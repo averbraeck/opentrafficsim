@@ -10,32 +10,32 @@
 
     <xi:include href="../xsd/defaults/default_gtutypes.xml">
       <xi:fallback>
-        <xi:include href="../../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_gtutypes.xml" />
+        <xi:include href="../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_gtutypes.xml" />
       </xi:fallback>
     </xi:include>
     <xi:include href="../xsd/defaults/default_linktypes.xml">
       <xi:fallback>
-        <xi:include href="../../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_linktypes.xml" />
+        <xi:include href="../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_linktypes.xml" />
       </xi:fallback>
     </xi:include>
     <xi:include href="../xsd/defaults/default_lanetypes.xml">
       <xi:fallback>
-        <xi:include href="../../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_lanetypes.xml" />
+        <xi:include href="../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_lanetypes.xml" />
       </xi:fallback>
     </xi:include>
     <xi:include href="../xsd/defaults/default_detectortypes.xml">
       <xi:fallback>
-        <xi:include href="../../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_detectortypes.xml" />
+        <xi:include href="../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_detectortypes.xml" />
       </xi:fallback>
     </xi:include>
     <xi:include href="../xsd/defaults/default_gtutemplates.xml">
       <xi:fallback>
-        <xi:include href="../../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_gtutemplates.xml" />
+        <xi:include href="../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_gtutemplates.xml" />
       </xi:fallback>
     </xi:include>
     <xi:include href="../xsd/defaults/default_lanebiases.xml">
       <xi:fallback>
-        <xi:include href="../../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_lanebiases.xml" />
+        <xi:include href="../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_lanebiases.xml" />
       </xi:fallback>
     </xi:include>
 
@@ -88,20 +88,20 @@
         </ots:Shoulder>
         <ots:Stripe Type="SOLID">
         </ots:Stripe>
-        <ots:Lane Id="FORWARD3" LaneType="STREET" DesignDirection="true">
+        <ots:Lane Id="FORWARD3" LaneType="STREET">
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
         <ots:Stripe Type="DASHED">
         </ots:Stripe>
-        <ots:Lane Id="FORWARD2" LaneType="STREET" DesignDirection="true">
+        <ots:Lane Id="FORWARD2" LaneType="STREET">
           <ots:CenterOffset>-6.2m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
         <ots:Stripe Type="DASHED">
         </ots:Stripe>
-        <ots:Lane Id="FORWARD1" LaneType="STREET" DesignDirection="true">
+        <ots:Lane Id="FORWARD1" LaneType="STREET">
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
@@ -115,7 +115,7 @@
         </ots:Shoulder>
         <ots:Stripe Type="SOLID">
         </ots:Stripe>
-        <ots:Lane Id="FORWARD3" LaneType="STREET" DesignDirection="true">
+        <ots:Lane Id="FORWARD3" LaneType="STREET">
           <ots:CenterOffsetStart>-6.2m</ots:CenterOffsetStart>
           <ots:CenterOffsetEnd>-9.5m</ots:CenterOffsetEnd>
           <ots:Width>3.3m</ots:Width>
@@ -124,7 +124,7 @@
         <ots:Stripe Type="DASHED">
           <ots:CenterOffset>-7.85m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD2" LaneType="STREET" DesignDirection="true">
+        <ots:Lane Id="FORWARD2" LaneType="STREET">
           <ots:CenterOffset>-6.2m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
@@ -132,7 +132,7 @@
         <ots:Stripe Type="DASHED">
           <ots:CenterOffset>-4.55m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD1" LaneType="STREET" DesignDirection="true">
+        <ots:Lane Id="FORWARD1" LaneType="STREET">
           <ots:CenterOffsetStart>-6.2m</ots:CenterOffsetStart>
           <ots:CenterOffsetEnd>-2.9m</ots:CenterOffsetEnd>
           <ots:Width>3.3m</ots:Width>
@@ -150,7 +150,7 @@
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>-7.8m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD" LaneType="STREET" DesignDirection="true">
+        <ots:Lane Id="FORWARD" LaneType="STREET">
           <ots:CenterOffset>-6.2m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
@@ -168,7 +168,7 @@
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>-7.8m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD" LaneType="STREET" DesignDirection="true">
+        <ots:Lane Id="FORWARD" LaneType="STREET">
           <ots:CenterOffset>-6.2m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
@@ -183,7 +183,7 @@
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>-4.6m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD" LaneType="STREET" DesignDirection="true">
+        <ots:Lane Id="FORWARD" LaneType="STREET">
           <ots:CenterOffset>-6.2m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
@@ -198,7 +198,7 @@
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>-4.6m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Lane Id="FORWARD" LaneType="STREET" DesignDirection="true">
+        <ots:Lane Id="FORWARD" LaneType="STREET">
           <ots:CenterOffset>-6.2m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
@@ -253,11 +253,11 @@
       <ots:Straight />
       <ots:DefinedLayout>r1</ots:DefinedLayout>
       <ots:TrafficLight Lane="FORWARD3"
-        Class="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" Id="10" Position="END-0.00m" />
+        Id="10" Position="END-0.00m" />
       <ots:TrafficLight Lane="FORWARD2"
-        Class="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" Id="11" Position="END-0.00m" />
+        Id="11" Position="END-0.00m" />
       <ots:TrafficLight Lane="FORWARD1"
-        Class="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" Id="12" Position="END-0.00m" />
+        Id="12" Position="END-0.00m" />
     </ots:Link>
 
     <ots:Link Id="EE1" NodeStart="E" NodeEnd="E1" Type="STREET">
@@ -274,11 +274,11 @@
       <ots:Straight />
       <ots:DefinedLayout>r1</ots:DefinedLayout>
       <ots:TrafficLight Lane="FORWARD3"
-        Class="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" Id="01" Position="END-0.00m" />
+        Id="01" Position="END-0.00m" />
       <ots:TrafficLight Lane="FORWARD2"
-        Class="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" Id="02" Position="END-0.00m" />
+        Id="02" Position="END-0.00m" />
       <ots:TrafficLight Lane="FORWARD1"
-        Class="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" Id="03" Position="END-0.00m" />
+        Id="03" Position="END-0.00m" />
     </ots:Link>
 
     <ots:Link Id="SS1" NodeStart="S" NodeEnd="S1" Type="STREET">
@@ -295,11 +295,11 @@
       <ots:Straight />
       <ots:DefinedLayout>r1</ots:DefinedLayout>
       <ots:TrafficLight Lane="FORWARD3"
-        Class="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" Id="04" Position="END-0.00m" />
+        Id="04" Position="END-0.00m" />
       <ots:TrafficLight Lane="FORWARD2"
-        Class="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" Id="05" Position="END-0.00m" />
+        Id="05" Position="END-0.00m" />
       <ots:TrafficLight Lane="FORWARD1"
-        Class="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" Id="06" Position="END-0.00m" />
+        Id="06" Position="END-0.00m" />
     </ots:Link>
 
     <ots:Link Id="WW1" NodeStart="W" NodeEnd="W1" Type="STREET">
@@ -316,11 +316,11 @@
       <ots:Straight />
       <ots:DefinedLayout>r1</ots:DefinedLayout>
       <ots:TrafficLight Lane="FORWARD3"
-        Class="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" Id="07" Position="END-0.00m" />
+        Id="07" Position="END-0.00m" />
       <ots:TrafficLight Lane="FORWARD2"
-        Class="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" Id="08" Position="END-0.00m" />
+        Id="08" Position="END-0.00m" />
       <ots:TrafficLight Lane="FORWARD1"
-        Class="org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight" Id="09" Position="END-0.00m" />
+        Id="09" Position="END-0.00m" />
     </ots:Link>
 
     <ots:Link Id="ECNC" NodeStart="EC" NodeEnd="NCO" Type="STREET" OffsetStart="-3.3m" OffsetEnd="0m">
@@ -405,17 +405,6 @@
 
   </ots:Network>
   <ots:Demand>
-    <ots:OdOptions Id="OdOptions">
-      <ots:OdOptionsItem>
-        <ots:Global />
-        <ots:LaneBiases>
-          <ots:LaneBias GtuType="NL.TRUCK" Bias="1.0" StickyLanes="2">
-            <ots:FromRight>0.2</ots:FromRight>
-          </ots:LaneBias>
-          <ots:DefinedLaneBias GtuType="NL.ROAD_USER"></ots:DefinedLaneBias>
-        </ots:LaneBiases>
-      </ots:OdOptionsItem>
-    </ots:OdOptions>
     <ots:Od Id="Traffic Demand" GlobalInterpolation="STEPWISE" GlobalFactor="1.000" SinkType="NL.ROAD_USERS" Options="OdOptions">
       <ots:Category GtuType="NL.CAR" Id="CAR" />
       <ots:Category GtuType="NL.TRUCK" Id="TRUCK" />
@@ -468,6 +457,17 @@
         <ots:Level Time="3600s">200.00veh/h</ots:Level>
       </ots:Cell>
     </ots:Od>
+    <ots:OdOptions Id="OdOptions">
+      <ots:OdOptionsItem>
+        <ots:Global />
+        <ots:LaneBiases>
+          <ots:LaneBias GtuType="NL.TRUCK" Bias="1.0" StickyLanes="2">
+            <ots:FromRight>0.2</ots:FromRight>
+          </ots:LaneBias>
+          <ots:DefinedLaneBias GtuType="NL.ROAD_USER"></ots:DefinedLaneBias>
+        </ots:LaneBiases>
+      </ots:OdOptionsItem>
+    </ots:OdOptions>
     <ots:Sink Type="NL.ROAD_USERS" Lane="FORWARD" Link="NCONO" Position="END-20m" />
     <ots:Sink Type="NL.ROAD_USERS" Lane="FORWARD" Link="ECOEO" Position="END-20m" />
     <ots:Sink Type="NL.ROAD_USERS" Lane="FORWARD" Link="SCOSO" Position="END-20m" />
@@ -4507,7 +4507,7 @@ ReN12 .=ER12
       
       </ots:Program>
       <ots:Console>
-        <ots:Map Type="PNG" Encoding="base64">
+        <ots:Map Type="PNG" Encoding="BASE64">
 iVBORw0KGgoAAAANSUhEUgAAAlgAAANQCAIAAAB7IIZSAAAQlklEQVR4nO3dW3Lb1hJAUeGWB2qN
 TJ4p8iFfhqYeoSTIDWCv9ZVEJeaU7WRXg2yd5eHpARi0/lyXX8v0KaDrf9MHAIBJQghAmhACkCaE
 AKQJIQBpQghAmhACkCaEAKQtFuoBKDMRApAmhACkCSEAaUIIQJoQApAmhDBs/blOHwHShBCANCEE

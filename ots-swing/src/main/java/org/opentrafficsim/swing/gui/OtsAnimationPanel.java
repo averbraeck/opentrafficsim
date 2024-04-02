@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -55,14 +56,14 @@ import nl.tudelft.simulation.dsol.animation.gis.GisMapInterface;
 import nl.tudelft.simulation.dsol.animation.gis.GisRenderable2d;
 import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.swing.animation.d2.AnimationPanel;
-import nl.tudelft.simulation.dsol.swing.animation.d2.VisualizationPanel;
 import nl.tudelft.simulation.dsol.swing.animation.d2.InputListener;
+import nl.tudelft.simulation.dsol.swing.animation.d2.VisualizationPanel;
 import nl.tudelft.simulation.language.DsolException;
 
 /**
  * Animation panel with various controls.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
@@ -175,6 +176,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         this.colorControlPanel = new ColorControlPanel(this.gtuColorer);
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
+        buttonPanel.setPreferredSize(new Dimension(200, 35));
         this.borderPanel.add(buttonPanel, BorderLayout.NORTH);
         buttonPanel.add(this.colorControlPanel);
 
@@ -184,11 +186,11 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         this.borderPanel.add(this.togglePanel, BorderLayout.WEST);
 
         // add the buttons for home, zoom all, grid, and mouse coordinates
-        buttonPanel.add(new JLabel("   "));
+        buttonPanel.add(Box.createHorizontalStrut(10));
         buttonPanel.add(makeButton("allButton", "/Expand.png", "ZoomAll", "Zoom whole network", true));
         buttonPanel.add(makeButton("homeButton", "/Home.png", "Home", "Zoom to original extent", true));
         buttonPanel.add(makeButton("gridButton", "/Grid.png", "Grid", "Toggle grid on/off", true));
-        buttonPanel.add(new JLabel("   "));
+        buttonPanel.add(Box.createHorizontalStrut(10));
 
         // add info labels next to buttons
         JPanel infoTextPanel = new JPanel();
@@ -219,8 +221,8 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         setGtuCountText();
 
         // Tell the animation to build the list of animation objects.
-        this.animationPanel.notify(
-                new TimedEvent<>(Replication.START_REPLICATION_EVENT, null, getSimulator().getSimulatorTime()));
+        this.animationPanel
+                .notify(new TimedEvent<>(Replication.START_REPLICATION_EVENT, null, getSimulator().getSimulatorTime()));
 
         // switch off the X and Y coordinates in a tooltip.
         this.animationPanel.setShowToolTip(false);
@@ -247,7 +249,8 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         this.autoPanTrack = newAutoPanTrack;
         this.autoPanOnNextPaintComponent = true;
         // System.out.println("AutoPan id=" + newAutoPanId + ", kind=" + newAutoPanKind + ", track=" + newAutoPanTrack);
-        if (null != this.autoPanId && this.autoPanId.length() > 0 && null != this.autoPanKind)
+        if (null != this.autoPanId && null != OtsAnimationPanel.this.animationPanel && this.autoPanId.length() > 0
+                && null != this.autoPanKind)
         {
             OtsAnimationPanel.this.animationPanel.repaint();
         }
@@ -850,13 +853,13 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
     /**
      * Animation panel that adds autopan functionality.
      * <p>
-     * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private class AutoAnimationPanel extends AnimationPanel
     {
@@ -964,17 +967,13 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
          */
         final synchronized void zoomVertical(final double factor, final int mouseX, final int mouseY)
         {
-            // TODO allow vertical and horizontal zoom when DSOL supports it in getScreenCoordinates() and getWorldCoordinates()
-            this.zoom(factor, mouseX, mouseY);
-            // double minX = this.extent.getMinX();
-            // Point2D mwc = Renderable2dInterface.Util.getWorldCoordinates(new Point2D.Double(mouseX, mouseY), this.extent,
-            // this.getSize());
-            // double minY = mwc.getY() - (mwc.getY() - this.extent.getMinY()) * factor;
-            // double w = this.extent.getWidth();
-            // double h = this.extent.getHeight() * factor;
-            //
-            // this.extent.setRect(minX, minY, w, h);
-            // this.repaint();
+            double minX = getExtent().getMinX();
+            Point2d mwc =
+                    getRenderableScale().getWorldCoordinates(new Point2D.Double(mouseX, mouseY), getExtent(), this.getSize());
+            double minY = mwc.getY() - (mwc.getY() - getExtent().getMinY()) * factor;
+            double w = getExtent().getDeltaX();
+            double h = getExtent().getDeltaY() * factor;
+            setExtent(new Bounds2d(minX, minX + w, minY, minY + h));
         }
 
         /**
@@ -985,16 +984,13 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
          */
         final synchronized void zoomHorizontal(final double factor, final int mouseX, final int mouseY)
         {
-            this.zoom(factor, mouseX, mouseY);
-            // double minY = this.extent.getMinY();
-            // Point2D mwc = Renderable2dInterface.Util.getWorldCoordinates(new Point2D.Double(mouseX, mouseY), this.extent,
-            // this.getSize());
-            // double minX = mwc.getX() - (mwc.getX() - this.extent.getMinX()) * factor;
-            // double w = this.extent.getWidth() * factor;
-            // double h = this.extent.getHeight();
-            //
-            // this.extent.setRect(minX, minY, w, h);
-            // this.repaint();
+            double minY = getExtent().getMinY();
+            Point2d mwc =
+                    getRenderableScale().getWorldCoordinates(new Point2D.Double(mouseX, mouseY), getExtent(), this.getSize());
+            double minX = mwc.getX() - (mwc.getX() - getExtent().getMinX()) * factor;
+            double w = getExtent().getDeltaX() * factor;
+            double h = getExtent().getDeltaY();
+            setExtent(new Bounds2d(minX, minX + w, minY, minY + h));
         }
 
         /**

@@ -5,17 +5,19 @@ import java.util.function.Consumer;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
+import org.djutils.event.reference.ReferenceType;
 import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
 
 /**
  * Allows the user to save definitions separately.
  * <p>
- * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class DefinitionsSaver implements EventListener, Consumer<XsdTreeNode>
 {
@@ -43,16 +45,22 @@ public class DefinitionsSaver implements EventListener, Consumer<XsdTreeNode>
         if (event.getType().equals(OtsEditor.NEW_FILE))
         {
             XsdTreeNodeRoot root = (XsdTreeNodeRoot) event.getContent();
-            root.addListener(this, XsdTreeNodeRoot.NODE_CREATED);
+            root.addListener(this, XsdTreeNodeRoot.NODE_CREATED, ReferenceType.WEAK);
+            root.addListener(this, XsdTreeNodeRoot.NODE_REMOVED, ReferenceType.WEAK);
         }
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
         {
             XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
-            if (!node.isType("Ots.Definitions.xi:include") && node.getParent() != null
-                    && node.getParent().isType("Ots.Definitions"))
+            if (!node.getPathString().equals(XsdPaths.DEFINITIONS + ".xi:include") && node.getParent() != null
+                    && node.getParent().getPathString().equals(XsdPaths.DEFINITIONS))
             {
                 node.addConsumer("Save as include file...", this);
             }
+        }
+        else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
+        {
+            XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
+            node.removeListener(this, XsdTreeNodeRoot.NODE_REMOVED);
         }
     }
 

@@ -21,12 +21,12 @@ import org.opentrafficsim.road.network.lane.Lane;
 
 /**
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGtu, LanePerception>
 {
@@ -167,8 +167,8 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGtu, 
      */
     static Lane mostOnSide(final Lane lane1, final Lane lane2, final LateralDirectionality lat)
     {
-        Length offset1 = lane1.getDesignLineOffsetAtBegin().plus(lane1.getDesignLineOffsetAtEnd());
-        Length offset2 = lane2.getDesignLineOffsetAtBegin().plus(lane2.getDesignLineOffsetAtEnd());
+        Length offset1 = lane1.getOffsetAtBegin().plus(lane1.getOffsetAtEnd());
+        Length offset2 = lane2.getOffsetAtBegin().plus(lane2.getOffsetAtEnd());
         if (lat.isLeft())
         {
             return offset1.gt(offset2) ? lane1 : lane2;

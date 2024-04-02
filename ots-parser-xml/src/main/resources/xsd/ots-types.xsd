@@ -504,7 +504,7 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid Direction with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad\(E\)|rad\(N\)|�\(E\)|deg\(E\)|�\(N\)|deg\(N\)))"></xsd:pattern>
+      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad|rad\(E\)|rad\(N\)|rad\(East\)|rad\(North\)|�\(E\)|�\(N\)|�\(East\)|�\(North\)|deg|deg\(E\)|deg\(N\)|deg\(East\)|deg\(North\)))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -904,7 +904,7 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveDirection with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad\(E\)|rad\(N\)|�\(E\)|deg\(E\)|�\(N\)|deg\(N\)))"></xsd:pattern>
+      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad|rad\(E\)|rad\(N\)|rad\(East\)|rad\(North\)|�\(E\)|�\(N\)|�\(East\)|�\(North\)|deg|deg\(E\)|deg\(N\)|deg\(East\)|deg\(North\)))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1360,15 +1360,6 @@
     </xsd:restriction>
   </xsd:simpleType>
 
-  <xsd:simpleType name="VehicleIntensityType">
-    <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a value as decimal number [0 .. 1] or percentage [0% .. 100%].</xsd:appinfo>
-    </xsd:annotation>
-    <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|(\d+\.?\d*\s*veh)"></xsd:pattern>
-    </xsd:restriction>
-  </xsd:simpleType>
-
   <xsd:simpleType name="VehicleFrequencyType">
     <xsd:annotation>
       <xsd:appinfo source="pattern">Provide an expression { }, or a value as X.Xveh/{time unit}.</xsd:appinfo>
@@ -1384,17 +1375,6 @@
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\{[^{}]+\}|(\(\s*[+-]?\d+\.?\d*\s*,\s*[+-]?\d+\.?\d*\s*\))">
-      </xsd:pattern>
-      <xsd:whiteSpace value="collapse" />
-    </xsd:restriction>
-  </xsd:simpleType>
-
-  <xsd:simpleType name="CoordinateNoSpaceType">
-    <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a value as (X.X,X.X).</xsd:appinfo>
-    </xsd:annotation>
-    <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|(\([+-]?\d+\.?\d*,[+-]?\d+\.?\d*\))">
       </xsd:pattern>
       <xsd:whiteSpace value="collapse" />
     </xsd:restriction>
@@ -1438,7 +1418,6 @@
         <xsd:restriction base="xsd:string">
           <xsd:enumeration value="PRIORITY" />
           <xsd:enumeration value="NONE" />
-          <xsd:enumeration value="TURN_ON_RED" />
           <xsd:enumeration value="YIELD" />
           <xsd:enumeration value="STOP" />
           <xsd:enumeration value="ALL_STOP" />
@@ -1475,30 +1454,6 @@
           <xsd:enumeration value="|:" />
           <xsd:enumeration value="RIGHT" />
           <xsd:enumeration value=":|" />
-        </xsd:restriction>
-      </xsd:simpleType>
-    </xsd:union>
-  </xsd:simpleType>
-
-  <xsd:simpleType name="DrivingDirectionType">
-    <xsd:union memberTypes="ots:Expression">
-      <xsd:simpleType>
-        <xsd:restriction base="xsd:string">
-          <xsd:enumeration value="FORWARD" />
-          <xsd:enumeration value="BACKWARD" />
-          <xsd:enumeration value="BOTH" />
-          <xsd:enumeration value="NONE" />
-        </xsd:restriction>
-      </xsd:simpleType>
-    </xsd:union>
-  </xsd:simpleType>
-
-  <xsd:simpleType name="GtuDirectionType">
-    <xsd:union memberTypes="ots:Expression">
-      <xsd:simpleType>
-        <xsd:restriction base="xsd:string">
-          <xsd:enumeration value="DIR_PLUS" />
-          <xsd:enumeration value="DIR_MINUS" />
         </xsd:restriction>
       </xsd:simpleType>
     </xsd:union>
@@ -1601,6 +1556,14 @@
 	        <xsd:attribute name="Sigma" type="ots:DoublePositive" use="required" />
 	      </xsd:complexType>
 	    </xsd:element>
+        <xsd:element name="LogNormalTrunc">
+          <xsd:complexType>
+            <xsd:attribute name="Mu" type="ots:double" use="required" />
+            <xsd:attribute name="Sigma" type="ots:DoublePositive" use="required" />
+            <xsd:attribute name="Min" type="ots:double" use="required" />
+            <xsd:attribute name="Max" type="ots:double" use="required" />
+          </xsd:complexType>
+        </xsd:element>
 	    <xsd:element name="Pearson5">
 	      <xsd:complexType>
 	        <xsd:attribute name="Alpha" type="ots:DoublePositive" use="required" />
@@ -1680,7 +1643,7 @@
   <xsd:complexType name="LengthDistType">
     <xsd:complexContent>
       <xsd:extension base="ots:ConstantDistType">
-        <xsd:attribute name="LengthUnit" type="ots:LengthUnitType" />
+        <xsd:attribute name="LengthUnit" type="ots:LengthUnitType" use="required" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -1688,7 +1651,7 @@
   <xsd:complexType name="PositionDistType">
     <xsd:complexContent>
       <xsd:extension base="ots:ConstantDistType">
-        <xsd:attribute name="PositionUnit" type="ots:PositionUnitType" />
+        <xsd:attribute name="PositionUnit" type="ots:PositionUnitType" use="required" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -1696,7 +1659,7 @@
   <xsd:complexType name="SpeedDistType">
     <xsd:complexContent>
       <xsd:extension base="ots:ConstantDistType">
-        <xsd:attribute name="SpeedUnit" type="ots:SpeedUnitType" />
+        <xsd:attribute name="SpeedUnit" type="ots:SpeedUnitType" use="required" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -1704,7 +1667,7 @@
   <xsd:complexType name="AccelerationDistType">
     <xsd:complexContent>
       <xsd:extension base="ots:ConstantDistType">
-        <xsd:attribute name="AccelerationUnit" type="ots:AccelerationUnitType" />
+        <xsd:attribute name="AccelerationUnit" type="ots:AccelerationUnitType" use="required" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -1712,7 +1675,7 @@
   <xsd:complexType name="TimeDistType">
     <xsd:complexContent>
       <xsd:extension base="ots:ConstantDistType">
-        <xsd:attribute name="TimeUnit" type="ots:TimeUnitType" />
+        <xsd:attribute name="TimeUnit" type="ots:TimeUnitType" use="required" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -1720,7 +1683,7 @@
   <xsd:complexType name="DurationDistType">
     <xsd:complexContent>
       <xsd:extension base="ots:ConstantDistType">
-        <xsd:attribute name="DurationUnit" type="ots:DurationUnitType" />
+        <xsd:attribute name="DurationUnit" type="ots:DurationUnitType" use="required" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -1728,7 +1691,7 @@
   <xsd:complexType name="LinearDensityDistType">
     <xsd:complexContent>
       <xsd:extension base="ots:ConstantDistType">
-        <xsd:attribute name="LinearDensityUnit" type="ots:LinearDensityUnitType" />
+        <xsd:attribute name="LinearDensityUnit" type="ots:LinearDensityUnitType" use="required" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -1736,7 +1699,7 @@
   <xsd:complexType name="FrequencyDistType">
     <xsd:complexContent>
       <xsd:extension base="ots:ConstantDistType">
-        <xsd:attribute name="FrequencyUnit" type="ots:FrequencyUnitType" />
+        <xsd:attribute name="FrequencyUnit" type="ots:FrequencyUnitType" use="required" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>

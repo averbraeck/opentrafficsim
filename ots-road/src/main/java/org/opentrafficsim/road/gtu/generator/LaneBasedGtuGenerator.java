@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.generator;
 
-import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -20,16 +19,16 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.draw.bounds.Bounds;
-import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.OrientedPoint2d;
-import org.djutils.draw.point.Point;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.TimeStampedObject;
+import org.opentrafficsim.base.geometry.BoundingBox;
+import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
@@ -60,12 +59,12 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * sufficient room to construct a GTU at the specified lane locations. The speed of a construction GTU may be reduced to ensure
  * it does not run into its immediate leader GTU.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGenerator
 {
@@ -507,21 +506,22 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
         Set<GtuGeneratorPosition> set = new LinkedHashSet<>();
         for (GeneratorLanePosition lanePosition : this.generatorPositions.getAllPositions())
         {
-            OrientedPoint2d p = lanePosition.getPosition().iterator().next().getLocation();
+            LanePosition pos = lanePosition.getPosition().iterator().next();
+            OrientedPoint2d p = pos.getLocation();
             set.add(new GtuGeneratorPosition()
             {
                 /** {@inheritDoc} */
                 @Override
-                public Point<?> getLocation() throws RemoteException
+                public Point2d getLocation()
                 {
                     return p;
                 }
 
                 /** {@inheritDoc} */
                 @Override
-                public Bounds<?, ?, ?> getBounds() throws RemoteException
+                public OtsBounds2d getBounds()
                 {
-                    return new Bounds2d(0.0, 0.0, 0.0, 0.0);
+                    return new BoundingBox(0.0, 0.0);
                 }
 
                 /** {@inheritDoc} */
@@ -529,6 +529,13 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
                 public int getQueueCount()
                 {
                     return getQueueLength(lanePosition);
+                }
+
+                /** {@inheritDoc} */
+                @Override
+                public String getId()
+                {
+                    return LaneBasedGtuGenerator.this.id + "@" + lanePosition.getLink().getId() + "." + pos.getLane().getId();
                 }
             });
         }
@@ -581,13 +588,13 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
     /**
      * Placement contains the information that a {@code RoomChecker} returns.
      * <p>
-     * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public static final class Placement
     {

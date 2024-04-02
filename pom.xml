@@ -52,7 +52,7 @@
     <dsol.version>4.2.1</dsol.version>
     <sim0mq.version>2.1.1</sim0mq.version>
     <jts.version>1.19.0</jts.version>
-    <jfreechart.version>1.5.0</jfreechart.version>
+    <jfreechart.version>1.5.4</jfreechart.version>
     <apache.poi.version>5.2.3</apache.poi.version>
     <jgrapht.version>1.5.1</jgrapht.version>
     <xstream.version>1.4.20</xstream.version>

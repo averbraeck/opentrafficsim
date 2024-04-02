@@ -14,10 +14,10 @@ import org.opentrafficsim.editor.XsdTreeNode;
 /**
  * Listener to the mouse for the attributes table.
  * <p>
- * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class AttributesMouseListener extends MouseAdapter
 {
@@ -71,7 +71,7 @@ public class AttributesMouseListener extends MouseAdapter
 
     /** {@inheritDoc} */
     @Override
-    public void mousePressed(final MouseEvent e)
+    public void mouseReleased(final MouseEvent e)
     {
         // shows popup for attributes with a selection of allowable values (xsd:keyref, xsd:enumeration)
         int col = this.attributesTable.columnAtPoint(e.getPoint());

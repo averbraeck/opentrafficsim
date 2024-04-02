@@ -41,12 +41,12 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * This class may be used with a {@code LaneBasedGtuCharacteristicsGenerator} or {@code GtuCharacteristicsGeneratorOD}. Use
  * {@code ofGtuType()} or {@code ofCategory()} respectively.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <T> type of demand category, typically a Category in an OdMatrix or a GtuType
  */
 public abstract class Platoons<T>
@@ -361,13 +361,13 @@ public abstract class Platoons<T>
     /**
      * Class containing info of a GTU to generate.
      * <p>
-     * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      * @param <K> type of demand category, typically a Category in an OdMatrix or a GtuType
      */
     private static class PlatoonGtu<K> implements Comparable<PlatoonGtu<K>>

@@ -22,6 +22,7 @@ import nl.tudelft.simulation.jstats.distributions.DistExponential;
 import nl.tudelft.simulation.jstats.distributions.DistGamma;
 import nl.tudelft.simulation.jstats.distributions.DistGeometric;
 import nl.tudelft.simulation.jstats.distributions.DistLogNormal;
+import nl.tudelft.simulation.jstats.distributions.DistLogNormalTrunc;
 import nl.tudelft.simulation.jstats.distributions.DistNegBinomial;
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
 import nl.tudelft.simulation.jstats.distributions.DistNormalTrunc;
@@ -36,11 +37,11 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 /**
  * Parse a distribution from text to a distribution.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public final class ParseDistribution
 {
@@ -162,6 +163,12 @@ public final class ParseDistribution
         {
             return new DistLogNormal(stream, distType.getLogNormal().getMu().get(eval),
                     distType.getLogNormal().getSigma().get(eval));
+        }
+        else if (distType.getLogNormalTrunc() != null)
+        {
+            return new DistLogNormalTrunc(stream, distType.getLogNormalTrunc().getMu().get(eval),
+                    distType.getLogNormalTrunc().getSigma().get(eval), distType.getLogNormalTrunc().getMin().get(eval),
+                    distType.getLogNormalTrunc().getMax().get(eval));
         }
         else if (distType.getPearson5() != null)
         {

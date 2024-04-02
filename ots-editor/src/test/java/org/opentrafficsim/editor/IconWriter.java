@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -13,10 +14,10 @@ import javax.imageio.ImageIO;
 /**
  * Writes some icons for the editor.
  * <p>
- * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public final class IconWriter
 {
@@ -39,7 +40,7 @@ public final class IconWriter
         Color blue = new Color(32, 160, 222);
         Color orange = new Color(222, 160, 32);
 
-        BufferedImage image = next(null, null);
+        BufferedImage image = next(null, null, 16);
         Graphics2D g = getGraphics(image);
 
         g.setColor(blue);
@@ -47,7 +48,7 @@ public final class IconWriter
         g.setColor(Color.BLACK);
         g.setStroke(new BasicStroke(2.0f));
         g.drawOval(3, 3, 9, 9);
-        image = next(image, "OTS_node.png");
+        image = next(image, "OTS_node.png", 16);
         g = getGraphics(image);
         
         g.setColor(orange);
@@ -55,7 +56,7 @@ public final class IconWriter
         g.setColor(Color.BLACK);
         g.setStroke(new BasicStroke(2.0f));
         g.drawOval(3, 3, 9, 9);
-        image = next(image, "OTS_centroid.png");
+        image = next(image, "OTS_centroid.png", 16);
         g = getGraphics(image);
 
         g.setColor(Color.BLACK);
@@ -67,7 +68,7 @@ public final class IconWriter
         g.setColor(Color.BLACK);
         g.drawOval(9, 0, 5, 5);
         g.drawOval(0, 9, 5, 5);
-        image = next(image, "OTS_link.png");
+        image = next(image, "OTS_link.png", 16);
         g = getGraphics(image);
         
         g.setColor(Color.BLACK);
@@ -80,7 +81,7 @@ public final class IconWriter
         g.setColor(Color.BLACK);
         g.drawOval(9, 0, 5, 5);
         g.drawOval(0, 9, 5, 5);
-        image = next(image, "OTS_connector.png");
+        image = next(image, "OTS_connector.png", 16);
         g = getGraphics(image);
 
         g.setColor(Color.BLACK);
@@ -101,7 +102,7 @@ public final class IconWriter
         g.drawOval(6, 6, 4, 4);
         g.drawOval(10, 2, 3, 3);
         g.drawOval(12, 11, 3, 3);
-        image = next(image, "OTS_network.png");
+        image = next(image, "OTS_network.png", 16);
         g = getGraphics(image);
 
         g.setColor(Color.BLACK);
@@ -114,7 +115,7 @@ public final class IconWriter
         g.fillOval(6, 6, 4, 4);
         g.setColor(new Color(0, 160, 160));
         g.fillOval(6, 10, 4, 4);
-        image = next(image, "OTS_control.png");
+        image = next(image, "OTS_control.png", 16);
         g = getGraphics(image);
 
         g.setColor(new Color(0, 128, 160));
@@ -128,24 +129,39 @@ public final class IconWriter
         g.setStroke(new BasicStroke(0.75f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] {3f, 1f}, 0));
         g.drawLine(5, 13, 6, 2);
         g.drawLine(10, 13, 9, 2);
-        image = next(image, "OTS_road.png");
+        image = next(image, "OTS_road.png", 24);
+        g = getGraphics(image);
+        
+        g.rotate(Math.PI / 4.0);
+        g.setColor(Color.WHITE);
+        g.fillRect((int) (6 * Math.sqrt(2.0)), (int) (-6 * Math.sqrt(2.0)), (int) (12 * Math.sqrt(2.0)), (int) (12 * Math.sqrt(2.0)));
+        g.setColor(Color.BLACK);
+        double r = 6.5;
+        RoundRectangle2D.Double shape = new RoundRectangle2D.Double(11.5 * Math.sqrt(2.0)-r, -r, 2.0 * r, 2.0 * r, 0.25 * r, 0.25 * r);
+        g.draw(shape);
+        r = 13.0 / 3.0;
+        g.setColor(new Color(255, 204, 0));
+        shape = new RoundRectangle2D.Double(11.5 * Math.sqrt(2.0)-r, -r, 2.0 * r, 2.0 * r, 0.15 * r, 0.15 * r);
+        g.fill(shape);
+        image = next(image, ".\\icons\\Priority24.png", 16);
     }
 
     /**
      * Saves the previous image. Creates a new empty image for the next.
      * @param image BufferedImage; image to save.
      * @param saveFile String; file name to same image.
+     * @param size int; size of icon.
      * @return BufferedImage; next empty image to draw in.
      * @throws IOException; on read or write exception.
      */
-    private static BufferedImage next(final BufferedImage image, final String saveFile) throws IOException
+    private static BufferedImage next(final BufferedImage image, final String saveFile, final int size) throws IOException
     {
         if (saveFile != null)
         {
-            File f = new File("..\\ots-core\\src\\main\\resources\\" + saveFile);
+            File f = new File("..\\ots-swing\\src\\main\\resources\\" + saveFile);
             ImageIO.write(image, "png", f);
         }
-        BufferedImage imageOut = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage imageOut = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
         return imageOut;
     }
 

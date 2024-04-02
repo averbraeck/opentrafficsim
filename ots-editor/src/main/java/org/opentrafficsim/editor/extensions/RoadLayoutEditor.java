@@ -12,16 +12,17 @@ import javax.swing.JLabel;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
 
 /**
  * Editor for road layouts.
  * <p>
- * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class RoadLayoutEditor implements EventListener, Consumer<XsdTreeNode>
 {
@@ -71,8 +72,8 @@ public class RoadLayoutEditor implements EventListener, Consumer<XsdTreeNode>
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
         {
             XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
-            if (node.isType("Ots.Definitions.RoadLayouts.RoadLayout")
-                    || node.isType("Ots.Network.Link.RoadLayout"))
+            if (node.getPathString().equals(XsdPaths.DEFINED_ROADLAYOUT)
+                    || node.getPathString().equals(XsdPaths.ROADLAYOUT))
             {
                 node.addConsumer("Edit...", this);
             }

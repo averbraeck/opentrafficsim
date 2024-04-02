@@ -1,11 +1,13 @@
 package org.opentrafficsim.swing.gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -26,7 +28,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
 /**
  * The OTS search panel.
  * <p>
- * Copyright (c) 2020-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2020-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
@@ -57,8 +59,9 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
     {
         this.otsAnimationPanel = otsAnimationPanel;
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        this.add(new JLabel("    ")); // insert some white space in the GUI
+        this.add(Box.createHorizontalStrut(10));
         this.add(new JLabel(OtsControlPanel.loadIcon("/View.png")));
+        this.add(Box.createHorizontalStrut(5));
         ObjectKind<?>[] objectKinds = new ObjectKind[] {new ObjectKind<Gtu>("GTU")
         {
             @Override
@@ -85,37 +88,10 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
         this.add(this.typeToSearch);
 
         /** Text field with appearance control. */
-        class AppearanceControlTextField extends JTextField implements AppearanceControl
-        {
-            /** */
-            private static final long serialVersionUID = 20180207L;
-
-            /** {@inheritDoc} */
-            @Override
-            public boolean isForeground()
-            {
-                return false;
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public boolean isBackground()
-            {
-                return false;
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public String toString()
-            {
-                return "AppearanceControlLabel []";
-            }
-        }
-
         this.idTextField = new AppearanceControlTextField();
         this.idTextField.setPreferredSize(new Dimension(100, 0));
         this.add(this.idTextField);
-        this.trackObject = new JCheckBox("track");
+        this.trackObject = new JCheckBox("Track");
         this.add(this.trackObject);
         this.trackObject.setActionCommand("Tracking status changed");
         this.idTextField.setActionCommand("Id changed");
@@ -125,6 +101,7 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
         this.typeToSearch.addActionListener(this);
         this.idTextField.addFocusListener(this);
         this.idTextField.getDocument().addDocumentListener(this);
+        new GhostText(this.idTextField, "Id...").setGhostColor(Color.GRAY);
     }
 
     /**

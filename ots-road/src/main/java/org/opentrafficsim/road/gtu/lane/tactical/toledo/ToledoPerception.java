@@ -22,12 +22,12 @@ import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
  * These methods determine and return infrastructure information of type {@code InfrastructureLaneChangeInfoToledo}, which
  * includes split number.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 // TODO updateInfrastructureLaneChangeInfo with split number
 public class ToledoPerception extends LaneBasedAbstractPerceptionCategory implements LaneBasedPerceptionCategory

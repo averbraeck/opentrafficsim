@@ -3,6 +3,7 @@ package org.opentrafficsim.road.network.factory.xml.parser;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -13,10 +14,13 @@ import java.util.function.BiFunction;
 
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Dimensionless;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.base.DoubleScalar;
 import org.djunits.value.vdouble.scalar.base.DoubleScalarRel;
 import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
@@ -35,6 +39,7 @@ import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.gtu.perception.PerceptionCategory;
 import org.opentrafficsim.core.parameters.ParameterFactory;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
+import org.opentrafficsim.core.parameters.ParameterFactoryByType.Correlation;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -120,12 +125,12 @@ import nl.tudelft.simulation.jstats.distributions.DistNormal;
 /**
  * Parser of the {@code Model} tags. Returns a map of strategical planner factories by model ID for use in demand parsing.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class ModelParser
 {
@@ -294,9 +299,188 @@ public class ModelParser
                                 ParseDistribution.parseContinuousDist(streamMap, p, p.getSpeedUnit().get(eval), eval));
                     }
                 }
+                // correlations
+                for (Serializable parameter : model.getModelParameters().getDurationOrDurationDistOrLength())
+                {
+                    if (parameter instanceof org.opentrafficsim.xml.generated.ModelType.ModelParameters.Correlation)
+                    {
+                        org.opentrafficsim.xml.generated.ModelType.ModelParameters.Correlation c =
+                                (org.opentrafficsim.xml.generated.ModelType.ModelParameters.Correlation) parameter;
+                        parseCorrelation(gtuType, c, parameterTypes, parameterFactory, eval);
+                    }
+                }
             }
         }
         return parameterFactory;
+    }
+
+    /**
+     * Parses a correlation.
+     * @param <F> value type of first parameter.
+     * @param <T> value type of then parameter.
+     * @param gtuType GtuType; GTU type for which the correlation applies.
+     * @param correlationTag Correlation; correlation tag.
+     * @param parameterTypes Map&lt;String, ParameterType&lt;?&gt;&gt;; parameter types.
+     * @param parameterFactory ParameterFactoryByType; parameter factory.
+     * @param eval Eval; evaluator (to evaluate First and Then node values).
+     */
+    @SuppressWarnings("unchecked")
+    private static <F, T> void parseCorrelation(final GtuType gtuType,
+            final org.opentrafficsim.xml.generated.ModelType.ModelParameters.Correlation correlationTag,
+            final Map<String, ParameterType<?>> parameterTypes, final ParameterFactoryByType parameterFactory, final Eval eval)
+    {
+        ParameterType<F> firstType = null;
+        if (correlationTag.getFirst() != null)
+        {
+            if (correlationTag.getFirst().getAcceleration() != null)
+            {
+                firstType = (ParameterType<F>) parameterTypes.get(correlationTag.getFirst().getAcceleration().get(eval));
+            }
+            else if (correlationTag.getFirst().getDouble() != null)
+            {
+                firstType = (ParameterType<F>) parameterTypes.get(correlationTag.getFirst().getDouble().get(eval));
+            }
+            else if (correlationTag.getFirst().getDuration() != null)
+            {
+                firstType = (ParameterType<F>) parameterTypes.get(correlationTag.getFirst().getDuration().get(eval));
+            }
+            else if (correlationTag.getFirst().getFraction() != null)
+            {
+                firstType = (ParameterType<F>) parameterTypes.get(correlationTag.getFirst().getFraction().get(eval));
+            }
+            else if (correlationTag.getFirst().getFrequency() != null)
+            {
+                firstType = (ParameterType<F>) parameterTypes.get(correlationTag.getFirst().getFrequency().get(eval));
+            }
+            else if (correlationTag.getFirst().getInteger() != null)
+            {
+                firstType = (ParameterType<F>) parameterTypes.get(correlationTag.getFirst().getInteger().get(eval));
+            }
+            else if (correlationTag.getFirst().getLength() != null)
+            {
+                firstType = (ParameterType<F>) parameterTypes.get(correlationTag.getFirst().getLength().get(eval));
+            }
+            else if (correlationTag.getFirst().getLinearDensity() != null)
+            {
+                firstType = (ParameterType<F>) parameterTypes.get(correlationTag.getFirst().getLinearDensity().get(eval));
+            }
+            else if (correlationTag.getFirst().getSpeed() != null)
+            {
+                firstType = (ParameterType<F>) parameterTypes.get(correlationTag.getFirst().getSpeed().get(eval));
+            }
+            else
+            {
+                throw new RuntimeException("First in Correlation is not valid.");
+            }
+        }
+        ParameterType<T> thenType = null;
+        Correlation<F, T> correlation = null;
+        String expression = correlationTag.getExpression();
+        if (correlationTag.getThen().getAcceleration() != null)
+        {
+            thenType = (ParameterType<T>) parameterTypes.get(correlationTag.getThen().getAcceleration().get(eval));
+            correlation = (Correlation<F, T>) (f, t) -> correlateFromExpression(f, t, expression, Acceleration.class);
+        }
+        else if (correlationTag.getThen().getDouble() != null)
+        {
+            thenType = (ParameterType<T>) parameterTypes.get(correlationTag.getThen().getDouble().get(eval));
+            correlation = (Correlation<F, T>) (f, t) -> correlateFromExpression(f, t, expression, Double.class);
+        }
+        else if (correlationTag.getThen().getDuration() != null)
+        {
+            thenType = (ParameterType<T>) parameterTypes.get(correlationTag.getThen().getDuration().get(eval));
+            correlation = (Correlation<F, T>) (f, t) -> correlateFromExpression(f, t, expression, Duration.class);
+        }
+        else if (correlationTag.getThen().getFraction() != null)
+        {
+            thenType = (ParameterType<T>) parameterTypes.get(correlationTag.getThen().getFraction().get(eval));
+            correlation = (Correlation<F, T>) (f, t) -> correlateFromExpression(f, t, expression, Double.class);
+        }
+        else if (correlationTag.getThen().getFrequency() != null)
+        {
+            thenType = (ParameterType<T>) parameterTypes.get(correlationTag.getThen().getFrequency().get(eval));
+            correlation = (Correlation<F, T>) (f, t) -> correlateFromExpression(f, t, expression, Frequency.class);
+        }
+        else if (correlationTag.getThen().getInteger() != null)
+        {
+            thenType = (ParameterType<T>) parameterTypes.get(correlationTag.getThen().getInteger().get(eval));
+            correlation = (Correlation<F, T>) (f, t) -> correlateFromExpression(f, t, expression, Integer.class);
+        }
+        else if (correlationTag.getThen().getLength() != null)
+        {
+            thenType = (ParameterType<T>) parameterTypes.get(correlationTag.getThen().getLength().get(eval));
+            correlation = (Correlation<F, T>) (f, t) -> correlateFromExpression(f, t, expression, Length.class);
+        }
+        else if (correlationTag.getThen().getLinearDensity() != null)
+        {
+            thenType = (ParameterType<T>) parameterTypes.get(correlationTag.getThen().getLinearDensity().get(eval));
+            correlation = (Correlation<F, T>) (f, t) -> correlateFromExpression(f, t, expression, LinearDensity.class);
+        }
+        else if (correlationTag.getThen().getSpeed() != null)
+        {
+            thenType = (ParameterType<T>) parameterTypes.get(correlationTag.getThen().getSpeed().get(eval));
+            correlation = (Correlation<F, T>) (f, t) -> correlateFromExpression(f, t, expression, Speed.class);
+        }
+        else
+        {
+            throw new RuntimeException("Then in Correlation is not valid.");
+        }
+        parameterFactory.addCorrelation(gtuType, firstType, thenType, correlation);
+    }
+
+    /**
+     * Correlates parameters using an expression.
+     * @param <F> value type of first parameter.
+     * @param <T> value type of then parameter.
+     * @param first F; value of first parameter.
+     * @param then T; value of then parameter.
+     * @param expression String; expression of the correlation.
+     * @param clazz Class<?>; type of T, not explicit as equivalence is not derivable in the calling context.
+     * @return T; correlated new value of then parameter.
+     */
+    @SuppressWarnings("unchecked")
+    private static <F, T> T correlateFromExpression(final F first, final T then, final String expression, final Class<?> clazz)
+    {
+        Eval eval = new Eval();
+        eval.setRetrieveValue((value) ->
+        {
+            if (value.equals("first"))
+            {
+                if (first instanceof DoubleScalar<?, ?>)
+                {
+                    return first;
+                }
+                return Dimensionless.instantiateSI(((Number) first).doubleValue());
+            }
+            if (value.equals("then"))
+            {
+                if (then instanceof DoubleScalar<?, ?>)
+                {
+                    return then;
+                }
+                return Dimensionless.instantiateSI(((Number) then).doubleValue());
+            }
+            throw new RuntimeException(
+                    "Value for " + value + " in correlation expression is not valid. Only 'first' and 'then' allowed.");
+        });
+        Object result = eval.evaluate(expression);
+        if (DoubleScalar.class.isAssignableFrom(clazz))
+        {
+            try
+            {
+                Method method = clazz.getDeclaredMethod("instantiateSI", new Class<?>[] {double.class});
+                return (T) method.invoke(null, ((DoubleScalar<?, ?>) result).si);
+            }
+            catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)
+            {
+                throw new RuntimeException("Unable to cast result of expression " + expression, ex);
+            }
+        }
+        if (Double.class.isAssignableFrom(clazz))
+        {
+            return (T) (Double) ((Number) result).doubleValue();
+        }
+        return (T) (Integer) ((Number) result).intValue();
     }
 
     /**
@@ -639,6 +823,7 @@ public class ModelParser
             Factory<DesiredSpeedModel> wrapped = parseDesiredSpeedModel(desiredSpeedModel.getSocio(), eval);
             return new Factory<>()
             {
+
                 /** {@inheritDoc} */
                 @Override
                 public Parameters getParameters() throws ParameterException
@@ -655,6 +840,7 @@ public class ModelParser
                 {
                     return new SocioDesiredSpeed(wrapped.get());
                 }
+
             };
         }
         else if (desiredSpeedModel.getClazz() != null)
@@ -702,11 +888,11 @@ public class ModelParser
      * Defines a simple factory for model components, combining {@code ModelComponentFactory.getParameters()} with a
      * {@code get()} method.
      * <p>
-     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      * @param <T> model component type.
      */
     private static interface Factory<T> extends ModelComponentFactory

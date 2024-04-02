@@ -211,39 +211,51 @@
 	<ots:Demand>
 
 		<ots:ShortestRoute Id="EW" GtuType="NL.CAR">
-			<ots:From Node="TRE" />
-			<ots:To Node="TRW" />
-			<ots:DistanceCost>1/m</ots:DistanceCost>
+            <ots:From>TRE</ots:From>
+            <ots:To>TRW</ots:To>
+            <ots:Cost>
+              <ots:Distance/>
+            </ots:Cost>
 		</ots:ShortestRoute>
 
 		<ots:ShortestRoute Id="WE" GtuType="NL.CAR">
-			<ots:From Node="BLW" />
-			<ots:To Node="BLE" />
-			<ots:DistanceCost>1/m</ots:DistanceCost>
+            <ots:From>BLW</ots:From>
+            <ots:To>BLE</ots:To>
+			<ots:Cost>
+              <ots:Distance/>
+            </ots:Cost>
 		</ots:ShortestRoute>
 
 		<ots:ShortestRoute Id="WS" GtuType="NL.CAR">
-			<ots:From Node="BLW" />
-			<ots:To Node="BLS" />
-			<ots:DistanceCost>1/m</ots:DistanceCost>
+            <ots:From>BLW</ots:From>
+            <ots:To>BLS</ots:To>
+			<ots:Cost>
+              <ots:Distance/>
+            </ots:Cost>
 		</ots:ShortestRoute>
 
 		<ots:ShortestRoute Id="SW" GtuType="NL.CAR">
-			<ots:From Node="TRS" />
-			<ots:To Node="TRW" />
-			<ots:DistanceCost>1/m</ots:DistanceCost>
+            <ots:From>TRS</ots:From>
+            <ots:To>TRW</ots:To>
+			<ots:Cost>
+              <ots:Distance/>
+            </ots:Cost>
 		</ots:ShortestRoute>
 
 		<ots:ShortestRoute Id="ES" GtuType="NL.CAR">
-			<ots:From Node="TRE" />
-			<ots:To Node="BLS" />
-			<ots:DistanceCost>1/m</ots:DistanceCost>
+            <ots:From>TRE</ots:From>
+            <ots:To>BLS</ots:To>
+			<ots:Cost>
+              <ots:Distance/>
+            </ots:Cost>
 		</ots:ShortestRoute>
 
 		<ots:ShortestRoute Id="SE" GtuType="NL.CAR">
-			<ots:From Node="TRS" />
-			<ots:To Node="BLE" />
-			<ots:DistanceCost>1/m</ots:DistanceCost>
+			<ots:From>TRS</ots:From>
+			<ots:To>BLE</ots:To>
+			<ots:Cost>
+              <ots:Distance/>
+            </ots:Cost>
 		</ots:ShortestRoute>
 
 		<ots:ShortestRouteMix Id="E" GtuType="NL.CAR">

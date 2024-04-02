@@ -28,7 +28,6 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.TurnIndicatorIntent;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
@@ -44,7 +43,6 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayStopLine;
 import org.opentrafficsim.road.gtu.lane.tactical.Blockable;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.pt.BusSchedule;
-import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.conflict.BusStopConflictRule;
 import org.opentrafficsim.road.network.lane.conflict.ConflictRule;
@@ -54,12 +52,15 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 /**
  * This class implements default behavior for intersection conflicts for use in tactical planners.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ * @see <a href="https://rstrail.nl/wp-content/uploads/2015/02/schakel_2012.pdf">Schakel, W.J., B. van Arem (2012) “An Urban
+ *      Traffic Extension of a Freeway Driver Model for use in the OpenTraffic® Open Source Traffic Simulation”, presented at
+ *      TRAIL Congress 2012.</a>
  */
 // TODO do not ignore vehicles upstream of conflict if they have green
 // TODO conflict over multiple lanes (longitudinal in own direction)
@@ -118,7 +119,7 @@ public final class ConflictUtil
      * Approach conflicts by applying appropriate acceleration (or deceleration). The model may yield for a vehicle even while
      * having priority. Such a 'yield plan' is remembered in <code>YieldPlans</code>. By forwarding the same
      * <code>YieldPlans</code> for a GTU consistency of such plans is provided. If any conflict is not accepted to pass,
-     * stopping before a more upstream conflict is applied if there not sufficient stopping length in between conflicts.
+     * stopping before a more upstream conflict is applied if there is not sufficient stopping length in between conflicts.
      * @param parameters Parameters; parameters
      * @param conflicts PerceptionCollectable&lt;HeadwayConflict,Conflict&gt;; set of conflicts to approach
      * @param leaders PerceptionCollectable&lt;HeadwayGtu,LaneBasedGtu&gt;; leading vehicles
@@ -187,8 +188,7 @@ public final class ConflictUtil
             if (lane.isCurrent())
             {
                 // TODO: priority rules of busses should be handled differently, this also makes a GTU type unnecessary here
-                if (gtu.getStrategicalPlanner().getRoute() instanceof BusSchedule
-                        && gtu.getType().isOfType(DefaultsNl.BUS)
+                if (gtu.getStrategicalPlanner().getRoute() instanceof BusSchedule && gtu.getType().isOfType(DefaultsNl.BUS)
                         && conflict.getConflictRuleType().equals(BusStopConflictRule.class))
                 {
                     BusSchedule busSchedule = (BusSchedule) gtu.getStrategicalPlanner().getRoute();
@@ -225,7 +225,6 @@ public final class ConflictUtil
                     break;
                 }
                 case YIELD: // TODO depending on rules, we may need to stop and not just yield
-                case TURN_ON_RED:
                 {
                     Length prevEnd = prevEnds.isEmpty() ? null : prevEnds.get(prevEnds.size() - 1);
                     stop = stopForGiveWayConflict(conflict, leaders, speed, acceleration, vehicleLength, parameters,
@@ -601,7 +600,7 @@ public final class ConflictUtil
             if (conflictingGTU.getSpeed().eq0() && conflictingGTU.isAhead()
                     && conflictingGTU.getDistance().gt(parameters.getParameter(S0)))
             {
-                // conflicting vehicle too far away
+                // conflicting stationary vehicle too far away
                 return false;
             }
         }
@@ -609,12 +608,12 @@ public final class ConflictUtil
         // Stop as long as some leader is standing still, and this leader is not leaving sufficient space yet
         // use start of conflict on merge, end of conflict on crossing
         Length typeCorrection = conflict.isCrossing() ? conflict.getLength() : Length.ZERO;
+        // distance ego vehicle has to cover to pass the conflict
+        Length required = conflict.getDistance().plus(typeCorrection).plus(passable);
         // distance leader has to cover before we can pass the conflict
-        Length distance = conflict.getDistance().minus(leaders.first().getDistance()).plus(passable).plus(typeCorrection);
-        if (distance.gt0())
+        Length requiredLeader = required.minus(leaders.first().getDistance());
+        if (requiredLeader.gt0())
         {
-            // for ourselves
-            Length required = conflict.getDistance().plus(typeCorrection).plus(passableDistance(vehicleLength, parameters));
             for (HeadwayGtu leader : leaders)
             {
                 if (leader.getSpeed().eq0())
@@ -669,6 +668,7 @@ public final class ConflictUtil
         Acceleration b = parameters.getParameter(bType).neg();
         double f = parameters.getParameter(TIME_FACTOR);
         Duration gap = parameters.getParameter(MIN_GAP);
+        Length passable = passableDistance(vehicleLength, parameters);
         // time till conflict is cleared
         Length distance = conflict.getDistance().plus(vehicleLength);
         if (conflict.isCrossing())
@@ -686,14 +686,14 @@ public final class ConflictUtil
         {
             if (!leaders.isEmpty())
             {
-                distance = conflict.getDistance().minus(leaders.first().getDistance()).plus(conflict.getLength())
-                        .plus(passableDistance(vehicleLength, parameters));
+                distance =
+                        conflict.getDistance().minus(leaders.first().getDistance()).plus(conflict.getLength()).plus(passable);
                 ttpDz = AnticipationInfo.anticipateMovement(distance, leaders.first().getSpeed(), Acceleration.ZERO);
                 ttpDs = AnticipationInfo.anticipateMovement(distance, leaders.first().getSpeed(), b);
             }
             else
             {
-                // no leader so conflict is passible within a duration of 0
+                // no leader so conflict is passable within a duration of 0
                 ttpDz = new AnticipationInfo(Duration.ZERO, Speed.ZERO);
                 ttpDs = new AnticipationInfo(Duration.ZERO, Speed.ZERO);
             }
@@ -705,24 +705,25 @@ public final class ConflictUtil
             PerceptionCollectable<HeadwayGtu, LaneBasedGtu> downs = conflict.getDownstreamConflictingGTUs();
             if (!downs.isEmpty() && downs.first().isParallel())
             {
-                distance = passableDistance(vehicleLength, parameters).minus(preGap).minus(downs.first().getOverlapRear());
-                ttpDs = AnticipationInfo.anticipateMovement(distance, downs.first().getSpeed(), b);
-                if (ttpDs.getDuration().equals(Duration.POSITIVE_INFINITY))
+                distance = passable.minus(preGap).minus(downs.first().getOverlapRear());
+                ttpDz = AnticipationInfo.anticipateMovement(distance, downs.first().getSpeed(), Acceleration.ZERO);
+                if (ttpDz.getDuration().equals(Duration.POSITIVE_INFINITY))
                 {
                     // vehicle on conflict will not leave sufficient space
                     return true;
                 }
+                ttpDs = AnticipationInfo.anticipateMovement(distance, downs.first().getSpeed(), b);
             }
             else if (!leaders.isEmpty())
             {
-                distance = conflict.getDistance().plus(passableDistance(vehicleLength, parameters)).minus(preGap)
-                        .minus(leaders.first().getDistance());
-                ttpDs = AnticipationInfo.anticipateMovement(distance, leaders.first().getSpeed(), b);
-                if (ttpDs.getDuration().equals(Duration.POSITIVE_INFINITY))
+                distance = conflict.getDistance().plus(passable).minus(preGap).minus(leaders.first().getDistance());
+                ttpDz = AnticipationInfo.anticipateMovement(distance, leaders.first().getSpeed(), Acceleration.ZERO);
+                if (ttpDz.getDuration().equals(Duration.POSITIVE_INFINITY))
                 {
                     // vehicle on conflict will not leave sufficient space
                     return true;
                 }
+                ttpDs = AnticipationInfo.anticipateMovement(distance, leaders.first().getSpeed(), b);
             }
         }
 
@@ -735,7 +736,6 @@ public final class ConflictUtil
                 // none within visibility, assume a conflicting vehicle just outside of visibility driving at speed limit
                 try
                 {
-                    RoadNetwork network = conflict.getConflictingLink().getNetwork();
                     HeadwayGtuSimple conflictGtu = new HeadwayGtuSimple("virtual " + UUID.randomUUID().toString(),
                             DefaultsNl.CAR, conflict.getConflictingVisibility(), new Length(4.0, LengthUnit.SI),
                             new Length(2.0, LengthUnit.SI), conflict.getConflictingSpeedLimit(), Acceleration.ZERO, Speed.ZERO);
@@ -770,7 +770,6 @@ public final class ConflictUtil
 
         // Loop over conflicting vehicles
         boolean first = true;
-        boolean ignoreBeyondFirst = false;
         for (HeadwayGtu conflictingVehicle : conflictingVehicles)
         {
 
@@ -784,12 +783,9 @@ public final class ConflictUtil
             AnticipationInfo tteCa;
             AnticipationInfo tteCs;
             if (first && conflictingVehicle.getSpeed().eq0() && conflictingVehicle.isAhead())
-            // && conflictingVehicle.getDistance().lt(parameters.getParameter(S0_CONF)))
             {
                 // do not stop if conflicting vehicle is standing still
-                tteCa = new AnticipationInfo(Duration.POSITIVE_INFINITY, Speed.ZERO);
-                tteCs = new AnticipationInfo(Duration.POSITIVE_INFINITY, Speed.ZERO);
-                ignoreBeyondFirst = true;
+                return false;
             }
             else
             {
@@ -835,9 +831,10 @@ public final class ConflictUtil
                 speedDiff = speedDiff > 0 ? speedDiff : 0;
                 Duration additionalTime = new Duration(speedDiff / -b.si, DurationUnit.SI);
                 // check if conflict vehicle will be upstream after that time, position beyond conflict after additional time
-                double followerFront = conflictingVehicle.isAhead() ? conflictingVehicle.getSpeed().si * ttcOa.getDuration().si
-                        - conflictingVehicle.getDistance().si + (conflictingVehicle.getSpeed().si * additionalTime.si
-                                + 0.5 * b.si * additionalTime.si * additionalTime.si)
+                double followerFront = conflictingVehicle.isAhead()
+                        ? conflictingVehicle.getSpeed().si * ttcOa.getDuration().si - conflictingVehicle.getDistance().si
+                                + (conflictingVehicle.getSpeed().si * additionalTime.si
+                                        + 0.5 * b.si * additionalTime.si * additionalTime.si) // note: b < 0
                         : 0.0;
                 double ownRear = vSelf * additionalTime.si; // constant speed after clearing
                 Duration tMax = parameters.getParameter(ParameterTypes.TMAX);
@@ -846,7 +843,9 @@ public final class ConflictUtil
                 // 2) not sufficient time to overcome speed difference
                 // 3) conflict vehicle will be too near after adjusting speed
                 if (ttcOa.getDuration().times(f).plus(gap).gt(tteCa.getDuration())
-                        || ttcOa.getDuration().plus(additionalTime).times(f).plus(gap).gt(tteCs.getDuration())
+                        // SKL 2024.02.15: I think this is nonsense, tteCs relates to the location of the conflict, not the
+                        // location where the speed difference is resolved
+                        // || ttcOa.getDuration().plus(additionalTime).times(f).plus(gap).gt(tteCs.getDuration())
                         || (!Double.isInfinite(tteCa.getDuration().si) && tteCa.getDuration().si > 0.0
                                 && ownRear < (followerFront + (tMax.si + gap.si) * vSelf + s0.si) * f))
                 {
@@ -878,10 +877,6 @@ public final class ConflictUtil
                         "Conflict is of unknown type " + conflict.getConflictType() + ", which is not merge nor a crossing.");
             }
 
-            if (first && ignoreBeyondFirst)
-            {
-                return false;
-            }
             first = false;
         }
 
@@ -982,13 +977,13 @@ public final class ConflictUtil
      * abandoned. Decelerations above what is considered safe deceleration may result due to numerical overshoot or other factor
      * coming into play in car-following models. Many other examples exist where a driver sticks to a certain plan.
      * <p>
-     * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public static final class ConflictPlans implements Blockable, Serializable
     {
@@ -1161,13 +1156,13 @@ public final class ConflictUtil
     /**
      * Phases of navigating an all-stop intersection.
      * <p>
-     * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private enum StopPhase
     {

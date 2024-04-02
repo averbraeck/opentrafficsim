@@ -21,7 +21,7 @@ import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 /**
  * A CrossSectionLink is a link with lanes where GTUs can possibly switch between lanes.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
@@ -195,13 +195,13 @@ public class CrossSectionLink extends Link implements Serializable
                 double half = lane.getBeginWidth().si * .5;
                 if (!Double.isNaN(left))
                 {
-                    left = Math.max(left, lane.getDesignLineOffsetAtBegin().si + half);
-                    right = Math.min(right, lane.getDesignLineOffsetAtBegin().si - half);
+                    left = Math.max(left, lane.getOffsetAtBegin().si + half);
+                    right = Math.min(right, lane.getOffsetAtBegin().si - half);
                 }
                 else
                 {
-                    left = lane.getDesignLineOffsetAtBegin().si + half;
-                    right = lane.getDesignLineOffsetAtBegin().si - half;
+                    left = lane.getOffsetAtBegin().si + half;
+                    right = lane.getOffsetAtBegin().si - half;
                 }
             }
             Point2d start = getDesignLine().getFirst();
@@ -230,13 +230,13 @@ public class CrossSectionLink extends Link implements Serializable
                 double half = lane.getEndWidth().si * .5;
                 if (!Double.isNaN(left))
                 {
-                    left = Math.max(left, lane.getDesignLineOffsetAtEnd().si + half);
-                    right = Math.min(right, lane.getDesignLineOffsetAtEnd().si - half);
+                    left = Math.max(left, lane.getOffsetAtEnd().si + half);
+                    right = Math.min(right, lane.getOffsetAtEnd().si - half);
                 }
                 else
                 {
-                    left = lane.getDesignLineOffsetAtEnd().si + half;
-                    right = lane.getDesignLineOffsetAtEnd().si - half;
+                    left = lane.getOffsetAtEnd().si + half;
+                    right = lane.getOffsetAtEnd().si - half;
                 }
             }
             Point2d start = getDesignLine().getLast();
@@ -262,13 +262,13 @@ public class CrossSectionLink extends Link implements Serializable
     /**
      * Priority of a link.
      * <p>
-     * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public enum Priority
     {
@@ -277,9 +277,6 @@ public class CrossSectionLink extends Link implements Serializable
 
         /** No priority. */
         NONE,
-
-        /** Turn on red. */
-        TURN_ON_RED,
 
         /** Yield. */
         YIELD,
@@ -309,15 +306,6 @@ public class CrossSectionLink extends Link implements Serializable
         public boolean isNone()
         {
             return this.equals(NONE);
-        }
-
-        /**
-         * Returns whether this is turn on red.
-         * @return whether this is turn on red
-         */
-        public boolean isTurnOnRed()
-        {
-            return this.equals(TURN_ON_RED);
         }
 
         /**

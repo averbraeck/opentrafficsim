@@ -23,12 +23,12 @@ import org.djutils.exceptions.Try;
  * Computational and Applied Mathematics, Volume 223, Issue 1, 1 January 2009, pp. 86-96.</li>
  * </ul>
  * <p>
- * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @see <a href="https://www.sciencedirect.com/science/article/pii/S0377042713006286">Connor and Krivodonova (2014)</a>
  * @see <a href="https://www.sciencedirect.com/science/article/pii/S0377042704000925">Waltona and Meek (2009)</a>
  */
@@ -76,6 +76,9 @@ public class ContinuousClothoid implements ContinuousLine
 
     /** Whether the line needs to be flipped. */
     private final boolean opposite;
+
+    /** Whether the line is reflected. */
+    private final boolean reflected;
 
     /** Simplification to straight when valid. */
     private final ContinuousStraight straight;
@@ -149,6 +152,7 @@ public class ContinuousClothoid implements ContinuousLine
             this.t0 = null;
             this.n0 = null;
             this.opposite = false;
+            this.reflected = false;
             return;
         }
         else if (Math.abs(phi2 - phi1) < ANGLE_TOLERANCE)
@@ -184,6 +188,7 @@ public class ContinuousClothoid implements ContinuousLine
             this.t0 = null;
             this.n0 = null;
             this.opposite = false;
+            this.reflected = false;
             return;
         }
         this.straight = null;
@@ -206,10 +211,9 @@ public class ContinuousClothoid implements ContinuousLine
         }
 
         // The algorithm assumes 0 < phi2 < pi. If this is not the case, the input and output are reflected on 'd'.
-        boolean reflect = false;
-        if (phi2 < 0 || phi2 > Math.PI)
+        this.reflected = phi2 < 0 || phi2 > Math.PI;
+        if (this.reflected)
         {
-            reflect = true;
             phi1 = -phi1;
             phi2 = -phi2;
         }
@@ -230,7 +234,7 @@ public class ContinuousClothoid implements ContinuousLine
 
         dx /= d2; // normalized
         dy /= d2;
-        if (reflect)
+        if (this.reflected)
         {
             // reflect t0 and n0 on 'd' so that the created output clothoid is reflected back after input was reflected
             this.t0 = new double[] {Math.cos(-v2) * dx + Math.sin(-v2) * dy, -Math.sin(-v2) * dx + Math.cos(-v2) * dy};
@@ -244,8 +248,11 @@ public class ContinuousClothoid implements ContinuousLine
 
         this.alphaMin = thetaSign * theta;
         this.alphaMax = v1; // alphaMax = theta + phi1 + phi2, which is v1
-        this.startCurvature = Math.PI * alphaToT(this.alphaMin) / this.a;
-        this.endCurvature = Math.PI * alphaToT(v1) / this.a;
+        double sign = (this.reflected ? -1.0 : 1.0);
+        double curveMin = Math.PI * alphaToT(this.alphaMin) / this.a;
+        double curveMax = Math.PI * alphaToT(v1) / this.a;
+        this.startCurvature = sign * (this.opposite ? -curveMax : curveMin);
+        this.endCurvature = sign * (this.opposite ? -curveMin : curveMax);
         this.length = this.a * (alphaToT(v1) - alphaToT(this.alphaMin));
     }
 
@@ -308,6 +315,7 @@ public class ContinuousClothoid implements ContinuousLine
         this.straight = null;
         this.arc = null;
         this.opposite = false;
+        this.reflected = false;
     }
 
     /**
@@ -543,7 +551,13 @@ public class ContinuousClothoid implements ContinuousLine
     private double getDirection(final double alpha)
     {
         double rot = Math.atan2(this.t0[1], this.t0[0]);
-        return normalizeAngle(alpha + rot);
+        // abs because alpha = -3deg has the same direction as alpha = 3deg in an S-curve where alpha = 0 is the middle
+        rot += this.reflected ? -Math.abs(alpha) : Math.abs(alpha);
+        if (this.opposite)
+        {
+            rot += Math.PI;
+        }
+        return normalizeAngle(rot);
     }
 
     /** {@inheritDoc} */
@@ -618,6 +632,16 @@ public class ContinuousClothoid implements ContinuousLine
     public double getLength()
     {
         return this.length;
+    }
+
+    /**
+     * Returns whether the shape was applied as a Clothoid, an Arc, or as a Straight, depending on start and end position and
+     * direction.
+     * @return String; "Clothoid", "Arc" or "Straight".
+     */
+    public String getAppliedShape()
+    {
+        return this.straight == null ? (this.arc == null ? "Clothoid" : "Arc") : "Straight";
     }
 
     /** {@inheritDoc} */

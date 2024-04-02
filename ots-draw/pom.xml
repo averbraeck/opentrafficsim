@@ -8,8 +8,8 @@
   </parent>
 
   <artifactId>ots-draw</artifactId>
-  <name>OTS drawing classes using Swing</name>
-  <description>OTS drawing classes that are used for ots-swing and ots-web</description>
+  <name>OTS drawing classes</name>
+  <description>OTS drawing classes that can paint themselves using data objects</description>
 
   <dependencies>
 

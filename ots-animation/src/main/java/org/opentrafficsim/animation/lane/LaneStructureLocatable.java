@@ -1,26 +1,24 @@
 package org.opentrafficsim.animation.lane;
 
-import java.rmi.RemoteException;
-
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.base.geometry.BoundingBox;
+import org.opentrafficsim.base.geometry.OtsBounds2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
 import org.opentrafficsim.road.gtu.lane.perception.RollingLaneStructure;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
-
 /**
  * LaneStructureLocatable.java.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class LaneStructureLocatable implements Locatable
+public class LaneStructureLocatable implements OtsLocatable
 {
     /** RollingLaneStructure. */
     private final RollingLaneStructure rollingLaneStructure;
@@ -61,9 +59,9 @@ public class LaneStructureLocatable implements Locatable
 
     /** {@inheritDoc} */
     @Override
-    public Bounds2d getBounds() throws RemoteException
+    public OtsBounds2d getBounds()
     {
-        return new Bounds2d(-1000000, 1000000, -1000000, 1000000);
+        return new BoundingBox(1000000, 1000000);
     }
 
     /**

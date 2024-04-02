@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.geometry.OtsLine2d;
@@ -16,12 +18,12 @@ import org.opentrafficsim.core.network.NetworkException;
 
 /**
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class Stripe extends CrossSectionElement
 {
@@ -131,13 +133,13 @@ public class Stripe extends CrossSectionElement
     /**
      * Defines the visible type of the stripe, and the standard permeability that pertains to it.
      * <p>
-     * Copyright (c) 2022-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2022-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public enum Type
     {
@@ -145,25 +147,28 @@ public class Stripe extends CrossSectionElement
         SOLID(false, false),
 
         /** Line |¦ allow to go to left, but not to right. */
-        LEFT(true, false),
+        LEFT(true, false, new Length(60.0, LengthUnit.CENTIMETER)),
 
         /** Line ¦| allow to go to right, but not to left. */
-        RIGHT(false, true),
+        RIGHT(false, true, new Length(60.0, LengthUnit.CENTIMETER)),
 
         /** Dashes ¦ allow to cross in both directions. */
         DASHED(true, true),
 
         /** Double solid line ||, don't cross. */
-        DOUBLE(false, false),
+        DOUBLE(false, false, new Length(60.0, LengthUnit.CENTIMETER)),
 
         /** Block : allow to cross in both directions. */
-        BLOCK(true, true);
+        BLOCK(true, true, new Length(40.0, LengthUnit.CENTIMETER));
 
         /** Left permeable. */
         private final boolean left;
 
         /** Right permeable. */
         private final boolean right;
+        
+        /** Default width. */
+        private final Length defaultWidth;
 
         /**
          * Constructor setting permeability.
@@ -172,8 +177,20 @@ public class Stripe extends CrossSectionElement
          */
         Type(final boolean left, final boolean right)
         {
+            this(left, right, new Length(20.0, LengthUnit.CENTIMETER));
+        }
+        
+        /**
+         * Constructor setting permeability.
+         * @param left boolean; left permeability.
+         * @param right boolean; right permeability.
+         * @param defaultWidth Length; default width.
+         */
+        Type(final boolean left, final boolean right, final Length defaultWidth)
+        {
             this.left = left;
             this.right = right;
+            this.defaultWidth = defaultWidth;
         }
 
         /**
@@ -192,6 +209,15 @@ public class Stripe extends CrossSectionElement
         public boolean right()
         {
             return this.right;
+        }
+        
+        /**
+         * Returns the default width.
+         * @return Length; default width.
+         */
+        public Length defaultWidth()
+        {
+            return this.defaultWidth;
         }
     }
 

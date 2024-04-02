@@ -18,10 +18,10 @@ import org.djutils.exceptions.Try;
  * single user input in an action. All actions need to be initiated externally using {@code startAction()}. This class will
  * itself listen to all relevant changes in the tree and add incoming sub-actions under the started action.
  * <p>
- * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class Undo implements EventListener
 {
@@ -30,7 +30,7 @@ public class Undo implements EventListener
     private static final long serialVersionUID = 20230921L;
 
     /** Maximum number of undo actions stored. */
-    private static int MAX_UNDO = 50;
+    private static final int MAX_UNDO = 50;
 
     /** Queue of actions. */
     private LinkedList<Action> queue = new LinkedList<>();
@@ -70,7 +70,7 @@ public class Undo implements EventListener
     }
 
     /**
-     * Clears the entire queue, suitable for when a new tree is loaded.
+     * Clears the entire queue, suitable for when a new tree is loaded. Also set ignore changes to false.
      */
     public void clear()
     {
@@ -82,10 +82,11 @@ public class Undo implements EventListener
 
     /**
      * Tells the undo unit to ignore all changes. Reset this by calling {@code clear()}. Useful during file loading.
+     * @param ignore boolean; ignore changes.
      */
-    public void setIgnoreChanges()
+    public void setIgnoreChanges(final boolean ignore)
     {
-        this.ignoreChanges = true;
+        this.ignoreChanges = ignore;
     }
 
     /**
@@ -131,11 +132,15 @@ public class Undo implements EventListener
      */
     private void add(final SubAction subAction)
     {
+        if (this.ignoreChanges)
+        {
+            return;
+        }
         Throw.when(this.currentSet == null, IllegalStateException.class,
                 "Adding undo action without having called startUndoAction()");
         if (this.currentSet.isEmpty())
         {
-            this.cursor++; // now the latest undo actually has content
+            this.cursor = this.queue.size() - 1; // now the latest undo actually has content
             updateButtons();
         }
         this.currentSet.add(subAction);
@@ -199,7 +204,7 @@ public class Undo implements EventListener
         Iterator<SubAction> iterator = action.subActions.iterator();
         while (iterator.hasNext())
         {
-            iterator.next().redo(); 
+            iterator.next().redo();
         }
         action.parent.children.forEach((n) -> n.invalidate());
         action.parent.invalidate();
@@ -262,7 +267,7 @@ public class Undo implements EventListener
             XsdTreeNode node = (XsdTreeNode) content[0];
             XsdTreeNode parent = (XsdTreeNode) content[1];
             int index = (int) content[2];
-            XsdTreeNode root = node.getPath().get(0);
+            XsdTreeNode root = node.getRoot();
             add(new SubActionRunnable(() ->
             {
                 parent.children.remove(node);
@@ -284,15 +289,14 @@ public class Undo implements EventListener
             XsdTreeNode node = (XsdTreeNode) content[0];
             XsdTreeNode parent = (XsdTreeNode) content[1];
             int index = (int) content[2];
-            XsdTreeNode root = node.getPath().get(0);
+            XsdTreeNode root = parent.getRoot();
             add(new SubActionRunnable(() ->
             {
                 if (index < 0)
                 {
                     // non selected choice node
                     node.parent = parent;
-                    root.fireEvent(XsdTreeNodeRoot.NODE_CREATED,
-                            new Object[] {node, parent, parent.children.indexOf(node)});
+                    root.fireEvent(XsdTreeNodeRoot.NODE_CREATED, new Object[] {node, parent, parent.children.indexOf(node)});
                 }
                 else
                 {
@@ -360,8 +364,8 @@ public class Undo implements EventListener
         else if (event.getType().equals(XsdTreeNode.OPTION_CHANGED))
         {
             Object[] content = (Object[]) event.getContent();
-            XsdTreeNode node = (XsdTreeNode) content[0];
-            XsdTreeNode previous = (XsdTreeNode) content[1];
+            XsdTreeNode node = (XsdTreeNode) content[1];
+            XsdTreeNode previous = (XsdTreeNode) content[2];
             if (previous != null)
             {
                 add(new SubActionRunnable(() ->
@@ -393,7 +397,7 @@ public class Undo implements EventListener
 
         }
     }
-    
+
     /**
      * Sets the node to show in the tree after the action.
      * @param node XsdTreeNode; node to show in the tree after the action.
@@ -406,11 +410,11 @@ public class Undo implements EventListener
     /**
      * Interface for any sub-action reflecting any change.
      * <p>
-     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private interface SubAction
     {
@@ -428,11 +432,11 @@ public class Undo implements EventListener
     /**
      * Implements {@code SubAction} using two {@code Runnable}'s, definable as an lambda expression.
      * <p>
-     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private static class SubActionRunnable implements SubAction
     {
@@ -483,11 +487,11 @@ public class Undo implements EventListener
     /**
      * Class that groups information around an action.
      * <p>
-     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private class Action
     {
@@ -505,7 +509,7 @@ public class Undo implements EventListener
 
         /** Attribute for an attribute change, {@code null} otherwise. */
         final String attribute;
-        
+
         /** Node to gain focus after the action. */
         XsdTreeNode postActionShowNode;
 
@@ -532,11 +536,11 @@ public class Undo implements EventListener
     /**
      * Type of actions for undo.
      * <p>
-     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public enum ActionType
     {
@@ -548,7 +552,7 @@ public class Undo implements EventListener
 
         /** Attribute changed. */
         ATTRIBUTE_CHANGE,
-        
+
         /** Cut. */
         CUT,
 
@@ -560,13 +564,13 @@ public class Undo implements EventListener
 
         /** INSERT. */
         INSERT,
-        
+
         /** Node moved. */
         MOVE,
 
         /** Option set. */
         OPTION,
-        
+
         /** Paste. */
         PASTE,
 
@@ -574,7 +578,10 @@ public class Undo implements EventListener
         REMOVE,
 
         /** Node value changed. */
-        VALUE_CHANGE;
+        VALUE_CHANGE,
+
+        /** Action on node, by custom decoration. */
+        ACTION;
 
         /** {@inheritDoc} */
         @Override

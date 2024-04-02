@@ -5,42 +5,42 @@ import java.awt.Color;
 /**
  * Contains a background color, foreground color and a font name, to be set throughout all components.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public enum Appearance
 {
 
-    /** MOTUS mimic. Grid not visible. */
+    /** MOTUS mimic. Grid and nodes not visible. */
     MOTUS("Motus", new Color(236, 233, 216), Color.BLACK, Color.BLACK, "Verdana"),
 
     /** Green. */
-    FOSIM("Fosim", new Color(240, 240, 240), Color.BLACK, new Color(0, 128, 0), "Verdana"),
+    FOSIM("Fosim", new Color(240, 240, 240), Color.BLACK, new Color(0, 128, 0), "Dialog"),
 
     /** Dark. */
-    DARK("Dark", new Color(96, 96, 96), Color.WHITE, Color.DARK_GRAY, "Verdana"),
+    DARK("Dark", new Color(96, 96, 96), Color.WHITE, Color.DARK_GRAY, "Dialog"),
 
     /** Gray. */
-    GRAY("Gray", Color.LIGHT_GRAY, Color.BLACK, new Color(96, 96, 96), "Verdana"),
+    GRAY("Gray", Color.LIGHT_GRAY, Color.BLACK, new Color(96, 96, 96), "Dialog"),
 
     /** Bright. */
-    BRIGHT("Bright", Color.LIGHT_GRAY, Color.BLACK, Color.WHITE, "Verdana"),
+    BRIGHT("Bright", Color.LIGHT_GRAY, Color.BLACK, Color.WHITE, "Dialog"),
 
     /** Legacy, as the initial OTS had. */
     LEGACY("Legacy", new Color(238, 238, 238), Color.BLACK, Color.WHITE, "Dialog"),
 
     /** Red. */
-    RED("Red", new Color(208, 192, 192), Color.RED.darker().darker(), new Color(208, 192, 192).darker(), "Verdana"),
+    RED("Red", new Color(208, 192, 192), Color.RED.darker().darker(), new Color(208, 192, 192).darker(), "Dialog"),
 
     /** Green. */
-    GREEN("Green", new Color(192, 208, 192), Color.GREEN.darker().darker(), new Color(192, 208, 192).darker(), "Verdana"),
+    GREEN("Green", new Color(192, 208, 192), Color.GREEN.darker().darker(), new Color(192, 208, 192).darker(), "Dialog"),
 
     /** Blue. */
-    BLUE("Blue", new Color(192, 192, 208), Color.BLUE.darker().darker(), new Color(192, 192, 208).darker(), "Verdana");
+    BLUE("Blue", new Color(192, 192, 208), Color.BLUE.darker().darker(), new Color(192, 192, 208).darker(), "Dialog");
 
     /** Name. */
     private final String name;

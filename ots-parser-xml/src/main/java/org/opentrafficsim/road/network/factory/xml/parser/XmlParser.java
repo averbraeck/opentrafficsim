@@ -33,6 +33,7 @@ import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.ContinuousLine;
+import org.opentrafficsim.core.geometry.Flattener;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -66,11 +67,11 @@ import nl.tudelft.simulation.dsol.experiment.StreamSeedInformation;
 /**
  * Parse an XML file for OTS, based on the ots.xsd definition.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public final class XmlParser implements Serializable
 {
@@ -242,7 +243,7 @@ public final class XmlParser implements Serializable
         CategoryLogger.setAllLogLevel(Level.TRACE);
 
         // input parameters
-        Eval eval = ScenarioParser.parseInputParameters(ots, scenario);
+        Eval eval = ScenarioParser.parseInputParameters(ots.getScenarios(), scenario);
 
         // run
         StreamSeedInformation streamInformation = RunParser.parseStreams(ots.getRun(), eval);
@@ -262,10 +263,11 @@ public final class XmlParser implements Serializable
         Map<String, Direction> nodeDirections = NetworkParser.calculateNodeAngles(otsNetwork, network, eval);
         NetworkParser.parseNodes(otsNetwork, network, nodeDirections, eval);
         Map<String, ContinuousLine> designLines = new LinkedHashMap<>();
+        Map<String, Flattener> flatteners = new LinkedHashMap<>();
         NetworkParser.parseLinks(otsNetwork, definitions, network, nodeDirections, otsNetwork.getSimulator(), designLines,
-                eval);
+                flatteners, eval);
         NetworkParser.applyRoadLayout(otsNetwork, definitions, network, otsNetwork.getSimulator(), roadLayoutMap,
-                linkTypeSpeedLimitMap, designLines, eval);
+                linkTypeSpeedLimitMap, designLines, flatteners, eval);
         NetworkParser.buildConflicts(otsNetwork, network, eval);
 
         // routes, generators and sinks
@@ -294,12 +296,15 @@ public final class XmlParser implements Serializable
         Map<String, LaneBasedStrategicalPlannerFactory<?>> factories =
                 ModelParser.parseModel(otsNetwork, models, eval, parameterTypes, streamInformation, parameterFactory);
         List<ScenarioType> scenarios = ots.getScenarios() == null ? new ArrayList<>() : ots.getScenarios().getScenario();
-        Map<String, String> modelIdReferrals = ScenarioParser.parseModelIdReferral(scenarios, ots.getDemand(), eval);
+        if (demand != null)
+        {
+            Map<String, String> modelIdReferrals = ScenarioParser.parseModelIdReferral(scenarios, demand, eval);
 
-        // OD generators
-        List<LaneBasedGtuGenerator> generators = OdParser.parseDemand(otsNetwork, definitions, demand, gtuTemplates, laneBiases,
-                factories, modelIdReferrals, streamInformation, eval);
-        System.out.println("Created " + generators.size() + " generators based on origin destination matrices");
+            // OD generators
+            List<LaneBasedGtuGenerator> generators = OdParser.parseDemand(otsNetwork, definitions, demand, gtuTemplates,
+                    laneBiases, factories, modelIdReferrals, streamInformation, eval);
+            System.out.println("Created " + generators.size() + " generators based on origin destination matrices");
+        }
 
         // control
         if (ots.getControl() != null)
@@ -313,13 +318,13 @@ public final class XmlParser implements Serializable
     /**
      * DefaultsResolver takes care of locating the defaults include files at the right place.
      * <p>
-     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private static class DefaultsResolver implements EntityResolver
     {

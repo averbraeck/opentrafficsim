@@ -17,10 +17,10 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 /**
  * Static methods regarding traffic lights for composition in tactical planners.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public final class TrafficLightUtil
 {
@@ -96,7 +96,8 @@ public final class TrafficLightUtil
         Throw.whenNull(speed, "Speed may not be null.");
         Throw.whenNull(speedLimitInfo, "Speed limit info may not be null.");
         Throw.when(!headwayTrafficLight.isAhead(), IllegalArgumentException.class, "Traffic light must be downstream.");
-        if (headwayTrafficLight.getTrafficLightColor().isRed() || headwayTrafficLight.getTrafficLightColor().isYellow())
+        if ((headwayTrafficLight.getTrafficLightColor().isRed() || headwayTrafficLight.getTrafficLightColor().isYellow())
+                && !headwayTrafficLight.canTurnOnRed())
         {
             // deceleration from car-following model
             Acceleration a = carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo,

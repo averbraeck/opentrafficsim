@@ -14,12 +14,12 @@ import org.djutils.exceptions.Throw;
 /**
  * Flattens a continuous line in to a polyline.
  * <p>
- * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 @FunctionalInterface
 public interface Flattener
@@ -35,13 +35,13 @@ public interface Flattener
     /**
      * Flattener based on number of segments.
      * <p>
-     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public static class NumSegments implements Flattener
     {
@@ -50,10 +50,11 @@ public interface Flattener
 
         /**
          * Constructor.
-         * @param numSegments int; number of segments.
+         * @param numSegments int; number of segments, must be at least 1.
          */
         public NumSegments(final int numSegments)
         {
+            Throw.when(numSegments < 1, IllegalArgumentException.class, "Number of segments must be at least 1.");
             this.numSegments = numSegments;
         }
 
@@ -74,13 +75,13 @@ public interface Flattener
     /**
      * Flattener based on maximum deviation.
      * <p>
-     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public static class MaxDeviation implements Flattener
     {
@@ -89,10 +90,11 @@ public interface Flattener
 
         /**
          * Constructor.
-         * @param maxDeviation int; maximum deviation.
+         * @param maxDeviation int; maximum deviation, must be above 0.0.
          */
         public MaxDeviation(final double maxDeviation)
         {
+            Throw.when(maxDeviation <= 0.0, IllegalArgumentException.class, "Maximum deviation must be above 0.0.");
             this.maxDeviation = maxDeviation;
         }
 
@@ -154,13 +156,13 @@ public interface Flattener
     /**
      * Flattener based on maximum deviation and maximum angle.
      * <p>
-     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public static class MaxDeviationAndAngle implements Flattener
     {
@@ -172,11 +174,13 @@ public interface Flattener
 
         /**
          * Constructor.
-         * @param maxDeviation int; maximum deviation.
-         * @param maxAngle int; maximum angle.
+         * @param maxDeviation int; maximum deviation, must be above 0.0.
+         * @param maxAngle int; maximum angle, must be above 0.0.
          */
         public MaxDeviationAndAngle(final double maxDeviation, final double maxAngle)
         {
+            Throw.when(maxDeviation <= 0.0, IllegalArgumentException.class, "Maximum deviation must be above 0.0.");
+            Throw.when(maxAngle <= 0.0, IllegalArgumentException.class, "Maximum angle must be above 0.0.");
             this.maxDeviation = maxDeviation;
             this.maxAngle = maxAngle;
         }
@@ -196,6 +200,7 @@ public interface Flattener
             double prevT = result.firstKey();
             Point2d prevPoint = result.get(prevT);
             Map.Entry<Double, Point2d> entry;
+            int iterationsAtSinglePoint = 0;
             while ((entry = result.higherEntry(prevT)) != null)
             {
                 double nextT = entry.getKey();
@@ -210,26 +215,33 @@ public interface Flattener
                 {
                     // We need to insert another point
                     result.put(medianT, medianPoint);
+                    directions.put(medianT, line.getDirection(medianT)); // for angle checks
                     continue;
                 }
 
                 // Check max angle
                 double angle = prevPoint.directionTo(nextPoint) - directions.get(prevT);
-                while (angle < 0.0)
+                while (angle < -Math.PI)
                 {
-                    angle += Math.PI;
+                    angle += 2 * Math.PI;
                 }
                 while (angle > Math.PI)
                 {
-                    angle -= Math.PI;
+                    angle -= 2 * Math.PI;
                 }
-                if (angle >= this.maxAngle)
+                if (Math.abs(angle) >= this.maxAngle)
                 {
                     // We need to insert another point
                     result.put(medianT, medianPoint);
                     directions.put(medianT, line.getDirection(medianT));
+                    iterationsAtSinglePoint++;
+                    Throw.when(iterationsAtSinglePoint == 50, RuntimeException.class,
+                            "Required a new point 50 times at the same point. Likely the reported direction of the point does "
+                                    + "not match further points produced. Consider using the numerical approach in the "
+                                    + "default getDirection(fraction) method of the FlattableLine.");
                     continue;
                 }
+                iterationsAtSinglePoint = 0;
 
                 // Check for an inflection point by creating additional points at one quarter and three quarters. If these
                 // are on opposite sides of the line from prevPoint to nextPoint; there must be an inflection point.
@@ -257,13 +269,13 @@ public interface Flattener
     /**
      * Flattener based on maximum angle.
      * <p>
-     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public static class MaxAngle implements Flattener
     {
@@ -276,6 +288,7 @@ public interface Flattener
          */
         public MaxAngle(final double maxAngle)
         {
+            Throw.when(maxAngle <= 0.0, IllegalArgumentException.class, "Maximum angle must be above 0.0.");
             this.maxAngle = maxAngle;
         }
 

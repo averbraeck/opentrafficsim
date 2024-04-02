@@ -19,7 +19,7 @@ import nl.tudelft.simulation.dsol.swing.gui.TabbedContentPane;
 /**
  * GUI with simulator, console, control panel, status bar, etc.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
@@ -49,7 +49,7 @@ public class OtsSimulationPanel extends JPanel
     }
 
     /** The tabbed pane that contains the different (default) screens. */
-    private final TabbedContentPane tabbedPane = new AppearanceControlTabbedContentPane(SwingConstants.BOTTOM);
+    private final TabbedContentPane tabbedPane;
 
     /**
      * Construct a panel that looks like the DSOLPanel for quick building of OTS applications.
@@ -59,6 +59,8 @@ public class OtsSimulationPanel extends JPanel
      */
     public OtsSimulationPanel(final OtsSimulatorInterface simulator, final OtsModelInterface otsModel) throws RemoteException
     {
+        AppearanceApplication.setDefaultFont();
+        
         this.simulator = simulator;
         this.otsModel = otsModel;
 
@@ -69,6 +71,7 @@ public class OtsSimulationPanel extends JPanel
         this.add(this.otsControlPanel, BorderLayout.NORTH);
 
         // Let's display our tabbed contentPane
+        this.tabbedPane = new AppearanceControlTabbedContentPane(SwingConstants.BOTTOM);
         this.add(this.tabbedPane, BorderLayout.CENTER);
 
         // put a status bar at the bottom
@@ -165,13 +168,13 @@ public class OtsSimulationPanel extends JPanel
     /**
      * TabbedContentPane which ignores appearance (it has too much colors looking ugly / becoming unreadable).
      * <p>
-     * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     static class AppearanceControlTabbedContentPane extends TabbedContentPane implements AppearanceControl
     {

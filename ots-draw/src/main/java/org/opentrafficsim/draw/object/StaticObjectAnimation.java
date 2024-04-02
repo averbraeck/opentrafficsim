@@ -4,31 +4,32 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
+import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
 import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsRenderable;
 import org.opentrafficsim.draw.PaintPolygons;
 import org.opentrafficsim.draw.object.StaticObjectAnimation.StaticObjectData;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
  * Generic animation of a static object.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class StaticObjectAnimation extends Renderable2d<StaticObjectData> implements Serializable
+public class StaticObjectAnimation extends OtsRenderable<StaticObjectData>
 {
     /** */
     private static final long serialVersionUID = 20160400L;
@@ -41,6 +42,9 @@ public class StaticObjectAnimation extends Renderable2d<StaticObjectData> implem
 
     /** */
     private boolean fill;
+
+    /** Drawable paths. */
+    private final Set<Path2D.Float> paths;
 
     /**
      * @param source StaticObjectData; Static Object
@@ -58,6 +62,7 @@ public class StaticObjectAnimation extends Renderable2d<StaticObjectData> implem
         this.width = width;
         this.color = color;
         this.fill = fill;
+        this.paths = PaintPolygons.getPaths(getSource().getLocation(), getSource().getGeometry());
     }
 
     /** {@inheritDoc} */
@@ -67,10 +72,11 @@ public class StaticObjectAnimation extends Renderable2d<StaticObjectData> implem
         if (this.width > 0.0f)
         {
             Stroke oldStroke = graphics.getStroke();
+            setRendering(graphics);
             graphics.setStroke(new BasicStroke(this.width));
-            PaintPolygons.paintMultiPolygon(graphics, this.color, getSource().getLocation(), getSource().getGeometry(),
-                    this.fill);
+            PaintPolygons.paintPaths(graphics, this.color, this.paths, this.fill);
             graphics.setStroke(oldStroke);
+            resetRendering(graphics);
         }
     }
 
@@ -132,23 +138,19 @@ public class StaticObjectAnimation extends Renderable2d<StaticObjectData> implem
     /**
      * StaticObjectData provides the information required to draw a static object.
      * <p>
-     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public interface StaticObjectData extends Locatable
+    public interface StaticObjectData extends OtsLocatable
     {
         /**
          * Returns the geometry of the object.
          * @return List&lt;Point2d&gt; list of points of the geometry.
          */
         List<Point2d> getGeometry();
-
-        /** {@inheritDoc} */
-        @Override
-        Point2d getLocation();
     }
 
 }

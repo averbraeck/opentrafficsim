@@ -16,12 +16,12 @@ import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
  * Note that extending classes must use a create(...) factory method that calls init() after fully constructing the object to
  * avoid "half constructed" objects to be registered in the network.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public abstract class AbstractLaneBasedObject extends StaticObject implements LaneBasedObject
 {
@@ -58,7 +58,7 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
         this.lane = lane;
         this.longitudinalPosition = longitudinalPosition;
     }
-    
+
     /**
      * Returns the oriented point of the position on a lane.
      * @param lane Lane; lane.
@@ -117,14 +117,6 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
     public final Length getLongitudinalPosition()
     {
         return this.longitudinalPosition;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public OrientedPoint2d getLocation()
-    {
-        return (OrientedPoint2d) super.getLocation();
     }
 
     /** {@inheritDoc} */

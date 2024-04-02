@@ -1,17 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.canBeAhead;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.gentleUrgency;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.getFollower;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.getMergeDistance;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.headwayWithLcSpace;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.removeAllUpstreamOfConflicts;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.requiredBufferSpace;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.stopForEnd;
-import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.tagAlongAcceleration;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.SortedSet;
 
 import org.djunits.unit.AccelerationUnit;
@@ -32,28 +20,24 @@ import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.SortedSetPerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
-import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
  * Different forms of synchronization.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public interface Synchronization extends LmrsParameters
 {
@@ -140,12 +124,8 @@ public interface Synchronization extends LmrsParameters
             double dCoop = params.getParameter(DCOOP);
             RelativeLane relativeLane = new RelativeLane(lat, 1);
 
-            PerceptionCollectable<HeadwayGtu,
-                    LaneBasedGtu> set =
-                            removeAllUpstreamOfConflicts(
-                                    removeAllUpstreamOfConflicts(perception.getPerceptionCategory(NeighborsPerception.class)
-                                            .getLeaders(relativeLane), perception, relativeLane),
-                                    perception, RelativeLane.CURRENT);
+            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> set =
+                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane);
             HeadwayGtu leader = null;
             if (set != null)
             {
@@ -376,9 +356,7 @@ public interface Synchronization extends LmrsParameters
             // abandon the gap if the sync vehicle is no longer adjacent, in congestion within xMergeSync, or too far
             NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
             RelativeLane lane = new RelativeLane(lat, 1);
-            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders =
-                    removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(neighbors.getLeaders(lane), perception, lane),
-                            perception, RelativeLane.CURRENT);
+            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = neighbors.getLeaders(lane);
             HeadwayGtu syncVehicle = lmrsData.getSyncVehicle(leaders);
             if (syncVehicle != null && ((syncVehicle.getSpeed().lt(vCong) && syncVehicle.getDistance().lt(xMergeSync))
                     || syncVehicle.getDistance().gt(xCur)))
@@ -411,9 +389,7 @@ public interface Synchronization extends LmrsParameters
 
             // select upstream vehicle if we can safely follow that, or if we cannot stay ahead of it (infrastructure, in coop)
             HeadwayGtu up;
-            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> followers =
-                    removeAllUpstreamOfConflicts(removeAllUpstreamOfConflicts(neighbors.getFollowers(lane), perception, lane),
-                            perception, RelativeLane.CURRENT);
+            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> followers = neighbors.getFollowers(lane);
             HeadwayGtu follower = followers == null || followers.isEmpty() ? null
                     : followers.first().moved(
                             followers.first().getDistance().plus(ownLength).plus(followers.first().getLength()).neg(),
@@ -585,69 +561,6 @@ public interface Synchronization extends LmrsParameters
             return headway.getDistance();
         }
         return headway.getDistance().minus(laneChange.getMinimumLaneChangeDistance());
-    }
-
-    /**
-     * Removes all GTUs from the set, that are found upstream on the conflicting lane of a conflict in the current lane.
-     * @param set PerceptionCollectable&lt;HeadwayGtu,LaneBasedGtu&gt;; set of GTUs
-     * @param perception LanePerception; perception
-     * @param relativeLane RelativeLane; relative lane
-     * @return the input set, for chained use
-     * @throws OperationalPlanException if the {@code IntersectionPerception} category is not present
-     */
-    static PerceptionCollectable<HeadwayGtu, LaneBasedGtu> removeAllUpstreamOfConflicts(
-            final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> set, final LanePerception perception,
-            final RelativeLane relativeLane) throws OperationalPlanException
-    {
-        // if (true)
-        // {
-        // return set;
-        // }
-        // TODO find a better solution for this inefficient hack... when to ignore a vehicle for synchronization?
-        SortedSetPerceptionIterable<HeadwayGtu> out;
-        try
-        {
-            out = new SortedSetPerceptionIterable<HeadwayGtu>(
-                    (RoadNetwork) perception.getGtu().getReferencePosition().getLane().getLink().getNetwork());
-        }
-        catch (GtuException exception)
-        {
-            throw new OperationalPlanException(exception);
-        }
-        if (set == null)
-        {
-            return out;
-        }
-        IntersectionPerception intersection = perception.getPerceptionCategoryOrNull(IntersectionPerception.class);
-        if (intersection == null)
-        {
-            return set;
-        }
-        Map<String, HeadwayGtu> map = new LinkedHashMap<>();
-        for (HeadwayGtu gtu : set)
-        {
-            map.put(gtu.getId(), gtu);
-        }
-        Iterable<HeadwayConflict> conflicts = intersection.getConflicts(relativeLane);
-        if (conflicts != null)
-        {
-            for (HeadwayConflict conflict : conflicts)
-            {
-                if (conflict.isCrossing() || conflict.isMerge())
-                {
-                    for (HeadwayGtu conflictGtu : conflict.getUpstreamConflictingGTUs())
-                    {
-                        if (map.containsKey(conflictGtu.getId()))
-                        {
-                            map.remove(conflictGtu.getId());
-                        }
-                    }
-                }
-            }
-        }
-        out.addAll(map.values());
-        return out;
-
     }
 
     /**

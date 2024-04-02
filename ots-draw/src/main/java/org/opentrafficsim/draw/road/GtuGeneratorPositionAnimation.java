@@ -8,28 +8,26 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsRenderable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
-import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
  * Animates a GtuGeneratorPosition.
  * <p>
- * Copyright (c) 2022-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2022-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class GtuGeneratorPositionAnimation extends Renderable2d<GtuGeneratorPositionData>
+public class GtuGeneratorPositionAnimation extends OtsRenderable<GtuGeneratorPositionData>
 {
 
     /** */
@@ -82,79 +80,59 @@ public class GtuGeneratorPositionAnimation extends Renderable2d<GtuGeneratorPosi
     public void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         graphics.setColor(Color.BLUE);
+        setRendering(graphics);
         graphics.fill(PATH);
+        resetRendering(graphics);
     }
 
     /**
      * Paints a queue counter with a GtuGeneratorPosition.
      * <p>
-     * Copyright (c) 2022-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2022-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public class Queue extends TextAnimation
+    public class Queue extends TextAnimation<GtuGeneratorPositionData, Queue>
     {
         /** */
         private static final long serialVersionUID = 20230204L;
 
         /**
          * Constructor.
-         * @param source Locatable; source.
+         * @param source GtuGeneratorPositionData; source.
          * @param contextualized Contextualized; context provider
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException when remote context cannot be found
          */
-        public Queue(final Locatable source, final Contextualized contextualized) throws RemoteException, NamingException
+        public Queue(final GtuGeneratorPositionData source, final Contextualized contextualized)
+                throws RemoteException, NamingException
         {
-            super(source, "", 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, 3.0f, 12.0f, 50f, contextualized, null,
-                    TextAnimation.RENDERALWAYS);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        @SuppressWarnings("checkstyle:designforextension")
-        public OrientedPoint2d getLocation()
-        {
-            // draw always on top, and not upside down.
-            OrientedPoint2d p = super.getLocation();
-            double a = Angle.normalizePi(p.getDirZ());
-            if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
-            {
-                a += Math.PI;
-            }
-            return new OrientedPoint2d(p.x, p.y, a);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public void paint(final Graphics2D graphics, final ImageObserver observer)
-        {
-            setText(Integer.toString(((GtuGeneratorPositionData) getSource()).getQueueCount()));
-            super.paint(graphics, observer);
+            super(source, () -> Integer.toString(source.getQueueCount()), 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, 3.0f,
+                    12.0f, 50f, contextualized, null, TextAnimation.RENDERWHEN10);
         }
     }
 
     /**
      * GtuGeneratorPositionData provides the information required to draw a GTU generator position.
      * <p>
-     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public interface GtuGeneratorPositionData extends Locatable
+    public interface GtuGeneratorPositionData extends OtsLocatable
     {
         /**
          * Returns the queue count.
          * @return int; queue count.
          */
         int getQueueCount();
-        
+
         /** {@inheritDoc} */
         @Override
         default double getZ()

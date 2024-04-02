@@ -1,15 +1,13 @@
 package org.opentrafficsim.core.object;
 
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.geometry.BoundingPolygon;
+import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.network.NetworkException;
 
@@ -17,7 +15,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * A static object with a height that a GTU might have to avoid, or which can cause occlusion for perception. All objects are
  * potential event producers, which allows them to signal that their state has changed.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
@@ -38,7 +36,7 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, D
     private final OrientedPoint2d location;
 
     /** Bounds. */
-    private final Bounds2d bounds;
+    private final OtsBounds2d bounds;
 
     /** The height of the object. */
     private final Length height;
@@ -59,11 +57,7 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, D
         this.geometry = geometry;
         this.location = location;
 
-        AffineTransform transform = AffineTransform.getRotateInstance(-location.dirZ, 0.0, 0.0);
-        transform.concatenate(AffineTransform.getTranslateInstance(-location.x, -location.y));
-        Shape path = transform.createTransformedShape(geometry.toPath2D());
-        Rectangle2D rect = path.getBounds2D();
-        this.bounds = new Bounds2d(rect.getMinX(), rect.getMaxX(), rect.getMinY(), rect.getMaxY());
+        this.bounds = BoundingPolygon.geometryToBounds(location, geometry);
         this.height = height;
     }
 
@@ -83,12 +77,12 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, D
     /**
      * Make a static object and carry out the initialization after it has been fully created.
      * @param id String; the id
-     * @param geometry PolyLine2d; the top-level 2D outline of the object
+     * @param geometry Polygon2d; the top-level 2D outline of the object
      * @param height Length; the height of the object
      * @return the static object
      * @throws NetworkException e.g. on error registering the object in the network
      */
-    public static StaticObject create(final String id, final PolyLine2d geometry, final Length height) throws NetworkException
+    public static StaticObject create(final String id, final Polygon2d geometry, final Length height) throws NetworkException
     {
         OrientedPoint2d point = new OrientedPoint2d(geometry.getBounds().midPoint(), 0.0);
         StaticObject staticObject = new StaticObject(id, point, geometry, height);
@@ -99,18 +93,18 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, D
     /**
      * Make a static object with zero height and carry out the initialization after it has been fully created.
      * @param id String; the id
-     * @param geometry PolyLine2d; the top-level 2D outline of the object
+     * @param geometry Polygon2d; the top-level 2D outline of the object
      * @return the static object
      * @throws NetworkException e.g. on error registering the object in the network
      */
-    public static StaticObject create(final String id, final PolyLine2d geometry) throws NetworkException
+    public static StaticObject create(final String id, final Polygon2d geometry) throws NetworkException
     {
         return create(id, geometry, Length.ZERO);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final PolyLine2d getGeometry()
+    public PolyLine2d getGeometry()
     {
         return this.geometry;
     }
@@ -148,7 +142,7 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, D
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Bounds2d getBounds()
+    public OtsBounds2d getBounds()
     {
         return this.bounds;
     }

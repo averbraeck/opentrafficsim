@@ -102,7 +102,7 @@
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.LengthBeginEndType" xmlType="ots:LengthBeginEndType"
       adapter="org.opentrafficsim.xml.bindings.LengthBeginEndAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.ClassType" xmlType="ots:ClassNameType"
-      adapter="org.opentrafficsim.xml.bindings.ClassNameAdapter" />
+      adapter="org.opentrafficsim.xml.bindings.ClassAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.InterpolationType" xmlType="ots:InterpolationType"
       adapter="org.opentrafficsim.xml.bindings.InterpolationAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.GraphicsTypeType" xmlType="ots:GraphicsType"
@@ -123,7 +123,18 @@
   <!-- The following bindings are on elements that appear once, and hence are not defined in a separate type. -->
   <!-- Simplifications, see: https://github.com/highsource/jaxb2-basics/wiki/JAXB2-Simplify-Plugin#as-element-properties -->
   <jaxb:bindings schemaLocation="ots-network.xsd">
+    <!-- Network.Node/Centroid/Link/Connector/include as separate lists -->
     <jaxb:bindings node="//xsd:element[@name='Network']/xsd:complexType/xsd:sequence/xsd:choice">
+      <simplify:as-element-property />
+    </jaxb:bindings>
+    <!-- Clothoid.Interpolated/Length/StartCurvature/EndCurvature/A/Flattener as separate lists -->
+    <jaxb:bindings
+      node="//xsd:element[@name='Clothoid']/xsd:complexType/xsd:sequence/xsd:choice/xsd:element[@name='Interpolated']">
+      <simplify:as-element-property />
+    </jaxb:bindings>
+    <!-- Flattener.MaxDeviation/MaxAngle as separate lists -->
+    <jaxb:bindings
+      node="//xsd:element[@name='DeviationAndAngle']/xsd:complexType/xsd:sequence/xsd:element[@name='MaxDeviation']">
       <simplify:as-element-property />
     </jaxb:bindings>
   </jaxb:bindings>

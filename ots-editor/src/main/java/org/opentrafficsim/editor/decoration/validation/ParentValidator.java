@@ -1,6 +1,5 @@
 package org.opentrafficsim.editor.decoration.validation;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -15,10 +14,10 @@ import org.opentrafficsim.editor.decoration.AbstractNodeDecoratorRemove;
 /**
  * Validates that the Parent attribute of a node does not refer to self, either directly or indirectly.
  * <p>
- * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class ParentValidator extends AbstractNodeDecoratorRemove implements ValueValidator
 {
@@ -45,9 +44,8 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
      * Constructor.
      * @param editor OtsEditor; editor.
      * @param path String; path of the nodes that have a Parent attribute referring to another node under the same path.
-     * @throws RemoteException if an exception occurs while adding as a listener.
      */
-    public ParentValidator(final OtsEditor editor, final String path) throws RemoteException
+    public ParentValidator(final OtsEditor editor, final String path)
     {
         super(editor);
         this.path = path;
@@ -94,7 +92,7 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
     @Override
     public String validate(final XsdTreeNode node)
     {
-        String value = node.getAttributeValue("Parent");
+        String value = node.getAttributeValue(this.parentAttribute);
         if (value == null || value.isEmpty() || !node.isActive())
         {
             return null;
@@ -152,7 +150,7 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
     {
         if (node.isType(ParentValidator.this.path))
         {
-            node.addAttributeValidator("Parent", ParentValidator.this);
+            node.addAttributeValidator(this.parentAttribute, ParentValidator.this, null);
             getContext(node).add(node);
         }
     }

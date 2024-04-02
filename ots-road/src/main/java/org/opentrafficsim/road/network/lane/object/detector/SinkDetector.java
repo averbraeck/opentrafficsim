@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.network.lane.object.detector;
 
-import java.util.UUID;
+import java.util.Locale;
 import java.util.function.BiPredicate;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -13,17 +13,18 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 /**
  * A SinkDetector is a detector that deletes GTUs that hit it, if they comply to a predicate.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands.<br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands.<br>
  * All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class SinkDetector extends LaneDetector
 {
@@ -73,7 +74,7 @@ public class SinkDetector extends LaneDetector
     public SinkDetector(final Lane lane, final Length position, final OtsSimulatorInterface simulator,
             final DetectorType detectorType) throws NetworkException
     {
-        this(""+ UUID.randomUUID(), lane, position, simulator, detectorType, (sink, gtu) -> true);
+        this(lane, position, simulator, detectorType, (sink, gtu) -> true);
     }
 
     /**
@@ -86,17 +87,10 @@ public class SinkDetector extends LaneDetector
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
     public SinkDetector(final Lane lane, final Length position, final OtsSimulatorInterface simulator,
-                        final DetectorType detectorType, final BiPredicate<SinkDetector, LaneBasedGtu> predicate) throws NetworkException
-    {
-        super("SINK@" + UUID.randomUUID(), lane, position, RelativePosition.CENTER, simulator,
-                makeGeometry(lane, position, 1.0), detectorType);
-        this.predicate = predicate;
-    }
-    public SinkDetector(final String gtuId, final Lane lane, final Length position, final OtsSimulatorInterface simulator,
             final DetectorType detectorType, final BiPredicate<SinkDetector, LaneBasedGtu> predicate) throws NetworkException
     {
-        super("SINK@" + gtuId, lane, position, RelativePosition.CENTER, simulator,
-                makeGeometry(lane, position, 1.0), detectorType);
+        super(String.format(Locale.US, "Sink@%.3fm", position.si), lane, position, RelativePosition.FRONT, simulator,
+                LaneBasedObject.makeGeometry(lane, position, 1.0), detectorType);
         this.predicate = predicate;
     }
 

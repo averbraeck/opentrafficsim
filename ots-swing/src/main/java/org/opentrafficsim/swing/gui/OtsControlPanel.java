@@ -65,7 +65,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 /**
  * Peter's improved simulation control panel.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
@@ -160,6 +160,13 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             {
                 return true;
             }
+            
+            /** {@inheritDoc} */
+            @Override
+            public Integer getFontSize()
+            {
+                return null;
+            }
 
             /** {@inheritDoc} */
             @Override
@@ -170,12 +177,15 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         }
         JLabel speedLabel = new AppearanceControlLabel();
         this.clockPanel = new ClockLabel(speedLabel);
-        this.clockPanel.setMaximumSize(new Dimension(133, 35));
+        this.clockPanel.setPreferredSize(new Dimension(125, 35));
+        this.clockPanel.setMaximumSize(new Dimension(125, 35));
         buttonPanel.add(this.clockPanel);
-        speedLabel.setMaximumSize(new Dimension(66, 35));
+        speedLabel.setPreferredSize(new Dimension(85, 35));
+        speedLabel.setMaximumSize(new Dimension(85, 35));
         buttonPanel.add(speedLabel);
         this.timeEdit = new TimeEdit(new Time(0, TimeUnit.DEFAULT));
-        this.timeEdit.setMaximumSize(new Dimension(133, 35));
+        this.timeEdit.setPreferredSize(new Dimension(135, 30));
+        this.timeEdit.setMaximumSize(new Dimension(135, 30));
         this.timeEdit.addPropertyChangeListener("value", this);
         buttonPanel.add(this.timeEdit);
         this.add(buttonPanel);
@@ -681,7 +691,6 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
     /**
      * @return simulator.
      */
-    @SuppressWarnings("unchecked")
     public final OtsSimulatorInterface getSimulator()
     {
         return this.simulator;
@@ -864,6 +873,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             // initial value of simulation speed
             if (simulator instanceof DevsRealTimeAnimator)
             {
+                @SuppressWarnings("unchecked")
                 DevsRealTimeAnimator<Duration> clock = (DevsRealTimeAnimator<Duration>) simulator;
                 clock.setSpeedFactor(TimeWarpPanel.this.tickValues.get(this.slider.getValue()));
             }
@@ -877,6 +887,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                     JSlider source = (JSlider) ce.getSource();
                     if (!source.getValueIsAdjusting() && simulator instanceof DevsRealTimeAnimator)
                     {
+                        @SuppressWarnings("unchecked")
                         DevsRealTimeAnimator<Duration> clock = (DevsRealTimeAnimator<Duration>) simulator;
                         clock.setSpeedFactor(((TimeWarpPanel) source.getParent()).getTickValues().get(source.getValue()));
                     }
@@ -1079,6 +1090,13 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         {
             return true;
         }
+        
+        /** {@inheritDoc} */
+        @Override
+        public Integer getFontSize()
+        {
+            return null;
+        }
 
         /** {@inheritDoc} */
         @Override
@@ -1132,6 +1150,13 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             int m = (int) (seconds - h * 3600) / 60;
             double s = v - h * 3600 - m * 60;
             this.setText(String.format("%04d:%02d:%06.3f", h, m, s));
+        }
+        
+        /** {@inheritDoc} */
+        @Override
+        public Integer getFontSize()
+        {
+            return null;
         }
 
         /** {@inheritDoc} */

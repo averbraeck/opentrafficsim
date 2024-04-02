@@ -1,21 +1,18 @@
 package org.opentrafficsim.animation.data;
 
-import java.rmi.RemoteException;
-
-import org.djutils.draw.bounds.Bounds;
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.point.Point;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
 
 /**
  * Animation data of a Link.
  * <p>
- * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class AnimationLinkData implements LinkData
 {
@@ -34,9 +31,9 @@ public class AnimationLinkData implements LinkData
 
     /** {@inheritDoc} */
     @Override
-    public Bounds<?, ?, ?> getBounds() throws RemoteException
+    public OtsBounds2d getBounds()
     {
-        return ClickableBounds.get(this.link.getBounds());
+        return this.link.getBounds();
     }
 
     /** {@inheritDoc} */
@@ -62,7 +59,7 @@ public class AnimationLinkData implements LinkData
 
     /** {@inheritDoc} */
     @Override
-    public Point<?> getLocation()
+    public OrientedPoint2d getLocation()
     {
         return this.link.getLocation();
     }

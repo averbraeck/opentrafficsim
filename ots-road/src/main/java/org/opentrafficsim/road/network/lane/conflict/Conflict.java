@@ -11,7 +11,7 @@ import java.util.UUID;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
@@ -51,12 +51,12 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
  * {@code getUpstreamGtus} and {@code getDownstreamGtus}. These methods are efficient in that they reuse underlying data
  * structures if the GTUs are requested at the same time by another GTU.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public final class Conflict extends AbstractLaneBasedObject implements EventListener
 {
@@ -69,6 +69,9 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
     /** Conflict rule, i.e. priority, give way, stop or all-stop. */
     private final ConflictRule conflictRule;
+
+    /** End of conflict. */
+    private final ConflictEnd end;
 
     /** Accompanying other conflict. */
     private Conflict otherConflict;
@@ -135,14 +138,14 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * @param lane Lane; lane where this conflict starts
      * @param longitudinalPosition Length; position of start of conflict on lane
      * @param length Length; length of the conflict along the lane centerline
-     * @param geometry PolyLine2d; geometry of conflict
+     * @param geometry Polygon2d; geometry of conflict
      * @param conflictType ConflictType; conflict type, i.e. crossing, merge or split
      * @param conflictRule ConflictRule; conflict rule, i.e. determines priority, give way, stop or all-stop
      * @param permitted boolean; whether the conflict is permitted in traffic light control
      * @throws NetworkException when the position on the lane is out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    private Conflict(final Lane lane, final Length longitudinalPosition, final Length length, final PolyLine2d geometry,
+    private Conflict(final Lane lane, final Length longitudinalPosition, final Length length, final Polygon2d geometry,
             final ConflictType conflictType, final ConflictRule conflictRule, final boolean permitted) throws NetworkException
     {
         super(UUID.randomUUID().toString(), lane, longitudinalPosition, geometry);
@@ -157,7 +160,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             Length position = conflictType.equals(ConflictType.SPLIT) ? length : lane.getLength();
             try
             {
-                new ConflictEnd(this, lane, position);
+                this.end = new ConflictEnd(this, lane, position);
             }
             catch (OtsGeometryException exception)
             {
@@ -165,10 +168,25 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                 throw new RuntimeException("Could not create dummy geometry for ConflictEnd.", exception);
             }
         }
+        else
+        {
+            this.end = null;
+        }
 
         // Lane record for GTU provision
         this.rootPosition = longitudinalPosition;
         this.root = new LaneRecord(lane, this.rootPosition.neg(), null);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    protected void init() throws NetworkException
+    {
+        super.init();
+        if (this.end != null)
+        {
+            this.end.init();
+        }
     }
 
     /**
@@ -340,6 +358,13 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     {
         return this.conflictRule.determinePriority(this);
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public Polygon2d getGeometry()
+    {
+        return (Polygon2d) super.getGeometry();
+    }
 
     /**
      * @return length.
@@ -389,7 +414,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                             protected HeadwayTrafficLight perceive(final LaneBasedGtu perceivingGtu, final TrafficLight object,
                                     final Length distance) throws GtuException, ParameterException
                             {
-                                return new HeadwayTrafficLight(object, distance);
+                                return new HeadwayTrafficLight(object, distance, false);
                             }
                         };
                 if (!it.isEmpty())
@@ -413,19 +438,19 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * @param lane1 Lane; lane of conflict 1
      * @param longitudinalPosition1 Length; longitudinal position of conflict 1
      * @param length1 Length; {@code Length} of conflict 1
-     * @param geometry1 PolyLine2d; geometry of conflict 1
+     * @param geometry1 Polygon2d; geometry of conflict 1
      * @param lane2 Lane; lane of conflict 2
      * @param longitudinalPosition2 Length; longitudinal position of conflict 2
      * @param length2 Length; {@code Length} of conflict 2
-     * @param geometry2 PolyLine2d; geometry of conflict 2
+     * @param geometry2 Polygon2d; geometry of conflict 2
      * @param simulator OtsSimulatorInterface; the simulator for animation and timed events
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static void generateConflictPair(final ConflictType conflictType, final ConflictRule conflictRule,
             final boolean permitted, final Lane lane1, final Length longitudinalPosition1, final Length length1,
-            final PolyLine2d geometry1, final Lane lane2, final Length longitudinalPosition2, final Length length2,
-            final PolyLine2d geometry2, final OtsSimulatorInterface simulator) throws NetworkException
+            final Polygon2d geometry1, final Lane lane2, final Length longitudinalPosition2, final Length length2,
+            final Polygon2d geometry2, final OtsSimulatorInterface simulator) throws NetworkException
     {
         // lane, longitudinalPosition, length and geometry are checked in AbstractLaneBasedObject
         Throw.whenNull(conflictType, "Conflict type may not be null.");
@@ -456,13 +481,13 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * Light-weight lane based object to indicate the end of a conflict. It is used to perceive conflicts when a GTU is on the
      * conflict area, and hence the conflict lane based object is upstream.
      * <p>
-     * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public class ConflictEnd extends AbstractLaneBasedObject
     {
@@ -484,8 +509,16 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                 throws NetworkException, OtsGeometryException
         {
             // FIXME: the OtsLine2d object should be shared by all ConflictEnd objects (removing OtsGeometryException)
-            super(conflict.getId() + "End", lane, longitudinalPosition, new PolyLine2d(new Point2d(0, 0), new Point2d(1, 0)));
+            super(conflict.getId() + "End", lane, longitudinalPosition, new Polygon2d(new Point2d(0, 0), new Point2d(1, 0)));
             this.conflict = conflict;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public void init() throws NetworkException
+        {
+            // override makes init accessible to conflict
+            super.init();
         }
 
         /**
@@ -513,13 +546,13 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * <p>
      * FIXME: why not create a getter for the gtu in the super class?
      * <p>
-     * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private class ConflictGtu extends HeadwayGtuReal
     {
@@ -561,13 +594,13 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * HeadwayGtuType that generates ConflictGtu's, for use within the base iterators for upstream and downstream neighbors.
      * This result is used by secondary iterators (ConflictGtuIterable) to provide the requested specific HeadwatGtuType.
      * <p>
-     * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private class ConflictGtuType implements HeadwayGtuType
     {
@@ -615,13 +648,13 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * HeadwayGtuType. This is used for downstream GTUs of the conflict, accounting also for the length of the conflict. Hence,
      * overlap information concerns the conflict and a downstream GTU (downstream of the start of the conflict).
      * <p>
-     * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private class OverlapHeadway implements HeadwayGtuType
     {
@@ -694,13 +727,13 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     /**
      * Iterable for upstream and downstream GTUs of a conflict, which uses a base iterable.
      * <p>
-     * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private class ConflictGtuIterable extends AbstractPerceptionReiterable<HeadwayGtu, LaneBasedGtu>
     {

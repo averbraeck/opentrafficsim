@@ -6,15 +6,18 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
-import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.Point2d;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.HierarchicallyTyped;
+import org.opentrafficsim.base.geometry.BoundingPolygon;
+import org.opentrafficsim.base.geometry.ClickableBounds;
+import org.opentrafficsim.base.geometry.OtsBounds2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.core.SpatialObject;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -22,12 +25,10 @@ import org.opentrafficsim.core.geometry.FractionalLengthData;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.Gtu;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
-
 /**
  * A standard implementation of a link between two Nodes.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$, initial version Aug 19, 2014 <br>
@@ -35,7 +36,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
 public class Link extends LocalEventProducer
-        implements HierarchicallyTyped<LinkType, Link>, SpatialObject, Locatable, Serializable, Identifiable, Drawable
+        implements HierarchicallyTyped<LinkType, Link>, SpatialObject, OtsLocatable, Serializable, Identifiable, Drawable
 {
 
     /** */
@@ -84,10 +85,13 @@ public class Link extends LocalEventProducer
     private final Polygon2d shape;
 
     /** Bounds. */
-    private final Bounds2d bounds;
+    private final OtsBounds2d bounds;
 
     /** The GTUs on this Link. */
     private final Set<Gtu> gtus = new LinkedHashSet<>();
+
+    /** Location. */
+    private OrientedPoint2d location;
 
     /**
      * Construct a new link.
@@ -121,7 +125,9 @@ public class Link extends LocalEventProducer
         this.designLine = designLine;
         this.elevation = elevation;
         this.shape = new Polygon2d(this.designLine.offsetLine(0.5).getPoints());
-        this.bounds = new Bounds2d(this.shape.getBounds().getDeltaX(), this.shape.getBounds().getDeltaY());
+        this.location = this.designLine.getLocationFractionExtended(0.5);
+        this.bounds =
+                BoundingPolygon.geometryToBounds(this.location, ClickableBounds.get(this.designLine.getLine2d()).asPolygon());
         this.network.addLink(this);
     }
 
@@ -262,15 +268,15 @@ public class Link extends LocalEventProducer
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Point2d getLocation()
+    public OrientedPoint2d getLocation()
     {
-        return this.designLine.getLocation();
+        return this.location;
     }
 
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Bounds2d getBounds()
+    public OtsBounds2d getBounds()
     {
         return this.bounds;
     }

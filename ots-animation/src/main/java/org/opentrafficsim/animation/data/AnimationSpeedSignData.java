@@ -1,20 +1,18 @@
 package org.opentrafficsim.animation.data;
 
-import java.rmi.RemoteException;
-
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djutils.draw.bounds.Bounds;
-import org.djutils.draw.point.Point;
+import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.draw.road.SpeedSignAnimation.SpeedSignData;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 
 /**
  * Animation data of a SpeedSign.
  * <p>
- * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class AnimationSpeedSignData implements SpeedSignData
 {
@@ -33,14 +31,14 @@ public class AnimationSpeedSignData implements SpeedSignData
 
     /** {@inheritDoc} */
     @Override
-    public Point<?> getLocation() throws RemoteException
+    public OrientedPoint2d getLocation()
     {
         return this.speedSign.getLocation();
     }
 
     /** {@inheritDoc} */
     @Override
-    public Bounds<?, ?, ?> getBounds() throws RemoteException
+    public OtsBounds2d getBounds()
     {
         return this.speedSign.getBounds();
     }
@@ -65,7 +63,7 @@ public class AnimationSpeedSignData implements SpeedSignData
     @Override
     public String toString()
     {
-        return "SpeedSign " + this.speedSign.getId();
+        return "Speed sign " + this.speedSign.getId();
     }
 
 }

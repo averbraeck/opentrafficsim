@@ -7,36 +7,34 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 import java.awt.image.ImageObserver;
-import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.function.Supplier;
 
 import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsRenderable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
-import nl.tudelft.simulation.dsol.animation.d2.Renderable2dInterface;
-import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
  * Draw a car.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class DefaultCarAnimation extends Renderable2d<GtuData> implements Renderable2dInterface<GtuData>, Serializable
+public class DefaultCarAnimation extends OtsRenderable<GtuData>
 {
     /** */
     private static final long serialVersionUID = 20150000L;
@@ -79,7 +77,7 @@ public class DefaultCarAnimation extends Renderable2d<GtuData> implements Render
     {
         super(gtu, contextualized);
         this.hashCode = gtu.hashCode();
-        this.text = new Text(gtu, gtu.getId(), 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, contextualized,
+        this.text = new Text(gtu, gtu::getId, 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, contextualized,
                 new TextAnimation.ContrastToBackground()
                 {
                     /** {@inheritDoc} */
@@ -88,13 +86,14 @@ public class DefaultCarAnimation extends Renderable2d<GtuData> implements Render
                     {
                         return gtu.getColor();
                     }
-                });
+                }).setDynamic(true);
     }
 
     /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
+        setRendering(graphics);
         final GtuData gtu = getSource();
         if (this.rectangle == null)
         {
@@ -181,6 +180,7 @@ public class DefaultCarAnimation extends Renderable2d<GtuData> implements Render
             this.marker.setFrame(x, x, w, w);
             graphics.fill(this.marker);
         }
+        resetRendering(graphics);
     }
 
     /** {@inheritDoc} */
@@ -209,15 +209,15 @@ public class DefaultCarAnimation extends Renderable2d<GtuData> implements Render
     /**
      * Text animation for the Car. Separate class to be able to turn it on and off...
      * <p>
-     * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public class Text extends TextAnimation
+    public class Text extends TextAnimation<GtuData, Text>
     {
         /** */
         private static final long serialVersionUID = 20161211L;
@@ -226,8 +226,8 @@ public class DefaultCarAnimation extends Renderable2d<GtuData> implements Render
         private boolean isTextDestroyed = false;
 
         /**
-         * @param source Locatable; the object for which the text is displayed
-         * @param text String; the text to display
+         * @param source GtuData; the object for which the text is displayed
+         * @param text Supplier&lt;String&gr;; the text to display
          * @param dx float; the horizontal movement of the text, in meters
          * @param dy float; the vertical movement of the text, in meters
          * @param textAlignment TextAlignment; where to place the text
@@ -236,7 +236,7 @@ public class DefaultCarAnimation extends Renderable2d<GtuData> implements Render
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
-        public Text(final Locatable source, final String text, final float dx, final float dy,
+        public Text(final GtuData source, final Supplier<String> text, final float dx, final float dy,
                 final TextAlignment textAlignment, final Color color, final Contextualized contextualized)
                 throws RemoteException, NamingException
         {
@@ -245,7 +245,7 @@ public class DefaultCarAnimation extends Renderable2d<GtuData> implements Render
 
         /**
          * @param source GtuData; the object for which the text is displayed
-         * @param text String; the text to display
+         * @param text Supplier&lt;String&gr;; the text to display
          * @param dx float; the horizontal movement of the text, in meters
          * @param dy float; the vertical movement of the text, in meters
          * @param textAlignment TextAlignment; where to place the text
@@ -256,26 +256,11 @@ public class DefaultCarAnimation extends Renderable2d<GtuData> implements Render
          * @throws RemoteException - when remote context cannot be found
          */
         @SuppressWarnings("parameternumber")
-        public Text(final GtuData source, final String text, final float dx, final float dy, final TextAlignment textAlignment,
-                final Color color, final Contextualized contextualized, final TextAnimation.ContrastToBackground background)
-                throws RemoteException, NamingException
+        public Text(final GtuData source, final Supplier<String> text, final float dx, final float dy,
+                final TextAlignment textAlignment, final Color color, final Contextualized contextualized,
+                final TextAnimation.ContrastToBackground background) throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textAlignment, color, 1.0f, 12.0f, 50f, contextualized, background, RENDERWHEN1);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        @SuppressWarnings("checkstyle:designforextension")
-        public OrientedPoint2d getLocation()
-        {
-            // draw always on top, and not upside down.
-            OrientedPoint2d p = ((GtuData) getSource()).getLocation();
-            double a = Angle.normalizePi(p.getDirZ());
-            if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
-            {
-                a += Math.PI;
-            }
-            return new OrientedPoint2d(p.x, p.y, a);
         }
 
         /** {@inheritDoc} */
@@ -290,15 +275,15 @@ public class DefaultCarAnimation extends Renderable2d<GtuData> implements Render
     /**
      * GtuData provides the information required to draw a link.
      * <p>
-     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public interface GtuData extends Locatable, Identifiable
+    public interface GtuData extends OtsLocatable, Identifiable
     {
         /**
          * Returns the GTU color.
@@ -360,7 +345,7 @@ public class DefaultCarAnimation extends Renderable2d<GtuData> implements Render
         /** {@inheritDoc} */
         @Override
         OrientedPoint2d getLocation();
-        
+
         /** {@inheritDoc} */
         @Override
         default double getZ()

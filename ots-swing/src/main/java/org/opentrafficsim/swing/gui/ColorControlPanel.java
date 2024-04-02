@@ -18,7 +18,7 @@ import org.opentrafficsim.animation.gtu.colorer.SwitchableGtuColorer;
 /**
  * Let the user select what the colors in the animation mean.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
@@ -54,30 +54,6 @@ public class ColorControlPanel extends JPanel implements ActionListener
         {
             this.switchableGtuColorer = (SwitchableGtuColorer) gtuColorer;
 
-            /**
-             * ComboBox for AppearanceControl.
-             * @param <T> generic type of the ComboBox
-             */
-            class AppearanceControlComboBox<T> extends JComboBox<T> implements AppearanceControl
-            {
-                /** */
-                private static final long serialVersionUID = 1L;
-
-                /** {@inheritDoc} */
-                @Override
-                public boolean isFont()
-                {
-                    return true;
-                }
-
-                /** {@inheritDoc} */
-                @Override
-                public String toString()
-                {
-                    return "AppearanceControlComboBox []";
-                }
-
-            }
             this.comboBoxGTUColor = new AppearanceControlComboBox<>();
             this.add(this.comboBoxGTUColor);
             this.comboBoxGTUColor.addActionListener(this);

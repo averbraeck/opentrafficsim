@@ -14,10 +14,10 @@ import de.javagl.treetable.JTreeTable;
  * state of a node is appropriate for an action, is up to the caller. Callers are typically mouse event or key listeners on the
  * tree.
  * <p>
- * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class NodeActions
 {
@@ -76,8 +76,9 @@ public class NodeActions
         }
         this.editor.getUndo().startAction(ActionType.REMOVE, node, null);
         XsdTreeNode parent = node.getParent();
-        int index = Math.min(parent.getChildren().indexOf(node), parent.getChildren().size() - 2);
+        int index = parent.getChildren().indexOf(node);
         node.remove();
+        index = Math.min(index, parent.getChildren().size() - 1);
         XsdTreeNode replaced = parent.getChild(index);
         this.editor.getUndo().setPostActionShowNode(replaced);
         this.editor.show(replaced, null);
@@ -112,7 +113,7 @@ public class NodeActions
     {
         this.editor.getUndo().startAction(ActionType.INSERT, node, null);
         XsdTreeNode newNode = node.emptyCopy();
-        ((XsdTreeNodeRoot) newNode.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+        newNode.getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                 new Object[] {newNode, newNode.getParent(), newNode.getParent().getChildren().indexOf(newNode)});
         newNode.move(-1);
         this.editor.getClipboard().copyInto(newNode);
@@ -137,7 +138,7 @@ public class NodeActions
         else
         {
             newNode = node.emptyCopy();
-            ((XsdTreeNodeRoot) newNode.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+            newNode.getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                     new Object[] {newNode, newNode.getParent(), newNode.getParent().getChildren().indexOf(newNode)});
         }
         this.editor.getClipboard().copyInto(newNode);
@@ -179,7 +180,7 @@ public class NodeActions
         node.setOption(next);
         this.editor.show(next, null);
     }
-    
+
     /**
      * Expand, or collapse, node.
      * @param node XsdTreeNode; node.
@@ -215,5 +216,5 @@ public class NodeActions
         node.move(down);
         this.editor.show(node, null);
     }
-    
+
 }

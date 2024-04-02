@@ -15,10 +15,10 @@ import org.opentrafficsim.editor.XsdTreeNode;
 /**
  * Listener for events when an attribute is selected in the table.
  * <p>
- * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class AttributesListSelectionListener implements ListSelectionListener, EventListener
 {
@@ -58,7 +58,7 @@ public class AttributesListSelectionListener implements ListSelectionListener, E
         if (index >= 0)
         {
             this.attribute = node.getAttributeNameByIndex(index);
-            this.editor.setCoupledNode(node.getCoupledKeyrefNode(index), node, this.attribute);
+            this.editor.setCoupledNode(node.getCoupledKeyrefNodeAttribute(index), node, this.attribute);
         }
         if (this.listening != null)
         {
@@ -77,7 +77,8 @@ public class AttributesListSelectionListener implements ListSelectionListener, E
     {
         if (this.attribute.equals(((Object[]) event.getContent())[1]))
         {
-            XsdTreeNode coupled = this.listening.getCoupledKeyrefNode(this.listening.getAttributeIndexByName(this.attribute));
+            XsdTreeNode coupled =
+                    this.listening.getCoupledKeyrefNodeAttribute(this.listening.getAttributeIndexByName(this.attribute));
             this.editor.setCoupledNode(coupled, this.listening, this.attribute);
         }
     }

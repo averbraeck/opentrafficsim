@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.network.factory.xml.parser;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -11,10 +9,10 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.djunits.unit.DirectionUnit;
-import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
@@ -22,15 +20,18 @@ import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
-import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.ContinuousArc;
 import org.opentrafficsim.core.geometry.ContinuousBezierCubic;
+import org.opentrafficsim.core.geometry.ContinuousClothoid;
 import org.opentrafficsim.core.geometry.ContinuousLine;
 import org.opentrafficsim.core.geometry.ContinuousPolyLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
+import org.opentrafficsim.core.geometry.Flattener;
+import org.opentrafficsim.core.geometry.Flattener.MaxAngle;
+import org.opentrafficsim.core.geometry.Flattener.MaxDeviation;
 import org.opentrafficsim.core.geometry.Flattener.MaxDeviationAndAngle;
 import org.opentrafficsim.core.geometry.Flattener.NumSegments;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
@@ -47,6 +48,8 @@ import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.utils.Cloner;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
+import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets;
+import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets.CseData;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
@@ -62,12 +65,15 @@ import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder.FixedWidthGenerator;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder.RelativeWidthGenerator;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder.WidthGenerator;
+import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
+import org.opentrafficsim.xml.bindings.types.StringType;
 import org.opentrafficsim.xml.generated.BasicRoadLayout;
 import org.opentrafficsim.xml.generated.CseLane;
 import org.opentrafficsim.xml.generated.CseNoTrafficLane;
 import org.opentrafficsim.xml.generated.CseShoulder;
 import org.opentrafficsim.xml.generated.CseStripe;
+import org.opentrafficsim.xml.generated.FlattenerType;
 import org.opentrafficsim.xml.generated.Link;
 import org.opentrafficsim.xml.generated.Link.LaneOverride;
 import org.opentrafficsim.xml.generated.Network;
@@ -80,11 +86,11 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 /**
  * NetworkParser parses the Network tag of the OTS network.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public final class NetworkParser
 {
@@ -173,14 +179,16 @@ public final class NetworkParser
      * @param network Network; the Network tag
      * @param nodeDirections Map&lt;String,Direction&gt;; a map of the node ids and their default directions
      * @param simulator OtsSimulatorInterface; the simulator
-     * @param designLines Map&lt;String, ContinuousLine&gt;; map t store created design lines.
+     * @param designLines Map&lt;String, ContinuousLine&gt;; map to store created design lines.
+     * @param flatteners Map&lt;String, Flattener&gt;; flattener per link id.
      * @param eval Eval; expression evaluator.
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      * @throws OtsGeometryException when the design line is invalid
      */
     static void parseLinks(final RoadNetwork otsNetwork, final Definitions definitions, final Network network,
             final Map<String, Direction> nodeDirections, final OtsSimulatorInterface simulator,
-            final Map<String, ContinuousLine> designLines, final Eval eval) throws NetworkException, OtsGeometryException
+            final Map<String, ContinuousLine> designLines, final Map<String, Flattener> flatteners, final Eval eval)
+            throws NetworkException, OtsGeometryException
     {
         for (org.opentrafficsim.xml.generated.Connector xmlConnector : network.getConnector())
         {
@@ -204,6 +212,8 @@ public final class NetworkParser
             link.setDemandWeight(demandWeight);
         }
 
+        Flattener defaultFlattener =
+                network.getFlattener() == null ? new NumSegments(64) : getFlattener(null, network.getFlattener(), eval);
         for (Link xmlLink : network.getLink())
         {
             Node startNode = (Node) otsNetwork.getNode(xmlLink.getNodeStart().get(eval));
@@ -227,9 +237,7 @@ public final class NetworkParser
             }
 
             ContinuousLine designLine;
-            Integer numSegments = null;
-            Angle maxAngleError = null;
-            Length maxSpatialError = null;
+            Flattener flattener = defaultFlattener;
             if (xmlLink.getStraight() != null)
             {
                 designLine = new ContinuousStraight(start, Math.hypot(end.x - start.x, end.y - start.y));
@@ -248,10 +256,7 @@ public final class NetworkParser
             }
             else if (xmlLink.getArc() != null)
             {
-                if (xmlLink.getArc().getNumSegments() != null)
-                {
-                    numSegments = xmlLink.getArc().getNumSegments().intValue();
-                }
+                flattener = getFlattener(defaultFlattener, xmlLink.getArc().getFlattener(), eval);
                 double radius = xmlLink.getArc().getRadius().get(eval).si;
                 boolean left = xmlLink.getArc().getDirection().get(eval).equals(ArcDirection.LEFT);
                 while (left && endHeading < startHeading)
@@ -266,10 +271,7 @@ public final class NetworkParser
             }
             else if (xmlLink.getBezier() != null)
             {
-                if (xmlLink.getBezier().getNumSegments() != null)
-                {
-                    numSegments = xmlLink.getBezier().getNumSegments().intValue();
-                }
+                flattener = getFlattener(defaultFlattener, xmlLink.getBezier().getFlattener(), eval);
                 double shape = xmlLink.getBezier().getShape().get(eval);
                 boolean weighted = xmlLink.getBezier().isWeighted();
                 Point2d[] designPoints = Bezier.cubicControlPoints(start, end, shape, weighted);
@@ -277,10 +279,31 @@ public final class NetworkParser
             }
             else if (xmlLink.getClothoid() != null)
             {
-                // int numSegments = xmlLink.getCLOTHOID().getNumSegments().intValue();
-
-                // TODO: Clothoid parsing
-                designLine = null;
+                FlattenerType flattenerType =
+                        xmlLink.getClothoid().getFlattener().isEmpty() ? null : xmlLink.getClothoid().getFlattener().get(0);
+                flattener = getFlattener(defaultFlattener, flattenerType, eval);
+                // fields in getClothoid() appear as lists as StartCurvature and EndCurvature appear in multiple options
+                if (!xmlLink.getClothoid().getInterpolated().isEmpty())
+                {
+                    designLine = new ContinuousClothoid(start, end);
+                }
+                else
+                {
+                    LinearDensity startCurvature = xmlLink.getClothoid().getStartCurvature().get(0).get(eval);
+                    LinearDensity endCurvature = xmlLink.getClothoid().getEndCurvature().get(0).get(eval);
+                    if (!xmlLink.getClothoid().getLength().isEmpty())
+                    {
+                        Length length = xmlLink.getClothoid().getLength().get(0).get(eval);
+                        designLine = ContinuousClothoid.withLength(start, length.si, startCurvature.si, endCurvature.si);
+                    }
+                    else
+                    {
+                        Throw.when(xmlLink.getClothoid().getA().isEmpty(), NetworkException.class,
+                                "Clothoid for link %s is not correctly specified.", xmlLink.getId());
+                        Length a = xmlLink.getClothoid().getA().get(0).get(eval);
+                        designLine = new ContinuousClothoid(start, a.si, startCurvature.si, endCurvature.si);
+                    }
+                }
             }
 
             else
@@ -289,19 +312,9 @@ public final class NetworkParser
                         + " has no filled straight, arc, bezier, polyline, or clothoid definition");
             }
             designLines.put(xmlLink.getId(), designLine);
+            flatteners.put(xmlLink.getId(), flattener);
 
-            // TODO: take flattening defaults from network when not defined for link
-            PolyLine2d flattenedLine;
-            if (maxAngleError != null)
-            {
-                flattenedLine = designLine.flatten(new MaxDeviationAndAngle(maxSpatialError.si, maxAngleError.si));
-            }
-            else
-            {
-                numSegments = numSegments == null ? 64 : numSegments;
-                flattenedLine = designLine.flatten(new NumSegments(numSegments));
-            }
-
+            PolyLine2d flattenedLine = designLine.flatten(flattener);
             LaneKeepingPolicy laneKeepingPolicy = xmlLink.getLaneKeeping().get(eval);
             LinkType linkType = definitions.get(LinkType.class, xmlLink.getType().get(eval));
             // TODO: elevation data
@@ -325,6 +338,7 @@ public final class NetworkParser
      * @param roadLayoutMap the map of the tags of the predefined RoadLayout tags in Definitions
      * @param linkTypeSpeedLimitMap map of speed limits per link type
      * @param designLines Map&lt;String, ContinuousLine&gt;; design lines per link id.
+     * @param flatteners Map&lt;String, Flattener&gt;; flattener per link id.
      * @param eval Eval; expression evaluator.
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      * @throws OtsGeometryException when the design line is invalid
@@ -335,7 +349,7 @@ public final class NetworkParser
     static void applyRoadLayout(final RoadNetwork otsNetwork, final Definitions definitions, final Network network,
             final OtsSimulatorInterface simulator, final Map<String, RoadLayout> roadLayoutMap,
             final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap, final Map<String, ContinuousLine> designLines,
-            final Eval eval)
+            final Map<String, Flattener> flatteners, final Eval eval)
             throws NetworkException, OtsGeometryException, XmlParserException, SimRuntimeException, GtuException
     {
         for (Link xmlLink : network.getLink())
@@ -383,14 +397,16 @@ public final class NetworkParser
             // calculate for each lane and stripe what the start and end offset is
             List<CseData> cseDataList = new ArrayList<>();
             Map<Object, Integer> cseTagMap = new LinkedHashMap<>();
-            calculateOffsets(roadLayoutTag, xmlLink, cseDataList, cseTagMap, eval);
+            RoadLayoutOffsets.calculateOffsets(roadLayoutTag, cseDataList, cseTagMap, eval);
 
             // Stripe
             ContinuousLine designLine = designLines.get(xmlLink.getId());
+            Flattener flattener = flatteners.get(xmlLink.getId());
             for (CseStripe stripeTag : ParseUtil.getObjectsOfType(roadLayoutTag.getStripeOrLaneOrShoulder(), CseStripe.class))
             {
                 CseData cseData = cseDataList.get(cseTagMap.get(stripeTag));
-                makeStripe(csl, designLine, cseData.centerOffsetStart, cseData.centerOffsetEnd, stripeTag, cseList, eval);
+                makeStripe(csl, designLine, flattener, cseData.centerOffsetStart, cseData.centerOffsetEnd, stripeTag, cseList,
+                        eval);
             }
 
             // Other CrossSectionElement
@@ -401,14 +417,12 @@ public final class NetworkParser
 
                 List<CrossSectionSlice> slices = LaneGeometryUtil.getSlices(designLine, cseData.centerOffsetStart,
                         cseData.centerOffsetEnd, cseData.widthStart, cseData.widthEnd);
-                // TODO: use flattening of link, or global; probably need to create a map in parseLinks(...)
-                NumSegments numSegments64 = new NumSegments(64);
                 PolyLine2d centerLine =
-                        designLine.flattenOffset(LaneGeometryUtil.getCenterOffsets(designLine, slices), numSegments64);
+                        designLine.flattenOffset(LaneGeometryUtil.getCenterOffsets(designLine, slices), flattener);
                 PolyLine2d leftEdge =
-                        designLine.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(designLine, slices), numSegments64);
+                        designLine.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(designLine, slices), flattener);
                 PolyLine2d rightEdge =
-                        designLine.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(designLine, slices), numSegments64);
+                        designLine.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(designLine, slices), flattener);
                 Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
 
                 // Lane
@@ -463,229 +477,20 @@ public final class NetworkParser
                         laneId);
                 Lane lane = lanes.get(laneId);
                 Length position = ParseUtil.parseLengthBeginEnd(trafficLight.getPosition().get(eval), lane.getLength());
-                try
+                TrafficLight obj = new TrafficLight(trafficLight.getId(), lane, position, simulator);
+                for (StringType nodeId : trafficLight.getTurnOnRed())
                 {
-                    @SuppressWarnings("unchecked")
-                    Constructor<?> trafficLightConstructor = ClassUtil.resolveConstructor(trafficLight.getClazz().get(eval),
-                            new Class[] {String.class, Lane.class, Length.class, OtsSimulatorInterface.class});
-                    trafficLightConstructor.newInstance(new Object[] {trafficLight.getId(), lane, position, simulator});
-                }
-                catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException
-                        | InvocationTargetException exception)
-                {
-                    throw new NetworkException("TrafficLight: Class Name " + trafficLight.getClazz().get(eval).getName()
-                            + " for traffic light " + trafficLight.getId() + " on lane " + lane.toString() + " at position "
-                            + position + " -- class not found or constructor not right", exception);
-                    // TODO: this discards too much information; e.g. Network already contains an object with the name ...
+                    obj.addTurnOnRed(otsNetwork.getNode(nodeId.get(eval)));
                 }
             }
         }
-    }
-
-    /**
-     * Calculate the offsets for the RoadLayout. Note that offsets can be different for begin and end, and that they can be
-     * specified from the right, left or center of the lane/stripe. The overall Link can have an additional start offset and end
-     * offset that has to be added to the already calculated offsets.
-     * @param roadLayoutTag BasicRoadLayout; the tag for the road layout containing all lanes and stripes
-     * @param xmlLink Link; the Link tag containing the overall offsets
-     * @param cseDataList List&ltCseData&gt;; the list of offsets and widths for each tag, in order of definition in the
-     *            RoadLayout tag
-     * @param cseTagMap Map&lt;Object, Integer&gt;; the map of the tags to the index in the list, to be able to find them
-     *            quickly
-     * @param eval Eval; expression evaluator.
-     */
-    @SuppressWarnings("checkstyle:methodlength")
-    private static void calculateOffsets(final BasicRoadLayout roadLayoutTag, final Link xmlLink,
-            final List<CseData> cseDataList, final Map<Object, Integer> cseTagMap, final Eval eval)
-    {
-        int nr = 0;
-        Length totalWidthStart = Length.ZERO;
-        Length totalWidthEnd = Length.ZERO;
-        boolean startOffset = false;
-        boolean endOffset = false;
-        for (Object o : roadLayoutTag.getStripeOrLaneOrShoulder())
-        {
-            if (o instanceof CseStripe)
-            {
-                CseStripe stripe = (CseStripe) o;
-                CseData cseData = new CseData();
-                cseData.widthStart = Length.ZERO;
-                cseData.widthEnd = Length.ZERO;
-                if (stripe.getCenterOffset() != null)
-                {
-                    cseData.centerOffsetStart = stripe.getCenterOffset().get(eval);
-                    cseData.centerOffsetEnd = stripe.getCenterOffset().get(eval);
-                    startOffset = true;
-                    endOffset = true;
-                }
-                else
-                {
-                    if (stripe.getCenterOffsetStart() != null)
-                    {
-                        cseData.centerOffsetStart = stripe.getCenterOffsetStart().get(eval);
-                        startOffset = true;
-                    }
-                    if (stripe.getCenterOffsetEnd() != null)
-                    {
-                        cseData.centerOffsetEnd = stripe.getCenterOffsetEnd().get(eval);
-                        endOffset = true;
-                    }
-                }
-                cseDataList.add(cseData);
-            }
-            else
-            {
-                org.opentrafficsim.xml.generated.CrossSectionElement cse =
-                        (org.opentrafficsim.xml.generated.CrossSectionElement) o;
-                CseData cseData = new CseData();
-                Length width = cse.getWidth() != null ? cse.getWidth().get(eval) : null;
-                cseData.widthStart = cse.getWidth() == null ? cse.getWidthStart().get(eval) : width;
-                Length halfWidthStart = cseData.widthStart.times(0.5);
-                totalWidthStart = totalWidthStart.plus(cseData.widthStart);
-                cseData.widthEnd = cse.getWidth() == null ? cse.getWidthEnd().get(eval) : width;
-                Length halfWidthEnd = cseData.widthEnd.times(0.5);
-                totalWidthEnd = totalWidthEnd.plus(cseData.widthStart);
-
-                if (cse.getCenterOffset() != null)
-                {
-                    Length offset = cse.getCenterOffset().get(eval);
-                    cseData.centerOffsetStart = offset;
-                    cseData.centerOffsetEnd = offset;
-                    startOffset = true;
-                    endOffset = true;
-                }
-                else if (cse.getLeftOffset() != null)
-                {
-                    Length leftOffset = cse.getLeftOffset().get(eval);
-                    cseData.centerOffsetStart = leftOffset.minus(halfWidthStart);
-                    cseData.centerOffsetEnd = leftOffset.minus(halfWidthEnd);
-                    startOffset = true;
-                    endOffset = true;
-                }
-                else if (cse.getRightOffset() != null)
-                {
-                    Length rightOffset = cse.getRightOffset().get(eval);
-                    cseData.centerOffsetStart = rightOffset.plus(halfWidthStart);
-                    cseData.centerOffsetEnd = rightOffset.plus(halfWidthEnd);
-                    startOffset = true;
-                    endOffset = true;
-                }
-
-                if (cse.getCenterOffsetStart() != null)
-                {
-                    cseData.centerOffsetStart = cse.getCenterOffsetStart().get(eval);
-                    startOffset = true;
-                }
-                else if (cse.getLeftOffsetStart() != null)
-                {
-                    cseData.centerOffsetStart = cse.getLeftOffsetStart().get(eval).minus(halfWidthStart);
-                    startOffset = true;
-                }
-                else if (cse.getRightOffsetStart() != null)
-                {
-                    cseData.centerOffsetStart = cse.getRightOffsetStart().get(eval).plus(halfWidthStart);
-                    startOffset = true;
-                }
-
-                if (cse.getCenterOffsetEnd() != null)
-                {
-                    cseData.centerOffsetEnd = cse.getCenterOffsetEnd().get(eval);
-                    endOffset = true;
-                }
-                else if (cse.getLeftOffsetEnd() != null)
-                {
-                    cseData.centerOffsetEnd = cse.getLeftOffsetEnd().get(eval).minus(halfWidthEnd);
-                    endOffset = true;
-                }
-                else if (cse.getRightOffsetEnd() != null)
-                {
-                    cseData.centerOffsetEnd = cse.getRightOffsetEnd().get(eval).plus(halfWidthEnd);
-                    endOffset = true;
-                }
-                cseDataList.add(cseData);
-            }
-            cseTagMap.put(o, nr);
-            nr++;
-        }
-
-        if (!startOffset)
-        {
-            cseDataList.get(0).centerOffsetStart = totalWidthStart.times(-0.5).minus(cseDataList.get(0).widthStart.times(-0.5));
-        }
-        if (!endOffset)
-        {
-            cseDataList.get(0).centerOffsetEnd = totalWidthEnd.times(-0.5).minus(cseDataList.get(0).widthEnd.times(-0.5));
-        }
-
-        // forward pass
-        Length cs = null;
-        Length es = null;
-        for (CseData cseData : cseDataList)
-        {
-            if (cseData.centerOffsetStart != null)
-            {
-                cs = cseData.centerOffsetStart.plus(cseData.widthStart.times(0.5));
-            }
-            else
-            {
-                if (cs != null)
-                {
-                    cseData.centerOffsetStart = cs.plus(cseData.widthStart.times(0.5));
-                    cs = cs.plus(cseData.widthStart);
-                }
-            }
-            if (cseData.centerOffsetEnd != null)
-            {
-                es = cseData.centerOffsetEnd.plus(cseData.widthEnd.times(0.5));
-            }
-            else
-            {
-                if (es != null)
-                {
-                    cseData.centerOffsetEnd = es.plus(cseData.widthEnd.times(0.5));
-                    es = es.plus(cseData.widthEnd);
-                }
-            }
-        }
-
-        // backward pass
-        cs = null;
-        es = null;
-        for (int i = cseDataList.size() - 1; i >= 0; i--)
-        {
-            CseData cseData = cseDataList.get(i);
-            if (cseData.centerOffsetStart != null)
-            {
-                cs = cseData.centerOffsetStart.minus(cseData.widthStart.times(0.5));
-            }
-            else
-            {
-                if (cs != null)
-                {
-                    cseData.centerOffsetStart = cs.minus(cseData.widthStart.times(0.5));
-                    cs = cs.minus(cseData.widthStart);
-                }
-            }
-            if (cseData.centerOffsetEnd != null)
-            {
-                es = cseData.centerOffsetEnd.minus(cseData.widthEnd.times(0.5));
-            }
-            else
-            {
-                if (es != null)
-                {
-                    cseData.centerOffsetEnd = es.minus(cseData.widthEnd.times(0.5));
-                    es = es.minus(cseData.widthEnd);
-                }
-            }
-        }
-
     }
 
     /**
      * Parse a stripe on a road.
      * @param csl CrossSectionLink; the CrossSectionLine
      * @param designLine ContinuousLine; design line.
+     * @param flattener Flattener; flattener.
      * @param startOffset Length; the offset of the start node
      * @param endOffset Length; the offset of the end node
      * @param stripeTag CseStripe; the CseStripe tag in the XML file
@@ -695,24 +500,21 @@ public final class NetworkParser
      * @throws NetworkException when id of the stripe not unique
      * @throws XmlParserException when the stripe type cannot be recognized
      */
-    private static void makeStripe(final CrossSectionLink csl, final ContinuousLine designLine, final Length startOffset,
-            final Length endOffset, final CseStripe stripeTag, final List<CrossSectionElement> cseList, final Eval eval)
+    private static void makeStripe(final CrossSectionLink csl, final ContinuousLine designLine, final Flattener flattener,
+            final Length startOffset, final Length endOffset, final CseStripe stripeTag,
+            final List<CrossSectionElement> cseList, final Eval eval)
             throws OtsGeometryException, NetworkException, XmlParserException
     {
-        Length width = stripeTag.getDrawingWidth() != null ? stripeTag.getDrawingWidth().get(eval)
-                : (stripeTag.getType().get(eval).equals(Type.BLOCK) ? new Length(40.0, LengthUnit.CENTIMETER)
-                        : new Length(20.0, LengthUnit.CENTIMETER));
+        Type type = stripeTag.getType().get(eval);
+        Length width = stripeTag.getDrawingWidth() != null ? stripeTag.getDrawingWidth().get(eval) : type.defaultWidth();
         List<CrossSectionSlice> slices = LaneGeometryUtil.getSlices(designLine, startOffset, endOffset, width, width);
 
-        // TODO: use flattening of link, or global; probably need to create a map in parseLinks(...)
-        NumSegments numSegments64 = new NumSegments(64);
-        PolyLine2d centerLine = designLine.flattenOffset(LaneGeometryUtil.getCenterOffsets(designLine, slices), numSegments64);
-        PolyLine2d leftEdge = designLine.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(designLine, slices), numSegments64);
-        PolyLine2d rightEdge =
-                designLine.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(designLine, slices), numSegments64);
+        PolyLine2d centerLine = designLine.flattenOffset(LaneGeometryUtil.getCenterOffsets(designLine, slices), flattener);
+        PolyLine2d leftEdge = designLine.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(designLine, slices), flattener);
+        PolyLine2d rightEdge = designLine.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(designLine, slices), flattener);
         Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
 
-        cseList.add(new Stripe(stripeTag.getType().get(eval), csl, new OtsLine2d(centerLine), contour, slices));
+        cseList.add(new Stripe(type, csl, new OtsLine2d(centerLine), contour, slices));
     }
 
     /**
@@ -778,32 +580,64 @@ public final class NetworkParser
         }
     }
 
-    /** contains information about the lanes and stripes to calculate the offset. */
-    protected static class CseData
+    /**
+     * Returns a flattener. If the flattener tag is empty, the flattener is obtained from the network.
+     * @param defaultFlattener Flattener; default flattener from the network, may be {@code null} to parse default flattener.
+     * @param flattenerType FlattenerType; XML tag of flattener.
+     * @param eval Eval; evaluator.
+     * @return Flattener.
+     * @throws NetworkException if the flattener is not correctly defined.
+     */
+    private static Flattener getFlattener(final Flattener defaultFlattener, final FlattenerType flattenerType, final Eval eval)
+            throws NetworkException
     {
-        /** the start width of the element (stripes are defined as 0). */
-        @SuppressWarnings("checkstyle:visibilitymodifier")
-        public Length widthStart;
-
-        /** the end width of the element (stripes are defined as 0). */
-        @SuppressWarnings("checkstyle:visibilitymodifier")
-        public Length widthEnd;
-
-        /** the start offset of the element. */
-        @SuppressWarnings("checkstyle:visibilitymodifier")
-        public Length centerOffsetStart;
-
-        /** the end offset of the element. */
-        @SuppressWarnings("checkstyle:visibilitymodifier")
-        public Length centerOffsetEnd;
-
-        /** {@inheritDoc} */
-        @Override
-        public String toString()
+        if (flattenerType == null)
         {
-            return "CseData [widthStart=" + this.widthStart + ", widthEnd=" + this.widthEnd + ", centerOffsetStart="
-                    + this.centerOffsetStart + ", centerOffsetEnd=" + this.centerOffsetEnd + "]";
+            return defaultFlattener;
         }
+        if (flattenerType.getNumSegments() != null)
+        {
+            return new NumSegments(flattenerType.getNumSegments().get(eval));
+        }
+        else if (flattenerType.getDeviationAndAngle() != null)
+        {
+            if (flattenerType.getDeviationAndAngle().getMaxDeviation() != null)
+            {
+                if (flattenerType.getDeviationAndAngle().getMaxAngle() != null)
+                {
+                    return new MaxDeviationAndAngle(
+                            getDeviation(flattenerType.getDeviationAndAngle().getMaxDeviation().get(eval)),
+                            getAngle(flattenerType.getDeviationAndAngle().getMaxAngle().get(eval)));
+                }
+                return new MaxDeviation(getDeviation(flattenerType.getDeviationAndAngle().getMaxDeviation().get(eval)));
+            }
+            else if (flattenerType.getDeviationAndAngle().getMaxAngle() != null)
+            {
+                return new MaxAngle(getAngle(flattenerType.getDeviationAndAngle().getMaxAngle().get(eval)));
+            }
+            throw new NetworkException("No deviation and/or angle for flattener specified.");
+        }
+        throw new NetworkException("No flattener specified.");
+    }
+
+    /**
+     * Returns a safe deviation value (>=0.001).
+     * @param length Length; deviation.
+     * @return double; safe deviation.
+     */
+    private static double getDeviation(final Length length)
+    {
+        return length.si < 0.001 ? 0.001 : length.si;
+    }
+
+    /**
+     * Returns a safe angle value (>=0.01).
+     * @param angle Length; angle.
+     * @return double; safe angle.
+     */
+    private static double getAngle(final Angle angle)
+    {
+        return angle.si < 0.01 ? 0.01 : angle.si;
     }
 
 }

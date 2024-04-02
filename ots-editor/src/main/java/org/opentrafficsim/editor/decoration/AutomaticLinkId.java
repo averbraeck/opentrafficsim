@@ -1,21 +1,21 @@
 package org.opentrafficsim.editor.decoration;
 
-import java.rmi.RemoteException;
 import java.util.function.Predicate;
 
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 
 import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 
 /**
  * Sets the Id of a link if it is not defined yet, and both NodeStart and NodeEnd are defined.
  * <p>
- * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements CellEditorListener
 {
@@ -32,11 +32,10 @@ public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements C
     /**
      * Constructor.
      * @param editor OtsEditor; editor.
-     * @throws RemoteException if an exception occurs while adding as a listener.
      */
-    public AutomaticLinkId(final OtsEditor editor) throws RemoteException
+    public AutomaticLinkId(final OtsEditor editor)
     {
-        super(editor, (node) -> node.isType("Ots.Network.Link"), "NodeStart", "NodeEnd");
+        super(editor, (node) -> node.isType(XsdPaths.LINK), "NodeStart", "NodeEnd");
         editor.addAttributeCellEditorListener(this);
     }
 
@@ -45,10 +44,8 @@ public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements C
      * @param editor OtsEditor; editor.
      * @param predicate Predicate&lt;XsdTreeNode&gt;; predicate to accept nodes that should have this attribute decorator.
      * @param attributes String...; attributes to trigger on.
-     * @throws RemoteException if an exception occurs while adding as a listener.
      */
     protected AutomaticLinkId(final OtsEditor editor, final Predicate<XsdTreeNode> predicate, final String... attributes)
-            throws RemoteException
     {
         super(editor, predicate, attributes);
         editor.addAttributeCellEditorListener(this);
@@ -96,7 +93,7 @@ public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements C
             this.lastId = null;
         }
     }
-    
+
     /**
      * Returns a string with the { and } removed.
      * @param value String; candidate value.

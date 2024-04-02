@@ -20,6 +20,7 @@ import org.opentrafficsim.animation.data.AnimationLaneData;
 import org.opentrafficsim.animation.data.AnimationLaneDetectorData;
 import org.opentrafficsim.animation.data.AnimationLinkData;
 import org.opentrafficsim.animation.data.AnimationNodeData;
+import org.opentrafficsim.animation.data.AnimationPriorityData;
 import org.opentrafficsim.animation.data.AnimationShoulderData;
 import org.opentrafficsim.animation.data.AnimationSpeedSignData;
 import org.opentrafficsim.animation.data.AnimationStripeData;
@@ -49,6 +50,7 @@ import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation.GtuGeneratorPo
 import org.opentrafficsim.draw.road.LaneAnimation;
 import org.opentrafficsim.draw.road.LaneDetectorAnimation;
 import org.opentrafficsim.draw.road.LaneDetectorAnimation.LaneDetectorData;
+import org.opentrafficsim.draw.road.PriorityAnimation;
 import org.opentrafficsim.draw.road.SpeedSignAnimation;
 import org.opentrafficsim.draw.road.SpeedSignAnimation.SpeedSignData;
 import org.opentrafficsim.draw.road.StripeAnimation;
@@ -79,11 +81,11 @@ import nl.tudelft.simulation.naming.context.Contextualized;
 /**
  * DefaultAnimationFactory.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class DefaultAnimationFactory implements EventListener
 {
@@ -146,7 +148,8 @@ public class DefaultAnimationFactory implements EventListener
                     new LinkAnimation(new AnimationLinkData(link), this.simulator, 0.5f);
                     if (link instanceof CrossSectionLink)
                     {
-                        for (CrossSectionElement element : ((CrossSectionLink) link).getCrossSectionElementList())
+                        CrossSectionLink cLink = (CrossSectionLink) link;
+                        for (CrossSectionElement element : cLink.getCrossSectionElementList())
                         {
                             if (element instanceof Lane)
                             {
@@ -161,14 +164,18 @@ public class DefaultAnimationFactory implements EventListener
                             else if (element instanceof Shoulder)
                             {
                                 Shoulder shoulder = (Shoulder) element;
-                                new CrossSectionElementAnimation(new AnimationShoulderData(shoulder), this.simulator,
+                                new CrossSectionElementAnimation<>(new AnimationShoulderData(shoulder), this.simulator,
                                         Color.DARK_GRAY);
                             }
                             else
                             {
-                                new CrossSectionElementAnimation(new AnimationCrossSectionElementData<>(element),
+                                new CrossSectionElementAnimation<>(new AnimationCrossSectionElementData<>(element),
                                         this.simulator, Color.DARK_GRAY);
                             }
+                        }
+                        if (!cLink.getPriority().isNone())
+                        {
+                            new PriorityAnimation(new AnimationPriorityData(cLink), this.simulator);
                         }
                     }
                 }
@@ -309,8 +316,8 @@ public class DefaultAnimationFactory implements EventListener
             {
                 SinkDetector detector = (SinkDetector) object;
                 // Renderable2d<SinkSensor> objectAnimation = new SinkAnimation(detector, this.simulator);
-                Renderable2d<LaneDetectorData> objectAnimation =
-                        new LaneDetectorAnimation(new AnimationLaneDetectorData(detector), this.simulator, Color.ORANGE);
+                Renderable2d<LaneDetectorData> objectAnimation = LaneDetectorAnimation
+                        .ofGenericType(new AnimationLaneDetectorData(detector), this.simulator, Color.ORANGE);
                 this.animatedLocatedObjects.put(object, objectAnimation);
             }
             else if (object instanceof TrafficLightDetector)
@@ -328,8 +335,8 @@ public class DefaultAnimationFactory implements EventListener
             else if (object instanceof LaneDetector)
             {
                 LaneDetector detector = (LaneDetector) object;
-                Renderable2d<LaneDetectorData> objectAnimation =
-                        new LaneDetectorAnimation(new AnimationLaneDetectorData(detector), this.simulator, Color.BLACK);
+                Renderable2d<LaneDetectorData> objectAnimation = LaneDetectorAnimation
+                        .ofGenericType(new AnimationLaneDetectorData(detector), this.simulator, Color.BLACK);
                 this.animatedLocatedObjects.put(object, objectAnimation);
             }
             else if (object instanceof Conflict)

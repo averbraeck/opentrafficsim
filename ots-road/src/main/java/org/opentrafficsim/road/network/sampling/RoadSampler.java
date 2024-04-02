@@ -36,12 +36,12 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 /**
  * Implementation of kpi sampler for OTS.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements EventListener
 {
@@ -252,37 +252,24 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
             if (isIntervalBased())
             {
                 double currentTime = now().getSI();
-                double nextTenth = Math.ceil(currentTime / this.samplingInterval.getSI()) * this.samplingInterval.getSI();
-                Duration d;
-                if(nextTenth!=currentTime){
-                    d = Duration.instantiateSI(nextTenth - currentTime);
-                }else{
-                    d = Duration.ZERO;
+                double next = Math.ceil(currentTime / this.samplingInterval.getSI()) * this.samplingInterval.getSI();
+                if (next > currentTime)
+                {
+                    // add sample at current time, then synchronize in interval
+                    notifySample(gtu, lane, false);
+                    scheduleSamplingInterval(gtu, lane, Duration.instantiateSI(next - currentTime));
                 }
-
-                Event e = new TimedEvent<>(Lane.GTU_SCHEDULE,
-                        new Object[] {gtu.getId(), lane.getId(), lane.getLink().getId()},
-                        gtu.getSimulator().getSimulatorTime());
-
-                this.simulator.scheduleEventRel(d, this, "notify", new Object[] {e});
+                else
+                {
+                    // already synchronous
+                    notifySample(gtu, lane, true);
+                }
             }
             else
             {
                 this.activeLanesPerGtu.computeIfAbsent(gtu.getId(), (key) -> new LinkedHashSet<>()).add(lane);
                 gtu.addListener(this, LaneBasedGtu.LANEBASED_MOVE_EVENT, ReferenceType.WEAK);
             }
-        }
-        else if (event.getType().equals(Lane.GTU_SCHEDULE)){
-            Object[] payload = (Object[]) event.getContent();
-            Lane lane = (Lane) ((CrossSectionLink) this.network.getLink((String) payload[2]))
-                    .getCrossSectionElement((String) payload[1]);
-
-            LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU((String) payload[0]);
-
-            boolean active = this.activeGtus.contains(gtu.getId());
-
-           Duration nowOnFirstEncounterOtherwiseAtInterval = active ? this.samplingInterval : Duration.ZERO;
-           scheduleSamplingInterval(gtu, lane, nowOnFirstEncounterOtherwiseAtInterval);
         }
         else if (event.getType().equals(Lane.GTU_REMOVE_EVENT))
         {
@@ -345,7 +332,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
         SimEventInterface<Duration> simEvent;
         try
         {
-            simEvent = this.simulator.scheduleEventRel(inTime, this, "notifySample", new Object[] {gtu, lane});
+            simEvent = this.simulator.scheduleEventRel(inTime, this, "notifySample", new Object[] {gtu, lane, true});
         }
         catch (SimRuntimeException exception)
         {
@@ -359,8 +346,9 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
      * Samples a gtu and schedules the next sampling event. This is used for interval-based sampling.
      * @param gtu LaneBasedGtu; gtu to sample
      * @param lane Lane; lane direction where the gtu is at
+     * @param scheduleNext boolean; whether to schedule the next event
      */
-    public final void notifySample(final LaneBasedGtu gtu, final Lane lane)
+    public final void notifySample(final LaneBasedGtu gtu, final Lane lane, final boolean scheduleNext)
     {
         LaneDataRoad laneData = new LaneDataRoad(lane);
         try
@@ -383,7 +371,10 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
         {
             throw new RuntimeException("Requesting position on lane, but the GTU is not on the lane.", exception);
         }
-        scheduleSamplingInterval(gtu, lane, this.samplingInterval);
+        if (scheduleNext)
+        {
+            scheduleSamplingInterval(gtu, lane, this.samplingInterval);
+        }
     }
 
     /** {@inheritDoc} */

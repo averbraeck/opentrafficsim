@@ -21,12 +21,12 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 /**
  * Different forms of cooperation.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public interface Cooperation extends LmrsParameters
 {
@@ -50,9 +50,7 @@ public interface Cooperation extends LmrsParameters
             double dCoop = params.getParameter(DCOOP);
             Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
             RelativeLane relativeLane = new RelativeLane(lat, 1);
-            for (HeadwayGtu leader : Synchronization.removeAllUpstreamOfConflicts(Synchronization.removeAllUpstreamOfConflicts(
-                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception,
-                    relativeLane), perception, RelativeLane.CURRENT))
+            for (HeadwayGtu leader : perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane))
             {
                 Parameters params2 = leader.getParameters();
                 double desire = lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)
@@ -98,9 +96,7 @@ public interface Cooperation extends LmrsParameters
             PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = neighbours.getLeaders(RelativeLane.CURRENT);
             Speed thresholdSpeed = Speed.instantiateSI(40.0 / 3.6);
             boolean leaderInCongestion = leaders.isEmpty() ? false : leaders.first().getSpeed().lt(thresholdSpeed);
-            for (HeadwayGtu leader : Synchronization.removeAllUpstreamOfConflicts(
-                    Synchronization.removeAllUpstreamOfConflicts(neighbours.getLeaders(relativeLane), perception, relativeLane),
-                    perception, RelativeLane.CURRENT))
+            for (HeadwayGtu leader : neighbours.getLeaders(relativeLane))
             {
                 Parameters params2 = leader.getParameters();
                 double desire = lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)
@@ -145,9 +141,7 @@ public interface Cooperation extends LmrsParameters
             double dCoop = params.getParameter(DCOOP);
             Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
             RelativeLane relativeLane = new RelativeLane(lat, 1);
-            for (HeadwayGtu leader : Synchronization.removeAllUpstreamOfConflicts(Synchronization.removeAllUpstreamOfConflicts(
-                    perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane), perception,
-                    relativeLane), perception, RelativeLane.CURRENT))
+            for (HeadwayGtu leader : perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane))
             {
                 Parameters params2 = leader.getParameters();
                 double desire = lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)

@@ -26,6 +26,15 @@
           </xsd:sequence>
           <xsd:attribute name="Id" type="ots:IdType" use="required" />
         </xsd:complexType>
+        
+        <!-- SignalGroup.TrafficLight.{Link|Lane|TrafficLightId} key -->
+        <xsd:key name="signalGroupTrafficLightId">
+          <xsd:selector xpath="ots:TrafficLight" />
+          <xsd:field xpath="@Link" />
+          <xsd:field xpath="@Lane" />
+          <xsd:field xpath="@TrafficLightId" />
+        </xsd:key>
+        
       </xsd:element>
     </xsd:sequence>
     <xsd:attribute name="Id" type="ots:IdType" use="required" />
@@ -98,6 +107,25 @@
               </xsd:extension>
             </xsd:complexContent>
           </xsd:complexType>
+          
+          <!-- FixedTime.SignalGroup.Id key -->
+          <xsd:key name="fixedTimeSignalGroupKey">
+            <xsd:selector xpath="ots:SignalGroup" />
+            <xsd:field xpath="@Id" />
+          </xsd:key>
+          
+          <!-- FixedTime.Cycle.SingalGroupId unique -->
+          <xsd:key name="cycleSignalGroupKey">
+            <xsd:selector xpath="ots:Cycle" />
+            <xsd:field xpath="@SignalGroupId" />
+          </xsd:key>
+          
+          <!-- FixedTime.Cycle.SingalGroupId = FixedTime.SignalGroup.Id -->
+          <xsd:keyref name="cycleSignalGroupIdRef" refer="ots:fixedTimeSignalGroupKey">
+            <xsd:selector xpath="ots:Cycle" />
+            <xsd:field xpath="@SignalGroupId" />
+          </xsd:keyref>
+          
         </xsd:element>
 
         <xsd:element name="TrafCod" minOccurs="0" maxOccurs="unbounded">
@@ -145,6 +173,13 @@
               </xsd:extension>
             </xsd:complexContent>
           </xsd:complexType>
+          
+          <!-- FixedTime.SignalGroup.Id key -->
+          <xsd:key name="trafCodTimeSignalGroupKey">
+            <xsd:selector xpath=".//ots:SignalGroup" />
+            <xsd:field xpath="@Id" />
+          </xsd:key>
+          
         </xsd:element>
 
       </xsd:choice>

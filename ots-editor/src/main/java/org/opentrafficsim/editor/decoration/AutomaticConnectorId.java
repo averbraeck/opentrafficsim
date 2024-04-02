@@ -1,17 +1,16 @@
 package org.opentrafficsim.editor.decoration;
 
-import java.rmi.RemoteException;
-
 import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 
 /**
  * Sets the Id of a connector if it is not defined yet, and Node, Centroid and Outbound are defined.
  * <p>
- * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class AutomaticConnectorId extends AutomaticLinkId
 {
@@ -22,11 +21,10 @@ public class AutomaticConnectorId extends AutomaticLinkId
     /**
      * Constructor.
      * @param editor OtsEditor; editor.
-     * @throws RemoteException if an exception occurs while adding as a listener.
      */
-    public AutomaticConnectorId(final OtsEditor editor) throws RemoteException
+    public AutomaticConnectorId(final OtsEditor editor)
     {
-        super(editor, (node) -> node.isType("Ots.Network.Connector"), "Node", "Centroid", "Outbound");
+        super(editor, (node) -> node.isType(XsdPaths.CONNECTOR), "Node", "Centroid", "Outbound");
         editor.addAttributeCellEditorListener(this);
     }
 

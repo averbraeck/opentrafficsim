@@ -13,6 +13,8 @@ import org.djutils.event.reference.ReferenceType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.editor.decoration.validation.KeyValidator;
+import org.opentrafficsim.editor.decoration.validation.KeyrefValidator;
+import org.opentrafficsim.editor.decoration.validation.XPathValidator;
 import org.w3c.dom.Node;
 
 /**
@@ -24,10 +26,10 @@ import org.w3c.dom.Node;
  * <br>
  * This class also sets up a listener for all xsd:key, xsd:keyref and xsd:unique from the schema.
  * <p>
- * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class XsdTreeNodeRoot extends XsdTreeNode
 {
@@ -96,6 +98,13 @@ public class XsdTreeNodeRoot extends XsdTreeNode
         // invalidate entire tree, as saving may trigger relative paths to includes to become ok, causing types to be found
         invalidateAll(this);
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public XsdTreeNodeRoot getRoot()
+    {
+        return this;
+    }
 
     /**
      * {@inheritDoc} Overridden to throw events on existing nodes to the listener.
@@ -128,28 +137,41 @@ public class XsdTreeNodeRoot extends XsdTreeNode
     {
 
         Set<KeyValidator> keys = new LinkedHashSet<>();
-        for (Entry<Node, String> entry : schema.keys().entrySet())
+        for (Entry<String, Node> entry : schema.keys().entrySet())
         {
-            keys.add(new KeyValidator(entry.getKey(), entry.getValue(), null));
+            String path = entry.getKey().substring(0, entry.getKey().lastIndexOf("."));
+            keys.add(new KeyValidator(entry.getValue(), path));
         }
-        Set<KeyValidator> keyrefs = new LinkedHashSet<>();
-        for (Entry<Node, String> entry : schema.keyrefs().entrySet())
+        Set<KeyValidator> uniques = new LinkedHashSet<>();
+        for (Entry<String, Node> entry : schema.uniques().entrySet())
         {
-            String keyName = DocumentReader.getAttribute(entry.getKey(), "refer").replace("ots:", "");
+            String path = entry.getKey().substring(0, entry.getKey().lastIndexOf("."));
+            uniques.add(new KeyValidator(entry.getValue(), path));
+        }
+        Set<KeyrefValidator> keyrefs = new LinkedHashSet<>();
+        for (Entry<String, Node> entry : schema.keyrefs().entrySet())
+        {
+            String keyName = DocumentReader.getAttribute(entry.getValue(), "refer").replace("ots:", "");
             for (KeyValidator key : keys)
             {
                 if (key.getKeyName().equals(keyName))
                 {
-                    keyrefs.add(new KeyValidator(entry.getKey(), entry.getValue(), key));
+                    String path = entry.getKey().substring(0, entry.getKey().lastIndexOf("."));
+                    keyrefs.add(new KeyrefValidator(entry.getValue(), path, key));
+                    break;
+                }
+            }
+            for (KeyValidator unique : uniques)
+            {
+                if (unique.getKeyName().equals(keyName))
+                {
+                    String path = entry.getKey().substring(0, entry.getKey().lastIndexOf("."));
+                    keyrefs.add(new KeyrefValidator(entry.getValue(), path, unique));
                     break;
                 }
             }
         }
-        Set<KeyValidator> uniques = new LinkedHashSet<>();
-        for (Entry<Node, String> entry : schema.uniques().entrySet())
-        {
-            uniques.add(new KeyValidator(entry.getKey(), entry.getValue(), null));
-        }
+        
 
         EventListener listener = new EventListener()
         {
@@ -161,11 +183,11 @@ public class XsdTreeNodeRoot extends XsdTreeNode
             public void notify(final Event event) throws RemoteException
             {
                 int iteration = 0;
-                Set<KeyValidator> keysIteration = keys;
+                Set<? extends XPathValidator> keysIteration = keys;
                 XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
                 while (iteration < 3)
                 {
-                    for (KeyValidator key : keysIteration)
+                    for (XPathValidator key : keysIteration)
                     {
                         if (event.getType().equals(NODE_CREATED))
                         {

@@ -132,12 +132,12 @@ import picocli.CommandLine.Option;
 
 /**
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class RampMeteringDemo extends AbstractSimulationScript
 {
@@ -297,17 +297,18 @@ public class RampMeteringDemo extends AbstractSimulationScript
                 .setOffsetStart(laneWidth.times(1.5).neg()).setOffsetEnd(laneWidth.times(1.5).neg())
                 .leftToRight(0.5, laneWidth, freewayLane, speedLimit).addLanes().getLanes();
         // detectors
+        Time first = Time.instantiateSI(60.0);
         Duration agg = Duration.instantiateSI(60.0);
         // TODO: detector length affects occupancy, which length to use?
         Length detectorLength = Length.ZERO;
         LoopDetector det1 = new LoopDetector("1", lanesAB.get(0), Length.instantiateSI(2900), detectorLength,
-                DefaultsRoadNl.LOOP_DETECTOR, sim, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+                DefaultsRoadNl.LOOP_DETECTOR, sim, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
         LoopDetector det2 = new LoopDetector("2", lanesAB.get(1), Length.instantiateSI(2900), detectorLength,
-                DefaultsRoadNl.LOOP_DETECTOR, sim, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+                DefaultsRoadNl.LOOP_DETECTOR, sim, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
         LoopDetector det3 = new LoopDetector("3", lanesCD.get(0), Length.instantiateSI(100), detectorLength,
-                DefaultsRoadNl.LOOP_DETECTOR, sim, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+                DefaultsRoadNl.LOOP_DETECTOR, sim, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
         LoopDetector det4 = new LoopDetector("4", lanesCD.get(1), Length.instantiateSI(100), detectorLength,
-                DefaultsRoadNl.LOOP_DETECTOR, sim, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+                DefaultsRoadNl.LOOP_DETECTOR, sim, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
         List<LoopDetector> detectors12 = new ArrayList<>();
         detectors12.add(det1);
         detectors12.add(det2);

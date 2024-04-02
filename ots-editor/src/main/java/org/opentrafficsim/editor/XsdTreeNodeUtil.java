@@ -13,15 +13,16 @@ import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
+import org.opentrafficsim.editor.decoration.validation.XsdAllValidator;
 import org.w3c.dom.Node;
 
 /**
  * This class exists to keep {@code XsdTreeNode} at manageable size. It houses all static methods used in {@code XsdTreeNode}.
  * <p>
- * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public final class XsdTreeNodeUtil
 {
@@ -29,12 +30,28 @@ public final class XsdTreeNodeUtil
     /** Pattern for regular expression to split string by upper case without disregarding the upper case itself. */
     private static final Pattern UPPER_PATTERN = Pattern.compile("(?=\\p{Lu})");
 
+    /** Validators for xsd:all nodes and their children. */
+    private final static Map<String, XsdAllValidator> XSD_ALL_VALIDATORS = new LinkedHashMap<>();
+
     /**
      * Private constructor.
      */
     private XsdTreeNodeUtil()
     {
 
+    }
+
+    /**
+     * Add xsd all validator to the given node.
+     * @param shared XsdTreeNode; shared xsd:all node.
+     * @param node XsdTreeNode; xsd:all node, or one of its children.
+     */
+    public static void addXsdAllValidator(final XsdTreeNode shared, final XsdTreeNode node)
+    {
+        String path = shared.getPathString();
+        XsdAllValidator validator = XSD_ALL_VALIDATORS.computeIfAbsent(path, (p) -> new XsdAllValidator(node.getRoot()));
+        node.addNodeValidator(validator);
+        validator.addNode(node);
     }
 
     /**
@@ -73,6 +90,7 @@ public final class XsdTreeNodeUtil
             final ImmutableList<Node> hiddenNodes, final Schema schema, final boolean flattenSequence, final int skip)
     {
         int skipIndex = skip;
+        XsdTreeNode root = parentNode.getRoot();
         for (int childIndex = 0; childIndex < node.getChildNodes().getLength(); childIndex++)
         {
             Node child = node.getChildNodes().item(childIndex);
@@ -110,7 +128,7 @@ public final class XsdTreeNodeUtil
                         element = new XsdTreeNode(parentNode, child, XsdTreeNodeUtil.append(hiddenNodes, node));
                     }
                     children.add(element);
-                    ((XsdTreeNodeRoot) element.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                    root.fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                             new Object[] {element, parentNode, parentNode.children.indexOf(element)});
                     break;
                 case "xsd:sequence":
@@ -129,18 +147,19 @@ public final class XsdTreeNodeUtil
                         // add sequence as option, 'children' is a list of options for a choice
                         XsdTreeNode sequence = new XsdTreeNode(parentNode, child, XsdTreeNodeUtil.append(hiddenNodes, node));
                         children.add(sequence);
-                        ((XsdTreeNodeRoot) sequence.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                        root.fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                                 new Object[] {sequence, parentNode, parentNode.children.indexOf(sequence)});
                     }
                     break;
                 case "xsd:choice":
+                case "xsd:all":
                     if (children.size() == skipIndex)
                     {
                         skipIndex = -1;
                         break;
                     }
                     XsdTreeNode choice = new XsdTreeNode(parentNode, child, XsdTreeNodeUtil.append(hiddenNodes, node));
-                    ((XsdTreeNodeRoot) choice.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                    root.fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                             new Object[] {choice, parentNode, parentNode.children.indexOf(choice)});
                     choice.createOptions();
                     /*
@@ -159,7 +178,7 @@ public final class XsdTreeNodeUtil
                         break;
                     }
                     XsdTreeNode extension = new XsdTreeNode(parentNode, child, XsdTreeNodeUtil.append(hiddenNodes, node));
-                    ((XsdTreeNodeRoot) extension.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                    root.fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                             new Object[] {extension, parentNode, parentNode.children.indexOf(extension)});
                     children.add(extension);
                     break;
@@ -232,8 +251,7 @@ public final class XsdTreeNodeUtil
         {
             fireCreatedEventOnExistingNodes(child, listener);
         }
-        Event event = new Event(XsdTreeNodeRoot.NODE_CREATED,
-                new Object[] {node, node.getParent(), subNodes.indexOf(node)});
+        Event event = new Event(XsdTreeNodeRoot.NODE_CREATED, new Object[] {node, node.getParent(), subNodes.indexOf(node)});
         listener.notify(event);
     }
 

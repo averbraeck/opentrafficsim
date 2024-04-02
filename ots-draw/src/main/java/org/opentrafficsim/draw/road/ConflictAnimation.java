@@ -4,11 +4,11 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
-import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -24,18 +24,21 @@ import nl.tudelft.simulation.naming.context.Contextualized;
 /**
  * Animate a conflict.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ConflictAnimation extends AbstractLineAnimation<ConflictData> implements Serializable
+public class ConflictAnimation extends AbstractLineAnimation<ConflictData>
 {
 
     /** */
     private static final long serialVersionUID = 20161207L;
+
+    /** Drawable paths. */
+    private final Set<Path2D.Float> paths;
 
     /**
      * @param source ConflictData; the conflict to draw
@@ -47,23 +50,25 @@ public class ConflictAnimation extends AbstractLineAnimation<ConflictData> imple
             throws NamingException, RemoteException
     {
         super(source, contextualized, .9, new Length(0.5, LengthUnit.SI));
+        // geometry of area (not the line) is absolute; pre-transform geometry to fit rotation of source
+        this.paths = this.getSource().getContour() == null ? null
+                : PaintPolygons.getPaths(getSource().getLocation(), getSource().getContour());
     }
 
     /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        ConflictData conflict = (ConflictData) this.getSource();
-        Color fillColor = conflict.getColor();
-
+        // paint the bar that represents the line where the conflict starts, like any other AbstractLineAnimation
+        Color fillColor = getSource().getColor();
         graphics.setColor(fillColor);
         super.paint(graphics, observer);
 
+        // paint the additional area with dashed lines
         Stroke oldStroke = graphics.getStroke();
-
         BasicStroke stroke;
-        float factor = conflict.isPermitted() ? .5f : 1f;
-        if (conflict.isCrossing())
+        float factor = getSource().isPermitted() ? .5f : 1f;
+        if (getSource().isCrossing())
         {
             stroke = new BasicStroke(.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1.0f,
                     new float[] {factor * 1.0f, factor * 2.0f}, 0.0f);
@@ -74,33 +79,13 @@ public class ConflictAnimation extends AbstractLineAnimation<ConflictData> imple
                     new float[] {factor * 1.0f, factor * 0.95f, factor * 0.1f, factor * 0.95f}, 0.0f);
         }
         graphics.setStroke(stroke);
-        AffineTransform saveAT = graphics.getTransform();
-        double angle = -getSource().getLocation().getDirZ();
-        if (isRotate() && angle != 0.0)
+        if (this.paths != null)
         {
-            graphics.rotate(-angle);
-        }
-        if (conflict.getContour() != null)
-        {
-            PaintPolygons.paintMultiPolygon(graphics, fillColor, conflict.getLocation(), conflict.getContour(), false);
-
-            /*- This code may be used to visually check conflicts are correctly paired
-            if (conflict.conflictPriority().isPriority())
-            {
-                graphics.setColor(Color.BLACK);
-                DirectedPoint from = conflict.getLocation();
-                DirectedPoint to = conflict.getOtherConflict().getLocation();
-                graphics.setStroke(new BasicStroke(0.1f));
-                Line2D line = new Line2D.Double(0, 0, to.x - from.x, from.y - to.y);
-                graphics.draw(line);
-            }*/
-        }
-        if (isRotate() && angle != 0.0)
-        {
-            graphics.rotate(+angle);
+            setRendering(graphics);
+            PaintPolygons.paintPaths(graphics, fillColor, this.paths, false);
+            resetRendering(graphics);
         }
         graphics.setStroke(oldStroke);
-        graphics.setTransform(saveAT);
     }
 
     /** {@inheritDoc} */
@@ -113,11 +98,11 @@ public class ConflictAnimation extends AbstractLineAnimation<ConflictData> imple
     /**
      * ConflictData provides the information required to draw a conflict.
      * <p>
-     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public interface ConflictData extends LaneBasedObjectData
     {

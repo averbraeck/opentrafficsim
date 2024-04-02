@@ -1,5 +1,6 @@
 package org.opentrafficsim.editor.render;
 
+import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.Icon;
@@ -21,10 +22,10 @@ import org.opentrafficsim.editor.XsdTreeNode;
  * Renderer for cells in the attributes table. Provides a {@code JCheckBox} for boolean-type attributes (those that cannot be
  * specified with an expression).
  * <p>
- * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class AttributeCellRenderer extends JLabel implements TableCellRenderer
 {
@@ -40,6 +41,24 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
 
     /** Checkbox to use for boolean types. */
     private final JCheckBox checkBox = new JCheckBox();
+
+    /** Selection color. */
+    private final Color selectionColor = UIManager.getColor("Table.selectionBackground");
+
+    /** Selection background color. */
+    private final Color tableSelectionBackgroundColor = UIManager.getColor("Table.selectionBackground");
+
+    /** Foreground color. */
+    private final Color tableForgroundColor = UIManager.getColor("Table.foreground");
+
+    /** Background color. */
+    private final Color tableBackroundColor = UIManager.getColor("Table.background");
+
+    /** Panel color. */
+    private final Color panelBackgroundColor = UIManager.getColor("Panel.background");
+
+    /** Line border for editable column. */
+    private final Border lineBorder = new LineBorder(UIManager.getColor("Table.gridColor"));
 
     /**
      * Constructor.
@@ -75,7 +94,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
                     this.checkBox.setToolTipText(null);
                     if (isSelected)
                     {
-                        this.checkBox.setBackground(UIManager.getColor("Table.selectionBackground"));
+                        this.checkBox.setBackground(this.selectionColor);
                     }
                     else if (node.attributeIsExpression(row))
                     {
@@ -83,7 +102,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
                     }
                     else
                     {
-                        this.checkBox.setBackground(UIManager.getColor("Panel.background"));
+                        this.checkBox.setBackground(table.getBackground());
                     }
                 }
                 if (value == null || value.toString().isEmpty())
@@ -135,9 +154,9 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
             setText("");
         }
         setFont(table.getFont());
-        table.setGridColor(UIManager.getColor("Panel.background"));
+        table.setGridColor(table.getBackground());
         setIcon(null);
-        setForeground(showingDefault ? OtsEditor.INACTIVE_COLOR : UIManager.getColor("Table.foreground"));
+        setForeground(showingDefault ? OtsEditor.INACTIVE_COLOR : this.tableForgroundColor);
         if (table.convertColumnIndexToModel(column) == 1)
         {
             String message = node.isSelfValid() ? null : node.reportInvalidAttributeValue(row);
@@ -151,7 +170,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
                 setToolTipText(value == null || value.toString().isEmpty() ? null : value.toString());
                 if (node.isInclude())
                 {
-                    setBackground(UIManager.getColor("Panel.background"));
+                    setBackground(this.panelBackgroundColor);
                 }
                 else if (node.attributeIsExpression(row))
                 {
@@ -159,10 +178,10 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
                 }
                 else
                 {
-                    setBackground(UIManager.getColor("Table.background"));
+                    setBackground(this.tableBackroundColor);
                 }
             }
-            setBorder(new LineBorder(UIManager.getColor("Table.gridColor")));
+            setBorder(this.lineBorder);
         }
         else
         {
@@ -174,11 +193,11 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
             }
             if (isSelected)
             {
-                setBackground(UIManager.getColor("Table.selectionBackground"));
+                setBackground(this.tableSelectionBackgroundColor);
             }
             else
             {
-                setBackground(UIManager.getColor("Panel.background"));
+                setBackground(table.getBackground());
             }
         }
         if (table.convertColumnIndexToModel(column) > 1)

@@ -3,42 +3,44 @@ package org.opentrafficsim.draw.road;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsRenderable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.PaintPolygons;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
-import nl.tudelft.simulation.dsol.animation.d2.Renderable2dInterface;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
  * Draw road stripes.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class StripeAnimation extends Renderable2d<StripeData> implements Renderable2dInterface<StripeData>, Serializable
+public class StripeAnimation extends OtsRenderable<StripeData>
 {
     /** */
     private static final long serialVersionUID = 20141017L;
 
-    /** The points for the outline of the Stripe. */
-    private final List<Point2d> line;
+    /** Drawable paths. */
+    private final Set<Path2D.Float> paths;
 
     /**
      * @param source StripeData; stripe data
@@ -52,12 +54,12 @@ public class StripeAnimation extends Renderable2d<StripeData> implements Rendera
         List<Point2d> list = makePoints(source);
         if (!list.isEmpty())
         {
-            this.line = list;
+            this.paths = PaintPolygons.getPaths(getSource().getLocation(), list);
         }
         else
         {
             // no dash within length
-            this.line = null;
+            this.paths = null;
         }
     }
 
@@ -138,9 +140,12 @@ public class StripeAnimation extends Renderable2d<StripeData> implements Rendera
             case DOUBLE:// ||- Draw two solid lines
             {
                 PolyLine2d centerLine = stripe.getCenterLine();
-                List<Point2d> result = new ArrayList<>(centerLine.size() * 2);
+                List<Point2d> result = new ArrayList<>(centerLine.size() * 4 + 1);
                 centerLine.offsetLine(width / 2).getPoints().forEachRemaining(result::add);
-                centerLine.offsetLine(-width / 2).reverse().getPoints().forEachRemaining(result::add);
+                centerLine.offsetLine(width / 6).reverse().getPoints().forEachRemaining(result::add);
+                result.add(PaintPolygons.NEWPATH);
+                centerLine.offsetLine(-width / 2).getPoints().forEachRemaining(result::add);
+                centerLine.offsetLine(-width / 6).reverse().getPoints().forEachRemaining(result::add);
                 return result;
             }
 
@@ -148,7 +153,9 @@ public class StripeAnimation extends Renderable2d<StripeData> implements Rendera
             {
                 PolyLine2d centerLine = stripe.getCenterLine();
                 List<Point2d> result = makeDashes(centerLine.offsetLine(-width / 3), width / 3, 0.0, new double[] {3, 9});
-                centerLine.offsetLine(width / 3).getPoints().forEachRemaining(result::add);
+                result.add(PaintPolygons.NEWPATH);
+                centerLine.offsetLine(width / 2).getPoints().forEachRemaining(result::add);
+                centerLine.offsetLine(width / 6).reverse().getPoints().forEachRemaining(result::add);
                 return result;
             }
 
@@ -156,13 +163,19 @@ public class StripeAnimation extends Renderable2d<StripeData> implements Rendera
             {
                 PolyLine2d centerLine = stripe.getCenterLine();
                 ArrayList<Point2d> result = makeDashes(centerLine.offsetLine(width / 3), width / 3, 0.0, new double[] {3, 9});
-                centerLine.offsetLine(-width / 3).getPoints().forEachRemaining(result::add);
+                result.add(PaintPolygons.NEWPATH);
+                centerLine.offsetLine(-width / 2).getPoints().forEachRemaining(result::add);
+                centerLine.offsetLine(-width / 6).reverse().getPoints().forEachRemaining(result::add);
                 return result;
             }
 
-            case SOLID:// | - Draw single solid line. This (regretfully) involves copying everything twice...
-                List<Point2d> result = new ArrayList<>(stripe.getContour().size());
-                stripe.getContour().iterator().forEachRemaining(result::add);
+            case SOLID: // | - Draw single solid line
+                PolyLine2d centerLine = stripe.getCenterLine();
+                PolyLine2d leftEdge = centerLine.offsetLine(stripe.getWidth().si / 2.0);
+                PolyLine2d rightEdge = centerLine.offsetLine(-stripe.getWidth().si / 2.0);
+                List<Point2d> list = leftEdge.getPointList();
+                list.addAll(rightEdge.reverse().getPointList());
+                List<Point2d> result = new Polygon2d(list).getPointList();
                 return result;
 
             default:
@@ -175,10 +188,12 @@ public class StripeAnimation extends Renderable2d<StripeData> implements Rendera
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        if (this.line != null)
+        if (this.paths != null)
         {
+            setRendering(graphics);
             graphics.setStroke(new BasicStroke(2.0f));
-            PaintPolygons.paintMultiPolygon(graphics, Color.WHITE, getSource().getLocation(), this.line, true);
+            PaintPolygons.paintPaths(graphics, Color.WHITE, this.paths, true);
+            resetRendering(graphics);
         }
     }
 
@@ -186,29 +201,29 @@ public class StripeAnimation extends Renderable2d<StripeData> implements Rendera
     @Override
     public final String toString()
     {
-        return "StripeAnimation [source = " + getSource().toString() + ", line=" + this.line + "]";
+        return "StripeAnimation [source = " + getSource().toString() + ", paths=" + this.paths + "]";
     }
 
     /**
      * StripeData provides the information required to draw a stripe.
      * <p>
-     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public interface StripeData extends Locatable
+    public interface StripeData extends OtsLocatable
     {
+        /** {@inheritDoc} */
+        @Override
+        OrientedPoint2d getLocation();
+
         /**
          * Returns the center line.
          * @return PolyLine2d; center line.
          */
         PolyLine2d getCenterLine();
-
-        /** {@inheritDoc} */
-        @Override
-        Point2d getLocation();
 
         /**
          * Returns the stripe type.
@@ -222,12 +237,6 @@ public class StripeAnimation extends Renderable2d<StripeData> implements Rendera
          */
         Length getWidth();
 
-        /**
-         * Returns the contour.
-         * @return PolyLine2d; contour.
-         */
-        List<Point2d> getContour();
-
         /** {@inheritDoc} */
         @Override
         default double getZ()
@@ -238,11 +247,11 @@ public class StripeAnimation extends Renderable2d<StripeData> implements Rendera
         /**
          * Stripe type (same fields as org.opentrafficsim.road.network.lane.Stripe.Type).
          * <p>
-         * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
+         * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
          * reserved. <br>
          * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
          * </p>
-         * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+         * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
          */
         public enum Type
         {

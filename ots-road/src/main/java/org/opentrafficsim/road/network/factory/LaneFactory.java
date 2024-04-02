@@ -44,7 +44,7 @@ import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 /**
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
@@ -337,13 +337,13 @@ public final class LaneFactory
             for (Lane lane : this.lanes)
             {
                 if (startOffset == null
-                        || lane.getDesignLineOffsetAtBegin().plus(lane.getBeginWidth().times(0.5)).gt(startOffset))
+                        || lane.getOffsetAtBegin().plus(lane.getBeginWidth().times(0.5)).gt(startOffset))
                 {
-                    startOffset = lane.getDesignLineOffsetAtBegin().plus(lane.getBeginWidth().times(0.5));
+                    startOffset = lane.getOffsetAtBegin().plus(lane.getBeginWidth().times(0.5));
                 }
-                if (endOffset == null || lane.getDesignLineOffsetAtEnd().plus(lane.getEndWidth().times(0.5)).gt(endOffset))
+                if (endOffset == null || lane.getOffsetAtEnd().plus(lane.getEndWidth().times(0.5)).gt(endOffset))
                 {
-                    endOffset = lane.getDesignLineOffsetAtEnd().plus(lane.getEndWidth().times(0.5));
+                    endOffset = lane.getOffsetAtEnd().plus(lane.getEndWidth().times(0.5));
                 }
             }
             Length start = startOffset.plus(width.times(0.5));
@@ -358,13 +358,13 @@ public final class LaneFactory
             for (Lane lane : this.lanes)
             {
                 if (startOffset == null
-                        || lane.getDesignLineOffsetAtBegin().minus(lane.getBeginWidth().times(0.5)).lt(startOffset))
+                        || lane.getOffsetAtBegin().minus(lane.getBeginWidth().times(0.5)).lt(startOffset))
                 {
-                    startOffset = lane.getDesignLineOffsetAtBegin().minus(lane.getBeginWidth().times(0.5));
+                    startOffset = lane.getOffsetAtBegin().minus(lane.getBeginWidth().times(0.5));
                 }
-                if (endOffset == null || lane.getDesignLineOffsetAtEnd().minus(lane.getEndWidth().times(0.5)).lt(endOffset))
+                if (endOffset == null || lane.getOffsetAtEnd().minus(lane.getEndWidth().times(0.5)).lt(endOffset))
                 {
-                    endOffset = lane.getDesignLineOffsetAtEnd().minus(lane.getEndWidth().times(0.5));
+                    endOffset = lane.getOffsetAtEnd().minus(lane.getEndWidth().times(0.5));
                 }
             }
             Length start = startOffset.minus(width.times(0.5));

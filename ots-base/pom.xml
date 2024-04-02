@@ -24,6 +24,14 @@
       <artifactId>djutils-data</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.djutils</groupId>
+      <artifactId>djutils-draw</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>nl.tudelft.simulation</groupId>
+      <artifactId>dsol-animation</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.djunits</groupId>
       <artifactId>djunits</artifactId>
     </dependency>

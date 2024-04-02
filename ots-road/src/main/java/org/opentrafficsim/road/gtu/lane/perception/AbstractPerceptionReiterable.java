@@ -5,8 +5,6 @@ import java.util.NoSuchElementException;
 import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.exceptions.Throw;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -18,12 +16,12 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
  * iterates over the linked list. If an iterator runs to the end of the linked list, the primary iterator is requested to add an
  * element if it has one.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <H> headway type
  * @param <U> underlying object type
  */
@@ -149,7 +147,6 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("synthetic-access")
     @Override
     public final <C, I> C collect(final Supplier<I> identity, final PerceptionAccumulator<? super U, I> accumulator,
             final PerceptionFinalizer<C, I> finalizer)
@@ -196,10 +193,18 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
             }
 
             /** {@inheritDoc} */
-            @SuppressWarnings("synthetic-access")
             @Override
             public U next()
             {
+                // this.next = assureNext(this.next, this.lastReturned);
+                // if (this.next == null)
+                // {
+                // throw new NoSuchElementException();
+                // }
+                // this.lastReturned = this.next;
+                // this.next = this.lastReturned.next;
+                // return this.lastReturned.object;
+
                 this.lastReturned = this.next;
                 this.next = this.lastReturned.next;
                 this.next = assureNext(this.next, this.lastReturned);
@@ -231,7 +236,6 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
             }
 
             /** {@inheritDoc} */
-            @SuppressWarnings("synthetic-access")
             @Override
             public UnderlyingDistance<U> next()
             {
@@ -248,13 +252,13 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
      * same linked list of {@code SecondaryIteratorEntry}. Whenever an iterator runs to the end of this list, the primary
      * iterator is requested to find the next object, if it has a next object.
      * <p>
-     * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public class PerceptionIterator implements Iterator<H>
     {
@@ -266,7 +270,6 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
         private SecondaryIteratorEntry next;
 
         /** Constructor. */
-        @SuppressWarnings("synthetic-access")
         PerceptionIterator()
         {
             this.next = AbstractPerceptionReiterable.this.first;
@@ -281,7 +284,6 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
         }
 
         /** {@inheritDoc} */
-        @SuppressWarnings("synthetic-access")
         @Override
         public H next()
         {
@@ -304,34 +306,40 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
      * @param lastReturned SecondaryIteratorEntry; entry of last returned object or value
      * @return IteratorEntry; next entry
      */
-    @SuppressWarnings("synthetic-access")
     synchronized SecondaryIteratorEntry assureNext(final SecondaryIteratorEntry next, final SecondaryIteratorEntry lastReturned)
     {
-        if (next == null && getPrimaryIterator().hasNext())
+        if (next != null)
+        {
+            return next;
+        }
+        if (lastReturned != null)
+        {
+            if (lastReturned.next == null)
+            {
+                if (getPrimaryIterator().hasNext())
+                {
+                    addNext(getPrimaryIterator().next());
+                }
+            }
+            return lastReturned.next;
+        }
+        if (getPrimaryIterator().hasNext())
         {
             addNext(getPrimaryIterator().next());
-            if (lastReturned == null)
-            {
-                return AbstractPerceptionReiterable.this.first;
-            }
-            else
-            {
-                return lastReturned.next;
-            }
         }
-        return next;
+        return AbstractPerceptionReiterable.this.first;
     }
 
     /**
      * Class for {@code primaryIterator()} to return, implemented in subclasses.
      * <p>
-     * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     protected class PrimaryIteratorEntry implements Comparable<PrimaryIteratorEntry>
     {
@@ -372,13 +380,13 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
     /**
      * Entries that make up a linked list of values for secondary iterators to iterate over.
      * <p>
-     * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private class SecondaryIteratorEntry
     {

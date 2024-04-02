@@ -9,7 +9,7 @@ import java.rmi.RemoteException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
@@ -23,7 +23,7 @@ import org.opentrafficsim.core.network.NetworkException;
 /**
  * Test the StaticObject class.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
@@ -45,8 +45,8 @@ public class StaticObjectTest implements EventListener
     public void staticObjectTest() throws OtsGeometryException, NetworkException
     {
         String id = "id of static object";
-        PolyLine2d geometry =
-                new PolyLine2d(new Point2d[] {new Point2d(0, 0), new Point2d(1, 0), new Point2d(1, 1), new Point2d(0, 1)});
+        Polygon2d geometry =
+                new Polygon2d(new Point2d[] {new Point2d(0, 0), new Point2d(1, 0), new Point2d(1, 1), new Point2d(0, 1)});
         Length height = new Length(1, LengthUnit.METER);
         try
         {
@@ -86,7 +86,7 @@ public class StaticObjectTest implements EventListener
         assertEquals(height, so.getHeight(), "height");
         assertEquals(new OrientedPoint2d(geometry.getBounds().midPoint(), 0.0), so.getLocation(), "location");
         // djutils PolyLine2d returns absolute bounds, StaticObject returns centered around (0, 0)
-        //assertEquals("bounds", geometry.getBounds(), so.getBounds());
+        // assertEquals("bounds", geometry.getBounds(), so.getBounds());
         assertTrue(so.toString().startsWith("StaticObject"), "toString returns something descriptive");
         so.init();
         assertNotNull(this.lastEvent, "adding so to network should have fired an event");

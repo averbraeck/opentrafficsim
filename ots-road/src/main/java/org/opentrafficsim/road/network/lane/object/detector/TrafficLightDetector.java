@@ -9,8 +9,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.draw.bounds.Bounds2d;
-import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
@@ -21,6 +20,8 @@ import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.opentrafficsim.base.geometry.BoundingPolygon;
+import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine2d;
@@ -39,12 +40,12 @@ import org.opentrafficsim.road.network.lane.Lane;
  * by 4 {@code Detector}s to capture GTU longitudinal movement, and by listening to events to capture lane changes, vehicle
  * generation, and vehicle destruction.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class TrafficLightDetector extends LocalEventProducer implements EventListener, Detector
 {
@@ -79,7 +80,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
     private final OrientedPoint2d location;
 
     /** Geometry of the detector. */
-    private final PolyLine2d geometry;
+    private final BoundingPolygon geometry;
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the triggering of the entry of a NonDirectionalOccupancyDetector. <br>
@@ -172,7 +173,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
             {
                 geometryPoints.add(new Point2d(p.x - dx, p.y - dy));
             }
-            this.geometry = new PolyLine2d(geometryPoints);
+            this.geometry = new BoundingPolygon(new Polygon2d(geometryPoints));
         }
         catch (OtsGeometryException exception)
         {
@@ -411,9 +412,9 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
 
     /** {@inheritDoc} */
     @Override
-    public final Bounds2d getBounds()
+    public final OtsBounds2d getBounds()
     {
-        return this.geometry.getBounds();
+        return this.geometry;
     }
 
     /**
@@ -427,9 +428,9 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
 
     /** {@inheritDoc} */
     @Override
-    public PolyLine2d getGeometry()
+    public Polygon2d getGeometry()
     {
-        return this.geometry;
+        return this.geometry.asPolygon();
     }
 
     /** {@inheritDoc} */
@@ -464,13 +465,13 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
     /**
      * Embedded detectors used by a TrafficLightDetector.
      * <p>
-     * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public class StartEndDetector extends LaneDetector
     {

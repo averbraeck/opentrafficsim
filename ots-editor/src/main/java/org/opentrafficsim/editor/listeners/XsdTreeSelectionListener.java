@@ -19,10 +19,10 @@ import de.javagl.treetable.JTreeTable;
 /**
  * Listener for selection events on the tree table.
  * <p>
- * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class XsdTreeSelectionListener implements TreeSelectionListener, EventListener
 {
@@ -69,7 +69,13 @@ public class XsdTreeSelectionListener implements TreeSelectionListener, EventLis
             }
             if (node.isIdentifiable())
             {
-                this.editor.setCoupledNode(node.getCoupledKeyrefNode("Id"), node, null);
+                this.editor.setCoupledNode(node.getCoupledKeyrefNodeAttribute("Id"), node, null);
+                this.listening = node;
+                this.listening.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+            }
+            else if (node.isEditable())
+            {
+                this.editor.setCoupledNode(node.getCoupledKeyrefNodeValue(), node, null);
                 this.listening = node;
                 this.listening.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
             }
@@ -132,7 +138,7 @@ public class XsdTreeSelectionListener implements TreeSelectionListener, EventLis
     {
         if ("Id".equals(((Object[]) event.getContent())[1]))
         {
-            XsdTreeNode coupled = this.listening.getCoupledKeyrefNode(this.listening.getAttributeIndexByName("Id"));
+            XsdTreeNode coupled = this.listening.getCoupledKeyrefNodeAttribute(this.listening.getAttributeIndexByName("Id"));
             this.editor.setCoupledNode(coupled, this.listening, null);
         }
     }

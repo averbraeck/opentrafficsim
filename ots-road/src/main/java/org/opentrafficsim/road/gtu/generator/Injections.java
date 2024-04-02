@@ -65,12 +65,12 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * simply return information from the current row in the injections table. Function 4 and 5 are tracked independently and
  * asynchronous with the rest, as these occur at later times when GTUs are (attempted to be) placed.
  * <p>
- * Copyright (c) 2022-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2022-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class Injections implements Generator<Duration>, Supplier<String>, GeneratorPositions, RoomChecker
 {
@@ -315,7 +315,7 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
                     @Override
                     public int compare(final Lane o1, final Lane o2)
                     {
-                        return o1.getDesignLineOffsetAtBegin().compareTo(o2.getDesignLineOffsetAtBegin());
+                        return o1.getOffsetAtBegin().compareTo(o2.getOffsetAtBegin());
                     }
                 });
                 int laneNumber = 0;

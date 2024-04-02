@@ -65,7 +65,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
 /**
  * Unit tests.
  * <p>
- * Copyright (c) 2020-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2020-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
@@ -506,9 +506,9 @@ public class TransceiverTest
         assertEquals(lane.getClass().getName(), result[1], "class name");
         assertEquals(lane.getLength(), result[2], "length");
         assertEquals(lane.getWidth(0.0), result[3], "width at begin");
-        assertEquals(lane.getDesignLineOffsetAtBegin(), result[4], "design line offset at begin");
+        assertEquals(lane.getOffsetAtBegin(), result[4], "design line offset at begin");
         assertEquals(lane.getWidth(1.0), result[5], "width at end");
-        assertEquals(lane.getDesignLineOffsetAtEnd(), result[6], "design line offset at end");
+        assertEquals(lane.getOffsetAtEnd(), result[6], "design line offset at end");
 
     }
 

@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -20,7 +19,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
@@ -34,9 +32,6 @@ import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
-import org.opentrafficsim.road.network.lane.conflict.LaneCombinationList;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
@@ -51,12 +46,12 @@ import nl.tudelft.simulation.language.DsolException;
 /**
  * Select a OTS-network XML file, load it and run it.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
 {
@@ -141,6 +136,7 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), xmlModel, map);
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(xmlModel.getNetwork().getExtent(), new Dimension(800, 600),
                     simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
+            animationPanel.enableSimulationControlButtons();
             LoadXml loadXml = new LoadXml(xmlModel, animationPanel);
             // TODO: permabilityType (CAR above) can probably not be null, but we will move stripe type to stripe later
             // (now StripeAnimation.TYPE is figured out from permebability)
@@ -187,22 +183,6 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
             {
                 new XmlParser(this.network).setStream(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)))
                         .build();
-                LaneCombinationList ignoreList = new LaneCombinationList();
-                try
-                {
-                    // TODO: These links are Aimsun Barcelona network specific.
-                    ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("928_J5"),
-                            (CrossSectionLink) this.network.getLink("928_J6"));
-                    ignoreList.addLinkCombination((CrossSectionLink) this.network.getLink("925_J1"),
-                            (CrossSectionLink) this.network.getLink("925_J2"));
-                }
-                catch (NullPointerException npe)
-                {
-                    // Ignore exception that is expected to happen when the network is NOT the Barcelona test network
-                }
-                LaneCombinationList permittedList = new LaneCombinationList();
-                ConflictBuilder.buildConflicts(this.network, getSimulator(),
-                        new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)), ignoreList, permittedList);
             }
             catch (NetworkException | OtsGeometryException | JAXBException | URISyntaxException | XmlParserException
                     | SAXException | ParserConfigurationException | GtuException | IOException

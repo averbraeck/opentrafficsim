@@ -13,10 +13,10 @@ import org.opentrafficsim.xml.bindings.types.ExpressionType;
  * {@code marshal(E value)} method, calling {@code marshal(E value, Function stringFunction)} to use a different form of
  * representing the value as a {@code String} and/or to implement value checks.
  * <p>
- * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <T> value type wrapped in ExpressionType
  * @param <E> ExpressionType
  */
@@ -45,6 +45,10 @@ public abstract class ExpressionAdapter<T, E extends ExpressionType<T>> extends 
         }
         return stringFunction.apply(value.getValue());
     }
+    
+    /** {@inheritDoc} */
+    @Override
+    public abstract E unmarshal(String v); // removes throws Exception
 
     /**
      * Checks whether field value is a bracketed expression.

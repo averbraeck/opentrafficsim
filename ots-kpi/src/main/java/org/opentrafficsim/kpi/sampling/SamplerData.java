@@ -2,6 +2,7 @@ package org.opentrafficsim.kpi.sampling;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -43,7 +44,7 @@ import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
  * guaranteed read-only class. Any type can obtain the lane directions and with those the coupled trajectory groups.
  * Trajectories can be added to these trajectory groups. Data can also be added to the trajectories themselves.
  * <p>
- * Copyright (c) 2020-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2020-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/current/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
@@ -154,10 +155,22 @@ public class SamplerData<G extends GtuData> extends Table
             {
                 Class<?> unitClass = Class.forName(
                         "org.djunits.unit." + extendedDataType.getType().getSimpleName().replace("Float", "") + "Unit");
-                return ((Unit<?>) unitClass.getDeclaredField("SI").get(unitClass)).getId();
+                Field field = null;
+                for (Field f : unitClass.getFields())
+                {
+                    if (f.getName().equals("SI"))
+                    {
+                        field = f;
+                        break;
+                    }
+                    else if (f.getName().equals("DEFAULT"))
+                    {
+                        field = f;
+                    }
+                }
+                return field == null ? null : ((Unit<?>) field.get(unitClass)).getId();
             }
-            catch (ClassNotFoundException | IllegalArgumentException | IllegalAccessException | NoSuchFieldException
-                    | SecurityException exception)
+            catch (ClassNotFoundException | IllegalArgumentException | IllegalAccessException | SecurityException exception)
             {
                 return null;
             }
@@ -266,13 +279,13 @@ public class SamplerData<G extends GtuData> extends Table
     /**
      * Iterator over the sampler data. It iterates over lanes, trajectories on a lane, and indices within the trajectory.
      * <p>
-     * Copyright (c) 2022-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2022-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private final class SamplerDataIterator implements Iterator<Row>
     {
@@ -412,13 +425,13 @@ public class SamplerData<G extends GtuData> extends Table
     /**
      * Compression method.
      * <p>
-     * Copyright (c) 2022-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2022-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public enum Compression
     {

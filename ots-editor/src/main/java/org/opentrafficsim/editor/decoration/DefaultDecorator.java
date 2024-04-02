@@ -1,51 +1,39 @@
 package org.opentrafficsim.editor.decoration;
 
-import java.awt.Color;
 import java.io.IOException;
-import java.rmi.RemoteException;
-import java.util.List;
 
 import javax.naming.NamingException;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
-import org.djutils.draw.bounds.Bounds;
-import org.djutils.draw.bounds.Bounds2d;
-import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.point.Point2d;
-import org.djutils.event.EventListenerMap;
-import org.djutils.event.EventProducer;
-import org.opentrafficsim.draw.road.LaneAnimation;
-import org.opentrafficsim.draw.road.LaneAnimation.LaneData;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.decoration.string.AttributesStringFunction;
 import org.opentrafficsim.editor.decoration.string.ChoiceNodeStringFunction;
 import org.opentrafficsim.editor.decoration.string.ClassNameTypeStringFunction;
+import org.opentrafficsim.editor.decoration.string.CorrelationStringFunction;
 import org.opentrafficsim.editor.decoration.string.OdOptionsItemStringFunction;
 import org.opentrafficsim.editor.decoration.string.XiIncludeStringFunction;
 import org.opentrafficsim.editor.decoration.validation.AttributesNotEqualValidator;
-import org.opentrafficsim.editor.decoration.validation.NoDuplicateChildrenValidator;
 import org.opentrafficsim.editor.decoration.validation.ParentValidator;
+import org.opentrafficsim.editor.decoration.validation.RoadLayoutElementValidator;
+import org.opentrafficsim.editor.decoration.validation.RoadLayoutElementValidator.LayoutCoupling;
+import org.opentrafficsim.editor.decoration.validation.TrafficLightValidator;
 import org.opentrafficsim.editor.extensions.DefinitionsSaver;
 import org.opentrafficsim.editor.extensions.OdEditor;
 import org.opentrafficsim.editor.extensions.RoadLayoutEditor;
 import org.opentrafficsim.editor.extensions.RouteEditor;
 import org.opentrafficsim.editor.extensions.TrafCodEditor;
-
-import nl.tudelft.simulation.dsol.swing.animation.d2.VisualizationPanel;
-import nl.tudelft.simulation.naming.context.ContextInterface;
-import nl.tudelft.simulation.naming.context.Contextualized;
-import nl.tudelft.simulation.naming.context.JvmContext;
+import org.opentrafficsim.editor.extensions.map.EditorMap;
 
 /**
  * Decorates the editor with custom icons, tabs, string functions and custom editors.
  * <p>
- * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public final class DefaultDecorator
 {
@@ -90,24 +78,30 @@ public final class DefaultDecorator
         editor.setCustomIcon("Ots.Control", OtsEditor.loadIcon("./OTS_control.png", -1, -1, -1, -1));
         editor.setCustomIcon("Ots.Run", OtsEditor.loadIcon("./Stopwatch.png", 16, 16, -1, -1));
         editor.setCustomIcon("Ots.Animation", OtsEditor.loadIcon("./Play.png", 14, 14, 16, 16));
+        editor.setCustomIcon("Ots.Animation.Connector", OtsEditor.loadIcon("./OTS_connector.png", -1, -1, -1, -1));
         editor.setCustomIcon("Ots.Output", OtsEditor.loadIcon("./Report.png", 14, 14, 16, 16)); // does not exist yet
 
-        editor.addTab("Map", networkIcon, buildMapPane(), "Map editor");
+        editor.addTab("Map", networkIcon, EditorMap.build(editor), "Map editor");
         editor.addTab("Parameters", null, buildParameterPane(), null);
         editor.addTab("Text", null, buildTextPane(), null);
 
         // string functions
         new AttributesStringFunction(editor, "Ots.Network.Link.LaneOverride", "Lane");
         new AttributesStringFunction(editor, ".SpeedLimit", "GtuType", "LegalSpeedLimit");
-        new AttributesStringFunction(editor, "Ots.Demand.Od.Cell", "Origin", "Category", "Destination").setSeparator(" > ");
+        new AttributesStringFunction(editor, "Ots.Demand.Od.Cell", "Origin", "Destination", "Category");
         new AttributesStringFunction(editor, "Ots.Demand.OdOptions.OdOptionsItem.Markov.State", "GtuType", "Parent",
                 "Correlation");
         new AttributesStringFunction(editor, "Ots.Demand.Generator", "Link", "Lane");
+        new AttributesStringFunction(editor, "Ots.Control.FixedTime.SignalGroup.TrafficLight", "Link", "Lane",
+                "TrafficLightId");
+        new AttributesStringFunction(editor, "Ots.Control.FixedTime.Cycle", "SignalGroupId", "Offset", "PreGreen", "Green",
+                "Yellow");
         new AttributesStringFunction(editor, ".LaneBias", "GtuType");
         new OdOptionsItemStringFunction(editor);
         new ClassNameTypeStringFunction(editor);
         new XiIncludeStringFunction(editor);
         new ChoiceNodeStringFunction(editor);
+        new CorrelationStringFunction(editor);
 
         // validators
         new ParentValidator(editor, "Ots.Definitions.GtuTypes.GtuType");
@@ -117,89 +111,38 @@ public final class DefaultDecorator
         new ParentValidator(editor, "Ots.Demand.OdOptions.OdOptionsItem.Markov.State")
                 .setContext("Ots.Demand.OdOptions.OdOptionsItem").setIdAttribute("GtuType");
         new AttributesNotEqualValidator(editor, "Ots.Network.Link", "NodeStart", "NodeEnd");
-        new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.MandatoryIncentives");
-        new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.VoluntaryIncentives");
-        new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.AccelerationIncentives");
+        new AttributesNotEqualValidator(editor, "Ots.Demand.Cell", "Origin", "Destination");
+        // new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.MandatoryIncentives");
+        // new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.VoluntaryIncentives");
+        // new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.AccelerationIncentives");
+        new RoadLayoutElementValidator(editor, "Ots.Network.Link.TrafficLight", LayoutCoupling.PARENT_IS_LINK, "Lane");
+        new RoadLayoutElementValidator(editor, "Ots.Demand.Od.Category.Lane", LayoutCoupling.LINK_ATTRIBUTE, "Lane");
+        new RoadLayoutElementValidator(editor, "Ots.Demand.OdOptions.OdOptionsItem.Lane", LayoutCoupling.LINK_ATTRIBUTE,
+                "Lane");
+        new RoadLayoutElementValidator(editor, "Ots.Demand.Generator", LayoutCoupling.LINK_ATTRIBUTE, "Lane");
+        new RoadLayoutElementValidator(editor, "Ots.Demand.ListGenerator", LayoutCoupling.LINK_ATTRIBUTE, "Lane");
+        new RoadLayoutElementValidator(editor, "Ots.Demand.Sink", LayoutCoupling.LINK_ATTRIBUTE, "Lane");
+        new RoadLayoutElementValidator(editor, "Ots.Animation.RoadLayout.Lane", LayoutCoupling.LAYOUT_BY_PARENT_ID, "Id");
+        new RoadLayoutElementValidator(editor, "Ots.Animation.RoadLayout.Stripe", LayoutCoupling.LAYOUT_BY_PARENT_ID, "Id");
+        new RoadLayoutElementValidator(editor, "Ots.Animation.RoadLayout.Shoulder", LayoutCoupling.LAYOUT_BY_PARENT_ID, "Id");
+        new RoadLayoutElementValidator(editor, "Ots.Animation.RoadLayout.NoTrafficLane", LayoutCoupling.LAYOUT_BY_PARENT_ID,
+                "Id");
+        new RoadLayoutElementValidator(editor, "Ots.Animation.Link.Lane", LayoutCoupling.LINK_BY_PARENT_ID, "Id");
+        new RoadLayoutElementValidator(editor, "Ots.Animation.Link.Stripe", LayoutCoupling.LINK_BY_PARENT_ID, "Id");
+        new RoadLayoutElementValidator(editor, "Ots.Animation.Link.Shoulder", LayoutCoupling.LINK_BY_PARENT_ID, "Id");
+        new RoadLayoutElementValidator(editor, "Ots.Animation.Link.NoTrafficLane", LayoutCoupling.LINK_BY_PARENT_ID, "Id");
+        new TrafficLightValidator(editor, ".SignalGroup.TrafficLight");
 
         new AutomaticLinkId(editor);
         new AutomaticConnectorId(editor);
         new DefinitionsSaver(editor);
+        new LayoutCustomizer(editor);
 
         // new NodeCreatedRemovedPrinter(editor);
         new RoadLayoutEditor(editor);
         new OdEditor(editor);
         new RouteEditor(editor);
         new TrafCodEditor(editor);
-    }
-
-    /**
-     * Temporary stub to create map pane.
-     * @return JComponent; component.
-     * @throws RemoteException on error when remote panel and producer cannot connect
-     * @throws NamingException when registering objects does not work
-     */
-    private static JComponent buildMapPane() throws RemoteException, NamingException
-    {
-        Contextualized contextualized = new Contextualized()
-        {
-            /** {@inheritDoc} */
-            @Override
-            public ContextInterface getContext()
-            {
-                return new JvmContext("Ots");
-            }
-        };
-        VisualizationPanel panel = new VisualizationPanel(new Bounds2d(500, 500), new EventProducer()
-        {
-            /** */
-            private static final long serialVersionUID = 20231001L;
-
-            /** {@inheritDoc} */
-            @Override
-            public EventListenerMap getEventListenerMap() throws RemoteException
-            {
-                return new EventListenerMap();
-            }
-        }, contextualized.getContext());
-        panel.setBackground(Color.GRAY);
-        panel.objectAdded(new LaneAnimation(new LaneData()
-        {
-            /** {@inheritDoc} */
-            @Override
-            public String getId()
-            {
-                return "MyLane";
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public Bounds<?, ?, ?> getBounds() throws RemoteException
-            {
-                return new Bounds2d(-50, 50, -50, 50);
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public Point2d getLocation()
-            {
-                return new Point2d(0.0, 0.0);
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public List<Point2d> getContour()
-            {
-                return List.of(new Point2d(-50, -47.5), new Point2d(47.5, 50), new Point2d(50, 47.5), new Point2d(-47.5, -50));
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public PolyLine2d getCenterLine()
-            {
-                return new PolyLine2d(List.of(new Point2d(-50, -50), new Point2d(50, 50)));
-            }
-        }, contextualized, Color.DARK_GRAY.brighter()));
-        return panel;
     }
 
     /**
@@ -229,13 +172,13 @@ public final class DefaultDecorator
     /**
      * Prints nodes that are created or removed.
      * <p>
-     * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
-     * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    // Leave this class for debugging. It can be added by a line above that is commented out.
+    @SuppressWarnings("unused") // Leave this class for debugging. It can be added by a line above that is commented out.
     private static class NodeCreatedRemovedPrinter extends AbstractNodeDecoratorRemove
     {
         /** */
@@ -244,9 +187,8 @@ public final class DefaultDecorator
         /**
          * Constructor.
          * @param editor OtsEditor; editor.
-         * @throws RemoteException if an exception occurs while adding as a listener.
          */
-        public NodeCreatedRemovedPrinter(final OtsEditor editor) throws RemoteException
+        public NodeCreatedRemovedPrinter(final OtsEditor editor)
         {
             super(editor);
         }

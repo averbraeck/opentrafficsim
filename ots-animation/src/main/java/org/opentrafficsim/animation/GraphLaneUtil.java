@@ -28,12 +28,12 @@ import org.opentrafficsim.road.network.sampling.LaneDataRoad;
 /**
  * Utilities to create {@code GraphPath}s and {@code GraphCrossSection}s for graphs, based on lanes.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public final class GraphLaneUtil
 {
@@ -245,7 +245,7 @@ public final class GraphLaneUtil
             @Override
             public int compare(final Lane o1, final Lane o2)
             {
-                return o1.getDesignLineOffsetAtBegin().compareTo(o2.getDesignLineOffsetAtEnd());
+                return o1.getOffsetAtBegin().compareTo(o2.getOffsetAtEnd());
             }
 
         });

@@ -8,7 +8,6 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djutils.base.Identifiable;
-import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
@@ -16,16 +15,17 @@ import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableHashSet;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.base.HierarchicallyTyped;
+import org.opentrafficsim.base.geometry.BoundingCircle;
+import org.opentrafficsim.base.geometry.OtsBounds2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.core.SpatialObject;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.gtu.GtuType;
 
-import nl.tudelft.simulation.dsol.animation.Locatable;
-
 /**
  * The Node is a point with an id. It is used in the network to connect Links.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$, initial version Aug 19, 2014 <br>
@@ -33,7 +33,8 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class Node implements HierarchicallyTyped<NodeType, Node>, SpatialObject, Locatable, Serializable, Identifiable, Drawable
+public class Node
+        implements HierarchicallyTyped<NodeType, Node>, SpatialObject, OtsLocatable, Serializable, Identifiable, Drawable
 {
     /** */
     private static final long serialVersionUID = 20150722L;
@@ -403,9 +404,9 @@ public class Node implements HierarchicallyTyped<NodeType, Node>, SpatialObject,
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Bounds2d getBounds()
+    public OtsBounds2d getBounds()
     {
-        return new Bounds2d(0.0, 0.0, 0.0, 0.0);
+        return new BoundingCircle(1.0);
     }
 
     /** {@inheritDoc} */

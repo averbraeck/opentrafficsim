@@ -15,6 +15,7 @@ import javax.naming.NamingException;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.geometry.OtsRenderable;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
@@ -22,17 +23,15 @@ import org.opentrafficsim.road.gtu.lane.perception.RollingLaneStructure;
 import org.opentrafficsim.road.gtu.lane.perception.RollingLaneStructureRecord;
 import org.opentrafficsim.road.gtu.lane.perception.RollingLaneStructureRecord.RecordLink;
 
-import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
-
 /**
  * LaneStructureAnimation.java.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class LaneStructureAnimation extends Renderable2d<LaneStructureLocatable>
+public class LaneStructureAnimation extends OtsRenderable<LaneStructureLocatable>
 {
     /** Destroyed. */
     private boolean isDestroyed = false;
@@ -55,6 +54,7 @@ public class LaneStructureAnimation extends Renderable2d<LaneStructureLocatable>
     {
         if (!this.isDestroyed)
         {
+            setRendering(graphics);
             if (getSource().getGtu().isDestroyed())
             {
                 this.isDestroyed = true;
@@ -70,6 +70,7 @@ public class LaneStructureAnimation extends Renderable2d<LaneStructureLocatable>
                     paintRecord(rt, graphics);
                 }
             }
+            resetRendering(graphics);
         }
     }
 

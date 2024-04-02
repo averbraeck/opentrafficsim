@@ -74,12 +74,12 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 /**
  * This utility creates GTU generators from an OD matrix.
  * <p>
- * Copyright (c) 2013-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public final class OdParser
 {
@@ -564,7 +564,7 @@ public final class OdParser
                 for (Model model : option.getModel())
                 {
                     GtuType gtuType = definitions.get(GtuType.class, model.getGtuType().get(eval));
-                    Throw.when(!factories.containsKey(model.getId()), XmlParserException.class,
+                    Throw.when(!factories.containsKey(model.getId().get(eval)), XmlParserException.class,
                             "OD option Model refers to a non existent-model with ID %s.", model.getId());
                     gtuTypeFactoryMap.put(gtuType, factories.get(getModelId(model, modelIdReferrals, eval)));
                 }

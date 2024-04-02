@@ -12,7 +12,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -21,13 +23,17 @@ import java.util.stream.Collectors;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djutils.event.Event;
+import org.djutils.event.EventListener;
+import org.djutils.event.EventListenerMap;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
+import org.djutils.event.reference.Reference;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.opentrafficsim.editor.decoration.validation.CoupledValidator;
 import org.opentrafficsim.editor.decoration.validation.KeyValidator;
 import org.opentrafficsim.editor.decoration.validation.ValueValidator;
 import org.w3c.dom.Document;
@@ -42,15 +48,16 @@ import org.xml.sax.SAXException;
  * tree. From this information it can be derived what the child nodes should be, and which attributes are contained.<br>
  * <br>
  * This class is mostly straightforward in the sense that there are direct parent-child relations, and that changing an option
- * replaces a node. When an xsd:sequence is part of an xsd:choice, things become complex as the xsd:sequence is a single option.
- * Therefore the xsd:sequence becomes a node visible in the tree, when it's an option under a choice. Furthermore, for each
- * xsd:choice node an {@code XsdTreeNode} is created that is not visible in the tree. It stores all options
- * {@code XsdTreeNode}'s and knows what option is selected. Only one options is ever in the list of children of the parent node.
+ * replaces a node. When an xsd:sequence is part of an xsd:choice or xsd:all, things become complex as the xsd:sequence is a
+ * single option. Therefore the xsd:sequence becomes a node visible in the tree, when it's an option under a choice.
+ * Furthermore, for each xsd:choice or xsd:all node an {@code XsdTreeNode} is created that is not visible in the tree. It stores
+ * all options {@code XsdTreeNode}'s and knows what option is selected. Only one options is ever in the list of children of the
+ * parent node.
  * <p>
- * Copyright (c) 2023-2023 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://dittlab.tudelft.nl">Wouter Schakel</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class XsdTreeNode extends LocalEventProducer implements Serializable
 {
@@ -74,7 +81,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /** Event when an option is changed. */
     public static final EventType OPTION_CHANGED = new EventType("OPTIONCHANGED",
             new MetaData("Option changed", "Option changed on node",
-                    new ObjectDescriptor("Node", "Newly selected option node", XsdTreeNode.class),
+                    new ObjectDescriptor("Node", "Node on which the event is called", XsdTreeNode.class),
+                    new ObjectDescriptor("Selected", "Newly selected option node", XsdTreeNode.class),
                     new ObjectDescriptor("Previous", "Previously selected option node", XsdTreeNode.class)));
 
     /** Event when an option is changed. */
@@ -197,17 +205,40 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /** Validators for the node itself, e.g. duplicate in parent check. */
     private Set<Function<XsdTreeNode, String>> nodeValidators = new LinkedHashSet<>();
 
-    /** Validators for the value, sorted so KeyValidators are first and couple to keys even for otherwise invalid nodes. */
-    private SortedSet<ValueValidator> valueValidators = new TreeSet<>();
+    /** Validators for the value, sorted so CoupledValidators are first and couple to keys even for otherwise invalid nodes. */
+    private SortedMap<ValueValidator, Object> valueValidators = new TreeMap<>();
 
-    /** Validators for each attribute, sorted so KeyValidators are first and couple to keys even for otherwise invalid nodes. */
+    /**
+     * Validators for each attribute, sorted so CoupledValidators are first and couple to keys even for otherwise invalid nodes.
+     */
     private Map<String, SortedSet<ValueValidator>> attributeValidators = new LinkedHashMap<>();
+
+    /** Field objects for each value validator and the attribute it validates. */
+    private Map<String, Map<ValueValidator, Object>> attributeValidatorFields = new LinkedHashMap<>();
 
     /** Stored valid status, excluding children. {@code null} means unknown and that it needs to be derived. */
     private Boolean isSelfValid = null;
 
     /** Stored valid status, including children. {@code null} means unknown and that it needs to be derived. */
     private Boolean isValid = null;
+
+    /** Stored value valid status. {@code null} means unknown and that it needs to be derived. */
+    private Boolean valueValid = null;
+
+    /** Value invalid message. */
+    private String valueInvalidMessage = null;
+
+    /** Stored node valid status. {@code null} means unknown and that it needs to be derived. */
+    private Boolean nodeValid = null;
+
+    /** Node invalid message (applies only to node itself, e.g. no duplicate nodes in parent). */
+    private String nodeInvalidMessage = null;
+
+    /** Stored attribute valid status. {@code null} means unknown and that it needs to be derived. */
+    private List<Boolean> attributeValid;
+
+    /** Attribute invalid message. */
+    private List<String> attributeInvalidMessage;
 
     /**
      * Constructor for root node, based on an {@code XsdSchema}. Note: {@code XsdTreeNodeRoot} should be used for the root. The
@@ -240,10 +271,11 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
-     * Constructor with referring node for extended types. If the node is xsd:choice, this node will represent the choice. All
-     * options are then created as separate {@code XsdTreeNode}'s by this constructor. For each option that is an xsd:sequence,
-     * this constructor will also create the nodes in that sequence, as those nodes function on the child-level of this node.
-     * They are coupled to this choice by their {@code parentChoice}, allowing them to delete and add on this level.<br>
+     * Constructor with referring node for extended types. If the node is xsd:choice or xsd:all, this node will represent the
+     * choice. All options are then created as separate {@code XsdTreeNode}'s by this constructor. For each option that is an
+     * xsd:sequence, this constructor will also create the nodes in that sequence, as those nodes function on the child-level of
+     * this node. They are coupled to this choice by their {@code parentChoice}, allowing them to delete and add on this
+     * level.<br>
      * <br>
      * The hidden nodes are all elements between the parent element and this element. For example {xsd:complexType, xsd:choice}
      * between the following child element and its containing object:
@@ -316,10 +348,25 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 : (this.referringXsdNode == null ? this.xsdNode : this.referringXsdNode);
         this.minOccurs = XsdTreeNodeUtil.getOccurs(node, "minOccurs");
         this.maxOccurs = XsdTreeNodeUtil.getOccurs(node, "maxOccurs");
+        if (getNodeName().equals("xsd:all"))
+        {
+            NodeList children = this.xsdNode.getChildNodes();
+            int childCount = 0;
+            for (int i = 0; i < children.getLength(); i++)
+            {
+                Node child = children.item(i);
+                if (!child.getNodeName().equals("#text"))
+                {
+                    childCount++;
+                }
+            }
+            this.maxOccurs *= childCount;
+        }
         for (int index = this.hiddenNodes.size() - 1; index >= 0; index--)
         {
             Node hiddenNode = this.hiddenNodes.get(index);
-            if (hiddenNode.getNodeName().equals("xsd:sequence") || hiddenNode.getNodeName().equals("xsd:choice"))
+            if (hiddenNode.getNodeName().equals("xsd:sequence") || hiddenNode.getNodeName().equals("xsd:choice")
+                    || hiddenNode.getNodeName().equals("xsd:all"))
             {
                 this.minOccurs *= XsdTreeNodeUtil.getOccurs(hiddenNode, "minOccurs");
                 int max = XsdTreeNodeUtil.getOccurs(hiddenNode, "maxOccurs");
@@ -343,7 +390,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         for (int i = 1; i < path.size(); i++)
         {
             String nodeString = ((XsdTreeNode) path.get(i)).getNodeName();
-            if ((!nodeString.equals("xsd:sequence") && !nodeString.equals("xi:include")) || i == path.size() - 1)
+            if ((!nodeString.equals("xsd:choice") && !nodeString.equals("xsd:all") && !nodeString.equals("xsd:sequence")
+                    && !nodeString.equals("xi:include")) || i == path.size() - 1)
             {
                 pathStr.append(".").append(nodeString);
             }
@@ -360,6 +408,15 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         List<XsdTreeNode> path = this.parent != null ? this.parent.getPath() : new ArrayList<>();
         path.add(this);
         return path;
+    }
+
+    /**
+     * Returns the root node.
+     * @return XsdTreeNodeRoot; root node.
+     */
+    public XsdTreeNodeRoot getRoot()
+    {
+        return this.parent.getRoot();
     }
 
     /**
@@ -432,7 +489,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         int index = removeAnyFromParent();
         this.parent.children.add(index, node);
         node.invalidate();
-        node.fireEvent(XsdTreeNodeRoot.OPTION_CHANGED, new Object[] {node, previous});
+        this.choice.options.forEach((n) -> n.fireEvent(XsdTreeNodeRoot.OPTION_CHANGED, new Object[] {n, node, previous}));
     }
 
     /**
@@ -489,12 +546,12 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
-     * Creates the option nodes as part of an xsd:choice node.
+     * Creates the option nodes as part of an xsd:choice or xsd:all node.
      */
     void createOptions()
     {
-        Throw.when(!this.xsdNode.getNodeName().equals("xsd:choice"), IllegalStateException.class,
-                "Can only add options for a node of type xsd:choice.");
+        Throw.when(!this.xsdNode.getNodeName().equals("xsd:choice") && !this.xsdNode.getNodeName().equals("xsd:all"),
+                IllegalStateException.class, "Can only add options for a node of type xsd:choice or xsd:all.");
         this.options = new ArrayList<>();
         XsdTreeNodeUtil.addChildren(this.xsdNode, this.parent, this.options, this.hiddenNodes, this.schema, false, -1);
         this.choice = this;
@@ -507,6 +564,14 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 option.setActive();
             }
             option.choice = this;
+        }
+        if (this.choice.xsdNode.getNodeName().equals("xsd:all"))
+        {
+            XsdTreeNodeUtil.addXsdAllValidator(this.choice, this.choice);
+            for (XsdTreeNode option : this.options)
+            {
+                XsdTreeNodeUtil.addXsdAllValidator(this.choice, option);
+            }
         }
     }
 
@@ -535,6 +600,37 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     {
         assureChildren();
         return this.children.get(index);
+    }
+
+    /**
+     * Returns the first child with given name. The node may be within a series of xsd:sequence and xsd:choice/xsd:all
+     * intermediate nodes.
+     * @param name String; child name.
+     * @return XsdTreeNode; child.
+     */
+    public XsdTreeNode getFirstChild(final String name)
+    {
+        assureChildren();
+        for (XsdTreeNode child : this.children)
+        {
+            if (child.getNodeName().equals("xsd:sequence") || child.getNodeName().equals("xsd:choice")
+                    || child.getNodeName().equals("xsd:all"))
+            {
+                try
+                {
+                    return child.getFirstChild(name);
+                }
+                catch (NoSuchElementException ex)
+                {
+                    // continue search at other children
+                }
+            }
+            if (child.getNodeName().equals(name))
+            {
+                return child;
+            }
+        }
+        throw new NoSuchElementException("Node does not have a child named " + name);
     }
 
     /**
@@ -570,14 +666,14 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             File file = new File(this.attributeValues.get(0));
             if (!file.isAbsolute())
             {
-                file = new File(((XsdTreeNodeRoot) getPath().get(0)).getDirectory() + this.attributeValues.get(0));
+                file = new File(getRoot().getDirectory() + this.attributeValues.get(0));
             }
             if (!file.exists() && this.attributeValues.get(1) != null)
             {
                 file = new File(this.attributeValues.get(1));
                 if (!file.isAbsolute())
                 {
-                    file = new File(((XsdTreeNodeRoot) getPath().get(0)).getDirectory() + this.attributeValues.get(1));
+                    file = new File(getRoot().getDirectory() + this.attributeValues.get(1));
                 }
             }
             if (file.exists())
@@ -601,7 +697,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                                 new XsdTreeNode(this, sibling.xsdNode, sibling.hiddenNodes, sibling.referringXsdNode);
                         child.isInclude = true;
                         this.children.add(child);
-                        ((XsdTreeNodeRoot) child.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                        getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                                 new Object[] {child, child.parent, child.parent.children.indexOf(child)});
                         child.loadXmlNodes(xsdIncludeNode);
                         return;
@@ -665,6 +761,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         this.attributeNodes = new ArrayList<>();
         this.attributeValues = new ArrayList<>();
+        this.attributeValid = new ArrayList<>();
+        this.attributeInvalidMessage = new ArrayList<>();
         if (this.referringXsdNode != null)
         {
             this.description = DocumentReader.getAnnotation(this.referringXsdNode, "xsd:documentation", "description");
@@ -703,6 +801,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             {
                 this.attributeNodes.add(child);
                 this.attributeValues.add(null);
+                this.attributeValid.add(null);
+                this.attributeInvalidMessage.add(null);
             }
             if (child.getNodeName().equals("xsd:complexContent") || child.getNodeName().equals("xsd:simpleContent"))
             {
@@ -780,7 +880,12 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         String previous = this.attributeValues.get(index);
         if (!XsdTreeNodeUtil.valuesAreEqual(previous, value))
         {
-            this.attributeValues.set(index, (value == null || value.isEmpty()) ? null : value);
+            boolean isDefaultBoolean = false;
+            if ("xsd:boolean".equals(DocumentReader.getAttribute(this.attributeNodes.get(index), "type")))
+            {
+                isDefaultBoolean = getDefaultAttributeValue(index).equals(value);
+            }
+            this.attributeValues.set(index, (value == null || value.isEmpty() || isDefaultBoolean) ? null : value);
             if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
             {
                 removeChildren();
@@ -836,13 +941,14 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public int getAttributeIndexByName(final String attribute)
     {
+        assureAttributesAndDescription();
         if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
         {
             // this is a bit dirty, at loading attribute 'href' and later attribute 'File' are mapped to 0
             // attribute 'Fallback' is explicitly set from child nodes (that are otherwise skipped) during loading
             return "Fallback".equals(attribute) ? 1 : 0;
         }
-        for (int index = 0; index < this.attributeCount(); index++)
+        for (int index = 0; index < this.attributeNodes.size(); index++)
         {
             Node attr = this.attributeNodes.get(index);
             if (DocumentReader.getAttribute(attr, "name").equals(attribute))
@@ -862,6 +968,25 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     {
         String name = DocumentReader.getAttribute(this.attributeNodes.get(index), "name");
         return name;
+    }
+
+    /**
+     * Returns whether this node has an attribute with given name.
+     * @param attribute String; attribute name.
+     * @return boolean; whether this node has an attribute with given name.
+     */
+    public boolean hasAttribute(final String attribute)
+    {
+        assureAttributesAndDescription();
+        for (int index = 0; index < this.attributeNodes.size(); index++)
+        {
+            Node attr = this.attributeNodes.get(index);
+            if (DocumentReader.getAttribute(attr, "name").equals(attribute))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     // ====== Methods to expose to the GUI ======
@@ -889,8 +1014,16 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         if (!this.active)
         {
             this.active = true;
-            if (this.deactivated && !this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
+            if (this.deactivated)
             {
+                if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE) || this.isInclude)
+                {
+                    // included children
+                    for (XsdTreeNode child : this.children)
+                    {
+                        child.setActive();
+                    }
+                }
                 invalidate();
                 fireEvent(new Event(XsdTreeNodeRoot.ACTIVATION_CHANGED, new Object[] {this, true}));
                 return; // deactivated from an active state in the past; all parts below are already in place
@@ -929,6 +1062,14 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             invalidate();
             this.parent.invalidate();
             fireEvent(new Event(XsdTreeNode.ACTIVATION_CHANGED, new Object[] {this, false}));
+            // included children
+            if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE) || this.isInclude)
+            {
+                for (XsdTreeNode child : this.children)
+                {
+                    child.setInactive();
+                }
+            }
         }
     }
 
@@ -1108,8 +1249,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             int index = this.parent.children.indexOf(this) + 1;
             XsdTreeNode node = new XsdTreeNode(this.choice.parent, this.choice.xsdNode, this.choice.hiddenNodes,
                     this.choice.referringXsdNode);
-            ((XsdTreeNodeRoot) node.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
-                    new Object[] {node, node.parent, node.parent.children.indexOf(node)});
+            getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                    new Object[] {node, node.parent, node.parent.children.indexOf(this) + 1});
             node.createOptions();
             int indexSelected = this.choice.options.indexOf(this.choice.selected);
             XsdTreeNode selectedOption = node.options.get(indexSelected);
@@ -1125,7 +1266,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             XsdTreeNode node = new XsdTreeNode(this.parent, this.xsdNode, this.hiddenNodes, this.referringXsdNode);
             this.parent.children.add(index, node);
             node.active = true;
-            ((XsdTreeNodeRoot) node.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+            getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                     new Object[] {node, node.parent, node.parent.children.indexOf(node)});
             return node;
         }
@@ -1145,14 +1286,16 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * @param newParent XsdTreeNode; parent node.
      * @return XsdTreeNode; newly created node.
      */
-    private XsdTreeNode duplicate(final XsdTreeNode newParent)
+    public XsdTreeNode duplicate(final XsdTreeNode newParent)
     {
         // empty copy
         XsdTreeNode copyNode = emptyCopy(newParent);
         copyNode.active = this.active;
         copyInto(copyNode);
-        ((XsdTreeNodeRoot) copyNode.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+        copyNode.invalidate();
+        getRoot().fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                 new Object[] {copyNode, newParent, newParent.children.indexOf(copyNode)});
+        invalidate(); // due to e.g. duplicate ID, this node may also become invalid
         return copyNode;
     }
 
@@ -1197,17 +1340,6 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         {
             return;
         }
-        if (copyNode.children != null)
-        {
-            for (XsdTreeNode child : copyNode.getChildren())
-            {
-                int index = copyNode.children.indexOf(child);
-                copyNode.children.remove(index);
-                child.parent = null;
-                ((XsdTreeNodeRoot) copyNode.getPath().get(0)).fireEvent(XsdTreeNodeRoot.NODE_REMOVED,
-                        new Object[] {child, copyNode, index});
-            }
-        }
         copyNode.value = this.value;
         // copy choice
         if (this.choice != null)
@@ -1222,9 +1354,17 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                     this.schema, false, selectedIndex);
             choiceNode.options.add(selectedIndex, copyNode);
             choiceNode.selected = choiceNode.options.get(selectedIndex);
+            if (this.choice.getNodeName().equals("xsd:all"))
+            {
+                XsdTreeNodeUtil.addXsdAllValidator(this.choice, this);
+            }
             for (int index = 0; index < choiceNode.options.size(); index++)
             {
                 XsdTreeNode option = choiceNode.options.get(index);
+                if (this.choice.getNodeName().equals("xsd:all"))
+                {
+                    XsdTreeNodeUtil.addXsdAllValidator(this.choice, option);
+                }
                 option.minOccurs = choiceNode.minOccurs;
                 option.maxOccurs = choiceNode.maxOccurs;
                 if (choiceNode.minOccurs > 0)
@@ -1242,6 +1382,16 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             copyNode.attributeValues.set(index, this.attributeValues.get(index));
         }
         // copy children, recursive
+        if (copyNode.children != null)
+        {
+            for (XsdTreeNode child : copyNode.getChildren())
+            {
+                int index = copyNode.children.indexOf(child);
+                copyNode.children.remove(index);
+                child.parent = null;
+                getRoot().fireEvent(XsdTreeNodeRoot.NODE_REMOVED, new Object[] {child, copyNode, index});
+            }
+        }
         if (this.children != null)
         {
             for (int index = 0; index < this.children.size(); index++)
@@ -1287,9 +1437,12 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         {
             numberOfTypeOrChoiceInParent = siblingPositions().size();
         }
-        if (this.minOccurs == 0 && numberOfTypeOrChoiceInParent == 1 && !this.isInclude && this.active)
+        if (this.minOccurs == 0 && numberOfTypeOrChoiceInParent == 1 && !this.isInclude)
         {
-            setInactive();
+            if (this.active)
+            {
+                setInactive();
+            }
             return;
         }
         if (this.choice != null && this.choice.selected.equals(this))
@@ -1306,7 +1459,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         XsdTreeNode parent = this.parent;
         int index = this.parent.children.indexOf(this);
         this.parent.children.remove(this);
-        XsdTreeNodeRoot root = (XsdTreeNodeRoot) getPath().get(0); // can't get path later as we set parent to null
+        XsdTreeNodeRoot root = getRoot(); // can't get it later as we set parent to null
         this.parent = null;
         parent.children.forEach((c) -> c.invalidate());
         parent.invalidate();
@@ -1423,9 +1576,9 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
-     * Returns the path string of this element, e.g. "OTS.Definitions.RoadLayouts". This is used to identify each unique type of
+     * Returns the path string of this element, e.g. "Ots.Definitions.RoadLayouts". This is used to identify each unique type of
      * element.
-     * @return String; path string of this element, e.g. "OTS.Definitions.RoadLayouts".
+     * @return String; path string of this element, e.g. "Ots.Definitions.RoadLayouts".
      */
     public String getPathString()
     {
@@ -1517,6 +1670,13 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         {
             this.parent.invalidate();
         }
+        this.valueValid = null;
+        this.valueInvalidMessage = null;
+        this.nodeValid = null;
+        this.nodeInvalidMessage = null;
+        assureAttributesAndDescription();
+        Collections.fill(this.attributeValid, null);
+        Collections.fill(this.attributeInvalidMessage, null);
     }
 
     /**
@@ -1616,10 +1776,11 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * Adds a validator for the value.
      * @param validator ValueValidator; validator.
+     * @param field Object; field.
      */
-    public void addValueValidator(final ValueValidator validator)
+    public void addValueValidator(final ValueValidator validator, final Object field)
     {
-        this.valueValidators.add(validator);
+        this.valueValidators.put(validator, field);
     }
 
     /**
@@ -1629,7 +1790,20 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public void addAttributeValidator(final String attribute, final ValueValidator validator)
     {
+        addAttributeValidator(attribute, validator, null);
+    }
+
+    /**
+     * Adds a validator for the value of an attribute. The field object is any object that is returned to the validator in its
+     * {@code getOptions()} method, such that it can know for which field option values should be given.
+     * @param attribute String; attribute name.
+     * @param validator ValueValidator; validator.
+     * @param field Object; field.
+     */
+    public void addAttributeValidator(final String attribute, final ValueValidator validator, final Object field)
+    {
         this.attributeValidators.computeIfAbsent(attribute, (key) -> new TreeSet<>()).add(validator);
+        this.attributeValidatorFields.computeIfAbsent(attribute, (key) -> new LinkedHashMap<>()).put(validator, field);
     }
 
     /**
@@ -1653,15 +1827,21 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public String reportInvalidNode()
     {
-        for (Function<XsdTreeNode, String> validator : this.nodeValidators)
+        if (this.nodeValid == null)
         {
-            String message = validator.apply(this);
-            if (message != null)
+            for (Function<XsdTreeNode, String> validator : this.nodeValidators)
             {
-                return message;
+                String message = validator.apply(this);
+                if (message != null)
+                {
+                    this.nodeInvalidMessage = message;
+                    this.nodeValid = false;
+                    return message;
+                }
             }
+            this.nodeValid = true;
         }
-        return null;
+        return this.nodeInvalidMessage;
     }
 
     /**
@@ -1670,22 +1850,31 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public String reportInvalidValue()
     {
-        if (!isEditable() || !isActive())
+        if (this.valueValid == null)
         {
-            return null;
-        }
-        if (this.value != null && !this.value.isEmpty())
-        {
-            for (ValueValidator validator : this.valueValidators)
+            if (!isEditable() || !isActive())
             {
-                String message = validator.validate(this);
-                if (message != null)
+                this.valueInvalidMessage = null;
+                this.valueValid = true;
+                return null;
+            }
+            if (this.value != null && !this.value.isEmpty())
+            {
+                for (ValueValidator validator : this.valueValidators.keySet())
                 {
-                    return message;
+                    String message = validator.validate(this);
+                    if (message != null)
+                    {
+                        this.valueInvalidMessage = message;
+                        this.valueValid = false;
+                        return message;
+                    }
                 }
             }
+            this.valueInvalidMessage = ValueValidator.reportInvalidValue(this.xsdNode, this.value, this.schema);
+            this.valueValid = this.valueInvalidMessage == null;
         }
-        return ValueValidator.reportInvalidValue(this.xsdNode, this.value, this.schema);
+        return this.valueInvalidMessage;
     }
 
     /**
@@ -1695,29 +1884,51 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public String reportInvalidAttributeValue(final int index)
     {
-        if (!isActive())
+        if (this.attributeValid.get(index) == null)
         {
-            return null;
-        }
-        if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
-        {
-            return ValueValidator.reportInvalidInclude(this.attributeValues.get(0), this.attributeValues.get(1),
-                    ((XsdTreeNodeRoot) getPath().get(0)).getDirectory());
-        }
-        String attribute = DocumentReader.getAttribute(getAttributeNode(index), "name");
-        String val = this.attributeValues.get(index);
-        if (val != null && !val.isEmpty())
-        {
+            if (!isActive())
+            {
+                this.attributeInvalidMessage.set(index, null);
+                this.attributeValid.set(index, true);
+                return null;
+            }
+            if (this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
+            {
+                XsdTreeNode root = getPath().get(0);
+                if (root instanceof XsdTreeNodeRoot)
+                {
+                    String message = ValueValidator.reportInvalidInclude(this.attributeValues.get(0),
+                            this.attributeValues.get(1), ((XsdTreeNodeRoot) root).getDirectory());
+                    this.attributeInvalidMessage.set(index, message);
+                    this.attributeValid.set(index, message == null);
+                    return message;
+                }
+                else
+                {
+                    // node is being deleted and has no parent anymore
+                    this.attributeInvalidMessage.set(index, null);
+                    this.attributeValid.set(index, true);
+                    return null;
+                }
+            }
+            String attribute = DocumentReader.getAttribute(getAttributeNode(index), "name");
             for (ValueValidator validator : this.attributeValidators.computeIfAbsent(attribute, (key) -> new TreeSet<>()))
             {
                 String message = validator.validate(this);
                 if (message != null)
                 {
+                    this.attributeInvalidMessage.set(index, message);
+                    this.attributeValid.set(index, false);
                     return message;
                 }
             }
+            String message =
+                    ValueValidator.reportInvalidAttributeValue(getAttributeNode(index), getAttributeValue(index), this.schema);
+            this.attributeInvalidMessage.set(index, message);
+            this.attributeValid.set(index, message == null);
+            return message;
         }
-        return ValueValidator.reportInvalidAttributeValue(getAttributeNode(index), getAttributeValue(index), this.schema);
+        return this.attributeInvalidMessage.get(index);
     }
 
     /**
@@ -1732,7 +1943,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         {
             return List.of("true", "false");
         }
-        List<String> valueOptions = getOptionsFromValidators(this.valueValidators, getNodeName()); // TODO: add "." or "ots:"
+        List<String> valueOptions = getOptionsFromValidators(this.valueValidators, getNodeName());
         if (!valueOptions.isEmpty())
         {
             return valueOptions;
@@ -1752,9 +1963,10 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             return List.of("true", "false");
         }
         String field = getAttributeNameByIndex(index);
-        // TODO: add "@" with field
-        List<String> valueOptions =
-                getOptionsFromValidators(this.attributeValidators.computeIfAbsent(field, (key) -> new TreeSet<>()), field);
+        Map<ValueValidator, Object> map = new LinkedHashMap<>();
+        this.attributeValidators.computeIfAbsent(field, (f) -> new TreeSet<>())
+                .forEach((v) -> map.put(v, this.attributeValidatorFields.get(field).get(v)));
+        List<String> valueOptions = getOptionsFromValidators(map, field);
         if (!valueOptions.isEmpty() || this.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
         {
             return valueOptions;
@@ -1768,9 +1980,9 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * @param index int; index of the attribute.
      * @return XsdTreeNode; node to which an attribute refers via a KeyValidator, or {@code null} if no such node.
      */
-    public XsdTreeNode getCoupledKeyrefNode(final int index)
+    public XsdTreeNode getCoupledKeyrefNodeAttribute(final int index)
     {
-        return getCoupledKeyrefNode(getAttributeNameByIndex(index));
+        return getCoupledKeyrefNodeAttribute(getAttributeNameByIndex(index));
     }
 
     /**
@@ -1778,18 +1990,38 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * @param attribute String; attribute name.
      * @return XsdTreeNode; node to which an attribute refers via a KeyValidator, or {@code null} if no such node.
      */
-    public XsdTreeNode getCoupledKeyrefNode(final String attribute)
+    public XsdTreeNode getCoupledKeyrefNodeAttribute(final String attribute)
     {
         if (this.attributeValidators.containsKey(attribute))
         {
-            for (ValueValidator validator : this.attributeValidators.get(attribute))
+            return getCoupledKeyrefNode(this.attributeValidators.get(attribute));
+        }
+        return null;
+    }
+
+    /**
+     * Returns the node to which the value refers via a KeyValidator.
+     * @return XsdTreeNode; node to which the value refers via a KeyValidator, or {@code null} if no such node.
+     */
+    public XsdTreeNode getCoupledKeyrefNodeValue()
+    {
+        return getCoupledKeyrefNode(this.valueValidators.keySet());
+    }
+
+    /**
+     * Return coupled node via a key validator.
+     * @param validators Set&lt;ValueValidator&gt;; validators.
+     * @return XsdTreeNode; coupled node via a key validator.
+     */
+    private XsdTreeNode getCoupledKeyrefNode(final Set<ValueValidator> validators)
+    {
+        for (ValueValidator validator : validators)
+        {
+            if (validator instanceof CoupledValidator)
             {
-                if (validator instanceof KeyValidator)
-                {
-                    KeyValidator key = (KeyValidator) validator;
-                    key.validate(this); // to trigger finding the right node should value have changed
-                    return key.getCoupledKeyrefNode(this);
-                }
+                CoupledValidator key = (CoupledValidator) validator;
+                key.validate(this); // to trigger finding the right node should value have changed
+                return key.getCoupledKeyrefNode(this);
             }
         }
         return null;
@@ -1807,16 +2039,17 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns options based on a set of validators.
-     * @param validators Set&lt;ValueValidator&gt;; validators.
+     * @param validators Map&lt;ValueValidator, Object&gt;; validators.
      * @param field String; field, attribute or child element, for which to obtain the options.
      * @return List&lt;String&gt;; list of options.
      */
-    private List<String> getOptionsFromValidators(final Set<ValueValidator> validators, final String field)
+    private List<String> getOptionsFromValidators(final Map<ValueValidator, Object> validators, final String field)
     {
         List<String> combined = null;
-        for (ValueValidator validator : validators)
+        for (Entry<ValueValidator, Object> entry : validators.entrySet())
         {
-            List<String> valueOptions = validator.getOptions(this, field);
+            ValueValidator validator = entry.getKey();
+            List<String> valueOptions = validator.getOptions(this, entry.getValue());
             if (valueOptions != null && combined != null)
             {
                 combined = combined.stream().filter(valueOptions::contains).collect(Collectors.toList());
@@ -1961,12 +2194,12 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     {
         if (this.options != null)
         {
-            // this name may appear as part of a sequence which is an option for an xsd:choice
+            // this name may appear as part of a sequence which is an option for an xsd:choice or xsd:all
             return this.options.toString().toLowerCase();
         }
         if (this.xsdNode.getNodeName().equals("xsd:sequence"))
         {
-            // this name may appear as an option for an xsd:choice
+            // this name may appear as an option for an xsd:choice or xsd:all
             StringBuilder stringBuilder = new StringBuilder();
             Node relevantNode = this.referringXsdNode == null ? this.xsdNode : this.referringXsdNode;
             String annotation = DocumentReader.getAnnotation(relevantNode, "xsd:appinfo", "name");
@@ -1980,14 +2213,22 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 Set<String> coveredTypes = new LinkedHashSet<>();
                 String separator = "";
                 assureChildren();
-                for (XsdTreeNode child : this.children)
+                if (!this.active)
                 {
-                    if (!coveredTypes.contains(child.getPathString()) || child.xsdNode.getNodeName().equals("xsd:sequence")
-                            || child.xsdNode.getNodeName().equals("xsd:choice"))
+                    stringBuilder.append("(inactive)");
+                }
+                else
+                {
+                    for (XsdTreeNode child : this.children)
                     {
-                        stringBuilder.append(separator).append(child.getShortString());
-                        separator = " | ";
-                        coveredTypes.add(child.getPathString());
+                        if (!coveredTypes.contains(child.getPathString()) || child.xsdNode.getNodeName().equals("xsd:sequence")
+                                || child.xsdNode.getNodeName().equals("xsd:choice")
+                                || child.xsdNode.getNodeName().equals("xsd:all"))
+                        {
+                            stringBuilder.append(separator).append(child.getShortString());
+                            separator = " | ";
+                            coveredTypes.add(child.getPathString());
+                        }
                     }
                 }
             }
@@ -2121,7 +2362,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public void loadXmlNodes(final Node nodeXml)
     {
-        this.active = true;
+        setActive();
 
         // value
         String candidateValue = "";
@@ -2141,7 +2382,9 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         if (!candidateValue.isEmpty())
         {
+            String previous = this.value;
             this.value = candidateValue;
+            fireEvent(new Event(VALUE_CHANGED, new Object[] {this, previous}));
         }
 
         // attributes
@@ -2166,13 +2409,12 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                     default:
                         try
                         {
-                            int attributeIndex = getAttributeIndexByName(attributeNode.getNodeName());
-                            this.attributeValues.set(attributeIndex, attributeNode.getNodeValue());
+                            setAttributeValue(attributeNode.getNodeName(), attributeNode.getNodeValue());
                         }
                         catch (NoSuchElementException e)
                         {
-                            System.err.println(
-                                    "Unable to load attribute " + attributeNode.getNodeName() + " in " + getShortString());
+                            System.err.println("Unable to load attribute " + attributeNode.getNodeName() + "=\""
+                                    + attributeNode.getNodeValue() + "\" in " + getShortString());
                         }
                 }
             }
@@ -2185,14 +2427,14 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             List<Integer> indices = new ArrayList<>();
             indices.add(0);
             indices.add(0);
-            loadChildren(indices, nodeXml.getChildNodes());
-            while (indices.get(0) < nodeXml.getChildNodes().getLength())
-            {
-                System.err.println(
-                        "Unable to load element with name " + nodeXml.getChildNodes().item(indices.get(0)).getNodeName() + ".");
-                indices.set(0, indices.get(0) + 1);
-                loadChildren(indices, nodeXml.getChildNodes());
-            }
+            loadChildren(indices, nodeXml.getChildNodes(), false);
+            // while (indices.get(0) < nodeXml.getChildNodes().getLength())
+            // {
+            // System.err.println(
+            // "Unable to load element with name " + nodeXml.getChildNodes().item(indices.get(0)).getNodeName() + ".");
+            // indices.set(0, indices.get(0) + 1);
+            // loadChildren(indices, nodeXml.getChildNodes());
+            // }
             // In included nodes, remove nodes that will not contain any of the loaded xml data. For example remove nodes that
             // are otherwise shown as inactive and allow a user to enable it, which makes no sense for imported nodes.
             if (this.isInclude)
@@ -2258,11 +2500,30 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * data was loaded is given.
      * @param indices List&lt;Integer&gt;; index of the first XML child node to load, and first XsdTreeNode index to use.
      * @param childrenXml NodeList; list of XML child nodes as specified within one parent XML tag.
+     * @param loadingSubSequence boolean; whether this call is loading children as a sub-sequence.
      */
-    protected void loadChildren(final List<Integer> indices, final NodeList childrenXml)
+    protected void loadChildren(final List<Integer> indices, final NodeList childrenXml, final boolean loadingSubSequence)
     {
-        int childIndex = indices.get(1);
+        List<XsdTreeNode> loadedChildren = new ArrayList<>();
+        int passes = 0;
+        int maxPasses = 1;
+        int loadedDuringPass = 0;
+        Node complexType = DocumentReader.getChild(this.xsdNode, "xsd:complexType");
+        if (complexType != null)
+        {
+            Node sequence = DocumentReader.getChild(complexType, "xsd:sequence");
+            if (sequence != null)
+            {
+                String maxOccurs = DocumentReader.getAttribute(sequence, "maxOccurs");
+                if (maxOccurs != null)
+                {
+                    maxPasses = maxOccurs.equalsIgnoreCase("unbounded") ? Integer.MAX_VALUE : Integer.valueOf(maxOccurs);
+                }
+            }
+        }
+
         int indexXml = indices.get(0);
+        int childIndex = indices.get(1);
         while (indexXml < childrenXml.getLength())
         {
             Node childNodeXml = childrenXml.item(indexXml);
@@ -2277,7 +2538,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             if (this.xsdNode == XiIncludeNode.XI_INCLUDE && "xi:fallback".equals(nameXml))
             {
                 String fallback = childNodeXml.getChildNodes().item(1).getAttributes().getNamedItem("href").getNodeValue();
-                this.setAttributeValue(1, fallback);
+                setAttributeValue(1, fallback);
                 indexXml++;
                 continue;
             }
@@ -2292,14 +2553,36 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             }
             else
             {
-                while (childIndex < this.children.size() && !this.children.get(childIndex).isRelevantNode(nameXml))
+                while (childIndex < this.children.size() && (!this.children.get(childIndex).isRelevantNode(nameXml)
+                        || loadedChildren.contains(this.children.get(childIndex))))
                 {
                     childIndex++;
                 }
                 if (childIndex >= this.children.size())
                 {
-                    indices.set(0, indexXml);
-                    return;
+                    if (loadedDuringPass == 0)
+                    {
+                        System.err.println("Failing to load " + nameXml + ", it is not a valid node.");
+                        indexXml++;
+                        childIndex = 0; // start next pass
+                        continue;
+                    }
+                    else
+                    {
+                        passes++;
+                        if (passes >= maxPasses)
+                        {
+                            if (!loadingSubSequence)
+                            {
+                                System.err.println("Failing to load " + nameXml + ", maximum number of passes reached.");
+                            }
+                            indices.set(0, indexXml);
+                            return;
+                        }
+                    }
+                    childIndex = 0; // start next pass
+                    loadedDuringPass = 0;
+                    continue;
                 }
             }
 
@@ -2308,6 +2591,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             if (relevantChild.choice == null)
             {
                 relevantChild.loadXmlNodes(childNodeXml);
+                loadedChildren.add(relevantChild);
             }
             else
             {
@@ -2324,8 +2608,9 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                                 List<Integer> optionIndices = new ArrayList<>();
                                 optionIndices.add(indexXml);
                                 optionIndices.add(0);
-                                option.loadChildren(optionIndices, childrenXml);
-                                indexXml = optionIndices.get(0) - 1; // will be increased at end of loop
+                                option.loadChildren(optionIndices, childrenXml, true);
+                                loadedChildren.add(option);
+                                indexXml = optionIndices.get(0) - 1;
                                 optionSet = true;
                                 break;
                             }
@@ -2350,6 +2635,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                     }
                 }
             }
+            loadedDuringPass++;
             childIndex++;
             indices.set(1, childIndex);
             indexXml++;
@@ -2408,6 +2694,34 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             }
         }
         return false;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean addListener(final EventListener listener, final EventType eventType)
+    {
+        boolean result = super.addListener(listener, eventType);
+        /*
+         * Prioritizes KeyValidators: when an Id attribute is changed this will update any referring nodes to the new value
+         * first, before any other listener may break the coupling. Coupling is broken when for example validation is performed
+         * with the new Id value, to obtain the coupled node.
+         */
+        if (eventType.equals(XsdTreeNode.ATTRIBUTE_CHANGED))
+        {
+            EventListenerMap map = getEventListenerMap();
+            List<Reference<EventListener>> list = map.get(eventType);
+            List<Reference<EventListener>> keys = new ArrayList<>();
+            for (Reference<EventListener> listen : list)
+            {
+                if (listen.get() instanceof KeyValidator)
+                {
+                    keys.add(listen);
+                }
+            }
+            list.removeAll(keys);
+            list.addAll(0, keys);
+        }
+        return result;
     }
 
 }

@@ -78,7 +78,7 @@ Animation in OTS is based on DSOL, which in term is based on the standard java t
 In this tutorial an example is shown for a speed sign animation. The class structure is given below. By extending `Renderable2d` the implementation does not have to be concerned with scaling, rotating, etc. This class only has the task to draw the animation around point (0, 0) without rotation. Any rotation as given by the location (`Locatable`) and flipping, translations and scaling (i.e. panning and zooming by the user) is taken care of through transformations in `Renderable2d`. The net unit that the class needs to draw with is meters.
 
 ```java
-    public class SpeedSignAnimation extends Renderable2d<SpeedSign>
+    public class SpeedSignAnimation extends OtsRenderable<SpeedSign>
     {
     
         private static final double RADIUS = 1.6;
