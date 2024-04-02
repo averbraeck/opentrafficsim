@@ -21,7 +21,7 @@ import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
 import org.opentrafficsim.xml.bindings.types.LengthBeginEndType.LengthBeginEnd;
 
 /**
- * Data class for objects that are drawn at a lane position. Implementations must call {@setLinkNode()} in their constructor or
+ * Data class for objects that are drawn at a lane position. Implementations must call in their constructor or
  * by some other dynamic means, or the XSD node must have a Link attribute that points to the XSD node of a link by a keyref.
  * This class will listen to attributes Id, Link, Lane and Position, and update visualization as needed. Attributes Id and Link
  * are optional.

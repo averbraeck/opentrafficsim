@@ -171,7 +171,7 @@ public class LinkAnimation extends OtsRenderable<LinkData>
 
         /**
          * @param source LinkData; the object for which the text is displayed
-         * @param text Supplier&lt;String&gr;; the text to display
+         * @param text Supplier; the text to display
          * @param dx float; the horizontal movement of the text, in meters
          * @param dy float; the vertical movement of the text, in meters
          * @param textPlacement TextAlignment; where to place the text

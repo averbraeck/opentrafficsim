@@ -44,8 +44,8 @@ import org.opentrafficsim.core.perception.collections.HistoricalList;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.detector.Detector;
-import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
+import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
@@ -142,11 +142,6 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                     new ObjectDescriptor("Lane id", "Id of the lane", String.class),
                     new ObjectDescriptor("Link id", "Id of the link", String.class)));
 
-    public static final EventType GTU_SCHEDULE = new EventType("LANE.GTU.SCHEDULE",
-            new MetaData("Lane GTU SCHEDULE", "GTU id, number of GTUs after addition, lane id, link id",
-                    new ObjectDescriptor("GTU id", "Id of GTU", String.class),
-                    new ObjectDescriptor("Lane id", "Id of the lane", String.class),
-                    new ObjectDescriptor("Link id", "Id of the link", String.class)));
     /**
      * The <b>timed</b> event type for pub/sub indicating the removal of a GTU from the lane. <br>
      * Payload: Object[] {String gtuId, LaneBasedGtu gtu, int count_after_removal, Length position, String laneId, String
