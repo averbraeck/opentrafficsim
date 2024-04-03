@@ -59,7 +59,7 @@ public abstract class Platoons<T>
     private final OtsSimulatorInterface simulator;
 
     /** Position to generate the GTU's at. */
-    private final Set<Lane> position;
+    private final Lane position;
 
     /** Queue of GTU information to generate GTU's with. */
     private final Queue<PlatoonGtu<T>> queue = new PriorityQueue<>();
@@ -91,9 +91,9 @@ public abstract class Platoons<T>
     /**
      * Constructor.
      * @param simulator OtsSimulatorInterface; simulator
-     * @param position Set&lt;Lane&gt;; position
+     * @param position Lane; position
      */
-    private Platoons(final OtsSimulatorInterface simulator, final Set<Lane> position)
+    private Platoons(final OtsSimulatorInterface simulator, final Lane position)
     {
         this.simulator = simulator;
         this.position = position;
@@ -104,11 +104,11 @@ public abstract class Platoons<T>
      * @param characteristics GtuCharacteristicsGeneratorOD; characteristics generator
      * @param simulator OtsSimulatorInterface; simulator
      * @param stream StreamInterface; random number stream
-     * @param position Set&lt;Lane&gt;; position
+     * @param position Lane; position
      * @return Platoons&lt;Category&gt;; platoons based on OD
      */
     public static Platoons<Category> ofCategory(final LaneBasedGtuCharacteristicsGeneratorOd characteristics,
-            final OtsSimulatorInterface simulator, final StreamInterface stream, final Set<Lane> position)
+            final OtsSimulatorInterface simulator, final StreamInterface stream, final Lane position)
     {
         return new Platoons<Category>(simulator, position)
         {
@@ -135,12 +135,12 @@ public abstract class Platoons<T>
      * @param characteristics LaneBasedGtuCharacteristicsGenerator; characteristics generator
      * @param simulator OtsSimulatorInterface; simulator
      * @param stream StreamInterface; random number stream
-     * @param position Set&lt;Lane&gt;; position
+     * @param position Lane; position
      * @return Platoons&lt;GtuType&gt;; platoons based on OD
      */
     @SuppressWarnings("synthetic-access")
     public static Platoons<GtuType> ofGtuType(final LaneBasedGtuCharacteristicsGenerator characteristics,
-            final OtsSimulatorInterface simulator, final StreamInterface stream, final Set<Lane> position)
+            final OtsSimulatorInterface simulator, final StreamInterface stream, final Lane position)
     {
         return new Platoons<GtuType>(simulator, position)
         {
@@ -263,7 +263,7 @@ public abstract class Platoons<T>
      * Returns the position for sub classes.
      * @return Set&lt;Lane&gt;; position for sub classes
      */
-    protected Set<Lane> getPosition()
+    protected Lane getPosition()
     {
         return this.position;
     }

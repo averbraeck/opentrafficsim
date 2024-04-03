@@ -635,21 +635,7 @@ public class StrategiesDemo extends AbstractSimulationScript
         LaneBasedStrategicalPlanner strategicalPlanner = this.factories.get(gtuType).create(gtu, null, null, null);
 
         // init
-        Set<LanePosition> initialPositions = new LinkedHashSet<>(1);
-        initialPositions.add(new LanePosition(lane, pos));
-        if (pos.plus(gtu.getFront().getDx()).gt(lane.getLength()))
-        {
-            Lane nextLane = lane.nextLanes(gtuType).iterator().next();
-            Length nextPos = pos.minus(lane.getLength());
-            initialPositions.add(new LanePosition(nextLane, nextPos));
-        }
-        if (pos.plus(gtu.getRear().getDx()).lt0())
-        {
-            Lane prevLane = lane.prevLanes(gtuType).iterator().next();
-            Length prevPos = prevLane.getLength().plus(pos.plus(gtu.getRear().getDx()));
-            initialPositions.add(new LanePosition(prevLane, prevPos));
-        }
-        gtu.init(strategicalPlanner, initialPositions, initialSpeed);
+        gtu.init(strategicalPlanner, new LanePosition(lane, pos), initialSpeed);
 
         if (this.kmplcListener != null)
         {

@@ -207,10 +207,11 @@ public class TrafficLightDetectorTest implements EventListener
                 Speed maximumSpeed = new Speed(90, SpeedUnit.KM_PER_HOUR);
                 LaneBasedGtu gtu =
                         new LaneBasedGtu("GTU1", gtuType, gtuLength, gtuWidth, maximumSpeed, gtuLength.times(0.5), network);
-                Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
+//                Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
                 Length initialPosition = new Length(pos, LengthUnit.METER);
                 LanePosition gtuPosition = findLaneAndPosition(lanes, initialPosition);
-                initialLongitudinalPositions.add(new LanePosition(gtuPosition.getLane(), gtuPosition.getPosition()));
+//                initialLongitudinalPositions.add(new LanePosition(gtuPosition.getLane(), gtuPosition.getPosition()));
+                LanePosition initialLongitudinalPositions = new LanePosition(gtuPosition.getLane(), gtuPosition.getPosition());
                 Parameters parameters = DefaultTestParameters.create();
                 LaneChangeModel laneChangeModel = new Egoistic();
                 GtuFollowingModelOld gtuFollowingModel = new FixedAccelerationModel(

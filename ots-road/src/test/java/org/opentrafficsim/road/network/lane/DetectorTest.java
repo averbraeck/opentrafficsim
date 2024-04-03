@@ -1,8 +1,5 @@
 package org.opentrafficsim.road.network.lane;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.util.UNITS;
@@ -83,8 +80,7 @@ public class DetectorTest implements UNITS
         }
 
         Length positionA = new Length(100, METER);
-        Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
-        initialLongitudinalPositions.add(new LanePosition(lanesA[1], positionA));
+        LanePosition initialLongitudinalPositions = new LanePosition(lanesA[1], positionA);
 
         // A Car needs an initial speed
         Speed initialSpeed = new Speed(50, KM_PER_HOUR);

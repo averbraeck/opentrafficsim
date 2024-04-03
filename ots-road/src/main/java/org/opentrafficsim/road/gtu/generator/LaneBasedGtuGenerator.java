@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.generator;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -226,12 +225,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
             GeneratorLanePosition lanePosition = this.generatorPositions.draw(gtuType, characteristics, unplaced);
 
             // skip if disabled at this lane-direction
-            Set<Lane> lanes = new LinkedHashSet<>();
-            for (LanePosition pos : lanePosition.getPosition())
-            {
-                lanes.add(pos.getLane());
-            }
-            if (Collections.disjoint(this.disabled, lanes))
+            if (!this.disabled.contains(lanePosition.getPosition().getLane()))
             {
                 queueGtu(lanePosition, characteristics);
             }
@@ -275,11 +269,9 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
 
         LaneBasedGtuCharacteristics characteristics = timedCharacteristics.getObject();
         SortedSet<HeadwayGtu> leaders = new TreeSet<>();
-        for (LanePosition dirPos : position.getPosition())
-        {
-            getFirstLeaders(dirPos.getLane(), dirPos.getPosition().neg().minus(characteristics.getFront()),
-                    dirPos.getPosition(), leaders);
-        }
+        getFirstLeaders(position.getPosition().getLane(),
+                position.getPosition().getPosition().neg().minus(characteristics.getFront()),
+                position.getPosition().getPosition(), leaders);
         Duration since = this.simulator.getSimulatorAbsTime().minus(timedCharacteristics.getTimestamp());
         Placement placement = this.roomChecker.canPlace(leaders, characteristics, since, position.getPosition());
         if (placement.canPlace())
@@ -307,27 +299,21 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
      * Adds a GTU to the generation queue. This method ignores whether vehicle generation is enabled at the location. This
      * allows an external party to govern (over some time) what vehicles are generated.
      * @param characteristics LaneBasedGtuCharacteristics; characteristics of GTU to add to the queue
-     * @param position Set&lt;Lane&gt;; position to generate the GTU at
+     * @param lane Lane; position to generate the GTU at
      */
-    public final void queueGtu(final LaneBasedGtuCharacteristics characteristics, final Set<Lane> position)
+    public final void queueGtu(final LaneBasedGtuCharacteristics characteristics, final Lane lane)
     {
         // first find the correct GeneratorLanePosition
         GeneratorLanePosition genPosition = null;
-        Set<Lane> genSet = new LinkedHashSet<>();
         for (GeneratorLanePosition lanePosition : this.generatorPositions.getAllPositions())
         {
-            for (LanePosition dirPos : lanePosition.getPosition())
-            {
-                genSet.add(dirPos.getLane());
-            }
-            if (genSet.equals(position))
+            if (lanePosition.getPosition().getLane().equals(lane))
             {
                 genPosition = lanePosition;
                 break;
             }
-            genSet.clear();
         }
-        Throw.when(genPosition == null, IllegalStateException.class, "Position %s is not part of the generation.", position);
+        Throw.when(genPosition == null, IllegalStateException.class, "Lane %s is not part of the generation.", lane);
         try
         {
             queueGtu(genPosition, characteristics);
@@ -371,7 +357,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
     /**
      * Places a GTU, regardless of whether it has room. The user of this method should verify this is the case.
      * @param characteristics LaneBasedGtuCharacteristics; characteristics
-     * @param position Set&lt;LanePosition&gt;; position
+     * @param position LanePosition; position
      * @param speed Speed; speed
      * @throws NamingException on exception
      * @throws GtuException on exception
@@ -379,7 +365,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
      * @throws SimRuntimeException on exception
      * @throws OtsGeometryException on exception
      */
-    public final void placeGtu(final LaneBasedGtuCharacteristics characteristics, final Set<LanePosition> position,
+    public final void placeGtu(final LaneBasedGtuCharacteristics characteristics, final LanePosition position,
             final Speed speed) throws NamingException, GtuException, NetworkException, SimRuntimeException, OtsGeometryException
     {
         String gtuId = this.idGenerator.get();
@@ -461,26 +447,26 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
      * are continued, but simply will not result in the queuing of the GTU.
      * @param start Time; start time
      * @param end Time; end time
-     * @param laneDirections Set&lt;Lane&gt;; lanes to disable generation on
+     * @param lane Lane; lane to disable generation on
      * @throws SimRuntimeException if time is incorrect
      */
-    public void disable(final Time start, final Time end, final Set<Lane> laneDirections) throws SimRuntimeException
+    public void disable(final Time start, final Time end, final Lane lane) throws SimRuntimeException
     {
         Throw.when(end.lt(start), SimRuntimeException.class, "End time %s is before start time %s.", end, start);
-        this.simulator.scheduleEventAbsTime(start, this, "disable", new Object[] {laneDirections});
+        this.simulator.scheduleEventAbsTime(start, this, "disable", new Object[] {lane});
         this.simulator.scheduleEventAbsTime(end, this, "enable", new Object[0]);
     }
 
     /**
      * Disables the generator.
-     * @param laneDirections Set&lt;Lane&gt;; lanes to disable generation on
+     * @param lane Lane; lanes to disable generation on
      */
     @SuppressWarnings("unused")
-    private void disable(final Set<Lane> laneDirections)
+    private void disable(final Lane lane)
     {
         Throw.when(this.disabled != null && !this.disabled.isEmpty(), IllegalStateException.class,
                 "Disabling a generator that is already disabled is not allowed.");
-        this.disabled = laneDirections;
+        this.disabled.add(lane);
     }
 
     /**
@@ -506,7 +492,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
         Set<GtuGeneratorPosition> set = new LinkedHashSet<>();
         for (GeneratorLanePosition lanePosition : this.generatorPositions.getAllPositions())
         {
-            LanePosition pos = lanePosition.getPosition().iterator().next();
+            LanePosition pos = lanePosition.getPosition();
             OrientedPoint2d p = pos.getLocation();
             set.add(new GtuGeneratorPosition()
             {
@@ -575,14 +561,14 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
          * @param leaders SortedSet&lt;HeadwayGtu&gt;; leaders, usually 1, possibly more after a branch
          * @param characteristics LaneBasedGtuCharacteristics; characteristics of the proposed new GTU
          * @param since Duration; time since the GTU wanted to arrive
-         * @param initialPosition Set&lt;LanePosition&gt;; initial position
+         * @param initialPosition LanePosition; initial position
          * @return Speed; maximum safe speed, or null if a GTU with the specified characteristics cannot be placed at the
          *         current time
          * @throws NetworkException this method may throw a NetworkException if it encounters an error in the network structure
          * @throws GtuException on parameter exception
          */
         Placement canPlace(SortedSet<HeadwayGtu> leaders, LaneBasedGtuCharacteristics characteristics, Duration since,
-                Set<LanePosition> initialPosition) throws NetworkException, GtuException;
+                LanePosition initialPosition) throws NetworkException, GtuException;
     }
 
     /**
@@ -606,7 +592,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
         private final Speed speed;
 
         /** Position. */
-        private final Set<LanePosition> position;
+        private final LanePosition position;
 
         /**
          * Constructor for NO.
@@ -620,9 +606,9 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
         /**
          * Constructor.
          * @param speed Speed; speed
-         * @param position Set&lt;LanePosition&gt;; position
+         * @param position LanePosition; position
          */
-        public Placement(final Speed speed, final Set<LanePosition> position)
+        public Placement(final Speed speed, final LanePosition position)
         {
             Throw.whenNull(speed, "Speed may not be null. Use Placement.NO if the GTU cannot be placed.");
             Throw.whenNull(position, "Position may not be null. Use Placement.NO if the GTU cannot be placed.");
@@ -650,9 +636,9 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
 
         /**
          * Returns the position.
-         * @return Set&lt;LanePosition&gt;; position
+         * @return LanePosition; position
          */
-        public Set<LanePosition> getPosition()
+        public LanePosition getPosition()
         {
             return this.position;
         }

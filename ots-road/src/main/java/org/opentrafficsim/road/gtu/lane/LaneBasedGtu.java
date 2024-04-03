@@ -1,8 +1,6 @@
 package org.opentrafficsim.road.gtu.lane;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -194,8 +192,7 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * @param strategicalPlanner LaneBasedStrategicalPlanner; the strategical planner (e.g., route determination) to use
-     * @param initialLongitudinalPositions Set&lt;LanePosition&gt;; the initial positions of the car on one or more lanes with
-     *            their directions
+     * @param longitudinalPosition LanePosition; the initial position of the GTU
      * @param initialSpeed Speed; the initial speed of the car on the lane
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
@@ -203,39 +200,12 @@ public class LaneBasedGtu extends Gtu
      * @throws OtsGeometryException when the initial path is wrong
      */
     @SuppressWarnings("checkstyle:designforextension")
-    public void init(final LaneBasedStrategicalPlanner strategicalPlanner, final Set<LanePosition> initialLongitudinalPositions,
+    public void init(final LaneBasedStrategicalPlanner strategicalPlanner, final LanePosition longitudinalPosition,
             final Speed initialSpeed) throws NetworkException, SimRuntimeException, GtuException, OtsGeometryException
     {
-        Throw.when(null == initialLongitudinalPositions, GtuException.class, "InitialLongitudinalPositions is null");
-        Throw.when(0 == initialLongitudinalPositions.size(), GtuException.class, "InitialLongitudinalPositions is empty set");
+        Throw.when(null == longitudinalPosition, GtuException.class, "InitialLongitudinalPositions is null");
 
-        for (LanePosition pos : new LinkedHashSet<LanePosition>(initialLongitudinalPositions)) // copy
-        {
-            double fracFront = (pos.getPosition().si + getFront().getDx().si) / pos.getLane().getLength().si;
-            if (fracFront > 1.0)
-            {
-                System.err.println("GTU " + toString() + " has been destroyed at init since it occupied multiple lanes");
-                this.destroy();
-                return;
-            }
-            double fracRear = (pos.getPosition().si - getRear().getDx().si) / pos.getLane().getLength().si;
-            if (fracRear < 0.0)
-            {
-                System.err.println("GTU " + toString() + " has been destroyed at init since it occupied multiple lanes");
-                this.destroy();
-                return;
-            }
-
-        }
-
-        OrientedPoint2d lastPoint = null;
-        for (LanePosition pos : initialLongitudinalPositions)
-        {
-            // Throw.when(lastPoint != null && pos.getLocation().distance(lastPoint) > initialLocationThresholdDifference.si,
-            // GTUException.class, "initial locations for GTU have distance > " + initialLocationThresholdDifference);
-            lastPoint = pos.getLocation();
-        }
-        OrientedPoint2d initialLocation = lastPoint;
+        OrientedPoint2d initialLocation = longitudinalPosition.getLocation();
 
         // TODO: move this to super.init(...), and remove setOperationalPlan(...) method
         // Give the GTU a 1 micrometer long operational plan, or a stand-still plan, so the first move and events will work
@@ -253,30 +223,7 @@ public class LaneBasedGtu extends Gtu
                     Segments.off(initialSpeed, path.getLength().divide(initialSpeed), Acceleration.ZERO)));
         }
 
-        // register the GTU on the lanes
-        List<LanePosition> inits = new ArrayList<>(); // need to sort them
-        inits.addAll(initialLongitudinalPositions);
-        Collections.sort(inits, new Comparator<LanePosition>()
-        {
-            @Override
-            public int compare(final LanePosition o1, final LanePosition o2)
-            {
-                return o1.getPosition().compareTo(o2.getPosition());
-            }
-        });
-        for (LanePosition directedLanePosition : inits)
-        {
-            List<Lane> lanes = new ArrayList<>();
-            lanes.add(directedLanePosition.getLane());
-            this.crossSections.add(new CrossSection(lanes)); // enter lane part 1
-        }
-
-        // register the GTU on the lanes
-        for (LanePosition directedLanePosition : initialLongitudinalPositions)
-        {
-            Lane lane = directedLanePosition.getLane();
-            lane.addGtu(this, directedLanePosition.getPosition()); // enter lane part 2
-        }
+        enterLaneRecursive(longitudinalPosition.getLane(), longitudinalPosition.getPosition(), 0);
 
         // initiate the actual move
         super.init(strategicalPlanner, initialLocation, initialSpeed);
@@ -315,16 +262,16 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Reinitializes the GTU on the network using the existing strategical planner and zero speed.
-     * @param initialLongitudinalPositions Set&lt;LanePosition&gt;; initial position
+     * @param initialLongitudinalPosition LanePosition; initial position
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GtuException when initial values are not correct
      * @throws OtsGeometryException when the initial path is wrong
      */
-    public void reinit(final Set<LanePosition> initialLongitudinalPositions)
+    public void reinit(final LanePosition initialLongitudinalPosition)
             throws NetworkException, SimRuntimeException, GtuException, OtsGeometryException
     {
-        init(getStrategicalPlanner(), initialLongitudinalPositions, Speed.ZERO);
+        init(getStrategicalPlanner(), initialLongitudinalPosition, Speed.ZERO);
     }
 
     /**
@@ -358,7 +305,7 @@ public class LaneBasedGtu extends Gtu
     }
 
     /**
-     * Enters lanes upstream and downstream of the new location after an instantaneous lane change.
+     * Enters lanes upstream and downstream of the new location after an instantaneous lane change or initialization.
      * @param lane Lane; considered lane
      * @param position Length; position to add GTU at
      * @param dir int; below 0 for upstream, above 0 for downstream, 0 for both<br>
@@ -408,6 +355,7 @@ public class LaneBasedGtu extends Gtu
                         upLane = upstream.iterator().next();
                     }
                     Lane next = upLane;
+                    // TODO: this assumes lanes are perfectly attached
                     Length nextPos = next.getLength().minus(before).minus(getRear().getDx());
                     enterLaneRecursive(next, nextPos, -1);
                 }
@@ -425,7 +373,9 @@ public class LaneBasedGtu extends Gtu
             }
             if (passed != null)
             {
-                Lane next = getNextLaneForRoute(lane);
+                Lane next = getStrategicalPlanner() == null ? lane.nextLanes(getType()).iterator().next()
+                        : getNextLaneForRoute(lane);
+                // TODO: this assumes lanes are perfectly attached
                 Length nextPos = passed.minus(getFront().getDx());
                 enterLaneRecursive(next, nextPos, 1);
             }

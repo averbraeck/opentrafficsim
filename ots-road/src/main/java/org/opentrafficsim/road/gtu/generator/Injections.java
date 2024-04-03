@@ -337,7 +337,7 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
                         position, laneId, linkId);
 
                 GeneratorLanePosition generatorLanePosition = new GeneratorLanePosition(laneNumber,
-                        Set.of(new LanePosition(lanes.get(laneNumber - 1), position)), (CrossSectionLink) link);
+                        new LanePosition(lanes.get(laneNumber - 1), position), (CrossSectionLink) link);
                 if (this.allLanePositions.add(generatorLanePosition))
                 {
                     this.lanePositions.put(generatorLanePosition, linkId, laneId, position);
@@ -492,7 +492,7 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
      * @param leaders SortedSet&lt;HeadwayGtu&gt;; leaders, usually 1, possibly more after a branch
      * @param characteristics LaneBasedGtuCharacteristics; characteristics of the proposed new GTU
      * @param since Duration; time since the GTU wanted to arrive
-     * @param initialPosition Set&lt;LanePosition&gt;; initial position
+     * @param initialPosition LanePosition; initial position
      * @return Speed; maximum safe speed, or null if a GTU with the specified characteristics cannot be placed at the current
      *         time
      * @throws NetworkException this method may throw a NetworkException if it encounters an error in the network structure
@@ -500,7 +500,7 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
      */
     @Override
     public Placement canPlace(final SortedSet<HeadwayGtu> leaders, final LaneBasedGtuCharacteristics characteristics,
-            final Duration since, final Set<LanePosition> initialPosition) throws NetworkException, GtuException
+            final Duration since, final LanePosition initialPosition) throws NetworkException, GtuException
     {
         Throw.when(!this.columnNumbers.containsKey(SPEED_COLUMN), IllegalStateException.class,
                 "Injection table without speed cannot be used to determine a GTU placement.");

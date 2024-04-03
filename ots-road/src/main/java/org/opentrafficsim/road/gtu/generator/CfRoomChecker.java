@@ -35,24 +35,9 @@ public class CfRoomChecker implements RoomChecker
     /** {@inheritDoc} */
     @Override
     public Placement canPlace(final SortedSet<HeadwayGtu> leaders, final LaneBasedGtuCharacteristics characteristics,
-            final Duration since, final Set<LanePosition> initialPosition) throws NetworkException, GtuException
+            final Duration since, final LanePosition initialPosition) throws NetworkException, GtuException
     {
-        Speed speedLimit = null;
-        for (LanePosition lane : initialPosition)
-        {
-            try
-            {
-                Speed limit = lane.getLane().getSpeedLimit(characteristics.getGtuType());
-                if (speedLimit == null || limit.gt(speedLimit))
-                {
-                    speedLimit = limit;
-                }
-            }
-            catch (NetworkException exception)
-            {
-                // ignore
-            }
-        }
+        Speed speedLimit = initialPosition.getLane().getSpeedLimit(characteristics.getGtuType());
         Throw.when(speedLimit == null, IllegalStateException.class, "No speed limit could be determined for GtuType %s.",
                 characteristics.getGtuType());
         Speed desiredSpeed = characteristics.getStrategicalPlannerFactory().peekDesiredSpeed(characteristics.getGtuType(),
@@ -91,38 +76,34 @@ public class CfRoomChecker implements RoomChecker
         }
         move = Length.min(move, since.times(generationSpeed)); // max distance the GTU would have moved until now
         // move this distance
-        Set<LanePosition> generationPosition;
-        if (move.eq0() || initialPosition.size() != 1)
+        LanePosition generationPosition;
+        if (move.eq0())
         {
             generationPosition = initialPosition;
         }
         else
         {
-            generationPosition = new LinkedHashSet<>();
-            for (LanePosition lanePos : initialPosition)
+            Lane lane = initialPosition.getLane();
+            Length position = initialPosition.getPosition();
+            Length canMove = lane.getLength().minus(position);
+            while (canMove.lt(move))
             {
-                Lane lane = lanePos.getLane();
-                Length position = lanePos.getPosition();
-                Length canMove = lane.getLength().minus(position);
-                while (canMove.lt(move))
+                Set<Lane> down = lane.nextLanes(characteristics.getGtuType());
+                if (down.size() != 1)
                 {
-                    Set<Lane> down = lane.nextLanes(characteristics.getGtuType());
-                    if (down.size() != 1)
-                    {
-                        // split or dead-end, fall back to original position
-                        return new Placement(generationSpeed, initialPosition);
-                    }
-                    else
-                    {
-                        move = move.minus(canMove);
-                        lane = down.iterator().next();
-                        position = Length.ZERO;
-                        canMove = lane.getLength();
-                    }
+                    // split or dead-end, fall back to original position
+                    return new Placement(generationSpeed, initialPosition);
                 }
-                position = position.plus(move);
-                generationPosition.add(new LanePosition(lane, position));
+                else
+                {
+                    move = move.minus(canMove);
+                    lane = down.iterator().next();
+                    position = Length.ZERO;
+                    canMove = lane.getLength();
+                }
             }
+            position = position.plus(move);
+            generationPosition = new LanePosition(lane, position);
         }
         return new Placement(generationSpeed, generationPosition);
     }

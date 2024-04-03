@@ -146,9 +146,7 @@ public interface GeneratorPositions
             List<GeneratorLanePosition> lanePositions = new ArrayList<>();
             for (LanePosition lanePosition : linkSplit.get(splitLink))
             {
-                Set<LanePosition> set = new LinkedHashSet<>();
-                set.add(lanePosition);
-                lanePositions.add(new GeneratorLanePosition(lanes.indexOf(lanePosition.getLane()) + 1, set,
+                lanePositions.add(new GeneratorLanePosition(lanes.indexOf(lanePosition.getLane()) + 1, lanePosition,
                         (CrossSectionLink) splitLink));
             }
             allLanePositions.addAll(lanePositions);
@@ -209,8 +207,8 @@ public interface GeneratorPositions
         /** Lane number, where 1 is the right-most lane. */
         private final int laneNumber;
 
-        /** Position set, representing a single GTU position on the network. */
-        private final Set<LanePosition> position;
+        /** Position. */
+        private final LanePosition position;
 
         /** Link. */
         private final CrossSectionLink link;
@@ -218,10 +216,10 @@ public interface GeneratorPositions
         /**
          * Constructor.
          * @param laneNumber int; lane number, where 1 is the right-most lane
-         * @param position Set&lt;LanePosition&gt;; position set, representing a single GTU position on the network
+         * @param position LanePosition; position set, representing a single GTU position on the network
          * @param link CrossSectionLink; link
          */
-        GeneratorLanePosition(final int laneNumber, final Set<LanePosition> position, final CrossSectionLink link)
+        GeneratorLanePosition(final int laneNumber, final LanePosition position, final CrossSectionLink link)
         {
             this.laneNumber = laneNumber;
             this.position = position;
@@ -244,21 +242,14 @@ public interface GeneratorPositions
          */
         boolean allows(final GtuType gtuType)
         {
-            for (LanePosition pos : this.position)
-            {
-                if (pos.getLane().getType().isCompatible(gtuType))
-                {
-                    return true;
-                }
-            }
-            return false;
+            return this.position.getLane().getType().isCompatible(gtuType);
         }
 
         /**
          * Returns the contained position set, representing a single GTU position on the network.
-         * @return Set&lt;LanePosition&gt;; contained position set, representing a single GTU position on the network
+         * @return LanePosition; contained position set, representing a single GTU position on the network
          */
-        Set<LanePosition> getPosition()
+        LanePosition getPosition()
         {
             return this.position;
         }
@@ -491,20 +482,17 @@ public interface GeneratorPositions
             Speed speedLimit = null;
             for (GeneratorLanePosition pos : this.positions)
             {
-                for (LanePosition lane : pos.getPosition())
+                try
                 {
-                    try
+                    Speed limit = pos.getPosition().getLane().getSpeedLimit(gtuType);
+                    if (speedLimit == null || limit.lt(speedLimit))
                     {
-                        Speed limit = lane.getLane().getSpeedLimit(gtuType);
-                        if (speedLimit == null || limit.lt(speedLimit))
-                        {
-                            speedLimit = limit;
-                        }
+                        speedLimit = limit;
                     }
-                    catch (NetworkException exception)
-                    {
-                        // ignore
-                    }
+                }
+                catch (NetworkException exception)
+                {
+                    // ignore
                 }
             }
             Throw.when(speedLimit == null, IllegalStateException.class, "No speed limit could be determined for GtuType %s.",

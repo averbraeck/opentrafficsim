@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.djunits.unit.DurationUnit;
@@ -133,7 +134,7 @@ public class LaneBasedGtuTest implements UNITS
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCfLcTacticalPlanner(gtuFollowingModel, laneChangeModel, truck), truck);
         truck.setParameters(parameters);
-        truck.init(strategicalPlanner, truckPositions, truckSpeed);
+        truck.init(strategicalPlanner, getReferencePosition(truckPositions), truckSpeed);
         // Verify that the truck is registered on the correct Lanes
         int lanesChecked = 0;
         int found = 0;
@@ -210,7 +211,7 @@ public class LaneBasedGtuTest implements UNITS
                 strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                         new LaneBasedCfLcTacticalPlanner(gtuFollowingModel, laneChangeModel, car), car);
                 car.setParameters(parameters);
-                car.init(strategicalPlanner, carPositions, carSpeed);
+                car.init(strategicalPlanner, getReferencePosition(carPositions), carSpeed);
                 // leader = truck.headway(forwardMaxDistance);
                 // TODO see how we can ask the vehicle to look 'forwardMaxDistance' ahead
                 leader = truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class)
@@ -404,7 +405,7 @@ public class LaneBasedGtuTest implements UNITS
             LaneBasedStrategicalPlanner strategicalPlanner =
                     new LaneBasedStrategicalRoutePlanner(new LaneBasedCfLcTacticalPlanner(fam, laneChangeModel, car), car);
             car.setParameters(parameters);
-            car.init(strategicalPlanner, carPositions, carSpeed);
+            car.init(strategicalPlanner, getReferencePosition(carPositions), carSpeed);
             // Let the simulator execute the move method of the car
             simulator.runUpTo(new Time(61, TimeUnit.BASE_SECOND));
             while (simulator.isStartingOrRunning())
@@ -465,7 +466,8 @@ public class LaneBasedGtuTest implements UNITS
             double linkLength = link.getLength().getSI();
             double frontPositionInLink = totalLongitudinalPosition.getSI() - cumulativeLength + gtuLength.getSI();
             double rearPositionInLink = frontPositionInLink - gtuLength.getSI();
-            double linkEnd = cumulativeLength + linkLength;
+            double midPositionInLink = frontPositionInLink - gtuLength.getSI() / 2.0;
+//            double linkEnd = cumulativeLength + linkLength;
             // System.out.println("cumulativeLength: " + cumulativeLength + ", linkEnd: " + linkEnd + ", frontpos: "
             // + frontPositionInLink + ", rearpos: " + rearPositionInLink);
             if (rearPositionInLink < linkLength && frontPositionInLink >= 0)
@@ -478,12 +480,29 @@ public class LaneBasedGtuTest implements UNITS
                     {
                         fail("Error in test; canot find lane with rank " + laneRank);
                     }
-                    result.add(new LanePosition(lane, new Length(rearPositionInLink, METER)));
+                    result.add(new LanePosition(lane, new Length(midPositionInLink, METER)));
                 }
             }
             cumulativeLength += linkLength;
         }
         return result;
+    }
+    
+    /**
+     * Returns the reference position from the set of positions.
+     * @param positions Set&lt;LanePosition&gt;; positions.
+     * @return reference position.
+     */
+    private LanePosition getReferencePosition(final Set<LanePosition> positions)
+    {
+        for (LanePosition lanePosition : positions)
+        {
+            if (lanePosition.getPosition().gt0() && lanePosition.getPosition().le(lanePosition.getLane().getLength()))
+            {
+                return lanePosition;
+            }
+        }
+        throw new NoSuchElementException("Reference point is not on any of the given lanes.");
     }
 
     /**
