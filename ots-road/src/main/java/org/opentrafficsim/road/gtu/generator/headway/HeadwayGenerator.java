@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.generator.headway;
 
+import nl.tudelft.simulation.jstats.streams.StreamInterface;
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
@@ -26,14 +27,18 @@ public class HeadwayGenerator implements Generator<Duration>
     /** Demand level. */
     private final Frequency demand;
 
+    /** The Stream. */
+    private final StreamInterface stream;
+
     /**
      * @param simulator OtsSimulatorInterface; the simulator
      * @param demand Frequency; demand
      */
-    HeadwayGenerator(final OtsSimulatorInterface simulator, final Frequency demand)
+    public HeadwayGenerator(final OtsSimulatorInterface simulator, final Frequency demand, final StreamInterface stream)
     {
         this.simulator = simulator;
         this.demand = demand;
+        this.stream = stream;
     }
 
     /** {@inheritDoc} */
@@ -41,7 +46,7 @@ public class HeadwayGenerator implements Generator<Duration>
     public Duration draw() throws ProbabilityException, ParameterException
     {
         return new Duration(
-                -Math.log(this.simulator.getModel().getStream("headwayGeneration").nextDouble()) / this.demand.si,
+                -Math.log(this.stream.nextDouble()) / this.demand.si,
                 DurationUnit.SI);
     }
 
