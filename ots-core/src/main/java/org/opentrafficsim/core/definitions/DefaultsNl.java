@@ -79,6 +79,9 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
     /** Super type for cars. */
     public static final GtuType CAR = new GtuType("NL.CAR", VEHICLE);
 
+    /** Super type for motorcycles. */
+    public static final GtuType MOTORCYCLE = new GtuType("NL.MOTORCYCLE", VEHICLE);
+
     /** Super type for vans. */
     public static final GtuType VAN = new GtuType("NL.VAN", VEHICLE);
 
@@ -102,6 +105,7 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
         map.put(VEHICLE, Color.GRAY);
         map.put(PEDESTRIAN, Color.YELLOW);
         map.put(BICYCLE, Color.GREEN);
+        map.put(MOTORCYCLE, Color.PINK);
         GTU_TYPE_COLORS = new ImmutableLinkedHashMap<>(map, Immutable.WRAP);
 
         TRUCK.setMarker(Marker.SQUARE);
@@ -154,6 +158,12 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
                     new ConstantGenerator<>(Length.instantiateSI(2.55)),
                     new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
         }
+        else if (gtuType.equals(MOTORCYCLE))
+        {
+            template = new GtuTemplate(gtuType, new ConstantGenerator<>(Length.instantiateSI(2.1)),
+                    new ConstantGenerator<>(Length.instantiateSI(0.9)),
+                    new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
+        }
         return template;
     };
 
@@ -163,7 +173,7 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
 
     /** Connector type. */
     public static final LinkType CONNECTOR = new LinkType("NL.CONNECTOR");
-    
+
     /** Super type for all roads. */
     public static final LinkType ROAD = new LinkType("NL.ROAD");
 

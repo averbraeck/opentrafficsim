@@ -19,7 +19,7 @@ import java.util.Set;
 
 public class GtuCreator {
 
-    public void createGTU(String obstacleId, LaneBasedGtuCharacteristics template_gtu_type, RoadNetwork net, Speed speed, Set<LanePosition> positions)
+    public void createGTU(String obstacleId, LaneBasedGtuCharacteristics template_gtu_type, RoadNetwork net, Speed speed, LanePosition position)
             throws GtuException, OtsGeometryException, NetworkException {
 
         GtuType.registerTemplateSupplier(template_gtu_type.getGtuType(), Defaults.NL);
@@ -38,6 +38,6 @@ public class GtuCreator {
         gtu.setErrorHandler(GtuErrorHandler.THROW);
 
         gtu.init(template_gtu_type.getStrategicalPlannerFactory().create(gtu, template_gtu_type.getRoute(), template_gtu_type.getOrigin(),
-                template_gtu_type.getDestination()),positions, speed);
+                template_gtu_type.getDestination()),position, speed);
     }
 }
