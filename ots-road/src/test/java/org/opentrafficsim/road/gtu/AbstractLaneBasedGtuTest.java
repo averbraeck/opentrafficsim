@@ -128,7 +128,7 @@ public class AbstractLaneBasedGtuTest implements UNITS
         LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(new LaneBasedCfLcTacticalPlanner(gfm, laneChangeModel, car), car);
         car.setParameters(parameters);
-        car.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
+        car.init(strategicalPlanner, new LanePosition(lanesGroupA[1], positionA), initialSpeed);
         // Now we can verify the various fields in the newly created Car
         assertEquals(carID, car.getId(), "ID of the car should be identical to the provided one");
         // TODO: Test with gfm as part of tactical planner
@@ -139,8 +139,6 @@ public class AbstractLaneBasedGtuTest implements UNITS
         assertEquals(gtuType, car.getType(), "GTU type should be identical to the provided one");
         assertEquals(positionA.getSI(), car.position(lanesGroupA[1], car.getReference()).getSI(),
                 0.0001, "front in lanesGroupA[1] is positionA");
-        assertEquals(positionB.getSI(), car.position(lanesGroupB[1], car.getReference()).getSI(),
-                0.0001, "front in lanesGroupB[1] is positionB");
         // assertEquals("acceleration is 0", 0, car.getAcceleration().getSI(), 0.00001);
         // edit wouter schakel: fixed acceleration model has a=2.0m/s^2, first plan is made during initialization
         assertEquals(2.0, car.getAcceleration().getSI(), 0.00001, "acceleration is 2");
@@ -157,7 +155,7 @@ public class AbstractLaneBasedGtuTest implements UNITS
         // {
         // // Ignore
         // }
-        for (Lane[] laneGroup : new Lane[][] {lanesGroupA, lanesGroupB})
+        for (Lane[] laneGroup : new Lane[][] {lanesGroupA})//, lanesGroupB})
         {
             for (int laneIndex = 0; laneIndex < laneGroup.length; laneIndex++)
             {
@@ -253,18 +251,14 @@ public class AbstractLaneBasedGtuTest implements UNITS
             for (RelativePosition relativePosition : new RelativePosition[] {car.getFront(), car.getRear()})
             {
                 Map<Lane, Double> positions = car.fractionalPositions(relativePosition);
-                assertEquals(2, positions.size(), "Car should be in two lanes");
+                assertEquals(1, positions.size(), "Car should be in one lane");
                 Double pos = positions.get(lanesGroupA[1]);
                 // System.out.println("Fractional positions: " + positions);
                 assertTrue(null != pos, "Car should be in lane 1 of lane group A");
                 assertEquals(pos, car.fractionalPosition(lanesGroupA[1], relativePosition),
                         0.0000001, "fractional position should be equal to result of fractionalPosition(lane, ...)");
-                pos = positions.get(lanesGroupB[1]);
-                assertTrue(null != pos, "Car should be in lane 1 of lane group B");
-                assertEquals(pos, car.fractionalPosition(lanesGroupB[1], relativePosition),
-                        0.0000001, "fractional position should be equal to result of fractionalPosition(lane, ...)");
             }
-            for (Lane[] laneGroup : new Lane[][] {lanesGroupA, lanesGroupB})
+            for (Lane[] laneGroup : new Lane[][] {lanesGroupA})//, lanesGroupB})
             {
                 for (int laneIndex = 0; laneIndex < laneGroup.length; laneIndex++)
                 {
@@ -350,34 +344,11 @@ public class AbstractLaneBasedGtuTest implements UNITS
         for (RelativePosition relativePosition : new RelativePosition[] {car.getFront(), car.getRear()})
         {
             Map<Lane, Double> positions = car.fractionalPositions(relativePosition);
-            // wouter schakel assertEquals("Car should be in three lanes", 3, positions.size());
             Double pos = positions.get(lanesGroupA[1]);
             assertTrue(null != pos, "Car should be in lane 1 of lane group A");
             assertEquals(pos, car.fractionalPosition(lanesGroupA[1], relativePosition),
                     0.0000001, "fractional position should be equal to result of fractionalPosition(lane, ...)");
-            pos = positions.get(lanesGroupB[1]);
-            assertTrue(null != pos, "Car should be in lane 1 of lane group B");
-            assertEquals(pos, car.fractionalPosition(lanesGroupB[1], relativePosition),
-                    0.0000001, "fractional position should be equal to result of fractionalPosition(lane, ...)");
             pos = positions.get(lanesGroupC[0]);
-        }
-        // wouter schakel car.leaveLane(lanesGroupA[1]);
-        for (RelativePosition relativePosition : new RelativePosition[] {car.getFront(), car.getRear()})
-        {
-            Map<Lane, Double> positions = car.fractionalPositions(relativePosition);
-            assertEquals(2, positions.size(), "Car should be in two lanes");
-            Double pos = positions.get(lanesGroupB[1]);
-            assertTrue(null != pos, "Car should be in lane 1 of lane group B");
-            assertEquals(pos, car.fractionalPosition(lanesGroupB[1], relativePosition),
-                    0.0000001, "fractional position should be equal to result of fractionalPosition(lane, ...)");
-            pos = positions.get(lanesGroupC[0]);
-            // wouter schakel assertTrue("Car should be in lane 0 of lane group C", null != pos);
-            // The next one fails - maybe I don't understand something - PK
-            // assertEquals("fractional position should be 0", 0,
-            // car.fractionalPosition(lanesGroupC[0], relativePosition), 0.0000001);
-            // wouter schakel assertEquals("fractional position should be equal to result of fractionalPosition(lane, ...)",
-            // pos,
-            // car.fractionalPosition(lanesGroupC[0], relativePosition), 0.0000001);
         }
         // TODO removeLane should throw an Error when the car is not on that lane (currently this is silently ignored)
         // TODO figure out why the added lane has a non-zero position

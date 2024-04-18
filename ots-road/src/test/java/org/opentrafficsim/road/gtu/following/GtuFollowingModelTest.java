@@ -111,8 +111,7 @@ public class GtuFollowingModelTest implements UNITS
         Length initialPosition = new Length(1234.567, METER);
         Length length = new Length(5.0, METER);
         Length width = new Length(2.0, METER);
-        Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
-        initialLongitudinalPositions.add(new LanePosition(lane, initialPosition));
+        LanePosition initialLongitudinalPositions = new LanePosition(lane, initialPosition);
         // AbstractLaneChangeModel laneChangeModel = new Egoistic();
         Parameters parameters = DefaultTestParameters.create();
         maxHeadway = parameters.getParameter(ParameterTypes.LOOKAHEAD);
@@ -161,8 +160,7 @@ public class GtuFollowingModelTest implements UNITS
             // Ignore
         }
         Length headway50m = new Length(50, METER);
-        Set<LanePosition> initialLongitudinalPositions50 = new LinkedHashSet<>(1);
-        initialLongitudinalPositions50.add(new LanePosition(lane, initialPosition.plus(headway50m)));
+        LanePosition initialLongitudinalPositions50 = new LanePosition(lane, initialPosition.plus(headway50m));
         LaneBasedGtu gtu50m = new LaneBasedGtu("100050", carType, length, width, maxSpeed, length.times(0.5), network);
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGtuFollowingTacticalPlanner(gtuFollowingModel, gtu50m), gtu50m);
@@ -250,8 +248,7 @@ public class GtuFollowingModelTest implements UNITS
         otherGTUs.add(hwgtu100m);
         // Follower at 75m
         Length headwayMinus75m = new Length(-75, METER);
-        Set<LanePosition> initialLongitudinalPositionsMinus75 = new LinkedHashSet<>(1);
-        initialLongitudinalPositionsMinus75.add(new LanePosition(lane, initialPosition.plus(headwayMinus75m)));
+        LanePosition initialLongitudinalPositionsMinus75 = new LanePosition(lane, initialPosition.plus(headwayMinus75m));
         LaneBasedGtu gtuMinus75m = new LaneBasedGtu("100075", carType, length, width, maxSpeed, length.times(0.5), network);
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGtuFollowingTacticalPlanner(gtuFollowingModel, gtuMinus75m), gtuMinus75m);
@@ -270,8 +267,7 @@ public class GtuFollowingModelTest implements UNITS
                 a100.getAcceleration(), a75.getAcceleration(), expectedValidUntil);
         // Another follower at 200m
         Length headwayMinus200m = new Length(-200, METER);
-        Set<LanePosition> initialLongitudinalPositionsMinus200 = new LinkedHashSet<>(1);
-        initialLongitudinalPositionsMinus200.add(new LanePosition(lane, initialPosition.plus(headwayMinus200m)));
+        LanePosition initialLongitudinalPositionsMinus200 = new LanePosition(lane, initialPosition.plus(headwayMinus200m));
         LaneBasedGtu gtuMinus200m = new LaneBasedGtu("100200", carType, length, width, maxSpeed, length.times(0.5), network);
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGtuFollowingTacticalPlanner(gtuFollowingModel, gtuMinus200m), gtuMinus200m);

@@ -22,8 +22,10 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.Transform2d;
 import org.djutils.draw.bounds.Bounds;
 import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
@@ -99,8 +101,8 @@ public class LaneTest implements UNITS
         assertEquals(0, lane.nextLanes(gtuTypeCar).size(), "NextLanes should be empty");
         double approximateLengthOfContour =
                 2 * nodeFrom.getPoint().distance(nodeTo.getPoint()) + startWidth.getSI() + endWidth.getSI();
-        assertEquals(approximateLengthOfContour, lane.getContour().getLength(),
-                0.1, "Length of contour is approximately " + approximateLengthOfContour);
+        assertEquals(approximateLengthOfContour, lane.getContour().getLength(), 0.1,
+                "Length of contour is approximately " + approximateLengthOfContour);
         assertEquals(new Speed(100, KM_PER_HOUR), lane.getSpeedLimit(DefaultsNl.VEHICLE),
                 "SpeedLimit should be " + (new Speed(100, KM_PER_HOUR)));
         assertEquals(0, lane.getGtuList().size(), "There should be no GTUs on the lane");
@@ -110,27 +112,29 @@ public class LaneTest implements UNITS
         {
             double expectedLateralCenterOffset =
                     startLateralPos.getSI() + (endLateralPos.getSI() - startLateralPos.getSI()) * i / 10;
-            assertEquals(expectedLateralCenterOffset,
-                    lane.getLateralCenterPosition(i / 10.0).getSI(), 0.01, String.format("Lateral offset at %d%% should be %.3fm", 10 * i, expectedLateralCenterOffset));
+            assertEquals(expectedLateralCenterOffset, lane.getLateralCenterPosition(i / 10.0).getSI(), 0.01,
+                    String.format("Lateral offset at %d%% should be %.3fm", 10 * i, expectedLateralCenterOffset));
             Length longitudinalPosition = new Length(lane.getLength().getSI() * i / 10, METER);
-            assertEquals(expectedLateralCenterOffset,
-                    lane.getLateralCenterPosition(longitudinalPosition).getSI(), 0.01, "Lateral offset at " + longitudinalPosition + " should be " + expectedLateralCenterOffset);
+            assertEquals(expectedLateralCenterOffset, lane.getLateralCenterPosition(longitudinalPosition).getSI(), 0.01,
+                    "Lateral offset at " + longitudinalPosition + " should be " + expectedLateralCenterOffset);
             double expectedWidth = startWidth.getSI() + (endWidth.getSI() - startWidth.getSI()) * i / 10;
-            assertEquals(expectedWidth, lane.getWidth(i / 10.0).getSI(),
-                    0.0001, String.format("Width at %d%% should be %.3fm", 10 * i, expectedWidth));
-            assertEquals(expectedWidth, lane.getWidth(longitudinalPosition).getSI(),
-                    0.0001, "Width at " + longitudinalPosition + " should be " + expectedWidth);
+            assertEquals(expectedWidth, lane.getWidth(i / 10.0).getSI(), 0.0001,
+                    String.format("Width at %d%% should be %.3fm", 10 * i, expectedWidth));
+            assertEquals(expectedWidth, lane.getWidth(longitudinalPosition).getSI(), 0.0001,
+                    "Width at " + longitudinalPosition + " should be " + expectedWidth);
             double expectedLeftOffset = expectedLateralCenterOffset - expectedWidth / 2;
             // The next test caught a bug
             assertEquals(expectedLeftOffset, lane.getLateralBoundaryPosition(LateralDirectionality.LEFT, i / 10.0).getSI(),
                     0.001, String.format("Left edge at %d%% should be %.3fm", 10 * i, expectedLeftOffset));
-            assertEquals(expectedLeftOffset, lane.getLateralBoundaryPosition(LateralDirectionality.LEFT, longitudinalPosition).getSI(),
-                    0.001, "Left edge at " + longitudinalPosition + " should be " + expectedLeftOffset);
+            assertEquals(expectedLeftOffset,
+                    lane.getLateralBoundaryPosition(LateralDirectionality.LEFT, longitudinalPosition).getSI(), 0.001,
+                    "Left edge at " + longitudinalPosition + " should be " + expectedLeftOffset);
             double expectedRightOffset = expectedLateralCenterOffset + expectedWidth / 2;
             assertEquals(expectedRightOffset, lane.getLateralBoundaryPosition(LateralDirectionality.RIGHT, i / 10.0).getSI(),
                     0.001, String.format("Right edge at %d%% should be %.3fm", 10 * i, expectedRightOffset));
-            assertEquals(expectedRightOffset, lane.getLateralBoundaryPosition(LateralDirectionality.RIGHT, longitudinalPosition).getSI(),
-                    0.001, "Right edge at " + longitudinalPosition + " should be " + expectedRightOffset);
+            assertEquals(expectedRightOffset,
+                    lane.getLateralBoundaryPosition(LateralDirectionality.RIGHT, longitudinalPosition).getSI(), 0.001,
+                    "Right edge at " + longitudinalPosition + " should be " + expectedRightOffset);
         }
 
         // Harder case; create a Link with form points along the way
@@ -672,10 +676,6 @@ public class LaneTest implements UNITS
                                         new Length(startWidth, METER), new Length(endWidth, METER), laneType, speedMap);
                                 // Verify a couple of points that should be inside the contour of the Lane
                                 // One meter along the lane design line
-                                if (startLateralOffset == -3 && endLateralOffset == -1 && endWidth == 4)
-                                {
-                                    System.out.println("hmmm");
-                                }
                                 checkInside(lane, 1, startLateralOffset, true);
                                 // One meter before the end along the lane design line
                                 checkInside(lane, link.getLength().getSI() - 1, endLateralOffset, true);
@@ -692,8 +692,7 @@ public class LaneTest implements UNITS
                                 // One meter before the end, right outside the lane
                                 checkInside(lane, link.getLength().getSI() - 1, endLateralOffset + endWidth / 2 + 1, false);
                                 // Check the result of getBounds.
-                                Point2d l = lane.getLocation();
-                                Bounds bb = lane.getBounds();
+                                OrientedPoint2d l = lane.getLocation();
                                 // System.out.println("bb is " + bb);
                                 // System.out.println("l is " + l.x + "," + l.y + "," + l.z);
                                 // System.out.println("start is at " + start.getX() + ", " + start.getY());
@@ -728,10 +727,15 @@ public class LaneTest implements UNITS
                                 // System.out.println(" my bbox is " + minX + "," + minY + " - " + maxX + "," + maxY);
                                 // System.out.println("the bbox is " + (bbLow.x + l.x) + "," + (bbLow.y + l.y) + " - "
                                 // + (bbHigh.x + l.x) + "," + (bbHigh.y + l.y));
-                                double boundsMinX = bb.getMinX() + l.x;
-                                double boundsMinY = bb.getMinY() + l.y;
-                                double boundsMaxX = bb.getMaxX() + l.x;
-                                double boundsMaxY = bb.getMaxY() + l.y;
+                                Transform2d transform = new Transform2d();
+                                transform.translate(l.x, l.y);
+                                transform.rotation(l.dirZ);
+                                Polygon2d pol = new Polygon2d(transform.transform(lane.getBounds().asPolygon().getPoints()));
+                                Bounds<?, ?, ?> bb = pol.getBounds();
+                                double boundsMinX = bb.getMinX();
+                                double boundsMinY = bb.getMinY();
+                                double boundsMaxX = bb.getMaxX();
+                                double boundsMaxY = bb.getMaxY();
                                 assertEquals(minX, boundsMinX, 0.1, "low x boundary");
                                 assertEquals(minY, boundsMinY, 0.1, "low y boundary");
                                 assertEquals(maxX, boundsMaxX, 0.1, "high x boundary");

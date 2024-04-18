@@ -299,10 +299,8 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
         }
 
         // init
-        Set<LanePosition> initialPositions = new LinkedHashSet<>(1);
-        initialPositions.add(new LanePosition(lane, initialPosition));
         Speed initialSpeed = new Speed(0, KM_PER_HOUR);
-        gtu.init(strategicalPlanner, initialPositions, initialSpeed);
+        gtu.init(strategicalPlanner, new LanePosition(lane, initialPosition), initialSpeed);
     }
 
     /** {@inheritDoc} */

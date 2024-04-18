@@ -135,15 +135,13 @@ public class CarTest implements UNITS
     {
         Length length = new Length(5.0, METER);
         Length width = new Length(2.0, METER);
-        Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
-        initialLongitudinalPositions.add(new LanePosition(lane, initialPosition));
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
         Parameters parameters = DefaultTestParameters.create();
         LaneBasedGtu gtu = new LaneBasedGtu(id, gtuType, length, width, maxSpeed, length.times(0.5), network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCfLcTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
         gtu.setParameters(parameters);
-        gtu.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
+        gtu.init(strategicalPlanner, new LanePosition(lane, initialPosition), initialSpeed);
 
         return gtu;
     }

@@ -182,8 +182,6 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
         assertEquals(0, lanes[1].accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, gtuType).size(),
                 "Rightmost lane should not have accessible adjacent lanes on the RIGHT side");
 
-        Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
-        initialLongitudinalPositions.add(new LanePosition(lanes[1], new Length(100, METER)));
         AbstractLaneChangeModel laneChangeModel = new Egoistic();
         ParameterSet parameters = DefaultTestParameters.create();
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =
@@ -194,7 +192,7 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCfLcTacticalPlanner(new IdmPlusOld(), laneChangeModel, car), car);
         car.setParameters(parameters);
-        car.init(strategicalPlanner, initialLongitudinalPositions, new Speed(100, KM_PER_HOUR));
+        car.init(strategicalPlanner, new LanePosition(lanes[1], new Length(100, METER)), new Speed(100, KM_PER_HOUR));
         car.getTacticalPlanner().getPerception().perceive();
         Collection<Headway> sameLaneGTUs = new LinkedHashSet<>();
         sameLaneGTUs.add(new HeadwayGtuSimple(car.getId(), car.getType(), Length.ZERO, Length.ZERO, car.getLength(),
@@ -218,9 +216,6 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
         Length collisionEnd = reference.plus(vehicleLength);
         for (double pos = collisionStart.getSI() + 0.01; pos < collisionEnd.getSI() - 0.01; pos += 0.1)
         {
-            Set<LanePosition> otherLongitudinalPositions = new LinkedHashSet<>(1);
-            otherLongitudinalPositions.add(new LanePosition(lanes[1], new Length(pos, METER)));
-
             parameters = DefaultTestParameters.create();
             // parameters = new BehavioralCharacteristics();
             // parameters.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
@@ -238,7 +233,7 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
             strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedCfLcTacticalPlanner(new IdmPlusOld(), laneChangeModel, collisionCar), collisionCar);
             collisionCar.setParameters(parameters);
-            collisionCar.init(strategicalPlanner, otherLongitudinalPositions, new Speed(100, KM_PER_HOUR));
+            collisionCar.init(strategicalPlanner, new LanePosition(lanes[1], new Length(pos, METER)), new Speed(100, KM_PER_HOUR));
             preferredLaneGTUs.clear();
             HeadwayGtuSimple collisionHWGTU = new HeadwayGtuSimple(collisionCar.getId(), collisionCar.getType(),
                     new Length(pos - reference.getSI(), LengthUnit.SI), collisionCar.getLength(), collisionCar.getWidth(),
@@ -253,9 +248,6 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
         }
         for (double pos = 0; pos < 180; pos += 5) // beyond 180m, a GTU gets a plan beyond the 200m long network
         {
-            Set<LanePosition> otherLongitudinalPositions = new LinkedHashSet<>(1);
-            otherLongitudinalPositions.add(new LanePosition(lanes[1], new Length(pos, METER)));
-
             parameters = new ParameterSet();
             parameters.setParameter(ParameterTypes.A, new Acceleration(1, METER_PER_SECOND_2));
             parameters.setParameter(ParameterTypes.B, new Acceleration(1.5, METER_PER_SECOND_2));
@@ -274,7 +266,7 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
             strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedCfLcTacticalPlanner(new IdmPlusOld(), laneChangeModel, otherCar), otherCar);
             otherCar.setParameters(parameters);
-            otherCar.init(strategicalPlanner, otherLongitudinalPositions, new Speed(100, KM_PER_HOUR));
+            otherCar.init(strategicalPlanner, new LanePosition(lanes[1], new Length(pos, METER)), new Speed(100, KM_PER_HOUR));
             preferredLaneGTUs.clear();
             HeadwayGtuSimple collisionHWGTU = new HeadwayGtuSimple(otherCar.getId(), otherCar.getType(),
                     new Length(pos - car.position(lanes[0], car.getReference()).getSI(), LengthUnit.SI), otherCar.getLength(),

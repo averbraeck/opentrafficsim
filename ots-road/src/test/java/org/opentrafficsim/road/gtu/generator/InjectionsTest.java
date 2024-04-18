@@ -53,6 +53,7 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactor
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
+import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -166,6 +167,7 @@ public class InjectionsTest
         arrivals.addRow(Map.of(time, Duration.instantiateSI(15.0), id, "5", speed, Speed.instantiateSI(14.0)));
         arrivals.addRow(Map.of(time, Duration.instantiateSI(21.0), id, "6", speed, Speed.instantiateSI(15.0)));
         Injections arrivalsInjection = new Injections(arrivals, null, null, null, null, Duration.ONE);
+        LanePosition generationLane = Mockito.mock(LanePosition.class);
         for (int i = 0; i < 6; i++)
         {
             // inter-arrival time
@@ -176,9 +178,9 @@ public class InjectionsTest
             Mockito.when(mockLeader.getDistance()).thenReturn(Length.ONE);
             Mockito.when(mockLeader.getSpeed()).thenReturn(Speed.ONE);
             leaders.add(mockLeader);
-            assertFalse(arrivalsInjection.canPlace(leaders, null, Duration.ZERO, Collections.emptySet()).canPlace());
+            assertFalse(arrivalsInjection.canPlace(leaders, null, Duration.ZERO, generationLane).canPlace());
             // without leader (note that these calls do not increase the row iterator, only inter-arrival time does that)
-            Placement p = arrivalsInjection.canPlace(Collections.emptySortedSet(), null, Duration.ZERO, Collections.emptySet());
+            Placement p = arrivalsInjection.canPlace(Collections.emptySortedSet(), null, Duration.ZERO, generationLane);
             assertEquals(i + 10, p.getSpeed().si, 1e-9);
         }
         assertNull(arrivalsInjection.draw()); // stop headway generator at end of rows
@@ -231,9 +233,9 @@ public class InjectionsTest
             LaneBasedGtuCharacteristics characteristics = full.asLaneBasedGtuCharacteristicsGenerator().draw();
             assertEquals(i + 1.0, characteristics.getLength().si, 1e-9);
             GeneratorLanePosition p = full.draw(characteristics.getGtuType(), characteristics, Collections.emptyMap());
-            assertEquals(lanes[laneIndex], p.getPosition().iterator().next().getLane().getId());
+            assertEquals(lanes[laneIndex], p.getPosition().getLane().getId());
             laneIndex = 1 - laneIndex;
-            assertEquals((i + 1) * 10.0, p.getPosition().iterator().next().getPosition().si, 1e-9);
+            assertEquals((i + 1) * 10.0, p.getPosition().getPosition().si, 1e-9);
         }
         Try.testFail(() -> full.asLaneBasedGtuCharacteristicsGenerator().draw(), IllegalStateException.class); // consec. draw
 
