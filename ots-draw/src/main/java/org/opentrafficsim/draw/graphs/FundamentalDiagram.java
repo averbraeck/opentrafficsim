@@ -632,12 +632,13 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
     /**
      * Creates a {@code Source} from a sampler and positions.
-     * @param sampler Sampler<?, ?>; sampler
+     * @param sampler Sampler&lt;?, L&gt;; sampler
      * @param crossSection GraphCrossSection&lt;LaneData&gt;; cross section
      * @param aggregateLanes boolean; whether to aggregate the positions
      * @param aggregationTime Duration; aggregation time (and update time)
      * @param harmonic boolean; harmonic mean
      * @return Source; source for a fundamental diagram from a sampler and positions
+     * @param <L> LaneData
      */
     @SuppressWarnings("methodlength")
     public static <L extends LaneData<L>> FdSource sourceFromSampler(final Sampler<?, L> sampler,
@@ -649,11 +650,12 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
     /**
      * Creates a {@code Source} from a sampler and positions.
-     * @param sampler Sampler<?, ?>; sampler
+     * @param sampler Sampler&lt;?, L&gt;; sampler
      * @param path GraphPath&lt;LaneData&gt;; cross section
      * @param aggregateLanes boolean; whether to aggregate the positions
      * @param aggregationTime Duration; aggregation time (and update time)
      * @return Source; source for a fundamental diagram from a sampler and positions
+     * @param <L> LaneData
      */
     public static <L extends LaneData<L>> FdSource sourceFromSampler(final Sampler<?, L> sampler, final GraphPath<L> path,
             final boolean aggregateLanes, final Duration aggregationTime)
