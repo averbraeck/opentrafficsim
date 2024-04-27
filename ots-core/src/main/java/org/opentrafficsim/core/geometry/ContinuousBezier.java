@@ -70,7 +70,6 @@ public class ContinuousBezier
     /**
      * Returns the derivative for a Bezier, which is a Bezier of 1 order lower.
      * @return ContinuousBezier; derivative Bezier.
-     * @throws IllegalStateException; if the Bezier has less than two points, in which case no derivative can be calculated.
      */
     public ContinuousBezier derivative()
     {
