@@ -4,24 +4,36 @@ import java.io.Serializable;
 
 import org.djunits.unit.AbsoluteLinearUnit;
 import org.djunits.unit.AbsoluteTemperatureUnit;
+import org.djunits.unit.AbsorbedDoseUnit;
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.AmountOfSubstanceUnit;
 import org.djunits.unit.AngleUnit;
 import org.djunits.unit.AreaUnit;
+import org.djunits.unit.CatalyticActivityUnit;
 import org.djunits.unit.DensityUnit;
 import org.djunits.unit.DimensionlessUnit;
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.DurationUnit;
+import org.djunits.unit.ElectricalCapacitanceUnit;
 import org.djunits.unit.ElectricalChargeUnit;
+import org.djunits.unit.ElectricalConductanceUnit;
 import org.djunits.unit.ElectricalCurrentUnit;
+import org.djunits.unit.ElectricalInductanceUnit;
 import org.djunits.unit.ElectricalPotentialUnit;
 import org.djunits.unit.ElectricalResistanceUnit;
 import org.djunits.unit.EnergyUnit;
+import org.djunits.unit.EquivalentDoseUnit;
 import org.djunits.unit.FlowMassUnit;
 import org.djunits.unit.FlowVolumeUnit;
 import org.djunits.unit.ForceUnit;
 import org.djunits.unit.FrequencyUnit;
+import org.djunits.unit.IlluminanceUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.LinearDensityUnit;
+import org.djunits.unit.LuminousFluxUnit;
+import org.djunits.unit.LuminousIntensityUnit;
+import org.djunits.unit.MagneticFluxDensityUnit;
+import org.djunits.unit.MagneticFluxUnit;
 import org.djunits.unit.MassUnit;
 import org.djunits.unit.PositionUnit;
 import org.djunits.unit.PowerUnit;
@@ -34,24 +46,36 @@ import org.djunits.unit.TorqueUnit;
 import org.djunits.unit.Unit;
 import org.djunits.unit.VolumeUnit;
 import org.djunits.value.vdouble.scalar.AbsoluteTemperature;
+import org.djunits.value.vdouble.scalar.AbsorbedDose;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.AmountOfSubstance;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Area;
+import org.djunits.value.vdouble.scalar.CatalyticActivity;
 import org.djunits.value.vdouble.scalar.Density;
 import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.ElectricalCapacitance;
 import org.djunits.value.vdouble.scalar.ElectricalCharge;
+import org.djunits.value.vdouble.scalar.ElectricalConductance;
 import org.djunits.value.vdouble.scalar.ElectricalCurrent;
+import org.djunits.value.vdouble.scalar.ElectricalInductance;
 import org.djunits.value.vdouble.scalar.ElectricalPotential;
 import org.djunits.value.vdouble.scalar.ElectricalResistance;
 import org.djunits.value.vdouble.scalar.Energy;
+import org.djunits.value.vdouble.scalar.EquivalentDose;
 import org.djunits.value.vdouble.scalar.FlowMass;
 import org.djunits.value.vdouble.scalar.FlowVolume;
 import org.djunits.value.vdouble.scalar.Force;
 import org.djunits.value.vdouble.scalar.Frequency;
+import org.djunits.value.vdouble.scalar.Illuminance;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
+import org.djunits.value.vdouble.scalar.LuminousFlux;
+import org.djunits.value.vdouble.scalar.LuminousIntensity;
+import org.djunits.value.vdouble.scalar.MagneticFlux;
+import org.djunits.value.vdouble.scalar.MagneticFluxDensity;
 import org.djunits.value.vdouble.scalar.Mass;
 import org.djunits.value.vdouble.scalar.Position;
 import org.djunits.value.vdouble.scalar.Power;
@@ -120,7 +144,7 @@ public interface DiscreteDistDoubleScalar
                 case "DirectionUnit":
                     return (T) new Direction(getDistribution().draw(), (DirectionUnit) getUnit());
 
-                case "PositionhUnit":
+                case "PositionUnit":
                     return (T) new Position(getDistribution().draw(), (PositionUnit) getUnit());
 
                 case "AbsoluteTemperatureUnit":
@@ -148,8 +172,7 @@ public interface DiscreteDistDoubleScalar
      * @param <T> The absolute doublescalar type
      * @param <U> The unit type used
      */
-    class Rel<T extends DoubleScalarRel<U, T>, U extends Unit<U>> extends AbstractDiscreteDistScalar
-            implements Serializable
+    class Rel<T extends DoubleScalarRel<U, T>, U extends Unit<U>> extends AbstractDiscreteDistScalar implements Serializable
     {
         /** */
         private static final long serialVersionUID = 20150000L;
@@ -183,6 +206,15 @@ public interface DiscreteDistDoubleScalar
                 case "AccelerationUnit":
                     return (T) new Acceleration(getDistribution().draw(), (AccelerationUnit) getUnit());
 
+                case "AbsorbedDoseUnit":
+                    return (T) new AbsorbedDose(getDistribution().draw(), (AbsorbedDoseUnit) getUnit());
+
+                case "AmountOfSubstanceUnit":
+                    return (T) new AmountOfSubstance(getDistribution().draw(), (AmountOfSubstanceUnit) getUnit());
+
+                case "CatalyticActivityUnit":
+                    return (T) new CatalyticActivity(getDistribution().draw(), (CatalyticActivityUnit) getUnit());
+
                 case "AngleUnit":
                     return (T) new Angle(getDistribution().draw(), (AngleUnit) getUnit());
 
@@ -213,8 +245,20 @@ public interface DiscreteDistDoubleScalar
                 case "ElectricalResistanceUnit":
                     return (T) new ElectricalResistance(getDistribution().draw(), (ElectricalResistanceUnit) getUnit());
 
+                case "ElectricalCapacitanceUnit":
+                    return (T) new ElectricalCapacitance(getDistribution().draw(), (ElectricalCapacitanceUnit) getUnit());
+
+                case "ElectricalConductanceUnit":
+                    return (T) new ElectricalConductance(getDistribution().draw(), (ElectricalConductanceUnit) getUnit());
+
+                case "ElectricalInductanceUnit":
+                    return (T) new ElectricalInductance(getDistribution().draw(), (ElectricalInductanceUnit) getUnit());
+
                 case "EnergyUnit":
                     return (T) new Energy(getDistribution().draw(), (EnergyUnit) getUnit());
+
+                case "EquivalentDoseUnit":
+                    return (T) new EquivalentDose(getDistribution().draw(), (EquivalentDoseUnit) getUnit());
 
                 case "FlowMassUnit":
                     return (T) new FlowMass(getDistribution().draw(), (FlowMassUnit) getUnit());
@@ -228,11 +272,26 @@ public interface DiscreteDistDoubleScalar
                 case "FrequencyUnit":
                     return (T) new Frequency(getDistribution().draw(), (FrequencyUnit) getUnit());
 
+                case "IlluminanceUnit":
+                    return (T) new Illuminance(getDistribution().draw(), (IlluminanceUnit) getUnit());
+
                 case "LengthUnit":
                     return (T) new Length(getDistribution().draw(), (LengthUnit) getUnit());
 
                 case "LinearDensityUnit":
                     return (T) new LinearDensity(getDistribution().draw(), (LinearDensityUnit) getUnit());
+
+                case "LuminousFluxUnit":
+                    return (T) new LuminousFlux(getDistribution().draw(), (LuminousFluxUnit) getUnit());
+
+                case "LuminousIntensityUnit":
+                    return (T) new LuminousIntensity(getDistribution().draw(), (LuminousIntensityUnit) getUnit());
+
+                case "MagneticFluxUnit":
+                    return (T) new MagneticFlux(getDistribution().draw(), (MagneticFluxUnit) getUnit());
+
+                case "MagneticFluxDensityUnit":
+                    return (T) new MagneticFluxDensity(getDistribution().draw(), (MagneticFluxDensityUnit) getUnit());
 
                 case "MassUnit":
                     return (T) new Mass(getDistribution().draw(), (MassUnit) getUnit());

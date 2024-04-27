@@ -4,24 +4,36 @@ import java.io.Serializable;
 
 import org.djunits.unit.AbsoluteLinearUnit;
 import org.djunits.unit.AbsoluteTemperatureUnit;
+import org.djunits.unit.AbsorbedDoseUnit;
 import org.djunits.unit.AccelerationUnit;
+import org.djunits.unit.AmountOfSubstanceUnit;
 import org.djunits.unit.AngleUnit;
 import org.djunits.unit.AreaUnit;
+import org.djunits.unit.CatalyticActivityUnit;
 import org.djunits.unit.DensityUnit;
 import org.djunits.unit.DimensionlessUnit;
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.DurationUnit;
+import org.djunits.unit.ElectricalCapacitanceUnit;
 import org.djunits.unit.ElectricalChargeUnit;
+import org.djunits.unit.ElectricalConductanceUnit;
 import org.djunits.unit.ElectricalCurrentUnit;
+import org.djunits.unit.ElectricalInductanceUnit;
 import org.djunits.unit.ElectricalPotentialUnit;
 import org.djunits.unit.ElectricalResistanceUnit;
 import org.djunits.unit.EnergyUnit;
+import org.djunits.unit.EquivalentDoseUnit;
 import org.djunits.unit.FlowMassUnit;
 import org.djunits.unit.FlowVolumeUnit;
 import org.djunits.unit.ForceUnit;
 import org.djunits.unit.FrequencyUnit;
+import org.djunits.unit.IlluminanceUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.LinearDensityUnit;
+import org.djunits.unit.LuminousFluxUnit;
+import org.djunits.unit.LuminousIntensityUnit;
+import org.djunits.unit.MagneticFluxDensityUnit;
+import org.djunits.unit.MagneticFluxUnit;
 import org.djunits.unit.MassUnit;
 import org.djunits.unit.PositionUnit;
 import org.djunits.unit.PowerUnit;
@@ -34,24 +46,36 @@ import org.djunits.unit.TorqueUnit;
 import org.djunits.unit.Unit;
 import org.djunits.unit.VolumeUnit;
 import org.djunits.value.vfloat.scalar.FloatAbsoluteTemperature;
+import org.djunits.value.vfloat.scalar.FloatAbsorbedDose;
 import org.djunits.value.vfloat.scalar.FloatAcceleration;
+import org.djunits.value.vfloat.scalar.FloatAmountOfSubstance;
 import org.djunits.value.vfloat.scalar.FloatAngle;
 import org.djunits.value.vfloat.scalar.FloatArea;
+import org.djunits.value.vfloat.scalar.FloatCatalyticActivity;
 import org.djunits.value.vfloat.scalar.FloatDensity;
 import org.djunits.value.vfloat.scalar.FloatDimensionless;
 import org.djunits.value.vfloat.scalar.FloatDirection;
 import org.djunits.value.vfloat.scalar.FloatDuration;
+import org.djunits.value.vfloat.scalar.FloatElectricalCapacitance;
 import org.djunits.value.vfloat.scalar.FloatElectricalCharge;
+import org.djunits.value.vfloat.scalar.FloatElectricalConductance;
 import org.djunits.value.vfloat.scalar.FloatElectricalCurrent;
+import org.djunits.value.vfloat.scalar.FloatElectricalInductance;
 import org.djunits.value.vfloat.scalar.FloatElectricalPotential;
 import org.djunits.value.vfloat.scalar.FloatElectricalResistance;
 import org.djunits.value.vfloat.scalar.FloatEnergy;
+import org.djunits.value.vfloat.scalar.FloatEquivalentDose;
 import org.djunits.value.vfloat.scalar.FloatFlowMass;
 import org.djunits.value.vfloat.scalar.FloatFlowVolume;
 import org.djunits.value.vfloat.scalar.FloatForce;
 import org.djunits.value.vfloat.scalar.FloatFrequency;
+import org.djunits.value.vfloat.scalar.FloatIlluminance;
 import org.djunits.value.vfloat.scalar.FloatLength;
 import org.djunits.value.vfloat.scalar.FloatLinearDensity;
+import org.djunits.value.vfloat.scalar.FloatLuminousFlux;
+import org.djunits.value.vfloat.scalar.FloatLuminousIntensity;
+import org.djunits.value.vfloat.scalar.FloatMagneticFlux;
+import org.djunits.value.vfloat.scalar.FloatMagneticFluxDensity;
 import org.djunits.value.vfloat.scalar.FloatMass;
 import org.djunits.value.vfloat.scalar.FloatPosition;
 import org.djunits.value.vfloat.scalar.FloatPower;
@@ -62,7 +86,6 @@ import org.djunits.value.vfloat.scalar.FloatTemperature;
 import org.djunits.value.vfloat.scalar.FloatTime;
 import org.djunits.value.vfloat.scalar.FloatTorque;
 import org.djunits.value.vfloat.scalar.FloatVolume;
-import org.djunits.value.vfloat.scalar.base.FloatScalar;
 import org.djunits.value.vfloat.scalar.base.FloatScalarAbs;
 import org.djunits.value.vfloat.scalar.base.FloatScalarRel;
 import org.opentrafficsim.core.distributions.Generator;
@@ -186,6 +209,15 @@ public interface DiscreteDistFloatScalar
                 case "AccelerationUnit":
                     return (T) new FloatAcceleration((float) getDistribution().draw(), (AccelerationUnit) getUnit());
 
+                case "AbsorbedDoseUnit":
+                    return (T) new FloatAbsorbedDose((float) getDistribution().draw(), (AbsorbedDoseUnit) getUnit());
+
+                case "AmountOfSubstanceUnit":
+                    return (T) new FloatAmountOfSubstance((float) getDistribution().draw(), (AmountOfSubstanceUnit) getUnit());
+
+                case "CatalyticActivityUnit":
+                    return (T) new FloatCatalyticActivity((float) getDistribution().draw(), (CatalyticActivityUnit) getUnit());
+
                 case "AngleUnit":
                     return (T) new FloatAngle((float) getDistribution().draw(), (AngleUnit) getUnit());
 
@@ -199,7 +231,7 @@ public interface DiscreteDistFloatScalar
                     return (T) new FloatDensity((float) getDistribution().draw(), (DensityUnit) getUnit());
 
                 case "DimensionlessUnit":
-                    return (T) new FloatDimensionless(getDistribution().draw(), (DimensionlessUnit) getUnit());
+                    return (T) new FloatDimensionless((float) getDistribution().draw(), (DimensionlessUnit) getUnit());
 
                 case "DurationUnit":
                     return (T) new FloatDuration((float) getDistribution().draw(), (DurationUnit) getUnit());
@@ -218,8 +250,23 @@ public interface DiscreteDistFloatScalar
                     return (T) new FloatElectricalResistance((float) getDistribution().draw(),
                             (ElectricalResistanceUnit) getUnit());
 
+                case "ElectricalCapacitanceUnit":
+                    return (T) new FloatElectricalCapacitance((float) getDistribution().draw(),
+                            (ElectricalCapacitanceUnit) getUnit());
+
+                case "ElectricalConductanceUnit":
+                    return (T) new FloatElectricalConductance((float) getDistribution().draw(),
+                            (ElectricalConductanceUnit) getUnit());
+
+                case "ElectricalInductanceUnit":
+                    return (T) new FloatElectricalInductance((float) getDistribution().draw(),
+                            (ElectricalInductanceUnit) getUnit());
+
                 case "EnergyUnit":
                     return (T) new FloatEnergy((float) getDistribution().draw(), (EnergyUnit) getUnit());
+
+                case "EquivalentDoseUnit":
+                    return (T) new FloatEquivalentDose((float) getDistribution().draw(), (EquivalentDoseUnit) getUnit());
 
                 case "FlowMassUnit":
                     return (T) new FloatFlowMass((float) getDistribution().draw(), (FlowMassUnit) getUnit());
@@ -233,11 +280,27 @@ public interface DiscreteDistFloatScalar
                 case "FrequencyUnit":
                     return (T) new FloatFrequency((float) getDistribution().draw(), (FrequencyUnit) getUnit());
 
+                case "IlluminanceUnit":
+                    return (T) new FloatIlluminance((float) getDistribution().draw(), (IlluminanceUnit) getUnit());
+
                 case "LengthUnit":
                     return (T) new FloatLength((float) getDistribution().draw(), (LengthUnit) getUnit());
 
                 case "LinearDensityUnit":
                     return (T) new FloatLinearDensity((float) getDistribution().draw(), (LinearDensityUnit) getUnit());
+
+                case "LuminousFluxUnit":
+                    return (T) new FloatLuminousFlux((float) getDistribution().draw(), (LuminousFluxUnit) getUnit());
+
+                case "LuminousIntensityUnit":
+                    return (T) new FloatLuminousIntensity((float) getDistribution().draw(), (LuminousIntensityUnit) getUnit());
+
+                case "MagneticFluxUnit":
+                    return (T) new FloatMagneticFlux((float) getDistribution().draw(), (MagneticFluxUnit) getUnit());
+
+                case "MagneticFluxDensityUnit":
+                    return (T) new FloatMagneticFluxDensity((float) getDistribution().draw(),
+                            (MagneticFluxDensityUnit) getUnit());
 
                 case "MassUnit":
                     return (T) new FloatMass((float) getDistribution().draw(), (MassUnit) getUnit());
