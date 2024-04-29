@@ -34,11 +34,6 @@ import org.opentrafficsim.xml.generated.Scenarios;
 public class ScenarioParser
 {
 
-    /** Last object looked up via evaluator. */
-    @Deprecated
-    // TODO: delete this and make sure regular evaluation output is used where this is used
-    public static Object lastLookedUp;
-
     /**
      * Parse input parameters for scenario.
      * @param scenarios Scenarios; scenarios tag.
@@ -380,7 +375,6 @@ public class ScenarioParser
             {
                 return Dimensionless.instantiateSI((Double) value);
             }
-            lastLookedUp = value;
             return value;
         }
     }

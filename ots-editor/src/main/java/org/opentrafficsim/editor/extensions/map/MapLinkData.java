@@ -57,7 +57,6 @@ import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.extensions.Adapters;
-import org.opentrafficsim.road.network.factory.xml.parser.ScenarioParser;
 import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets.CseData;
 import org.opentrafficsim.road.network.lane.CrossSectionSlice;
 import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
@@ -443,20 +442,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     private XsdTreeNode getInputNode(final XsdTreeNode inputParameter)
     {
         String inputId = inputParameter.getId();
-        String nodeId;
-        try
-        {
-            nodeId = (String) getEval().evaluate(inputId.substring(1, inputId.length() - 1));
-        }
-        catch (RuntimeException ex)
-        {
-            // TODO: dirty trick to obtain a value that was given to Eval, which not yet supports non Boolean/DoubleScalar.
-            if (!(ScenarioParser.lastLookedUp instanceof String))
-            {
-                return null;
-            }
-            nodeId = (String) ScenarioParser.lastLookedUp;
-        }
+        String nodeId = (String) getEval().evaluate(inputId.substring(1, inputId.length() - 1));
         XsdTreeNode ots = inputParameter.getRoot();
         for (XsdTreeNode child : ots.getChildren())
         {
