@@ -215,7 +215,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
             LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU(payload[0].toString());
             LaneDataRoad laneData = new LaneDataRoad(lane);
 
-            if (!this.activeGtus.contains(gtu.getId()))
+            if (!this.activeGtus.contains(gtu.getId()) && this.getSamplerData().contains(laneData))
             {
                 // GTU add was skipped during add event due to an improper phase of initialization, do here instead
                 processGtuAddEvent(laneData, new GtuDataRoad(gtu));

@@ -157,7 +157,20 @@ public final class LaneOperationalPlanBuilder
                             return new OtsLine2d(points);
                         }
                     }
-                    CategoryLogger.always().error("GTU {} on link {} has nowhere to go and no sink detector either", gtu,
+                    // force lane change, and create path from there
+                    for (LateralDirectionality lat : new LateralDirectionality[] {LateralDirectionality.LEFT,
+                            LateralDirectionality.RIGHT})
+                    {
+                        Lane latLane = prevFrom.getAdjacentLane(lat, gtu);
+                        if (latLane != null && gtu.getNextLaneForRoute(latLane) != null)
+                        {
+                            gtu.changeLaneInstantaneously(lat);
+                            CategoryLogger.always().warn("GTU {} on link {} is forced to change lane towards {}", gtu.getId(),
+                                    ref.getLane().getLink().getId(), lat);
+                            return createPathAlongCenterLine(gtu, distance);
+                        }
+                    }
+                    CategoryLogger.always().error("GTU {} on link {} has nowhere to go and no sink detector either", gtu.getId(),
                             ref.getLane().getLink().getId());
                     gtu.destroy();
                     return path;
