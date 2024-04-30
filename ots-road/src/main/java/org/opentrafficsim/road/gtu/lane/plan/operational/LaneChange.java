@@ -262,7 +262,7 @@ public class LaneChange implements Serializable
         List<Lane> fromLanes = new ArrayList<>();
         List<Lane> toLanes = new ArrayList<>();
         fromLanes.add(fromLane);
-        toLanes.add(fromLane.getAdjacentLane(this.laneChangeDirectionality, gtu));
+        toLanes.add(fromLane.getAdjacentLane(this.laneChangeDirectionality, gtu.getType()));
         double endPosFrom = from.getPosition().si + fromDist;
         while (endPosFrom + gtu.getFront().getDx().si > fromLane.getLength().si)
         {
@@ -299,7 +299,7 @@ public class LaneChange implements Serializable
                 break;
             }
             endPosFrom -= fromLane.getLength().si;
-            Lane nextToLane = nextFromLane.getAdjacentLane(this.laneChangeDirectionality, gtu);
+            Lane nextToLane = nextFromLane.getAdjacentLane(this.laneChangeDirectionality, gtu.getType());
             if (nextToLane == null)
             {
                 // there are no lanes to change to, restrict lane change length/duration (given fixed mean speed)
@@ -440,6 +440,10 @@ public class LaneChange implements Serializable
         {
             if (line == null && lane.equals(lanes.get(lanes.size() - 1)))
             {
+                if (endFractionalPosition < startFractionalPosition)
+                {
+                    System.out.println("hmmm");
+                }
                 line = lane.getCenterLine().extractFractional(startFractionalPosition, endFractionalPosition);
             }
             else if (line == null)

@@ -141,6 +141,11 @@ public final class LaneOperationalPlanBuilder
                     CategoryLogger.always().warn("About to die: GTU {} has null from value", gtu.getId());
                 }
                 from = gtu.getNextLaneForRoute(from);
+                // if (from != null && from.getType().equals(Lane.SHOULDER))
+                // {
+                // CategoryLogger.always().warn("GTU {} on link {} will move on to shoulder.", gtu.getId(),
+                // ref.getLane().getLink().getId());
+                // }
                 prevPos = pos;
                 pos = Length.ZERO;
                 if (from == null)
@@ -161,7 +166,7 @@ public final class LaneOperationalPlanBuilder
                     for (LateralDirectionality lat : new LateralDirectionality[] {LateralDirectionality.LEFT,
                             LateralDirectionality.RIGHT})
                     {
-                        Lane latLane = prevFrom.getAdjacentLane(lat, gtu);
+                        Lane latLane = prevFrom.getAdjacentLane(lat, gtu.getType());
                         if (latLane != null && gtu.getNextLaneForRoute(latLane) != null)
                         {
                             gtu.changeLaneInstantaneously(lat);
@@ -170,8 +175,8 @@ public final class LaneOperationalPlanBuilder
                             return createPathAlongCenterLine(gtu, distance);
                         }
                     }
-                    CategoryLogger.always().error("GTU {} on link {} has nowhere to go and no sink detector either", gtu.getId(),
-                            ref.getLane().getLink().getId());
+                    CategoryLogger.always().error("GTU {} on link {} has nowhere to go and no sink detector either",
+                            gtu.getId(), ref.getLane().getLink().getId());
                     gtu.destroy();
                     return path;
                 }

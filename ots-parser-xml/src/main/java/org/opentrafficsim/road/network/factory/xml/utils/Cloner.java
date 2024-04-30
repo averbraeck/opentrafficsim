@@ -8,7 +8,6 @@ import java.io.ObjectOutputStream;
 
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.xml.generated.CseLane;
-import org.opentrafficsim.xml.generated.CseNoTrafficLane;
 import org.opentrafficsim.xml.generated.CseShoulder;
 import org.opentrafficsim.xml.generated.CseStripe;
 import org.opentrafficsim.xml.generated.RoadLayout;
@@ -87,26 +86,6 @@ public final class Cloner
                 lc.setWidthStart(lane.getWidthStart());
                 lc.getSpeedLimit().addAll(lane.getSpeedLimit());
                 rl.getStripeOrLaneOrShoulder().add(lc);
-            }
-
-            else if (o instanceof CseNoTrafficLane)
-            {
-                CseNoTrafficLane ntl = (CseNoTrafficLane) o;
-                CseNoTrafficLane ntlc = new CseNoTrafficLane();
-                ntlc.setCenterOffset(ntl.getCenterOffset());
-                ntlc.setCenterOffsetEnd(ntl.getCenterOffsetEnd());
-                ntlc.setCenterOffsetStart(ntl.getCenterOffsetStart());
-                ntlc.setLeftOffset(ntl.getLeftOffset());
-                ntlc.setLeftOffsetEnd(ntl.getLeftOffsetEnd());
-                ntlc.setLeftOffsetStart(ntl.getLeftOffsetStart());
-                ntlc.setRightOffset(ntl.getRightOffset());
-                ntlc.setRightOffsetEnd(ntl.getRightOffsetEnd());
-                ntlc.setRightOffsetStart(ntl.getRightOffsetStart());
-                ntlc.setId(ntl.getId());
-                ntlc.setWidth(ntl.getWidth());
-                ntlc.setWidthEnd(ntl.getWidthEnd());
-                ntlc.setWidthStart(ntl.getWidthStart());
-                rl.getStripeOrLaneOrShoulder().add(ntlc);
             }
 
             else if (o instanceof CseShoulder)

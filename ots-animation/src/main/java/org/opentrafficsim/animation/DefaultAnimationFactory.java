@@ -63,7 +63,6 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.object.BusStop;
@@ -146,26 +145,25 @@ public class DefaultAnimationFactory implements EventListener
                 for (Link link : network.getLinkMap().values())
                 {
                     new LinkAnimation(new AnimationLinkData(link), this.simulator, 0.5f);
-                    if (link instanceof CrossSectionLink)
+                    if (link instanceof CrossSectionLink cLink)
                     {
-                        CrossSectionLink cLink = (CrossSectionLink) link;
                         for (CrossSectionElement element : cLink.getCrossSectionElementList())
                         {
-                            if (element instanceof Lane)
+                            if (element instanceof Lane lane)
                             {
-                                Lane lane = (Lane) element;
-                                new LaneAnimation(new AnimationLaneData(lane), this.simulator, Color.GRAY.brighter());
+                                if (lane.getType().equals(Lane.SHOULDER))
+                                {
+                                    new CrossSectionElementAnimation<>(new AnimationShoulderData(lane), this.simulator,
+                                            Color.DARK_GRAY);
+                                }
+                                else
+                                {
+                                    new LaneAnimation(new AnimationLaneData(lane), this.simulator, Color.GRAY.brighter());
+                                }
                             }
-                            else if (element instanceof Stripe)
+                            else if (element instanceof Stripe stripe)
                             {
-                                Stripe stripe = (Stripe) element;
                                 new StripeAnimation(new AnimationStripeData(stripe), this.simulator);
-                            }
-                            else if (element instanceof Shoulder)
-                            {
-                                Shoulder shoulder = (Shoulder) element;
-                                new CrossSectionElementAnimation<>(new AnimationShoulderData(shoulder), this.simulator,
-                                        Color.DARK_GRAY);
                             }
                             else
                             {

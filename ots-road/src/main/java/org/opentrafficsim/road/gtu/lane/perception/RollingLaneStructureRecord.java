@@ -288,12 +288,19 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
      */
     private boolean allowsRoute0(final Route route, final GtuType gtuType, final boolean end) throws NetworkException
     {
+        // check shoulder
+        boolean isShoulder = this.lane.getType().equals(Lane.SHOULDER);
+        if (!end && isShoulder)
+        {
+            return false;
+        }
+        
         // driving without route
-        if (route == null)
+        if (!isShoulder && route == null)
         {
             return true;
         }
-
+        
         // start with simple check
         int from = route.indexOf(getFromNode());
         int to = route.indexOf(getToNode());
@@ -341,14 +348,17 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
 
                     for (LaneStructureRecord next : laneRecord.getNext())
                     {
-                        if (next.getToNode().equals(route.destinationNode()))
+                        if (!next.getLane().getType().equals(Lane.SHOULDER))
                         {
-                            // reached destination, by definition ok
-                            return true;
-                        }
-                        if (route.indexOf(next.getToNode()) == to + 1)
-                        {
-                            nextSet.add(next);
+                            if (next.getToNode().equals(route.destinationNode()))
+                            {
+                                // reached destination, by definition ok
+                                return true;
+                            }
+                            if (route.indexOf(next.getToNode()) == to + 1)
+                            {
+                                nextSet.add(next);
+                            }
                         }
                     }
                 }
@@ -388,7 +398,10 @@ public class RollingLaneStructureRecord implements LaneStructureRecord, Serializ
             LaneStructureRecord nextRecord = nextSet.iterator().next();
             for (Lane l : nextRecord.getLane().getLink().getLanes())
             {
-                nLanesOnNextLink++;
+                if (!l.getType().equals(Lane.SHOULDER))
+                {
+                    nLanesOnNextLink++;
+                }
             }
             if (nextSet.size() == nLanesOnNextLink)
             {

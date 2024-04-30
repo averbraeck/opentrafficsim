@@ -860,13 +860,12 @@ public class LaneBasedGtu extends Gtu
      */
     public final Lane getNextLaneForRoute(final Lane lane)
     {
-        Set<Lane> next = lane.nextLanes(getType());
-        if (next.isEmpty())
+        // ask strategical planner
+        Set<Lane> set = getNextLanesForRoute(lane);
+        if (set == null || set.isEmpty())
         {
             return null;
         }
-        // ask strategical planner
-        Set<Lane> set = getNextLanesForRoute(lane);
         if (set.size() == 1)
         {
             return set.iterator().next();
@@ -892,10 +891,11 @@ public class LaneBasedGtu extends Gtu
      */
     public Set<Lane> getNextLanesForRoute(final Lane lane)
     {
-        Set<Lane> next = lane.nextLanes(getType());
-        if (next.isEmpty())
+        Set<Lane> out = new LinkedHashSet<>();
+        Set<Lane> nextPhysical = lane.nextLanes(null);
+        if (nextPhysical.isEmpty())
         {
-            return null;
+            return out;
         }
         Link link;
         try
@@ -906,7 +906,11 @@ public class LaneBasedGtu extends Gtu
         {
             throw new RuntimeException("Strategical planner experiences exception on network.", exception);
         }
-        Set<Lane> out = new LinkedHashSet<>();
+        Set<Lane> next = lane.nextLanes(getType());
+        if (next.isEmpty())
+        {
+            next = nextPhysical;
+        }
         for (Lane l : next)
         {
             if (l.getLink().equals(link))
