@@ -190,7 +190,7 @@ public final class OdParser
             // Collect generators in output
             for (GeneratorObjects generatorObject : output.values())
             {
-                generators.add(generatorObject.getGenerator());
+                generators.add(generatorObject.generator());
             }
         }
 

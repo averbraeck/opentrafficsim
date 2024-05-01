@@ -30,11 +30,11 @@ public class TimeStampedObjectTest
         Time timeStamp1 = new Time(123, TimeUnit.DEFAULT);
         Time timeStamp2 = new Time(456, TimeUnit.DEFAULT);
         TimeStampedObject<String> tso1 = new TimeStampedObject<String>("tso1", timeStamp1);
-        assertEquals(timeStamp1, tso1.getTimestamp(), "time stamp matches");
-        assertEquals("tso1", tso1.getObject(), "string matches");
-        assertFalse("String".equals(tso1.getObject()), "some other string does not match payload");
+        assertEquals(timeStamp1, tso1.timestamp(), "time stamp matches");
+        assertEquals("tso1", tso1.object(), "string matches");
+        assertFalse("String".equals(tso1.object()), "some other string does not match payload");
         TimeStampedObject<Double> tso2 = new TimeStampedObject<Double>(12.34, timeStamp2);
-        assertEquals(tso2.getObject(), new Double(12.34), "payload matches");
+        assertEquals(tso2.object(), new Double(12.34), "payload matches");
         TimeStampedObject<String> tso3 = new TimeStampedObject<String>("tso1", timeStamp2);
         assertFalse(tso1.equals(tso3), "tso's with different time stamp are not equal");
         tso2 = new TimeStampedObject<Double>(12.34, timeStamp1);

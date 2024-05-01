@@ -65,7 +65,7 @@ public interface LaneStructure
      * @throws GtuException if lane is not in current set
      */
     <T extends LaneBasedObject> Map<RelativeLane, SortedSet<Entry<T>>> getDownstreamObjects(Class<T> clazz, LaneBasedGtu gtu,
-            RelativePosition.TYPE pos) throws GtuException;
+            RelativePosition.Type pos) throws GtuException;
 
     /**
      * Retrieve objects on a lane of a specific type. Returns objects over a maximum length of the look ahead distance
@@ -79,7 +79,7 @@ public interface LaneStructure
      * @throws GtuException if lane is not in current set
      */
     <T extends LaneBasedObject> SortedSet<Entry<T>> getDownstreamObjects(RelativeLane lane, Class<T> clazz, LaneBasedGtu gtu,
-            RelativePosition.TYPE pos) throws GtuException;
+            RelativePosition.Type pos) throws GtuException;
 
     /**
      * Retrieve objects of a specific type. Returns objects over a maximum length of the look ahead distance downstream from the
@@ -93,7 +93,7 @@ public interface LaneStructure
      * @throws GtuException if lane is not in current set
      */
     <T extends LaneBasedObject> Map<RelativeLane, SortedSet<Entry<T>>> getDownstreamObjectsOnRoute(Class<T> clazz,
-            LaneBasedGtu gtu, RelativePosition.TYPE pos, Route route) throws GtuException;
+            LaneBasedGtu gtu, RelativePosition.Type pos, Route route) throws GtuException;
 
     /**
      * Retrieve objects on a lane of a specific type. Returns objects over a maximum length of the look ahead distance
@@ -109,7 +109,7 @@ public interface LaneStructure
      * @throws GtuException if lane is not in current set
      */
     <T extends LaneBasedObject> SortedSet<Entry<T>> getDownstreamObjectsOnRoute(RelativeLane lane, Class<T> clazz,
-            LaneBasedGtu gtu, RelativePosition.TYPE pos, Route route) throws GtuException;
+            LaneBasedGtu gtu, RelativePosition.Type pos, Route route) throws GtuException;
 
     /**
      * Retrieve objects on a lane of a specific type. Returns upstream objects from the relative position for as far as the lane
@@ -123,7 +123,7 @@ public interface LaneStructure
      * @throws GtuException if lane is not in current set
      */
     <T extends LaneBasedObject> SortedSet<Entry<T>> getUpstreamObjects(RelativeLane lane, Class<T> clazz, LaneBasedGtu gtu,
-            RelativePosition.TYPE pos) throws GtuException;
+            RelativePosition.Type pos) throws GtuException;
 
     /**
      * Wrapper to hold lane-based object and it's distance.

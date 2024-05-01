@@ -22,44 +22,14 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ * @param duration Duration; duration of movement
+ * @param endSpeed Speed; end speed of movement
  */
-public final class AnticipationInfo implements Serializable
+public final record AnticipationInfo(Duration duration, Speed endSpeed) implements Serializable
 {
 
     /** */
     private static final long serialVersionUID = 20160811L;
-
-    /** Duration of movement. */
-    private final Duration duration;
-
-    /** End speed of movement. */
-    private final Speed endSpeed;
-
-    /**
-     * @param duration Duration; duration of movement
-     * @param endSpeed Speed; end speed of movement
-     */
-    public AnticipationInfo(final Duration duration, final Speed endSpeed)
-    {
-        this.duration = duration;
-        this.endSpeed = endSpeed;
-    }
-
-    /**
-     * @return duration.
-     */
-    public Duration getDuration()
-    {
-        return this.duration;
-    }
-
-    /**
-     * @return endSpeed.
-     */
-    public Speed getEndSpeed()
-    {
-        return this.endSpeed;
-    }
 
     /**
      * Returns info of the anticipation assuming constant acceleration.
@@ -177,13 +147,6 @@ public final class AnticipationInfo implements Serializable
         }
         // should not happen
         throw new RuntimeException("Distance for anticipation of conflict movement is surpassed.");
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString()
-    {
-        return "AnticipationInfo [duration = " + this.duration + ", endSpeed = " + this.endSpeed + "]";
     }
 
 }

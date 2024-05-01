@@ -46,10 +46,10 @@ public class RoadLayoutOffsets
             CseData cseData = new CseData(offsetElement);
             totalWidthStart = totalWidthStart.plus(cseData.widthStart);
             totalWidthEnd = totalWidthEnd.plus(cseData.widthEnd);
-            startOffset = startOffset || (offsetElement.getCenterOffsetStart() != null);
-            endOffset = endOffset || (offsetElement.getCenterOffsetEnd() != null);
+            startOffset = startOffset || (offsetElement.centerOffsetStart() != null);
+            endOffset = endOffset || (offsetElement.centerOffsetEnd() != null);
             cseDataList.add(cseData);
-            cseObjectMap.put(offsetElement.getObject(), nr);
+            cseObjectMap.put(offsetElement.object(), nr);
             nr++;
         }
 
@@ -248,93 +248,22 @@ public class RoadLayoutOffsets
     }
 
     /**
-     * A logical wrapper class that can provide width and center offset information.
+     * A logical wrapper class that can provide width and center offset information. This is a static version of CseData.
      * <p>
      * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * @param widthStart Length; start width.
+     * @param widthEnd Length; end width.
+     * @param centerOffsetStart Length; start offset.
+     * @param centerOffsetEnd Length; end offset.
+     * @param object Object; underlying object providing width and offset.
      */
-    public static class OffsetElement
+    public static record OffsetElement(Length widthStart, Length widthEnd, Length centerOffsetStart, Length centerOffsetEnd,
+            Object object)
     {
-        /** Start width. */
-        private final Length widthStart;
-
-        /** End width. */
-        private final Length widthEnd;
-
-        /** Start offset. */
-        private final Length offsetStart;
-
-        /** End offset. */
-        private final Length offsetEnd;
-
-        /** Underlying object providing width and offset. */
-        private final Object object;
-
-        /**
-         * Constructor.
-         * @param widthStart Length; start width.
-         * @param widthEnd Length; end width.
-         * @param offsetStart Length; start offset.
-         * @param offsetEnd Length; end offset.
-         * @param object Object; underlying object providing width and offset.
-         */
-        public OffsetElement(final Length widthStart, final Length widthEnd, final Length offsetStart, final Length offsetEnd,
-                final Object object)
-        {
-            this.widthStart = widthStart;
-            this.widthEnd = widthEnd;
-            this.offsetStart = offsetStart;
-            this.offsetEnd = offsetEnd;
-            this.object = object;
-        }
-
-        /**
-         * Return the start width.
-         * @return Length; start width.
-         */
-        public Length getWidthStart()
-        {
-            return this.widthStart;
-        }
-
-        /**
-         * Return the end width.
-         * @return Length; end width.
-         */
-        public Length getWidthEnd()
-        {
-            return this.widthEnd;
-        }
-
-        /**
-         * Return the start center offset.
-         * @return Length; start center offset.
-         */
-        public Length getCenterOffsetStart()
-        {
-            return this.offsetStart;
-        }
-
-        /**
-         * Return the end center offset.
-         * @return Length; end center offset.
-         */
-        public Length getCenterOffsetEnd()
-        {
-            return this.offsetEnd;
-        }
-
-        /**
-         * Returns the underlying object providing the width and offset information.
-         * @return Object; underlying object providing the width and offset information, e.g. an XML tag object or tree node.
-         */
-        public Object getObject()
-        {
-            return this.object;
-        }
     }
 
     /**
@@ -372,10 +301,10 @@ public class RoadLayoutOffsets
          */
         public CseData(final OffsetElement offsetElement)
         {
-            this.widthStart = offsetElement.getWidthStart();
-            this.widthEnd = offsetElement.getWidthEnd();
-            this.centerOffsetStart = offsetElement.getCenterOffsetStart();
-            this.centerOffsetEnd = offsetElement.getCenterOffsetEnd();
+            this.widthStart = offsetElement.widthStart();
+            this.widthEnd = offsetElement.widthEnd();
+            this.centerOffsetStart = offsetElement.centerOffsetStart();
+            this.centerOffsetEnd = offsetElement.centerOffsetEnd();
         }
 
         /** {@inheritDoc} */

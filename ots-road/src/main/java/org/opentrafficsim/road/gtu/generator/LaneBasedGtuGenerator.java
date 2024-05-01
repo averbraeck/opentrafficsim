@@ -225,7 +225,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
             GeneratorLanePosition lanePosition = this.generatorPositions.draw(gtuType, characteristics, unplaced);
 
             // skip if disabled at this lane-direction
-            if (!this.disabled.contains(lanePosition.getPosition().getLane()))
+            if (!this.disabled.contains(lanePosition.getPosition().lane()))
             {
                 queueGtu(lanePosition, characteristics);
             }
@@ -267,12 +267,12 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
             return; // Do not re-schedule this method
         }
 
-        LaneBasedGtuCharacteristics characteristics = timedCharacteristics.getObject();
+        LaneBasedGtuCharacteristics characteristics = timedCharacteristics.object();
         SortedSet<HeadwayGtu> leaders = new TreeSet<>();
-        getFirstLeaders(position.getPosition().getLane(),
-                position.getPosition().getPosition().neg().minus(characteristics.getFront()),
-                position.getPosition().getPosition(), leaders);
-        Duration since = this.simulator.getSimulatorAbsTime().minus(timedCharacteristics.getTimestamp());
+        getFirstLeaders(position.getPosition().lane(),
+                position.getPosition().position().neg().minus(characteristics.getFront()),
+                position.getPosition().position(), leaders);
+        Duration since = this.simulator.getSimulatorAbsTime().minus(timedCharacteristics.timestamp());
         Placement placement = this.roomChecker.canPlace(leaders, characteristics, since, position.getPosition());
         if (placement.canPlace())
         {
@@ -307,7 +307,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
         GeneratorLanePosition genPosition = null;
         for (GeneratorLanePosition lanePosition : this.generatorPositions.getAllPositions())
         {
-            if (lanePosition.getPosition().getLane().equals(lane))
+            if (lanePosition.getPosition().lane().equals(lane))
             {
                 genPosition = lanePosition;
                 break;
@@ -521,7 +521,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
                 @Override
                 public String getId()
                 {
-                    return LaneBasedGtuGenerator.this.id + "@" + lanePosition.getLink().getId() + "." + pos.getLane().getId();
+                    return LaneBasedGtuGenerator.this.id + "@" + lanePosition.getLink().getId() + "." + pos.lane().getId();
                 }
             });
         }

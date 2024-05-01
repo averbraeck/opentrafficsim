@@ -177,7 +177,7 @@ public class AbstractLaneBasedGtuTest implements UNITS
                         else
                         {
                             Length expectedPosition = laneGroup == lanesGroupA ? positionA : positionB;
-                            expectedPosition = expectedPosition.plus(relativePosition.getDx());
+                            expectedPosition = expectedPosition.plus(relativePosition.dx());
                             // System.out.println("reported position: " + position);
                             // System.out.println("expected position: " + expectedPosition);
                             assertEquals(expectedPosition.getSI(), position.getSI(), 0.0001,
@@ -285,7 +285,7 @@ public class AbstractLaneBasedGtuTest implements UNITS
                                         .plus(new Length(stepTime.getSI() * initialSpeed.getSI(), LengthUnit.SI));
                                 expectedPosition = expectedPosition.plus(new Length(
                                         0.5 * acceleration.getSI() * stepTime.getSI() * stepTime.getSI(), LengthUnit.SI));
-                                expectedPosition = expectedPosition.plus(relativePosition.getDx());
+                                expectedPosition = expectedPosition.plus(relativePosition.dx());
                                 // System.out.println("reported position: " + position);
                                 // System.out.println("expected position: " + expectedPosition);
                                 assertEquals(expectedPosition.getSI(), position.getSI(),
@@ -315,7 +315,7 @@ public class AbstractLaneBasedGtuTest implements UNITS
                                         .plus(new Length(stepTime.getSI() * initialSpeed.getSI(), LengthUnit.SI));
                                 expectedPosition = expectedPosition.plus(new Length(
                                         0.5 * acceleration.getSI() * stepTime.getSI() * stepTime.getSI(), LengthUnit.SI));
-                                expectedPosition = expectedPosition.plus(relativePosition.getDx());
+                                expectedPosition = expectedPosition.plus(relativePosition.dx());
                                 // System.out.println("reported position: " + position);
                                 // System.out.println("expected position: " + expectedPosition);
                                 double expectedFractionalPosition = expectedPosition.getSI() / lane.getLength().getSI();

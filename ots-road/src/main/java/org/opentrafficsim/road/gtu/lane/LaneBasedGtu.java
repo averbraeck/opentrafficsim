@@ -223,7 +223,7 @@ public class LaneBasedGtu extends Gtu
                     Segments.off(initialSpeed, path.getLength().divide(initialSpeed), Acceleration.ZERO)));
         }
 
-        enterLaneRecursive(longitudinalPosition.getLane(), longitudinalPosition.getPosition(), 0);
+        enterLaneRecursive(longitudinalPosition.lane(), longitudinalPosition.position(), 0);
 
         // initiate the actual move
         super.init(strategicalPlanner, initialLocation, initialSpeed);
@@ -286,9 +286,9 @@ public class LaneBasedGtu extends Gtu
         LanePosition from = getReferencePosition();
 
         // obtain position on lane adjacent to reference lane and enter lanes upstream/downstream from there
-        Set<Lane> adjLanes = from.getLane().accessibleAdjacentLanesPhysical(laneChangeDirection, getType());
+        Set<Lane> adjLanes = from.lane().accessibleAdjacentLanesPhysical(laneChangeDirection, getType());
         Lane adjLane = adjLanes.iterator().next();
-        Length position = adjLane.position(from.getLane().fraction(from.getPosition()));
+        Length position = adjLane.position(from.lane().fraction(from.position()));
         leaveAllLanes();
         enterLaneRecursive(adjLane, position, 0);
 
@@ -299,7 +299,7 @@ public class LaneBasedGtu extends Gtu
         // fire event
         this.fireTimedEvent(
                 LaneBasedGtu.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection.name(),
-                        from.getLane().getLink().getId(), from.getLane().getId(), from.getPosition()},
+                        from.lane().getLink().getId(), from.lane().getId(), from.position()},
                 getSimulator().getSimulatorTime());
 
     }
@@ -323,7 +323,7 @@ public class LaneBasedGtu extends Gtu
         // upstream
         if (dir < 1)
         {
-            Length rear = position.plus(getRear().getDx());
+            Length rear = position.plus(getRear().dx());
             Length before = null;
             if (rear.si < 0.0)
             {
@@ -356,7 +356,7 @@ public class LaneBasedGtu extends Gtu
                     }
                     Lane next = upLane;
                     // TODO: this assumes lanes are perfectly attached
-                    Length nextPos = next.getLength().minus(before).minus(getRear().getDx());
+                    Length nextPos = next.getLength().minus(before).minus(getRear().dx());
                     enterLaneRecursive(next, nextPos, -1);
                 }
             }
@@ -365,7 +365,7 @@ public class LaneBasedGtu extends Gtu
         // downstream
         if (dir > -1)
         {
-            Length front = position.plus(getFront().getDx());
+            Length front = position.plus(getFront().dx());
             Length passed = null;
             if (front.si > lane.getLength().si)
             {
@@ -376,7 +376,7 @@ public class LaneBasedGtu extends Gtu
                 Lane next = getStrategicalPlanner() == null ? lane.nextLanes(getType()).iterator().next()
                         : getNextLaneForRoute(lane);
                 // TODO: this assumes lanes are perfectly attached
-                Length nextPos = passed.minus(getFront().getDx());
+                Length nextPos = passed.minus(getFront().dx());
                 enterLaneRecursive(next, nextPos, 1);
             }
         }
@@ -472,7 +472,7 @@ public class LaneBasedGtu extends Gtu
         // XXX: WRONG: getSimulator().getSimulatorTime());
         this.fireTimedEvent(
                 LaneBasedGtu.LANE_CHANGE_EVENT, new Object[] {getId(), laneChangeDirection.name(),
-                        from.getLane().getLink().getId(), from.getLane().getId(), from.getPosition()},
+                        from.lane().getLink().getId(), from.lane().getId(), from.position()},
                 getSimulator().getSimulatorTime());
 
         this.finalizeLaneChangeEvent = null;
@@ -547,8 +547,8 @@ public class LaneBasedGtu extends Gtu
                     new Object[] {getId(),
                             new PositionVector(new double[] {fromLocation.x, fromLocation.y}, PositionUnit.METER),
                             new Direction(fromLocation.getDirZ(), DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
-                            getTurnIndicatorStatus().name(), getOdometer(), dlp.getLane().getLink().getId(),
-                            dlp.getLane().getId(), dlp.getPosition()},
+                            getTurnIndicatorStatus().name(), getOdometer(), dlp.lane().getLink().getId(),
+                            dlp.lane().getId(), dlp.position()},
                     getSimulator().getSimulatorTime());
 
             return false;
@@ -742,7 +742,7 @@ public class LaneBasedGtu extends Gtu
         CrossSection firstCrossSection = this.crossSections.get(0);
         // check, if reference lane is not in first cross section
         boolean possiblyNearNextSection =
-                !getReferencePosition().getLane().equals(firstCrossSection.getLanes().get(this.referenceLaneIndex));
+                !getReferencePosition().lane().equals(firstCrossSection.getLanes().get(this.referenceLaneIndex));
         if (!possiblyNearNextSection)
         {
             Length remain = remainingEventDistance();
@@ -936,19 +936,19 @@ public class LaneBasedGtu extends Gtu
         OtsLine2d path = getOperationalPlan().getPath();
         Point2d[] points;
         double adjust;
-        if (relativePosition.getDx().gt0())
+        if (relativePosition.dx().gt0())
         {
             // as the position is downstream of the reference, we need to attach some distance at the end
             points = new Point2d[path.size() + 1];
             System.arraycopy(path.getPoints(), 0, points, 0, path.size());
-            points[path.size()] = path.getLocationExtendedSI(path.getLength().si + relativePosition.getDx().si);
-            adjust = -relativePosition.getDx().si;
+            points[path.size()] = path.getLocationExtendedSI(path.getLength().si + relativePosition.dx().si);
+            adjust = -relativePosition.dx().si;
         }
-        else if (relativePosition.getDx().lt0())
+        else if (relativePosition.dx().lt0())
         {
             points = new Point2d[path.size() + 1];
             System.arraycopy(path.getPoints(), 0, points, 1, path.size());
-            points[0] = path.getLocationExtendedSI(relativePosition.getDx().si);
+            points[0] = path.getLocationExtendedSI(relativePosition.dx().si);
             adjust = 0.0;
         }
         else
@@ -1409,13 +1409,13 @@ public class LaneBasedGtu extends Gtu
                 }
             }
         }
-        if (dlp != null && dlp.getLane() != null)
+        if (dlp != null && dlp.lane() != null)
         {
-            Lane referenceLane = dlp.getLane();
+            Lane referenceLane = dlp.lane();
             fireTimedEvent(LaneBasedGtu.LANEBASED_DESTROY_EVENT,
                     new Object[] {getId(), new PositionVector(new double[] {location.x, location.y}, PositionUnit.METER),
                             new Direction(location.getDirZ(), DirectionUnit.EAST_RADIAN), getOdometer(),
-                            referenceLane.getLink().getId(), referenceLane.getId(), dlp.getPosition()},
+                            referenceLane.getLink().getId(), referenceLane.getId(), dlp.position()},
                     getSimulator().getSimulatorTime());
         }
         else
@@ -1565,7 +1565,7 @@ public class LaneBasedGtu extends Gtu
             {
                 latIndex = lanes.indexOf(lane);
             }
-            if (lanes.contains(ref.getLane()))
+            if (lanes.contains(ref.lane()))
             {
                 longIndex = i;
             }

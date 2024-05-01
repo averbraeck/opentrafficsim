@@ -215,7 +215,7 @@ public interface HeadwayGtuType
             }
             NeighborTriplet triplet = this.estimation.estimate(perceivingGtu, perceivedGtu, distance, downstream, this.when);
             triplet = this.anticipation.anticipate(triplet, this.tr, this.traveledDistance, downstream);
-            return new HeadwayGtuPerceived(perceivedGtu, triplet.getHeadway(), triplet.getSpeed(), triplet.getAcceleration());
+            return new HeadwayGtuPerceived(perceivedGtu, triplet.headway(), triplet.speed(), triplet.acceleration());
         }
 
         /** {@inheritDoc} */

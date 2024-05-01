@@ -36,7 +36,7 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
     private static final long serialVersionUID = 20141231L;
 
     /** The relative position of the vehicle that triggers the detector. */
-    private final RelativePosition.TYPE positionType;
+    private final RelativePosition.Type positionType;
 
     /** The simulator for being able to generate an animation. */
     private final OtsSimulatorInterface simulator;
@@ -53,7 +53,7 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
                     new ObjectDescriptor("Detector id", "Id of the detector", String.class),
                     new ObjectDescriptor("Detector", "Detector itself", Detector.class),
                     new ObjectDescriptor("GTU", "Triggering GTU", LaneBasedGtu.class),
-                    new ObjectDescriptor("Position", "Relative GTU position that triggered", RelativePosition.TYPE.class)));
+                    new ObjectDescriptor("Position", "Relative GTU position that triggered", RelativePosition.Type.class)));
 
     /** Default elevation of a detector; if the lane is not at elevation 0; this value is probably far off. */
     public static final Length DEFAULT_DETECTOR_ELEVATION = new Length(0.1, LengthUnit.METER);
@@ -74,7 +74,7 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneDetector(final String id, final Lane lane, final Length longitudinalPosition,
-            final RelativePosition.TYPE positionType, final OtsSimulatorInterface simulator, final PolyLine2d geometry,
+            final RelativePosition.Type positionType, final OtsSimulatorInterface simulator, final PolyLine2d geometry,
             final Length elevation, final DetectorType detectorType) throws NetworkException
     {
         super(id, lane, longitudinalPosition, geometry, elevation);
@@ -105,7 +105,7 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public LaneDetector(final String id, final Lane lane, final Length longitudinalPosition,
-            final RelativePosition.TYPE positionType, final OtsSimulatorInterface simulator, final PolyLine2d geometry,
+            final RelativePosition.Type positionType, final OtsSimulatorInterface simulator, final PolyLine2d geometry,
             final DetectorType detectorType) throws NetworkException
     {
         this(id, lane, longitudinalPosition, positionType, simulator, geometry, LaneDetector.DEFAULT_DETECTOR_ELEVATION,
@@ -126,7 +126,7 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public LaneDetector(final String id, final Lane lane, final Length longitudinalPosition,
-            final RelativePosition.TYPE positionType, final OtsSimulatorInterface simulator, final DetectorType detectorType)
+            final RelativePosition.Type positionType, final OtsSimulatorInterface simulator, final DetectorType detectorType)
             throws NetworkException
     {
         this(id, lane, longitudinalPosition, positionType, simulator,
@@ -162,7 +162,7 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
      * Returns the relative position type of the vehicle (e.g., FRONT, BACK) that triggers the detector.
      * @return the relative position type of the vehicle (e.g., FRONT, BACK) that triggers the detector.
      */
-    public final RelativePosition.TYPE getPositionType()
+    public final RelativePosition.Type getPositionType()
     {
         return this.positionType;
     }

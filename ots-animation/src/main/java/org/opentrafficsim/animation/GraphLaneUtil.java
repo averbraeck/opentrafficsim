@@ -216,9 +216,9 @@ public final class GraphLaneUtil
         List<String> names = new ArrayList<>();
         List<Length> positions = new ArrayList<>();
         names.add(name);
-        positions.add(lanePosition.getPosition());
-        list.add(new LaneDataRoad(lanePosition.getLane()));
-        Speed speed = lanePosition.getLane().getLowestSpeedLimit();
+        positions.add(lanePosition.position());
+        list.add(new LaneDataRoad(lanePosition.lane()));
+        Speed speed = lanePosition.lane().getLowestSpeedLimit();
         return createCrossSection(names, list, positions, speed);
     }
 
@@ -234,9 +234,9 @@ public final class GraphLaneUtil
     {
         Throw.whenNull(names, "Names may not be null.");
         Throw.whenNull(linkPosition, "Link position may not be null.");
-        Throw.when(!(linkPosition.getLink() instanceof CrossSectionLink), IllegalArgumentException.class,
+        Throw.when(!(linkPosition.link() instanceof CrossSectionLink), IllegalArgumentException.class,
                 "The link is not a CrossEctionLink.");
-        List<Lane> lanes = ((CrossSectionLink) linkPosition.getLink()).getLanes();
+        List<Lane> lanes = ((CrossSectionLink) linkPosition.link()).getLanes();
         Throw.when(names.size() != lanes.size(), IllegalArgumentException.class,
                 "Size of 'names' not equal to the number of lanes.");
         Collections.sort(lanes, new Comparator<Lane>()
@@ -256,7 +256,7 @@ public final class GraphLaneUtil
         {
             speed = speed == null ? lane.getLowestSpeedLimit() : Speed.min(speed, lane.getLowestSpeedLimit());
             list.add(new LaneDataRoad(lane));
-            positions.add(lane.getLength().times(linkPosition.getFractionalLongitudinalPosition()));
+            positions.add(lane.getLength().times(linkPosition.fractionalLongitudinalPosition()));
         }
         return createCrossSection(names, list, positions, speed);
     }

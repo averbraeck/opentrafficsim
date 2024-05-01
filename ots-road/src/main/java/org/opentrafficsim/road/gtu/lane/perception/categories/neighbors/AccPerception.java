@@ -79,7 +79,7 @@ public class AccPerception extends LaneBasedAbstractPerceptionCategory implement
         {
             LaneStructureRecord record = getPerception().getLaneStructure().getRootRecord();
             Length pos = record.getStartDistance().neg();
-            pos = pos.plus(getGtu().getFront().getDx());
+            pos = pos.plus(getGtu().getFront().dx());
             boolean ignoreIfUpstream = true;
             return new DownstreamNeighboursIterableACC(getGtu(), record, Length.max(Length.ZERO, pos),
                     ((ControlTacticalPlanner) getGtu().getTacticalPlanner()).getSettings()

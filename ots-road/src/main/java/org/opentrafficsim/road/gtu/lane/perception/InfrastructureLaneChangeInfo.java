@@ -72,7 +72,7 @@ public class InfrastructureLaneChangeInfo implements Comparable<InfrastructureLa
         Throw.whenNull(record, "Record may not be null.");
         this.requiredNumberOfLaneChanges = requiredNumberOfLaneChanges;
         this.record = record;
-        this.afterStartLength = this.record.getLane().getLength().minus(relativePosition.getDx());
+        this.afterStartLength = this.record.getLane().getLength().minus(relativePosition.dx());
         this.deadEnd = deadEnd;
         this.lat = lat;
     }

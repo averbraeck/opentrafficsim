@@ -115,22 +115,22 @@ public final class LaneOperationalPlanBuilder
         try
         {
             LanePosition ref = gtu.getReferencePosition();
-            double f = ref.getLane().fraction(ref.getPosition());
+            double f = ref.lane().fraction(ref.position());
             if (f < 1.0)
             {
                 if (f >= 0.0)
                 {
-                    path = ref.getLane().getCenterLine().extractFractional(f, 1.0);
+                    path = ref.lane().getCenterLine().extractFractional(f, 1.0);
                 }
                 else
                 {
-                    path = ref.getLane().getCenterLine().extractFractional(0.0, 1.0);
+                    path = ref.lane().getCenterLine().extractFractional(0.0, 1.0);
                 }
             }
             Lane prevFrom = null;
-            Lane from = ref.getLane();
+            Lane from = ref.lane();
             Length prevPos = null;
-            Length pos = ref.getPosition();
+            Length pos = ref.position();
             int n = 1;
             while (path == null || path.getLength().si < distance.si + n * Lane.MARGIN.si)
             {
@@ -171,12 +171,12 @@ public final class LaneOperationalPlanBuilder
                         {
                             gtu.changeLaneInstantaneously(lat);
                             CategoryLogger.always().warn("GTU {} on link {} is forced to change lane towards {}", gtu.getId(),
-                                    ref.getLane().getLink().getId(), lat);
+                                    ref.lane().getLink().getId(), lat);
                             return createPathAlongCenterLine(gtu, distance);
                         }
                     }
                     CategoryLogger.always().error("GTU {} on link {} has nowhere to go and no sink detector either",
-                            gtu.getId(), ref.getLane().getLink().getId());
+                            gtu.getId(), ref.lane().getLink().getId());
                     gtu.destroy();
                     return path;
                 }
@@ -239,7 +239,7 @@ public final class LaneOperationalPlanBuilder
             // get position on from lane
             Map<Lane, Length> positions = gtu.positions(gtu.getReference());
             LanePosition ref = gtu.getReferencePosition();
-            Iterator<Lane> iterator = ref.getLane().accessibleAdjacentLanesPhysical(direction, gtu.getType()).iterator();
+            Iterator<Lane> iterator = ref.lane().accessibleAdjacentLanesPhysical(direction, gtu.getType()).iterator();
             Lane adjLane = iterator.hasNext() ? iterator.next() : null;
             LanePosition from = null;
             if (laneChange.getDirection() == null || (adjLane != null && positions.containsKey(adjLane)))
@@ -252,7 +252,7 @@ public final class LaneOperationalPlanBuilder
                 // reference lane is to lane, this should be accounted for
                 for (Lane lane : positions.keySet())
                 {
-                    if (lane.accessibleAdjacentLanesPhysical(direction, gtu.getType()).contains(ref.getLane()))
+                    if (lane.accessibleAdjacentLanesPhysical(direction, gtu.getType()).contains(ref.lane()))
                     {
                         from = new LanePosition(lane, positions.get(lane));
                         break;

@@ -100,7 +100,7 @@ public class RoadNetwork extends Network
         while (lcInfoBeyondHorizon == null && iterator.hasNext())
         {
             LaneChangeInfo lcInfo = iterator.next();
-            if (lcInfo.getRemainingDistance().gt(range))
+            if (lcInfo.remainingDistance().gt(range))
             {
                 lcInfoBeyondHorizon = lcInfo;
             }
@@ -157,7 +157,7 @@ public class RoadNetwork extends Network
                             outputLaneChangeInfo = laneChangeInfo;
                             originalPath = false;
                         }
-                        this.legalLaneChangeInfoCache.put(laneChangeInfo, gtuType, route, path.get(0).getFromLane());
+                        this.legalLaneChangeInfoCache.put(laneChangeInfo, gtuType, route, path.get(0).fromLane());
                         path.remove(0); // next lane
                     }
                 }
@@ -190,7 +190,7 @@ public class RoadNetwork extends Network
                             outputLaneChangeInfo = laneChangeInfo;
                             originalPath = false;
                         }
-                        this.physicalLaneChangeInfoCache.put(laneChangeInfo, route, path.get(0).getFromLane());
+                        this.physicalLaneChangeInfoCache.put(laneChangeInfo, route, path.get(0).fromLane());
                         path.remove(0); // next lane
                     }
                 }
@@ -227,40 +227,43 @@ public class RoadNetwork extends Network
         boolean legal = laneChangeLaw.equals(LaneAccessLaw.LEGAL);
         for (Link link : this.getLinkMap().values())
         {
-            for (Lane lane : ((CrossSectionLink) link).getLanes())
+            if (link instanceof CrossSectionLink cLink)
             {
-                // adjacent lanes
-                for (LateralDirectionality lat : List.of(LateralDirectionality.LEFT, LateralDirectionality.RIGHT))
+                for (Lane lane : cLink.getLanes())
                 {
-                    Set<Lane> adjacentLanes;
-                    if (legal)
+                    // adjacent lanes
+                    for (LateralDirectionality lat : List.of(LateralDirectionality.LEFT, LateralDirectionality.RIGHT))
                     {
-                        adjacentLanes = lane.accessibleAdjacentLanesLegal(lat, gtuType);
+                        Set<Lane> adjacentLanes;
+                        if (legal)
+                        {
+                            adjacentLanes = lane.accessibleAdjacentLanesLegal(lat, gtuType);
+                        }
+                        else
+                        {
+                            adjacentLanes = lane.accessibleAdjacentLanesPhysical(lat, gtuType);
+                        }
+                        for (Lane adjacentLane : adjacentLanes)
+                        {
+                            LaneChangeInfoEdgeType type = lat.equals(LateralDirectionality.LEFT) ? LaneChangeInfoEdgeType.LEFT
+                                    : LaneChangeInfoEdgeType.RIGHT;
+                            // downstream link may be null for lateral edges
+                            LaneChangeInfoEdge edge = new LaneChangeInfoEdge(lane, type, null);
+                            graph.addEdge(lane, adjacentLane, edge);
+                        }
                     }
-                    else
+                    // next lanes
+                    Set<Lane> nextLanes = lane.nextLanes(legal ? gtuType : null);
+                    for (Lane nextLane : nextLanes)
                     {
-                        adjacentLanes = lane.accessibleAdjacentLanesPhysical(lat, gtuType);
+                        LaneChangeInfoEdge edge =
+                                new LaneChangeInfoEdge(lane, LaneChangeInfoEdgeType.DOWNSTREAM, nextLane.getLink());
+                        graph.addEdge(lane, nextLane, edge);
                     }
-                    for (Lane adjacentLane : adjacentLanes)
-                    {
-                        LaneChangeInfoEdgeType type = lat.equals(LateralDirectionality.LEFT) ? LaneChangeInfoEdgeType.LEFT
-                                : LaneChangeInfoEdgeType.RIGHT;
-                        // downstream link may be null for lateral edges
-                        LaneChangeInfoEdge edge = new LaneChangeInfoEdge(lane, type, null);
-                        graph.addEdge(lane, adjacentLane, edge);
-                    }
+                    // add edge towards end node so that it can be used as a destination in the shortest path search
+                    LaneChangeInfoEdge edge = new LaneChangeInfoEdge(lane, LaneChangeInfoEdgeType.DOWNSTREAM, null);
+                    graph.addEdge(lane, lane.getLink().getEndNode(), edge);
                 }
-                // next lanes
-                Set<Lane> nextLanes = lane.nextLanes(legal ? gtuType : null);
-                for (Lane nextLane : nextLanes)
-                {
-                    LaneChangeInfoEdge edge =
-                            new LaneChangeInfoEdge(lane, LaneChangeInfoEdgeType.DOWNSTREAM, nextLane.getLink());
-                    graph.addEdge(lane, nextLane, edge);
-                }
-                // add edge towards end node so that it can be used as a destination in the shortest path search
-                LaneChangeInfoEdge edge = new LaneChangeInfoEdge(lane, LaneChangeInfoEdgeType.DOWNSTREAM, null);
-                graph.addEdge(lane, lane.getLink().getEndNode(), edge);
             }
         }
     }
@@ -330,7 +333,7 @@ public class RoadNetwork extends Network
         boolean inLateralState = false; // consecutive lateral moves in the path create 1 LaneChangeInfo
         for (LaneChangeInfoEdge edge : path)
         {
-            LaneChangeInfoEdgeType lcType = edge.getLaneChangeInfoEdgeType();
+            LaneChangeInfoEdgeType lcType = edge.laneChangeInfoEdgeType();
             int lat = lcType.equals(LaneChangeInfoEdgeType.LEFT) ? -1 : (lcType.equals(LaneChangeInfoEdgeType.RIGHT) ? 1 : 0);
 
             // check opposite lateral direction
@@ -361,7 +364,7 @@ public class RoadNetwork extends Network
                 else
                 {
                     // longitudinal move, we need to add distance to x
-                    x = x.plus(edge.getFromLane().getLength());
+                    x = x.plus(edge.fromLane().getLength());
                 }
             }
             else
@@ -369,7 +372,7 @@ public class RoadNetwork extends Network
                 // lateral move start
                 if (!inLateralState)
                 {
-                    x = x.plus(edge.getFromLane().getLength()); // need to add length of first lane of all lateral moves
+                    x = x.plus(edge.fromLane().getLength()); // need to add length of first lane of all lateral moves
                     inLateralState = true;
                 }
                 // increase lane change count (negative for left)
@@ -394,13 +397,13 @@ public class RoadNetwork extends Network
     /**
      * A {@code SimpleDirectedWeightedGraph} to search over the lanes, where the weight of an edge (movement between lanes) is
      * tailored to providing lane change information. The vertex type is {@code Identifiable} such that both {@code Lane}'s and
-     * {@code Node}'s can be used. The latter is required to find paths towards a destination node.<br>
+     * {@code Node}'s can be used. The latter is required to find paths towards a destination node.
+     * <p>
+     * Copyright (c) 2022-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * Copyright (c) 2022-2024 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
-     * See for project information <a href="https://djutils.org" target="_blank"> https://djutils.org</a>. The DJUTILS project
-     * is distributed under a three-clause BSD-style license, which can be found at
-     * <a href="https://djutils.org/docs/license.html" target="_blank"> https://djutils.org/docs/license.html</a>. <br>
-     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private class RouteWeightedGraph extends SimpleDirectedWeightedGraph<Identifiable, LaneChangeInfoEdge>
     {
@@ -443,13 +446,13 @@ public class RoadNetwork extends Network
         @Override
         public double getEdgeWeight(final LaneChangeInfoEdge e)
         {
-            if (e.getLaneChangeInfoEdgeType().equals(LaneChangeInfoEdgeType.LEFT)
-                    || e.getLaneChangeInfoEdgeType().equals(LaneChangeInfoEdgeType.RIGHT))
+            if (e.laneChangeInfoEdgeType().equals(LaneChangeInfoEdgeType.LEFT)
+                    || e.laneChangeInfoEdgeType().equals(LaneChangeInfoEdgeType.RIGHT))
             {
-                int indexEndNode = this.route.indexOf(e.getFromLane().getLink().getEndNode());
+                int indexEndNode = this.route.indexOf(e.fromLane().getLink().getEndNode());
                 return 1.0 + 1.0 / indexEndNode; // lateral, reduce weight for further lane changes
             }
-            Link toLink = e.getToLink();
+            Link toLink = e.toLink();
             if (toLink == null)
             {
                 return 0.0; // edge towards Node, which may be the destination in a Route
@@ -509,81 +512,29 @@ public class RoadNetwork extends Network
     /**
      * Edge between two lanes, or between a lane and a node (to provide the shortest path algorithm with a suitable
      * destination). From a list of these from a path, the lane change information along the path (distances and number of lane
-     * changes) can be derived.<br>
+     * changes) can be derived.
+     * <p>
+     * Copyright (c) 2022-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * Copyright (c) 2022-2024 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
-     * See for project information <a href="https://djutils.org" target="_blank"> https://djutils.org</a>. The DJUTILS project
-     * is distributed under a three-clause BSD-style license, which can be found at
-     * <a href="https://djutils.org/docs/license.html" target="_blank"> https://djutils.org/docs/license.html</a>. <br>
-     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * @param fromLane Lane; from lane, to allow construction of distances from a path.
+     * @param laneChangeInfoEdgeType LaneChangeInfoEdgeType; the type of lane to lane movement performed along this edge.
+     * @param toLink Link; to link (of the lane this edge moves to).
      */
-    private static class LaneChangeInfoEdge
+    private static record LaneChangeInfoEdge(Lane fromLane, LaneChangeInfoEdgeType laneChangeInfoEdgeType, Link toLink)
     {
-        /** From lane, to allow construction of distances from a path. */
-        private final Lane fromLane;
-
-        /** The type of lane to lane movement performed along this edge. */
-        private final LaneChangeInfoEdgeType laneChangeInfoEdgeType;
-
-        /** To link (of the lane this edge moves to). */
-        private final Link toLink;
-
-        /**
-         * Constructor.
-         * @param fromLane Lane; lane this edge is from.
-         * @param laneChangeInfoEdgeType LaneChangeInfoEdgeType; type of lane to lane movement performed along this edge.
-         * @param toLink Link; to link of target lane (if any, may be {@code null}).
-         */
-        LaneChangeInfoEdge(final Lane fromLane, final LaneChangeInfoEdgeType laneChangeInfoEdgeType, final Link toLink)
-        {
-            this.fromLane = fromLane;
-            this.laneChangeInfoEdgeType = laneChangeInfoEdgeType;
-            this.toLink = toLink;
-        }
-
-        /**
-         * Returns the from lane to allow construction of distances from a path.
-         * @return Lane; from lane.
-         */
-        public Lane getFromLane()
-        {
-            return this.fromLane;
-        }
-
-        /**
-         * Returns the type of lane to lane movement performed along this edge.
-         * @return LaneChangeInfoEdgeType; type of lane to lane movement performed along this edge.
-         */
-        public LaneChangeInfoEdgeType getLaneChangeInfoEdgeType()
-        {
-            return this.laneChangeInfoEdgeType;
-        }
-
-        /**
-         * Returns the to link.
-         * @return Link; to link of target lane (if any, may be {@code null})
-         */
-        public Link getToLink()
-        {
-            return this.toLink;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "LaneChangeInfoEdge [fromLane=" + this.fromLane + "]";
-        }
-
     }
 
     /**
-     * Enum to provide information on the lane to lane movement in a path.<br>
+     * Enum to provide information on the lane to lane movement in a path.
+     * <p>
+     * Copyright (c) 2022-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
-     * Copyright (c) 2022-2024 Delft University of Technology, Jaffalaan 5, 2628 BX Delft, the Netherlands. All rights reserved.
-     * See for project information <a href="https://djutils.org" target="_blank"> https://djutils.org</a>. The DJUTILS project
-     * is distributed under a three-clause BSD-style license, which can be found at
-     * <a href="https://djutils.org/docs/license.html" target="_blank"> https://djutils.org/docs/license.html</a>. <br>
-     * @author <a href="http://www.transport.citg.tudelft.nl">Wouter Schakel</a>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private enum LaneChangeInfoEdgeType
     {

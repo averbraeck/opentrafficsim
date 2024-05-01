@@ -227,7 +227,7 @@ public interface Synchronization extends LmrsParameters
             Length dx;
             try
             {
-                dx = perception.getGtu().getFront().getDx();
+                dx = perception.getGtu().getFront().dx();
             }
             catch (GtuException exception)
             {
@@ -422,7 +422,7 @@ public interface Synchronization extends LmrsParameters
             throws OperationalPlanException
     {
         InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
-        Length dx = Try.assign(() -> perception.getGtu().getFront().getDx(), "Could not obtain GTU.");
+        Length dx = Try.assign(() -> perception.getGtu().getFront().dx(), "Could not obtain GTU.");
         Length xMergeRef = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, lat);
         if (xMergeRef.gt0() && xMergeRef.lt(dx))
         {

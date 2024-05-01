@@ -141,7 +141,7 @@ public class XsdTreeMouseListener extends MouseAdapter
                 boolean firstEntry = true;
                 for (XsdOption option : treeNode.getOptions())
                 {
-                    if (option.isFirstInGroup())
+                    if (option.firstInGroup())
                     {
                         if (!firstEntry)
                         {
@@ -149,10 +149,10 @@ public class XsdTreeMouseListener extends MouseAdapter
                         }
                     }
                     firstEntry = false;
-                    JMenuItem button = new JMenuItem(option.getOptionNode().getShortString());
-                    if (!option.isSelected())
+                    JMenuItem button = new JMenuItem(option.optionNode().getShortString());
+                    if (!option.selected())
                     {
-                        button.addActionListener(new ChoiceListener(option.getChoice(), option.getOptionNode(), row,
+                        button.addActionListener(new ChoiceListener(option.choice(), option.optionNode(), row,
                                 this.editor, this.treeTable, this.attributesTable));
                     }
                     button.setFont(this.treeTable.getFont());

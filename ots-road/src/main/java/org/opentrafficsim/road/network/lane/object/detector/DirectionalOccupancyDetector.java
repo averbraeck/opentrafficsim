@@ -24,10 +24,10 @@ import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 public interface DirectionalOccupancyDetector extends Serializable, Identifiable
 {
     /** @return the relative position type of the vehicle (e.g., FRONT, BACK) that triggers the detector. */
-    RelativePosition.TYPE getPositionTypeEntry();
+    RelativePosition.Type getPositionTypeEntry();
 
     /** @return the relative position type of the vehicle (e.g., FRONT, BACK) that triggers the detector. */
-    RelativePosition.TYPE getPositionTypeExit();
+    RelativePosition.Type getPositionTypeExit();
 
     /**
      * Return the entry position of this DirectionalOccupancyDetector.
@@ -57,7 +57,7 @@ public interface DirectionalOccupancyDetector extends Serializable, Identifiable
                     new ObjectDescriptor("Detector id", "Id of the detector", String.class),
                     new ObjectDescriptor("Detector", "Detector itself", Detector.class),
                     new ObjectDescriptor("GTU", "Triggering GTU", LaneBasedGtu.class),
-                    new ObjectDescriptor("Position", "Relative GTU position that triggered", RelativePosition.TYPE.class)));
+                    new ObjectDescriptor("Position", "Relative GTU position that triggered", RelativePosition.Type.class)));
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the triggering of the exit of an OccupancyDetector. <br>
@@ -68,7 +68,7 @@ public interface DirectionalOccupancyDetector extends Serializable, Identifiable
                     new ObjectDescriptor("Detector id", "Id of the detector", String.class),
                     new ObjectDescriptor("Detector", "Detector itself", Detector.class),
                     new ObjectDescriptor("GTU", "Triggering GTU", LaneBasedGtu.class),
-                    new ObjectDescriptor("Position", "Relative GTU position that triggered", RelativePosition.TYPE.class)));
+                    new ObjectDescriptor("Position", "Relative GTU position that triggered", RelativePosition.Type.class)));
 
     // TODO enforce clone method
 

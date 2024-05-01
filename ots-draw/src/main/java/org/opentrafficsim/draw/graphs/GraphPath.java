@@ -75,13 +75,13 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
         for (Section<S> section : sections)
         {
             this.startDistances.add(cumulativeLength);
-            cumulativeLength = cumulativeLength.plus(section.getLength());
+            cumulativeLength = cumulativeLength.plus(section.length());
         }
         this.totalLength = cumulativeLength;
         ArithmeticMean<Double, Double> mean = new ArithmeticMean<>();
         for (Section<S> section : sections)
         {
-            mean.add(section.getSpeedLimit().si, section.getLength().si);
+            mean.add(section.speedLimit().si, section.length().si);
         }
         this.speedLimit = Speed.instantiateSI(mean.getMean());
     }
@@ -228,49 +228,12 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      * @param <L> underlying type
+     * @param length Length; length of the section
+     * @param speedLimit Speed; speed limit on the section
+     * @param sections List&lt;S&gt;; list of underlying objects
      */
-    public static class Section<L> implements Iterable<L>
+    public static record Section<L>(Length length, Speed speedLimit, List<L> sections) implements Iterable<L>
     {
-        /** Length. */
-        private final Length length;
-
-        /** Speed limit. */
-        private final Speed speedLimit;
-
-        /** List of underlying objects. */
-        private final List<L> objects;
-
-        /**
-         * Constructor.
-         * @param length Length; length of the section
-         * @param speedLimit Speed; speed limit on the section
-         * @param sections List&lt;S&gt;; list of underlying objects
-         */
-        public Section(final Length length, final Speed speedLimit, final List<L> sections)
-        {
-            this.length = length;
-            this.speedLimit = speedLimit;
-            this.objects = sections;
-        }
-
-        /**
-         * Returns the section length.
-         * @return Length; section length
-         */
-        public Length getLength()
-        {
-            return this.length;
-        }
-
-        /**
-         * Returns the speed limit on the section.
-         * @return Speed; speed limit on the section
-         */
-        public Speed getSpeedLimit()
-        {
-            return this.speedLimit;
-        }
-
         /**
          * Returns the source object.
          * @param series int; number
@@ -278,14 +241,14 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
          */
         public L getSource(final int series)
         {
-            return this.objects.get(series);
+            return this.sections.get(series);
         }
 
         /** {@inheritDoc} */
         @Override
         public Iterator<L> iterator()
         {
-            return this.objects.iterator();
+            return this.sections.iterator();
         }
     }
 

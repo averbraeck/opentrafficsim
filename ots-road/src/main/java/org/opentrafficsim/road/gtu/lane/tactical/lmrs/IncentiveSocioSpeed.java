@@ -74,7 +74,7 @@ public class IncentiveSocioSpeed implements VoluntaryIncentive
             boolean leftLane = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).si > 0.0;
             boolean rightLane = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).si > 0.0;
             // change right to get out of the way
-            if (rightLane && mandatoryDesire.getRight() >= 0.0)
+            if (rightLane && mandatoryDesire.right() >= 0.0)
             {
                 PerceptionCollectable<HeadwayGtu, LaneBasedGtu> followers = neighbors.getFollowers(RelativeLane.CURRENT);
                 if (!followers.isEmpty())
@@ -89,7 +89,7 @@ public class IncentiveSocioSpeed implements VoluntaryIncentive
                 }
             }
             // stay right to keep out of the way
-            if (leftLane && mandatoryDesire.getLeft() <= 0.0)
+            if (leftLane && mandatoryDesire.left() <= 0.0)
             {
                 PerceptionCollectable<HeadwayGtu, LaneBasedGtu> followers = neighbors.getFollowers(RelativeLane.LEFT);
                 if (followers != null && !followers.isEmpty())

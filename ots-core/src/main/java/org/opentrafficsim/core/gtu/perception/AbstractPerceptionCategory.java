@@ -85,7 +85,7 @@ public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Percep
         {
             return null;
         }
-        return object.getObject();
+        return object.object();
     }
 
 }

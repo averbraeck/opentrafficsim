@@ -110,7 +110,7 @@ public class OperationalPlan implements Serializable
             this.segmentStartDurations[i] = segmentsDuration.si;
             this.segmentStartDistances[i] = segmentsLength.si;
             Segment segment = this.segments.get(i);
-            segmentsDuration = segmentsDuration.plus(segment.getDuration());
+            segmentsDuration = segmentsDuration.plus(segment.duration());
             segmentsLength = segmentsLength.plus(segment.totalDistance());
         }
         this.segmentStartDurations[this.segments.size()] = segmentsDuration.si;
@@ -170,7 +170,7 @@ public class OperationalPlan implements Serializable
      */
     public Speed getStartSpeed()
     {
-        return this.segments.get(0).getStartSpeed();
+        return this.segments.get(0).startSpeed();
     }
 
     /**
@@ -289,7 +289,7 @@ public class OperationalPlan implements Serializable
      */
     public final OrientedPoint2d getLocation(final Time time, final RelativePosition pos) throws OperationalPlanException
     {
-        double distanceSI = getTraveledDistance(time).si + pos.getDx().si;
+        double distanceSI = getTraveledDistance(time).si + pos.dx().si;
         return this.path.getLocationExtendedSI(distanceSI);
     }
 
@@ -336,7 +336,7 @@ public class OperationalPlan implements Serializable
      */
     public final Acceleration getAcceleration(final Time time) throws OperationalPlanException
     {
-        return this.segments.get(getSegment(time)).getAcceleration();
+        return this.segments.get(getSegment(time)).acceleration();
     }
 
     /**

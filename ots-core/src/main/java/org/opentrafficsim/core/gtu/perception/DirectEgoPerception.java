@@ -90,28 +90,28 @@ public class DirectEgoPerception<G extends Gtu, P extends Perception<G>> extends
     @Override
     public final Acceleration getAcceleration()
     {
-        return this.acceleration.getObject();
+        return this.acceleration.object();
     }
 
     /** {@inheritDoc} */
     @Override
     public final Speed getSpeed()
     {
-        return this.speed.getObject();
+        return this.speed.object();
     }
 
     /** {@inheritDoc} */
     @Override
     public final Length getLength()
     {
-        return this.length.getObject();
+        return this.length.object();
     }
 
     /** {@inheritDoc} */
     @Override
     public final Length getWidth()
     {
-        return this.width.getObject();
+        return this.width.object();
     }
 
     /**

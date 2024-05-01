@@ -199,8 +199,8 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
          */
 
         // fractional position
-        Lane lane = pos.getLane();
-        Length position = pos.getPosition();
+        Lane lane = pos.lane();
+        Length position = pos.position();
         double fracPos = position.si / lane.getLength().si;
         boolean deviative = this.containingGtu.getOperationalPlan() instanceof LaneBasedOperationalPlan
                 && ((LaneBasedOperationalPlan) this.containingGtu.getOperationalPlan()).isDeviative();
@@ -1265,7 +1265,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
      */
     @Override
     public final <T extends LaneBasedObject> Map<RelativeLane, SortedSet<Entry<T>>> getDownstreamObjects(final Class<T> clazz,
-            final LaneBasedGtu gtu, final RelativePosition.TYPE pos) throws GtuException
+            final LaneBasedGtu gtu, final RelativePosition.Type pos) throws GtuException
     {
         Map<RelativeLane, SortedSet<Entry<T>>> out = new LinkedHashMap<>();
         for (RelativeLane relativeLane : this.relativeLaneMap.keySet())
@@ -1289,13 +1289,13 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
     @Override
     @SuppressWarnings("unchecked")
     public final <T extends LaneBasedObject> SortedSet<Entry<T>> getDownstreamObjects(final RelativeLane lane,
-            final Class<T> clazz, final LaneBasedGtu gtu, final RelativePosition.TYPE pos) throws GtuException
+            final Class<T> clazz, final LaneBasedGtu gtu, final RelativePosition.Type pos) throws GtuException
     {
         LaneStructureRecord record = getFirstRecord(lane);
         SortedSet<Entry<T>> set = new TreeSet<>();
         if (record != null)
         {
-            double ds = gtu.getRelativePositions().get(pos).getDx().si - gtu.getReference().getDx().si;
+            double ds = gtu.getRelativePositions().get(pos).dx().si - gtu.getReference().dx().si;
             if (record.isDownstreamBranch())
             {
                 // the list is ordered, but only for DIR_PLUS, need to do our own ordering
@@ -1334,7 +1334,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
      */
     @Override
     public final <T extends LaneBasedObject> SortedSet<Entry<T>> getDownstreamObjectsOnRoute(final RelativeLane lane,
-            final Class<T> clazz, final LaneBasedGtu gtu, final RelativePosition.TYPE pos, final Route route)
+            final Class<T> clazz, final LaneBasedGtu gtu, final RelativePosition.Type pos, final Route route)
             throws GtuException
     {
         SortedSet<Entry<T>> set = getDownstreamObjects(lane, clazz, gtu, pos);
@@ -1413,7 +1413,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
      */
     @Override
     public final <T extends LaneBasedObject> Map<RelativeLane, SortedSet<Entry<T>>> getDownstreamObjectsOnRoute(
-            final Class<T> clazz, final LaneBasedGtu gtu, final RelativePosition.TYPE pos, final Route route)
+            final Class<T> clazz, final LaneBasedGtu gtu, final RelativePosition.Type pos, final Route route)
             throws GtuException
     {
         Map<RelativeLane, SortedSet<Entry<T>>> out = new LinkedHashMap<>();
@@ -1438,7 +1438,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
     @Override
     @SuppressWarnings("unchecked")
     public final <T extends LaneBasedObject> SortedSet<Entry<T>> getUpstreamObjects(final RelativeLane lane,
-            final Class<T> clazz, final LaneBasedGtu gtu, final RelativePosition.TYPE pos) throws GtuException
+            final Class<T> clazz, final LaneBasedGtu gtu, final RelativePosition.Type pos) throws GtuException
     {
         SortedSet<Entry<T>> set = new TreeSet<>();
         LaneStructureRecord record = this.getFirstRecord(lane);
@@ -1446,7 +1446,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
         {
             return set; // this lane is only downstream
         }
-        Length ds = gtu.getReference().getDx().minus(gtu.getRelativePositions().get(pos).getDx());
+        Length ds = gtu.getReference().dx().minus(gtu.getRelativePositions().get(pos).dx());
         // the list is ordered, but only for DIR_PLUS, need to do our own ordering
         Length minimumPosition = Length.ZERO;
         Length maximumPosition = record.getStartDistance().neg().minus(ds);

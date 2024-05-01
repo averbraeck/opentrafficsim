@@ -520,8 +520,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     public final void scheduleDetectorTriggers(final LaneBasedGtu gtu, final double referenceStartSI,
             final double referenceMoveSI) throws NetworkException, SimRuntimeException
     {
-        double minPos = referenceStartSI + gtu.getRear().getDx().si;
-        double maxPos = referenceStartSI + gtu.getFront().getDx().si + referenceMoveSI;
+        double minPos = referenceStartSI + gtu.getRear().dx().si;
+        double maxPos = referenceStartSI + gtu.getFront().dx().si + referenceMoveSI;
         Map<Double, List<LaneDetector>> map = this.detectors.subMap(minPos, maxPos);
         for (double pos : map.keySet())
         {
@@ -529,7 +529,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             {
                 if (detector.isCompatible(gtu.getType()))
                 {
-                    double dx = gtu.getRelativePositions().get(detector.getPositionType()).getDx().si;
+                    double dx = gtu.getRelativePositions().get(detector.getPositionType()).dx().si;
                     minPos = referenceStartSI + dx;
                     maxPos = minPos + referenceMoveSI;
                     if (minPos <= detector.getLongitudinalPosition().si && maxPos > detector.getLongitudinalPosition().si)
@@ -856,7 +856,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      *         found.
      * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
-    public final LaneBasedGtu getGtuAhead(final Length position, final RelativePosition.TYPE relativePosition, final Time when)
+    public final LaneBasedGtu getGtuAhead(final Length position, final RelativePosition.Type relativePosition, final Time when)
             throws GtuException
     {
         List<LaneBasedGtu> list = this.gtuList.get(when);
@@ -886,7 +886,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      *         found.
      * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
-    public final LaneBasedGtu getGtuBehind(final Length position, final RelativePosition.TYPE relativePosition, final Time when)
+    public final LaneBasedGtu getGtuBehind(final Length position, final RelativePosition.Type relativePosition, final Time when)
             throws GtuException
     {
         List<LaneBasedGtu> list = this.gtuList.get(when);

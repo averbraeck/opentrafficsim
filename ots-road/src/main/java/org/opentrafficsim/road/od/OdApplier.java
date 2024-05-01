@@ -403,7 +403,7 @@ public final class OdApplier
             LinkType linkType;
             if (laneBased)
             {
-                lane = initialPosition.iterator().next().getLane();
+                lane = initialPosition.iterator().next().lane();
                 linkType = lane.getLink().getType();
             }
             else
@@ -616,16 +616,16 @@ public final class OdApplier
             public int compare(final Entry<K, V> o1, final Entry<K, V> o2)
             {
                 LanePosition lanePos1 = o1.getValue().iterator().next();
-                String linkId1 = lanePos1.getLane().getLink().getId();
+                String linkId1 = lanePos1.lane().getLink().getId();
                 LanePosition lanePos2 = o2.getValue().iterator().next();
-                String linkId2 = lanePos2.getLane().getLink().getId();
+                String linkId2 = lanePos2.lane().getLink().getId();
                 int c = linkId1.compareToIgnoreCase(linkId2);
                 if (c == 0)
                 {
                     Length pos1 = Length.ZERO;
-                    Length lat1 = lanePos1.getLane().getLateralCenterPosition(pos1);
+                    Length lat1 = lanePos1.lane().getLateralCenterPosition(pos1);
                     Length pos2 = Length.ZERO;
-                    Length lat2 = lanePos2.getLane().getLateralCenterPosition(pos2);
+                    Length lat2 = lanePos2.lane().getLateralCenterPosition(pos2);
                     return lat1.compareTo(lat2);
                 }
                 return c;
@@ -921,59 +921,13 @@ public final class OdApplier
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * @param generator LaneBasedGtuGenerator; main generator for GTU's
+     * @param headwayGenerator Generator&lt;Duration&gt;; generator of headways
+     * @param characteristicsGenerator LaneBasedGtuCharacteristicsGenerator; generator of GTU characteristics
      */
-    public static class GeneratorObjects
+    public static record GeneratorObjects(LaneBasedGtuGenerator generator, Generator<Duration> headwayGenerator,
+            LaneBasedGtuCharacteristicsGenerator characteristicsGenerator)
     {
-
-        /** Main generator for GTU's. */
-        private final LaneBasedGtuGenerator generator;
-
-        /** Generator of headways. */
-        private final Generator<Duration> headwayGenerator;
-
-        /** Generator of GTU characteristics. */
-        private final LaneBasedGtuCharacteristicsGenerator characteristicsGenerator;
-
-        /**
-         * @param generator LaneBasedGtuGenerator; main generator for GTU's
-         * @param headwayGenerator Generator&lt;Duration&gt;; generator of headways
-         * @param characteristicsGenerator LaneBasedGtuCharacteristicsGenerator; generator of GTU characteristics
-         */
-        public GeneratorObjects(final LaneBasedGtuGenerator generator, final Generator<Duration> headwayGenerator,
-                final LaneBasedGtuCharacteristicsGenerator characteristicsGenerator)
-        {
-            this.generator = generator;
-            this.headwayGenerator = headwayGenerator;
-            this.characteristicsGenerator = characteristicsGenerator;
-        }
-
-        /**
-         * Returns the main generator for GTU's.
-         * @return LaneBasedGtuGenerator; main generator for GTU's
-         */
-        public LaneBasedGtuGenerator getGenerator()
-        {
-            return this.generator;
-        }
-
-        /**
-         * Returns the generator of headways.
-         * @return Generator&lt;Duration&gt; generator of headways
-         */
-        public Generator<Duration> getHeadwayGenerator()
-        {
-            return this.headwayGenerator;
-        }
-
-        /**
-         * Returns the generator of GTU characteristics.
-         * @return LaneBasedGtuCharacteristicsGenerator; generator of GTU characteristics
-         */
-        public LaneBasedGtuCharacteristicsGenerator getCharacteristicsGenerator()
-        {
-            return this.characteristicsGenerator;
-        }
-
     }
 
 }

@@ -27,7 +27,7 @@ import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
+import org.opentrafficsim.core.gtu.RelativePosition.Type;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -116,7 +116,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public TrafficLightDetector(final String id, final Lane laneA, final Length positionA, final Lane laneB,
-            final Length positionB, final List<Lane> intermediateLanes, final TYPE entryPosition, final TYPE exitPosition,
+            final Length positionB, final List<Lane> intermediateLanes, final Type entryPosition, final Type exitPosition,
             final OtsSimulatorInterface simulator, final DetectorType detectorType) throws NetworkException
     {
         Throw.whenNull(id, "id may not be null");
@@ -338,13 +338,13 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
     }
 
     /** @return the relative position type of the vehicle (e.g., FRONT, BACK) that triggers the detector. */
-    public final TYPE getPositionTypeEntry()
+    public final Type getPositionTypeEntry()
     {
         return this.entryA.getPositionType();
     }
 
     /** @return the relative position type of the vehicle (e.g., FRONT, BACK) that triggers the detector. */
-    public final TYPE getPositionTypeExit()
+    public final Type getPositionTypeExit()
     {
         return this.exitB.getPositionType();
     }
@@ -488,7 +488,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
          * @param detectorType DetectorType; detector type.
          * @throws NetworkException when the network is inconsistent
          */
-        public StartEndDetector(final String id, final Lane lane, final Length longitudinalPosition, final TYPE positionType,
+        public StartEndDetector(final String id, final Lane lane, final Length longitudinalPosition, final Type positionType,
                 final OtsSimulatorInterface simulator, final DetectorType detectorType) throws NetworkException
         {
             super(id, lane, longitudinalPosition, positionType, simulator, detectorType);

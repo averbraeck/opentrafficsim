@@ -248,7 +248,7 @@ public class LaneBasedStrategicalRoutePlanner implements LaneBasedStrategicalPla
             try
             {
                 LanePosition pos = getGtu().getReferencePosition();
-                CrossSectionLink link = pos.getLane().getLink();
+                CrossSectionLink link = pos.lane().getLink();
                 Node from = link.getStartNode();
                 this.route = link.getNetwork().getShortestRouteBetween(getGtu().getType(), from, this.destination);
             }
@@ -272,18 +272,18 @@ public class LaneBasedStrategicalRoutePlanner implements LaneBasedStrategicalPla
             List<Node> nodes = new ArrayList<>();
             if (this.origin != null)
             {
-                nodes.addAll(this.routeGenerator.getRoute(this.origin, ref.getLane().getLink().getStartNode(), gtuType)
+                nodes.addAll(this.routeGenerator.getRoute(this.origin, ref.lane().getLink().getStartNode(), gtuType)
                         .getNodes());
             }
             else
             {
-                nodes.add(ref.getLane().getLink().getStartNode());
+                nodes.add(ref.lane().getLink().getStartNode());
             }
             Route newRoute =
-                    this.routeGenerator.getRoute(ref.getLane().getLink().getEndNode(), this.destination, gtuType);
+                    this.routeGenerator.getRoute(ref.lane().getLink().getEndNode(), this.destination, gtuType);
             nodes.addAll(newRoute.getNodes());
             this.route = Try.assign(() -> new Route("Route for " + gtuType + " from " + this.origin + "to " + this.destination
-                    + " via " + ref.getLane().getLink(), gtuType, nodes), "No route possible over nodes %s", nodes);
+                    + " via " + ref.lane().getLink(), gtuType, nodes), "No route possible over nodes %s", nodes);
         }
     }
 

@@ -161,7 +161,7 @@ public class AnticipationTrafficPerception extends LaneBasedAbstractPerceptionCa
     {
         Time now = Try.assign(() -> getTimestamp(), "");
         TimeStampedObject<LinearDensity> tK = this.density.get(lane);
-        if (tK == null || tK.getTimestamp().si < now.si)
+        if (tK == null || tK.timestamp().si < now.si)
         {
             LinearDensity k =
                     getPerception().getPerceptionCategoryOrNull(NeighborsPerception.class).getLeaders(lane).collect(DENSITY);
@@ -170,7 +170,7 @@ public class AnticipationTrafficPerception extends LaneBasedAbstractPerceptionCa
         }
         else
         {
-            return tK.getObject();
+            return tK.object();
         }
     }
 

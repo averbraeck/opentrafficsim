@@ -149,7 +149,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
     public final void updateInfrastructureLaneChangeInfo(final RelativeLane lane) throws GtuException, ParameterException
     {
         if (this.infrastructureLaneChangeInfo.containsKey(lane)
-                && this.infrastructureLaneChangeInfo.get(lane).getTimestamp().equals(getTimestamp()))
+                && this.infrastructureLaneChangeInfo.get(lane).timestamp().equals(getTimestamp()))
         {
             // already done at this time
             return;
@@ -343,7 +343,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         SpeedLimitProspect slp;
         if (tsSlp != null)
         {
-            slp = tsSlp.getObject();
+            slp = tsSlp.object();
             slp.update(getGtu().getOdometer());
         }
         else
@@ -353,7 +353,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         }
         try
         {
-            Lane laneObj = getGtu().getReferencePosition().getLane();
+            Lane laneObj = getGtu().getReferencePosition().lane();
             if (!slp.containsAddSource(laneObj))
             {
                 slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.FIXED_SIGN, laneObj.getSpeedLimit(getGtu().getType()), laneObj);
@@ -407,7 +407,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         }
         LaneStructureRecord record = getPerception().getLaneStructure().getFirstRecord(lane);
         // check tail
-        Length tail = getPerception().getGtu().getRear().getDx();
+        Length tail = getPerception().getGtu().getRear().dx();
         while (record != null && record.getStartDistance().gt(tail) && !record.getPrev().isEmpty()
                 && ((lat.isLeft() && record.possibleLeft(legal)) || (lat.isRight() && record.possibleRight(legal))))
         {
@@ -439,7 +439,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         Length dx;
         if ((lat.isLeft() && record.possibleLeft(legal)) || (lat.isRight() && record.possibleRight(legal)))
         {
-            dx = getPerception().getGtu().getFront().getDx();
+            dx = getPerception().getGtu().getFront().dx();
             while (record != null
                     && ((lat.isLeft() && record.possibleLeft(legal)) || (lat.isRight() && record.possibleRight(legal))))
             {
@@ -450,7 +450,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
         }
         else
         {
-            dx = getPerception().getGtu().getRear().getDx();
+            dx = getPerception().getGtu().getRear().dx();
             while (record != null
                     && ((lat.isLeft() && !record.possibleLeft(legal)) || (lat.isRight() && !record.possibleRight(legal))))
             {
@@ -477,7 +477,7 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
     @Override
     public final void updateCrossSection() throws GtuException, ParameterException
     {
-        if (this.crossSection != null && this.crossSection.getTimestamp().equals(getTimestamp()))
+        if (this.crossSection != null && this.crossSection.timestamp().equals(getTimestamp()))
         {
             // already done at this time
             return;
@@ -490,35 +490,35 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
     @Override
     public final SortedSet<InfrastructureLaneChangeInfo> getInfrastructureLaneChangeInfo(final RelativeLane lane)
     {
-        return this.infrastructureLaneChangeInfo.get(lane).getObject();
+        return this.infrastructureLaneChangeInfo.get(lane).object();
     }
 
     /** {@inheritDoc} */
     @Override
     public final SpeedLimitProspect getSpeedLimitProspect(final RelativeLane lane)
     {
-        return this.speedLimitProspect.get(lane).getObject();
+        return this.speedLimitProspect.get(lane).object();
     }
 
     /** {@inheritDoc} */
     @Override
     public final Length getLegalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat)
     {
-        return this.legalLaneChangePossibility.get(fromLane).get(lat).getObject().getDistance(lat);
+        return this.legalLaneChangePossibility.get(fromLane).get(lat).object().getDistance(lat);
     }
 
     /** {@inheritDoc} */
     @Override
     public final Length getPhysicalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat)
     {
-        return this.physicalLaneChangePossibility.get(fromLane).get(lat).getObject().getDistance(lat);
+        return this.physicalLaneChangePossibility.get(fromLane).get(lat).object().getDistance(lat);
     }
 
     /** {@inheritDoc} */
     @Override
     public final SortedSet<RelativeLane> getCrossSection()
     {
-        return this.crossSection.getObject();
+        return this.crossSection.object();
     }
 
     /**
@@ -571,8 +571,8 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
             final LateralDirectionality lat)
     {
         TimeStampedObject<LaneChangePossibility> tsLcp = this.legalLaneChangePossibility.get(fromLane).get(lat);
-        LaneChangePossibility lcp = tsLcp.getObject();
-        return new TimeStampedObject<>(lcp.getDistance(lat), tsLcp.getTimestamp());
+        LaneChangePossibility lcp = tsLcp.object();
+        return new TimeStampedObject<>(lcp.getDistance(lat), tsLcp.timestamp());
     }
 
     /**
@@ -586,8 +586,8 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
             final LateralDirectionality lat)
     {
         TimeStampedObject<LaneChangePossibility> tsLcp = this.physicalLaneChangePossibility.get(fromLane).get(lat);
-        LaneChangePossibility lcp = tsLcp.getObject();
-        return new TimeStampedObject<>(lcp.getDistance(lat), tsLcp.getTimestamp());
+        LaneChangePossibility lcp = tsLcp.object();
+        return new TimeStampedObject<>(lcp.getDistance(lat), tsLcp.timestamp());
     }
 
     /**

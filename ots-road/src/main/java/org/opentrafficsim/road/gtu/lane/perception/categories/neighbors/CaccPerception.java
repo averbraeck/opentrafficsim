@@ -80,7 +80,7 @@ public class CaccPerception extends LaneBasedAbstractPerceptionCategory implemen
         {
             LaneStructureRecord record = getPerception().getLaneStructure().getRootRecord();
             Length pos = record.getStartDistance().neg();
-            pos = pos.plus(getGtu().getFront().getDx());
+            pos = pos.plus(getGtu().getFront().dx());
             boolean ignoreIfUpstream = true;
             return new DownstreamNeighboursIterableCACC(getGtu(), record, Length.max(Length.ZERO, pos),
                     ((ControlTacticalPlanner) getGtu().getTacticalPlanner()).getSettings()

@@ -233,9 +233,9 @@ public class InjectionsTest
             LaneBasedGtuCharacteristics characteristics = full.asLaneBasedGtuCharacteristicsGenerator().draw();
             assertEquals(i + 1.0, characteristics.getLength().si, 1e-9);
             GeneratorLanePosition p = full.draw(characteristics.getGtuType(), characteristics, Collections.emptyMap());
-            assertEquals(lanes[laneIndex], p.getPosition().getLane().getId());
+            assertEquals(lanes[laneIndex], p.getPosition().lane().getId());
             laneIndex = 1 - laneIndex;
-            assertEquals((i + 1) * 10.0, p.getPosition().getPosition().si, 1e-9);
+            assertEquals((i + 1) * 10.0, p.getPosition().position().si, 1e-9);
         }
         Try.testFail(() -> full.asLaneBasedGtuCharacteristicsGenerator().draw(), IllegalStateException.class); // consec. draw
 

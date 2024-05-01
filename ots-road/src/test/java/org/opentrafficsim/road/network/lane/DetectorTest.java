@@ -159,7 +159,7 @@ class TriggerDetector extends LaneDetector
      * @param simulator the simulator
      * @throws NetworkException in case position is out of bounds
      */
-    TriggerDetector(final Lane lane, final Length longitudinalPosition, final RelativePosition.TYPE positionType,
+    TriggerDetector(final Lane lane, final Length longitudinalPosition, final RelativePosition.Type positionType,
             final String name, final OtsSimulatorInterface simulator) throws NetworkException
     {
         super(name, lane, longitudinalPosition, positionType, simulator, DefaultsRoadNl.ROAD_USERS);

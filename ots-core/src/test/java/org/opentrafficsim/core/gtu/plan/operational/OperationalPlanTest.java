@@ -47,7 +47,7 @@ public class OperationalPlanTest
         assertEquals(startTime.plus(duration).si, op.getEndTime().si, 0.0001, "End time is " + startTime.plus(duration));
         assertEquals(1, op.getOperationalPlanSegmentList().size(), "Segment list contains 1 segment");
         Segment segment = op.getOperationalPlanSegmentList().get(0);
-        assertEquals(duration.si, segment.getDuration().si, 0.00001, "Duration is " + duration);
+        assertEquals(duration.si, segment.duration().si, 0.00001, "Duration is " + duration);
         assertEquals(0, waitPoint.distance(op.getEndLocation()), 0.0001, "End location is " + waitPoint);
         try
         {

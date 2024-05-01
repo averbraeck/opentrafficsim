@@ -128,7 +128,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
                     TrajectoryGroup<?> trajectoryGroup = getSamplerData().getTrajectoryGroup(lane);
                     int from = this.knownTrajectories.getOrDefault(lane, 0);
                     int to = trajectoryGroup.size();
-                    double scaleFactor = section.getLength().si / lane.getLength().si;
+                    double scaleFactor = section.length().si / lane.getLength().si;
                     for (Trajectory<?> trajectory : trajectoryGroup.getTrajectories().subList(from, to))
                     {
                         if (getPath().getNumberOfSeries() > 1)

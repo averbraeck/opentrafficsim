@@ -46,7 +46,6 @@ import org.pmw.tinylog.Level;
  * @see <a href="https://opentrafficsim.org/manual/99-appendices/conflict-areas/">Generation of conflics</a>
  */
 // TODO use z-coordinate for intersections of lines
-// TODO use record classes for ConflictBuilderRecordBig/ConflictBuilderRecordSmall
 // TODO use remove big parallel type, and use fibers for small tasks.
 public final class ConflictBuilder
 {
@@ -1336,75 +1335,23 @@ public final class ConflictBuilder
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * @param lane1 Lane; lane 1
+     * @param down1 Set&lt;Lane&gt;; downstream lanes 1
+     * @param up1 Set&lt;Lane&gt;; upstream lanes 1
+     * @param lane2 Lane; lane 2
+     * @param down2 Set&lt;Lane&gt;; downstream lane 2
+     * @param up2 Set&lt;Lane&gt;; upstream lanes 2
+     * @param permitted boolean; conflict permitted by traffic control
+     * @param simulator OtsSimulatorInterface; simulator
+     * @param widthGenerator WidthGenerator; width generator
+     * @param leftEdges Map&lt;Lane, OtsLine2d&gt;; cache of left edge lines
+     * @param rightEdges Map&lt;Lane, OtsLine2d&gt;; cache of right edge lines
      */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    static class ConflictBuilderRecordSmall
+    static record ConflictBuilderRecordSmall(Lane lane1, Set<Lane> down1, Set<Lane> up1, Lane lane2, Set<Lane> down2,
+            Set<Lane> up2, boolean permitted, OtsSimulatorInterface simulator, WidthGenerator widthGenerator,
+            Map<Lane, OtsLine2d> leftEdges, Map<Lane, OtsLine2d> rightEdges)
     {
-        /** Lane 1. */
-        final Lane lane1;
-
-        /** Downstream lanes of lanes 1. */
-        final Set<Lane> down1;
-
-        /** Upstream lanes of lane 1. */
-        final Set<Lane> up1;
-
-        /** Lane 2. */
-        final Lane lane2;
-
-        /** Downstream lanes of lane 2. */
-        final Set<Lane> down2;
-
-        /** Upstream lanes of lane 2. */
-        final Set<Lane> up2;
-
-        /** Whether the conflict is permitted at a traffic light. */
-        final boolean permitted;
-
-        /** Simulator. */
-        final OtsSimulatorInterface simulator;
-
-        /** Width generator. */
-        final WidthGenerator widthGenerator;
-
-        /** Cache of left edges. */
-        final Map<Lane, OtsLine2d> leftEdges;
-
-        /** Cache of right edges. */
-        final Map<Lane, OtsLine2d> rightEdges;
-
-        /**
-         * Stores conflicts about a single lane pair.
-         * @param lane1 Lane; lane 1
-         * @param down1 Set&lt;Lane&gt;; downstream lanes 1
-         * @param up1 Set&lt;Lane&gt;; upstream lanes 1
-         * @param lane2 Lane; lane 2
-         * @param down2 Set&lt;Lane&gt;; downstream lane 2
-         * @param up2 Set&lt;Lane&gt;; upstream lanes 2
-         * @param permitted boolean; conflict permitted by traffic control
-         * @param simulator OtsSimulatorInterface; simulator
-         * @param widthGenerator WidthGenerator; width generator
-         * @param leftEdges Map&lt;Lane, OtsLine2d&gt;; cache of left edge lines
-         * @param rightEdges Map&lt;Lane, OtsLine2d&gt;; cache of right edge lines
-         */
-        @SuppressWarnings("checkstyle:parameternumber")
-        ConflictBuilderRecordSmall(final Lane lane1, final Set<Lane> down1, final Set<Lane> up1, final Lane lane2,
-                final Set<Lane> down2, final Set<Lane> up2, final boolean permitted, final OtsSimulatorInterface simulator,
-                final WidthGenerator widthGenerator, final Map<Lane, OtsLine2d> leftEdges,
-                final Map<Lane, OtsLine2d> rightEdges)
-        {
-            this.lane1 = lane1;
-            this.down1 = down1;
-            this.up1 = up1;
-            this.lane2 = lane2;
-            this.down2 = down2;
-            this.up2 = up2;
-            this.permitted = permitted;
-            this.simulator = simulator;
-            this.widthGenerator = widthGenerator;
-            this.leftEdges = leftEdges;
-            this.rightEdges = rightEdges;
-        }
     }
 
     /**
@@ -1506,60 +1453,20 @@ public final class ConflictBuilder
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * @param starti int; the start index
+     * @param lanes List of lanes
+     * @param ignoreList list of lane combinations to ignore
+     * @param permittedList list of lane combinations to permit
+     * @param simulator OtsSimulatorInterface; simulator
+     * @param widthGenerator WidthGenerator; width generator
+     * @param leftEdges Map&lt;Lane, OtsLine2d&gt;; cache of left edge lines
+     * @param rightEdges Map&lt;Lane, OtsLine2d&gt;; cache of right edge lines
      */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    static class ConflictBuilderRecordBig
+    static record ConflictBuilderRecordBig(int starti, List<Lane> lanes, LaneCombinationList ignoreList,
+            LaneCombinationList permittedList, OtsSimulatorInterface simulator, WidthGenerator widthGenerator,
+            Map<Lane, OtsLine2d> leftEdges, Map<Lane, OtsLine2d> rightEdges)
     {
-        /** Start index of the particular lane. */
-        final int starti;
-
-        /** List of all lanes. */
-        final List<Lane> lanes;
-
-        /** Combinations to ignore. */
-        final LaneCombinationList ignoreList;
-
-        /** Combinations of permitted conflicts. */
-        final LaneCombinationList permittedList;
-
-        /** Simulator. */
-        final OtsSimulatorInterface simulator;
-
-        /** Width generator. */
-        final WidthGenerator widthGenerator;
-
-        /** Cache of left edges. */
-        final Map<Lane, OtsLine2d> leftEdges;
-
-        /** Cache of right edges. */
-        final Map<Lane, OtsLine2d> rightEdges;
-
-        /**
-         * Stores conflicts about a single lane pair.
-         * @param starti int; the start index
-         * @param lanes List of lanes
-         * @param ignoreList list of lane combinations to ignore
-         * @param permittedList list of lane combinations to permit
-         * @param simulator OtsSimulatorInterface; simulator
-         * @param widthGenerator WidthGenerator; width generator
-         * @param leftEdges Map&lt;Lane, OtsLine2d&gt;; cache of left edge lines
-         * @param rightEdges Map&lt;Lane, OtsLine2d&gt;; cache of right edge lines
-         */
-        @SuppressWarnings("checkstyle:parameternumber")
-        ConflictBuilderRecordBig(final int starti, final List<Lane> lanes, final LaneCombinationList ignoreList,
-                final LaneCombinationList permittedList, final OtsSimulatorInterface simulator,
-                final WidthGenerator widthGenerator, final Map<Lane, OtsLine2d> leftEdges,
-                final Map<Lane, OtsLine2d> rightEdges)
-        {
-            this.starti = starti;
-            this.lanes = lanes;
-            this.ignoreList = ignoreList;
-            this.permittedList = permittedList;
-            this.simulator = simulator;
-            this.widthGenerator = widthGenerator;
-            this.leftEdges = leftEdges;
-            this.rightEdges = rightEdges;
-        }
     }
 
 }

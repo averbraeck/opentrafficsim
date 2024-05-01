@@ -64,7 +64,7 @@ public class DirectBusStopPerception extends LaneBasedAbstractPerceptionCategory
             {
                 LaneRecordInterface<?> record = getPerception().getLaneStructure().getFirstRecord(lane);
                 Length pos = record.getStartDistance().neg();
-                pos = pos.plus(getGtu().getFront().getDx());
+                pos = pos.plus(getGtu().getFront().dx());
                 AbstractPerceptionIterable<HeadwayBusStop, BusStop,
                         ?> it = new LaneBasedObjectIterable<HeadwayBusStop, BusStop>(getGtu(), BusStop.class, record,
                                 Length.max(Length.ZERO, pos), true, getGtu().getParameters().getParameter(LOOKAHEAD),

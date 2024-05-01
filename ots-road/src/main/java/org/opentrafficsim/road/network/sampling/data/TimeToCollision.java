@@ -47,8 +47,8 @@ public class TimeToCollision extends ExtendedDataDuration<GtuDataRoad>
             LanePosition ref = gtuObj.getReferencePosition();
             Set<Lane> set = new LinkedHashSet<>();
             Set<Lane> visited = new LinkedHashSet<>();
-            set.add(ref.getLane());
-            Length pos = ref.getPosition();
+            set.add(ref.lane());
+            Length pos = ref.position();
             Length cumulDist = Length.ZERO; // from start of lane
             Time now = gtuObj.getSimulator().getSimulatorAbsTime();
             LaneBasedGtu next = null;
@@ -77,7 +77,7 @@ public class TimeToCollision extends ExtendedDataDuration<GtuDataRoad>
                     {
                         return new FloatDuration(Double.NaN, DurationUnit.SI);
                     }
-                    Length ownPos = gtuObj.position(ref.getLane(), gtuObj.getFront());
+                    Length ownPos = gtuObj.position(ref.lane(), gtuObj.getFront());
                     Length nextPos = next.position(lane, next.getRear());
                     Length dist = nextPos.minus(ownPos).plus(cumulDist);
                     Speed dv = gtuObj.getSpeed().minus(next.getSpeed());

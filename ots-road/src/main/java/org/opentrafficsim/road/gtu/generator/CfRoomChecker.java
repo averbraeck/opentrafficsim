@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.generator;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -37,7 +36,7 @@ public class CfRoomChecker implements RoomChecker
     public Placement canPlace(final SortedSet<HeadwayGtu> leaders, final LaneBasedGtuCharacteristics characteristics,
             final Duration since, final LanePosition initialPosition) throws NetworkException, GtuException
     {
-        Speed speedLimit = initialPosition.getLane().getSpeedLimit(characteristics.getGtuType());
+        Speed speedLimit = initialPosition.lane().getSpeedLimit(characteristics.getGtuType());
         Throw.when(speedLimit == null, IllegalStateException.class, "No speed limit could be determined for GtuType %s.",
                 characteristics.getGtuType());
         Speed desiredSpeed = characteristics.getStrategicalPlannerFactory().peekDesiredSpeed(characteristics.getGtuType(),
@@ -83,8 +82,8 @@ public class CfRoomChecker implements RoomChecker
         }
         else
         {
-            Lane lane = initialPosition.getLane();
-            Length position = initialPosition.getPosition();
+            Lane lane = initialPosition.lane();
+            Length position = initialPosition.position();
             Length canMove = lane.getLength().minus(position);
             while (canMove.lt(move))
             {

@@ -114,10 +114,10 @@ public class LaneBasedOperationalPlan extends OperationalPlan
 
         // start lane center lines at current reference lane
         LanePosition pos = gtu.getReferencePosition();
-        Lane lane = pos.getLane();
+        Lane lane = pos.lane();
 
         // initialize loop data
-        double length = -lane.coveredDistance(pos.getPosition().si / pos.getLane().getLength().si).si;
+        double length = -lane.coveredDistance(pos.position().si / pos.lane().getLength().si).si;
         double f = Double.NaN;
         Direction prevDir = Direction.instantiateSI(getRotZAtFraction(lane, true));
 
