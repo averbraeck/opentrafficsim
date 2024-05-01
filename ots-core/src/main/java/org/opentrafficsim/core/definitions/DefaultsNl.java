@@ -164,6 +164,12 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
                     new ConstantGenerator<>(Length.instantiateSI(0.9)),
                     new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
         }
+        else if (gtuType.equals(BICYCLE))
+        {
+            template = new GtuTemplate(gtuType, new ConstantGenerator<>(Length.instantiateSI(2)),
+                    new ConstantGenerator<>(Length.instantiateSI(0.7)),
+                    new ConstantGenerator<>(new Speed(35, SpeedUnit.KM_PER_HOUR)));
+        }
         return template;
     };
 
