@@ -351,7 +351,8 @@ public class StrategiesDemo extends AbstractSimulationScript
     {
         while (getNetwork().getGTUs().size() > this.gtuNum)
         {
-            int i = StrategiesDemo.this.stream.nextInt(0, getNetwork().getGTUs().size());
+            int n = getNetwork().getGTUs().size();
+            int i = n <= 1 ? 0 : StrategiesDemo.this.stream.nextInt(0, n - 1);
             Iterator<Gtu> it = getNetwork().getGTUs().iterator();
             Gtu gtu = it.next();
             for (int j = 0; j < i; j++)
