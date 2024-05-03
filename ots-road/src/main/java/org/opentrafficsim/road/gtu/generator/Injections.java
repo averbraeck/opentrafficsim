@@ -348,6 +348,8 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
             {
                 String linkId = (String) row.getValue(this.columnNumbers.get(LINK_COLUMN));
                 Link link = this.network.getLink(linkId);
+                Throw.when(link == null, IllegalArgumentException.class, "Link %s in injections is not in the network.",
+                        linkId);
                 Throw.when(!(link instanceof CrossSectionLink), IllegalArgumentException.class,
                         "Injection table contains link that is not a CrossSectionLink.");
 
@@ -407,6 +409,16 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
         Throw.when(!this.columnNumbers.containsKey(ID_COLUMN), IllegalStateException.class,
                 "Using Injections as id generator, but the injection table has no id column.");
         return (String) this.idIterator.next().getValue(this.columnNumbers.get(ID_COLUMN));
+    }
+
+    /**
+     * Returns whether the column of given id is present.
+     * @param columnId String; column id.
+     * @return boolean; whether the column of given id is present.
+     */
+    public boolean hasColumn(final String columnId)
+    {
+        return this.columnNumbers.containsKey(columnId);
     }
 
     /** {@inheritDoc} */

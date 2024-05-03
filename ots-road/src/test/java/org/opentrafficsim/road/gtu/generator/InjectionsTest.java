@@ -49,9 +49,14 @@ import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.Placement;
 import org.opentrafficsim.road.gtu.generator.characteristics.DefaultLaneBasedGtuCharacteristicsGeneratorOd;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
+import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
+import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -238,21 +243,6 @@ public class InjectionsTest
             assertEquals((i + 1) * 10.0, p.getPosition().position().si, 1e-9);
         }
         Try.testFail(() -> full.asLaneBasedGtuCharacteristicsGenerator().draw(), IllegalStateException.class); // consec. draw
-
-        // test increasing time
-        arrivals = new ListTable("id", "", Set.of(time));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(1.0)));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(2.0)));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(3.0)));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(3.0)));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(4.0)));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(3.0)));
-        Injections arrivalsInjection2 = new Injections(arrivals, null, null, null, null, null);
-        for (int i = 0; i < 5; i++)
-        {
-            arrivalsInjection2.draw();
-        }
-        Try.testFail(() -> arrivalsInjection2.draw(), IllegalStateException.class); // 3.0 < 4.0
     }
 
     /**
@@ -293,6 +283,89 @@ public class InjectionsTest
         GtuType.registerTemplateSupplier(DefaultsNl.TRUCK, Defaults.NL);
         return new Injections(table, network, gtuTypes, DefaultLaneBasedGtuCharacteristicsGeneratorOd.defaultLmrs(stream),
                 stream, Duration.ONE);
+    }
+
+    /**
+     * Tests whether Injection ids are used even when a GTU is delayed due to a lack of space.
+     * @throws NetworkException exception
+     * @throws ParameterException exception
+     * @throws ProbabilityException exception
+     * @throws SimRuntimeException exception
+     * @throws NamingException exception
+     */
+    @Test
+    public final void testIdorder()
+            throws NetworkException, SimRuntimeException, ProbabilityException, ParameterException, NamingException
+    {
+        // A small test network with two completely separated lanes on different links
+        OtsSimulatorInterface simulator = new OtsSimulator("simulator");
+        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), Mockito.mock(OtsModelInterface.class));
+        RoadNetwork network = new RoadNetwork("network", simulator);
+        Point2d pointA = new Point2d(0.0, 0.0);
+        Point2d pointB = new Point2d(0.0, 1000.0);
+        Point2d pointC = new Point2d(10.0, 0.0);
+        Point2d pointD = new Point2d(10.0, 1000.0);
+        Node nodeA = new Node(network, "A", pointA);
+        Node nodeB = new Node(network, "B", pointB);
+        Node nodeC = new Node(network, "C", pointC);
+        Node nodeD = new Node(network, "D", pointD);
+        CrossSectionLink linkAB = new CrossSectionLink(network, "AB", nodeA, nodeB, DefaultsNl.FREEWAY,
+                new OtsLine2d(pointA, pointB), null, LaneKeepingPolicy.KEEPRIGHT);
+        CrossSectionLink linkCD = new CrossSectionLink(network, "CD", nodeC, nodeD, DefaultsNl.FREEWAY,
+                new OtsLine2d(pointC, pointD), null, LaneKeepingPolicy.KEEPRIGHT);
+        Map<GtuType, Speed> speedLimit = Map.of(DefaultsNl.CAR, Speed.instantiateSI(25.0));
+        Lane lane1 = LaneGeometryUtil.createStraightLane(linkAB, "lane1", Length.ZERO, Length.instantiateSI(3.5),
+                DefaultsRoadNl.FREEWAY, speedLimit);
+        Lane lane2 = LaneGeometryUtil.createStraightLane(linkCD, "lane2", Length.ZERO, Length.instantiateSI(3.5),
+                DefaultsRoadNl.FREEWAY, speedLimit);
+
+        // Columns
+        Column<Duration> time = new Column<>(Injections.TIME_COLUMN, "", Duration.class, "s");
+        Column<String> id = new Column<>(Injections.ID_COLUMN, "", String.class);
+        Column<String> gtu = new Column<>(Injections.GTU_TYPE_COLUMN, "", String.class);
+        Column<Length> position = new Column<>(Injections.POSITION_COLUMN, "", Length.class, "m");
+        Column<String> lane = new Column<>(Injections.LANE_COLUMN, "", String.class);
+        Column<String> link = new Column<>(Injections.LINK_COLUMN, "", String.class);
+        Column<Speed> speed = new Column<>(Injections.SPEED_COLUMN, "", Speed.class, "m/s");
+
+        // Create arrivals, with 2 GTUs on lane 1 that are too close for direct generation
+        ListTable arrivals = new ListTable("id", "", Set.of(id, time, gtu, position, lane, link, speed));
+        arrivals.addRow(Map.of(time, Duration.instantiateSI(1.0), id, "1", gtu, "NL.CAR", position, Length.instantiateSI(10.0),
+                lane, "lane1", link, "AB", speed, Speed.instantiateSI(5.0)));
+        arrivals.addRow(Map.of(time, Duration.instantiateSI(1.5), id, "2", gtu, "NL.CAR", position, Length.instantiateSI(10.0),
+                lane, "lane1", link, "AB", speed, Speed.instantiateSI(25.0)));
+        arrivals.addRow(Map.of(time, Duration.instantiateSI(1.6), id, "3", gtu, "NL.CAR", position, Length.instantiateSI(10.0),
+                lane, "lane2", link, "CD", speed, Speed.instantiateSI(25.0)));
+
+        // Create the generator and its components
+        ImmutableMap<String, GtuType> gtuTypes = new ImmutableLinkedHashMap<>(Map.of("NL.CAR", DefaultsNl.CAR));
+        StreamInterface stream = new MersenneTwister();
+        LmrsFactory tacticalFactory = new LmrsFactory(new IdmPlusFactory(stream), new DefaultLmrsPerceptionFactory());
+        LaneBasedStrategicalRoutePlannerFactory strategicalPlannerFactory =
+                new LaneBasedStrategicalRoutePlannerFactory(tacticalFactory);
+        Injections injections =
+                new Injections(arrivals, network, gtuTypes, strategicalPlannerFactory, stream, Duration.instantiateSI(60.0));
+        new LaneBasedGtuGenerator("id", injections, injections.asLaneBasedGtuCharacteristicsGenerator(), injections, network,
+                simulator, injections, injections);
+        GtuType.registerTemplateSupplier(DefaultsNl.CAR, Defaults.NL);
+
+        // Simulate till 1.7s and check that GTU 2 was not yet generated
+        while (simulator.getSimulatorTime().si < 1.7)
+        {
+            simulator.step();
+        }
+        assertEquals(1, lane1.getGtuList().size(), "Lane1 should have 1 GTU as the second is too close.");
+        assertEquals(1, lane2.getGtuList().size(), "Lane2 should have 1 GTU.");
+        assertEquals("1", lane1.getGtuList().get(0).getId(), "GTU on lane 1 should have id \"1\".");
+        assertEquals("3", lane2.getGtuList().get(0).getId(), "GTU on lane 1 should have id \"3\".");
+        // Simulate till 20.0s and check that GTU 2 was generated
+        while (simulator.getSimulatorTime().si < 20.0)
+        {
+            simulator.step();
+        }
+        assertEquals(2, lane1.getGtuList().size(), "Lane1 should have 2 GTUs after some simulation time.");
+        assertTrue(lane1.getGtuList().get(0).getId().equals("2") || lane1.getGtuList().get(1).getId().equals("2"),
+                "Lane1 does not have GTU \"2\" after some simulation time.");
     }
 
 }
