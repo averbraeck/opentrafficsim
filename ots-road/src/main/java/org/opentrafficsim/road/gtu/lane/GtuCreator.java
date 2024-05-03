@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane;
 
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.definitions.Defaults;
@@ -33,7 +34,7 @@ public class GtuCreator {
         gtu.setMaximumAcceleration(defaultCharacteristics.getMaximumAcceleration());
         gtu.setMaximumDeceleration(defaultCharacteristics.getMaximumDeceleration());
         gtu.setVehicleModel(template_gtu_type.getVehicleModel());
-        gtu.setNoLaneChangeDistance(null);
+        gtu.setNoLaneChangeDistance(Length.instantiateSI(5));
         gtu.setInstantaneousLaneChange(false);
         gtu.setErrorHandler(GtuErrorHandler.THROW);
 
