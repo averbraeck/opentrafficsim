@@ -21,23 +21,17 @@ import org.opentrafficsim.core.math.Solver;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ * @param isStandStill boolean; whether this is a stand still segment
+ * @param startSpeed Speed; start speed.
+ * @param duration Duration; the duration of the acceleration for this segment.
+ * @param acceleration Acceleration; acceleration of this segment.
  */
-public class Segment implements Serializable
+public record Segment(boolean isStandStill, Speed startSpeed, Duration duration, Acceleration acceleration)
+        implements Serializable
 {
+
     /** */
     private static final long serialVersionUID = 20230421L;
-
-    /** Whether this plan is a stand-still plan. */
-    private final boolean isStandStill;
-
-    /** Speed at the start of the plan. */
-    private final Speed startSpeed;
-
-    /** The duration of the acceleration for this segment. */
-    private final Duration duration;
-
-    /** The acceleration of this segment. */
-    private final Acceleration acceleration;
 
     /**
      * Constructor.
@@ -47,10 +41,7 @@ public class Segment implements Serializable
      */
     public Segment(final Speed startSpeed, final Duration duration, final Acceleration acceleration)
     {
-        this.isStandStill = false;
-        this.startSpeed = startSpeed;
-        this.duration = duration;
-        this.acceleration = acceleration;
+        this(false, startSpeed, duration, acceleration);
     }
 
     /**
@@ -59,37 +50,7 @@ public class Segment implements Serializable
      */
     private Segment(final Duration duration)
     {
-        this.isStandStill = true;
-        this.startSpeed = Speed.ZERO;
-        this.duration = duration;
-        this.acceleration = Acceleration.ZERO;
-    }
-
-    /**
-     * Returns the start speed of the segment.
-     * @return Speed; start speed of the segment.
-     */
-    public Speed getStartSpeed()
-    {
-        return this.startSpeed;
-    }
-
-    /**
-     * Return the segment duration.
-     * @return Duration; segment duration.
-     */
-    public Duration getDuration()
-    {
-        return this.duration;
-    }
-
-    /**
-     * Returns the acceleration during the segment.
-     * @return Acceleration; acceleration during the segment.
-     */
-    public Acceleration getAcceleration()
-    {
-        return this.acceleration;
+        this(true, Speed.ZERO, duration, Acceleration.ZERO);
     }
 
     /**
@@ -139,8 +100,7 @@ public class Segment implements Serializable
         {
             return Length.ZERO;
         }
-        return Length
-                .instantiateSI(duration.si * this.startSpeed.si + .5 * this.acceleration.si * duration.si * duration.si);
+        return Length.instantiateSI(duration.si * this.startSpeed.si + .5 * this.acceleration.si * duration.si * duration.si);
     }
 
     /**

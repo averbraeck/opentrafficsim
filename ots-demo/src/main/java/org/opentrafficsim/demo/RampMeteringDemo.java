@@ -617,8 +617,8 @@ public class RampMeteringDemo extends AbstractSimulationScript
                     getMandatoryIncentives(), getVoluntaryIncentives(), this.dummyMap);
 
             // other vehicles respond to these 'interpreted' levels of lane change desire
-            getGtu().getParameters().setParameter(LmrsParameters.DLEFT, desire.getLeft());
-            getGtu().getParameters().setParameter(LmrsParameters.DRIGHT, desire.getRight());
+            getGtu().getParameters().setParameter(LmrsParameters.DLEFT, desire.left());
+            getGtu().getParameters().setParameter(LmrsParameters.DRIGHT, desire.right());
 
             // car-following
             Acceleration a = getGtu().getCarFollowingAcceleration();
@@ -646,19 +646,19 @@ public class RampMeteringDemo extends AbstractSimulationScript
                 double dFree = getGtu().getParameters().getParameter(LmrsParameters.DFREE);
                 if (this.laneChangeSystem.initiatedLaneChange().isNone())
                 {
-                    if (desire.leftIsLargerOrEqual() && desire.getLeft() > dFree)
+                    if (desire.leftIsLargerOrEqual() && desire.left() > dFree)
                     {
                         this.laneChangeSystem.initiateLaneChange(LateralDirectionality.LEFT);
                     }
-                    else if (desire.getRight() > dFree)
+                    else if (desire.right() > dFree)
                     {
                         this.laneChangeSystem.initiateLaneChange(LateralDirectionality.RIGHT);
                     }
                 }
                 else
                 {
-                    if ((this.laneChangeSystem.initiatedLaneChange().isLeft() && desire.getLeft() < dFree)
-                            || (this.laneChangeSystem.initiatedLaneChange().isRight() && desire.getRight() < dFree))
+                    if ((this.laneChangeSystem.initiatedLaneChange().isLeft() && desire.left() < dFree)
+                            || (this.laneChangeSystem.initiatedLaneChange().isRight() && desire.right() < dFree))
                     {
                         this.laneChangeSystem.initiateLaneChange(LateralDirectionality.NONE);
                     }

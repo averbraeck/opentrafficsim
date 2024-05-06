@@ -494,15 +494,15 @@ public final class ConflictUtil
                     parameters, carFollowingModel, speedLimitInfo, TIME_STEP);
             // enter before cleared
             // TODO safety factor?
-            if (tteC.getDuration().lt(tteO.getDuration()) && tteO.getDuration().lt(ttcC.getDuration()))
+            if (tteC.duration().lt(tteO.duration()) && tteO.duration().lt(ttcC.duration()))
             {
                 if (!conflictingGTU.getSpeed().eq0() || !CROSSSTANDING)
                 {
                     // solve parabolic speed profile s = v*t + .5*a*t*t, a =
-                    double acc = 2 * (conflict.getDistance().si - speed.si * ttcC.getDuration().si)
-                            / (ttcC.getDuration().si * ttcC.getDuration().si);
+                    double acc = 2 * (conflict.getDistance().si - speed.si * ttcC.duration().si)
+                            / (ttcC.duration().si * ttcC.duration().si);
                     // time till zero speed > time to avoid conflict?
-                    if (speed.si / -acc > ttcC.getDuration().si)
+                    if (speed.si / -acc > ttcC.duration().si)
                     {
                         a = Acceleration.min(a, new Acceleration(acc, AccelerationUnit.SI));
                     }
@@ -707,7 +707,7 @@ public final class ConflictUtil
             {
                 distance = passable.minus(preGap).minus(downs.first().getOverlapRear());
                 ttpDz = AnticipationInfo.anticipateMovement(distance, downs.first().getSpeed(), Acceleration.ZERO);
-                if (ttpDz.getDuration().equals(Duration.POSITIVE_INFINITY))
+                if (ttpDz.duration().equals(Duration.POSITIVE_INFINITY))
                 {
                     // vehicle on conflict will not leave sufficient space
                     return true;
@@ -718,7 +718,7 @@ public final class ConflictUtil
             {
                 distance = conflict.getDistance().plus(passable).minus(preGap).minus(leaders.first().getDistance());
                 ttpDz = AnticipationInfo.anticipateMovement(distance, leaders.first().getSpeed(), Acceleration.ZERO);
-                if (ttpDz.getDuration().equals(Duration.POSITIVE_INFINITY))
+                if (ttpDz.duration().equals(Duration.POSITIVE_INFINITY))
                 {
                     // vehicle on conflict will not leave sufficient space
                     return true;
@@ -826,13 +826,13 @@ public final class ConflictUtil
             {
 
                 // Merge, will be each others followers, add time to overcome speed difference
-                double vSelf = ttcOa.getEndSpeed().si;
+                double vSelf = ttcOa.endSpeed().si;
                 double speedDiff = conflictingVehicle.getSpeed().si - vSelf;
                 speedDiff = speedDiff > 0 ? speedDiff : 0;
                 Duration additionalTime = new Duration(speedDiff / -b.si, DurationUnit.SI);
                 // check if conflict vehicle will be upstream after that time, position beyond conflict after additional time
                 double followerFront = conflictingVehicle.isAhead()
-                        ? conflictingVehicle.getSpeed().si * ttcOa.getDuration().si - conflictingVehicle.getDistance().si
+                        ? conflictingVehicle.getSpeed().si * ttcOa.duration().si - conflictingVehicle.getDistance().si
                                 + (conflictingVehicle.getSpeed().si * additionalTime.si
                                         + 0.5 * b.si * additionalTime.si * additionalTime.si) // note: b < 0
                         : 0.0;
@@ -842,11 +842,11 @@ public final class ConflictUtil
                 // 1) will clear the conflict after the conflict vehicle enters
                 // 2) not sufficient time to overcome speed difference
                 // 3) conflict vehicle will be too near after adjusting speed
-                if (ttcOa.getDuration().times(f).plus(gap).gt(tteCa.getDuration())
+                if (ttcOa.duration().times(f).plus(gap).gt(tteCa.duration())
                         // SKL 2024.02.15: I think this is nonsense, tteCs relates to the location of the conflict, not the
                         // location where the speed difference is resolved
                         // || ttcOa.getDuration().plus(additionalTime).times(f).plus(gap).gt(tteCs.getDuration())
-                        || (!Double.isInfinite(tteCa.getDuration().si) && tteCa.getDuration().si > 0.0
+                        || (!Double.isInfinite(tteCa.duration().si) && tteCa.duration().si > 0.0
                                 && ownRear < (followerFront + (tMax.si + gap.si) * vSelf + s0.si) * f))
                 {
                     return true;
@@ -862,10 +862,10 @@ public final class ConflictUtil
                 // 2) must clear the conflict before the conflict vehicle will enter
                 // 3) if leader decelerates with b, conflict vehicle should be able to safely delay entering conflict
                 // 4) conflict vehicle will never leave enough space beyond the conflict
-                if (ttpDz.getDuration().times(f).plus(gap).gt(tteCa.getDuration())
-                        || ttcOa.getDuration().times(f).plus(gap).gt(tteCa.getDuration())
-                        || ttpDs.getDuration().times(f).plus(gap).gt(tteCs.getDuration())
-                        || ttpDs.getDuration().equals(Duration.POSITIVE_INFINITY))
+                if (ttpDz.duration().times(f).plus(gap).gt(tteCa.duration())
+                        || ttcOa.duration().times(f).plus(gap).gt(tteCa.duration())
+                        || ttpDs.duration().times(f).plus(gap).gt(tteCs.duration())
+                        || ttpDs.duration().equals(Duration.POSITIVE_INFINITY))
                 {
                     return true;
                 }

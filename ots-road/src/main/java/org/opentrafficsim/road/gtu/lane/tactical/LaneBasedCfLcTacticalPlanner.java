@@ -141,7 +141,7 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
 
             // TODO these two info's are not used
             NextSplitInfo nextSplitInfo = determineNextSplit(laneBasedGTU, maximumForwardHeadway);
-            boolean currentLaneFine = nextSplitInfo.getCorrectCurrentLanes().contains(lanePathInfo.getReferenceLane());
+            boolean currentLaneFine = nextSplitInfo.correctCurrentLanes().contains(lanePathInfo.getReferenceLane());
 
             // calculate the lane change step
             // TODO skip if:
@@ -184,7 +184,7 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
             }
 
             // incorporate dead-end/split
-            Length dist = lanePathInfo.getPath().getLength().minus(getGtu().getFront().getDx());
+            Length dist = lanePathInfo.path().getLength().minus(getGtu().getFront().dx());
             a = Acceleration.min(a, ((GtuFollowingModelOld) getCarFollowingModel()).computeAcceleration(getGtu().getSpeed(),
                     getGtu().getMaximumSpeed(), Speed.ZERO, dist, speedLimit));
 
@@ -193,7 +193,7 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
             {
                 return OperationalPlan.standStill(getGtu(), getGtu().getLocation(), startTime, Duration.ONE);
             }
-            OtsLine2d path = lanePathInfo.getPath();
+            OtsLine2d path = lanePathInfo.path();
             OperationalPlan op = new OperationalPlan(getGtu(), path, startTime, Segments.off(getGtu().getSpeed(), duration, a));
             return op;
         }
@@ -309,8 +309,8 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
             throws NetworkException, GtuException, OperationalPlanException
     {
         LanePosition dlp = gtu.getReferencePosition();
-        Lane lane = dlp.getLane();
-        Length longitudinalPosition = dlp.getPosition();
+        Lane lane = dlp.lane();
+        Length longitudinalPosition = dlp.position();
         if (null != direction)
         {
             lane = getPerception().getPerceptionCategory(DefaultSimplePerception.class).bestAccessibleAdjacentLane(lane,
@@ -362,8 +362,8 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
             throws NetworkException, GtuException, OperationalPlanException
     {
         LanePosition dlp = gtu.getReferencePosition();
-        Lane lane = dlp.getLane();
-        Length longitudinalPosition = dlp.getPosition().plus(gtu.getFront().getDx());
+        Lane lane = dlp.lane();
+        Length longitudinalPosition = dlp.position().plus(gtu.getFront().dx());
         if (null != direction)
         {
             lane = getPerception().getPerceptionCategory(DefaultSimplePerception.class).bestAccessibleAdjacentLane(lane,

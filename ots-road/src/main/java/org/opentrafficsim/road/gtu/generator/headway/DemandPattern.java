@@ -15,58 +15,13 @@ import org.opentrafficsim.road.od.Interpolation;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ * @param demandVector FrequencyVector; demand vector
+ * @param timeVector TimeVector; time vector
+ * @param interpolation Interpolation; interpolation
  */
-public class DemandPattern implements Arrivals
+public record DemandPattern(FrequencyVector demandVector, TimeVector timeVector, Interpolation interpolation)
+        implements Arrivals
 {
-
-    /** Demand vector. */
-    private final FrequencyVector demandVector;
-
-    /** Time vector, may be null. */
-    private final TimeVector timeVector;
-
-    /** Interpolation, may be null. */
-    private final Interpolation interpolation;
-
-    /**
-     * Constructor.
-     * @param demandVector FrequencyVector; demand vector
-     * @param timeVector TimeVector; time vector
-     * @param interpolation Interpolation; interpolation
-     */
-    public DemandPattern(final FrequencyVector demandVector, final TimeVector timeVector, final Interpolation interpolation)
-    {
-        this.demandVector = demandVector;
-        this.timeVector = timeVector;
-        this.interpolation = interpolation;
-    }
-
-    /**
-     * Returns the demand vector.
-     * @return FrequencyVector; returns the demand vector
-     */
-    public final FrequencyVector getDemandVector()
-    {
-        return this.demandVector;
-    }
-
-    /**
-     * Returns the time vector.
-     * @return TimeVector; returns the time vector
-     */
-    public final TimeVector getTimeVector()
-    {
-        return this.timeVector;
-    }
-
-    /**
-     * Returns the interpolation.
-     * @return Interpolation; returns the interpolation
-     */
-    public final Interpolation getInterpolation()
-    {
-        return this.interpolation;
-    }
 
     /** {@inheritDoc} */
     @Override
@@ -87,72 +42,6 @@ public class DemandPattern implements Arrivals
             }
         }
         return null;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((this.demandVector == null) ? 0 : this.demandVector.hashCode());
-        result = prime * result + ((this.interpolation == null) ? 0 : this.interpolation.hashCode());
-        result = prime * result + ((this.timeVector == null) ? 0 : this.timeVector.hashCode());
-        return result;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean equals(final Object obj)
-    {
-        if (this == obj)
-        {
-            return true;
-        }
-        if (obj == null)
-        {
-            return false;
-        }
-        if (getClass() != obj.getClass())
-        {
-            return false;
-        }
-        DemandPattern other = (DemandPattern) obj;
-        if (this.demandVector == null)
-        {
-            if (other.demandVector != null)
-            {
-                return false;
-            }
-        }
-        else if (!this.demandVector.equals(other.demandVector))
-        {
-            return false;
-        }
-        if (this.interpolation != other.interpolation)
-        {
-            return false;
-        }
-        if (this.timeVector == null)
-        {
-            if (other.timeVector != null)
-            {
-                return false;
-            }
-        }
-        else if (!this.timeVector.equals(other.timeVector))
-        {
-            return false;
-        }
-        return true;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString()
-    {
-        return "DemandPattern [demandVector=" + this.demandVector + ", timeVector=" + this.timeVector + ", interpolation="
-                + this.interpolation + "]";
     }
 
 }

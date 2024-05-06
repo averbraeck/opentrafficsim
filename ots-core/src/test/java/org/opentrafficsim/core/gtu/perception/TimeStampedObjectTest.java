@@ -44,7 +44,7 @@ public class TimeStampedObjectTest
      */
     private void verifyFields(final TimeStampedObject<String> tso, final String string, final Time time)
     {
-        assertEquals(string, tso.getObject(), "object must be " + string);
-        assertEquals(time.si, tso.getTimestamp().si, time.si / 99999, "time must be " + time);
+        assertEquals(string, tso.object(), "object must be " + string);
+        assertEquals(time.si, tso.timestamp().si, time.si / 99999, "time must be " + time);
     }
 }

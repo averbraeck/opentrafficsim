@@ -201,7 +201,7 @@ public class LaneChange implements Serializable
         {
             throw new OperationalPlanException("Second lane of lane change could not be determined.", exception);
         }
-        Set<Lane> accessibleLanes = dlp.getLane().accessibleAdjacentLanesPhysical(this.laneChangeDirectionality, gtu.getType());
+        Set<Lane> accessibleLanes = dlp.lane().accessibleAdjacentLanesPhysical(this.laneChangeDirectionality, gtu.getType());
         if (!accessibleLanes.isEmpty() && map.containsKey(accessibleLanes.iterator().next()))
         {
             return isChangingLeft() ? RelativeLane.LEFT : RelativeLane.RIGHT;
@@ -258,13 +258,13 @@ public class LaneChange implements Serializable
         Throw.when(fromDist < 0.0, RuntimeException.class, "Lane change results in negative distance along from lanes.");
 
         // get fractional location there, build lane lists as we search over the distance
-        Lane fromLane = from.getLane();
+        Lane fromLane = from.lane();
         List<Lane> fromLanes = new ArrayList<>();
         List<Lane> toLanes = new ArrayList<>();
         fromLanes.add(fromLane);
-        toLanes.add(fromLane.getAdjacentLane(this.laneChangeDirectionality, gtu));
-        double endPosFrom = from.getPosition().si + fromDist;
-        while (endPosFrom + gtu.getFront().getDx().si > fromLane.getLength().si)
+        toLanes.add(fromLane.getAdjacentLane(this.laneChangeDirectionality, gtu.getType()));
+        double endPosFrom = from.position().si + fromDist;
+        while (endPosFrom + gtu.getFront().dx().si > fromLane.getLength().si)
         {
             Lane nextFromLane;
             if (!favoured)
@@ -292,18 +292,18 @@ public class LaneChange implements Serializable
             if (nextFromLane == null)
             {
                 // there are no lanes to move on, restrict lane change length/duration (given fixed mean speed)
-                double endFromPosLimit = fromLane.getLength().si - gtu.getFront().getDx().si;
+                double endFromPosLimit = fromLane.getLength().si - gtu.getFront().dx().si;
                 double f = 1.0 - (endPosFrom - endFromPosLimit) / fromDist;
                 laneChangeDuration *= f;
                 endPosFrom = endFromPosLimit;
                 break;
             }
             endPosFrom -= fromLane.getLength().si;
-            Lane nextToLane = nextFromLane.getAdjacentLane(this.laneChangeDirectionality, gtu);
+            Lane nextToLane = nextFromLane.getAdjacentLane(this.laneChangeDirectionality, gtu.getType());
             if (nextToLane == null)
             {
                 // there are no lanes to change to, restrict lane change length/duration (given fixed mean speed)
-                double endFromPosLimit = fromLane.getLength().si - gtu.getFront().getDx().si;
+                double endFromPosLimit = fromLane.getLength().si - gtu.getFront().dx().si;
                 double f = 1.0 - (endPosFrom - endFromPosLimit) / fromDist;
                 laneChangeDuration *= f;
                 endPosFrom = endFromPosLimit;
@@ -325,12 +325,12 @@ public class LaneChange implements Serializable
         double endFractionalPositionFrom = fromLane.fractionAtCoveredDistance(Length.instantiateSI(endPosFrom));
 
         LanePosition fromAdjusted = from;
-        while (fromAdjusted.getPosition().gt(fromAdjusted.getLane().getLength()))
+        while (fromAdjusted.position().gt(fromAdjusted.lane().getLength()))
         {
             // the from position is beyond the first lane (can occur if it is not the ref position)
             fromLanes.remove(0);
             toLanes.remove(0);
-            Length beyond = fromAdjusted.getPosition().minus(fromAdjusted.getLane().getLength());
+            Length beyond = fromAdjusted.position().minus(fromAdjusted.lane().getLength());
             Length pos = beyond;
             fromAdjusted = Try.assign(() -> new LanePosition(fromLanes.get(0), pos), OtsGeometryException.class,
                     "Info for lane is null.");
@@ -339,7 +339,7 @@ public class LaneChange implements Serializable
         // get path from shape
 
         // create center lines
-        double startFractionalPositionFrom = from.getPosition().si / from.getLane().getLength().si;
+        double startFractionalPositionFrom = from.position().si / from.lane().getLength().si;
         OtsLine2d fromLine = getLine(fromLanes, startFractionalPositionFrom, endFractionalPositionFrom);
         // project for toLane
         double startFractionalPositionTo = toLanes.get(0).getCenterLine().projectFractional(null, null, startPosition.x,
@@ -440,6 +440,10 @@ public class LaneChange implements Serializable
         {
             if (line == null && lane.equals(lanes.get(lanes.size() - 1)))
             {
+                if (endFractionalPosition < startFractionalPosition)
+                {
+                    System.out.println("hmmm");
+                }
                 line = lane.getCenterLine().extractFractional(startFractionalPosition, endFractionalPosition);
             }
             else if (line == null)

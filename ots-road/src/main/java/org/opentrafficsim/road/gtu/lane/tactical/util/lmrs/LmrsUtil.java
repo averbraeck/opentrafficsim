@@ -159,16 +159,16 @@ public final class LmrsUtil implements LmrsParameters
             double dFree = params.getParameter(DFREE);
             initiatedLaneChange = LateralDirectionality.NONE;
             turnIndicatorStatus = TurnIndicatorIntent.NONE;
-            if (desire.leftIsLargerOrEqual() && desire.getLeft() >= dFree)
+            if (desire.leftIsLargerOrEqual() && desire.left() >= dFree)
             {
-                if (acceptLaneChange(perception, params, sli, carFollowingModel, desire.getLeft(), speed, a,
+                if (acceptLaneChange(perception, params, sli, carFollowingModel, desire.left(), speed, a,
                         LateralDirectionality.LEFT, lmrsData.getGapAcceptance(), laneChange))
                 {
                     // change left
                     initiatedLaneChange = LateralDirectionality.LEFT;
                     turnIndicatorStatus = TurnIndicatorIntent.LEFT;
-                    params.setParameter(DLC, desire.getLeft());
-                    setDesiredHeadway(params, desire.getLeft());
+                    params.setParameter(DLC, desire.left());
+                    setDesiredHeadway(params, desire.left());
                     leaders = neighbors.getLeaders(RelativeLane.LEFT);
                     if (!leaders.isEmpty())
                     {
@@ -180,16 +180,16 @@ public final class LmrsUtil implements LmrsParameters
                             neighbors.getLeaders(RelativeLane.LEFT)));
                 }
             }
-            else if (!desire.leftIsLargerOrEqual() && desire.getRight() >= dFree)
+            else if (!desire.leftIsLargerOrEqual() && desire.right() >= dFree)
             {
-                if (acceptLaneChange(perception, params, sli, carFollowingModel, desire.getRight(), speed, a,
+                if (acceptLaneChange(perception, params, sli, carFollowingModel, desire.right(), speed, a,
                         LateralDirectionality.RIGHT, lmrsData.getGapAcceptance(), laneChange))
                 {
                     // change right
                     initiatedLaneChange = LateralDirectionality.RIGHT;
                     turnIndicatorStatus = TurnIndicatorIntent.RIGHT;
-                    params.setParameter(DLC, desire.getRight());
-                    setDesiredHeadway(params, desire.getRight());
+                    params.setParameter(DLC, desire.right());
+                    setDesiredHeadway(params, desire.right());
                     leaders = neighbors.getLeaders(RelativeLane.RIGHT);
                     if (!leaders.isEmpty())
                     {
@@ -231,8 +231,8 @@ public final class LmrsUtil implements LmrsParameters
             }
             else
             {
-                params.setParameter(DLEFT, desire.getLeft());
-                params.setParameter(DRIGHT, desire.getRight());
+                params.setParameter(DLEFT, desire.left());
+                params.setParameter(DRIGHT, desire.right());
             }
 
             // take action if we cannot change lane
@@ -240,10 +240,10 @@ public final class LmrsUtil implements LmrsParameters
 
             // synchronize
             double dSync = params.getParameter(DSYNC);
-            if (desire.leftIsLargerOrEqual() && desire.getLeft() >= dSync)
+            if (desire.leftIsLargerOrEqual() && desire.left() >= dSync)
             {
                 Synchronizable.State state;
-                if (desire.getLeft() >= params.getParameter(DCOOP))
+                if (desire.left() >= params.getParameter(DCOOP))
                 {
                     // switch on left indicator
                     turnIndicatorStatus = TurnIndicatorIntent.LEFT;
@@ -253,14 +253,14 @@ public final class LmrsUtil implements LmrsParameters
                 {
                     state = Synchronizable.State.SYNCHRONIZING;
                 }
-                aSync = lmrsData.getSynchronization().synchronize(perception, params, sli, carFollowingModel, desire.getLeft(),
+                aSync = lmrsData.getSynchronization().synchronize(perception, params, sli, carFollowingModel, desire.left(),
                         LateralDirectionality.LEFT, lmrsData, laneChange, initiatedLaneChange);
                 a = applyAcceleration(a, aSync, lmrsData, state);
             }
-            else if (!desire.leftIsLargerOrEqual() && desire.getRight() >= dSync)
+            else if (!desire.leftIsLargerOrEqual() && desire.right() >= dSync)
             {
                 Synchronizable.State state;
-                if (desire.getRight() >= params.getParameter(DCOOP))
+                if (desire.right() >= params.getParameter(DCOOP))
                 {
                     // switch on right indicator
                     turnIndicatorStatus = TurnIndicatorIntent.RIGHT;
@@ -270,7 +270,7 @@ public final class LmrsUtil implements LmrsParameters
                 {
                     state = Synchronizable.State.SYNCHRONIZING;
                 }
-                aSync = lmrsData.getSynchronization().synchronize(perception, params, sli, carFollowingModel, desire.getRight(),
+                aSync = lmrsData.getSynchronization().synchronize(perception, params, sli, carFollowingModel, desire.right(),
                         LateralDirectionality.RIGHT, lmrsData, laneChange, initiatedLaneChange);
                 a = applyAcceleration(a, aSync, lmrsData, state);
             }
@@ -387,8 +387,8 @@ public final class LmrsUtil implements LmrsParameters
         {
             Desire d = incentive.determineDesire(parameters, perception, carFollowingModel, mandatoryDesire);
             desireMap.put(incentive.getClass(), d);
-            dLeftMandatory = Math.abs(d.getLeft()) > Math.abs(dLeftMandatory) ? d.getLeft() : dLeftMandatory;
-            dRightMandatory = Math.abs(d.getRight()) > Math.abs(dRightMandatory) ? d.getRight() : dRightMandatory;
+            dLeftMandatory = Math.abs(d.left()) > Math.abs(dLeftMandatory) ? d.left() : dLeftMandatory;
+            dRightMandatory = Math.abs(d.right()) > Math.abs(dRightMandatory) ? d.right() : dRightMandatory;
             mandatoryDesire = new Desire(dLeftMandatory, dRightMandatory);
         }
 
@@ -400,8 +400,8 @@ public final class LmrsUtil implements LmrsParameters
         {
             Desire d = incentive.determineDesire(parameters, perception, carFollowingModel, mandatoryDesire, voluntaryDesire);
             desireMap.put(incentive.getClass(), d);
-            dLeftVoluntary += d.getLeft();
-            dRightVoluntary += d.getRight();
+            dLeftVoluntary += d.left();
+            dRightVoluntary += d.right();
             voluntaryDesire = new Desire(dLeftVoluntary, dRightVoluntary);
         }
 

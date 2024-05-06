@@ -33,7 +33,7 @@ import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
+import org.opentrafficsim.core.gtu.RelativePosition.Type;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.DefaultTestParameters;
@@ -167,19 +167,19 @@ public class TrafficLightDetectorTest implements EventListener
                 LanePosition pA = findLaneAndPosition(lanes, a);
                 LanePosition pB = findLaneAndPosition(lanes, b);
                 String sensorId = "D123";
-                TYPE entryPosition = RelativePosition.FRONT;
-                TYPE exitPosition = RelativePosition.REAR;
+                Type entryPosition = RelativePosition.FRONT;
+                Type exitPosition = RelativePosition.REAR;
                 List<Lane> intermediateLanes = null;
                 if (lanes.length > 2)
                 {
                     intermediateLanes = new ArrayList<>();
                     for (Lane lane : lanes)
                     {
-                        if (lane.equals(pA.getLane()))
+                        if (lane.equals(pA.lane()))
                         {
                             continue;
                         }
-                        if (lane.equals(pB.getLane()))
+                        if (lane.equals(pB.lane()))
                         {
                             break;
                         }
@@ -187,14 +187,14 @@ public class TrafficLightDetectorTest implements EventListener
                     }
                 }
                 TrafficLightDetector tls =
-                        new TrafficLightDetector(sensorId, pA.getLane(), pA.getPosition(), pB.getLane(), pB.getPosition(),
+                        new TrafficLightDetector(sensorId, pA.lane(), pA.position(), pB.lane(), pB.position(),
                                 intermediateLanes, entryPosition, exitPosition, simulator, DefaultsRoadNl.TRAFFIC_LIGHT);
                 assertEquals(sensorId, tls.getId(), "Id should match the provided id");
                 assertEquals(simulator, tls.getSimulator(), "Simulator should match");
                 assertEquals(entryPosition, tls.getPositionTypeEntry(), "Entry position");
                 assertEquals(exitPosition, tls.getPositionTypeExit(), "Exit position");
-                assertEquals(pA.getPosition().si, tls.getLanePositionA().si, 0.00001, "Position a");
-                assertEquals(pB.getPosition().si, tls.getLanePositionB().si, 0.00001, "Position b");
+                assertEquals(pA.position().si, tls.getLanePositionA().si, 0.00001, "Position a");
+                assertEquals(pB.position().si, tls.getLanePositionB().si, 0.00001, "Position b");
                 this.loggedEvents.clear();
                 assertEquals(0, this.loggedEvents.size(), "event list is empty");
                 tls.addListener(this, TrafficLightDetector.TRAFFIC_LIGHT_DETECTOR_TRIGGER_ENTRY_EVENT);
@@ -211,7 +211,7 @@ public class TrafficLightDetectorTest implements EventListener
                 Length initialPosition = new Length(pos, LengthUnit.METER);
                 LanePosition gtuPosition = findLaneAndPosition(lanes, initialPosition);
 //                initialLongitudinalPositions.add(new LanePosition(gtuPosition.getLane(), gtuPosition.getPosition()));
-                LanePosition initialLongitudinalPositions = new LanePosition(gtuPosition.getLane(), gtuPosition.getPosition());
+                LanePosition initialLongitudinalPositions = new LanePosition(gtuPosition.lane(), gtuPosition.position());
                 Parameters parameters = DefaultTestParameters.create();
                 LaneChangeModel laneChangeModel = new Egoistic();
                 GtuFollowingModelOld gtuFollowingModel = new FixedAccelerationModel(

@@ -46,7 +46,7 @@ import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine2d;
-import org.opentrafficsim.core.gtu.RelativePosition.TYPE;
+import org.opentrafficsim.core.gtu.RelativePosition.Type;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.gtu.plan.strategical.StrategicalPlanner;
@@ -157,7 +157,7 @@ public class Gtu extends LocalEventProducer
     private Polygon2d shape = null;
 
     /** Sensing positions. */
-    private final Map<RelativePosition.TYPE, RelativePosition> relativePositions = new LinkedHashMap<>();
+    private final Map<RelativePosition.Type, RelativePosition> relativePositions = new LinkedHashMap<>();
 
     /** cached front. */
     private final RelativePosition frontPos;
@@ -236,7 +236,7 @@ public class Gtu extends LocalEventProducer
         this.relativePositions.put(RelativePosition.REFERENCE, RelativePosition.REFERENCE_POSITION);
         this.relativePositions.put(RelativePosition.CENTER,
                 new RelativePosition(Length.ZERO, Length.ZERO, Length.ZERO, RelativePosition.CENTER));
-        this.bounds = new BoundingRectangle(getRear().getDx().si, getFront().getDx().si, -dy2.si, dy2.si);
+        this.bounds = new BoundingRectangle(getRear().dx().si, getFront().dx().si, -dy2.si, dy2.si);
 
         // Contour positions. For now, a rectangle with the four corners.
         for (int i = -1; i <= 1; i += 2)
@@ -303,7 +303,7 @@ public class Gtu extends LocalEventProducer
     }
 
     /** @return the positions for this GTU, but not the contour points. */
-    public final ImmutableMap<TYPE, RelativePosition> getRelativePositions()
+    public final ImmutableMap<Type, RelativePosition> getRelativePositions()
     {
         return new ImmutableLinkedHashMap<>(this.relativePositions, Immutable.WRAP);
     }
@@ -864,8 +864,8 @@ public class Gtu extends LocalEventProducer
             OtsLine2d path = this.operationalPlan.get().getPath();
             // part of the Gtu length has to be added before the start and after the end of the path.
             // we assume the reference point is within the contour of the Gtu.
-            double rear = Math.max(0.0, getReference().getDx().si - getRear().getDx().si);
-            double front = path.getLength().si + Math.max(0.0, getFront().getDx().si - getReference().getDx().si);
+            double rear = Math.max(0.0, getReference().dx().si - getRear().dx().si);
+            double front = path.getLength().si + Math.max(0.0, getFront().dx().si - getReference().dx().si);
             Point2d p0 = path.getLocationExtendedSI(-rear);
             Point2d pn = path.getLocationExtendedSI(front);
             List<Point2d> pList = new ArrayList<>(Arrays.asList(path.getPoints()));

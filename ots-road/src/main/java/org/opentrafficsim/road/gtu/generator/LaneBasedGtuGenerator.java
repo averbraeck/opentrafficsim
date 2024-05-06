@@ -126,6 +126,15 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
     /** Vehicle generation is ignored on these lanes. */
     private Set<Lane> disabled = new LinkedHashSet<>();
 
+    /** Order of GTU ids. Default is in order of successful generation. Otherwise its in order of characteristics drawing. */
+    private boolean idsInCharacteristicsOrder = false;
+
+    /** Map of ids drawn at time of GTU characteristics drawing, if idsInCharacteristicsOrder = true. */
+    private Map<LaneBasedGtuCharacteristics, String> unplacedIds = null;
+
+    /** This enables to check whether idsInCharacteristicsOrder can still be set. */
+    private boolean firstCharacteristicsDrawn = false;
+
     /**
      * Construct a new lane base GTU generator.
      * @param id String; name of the new GTU generator
@@ -164,6 +173,10 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
             simulator.scheduleEventRel(headway, this, "generateCharacteristics", new Object[] {});
         }
         this.network.addNonLocatedObject(this);
+        if (this.idGenerator instanceof Injections injections && injections.hasColumn(Injections.ID_COLUMN))
+        {
+            setIdsInCharacteristicsOrder(true); // also creates the unplaced ids map
+        }
     }
 
     /**
@@ -194,6 +207,20 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
     }
 
     /**
+     * Sets what order should be used for the ids. By default this is in the order of successful GTU generation. If however the
+     * id generator is an instance of {@code Injections} with an id column, it is by default in the order of characteristics
+     * drawing.
+     * @param idsInCharacteristicsOrder boolean; ids in order of drawing characteristics, or successful generation otherwise.
+     */
+    public void setIdsInCharacteristicsOrder(final boolean idsInCharacteristicsOrder)
+    {
+        Throw.when(this.firstCharacteristicsDrawn, IllegalStateException.class,
+                "Id order cannot be set once GTU characteristics were drawn.");
+        this.unplacedIds = new LinkedHashMap<>();
+        this.idsInCharacteristicsOrder = idsInCharacteristicsOrder;
+    }
+
+    /**
      * Generate the characteristics of the next GTU.
      * @throws ProbabilityException when something is wrongly defined in the LaneBasedTemplateGTUType
      * @throws SimRuntimeException when this method fails to re-schedule itself or the call to the method that tries to place a
@@ -204,6 +231,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
     @SuppressWarnings("unused")
     private void generateCharacteristics() throws ProbabilityException, SimRuntimeException, ParameterException, GtuException
     {
+        this.firstCharacteristicsDrawn = true;
         synchronized (this.unplacedTemplates)
         {
             LaneBasedGtuCharacteristics characteristics = this.laneBasedGtuCharacteristicsGenerator.draw();
@@ -225,8 +253,12 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
             GeneratorLanePosition lanePosition = this.generatorPositions.draw(gtuType, characteristics, unplaced);
 
             // skip if disabled at this lane-direction
-            if (!this.disabled.contains(lanePosition.getPosition().getLane()))
+            if (!this.disabled.contains(lanePosition.getPosition().lane()))
             {
+                if (this.idsInCharacteristicsOrder)
+                {
+                    this.unplacedIds.put(characteristics, this.idGenerator.get());
+                }
                 queueGtu(lanePosition, characteristics);
             }
 
@@ -267,12 +299,12 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
             return; // Do not re-schedule this method
         }
 
-        LaneBasedGtuCharacteristics characteristics = timedCharacteristics.getObject();
+        LaneBasedGtuCharacteristics characteristics = timedCharacteristics.object();
         SortedSet<HeadwayGtu> leaders = new TreeSet<>();
-        getFirstLeaders(position.getPosition().getLane(),
-                position.getPosition().getPosition().neg().minus(characteristics.getFront()),
-                position.getPosition().getPosition(), leaders);
-        Duration since = this.simulator.getSimulatorAbsTime().minus(timedCharacteristics.getTimestamp());
+        getFirstLeaders(position.getPosition().lane(),
+                position.getPosition().position().neg().minus(characteristics.getFront()), position.getPosition().position(),
+                leaders);
+        Duration since = this.simulator.getSimulatorAbsTime().minus(timedCharacteristics.timestamp());
         Placement placement = this.roomChecker.canPlace(leaders, characteristics, since, position.getPosition());
         if (placement.canPlace())
         {
@@ -307,7 +339,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
         GeneratorLanePosition genPosition = null;
         for (GeneratorLanePosition lanePosition : this.generatorPositions.getAllPositions())
         {
-            if (lanePosition.getPosition().getLane().equals(lane))
+            if (lanePosition.getPosition().lane().equals(lane))
             {
                 genPosition = lanePosition;
                 break;
@@ -368,7 +400,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
     public final void placeGtu(final LaneBasedGtuCharacteristics characteristics, final LanePosition position,
             final Speed speed) throws NamingException, GtuException, NetworkException, SimRuntimeException, OtsGeometryException
     {
-        String gtuId = this.idGenerator.get();
+        String gtuId = this.idsInCharacteristicsOrder ? this.unplacedIds.remove(characteristics) : this.idGenerator.get();
         LaneBasedGtu gtu = new LaneBasedGtu(gtuId, characteristics.getGtuType(), characteristics.getLength(),
                 characteristics.getWidth(), characteristics.getMaximumSpeed(), characteristics.getFront(), this.network);
         gtu.setMaximumAcceleration(characteristics.getMaximumAcceleration());
@@ -521,7 +553,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
                 @Override
                 public String getId()
                 {
-                    return LaneBasedGtuGenerator.this.id + "@" + lanePosition.getLink().getId() + "." + pos.getLane().getId();
+                    return LaneBasedGtuGenerator.this.id + "@" + lanePosition.getLink().getId() + "." + pos.lane().getId();
                 }
             });
         }

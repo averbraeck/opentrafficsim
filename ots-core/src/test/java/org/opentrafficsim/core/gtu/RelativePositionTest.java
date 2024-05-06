@@ -28,21 +28,21 @@ public class RelativePositionTest
         Length deltaX = new Length(12, LengthUnit.METER);
         Length deltaY = new Length(23, LengthUnit.METER);
         Length deltaZ = new Length(34, LengthUnit.METER);
-        RelativePosition.TYPE type = new RelativePosition.TYPE("TestType");
+        RelativePosition.Type type = new RelativePosition.Type("TestType");
         assertEquals(type.getName(), "TestType", "type name");
         assertTrue(type.equals(type), "type is equal to itself");
         assertFalse(type.equals(RelativePosition.REFERENCE), "type is not equals to REFERENCE");
         RelativePosition rp = new RelativePosition(deltaX, deltaY, deltaZ, type);
-        assertTrue(deltaX.eq(rp.getDx()), "deltaX");
-        assertTrue(deltaY.eq(rp.getDy()), "deltaY");
-        assertTrue(deltaZ.eq(rp.getDz()), "deltaZ");
-        assertEquals(type, rp.getType(), "type");
+        assertTrue(deltaX.eq(rp.dx()), "deltaX");
+        assertTrue(deltaY.eq(rp.dy()), "deltaY");
+        assertTrue(deltaZ.eq(rp.dz()), "deltaZ");
+        assertEquals(type, rp.type(), "type");
 
         RelativePosition rpCopy = new RelativePosition(rp);
-        assertTrue(deltaX.eq(rpCopy.getDx()), "deltaX");
-        assertTrue(deltaY.eq(rpCopy.getDy()), "deltaY");
-        assertTrue(deltaZ.eq(rpCopy.getDz()), "deltaZ");
-        assertEquals(type, rpCopy.getType(), "type");
+        assertTrue(deltaX.eq(rpCopy.dx()), "deltaX");
+        assertTrue(deltaY.eq(rpCopy.dy()), "deltaY");
+        assertTrue(deltaZ.eq(rpCopy.dz()), "deltaZ");
+        assertEquals(type, rpCopy.type(), "type");
         assertTrue(rp.equals(rpCopy), "equals");
         RelativePosition rp2 = new RelativePosition(deltaX, deltaY, deltaZ, type);
         assertTrue(rp.equals(rp2), "equals");
@@ -52,10 +52,10 @@ public class RelativePositionTest
         assertTrue(rp.hashCode() != rp3.hashCode(), "hascode should differ with extreme likelihood");
 
         RelativePosition reference = RelativePosition.REFERENCE_POSITION;
-        assertEquals(reference.getDx().getSI(), 0, 0.0000001, "reference is 0,0,0");
-        assertEquals(reference.getDy().getSI(), 0, 0.0000001, "reference is 0,0,0");
-        assertEquals(reference.getDz().getSI(), 0, 0.0000001, "reference is 0,0,0");
-        assertEquals(reference.getType(), RelativePosition.REFERENCE, "reference has type REFERENCE_POSITION");
+        assertEquals(reference.dx().getSI(), 0, 0.0000001, "reference is 0,0,0");
+        assertEquals(reference.dy().getSI(), 0, 0.0000001, "reference is 0,0,0");
+        assertEquals(reference.dz().getSI(), 0, 0.0000001, "reference is 0,0,0");
+        assertEquals(reference.type(), RelativePosition.REFERENCE, "reference has type REFERENCE_POSITION");
     }
 
 }

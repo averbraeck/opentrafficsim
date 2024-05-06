@@ -400,7 +400,7 @@ public class OdMatrix implements Serializable, Identifiable
         {
             return null;
         }
-        return demandPattern.getDemandVector();
+        return demandPattern.demandVector();
     }
 
     /**
@@ -419,7 +419,7 @@ public class OdMatrix implements Serializable, Identifiable
         {
             return null;
         }
-        return demandPattern.getTimeVector();
+        return demandPattern.timeVector();
     }
 
     /**
@@ -438,7 +438,7 @@ public class OdMatrix implements Serializable, Identifiable
         {
             return null;
         }
-        return demandPattern.getInterpolation();
+        return demandPattern.interpolation();
     }
 
     /**
@@ -845,7 +845,7 @@ public class OdMatrix implements Serializable, Identifiable
                         catStr.append("]");
                         // System.out.println("DEBUG format is \"" + format + "\"");
                         System.out.println(String.format(format, origin.getId(), destination.getId()) + catStr + " | "
-                                + categoryMap.get(category).getDemandVector());
+                                + categoryMap.get(category).demandVector());
                     }
                 }
             }

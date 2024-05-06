@@ -342,22 +342,23 @@ public class NetworkTest implements EventListener
         assertEquals(500, extent.getMaxX(), 0, "extend right");
         assertEquals(500, extent.getMaxY(), 0, "extend top");
 
-        // Add one node
+        // Add one node (node has a bounding circle with radius 1), and there is an EXTENT_MARGIN of 0.05 in this case
         new Node(network, "node1", new Point2d(10, 20));
         extent = network.getExtent();
-        assertEquals(10, extent.getMinX(), 0.01, "extend left");
-        assertEquals(20, extent.getMinY(), 0.01, "extend bottom");
-        assertEquals(10, extent.getMaxX(), 0.01, "extend right");
-        assertEquals(20, extent.getMaxY(), 0.01, "extend top");
-        // Add another node
+        assertEquals(10.0 - 1.0 - 0.05, extent.getMinX(), 0.01, "extend left");
+        assertEquals(20.0 - 1.0 - 0.05, extent.getMinY(), 0.01, "extend bottom");
+        assertEquals(10.0 + 1.0 + 0.05, extent.getMaxX(), 0.01, "extend right");
+        assertEquals(20.0 + 1.0 + 0.05, extent.getMaxY(), 0.01, "extend top");
+        
+        // Add another node (node has a bounding circle with radius 1, so diameter 2)
         new Node(network, "node2", new Point2d(110, 220));
         extent = network.getExtent();
-        double xMargin = 100 * Network.EXTENT_MARGIN / 2;
-        double yMargin = 200 * Network.EXTENT_MARGIN / 2;
-        assertEquals(10 - xMargin, extent.getMinX(), 0.01, "extend left");
-        assertEquals(20 - yMargin, extent.getMinY(), 0.01, "extend bottom");
-        assertEquals(110 + xMargin, extent.getMaxX(), 0.01, "extend right");
-        assertEquals(220 + yMargin, extent.getMaxY(), 0.01, "extend top");
+        double xMargin = 102 * Network.EXTENT_MARGIN / 2;
+        double yMargin = 202 * Network.EXTENT_MARGIN / 2;
+        assertEquals(10.0 - 1.0 - xMargin, extent.getMinX(), 0.01, "extend left");
+        assertEquals(20.0 - 1.0 - yMargin, extent.getMinY(), 0.01, "extend bottom");
+        assertEquals(110.0 + 1.0 + xMargin, extent.getMaxX(), 0.01, "extend right");
+        assertEquals(220.0 + 1.0 + yMargin, extent.getMaxY(), 0.01, "extend top");
     }
 
     /** {@inheritDoc} */

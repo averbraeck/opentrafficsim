@@ -90,28 +90,28 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
     {
         Throw.whenNull(spaceTimeRegion, "SpaceTimeRegion may not be null.");
         Time firstPossibleDataTime;
-        if (this.samplerData.contains(spaceTimeRegion.getLane()))
+        if (this.samplerData.contains(spaceTimeRegion.lane()))
         {
-            firstPossibleDataTime = this.samplerData.getTrajectoryGroup(spaceTimeRegion.getLane()).getStartTime();
+            firstPossibleDataTime = this.samplerData.getTrajectoryGroup(spaceTimeRegion.lane()).getStartTime();
         }
         else
         {
             firstPossibleDataTime = now();
         }
-        Throw.when(spaceTimeRegion.getStartTime().lt(firstPossibleDataTime), IllegalStateException.class,
+        Throw.when(spaceTimeRegion.startTime().lt(firstPossibleDataTime), IllegalStateException.class,
                 "Space time region with start time %s is defined while data is available from %s onwards.",
-                spaceTimeRegion.getStartTime(), firstPossibleDataTime);
-        if (this.samplerData.contains(spaceTimeRegion.getLane()))
+                spaceTimeRegion.startTime(), firstPossibleDataTime);
+        if (this.samplerData.contains(spaceTimeRegion.lane()))
         {
-            this.endTimes.put(spaceTimeRegion.getLane(),
-                    Time.max(this.endTimes.get(spaceTimeRegion.getLane()), spaceTimeRegion.getEndTime()));
+            this.endTimes.put(spaceTimeRegion.lane(),
+                    Time.max(this.endTimes.get(spaceTimeRegion.lane()), spaceTimeRegion.endTime()));
         }
         else
         {
-            this.endTimes.put(spaceTimeRegion.getLane(), spaceTimeRegion.getEndTime());
-            scheduleStartRecording(spaceTimeRegion.getStartTime(), spaceTimeRegion.getLane());
+            this.endTimes.put(spaceTimeRegion.lane(), spaceTimeRegion.endTime());
+            scheduleStartRecording(spaceTimeRegion.startTime(), spaceTimeRegion.lane());
         }
-        scheduleStopRecording(this.endTimes.get(spaceTimeRegion.getLane()), spaceTimeRegion.getLane());
+        scheduleStopRecording(this.endTimes.get(spaceTimeRegion.lane()), spaceTimeRegion.lane());
         this.spaceTimeRegions.add(spaceTimeRegion);
     }
 

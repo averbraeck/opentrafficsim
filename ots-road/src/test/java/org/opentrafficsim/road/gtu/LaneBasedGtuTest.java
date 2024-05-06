@@ -148,7 +148,7 @@ public class LaneBasedGtuTest implements UNITS
                     boolean truckPositionsOnLane = false;
                     for (LanePosition pos : truckPositions)
                     {
-                        if (pos.getLane().equals(lane))
+                        if (pos.lane().equals(lane))
                         {
                             truckPositionsOnLane = true;
                         }
@@ -337,7 +337,7 @@ public class LaneBasedGtuTest implements UNITS
                 assertTrue(foundCar, "car was not found in rightParallel");
                 for (LanePosition pos : carPositions)
                 {
-                    pos.getLane().removeGtu(car, true, pos.getPosition());
+                    pos.lane().removeGtu(car, true, pos.position());
                 }
             }
         }
@@ -497,7 +497,7 @@ public class LaneBasedGtuTest implements UNITS
     {
         for (LanePosition lanePosition : positions)
         {
-            if (lanePosition.getPosition().gt0() && lanePosition.getPosition().le(lanePosition.getLane().getLength()))
+            if (lanePosition.position().gt0() && lanePosition.position().le(lanePosition.lane().getLength()))
             {
                 return lanePosition;
             }

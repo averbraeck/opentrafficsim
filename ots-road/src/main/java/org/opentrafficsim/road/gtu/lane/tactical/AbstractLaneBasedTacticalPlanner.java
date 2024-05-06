@@ -105,7 +105,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             throws GtuException, NetworkException
     {
         LanePosition dlp = gtu.getReferencePosition();
-        return buildLanePathInfo(gtu, maxHeadway, dlp.getLane(), dlp.getPosition());
+        return buildLanePathInfo(gtu, maxHeadway, dlp.lane(), dlp.position());
     }
 
     /**
@@ -238,10 +238,10 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         Node nextSplitNode = null;
         Set<Lane> correctCurrentLanes = new LinkedHashSet<>();
         LanePosition dlp = gtu.getReferencePosition();
-        Lane referenceLane = dlp.getLane();
-        double refFrac = dlp.getPosition().si / referenceLane.getLength().si;
+        Lane referenceLane = dlp.lane();
+        double refFrac = dlp.position().si / referenceLane.getLength().si;
         Link lastLink = referenceLane.getLink();
-        Length position = dlp.getPosition();
+        Length position = dlp.position();
         Length lengthForward = referenceLane.getLength().minus(position);
         Node lastNode = referenceLane.getLink().getEndNode();
 
@@ -389,7 +389,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
     protected static boolean connectsToPath(final LaneBasedGtu gtu, final Length maxHeadway, final Lane startLane,
             final Length startLanePosition, final Link linkAfterSplit) throws GtuException, NetworkException
     {
-        List<Lane> lanes = buildLanePathInfo(gtu, maxHeadway, startLane, startLanePosition).getLaneList();
+        List<Lane> lanes = buildLanePathInfo(gtu, maxHeadway, startLane, startLanePosition).laneList();
         for (Lane lane : lanes)
         {
             if (lane.getLink().equals(linkAfterSplit))
@@ -415,7 +415,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             final Length startLanePosition) throws GtuException, NetworkException
     {
         LanePathInfo lpi = buildLanePathInfo(gtu, maxHeadway, startLane, startLanePosition);
-        if (lpi.getPath().getLength().lt(maxHeadway))
+        if (lpi.path().getLength().lt(maxHeadway))
         {
             return false;
         }
@@ -435,10 +435,10 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
     {
         List<Link> linkList = new ArrayList<>();
         LanePosition dlp = gtu.getReferencePosition();
-        Lane referenceLane = dlp.getLane();
+        Lane referenceLane = dlp.lane();
         Link lastLink = referenceLane.getLink();
         linkList.add(lastLink);
-        Length position = dlp.getPosition();
+        Length position = dlp.position();
         Length lengthForward = referenceLane.getLength().minus(position);
         Node lastNode = referenceLane.getLink().getEndNode();
 

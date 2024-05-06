@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.generator;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -20,6 +21,7 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.data.ListTable;
 import org.djutils.data.Row;
 import org.djutils.data.Table;
 import org.djutils.exceptions.Throw;
@@ -33,9 +35,9 @@ import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.Placement;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
@@ -200,17 +202,18 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
             final Duration timeToCollision) throws IllegalArgumentException
     {
         Throw.whenNull(table, "Table may not be null.");
-        this.idIterator = table.iterator();
-        this.speedIterator = table.iterator();
-        this.characteristicsIterator = table.iterator();
+        Table sortedTable = sortTable(table);
+        this.idIterator = sortedTable.iterator();
+        this.speedIterator = sortedTable.iterator();
+        this.characteristicsIterator = sortedTable.iterator();
         this.network = network;
         this.gtuTypes = gtuTypes == null ? new ImmutableLinkedHashMap<>(Collections.emptyMap()) : gtuTypes;
         this.strategicalPlannerFactory = strategicalPlannerFactory;
         this.timeToCollision = timeToCollision;
         this.stream = stream;
 
-        table.getColumns().forEach((c) -> this.columnNumbers.put(c.getId(), table.getColumnNumber(c)));
-        boolean needStrategicalPlannerFactory = checkColumnTypesNeedStrategicalPlannerFactory(table);
+        sortedTable.getColumns().forEach((c) -> this.columnNumbers.put(c.getId(), sortedTable.getColumnNumber(c)));
+        boolean needStrategicalPlannerFactory = checkColumnTypesNeedStrategicalPlannerFactory(sortedTable);
         Throw.when(needStrategicalPlannerFactory && (gtuTypes == null || gtuTypes.isEmpty()), IllegalArgumentException.class,
                 "Injection table contains columns that require GTU types.");
         Throw.when(needStrategicalPlannerFactory && strategicalPlannerFactory == null, IllegalArgumentException.class,
@@ -222,7 +225,49 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
         Throw.when(!this.columnNumbers.containsKey(TIME_COLUMN), IllegalArgumentException.class,
                 "Injection table contains no time column.");
 
-        createLanePositions(table);
+        createLanePositions(sortedTable);
+    }
+
+    /**
+     * Makes sure the table is sorted by the time column.
+     * @param table Table; input table.
+     * @return Table; table sorted by time column.
+     */
+    private static Table sortTable(final Table table)
+    {
+        int timeColumn = table.getColumnNumber(TIME_COLUMN);
+        Iterator<Row> iterator = table.iterator();
+        Duration prev = iterator.hasNext() ? (Duration) iterator.next().getValue(timeColumn) : null;
+        while (iterator.hasNext())
+        {
+            Duration next = (Duration) iterator.next().getValue(timeColumn);
+            if (next.lt(prev))
+            {
+                // data is not in order
+                List<Row> data = new ArrayList<>();
+                for (Row row : table)
+                {
+                    data.add(row);
+                }
+                Collections.sort(data, new Comparator<Row>()
+                {
+                    /** {@inheritDoc} */
+                    @Override
+                    public int compare(final Row o1, final Row o2)
+                    {
+                        return ((Duration) o1.getValue(timeColumn)).compareTo((Duration) o2.getValue(timeColumn));
+                    }
+                });
+                ListTable out = new ListTable(table.getId(), table.getDescription(), table.getColumns().toList());
+                for (Row row : data)
+                {
+                    out.addRow(row.getValues());
+                }
+                return out;
+            }
+            prev = next;
+        }
+        return table;
     }
 
     /**
@@ -303,6 +348,8 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
             {
                 String linkId = (String) row.getValue(this.columnNumbers.get(LINK_COLUMN));
                 Link link = this.network.getLink(linkId);
+                Throw.when(link == null, IllegalArgumentException.class, "Link %s in injections is not in the network.",
+                        linkId);
                 Throw.when(!(link instanceof CrossSectionLink), IllegalArgumentException.class,
                         "Injection table contains link that is not a CrossSectionLink.");
 
@@ -362,6 +409,16 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
         Throw.when(!this.columnNumbers.containsKey(ID_COLUMN), IllegalStateException.class,
                 "Using Injections as id generator, but the injection table has no id column.");
         return (String) this.idIterator.next().getValue(this.columnNumbers.get(ID_COLUMN));
+    }
+
+    /**
+     * Returns whether the column of given id is present.
+     * @param columnId String; column id.
+     * @return boolean; whether the column of given id is present.
+     */
+    public boolean hasColumn(final String columnId)
+    {
+        return this.columnNumbers.containsKey(columnId);
     }
 
     /** {@inheritDoc} */

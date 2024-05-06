@@ -259,7 +259,7 @@ public class OdApplierTest
         assertEquals(generatorObjects.size(), 2, "Incorrect number of generator created or returned.");
         for (String id : generatorObjects.keySet())
         {
-            Generator<Duration> headwayGenerator = generatorObjects.get(id).getHeadwayGenerator();
+            Generator<Duration> headwayGenerator = generatorObjects.get(id).headwayGenerator();
             double factor = id.equals("A1") ? 0.4 : 0.6;
             // now check various points in time
             this.time = Time.instantiateSI(0); // spanning initial 0-demand period
@@ -295,7 +295,7 @@ public class OdApplierTest
         assertEquals(generatorObjects.size(), 2, "Incorrect number of generator created or returned.");
         for (String id : generatorObjects.keySet())
         {
-            Generator<Duration> headwayGenerator = generatorObjects.get(id).getHeadwayGenerator();
+            Generator<Duration> headwayGenerator = generatorObjects.get(id).headwayGenerator();
             double factor = id.equals("A1") ? 0.4 : 0.6;
             // now check various points in time
             this.time = Time.instantiateSI(0); // spanning initial 0-demand period
@@ -338,7 +338,7 @@ public class OdApplierTest
                     assertEquals(generatorObjects.size(), 2, "Incorrect number of generators created or returned.");
                     for (String id : generatorObjects.keySet())
                     {
-                        Generator<Duration> headwayGenerator = generatorObjects.get(id).getHeadwayGenerator();
+                        Generator<Duration> headwayGenerator = generatorObjects.get(id).headwayGenerator();
                         double factor = id.equals("A1") ? 0.4 : 0.6;
                         double n = 0;
                         int nSims = 10;
@@ -530,7 +530,7 @@ public class OdApplierTest
                 counts.put(DefaultsNl.TRUCK, 0);
                 for (int j = 0; j < nTot; j++)
                 {
-                    GtuType type = generatorObjects.get("A" + i).getCharacteristicsGenerator().draw().getGtuType();
+                    GtuType type = generatorObjects.get("A" + i).characteristicsGenerator().draw().getGtuType();
                     if (counts.containsKey(type))
                     {
                         counts.put(type, counts.get(type) + 1);

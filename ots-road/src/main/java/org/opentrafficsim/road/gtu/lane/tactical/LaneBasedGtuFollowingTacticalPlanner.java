@@ -77,13 +77,13 @@ public class LaneBasedGtuFollowingTacticalPlanner extends AbstractLaneBasedTacti
         {
             // TODO I really don't like this -- if there is a lane drop at 20 m, the GTU should stop...
             accelerationStepGTU = ((GtuFollowingModelOld) getCarFollowingModel()).computeAccelerationStepWithNoLeader(
-                    laneBasedGTU, lanePathInfo.getPath().getLength(), simplePerception.getSpeedLimit());
+                    laneBasedGTU, lanePathInfo.path().getLength(), simplePerception.getSpeedLimit());
         }
         else
         {
             accelerationStepGTU =
                     ((GtuFollowingModelOld) getCarFollowingModel()).computeAccelerationStep(laneBasedGTU, headwayGTU.getSpeed(),
-                            headwayGTU.getDistance(), lanePathInfo.getPath().getLength(), simplePerception.getSpeedLimit());
+                            headwayGTU.getDistance(), lanePathInfo.path().getLength(), simplePerception.getSpeedLimit());
         }
 
         // look at the conditions for headway from an object in front
@@ -92,12 +92,12 @@ public class LaneBasedGtuFollowingTacticalPlanner extends AbstractLaneBasedTacti
         if (headwayObject.getDistance().ge(maxDistance))
         {
             accelerationStepObject = ((GtuFollowingModelOld) getCarFollowingModel()).computeAccelerationStepWithNoLeader(
-                    laneBasedGTU, lanePathInfo.getPath().getLength(), simplePerception.getSpeedLimit());
+                    laneBasedGTU, lanePathInfo.path().getLength(), simplePerception.getSpeedLimit());
         }
         else
         {
             accelerationStepObject = ((GtuFollowingModelOld) getCarFollowingModel()).computeAccelerationStep(laneBasedGTU,
-                    headwayObject.getSpeed(), headwayObject.getDistance(), lanePathInfo.getPath().getLength(),
+                    headwayObject.getSpeed(), headwayObject.getDistance(), lanePathInfo.path().getLength(),
                     simplePerception.getSpeedLimit());
         }
 
@@ -110,7 +110,7 @@ public class LaneBasedGtuFollowingTacticalPlanner extends AbstractLaneBasedTacti
         {
             return OperationalPlan.standStill(getGtu(), getGtu().getLocation(), startTime, Duration.ONE);
         }
-        OtsLine2d path = lanePathInfo.getPath();
+        OtsLine2d path = lanePathInfo.path();
         OperationalPlan op = new OperationalPlan(getGtu(), path, startTime,
                 Segments.off(getGtu().getSpeed(), accelerationStep.getDuration(), accelerationStep.getAcceleration()));
         return op;

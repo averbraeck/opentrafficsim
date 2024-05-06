@@ -16,34 +16,22 @@ import org.djutils.exceptions.Throw;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ * @param radius Length; curvature radius
  */
-public class SpeedInfoCurvature implements Serializable
+public record SpeedInfoCurvature(Length radius) implements Serializable
 {
 
     /** */
     private static final long serialVersionUID = 20160501L;
-
-    /** Curvature radius. */
-    private final Length radius;
 
     /**
      * Constructor with curvature radius.
      * @param radius Length; curvature radius
      * @throws NullPointerException if radius is null
      */
-    public SpeedInfoCurvature(final Length radius)
+    public SpeedInfoCurvature
     {
         Throw.whenNull(radius, "Radius may not be null.");
-        this.radius = radius;
-    }
-
-    /**
-     * Returns the curvature radius.
-     * @return curvature radius
-     */
-    public final Length getRadius()
-    {
-        return this.radius;
     }
 
     /**
@@ -57,44 +45,6 @@ public class SpeedInfoCurvature implements Serializable
         Throw.whenNull(acceleration, "Acceleration may not be null.");
         // a=v*v/r => v=sqrt(a*r)
         return new Speed(Math.sqrt(acceleration.si * this.radius.si), SpeedUnit.SI);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final int hashCode()
-    {
-        return this.radius.hashCode();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final boolean equals(final Object obj)
-    {
-        if (this == obj)
-        {
-            return true;
-        }
-        if (obj == null)
-        {
-            return false;
-        }
-        if (getClass() != obj.getClass())
-        {
-            return false;
-        }
-        SpeedInfoCurvature other = (SpeedInfoCurvature) obj;
-        if (!this.radius.equals(other.radius))
-        {
-            return false;
-        }
-        return true;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String toString()
-    {
-        return "SpeedInfoCurvature [radius=" + this.radius + "]";
     }
 
 }

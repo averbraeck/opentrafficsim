@@ -329,31 +329,28 @@ public abstract class XPathValidator implements ValueValidator
                         return node.getAttributeValue(attribute);
                     }
                 }
-                if (fieldPath.startsWith("ots:") || fieldPath.startsWith(".//"))
+                // a child node may be calling this method, check whether the given node is the child directly
+                String nodePath = node.getPathString();
+                for (String selector : getSelectorTypeString())
                 {
-                    // a child node may be calling this method, check whether the given node is the child directly
-                    String nodePath = node.getPathString();
-                    for (String selector : getSelectorTypeString())
+                    if (Pattern.matches(getKeyPathPattern() + appendPattern(selector) + appendPattern(fieldPath), nodePath))
                     {
-                        if (Pattern.matches(getKeyPathPattern() + appendPattern(selector) + appendPattern(fieldPath), nodePath))
+                        if (node.isEditable())
                         {
-                            if (node.isEditable())
-                            {
-                                return node.getValue();
-                            }
-                            throw new RuntimeException(
-                                    "Field " + this.fullFieldPath + " points to a node that cannot give a value.");
+                            return node.getValue();
                         }
+                        throw new RuntimeException(
+                                "Field " + this.fullFieldPath + " points to a node that cannot give a value.");
                     }
-                    // if not a child directly, recursively find it
-                    try
-                    {
-                        return getChildValue(node, fieldPath);
-                    }
-                    catch (NoSuchElementException ex)
-                    {
-                        // there can be more field names which may supply a value
-                    }
+                }
+                // if not a child directly, recursively find it
+                try
+                {
+                    return getChildValue(node, fieldPath);
+                }
+                catch (NoSuchElementException ex)
+                {
+                    // there can be more field names which may supply a value
                 }
             }
             throw new RuntimeException("Field " + this.fullFieldPath + " cannot be found in node " + node);

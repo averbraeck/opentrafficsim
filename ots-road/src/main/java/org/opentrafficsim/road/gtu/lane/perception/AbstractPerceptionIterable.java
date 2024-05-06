@@ -122,7 +122,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
      */
     protected Length getDx()
     {
-        return this.relativePosition.getDx();
+        return this.relativePosition.dx();
     }
 
     /**

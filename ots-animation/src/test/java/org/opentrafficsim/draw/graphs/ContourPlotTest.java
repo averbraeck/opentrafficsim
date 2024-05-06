@@ -146,8 +146,8 @@ public class ContourPlotTest implements UNITS
         Mockito.when(this.section0.iterator()).thenReturn(set0.iterator());
         Mockito.when(this.section1.iterator()).thenReturn(set1.iterator());
         Mockito.when(this.mockedPath.getSections()).thenReturn(new ImmutableArrayList<>(sectionList));
-        Mockito.when(this.section0.getLength()).thenReturn(Length.valueOf("2000m"));
-        Mockito.when(this.section1.getLength()).thenReturn(Length.valueOf("766m"));
+        Mockito.when(this.section0.length()).thenReturn(Length.valueOf("2000m"));
+        Mockito.when(this.section1.length()).thenReturn(Length.valueOf("766m"));
         Mockito.when(this.mockedSimulator.scheduleEventAbsTime(ArgumentMatchers.any(Time.class), ArgumentMatchers.any(),
                 ArgumentMatchers.anyString(), ArgumentMatchers.isNull())).thenAnswer(new Answer<SimEventInterface<Duration>>()
                 {
@@ -323,7 +323,7 @@ public class ContourPlotTest implements UNITS
                         + (cp.getDataPool().timeAxis.isInterpolate() ? 1 : 0);
                 xBins = cp.getDataPool().timeAxis.getBinCount();
                 assertEquals(expectedXBins, xBins, "Modified xBins should be " + expectedXBins);
-                expectedYBins = (int) Math.ceil(path.get(0).getLength().getSI() / distanceGranularity)
+                expectedYBins = (int) Math.ceil(path.get(0).length().getSI() / distanceGranularity)
                         + (cp.getDataPool().spaceAxis.isInterpolate() ? 1 : 0);
                 yBins = cp.getDataPool().spaceAxis.getBinCount();
                 // System.out.println(cp.getDataPool().spaceAxis);

@@ -50,7 +50,7 @@ public class TtcRoomChecker implements RoomChecker
     public final Placement canPlace(final SortedSet<HeadwayGtu> leaders, final LaneBasedGtuCharacteristics characteristics,
             final Duration since, final LanePosition initialPosition) throws NetworkException, GtuException
     {
-        Speed speedLimit = initialPosition.getLane().getSpeedLimit(characteristics.getGtuType());
+        Speed speedLimit = initialPosition.lane().getSpeedLimit(characteristics.getGtuType());
         Speed desiredSpeedProxy = Speed.min(characteristics.getMaximumSpeed(), speedLimit);
         if (leaders.isEmpty())
         {

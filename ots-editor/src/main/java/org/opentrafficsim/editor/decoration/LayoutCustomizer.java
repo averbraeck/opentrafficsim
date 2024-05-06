@@ -81,9 +81,9 @@ public class LayoutCustomizer implements EventListener, Consumer<XsdTreeNode>
         XsdTreeNode custom = null;
         for (XsdOption option : options)
         {
-            if (!option.getOptionNode().equals(node))
+            if (!option.optionNode().equals(node))
             {
-                custom = option.getOptionNode();
+                custom = option.optionNode();
                 break;
             }
         }

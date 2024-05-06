@@ -45,7 +45,7 @@ public class IncentiveColorer extends DesireColorer
         Desire d = ((DesireBased) gtu.getTacticalPlanner()).getLatestDesire(this.incentiveClass);
         if (d != null)
         {
-            return getColor(d.getLeft(), d.getRight());
+            return getColor(d.left(), d.right());
         }
         return NA;
     }

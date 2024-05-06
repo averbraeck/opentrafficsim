@@ -239,9 +239,9 @@ public class LaneChangeInfoTest
         int i = 0;
         for (LaneChangeInfo laneChangeInfo : laneChangeInfos)
         {
-            assertEquals(lat, laneChangeInfo.getLateralDirectionality());
-            assertEquals(laneChanges[i], laneChangeInfo.getNumberOfLaneChanges());
-            assertTrue(Math.abs(laneChangeInfo.getRemainingDistance().si - distances[i]) < 1e-3);
+            assertEquals(lat, laneChangeInfo.lateralDirectionality());
+            assertEquals(laneChanges[i], laneChangeInfo.numberOfLaneChanges());
+            assertTrue(Math.abs(laneChangeInfo.remainingDistance().si - distances[i]) < 1e-3);
             i++;
         }
     }

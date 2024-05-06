@@ -13,60 +13,10 @@ import org.djunits.value.vdouble.scalar.Speed;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ * @param headway Length; headway
+ * @param speed Speed; speed
+ * @param acceleration Acceleration; acceleration
  */
-public class NeighborTriplet
+public record NeighborTriplet(Length headway, Speed speed, Acceleration acceleration)
 {
-
-    /** Headway. */
-    private final Length headway;
-
-    /** Speed. */
-    private final Speed speed;
-
-    /** Acceleration. */
-    private final Acceleration acceleration;
-
-    /**
-     * @param headway Length; headway
-     * @param speed Speed; speed
-     * @param acceleration Acceleration; acceleration
-     */
-    public NeighborTriplet(final Length headway, final Speed speed, final Acceleration acceleration)
-    {
-        this.headway = headway;
-        this.speed = speed;
-        this.acceleration = acceleration;
-    }
-
-    /**
-     * @return headway.
-     */
-    public Length getHeadway()
-    {
-        return this.headway;
-    }
-
-    /**
-     * @return speed.
-     */
-    public Speed getSpeed()
-    {
-        return this.speed;
-    }
-
-    /**
-     * @return acceleration.
-     */
-    public Acceleration getAcceleration()
-    {
-        return this.acceleration;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String toString()
-    {
-        return "NeighborTriplet [headway=" + this.headway + ", speed=" + this.speed + ", acceleration=" + this.acceleration
-                + "]";
-    }
 }

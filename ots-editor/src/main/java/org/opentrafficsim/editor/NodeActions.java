@@ -165,7 +165,7 @@ public class NodeActions
         int optionIndex = 0;
         for (int i = 0; i < options.size(); i++)
         {
-            if (options.get(i).getOptionNode().equals(node))
+            if (options.get(i).optionNode().equals(node))
             {
                 optionIndex = i + 1;
                 break;
@@ -176,7 +176,7 @@ public class NodeActions
             optionIndex = 0;
         }
         this.editor.getUndo().startAction(ActionType.OPTION, node, null);
-        XsdTreeNode next = options.get(optionIndex).getOptionNode();
+        XsdTreeNode next = options.get(optionIndex).optionNode();
         node.setOption(next);
         this.editor.show(next, null);
     }

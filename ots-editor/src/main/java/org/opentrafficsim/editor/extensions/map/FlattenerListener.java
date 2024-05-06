@@ -12,7 +12,6 @@ import org.opentrafficsim.core.geometry.Flattener.MaxDeviationAndAngle;
 import org.opentrafficsim.core.geometry.Flattener.NumSegments;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.extensions.Adapters;
-import org.opentrafficsim.road.network.factory.xml.parser.ScenarioParser;
 
 /**
  * Listener for flattener nodes, either under the network or at a link (shape). This class can also calculate a flattener
@@ -49,6 +48,10 @@ public class FlattenerListener extends ChangeListener<Flattener>
             {
                 return null;
             }
+            if (getNode().getChild(0).getNodeName().equals("NumSegments"))
+            {
+                return new NumSegments(Integer.valueOf(getNode().getChild(0).getValue()));
+            }
             if (getNode().getChild(0).getChild(0).isActive())
             {
                 if (getNode().getChild(0).getChild(1).isActive())
@@ -61,16 +64,6 @@ public class FlattenerListener extends ChangeListener<Flattener>
             if (getNode().getChild(0).getChild(1).isActive())
             {
                 return new MaxAngle(getAngle(getNode().getChild(0).getChild(1)));
-            }
-        }
-        catch (RuntimeException rte)
-        {
-            String message = rte.getMessage();
-            if (message != null && message.contains("is neither a DoubleScalar nor a Boolean")
-                    && ScenarioParser.lastLookedUp instanceof Integer)
-            {
-                // TODO: dirty trick to obtain a value that was given to Eval, which not yet supports non Boolean/DoubleScalar.
-                return new NumSegments((int) ScenarioParser.lastLookedUp);
             }
         }
         catch (Exception ex)

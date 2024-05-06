@@ -93,7 +93,7 @@ public class GtuDataRoad implements GtuData
     {
         try
         {
-            double v1 = this.gtu.getReferencePosition().getLane().getSpeedLimit(this.gtu.getType()).si;
+            double v1 = this.gtu.getReferencePosition().lane().getSpeedLimit(this.gtu.getType()).si;
             double v2 = this.gtu.getMaximumSpeed().si;
             return Speed.instantiateSI(v1 < v2 ? v1 : v2);
         }

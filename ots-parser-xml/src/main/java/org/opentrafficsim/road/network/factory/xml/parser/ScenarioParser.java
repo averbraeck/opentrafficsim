@@ -34,11 +34,6 @@ import org.opentrafficsim.xml.generated.Scenarios;
 public class ScenarioParser
 {
 
-    /** Last object looked up via evaluator. */
-    @Deprecated
-    // TODO: delete this and make sure regular evaluation output is used where this is used
-    public static Object lastLookedUp;
-
     /**
      * Parse input parameters for scenario.
      * @param scenarios Scenarios; scenarios tag.
@@ -273,45 +268,31 @@ public class ScenarioParser
     }
 
     /**
-     * Generic parameters form for parsing.
+     * Generic parameters for for parsing.
      * <p>
      * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * @param id String; id.
+     * @param value ExpressionType&lt;?&gt;; value expression type.
      */
-    public static class ParameterWrapper implements Identifiable, Supplier<ExpressionType<?>>
+    public static record ParameterWrapper(String id, ExpressionType<?> value)
+            implements Identifiable, Supplier<ExpressionType<?>>
     {
-        /** Id. */
-        private final String id;
-
-        /** Value expression type. */
-        private final ExpressionType<?> value;
-
-        /**
-         * Constructor.
-         * @param id String; id.
-         * @param value ExpressionType&lt;?&gt;; value expression type.
-         */
-        public ParameterWrapper(final String id, final ExpressionType<?> value)
-        {
-            this.id = id;
-            this.value = value;
-        }
-
         /** {@inheritDoc} */
         @Override
         public String getId()
         {
-            return this.id;
+            return this.id();
         }
 
         /** {@inheritDoc} */
         @Override
         public ExpressionType<?> get()
         {
-            return this.value;
+            return this.value();
         }
     }
 
@@ -380,7 +361,6 @@ public class ScenarioParser
             {
                 return Dimensionless.instantiateSI((Double) value);
             }
-            lastLookedUp = value;
             return value;
         }
     }

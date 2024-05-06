@@ -86,7 +86,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
             Route route = getPerception().getGtu().getStrategicalPlanner().getRoute();
             LaneStructureRecord record = getPerception().getLaneStructure().getFirstRecord(lane);
             Length pos = record.getStartDistance().neg();
-            pos = pos.plus(getGtu().getFront().getDx());
+            pos = pos.plus(getGtu().getFront().dx());
             return new LaneBasedObjectIterable<HeadwayTrafficLight, TrafficLight>(getGtu(), TrafficLight.class, record,
                     Length.max(Length.ZERO, pos), true, getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(),
                     route)
@@ -126,7 +126,7 @@ public class DirectIntersectionPerception extends LaneBasedAbstractPerceptionCat
         {
             Route route = getPerception().getGtu().getStrategicalPlanner().getRoute();
             LaneStructureRecord record = getPerception().getLaneStructure().getFirstRecord(lane);
-            Length pos = record.getStartDistance().neg().plus(getGtu().getRear().getDx());
+            Length pos = record.getStartDistance().neg().plus(getGtu().getRear().dx());
             while (pos.lt0() && !record.getPrev().isEmpty())
             {
                 pos = pos.plus(record.getLength());

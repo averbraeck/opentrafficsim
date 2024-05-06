@@ -33,7 +33,7 @@ public final class IconWriter
     /**
      * Writes some icons for the editor.
      * @param args String[]; arguments.
-     * @throws IOException; on write exception.
+     * @throws IOException on write exception.
      */
     public static void main(final String[] args) throws IOException
     {
@@ -152,7 +152,7 @@ public final class IconWriter
      * @param saveFile String; file name to same image.
      * @param size int; size of icon.
      * @return BufferedImage; next empty image to draw in.
-     * @throws IOException; on read or write exception.
+     * @throws IOException on read or write exception.
      */
     private static BufferedImage next(final BufferedImage image, final String saveFile, final int size) throws IOException
     {

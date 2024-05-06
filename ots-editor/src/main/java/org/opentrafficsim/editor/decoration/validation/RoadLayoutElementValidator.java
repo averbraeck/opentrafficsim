@@ -283,11 +283,11 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
             this.linkToNodes.computeIfAbsent(linkNode, (n) -> new LinkedHashSet<>()).add(node);
             for (XsdOption option : linkNode.getChild(1).getOptions())
             {
-                option.getOptionNode().addListener(this, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
-                if (option.getOptionNode().getNodeName().equals("xsd:sequence"))
+                option.optionNode().addListener(this, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
+                if (option.optionNode().getNodeName().equals("xsd:sequence"))
                 {
                     // defined layout
-                    option.getOptionNode().getChild(0).addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
+                    option.optionNode().getChild(0).addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
                     break;
                 }
             }
@@ -320,11 +320,11 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
             this.linkToNodes.computeIfAbsent(formerLinkNode, (n) -> new LinkedHashSet<>()).remove(node);
             for (XsdOption option : formerLinkNode.getChild(1).getOptions())
             {
-                option.getOptionNode().removeListener(this, XsdTreeNode.OPTION_CHANGED);
-                if (option.getOptionNode().getNodeName().equals("xsd:sequence"))
+                option.optionNode().removeListener(this, XsdTreeNode.OPTION_CHANGED);
+                if (option.optionNode().getNodeName().equals("xsd:sequence"))
                 {
                     // defined layout
-                    option.getOptionNode().getChild(0).removeListener(this, XsdTreeNode.VALUE_CHANGED);
+                    option.optionNode().getChild(0).removeListener(this, XsdTreeNode.VALUE_CHANGED);
                     break;
                 }
             }

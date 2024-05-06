@@ -15,18 +15,14 @@ import org.opentrafficsim.core.network.LateralDirectionality;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ * @param left double; Left desire.
+ * @param right double; Right desire.
  */
-public class Desire implements Serializable
+public record Desire(double left, double right) implements Serializable
 {
 
     /** */
     private static final long serialVersionUID = 20160413L;
-
-    /** Level of left desire. */
-    private final double left;
-
-    /** Level of right desire. */
-    private final double right;
 
     /** Easy access and efficient zero desired. */
     public static final Desire ZERO = new Desire(0.0, 0.0);
@@ -71,37 +67,12 @@ public class Desire implements Serializable
     }
 
     /**
-     * Returns lane change desire to left.
-     * @return Lane change desire to left.
-     */
-    public final double getLeft()
-    {
-        return this.left;
-    }
-
-    /**
-     * Returns lane change desire to right.
-     * @return Lane change desire to right.
-     */
-    public final double getRight()
-    {
-        return this.right;
-    }
-
-    /**
      * Returns whether the left desire is larger than (or equal to) the right.
      * @return Returns whether the left desire is larger than (or equal to) the right.
      */
     public final boolean leftIsLargerOrEqual()
     {
         return this.left >= this.right;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String toString()
-    {
-        return "Desire [left=" + this.left + ", right=" + this.right + "]";
     }
 
 }

@@ -57,7 +57,6 @@ import org.opentrafficsim.road.network.lane.CrossSectionSlice;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Type;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -70,7 +69,6 @@ import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
 import org.opentrafficsim.xml.bindings.types.StringType;
 import org.opentrafficsim.xml.generated.BasicRoadLayout;
 import org.opentrafficsim.xml.generated.CseLane;
-import org.opentrafficsim.xml.generated.CseNoTrafficLane;
 import org.opentrafficsim.xml.generated.CseShoulder;
 import org.opentrafficsim.xml.generated.CseStripe;
 import org.opentrafficsim.xml.generated.FlattenerType;
@@ -449,21 +447,12 @@ public final class NetworkParser
                     lanes.put(lane.getId(), lane);
                 }
 
-                // NoTrafficLane
-                else if (cseTag instanceof CseNoTrafficLane)
-                {
-                    CseNoTrafficLane ntlTag = (CseNoTrafficLane) cseTag;
-                    String id = ntlTag.getId() != null ? ntlTag.getId() : UUID.randomUUID().toString();
-                    Lane lane = Lane.noTrafficLane(csl, id, new OtsLine2d(centerLine), contour, slices);
-                    cseList.add(lane);
-                }
-
                 // Shoulder
                 else if (cseTag instanceof CseShoulder)
                 {
                     CseShoulder shoulderTag = (CseShoulder) cseTag;
                     String id = shoulderTag.getId() != null ? shoulderTag.getId() : UUID.randomUUID().toString();
-                    CrossSectionElement shoulder = new Shoulder(csl, id, new OtsLine2d(centerLine), contour, slices);
+                    CrossSectionElement shoulder = Lane.shoulder(csl, id, new OtsLine2d(centerLine), contour, slices);
                     cseList.add(shoulder);
                 }
             }

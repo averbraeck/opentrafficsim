@@ -59,8 +59,8 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
             final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold, final Duration laneChangeTime)
             throws GtuException, ParameterException, OperationalPlanException
     {
-        Lane lane = gtu.getReferencePosition().getLane();
-        Length longitudinalPosition = gtu.getReferencePosition().getPosition();
+        Lane lane = gtu.getReferencePosition().lane();
+        Length longitudinalPosition = gtu.getReferencePosition().position();
         Lane otherLane = getPerception().getPerceptionCategory(DefaultSimplePerception.class).bestAccessibleAdjacentLane(lane,
                 direction, longitudinalPosition);
         GtuFollowingModelOld gtuFollowingModel = (GtuFollowingModelOld) gtu.getTacticalPlanner().getCarFollowingModel();

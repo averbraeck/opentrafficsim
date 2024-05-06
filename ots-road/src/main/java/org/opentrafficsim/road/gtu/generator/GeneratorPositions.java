@@ -121,7 +121,7 @@ public interface GeneratorPositions
         Map<Link, Set<LanePosition>> linkSplit = new LinkedHashMap<>();
         for (LanePosition position : positions)
         {
-            linkSplit.computeIfAbsent(position.getLane().getLink(), (link) -> new LinkedHashSet<>()).add(position);
+            linkSplit.computeIfAbsent(position.lane().getLink(), (link) -> new LinkedHashSet<>()).add(position);
         }
 
         // create list of GeneratorLinkPositions
@@ -146,7 +146,7 @@ public interface GeneratorPositions
             List<GeneratorLanePosition> lanePositions = new ArrayList<>();
             for (LanePosition lanePosition : linkSplit.get(splitLink))
             {
-                lanePositions.add(new GeneratorLanePosition(lanes.indexOf(lanePosition.getLane()) + 1, lanePosition,
+                lanePositions.add(new GeneratorLanePosition(lanes.indexOf(lanePosition.lane()) + 1, lanePosition,
                         (CrossSectionLink) splitLink));
             }
             allLanePositions.addAll(lanePositions);
@@ -242,7 +242,7 @@ public interface GeneratorPositions
          */
         boolean allows(final GtuType gtuType)
         {
-            return this.position.getLane().getType().isCompatible(gtuType);
+            return this.position.lane().getType().isCompatible(gtuType);
         }
 
         /**
@@ -484,7 +484,7 @@ public interface GeneratorPositions
             {
                 try
                 {
-                    Speed limit = pos.getPosition().getLane().getSpeedLimit(gtuType);
+                    Speed limit = pos.getPosition().lane().getSpeedLimit(gtuType);
                     if (speedLimit == null || limit.lt(speedLimit))
                     {
                         speedLimit = limit;

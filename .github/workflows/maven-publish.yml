@@ -16,11 +16,11 @@ jobs:
       packages: write
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Java 11 for publishing to Maven Central Repository
-      uses: actions/setup-java@v3
+    - uses: actions/checkout@v4
+    - name: Set up Java 17 for publishing to Maven Central Repository
+      uses: actions/setup-java@v4
       with:
-        java-version: '11'
+        java-version: '17'
         distribution: 'temurin'
         server-id: ossrh # Value of the distributionManagement/repository/id field
         server-username: MAVEN_USERNAME
@@ -30,7 +30,7 @@ jobs:
         settings-path: ${{ github.workspace }} # location for the settings.xml file
         
     - name: install gpg key
-      uses: crazy-max/ghaction-import-gpg@v5
+      uses: crazy-max/ghaction-import-gpg@v6
       with:
         gpg_private_key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
         passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}

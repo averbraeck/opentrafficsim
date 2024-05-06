@@ -34,7 +34,7 @@ public class ReportingDetector extends LaneDetector
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
     public ReportingDetector(final String id, final Lane lane, final Length position,
-            final RelativePosition.TYPE triggerPosition, final OtsSimulatorInterface simulator, final DetectorType detectorType)
+            final RelativePosition.Type triggerPosition, final OtsSimulatorInterface simulator, final DetectorType detectorType)
             throws NetworkException
     {
         super(id, lane, position, triggerPosition, simulator, detectorType);

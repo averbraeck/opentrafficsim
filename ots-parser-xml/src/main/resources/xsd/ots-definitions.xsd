@@ -213,14 +213,6 @@
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="CseNoTrafficLane">
-    <xsd:complexContent>
-      <xsd:extension base="ots:CrossSectionElement">
-        <xsd:attribute name="Id" type="ots:IdType" use="optional" />
-      </xsd:extension>
-    </xsd:complexContent>
-  </xsd:complexType>
-
   <xsd:complexType name="CseShoulder">
     <xsd:complexContent>
       <xsd:extension base="ots:CrossSectionElement">
@@ -258,7 +250,6 @@
         <xsd:element name="Stripe" type="ots:CseStripe" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element name="Lane" type="ots:CseLane" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element name="Shoulder" type="ots:CseShoulder" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element name="NoTrafficLane" type="ots:CseNoTrafficLane" minOccurs="0" maxOccurs="unbounded" />
       </xsd:choice>
       <xsd:element ref="ots:SpeedLimit" minOccurs="0" maxOccurs="unbounded" />
     </xsd:sequence>

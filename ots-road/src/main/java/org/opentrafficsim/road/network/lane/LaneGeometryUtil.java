@@ -241,6 +241,6 @@ public class LaneGeometryUtil
         PolyLine2d leftEdge = designLine.flattenOffset(getLeftEdgeOffsets(designLine, slices), null);
         PolyLine2d rightEdge = designLine.flattenOffset(getRightEdgeOffsets(designLine, slices), null);
         Polygon2d contour = getContour(leftEdge, rightEdge);
-        return Try.assign(() -> new Shoulder(link, id, new OtsLine2d(centerLine), contour, slices), "Network exception.");
+        return Try.assign(() -> Lane.shoulder(link, id, new OtsLine2d(centerLine), contour, slices), "Network exception.");
     }
 }

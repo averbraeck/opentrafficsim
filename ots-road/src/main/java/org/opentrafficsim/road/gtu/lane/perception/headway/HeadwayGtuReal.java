@@ -95,7 +95,7 @@ public class HeadwayGtuReal extends AbstractHeadway implements HeadwayGtu
         try
         {
             sli.addSpeedInfo(SpeedLimitTypes.FIXED_SIGN,
-                    wrappedGtu.getReferencePosition().getLane().getSpeedLimit(wrappedGtu.getType()));
+                    wrappedGtu.getReferencePosition().lane().getSpeedLimit(wrappedGtu.getType()));
         }
         catch (NetworkException | GtuException exception)
         {

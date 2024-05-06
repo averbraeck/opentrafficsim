@@ -56,13 +56,13 @@ public final class NeighborsUtil
      */
     public static SortedSet<DistanceGTU> getFirstDownstreamGTUs(final LaneStructureRecord startRecord,
             final RelativePosition egoRelativePosition, final RelativePosition egoFrontPosition,
-            final RelativePosition.TYPE otherRelativePosition, final Time now) throws GtuException, ParameterException
+            final RelativePosition.Type otherRelativePosition, final Time now) throws GtuException, ParameterException
     {
         SortedSet<DistanceGTU> headwaySet = new TreeSet<>();
         Set<LaneStructureRecord> currentSet = new LinkedHashSet<>();
         Set<LaneStructureRecord> nextSet = new LinkedHashSet<>();
-        Length dxSearch = egoRelativePosition.getDx();
-        Length dxHeadway = egoFrontPosition.getDx();
+        Length dxSearch = egoRelativePosition.dx();
+        Length dxHeadway = egoFrontPosition.dx();
         LaneStructureRecord record = startRecord;
         branchUpstream(record, dxSearch, currentSet);
         // move downstream over branches as long as no vehicles are found
@@ -139,13 +139,13 @@ public final class NeighborsUtil
      */
     public static SortedSet<DistanceGTU> getFirstUpstreamGTUs(final LaneStructureRecord startRecord,
             final RelativePosition egoRelativePosition, final RelativePosition egoRearPosition,
-            final RelativePosition.TYPE otherRelativePosition, final Time now) throws GtuException, ParameterException
+            final RelativePosition.Type otherRelativePosition, final Time now) throws GtuException, ParameterException
     {
         SortedSet<DistanceGTU> headwaySet = new TreeSet<>();
         Set<LaneStructureRecord> currentSet = new LinkedHashSet<>();
         Set<LaneStructureRecord> prevSet = new LinkedHashSet<>();
-        Length dxSearch = egoRelativePosition.getDx();
-        Length dxHeadway = egoRearPosition.getDx();
+        Length dxSearch = egoRelativePosition.dx();
+        Length dxHeadway = egoRearPosition.dx();
         LaneStructureRecord record = startRecord;
         branchDownstream(record, dxSearch, currentSet);
         // move upstream over branches as long as no vehicles are found

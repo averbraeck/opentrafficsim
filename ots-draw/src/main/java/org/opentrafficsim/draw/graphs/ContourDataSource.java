@@ -700,11 +700,11 @@ public class ContourDataSource
                         TrajectoryGroup<?> trajectoryGroup = trajectories.get(k);
                         LaneData<?> lane = trajectoryGroup.getLane();
                         Length startDistance = this.path.getStartDistance(this.path.get(k));
-                        if (startDistance.si + this.path.get(k).getLength().si > spaceTicks[i]
+                        if (startDistance.si + this.path.get(k).length().si > spaceTicks[i]
                                 && startDistance.si < spaceTicks[i + 1])
                         {
                             included.add(trajectoryGroup);
-                            double scale = this.path.get(k).getLength().si / lane.getLength().si;
+                            double scale = this.path.get(k).length().si / lane.getLength().si;
                             // divide by scale, so we go from base length to section length
                             xStart.add(Length.max(xFrom.minus(startDistance).divide(scale), Length.ZERO));
                             xEnd.add(Length.min(xTo.minus(startDistance).divide(scale), trajectoryGroup.getLane().getLength()));

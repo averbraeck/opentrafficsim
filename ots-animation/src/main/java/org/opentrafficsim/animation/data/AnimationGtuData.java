@@ -86,14 +86,14 @@ public class AnimationGtuData implements GtuData
     @Override
     public Length getFront()
     {
-        return this.gtu.getFront().getDx();
+        return this.gtu.getFront().dx();
     }
 
     /** {@inheritDoc} */
     @Override
     public Length getRear()
     {
-        return this.gtu.getRear().getDx();
+        return this.gtu.getRear().dx();
     }
 
     /** {@inheritDoc} */

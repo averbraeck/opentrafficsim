@@ -42,6 +42,7 @@ import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.collections.HistoricalArrayList;
 import org.opentrafficsim.core.perception.collections.HistoricalList;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.detector.Detector;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
@@ -270,7 +271,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     private boolean laterallyAdjacentAndAccessible(final Lane lane, final LateralDirectionality direction,
             final GtuType gtuType, final boolean legal)
     {
-        if (!lane.getType().isCompatible(gtuType))
+        if (legal && !lane.getType().isCompatible(gtuType))
         {
             // not accessible for the given GTU type
             return false;
@@ -286,7 +287,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                             - (getOffsetAtEnd().si + getEndWidth().si / 2.0) < ADJACENT_MARGIN.si)
             {
                 // look at stripes between the two lanes
-                if (legal)
+                if (!getType().equals(SHOULDER) && legal) // may always leave shoulder
                 {
                     for (CrossSectionElement cse : this.link.getCrossSectionElementList())
                     {
@@ -519,8 +520,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     public final void scheduleDetectorTriggers(final LaneBasedGtu gtu, final double referenceStartSI,
             final double referenceMoveSI) throws NetworkException, SimRuntimeException
     {
-        double minPos = referenceStartSI + gtu.getRear().getDx().si;
-        double maxPos = referenceStartSI + gtu.getFront().getDx().si + referenceMoveSI;
+        double minPos = referenceStartSI + gtu.getRear().dx().si;
+        double maxPos = referenceStartSI + gtu.getFront().dx().si + referenceMoveSI;
         Map<Double, List<LaneDetector>> map = this.detectors.subMap(minPos, maxPos);
         for (double pos : map.keySet())
         {
@@ -528,7 +529,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             {
                 if (detector.isCompatible(gtu.getType()))
                 {
-                    double dx = gtu.getRelativePositions().get(detector.getPositionType()).getDx().si;
+                    double dx = gtu.getRelativePositions().get(detector.getPositionType()).dx().si;
                     minPos = referenceStartSI + dx;
                     maxPos = minPos + referenceMoveSI;
                     if (minPos <= detector.getLongitudinalPosition().si && maxPos > detector.getLongitudinalPosition().si)
@@ -855,7 +856,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      *         found.
      * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
-    public final LaneBasedGtu getGtuAhead(final Length position, final RelativePosition.TYPE relativePosition, final Time when)
+    public final LaneBasedGtu getGtuAhead(final Length position, final RelativePosition.Type relativePosition, final Time when)
             throws GtuException
     {
         List<LaneBasedGtu> list = this.gtuList.get(when);
@@ -885,7 +886,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      *         found.
      * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
-    public final LaneBasedGtu getGtuBehind(final Length position, final RelativePosition.TYPE relativePosition, final Time when)
+    public final LaneBasedGtu getGtuBehind(final Length position, final RelativePosition.Type relativePosition, final Time when)
             throws GtuException
     {
         List<LaneBasedGtu> list = this.gtuList.get(when);
@@ -1202,13 +1203,14 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Returns one adjacent lane.
-     * @param gtu LaneBasedGtu; gtu
      * @param laneChangeDirection LateralDirectionality; lane change direction
+     * @param gtuType GtuType; GTU type.
      * @return Lane; adjacent lane, {@code null} if none
      */
-    public final Lane getAdjacentLane(final LateralDirectionality laneChangeDirection, final LaneBasedGtu gtu)
+    public final Lane getAdjacentLane(final LateralDirectionality laneChangeDirection, final GtuType gtuType)
     {
-        Set<Lane> adjLanes = accessibleAdjacentLanesLegal(laneChangeDirection, gtu.getType());
+        Set<Lane> adjLanes = getType().equals(SHOULDER) ? accessibleAdjacentLanesPhysical(laneChangeDirection, gtuType)
+                : accessibleAdjacentLanesLegal(laneChangeDirection, gtuType);
         if (!adjLanes.isEmpty())
         {
             return adjLanes.iterator().next();
@@ -1539,12 +1541,11 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @throws NetworkException when id equal to null or not unique
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public static Lane noTrafficLane(final CrossSectionLink parentLink, final String id, final OtsLine2d centerLine,
+    public static Lane shoulder(final CrossSectionLink parentLink, final String id, final OtsLine2d centerLine,
             final Polygon2d contour, final List<CrossSectionSlice> crossSectionSlices)
             throws OtsGeometryException, NetworkException
     {
-        return new Lane(parentLink, id, centerLine, contour, crossSectionSlices, new LaneType("NO_TRAFFIC"),
-                new LinkedHashMap<>())
+        return new Lane(parentLink, id, centerLine, contour, crossSectionSlices, SHOULDER, new LinkedHashMap<>())
         {
             /** */
             private static final long serialVersionUID = 20230116L;
@@ -1558,11 +1559,25 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
             /** {@inheritDoc} */
             @Override
-            public Speed getSpeedLimit(final GtuType gtuType)
+            public Speed getSpeedLimit(final GtuType gtuType) throws NetworkException
             {
+                LateralDirectionality[] lats = getLink().getLaneKeepingPolicy().equals(LaneKeepingPolicy.KEEPRIGHT)
+                        ? new LateralDirectionality[] {LateralDirectionality.RIGHT, LateralDirectionality.LEFT}
+                        : new LateralDirectionality[] {LateralDirectionality.LEFT, LateralDirectionality.RIGHT};
+                for (LateralDirectionality lat : lats)
+                {
+                    Lane adjacentLane = getAdjacentLane(lat, gtuType);
+                    if (adjacentLane != null)
+                    {
+                        return adjacentLane.getSpeedLimit(gtuType);
+                    }
+                }
                 return Speed.ZERO;
             }
         };
     }
+
+    /** Shoulder lane type. */
+    public static final LaneType SHOULDER = new LaneType("Shoulder");
 
 }

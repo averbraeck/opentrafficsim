@@ -339,17 +339,17 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
         List<TrajectoryGroup<G>> trajectoryGroupList = new ArrayList<>();
         for (SpaceTimeRegion<? extends L> spaceTimeRegion : this.spaceTimeRegions)
         {
-            Time start = startTime.gt(spaceTimeRegion.getStartTime()) ? startTime : spaceTimeRegion.getStartTime();
-            Time end = endTime.lt(spaceTimeRegion.getEndTime()) ? endTime : spaceTimeRegion.getEndTime();
+            Time start = startTime.gt(spaceTimeRegion.startTime()) ? startTime : spaceTimeRegion.startTime();
+            Time end = endTime.lt(spaceTimeRegion.endTime()) ? endTime : spaceTimeRegion.endTime();
             TrajectoryGroup<G> trajectoryGroup;
-            if (this.sampler.getSamplerData().getTrajectoryGroup(spaceTimeRegion.getLane()) == null)
+            if (this.sampler.getSamplerData().getTrajectoryGroup(spaceTimeRegion.lane()) == null)
             {
-                trajectoryGroup = new TrajectoryGroup<>(start, spaceTimeRegion.getLane());
+                trajectoryGroup = new TrajectoryGroup<>(start, spaceTimeRegion.lane());
             }
             else
             {
-                trajectoryGroup = this.sampler.getSamplerData().getTrajectoryGroup(spaceTimeRegion.getLane())
-                        .getTrajectoryGroup(spaceTimeRegion.getStartPosition(), spaceTimeRegion.getEndPosition(), start, end);
+                trajectoryGroup = this.sampler.getSamplerData().getTrajectoryGroup(spaceTimeRegion.lane())
+                        .getTrajectoryGroup(spaceTimeRegion.startPosition(), spaceTimeRegion.endPosition(), start, end);
             }
             for (Trajectory<G> trajectory : trajectoryGroup.getTrajectories())
             {
