@@ -47,7 +47,7 @@
     </ots:LaneTypes>
     <ots:RoadLayouts>
       <ots:RoadLayout Id="2LANELC" LinkType="URBAN">
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="URBAN">
           <ots:CenterOffset>-5m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
@@ -68,13 +68,13 @@
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>3.5m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="URBAN">
           <ots:CenterOffset>5m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
       </ots:RoadLayout>
       <ots:RoadLayout Id="3LANELC" LinkType="URBAN">
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="URBAN">
           <ots:CenterOffset>-5m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
@@ -95,13 +95,13 @@
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>3.5m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="URBAN">
           <ots:CenterOffset>5m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
       </ots:RoadLayout>
       <ots:RoadLayout Id="2LANE" LinkType="URBAN">
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="URBAN">
           <ots:CenterOffset>-5m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
@@ -122,13 +122,13 @@
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>3.5m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="URBAN">
           <ots:CenterOffset>5m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
       </ots:RoadLayout>
       <ots:RoadLayout Id="1LEFT" LinkType="URBAN">
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="URBAN">
           <ots:CenterOffset>-5m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
@@ -142,13 +142,13 @@
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>0m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="URBAN">
           <ots:CenterOffset>1.5m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
       </ots:RoadLayout>
       <ots:RoadLayout Id="1RIGHT" LinkType="URBAN">
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="URBAN">
           <ots:CenterOffset>-1.5m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
@@ -162,7 +162,7 @@
         <ots:Stripe Type="SOLID">
           <ots:CenterOffset>3.5m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="URBAN">
           <ots:CenterOffset>5m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>

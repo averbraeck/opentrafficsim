@@ -27,6 +27,7 @@ import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.Shoulder;
 import org.pmw.tinylog.Level;
 
 /**
@@ -114,7 +115,7 @@ public final class ConflictBuilder
             {
                 for (CrossSectionElement element : ((CrossSectionLink) link).getCrossSectionElementList())
                 {
-                    if (element instanceof Lane)
+                    if (element instanceof Lane lane && !(element instanceof Shoulder))
                     {
                         lanes.add((Lane) element);
                     }
@@ -1263,7 +1264,7 @@ public final class ConflictBuilder
                 {
                     for (CrossSectionElement element : ((CrossSectionLink) link).getCrossSectionElementList())
                     {
-                        if (element instanceof Lane)
+                        if (element instanceof Lane lane && !(element instanceof Shoulder))
                         {
                             lanes.add((Lane) element);
                         }

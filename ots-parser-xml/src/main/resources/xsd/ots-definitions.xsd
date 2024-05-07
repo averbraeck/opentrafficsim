@@ -217,6 +217,7 @@
     <xsd:complexContent>
       <xsd:extension base="ots:CrossSectionElement">
         <xsd:attribute name="Id" type="ots:IdType" use="optional" />
+        <xsd:attribute name="LaneType" type="ots:string" use="required" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -288,12 +289,6 @@
     <!-- RoadLayout.Shoulder.Id unique -->
     <xsd:unique name="roadLayoutShoulderId">
       <xsd:selector xpath="ots:Shoulder" />
-      <xsd:field xpath="@Id" />
-    </xsd:unique>
-    
-    <!-- RoadLayout.NoTrafficLane.Id unique -->
-    <xsd:unique name="roadLayoutNoTrafficLaneId">
-      <xsd:selector xpath="ots:NoTrafficLane" />
       <xsd:field xpath="@Id" />
     </xsd:unique>
     

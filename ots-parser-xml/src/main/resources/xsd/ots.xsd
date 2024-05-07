@@ -330,6 +330,12 @@
       <xsd:selector xpath=".//ots:RoadLayout/ots:Lane" />
       <xsd:field xpath="@LaneType" />
     </xsd:keyref>
+    
+    <!-- RoadLayout.Shoulder.LaneType = LaneType.Id -->
+    <xsd:keyref name="shoulderLaneTypeRef" refer="ots:laneTypeKey">
+      <xsd:selector xpath=".//ots:RoadLayout/ots:Shoulder" />
+      <xsd:field xpath="@LaneType" />
+    </xsd:keyref>
 
     <!-- RoadLayout.LinkType = LinkType.Id -->
     <xsd:keyref name="roadlayoutLinkTypeRef" refer="ots:linkTypeKey">

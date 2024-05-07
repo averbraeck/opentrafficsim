@@ -80,7 +80,7 @@
 
     <ots:RoadLayouts>
       <ots:RoadLayout Id="r1" LinkType="STREET">
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="STREET">
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
         <ots:Stripe Type="SOLID">
@@ -107,7 +107,7 @@
       </ots:RoadLayout>
 
       <ots:RoadLayout Id="r1g" LinkType="STREET">
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="STREET">
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
         <ots:Stripe Type="SOLID">
@@ -140,7 +140,7 @@
       </ots:RoadLayout>
 
       <ots:RoadLayout Id="r2l" LinkType="STREET">
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="STREET">
           <ots:CenterOffset>-4.3m</ots:CenterOffset>
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>

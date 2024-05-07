@@ -324,10 +324,11 @@ public final class LaneFactory
      * Adds 1 or 2 shoulders to the current set of lanes.
      * @param width Length; width of the shoulder
      * @param lat LateralDirectionality; side of shoulder, use {@code null} or {@code NONE} for both
+     * @param laneType LaneType; lane type.
      * @return LaneFactory this lane factory for method chaining
      * @throws IllegalStateException if no lanes are defined
      */
-    public LaneFactory addShoulder(final Length width, final LateralDirectionality lat)
+    public LaneFactory addShoulder(final Length width, final LateralDirectionality lat, final LaneType laneType)
     {
         Throw.when(this.lanes.isEmpty(), IllegalStateException.class, "Lanes should be defined before adding shoulder(s).");
         if (lat == null || lat.isNone() || lat.isLeft())
@@ -336,8 +337,7 @@ public final class LaneFactory
             Length endOffset = null;
             for (Lane lane : this.lanes)
             {
-                if (startOffset == null
-                        || lane.getOffsetAtBegin().plus(lane.getBeginWidth().times(0.5)).gt(startOffset))
+                if (startOffset == null || lane.getOffsetAtBegin().plus(lane.getBeginWidth().times(0.5)).gt(startOffset))
                 {
                     startOffset = lane.getOffsetAtBegin().plus(lane.getBeginWidth().times(0.5));
                 }
@@ -348,8 +348,8 @@ public final class LaneFactory
             }
             Length start = startOffset.plus(width.times(0.5));
             Length end = endOffset.plus(width.times(0.5));
-            Try.assign(() -> LaneGeometryUtil.createStraightShoulder(this.link, "Left shoulder", start, end, width, width),
-                    "Unexpected exception while building link.");
+            Try.assign(() -> LaneGeometryUtil.createStraightShoulder(this.link, "Left shoulder", start, end, width, width,
+                    laneType), "Unexpected exception while building link.");
         }
         if (lat == null || lat.isNone() || lat.isRight())
         {
@@ -357,8 +357,7 @@ public final class LaneFactory
             Length endOffset = null;
             for (Lane lane : this.lanes)
             {
-                if (startOffset == null
-                        || lane.getOffsetAtBegin().minus(lane.getBeginWidth().times(0.5)).lt(startOffset))
+                if (startOffset == null || lane.getOffsetAtBegin().minus(lane.getBeginWidth().times(0.5)).lt(startOffset))
                 {
                     startOffset = lane.getOffsetAtBegin().minus(lane.getBeginWidth().times(0.5));
                 }
@@ -369,8 +368,8 @@ public final class LaneFactory
             }
             Length start = startOffset.minus(width.times(0.5));
             Length end = endOffset.minus(width.times(0.5));
-            Try.assign(() -> LaneGeometryUtil.createStraightShoulder(this.link, "Right shoulder", start, end, width, width),
-                    "Unexpected exception while building link.");
+            Try.assign(() -> LaneGeometryUtil.createStraightShoulder(this.link, "Right shoulder", start, end, width, width,
+                    laneType), "Unexpected exception while building link.");
         }
         return this;
     }

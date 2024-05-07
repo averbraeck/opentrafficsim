@@ -34,6 +34,7 @@ import org.opentrafficsim.road.gtu.lane.plan.operational.LaneBasedOperationalPla
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
+import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 /**
@@ -1169,8 +1170,7 @@ public class RollingLaneStructure implements LaneStructure, Serializable, EventL
             return this.firstRecords.get(lane);
         }
         RollingLaneStructureRecord inCrossSection = this.crossSectionRecords.get(lane);
-        if (inCrossSection != null
-                && !inCrossSection.getLane().getType().equals(Lane.SHOULDER))
+        if (inCrossSection != null && !(inCrossSection.getLane() instanceof Shoulder))
         {
             this.firstRecords.put(lane, inCrossSection);
             return inCrossSection;
