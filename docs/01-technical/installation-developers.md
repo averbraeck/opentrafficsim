@@ -5,7 +5,7 @@ When you are a code developer who has access to update the opentrafficsim code o
 
 ## 1. Install Eclipse on your computer
 
-Eclipse is an open-source development environment for, amongst others, Java projects. The Eclipse development environment is available for Windows, Mac, and Linux. The github project has all settings optimized for working in Eclise, but of course you can use your favorite development environment instead of Eclipse.
+Eclipse is an open-source development environment for, amongst others, Java projects. The Eclipse development environment is available for Windows, Mac, and Linux. The github project has all settings optimized for working in Eclipse, but of course you can use your favorite development environment instead of Eclipse.
 
 If you want to use Eclipse, download and install one of the Eclipse development tools via the Eclipse installer: [https://www.eclipse.org/downloads/packages/installer](https://www.eclipse.org/downloads/packages/installer) or more fine-grained from [https://www.eclipse.org/downloads/packages/](https://www.eclipse.org/downloads/packages/). Make sure to take a version for Java development that contains Maven for Eclipse (m2e); the "Eclipse IDE for Java Developers" is probably your best choice. If you want to choose an installation folder in Windows, you might put it in a folder for 'offline installations', such as `c:\app\eclipse` on Windows. Eclipse, as an offline installation, does not install as a regular program, is fully self-contained, and does not rely on the Windows registry. Create a start menu entry or a desktop shortcut for Eclipse to easily start it.
 
@@ -15,11 +15,11 @@ By default, Eclipse starts with a built-in Java version. If you go to the folder
 -vm
 plugins/org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_17.0.1.v20211116-1657/jre/bin
 ```
-So, in this case the Java version that is used is Java version 17, built into Eclipse. This is sufficient to run. You can also install a stable, Long-Term Support (LTS) version of Java yourself -- see the following section what to do in case you want to install a version of Java yourself. If you have installed your own Java version, e.g. version 11 in C:\app\jdk11 for Windows, change the above 'vm' setting to:
+So, in this case the Java version that is used is Java version 17, built into Eclipse. This is sufficient to run. You can also install a stable, Long-Term Support (LTS) version of Java yourself -- see the following section what to do in case you want to install a version of Java yourself. If you have installed your own Java version, e.g. version 17 in C:\app\jdk17 for Windows, change the above 'vm' setting to:
 
 ```
 -vm
-C:/app/jdk11/bin
+C:/app/jdk17/bin
 ```
 
 The opentrafficsim Java code is dependent on several external libraries to function properly. The easiest way to resolve those dependencies is to have Apache Maven figure out what libraries are needed for the project. [Apache Maven](https://maven.apache.org/) is a flexible and open source build tool that, amongst a large set of functions, enables programmers to automatically resolve dependencies and easily build their project. The Eclipse Java installations all contain Maven, making it really easy to set-up, develop, run, and deploy your project. 
@@ -29,13 +29,13 @@ Of course it is possible to use another development environment such as Netbeans
 
 ## 2. Installing Java (optional -- you can use the Eclipse version)
 
-For **Windows**, install OpenJDK version 11 (the current LTS = Long Term Support version). Download the zip for Java 11 at [https://jdk.java.net/archive/](https://jdk.java.net/archive/) for your operating system. You can install a later version of Java, but the current version of DSOL has been developed and tested with Java version 11. The best way to install Java is to unpack the Java zip in a folder without spaces in the folder name, e.g., C:\app\jdk11. Make sure to add Java to the current 'Path' (on Windows-10 go to Windows Settings - System - About and click 'Advanced Systems Settings' on the right. Click 'Environment Variables' in the 'Systems Properties' screen. Edit the 'Path' entry and add `C:\app\jdk11\bin` as an entry (adapt for your chosen location). You can move the entry to before 'C:\Windows\system32' to override a Java client in Windows. Add or modify an entry `JAVA_HOME` and set the value to `C:\app\jdk11` (adapt for your chosen location). You can test whether Java works by opening a Command prompt (CMD) and typing `java -version`. If Java responds with with version 11, the installation has succeeded.
+For **Windows**, install OpenJDK version 17 (an LTS = Long Term Support version). Download the zip for Java 17 at [https://jdk.java.net/archive/](https://jdk.java.net/archive/) for your operating system. You can install a later version of Java, but the current version of DSOL has been developed and tested with Java version 17. The best way to install Java is to unpack the Java zip in a folder without spaces in the folder name, e.g., C:\app\jdk17. Make sure to add Java to the current 'Path' (on Windows-10 go to Windows Settings - System - About and click 'Advanced Systems Settings' on the right. Click 'Environment Variables' in the 'Systems Properties' screen. Edit the 'Path' entry and add `C:\app\jdk17\bin` as an entry (adapt for your chosen location). You can move the entry to before 'C:\Windows\system32' to override a Java client in Windows. Add or modify an entry `JAVA_HOME` and set the value to `C:\app\jdk17` (adapt for your chosen location). You can test whether Java works by opening a Command prompt (CMD) and typing `java -version`. If Java responds with with version 17, the installation has succeeded.
 
-For **MacOS**, install OpenJDK version 11, e.g., using the following instruction: [https://techoral.com/blog/java/install-openjdk-11-on-mac.html](https://techoral.com/blog/java/install-openjdk-11-on-mac.html).
+For **MacOS**, install OpenJDK version 17, e.g., using the following instruction: [https://stackoverflow.com/questions/69875335/macos-how-to-install-java-17](https://stackoverflow.com/questions/69875335/macos-how-to-install-java-17).
 
-For **Debian / Ubuntu** versions of Linux, use the command `sudo apt install openjdk-11-jdk` to install OpenJDK version 11. For
+For **Debian / Ubuntu** versions of Linux, use the command `sudo apt install openjdk-17-jdk` to install OpenJDK version 11. For
 
-**CentOS / RedHat** versions of Linux, use the command `sudo yum install java-11-openjdk-devel` or `sudo dnf install java-11-openjdk-devel` to install OpenJDK version 11. If you want to know which java installations are available on CentOS / RedHat, type: `yum search jdk` or `dnf search jdk`, and choose the one you want to install.
+**CentOS / RedHat** versions of Linux, use the command `sudo yum install java-17-openjdk-devel` or `sudo dnf install java-17-openjdk-devel` to install OpenJDK version 17. If you want to know which java installations are available on CentOS / RedHat, type: `yum search jdk` or `dnf search jdk`, and choose the one you want to install.
 
 
 ## 3. Clone the git for opentrafficsim into Eclipse
