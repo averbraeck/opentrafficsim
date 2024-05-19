@@ -1,42 +1,38 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="${project.artifactId} ${project.version}" xmlns="http://maven.apache.org/DECORATION/1.6.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.6.0 http://maven.apache.org/xsd/decoration-1.6.0.xsd">
+<site xmlns="http://maven.apache.org/SITE/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SITE/2.0.0 https://maven.apache.org/xsd/site-2.0.0.xsd"
+  name="${project.artifactId} ${project.version}">
 
-  <publishDate position="left" format="dd-MM-yyyy hh:mm" />
+  <publishDate position="left" format="dd-MM-yyyy HH:mm" />
 
-  <bannerLeft>
-    <name>${project.name}</name>
-  </bannerLeft>
-
-  <bannerRight>
-    <name>${project.artifactId} ${project.version}</name>
-  </bannerRight>
+  <bannerLeft name="${project.name}" />
+  <bannerRight name="${project.artifactId} ${project.version}" />
 
   <skin>
     <groupId>org.apache.maven.skins</groupId>
     <artifactId>maven-fluido-skin</artifactId>
     <version>2.0.0-M8</version>
   </skin>
-  
+
   <body>
 
    <menu name="MODULES">
-      <item name="ots" href="https://opentrafficsim.org/docs/${project.version}/index.html" />
-      <item name="ots-base" href="https://opentrafficsim.org/docs/${project.version}/ots-base/index.html" />
-      <item name="ots-core" href="https://opentrafficsim.org/docs/${project.version}/ots-core/index.html" />
-      <item name="ots-kpi" href="https://opentrafficsim.org/docs/${project.version}/ots-kpi/index.html" />
-      <item name="ots-animation" href="https://opentrafficsim.org/docs/${project.version}/ots-animation/index.html" />
-      <item name="ots-road" href="https://opentrafficsim.org/docs/${project.version}/ots-road/index.html" />
-      <item name="ots-trafficcontrol" href="https://opentrafficsim.org/docs/${project.version}/ots-trafficcontrol/index.html" />
-      <item name="ots-parser-xml" href="https://opentrafficsim.org/docs/${project.version}/ots-parser-xml/index.html" />
-      <item name="ots-sim0mq" href="https://opentrafficsim.org/docs/${project.version}/ots-sim0mq/index.html" />
-      <item name="ots-sim0mq-kpi" href="https://opentrafficsim.org/docs/${project.version}/ots-sim0mq-kpi/index.html" />
-      <item name="ots-sim0mq-swing" href="https://opentrafficsim.org/docs/${project.version}/ots-sim0mq-swing/index.html" />
-      <item name="ots-draw" href="https://opentrafficsim.org/docs/${project.version}/ots-draw/index.html" />
-      <item name="ots-swing" href="https://opentrafficsim.org/docs/${project.version}/ots-swing/index.html" />
-      <item name="ots-web" href="https://opentrafficsim.org/docs/${project.version}/ots-web/index.html" />
-      <item name="ots-demo" href="https://opentrafficsim.org/docs/${project.version}/ots-demo/index.html" />
-      <item name="ots-editor" href="https://opentrafficsim.org/docs/${project.version}/ots-editor/index.html" />
+      <item name="ots" href="../index.html" />
+      <item name="ots-base" href="../ots-base/index.html" />
+      <item name="ots-core" href="../ots-core/index.html" />
+      <item name="ots-kpi" href="../ots-kpi/index.html" />
+      <item name="ots-animation" href="../ots-animation/index.html" />
+      <item name="ots-road" href="../ots-road/index.html" />
+      <item name="ots-trafficcontrol" href="../ots-trafficcontrol/index.html" />
+      <item name="ots-parser-xml" href="../ots-parser-xml/index.html" />
+      <item name="ots-sim0mq" href="../ots-sim0mq/index.html" />
+      <item name="ots-sim0mq-kpi" href="../ots-sim0mq-kpi/index.html" />
+      <item name="ots-sim0mq-swing" href="../ots-sim0mq-swing/index.html" />
+      <item name="ots-draw" href="../ots-draw/index.html" />
+      <item name="ots-swing" href="../ots-swing/index.html" />
+      <item name="ots-web" href="../ots-web/index.html" />
+      <item name="ots-demo" href="../ots-demo/index.html" />
+      <item name="ots-editor" href="../ots-editor/index.html" />
     </menu>
      
     <menu name="API">
@@ -57,6 +53,15 @@
       <item name="CPD" href="cpd.html" />
       <item name="PMD" href="pmd.html" />
     </menu>
+     
+    <menu name="PROJECT INFO">
+      <item name="About" href="index.html" />
+      <item name="Project Summary" href="summary.html" />
+      <item name="Project Team" href="team.html" />
+      <item name="Project License" href="../license.html" />
+      <item name="Versions + Changes" href="changes-report.html" />
+      <item name="OTS manual" href="manual/" target="_blank" />
+    </menu>
 
   </body>
-</project>
+</site>
