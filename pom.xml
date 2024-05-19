@@ -787,7 +787,7 @@
             <offlineLink><url>https://simulation.tudelft.nl/dsol/docs/latest/dsol-web/apidocs/</url></offlineLink>
             <offlineLink><url>https://tinylog.org/v1/javadoc/</url></offlineLink>
             <offlineLink><url>https://djunits.org/docs/latest/apidocs/</url></offlineLink>
-            <offlineLink>https://djutils.org/docs/latest/djutils/apidocs/</offlineLink>
+            <offlineLink><url>https://djutils.org/docs/latest/djutils/apidocs/</url></offlineLink>
             <offlineLink><url>https://djutils.org/docs/latest/djutils-serialization/apidocs/</url></offlineLink>
             <offlineLink><url>https://djutils.org/docs/latest/djutils-data/apidocs/</url></offlineLink>
             <offlineLink><url>https://djutils.org/docs/latest/djutils-cli/apidocs/</url></offlineLink>
