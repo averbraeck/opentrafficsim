@@ -59,7 +59,7 @@
       <item name="Project Summary" href="summary.html" />
       <item name="Project Team" href="team.html" />
       <item name="Project License" href="../license.html" />
-      <item name="Versions + Changes" href="changes-report.html" />
+      <item name="Versions + Changes" href="../changes-report.html" />
       <item name="OTS manual" href="manual/" target="_blank" />
     </menu>
 
