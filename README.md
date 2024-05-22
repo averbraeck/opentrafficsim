@@ -35,6 +35,23 @@ Early contributors to the project were:
 * Guus Tamminga, TU Delft, faculty CEG
 * Yufei Yuan, TU Delft, faculty CEG
 
+## Differences of this fork to OTS
+
+### GtuCreator.java
+* Custom class to spawn GTUs with fixed attributes at fixed locations
+* Necessary for resimulation purposes
+
+### WorldType.java, WorldLength.java, WorldWidth.java
+* Additional attributes used in the roadSampler exports
+* Necessary information for the conversion back to CR scenarios
+
+### HeadwayGenerator.java
+* Copied code from other private headway generator classes in demo files
+* Necessary to use this class from within python
+
+### Maven Shade plugin
+* Additional plugin in the pom.xml
+* Necessary to create fat-jars that are required by Jpype
 
 ## Where is the manual?
 
