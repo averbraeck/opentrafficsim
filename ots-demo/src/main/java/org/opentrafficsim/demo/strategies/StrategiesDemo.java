@@ -211,7 +211,7 @@ public class StrategiesDemo extends AbstractSimulationScript
         // text
         JLabel textLabel = new JLabel("<html><p align=\"justify\">"
                 + "Adjust the sliders below to change the ego-speed sensitivity and socio-speed sensitivity of the drivers, "
-                + "and observe how traffic is affected. Detailed instructions are in the attached read-me." + "</html>");
+                + "and observe how traffic is affected." + "</html>"); // Detailed instructions are in the attached read-me.
         textLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         animation.getDemoPanel().add(textLabel);
 
