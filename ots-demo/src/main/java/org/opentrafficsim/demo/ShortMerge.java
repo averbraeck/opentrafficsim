@@ -181,7 +181,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         {
             Lane start = ((CrossSectionLink) getModel().getNetwork().getLink("AB")).getLanes().get(1);
             path = GraphLaneUtil.createPath("Right lane", start);
-        }  
+        }
         catch (NetworkException exception)
         {
             throw new RuntimeException("Could not create a path as a lane has no set speed limit.", exception);
@@ -215,7 +215,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         {
             OtsAnimator simulator = new OtsAnimator("ShortMerge");
             final ShortMergeModel otsModel = new ShortMergeModel(simulator);
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel);
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(SIMTIME.si), otsModel);
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(), new Dimension(800, 600),
                     simulator, otsModel, new LmrsSwitchableColorer(DefaultsNl.GTU_TYPE_COLORS.toMap()), otsModel.getNetwork());
             ShortMerge app = new ShortMerge("ShortMerge", animationPanel, otsModel);
