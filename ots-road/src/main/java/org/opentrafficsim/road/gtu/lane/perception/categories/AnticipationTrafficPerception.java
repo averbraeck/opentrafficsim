@@ -12,8 +12,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -31,7 +30,8 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Neighbor
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class AnticipationTrafficPerception extends LaneBasedAbstractPerceptionCategory implements TrafficPerception
+public class AnticipationTrafficPerception extends AbstractPerceptionCategory<LaneBasedGtu, LanePerception>
+        implements TrafficPerception
 {
 
     /** */
@@ -172,13 +172,6 @@ public class AnticipationTrafficPerception extends LaneBasedAbstractPerceptionCa
         {
             return tK.object();
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void updateAll() throws GtuException, NetworkException, ParameterException
-    {
-        // lazy evaluation
     }
 
     /** {@inheritDoc} */

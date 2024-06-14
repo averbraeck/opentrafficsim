@@ -40,8 +40,7 @@ public interface Cooperation extends LmrsParameters
                 final CarFollowingModel cfm, final LateralDirectionality lat, final Desire ownDesire)
                 throws ParameterException, OperationalPlanException
         {
-            if ((lat.isLeft() && !perception.getLaneStructure().getExtendedCrossSection().contains(RelativeLane.LEFT))
-                    || (lat.isRight() && !perception.getLaneStructure().getExtendedCrossSection().contains(RelativeLane.RIGHT)))
+            if (!perception.getLaneStructure().exists(lat.isRight() ? RelativeLane.RIGHT : RelativeLane.LEFT))
             {
                 return new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
             }
@@ -64,7 +63,7 @@ public interface Cooperation extends LmrsParameters
             }
             return Acceleration.max(a, b.neg());
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public String toString()
@@ -82,8 +81,7 @@ public interface Cooperation extends LmrsParameters
                 final CarFollowingModel cfm, final LateralDirectionality lat, final Desire ownDesire)
                 throws ParameterException, OperationalPlanException
         {
-            if ((lat.isLeft() && !perception.getLaneStructure().getExtendedCrossSection().contains(RelativeLane.LEFT))
-                    || (lat.isRight() && !perception.getLaneStructure().getExtendedCrossSection().contains(RelativeLane.RIGHT)))
+            if (!perception.getLaneStructure().exists(lat.isRight() ? RelativeLane.RIGHT : RelativeLane.LEFT))
             {
                 return new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
             }
@@ -94,7 +92,7 @@ public interface Cooperation extends LmrsParameters
             RelativeLane relativeLane = new RelativeLane(lat, 1);
             NeighborsPerception neighbours = perception.getPerceptionCategory(NeighborsPerception.class);
             PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = neighbours.getLeaders(RelativeLane.CURRENT);
-            Speed thresholdSpeed = Speed.instantiateSI(40.0 / 3.6);
+            Speed thresholdSpeed = Speed.instantiateSI(6.86); // 295m / 43s
             boolean leaderInCongestion = leaders.isEmpty() ? false : leaders.first().getSpeed().lt(thresholdSpeed);
             for (HeadwayGtu leader : neighbours.getLeaders(relativeLane))
             {
@@ -113,7 +111,7 @@ public interface Cooperation extends LmrsParameters
             }
             return Acceleration.max(a, bCrit.neg());
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public String toString()
@@ -131,9 +129,7 @@ public interface Cooperation extends LmrsParameters
                 final CarFollowingModel cfm, final LateralDirectionality lat, final Desire ownDesire)
                 throws ParameterException, OperationalPlanException
         {
-
-            if ((lat.isLeft() && !perception.getLaneStructure().getExtendedCrossSection().contains(RelativeLane.LEFT))
-                    || (lat.isRight() && !perception.getLaneStructure().getExtendedCrossSection().contains(RelativeLane.RIGHT)))
+            if (!perception.getLaneStructure().exists(lat.isRight() ? RelativeLane.RIGHT : RelativeLane.LEFT))
             {
                 return new Acceleration(Double.MAX_VALUE, AccelerationUnit.SI);
             }
@@ -156,7 +152,7 @@ public interface Cooperation extends LmrsParameters
             }
             return a;
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public String toString()

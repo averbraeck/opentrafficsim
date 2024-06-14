@@ -450,10 +450,8 @@ public class LoopDetector extends LaneDetector
         new RearDetector(id + "_rear", lane, position, simulator, detectorType);
     }
 
-    /**
-     * Returns the detector length.
-     * @return Length; the detector length
-     */
+    /** {@inheritDoc} */
+    @Override
     public Length getLength()
     {
         return this.length;

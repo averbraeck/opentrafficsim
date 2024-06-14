@@ -9,7 +9,6 @@ import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
@@ -19,6 +18,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
+import org.opentrafficsim.road.network.LaneChangeInfo;
 
 /**
  * Incentive that lets drivers queue in an adjacent lane as soon as the speed is low in the adjacent lane, and stopping in the
@@ -51,9 +51,9 @@ public class IncentiveGetInLane implements MandatoryIncentive
         double socio = parameters.getParameter(SOCIO);
         InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
         NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
-        SortedSet<InfrastructureLaneChangeInfo> info = infra.getInfrastructureLaneChangeInfo(RelativeLane.CURRENT);
+        SortedSet<LaneChangeInfo> info = infra.getLegalLaneChangeInfo(RelativeLane.CURRENT);
         double dCur = info.isEmpty() ? Double.POSITIVE_INFINITY
-                : info.first().getRemainingDistance().si / info.first().getRequiredNumberOfLaneChanges();
+                : info.first().remainingDistance().si / info.first().numberOfLaneChanges();
         double left = 0;
         double right = 0;
         double vCur = Double.POSITIVE_INFINITY;
@@ -62,10 +62,10 @@ public class IncentiveGetInLane implements MandatoryIncentive
         {
             if (infra.getCrossSection().contains(lane))
             {
-                SortedSet<InfrastructureLaneChangeInfo> adjInfo = infra.getInfrastructureLaneChangeInfo(lane);
+                SortedSet<LaneChangeInfo> adjInfo = infra.getLegalLaneChangeInfo(lane);
                 double dAdj = adjInfo.isEmpty() ? Double.POSITIVE_INFINITY
-                        : adjInfo.first().getRemainingDistance().si / adjInfo.first().getRequiredNumberOfLaneChanges();
-                if (!info.isEmpty() && !info.first().isDeadEnd() && dCur < dAdj)
+                        : adjInfo.first().remainingDistance().si / adjInfo.first().numberOfLaneChanges();
+                if (!info.isEmpty() && !info.first().deadEnd() && dCur < dAdj)
                 {
                     double v = Double.POSITIVE_INFINITY;
                     for (HeadwayGtu neighbor : neighbors.getLeaders(lane))
@@ -85,8 +85,8 @@ public class IncentiveGetInLane implements MandatoryIncentive
                         // left -= d;
                     }
                 }
-                if (!adjInfo.isEmpty() && !adjInfo.first().isDeadEnd()
-                        && (info.isEmpty() || (!info.isEmpty() && !info.first().isDeadEnd())) && dCur > dAdj)
+                if (!adjInfo.isEmpty() && !adjInfo.first().deadEnd()
+                        && (info.isEmpty() || (!info.isEmpty() && !info.first().deadEnd())) && dCur > dAdj)
                 {
                     if (Double.isInfinite(vCur))
                     {

@@ -6,15 +6,15 @@ import java.util.TreeSet;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.TimeStampedObject;
-import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.LaneBasedAbstractPerceptionCategory;
 import org.opentrafficsim.road.gtu.lane.perception.categories.LaneBasedPerceptionCategory;
+import org.opentrafficsim.road.network.LaneChangeInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 
 /**
@@ -30,14 +30,15 @@ import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 // TODO updateInfrastructureLaneChangeInfo with split number
-public class ToledoPerception extends LaneBasedAbstractPerceptionCategory implements LaneBasedPerceptionCategory
+public class ToledoPerception extends AbstractPerceptionCategory<LaneBasedGtu, LanePerception>
+        implements LaneBasedPerceptionCategory
 {
 
     /** */
     private static final long serialVersionUID = 20160000L;
 
     /** Infrastructure lane change info per relative lane. */
-    private Map<RelativeLane, TimeStampedObject<SortedSet<InfrastructureLaneChangeInfoToledo>>> infrastructureLaneChangeInfo;
+    private Map<RelativeLane, TimeStampedObject<SortedSet<LaneChangeInfo>>> infrastructureLaneChangeInfo;
 
     /** Wrapped regular infrastructureCategory. */
     private final DirectInfrastructurePerception infrastructureCategory;
@@ -84,7 +85,7 @@ public class ToledoPerception extends LaneBasedAbstractPerceptionCategory implem
      * @param lane RelativeLane; relative lateral lane
      * @return infrastructure lane change info of a lane
      */
-    public final SortedSet<InfrastructureLaneChangeInfoToledo> getInfrastructureLaneChangeInfo(final RelativeLane lane)
+    public final SortedSet<LaneChangeInfo> getInfrastructureLaneChangeInfo(final RelativeLane lane)
     {
         return new TreeSet<>();
         // return this.infrastructureLaneChangeInfo.get(lane).getObject();
@@ -113,57 +114,10 @@ public class ToledoPerception extends LaneBasedAbstractPerceptionCategory implem
      * @param lane RelativeLane; relative lateral lane
      * @return time stamped infrastructure lane change info of a lane
      */
-    public final TimeStampedObject<SortedSet<InfrastructureLaneChangeInfoToledo>> getTimeStampedInfrastructureLaneChangeInfo(
+    public final TimeStampedObject<SortedSet<LaneChangeInfo>> getTimeStampedInfrastructureLaneChangeInfo(
             final RelativeLane lane)
     {
         return this.infrastructureLaneChangeInfo.get(lane);
-    }
-
-    /**
-     * Updates the speed limit prospect.
-     * @param lane RelativeLane; relative lateral lane
-     * @throws GtuException if the GTU was not initialized
-     * @throws ParameterException if a parameter is not defined
-     */
-    public final void updateSpeedLimitProspect(final RelativeLane lane) throws GtuException, ParameterException
-    {
-        this.infrastructureCategory.updateSpeedLimitProspect(lane);
-    }
-
-    /**
-     * Updates the distance over which lane changes remains legally possible.
-     * @param fromLane RelativeLane; lane from which the lane change possibility is requested
-     * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
-     * @throws GtuException if the GTU was not initialized
-     * @throws ParameterException if a parameter is not defined
-     */
-    public final void updateLegalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat)
-            throws GtuException, ParameterException
-    {
-        this.infrastructureCategory.updateLegalLaneChangePossibility(fromLane, lat);
-    }
-
-    /**
-     * Updates the distance over which lane changes remains physically possible.
-     * @param fromLane RelativeLane; lane from which the lane change possibility is requested
-     * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
-     * @throws GtuException if the GTU was not initialized
-     * @throws ParameterException if a parameter is not defined
-     */
-    public final void updatePhysicalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat)
-            throws GtuException, ParameterException
-    {
-        this.infrastructureCategory.updatePhysicalLaneChangePossibility(fromLane, lat);
-    }
-
-    /**
-     * Updates a set of relative lanes representing the cross section.
-     * @throws GtuException if the GTU was not initialized
-     * @throws ParameterException if a parameter is not defined
-     */
-    public final void updateCrossSection() throws GtuException, ParameterException
-    {
-        this.infrastructureCategory.updateCrossSection();
     }
 
     /**
@@ -207,58 +161,6 @@ public class ToledoPerception extends LaneBasedAbstractPerceptionCategory implem
     public final SortedSet<RelativeLane> getCrossSection()
     {
         return this.infrastructureCategory.getCrossSection();
-    }
-
-    /**
-     * Returns the time stamped prospect for speed limits on a lane (dynamic speed limits may vary between lanes).
-     * @param lane RelativeLane; relative lateral lane
-     * @return time stamped prospect for speed limits on a lane
-     */
-    public final TimeStampedObject<SpeedLimitProspect> getTimeStampedSpeedLimitProspect(final RelativeLane lane)
-    {
-        return this.infrastructureCategory.getTimeStampedSpeedLimitProspect(lane);
-    }
-
-    /**
-     * Returns the time stamped distance over which a lane change remains legally possible.
-     * @param fromLane RelativeLane; lane from which the lane change possibility is requested
-     * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
-     * @return time stamped distance over which a lane change remains possible
-     * @throws NullPointerException if {@code lat == null}
-     */
-    public final TimeStampedObject<Length> getTimeStampedLegalLaneChangePossibility(final RelativeLane fromLane,
-            final LateralDirectionality lat)
-    {
-        return this.infrastructureCategory.getTimeStampedLegalLaneChangePossibility(fromLane, lat);
-    }
-
-    /**
-     * Returns the time stamped distance over which a lane change remains physically possible.
-     * @param fromLane RelativeLane; lane from which the lane change possibility is requested
-     * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
-     * @return time stamped distance over which a lane change remains possible
-     * @throws NullPointerException if {@code lat == null}
-     */
-    public final TimeStampedObject<Length> getTimeStampedPhysicalLaneChangePossibility(final RelativeLane fromLane,
-            final LateralDirectionality lat)
-    {
-        return this.infrastructureCategory.getTimeStampedPhysicalLaneChangePossibility(fromLane, lat);
-    }
-
-    /**
-     * Returns a time stamped set of relative lanes representing the cross section. Lanes are sorted left to right.
-     * @return time stamped set of relative lanes representing the cross section
-     */
-    public final TimeStampedObject<SortedSet<RelativeLane>> getTimeStampedCrossSection()
-    {
-        return this.infrastructureCategory.getTimeStampedCrossSection();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void updateAll() throws GtuException, NetworkException, ParameterException
-    {
-        this.infrastructureCategory.updateAll();
     }
 
     /** {@inheritDoc} */

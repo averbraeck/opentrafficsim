@@ -11,6 +11,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.LaneBasedPerceptio
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 
 /**
+ * Perception of surrounding vehicles.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -85,15 +86,15 @@ public interface NeighborsPerception extends LaneBasedPerceptionCategory
 
     /**
      * Set of leaders on a lane, including adjacent GTU's who's FRONT is ahead of the own vehicle FRONT. Leaders are sorted by
-     * headway value.
+     * distance.
      * @param lane RelativeLane; relative lateral lane
      * @return set of leaders on a lane, including adjacent GTU's who's FRONT is ahead of the own vehicle FRONT
      */
     PerceptionCollectable<HeadwayGtu, LaneBasedGtu> getLeaders(RelativeLane lane);
 
     /**
-     * Set of followers on a lane, including adjacent GTU's who's FRONT is back of the own vehicle FRONT. Follower are are
-     * sorted by distance.
+     * Set of followers on a lane, including adjacent GTU's who's FRONT is back of the own vehicle FRONT. Followers are sorted
+     * by distance.
      * @param lane RelativeLane; relative lateral lane
      * @return set of followers on a lane, including adjacent GTU's who's FRONT is back of the own vehicle FRONT
      */

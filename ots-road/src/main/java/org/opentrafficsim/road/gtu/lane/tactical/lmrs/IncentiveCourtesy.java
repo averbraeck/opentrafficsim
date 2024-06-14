@@ -121,12 +121,12 @@ public class IncentiveCourtesy implements VoluntaryIncentive
                             if (dir.isLeft() && leftLane)
                             {
                                 // follower in second left lane wants to change right, so we do not change left
-                                dLeftNo = dLeftNo > desire ? dLeftNo : d;
+                                dLeftNo = dLeftNo > d ? dLeftNo : d;
                             }
                             else if (rightLane)
                             {
                                 // follower in second right lane wants to change left, so we do not change right
-                                dRightNo = dRightNo > desire ? dRightNo : d;
+                                dRightNo = dRightNo > d ? dRightNo : d;
                             }
                         }
                     }

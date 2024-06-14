@@ -218,23 +218,6 @@ public interface DefaultSimplePerception extends LaneBasedPerceptionCategory
      */
     Speed getSpeedLimit();
 
-    /** {@inheritDoc} */
-    @Override
-    default void updateAll() throws GtuException, ParameterException, NetworkException
-    {
-        updateLanePathInfo();
-        updateForwardHeadwayGtu();
-        updateForwardHeadwayObject();
-        updateBackwardHeadway();
-        updateAccessibleAdjacentLanesLeft();
-        updateAccessibleAdjacentLanesRight();
-        updateNeighboringHeadwaysLeft();
-        updateNeighboringHeadwaysRight();
-        updateParallelHeadwaysLeft();
-        updateParallelHeadwaysRight();
-        updateSpeedLimit();
-    }
-
     /**
      * Determine whether there is a lane to the left or to the right of this lane, which is accessible from this lane, or null
      * if no lane could be found. The method takes the LongitidinalDirectionality of the lane into account. In other words, if

@@ -3,13 +3,11 @@ package org.opentrafficsim.core.gtu.perception;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.core.network.NetworkException;
 
 /**
+ * Implements {@code Perception} by housing categories.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -134,17 +132,6 @@ public abstract class AbstractPerception<G extends Gtu> implements Perception<G>
                 this.cachedCategories.clear();
                 return;
             }
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public void perceive() throws GtuException, NetworkException, ParameterException
-    {
-        for (PerceptionCategory<?, ?> category : this.perceptionCategories.values())
-        {
-            category.updateAll();
         }
     }
 

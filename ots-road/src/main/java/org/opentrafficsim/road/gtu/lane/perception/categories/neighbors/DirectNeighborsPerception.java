@@ -1,33 +1,26 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories.neighbors;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.Iterator;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.DownstreamNeighborsIterable;
-import org.opentrafficsim.road.gtu.lane.perception.LaneBasedObjectIterable;
+import org.opentrafficsim.road.gtu.lane.perception.AbstractPerceptionReiterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.UpstreamNeighborsIterable;
-import org.opentrafficsim.road.gtu.lane.perception.categories.LaneBasedAbstractPerceptionCategory;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsUtil.DistanceGTU;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
-import org.opentrafficsim.road.network.lane.conflict.Conflict;
-import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
+import org.opentrafficsim.road.gtu.lane.perception.structure.LaneStructure.Entry;
 
 /**
  * Perception of surrounding traffic on the own road, i.e. without crossing traffic.
@@ -39,7 +32,8 @@ import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCategory implements NeighborsPerception
+public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBasedGtu, LanePerception>
+        implements NeighborsPerception
 {
 
     /** */
@@ -54,36 +48,15 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     /** Headway GTU type that should be used. */
     private final HeadwayGtuType headwayGtuType;
 
-    /** Headway GTU type that should be used to assess gaps. */
-    private final HeadwayGtuType headwayGtuTypeGap;
-
     /**
+     * Constructor.
      * @param perception LanePerception; perception
      * @param headwayGtuType HeadwayGtuType; type of headway gtu to generate
      */
     public DirectNeighborsPerception(final LanePerception perception, final HeadwayGtuType headwayGtuType)
     {
-        this(perception, headwayGtuType, headwayGtuType);
-    }
-
-    /**
-     * @param perception LanePerception; perception
-     * @param headwayGtuType HeadwayGtuType; type of headway gtu to generate
-     * @param headwayGtuTypeGap HeadwayGtuType; type of headway gtu to assess gaps
-     */
-    public DirectNeighborsPerception(final LanePerception perception, final HeadwayGtuType headwayGtuType,
-            final HeadwayGtuType headwayGtuTypeGap)
-    {
         super(perception);
         this.headwayGtuType = headwayGtuType;
-        this.headwayGtuTypeGap = headwayGtuTypeGap;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void updateAll() throws GtuException, NetworkException, ParameterException
-    {
-        // lazy evaluation
     }
 
     /** {@inheritDoc} */
@@ -104,11 +77,14 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     {
         try
         {
-            return NeighborsUtil.perceive(
-                    NeighborsUtil.getFirstDownstreamGTUs(
-                            getPerception().getLaneStructure().getFirstRecord(new RelativeLane(lat, 1)), getGtu().getFront(),
-                            getGtu().getFront(), RelativePosition.REAR, getTimestamp()),
-                    this.headwayGtuTypeGap, getGtu(), true);
+            SortedSet<HeadwayGtu> set = new TreeSet<>();
+            for (Entry<LaneBasedGtu> entry : getPerception().getLaneStructure().getFirstDownstreamGtus(
+                    new RelativeLane(lat, 1), RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT,
+                    RelativePosition.REAR))
+            {
+                set.add(this.headwayGtuType.createDownstreamGtu(getGtu(), entry.object(), entry.distance()));
+            }
+            return set;
         }
         catch (ParameterException | GtuException | IllegalArgumentException exception)
         {
@@ -134,11 +110,13 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
     {
         try
         {
-            return NeighborsUtil.perceive(
-                    NeighborsUtil.getFirstUpstreamGTUs(
-                            getPerception().getLaneStructure().getFirstRecord(new RelativeLane(lat, 1)), getGtu().getRear(),
-                            getGtu().getRear(), RelativePosition.FRONT, getTimestamp()),
-                    this.headwayGtuTypeGap, getGtu(), false);
+            SortedSet<HeadwayGtu> set = new TreeSet<>();
+            for (Entry<LaneBasedGtu> entry : getPerception().getLaneStructure().getFirstUpstreamGtus(new RelativeLane(lat, 1),
+                    RelativePosition.REAR, RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT))
+            {
+                set.add(this.headwayGtuType.createUpstreamGtu(getGtu(), entry.object(), entry.distance()));
+            }
+            return set;
         }
         catch (ParameterException | GtuException | IllegalArgumentException exception)
         {
@@ -165,23 +143,27 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
         try
         {
             // check if any GTU is downstream of the rear, within the vehicle length
-            SortedSet<DistanceGTU> headwaySet = NeighborsUtil.getFirstDownstreamGTUs(
-                    getPerception().getLaneStructure().getFirstRecord(new RelativeLane(lat, 1)), getGtu().getRear(),
-                    getGtu().getFront(), RelativePosition.FRONT, getTimestamp());
-            if (!headwaySet.isEmpty() && headwaySet.first().getDistance().le0())
+            for (Entry<LaneBasedGtu> entry : getPerception().getLaneStructure().getFirstDownstreamGtus(
+                    new RelativeLane(lat, 1), RelativePosition.REAR, RelativePosition.FRONT, RelativePosition.FRONT,
+                    RelativePosition.REAR))
             {
-                return true;
+                if (entry.distance().le0())
+                {
+                    return true;
+                }
             }
+
             // check if any GTU is upstream of the front, within the vehicle length
-            headwaySet = NeighborsUtil.getFirstUpstreamGTUs(
-                    getPerception().getLaneStructure().getFirstRecord(new RelativeLane(lat, 1)), getGtu().getFront(),
-                    getGtu().getRear(), RelativePosition.REAR, getTimestamp());
-            if (!headwaySet.isEmpty() && headwaySet.first().getDistance().le0())
+            for (Entry<LaneBasedGtu> entry : getPerception().getLaneStructure().getFirstUpstreamGtus(new RelativeLane(lat, 1),
+                    RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.REAR, RelativePosition.FRONT))
             {
-                return true;
+                if (entry.distance().le0())
+                {
+                    return true;
+                }
             }
         }
-        catch (ParameterException | GtuException | IllegalArgumentException exception)
+        catch (ParameterException | IllegalArgumentException exception) // | GtuException
         {
             throw new RuntimeException("Unexpected exception while computing gtu alongside.", exception);
         }
@@ -204,99 +186,42 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
      */
     private PerceptionCollectable<HeadwayGtu, LaneBasedGtu> computeLeaders(final RelativeLane lane)
     {
-        try
+        Iterable<Entry<LaneBasedGtu>> iterable = Try.assign(() -> getPerception().getLaneStructure().getDownstreamGtus(lane,
+                RelativePosition.FRONT, RelativePosition.FRONT, RelativePosition.FRONT, RelativePosition.REAR), "");
+        return new AbstractPerceptionReiterable<>(Try.assign(() -> getGtu(), "GtuException"))
         {
-            if (!getPerception().getLaneStructure().getExtendedCrossSection().contains(lane))
+            /** {@inheritDoc} */
+            @Override
+            protected Iterator<PrimaryIteratorEntry> primaryIterator()
             {
-                return null;
-            }
-            LaneStructureRecord record = getPerception().getLaneStructure().getFirstRecord(lane);
-            Length pos = record.getStartDistance().neg();
-
-            /*
-             * On adjacent lanes we ignore GTUs that are upstream of any conflict on our current lane. For instance on the left
-             * lane towards a turbo roundabout, the left adjacent lane is the lane that will come from the right, as it will
-             * cross our lane and become our left lane. GTUs upstream of the crossing conflict, should hence be ignored.
-             */
-            if (!lane.isCurrent())
-            {
-                // find all conflicting conflicts
-                Set<Conflict> conflicts = new LinkedHashSet<>();
-                LaneStructureRecord currentRecord = getPerception().getLaneStructure().getFirstRecord(RelativeLane.CURRENT);
-                boolean downstream = true;
-                LaneBasedObjectIterable<HeadwayConflict,
-                        Conflict> confs = new LaneBasedObjectIterable<HeadwayConflict, Conflict>(getGtu(), Conflict.class,
-                                currentRecord, currentRecord.getStartDistance().neg(), downstream,
-                                getGtu().getParameters().getParameter(ParameterTypes.LOOKAHEAD),
-                                getGtu().getRelativePositions().get(RelativePosition.REFERENCE),
-                                getGtu().getStrategicalPlanner().getRoute())
-                        {
-                            /** {@inheritDoc} */
-                            @Override
-                            protected HeadwayConflict perceive(final LaneBasedGtu perceivingGtu, final Conflict object,
-                                    final Length distance) throws GtuException, ParameterException
-                            {
-                                return null;
-                            }
-                        };
-                conflicts.addAll(confs.collect(() -> new LinkedHashSet<Conflict>(), (i, u, d) ->
+                Iterator<Entry<LaneBasedGtu>> iterator = iterable.iterator();
+                return new Iterator<>()
                 {
-                    i.getObject().add(u.getOtherConflict());
-                    return i;
-                }, (i) -> i));
+                    /** {@inheritDoc} */
+                    @Override
+                    public boolean hasNext()
+                    {
+                        return iterator.hasNext();
+                    }
 
-                // loop downstream towards the most downstream conflicting conflict, if any
-                boolean conflictFound = false;
-                LaneStructureRecord recordToConflict = null;
-                Length posToConflict = null;
-                LaneStructureRecord recordLoop = record;
-                Length posLoop = pos;
-                Length lookBack = getGtu().getParameters().getParameter(ParameterTypes.LOOKBACK);
-                while (recordLoop != null && recordLoop.getStartDistance().lt(lookBack))
-                {
-                    List<LaneBasedObject> list = recordLoop.getLane().getLaneBasedObjects(posLoop, recordLoop.getLength());
-                    for (LaneBasedObject object : list)
+                    /** {@inheritDoc} */
+                    @Override
+                    public AbstractPerceptionReiterable<HeadwayGtu, LaneBasedGtu>.PrimaryIteratorEntry next()
                     {
-                        if (conflicts.contains(object))
-                        {
-                            Conflict c = (Conflict) object;
-                            if ((c.getConflictType().isCrossing() || c.getConflictType().isMerge()))
-                            {
-                                conflictFound = true;
-                                recordToConflict = recordLoop;
-                                posToConflict = posLoop;
-                            }
-                        }
+                        Entry<LaneBasedGtu> entry = iterator.next();
+                        return new PrimaryIteratorEntry(entry.object(), entry.distance());
                     }
-                    if (recordLoop.getNext().size() == 1)
-                    {
-                        recordLoop = recordLoop.getNext().get(0);
-                    }
-                    else
-                    {
-                        recordLoop = null;
-                    }
-                    posLoop = Length.ZERO;
-                }
-
-                // if any found, start search for downstream GTUs at that point
-                if (conflictFound)
-                {
-                    record = recordToConflict;
-                    pos = posToConflict;
-                }
+                };
             }
 
-            pos = pos.plus(getGtu().getFront().dx());
-            boolean ignoreIfUpstream = true;
-            return new DownstreamNeighborsIterable(getGtu(), record, Length.max(Length.ZERO, pos),
-                    getGtu().getParameters().getParameter(LOOKAHEAD), getGtu().getFront(), this.headwayGtuType, lane,
-                    ignoreIfUpstream);
-        }
-        catch (ParameterException | GtuException exception)
-        {
-            throw new RuntimeException("Unexpected exception while computing gtu alongside.", exception);
-        }
+            /** {@inheritDoc} */
+            @Override
+            protected HeadwayGtu perceive(final LaneBasedGtu perceivingGtu, final LaneBasedGtu object, final Length distance)
+                    throws GtuException, ParameterException
+            {
+                return DirectNeighborsPerception.this.headwayGtuType.createDownstreamGtu(perceivingGtu, object, distance);
+            }
+        };
     }
 
     /** {@inheritDoc} */
@@ -314,24 +239,42 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
      */
     private PerceptionCollectable<HeadwayGtu, LaneBasedGtu> computeFollowers(final RelativeLane lane)
     {
-        try
+        Iterable<Entry<LaneBasedGtu>> iterable = Try.assign(() -> getPerception().getLaneStructure().getUpstreamGtus(lane,
+                RelativePosition.FRONT, RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT), "");
+        return new AbstractPerceptionReiterable<>(Try.assign(() -> getGtu(), "GtuException"))
         {
-            if (!getPerception().getLaneStructure().getExtendedCrossSection().contains(lane))
+            /** {@inheritDoc} */
+            @Override
+            protected Iterator<PrimaryIteratorEntry> primaryIterator()
             {
-                return null;
+                Iterator<Entry<LaneBasedGtu>> iterator = iterable.iterator();
+                return new Iterator<>()
+                {
+                    /** {@inheritDoc} */
+                    @Override
+                    public boolean hasNext()
+                    {
+                        return iterator.hasNext();
+                    }
+
+                    /** {@inheritDoc} */
+                    @Override
+                    public AbstractPerceptionReiterable<HeadwayGtu, LaneBasedGtu>.PrimaryIteratorEntry next()
+                    {
+                        Entry<LaneBasedGtu> entry = iterator.next();
+                        return new PrimaryIteratorEntry(entry.object(), entry.distance());
+                    }
+                };
             }
-            Throw.whenNull(lane, "Lane may not be null.");
-            LaneStructureRecord record = getPerception().getLaneStructure().getFirstRecord(lane);
-            Length pos;
-            pos = record.getStartDistance().neg();
-            pos = pos.plus(getGtu().getFront().dx());
-            return new UpstreamNeighborsIterable(getGtu(), record, Length.max(Length.ZERO, pos),
-                    getGtu().getParameters().getParameter(LOOKBACK), getGtu().getRear(), this.headwayGtuType, lane);
-        }
-        catch (ParameterException | GtuException exception)
-        {
-            throw new RuntimeException("Unexpected exception while computing gtu alongside.", exception);
-        }
+
+            /** {@inheritDoc} */
+            @Override
+            protected HeadwayGtu perceive(final LaneBasedGtu perceivingGtu, final LaneBasedGtu object, final Length distance)
+                    throws GtuException, ParameterException
+            {
+                return DirectNeighborsPerception.this.headwayGtuType.createUpstreamGtu(perceivingGtu, object, distance);
+            }
+        };
     }
 
     /**
@@ -347,11 +290,7 @@ public class DirectNeighborsPerception extends LaneBasedAbstractPerceptionCatego
         Throw.whenNull(lat, "Lateral directionality may not be null.");
         Throw.when(lat.equals(LateralDirectionality.NONE), IllegalArgumentException.class,
                 "Lateral directionality may not be NONE.");
-        Throw.when(
-                (lat.equals(LateralDirectionality.LEFT)
-                        && !getPerception().getLaneStructure().getExtendedCrossSection().contains(RelativeLane.LEFT))
-                        || (lat.equals(LateralDirectionality.RIGHT)
-                                && !getPerception().getLaneStructure().getExtendedCrossSection().contains(RelativeLane.RIGHT)),
+        Throw.when(!getPerception().getLaneStructure().exists(lat.isLeft() ? RelativeLane.LEFT : RelativeLane.RIGHT),
                 IllegalArgumentException.class, "Lateral directionality may only point to an existing adjacent lane.");
     }
 

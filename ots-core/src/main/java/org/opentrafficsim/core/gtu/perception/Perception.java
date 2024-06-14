@@ -34,9 +34,8 @@ public interface Perception<G extends Gtu> extends Serializable
     /**
      * Return the GTU of this perception.
      * @return GTU of this perception
-     * @throws GtuException if the GTU has not been initialized
      */
-    G getGtu() throws GtuException;
+    G getGtu();
 
     /**
      * Adds given perception category to the perception.

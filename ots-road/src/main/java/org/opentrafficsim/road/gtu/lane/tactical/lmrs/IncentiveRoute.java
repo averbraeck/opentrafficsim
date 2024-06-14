@@ -12,13 +12,13 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
+import org.opentrafficsim.road.network.LaneChangeInfo;
 
 /**
  * Determines desire by assessing the number of required lane change to be performed and the distance within which these have to
@@ -51,12 +51,12 @@ public class IncentiveRoute implements MandatoryIncentive
         InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
 
         // desire to leave current lane
-        SortedSet<InfrastructureLaneChangeInfo> currentInfo = infra.getInfrastructureLaneChangeInfo(RelativeLane.CURRENT);
-        Length currentFirst = currentInfo.isEmpty() || currentInfo.first().getRequiredNumberOfLaneChanges() == 0
-                ? Length.POSITIVE_INFINITY : currentInfo.first().getRemainingDistance();
+        SortedSet<LaneChangeInfo> currentInfo = infra.getLegalLaneChangeInfo(RelativeLane.CURRENT);
+        Length currentFirst = currentInfo.isEmpty() || currentInfo.first().numberOfLaneChanges() == 0 ? Length.POSITIVE_INFINITY
+                : currentInfo.first().remainingDistance();
         double dCurr = getDesireToLeave(parameters, infra, RelativeLane.CURRENT, speed);
         double dLeft = 0;
-        if (perception.getLaneStructure().getExtendedCrossSection().contains(RelativeLane.LEFT)
+        if (perception.getLaneStructure().exists(RelativeLane.LEFT)
                 && infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).neg().lt(currentFirst))
         {
             // desire to leave left lane
@@ -65,7 +65,7 @@ public class IncentiveRoute implements MandatoryIncentive
             dLeft = dLeft < dCurr ? dCurr : dLeft > dCurr ? -dLeft : 0;
         }
         double dRigh = 0;
-        if (perception.getLaneStructure().getExtendedCrossSection().contains(RelativeLane.RIGHT) && infra
+        if (perception.getLaneStructure().exists(RelativeLane.RIGHT) && infra
                 .getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).neg().lt(currentFirst))
         {
             // desire to leave right lane
@@ -92,9 +92,10 @@ public class IncentiveRoute implements MandatoryIncentive
         double dOut = 0.0;
         if (infra.getCrossSection().contains(lane))
         {
-            for (InfrastructureLaneChangeInfo info : infra.getInfrastructureLaneChangeInfo(lane))
+            for (LaneChangeInfo info : infra.getLegalLaneChangeInfo(lane))
             {
-                double d = getDesireToLeave(params, info.getRemainingDistance(), info.getRequiredNumberOfLaneChanges(), speed);
+                double d = info.remainingDistance().lt0() ? info.numberOfLaneChanges()
+                        : getDesireToLeave(params, info.remainingDistance(), info.numberOfLaneChanges(), speed);
                 dOut = d > dOut ? d : dOut;
             }
         }

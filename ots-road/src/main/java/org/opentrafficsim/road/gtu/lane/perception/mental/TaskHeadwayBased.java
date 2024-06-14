@@ -2,7 +2,6 @@ package org.opentrafficsim.road.gtu.lane.perception.mental;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
@@ -45,7 +44,6 @@ public abstract class TaskHeadwayBased extends AbstractTask
         double tMin = parameters.getParameter(ParameterTypes.TMIN).si;
         double hMin = a < -b ? (1.0 - (a + b) / (8.0 - b)) * tMin : tMin;
         EgoPerception<?, ?> ego = perception.getPerceptionCategoryOrNull(EgoPerception.class);
-        Try.execute(() -> ego.updateSpeed(), "Could not update perception of ego speed.");
         this.speed = ego.getSpeed();
         Duration h = getHeadway(perception, gtu, parameters);
         if (h == null)

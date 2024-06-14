@@ -26,7 +26,6 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -38,6 +37,7 @@ import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.network.LaneChangeInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 
@@ -93,8 +93,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
     /** {@inheritDoc} */
     @Override
-    public final OperationalPlan generateOperationalPlan(final Time startTime,
-            final OrientedPoint2d locationAtStartTime)
+    public final OperationalPlan generateOperationalPlan(final Time startTime, final OrientedPoint2d locationAtStartTime)
             throws OperationalPlanException, GtuException, NetworkException, ParameterException
     {
 
@@ -572,26 +571,26 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
     {
 
         ToledoPerception toledo = perception.getPerceptionCategory(ToledoPerception.class);
-        if (!perception.getLaneStructure().getExtendedCrossSection().contains(lane))
+        if (!perception.getLaneStructure().exists(lane))
         {
             return 0.0;
         }
 
         // get infrastructure info
         boolean takeNextOffRamp = false;
-        for (InfrastructureLaneChangeInfoToledo info : toledo.getInfrastructureLaneChangeInfo(RelativeLane.CURRENT))
-        {
-            if (info.getSplitNumber() == 1)
-            {
-                takeNextOffRamp = true;
-            }
-        }
+//        for (LaneChangeInfo info : toledo.getInfrastructureLaneChangeInfo(RelativeLane.CURRENT))
+//        {
+//             if (info.getSplitNumber() == 1)
+//             {
+//             takeNextOffRamp = true;
+//             }
+//        }
         int deltaNextExit = takeNextOffRamp ? 1 : 0;
 
         Length dExit;
         if (!toledo.getInfrastructureLaneChangeInfo(RelativeLane.CURRENT).isEmpty())
         {
-            dExit = toledo.getInfrastructureLaneChangeInfo(RelativeLane.CURRENT).first().getRemainingDistance();
+            dExit = toledo.getInfrastructureLaneChangeInfo(RelativeLane.CURRENT).first().remainingDistance();
         }
         else
         {
@@ -602,10 +601,10 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         int deltaAdd = 0;
         if (!toledo.getInfrastructureLaneChangeInfo(lane).isEmpty())
         {
-            InfrastructureLaneChangeInfo ilciLef = toledo.getInfrastructureLaneChangeInfo(lane).first();
-            if (ilciLef.getRequiredNumberOfLaneChanges() > 1 && ilciLef.getRequiredNumberOfLaneChanges() < 5)
+            LaneChangeInfo ilciLef = toledo.getInfrastructureLaneChangeInfo(lane).first();
+            if (ilciLef.numberOfLaneChanges() > 1 && ilciLef.numberOfLaneChanges() < 5)
             {
-                deltaAdd = ilciLef.getRequiredNumberOfLaneChanges() - 2;
+                deltaAdd = ilciLef.numberOfLaneChanges() - 2;
                 delta[deltaAdd] = 1;
             }
         }

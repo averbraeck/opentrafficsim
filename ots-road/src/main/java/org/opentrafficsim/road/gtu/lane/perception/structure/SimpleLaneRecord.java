@@ -1,7 +1,6 @@
-package org.opentrafficsim.road.gtu.lane.perception;
+package org.opentrafficsim.road.gtu.lane.perception.structure;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -21,7 +20,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class LaneRecord implements LaneRecordInterface<LaneRecord>
+public class SimpleLaneRecord implements LaneRecordInterface<SimpleLaneRecord>
 {
 
     /** Lane. */
@@ -34,10 +33,10 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
     private final GtuType gtuType;
 
     /** Stored next lanes. */
-    private List<LaneRecord> next;
+    private Set<SimpleLaneRecord> next;
 
     /** Stored prev lanes. */
-    private List<LaneRecord> prev;
+    private Set<SimpleLaneRecord> prev;
 
     /**
      * Constructor.
@@ -45,7 +44,7 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
      * @param startDistance Length; distance to start
      * @param gtuType GtuType; GTU type
      */
-    public LaneRecord(final Lane lane, final Length startDistance, final GtuType gtuType)
+    public SimpleLaneRecord(final Lane lane, final Length startDistance, final GtuType gtuType)
     {
         this.lane = lane;
         this.startDistance = startDistance;
@@ -54,16 +53,16 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
 
     /** {@inheritDoc} */
     @Override
-    public List<LaneRecord> getNext()
+    public Set<SimpleLaneRecord> getNext()
     {
         if (this.next == null)
         {
             Set<Lane> set = this.lane.nextLanes(this.gtuType);
-            this.next = new ArrayList<>();
+            this.next = new LinkedHashSet<>();
             Length distance = this.startDistance.plus(getLength());
             for (Lane down : set)
             {
-                this.next.add(new LaneRecord(down, distance, this.gtuType));
+                this.next.add(new SimpleLaneRecord(down, distance, this.gtuType));
             }
         }
         return this.next;
@@ -71,15 +70,15 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
 
     /** {@inheritDoc} */
     @Override
-    public List<LaneRecord> getPrev()
+    public Set<SimpleLaneRecord> getPrev()
     {
         if (this.prev == null)
         {
             Set<Lane> set = this.lane.prevLanes(this.gtuType);
-            this.prev = new ArrayList<>();
+            this.prev = new LinkedHashSet<>();
             for (Lane up : set)
             {
-                this.prev.add(new LaneRecord(up, this.startDistance.minus(up.getLength()), this.gtuType));
+                this.prev.add(new SimpleLaneRecord(up, this.startDistance.minus(up.getLength()), this.gtuType));
             }
         }
         return this.prev;

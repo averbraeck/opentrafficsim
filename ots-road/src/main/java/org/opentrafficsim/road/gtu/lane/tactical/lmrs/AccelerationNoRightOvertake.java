@@ -23,6 +23,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
+ * Makes a GTU follow leaders in the left lane, with limited deceleration.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -48,7 +49,7 @@ public class AccelerationNoRightOvertake implements AccelerationIncentive
             throws OperationalPlanException, ParameterException, GtuException
     {
         // TODO ignore incentive if we need to change lane for the route
-        if (lane.isCurrent() && perception.getLaneStructure().getExtendedCrossSection().contains(RelativeLane.LEFT))
+        if (lane.isCurrent() && perception.getLaneStructure().exists(RelativeLane.LEFT))
         {
             Speed vCong = params.getParameter(VCONG);
             if (perception.getPerceptionCategory(TrafficPerception.class).getSpeed(RelativeLane.CURRENT).si > vCong.si)

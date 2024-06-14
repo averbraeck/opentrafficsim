@@ -35,7 +35,7 @@ public interface Anticipation
         {
             return Length.ZERO;
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public String toString()
@@ -53,9 +53,9 @@ public interface Anticipation
                 final Length traveledDistance, final boolean downstream)
         {
             // upstream neighbor approaches when faster
-            Length distance = downstream
-                    ? neighborTriplet.headway().plus(neighborTriplet.speed().times(duration)).minus(traveledDistance)
-                    : neighborTriplet.headway().minus(neighborTriplet.speed().times(duration)).plus(traveledDistance);
+            Length distance =
+                    downstream ? neighborTriplet.headway().plus(neighborTriplet.speed().times(duration)).minus(traveledDistance)
+                            : neighborTriplet.headway().minus(neighborTriplet.speed().times(duration)).plus(traveledDistance);
             return new NeighborTriplet(distance, neighborTriplet.speed(), neighborTriplet.acceleration());
         }
 
@@ -65,7 +65,7 @@ public interface Anticipation
         {
             return speed.times(duration);
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public String toString()
@@ -87,14 +87,18 @@ public interface Anticipation
                 // to stand still
                 double t = neighborTriplet.speed().si / -neighborTriplet.acceleration().si;
                 double dx = neighborTriplet.speed().si * t + .5 * neighborTriplet.acceleration().si * t * t;
-                dx = downstream ? dx : -dx; // upstream neighbor approaches when faster
-                return new NeighborTriplet(Length.instantiateSI(neighborTriplet.headway().si + dx - traveledDistance.si),
+                // upstream neighbor approaches when faster
+                return new NeighborTriplet(
+                        Length.instantiateSI(
+                                neighborTriplet.headway().si + (downstream ? 1.0 : -1.0) * (dx - traveledDistance.si)),
                         Speed.ZERO, Acceleration.ZERO);
             }
             double dx = neighborTriplet.speed().si * duration.si
                     + .5 * neighborTriplet.acceleration().si * duration.si * duration.si;
             double dv = neighborTriplet.acceleration().si * duration.si;
-            return new NeighborTriplet(Length.instantiateSI(neighborTriplet.headway().si + dx - traveledDistance.si),
+            // upstream neighbor approaches when faster
+            return new NeighborTriplet(
+                    Length.instantiateSI(neighborTriplet.headway().si + (downstream ? 1.0 : -1.0) * (dx - traveledDistance.si)),
                     Speed.instantiateSI(neighborTriplet.speed().si + dv), neighborTriplet.acceleration());
         }
 
@@ -104,7 +108,7 @@ public interface Anticipation
         {
             return speed.times(duration);
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public String toString()
