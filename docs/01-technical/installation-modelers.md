@@ -77,18 +77,18 @@ Double click the pom file. You can see the information you added above in the XM
 </project>
 ```
 
-The first thing we need to do is telling Eclipse that we want to use UTF-8 encoding and Java 11, and not version 1.5. We do that by including the following properties at the bottom, but _inside_ the project tags:
+The first thing we need to do is telling Eclipse that we want to use UTF-8 encoding and Java 17, and not version 1.5. We do that by including the following properties at the bottom, but _inside_ the project tags:
 
 ```xml
   <properties>
-    <jdk.version>11</jdk.version>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
+    <jdk.version>17</jdk.version>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 ```
 
-Save the pom file, and use the right mouse button on the project name at the left (traffic-demo), choose Maven - Update Project, and press Ok. The library should now be updated to Java 11:
+Save the pom file, and use the right mouse button on the project name at the left (traffic-demo), choose Maven - Update Project, and press Ok. The library should now be updated to Java 17:
 
 <center>![](../images/01-technical/install-modeler-009.png)</center>
 
