@@ -111,7 +111,7 @@ public class GtuSpawner
      * @throws OtsGeometryException when the initial path is wrong
      * @throws NetworkException when the GTU cannot be placed on the given lane
      */
-    public void createGTU(final String id, final LaneBasedGtuCharacteristics templateGtuType, final RoadNetwork network,
+    public void spawnGtu(final String id, final LaneBasedGtuCharacteristics templateGtuType, final RoadNetwork network,
             final Speed speed, final LanePosition position) throws GtuException, OtsGeometryException, NetworkException
     {
 
