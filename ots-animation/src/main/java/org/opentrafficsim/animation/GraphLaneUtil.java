@@ -23,6 +23,7 @@ import org.opentrafficsim.draw.graphs.GraphPath.Section;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
+import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.sampling.LaneDataRoad;
 
 /**
@@ -70,7 +71,7 @@ public final class GraphLaneUtil
             sections.add(new Section<>(length, speed, list));
             set.add(lane);
             Set<Lane> nextLaneSet = lane.nextLanes(null);
-            if (nextLaneSet.size() == 1)
+            if (nextLaneSet.size() == 1 && !(nextLaneSet.iterator().next() instanceof Shoulder))
             {
                 lane = nextLaneSet.iterator().next();
             }
