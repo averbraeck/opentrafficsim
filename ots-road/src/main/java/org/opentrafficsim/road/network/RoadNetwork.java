@@ -225,8 +225,6 @@ public class RoadNetwork extends Network
         }
 
         // add edges
-        try
-        {
         for (Link link : this.getLinkMap().values())
         {
             if (link instanceof CrossSectionLink cLink)
@@ -267,10 +265,6 @@ public class RoadNetwork extends Network
                     graph.addEdge(lane, lane.getLink().getEndNode(), edge);
                 }
             }
-        }
-        } catch (Exception e)
-        {
-            System.out.println("hmmm");
         }
     }
 

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.djunits.unit.DurationUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -41,6 +40,7 @@ import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplate;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplateDistribution;
+import org.opentrafficsim.road.gtu.generator.headway.HeadwayGenerator;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
@@ -97,8 +97,8 @@ public final class DemandParser
      * @param eval Eval; expression evaluator.
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
-    static void parseRoutes(final RoadNetwork otsNetwork, final Definitions definitions, final Demand demand,
-            final Eval eval) throws NetworkException
+    static void parseRoutes(final RoadNetwork otsNetwork, final Definitions definitions, final Demand demand, final Eval eval)
+            throws NetworkException
     {
         for (org.opentrafficsim.xml.generated.Route routeTag : demand.getRoute())
         {
@@ -390,8 +390,7 @@ public final class DemandParser
         {
             for (org.opentrafficsim.xml.generated.Generator generatorTag : demand.getGenerator())
             {
-                StreamInterface stream =
-                        ParseUtil.findStream(streamInformation, generatorTag.getRandomStream(), eval);
+                StreamInterface stream = ParseUtil.findStream(streamInformation, generatorTag.getRandomStream(), eval);
 
                 String linkId = generatorTag.getLink().get(eval);
                 String laneId = generatorTag.getLane().get(eval);
@@ -521,8 +520,8 @@ public final class DemandParser
                                 "GtuTemplate %s is not defined.", template.getId());
                         LaneBasedGtuTemplate templateGtuType = parseGtuTemplate(gtuTemplates.get(template.getId()), definitions,
                                 streamInformation, gtuTemplateMixId, routeGenerator, strategicalFactory, eval);
-                        gtuTypeDistribution.add(new FrequencyAndObject<LaneBasedGtuTemplate>(
-                                template.getWeight().get(eval), templateGtuType));
+                        gtuTypeDistribution.add(
+                                new FrequencyAndObject<LaneBasedGtuTemplate>(template.getWeight().get(eval), templateGtuType));
                     }
                 }
                 else
@@ -532,13 +531,11 @@ public final class DemandParser
 
                 RoomChecker roomChecker = ParseUtil.parseRoomChecker(generatorTag.getRoomChecker(), eval);
 
-                Generator<Duration> headwayGenerator =
-                        new HeadwayGenerator(generatorTag.getFrequency().get(eval), stream);
+                Generator<Duration> headwayGenerator = new HeadwayGenerator(generatorTag.getFrequency().get(eval), stream);
 
                 CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(linkId);
                 Lane lane = (Lane) link.getCrossSectionElement(laneId);
-                Length position =
-                        ParseUtil.parseLengthBeginEnd(generatorTag.getPosition().get(eval), lane.getLength());
+                Length position = ParseUtil.parseLengthBeginEnd(generatorTag.getPosition().get(eval), lane.getLength());
                 Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
                 initialLongitudinalPositions.add(new LanePosition(lane, position));
 
@@ -572,8 +569,7 @@ public final class DemandParser
      */
     private static LaneBasedGtuTemplate parseGtuTemplate(final GtuTemplate templateTag, final Definitions definitions,
             final StreamInformation streamInformation, final String gtuTemplateId, final Generator<Route> routeGenerator,
-            final LaneBasedStrategicalRoutePlannerFactory strategicalFactory, final Eval eval)
-            throws XmlParserException
+            final LaneBasedStrategicalRoutePlannerFactory strategicalFactory, final Eval eval) throws XmlParserException
     {
         String gtuTypeId = templateTag.getGtuType().get(eval);
         GtuType gtuType = definitions.get(GtuType.class, gtuTypeId);
@@ -600,8 +596,8 @@ public final class DemandParser
      * @throws XmlParserException on parse error
      */
     private static <T extends DoubleScalarRel<U, T>, U extends Unit<U>> Generator<T> makeGenerator(
-            final StreamInformation streamMap, final ConstantDistType distribution, final U unit,
-            final Eval eval) throws XmlParserException
+            final StreamInformation streamMap, final ConstantDistType distribution, final U unit, final Eval eval)
+            throws XmlParserException
     {
         try
         {
@@ -660,41 +656,4 @@ public final class DemandParser
         }
     }
 
-    /**
-     * Standard Poisson arrivals with fixed (mean) arrival rate.
-     * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
-     */
-    private static class HeadwayGenerator implements Generator<Duration>
-    {
-        /** Demand level. */
-        private final Frequency demand;
-
-        /** the stream information. */
-        private final StreamInterface stream;
-
-        /**
-         * @param demand Frequency; demand
-         * @param stream the stream to use for generation
-         */
-        HeadwayGenerator(final Frequency demand, final StreamInterface stream)
-        {
-            this.demand = demand;
-            this.stream = stream;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Duration draw() throws ProbabilityException, ParameterException
-        {
-            return new Duration(-Math.log(this.stream.nextDouble()) / this.demand.si, DurationUnit.SI);
-        }
-
-    }
 }
