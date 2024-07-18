@@ -21,7 +21,7 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class FilterDataCrossSections extends FilterDataType<CrossSection>
+public class FilterDataCrossSections extends FilterDataType<CrossSection, GtuData>
 {
 
     /**

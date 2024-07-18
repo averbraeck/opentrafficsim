@@ -17,8 +17,9 @@ import org.opentrafficsim.kpi.sampling.TrajectoryAcceptList;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <T> class of meta data
+ * @param <G> gtu data type
  */
-public abstract class FilterDataType<T> implements Identifiable
+public abstract class FilterDataType<T, G extends GtuData> implements Identifiable
 {
 
     /** Id. */
@@ -51,10 +52,10 @@ public abstract class FilterDataType<T> implements Identifiable
 
     /**
      * Retrieves the value of the meta data of this type from a GTU.
-     * @param gtu GtuData; gtu to retrieve the value from
+     * @param gtu G; gtu to retrieve the value from
      * @return value of the meta data of this type from a GTU, may be {@code null} if not applicable.
      */
-    public abstract T getValue(GtuData gtu);
+    public abstract T getValue(G gtu);
 
     /**
      * Determines for a set of {@code trajectory}'s from a single GTU, which may be accepted according to this filter data type.

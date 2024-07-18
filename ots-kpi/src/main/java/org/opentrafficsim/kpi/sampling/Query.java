@@ -230,10 +230,10 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
 
     /**
      * Returns an iterator over the filter datas and the related data sets.
-     * @return Iterator&lt;Entry&lt;FilterDataType&lt;?&gt;, Set&lt;?&gt;&gt;&gt;; iterator over filter data entries, removal is
-     *         not allowed
+     * @return Iterator&lt;Entry&lt;FilterDataType&lt;?, ?&gt;, Set&lt;?&gt;&gt;&gt;; iterator over filter data entries, removal
+     *         is not allowed
      */
-    public Iterator<Entry<FilterDataType<?>, Set<?>>> getFilterDataSetIterator()
+    public Iterator<Entry<FilterDataType<?, ?>, Set<?>>> getFilterDataSetIterator()
     {
         return this.filterDataSet.getFilterDataSetIterator();
     }
@@ -368,12 +368,12 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
             String gtuId = iterator.next();
             TrajectoryAcceptList trajectoryAcceptListCombined = trajectoryAcceptLists.get(gtuId);
             trajectoryAcceptListCombined.acceptAll(); // refuse only if any filter data type refuses
-            for (FilterDataType<?> filterDataType : this.filterDataSet.getFilterDataTypes())
+            for (FilterDataType<?, ?> filterDataType : this.filterDataSet.getFilterDataTypes())
             {
                 // create safe copy per filter data type, with defaults accepts = false
                 TrajectoryAcceptList trajectoryAcceptListCopy = copyTrajectoryAcceptList(trajectoryAcceptLists.get(gtuId));
                 // request filter data type to accept or reject
-                ((FilterDataType<T>) filterDataType).accept(trajectoryAcceptListCopy,
+                ((FilterDataType<T, ?>) filterDataType).accept(trajectoryAcceptListCopy,
                         (Set<T>) new LinkedHashSet<>(this.filterDataSet.get(filterDataType)));
                 // combine acceptance/rejection of filter data types so far
                 for (int i = 0; i < trajectoryAcceptListCopy.size(); i++)

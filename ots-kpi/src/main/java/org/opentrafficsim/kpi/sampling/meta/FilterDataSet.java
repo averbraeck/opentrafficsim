@@ -25,7 +25,7 @@ public class FilterDataSet
 {
 
     /** Meta data. */
-    private final Map<FilterDataType<?>, Set<?>> filterDataMap = new LinkedHashMap<>();
+    private final Map<FilterDataType<?, ?>, Set<?>> filterDataMap = new LinkedHashMap<>();
 
     /**
      * Default constructor.
@@ -42,7 +42,7 @@ public class FilterDataSet
     public FilterDataSet(final FilterDataSet filterDataSet)
     {
         Throw.whenNull(filterDataSet, "Filter data set may not be null.");
-        for (FilterDataType<?> filterDataType : filterDataSet.filterDataMap.keySet())
+        for (FilterDataType<?, ?> filterDataType : filterDataSet.filterDataMap.keySet())
         {
             this.filterDataMap.put(filterDataType, filterDataSet.filterDataMap.get(filterDataType));
         }
@@ -50,11 +50,11 @@ public class FilterDataSet
 
     /**
      * Add filter data for type.
-     * @param filterDataType FilterDataType&lt;T&gt;; filter data type
+     * @param filterDataType FilterDataType&lt;T, ?&gt;; filter data type
      * @param <T> class of filter data
      * @param values Set&lt;T&gt;; values of filter data
      */
-    public final <T> void put(final FilterDataType<T> filterDataType, final Set<T> values)
+    public final <T> void put(final FilterDataType<T, ?> filterDataType, final Set<T> values)
     {
         Throw.whenNull(filterDataType, "Filter data type may not be null.");
         Throw.whenNull(values, "Values may not be null.");
@@ -63,22 +63,22 @@ public class FilterDataSet
 
     /**
      * Returns whether the filter data type is contained.
-     * @param filterDataType FilterDataType&lt;?&gt;; filter data type
+     * @param filterDataType FilterDataType&lt;?, ?&gt;; filter data type
      * @return whether the trajectory contains the filter data of give type
      */
-    public final boolean contains(final FilterDataType<?> filterDataType)
+    public final boolean contains(final FilterDataType<?, ?> filterDataType)
     {
         return this.filterDataMap.containsKey(filterDataType);
     }
 
     /**
      * Returns the value set of a filter data type.
-     * @param filterDataType FilterDataType&lt;T&gt;; filter data type
+     * @param filterDataType FilterDataType&lt;T, ?&gt;; filter data type
      * @param <T> class of filter data
      * @return value of filter data
      */
     @SuppressWarnings("unchecked")
-    public final <T> Set<T> get(final FilterDataType<T> filterDataType)
+    public final <T> Set<T> get(final FilterDataType<T, ?> filterDataType)
     {
         return (Set<T>) this.filterDataMap.get(filterDataType);
     }
@@ -87,7 +87,7 @@ public class FilterDataSet
      * Returns the filter data types.
      * @return set of filter data types
      */
-    public final Set<FilterDataType<?>> getFilterDataTypes()
+    public final Set<FilterDataType<?, ?>> getFilterDataTypes()
     {
         return new LinkedHashSet<>(this.filterDataMap.keySet());
     }
@@ -105,7 +105,7 @@ public class FilterDataSet
      * Returns an iterator over the filter data types.
      * @return iterator over filter data entries, removal is not allowed
      */
-    public final Iterator<Entry<FilterDataType<?>, Set<?>>> getFilterDataSetIterator()
+    public final Iterator<Entry<FilterDataType<?, ?>, Set<?>>> getFilterDataSetIterator()
     {
         return new ImmutableIterator<>(this.filterDataMap.entrySet().iterator());
     }

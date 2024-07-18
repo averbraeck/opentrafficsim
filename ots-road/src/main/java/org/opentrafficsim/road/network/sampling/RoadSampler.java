@@ -79,13 +79,13 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
     /**
      * Constructor which uses the operational plan updates of GTU's as sampling interval.
-     * @param extendedDataTypes Set&lt;ExtendedDataType&lt;?, ?, ?, GtuData&gt;&gt;; extended data types
-     * @param filterDataTypes Set&lt;FilterDataType&lt;?&gt;&gt;; filter data types
+     * @param extendedDataTypes Set&lt;ExtendedDataType&lt;?, ?, ?, ? super GtuDataRoad&gt;&gt;; extended data types
+     * @param filterDataTypes Set&lt;FilterDataType&lt;?, ? super GtuDataRoad&gt;&gt;; filter data types
      * @param network RoadNetwork; the network
      * @throws NullPointerException if the simulator is {@code null}
      */
-    public RoadSampler(final Set<ExtendedDataType<?, ?, ?, GtuDataRoad>> extendedDataTypes,
-            final Set<FilterDataType<?>> filterDataTypes, final RoadNetwork network)
+    public RoadSampler(final Set<ExtendedDataType<?, ?, ?, ? super GtuDataRoad>> extendedDataTypes,
+            final Set<FilterDataType<?, ? super GtuDataRoad>> filterDataTypes, final RoadNetwork network)
     {
         super(extendedDataTypes, filterDataTypes);
         Throw.whenNull(network, "Network may not be null.");
@@ -108,15 +108,16 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
     /**
      * Constructor which uses the given frequency to determine the sampling interval.
-     * @param extendedDataTypes Set&lt;ExtendedDataType&lt;?, ?, ?, GtuData&gt;&gt;; extended data types
-     * @param filterDataTypes Set&lt;FilterDataType&lt;?&gt;&gt;; filter data types
+     * @param extendedDataTypes Set&lt;ExtendedDataType&lt;?, ?, ?, ? super GtuDataRoad&gt;&gt;; extended data types
+     * @param filterDataTypes Set&lt;FilterDataType&lt;?, ? super GtuDataRoad&gt;&gt;; filter data types
      * @param network RoadNetwork; the network
      * @param frequency Frequency; sampling frequency
      * @throws NullPointerException if an input is {@code null}
      * @throws IllegalArgumentException if frequency is negative or zero
      */
-    public RoadSampler(final Set<ExtendedDataType<?, ?, ?, GtuDataRoad>> extendedDataTypes,
-            final Set<FilterDataType<?>> filterDataTypes, final RoadNetwork network, final Frequency frequency)
+    public RoadSampler(final Set<ExtendedDataType<?, ?, ?, ? super GtuDataRoad>> extendedDataTypes,
+            final Set<FilterDataType<?, ? super GtuDataRoad>> filterDataTypes, final RoadNetwork network,
+            final Frequency frequency)
     {
         super(extendedDataTypes, filterDataTypes);
         Throw.whenNull(network, "Network may not be null.");
@@ -468,10 +469,10 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
         private final RoadNetwork network;
 
         /** Registration of included extended data types. */
-        private final Set<ExtendedDataType<?, ?, ?, GtuDataRoad>> extendedDataTypes = new LinkedHashSet<>();
+        private final Set<ExtendedDataType<?, ?, ?, ? super GtuDataRoad>> extendedDataTypes = new LinkedHashSet<>();
 
         /** Set of registered filter data types. */
-        private final Set<FilterDataType<?>> filterDataTypes = new LinkedHashSet<>();
+        private final Set<FilterDataType<?, ? super GtuDataRoad>> filterDataTypes = new LinkedHashSet<>();
 
         /** Frequency. */
         private Frequency freq;
@@ -487,10 +488,10 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
         /**
          * Register extended data type.
-         * @param extendedDataType ExtendedDataType&lt;?, ?, ?, GtuData&gt;; extended data type
+         * @param extendedDataType ExtendedDataType&lt;?, ?, ?, ? super GtuDataRoad&gt;; extended data type
          * @return Factory; this factory
          */
-        public Factory registerExtendedDataType(final ExtendedDataType<?, ?, ?, GtuDataRoad> extendedDataType)
+        public Factory registerExtendedDataType(final ExtendedDataType<?, ?, ?, ? super GtuDataRoad> extendedDataType)
         {
             Throw.whenNull(extendedDataType, "Extended data type may not be null.");
             this.extendedDataTypes.add(extendedDataType);
@@ -499,10 +500,10 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
         /**
          * Register filter data type.
-         * @param filterDataType FilterDataType&lt;?&gt;; filter data type
+         * @param filterDataType FilterDataType&lt;?, ? super GtuDataRoad&gt;; filter data type
          * @return Factory; this factory
          */
-        public Factory registerFilterDataType(final FilterDataType<?> filterDataType)
+        public Factory registerFilterDataType(final FilterDataType<?, ? super GtuDataRoad> filterDataType)
         {
             Throw.whenNull(filterDataType, "Filter data type may not be null.");
             this.filterDataTypes.add(filterDataType);
