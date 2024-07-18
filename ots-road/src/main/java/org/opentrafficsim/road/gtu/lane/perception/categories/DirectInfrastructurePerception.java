@@ -113,9 +113,12 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
      */
     private SortedSet<LaneChangeInfo> computeLaneChangeInfo(final RelativeLane lane, final LaneAccessLaw laneLaw)
     {
-        // TODO make output a SortedSet<LaneChangeInfo>
         SortedSet<LaneChangeInfo> out = new TreeSet<>();
         Route route = getGtu().getStrategicalPlanner().getRoute();
+        if (route == null)
+        {
+            return out;
+        }
         for (LaneRecord root : getLaneStructure().getCrossSectionRecords(lane))
         {
             LaneRecord record = root;
