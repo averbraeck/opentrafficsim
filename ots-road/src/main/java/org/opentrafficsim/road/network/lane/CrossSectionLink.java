@@ -39,6 +39,9 @@ public class CrossSectionLink extends Link implements Serializable
     /** List of lanes. */
     private final List<Lane> lanes = new ArrayList<>();
 
+    /** List of shoulders. */
+    private final List<Shoulder> shoulders = new ArrayList<>();
+
     /** The policy to generally keep left, keep right, or keep lane. */
     private final LaneKeepingPolicy laneKeepingPolicy;
 
@@ -114,9 +117,17 @@ public class CrossSectionLink extends Link implements Serializable
         this.crossSectionElementList.add(cse);
         if (cse instanceof Lane)
         {
-            this.lanes.add((Lane) cse);
-            fireTimedEvent(LANE_ADD_EVENT, new Object[] {getNetwork().getId(), getId(), cse.getId(), this.lanes.indexOf(cse)},
-                    getSimulator().getSimulatorTime());
+            if (cse instanceof Shoulder)
+            {
+                this.shoulders.add((Shoulder) cse);
+            }
+            else
+            {
+                this.lanes.add((Lane) cse);
+                fireTimedEvent(LANE_ADD_EVENT,
+                        new Object[] {getNetwork().getId(), getId(), cse.getId(), this.lanes.indexOf(cse)},
+                        getSimulator().getSimulatorTime());
+            }
         }
     }
 
@@ -161,7 +172,27 @@ public class CrossSectionLink extends Link implements Serializable
      */
     public final List<Lane> getLanes()
     {
-        return this.lanes == null ? new ArrayList<>() : new ArrayList<>(this.lanes);
+        return new ArrayList<>(this.lanes);
+    }
+    
+    /**
+     * Return a safe copy of the list of shoulders of this CrossSectionLink.
+     * @return List&lt;Shoulder&gt;; the list of lanes.
+     */
+    public final List<Shoulder> getShoulders()
+    {
+        return new ArrayList<>(this.shoulders);
+    }
+    
+    /**
+     * Return a safe copy of the list of lanes and shoulders of this CrossSectionLink.
+     * @return List&lt;Lane&gt;; the list of lanes.
+     */
+    public final List<Lane> getLanesAndShoulders()
+    {
+        List<Lane> all = new ArrayList<>(this.lanes);
+        all.addAll(this.shoulders);
+        return all;
     }
 
     /**

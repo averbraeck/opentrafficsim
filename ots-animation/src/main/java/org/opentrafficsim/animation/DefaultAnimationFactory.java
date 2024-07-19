@@ -63,6 +63,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.object.BusStop;
@@ -149,17 +150,14 @@ public class DefaultAnimationFactory implements EventListener
                     {
                         for (CrossSectionElement element : cLink.getCrossSectionElementList())
                         {
-                            if (element instanceof Lane lane)
+                            if (element instanceof Shoulder shoulder)
                             {
-                                if (lane.getType().equals(Lane.SHOULDER))
-                                {
-                                    new CrossSectionElementAnimation<>(new AnimationShoulderData(lane), this.simulator,
-                                            Color.DARK_GRAY);
-                                }
-                                else
-                                {
-                                    new LaneAnimation(new AnimationLaneData(lane), this.simulator, Color.GRAY.brighter());
-                                }
+                                new CrossSectionElementAnimation<>(new AnimationShoulderData(shoulder), this.simulator,
+                                        Color.DARK_GRAY);
+                            }
+                            else if (element instanceof Lane lane)
+                            {
+                                new LaneAnimation(new AnimationLaneData(lane), this.simulator, Color.GRAY.brighter());
                             }
                             else if (element instanceof Stripe stripe)
                             {

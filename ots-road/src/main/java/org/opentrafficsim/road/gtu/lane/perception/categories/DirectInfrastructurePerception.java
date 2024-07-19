@@ -1,31 +1,29 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.WeakHashMap;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.base.TimeStampedObject;
+import org.djutils.immutablecollections.ImmutableSortedSet;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.base.parameters.ParameterTypeLength;
+import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.LaneStructureRecord;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.lane.perception.structure.LaneRecord;
+import org.opentrafficsim.road.gtu.lane.perception.structure.LaneStructure;
+import org.opentrafficsim.road.network.LaneAccessLaw;
+import org.opentrafficsim.road.network.LaneChangeInfo;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
-import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
+import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
@@ -42,47 +40,18 @@ import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-// TODO: more than the lane speed limit and maximum vehicle speed in the speed limit prospect
-public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionCategory implements InfrastructurePerception
+public class DirectInfrastructurePerception extends AbstractPerceptionCategory<LaneBasedGtu, LanePerception>
+        implements InfrastructurePerception
 {
 
     /** */
     private static final long serialVersionUID = 20160811L;
 
-    /** Infrastructure lane change info per relative lane. */
-    private final Map<RelativeLane, TimeStampedObject<SortedSet<InfrastructureLaneChangeInfo>>> infrastructureLaneChangeInfo =
-            new LinkedHashMap<>();
+    /** Range of lane change info perception. */
+    public static ParameterTypeLength PERCEPTION = ParameterTypes.PERCEPTION;
 
-    /** Speed limit prospect per relative lane. */
-    private Map<RelativeLane, TimeStampedObject<SpeedLimitProspect>> speedLimitProspect = new LinkedHashMap<>();
-
-    /** Legal Lane change possibilities per relative lane and lateral direction. */
-    private final Map<RelativeLane,
-            Map<LateralDirectionality, TimeStampedObject<LaneChangePossibility>>> legalLaneChangePossibility =
-                    new LinkedHashMap<>();
-
-    /** Physical Lane change possibilities per relative lane and lateral direction. */
-    private final Map<RelativeLane,
-            Map<LateralDirectionality, TimeStampedObject<LaneChangePossibility>>> physicalLaneChangePossibility =
-                    new LinkedHashMap<>();
-
-    /** Cross-section. */
-    private TimeStampedObject<SortedSet<RelativeLane>> crossSection;
-
-    /** Cache for anyNextOk. */
-    private final Map<LaneStructureRecord, Boolean> anyNextOkCache = new WeakHashMap<>();
-
-    /** Set of records with accessible end as they are cut off. */
-    private final Set<LaneStructureRecord> cutOff = new LinkedHashSet<>();
-
-    /** Root. */
-    private LaneStructureRecord root;
-
-    /** Lanes registered to the GTU used to check if an update is required. */
-    private Set<Lane> lanes;
-
-    /** Route. */
-    private Route route;
+    /** Range of lane change possibility perception. */
+    public static ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 
     /**
      * @param perception LanePerception; perception
@@ -94,570 +63,223 @@ public class DirectInfrastructurePerception extends LaneBasedAbstractPerceptionC
 
     /** {@inheritDoc} */
     @Override
-    public void updateAll() throws GtuException, ParameterException
+    public final SortedSet<LaneChangeInfo> getLegalLaneChangeInfo(final RelativeLane lane)
     {
-        updateCrossSection();
-        // clean-up
-        Set<RelativeLane> cs = getCrossSection();
-        this.infrastructureLaneChangeInfo.keySet().retainAll(cs);
-        this.legalLaneChangePossibility.keySet().retainAll(cs);
-        this.physicalLaneChangePossibility.keySet().retainAll(cs);
-        this.speedLimitProspect.keySet().retainAll(cs);
-        // only if required
-        LaneStructureRecord newRoot = getPerception().getLaneStructure().getRootRecord();
-        if (this.root == null || !newRoot.equals(this.root)
-                || !this.lanes.equals(getPerception().getGtu().positions(RelativePosition.REFERENCE_POSITION).keySet())
-                || !Objects.equals(this.route, getPerception().getGtu().getStrategicalPlanner().getRoute())
-                || this.cutOff.stream().filter((record) -> !record.isCutOffEnd()).count() > 0)
-        {
-            this.cutOff.clear();
-            this.root = newRoot;
-            this.lanes = getPerception().getGtu().positions(RelativePosition.REFERENCE_POSITION).keySet();
-            this.route = getPerception().getGtu().getStrategicalPlanner().getRoute();
-            // TODO: this is not suitable if we change lane and consider e.g. dynamic speed signs, they will be forgotten
-            this.speedLimitProspect.clear();
-            for (RelativeLane lane : getCrossSection())
-            {
-                updateInfrastructureLaneChangeInfo(lane);
-                updateLegalLaneChangePossibility(lane, LateralDirectionality.LEFT);
-                updateLegalLaneChangePossibility(lane, LateralDirectionality.RIGHT);
-                updatePhysicalLaneChangePossibility(lane, LateralDirectionality.LEFT);
-                updatePhysicalLaneChangePossibility(lane, LateralDirectionality.RIGHT);
-            }
-        }
-
-        // speed limit prospect
-        for (RelativeLane lane : getCrossSection())
-        {
-            updateSpeedLimitProspect(lane);
-        }
-        for (RelativeLane lane : getCrossSection())
-        {
-            if (!this.infrastructureLaneChangeInfo.containsKey(lane))
-            {
-                updateInfrastructureLaneChangeInfo(lane); // new lane in cross section
-                updateLegalLaneChangePossibility(lane, LateralDirectionality.LEFT);
-                updateLegalLaneChangePossibility(lane, LateralDirectionality.RIGHT);
-                updatePhysicalLaneChangePossibility(lane, LateralDirectionality.LEFT);
-                updatePhysicalLaneChangePossibility(lane, LateralDirectionality.RIGHT);
-            }
-        }
+        return computeIfAbsent("legalLaneChangeInfo", () -> computeLaneChangeInfo(lane, LaneAccessLaw.LEGAL), lane);
     }
 
     /** {@inheritDoc} */
     @Override
-    public final void updateInfrastructureLaneChangeInfo(final RelativeLane lane) throws GtuException, ParameterException
+    public final SortedSet<LaneChangeInfo> getPhysicalLaneChangeInfo(final RelativeLane lane)
     {
-        if (this.infrastructureLaneChangeInfo.containsKey(lane)
-                && this.infrastructureLaneChangeInfo.get(lane).timestamp().equals(getTimestamp()))
-        {
-            // already done at this time
-            return;
-        }
-        updateCrossSection();
-
-        // start at requested lane
-        SortedSet<InfrastructureLaneChangeInfo> resultSet = new TreeSet<>();
-        LaneStructureRecord record = getPerception().getLaneStructure().getFirstRecord(lane);
-        try
-        {
-            record = getPerception().getLaneStructure().getFirstRecord(lane);
-            if (!record.allowsRoute(getGtu().getStrategicalPlanner().getRoute(), getGtu().getType()))
-            {
-                resultSet.add(InfrastructureLaneChangeInfo.fromInaccessibleLane(record.isDeadEnd()));
-                this.infrastructureLaneChangeInfo.put(lane, new TimeStampedObject<>(resultSet, getTimestamp()));
-                return;
-            }
-        }
-        catch (NetworkException exception)
-        {
-            throw new GtuException("Route has no destination.", exception);
-        }
-        Map<LaneStructureRecord, InfrastructureLaneChangeInfo> currentSet = new LinkedHashMap<>();
-        Map<LaneStructureRecord, InfrastructureLaneChangeInfo> nextSet = new LinkedHashMap<>();
-        RelativePosition front = getPerception().getGtu().getFront();
-        currentSet.put(record,
-                new InfrastructureLaneChangeInfo(0, record, front, record.isDeadEnd(), LateralDirectionality.NONE));
-        while (!currentSet.isEmpty())
-        {
-            // move lateral
-            nextSet.putAll(currentSet);
-            for (LaneStructureRecord laneRecord : currentSet.keySet())
-            {
-                while (laneRecord.legalLeft() && !nextSet.containsKey(laneRecord.getLeft()))
-                {
-                    InfrastructureLaneChangeInfo info =
-                            nextSet.get(laneRecord).left(laneRecord.getLeft(), front, laneRecord.getLeft().isDeadEnd());
-                    nextSet.put(laneRecord.getLeft(), info);
-                    laneRecord = laneRecord.getLeft();
-                }
-            }
-            for (LaneStructureRecord laneRecord : currentSet.keySet())
-            {
-                while (laneRecord.legalRight() && !nextSet.containsKey(laneRecord.getRight()))
-                {
-                    InfrastructureLaneChangeInfo info =
-                            nextSet.get(laneRecord).right(laneRecord.getRight(), front, laneRecord.getRight().isDeadEnd());
-                    nextSet.put(laneRecord.getRight(), info);
-                    laneRecord = laneRecord.getRight();
-                }
-            }
-            // move longitudinal
-            currentSet = nextSet;
-            nextSet = new LinkedHashMap<>();
-            InfrastructureLaneChangeInfo bestOk = null;
-            InfrastructureLaneChangeInfo bestNotOk = null;
-            boolean deadEnd = false;
-            for (LaneStructureRecord laneRecord : currentSet.keySet())
-            {
-                boolean anyOk = Try.assign(() -> anyNextOk(laneRecord), "Route has no destination.");
-                if (anyOk)
-                {
-                    // add to nextSet
-                    for (LaneStructureRecord next : laneRecord.getNext())
-                    {
-                        try
-                        {
-                            if (next.allowsRoute(getGtu().getStrategicalPlanner().getRoute(), getGtu().getType()))
-                            {
-                                InfrastructureLaneChangeInfo prev = currentSet.get(laneRecord);
-                                InfrastructureLaneChangeInfo info =
-                                        new InfrastructureLaneChangeInfo(prev.getRequiredNumberOfLaneChanges(), next, front,
-                                                next.isDeadEnd(), prev.getLateralDirectionality());
-                                nextSet.put(next, info);
-                            }
-                        }
-                        catch (NetworkException exception)
-                        {
-                            throw new RuntimeException("Network exception while considering route on next lane.", exception);
-                        }
-                    }
-                    // take best ok
-                    if (bestOk == null || currentSet.get(laneRecord).getRequiredNumberOfLaneChanges() < bestOk
-                            .getRequiredNumberOfLaneChanges())
-                    {
-                        bestOk = currentSet.get(laneRecord);
-                    }
-                }
-                else
-                {
-                    // take best not ok
-                    deadEnd = deadEnd || currentSet.get(laneRecord).isDeadEnd();
-                    if (bestNotOk == null || currentSet.get(laneRecord).getRequiredNumberOfLaneChanges() < bestNotOk
-                            .getRequiredNumberOfLaneChanges())
-                    {
-                        bestNotOk = currentSet.get(laneRecord);
-                    }
-                }
-
-            }
-            if (bestOk == null)
-            {
-                break;
-            }
-            // if there are lanes that are not okay and only -further- lanes that are ok, we need to change to one of the ok's
-            if (bestNotOk != null && bestOk.getRequiredNumberOfLaneChanges() > bestNotOk.getRequiredNumberOfLaneChanges())
-            {
-                bestOk.setDeadEnd(deadEnd);
-                resultSet.add(bestOk);
-            }
-            currentSet = nextSet;
-            nextSet = new LinkedHashMap<>();
-        }
-
-        // save
-        this.infrastructureLaneChangeInfo.put(lane, new TimeStampedObject<>(resultSet, getTimestamp()));
-    }
-
-    /**
-     * Returns whether the given record end is ok to pass. If not, a lane change is required before this end. The method will
-     * also return true if the next node is the end node of the route, if the lane is cut off due to limited perception range,
-     * or when there is a {@code SinkSensor} on the lane.
-     * @param record LaneStructureRecord; checked record
-     * @return whether the given record end is ok to pass
-     * @throws NetworkException if destination could not be obtained
-     * @throws GtuException if the GTU could not be obtained
-     */
-    private boolean anyNextOk(final LaneStructureRecord record) throws NetworkException, GtuException
-    {
-        if (record.isCutOffEnd())
-        {
-            this.cutOff.add(record);
-            return true; // always ok if cut-off
-        }
-        // check cache
-        Boolean ok = this.anyNextOkCache.get(record);
-        if (ok != null)
-        {
-            return ok;
-        }
-        // sink
-        for (LaneDetector s : record.getLane().getDetectors())
-        {
-            // XXX for now, we do allow to lower speed for a DestinationSensor (e.g., to brake for parking)
-            if (s instanceof SinkDetector)
-            {
-                this.anyNextOkCache.put(record, true);
-                return true; // ok towards sink
-            }
-        }
-        // check destination
-        Route currentRoute = getGtu().getStrategicalPlanner().getRoute();
-        try
-        {
-            if (currentRoute != null && currentRoute.destinationNode().equals(record.getToNode()))
-            {
-                this.anyNextOkCache.put(record, true);
-                return true;
-            }
-        }
-        catch (NetworkException exception)
-        {
-            throw new RuntimeException("Could not determine destination node.", exception);
-        }
-        // check dead-end
-        if (record.getNext().isEmpty())
-        {
-            this.anyNextOkCache.put(record, false);
-            return false; // never ok if dead-end
-        }
-        // check if we have a route
-        if (currentRoute == null)
-        {
-            this.anyNextOkCache.put(record, true);
-            return true; // if no route assume ok, i.e. simple networks without routes
-        }
-        // finally check route
-        ok = record.allowsRouteAtEnd(currentRoute, getGtu().getType());
-        this.anyNextOkCache.put(record, ok);
-        return ok;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void updateSpeedLimitProspect(final RelativeLane lane) throws GtuException, ParameterException
-    {
-        updateCrossSection();
-        checkLaneIsInCrossSection(lane);
-        TimeStampedObject<SpeedLimitProspect> tsSlp = this.speedLimitProspect.get(lane);
-        SpeedLimitProspect slp;
-        if (tsSlp != null)
-        {
-            slp = tsSlp.object();
-            slp.update(getGtu().getOdometer());
-        }
-        else
-        {
-            slp = new SpeedLimitProspect(getGtu().getOdometer());
-            slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.MAX_VEHICLE_SPEED, getGtu().getMaximumSpeed(), getGtu());
-        }
-        try
-        {
-            Lane laneObj = getGtu().getReferencePosition().lane();
-            if (!slp.containsAddSource(laneObj))
-            {
-                slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.FIXED_SIGN, laneObj.getSpeedLimit(getGtu().getType()), laneObj);
-            }
-        }
-        catch (NetworkException exception)
-        {
-            throw new RuntimeException("Could not obtain speed limit from lane for perception.", exception);
-        }
-        this.speedLimitProspect.put(lane, new TimeStampedObject<>(slp, getTimestamp()));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void updateLegalLaneChangePossibility(final RelativeLane lane, final LateralDirectionality lat)
-            throws GtuException, ParameterException
-    {
-        updateLaneChangePossibility(lane, lat, true, this.legalLaneChangePossibility);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void updatePhysicalLaneChangePossibility(final RelativeLane lane, final LateralDirectionality lat)
-            throws GtuException, ParameterException
-    {
-        updateLaneChangePossibility(lane, lat, false, this.physicalLaneChangePossibility);
-    }
-
-    /**
-     * Updates the distance over which lane changes remains legally or physically possible.
-     * @param lane RelativeLane; lane from which the lane change possibility is requested
-     * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
-     * @param legal boolean; legal, or physical otherwise
-     * @param possibilityMap
-     *            Map&lt;RelativeLane,Map&lt;LateralDirectionality,TimeStampedObject&lt;LaneChangePossibility&gt;&gt;&gt;;
-     *            Map&lt;RelativeLane,Map&lt;LateralDirectionality,TimeStampedObject&lt;LaneChangePossibility&gt;&gt;&gt;; legal
-     *            or physical possibility map
-     * @throws GtuException if the GTU was not initialized or if the lane is not in the cross section
-     * @throws ParameterException if a parameter is not defined
-     */
-    private void updateLaneChangePossibility(final RelativeLane lane, final LateralDirectionality lat, final boolean legal,
-            final Map<RelativeLane, Map<LateralDirectionality, TimeStampedObject<LaneChangePossibility>>> possibilityMap)
-            throws GtuException, ParameterException
-    {
-        updateCrossSection();
-        checkLaneIsInCrossSection(lane);
-
-        if (possibilityMap.get(lane) == null)
-        {
-            possibilityMap.put(lane, new LinkedHashMap<>());
-        }
-        LaneStructureRecord record = getPerception().getLaneStructure().getFirstRecord(lane);
-        // check tail
-        Length tail = getPerception().getGtu().getRear().dx();
-        while (record != null && record.getStartDistance().gt(tail) && !record.getPrev().isEmpty()
-                && ((lat.isLeft() && record.possibleLeft(legal)) || (lat.isRight() && record.possibleRight(legal))))
-        {
-            if (record.getPrev().size() > 1)
-            {
-                // assume not possible at a merge
-                possibilityMap.get(lane).put(lat, new TimeStampedObject<>(
-                        new LaneChangePossibility(record.getPrev().get(0), tail, true), getTimestamp()));
-                return;
-            }
-            else if (record.getPrev().isEmpty())
-            {
-                // dead-end, no lane upwards prevents a lane change
-                break;
-            }
-            record = record.getPrev().get(0);
-            if ((lat.isLeft() && !record.possibleLeft(legal)) || (lat.isRight() && !record.possibleRight(legal)))
-            {
-                // this lane prevents a lane change for the tail
-                possibilityMap.get(lane).put(lat,
-                        new TimeStampedObject<>(new LaneChangePossibility(record, tail, true), getTimestamp()));
-                return;
-            }
-        }
-
-        LaneStructureRecord prevRecord = null;
-        record = getPerception().getLaneStructure().getFirstRecord(lane);
-
-        Length dx;
-        if ((lat.isLeft() && record.possibleLeft(legal)) || (lat.isRight() && record.possibleRight(legal)))
-        {
-            dx = getPerception().getGtu().getFront().dx();
-            while (record != null
-                    && ((lat.isLeft() && record.possibleLeft(legal)) || (lat.isRight() && record.possibleRight(legal))))
-            {
-                // TODO: splits
-                prevRecord = record;
-                record = record.getNext().isEmpty() ? null : record.getNext().get(0);
-            }
-        }
-        else
-        {
-            dx = getPerception().getGtu().getRear().dx();
-            while (record != null
-                    && ((lat.isLeft() && !record.possibleLeft(legal)) || (lat.isRight() && !record.possibleRight(legal))))
-            {
-                // TODO: splits
-                prevRecord = record;
-                record = record.getNext().isEmpty() ? null : record.getNext().get(0);
-            }
-        }
-        possibilityMap.get(lane).put(lat,
-                new TimeStampedObject<>(new LaneChangePossibility(prevRecord, dx, true), getTimestamp()));
-    }
-
-    /**
-     * @param lane RelativeLane; lane to check
-     * @throws GtuException if the lane is not in the cross section
-     */
-    private void checkLaneIsInCrossSection(final RelativeLane lane) throws GtuException
-    {
-        Throw.when(!getCrossSection().contains(lane), GtuException.class,
-                "The requeasted lane %s is not in the most recent cross section.", lane);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final void updateCrossSection() throws GtuException, ParameterException
-    {
-        if (this.crossSection != null && this.crossSection.timestamp().equals(getTimestamp()))
-        {
-            // already done at this time
-            return;
-        }
-        this.crossSection =
-                new TimeStampedObject<>(getPerception().getLaneStructure().getExtendedCrossSection(), getTimestamp());
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final SortedSet<InfrastructureLaneChangeInfo> getInfrastructureLaneChangeInfo(final RelativeLane lane)
-    {
-        return this.infrastructureLaneChangeInfo.get(lane).object();
+        return computeIfAbsent("physicalLaneChangeInfo", () -> computeLaneChangeInfo(lane, LaneAccessLaw.PHYSICAL), lane);
     }
 
     /** {@inheritDoc} */
     @Override
     public final SpeedLimitProspect getSpeedLimitProspect(final RelativeLane lane)
     {
-        return this.speedLimitProspect.get(lane).object();
+        return computeIfAbsent("speedLimitProspect", () -> computeSpeedLimitProspect(lane), lane);
     }
 
     /** {@inheritDoc} */
     @Override
     public final Length getLegalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat)
     {
-        return this.legalLaneChangePossibility.get(fromLane).get(lat).object().getDistance(lat);
+        return computeIfAbsent("legalLaneChange", () -> computeLaneChangePossibility(fromLane, lat, LaneAccessLaw.LEGAL),
+                fromLane, lat);
     }
 
     /** {@inheritDoc} */
     @Override
     public final Length getPhysicalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat)
     {
-        return this.physicalLaneChangePossibility.get(fromLane).get(lat).object().getDistance(lat);
+        return computeIfAbsent("physicalLaneChange", () -> computeLaneChangePossibility(fromLane, lat, LaneAccessLaw.PHYSICAL),
+                fromLane, lat);
     }
 
     /** {@inheritDoc} */
     @Override
     public final SortedSet<RelativeLane> getCrossSection()
     {
-        return this.crossSection.object();
+        return computeIfAbsent("crossSection", () -> getLaneStructure().getRootCrossSection());
     }
 
     /**
-     * Returns time stamped infrastructure lane change info of a lane. A set is returned as multiple points may force lane
-     * changes. Which point is considered most critical is a matter of driver interpretation and may change over time. This is
-     * shown below. Suppose vehicle A needs to take the off-ramp, and that behavior is that the minimum distance per required
-     * lane change determines how critical it is. First, 400m before the lane-drop, the off-ramp is critical. 300m downstream,
-     * the lane-drop is critical. Info is sorted by distance, closest first.
-     * 
-     * <pre>
-     * _______
-     * _ _A_ _\_________
-     * _ _ _ _ _ _ _ _ _
-     * _________ _ _ ___
-     *          \_______
-     *     (-)        Lane-drop: 1 lane change  in 400m (400m per lane change)
-     *     (--------) Off-ramp:  3 lane changes in 900m (300m per lane change, critical)
-     *     
-     *     (-)        Lane-drop: 1 lane change  in 100m (100m per lane change, critical)
-     *     (--------) Off-ramp:  3 lane changes in 600m (200m per lane change)
-     * </pre>
-     * 
-     * @param lane RelativeLane; relative lateral lane
-     * @return time stamped infrastructure lane change info of a lane
+     * Compute lane change info.
+     * @param lane RelativeLane; lane.
+     * @param laneLaw LaneLaw; lane change law.
+     * @return SortedSet&lt;InfrastructureLaneChangeInfo&gt;; lane change info.
      */
-    public final TimeStampedObject<SortedSet<InfrastructureLaneChangeInfo>> getTimeStampedInfrastructureLaneChangeInfo(
-            final RelativeLane lane)
+    private SortedSet<LaneChangeInfo> computeLaneChangeInfo(final RelativeLane lane, final LaneAccessLaw laneLaw)
     {
-        return this.infrastructureLaneChangeInfo.get(lane);
+        SortedSet<LaneChangeInfo> out = new TreeSet<>();
+        Route route = getGtu().getStrategicalPlanner().getRoute();
+        if (route == null)
+        {
+            return out;
+        }
+        for (LaneRecord root : getLaneStructure().getCrossSectionRecords(lane))
+        {
+            LaneRecord record = root;
+            while (record != null && !record.isOnRoute(route))
+            {
+                Throw.when(record.getNext().size() > 1, IllegalStateException.class,
+                        "Requesting lane change info on relative lane that is found upstream of a merge, "
+                                + "but the record of which splits downstream.");
+                record = record.getNext().isEmpty() ? null : record.getNext().iterator().next();
+            }
+            if (record == null)
+            {
+                continue; // this lane was added in a lateral move, use the lane from which this move was used
+            }
+            Lane l = record.getLane();
+            if (l instanceof Shoulder)
+            {
+                if (lane.isCurrent())
+                {
+                    for (LateralDirectionality lat : new LateralDirectionality[] {LateralDirectionality.LEFT,
+                            LateralDirectionality.RIGHT})
+                    {
+                        if (!record.getLane().accessibleAdjacentLanesPhysical(lat, getGtu().getType()).isEmpty())
+                        {
+                            out.add(new LaneChangeInfo(1, Length.ZERO, true, lat));
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Length range = Try.assign(() -> getGtu().getParameters().getParameter(PERCEPTION),
+                        "Parameter PERCEPTION not available.");
+                ImmutableSortedSet<LaneChangeInfo> set =
+                        getGtu().getNetwork().getLaneChangeInfo(l, route, getGtu().getType(), range, laneLaw);
+                if (set != null)
+                {
+                    Length front = getGtu().getRelativePositions().get(RelativePosition.FRONT).dx();
+                    for (LaneChangeInfo laneChangeInfo : set)
+                    {
+                        Length dist = laneChangeInfo.remainingDistance().plus(record.getStartDistance()).minus(front);
+                        out.add(new LaneChangeInfo(laneChangeInfo.numberOfLaneChanges(), dist, laneChangeInfo.deadEnd(),
+                                laneChangeInfo.lateralDirectionality()));
+                    }
+                }
+            }
+        }
+        return out;
     }
 
     /**
-     * Returns the time stamped prospect for speed limits on a lane (dynamic speed limits may vary between lanes).
-     * @param lane RelativeLane; relative lateral lane
-     * @return time stamped prospect for speed limits on a lane
+     * Compute speed limit prospect.
+     * @param lane RelativeLane; lane.
+     * @return SpeedLimitProspect; speed limit prospect.
      */
-    public final TimeStampedObject<SpeedLimitProspect> getTimeStampedSpeedLimitProspect(final RelativeLane lane)
+    private SpeedLimitProspect computeSpeedLimitProspect(final RelativeLane lane)
     {
-        return this.speedLimitProspect.get(lane);
+        // TODO: this is very limited information regarding what the prospect could have, is this is only maximum vehicle speed,
+        // and legal speed on the lane
+        SpeedLimitProspect slp = new SpeedLimitProspect(getGtu().getOdometer());
+        slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.MAX_VEHICLE_SPEED, getGtu().getMaximumSpeed(), getGtu());
+        Lane l = getLaneStructure().getRootRecord(lane).getLane();
+        GtuType gtuType = getGtu().getType();
+        slp.addSpeedInfo(Length.ZERO, SpeedLimitTypes.FIXED_SIGN, Try.assign(() -> l.getSpeedLimit(getGtu().getType()),
+                "No speed limit for GTU type %s on lane %s.", gtuType, l.getFullId()), l);
+        return slp;
     }
 
     /**
-     * Returns the time stamped distance over which a lane change remains legally possible.
-     * @param fromLane RelativeLane; lane from which the lane change possibility is requested
-     * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
-     * @return time stamped distance over which a lane change remains possible
-     * @throws NullPointerException if {@code lat == null}
+     * Compute lane change possibility.
+     * @param fromLane RelativeLane; lane to possibly change from.
+     * @param lat LateralDirectionality; direction to change to.
+     * @param accessLaw LaneAccessLaw; legal or physical.
+     * @return Length; length over which a lane change is possible, or not for a negative value.
      */
-    public final TimeStampedObject<Length> getTimeStampedLegalLaneChangePossibility(final RelativeLane fromLane,
-            final LateralDirectionality lat)
+    private Length computeLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat,
+            final LaneAccessLaw accessLaw)
     {
-        TimeStampedObject<LaneChangePossibility> tsLcp = this.legalLaneChangePossibility.get(fromLane).get(lat);
-        LaneChangePossibility lcp = tsLcp.object();
-        return new TimeStampedObject<>(lcp.getDistance(lat), tsLcp.timestamp());
+        LaneRecord root = getLaneStructure().getRootRecord(fromLane);
+        LaneRecord record = root;
+
+        // check tail
+        Length tail = getPerception().getGtu().getRear().dx();
+        while (record != null && record.getStartDistance().gt(tail) && !record.getPrev().isEmpty())
+        {
+            if (record.getPrev().size() > 1)
+            {
+                return tail.minus(record.getStartDistance()); // merge prevents lane change
+            }
+            record = record.getPrev().iterator().next();
+            if (!canChange(record, lat, accessLaw))
+            {
+                return tail.minus(record.getEndDistance());
+            }
+        }
+
+        LaneRecord prevRecord = null;
+        record = root;
+        Length lookAhead;
+        try
+        {
+            lookAhead = getPerception().getGtu().getParameters().getParameter(LOOKAHEAD);
+        }
+        catch (ParameterException ex)
+        {
+            lookAhead = Length.POSITIVE_INFINITY;
+        }
+        if (canChange(record, lat, accessLaw))
+        {
+            while (record != null && canChange(record, lat, accessLaw))
+            {
+                if (record.getEndDistance().gt(lookAhead))
+                {
+                    return Length.POSITIVE_INFINITY;
+                }
+                prevRecord = record;
+                record = record.getNext().isEmpty() ? null : record.getNext().iterator().next();
+            }
+            Length d = prevRecord.getEndDistance().minus(getPerception().getGtu().getFront().dx());
+            if (d.gt0())
+            {
+                return d;
+            }
+            // nose is beyond lane, and next lane does not allow a lane change, we can do a !canChange() search
+        }
+        while (record != null && !canChange(record, lat, accessLaw))
+        {
+            prevRecord = record;
+            record = record.getNext().isEmpty() ? null : record.getNext().iterator().next();
+        }
+        return getPerception().getGtu().getRear().dx().minus(prevRecord.getEndDistance());
     }
 
     /**
-     * Returns the time stamped distance over which a lane change remains physically possible.
-     * @param fromLane RelativeLane; lane from which the lane change possibility is requested
-     * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
-     * @return time stamped distance over which a lane change remains possible
-     * @throws NullPointerException if {@code lat == null}
+     * Returns whether the lane change is possible.
+     * @param record LaneRecord; record.
+     * @param lat LateralDirectionality; direction of lane change.
+     * @param accessLaw LaneAccessLaw; legal or physical.
+     * @return boolean; whether the lane change is possible.
      */
-    public final TimeStampedObject<Length> getTimeStampedPhysicalLaneChangePossibility(final RelativeLane fromLane,
-            final LateralDirectionality lat)
+    private boolean canChange(final LaneRecord record, final LateralDirectionality lat, final LaneAccessLaw accessLaw)
     {
-        TimeStampedObject<LaneChangePossibility> tsLcp = this.physicalLaneChangePossibility.get(fromLane).get(lat);
-        LaneChangePossibility lcp = tsLcp.object();
-        return new TimeStampedObject<>(lcp.getDistance(lat), tsLcp.timestamp());
+        return accessLaw.equals(LaneAccessLaw.LEGAL)
+                ? !record.getLane().accessibleAdjacentLanesLegal(lat, getGtu().getType()).isEmpty()
+                : !record.getLane().accessibleAdjacentLanesPhysical(lat, getGtu().getType()).isEmpty();
     }
 
     /**
-     * Returns a time stamped set of relative lanes representing the cross section. Lanes are sorted left to right.
-     * @return time stamped set of relative lanes representing the cross section
+     * Returns the lane structure.
+     * @return LaneStructure; lane structure.
      */
-    public final TimeStampedObject<SortedSet<RelativeLane>> getTimeStampedCrossSection()
+    private LaneStructure getLaneStructure()
     {
-        return this.crossSection;
+        return Try.assign(() -> getPerception().getLaneStructure(), "Parameters for lane structure not available.");
     }
 
     /** {@inheritDoc} */
     @Override
     public final String toString()
     {
-        return "DirectInfrastructurePerception";
-    }
-
-    /**
-     * Helper class to return the distance over which a lane change is or is not possible. The distance is based on a
-     * LaneStructureRecord, and does not need an update as such.
-     * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
-     */
-    private class LaneChangePossibility
-    {
-
-        /** Structure the end of which determines the available distance. */
-        private final LaneStructureRecord record;
-
-        /** Relative distance towards nose or tail. */
-        private final double dx;
-
-        /** Whether to apply legal accessibility. */
-        private final boolean legal;
-
-        /**
-         * @param record LaneStructureRecord; structure the end of which determines the available distance
-         * @param dx Length; relative distance towards nose or tail
-         * @param legal boolean; whether to apply legal accessibility
-         */
-        LaneChangePossibility(final LaneStructureRecord record, final Length dx, final boolean legal)
-        {
-            this.record = record;
-            this.dx = dx.si;
-            this.legal = legal;
-        }
-
-        /**
-         * Returns the distance over which a lane change is (&gt;0) or is not (&lt;0) possible.
-         * @param lat LateralDirectionality; lateral direction
-         * @return Length distance over which a lane change is (&gt;0) or is not (&lt;0) possible
-         */
-        final Length getDistance(final LateralDirectionality lat)
-        {
-            double d = this.record.getStartDistance().si + this.record.getLane().getLength().si - this.dx;
-            if ((lat.isLeft() && this.record.possibleLeft(this.legal))
-                    || (lat.isRight() && this.record.possibleRight(this.legal)))
-            {
-                return Length.instantiateSI(d); // possible over d
-            }
-            return Length.instantiateSI(-d); // not possible over d
-        }
-
+        return "DirectInfrastructurePerception " + cacheAsString();
     }
 
 }

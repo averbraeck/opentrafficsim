@@ -21,7 +21,7 @@ public final class Break
 {
 
     /** Condition to allow or prevent breaking in lower-level functionality. */
-    private static boolean superCondition = true;
+    private static boolean superCondition = false;
 
     /**
      * Constructor.

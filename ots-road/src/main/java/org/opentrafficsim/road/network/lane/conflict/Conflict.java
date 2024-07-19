@@ -28,8 +28,6 @@ import org.opentrafficsim.road.gtu.lane.perception.AbstractPerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.AbstractPerceptionReiterable;
 import org.opentrafficsim.road.gtu.lane.perception.DownstreamNeighborsIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LaneBasedObjectIterable;
-import org.opentrafficsim.road.gtu.lane.perception.LaneRecord;
-import org.opentrafficsim.road.gtu.lane.perception.LaneRecordInterface;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.UpstreamNeighborsIterable;
@@ -37,6 +35,8 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayG
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuReal;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
+import org.opentrafficsim.road.gtu.lane.perception.structure.LaneRecordInterface;
+import org.opentrafficsim.road.gtu.lane.perception.structure.SimpleLaneRecord;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -93,7 +93,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     /////////////////////////////////////////////////////////////////
 
     /** Root for GTU search. */
-    private final LaneRecord root;
+    private final SimpleLaneRecord root;
 
     /** Position on the root. */
     private final Length rootPosition;
@@ -175,7 +175,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
         // Lane record for GTU provision
         this.rootPosition = longitudinalPosition;
-        this.root = new LaneRecord(lane, this.rootPosition.neg(), null);
+        this.root = new SimpleLaneRecord(lane, this.rootPosition.neg(), null);
     }
 
     /** {@inheritDoc} */
@@ -366,9 +366,8 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         return (Polygon2d) super.getGeometry();
     }
 
-    /**
-     * @return length.
-     */
+    /** {@inheritDoc} */
+    @Override
     public Length getLength()
     {
         return this.length;

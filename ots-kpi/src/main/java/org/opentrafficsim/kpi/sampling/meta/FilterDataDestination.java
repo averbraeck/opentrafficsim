@@ -13,7 +13,7 @@ import org.opentrafficsim.kpi.interfaces.GtuData;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class FilterDataDestination extends FilterDataType<String>
+public class FilterDataDestination extends FilterDataType<String, GtuData>
 {
 
     /**

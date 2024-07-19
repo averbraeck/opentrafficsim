@@ -57,6 +57,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionSlice;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.LaneType;
+import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Type;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -451,8 +452,12 @@ public final class NetworkParser
                 else if (cseTag instanceof CseShoulder)
                 {
                     CseShoulder shoulderTag = (CseShoulder) cseTag;
+                    // FIXME:  laneType is a mandatory field, but parsing or eclipse is not taking the new field
+                    // although specified in XML, the value is always null
+                    LaneType laneType = shoulderTag.getLaneType() == null ? SHOULDER
+                            : definitions.get(LaneType.class, shoulderTag.getLaneType().get(eval));
                     String id = shoulderTag.getId() != null ? shoulderTag.getId() : UUID.randomUUID().toString();
-                    CrossSectionElement shoulder = Lane.shoulder(csl, id, new OtsLine2d(centerLine), contour, slices);
+                    CrossSectionElement shoulder = new Shoulder(csl, id, new OtsLine2d(centerLine), contour, slices, laneType);
                     cseList.add(shoulder);
                 }
             }
@@ -474,6 +479,10 @@ public final class NetworkParser
             }
         }
     }
+    
+    /** Temporary fix for CseShoulder.getLaneType() always being null. */
+    // FIXME
+    private static final LaneType SHOULDER = new LaneType("Shoulder");
 
     /**
      * Parse a stripe on a road.

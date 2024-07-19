@@ -35,19 +35,19 @@
     </ots:DetectorTypes>
     <ots:RoadLayouts>
       <ots:RoadLayout Id="turnlane" LinkType="URBAN">
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="URBAN">
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
         <ots:Lane Id="lane1" LaneType="URBAN">
           <ots:Width>3.5m</ots:Width>
           <ots:SpeedLimit GtuType="CAR" LegalSpeedLimit="40km/h"/>
         </ots:Lane>
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="URBAN">
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
       </ots:RoadLayout>
       <ots:RoadLayout Id="2lane" LinkType="URBAN">
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="URBAN">
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
         <ots:Stripe Type="SOLID"/>
@@ -59,12 +59,12 @@
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
         <ots:Stripe Type="SOLID"/>
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="URBAN">
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
       </ots:RoadLayout>
       <ots:RoadLayout Id="2turnlane" LinkType="URBAN">
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="URBAN">
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
         <ots:Lane Id="lane2" LaneType="URBAN">
@@ -74,12 +74,12 @@
         <ots:Lane Id="lane1" LaneType="URBAN">
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="URBAN">
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
       </ots:RoadLayout>
       <ots:RoadLayout Id="4lane" LinkType="URBAN">
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="URBAN">
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
         <ots:Stripe Type="SOLID"/>
@@ -99,7 +99,7 @@
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
         <ots:Stripe Type="SOLID"/>
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="URBAN">
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
       </ots:RoadLayout>

@@ -32,7 +32,7 @@ public interface GtuData extends Identifiable
      * Returns the GTU type id.
      * @return type id of the gtu
      */
-    String getGtuId();
+    String getGtuTypeId();
 
     /**
      * Returns the route id.

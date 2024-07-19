@@ -43,7 +43,7 @@
     <ots:RoadLayouts>
 
       <ots:RoadLayout Id="4LaneHighway" LinkType="HIGHWAY">
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="NL.HIGHWAY">
           <ots:CenterOffset>12.1m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
@@ -83,14 +83,14 @@
           <ots:CenterOffset>-3.6m</ots:CenterOffset>
           <ots:DrawingWidth>20cm</ots:DrawingWidth>
         </ots:Stripe>
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="NL.HIGHWAY">
           <ots:CenterOffset>-5.1m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
       </ots:RoadLayout>
 
       <ots:RoadLayout Id="3LaneHighway" LinkType="HIGHWAY">
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="NL.HIGHWAY">
           <ots:CenterOffset>12.1m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
@@ -122,14 +122,14 @@
           <ots:CenterOffset>0m</ots:CenterOffset>
           <ots:DrawingWidth>20cm</ots:DrawingWidth>
         </ots:Stripe>
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="NL.HIGHWAY">
           <ots:CenterOffset>-1.5m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
       </ots:RoadLayout>
 
       <ots:RoadLayout Id="2LaneHighway" LinkType="HIGHWAY">
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="NL.HIGHWAY">
           <ots:CenterOffset>8.5m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
@@ -153,14 +153,14 @@
           <ots:CenterOffset>0m</ots:CenterOffset>
           <ots:DrawingWidth>20cm</ots:DrawingWidth>
         </ots:Stripe>
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="NL.HIGHWAY">
           <ots:CenterOffset>-1.5m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
       </ots:RoadLayout>
 
       <ots:RoadLayout Id="1LaneHighway" LinkType="HIGHWAY">
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="NL.HIGHWAY">
           <ots:CenterOffset>4.9m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
@@ -176,14 +176,14 @@
           <ots:CenterOffset>0m</ots:CenterOffset>
           <ots:DrawingWidth>20cm</ots:DrawingWidth>
         </ots:Stripe>
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="NL.HIGHWAY">
           <ots:CenterOffset>-1.5m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
       </ots:RoadLayout>
 
       <ots:RoadLayout Id="1LaneLocal" LinkType="LOCAL">
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="NL.HIGHWAY">
           <ots:CenterOffset>4.9m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>
@@ -199,7 +199,7 @@
           <ots:CenterOffset>0m</ots:CenterOffset>
           <ots:DrawingWidth>20cm</ots:DrawingWidth>
         </ots:Stripe>
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="NL.HIGHWAY">
           <ots:CenterOffset>-1.5m</ots:CenterOffset>
           <ots:Width>3m</ots:Width>
         </ots:Shoulder>

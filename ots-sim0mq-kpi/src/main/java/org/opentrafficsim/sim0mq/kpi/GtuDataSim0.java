@@ -58,7 +58,7 @@ public class GtuDataSim0 implements GtuData
 
     /** {@inheritDoc} */
     @Override
-    public final String getGtuId()
+    public final String getGtuTypeId()
     {
         return this.gtuType;
     }

@@ -13,7 +13,7 @@ import org.opentrafficsim.kpi.interfaces.GtuData;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class FilterDataGtuType extends FilterDataType<String>
+public class FilterDataGtuType extends FilterDataType<String, GtuData>
 {
 
     /**
@@ -29,7 +29,7 @@ public class FilterDataGtuType extends FilterDataType<String>
     public final String getValue(final GtuData gtu)
     {
         Throw.whenNull(gtu, "GTU may not be null.");
-        return gtu.getGtuId();
+        return gtu.getGtuTypeId();
     }
 
     /** {@inheritDoc} */

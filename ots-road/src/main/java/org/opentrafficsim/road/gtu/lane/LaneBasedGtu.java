@@ -400,7 +400,7 @@ public class LaneBasedGtu extends Gtu
             List<Lane> resultingLanes = new ArrayList<>();
             Lane lane = crossSection.getLanes().get(0);
             resultingLanes.add(lane);
-            Set<Lane> laneSet = lane.accessibleAdjacentLanesLegal(laneChangeDirection, getType());
+            Set<Lane> laneSet = lane.accessibleAdjacentLanesPhysical(laneChangeDirection, getType());
             if (laneSet.size() > 0)
             {
                 numRegistered++;
@@ -547,8 +547,8 @@ public class LaneBasedGtu extends Gtu
                     new Object[] {getId(),
                             new PositionVector(new double[] {fromLocation.x, fromLocation.y}, PositionUnit.METER),
                             new Direction(fromLocation.getDirZ(), DirectionUnit.EAST_RADIAN), getSpeed(), getAcceleration(),
-                            getTurnIndicatorStatus().name(), getOdometer(), dlp.lane().getLink().getId(),
-                            dlp.lane().getId(), dlp.position()},
+                            getTurnIndicatorStatus().name(), getOdometer(), dlp.lane().getLink().getId(), dlp.lane().getId(),
+                            dlp.position()},
                     getSimulator().getSimulatorTime());
 
             return false;

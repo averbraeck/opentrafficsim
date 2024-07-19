@@ -3,7 +3,6 @@ package org.opentrafficsim.road.gtu.lane.perception.mental;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.SortedSet;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -12,7 +11,6 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.LaneStructure.Entry;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.network.lane.object.Distraction;
 
@@ -43,17 +41,18 @@ public class TaskRoadSideDistraction extends AbstractTask
     public double calculateTaskDemand(final LanePerception perception, final LaneBasedGtu gtu, final Parameters parameters)
             throws ParameterException, GtuException
     {
-        Map<RelativeLane, SortedSet<Entry<Distraction>>> map =
-                perception.getLaneStructure().getDownstreamObjects(Distraction.class, gtu, RelativePosition.FRONT);
-        // (re)put all downstream distractions in the odos map
         double odo = gtu.getOdometer().si;
-        for (RelativeLane lane : map.keySet())
+
+        for (RelativeLane lane : perception.getLaneStructure().getRootCrossSection())
         {
-            for (Entry<Distraction> entry : map.get(lane))
+            for (org.opentrafficsim.road.gtu.lane.perception.structure.LaneStructure.Entry<
+                    Distraction> distraction : perception.getLaneStructure().getDownstreamObjects(lane, Distraction.class,
+                            RelativePosition.DRIVER, false))
             {
-                this.odos.put(entry.getLaneBasedObject(), odo + entry.getDistance().si);
+                this.odos.put(distraction.object(), odo + distraction.distance().si);
             }
         }
+
         // loop over all distractions in odos
         Iterator<Distraction> it = this.odos.keySet().iterator();
         double demand = 0.0;

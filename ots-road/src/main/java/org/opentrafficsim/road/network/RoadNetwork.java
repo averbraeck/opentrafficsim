@@ -213,9 +213,10 @@ public class RoadNetwork extends Network
     private void buildGraph(final RouteWeightedGraph graph, final GtuType gtuType, final LaneAccessLaw laneChangeLaw)
     {
         // add vertices
+        boolean legal = laneChangeLaw.equals(LaneAccessLaw.LEGAL);
         for (Link link : this.getLinkMap().values())
         {
-            for (Lane lane : ((CrossSectionLink) link).getLanes())
+            for (Lane lane : legal ? ((CrossSectionLink) link).getLanes() : ((CrossSectionLink) link).getLanesAndShoulders())
             {
                 graph.addVertex(lane);
             }
@@ -224,12 +225,11 @@ public class RoadNetwork extends Network
         }
 
         // add edges
-        boolean legal = laneChangeLaw.equals(LaneAccessLaw.LEGAL);
         for (Link link : this.getLinkMap().values())
         {
             if (link instanceof CrossSectionLink cLink)
             {
-                for (Lane lane : cLink.getLanes())
+                for (Lane lane : legal ? cLink.getLanes() : cLink.getLanesAndShoulders())
                 {
                     // adjacent lanes
                     for (LateralDirectionality lat : List.of(LateralDirectionality.LEFT, LateralDirectionality.RIGHT))

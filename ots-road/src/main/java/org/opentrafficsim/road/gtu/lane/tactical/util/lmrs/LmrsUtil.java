@@ -22,7 +22,6 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.InfrastructureLaneChangeInfo;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -39,6 +38,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil.ConflictPlans;
+import org.opentrafficsim.road.network.LaneChangeInfo;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
@@ -147,6 +147,8 @@ public final class LmrsUtil implements LmrsParameters
                 }
                 a = Acceleration.min(a, aSecond);
             }
+            a = Acceleration.min(a, Synchronization.DEADEND.synchronize(perception, params, sli, carFollowingModel, 0.0,
+                    laneChange.getDirection(), lmrsData, laneChange, initiatedLaneChange));
         }
         else
         {
@@ -203,23 +205,23 @@ public final class LmrsUtil implements LmrsParameters
             }
             if (!initiatedLaneChange.isNone())
             {
-                SortedSet<InfrastructureLaneChangeInfo> set = infra.getInfrastructureLaneChangeInfo(RelativeLane.CURRENT);
+                SortedSet<LaneChangeInfo> set = infra.getLegalLaneChangeInfo(RelativeLane.CURRENT);
                 if (!set.isEmpty())
                 {
                     Length boundary = null;
-                    for (InfrastructureLaneChangeInfo info : set)
+                    for (LaneChangeInfo info : set)
                     {
-                        int n = info.getRequiredNumberOfLaneChanges();
+                        int n = info.numberOfLaneChanges();
                         if (n > 1)
                         {
-                            Length thisBoundary = info.getRemainingDistance()
-                                    .minus(Synchronization.requiredBufferSpace(speed, info.getRequiredNumberOfLaneChanges(),
+                            Length thisBoundary = info.remainingDistance()
+                                    .minus(Synchronization.requiredBufferSpace(speed, info.numberOfLaneChanges(),
                                             params.getParameter(ParameterTypes.LOOKAHEAD),
                                             params.getParameter(ParameterTypes.T0), params.getParameter(ParameterTypes.LCDUR),
                                             params.getParameter(DCOOP)));
                             if (thisBoundary.le0())
                             {
-                                thisBoundary = info.getRemainingDistance().divide(info.getRequiredNumberOfLaneChanges());
+                                thisBoundary = info.remainingDistance().divide(info.numberOfLaneChanges());
                             }
                             boundary = boundary == null || thisBoundary.si < boundary.si ? thisBoundary : boundary;
                         }
@@ -240,6 +242,7 @@ public final class LmrsUtil implements LmrsParameters
 
             // synchronize
             double dSync = params.getParameter(DSYNC);
+            lmrsData.setSynchronizationState(Synchronizable.State.NONE);
             if (desire.leftIsLargerOrEqual() && desire.left() >= dSync)
             {
                 Synchronizable.State state;
@@ -273,10 +276,6 @@ public final class LmrsUtil implements LmrsParameters
                 aSync = lmrsData.getSynchronization().synchronize(perception, params, sli, carFollowingModel, desire.right(),
                         LateralDirectionality.RIGHT, lmrsData, laneChange, initiatedLaneChange);
                 a = applyAcceleration(a, aSync, lmrsData, state);
-            }
-            else
-            {
-                lmrsData.setSynchronizationState(Synchronizable.State.NONE);
             }
 
             // cooperate

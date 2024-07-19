@@ -68,22 +68,22 @@ public final class Trajectory<G extends GtuData>
     private final String gtuId;
 
     /** Meta data. */
-    private final Map<FilterDataType<?>, Object> filterData = new LinkedHashMap<>();
+    private final Map<FilterDataType<?, ? super G>, Object> filterData = new LinkedHashMap<>();
 
     /** Map of array data types and their values. */
-    private final Map<ExtendedDataType<?, ?, ?, G>, Object> extendedData = new LinkedHashMap<>();
+    private final Map<ExtendedDataType<?, ?, ?, ? super G>, Object> extendedData = new LinkedHashMap<>();
 
     /** Lane of travel. */
     private final LaneData<?> lane;
 
     /**
      * @param gtu GtuData; GTU of this trajectory, only the id is stored.
-     * @param filterData Map&lt;FilterDataType&lt;?&gt;, Object&gt;; filter data
-     * @param extendedData Set&lt;ExtendedDataType&lt;?,?,?,G&gt;&gt;; types of extended data
+     * @param filterData Map&lt;FilterDataType&lt;?, ? super G&gt;, Object&gt;; filter data
+     * @param extendedData Set&lt;ExtendedDataType&lt;?, ? ,? , ? super G&gt;&gt;; types of extended data
      * @param lane LaneData&lt;?&gt;; lane of travel
      */
-    public Trajectory(final GtuData gtu, final Map<FilterDataType<?>, Object> filterData,
-            final Set<ExtendedDataType<?, ?, ?, G>> extendedData, final LaneData<?> lane)
+    public Trajectory(final GtuData gtu, final Map<FilterDataType<?, ? super G>, Object> filterData,
+            final Set<ExtendedDataType<?, ?, ?, ? super G>> extendedData, final LaneData<?> lane)
     {
         this(gtu == null ? null : gtu.getId(), filterData, extendedData, lane);
     }
@@ -91,12 +91,12 @@ public final class Trajectory<G extends GtuData>
     /**
      * Private constructor for creating subsets.
      * @param gtuId String; GTU id
-     * @param filterData Map&lt;FilterDataType&lt;?&gt;, Object&gt;; filter data
-     * @param extendedData Set&lt;ExtendedDataType&lt;?,?,?,G&gt;&gt;; types of extended data
+     * @param filterData Map&lt;FilterDataType&lt;?, ? super G&gt;, Object&gt;; filter data
+     * @param extendedData Set&lt;ExtendedDataType&lt;?, ?, ?, ? super G&gt;&gt;; types of extended data
      * @param lane LaneData&lt;?&gt;; lane of travel
      */
-    private Trajectory(final String gtuId, final Map<FilterDataType<?>, Object> filterData,
-            final Set<ExtendedDataType<?, ?, ?, G>> extendedData, final LaneData<?> lane)
+    private Trajectory(final String gtuId, final Map<FilterDataType<?, ? super G>, Object> filterData,
+            final Set<ExtendedDataType<?, ?, ?, ? super G>> extendedData, final LaneData<?> lane)
     {
         Throw.whenNull(gtuId, "GTU may not be null.");
         Throw.whenNull(filterData, "Filter data may not be null.");
@@ -104,7 +104,7 @@ public final class Trajectory<G extends GtuData>
         Throw.whenNull(lane, "Lane direction may not be null.");
         this.gtuId = gtuId;
         this.filterData.putAll(filterData);
-        for (ExtendedDataType<?, ?, ?, G> dataType : extendedData)
+        for (ExtendedDataType<?, ?, ?, ? super G> dataType : extendedData)
         {
             this.extendedData.put(dataType, dataType.initializeStorage());
         }
@@ -155,7 +155,7 @@ public final class Trajectory<G extends GtuData>
         this.v[this.size] = (float) speed.si;
         this.a[this.size] = (float) acceleration.si;
         this.t[this.size] = (float) time.si;
-        for (ExtendedDataType<?, ?, ?, G> extendedDataType : this.extendedData.keySet())
+        for (ExtendedDataType<?, ?, ?, ? super G> extendedDataType : this.extendedData.keySet())
         {
             appendValue(extendedDataType, gtu);
         }
@@ -164,13 +164,13 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Append value of the extended data type.
-     * @param extendedDataType ExtendedDataType&lt;T,?,S,G&gt;; extended data type
+     * @param extendedDataType ExtendedDataType&lt;T, ?, S, ? super G&gt;; extended data type
      * @param gtu G; gtu
      * @param <T> extended data value type
      * @param <S> extended data storage data type
      */
     @SuppressWarnings("unchecked")
-    private <T, S> void appendValue(final ExtendedDataType<T, ?, S, G> extendedDataType, final G gtu)
+    private <T, S> void appendValue(final ExtendedDataType<T, ?, S, ? super G> extendedDataType, final G gtu)
     {
         S in = (S) this.extendedData.get(extendedDataType);
         S out = extendedDataType.setValue(in, this.size, extendedDataType.getValue(gtu));
@@ -441,22 +441,22 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Returns whether the filter data is contained.
-     * @param filterDataType MetaDataType&lt;?&gt;; filter data type
+     * @param filterDataType MetaDataType&lt;?, ?&gt;; filter data type
      * @return whether the trajectory contains the filter data of give type
      */
-    public boolean contains(final FilterDataType<?> filterDataType)
+    public boolean contains(final FilterDataType<?, ?> filterDataType)
     {
         return this.filterData.containsKey(filterDataType);
     }
 
     /**
      * Returns the value of the filter data.
-     * @param filterDataType MetaDataType&lt;T&gt;; filter data type
+     * @param filterDataType MetaDataType&lt;T, ?&gt;; filter data type
      * @param <T> class of filter data
      * @return value of filter data
      */
     @SuppressWarnings("unchecked")
-    public <T> T getFilterData(final FilterDataType<T> filterDataType)
+    public <T> T getFilterData(final FilterDataType<T, ?> filterDataType)
     {
         return (T) this.filterData.get(filterDataType);
     }
@@ -465,7 +465,7 @@ public final class Trajectory<G extends GtuData>
      * Returns the included filter data types.
      * @return included filter data types
      */
-    public Set<FilterDataType<?>> getFilterDataTypes()
+    public Set<FilterDataType<?, ? super G>> getFilterDataTypes()
     {
         return this.filterData.keySet();
     }
@@ -500,7 +500,7 @@ public final class Trajectory<G extends GtuData>
      * Returns the included extended data types.
      * @return included extended data types
      */
-    public Set<ExtendedDataType<?, ?, ?, G>> getExtendedDataTypes()
+    public Set<ExtendedDataType<?, ?, ?, ? super G>> getExtendedDataTypes()
     {
         return this.extendedData.keySet();
     }
@@ -791,7 +791,7 @@ public final class Trajectory<G extends GtuData>
                 out.t[n - 1] = (float) (this.t[bounds.to] * (1 - bounds.fTo) + this.t[bounds.to + 1] * bounds.fTo);
             }
             out.size = n;
-            for (ExtendedDataType<?, ?, ?, G> extendedDataType : this.extendedData.keySet())
+            for (ExtendedDataType<?, ?, ?, ? super G> extendedDataType : this.extendedData.keySet())
             {
                 int j = 0;
                 ExtendedDataType<T, ?, S, G> edt = (ExtendedDataType<T, ?, S, G>) extendedDataType;

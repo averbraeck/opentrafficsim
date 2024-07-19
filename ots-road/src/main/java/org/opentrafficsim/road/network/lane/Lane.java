@@ -29,7 +29,6 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.HierarchicallyTyped;
 import org.opentrafficsim.core.SpatialObject;
-import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -42,7 +41,6 @@ import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.collections.HistoricalArrayList;
 import org.opentrafficsim.core.perception.collections.HistoricalList;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.detector.Detector;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
@@ -287,7 +285,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                             - (getOffsetAtEnd().si + getEndWidth().si / 2.0) < ADJACENT_MARGIN.si)
             {
                 // look at stripes between the two lanes
-                if (!getType().equals(SHOULDER) && legal) // may always leave shoulder
+                if (!(this instanceof Shoulder) && legal) // may always leave shoulder
                 {
                     for (CrossSectionElement cse : this.link.getCrossSectionElementList())
                     {
@@ -1207,10 +1205,9 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param gtuType GtuType; GTU type.
      * @return Lane; adjacent lane, {@code null} if none
      */
-    public final Lane getAdjacentLane(final LateralDirectionality laneChangeDirection, final GtuType gtuType)
+    public Lane getAdjacentLane(final LateralDirectionality laneChangeDirection, final GtuType gtuType)
     {
-        Set<Lane> adjLanes = getType().equals(SHOULDER) ? accessibleAdjacentLanesPhysical(laneChangeDirection, gtuType)
-                : accessibleAdjacentLanesLegal(laneChangeDirection, gtuType);
+        Set<Lane> adjLanes = accessibleAdjacentLanesLegal(laneChangeDirection, gtuType);
         if (!adjLanes.isEmpty())
         {
             return adjLanes.iterator().next();
@@ -1528,56 +1525,5 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
          */
         double get(int index) throws GtuException;
     }
-
-    /**
-     * Creates a no-traffic, i.e. a {@code Lane} returning a z-value for drawing of -0.00005 with zero speed for all traffic.
-     * @param parentLink CrossSectionLink; Cross Section Link to which the element belongs.
-     * @param id String; the id of the lane. Should be unique within the parentLink.
-     * @param centerLine OtsLine2d; center line.
-     * @param contour Polygon2d; contour shape.
-     * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
-     * @return Lane; lane representing a no-traffic lane.
-     * @throws OtsGeometryException when creation of the geometry fails
-     * @throws NetworkException when id equal to null or not unique
-     */
-    @SuppressWarnings("checkstyle:parameternumber")
-    public static Lane shoulder(final CrossSectionLink parentLink, final String id, final OtsLine2d centerLine,
-            final Polygon2d contour, final List<CrossSectionSlice> crossSectionSlices)
-            throws OtsGeometryException, NetworkException
-    {
-        return new Lane(parentLink, id, centerLine, contour, crossSectionSlices, SHOULDER, new LinkedHashMap<>())
-        {
-            /** */
-            private static final long serialVersionUID = 20230116L;
-
-            /** {@inheritDoc} */
-            @Override
-            public double getZ()
-            {
-                return -0.00005;
-            }
-
-            /** {@inheritDoc} */
-            @Override
-            public Speed getSpeedLimit(final GtuType gtuType) throws NetworkException
-            {
-                LateralDirectionality[] lats = getLink().getLaneKeepingPolicy().equals(LaneKeepingPolicy.KEEPRIGHT)
-                        ? new LateralDirectionality[] {LateralDirectionality.RIGHT, LateralDirectionality.LEFT}
-                        : new LateralDirectionality[] {LateralDirectionality.LEFT, LateralDirectionality.RIGHT};
-                for (LateralDirectionality lat : lats)
-                {
-                    Lane adjacentLane = getAdjacentLane(lat, gtuType);
-                    if (adjacentLane != null)
-                    {
-                        return adjacentLane.getSpeedLimit(gtuType);
-                    }
-                }
-                return Speed.ZERO;
-            }
-        };
-    }
-
-    /** Shoulder lane type. */
-    public static final LaneType SHOULDER = new LaneType("Shoulder");
 
 }

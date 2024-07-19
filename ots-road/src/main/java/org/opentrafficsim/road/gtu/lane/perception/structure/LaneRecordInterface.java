@@ -1,6 +1,6 @@
-package org.opentrafficsim.road.gtu.lane.perception;
+package org.opentrafficsim.road.gtu.lane.perception.structure;
 
-import java.util.List;
+import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -23,13 +23,13 @@ public interface LaneRecordInterface<R extends LaneRecordInterface<R>>
      * Returns a list of next lanes.
      * @return List; list of next lanes
      */
-    List<? extends R> getNext();
+    Set<? extends R> getNext();
 
     /**
      * Returns a list of previous lanes.
      * @return List; list of previous lanes
      */
-    List<? extends R> getPrev();
+    Set<? extends R> getPrev();
 
     /**
      * Returns the distance from a reference to the start of this lane, negative for upstream distance.

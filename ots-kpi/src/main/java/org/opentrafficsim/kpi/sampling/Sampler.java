@@ -35,10 +35,10 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
     private final SamplerData<G> samplerData;
 
     /** Registration of included extended data types. */
-    private final Set<ExtendedDataType<?, ?, ?, G>> extendedDataTypes;
+    private final Set<ExtendedDataType<?, ?, ?, ? super G>> extendedDataTypes;
 
     /** Set of registered filter data types. */
-    private final Set<FilterDataType<?>> filterDataTypes;
+    private final Set<FilterDataType<?, ? super G>> filterDataTypes;
 
     /** Registration of current trajectories of each GTU per lane. */
     private final Map<String, Map<L, Trajectory<G>>> trajectoryPerGtu = new LinkedHashMap<>();
@@ -51,10 +51,10 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
 
     /**
      * Constructor.
-     * @param extendedDataTypes Set&lt;ExtendedDataType&lt;?, ?, ?, G&gt;&gt;; extended data types.
-     * @param filterDataTypes Set&lt;FilterDataType&lt;?&gt;&gt;; filter data types.
+     * @param extendedDataTypes Set&lt;ExtendedDataType&lt;?, ?, ?, ? super G&gt;&gt;; extended data types.
+     * @param filterDataTypes Set&lt;FilterDataType&lt;?, ? super G&gt;&gt;; filter data types.
      */
-    public Sampler(final Set<ExtendedDataType<?, ?, ?, G>> extendedDataTypes, final Set<FilterDataType<?>> filterDataTypes)
+    public Sampler(final Set<ExtendedDataType<?, ?, ?, ? super G>> extendedDataTypes, final Set<FilterDataType<?, ? super G>> filterDataTypes)
     {
         this.extendedDataTypes = new LinkedHashSet<>(extendedDataTypes);
         this.filterDataTypes = new LinkedHashSet<>(filterDataTypes);
@@ -213,7 +213,7 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
         Throw.whenNull(lane, "LaneData may not be null.");
         Throw.whenNull(gtu, "GtuData may not be null.");
         String gtuId = gtu.getId();
-        Trajectory<G> trajectory = new Trajectory<>(gtu, makeFilterData(gtu), this.extendedDataTypes, lane);
+        Trajectory<G> trajectory = new Trajectory<G>(gtu, makeFilterData(gtu), this.extendedDataTypes, lane);
         this.trajectoryPerGtu.computeIfAbsent(gtuId, (key) -> new LinkedHashMap<>()).put(lane, trajectory);
         this.samplerData.getTrajectoryGroup(lane).addTrajectory(trajectory);
     }
@@ -291,9 +291,9 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
      * @param gtu G; gtu to return filter data for a GTU
      * @return filter data for the given gtu
      */
-    private Map<FilterDataType<?>, Object> makeFilterData(final G gtu)
+    private Map<FilterDataType<?, ? super G>, Object> makeFilterData(final G gtu)
     {
-        Map<FilterDataType<?>, Object> filterData = new LinkedHashMap<>();
+        Map<FilterDataType<?, ? super G>, Object> filterData = new LinkedHashMap<>();
         this.filterDataTypes.forEach((filterDataType) -> filterData.put(filterDataType, filterDataType.getValue(gtu)));
         return filterData;
     }

@@ -4,7 +4,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -39,28 +38,13 @@ public class IncentiveBusStop implements MandatoryIncentive
         HeadwayBusStop firstStop = null;
         PerceptionCollectable<HeadwayBusStop, BusStop> stops =
                 perception.getPerceptionCategory(BusStopPerception.class).getBusStops();
-        Time now;
-        try
-        {
-            now = perception.getGtu().getSimulator().getSimulatorAbsTime();
-        }
-        catch (GtuException exception)
-        {
-            throw new RuntimeException("GTU not initialized.", exception);
-        }
+        Time now = perception.getGtu().getSimulator().getSimulatorAbsTime();
         for (HeadwayBusStop stop : stops)
         {
-            try
+            if (((BusSchedule) perception.getGtu().getStrategicalPlanner().getRoute()).isLineStop(stop.getId(), now))
             {
-                if (((BusSchedule) perception.getGtu().getStrategicalPlanner().getRoute()).isLineStop(stop.getId(), now))
-                {
-                    firstStop = stop;
-                    break;
-                }
-            }
-            catch (GtuException exception)
-            {
-                throw new OperationalPlanException("Could not obtain bus schedule.", exception);
+                firstStop = stop;
+                break;
             }
         }
 

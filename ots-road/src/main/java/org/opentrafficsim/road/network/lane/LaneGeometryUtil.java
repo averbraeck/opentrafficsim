@@ -228,10 +228,11 @@ public class LaneGeometryUtil
      * @param endOffset Length; end offset.
      * @param startWidth Length; start width.
      * @param endWidth Length; end width.
+     * @param laneType LaneType; lane type.
      * @return Lane; lane.
      */
     public static Object createStraightShoulder(final CrossSectionLink link, final String id, final Length startOffset,
-            final Length endOffset, final Length startWidth, final Length endWidth)
+            final Length endOffset, final Length startWidth, final Length endWidth, final LaneType laneType)
     {
         ContinuousLine designLine = new ContinuousStraight(
                 Try.assign(() -> link.getDesignLine().getLocationFraction(0.0), "Link should have a valid design line."),
@@ -241,6 +242,7 @@ public class LaneGeometryUtil
         PolyLine2d leftEdge = designLine.flattenOffset(getLeftEdgeOffsets(designLine, slices), null);
         PolyLine2d rightEdge = designLine.flattenOffset(getRightEdgeOffsets(designLine, slices), null);
         Polygon2d contour = getContour(leftEdge, rightEdge);
-        return Try.assign(() -> Lane.shoulder(link, id, new OtsLine2d(centerLine), contour, slices), "Network exception.");
+        return Try.assign(() -> new Shoulder(link, id, new OtsLine2d(centerLine), contour, slices, laneType),
+                "Network exception.");
     }
 }

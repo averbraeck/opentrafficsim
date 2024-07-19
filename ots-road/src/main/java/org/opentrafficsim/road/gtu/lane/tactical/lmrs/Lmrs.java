@@ -82,8 +82,7 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements DesireBas
 
     /** {@inheritDoc} */
     @Override
-    public final OperationalPlan generateOperationalPlan(final Time startTime,
-            final OrientedPoint2d locationAtStartTime)
+    public final OperationalPlan generateOperationalPlan(final Time startTime, final OrientedPoint2d locationAtStartTime)
             throws OperationalPlanException, GtuException, NetworkException, ParameterException
     {
         // obtain objects to get info
@@ -120,15 +119,19 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements DesireBas
         }
         for (RelativeLane lane : lanes)
         {
-            // On the current lane, consider all incentives. On adjacent lanes only consider incentives beyond the distance over
-            // which a lane change is not yet possible, i.e. the merge distance.
-            // TODO: consider route in incentives (only if not on current lane?)
-            Length mergeDistance = lane.isCurrent() ? Length.ZERO
-                    : Synchronization.getMergeDistance(getPerception(), lane.getLateralDirectionality());
-            for (AccelerationIncentive incentive : getAccelerationIncentives())
+            if (getPerception().getLaneStructure().getRootCrossSection().contains(lane))
             {
-                incentive.accelerate(simplePlan, lane, mergeDistance, getGtu(), getPerception(), getCarFollowingModel(), speed,
-                        params, sli);
+                // On the current lane, consider all incentives. On adjacent lanes only consider incentives beyond the distance
+                // over
+                // which a lane change is not yet possible, i.e. the merge distance.
+                // TODO: consider route in incentives (only if not on current lane?)
+                Length mergeDistance = lane.isCurrent() ? Length.ZERO
+                        : Synchronization.getMergeDistance(getPerception(), lane.getLateralDirectionality());
+                for (AccelerationIncentive incentive : getAccelerationIncentives())
+                {
+                    incentive.accelerate(simplePlan, lane, mergeDistance, getGtu(), getPerception(), getCarFollowingModel(),
+                            speed, params, sli);
+                }
             }
         }
 

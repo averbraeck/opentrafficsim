@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -20,6 +21,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
+import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -47,7 +49,8 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCategory implements DefaultSimplePerception
+public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<LaneBasedGtu, LanePerception>
+        implements DefaultSimplePerception
 {
 
     /** */
@@ -58,6 +61,18 @@ public class DirectDefaultSimplePerception extends LaneBasedAbstractPerceptionCa
 
     /** Look back parameter type. */
     protected static final ParameterTypeLength LOOKBACKOLD = ParameterTypes.LOOKBACKOLD;
+
+    /**
+     * Maximum deceleration that is used to determine if a vehicle will attempt to stop for a yellow light. <br>
+     * Derived from the report <cite>Onderzoek geeltijden</cite> by Goudappel Coffeng.
+     */
+    public static final Acceleration MAX_YELLOW_DECELERATION = new Acceleration(-2.8, AccelerationUnit.METER_PER_SECOND_2);
+
+    /**
+     * Maximum deceleration that is used to determine if a vehicle will attempt to stop for a red light. <br>
+     * Not based on any scientific source; sorry.
+     */
+    public static final Acceleration MAX_RED_DECELERATION = new Acceleration(-5, AccelerationUnit.METER_PER_SECOND_2);
 
     /** The forward headway and (leader) GTU. */
     private TimeStampedObject<Headway> forwardHeadwayGtu;

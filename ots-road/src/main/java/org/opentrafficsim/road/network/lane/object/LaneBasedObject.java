@@ -26,6 +26,15 @@ public interface LaneBasedObject extends LocatedObject
 
     /** @return the position (between 0.0 and the length of the Lane) of the sensor on the design line of the lane. */
     Length getLongitudinalPosition();
+    
+    /**
+     * Returns the length of the object. The default value is zero.
+     * @return Length; length of the object.
+     */
+    default Length getLength()
+    {
+        return Length.ZERO;
+    }
 
     /** {@inheritDoc} */
     @Override

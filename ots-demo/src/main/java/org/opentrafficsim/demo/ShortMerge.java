@@ -62,6 +62,7 @@ import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.TtcRoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplate;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplateDistribution;
+import org.opentrafficsim.road.gtu.generator.headway.HeadwayGenerator;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
@@ -181,7 +182,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         {
             Lane start = ((CrossSectionLink) getModel().getNetwork().getLink("AB")).getLanes().get(1);
             path = GraphLaneUtil.createPath("Right lane", start);
-        }  
+        }
         catch (NetworkException exception)
         {
             throw new RuntimeException("Could not create a path as a lane has no set speed limit.", exception);
@@ -215,7 +216,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         {
             OtsAnimator simulator = new OtsAnimator("ShortMerge");
             final ShortMergeModel otsModel = new ShortMergeModel(simulator);
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel);
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(SIMTIME.si), otsModel);
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(), new Dimension(800, 600),
                     simulator, otsModel, new LmrsSwitchableColorer(DefaultsNl.GTU_TYPE_COLORS.toMap()), otsModel.getNetwork());
             ShortMerge app = new ShortMerge("ShortMerge", animationPanel, otsModel);
@@ -370,10 +371,10 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             bcFactory.addParameter(truck, LmrsParameters.SOCIO, new DistNormal(stream, 0.5, 0.1));
             bcFactory.addParameter(Tailgating.RHO, Tailgating.RHO.getDefaultValue());
 
-            Generator<Duration> headwaysA1 = new HeadwayGenerator(getSimulator(), MAIN_DEMAND);
-            Generator<Duration> headwaysA2 = new HeadwayGenerator(getSimulator(), MAIN_DEMAND);
-            Generator<Duration> headwaysA3 = new HeadwayGenerator(getSimulator(), MAIN_DEMAND);
-            Generator<Duration> headwaysF = new HeadwayGenerator(getSimulator(), RAMP_DEMAND);
+            Generator<Duration> headwaysA1 = new HeadwayGenerator(MAIN_DEMAND, stream);
+            Generator<Duration> headwaysA2 = new HeadwayGenerator(MAIN_DEMAND, stream);
+            Generator<Duration> headwaysA3 = new HeadwayGenerator(MAIN_DEMAND, stream);
+            Generator<Duration> headwaysF = new HeadwayGenerator(RAMP_DEMAND, stream);
 
             // speed generators
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedCar =
@@ -477,45 +478,6 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             new LaneBasedGtuGenerator(id, headwayGenerator, characteristicsGenerator,
                     GeneratorPositions.create(initialLongitudinalPositions, stream), this.network, getSimulator(), roomChecker,
                     idGenerator);
-        }
-
-    }
-
-    /**
-     * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
-     */
-    private static class HeadwayGenerator implements Generator<Duration>
-    {
-        /** the simulator. */
-        private final OtsSimulatorInterface simulator;
-
-        /** Demand level. */
-        private final Frequency demand;
-
-        /**
-         * @param simulator OtsSimulatorInterface; the simulator
-         * @param demand Frequency; demand
-         */
-        HeadwayGenerator(final OtsSimulatorInterface simulator, final Frequency demand)
-        {
-            this.simulator = simulator;
-            this.demand = demand;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Duration draw() throws ProbabilityException, ParameterException
-        {
-            return new Duration(
-                    -Math.log(this.simulator.getModel().getStream("headwayGeneration").nextDouble()) / this.demand.si,
-                    DurationUnit.SI);
         }
 
     }

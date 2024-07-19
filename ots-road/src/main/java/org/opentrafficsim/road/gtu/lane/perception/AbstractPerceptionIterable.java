@@ -18,6 +18,7 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.structure.LaneRecordInterface;
 
 /**
  * Abstract iterable that figures out how to find the next nearest object, including splits.

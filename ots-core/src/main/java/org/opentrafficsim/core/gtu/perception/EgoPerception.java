@@ -3,10 +3,7 @@ package org.opentrafficsim.core.gtu.perception;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.network.NetworkException;
 
 /**
  * Ego perception interface.
@@ -22,30 +19,6 @@ import org.opentrafficsim.core.network.NetworkException;
  */
 public interface EgoPerception<G extends Gtu, P extends Perception<G>> extends PerceptionCategory<G, P>
 {
-
-    /**
-     * Update speed.
-     * @throws GtuException if the GTU has not been initialized
-     */
-    void updateSpeed() throws GtuException;
-
-    /**
-     * Update acceleration.
-     * @throws GtuException if the GTU has not been initialized
-     */
-    void updateAcceleration() throws GtuException;
-
-    /**
-     * Update length.
-     * @throws GtuException if the GTU has not been initialized
-     */
-    void updateLength() throws GtuException;
-
-    /**
-     * Update width.
-     * @throws GtuException if the GTU has not been initialized
-     */
-    void updateWidth() throws GtuException;
 
     /**
      * Returns the acceleration.
@@ -70,15 +43,5 @@ public interface EgoPerception<G extends Gtu, P extends Perception<G>> extends P
      * @return width
      */
     Length getWidth();
-
-    /** {@inheritDoc} */
-    @Override
-    default void updateAll() throws GtuException, NetworkException, ParameterException
-    {
-        updateSpeed();
-        updateAcceleration();
-        updateLength();
-        updateWidth();
-    }
 
 }

@@ -59,10 +59,10 @@ public class SamplerData<G extends GtuData> extends Table
     private static Collection<Column<?>> BASE_COLUMNS = new LinkedHashSet<>();
 
     /** Extended data types, in order of relevant columns. */
-    private final List<ExtendedDataType<?, ?, ?, G>> extendedDataTypes;
+    private final List<ExtendedDataType<?, ?, ?, ? super G>> extendedDataTypes;
 
     /** Filter data types, in order of relevant columns. */
-    private final List<FilterDataType<?>> filterDataTypes;
+    private final List<FilterDataType<?, ? super G>> filterDataTypes;
 
     /** Map with all sampling data. */
     private final Map<LaneData<?>, TrajectoryGroup<G>> trajectories = new LinkedHashMap<>();
@@ -81,10 +81,11 @@ public class SamplerData<G extends GtuData> extends Table
 
     /**
      * Constructor.
-     * @param extendedDataTypes Set&lt;? extends ExtendedDataType&lt;?, ?, ?, G&gt;&gt;; extended data types.
-     * @param filterDataTypes Set&lt;FilterDataType&lt;?&gt;&gt;; filter data types.
+     * @param extendedDataTypes Set&lt;? extends ExtendedDataType&lt;?, ?, ?, ? super G&gt;&gt;; extended data types.
+     * @param filterDataTypes Set&lt;FilterDataType&lt;?, ? super G&gt;&gt;; filter data types.
      */
-    public SamplerData(final Set<ExtendedDataType<?, ?, ?, G>> extendedDataTypes, final Set<FilterDataType<?>> filterDataTypes)
+    public SamplerData(final Set<ExtendedDataType<?, ?, ?, ? super G>> extendedDataTypes,
+            final Set<FilterDataType<?, ? super G>> filterDataTypes)
     {
         super("sampler", "Trajectory data", generateColumns(extendedDataTypes, filterDataTypes));
         /*
@@ -95,7 +96,7 @@ public class SamplerData<G extends GtuData> extends Table
         for (int i = BASE_COLUMNS.size(); i < BASE_COLUMNS.size() + extendedDataTypes.size(); i++)
         {
             String columnId = getColumn(i).getId();
-            for (ExtendedDataType<?, ?, ?, G> extendedDataType : extendedDataTypes)
+            for (ExtendedDataType<?, ?, ?, ? super G> extendedDataType : extendedDataTypes)
             {
                 if (extendedDataType.getId().equals(columnId))
                 {
@@ -108,7 +109,7 @@ public class SamplerData<G extends GtuData> extends Table
                 + filterDataTypes.size(); i++)
         {
             String columnId = getColumn(i).getId();
-            for (FilterDataType<?> filterType : filterDataTypes)
+            for (FilterDataType<?, ? super G> filterType : filterDataTypes)
             {
                 if (filterType.getId().equals(columnId))
                 {
@@ -120,22 +121,21 @@ public class SamplerData<G extends GtuData> extends Table
 
     /**
      * Generates the columns based on base information and the extended and filter types.
-     * @param extendedDataTypes Set&lt;? extends ExtendedDataType&lt;?, ?, ?, ? extends GtuData&gt;&gt;; extended data types.
-     * @param filterDataTypes Set&lt;FilterDataType&lt;?&gt;&gt;; filter data types.
+     * @param extendedDataTypes2 Set&lt;? extends ExtendedDataType&lt;?, ?, ?, ? super G2&gt;&gt;; extended data types.
+     * @param filterDataTypes2 Set&lt;FilterDataType&lt;?, ? super G2&gt;&gt;; filter data types.
      * @return Collection&lt;Column&lt;?&gt;&gt;; columns.
      */
-    private static Collection<Column<?>> generateColumns(
-            final Set<? extends ExtendedDataType<?, ?, ?, ? extends GtuData>> extendedDataTypes,
-            final Set<FilterDataType<?>> filterDataTypes)
+    private static <G2> Collection<Column<?>> generateColumns(final Set<ExtendedDataType<?, ?, ?, ? super G2>> extendedDataTypes2,
+            final Set<FilterDataType<?, ? super G2>> filterDataTypes2)
     {
-        Collection<Column<?>> out = new ArrayList<>(BASE_COLUMNS.size() + extendedDataTypes.size() + filterDataTypes.size());
+        Collection<Column<?>> out = new ArrayList<>(BASE_COLUMNS.size() + extendedDataTypes2.size() + filterDataTypes2.size());
         out.addAll(BASE_COLUMNS);
-        for (ExtendedDataType<?, ?, ?, ?> extendedDataType : extendedDataTypes)
+        for (ExtendedDataType<?, ?, ?, ?> extendedDataType : extendedDataTypes2)
         {
             out.add(new Column<>(extendedDataType.getId(), extendedDataType.getDescription(), extendedDataType.getType(),
                     getUnit(extendedDataType)));
         }
-        for (FilterDataType<?> filterDataType : filterDataTypes)
+        for (FilterDataType<?, ?> filterDataType : filterDataTypes2)
         {
             out.add(new Column<>(filterDataType.getId(), filterDataType.getDescription(), String.class, null));
         }
@@ -353,7 +353,7 @@ public class SamplerData<G extends GtuData> extends Table
                 // extended data
                 for (int i = 0; i < SamplerData.this.extendedDataTypes.size(); i++)
                 {
-                    ExtendedDataType<?, ?, ?, G> extendedDataType = SamplerData.this.extendedDataTypes.get(i);
+                    ExtendedDataType<?, ?, ?, ?> extendedDataType = SamplerData.this.extendedDataTypes.get(i);
                     data[dataIndex++] = this.currentTrajectory.contains(extendedDataType)
                             ? this.currentTrajectory.getExtendedData(extendedDataType, trajectoryIndex) : null;
                 }
@@ -361,7 +361,7 @@ public class SamplerData<G extends GtuData> extends Table
                 // filter data
                 for (int i = 0; i < SamplerData.this.filterDataTypes.size(); i++)
                 {
-                    FilterDataType<?> filterDataType = SamplerData.this.filterDataTypes.get(i);
+                    FilterDataType<?, ?> filterDataType = SamplerData.this.filterDataTypes.get(i);
                     // filter data is only stored on the first index, as this data is fixed over a trajectory
                     data[dataIndex++] = trajectoryIndex == 0 && this.currentTrajectory.contains(filterDataType)
                             ? this.currentTrajectory.getFilterData(filterDataType) : null;

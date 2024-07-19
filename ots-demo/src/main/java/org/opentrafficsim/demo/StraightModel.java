@@ -42,6 +42,7 @@ import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.generator.TtcRoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplate;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplateDistribution;
+import org.opentrafficsim.road.gtu.generator.headway.HeadwayGenerator;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
@@ -170,7 +171,8 @@ public class StraightModel extends AbstractOtsModel implements UNITS
             Distribution<LaneBasedGtuTemplate> gtuTypeDistribution = new Distribution<>(this.stream);
             gtuTypeDistribution.add(new FrequencyAndObject<>(this.carProbability, carTemplate));
             gtuTypeDistribution.add(new FrequencyAndObject<>(1.0 - this.carProbability, truckTemplate));
-            Generator<Duration> headwayGenerator = new HeadwayGenerator(new Frequency(1500.0, PER_HOUR));
+            Generator<Duration> headwayGenerator =
+                    new HeadwayGenerator(new Frequency(1500.0, PER_HOUR), new MersenneTwister(4L));
             Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
             initialLongitudinalPositions.add(new LanePosition(this.lane, new Length(5.0, LengthUnit.SI)));
             LaneBasedGtuTemplateDistribution characteristicsGenerator =
@@ -224,41 +226,6 @@ public class StraightModel extends AbstractOtsModel implements UNITS
     public final List<Lane> getPath()
     {
         return this.path;
-    }
-
-    /**
-     * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
-     */
-    private static class HeadwayGenerator implements Generator<Duration>
-    {
-        /** Demand level. */
-        private final Frequency demand;
-
-        /** a random stream. */
-        private StreamInterface stream = new MersenneTwister(4L);
-
-        /**
-         * @param demand Frequency; demand
-         */
-        HeadwayGenerator(final Frequency demand)
-        {
-            this.demand = demand;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Duration draw() throws ProbabilityException, ParameterException
-        {
-            return new Duration(-Math.log(this.stream.nextDouble()) / this.demand.si, DurationUnit.SI);
-        }
-
     }
 
 }

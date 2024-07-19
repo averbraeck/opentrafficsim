@@ -314,7 +314,24 @@ public class OperationalPlan implements Serializable
     {
         int segment = getSegment(time);
         Duration durationInSegment = Duration.instantiateSI(time.si - this.startTime.si - this.segmentStartDurations[segment]);
+        durationInSegment = fixDoublePrecision(durationInSegment, segment);
         return this.segments.get(segment).speed(durationInSegment);
+    }
+
+    /**
+     * Maximize to segment duration in case of double precision issue.
+     * @param durationInSegment Duration; duration in segment.
+     * @param segment int; segment number.
+     * @return duration in segment, maximized to segment duration if beyond within 1e-6.
+     */
+    private Duration fixDoublePrecision(final Duration durationInSegment, final int segment)
+    {
+        if (this.segments.get(segment).duration().lt(durationInSegment)
+                && durationInSegment.si - this.segments.get(segment).duration().si < 1e-6)
+        {
+            return this.segments.get(segment).duration();
+        }
+        return durationInSegment;
     }
 
     /**
@@ -364,6 +381,7 @@ public class OperationalPlan implements Serializable
                 "getTravelDistance exception: requested traveled distance beyond end of plan");
         int segment = getSegment(time);
         Duration durationInSegment = Duration.instantiateSI(time.si - this.startTime.si - this.segmentStartDurations[segment]);
+        durationInSegment = fixDoublePrecision(durationInSegment, segment);
         double distanceInSegment = this.segments.get(segment).distance(durationInSegment).si;
         return Length.instantiateSI(this.segmentStartDistances[segment] + distanceInSegment);
     }

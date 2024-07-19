@@ -12,6 +12,7 @@ import org.djutils.io.URLResource;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.demo.conflict.TJunctionDemo.TJunctionModel;
 import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.road.network.RoadNetwork;
@@ -64,6 +65,7 @@ public class TJunctionDemo extends OtsSimulationApplication<TJunctionModel>
      */
     public static void demo(final boolean exitOnClose)
     {
+        Gtu.ALIGNED = false;
         try
         {
             OtsAnimator simulator = new OtsAnimator("TJunctionDemo");
