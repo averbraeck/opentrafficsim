@@ -79,6 +79,9 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
     /** Super type for cars. */
     public static final GtuType CAR = new GtuType("NL.CAR", VEHICLE);
 
+    /** Super type for motorcycles. */
+    public static final GtuType MOTORCYCLE = new GtuType("NL.MOTORCYCLE", VEHICLE);
+    
     /** Super type for vans. */
     public static final GtuType VAN = new GtuType("NL.VAN", VEHICLE);
 
@@ -101,6 +104,7 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
         map.put(TRUCK, Color.RED);
         map.put(VEHICLE, Color.GRAY);
         map.put(PEDESTRIAN, Color.YELLOW);
+        map.put(MOTORCYCLE, Color.PINK);
         map.put(BICYCLE, Color.GREEN);
         GTU_TYPE_COLORS = new ImmutableLinkedHashMap<>(map, Immutable.WRAP);
 
@@ -153,6 +157,21 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
             template = new GtuTemplate(gtuType, new ConstantGenerator<>(Length.instantiateSI(5.0)),
                     new ConstantGenerator<>(Length.instantiateSI(2.55)),
                     new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
+        }
+        else if (gtuType.equals(MOTORCYCLE))
+        {
+            // Yamaha R7 2022
+            template = new GtuTemplate(gtuType, new ConstantGenerator<>(Length.instantiateSI(2.1)),
+                    new ConstantGenerator<>(Length.instantiateSI(0.7)),
+                    new ConstantGenerator<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
+        }
+        else if (gtuType.equals(BICYCLE))
+        {
+            // length/width: https://www.verderfietsen.nl/fiets-afmetingen/
+            // width: https://www.fietsberaad.nl/CROWFietsberaad/media/Kennis/Bestanden/document000172.pdf?ext=.pdf
+            template = new GtuTemplate(gtuType, new ConstantGenerator<>(Length.instantiateSI(1.9)),
+                    new ConstantGenerator<>(Length.instantiateSI(0.6)),
+                    new ConstantGenerator<>(new Speed(35, SpeedUnit.KM_PER_HOUR)));
         }
         return template;
     };
