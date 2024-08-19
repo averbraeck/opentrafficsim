@@ -20,7 +20,7 @@ public class FilterDataWidth extends FilterDataType<Length, GtuDataRoad>
      */
     public FilterDataWidth()
     {
-        super("width", "GTU width");
+        super("width", "GTU width", Length.class);
     }
 
     /** {@inheritDoc} */

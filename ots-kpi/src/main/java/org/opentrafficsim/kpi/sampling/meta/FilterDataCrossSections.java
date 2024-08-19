@@ -29,14 +29,14 @@ public class FilterDataCrossSections extends FilterDataType<CrossSection, GtuDat
      */
     public FilterDataCrossSections()
     {
-        super("crossSection", "Cross sections");
+        super("crossSection", "Cross sections", CrossSection.class);
     }
 
     /** {@inheritDoc} */
     @Override
     public final CrossSection getValue(final GtuData gtu)
     {
-        return null;
+        return null; // TODO
     }
 
     /**

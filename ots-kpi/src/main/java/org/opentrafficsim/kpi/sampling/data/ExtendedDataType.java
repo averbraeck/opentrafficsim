@@ -10,9 +10,9 @@ import org.djunits.value.vfloat.scalar.base.FloatScalar;
 import org.djunits.value.vfloat.scalar.base.FloatScalarAbs;
 import org.djunits.value.vfloat.scalar.base.FloatScalarRel;
 import org.djunits.value.vfloat.scalar.base.FloatScalarRelWithAbs;
-import org.djutils.base.Identifiable;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuData;
+import org.opentrafficsim.kpi.sampling.DataType;
 import org.opentrafficsim.kpi.sampling.SamplingException;
 
 /**
@@ -32,17 +32,8 @@ import org.opentrafficsim.kpi.sampling.SamplingException;
  * @param <S> storage type
  * @param <G> gtu data type
  */
-public abstract class ExtendedDataType<T, O, S, G extends GtuData> implements Identifiable
+public abstract class ExtendedDataType<T, O, S, G extends GtuData> extends DataType<T, G>
 {
-
-    /** Id. */
-    private final String id;
-
-    /** Description. */
-    private final String description;
-
-    /** Type of value. */
-    private final Class<T> type;
 
     /**
      * Constructor setting the id.
@@ -52,37 +43,7 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuData> implements Id
      */
     public ExtendedDataType(final String id, final String description, final Class<T> type)
     {
-        Throw.whenNull(id, "Id may nog be null.");
-        Throw.whenNull(description, "Description may nog be null.");
-        Throw.whenNull(type, "Type may not bee null.");
-        this.id = id;
-        this.description = description;
-        this.type = type;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final String getId()
-    {
-        return this.id;
-    }
-
-    /**
-     * Returns the description.
-     * @return String; description.
-     */
-    public String getDescription()
-    {
-        return this.description;
-    }
-
-    /**
-     * Returns the type.
-     * @return the type
-     */
-    public Class<T> getType()
-    {
-        return this.type;
+        super(id, description, type);
     }
 
     /**
@@ -90,6 +51,7 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuData> implements Id
      * @param gtu G; gtu
      * @return current value of the gtu
      */
+    @Override
     public abstract T getValue(G gtu);
 
     /**
@@ -197,50 +159,9 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuData> implements Id
 
     /** {@inheritDoc} */
     @Override
-    public final int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
-        return result;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public final boolean equals(final Object obj)
-    {
-        if (this == obj)
-        {
-            return true;
-        }
-        if (obj == null)
-        {
-            return false;
-        }
-        if (getClass() != obj.getClass())
-        {
-            return false;
-        }
-        ExtendedDataType<?, ?, ?, ?> other = (ExtendedDataType<?, ?, ?, ?>) obj;
-        if (this.id == null)
-        {
-            if (other.id != null)
-            {
-                return false;
-            }
-        }
-        else if (!this.id.equals(other.id))
-        {
-            return false;
-        }
-        return true;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public String toString()
     {
-        return "ExtendedDataType [id=" + this.id + ", description=" + this.description + "]";
+        return "ExtendedDataType [id=" + getId() + ", description=" + getDescription() + "]";
     }
 
 }

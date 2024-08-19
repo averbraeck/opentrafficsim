@@ -21,7 +21,7 @@ public class FilterDataDestination extends FilterDataType<String, GtuData>
      */
     public FilterDataDestination()
     {
-        super("destination", "Destination node id");
+        super("destination", "Destination node id", String.class);
     }
 
     /** {@inheritDoc} */

@@ -21,7 +21,7 @@ public class FilterDataOrigin extends FilterDataType<String, GtuData>
      */
     public FilterDataOrigin()
     {
-        super("origin", "Origin node id");
+        super("origin", "Origin node id", String.class);
     }
 
     /** {@inheritDoc} */

@@ -21,7 +21,7 @@ public class FilterDataGtuType extends FilterDataType<String, GtuData>
      */
     public FilterDataGtuType()
     {
-        super("gtuType", "GTU type id");
+        super("gtuType", "GTU type id", String.class);
     }
 
     /** {@inheritDoc} */

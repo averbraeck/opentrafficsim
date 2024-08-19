@@ -2,9 +2,9 @@ package org.opentrafficsim.kpi.sampling.meta;
 
 import java.util.Set;
 
-import org.djutils.base.Identifiable;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuData;
+import org.opentrafficsim.kpi.sampling.DataType;
 import org.opentrafficsim.kpi.sampling.TrajectoryAcceptList;
 
 /**
@@ -19,43 +19,19 @@ import org.opentrafficsim.kpi.sampling.TrajectoryAcceptList;
  * @param <T> class of meta data
  * @param <G> gtu data type
  */
-public abstract class FilterDataType<T, G extends GtuData> implements Identifiable
+public abstract class FilterDataType<T, G extends GtuData> extends DataType<T, G>
 {
 
-    /** Id. */
-    private final String id;
-    
-    /** Description. */
-    private final String description;
-
     /**
-     * Constructor.
+     * Constructor setting the id.
      * @param id String; id
      * @param description String; description
+     * @param type Class&lt;T&gt;; type class
      */
-    public FilterDataType(final String id, final String description)
+    public FilterDataType(final String id, final String description, final Class<T> type)
     {
-        Throw.whenNull(id, "Id may not be null.");
-        this.id = id;
-        this.description = description;
+        super(id, description, type);
     }
-
-    /**
-     * Returns the id.
-     * @return id
-     */
-    @Override
-    public final String getId()
-    {
-        return this.id;
-    }
-
-    /**
-     * Retrieves the value of the meta data of this type from a GTU.
-     * @param gtu G; gtu to retrieve the value from
-     * @return value of the meta data of this type from a GTU, may be {@code null} if not applicable.
-     */
-    public abstract T getValue(G gtu);
 
     /**
      * Determines for a set of {@code trajectory}'s from a single GTU, which may be accepted according to this filter data type.
@@ -86,20 +62,11 @@ public abstract class FilterDataType<T, G extends GtuData> implements Identifiab
         }
     }
 
-    /**
-     * Returns the description.
-     * @return String; description.
-     */
-    public String getDescription()
-    {
-        return this.description;
-    }
-
     /** {@inheritDoc} */
     @Override
     public String toString()
     {
-        return "FilterDataType [id=" + this.id + ", description=" + this.description + "]";
+        return "FilterDataType [id=" + getId() + ", description=" + getDescription() + "]";
     }
-    
+
 }

@@ -21,7 +21,7 @@ public class FilterDataRoute extends FilterDataType<String, GtuData>
      */
     public FilterDataRoute()
     {
-        super("route", "Route id");
+        super("route", "Route id", String.class);
     }
 
     /** {@inheritDoc} */

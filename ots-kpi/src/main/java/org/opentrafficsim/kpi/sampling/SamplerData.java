@@ -125,7 +125,8 @@ public class SamplerData<G extends GtuData> extends Table
      * @param filterDataTypes2 Set&lt;FilterDataType&lt;?, ? super G2&gt;&gt;; filter data types.
      * @return Collection&lt;Column&lt;?&gt;&gt;; columns.
      */
-    private static <G2> Collection<Column<?>> generateColumns(final Set<ExtendedDataType<?, ?, ?, ? super G2>> extendedDataTypes2,
+    private static <G2> Collection<Column<?>> generateColumns(
+            final Set<ExtendedDataType<?, ?, ?, ? super G2>> extendedDataTypes2,
             final Set<FilterDataType<?, ? super G2>> filterDataTypes2)
     {
         Collection<Column<?>> out = new ArrayList<>(BASE_COLUMNS.size() + extendedDataTypes2.size() + filterDataTypes2.size());
@@ -137,17 +138,18 @@ public class SamplerData<G extends GtuData> extends Table
         }
         for (FilterDataType<?, ?> filterDataType : filterDataTypes2)
         {
-            out.add(new Column<>(filterDataType.getId(), filterDataType.getDescription(), String.class, null));
+            out.add(new Column<>(filterDataType.getId(), filterDataType.getDescription(), filterDataType.getType(),
+                    getUnit(filterDataType)));
         }
         return out;
     }
 
     /**
      * Returns the unit for values in an extended data type.
-     * @param extendedDataType ExtendedDataType&lt;?, ?, ?, ?&gt;; extended data type.
+     * @param extendedDataType DataType&lt;?, ?&gt;; extended data type.
      * @return String; representation of the unit
      */
-    private static String getUnit(final ExtendedDataType<?, ?, ?, ?> extendedDataType)
+    private static String getUnit(final DataType<?, ?> extendedDataType)
     {
         if (Scalar.class.isAssignableFrom(extendedDataType.getType()))
         {
