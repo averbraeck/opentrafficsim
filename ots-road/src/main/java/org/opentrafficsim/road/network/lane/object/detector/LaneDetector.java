@@ -184,13 +184,6 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
     }
 
     /** {@inheritDoc} */
-    @Override
-    public double getZ() throws RemoteException
-    {
-        return -0.0002;
-    }
-
-    /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override
     public int hashCode()
