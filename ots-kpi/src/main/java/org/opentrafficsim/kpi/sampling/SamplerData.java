@@ -56,7 +56,7 @@ public class SamplerData<G extends GtuData> extends Table
 {
 
     /** Base columns. */
-    private static Collection<Column<?>> BASE_COLUMNS = new LinkedHashSet<>();
+    private static final Collection<Column<?>> BASE_COLUMNS = new LinkedHashSet<>();
 
     /** Extended data types, in order of relevant columns. */
     private final List<ExtendedDataType<?, ?, ?, ? super G>> extendedDataTypes;
@@ -123,6 +123,7 @@ public class SamplerData<G extends GtuData> extends Table
      * Generates the columns based on base information and the extended and filter types.
      * @param extendedDataTypes2 Set&lt;? extends ExtendedDataType&lt;?, ?, ?, ? super G2&gt;&gt;; extended data types.
      * @param filterDataTypes2 Set&lt;FilterDataType&lt;?, ? super G2&gt;&gt;; filter data types.
+     * @param <G2> type to bound extended and filter data types.
      * @return Collection&lt;Column&lt;?&gt;&gt;; columns.
      */
     private static <G2> Collection<Column<?>> generateColumns(
