@@ -3,7 +3,7 @@
 
   <groupId>org.opentrafficsim</groupId>
   <artifactId>ots</artifactId>
-  <version>1.7.4</version>
+  <version>1.7.5-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>OpenTrafficSim base project</name>
@@ -47,45 +47,45 @@
 
     <ots.version>${project.version}</ots.version>
     <tinylog.version>1.3.6</tinylog.version>
-    <djunits.version>5.1.3</djunits.version>
-    <djutils.version>2.2.1</djutils.version>
-    <dsol.version>4.2.2</dsol.version>
-    <sim0mq.version>2.1.2</sim0mq.version>
+    <djunits.version>5.1.4</djunits.version>
+    <djutils.version>2.2.2</djutils.version>
+    <dsol.version>4.2.3</dsol.version>
+    <sim0mq.version>2.1.3</sim0mq.version>
     <jts.version>1.19.0</jts.version>
-    <jfreechart.version>1.5.4</jfreechart.version>
-    <apache.poi.version>5.2.5</apache.poi.version>
+    <jfreechart.version>1.5.5</jfreechart.version>
+    <apache.poi.version>5.3.0</apache.poi.version>
     <jgrapht.version>1.5.2</jgrapht.version>
     <xstream.version>1.4.20</xstream.version>
     <jaxb.version>2.3.1</jaxb.version>
-    <javax.annotation.version>1.3.2</javax.annotation.version>
+    <jakarta.annotation.version>3.0.0</jakarta.annotation.version>
     <treetable.version>0.0.2</treetable.version>
 
-    <junit.version>5.10.2</junit.version>
-    <mockito.version>5.1.1</mockito.version>
+    <junit.version>5.11.0</junit.version>
+    <mockito.version>5.12.0</mockito.version>
 
     <maven.compiler.version>3.13.0</maven.compiler.version>
-    <maven.site.version>4.0.0-M13</maven.site.version>
-    <maven.install.version>3.1.1</maven.install.version>
+    <maven.site.version>4.0.0-M16</maven.site.version>
+    <maven.install.version>3.1.3</maven.install.version>
     <maven.source.version>3.3.1</maven.source.version>
-    <maven.javadoc.version>3.6.3</maven.javadoc.version>
+    <maven.javadoc.version>3.8.0</maven.javadoc.version>
     <maven.resources.version>3.3.1</maven.resources.version>
-    <maven.checkstyle.version>3.3.1</maven.checkstyle.version>
-    <checkstyle.version>10.15.0</checkstyle.version>
-    <maven.surefire.version>3.2.5</maven.surefire.version>
-    <maven.surefire-report.version>3.2.5</maven.surefire-report.version>
-    <maven.failsafe.version>3.2.5</maven.failsafe.version>
+    <maven.checkstyle.version>3.4.0</maven.checkstyle.version>
+    <checkstyle.version>10.17.0</checkstyle.version>
+    <maven.surefire.version>3.3.1</maven.surefire.version>
+    <maven.surefire-report.version>3.3.1</maven.surefire-report.version>
+    <maven.failsafe.version>3.3.1</maven.failsafe.version>
     <maven.jacoco.version>0.8.12</maven.jacoco.version>
-    <maven.spotbugs.version>4.8.4.0</maven.spotbugs.version>
-    <spotbugs.version>4.8.4</spotbugs.version>
-    <maven.project-info-reports.version>3.5.0</maven.project-info-reports.version>
-    <maven.jxr.version>3.3.2</maven.jxr.version>
-    <maven.taglist.version>3.0.0</maven.taglist.version>
-    <maven.pmd.version>3.22.0</maven.pmd.version>
-    <maven.changes.version>2.12.1</maven.changes.version>
+    <maven.spotbugs.version>4.8.6.0</maven.spotbugs.version>
+    <spotbugs.version>4.8.6</spotbugs.version>
+    <maven.project-info-reports.version>3.6.2</maven.project-info-reports.version>
+    <maven.jxr.version>3.4.0</maven.jxr.version>
+    <maven.taglist.version>3.1.0</maven.taglist.version>
+    <maven.pmd.version>3.24.0</maven.pmd.version>
+    <!--maven.changes.version>2.12.1</maven.changes.version-->
     <flatten.maven.version>1.6.0</flatten.maven.version>
-    <maven.deploy.version>3.1.1</maven.deploy.version>
-    <nexus-staging.version>1.6.13</nexus-staging.version>
-    <maven.gpg.version>3.2.4</maven.gpg.version>
+    <maven.deploy.version>3.1.3</maven.deploy.version>
+    <nexus-staging.version>1.7.0</nexus-staging.version>
+    <maven.gpg.version>3.2.5</maven.gpg.version>
     <maven-jaxb2.version>0.15.3</maven-jaxb2.version>
     <maven-jaxb2-basics.version>1.11.1</maven-jaxb2-basics.version>
   </properties>
@@ -101,9 +101,9 @@
     </dependency>
 
     <dependency>
-      <groupId>javax.annotation</groupId>
-      <artifactId>javax.annotation-api</artifactId>
-      <version>${javax.annotation.version}</version>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
+      <version>${jakarta.annotation.version}</version>
     </dependency>
 
     <dependency>
@@ -940,7 +940,7 @@
         </configuration>
       </plugin>
 
-      <plugin>
+      <!--plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-changes-plugin</artifactId>
         <version>${maven.changes.version}</version>
@@ -951,7 +951,7 @@
             </reports>
           </reportSet>
         </reportSets>
-      </plugin>
+      </plugin-->
 
     </plugins>
   </reporting>
