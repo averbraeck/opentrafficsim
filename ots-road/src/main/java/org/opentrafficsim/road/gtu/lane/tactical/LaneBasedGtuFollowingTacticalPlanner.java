@@ -71,6 +71,9 @@ public class LaneBasedGtuFollowingTacticalPlanner extends AbstractLaneBasedTacti
 
         // look at the conditions for headway from a GTU in front
         DefaultSimplePerception simplePerception = perception.getPerceptionCategory(DefaultSimplePerception.class);
+        simplePerception.updateForwardHeadwayGtu();
+        simplePerception.updateSpeedLimit();
+        simplePerception.updateForwardHeadwayObject();
         Headway headwayGTU = simplePerception.getForwardHeadwayGtu();
         AccelerationStep accelerationStepGTU = null;
         if (headwayGTU.getDistance().ge(maxDistance))
