@@ -68,6 +68,7 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
             final LateralDirectionality preferred = LateralDirectionality.RIGHT;
             final LateralDirectionality nonPreferred = LateralDirectionality.LEFT;
             DefaultSimplePerception simplePerception = perception.getPerceptionCategory(DefaultSimplePerception.class);
+            simplePerception.updateAccessibleAdjacentLanes();
             Lane nonPreferredLane = simplePerception.bestAccessibleAdjacentLane(lane, nonPreferred, longitudinalPosition);
             Lane preferredLane = simplePerception.bestAccessibleAdjacentLane(lane, preferred, longitudinalPosition);
             AbstractLaneBasedTacticalPlanner albtp = (AbstractLaneBasedTacticalPlanner) gtu.getTacticalPlanner();

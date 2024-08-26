@@ -120,6 +120,12 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
 
             Length maximumForwardHeadway = laneBasedGTU.getParameters().getParameter(LOOKAHEAD);
             DefaultSimplePerception simplePerception = perception.getPerceptionCategory(DefaultSimplePerception.class);
+            simplePerception.updateSpeedLimit();
+            simplePerception.updateForwardHeadwayGtu();
+            simplePerception.updateForwardHeadwayObject();
+            simplePerception.updateBackwardHeadway();
+            simplePerception.updateNeighboringHeadwaysLeft();
+            simplePerception.updateNeighboringHeadwaysRight();
             Speed speedLimit = simplePerception.getSpeedLimit();
 
             // look at the conditions for headway on the current lane
