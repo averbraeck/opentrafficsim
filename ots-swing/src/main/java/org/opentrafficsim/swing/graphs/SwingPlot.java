@@ -55,6 +55,9 @@ public class SwingPlot extends JFrame
     /** Detach menu item. */
     private JMenuItem detach;
 
+    /** Chart panel. */
+    private ChartPanel chartPanel;
+
     /**
      * Construct a new Swing container for an AbstractPlot.
      * @param plot AbstractPlot; the plot to embed
@@ -76,7 +79,7 @@ public class SwingPlot extends JFrame
     {
         // this.plot.setChart(chart);
         // override to gain some control over the auto bounds
-        ChartPanel chartPanel = new ChartPanel(chart)
+        this.chartPanel = new ChartPanel(chart)
         {
             /** */
             private static final long serialVersionUID = 20181006L;
@@ -179,7 +182,7 @@ public class SwingPlot extends JFrame
         ChartMouseListener chartListener = getChartMouseListener();
         if (chartListener != null)
         {
-            chartPanel.addChartMouseListener(chartListener);
+            this.chartPanel.addChartMouseListener(chartListener);
         }
 
         // pointer handler
@@ -199,13 +202,13 @@ public class SwingPlot extends JFrame
                 }
             }
         };
-        chartPanel.addMouseMotionListener(ph);
-        chartPanel.addMouseListener(ph);
-        add(chartPanel, BorderLayout.CENTER);
-        chartPanel.setMouseWheelEnabled(true);
+        this.chartPanel.addMouseMotionListener(ph);
+        this.chartPanel.addMouseListener(ph);
+        add(this.chartPanel, BorderLayout.CENTER);
+        this.chartPanel.setMouseWheelEnabled(true);
 
         // pop up
-        JPopupMenu popupMenu = chartPanel.getPopupMenu();
+        JPopupMenu popupMenu = this.chartPanel.getPopupMenu();
         popupMenu.add(new JPopupMenu.Separator());
         this.detach = new JMenuItem("Show in detached window");
         this.detach.addActionListener(new ActionListener()
@@ -217,7 +220,7 @@ public class SwingPlot extends JFrame
                 SwingPlot.this.detach.setEnabled(false);
                 JFrame window = new JFrame(getPlot().getCaption());
                 window.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-                window.add(chartPanel, BorderLayout.CENTER);
+                window.add(SwingPlot.this.chartPanel, BorderLayout.CENTER);
                 window.add(SwingPlot.this.statusLabel, BorderLayout.SOUTH);
                 window.addWindowListener(new WindowAdapter()
                 {
@@ -225,7 +228,7 @@ public class SwingPlot extends JFrame
                     @Override
                     public void windowClosing(@SuppressWarnings("hiding") final WindowEvent e)
                     {
-                        add(chartPanel, BorderLayout.CENTER);
+                        add(SwingPlot.this.chartPanel, BorderLayout.CENTER);
                         add(SwingPlot.this.statusLabel, BorderLayout.SOUTH);
                         SwingPlot.this.detach.setEnabled(true);
                         SwingPlot.this.getContentPane().validate();
@@ -278,6 +281,15 @@ public class SwingPlot extends JFrame
     public AbstractPlot getPlot()
     {
         return this.plot;
+    }
+
+    /**
+     * Returns the chart panel.
+     * @return chart panel.
+     */
+    public ChartPanel getChartPanel()
+    {
+        return this.chartPanel;
     }
 
 }
