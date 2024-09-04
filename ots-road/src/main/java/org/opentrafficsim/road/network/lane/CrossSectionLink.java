@@ -221,7 +221,7 @@ public class CrossSectionLink extends Link implements Serializable
         {
             double left = Double.NaN;
             double right = Double.NaN;
-            for (Lane lane : this.lanes)
+            for (Lane lane : getLanesAndShoulders())
             {
                 double half = lane.getBeginWidth().si * .5;
                 if (!Double.isNaN(left))
@@ -256,7 +256,7 @@ public class CrossSectionLink extends Link implements Serializable
         {
             double left = Double.NaN;
             double right = Double.NaN;
-            for (Lane lane : this.lanes)
+            for (Lane lane : getLanesAndShoulders())
             {
                 double half = lane.getEndWidth().si * .5;
                 if (!Double.isNaN(left))

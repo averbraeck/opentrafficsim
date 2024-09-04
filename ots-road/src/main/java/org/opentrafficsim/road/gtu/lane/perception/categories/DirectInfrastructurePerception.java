@@ -134,7 +134,7 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
                 continue; // this lane was added in a lateral move, use the lane from which this move was used
             }
             Lane l = record.getLane();
-            if (l instanceof Shoulder)
+            if (laneLaw.equals(LaneAccessLaw.LEGAL) && l instanceof Shoulder)
             {
                 if (lane.isCurrent())
                 {
