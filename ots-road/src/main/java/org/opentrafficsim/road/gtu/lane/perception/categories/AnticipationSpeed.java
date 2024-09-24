@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -9,7 +10,6 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.Intermediate;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionAccumulator;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionCollector;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionFinalizer;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationSpeed.SpeedSet;
 
@@ -131,12 +131,13 @@ public class AnticipationSpeed implements PerceptionCollector<SpeedSet, LaneBase
 
     /** {@inheritDoc} */
     @Override
-    public PerceptionFinalizer<SpeedSet, SpeedSet> getFinalizer()
+    public Function<SpeedSet, SpeedSet> getFinalizer()
     {
-        return new PerceptionFinalizer<SpeedSet, SpeedSet>()
+        return new Function<SpeedSet, SpeedSet>()
         {
+            /** {@inheritDoc} */
             @Override
-            public SpeedSet collect(final SpeedSet intermediate)
+            public SpeedSet apply(final SpeedSet intermediate)
             {
                 return intermediate;
             }

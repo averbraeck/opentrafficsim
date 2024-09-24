@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
 import java.util.Iterator;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -37,13 +38,13 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
      * Collect the underlying objects in to a perceived result. This methodology is loosely based on Stream.collect().
      * @param identity Supplier&lt;I&gt;; the initial intermediate result value
      * @param accumulator PerceptionAccumulator&lt;? super U, I&gt;; accumulator
-     * @param finalizer PerceptionFinalizer&lt;C, I&gt;; finalizer
+     * @param finalizer Function&lt;C, I&gt;; finalizer
      * @param <C> collection result type
      * @param <I> intermediate type
      * @return C; collection result
      */
     <C, I> C collect(Supplier<I> identity, PerceptionAccumulator<? super U, I> accumulator,
-            PerceptionFinalizer<C, I> finalizer);
+            Function<I, C> finalizer);
 
     /**
      * Returns an iterator over the underlying objects.
@@ -71,7 +72,7 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
      * @param <U> underlying object type
      * @param <I> intermediate result type
      */
-    public interface PerceptionCollector<C, U, I>
+    interface PerceptionCollector<C, U, I>
     {
         /**
          * Returns the identity value, the initial intermediate value.
@@ -89,7 +90,7 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
          * Returns the finalizer.
          * @return PerceptionFinalizer; finalizer
          */
-        PerceptionFinalizer<C, I> getFinalizer();
+        Function<I, C> getFinalizer();
     }
 
     /**
@@ -105,7 +106,7 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
      * @param <U> underlying object type
      * @param <I> intermediate result type
      */
-    public interface PerceptionAccumulator<U, I>
+    interface PerceptionAccumulator<U, I>
     {
         /**
          * Accumulate the next object to intermediate result.
@@ -115,29 +116,6 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
          * @return I; intermediate result after accumulation of object
          */
         Intermediate<I> accumulate(Intermediate<I> intermediate, U object, Length distance);
-    }
-
-    /**
-     * Translates the last intermediate result of an accumulator in to the collection output.
-     * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
-     * @param <C> collection result type
-     * @param <I> intermediate result type
-     */
-    public interface PerceptionFinalizer<C, I>
-    {
-        /**
-         * Translate the last intermediate result in to a final result.
-         * @param intermediate I; last intermediate result
-         * @return C; final result
-         */
-        C collect(I intermediate);
     }
 
     /**
@@ -237,13 +215,13 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      * @param <U> underlying object type
      */
-    class UnderlyingDistance<U>
+    class UnderlyingDistance<U> implements Comparable<UnderlyingDistance<?>>
     {
         /** Object. */
-        final U object;
+        private final U object;
 
         /** Distance. */
-        final Length distance;
+        private final Length distance;
 
         /**
          * @param object U; object
@@ -269,6 +247,13 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
         public Length getDistance()
         {
             return this.distance;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public int compareTo(final UnderlyingDistance<?> o)
+        {
+            return this.distance.compareTo(o.distance);
         }
     }
 

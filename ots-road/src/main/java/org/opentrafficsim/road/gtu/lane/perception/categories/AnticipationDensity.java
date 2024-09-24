@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -8,7 +9,6 @@ import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.Intermediate;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionAccumulator;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionCollector;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionFinalizer;
 import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationDensity.CountAndDistance;
 
 /**
@@ -59,13 +59,13 @@ public class AnticipationDensity implements PerceptionCollector<LinearDensity, G
 
     /** {@inheritDoc} */
     @Override
-    public PerceptionFinalizer<LinearDensity, CountAndDistance> getFinalizer()
+    public Function<CountAndDistance, LinearDensity> getFinalizer()
     {
-        return new PerceptionFinalizer<LinearDensity, CountAndDistance>()
+        return new Function<CountAndDistance, LinearDensity>()
         {
             /** {@inheritDoc} */
             @Override
-            public LinearDensity collect(final CountAndDistance intermediate)
+            public LinearDensity apply(final CountAndDistance intermediate)
             {
                 return LinearDensity.instantiateSI(intermediate.getDistance().si / intermediate.getCount());
             }

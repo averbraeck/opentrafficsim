@@ -1,6 +1,7 @@
 package org.opentrafficsim.demo.doc;
 
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -8,10 +9,18 @@ import org.opentrafficsim.base.Type;
 import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.base.parameters.constraint.Constraint;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionAccumulator;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionFinalizer;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 
+/**
+ * This class contains code snippets that are used in the documentation. Whenever error arise in this code, they need to be
+ * fixed -and- the code in the documentation needs to be updated.
+ * <p>
+ * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ */
 public class Generics
 {
 
@@ -56,8 +65,7 @@ public class Generics
     // @docs/02-model-structure/java.md#java-generics
     public interface PerceptionCollectable<H extends Headway, U> extends PerceptionIterable<H>
     {
-        <C, I> C collect(Supplier<I> identity, PerceptionAccumulator<? super U, I> accumulator,
-                PerceptionFinalizer<C, I> finalizer);
+        <C, I> C collect(Supplier<I> identity, PerceptionAccumulator<? super U, I> accumulator, Function<I, C> finalizer);
     }
-    
+
 }

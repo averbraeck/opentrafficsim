@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane.perception;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -149,7 +150,7 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
     /** {@inheritDoc} */
     @Override
     public final <C, I> C collect(final Supplier<I> identity, final PerceptionAccumulator<? super U, I> accumulator,
-            final PerceptionFinalizer<C, I> finalizer)
+            final Function<I, C> finalizer)
     {
         Intermediate<I> intermediate = new Intermediate<>(identity.get());
         assureFirst();
@@ -167,7 +168,7 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
                 next = assureNext(next, lastReturned);
             }
         }
-        return finalizer.collect(intermediate.getObject());
+        return finalizer.apply(intermediate.getObject());
     }
 
     /** {@inheritDoc} */

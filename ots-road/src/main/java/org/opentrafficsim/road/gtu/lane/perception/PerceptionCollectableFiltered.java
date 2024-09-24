@@ -82,7 +82,7 @@ public class PerceptionCollectableFiltered<H extends Headway, U> implements Perc
     /** {@inheritDoc} */
     @Override
     public <C, I> C collect(final Supplier<I> identity, final PerceptionAccumulator<? super U, I> accumulator,
-            final PerceptionFinalizer<C, I> finalizer)
+            final Function<I, C> finalizer)
     {
         Intermediate<I> i = new Intermediate<>(identity.get());
         Iterator<UnderlyingDistance<U>> iterator = underlyingWithDistance();
@@ -95,7 +95,7 @@ public class PerceptionCollectableFiltered<H extends Headway, U> implements Perc
                 break;
             }
         }
-        return finalizer.collect(i.getObject());
+        return finalizer.apply(i.getObject());
     }
 
     /** {@inheritDoc} */
@@ -165,11 +165,11 @@ public class PerceptionCollectableFiltered<H extends Headway, U> implements Perc
         private Entry<H, U> next;
 
         /**
-         * Constructor;
+         * Constructor.
          * @param h H; headway object.
          * @param u U; underlying object.
          */
-        public Entry(final H h, final U u)
+        Entry(final H h, final U u)
         {
             this.h = h;
             this.u = u;
@@ -202,7 +202,7 @@ public class PerceptionCollectableFiltered<H extends Headway, U> implements Perc
          * Constructor.
          * @param converter Function&lt;Entry&lt;H, U&gt;, R&gt;; converter to return type.
          */
-        public FilterIterator(final Function<Entry<H, U>, R> converter)
+        FilterIterator(final Function<Entry<H, U>, R> converter)
         {
             this.converter = converter;
         }

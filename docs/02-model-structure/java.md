@@ -97,7 +97,7 @@ Next, we show an example using quite some type arguments, to show that although 
     {
         <C, I> C collect(Supplier<I> identity, 
                 PerceptionAccumulator<? super U, I> accumulator, 
-                PerceptionFinalizer<C, I> finalizer);
+                Function<I, C> finalizer);
     }
 ```
 
