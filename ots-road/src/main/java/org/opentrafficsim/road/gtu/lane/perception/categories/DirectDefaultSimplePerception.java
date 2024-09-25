@@ -32,7 +32,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayDistance;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuSimple;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayObject;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLightReal;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LanePathInfo;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -723,9 +723,9 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
                 {
                     if (cumDistSI + objectDistanceSI > breakingDistance(MAX_RED_DECELERATION, getGtu().getSpeed()).si)
                     {
-                        return new HeadwayTrafficLight(tl, new Length(cumDistSI + objectDistanceSI, LengthUnit.SI), turnOnRed);
+                        return new HeadwayTrafficLightReal(tl, new Length(cumDistSI + objectDistanceSI, LengthUnit.SI), turnOnRed);
                     }
-                    return new HeadwayTrafficLight(tl, new Length(cumDistSI + objectDistanceSI, LengthUnit.SI), turnOnRed);
+                    return new HeadwayTrafficLightReal(tl, new Length(cumDistSI + objectDistanceSI, LengthUnit.SI), turnOnRed);
                 }
                 if (tl.getTrafficLightColor().isYellow())
                 {
@@ -735,7 +735,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
                     // getGtu().getSpeed().si * brakingTime - 0.5 * maxDecel * brakingTime * brakingTime;
                     if (cumDistSI + objectDistanceSI > breakingDistance(MAX_YELLOW_DECELERATION, getGtu().getSpeed()).si)
                     {
-                        return new HeadwayTrafficLight(tl, new Length(cumDistSI + objectDistanceSI, LengthUnit.SI), turnOnRed);
+                        return new HeadwayTrafficLightReal(tl, new Length(cumDistSI + objectDistanceSI, LengthUnit.SI), turnOnRed);
                     }
                 }
                 if (tl.getTrafficLightColor().isRed())

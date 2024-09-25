@@ -26,6 +26,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayStopLine;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLightReal;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
@@ -66,7 +67,7 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
         super(perception);
         this.headwayGtuType = headwayGtuType;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public final PerceptionCollectable<HeadwayTrafficLight, TrafficLight> getTrafficLights(final RelativeLane lane)
@@ -141,7 +142,7 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
             protected HeadwayTrafficLight perceive(final LaneBasedGtu perceivingGtu, final TrafficLight trafficLight,
                     final Length distance) throws GtuException, ParameterException
             {
-                return new HeadwayTrafficLight(trafficLight, distance,
+                return new HeadwayTrafficLightReal(trafficLight, distance,
                         trafficLight.canTurnOnRed(route, getPerception().getGtu().getType()));
             }
         };

@@ -35,6 +35,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayG
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuReal;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLightReal;
 import org.opentrafficsim.road.gtu.lane.perception.structure.LaneRecordInterface;
 import org.opentrafficsim.road.gtu.lane.perception.structure.SimpleLaneRecord;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -413,7 +414,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                             protected HeadwayTrafficLight perceive(final LaneBasedGtu perceivingGtu, final TrafficLight object,
                                     final Length distance) throws GtuException, ParameterException
                             {
-                                return new HeadwayTrafficLight(object, distance, false);
+                                return new HeadwayTrafficLightReal(object, distance, false);
                             }
                         };
                 if (!it.isEmpty())
