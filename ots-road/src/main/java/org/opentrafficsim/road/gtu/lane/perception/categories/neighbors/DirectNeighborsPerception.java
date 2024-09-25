@@ -8,8 +8,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.ParameterTypeLength;
-import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
@@ -38,12 +36,6 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
 
     /** */
     private static final long serialVersionUID = 20160811L;
-
-    /** Look ahead parameter type. */
-    protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
-
-    /** Look back parameter type. */
-    protected static final ParameterTypeLength LOOKBACK = ParameterTypes.LOOKBACK;
 
     /** Headway GTU type that should be used. */
     private final HeadwayGtuType headwayGtuType;
@@ -78,9 +70,8 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
         try
         {
             SortedSet<HeadwayGtu> set = new TreeSet<>();
-            for (Entry<LaneBasedGtu> entry : getPerception().getLaneStructure().getFirstDownstreamGtus(
-                    new RelativeLane(lat, 1), RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT,
-                    RelativePosition.REAR))
+            for (Entry<LaneBasedGtu> entry : getPerception().getLaneStructure().getFirstDownstreamGtus(new RelativeLane(lat, 1),
+                    RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT, RelativePosition.REAR))
             {
                 set.add(this.headwayGtuType.createDownstreamGtu(getGtu(), entry.object(), entry.distance()));
             }
@@ -143,9 +134,8 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
         try
         {
             // check if any GTU is downstream of the rear, within the vehicle length
-            for (Entry<LaneBasedGtu> entry : getPerception().getLaneStructure().getFirstDownstreamGtus(
-                    new RelativeLane(lat, 1), RelativePosition.REAR, RelativePosition.FRONT, RelativePosition.FRONT,
-                    RelativePosition.REAR))
+            for (Entry<LaneBasedGtu> entry : getPerception().getLaneStructure().getFirstDownstreamGtus(new RelativeLane(lat, 1),
+                    RelativePosition.REAR, RelativePosition.FRONT, RelativePosition.FRONT, RelativePosition.REAR))
             {
                 if (entry.distance().le0())
                 {
@@ -298,7 +288,7 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
     @Override
     public final String toString()
     {
-        return "DirectNeighborsPesrception";
+        return "DirectNeighborsPerception";
     }
 
 }
