@@ -39,8 +39,8 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
-     * @param path String; path.
+     * @param editor editor.
+     * @param path path.
      */
     public TrafficLightValidator(final OtsEditor editor, final String path)
     {

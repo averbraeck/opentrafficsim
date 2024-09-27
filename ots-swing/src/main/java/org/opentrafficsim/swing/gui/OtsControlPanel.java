@@ -118,9 +118,9 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
 
     /**
      * Decorate a SimpleSimulator with a different set of control buttons.
-     * @param simulator OtsSimulatorInterface; the simulator
-     * @param model OtsModelInterface; if non-null, the restart button should work
-     * @param otsAnimationPanel OtsAnimationPanel; the OTS animation panel
+     * @param simulator the simulator
+     * @param model if non-null, the restart button should work
+     * @param otsAnimationPanel the OTS animation panel
      * @throws RemoteException when simulator cannot be accessed for listener attachment
      */
     public OtsControlPanel(final OtsSimulatorInterface simulator, final OtsModelInterface model,
@@ -160,7 +160,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             {
                 return true;
             }
-            
+
             /** {@inheritDoc} */
             @Override
             public Integer getFontSize()
@@ -201,7 +201,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
 
     /**
      * Change the enabled/disabled state of the various simulation control buttons.
-     * @param newState boolean; true if the buttons should become enabled; false if the buttons should become disabled
+     * @param newState true if the buttons should become enabled; false if the buttons should become disabled
      */
     public void setSimulationControlButtons(final boolean newState)
     {
@@ -211,7 +211,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
 
     /**
      * Provide access to the search panel.
-     * @return OtsSearchPanel; the OTS search panel
+     * @return the OTS search panel
      */
     public OtsSearchPanel getOtsSearchPanel()
     {
@@ -220,11 +220,11 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
 
     /**
      * Create a button.
-     * @param name String; name of the button
-     * @param iconPath String; path to the resource
-     * @param actionCommand String; the action command
-     * @param toolTipText String; the hint to show when the mouse hovers over the button
-     * @param enabled boolean; true if the new button must initially be enable; false if it must initially be disabled
+     * @param name name of the button
+     * @param iconPath path to the resource
+     * @param actionCommand the action command
+     * @param toolTipText the hint to show when the mouse hovers over the button
+     * @param enabled true if the new button must initially be enable; false if it must initially be disabled
      * @return JButton
      */
     private JButton makeButton(final String name, final String iconPath, final String actionCommand, final String toolTipText,
@@ -237,7 +237,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             private static final long serialVersionUID = 20180206L;
 
             /**
-             * @param loadIcon Icon; icon
+             * @param loadIcon icon
              */
             AppearanceControlButton(final Icon loadIcon)
             {
@@ -270,8 +270,8 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
 
     /**
      * Attempt to load and return an icon.
-     * @param iconPath String; the path that is used to load the icon
-     * @return Icon; or null if loading failed
+     * @param iconPath the path that is used to load the icon
+     * @return or null if loading failed
      */
     public static final Icon loadIcon(final String iconPath)
     {
@@ -288,8 +288,8 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
 
     /**
      * Attempt to load and return an icon, which will be made gray-scale.
-     * @param iconPath String; the path that is used to load the icon
-     * @return Icon; or null if loading failed
+     * @param iconPath the path that is used to load the icon
+     * @return or null if loading failed
      */
     public static final Icon loadGrayscaleIcon(final String iconPath)
     {
@@ -306,16 +306,15 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
 
     /**
      * Construct and schedule a SimEvent using a Time to specify the execution time.
-     * @param executionTime Time; the time at which the event must happen
-     * @param priority short; should be between <cite>SimEventInterface.MAX_PRIORITY</cite> and
+     * @param executionTime the time at which the event must happen
+     * @param priority should be between <cite>SimEventInterface.MAX_PRIORITY</cite> and
      *            <cite>SimEventInterface.MIN_PRIORITY</cite>; most normal events should use
      *            <cite>SimEventInterface.NORMAL_PRIORITY</cite>
-     * @param source Object; the object that creates/schedules the event
-     * @param eventTarget Object; the object that must execute the event
-     * @param method String; the name of the method of <code>target</code> that must execute the event
-     * @param args Object[]; the arguments of the <code>method</code> that must execute the event
-     * @return SimEvent&lt;Duration&gt;; the event that was scheduled (the caller should save this if a need to cancel the event
-     *         may arise later)
+     * @param source the object that creates/schedules the event
+     * @param eventTarget the object that must execute the event
+     * @param method the name of the method of <code>target</code> that must execute the event
+     * @param args the arguments of the <code>method</code> that must execute the event
+     * @return the event that was scheduled (the caller should save this if a need to cancel the event may arise later)
      * @throws SimRuntimeException when the <code>executionTime</code> is in the past
      */
     private SimEvent<Duration> scheduleEvent(final Time executionTime, final short priority, final Object source,
@@ -348,7 +347,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         private OtsControlPanel panel;
 
         /**
-         * @param panel OtsControlPanel; the OTSControlpanel container.
+         * @param panel the OTSControlpanel container.
          */
         public DisposeOnCloseThread(final OtsControlPanel panel)
         {
@@ -783,13 +782,11 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
 
         /**
          * Construct a new TimeWarpPanel.
-         * @param minimum double; the minimum value on the scale (the displayed scale may extend a little further than this
-         *            value)
-         * @param maximum double; the maximum value on the scale (the displayed scale may extend a little further than this
-         *            value)
-         * @param initialValue double; the initially selected value on the scale
-         * @param ticksPerDecade int; the number of steps per decade
-         * @param simulator DevsSimulatorInterface&lt;?, ?, ?&gt;; the simulator to change the speed of
+         * @param minimum the minimum value on the scale (the displayed scale may extend a little further than this value)
+         * @param maximum the maximum value on the scale (the displayed scale may extend a little further than this value)
+         * @param initialValue the initially selected value on the scale
+         * @param ticksPerDecade the number of steps per decade
+         * @param simulator the simulator to change the speed of
          */
         TimeWarpPanel(final double minimum, final double maximum, final double initialValue, final int ticksPerDecade,
                 final OtsSimulatorInterface simulator)
@@ -906,8 +903,8 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
 
         /**
          * Convert a position on the slider to a factor.
-         * @param step int; the position on the slider
-         * @return double; the factor that corresponds to step
+         * @param step the position on the slider
+         * @return the factor that corresponds to step
          */
         private double stepToFactor(final int step)
         {
@@ -934,7 +931,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
 
         /**
          * Retrieve the current TimeWarp factor.
-         * @return double; the current TimeWarp factor
+         * @return the current TimeWarp factor
          */
         public final double getFactor()
         {
@@ -950,7 +947,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
 
         /**
          * Set the time warp factor to the best possible approximation of a given value.
-         * @param factor double; the requested speed factor
+         * @param factor the requested speed factor
          */
         public void setSpeedFactor(final double factor)
         {
@@ -996,7 +993,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
 
         /**
          * Construct a clock panel.
-         * @param speedLabel JLabel; speed label
+         * @param speedLabel speed label
          */
         ClockLabel(final JLabel speedLabel)
         {
@@ -1074,7 +1071,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
 
         /**
          * Returns the simulation speed.
-         * @param t double; simulation time
+         * @param t simulation time
          * @return simulation speed
          */
         protected double getSpeed(final double t)
@@ -1090,7 +1087,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         {
             return true;
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public Integer getFontSize()
@@ -1115,7 +1112,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
 
         /**
          * Construct a new TimeEdit.
-         * @param initialValue Time; the initial value for the TimeEdit
+         * @param initialValue the initial value for the TimeEdit
          */
         TimeEdit(final Time initialValue)
         {
@@ -1140,7 +1137,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
 
         /**
          * Set or update the time shown in this TimeEdit.
-         * @param newValue Time; the (new) value to set/show in this TimeEdit
+         * @param newValue the (new) value to set/show in this TimeEdit
          */
         public void setTime(final Time newValue)
         {
@@ -1151,7 +1148,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             double s = v - h * 3600 - m * 60;
             this.setText(String.format("%04d:%02d:%06.3f", h, m, s));
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public Integer getFontSize()
@@ -1183,7 +1180,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
 
         /**
          * Create a new RegexFormatter.
-         * @param pattern String; regular expression pattern that defines what this RexexFormatter will accept
+         * @param pattern regular expression pattern that defines what this RexexFormatter will accept
          */
         RegexFormatter(final String pattern)
         {

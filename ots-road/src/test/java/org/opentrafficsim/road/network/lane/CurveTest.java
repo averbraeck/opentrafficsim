@@ -106,7 +106,7 @@ public class CurveTest
 
     /**
      * Print all scheduled events of an OtsSimulatorInterface.
-     * @param simulator OtsSimulatorInterface; the OtsSimulatorInterface
+     * @param simulator the OtsSimulatorInterface
      */
     public final void printEventList(final OtsSimulatorInterface simulator)
     {

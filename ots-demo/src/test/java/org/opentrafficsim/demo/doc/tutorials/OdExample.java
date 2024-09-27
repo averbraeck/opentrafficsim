@@ -56,7 +56,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 public class OdExample
 {
-    
+
     public void howToCreateAnOdMatrixAndAddDemandData()
     {
         Node nodeA = Mockito.mock(Node.class);
@@ -96,19 +96,19 @@ public class OdExample
         data = DoubleVectorData.instantiate(new double[] {100.0, 150.0}, FrequencyUnit.PER_HOUR.getScale(), StorageType.DENSE);
         FrequencyVector demandABTruck = new FrequencyVector(data, FrequencyUnit.PER_HOUR);
         odMatrix.putDemandVector(nodeA, nodeB, truckCategory, demandABTruck, truckTime, Interpolation.LINEAR);
-        
+
         data = DoubleVectorData.instantiate(new double[] {1200.0, 1500.0, 0.0}, FrequencyUnit.PER_HOUR.getScale(),
                 StorageType.DENSE);
         FrequencyVector demandBC = new FrequencyVector(data, FrequencyUnit.PER_HOUR);
         odMatrix.putDemandVector(nodeB, nodeC, carCategory, demandBC, timeVector, interpolation, 0.9);
         odMatrix.putDemandVector(nodeB, nodeC, truckCategory, demandBC, timeVector, interpolation, 0.1);
-        
-        odMatrix.putTripsVector(nodeA, nodeC, carCategory, new int[]{300, 400});
-        odMatrix.putTripsVector(nodeA, nodeC, truckCategory, new int[]{100}, truckTime);
-        
+
+        odMatrix.putTripsVector(nodeA, nodeC, carCategory, new int[] {300, 400});
+        odMatrix.putTripsVector(nodeA, nodeC, truckCategory, new int[] {100}, truckTime);
+
         odMatrix.print();
     }
-    
+
     public void howToSetUpModelFactoriesWhenUsingAnOdMatrix()
     {
         // @docs/08-tutorials/simulation-setup.md#How-to-set-up-model-factories-when-using-an-od-matrix
@@ -119,40 +119,43 @@ public class OdExample
                     final StreamInterface randomStream) throws GtuException
             {
                 // implementation code
-                
+
                 // @docs/08-tutorials/simulation-setup.md#How-to-set-up-model-factories-when-using-an-od-matrix
                 GtuType gtuType = category.get(GtuType.class);
                 Route route = category.get(Route.class);
-                GtuCharacteristics gtuCharacteristics = GtuType.defaultCharacteristics(gtuType, origin.getNetwork(), randomStream);
+                GtuCharacteristics gtuCharacteristics =
+                        GtuType.defaultCharacteristics(gtuType, origin.getNetwork(), randomStream);
                 VehicleModel vehicleModel = VehicleModel.NONE;
-                
+
                 CarFollowingModelFactory<?> carFollowing = new IdmPlusFactory(randomStream);
                 PerceptionFactory perception = new DefaultLmrsPerceptionFactory();
                 LaneBasedTacticalPlannerFactory<?> tactical = new LmrsFactory(carFollowing, perception);
                 LaneBasedStrategicalPlannerFactory<?> strategical = new LaneBasedStrategicalRoutePlannerFactory(tactical);
-                
-                return new LaneBasedGtuCharacteristics(gtuCharacteristics, strategical, route, origin, destination, vehicleModel);
+
+                return new LaneBasedGtuCharacteristics(gtuCharacteristics, strategical, route, origin, destination,
+                        vehicleModel);
             }
         };
     }
-    
+
     static
     {
         StreamInterface randomStream = null;
-        
+
         // @docs/08-tutorials/simulation-setup.md#How-to-set-up-model-factories-when-using-an-od-matrix
         LaneBasedStrategicalRoutePlannerFactory lmrs = DefaultLaneBasedGtuCharacteristicsGeneratorOd.defaultLmrs(randomStream);
-        DefaultLaneBasedGtuCharacteristicsGeneratorOd generator = new DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory(lmrs).create();
+        DefaultLaneBasedGtuCharacteristicsGeneratorOd generator =
+                new DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory(lmrs).create();
     }
-    
+
     private void factories() throws ProbabilityException
     {
         StreamInterface randomStream = null;
-        
+
         // @docs/08-tutorials/simulation-setup.md#How-to-set-up-model-factories-when-using-an-od-matrix
         GtuType car = DefaultsNl.CAR;
         GtuType truck = DefaultsNl.TRUCK;
-        
+
         CarFollowingModelFactory<?> carFollowing = new IdmPlusFactory(randomStream);
         PerceptionFactory perception = new DefaultLmrsPerceptionFactory();
         LmrsFactory tactical = new LmrsFactory(carFollowing, perception);
@@ -160,20 +163,18 @@ public class OdExample
         params.addParameter(truck, ParameterTypes.A, Acceleration.instantiateSI(0.8));
         LaneBasedStrategicalPlannerFactory<?> strategical = new LaneBasedStrategicalRoutePlannerFactory(tactical, params);
         Factory factoryOD = new DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory(strategical);
-        
+
         Distribution<GtuType> gtuTypeGenerator = new Distribution<>(randomStream);
         gtuTypeGenerator.add(new FrequencyAndObject<>(0.9, car));
         gtuTypeGenerator.add(new FrequencyAndObject<>(0.1, truck));
         factoryOD.setGtuTypeGenerator(gtuTypeGenerator);
-        
+
         Set<GtuTemplate> templates = new LinkedHashSet<>();
-        templates.add(new GtuTemplate(car,
-                new ConstantGenerator<>(Length.instantiateSI(4.5)),
-                new ConstantGenerator<>(Length.instantiateSI(1.9)), 
-                new ConstantGenerator<>(Speed.instantiateSI(50))));
+        templates.add(new GtuTemplate(car, new ConstantGenerator<>(Length.instantiateSI(4.5)),
+                new ConstantGenerator<>(Length.instantiateSI(1.9)), new ConstantGenerator<>(Speed.instantiateSI(50))));
         factoryOD.setTemplates(templates);
         GtuType.registerTemplateSupplier(truck, Defaults.NL);
-        
+
         DistContinuousMass carMass = new DistContinuousMass(new DistUniform(randomStream, 500, 1500));
         DistContinuousMass truckMass = new DistContinuousMass(new DistUniform(randomStream, 800, 10000));
         factoryOD.setVehicleModelGenerator(new VehicleModelFactory()
@@ -186,7 +187,7 @@ public class OdExample
                 return new VehicleModel.MassBased(mass, momentOfInertiaAboutZ);
             }
         });
-        
+
         DefaultLaneBasedGtuCharacteristicsGeneratorOd generator = factoryOD.create();
     }
 }

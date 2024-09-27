@@ -21,8 +21,8 @@ public class DiscreteDistDimensionless extends DiscreteDistDoubleScalar.Rel<Dime
     private static final long serialVersionUID = 20180829L;
 
     /**
-     * @param distribution DistDiscrete; distribution
-     * @param unit DimensionlessUnit; units
+     * @param distribution distribution
+     * @param unit units
      */
     public DiscreteDistDimensionless(final DistDiscrete distribution, final DimensionlessUnit unit)
     {

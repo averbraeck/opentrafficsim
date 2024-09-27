@@ -27,9 +27,9 @@ public class AttributesStringFunction extends AbstractStringFunction
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
-     * @param path String; path of nodes to register a string function with, used in a {@code String.endsWith()} manner.
-     * @param attributes String...; attributes to show in the node name.
+     * @param editor editor.
+     * @param path path of nodes to register a string function with, used in a {@code String.endsWith()} manner.
+     * @param attributes attributes to show in the node name.
      */
     public AttributesStringFunction(final OtsEditor editor, final String path, final String... attributes)
     {
@@ -40,7 +40,7 @@ public class AttributesStringFunction extends AbstractStringFunction
 
     /**
      * Sets the separator. Default is ", ".
-     * @param separator String; separator between attribute values.
+     * @param separator separator between attribute values.
      */
     public void setSeparator(final String separator)
     {

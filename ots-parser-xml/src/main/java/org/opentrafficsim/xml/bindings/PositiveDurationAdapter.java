@@ -28,7 +28,8 @@ public class PositiveDurationAdapter extends ScalarAdapter<Duration, DurationTyp
         try
         {
             Duration value = Duration.valueOf(field);
-            Throw.when(value.lt0(), IllegalArgumentException.class, "PositiveDuration value %s is not a positive value.", value);
+            Throw.when(value.lt0(), IllegalArgumentException.class, "PositiveDuration value %s is not a positive value.",
+                    value);
             return new DurationType(value);
         }
         catch (Exception exception)

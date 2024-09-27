@@ -21,8 +21,8 @@ public class ContinuousDistTemperature extends ContinuousDistDoubleScalar.Rel<Te
     private static final long serialVersionUID = 20180829L;
 
     /**
-     * @param distribution DistContinuous; distribution
-     * @param unit TemperatureUnit; units
+     * @param distribution distribution
+     * @param unit units
      */
     public ContinuousDistTemperature(final DistContinuous distribution, final TemperatureUnit unit)
     {

@@ -22,7 +22,7 @@ import org.opentrafficsim.xml.bindings.types.ColorType;
  */
 public class ColorAdapter extends ExpressionAdapter<Color, ColorType>
 {
-    
+
     /** {@inheritDoc} */
     @Override
     public ColorType unmarshal(final String field) throws IllegalArgumentException

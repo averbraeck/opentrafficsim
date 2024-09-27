@@ -24,7 +24,7 @@ public abstract class AbstractTask implements Task
 
     /**
      * Constructor.
-     * @param id String; id
+     * @param id id
      */
     public AbstractTask(final String id)
     {

@@ -18,7 +18,7 @@ interface XyInterpolatedDataset extends XYZDataset
 
     /**
      * Returns the number of items in each column.
-     * @return int; number of items in each column
+     * @return number of items in each column
      */
     int getRangeBinCount();
 

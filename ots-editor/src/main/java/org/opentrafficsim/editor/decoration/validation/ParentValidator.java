@@ -42,8 +42,8 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
-     * @param path String; path of the nodes that have a Parent attribute referring to another node under the same path.
+     * @param editor editor.
+     * @param path path of the nodes that have a Parent attribute referring to another node under the same path.
      */
     public ParentValidator(final OtsEditor editor, final String path)
     {
@@ -57,7 +57,7 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
     /**
      * Sets the context path, which should refer to a higher level node relative to the nodes at the regular path. Default is
      * "Ots".
-     * @param contextPath String; context level within which the parents may be found.
+     * @param contextPath context level within which the parents may be found.
      * @return this validator for method chaining.
      */
     public ParentValidator setContext(final String contextPath)
@@ -68,7 +68,7 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
 
     /**
      * Sets the attribute that is the defining attribute of a parent. Default is "Id".
-     * @param idAttribute String; attribute defining a parent.
+     * @param idAttribute attribute defining a parent.
      * @return this validator for method chaining.
      */
     public ParentValidator setIdAttribute(final String idAttribute)
@@ -79,7 +79,7 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
 
     /**
      * Sets the attribute that refers to a parent. Default is "Parent".
-     * @param parentAttribute String; attribute defining a parent.
+     * @param parentAttribute attribute defining a parent.
      * @return this validator for method chaining.
      */
     public ParentValidator setParentAttribute(final String parentAttribute)
@@ -104,10 +104,10 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
 
     /**
      * Finds the parent node, checks whether it is referring to an exiting node in the list, and moves to the next parent.
-     * @param context Set&lt;XsdTreeNode&gt;; context, i.e. all relevant possible parent nodes.
-     * @param parentId String; id of next parent node to find.
-     * @param nodeList List&lt;XsdTreeNode&gt;; list of nodes so far, every next node is the parent of the previous.
-     * @return String; message if the parent refers to self, directly or indirectly, or {@code null} otherwise.
+     * @param context context, i.e. all relevant possible parent nodes.
+     * @param parentId id of next parent node to find.
+     * @param nodeList list of nodes so far, every next node is the parent of the previous.
+     * @return message if the parent refers to self, directly or indirectly, or {@code null} otherwise.
      */
     private String validateParent(final Set<XsdTreeNode> context, final String parentId, final List<XsdTreeNode> nodeList)
     {
@@ -167,7 +167,7 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
 
     /**
      * Returns the context of the given node, i.e. all relevant possible parent nodes.
-     * @param node XsdTreeNode; node.
+     * @param node node.
      * @return Context of the given node, i.e. all relevant possible parent nodes.
      */
     private Set<XsdTreeNode> getContext(final XsdTreeNode node)

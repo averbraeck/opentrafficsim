@@ -21,7 +21,7 @@ public class AnimationNodeData implements NodeData
 
     /**
      * Constructor.
-     * @param node Node; node.
+     * @param node node.
      */
     public AnimationNodeData(final Node node)
     {
@@ -51,7 +51,7 @@ public class AnimationNodeData implements NodeData
 
     /**
      * Returns the node.
-     * @return Node; node.
+     * @return node.
      */
     public Node getNode()
     {

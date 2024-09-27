@@ -41,8 +41,8 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
 
     /**
      * Constructor without length specification. The complete lane will be used.
-     * @param startTime Time; start time of trajectories
-     * @param lane LaneData&lt;?&gt;; lane
+     * @param startTime start time of trajectories
+     * @param lane lane
      */
     public TrajectoryGroup(final Time startTime, final LaneData<?> lane)
     {
@@ -50,13 +50,12 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
     }
 
     /**
-     * @param startTime Time; start time of trajectory group
-     * @param startPosition Length; start position
-     * @param endPosition Length; end position
-     * @param lane LaneData&lt;?&gt;; the lane
+     * @param startTime start time of trajectory group
+     * @param startPosition start position
+     * @param endPosition end position
+     * @param lane the lane
      */
-    public TrajectoryGroup(final Time startTime, final Length startPosition, final Length endPosition,
-            final LaneData<?> lane)
+    public TrajectoryGroup(final Time startTime, final Length startPosition, final Length endPosition, final LaneData<?> lane)
     {
         Throw.whenNull(startTime, "Start time may not be null.");
         // keep before position check; prevents "End position may not be null" due to missing direction in other constructor
@@ -73,7 +72,7 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
 
     /**
      * Add trajectory.
-     * @param trajectory Trajectory&lt;G&gt;; trajectory to add
+     * @param trajectory trajectory to add
      */
     public final synchronized void addTrajectory(final Trajectory<G> trajectory)
     {
@@ -100,7 +99,7 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
     /**
      * Whether this {@code TrajectoryGroup} holds the given trajectory. Note that this is false if the given trajectory is
      * derived from a trajectory in this {@code TrajectoryGroup}.
-     * @param trajectory Trajectory&lt;?&gt;; trajectory
+     * @param trajectory trajectory
      * @return whether this {@code TrajectoryGroup} holds the given trajectory.
      */
     public final boolean contains(final Trajectory<?> trajectory)
@@ -128,8 +127,8 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
 
     /**
      * Returns trajectory group between two locations.
-     * @param x0 Length; start length
-     * @param x1 Length; end length
+     * @param x0 start length
+     * @param x1 end length
      * @return list of trajectories
      */
     public final synchronized TrajectoryGroup<G> getTrajectoryGroup(final Length x0, final Length x1)
@@ -146,8 +145,8 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
 
     /**
      * Returns trajectory group between two times.
-     * @param t0 Time; start time
-     * @param t1 Time; end time
+     * @param t0 start time
+     * @param t1 end time
      * @return list of trajectories
      */
     public final synchronized TrajectoryGroup<G> getTrajectoryGroup(final Time t0, final Time t1)
@@ -162,10 +161,10 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
 
     /**
      * Returns trajectory group between two locations and between two times.
-     * @param x0 Length; start length
-     * @param x1 Length; end length
-     * @param t0 Time; start time
-     * @param t1 Time; end time
+     * @param x0 start length
+     * @param x1 end length
+     * @param t0 start time
+     * @param t1 end time
      * @return list of trajectories
      */
     public final synchronized TrajectoryGroup<G> getTrajectoryGroup(final Length x0, final Length x1, final Time t0,

@@ -22,11 +22,11 @@ public class MapLaneData extends MapCrossSectionData implements LaneData
 
     /**
      * Constructor.
-     * @param id String; id.
-     * @param linkNode XsdTreeNode; node representing the element.
-     * @param centerLine PolyLine2d; center line.
-     * @param contour PolyLine2d; contour.
-     * @param sliceInfo SliceInfo; slice info.
+     * @param id id.
+     * @param linkNode node representing the element.
+     * @param centerLine center line.
+     * @param contour contour.
+     * @param sliceInfo slice info.
      */
     public MapLaneData(final String id, final XsdTreeNode linkNode, final PolyLine2d centerLine, final Polygon2d contour,
             final SliceInfo sliceInfo)

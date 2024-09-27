@@ -21,9 +21,9 @@ public class Centroid extends Node
 
     /**
      * Construction of a Centroid Node.
-     * @param network Network; the network.
-     * @param id String; the id of the Node.
-     * @param point Point2d; the point with usually an x and y setting.
+     * @param network the network.
+     * @param id the id of the Node.
+     * @param point the point with usually an x and y setting.
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
     public Centroid(final Network network, final String id, final Point2d point) throws NetworkException
@@ -38,7 +38,7 @@ public class Centroid extends Node
         Throw.when(!link.isConnector(), OtsRuntimeException.class, "Centroids can only be connected to Connectors.");
         super.addLink(link);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public NodeType getType()

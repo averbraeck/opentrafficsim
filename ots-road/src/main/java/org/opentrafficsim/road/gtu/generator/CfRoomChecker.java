@@ -109,11 +109,11 @@ public class CfRoomChecker implements RoomChecker
 
     /**
      * Returns a situation dependent headway factor to deal with spillback.
-     * @param desiredSpeed Speed; desired speed
-     * @param desiredHeadway Length; desired headway at desired speed
-     * @param generationSpeed Speed; generation speed
-     * @param generationHeadway Length; desired headway at generation speed
-     * @param leaderLength Length; length of the leader
+     * @param desiredSpeed desired speed
+     * @param desiredHeadway desired headway at desired speed
+     * @param generationSpeed generation speed
+     * @param generationHeadway desired headway at generation speed
+     * @param leaderLength length of the leader
      * @return situation dependent headway factor to deal with spillback
      */
     protected double headwayFactor(final Speed desiredSpeed, final Length desiredHeadway, final Speed generationSpeed,

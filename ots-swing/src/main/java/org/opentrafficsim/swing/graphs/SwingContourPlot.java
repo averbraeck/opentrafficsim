@@ -43,7 +43,7 @@ public class SwingContourPlot extends SwingSpaceTimePlot
 
     /**
      * Create a new SwingContourPlot with embedded plot.
-     * @param plot AbstractContourPlot&lt;?&gt;; the plot to embed
+     * @param plot the plot to embed
      */
     public SwingContourPlot(final AbstractContourPlot<?> plot)
     {
@@ -95,14 +95,14 @@ public class SwingContourPlot extends SwingSpaceTimePlot
 
     /**
      * Create a JMenu to let the user set the granularity.
-     * @param menuName String; caption for the new JMenu
-     * @param format1 String; format string for the values in the items under the new JMenu, below formatValue
-     * @param formatValue double; format value
-     * @param format2 String; format string for the values in the items under the new JMenu, above and equal to formatValue
-     * @param command String; prefix for the actionCommand of the items under the new JMenu
-     * @param values double[]; array of values to be formatted using the format strings to yield the items under the new JMenu
-     * @param initialValue double; the currently selected value (used to put the bullet on the correct item)
-     * @param granularityButtons Map&lt;JRadioButtonMenuItem, Double&gt;; map in to which buttons should be added
+     * @param menuName caption for the new JMenu
+     * @param format1 format string for the values in the items under the new JMenu, below formatValue
+     * @param formatValue format value
+     * @param format2 format string for the values in the items under the new JMenu, above and equal to formatValue
+     * @param command prefix for the actionCommand of the items under the new JMenu
+     * @param values array of values to be formatted using the format strings to yield the items under the new JMenu
+     * @param initialValue the currently selected value (used to put the bullet on the correct item)
+     * @param granularityButtons map in to which buttons should be added
      * @return JMenu with JRadioMenuItems for the values and a bullet on the currentValue item
      */
     private JMenu buildMenu(final String menuName, final String format1, final double formatValue, final String format2,
@@ -156,7 +156,7 @@ public class SwingContourPlot extends SwingSpaceTimePlot
     /**
      * Sets the correct space granularity radio button to selected. This is done from a {@code DataPool} to keep multiple plots
      * consistent.
-     * @param granularity double; space granularity
+     * @param granularity space granularity
      */
     protected final void setSpaceGranularityRadioButton(final double granularity)
     {
@@ -170,7 +170,7 @@ public class SwingContourPlot extends SwingSpaceTimePlot
     /**
      * Sets the correct time granularity radio button to selected. This is done from a {@code DataPool} to keep multiple plots
      * consistent.
-     * @param granularity double; time granularity
+     * @param granularity time granularity
      */
     protected final void setTimeGranularityRadioButton(final double granularity)
     {
@@ -183,7 +183,7 @@ public class SwingContourPlot extends SwingSpaceTimePlot
 
     /**
      * Sets the check box for smooth rendering. This is done from a {@code DataPool} to keep multiple plots consistent.
-     * @param smooth boolean; selected or not
+     * @param smooth selected or not
      */
     protected final void setSmoothing(final boolean smooth)
     {
@@ -193,7 +193,7 @@ public class SwingContourPlot extends SwingSpaceTimePlot
     /**
      * Sets the check box for interpolated rendering and block renderer setting. This is done from a {@code DataPool} to keep
      * multiple plots consistent.
-     * @param interpolate boolean; selected or not
+     * @param interpolate selected or not
      */
     protected final void setInterpolation(final boolean interpolate)
     {

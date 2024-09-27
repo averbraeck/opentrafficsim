@@ -21,8 +21,8 @@ public class DiscreteDistLinearDensity extends DiscreteDistDoubleScalar.Rel<Line
     private static final long serialVersionUID = 20180829L;
 
     /**
-     * @param distribution DistDiscrete; distribution
-     * @param unit LinearDensityUnit; units
+     * @param distribution distribution
+     * @param unit units
      */
     public DiscreteDistLinearDensity(final DistDiscrete distribution, final LinearDensityUnit unit)
     {

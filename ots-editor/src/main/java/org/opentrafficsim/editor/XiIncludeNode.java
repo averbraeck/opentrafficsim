@@ -9,7 +9,7 @@ import org.w3c.dom.UserDataHandler;
 
 /**
  * Singleton at {@code XiIncludeNode.XI_INCLUDE} to use for xi:include nodes in an {@code XsdTreeNode}. Most methods return
- * {@code null} or do nothing. The attributes contain one attribute named 'File' and one named 'Fallback'. 
+ * {@code null} or do nothing. The attributes contain one attribute named 'File' and one named 'Fallback'.
  * <p>
  * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -24,10 +24,10 @@ public final class XiIncludeNode implements Node
 
     /** Child node that represents the 'File' attribute. */
     private static final Node FILE_CHILD = new FileNode(new Attributes("File"));
-    
+
     /** Child node that represents the 'Fallback' attribute. */
     private static final Node FALLBACK_CHILD = new FileNode(new Attributes("Fallback"));
-    
+
     /**
      * Private constructor.
      */
@@ -317,26 +317,27 @@ public final class XiIncludeNode implements Node
     /**
      * Implementation of {@code Node} to provide the 'File' attribute child node.
      * <p>
- * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
- * </p>
- * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private static class FileNode implements Node
     {
 
         /** Attributes. */
         private final Attributes attributes;
-        
+
         /**
          * Constructor.
-         * @param attributes Attributes; attributes.
+         * @param attributes attributes.
          */
         public FileNode(final Attributes attributes)
         {
             this.attributes = attributes;
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public String getNodeName()
@@ -384,7 +385,7 @@ public final class XiIncludeNode implements Node
         {
             return null;
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public Node getLastChild()
@@ -591,32 +592,33 @@ public final class XiIncludeNode implements Node
         {
             return null;
         }
-        
+
     }
-    
+
     /**
      * Implementation of {@code NamedNodeMap} to provide the 'File' attribute.
      * <p>
- * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
- * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
- * </p>
- * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private static class Attributes implements NamedNodeMap
     {
 
         /** Attribute name in GUI. */
         private final String name;
-        
+
         /**
          * Constructor.
-         * @param name String; attribute name in GUI.
+         * @param name attribute name in GUI.
          */
         public Attributes(final String name)
         {
             this.name = name;
         }
-        
+
         /** File node. */
         private Node file = new Node()
         {

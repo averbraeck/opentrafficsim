@@ -55,7 +55,7 @@ public class XyInterpolatedBlockRenderer extends XYBlockRenderer
     private final XyInterpolatedDataset xyInterpolatedDataset;
 
     /**
-     * @param xyInterpolatedDataset XYInterpolatedDataset; dataset that allows retrieving surrounding value for interpolation
+     * @param xyInterpolatedDataset dataset that allows retrieving surrounding value for interpolation
      */
     public XyInterpolatedBlockRenderer(final XyInterpolatedDataset xyInterpolatedDataset)
     {
@@ -87,7 +87,7 @@ public class XyInterpolatedBlockRenderer extends XYBlockRenderer
      * Enables interpolation or not. Interpolation occurs between cell centers. Therefore the painted blocks are shifted right
      * and up. The user of this class must provide an additional row and column of data to fill up the gaps. These values may be
      * NaN.
-     * @param interpolate boolean; interpolate or not
+     * @param interpolate interpolate or not
      */
     public final void setInterpolate(final boolean interpolate)
     {
@@ -250,11 +250,11 @@ public class XyInterpolatedBlockRenderer extends XYBlockRenderer
 
     /**
      * Returns the value of an adjacent cell.
-     * @param series int; the series index
-     * @param item int; item
-     * @param up boolean; whether to get the upper cell (can be combined with right)
-     * @param right boolean; whether to get the right cell (can be combined with up)
-     * @return double; value in adjacent cell, or {@code Double.NaN} if no such cell.
+     * @param series the series index
+     * @param item item
+     * @param up whether to get the upper cell (can be combined with right)
+     * @param right whether to get the right cell (can be combined with up)
+     * @return value in adjacent cell, or {@code Double.NaN} if no such cell.
      */
     private double getAdjacentZ(final int series, final int item, final boolean up, final boolean right)
     {
@@ -277,11 +277,11 @@ public class XyInterpolatedBlockRenderer extends XYBlockRenderer
      * those is used. If either is not NaN, that value is used. Otherwise the opposite corner point is used (which may be NaN).
      * This method's main purpose is to fill the left side of the first column of cells and the bottom of the first row of cells
      * in case of interpolation. Coincidentally it can also fill small data gaps visually.
-     * @param value double; value to fix (if needed)
-     * @param adjacentCorner1 double; adjacent corner value
-     * @param adjacentCorner2 double; other adjacent corner value
-     * @param oppositeCorner double; opposite corner value
-     * @return double; fixed value (if possible, i.e. not all corners are NaN)
+     * @param value value to fix (if needed)
+     * @param adjacentCorner1 adjacent corner value
+     * @param adjacentCorner2 other adjacent corner value
+     * @param oppositeCorner opposite corner value
+     * @return fixed value (if possible, i.e. not all corners are NaN)
      */
     private double fixNaN(final double value, final double adjacentCorner1, final double adjacentCorner2,
             final double oppositeCorner)

@@ -47,11 +47,11 @@ public class StaticObjectAnimation extends OtsRenderable<StaticObjectData>
     private final Set<Path2D.Float> paths;
 
     /**
-     * @param source StaticObjectData; Static Object
-     * @param contextualized Contextualized; context provider
-     * @param width float; width of the contour line to draw
-     * @param color Color; color of the contour line / fill
-     * @param fill boolean; fill internal or not
+     * @param source Static Object
+     * @param contextualized context provider
+     * @param width width of the contour line to draw
+     * @param color color of the contour line / fill
+     * @param fill fill internal or not
      * @throws NamingException for problems with registering in context
      * @throws RemoteException on communication failure
      */
@@ -89,7 +89,7 @@ public class StaticObjectAnimation extends OtsRenderable<StaticObjectData>
     }
 
     /**
-     * @param width float; set width
+     * @param width set width
      */
     public final void setWidth(final float width)
     {
@@ -105,7 +105,7 @@ public class StaticObjectAnimation extends OtsRenderable<StaticObjectData>
     }
 
     /**
-     * @param color Color; set color
+     * @param color set color
      */
     public final void setColor(final Color color)
     {
@@ -121,7 +121,7 @@ public class StaticObjectAnimation extends OtsRenderable<StaticObjectData>
     }
 
     /**
-     * @param fill boolean; set fill
+     * @param fill set fill
      */
     public final void setFill(final boolean fill)
     {

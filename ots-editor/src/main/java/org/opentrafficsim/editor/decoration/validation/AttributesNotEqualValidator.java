@@ -20,10 +20,10 @@ public class AttributesNotEqualValidator extends AbstractNodeDecoratorAttribute 
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
-     * @param path String; path location of nodes to attach to.
-     * @param attribute1 String; first attribute to compare.
-     * @param attribute2 String; second attribute to compare.
+     * @param editor editor.
+     * @param path path location of nodes to attach to.
+     * @param attribute1 first attribute to compare.
+     * @param attribute2 second attribute to compare.
      */
     public AttributesNotEqualValidator(final OtsEditor editor, final String path, final String attribute1,
             final String attribute2)

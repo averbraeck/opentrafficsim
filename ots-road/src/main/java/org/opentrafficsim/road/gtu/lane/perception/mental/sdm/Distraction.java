@@ -47,14 +47,14 @@ public class Distraction
 
     /**
      * Constructor.
-     * @param id String; id
-     * @param description String; description
-     * @param frequency Frequency; frequency per exposed driver
-     * @param exposure double; exposure (value in range [0...1])
-     * @param averageDuration Duration; average duration
-     * @param stdDuration Duration; standard deviation of duration
-     * @param stream StreamInterface; random number stream
-     * @param taskSupplier TaskSupplier; task supplier
+     * @param id id
+     * @param description description
+     * @param frequency frequency per exposed driver
+     * @param exposure exposure (value in range [0...1])
+     * @param averageDuration average duration
+     * @param stdDuration standard deviation of duration
+     * @param stream random number stream
+     * @param taskSupplier task supplier
      */
     public Distraction(final String id, final String description, final Frequency frequency, final double exposure,
             final Duration averageDuration, final Duration stdDuration, final StreamInterface stream,
@@ -82,7 +82,7 @@ public class Distraction
 
     /**
      * Returns the id.
-     * @return String; id
+     * @return id
      */
     public final String getId()
     {
@@ -91,7 +91,7 @@ public class Distraction
 
     /**
      * Returns the description.
-     * @return String; description
+     * @return description
      */
     public final String getDescription()
     {
@@ -100,7 +100,7 @@ public class Distraction
 
     /**
      * Returns the next exposure.
-     * @return boolean; next exposure
+     * @return next exposure
      */
     public final boolean nextExposure()
     {
@@ -109,7 +109,7 @@ public class Distraction
 
     /**
      * Returns the next inter-arrival time of this secondary task.
-     * @return Duration; next inter-arrival time of this secondary task
+     * @return next inter-arrival time of this secondary task
      */
     public final Duration nextInterArrival()
     {
@@ -118,7 +118,7 @@ public class Distraction
 
     /**
      * Returns the next duration of this secondary task.
-     * @return Duration; next duration of this secondary task
+     * @return next duration of this secondary task
      */
     public final Duration nextDuration()
     {
@@ -127,8 +127,8 @@ public class Distraction
 
     /**
      * Returns a task for the given GTU.
-     * @param gtu LaneBasedGtu; gtu
-     * @return Task; task for given GTU
+     * @param gtu gtu
+     * @return task for given GTU
      */
     public final Task getTask(final LaneBasedGtu gtu)
     {

@@ -55,9 +55,9 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
 
     /**
      * Create a Trafcod demo.
-     * @param title String; the title of the Frame
-     * @param panel OtsAnimationPanel; the tabbed panel to display
-     * @param model TrafCODModel; the model
+     * @param title the title of the Frame
+     * @param panel the tabbed panel to display
+     * @param model the model
      * @throws OtsDrawingException on animation error
      */
     public TrafCodDemo2(final String title, final OtsAnimationPanel panel, final TrafCodModel model) throws OtsDrawingException
@@ -67,7 +67,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
 
     /**
      * Main program.
-     * @param args String[]; the command line arguments (not used)
+     * @param args the command line arguments (not used)
      * @throws IOException ...
      */
     public static void main(final String[] args) throws IOException
@@ -78,7 +78,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
     /**
      * Open an URL, read it and store the contents in a string. Adapted from
      * https://stackoverflow.com/questions/4328711/read-url-to-string-in-few-lines-of-java-code
-     * @param url URL; the URL
+     * @param url the URL
      * @return String
      * @throws IOException when reading the file fails
      */
@@ -93,7 +93,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
 
     /**
      * Start the demo.
-     * @param exitOnClose boolean; when running stand-alone: true; when running as part of a demo: false
+     * @param exitOnClose when running stand-alone: true; when running as part of a demo: false
      * @throws IOException when reading the file fails
      */
     public static void demo(final boolean exitOnClose) throws IOException
@@ -169,10 +169,10 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
         private final String xml;
 
         /**
-         * @param simulator OtsSimulatorInterface; the simulator
-         * @param shortName String; name of the model
-         * @param description String; description of the model
-         * @param xml String; the XML string
+         * @param simulator the simulator
+         * @param shortName name of the model
+         * @param description description of the model
+         * @param xml the XML string
          */
         public TrafCodModel(final OtsSimulatorInterface simulator, final String shortName, final String description,
                 final String xml)

@@ -15,7 +15,7 @@ public class LengthUnitType extends ExpressionType<LengthUnit>
 
     /**
      * Constructor with value.
-     * @param value LengthUnit; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public LengthUnitType(final LengthUnit value)
     {
@@ -24,7 +24,7 @@ public class LengthUnitType extends ExpressionType<LengthUnit>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public LengthUnitType(final String expression)
     {

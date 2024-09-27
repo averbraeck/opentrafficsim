@@ -47,8 +47,8 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
 
     /**
      * Constructor for a one-series path.
-     * @param name String; name
-     * @param sections List&lt;Section&lt;S&gt;&gt;; sections
+     * @param name name
+     * @param sections sections
      */
     public GraphPath(final String name, final List<Section<S>> sections)
     {
@@ -64,8 +64,8 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
 
     /**
      * Constructor.
-     * @param seriesNames List&lt;String&gt;; names of series
-     * @param sections List&lt;Section&lt;S&gt;&gt;; sections
+     * @param seriesNames names of series
+     * @param sections sections
      */
     public GraphPath(final List<String> seriesNames, final List<Section<S>> sections)
     {
@@ -89,7 +89,7 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
     /**
      * Returns the start distance of the section.
      * @param section Section&lt;?&gt; section
-     * @return Length; start distance of the section
+     * @return start distance of the section
      */
     public Length getStartDistance(final Section<?> section)
     {
@@ -100,7 +100,7 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
 
     /**
      * Returns the total path length.
-     * @return Length; total path length
+     * @return total path length
      */
     public Length getTotalLength()
     {
@@ -109,7 +109,7 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
 
     /**
      * Returns the mean speed over the entire section.
-     * @return Speed; mean speed over the entire section
+     * @return mean speed over the entire section
      */
     public Speed getSpeedLimit()
     {
@@ -118,8 +118,8 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
 
     /**
      * Returns a section.
-     * @param index int; index of section
-     * @return Section&lt;S&gt;; section
+     * @param index index of section
+     * @return section
      */
     public Section<S> get(final int index)
     {
@@ -184,7 +184,7 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
 
     /**
      * Returns an immutable list of the sections.
-     * @return ImmutableList&lt;Section&lt;S&gt;&gt;; sections
+     * @return sections
      */
     public ImmutableList<Section<S>> getSections()
     {
@@ -201,8 +201,8 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
 
     /**
      * Start recording along path.
-     * @param sampler Sampler&lt;?, L&gt;; sampler
-     * @param path GraphPath&lt;L&gt;; path
+     * @param sampler sampler
+     * @param path path
      * @param <L> lane data type
      */
     public static <L extends LaneData<L>> void initRecording(final Sampler<?, L> sampler, final GraphPath<L> path)
@@ -228,16 +228,16 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      * @param <L> underlying type
-     * @param length Length; length of the section
-     * @param speedLimit Speed; speed limit on the section
-     * @param sections List&lt;S&gt;; list of underlying objects
+     * @param length length of the section
+     * @param speedLimit speed limit on the section
+     * @param sections list of underlying objects
      */
     public static record Section<L>(Length length, Speed speedLimit, List<L> sections) implements Iterable<L>
     {
         /**
          * Returns the source object.
-         * @param series int; number
-         * @return S; underlying object of the series
+         * @param series number
+         * @return underlying object of the series
          */
         public L getSource(final int series)
         {

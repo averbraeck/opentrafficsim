@@ -29,88 +29,90 @@ public class VerifyRequiredMethods
     @Test
     public final void toStringTest()
     {
-        try {
-        Collection<Class<?>> classList = ClassList.classList("org.opentrafficsim", true);
-        for (Class<?> c : classList)
+        try
         {
-            if (c.getName().contains("DirectedPoint"))
+            Collection<Class<?>> classList = ClassList.classList("org.opentrafficsim", true);
+            for (Class<?> c : classList)
             {
-                System.out.println("hmmm");
-            }
-            if (Exception.class.isAssignableFrom(c))
-            {
-                continue;
-            }
-            if (ClassList.isAnonymousInnerClass(c))
-            {
-                continue;
-            }
-            Method toStringMethod = null;
-            boolean isAbstract = false;
-            for (String modifierString : Modifier.toString(c.getModifiers()).split(" "))
-            {
-                if (modifierString.equals("abstract"))
+                if (c.getName().contains("DirectedPoint"))
                 {
-                    isAbstract = true;
-                    break;
+                    System.out.println("hmmm");
                 }
-            }
-            for (Method m : c.getDeclaredMethods())
-            {
-                if (m.getName().equals("toString") && m.getParameterCount() == 0)
+                if (Exception.class.isAssignableFrom(c))
                 {
-                    toStringMethod = m;
+                    continue;
                 }
-            }
-            if (null == toStringMethod)
-            {
-                // Get the nearest toString method from the parent tree
-                try
+                if (ClassList.isAnonymousInnerClass(c))
                 {
-                    toStringMethod = c.getMethod("toString");
+                    continue;
                 }
-                catch (NoSuchMethodException | SecurityException exception)
+                Method toStringMethod = null;
+                boolean isAbstract = false;
+                for (String modifierString : Modifier.toString(c.getModifiers()).split(" "))
                 {
-                    exception.printStackTrace();
-                    fail("Cannot happen: getMethod(\"toString\") should never fail - there is one in Object");
-                }
-                boolean isFinal = false;
-                for (String modifierString : Modifier.toString(toStringMethod.getModifiers()).split(" "))
-                {
-                    if ("final".equals(modifierString))
+                    if (modifierString.equals("abstract"))
                     {
-                        isFinal = true;
+                        isAbstract = true;
                         break;
                     }
                 }
-                if (isFinal)
+                for (Method m : c.getDeclaredMethods())
                 {
-                    System.out.println("Class " + c.getName() + " can not override the toString method because a super "
-                            + "class implements a final toString method");
+                    if (m.getName().equals("toString") && m.getParameterCount() == 0)
+                    {
+                        toStringMethod = m;
+                    }
                 }
-                else if (!ClassList.hasNonStaticFields(c))
+                if (null == toStringMethod)
                 {
-                    System.out.println("Class " + c.getName()
-                            + " does not have to override the toString method because it does not have non-static fields");
-                }
-                else if (isAbstract)
-                {
-                    System.out.println("Class " + c.getName() + " does not have to override the toString method because "
-                            + "it is an abstract class");
-                }
-                else if (c.isEnum())
-                {
-                    System.out.println(
-                            "Class " + c.getName() + " does not have to override toString because this class " + "is an enum");
-                }
-                else
-                {
-                    // TODO: build in toString() methods in ots-core. Then replace System.err.println with fail again...
-                    System.err.println("Class " + c.getName() + " does not (but should) override toString");
+                    // Get the nearest toString method from the parent tree
+                    try
+                    {
+                        toStringMethod = c.getMethod("toString");
+                    }
+                    catch (NoSuchMethodException | SecurityException exception)
+                    {
+                        exception.printStackTrace();
+                        fail("Cannot happen: getMethod(\"toString\") should never fail - there is one in Object");
+                    }
+                    boolean isFinal = false;
+                    for (String modifierString : Modifier.toString(toStringMethod.getModifiers()).split(" "))
+                    {
+                        if ("final".equals(modifierString))
+                        {
+                            isFinal = true;
+                            break;
+                        }
+                    }
+                    if (isFinal)
+                    {
+                        System.out.println("Class " + c.getName() + " can not override the toString method because a super "
+                                + "class implements a final toString method");
+                    }
+                    else if (!ClassList.hasNonStaticFields(c))
+                    {
+                        System.out.println("Class " + c.getName()
+                                + " does not have to override the toString method because it does not have non-static fields");
+                    }
+                    else if (isAbstract)
+                    {
+                        System.out.println("Class " + c.getName() + " does not have to override the toString method because "
+                                + "it is an abstract class");
+                    }
+                    else if (c.isEnum())
+                    {
+                        System.out.println("Class " + c.getName() + " does not have to override toString because this class "
+                                + "is an enum");
+                    }
+                    else
+                    {
+                        // TODO: build in toString() methods in ots-core. Then replace System.err.println with fail again...
+                        System.err.println("Class " + c.getName() + " does not (but should) override toString");
+                    }
                 }
             }
         }
-        }catch(Exception e)
+        catch (Exception e)
         {
             System.out.println("hmmm");
         }

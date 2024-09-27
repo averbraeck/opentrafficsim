@@ -13,7 +13,7 @@ import org.opentrafficsim.xml.bindings.types.CooperationType;
  */
 public class CooperationAdapter extends StaticFieldAdapter<Cooperation, CooperationType>
 {
-    
+
     /**
      * Constructor.
      */

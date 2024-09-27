@@ -22,8 +22,8 @@ public class ContinuousDistTime extends ContinuousDistDoubleScalar.Abs<Time, Tim
     private static final long serialVersionUID = 20180829L;
 
     /**
-     * @param distribution DistContinuous; distribution
-     * @param unit TimeUnit; units
+     * @param distribution distribution
+     * @param unit units
      */
     public ContinuousDistTime(final DistContinuous distribution, final TimeUnit unit)
     {

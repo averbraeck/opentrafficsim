@@ -42,9 +42,9 @@ public class BoundingBoxRounded implements OtsBounds2d
 
     /**
      * Constructor.
-     * @param dx double; complete length along x dimension.
-     * @param dy double; complete length along y dimension.
-     * @param r double; radius of rounding, must be positive.
+     * @param dx complete length along x dimension.
+     * @param dy complete length along y dimension.
+     * @param r radius of rounding, must be positive.
      */
     public BoundingBoxRounded(final double dx, final double dy, final double r)
     {

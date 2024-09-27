@@ -26,7 +26,7 @@ public class BoundingPolygon implements OtsBounds2d
 
     /**
      * Constructor.
-     * @param polygon Polygon2d; polygon.
+     * @param polygon polygon.
      */
     public BoundingPolygon(final Polygon2d polygon)
     {
@@ -42,9 +42,9 @@ public class BoundingPolygon implements OtsBounds2d
 
     /**
      * Translates absolute geometry to bounds relative to location, including rotation.
-     * @param location OrientedPoint2d; location.
-     * @param geometry PolyLine2d; geometry..
-     * @return BoundingPolygon; bounded polygon.
+     * @param location location.
+     * @param geometry geometry..
+     * @return bounded polygon.
      */
     public static BoundingPolygon geometryToBounds(final OrientedPoint2d location, final PolyLine2d geometry)
     {

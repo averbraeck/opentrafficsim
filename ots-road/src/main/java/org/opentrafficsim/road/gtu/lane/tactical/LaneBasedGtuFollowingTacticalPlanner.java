@@ -40,8 +40,8 @@ public class LaneBasedGtuFollowingTacticalPlanner extends AbstractLaneBasedTacti
 
     /**
      * Instantiate a tactical planner with just GTU following behavior and no lane changes.
-     * @param carFollowingModel GtuFollowingModelOld; Car-following model.
-     * @param gtu LaneBasedGtu; GTU
+     * @param carFollowingModel Car-following model.
+     * @param gtu GTU
      */
     public LaneBasedGtuFollowingTacticalPlanner(final GtuFollowingModelOld carFollowingModel, final LaneBasedGtu gtu)
     {
@@ -51,8 +51,7 @@ public class LaneBasedGtuFollowingTacticalPlanner extends AbstractLaneBasedTacti
 
     /** {@inheritDoc} */
     @Override
-    public final OperationalPlan generateOperationalPlan(final Time startTime,
-            final OrientedPoint2d locationAtStartTime)
+    public final OperationalPlan generateOperationalPlan(final Time startTime, final OrientedPoint2d locationAtStartTime)
             throws OperationalPlanException, NetworkException, GtuException, ParameterException
     {
         // ask Perception for the local situation

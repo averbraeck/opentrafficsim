@@ -4,8 +4,8 @@ import org.djunits.value.vdouble.scalar.base.DoubleScalar;
 import org.djutils.exceptions.Throw;
 
 /**
- * Continuous constraints with a dual bound. To allow both {@code Double} and {@code DoubleScalar<?, ?>} constraints,
- * the generic type is restricted to {@code Number}. However, that also allows other subclasses of {@code Number}, e.g.
+ * Continuous constraints with a dual bound. To allow both {@code Double} and {@code DoubleScalar<?, ?>} constraints, the
+ * generic type is restricted to {@code Number}. However, that also allows other subclasses of {@code Number}, e.g.
  * {@code Integer}. Due to rounding and value limits from the type (e.g. {@code Integer.MAX_VALEU}), bounds may not function
  * correctly after a call to {@code Number.doubleValue()}. To restrict the usage, the constructor is private and static factory
  * methods for {@code Double} and {@code DoubleScalar<?, ?>} are supplied.
@@ -22,8 +22,8 @@ public final class DualBound<T extends Number> extends SingleBound<T>
 {
 
     /**
-     * Standard dual bound on the unit interval [0...1]. This can be used for both {@code Double} and
-     * {@code DoubleScalar<?, ?>} parameters.
+     * Standard dual bound on the unit interval [0...1]. This can be used for both {@code Double} and {@code DoubleScalar<?, ?>}
+     * parameters.
      */
     public static final DualBound<Number> UNITINTERVAL = createClosed(0.0, 1.0);
 
@@ -32,8 +32,8 @@ public final class DualBound<T extends Number> extends SingleBound<T>
 
     /**
      * Creates a dual bound <i>including</i> the bounds; {@code lowerBound <= value <= upperBound}. Bounds may be equal.
-     * @param lowerBound double; lower bound value
-     * @param upperBound double; upper bound value
+     * @param lowerBound lower bound value
+     * @param upperBound upper bound value
      * @return closed dual bound
      */
     public static DualBound<Double> closed(final double lowerBound, final double upperBound)
@@ -43,8 +43,8 @@ public final class DualBound<T extends Number> extends SingleBound<T>
 
     /**
      * Creates a dual bound <i>including</i> the bounds; {@code lowerBound <= value <= upperBound}.
-     * @param lowerBound T; lower bound value
-     * @param upperBound T; upper bound value
+     * @param lowerBound lower bound value
+     * @param upperBound upper bound value
      * @param <T> value type
      * @return closed dual bound
      */
@@ -55,8 +55,8 @@ public final class DualBound<T extends Number> extends SingleBound<T>
 
     /**
      * Creates a dual bound <i>including</i> the bounds; {@code lowerBound <= value <= upperBound}.
-     * @param lowerBound T; lower bound value
-     * @param upperBound T; upper bound value
+     * @param lowerBound lower bound value
+     * @param upperBound upper bound value
      * @param <T> value type
      * @return closed dual bound
      */
@@ -70,8 +70,8 @@ public final class DualBound<T extends Number> extends SingleBound<T>
 
     /**
      * Creates a dual bound <i>excluding</i> the bounds; {@code lowerBound < value < upperBound}.
-     * @param lowerBound double; lower bound value
-     * @param upperBound double; upper bound value
+     * @param lowerBound lower bound value
+     * @param upperBound upper bound value
      * @return open dual bound
      */
     public static DualBound<Double> open(final double lowerBound, final double upperBound)
@@ -81,8 +81,8 @@ public final class DualBound<T extends Number> extends SingleBound<T>
 
     /**
      * Creates a dual bound <i>excluding</i> the bounds; {@code lowerBound < value < upperBound}.
-     * @param lowerBound T; lower bound value
-     * @param upperBound T; upper bound value
+     * @param lowerBound lower bound value
+     * @param upperBound upper bound value
      * @param <T> value type
      * @return open dual bound
      */
@@ -93,8 +93,8 @@ public final class DualBound<T extends Number> extends SingleBound<T>
 
     /**
      * Creates a dual bound <i>excluding</i> the bounds; {@code lowerBound < value < upperBound}.
-     * @param lowerBound T; lower bound value
-     * @param upperBound T; upper bound value
+     * @param lowerBound lower bound value
+     * @param upperBound upper bound value
      * @param <T> value type
      * @return open dual bound
      */
@@ -108,9 +108,9 @@ public final class DualBound<T extends Number> extends SingleBound<T>
     /**
      * Creates a dual bound <i>excluding</i> the lower bound and <i>including</i> the upper bound;
      * {@code lowerBound < value <= upperBound}.
-     * @param lowerBound double; lower bound value
-     * @param upperBound double; upper bound value
-     * @return dual bound; excluding the lower bound and including the upper bound
+     * @param lowerBound lower bound value
+     * @param upperBound upper bound value
+     * @return excluding the lower bound and including the upper bound
      */
     public static DualBound<Double> leftOpenRightClosed(final double lowerBound, final double upperBound)
     {
@@ -120,13 +120,12 @@ public final class DualBound<T extends Number> extends SingleBound<T>
     /**
      * Creates a dual bound <i>excluding</i> the lower bound and <i>including</i> the upper bound;
      * {@code lowerBound < value <= upperBound}.
-     * @param lowerBound T; lower bound value
-     * @param upperBound T; upper bound value
+     * @param lowerBound lower bound value
+     * @param upperBound upper bound value
      * @param <T> value type
-     * @return dual bound; excluding the lower bound and including the upper bound
+     * @return excluding the lower bound and including the upper bound
      */
-    public static <T extends DoubleScalar<?, ?>> DualBound<T> leftOpenRightClosed(final T lowerBound,
-            final T upperBound)
+    public static <T extends DoubleScalar<?, ?>> DualBound<T> leftOpenRightClosed(final T lowerBound, final T upperBound)
     {
         return createLeftOpenRightClosed(lowerBound, upperBound);
     }
@@ -134,10 +133,10 @@ public final class DualBound<T extends Number> extends SingleBound<T>
     /**
      * Creates a dual bound <i>excluding</i> the lower bound and <i>including</i> the upper bound;
      * {@code lowerBound < value <= upperBound}.
-     * @param lowerBound T; lower bound value
-     * @param upperBound T; upper bound value
+     * @param lowerBound lower bound value
+     * @param upperBound upper bound value
      * @param <T> value type
-     * @return dual bound; excluding the lower bound and including the upper bound
+     * @return excluding the lower bound and including the upper bound
      */
     private static <T extends Number> DualBound<T> createLeftOpenRightClosed(final T lowerBound, final T upperBound)
     {
@@ -149,9 +148,9 @@ public final class DualBound<T extends Number> extends SingleBound<T>
     /**
      * Creates a dual bound <i>including</i> the lower bound and <i>excluding</i> the upper bound;
      * {@code lowerBound <= value < upperBound}.
-     * @param lowerBound double; lower bound value
-     * @param upperBound double; upper bound value
-     * @return dual bound; including the lower bound and excluding the upper bound
+     * @param lowerBound lower bound value
+     * @param upperBound upper bound value
+     * @return including the lower bound and excluding the upper bound
      */
     public static DualBound<Double> leftClosedRightOpen(final double lowerBound, final double upperBound)
     {
@@ -161,13 +160,12 @@ public final class DualBound<T extends Number> extends SingleBound<T>
     /**
      * Creates a dual bound <i>including</i> the lower bound and <i>excluding</i> the upper bound;
      * {@code lowerBound <= value < upperBound}.
-     * @param lowerBound T; lower bound value
-     * @param upperBound T; upper bound value
+     * @param lowerBound lower bound value
+     * @param upperBound upper bound value
      * @param <T> value type
-     * @return dual bound; including the lower bound and excluding the upper bound
+     * @return including the lower bound and excluding the upper bound
      */
-    public static <T extends DoubleScalar<?, ?>> DualBound<T> leftClosedRightOpen(final T lowerBound,
-            final T upperBound)
+    public static <T extends DoubleScalar<?, ?>> DualBound<T> leftClosedRightOpen(final T lowerBound, final T upperBound)
     {
         return createLeftClosedRightOpen(lowerBound, upperBound);
     }
@@ -175,10 +173,10 @@ public final class DualBound<T extends Number> extends SingleBound<T>
     /**
      * Creates a dual bound <i>including</i> the lower bound and <i>excluding</i> the upper bound;
      * {@code lowerBound <= value < upperBound}.
-     * @param lowerBound T; lower bound value
-     * @param upperBound T; upper bound value
+     * @param lowerBound lower bound value
+     * @param upperBound upper bound value
      * @param <T> value type
-     * @return dual bound; including the lower bound and excluding the upper bound
+     * @return including the lower bound and excluding the upper bound
      */
     private static <T extends Number> DualBound<T> createLeftClosedRightOpen(final T lowerBound, final T upperBound)
     {
@@ -190,8 +188,8 @@ public final class DualBound<T extends Number> extends SingleBound<T>
     /**
      * Checks whether both values for the bounds are positively separated. This should not be used for a closed interval where
      * equal bounds can be accepted.
-     * @param lowerBound T; lower bound value
-     * @param upperBound T; upper bound value
+     * @param lowerBound lower bound value
+     * @param upperBound upper bound value
      * @throws IllegalArgumentException if the bound values are not positively separated
      * @param <T> value type
      */
@@ -203,9 +201,9 @@ public final class DualBound<T extends Number> extends SingleBound<T>
 
     /**
      * Constructor.
-     * @param lowerBound Bound; lower bound
-     * @param upperBound Bound; upper bound
-     * @param failMessage String; message about values that do not comply with the bound
+     * @param lowerBound lower bound
+     * @param upperBound upper bound
+     * @param failMessage message about values that do not comply with the bound
      */
     private DualBound(final Bound lowerBound, final Bound upperBound, final String failMessage)
     {

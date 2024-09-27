@@ -37,7 +37,7 @@ public abstract class HierarchicalType<T extends HierarchicalType<T, I>, I exten
 
     /**
      * Constructor for creating the top level types in subclasses.
-     * @param id String; The id of the type to make it identifiable.
+     * @param id The id of the type to make it identifiable.
      * @throws NullPointerException if the id is null
      */
     protected HierarchicalType(final String id) throws NullPointerException
@@ -47,8 +47,8 @@ public abstract class HierarchicalType<T extends HierarchicalType<T, I>, I exten
 
     /**
      * Constructor that creates a hierarchical type including a link to a parent type.
-     * @param id String; The id of the type to make it identifiable.
-     * @param parent T; parent type; can be null, in that case no parent will be identified
+     * @param id The id of the type to make it identifiable.
+     * @param parent parent type; can be null, in that case no parent will be identified
      * @throws NullPointerException if the id is null
      */
     @SuppressWarnings("unchecked")
@@ -90,7 +90,7 @@ public abstract class HierarchicalType<T extends HierarchicalType<T, I>, I exten
 
     /**
      * Whether this, or any of the parent types, equals the given type.
-     * @param type T; type the type to look for
+     * @param type type the type to look for
      * @return whether this, or any of the parent types, equals the given type
      */
     public final boolean isOfType(final T type)
@@ -108,7 +108,7 @@ public abstract class HierarchicalType<T extends HierarchicalType<T, I>, I exten
 
     /**
      * Returns the common ancestor of both types.
-     * @param type T; other type.
+     * @param type other type.
      * @return common ancestor of both types, {@code null} if none
      */
     public final T commonAncestor(final T type)

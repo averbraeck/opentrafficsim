@@ -79,7 +79,7 @@ public class LengthBeginEndAdapter extends ExpressionAdapter<LengthBeginEnd, Len
 
     /**
      * Marshal value (not an expression).
-     * @param lbe LengthBeginEnd; value.
+     * @param lbe value.
      * @return marshaled value.
      * @throws IllegalArgumentException when the fraction is out of bounds
      */

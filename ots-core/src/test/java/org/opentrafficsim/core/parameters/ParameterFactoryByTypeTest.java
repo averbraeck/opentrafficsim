@@ -135,10 +135,10 @@ public final class ParameterFactoryByTypeTest
 
     /**
      * Tests a single parameter value.
-     * @param parameterFactory ParameterFactory; parameter factory
-     * @param parameterType ParameterTypeDouble; parameter type
-     * @param gtuType GtuType; GTU type
-     * @param value double; value
+     * @param parameterFactory parameter factory
+     * @param parameterType parameter type
+     * @param gtuType GTU type
+     * @param value value
      * @throws ParameterException if parameter 'a' is not set
      */
     private static void testParameterValue(final ParameterFactory parameterFactory, final ParameterTypeDouble parameterType,
@@ -151,9 +151,9 @@ public final class ParameterFactoryByTypeTest
 
     /**
      * Adds a correlation B = A * factor + 0.5.
-     * @param parameterFactory ParameterFactoryByType; parameter factory
-     * @param gtuType GtuType; GTU type
-     * @param factor double; factor
+     * @param parameterFactory parameter factory
+     * @param gtuType GTU type
+     * @param factor factor
      */
     private static void addCorrelation(final ParameterFactoryByType parameterFactory, final GtuType gtuType,
             final double factor)

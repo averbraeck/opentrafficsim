@@ -25,14 +25,14 @@ public interface HistoricalMap<K, V> extends Map<K, V>
 
     /**
      * Returns the current map.
-     * @return Map; current map
+     * @return current map
      */
     Map<K, V> get();
 
     /**
      * Returns a past map.
-     * @param time Time; time to obtain the map at
-     * @return Map; past map
+     * @param time time to obtain the map at
+     * @return past map
      */
     Map<K, V> get(Time time);
 

@@ -163,12 +163,12 @@ public interface Cooperation extends LmrsParameters
 
     /**
      * Determine acceleration for cooperation.
-     * @param perception LanePerception; perception
-     * @param params Parameters; parameters
-     * @param sli SpeedLimitInfo; speed limit info
-     * @param cfm CarFollowingModel; car-following model
-     * @param lat LateralDirectionality; lateral direction for cooperation
-     * @param ownDesire Desire; own lane change desire
+     * @param perception perception
+     * @param params parameters
+     * @param sli speed limit info
+     * @param cfm car-following model
+     * @param lat lateral direction for cooperation
+     * @param ownDesire own lane change desire
      * @return acceleration for synchronization
      * @throws ParameterException if a parameter is not defined
      * @throws OperationalPlanException perception exception

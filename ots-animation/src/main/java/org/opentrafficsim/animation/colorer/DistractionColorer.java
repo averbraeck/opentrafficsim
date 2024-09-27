@@ -43,7 +43,7 @@ public class DistractionColorer implements GtuColorer, Serializable
 
     /**
      * Constructor.
-     * @param distractions DefaultDistraction...; DefaultDistraction... distractions to color
+     * @param distractions DefaultDistraction... distractions to color
      */
     public DistractionColorer(final DefaultDistraction... distractions)
     {

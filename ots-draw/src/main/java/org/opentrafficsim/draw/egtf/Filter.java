@@ -15,27 +15,27 @@ public interface Filter
 
     /**
      * Returns the grid location.
-     * @return double[]; grid location
+     * @return grid location
      */
     double[] getLocation();
 
     /**
      * Returns the grid time.
-     * @return double[]; grid time
+     * @return grid time
      */
     double[] getTime();
 
     /**
      * Returns filtered data as SI values.
-     * @param quantity Quantity&lt;?, ?&gt;; quantity
-     * @return double[][]; filtered data as SI values
+     * @param quantity quantity
+     * @return filtered data as SI values
      */
     double[][] getSI(Quantity<?, ?> quantity);
 
     /**
      * Returns the filtered data in output format.
-     * @param quantity Quantity&lt;?, K&gt;; quantity.
-     * @return K; filtered data in output format
+     * @param quantity quantity.
+     * @return filtered data in output format
      * @param <K> output format.
      */
     <K> K get(Quantity<?, K> quantity);

@@ -31,7 +31,7 @@ public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements C
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
+     * @param editor editor.
      */
     public AutomaticLinkId(final OtsEditor editor)
     {
@@ -41,9 +41,9 @@ public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements C
 
     /**
      * Constructor for sub classes.
-     * @param editor OtsEditor; editor.
-     * @param predicate Predicate&lt;XsdTreeNode&gt;; predicate to accept nodes that should have this attribute decorator.
-     * @param attributes String...; attributes to trigger on.
+     * @param editor editor.
+     * @param predicate predicate to accept nodes that should have this attribute decorator.
+     * @param attributes attributes to trigger on.
      */
     protected AutomaticLinkId(final OtsEditor editor, final Predicate<XsdTreeNode> predicate, final String... attributes)
     {
@@ -96,8 +96,8 @@ public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements C
 
     /**
      * Returns a string with the { and } removed.
-     * @param value String; candidate value.
-     * @return String; string with the { and } removed
+     * @param value candidate value.
+     * @return string with the { and } removed
      */
     protected String debrace(final String value)
     {

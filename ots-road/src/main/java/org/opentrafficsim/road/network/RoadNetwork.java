@@ -57,8 +57,8 @@ public class RoadNetwork extends Network
 
     /**
      * Construction of an empty network.
-     * @param id String; the network id.
-     * @param simulator OtsSimulatorInterface; the DSOL simulator engine
+     * @param id the network id.
+     * @param simulator the DSOL simulator engine
      */
     public RoadNetwork(final String id, final OtsSimulatorInterface simulator)
     {
@@ -69,13 +69,12 @@ public class RoadNetwork extends Network
      * Returns lane change info from the given lane. Distances are given from the start of the lane and will never exceed the
      * given range. This method returns {@code null} if no valid path exists. If there are no reasons to change lane within
      * range, an empty set is returned.
-     * @param lane Lane; from lane.
-     * @param route Route; route.
-     * @param gtuType GtuType; GTU Type.
-     * @param range Length; maximum range of info to consider, from the start of the given lane.
-     * @param laneAccessLaw LaneAccessLaw; lane access law.
-     * @return ImmutableSortedSet&lt;LaneChangeInfo&gt;; lane change info from the given lane, or {@code null} if no path
-     *         exists.
+     * @param lane from lane.
+     * @param route route.
+     * @param gtuType GTU Type.
+     * @param range maximum range of info to consider, from the start of the given lane.
+     * @param laneAccessLaw lane access law.
+     * @return lane change info from the given lane, or {@code null} if no path exists.
      */
     public ImmutableSortedSet<LaneChangeInfo> getLaneChangeInfo(final Lane lane, final Route route, final GtuType gtuType,
             final Length range, final LaneAccessLaw laneAccessLaw)
@@ -117,12 +116,11 @@ public class RoadNetwork extends Network
     /**
      * Returns the complete (i.e. without range) lane change info from the given lane. It is either taken from cache, or
      * created.
-     * @param lane Lane; from lane.
-     * @param route Route; route.
-     * @param gtuType GtuType; GTU Type.
-     * @param laneAccessLaw LaneAccessLaw; lane access law.
-     * @return SortedSet&lt;LaneChangeInfo&gt;; complete (i.e. without range) lane change info from the given lane, or
-     *         {@code null} if no path exists.
+     * @param lane from lane.
+     * @param route route.
+     * @param gtuType GTU Type.
+     * @param laneAccessLaw lane access law.
+     * @return complete (i.e. without range) lane change info from the given lane, or {@code null} if no path exists.
      */
     private SortedSet<LaneChangeInfo> getCompleteLaneChangeInfo(final Lane lane, final Route route, final GtuType gtuType,
             final LaneAccessLaw laneAccessLaw)
@@ -206,9 +204,9 @@ public class RoadNetwork extends Network
 
     /**
      * Builds the graph.
-     * @param graph RouteWeightedGraph; empty graph to build.
-     * @param gtuType GtuType; GTU type.
-     * @param laneChangeLaw LaneChangeLaw; lane change law, legal or physical.
+     * @param graph empty graph to build.
+     * @param gtuType GTU type.
+     * @param laneChangeLaw lane change law, legal or physical.
      */
     private void buildGraph(final RouteWeightedGraph graph, final GtuType gtuType, final LaneAccessLaw laneChangeLaw)
     {
@@ -270,11 +268,11 @@ public class RoadNetwork extends Network
 
     /**
      * Returns a set of lane change info, extracted from the graph.
-     * @param lane Lane; from lane.
-     * @param graph RouteWeightedGraph; graph.
-     * @param gtuType GtuType; GTU Type.
-     * @param route Route; route.
-     * @return List&lt;LaneChangeInfoEdge&gt;; path derived from the graph, or {@code null} if there is no path.
+     * @param lane from lane.
+     * @param graph graph.
+     * @param gtuType GTU Type.
+     * @param route route.
+     * @return path derived from the graph, or {@code null} if there is no path.
      */
     private List<LaneChangeInfoEdge> findPath(final Lane lane, final RouteWeightedGraph graph, final GtuType gtuType,
             final Route route)
@@ -322,8 +320,8 @@ public class RoadNetwork extends Network
 
     /**
      * Extracts lane change info from a path.
-     * @param path List&lt;LaneChangeInfoEdge&gt;; path.
-     * @return SortedSet&lt;LaneChangeInfo&gt;; lane change info.
+     * @param path path.
+     * @return lane change info.
      */
     private SortedSet<LaneChangeInfo> extractLaneChangeInfo(final List<LaneChangeInfoEdge> path)
     {
@@ -427,7 +425,7 @@ public class RoadNetwork extends Network
 
         /**
          * Set the route.
-         * @param route Route; route.
+         * @param route route.
          */
         public void setRoute(final Route route)
         {
@@ -467,8 +465,8 @@ public class RoadNetwork extends Network
 
         /**
          * Returns the destination node to use when no route is available. This will be the last node found moving downstream.
-         * @param gtuType GtuType; GTU type.
-         * @return Node; destination node to use when no route is available.
+         * @param gtuType GTU type.
+         * @return destination node to use when no route is available.
          */
         public Node getNoRouteDestinationNode(final GtuType gtuType)
         {
@@ -519,9 +517,9 @@ public class RoadNetwork extends Network
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
-     * @param fromLane Lane; from lane, to allow construction of distances from a path.
-     * @param laneChangeInfoEdgeType LaneChangeInfoEdgeType; the type of lane to lane movement performed along this edge.
-     * @param toLink Link; to link (of the lane this edge moves to).
+     * @param fromLane from lane, to allow construction of distances from a path.
+     * @param laneChangeInfoEdgeType the type of lane to lane movement performed along this edge.
+     * @param toLink to link (of the lane this edge moves to).
      */
     private static record LaneChangeInfoEdge(Lane fromLane, LaneChangeInfoEdgeType laneChangeInfoEdgeType, Link toLink)
     {

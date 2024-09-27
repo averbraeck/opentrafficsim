@@ -106,8 +106,8 @@ public class Fuller implements Mental
 
     /**
      * Constructor with custom situational awareness.
-     * @param tasks Set&lt;? extends Task&gt;; tasks
-     * @param behavioralAdapatations Set&lt;BehavioralAdaptation&gt;; behavioralAdapatations
+     * @param tasks tasks
+     * @param behavioralAdapatations behavioralAdapatations
      */
     public Fuller(final Set<? extends Task> tasks, final Set<BehavioralAdaptation> behavioralAdapatations)
     {
@@ -116,9 +116,9 @@ public class Fuller implements Mental
 
     /**
      * Constructor with custom situational awareness.
-     * @param tasks Set&lt;? extends Task&gt;; tasks
-     * @param behavioralAdapatations Set&lt;BehavioralAdaptation&gt;; behavioralAdapatations
-     * @param taskManager TaskManager; task manager
+     * @param tasks tasks
+     * @param behavioralAdapatations behavioralAdapatations
+     * @param taskManager task manager
      */
     public Fuller(final Set<? extends Task> tasks, final Set<BehavioralAdaptation> behavioralAdapatations,
             final TaskManager taskManager)
@@ -133,7 +133,7 @@ public class Fuller implements Mental
 
     /**
      * Adds a task.
-     * @param task Task; task to add
+     * @param task task to add
      */
     public void addTask(final Task task)
     {
@@ -142,7 +142,7 @@ public class Fuller implements Mental
 
     /**
      * Removes a task.
-     * @param task Task; task to remove
+     * @param task task to remove
      */
     public void removeTask(final Task task)
     {
@@ -192,8 +192,8 @@ public class Fuller implements Mental
 
     /**
      * Returns the anticipation reliance of the given task id.
-     * @param taskId taskId; task id to return the anticipation reliance for.
-     * @return double; anticipation reliance of given task id, {@code NaN if not present}
+     * @param taskId task id to return the anticipation reliance for.
+     * @return anticipation reliance of given task id, {@code NaN if not present}
      */
     public double getAnticipationReliance(final String taskId)
     {
@@ -202,8 +202,8 @@ public class Fuller implements Mental
 
     /**
      * Returns the demand of the given task id.
-     * @param taskId taskId; task id to return the demand for.
-     * @return double; demand of given task id, {@code NaN if not present}
+     * @param taskId task id to return the demand for.
+     * @return demand of given task id, {@code NaN if not present}
      */
     public double getTaskDemand(final String taskId)
     {
@@ -233,8 +233,8 @@ public class Fuller implements Mental
     {
         /**
          * Adapt to task saturation by changing parameter values.
-         * @param parameters Parameters; parameters
-         * @param taskSaturation double; task saturation
+         * @param parameters parameters
+         * @param taskSaturation task saturation
          * @throws ParameterException if a parameter is missing or out of bounds
          */
         void adapt(Parameters parameters, double taskSaturation) throws ParameterException;

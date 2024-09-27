@@ -29,7 +29,7 @@ public class AnimationConflictData implements ConflictData
 
     /**
      * Constructor.
-     * @param conflict Conflict; conflict.
+     * @param conflict conflict.
      */
     public AnimationConflictData(final Conflict conflict)
     {
@@ -109,7 +109,7 @@ public class AnimationConflictData implements ConflictData
 
     /**
      * Returns the Conflict.
-     * @return Conflict; GTU.
+     * @return GTU.
      */
     public Conflict getConflict()
     {

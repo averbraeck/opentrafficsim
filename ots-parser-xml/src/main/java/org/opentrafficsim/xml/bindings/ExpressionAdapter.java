@@ -33,8 +33,8 @@ public abstract class ExpressionAdapter<T, E extends ExpressionType<T>> extends 
     /**
      * Marshaling of {@code ExpressionType}. If the {@code ExpressionType} contains an expression, it is returned with brackets.
      * Otherwise a {@code String} representation of the contained value is returned using the supplied function.
-     * @param value ExpressionType&lt;?&gt;; value.
-     * @param stringFunction Function&lt;T, String&gt;; function to get a {@code String} representation of a contained value.
+     * @param value value.
+     * @param stringFunction function to get a {@code String} representation of a contained value.
      * @return Marshaled {@code String} of an {@code ExpressionType}.
      */
     protected final String marshal(final E value, final Function<T, String> stringFunction)
@@ -45,15 +45,15 @@ public abstract class ExpressionAdapter<T, E extends ExpressionType<T>> extends 
         }
         return stringFunction.apply(value.getValue());
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public abstract E unmarshal(String v); // removes throws Exception
 
     /**
      * Checks whether field value is a bracketed expression.
-     * @param field String; field value.
-     * @return boolean; whether field value is a bracketed expression.
+     * @param field field value.
+     * @return whether field value is a bracketed expression.
      * @throws IllegalArgumentException when the fields starts with { but does not end with }
      */
     protected static boolean isExpression(final String field) throws IllegalArgumentException
@@ -69,8 +69,8 @@ public abstract class ExpressionAdapter<T, E extends ExpressionType<T>> extends 
 
     /**
      * Trims the brackets from an expression.
-     * @param field String; expression with brackets.
-     * @return String; expression trimmed from brackets.
+     * @param field expression with brackets.
+     * @return expression trimmed from brackets.
      * @throws IllegalArgumentException when the field is not a valid expression between brackets
      */
     protected static String trimBrackets(final String field) throws IllegalArgumentException

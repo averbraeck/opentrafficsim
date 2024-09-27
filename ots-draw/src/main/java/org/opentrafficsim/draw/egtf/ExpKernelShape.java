@@ -19,8 +19,8 @@ public class ExpKernelShape implements KernelShape
 
     /**
      * Constructor.
-     * @param sigma double; spatial size of the kernel
-     * @param tau double; temporal size of the kernel
+     * @param sigma spatial size of the kernel
+     * @param tau temporal size of the kernel
      */
     ExpKernelShape(final double sigma, final double tau)
     {

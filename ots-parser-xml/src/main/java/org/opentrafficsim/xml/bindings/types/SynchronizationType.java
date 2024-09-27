@@ -15,7 +15,7 @@ public class SynchronizationType extends ExpressionType<Synchronization>
 
     /**
      * Constructor with value.
-     * @param value Synchronization; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public SynchronizationType(final Synchronization value)
     {
@@ -24,7 +24,7 @@ public class SynchronizationType extends ExpressionType<Synchronization>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public SynchronizationType(final String expression)
     {

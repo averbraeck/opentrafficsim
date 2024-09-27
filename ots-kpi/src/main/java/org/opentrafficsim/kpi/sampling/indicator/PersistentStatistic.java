@@ -21,7 +21,7 @@ public class PersistentStatistic<U extends Unit<U>, T extends DoubleScalarRel<U,
 
     /**
      * Constructor.
-     * @param persistent Persistent&lt;?,T,?&gt;; the persistent statistic that gathers the data
+     * @param persistent the persistent statistic that gathers the data
      */
     public PersistentStatistic(final Persistent<U, T, ?> persistent)
     {
@@ -29,7 +29,7 @@ public class PersistentStatistic<U extends Unit<U>, T extends DoubleScalarRel<U,
     }
 
     /**
-     * @param alpha double; confidence level
+     * @param alpha confidence level
      * @return both-side confidence interval
      */
     public ConfidenceInterval<T> getConfidenceInterval(final double alpha)
@@ -38,8 +38,8 @@ public class PersistentStatistic<U extends Unit<U>, T extends DoubleScalarRel<U,
     }
 
     /**
-     * @param alpha double; confidence level
-     * @param side IntervalSide; side of confidence interval
+     * @param alpha confidence level
+     * @param side side of confidence interval
      * @return confidence interval
      */
     public ConfidenceInterval<T> getConfidenceInterval(final double alpha, final IntervalSide side)

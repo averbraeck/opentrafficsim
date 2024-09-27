@@ -44,7 +44,7 @@ public final class SpeedLimitUtil
      * Returns the minimum speed of the applicable speed limit types MAX_LEGAL_VEHICLE_SPEED, ROAD_CLASS, FIXED_SIGN and
      * DYNAMIC_SIGN. ROAD_CLASS is only used if FIXED_SIGN and DYNAMIC_SIGN are not present. This method may be overridden by
      * subclasses to implement additional behavior regarding legal speed limits.
-     * @param speedLimitInfo SpeedLimitInfo; speed limit info
+     * @param speedLimitInfo speed limit info
      * @return minimum of speed of speed limit types
      * @throws NullPointerException if speed limit info is null
      */
@@ -78,7 +78,7 @@ public final class SpeedLimitUtil
     /**
      * Returns the speed of speed limit type MAX_VEHICLE_SPEED. This method may be overridden by subclasses to implement
      * additional behavior regarding maximum vehicle speed limits.
-     * @param speedLimitInfo SpeedLimitInfo; speed limit info
+     * @param speedLimitInfo speed limit info
      * @return speed of speed limit type MAX_VEHICLE_SPEED
      * @throws NullPointerException if speed limit info is null
      */
@@ -92,10 +92,10 @@ public final class SpeedLimitUtil
      * Acceleration for speed limit transitions. This implementation decelerates before curves and speed bumps. For this it uses
      * {@code approachTargetSpeed()} of the abstract car-following model implementation. All remaining transitions happen in the
      * default manner, i.e. deceleration and acceleration after the speed limit change and governed by the car-following model.
-     * @param parameters Parameters; parameters
-     * @param speed Speed; current speed
-     * @param speedLimitProspect SpeedLimitProspect; speed limit prospect
-     * @param carFollowingModel CarFollowingModel; car following model
+     * @param parameters parameters
+     * @param speed current speed
+     * @param speedLimitProspect speed limit prospect
+     * @param carFollowingModel car following model
      * @return acceleration for speed limit transitions
      * @throws ParameterException if a required parameter is not found
      */

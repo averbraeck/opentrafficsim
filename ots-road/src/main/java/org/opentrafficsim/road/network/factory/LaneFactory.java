@@ -92,13 +92,13 @@ public final class LaneFactory
     private Stripe firstStripe;
 
     /**
-     * @param network RoadNetwork; network
-     * @param from Node; from node
-     * @param to Node; to node
-     * @param type LinkType; link type
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param policy LaneKeepingPolicy; lane keeping policy
-     * @param gtuType GtuType; parent GTU type of relevant GTUs.
+     * @param network network
+     * @param from from node
+     * @param to to node
+     * @param type link type
+     * @param simulator simulator
+     * @param policy lane keeping policy
+     * @param gtuType parent GTU type of relevant GTUs.
      * @throws OtsGeometryException if no valid line can be created
      * @throws NetworkException if the link exists, or a node does not exist, in the network
      */
@@ -110,14 +110,14 @@ public final class LaneFactory
     }
 
     /**
-     * @param network RoadNetwork; network
-     * @param from Node; from node
-     * @param to Node; to node
-     * @param type LinkType; link type
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param policy LaneKeepingPolicy; lane keeping policy
-     * @param gtuType GtuType; parent GTU type of relevant GTUs.
-     * @param line ContinuousLine; line
+     * @param network network
+     * @param from from node
+     * @param to to node
+     * @param type link type
+     * @param simulator simulator
+     * @param policy lane keeping policy
+     * @param gtuType parent GTU type of relevant GTUs.
+     * @param line line
      * @throws NetworkException if the link exists, or a node does not exist, in the network
      */
     public LaneFactory(final RoadNetwork network, final Node from, final Node to, final LinkType type,
@@ -133,9 +133,9 @@ public final class LaneFactory
     /**
      * Creates a line between two nodes. If the nodes and their directions are on a straight line, a straight line is created.
      * Otherwise a default Bezier curve is created.
-     * @param from Node; from node
-     * @param to Node; to node
-     * @return ContinuousLine; design line
+     * @param from from node
+     * @param to to node
+     * @return design line
      */
     private static ContinuousLine makeLine(final Node from, final Node to)
     {
@@ -165,10 +165,10 @@ public final class LaneFactory
 
     /**
      * Prepare the factory to add lanes from left to right.
-     * @param leftLanes double; number of lanes left from the link design line
-     * @param laneWidth Length; lane width
-     * @param laneType LaneType; lane type
-     * @param speedLimit Speed; speed limit
+     * @param leftLanes number of lanes left from the link design line
+     * @param laneWidth lane width
+     * @param laneType lane type
+     * @param speedLimit speed limit
      * @return LaneFactory this lane factory for method chaining
      */
     public LaneFactory leftToRight(final double leftLanes, final Length laneWidth, final LaneType laneType,
@@ -191,10 +191,10 @@ public final class LaneFactory
 
     /**
      * Prepare the factory to add lanes from right to left.
-     * @param rightLanes double; number of lanes right from the link design line
-     * @param laneWidth Length; lane width
-     * @param laneType LaneType; lane type
-     * @param speedLimit Speed; speed limit
+     * @param rightLanes number of lanes right from the link design line
+     * @param laneWidth lane width
+     * @param laneType lane type
+     * @param speedLimit speed limit
      * @return LaneFactory this lane factory for method chaining
      */
     public LaneFactory rightToLeft(final double rightLanes, final Length laneWidth, final LaneType laneType,
@@ -217,7 +217,7 @@ public final class LaneFactory
 
     /**
      * Set start offset.
-     * @param startOffset Length; offset
+     * @param startOffset offset
      * @return LaneFactory this lane factory for method chaining
      */
     public LaneFactory setOffsetStart(final Length startOffset)
@@ -228,7 +228,7 @@ public final class LaneFactory
 
     /**
      * Set end offset.
-     * @param endOffset Length; offset
+     * @param endOffset offset
      * @return LaneFactory this lane factory for method chaining
      */
     public LaneFactory setOffsetEnd(final Length endOffset)
@@ -242,7 +242,7 @@ public final class LaneFactory
      * right and vice versa. The left-most stripe is created in {@code leftToRight()}, meaning that each type describes
      * permeablility between a lane and it's right-hand neighbor, when building left to right (and vice versa). This method
      * internally adds {@code SOLID} to create the final continuous stripe.
-     * @param types Type...; type per lane pair, for N lanes N-1 should be provided
+     * @param types type per lane pair, for N lanes N-1 should be provided
      * @return this LaneFactory this lane factory for method chaining
      */
     public LaneFactory addLanes(final Type... types)
@@ -256,8 +256,8 @@ public final class LaneFactory
      * permeablility between a lane and it's right-hand neighbor, when building left to right (and vice versa). This method
      * internally adds {@code SOLID} to create the final continuous stripe. All generated stripes, including the one generated
      * in leftToRight() or rightToLeft(), is returned in the provided list for custom permeability.
-     * @param stripeList List&lt;? super Stripe&gt;; list in to which the generated stripes are placed.
-     * @param types Type...; type per lane pair, for N lanes N-1 should be provided
+     * @param stripeList list in to which the generated stripes are placed.
+     * @param types type per lane pair, for N lanes N-1 should be provided
      * @return this LaneFactory this lane factory for method chaining
      */
     public LaneFactory addLanes(final List<? super Stripe> stripeList, final Type... types)
@@ -299,8 +299,8 @@ public final class LaneFactory
 
     /**
      * Return width to use for different stripe types.
-     * @param type Type; stripe type.
-     * @return Length; width.
+     * @param type stripe type.
+     * @return width.
      */
     private Length getWidth(final Type type)
     {
@@ -322,9 +322,9 @@ public final class LaneFactory
 
     /**
      * Adds 1 or 2 shoulders to the current set of lanes.
-     * @param width Length; width of the shoulder
-     * @param lat LateralDirectionality; side of shoulder, use {@code null} or {@code NONE} for both
-     * @param laneType LaneType; lane type.
+     * @param width width of the shoulder
+     * @param lat side of shoulder, use {@code null} or {@code NONE} for both
+     * @param laneType lane type.
      * @return LaneFactory this lane factory for method chaining
      * @throws IllegalStateException if no lanes are defined
      */
@@ -385,14 +385,13 @@ public final class LaneFactory
 
     /**
      * Create a Link along intermediate coordinates from one Node to another.
-     * @param network RoadNetwork; the network
-     * @param name String; name of the new Link
-     * @param from Node; start Node of the new Link
-     * @param to Node; end Node of the new Link
-     * @param intermediatePoints Point2d[]; array of intermediate coordinates (may be null in which case the node points are
-     *            used)
-     * @param simulator OtsSimulatorInterface; the simulator for this network
-     * @return Link; the newly constructed Link
+     * @param network the network
+     * @param name name of the new Link
+     * @param from start Node of the new Link
+     * @param to end Node of the new Link
+     * @param intermediatePoints array of intermediate coordinates (may be null in which case the node points are used)
+     * @param simulator the simulator for this network
+     * @return the newly constructed Link
      * @throws OtsGeometryException when the design line is degenerate (only one point or duplicate point)
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
@@ -411,17 +410,17 @@ public final class LaneFactory
 
     /**
      * Create one Lane.
-     * @param link CrossSectionLink; the link that owns the new Lane
-     * @param id String; the id of this lane, should be unique within the link
-     * @param laneType LaneType; the type of the new Lane
-     * @param latPosAtStart Length; the lateral position of the new Lane with respect to the design line of the link at the
-     *            start of the link
-     * @param latPosAtEnd Length; the lateral position of the new Lane with respect to the design line of the link at the end of
-     *            the link
-     * @param width Length; the width of the new Lane
-     * @param speedLimit Speed; the speed limit on the new Lane
-     * @param simulator OtsSimulatorInterface; the simulator
-     * @param gtuType GtuType; parent GTU type of relevant GTUs
+     * @param link the link that owns the new Lane
+     * @param id the id of this lane, should be unique within the link
+     * @param laneType the type of the new Lane
+     * @param latPosAtStart the lateral position of the new Lane with respect to the design line of the link at the start of the
+     *            link
+     * @param latPosAtEnd the lateral position of the new Lane with respect to the design line of the link at the end of the
+     *            link
+     * @param width the width of the new Lane
+     * @param speedLimit the speed limit on the new Lane
+     * @param simulator the simulator
+     * @param gtuType parent GTU type of relevant GTUs
      * @return Lane
      * @throws NetworkException on network inconsistency
      * @throws OtsGeometryException when creation of center line or contour fails
@@ -450,17 +449,17 @@ public final class LaneFactory
 
     /**
      * Create a simple Lane.
-     * @param network RoadNetwork; the network
-     * @param name String; name of the Lane (and also of the Link that owns it)
-     * @param from Node; starting node of the new Lane
-     * @param to Node; ending node of the new Lane
-     * @param intermediatePoints Point2d[]; intermediate coordinates or null to create a straight road; the intermediate points
-     *            may contain the coordinates of the from node and to node
-     * @param laneType LaneType; type of the new Lane
-     * @param speedLimit Speed; the speed limit on the new Lane
-     * @param simulator OtsSimulatorInterface; the simulator
-     * @param gtuType GtuType; parent GTU type of relevant GTUs
-     * @return Lane; the new Lane
+     * @param network the network
+     * @param name name of the Lane (and also of the Link that owns it)
+     * @param from starting node of the new Lane
+     * @param to ending node of the new Lane
+     * @param intermediatePoints intermediate coordinates or null to create a straight road; the intermediate points may contain
+     *            the coordinates of the from node and to node
+     * @param laneType type of the new Lane
+     * @param speedLimit the speed limit on the new Lane
+     * @param simulator the simulator
+     * @param gtuType parent GTU type of relevant GTUs
+     * @return the new Lane
      * @throws NetworkException on network inconsistency
      * @throws OtsGeometryException when creation of center line or contour fails
      */
@@ -479,20 +478,20 @@ public final class LaneFactory
      * Create a simple road with the specified number of Lanes.<br>
      * This method returns an array of Lane. These lanes are embedded in a Link that can be accessed through the getParentLink
      * method of the Lane.
-     * @param network RoadNetwork; the network
-     * @param name String; name of the Link
-     * @param from Node; starting node of the new Lane
-     * @param to Node; ending node of the new Lane
-     * @param intermediatePoints Point2d[]; intermediate coordinates or null to create a straight road; the intermediate points
-     *            may contain the coordinates of the from node and to node
-     * @param laneCount int; number of lanes in the road
-     * @param laneOffsetAtStart int; extra offset from design line in lane widths at start of link
-     * @param laneOffsetAtEnd int; extra offset from design line in lane widths at end of link
-     * @param laneType LaneType; type of the new Lanes
-     * @param speedLimit Speed; the speed limit on all lanes
-     * @param simulator OtsSimulatorInterface; the simulator
-     * @param gtuType GtuType; parent GTU type of relevant GTUs
-     * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
+     * @param network the network
+     * @param name name of the Link
+     * @param from starting node of the new Lane
+     * @param to ending node of the new Lane
+     * @param intermediatePoints intermediate coordinates or null to create a straight road; the intermediate points may contain
+     *            the coordinates of the from node and to node
+     * @param laneCount number of lanes in the road
+     * @param laneOffsetAtStart extra offset from design line in lane widths at start of link
+     * @param laneOffsetAtEnd extra offset from design line in lane widths at end of link
+     * @param laneType type of the new Lanes
+     * @param speedLimit the speed limit on all lanes
+     * @param simulator the simulator
+     * @param gtuType parent GTU type of relevant GTUs
+     * @return array containing the new Lanes
      * @throws NetworkException on topological problems
      * @throws OtsGeometryException when creation of center line or contour fails
      */
@@ -520,18 +519,18 @@ public final class LaneFactory
      * Create a simple road with the specified number of Lanes.<br>
      * This method returns an array of Lane. These lanes are embedded in a Link that can be accessed through the getParentLink
      * method of the Lane.
-     * @param network RoadNetwork; the network
-     * @param name String; name of the Link
-     * @param from Node; starting node of the new Lane
-     * @param to Node; ending node of the new Lane
-     * @param intermediatePoints Point2d[]; intermediate coordinates or null to create a straight road; the intermediate points
-     *            may contain the coordinates of the from node and to node
-     * @param laneCount int; number of lanes in the road
-     * @param laneType LaneType; type of the new Lanes
-     * @param speedLimit Speed; Speed the speed limit (applies to all generated lanes)
-     * @param simulator OtsSimulatorInterface; the simulator
-     * @param gtuType GtuType; parent GTU type of relevant GTUs
-     * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
+     * @param network the network
+     * @param name name of the Link
+     * @param from starting node of the new Lane
+     * @param to ending node of the new Lane
+     * @param intermediatePoints intermediate coordinates or null to create a straight road; the intermediate points may contain
+     *            the coordinates of the from node and to node
+     * @param laneCount number of lanes in the road
+     * @param laneType type of the new Lanes
+     * @param speedLimit Speed the speed limit (applies to all generated lanes)
+     * @param simulator the simulator
+     * @param gtuType parent GTU type of relevant GTUs
+     * @return array containing the new Lanes
      * @throws NamingException when names cannot be registered for animation
      * @throws NetworkException on topological problems
      * @throws OtsGeometryException when creation of center line or contour fails
@@ -550,20 +549,20 @@ public final class LaneFactory
      * Create a simple road with the specified number of Lanes, based on a Bezier curve.<br>
      * This method returns an array of Lane. These lanes are embedded in a Link that can be accessed through the getParentLink
      * method of the Lane.
-     * @param network RoadNetwork; the network
-     * @param name String; name of the Link
-     * @param n1 Node; control node for the start direction
-     * @param n2 Node; starting node of the new Lane
-     * @param n3 Node; ending node of the new Lane
-     * @param n4 Node; control node for the end direction
-     * @param laneCount int; number of lanes in the road
-     * @param laneOffsetAtStart int; extra offset from design line in lane widths at start of link
-     * @param laneOffsetAtEnd int; extra offset from design line in lane widths at end of link
-     * @param laneType LaneType; type of the new Lanes
-     * @param speedLimit Speed; the speed limit on all lanes
-     * @param simulator OtsSimulatorInterface; the simulator
-     * @param gtuType GtuType; parent GTU type of relevant GTUs
-     * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
+     * @param network the network
+     * @param name name of the Link
+     * @param n1 control node for the start direction
+     * @param n2 starting node of the new Lane
+     * @param n3 ending node of the new Lane
+     * @param n4 control node for the end direction
+     * @param laneCount number of lanes in the road
+     * @param laneOffsetAtStart extra offset from design line in lane widths at start of link
+     * @param laneOffsetAtEnd extra offset from design line in lane widths at end of link
+     * @param laneType type of the new Lanes
+     * @param speedLimit the speed limit on all lanes
+     * @param simulator the simulator
+     * @param gtuType parent GTU type of relevant GTUs
+     * @return array containing the new Lanes
      * @throws NamingException when names cannot be registered for animation
      * @throws NetworkException on topological problems
      * @throws OtsGeometryException when creation of center line or contour fails
@@ -609,10 +608,10 @@ public final class LaneFactory
     }
 
     /**
-     * @param n1 Node; node 1
-     * @param n2 Node; node 2
-     * @param n3 Node; node 3
-     * @param n4 Node; node 4
+     * @param n1 node 1
+     * @param n2 node 2
+     * @param n3 node 3
+     * @param n4 node 4
      * @return line between n2 and n3 with start-direction n1--&gt;n2 and end-direction n3--&gt;n4
      * @throws OtsGeometryException on failure of Bezier curve creation
      */

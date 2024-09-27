@@ -187,14 +187,12 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
      * <b>strategicalPlannerFactory</b> and <b>stream</b>.
      * </ul>
      * Time should be in increasing order. If length is provided, but no front, front will be 75% of the length.
-     * @param table Table; table with at least a "time" column.
-     * @param network Network; network, may be {@code null}.
-     * @param gtuTypes ImmutableMap&lt;String, GtuType&gt;; GTU types, as obtained from {@code Definitions}, may be
-     *            {@code null}.
-     * @param strategicalPlannerFactory LaneBasedStrategicalPlannerFactory&lt;?&gt;; strategical planner factory, may be
-     *            {@code null}.
-     * @param stream StreamInterface; random number stream, may be {@code null}.
-     * @param timeToCollision Duration; critical time-to-collision to allow GTU generation, may be {@code null}.
+     * @param table table with at least a "time" column.
+     * @param network network, may be {@code null}.
+     * @param gtuTypes GTU types, as obtained from {@code Definitions}, may be {@code null}.
+     * @param strategicalPlannerFactory strategical planner factory, may be {@code null}.
+     * @param stream random number stream, may be {@code null}.
+     * @param timeToCollision critical time-to-collision to allow GTU generation, may be {@code null}.
      * @throws IllegalArgumentException when the right arguments are not provided for the columns in the injection table.
      */
     public Injections(final Table table, final Network network, final ImmutableMap<String, GtuType> gtuTypes,
@@ -230,8 +228,8 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
 
     /**
      * Makes sure the table is sorted by the time column.
-     * @param table Table; input table.
-     * @return Table; table sorted by time column.
+     * @param table input table.
+     * @return table sorted by time column.
      */
     private static Table sortTable(final Table table)
     {
@@ -272,8 +270,8 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
 
     /**
      * Checks whether all columns have the right value type.
-     * @param table Table; injection table.
-     * @return boolean; whether columns are present that require a strategical planner factory in order to be processed.
+     * @param table injection table.
+     * @return whether columns are present that require a strategical planner factory in order to be processed.
      */
     private boolean checkColumnTypesNeedStrategicalPlannerFactory(final Table table)
     {
@@ -335,7 +333,7 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
 
     /**
      * Creates all the lane positions for GTU generation.
-     * @param table Table; injection table.
+     * @param table injection table.
      */
     private void createLanePositions(final Table table)
     {
@@ -413,8 +411,8 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
 
     /**
      * Returns whether the column of given id is present.
-     * @param columnId String; column id.
-     * @return boolean; whether the column of given id is present.
+     * @param columnId column id.
+     * @return whether the column of given id is present.
      */
     public boolean hasColumn(final String columnId)
     {
@@ -441,7 +439,7 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
     /**
      * Returns a characteristics generator view of the injections, as used by {@code LaneBasedGtuGenerator}. This requires at
      * the least that a GTU type column, a strategical planner factory, a network, and a stream of random numbers are provided.
-     * @return LaneBasedGtuCharacteristicsGenerator; characteristics generator view of the injections.
+     * @return characteristics generator view of the injections.
      */
     public LaneBasedGtuCharacteristicsGenerator asLaneBasedGtuCharacteristicsGenerator()
     {
@@ -495,10 +493,10 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
                 /**
                  * Tries to obtain a column value. If it is not provided, takes the value from generated default
                  * characteristics.
-                 * @param column String; characteristic column name.
-                 * @param gtuType GtuType; GTU type of the GTU to be generated.
-                 * @param supplier Function&lt;GtuCharacteristics, ?&gt;; takes value from default characteristics.
-                 * @return Object; object value for the characteristic.
+                 * @param column characteristic column name.
+                 * @param gtuType GTU type of the GTU to be generated.
+                 * @param supplier takes value from default characteristics.
+                 * @return object value for the characteristic.
                  * @throws GtuException; if there are no default characteristics for the GTU type, but these are required.
                  */
                 private Object assureCharacteristic(final String column, final GtuType gtuType,
@@ -546,12 +544,11 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
      * Returns placement for injected GTUs, as used by {@code LaneBasedGtuGenerator}. This needs speed to be provided in the
      * injections, and a minimum time-to-collision value. Besides the time-to-collision value, the minimum headway for a
      * successful placement is t*v + 3m, where t = 1s and v the generation speed.
-     * @param leaders SortedSet&lt;HeadwayGtu&gt;; leaders, usually 1, possibly more after a branch
-     * @param characteristics LaneBasedGtuCharacteristics; characteristics of the proposed new GTU
-     * @param since Duration; time since the GTU wanted to arrive
-     * @param initialPosition LanePosition; initial position
-     * @return Speed; maximum safe speed, or null if a GTU with the specified characteristics cannot be placed at the current
-     *         time
+     * @param leaders leaders, usually 1, possibly more after a branch
+     * @param characteristics characteristics of the proposed new GTU
+     * @param since time since the GTU wanted to arrive
+     * @param initialPosition initial position
+     * @return maximum safe speed, or null if a GTU with the specified characteristics cannot be placed at the current time
      * @throws NetworkException this method may throw a NetworkException if it encounters an error in the network structure
      * @throws GtuException on parameter exception
      */
@@ -590,8 +587,8 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
 
     /**
      * Shorthand to retrieve a column value from the current characteristics row.
-     * @param column String; characteristic column name.
-     * @return Object; object value for the characteristic.
+     * @param column characteristic column name.
+     * @return object value for the characteristic.
      */
     private Object getCharacteristic(final String column)
     {

@@ -44,8 +44,8 @@ public class DirectedLaneMovementStep implements Serializable
 
     /**
      * Construct a new LaneChangeModelResult.
-     * @param accelerationStep AccelerationStep; the acceleration and duration of validity of this result.
-     * @param direction LateralDirectionality; this has one of the values:
+     * @param accelerationStep the acceleration and duration of validity of this result.
+     * @param direction this has one of the values:
      *            <table >
      *            <caption>&nbsp;</caption>
      *            <tr>

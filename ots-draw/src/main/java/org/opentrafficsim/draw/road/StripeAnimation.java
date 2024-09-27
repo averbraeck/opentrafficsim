@@ -43,8 +43,8 @@ public class StripeAnimation extends OtsRenderable<StripeData>
     private final Set<Path2D.Float> paths;
 
     /**
-     * @param source StripeData; stripe data
-     * @param contextualized Contextualized; context provider
+     * @param source stripe data
+     * @param contextualized context provider
      * @throws NamingException ne
      * @throws RemoteException on communication failure
      */
@@ -65,14 +65,13 @@ public class StripeAnimation extends OtsRenderable<StripeData>
 
     /**
      * Generate the drawing commands for a dash pattern.
-     * @param center PolyLine2d; the design line of the striped pattern
-     * @param width double; width of the stripes in meters
-     * @param startOffset double; shift the starting point in the pattern by this length in meters
-     * @param onOffLengths double[]; one or more lengths of the dashes and the gaps between those dashes. If the number of
-     *            values in <cite>onOffLengths</cite> is odd, the pattern repeats inverted. The first value in
-     *            <cite>onOffLengths</cite> is the length of a dash.
-     * @return ArrayList&lt;Coordinate&gt;; the coordinates of the dashes separated and terminated by a <cite>NEWPATH</cite>
-     *         Coordinate
+     * @param center the design line of the striped pattern
+     * @param width width of the stripes in meters
+     * @param startOffset shift the starting point in the pattern by this length in meters
+     * @param onOffLengths one or more lengths of the dashes and the gaps between those dashes. If the number of values in
+     *            <cite>onOffLengths</cite> is odd, the pattern repeats inverted. The first value in <cite>onOffLengths</cite>
+     *            is the length of a dash.
+     * @return the coordinates of the dashes separated and terminated by a <cite>NEWPATH</cite> Coordinate
      */
     private ArrayList<Point2d> makeDashes(final PolyLine2d center, final double width, final double startOffset,
             final double[] onOffLengths)
@@ -122,8 +121,8 @@ public class StripeAnimation extends OtsRenderable<StripeData>
 
     /**
      * Generate the points needed to draw the stripe pattern.
-     * @param stripe StripeData; the stripe
-     * @return Coordinate[]; array of Coordinate
+     * @param stripe the stripe
+     * @return array of Coordinate
      * @throws NamingException when <cite>type</cite> is not supported
      */
     private List<Point2d> makePoints(final StripeData stripe) throws NamingException
@@ -221,19 +220,19 @@ public class StripeAnimation extends OtsRenderable<StripeData>
 
         /**
          * Returns the center line.
-         * @return PolyLine2d; center line.
+         * @return center line.
          */
         PolyLine2d getCenterLine();
 
         /**
          * Returns the stripe type.
-         * @return Type; stripe type.
+         * @return stripe type.
          */
         Type getType();
 
         /**
          * Returns the line width.
-         * @return Length; line width.
+         * @return line width.
          */
         Length getWidth();
 

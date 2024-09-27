@@ -26,8 +26,8 @@ public abstract class AbstractIdTransceiver extends AbstractTransceiver
 
     /**
      * Construct a GtuIdTransceiver.
-     * @param network Network; the OTS network
-     * @param id String; name of the IdTransceiver
+     * @param network the OTS network
+     * @param id name of the IdTransceiver
      */
     public AbstractIdTransceiver(final Network network, final String id)
     {
@@ -40,8 +40,8 @@ public abstract class AbstractIdTransceiver extends AbstractTransceiver
 
     /**
      * Retrieve the set of names of objects that can be individually subscribed to.
-     * @return Set&lt;?&gt;; the set of names of objects whose that can be subscribed to. Each object in this set should
-     *         implement <code>Identifiable</code>
+     * @return the set of names of objects whose that can be subscribed to. Each object in this set should implement
+     *         <code>Identifiable</code>
      */
     abstract ImmutableSet<?> getSet();
 
@@ -68,7 +68,7 @@ public abstract class AbstractIdTransceiver extends AbstractTransceiver
 
     /**
      * Retrieve the network.
-     * @return Network; the network
+     * @return the network
      */
     final Network getNetwork()
     {

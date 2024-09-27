@@ -71,8 +71,8 @@ public abstract class ExpansionNetwork extends Network
     private static final long serialVersionUID = 20150104L;
 
     /**
-     * @param id String; the network id.
-     * @param simulator OtsSimulatorInterface; the DSOL simulator engine
+     * @param id the network id.
+     * @param simulator the DSOL simulator engine
      */
     public ExpansionNetwork(final String id, final OtsSimulatorInterface simulator)
     {

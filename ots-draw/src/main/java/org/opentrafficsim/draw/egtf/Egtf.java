@@ -122,10 +122,10 @@ public class Egtf
 
     /**
      * Constructor defining global settings. A default kernel is set.
-     * @param cCong double; shock wave speed in congestion [km/h]
-     * @param cFree double; shock wave speed in free flow [km/h]
-     * @param deltaV double; speed range between congestion and free flow [km/h]
-     * @param vc double; flip-over speed below which we have congestion [km/h]
+     * @param cCong shock wave speed in congestion [km/h]
+     * @param cFree shock wave speed in free flow [km/h]
+     * @param deltaV speed range between congestion and free flow [km/h]
+     * @param vc flip-over speed below which we have congestion [km/h]
      */
     public Egtf(final double cCong, final double cFree, final double deltaV, final double vc)
     {
@@ -138,14 +138,14 @@ public class Egtf
 
     /**
      * Convenience constructor that also sets a specified kernel.
-     * @param cCong double; shock wave speed in congestion [km/h]
-     * @param cFree double; shock wave speed in free flow [km/h]
-     * @param deltaV double; speed range between congestion and free flow [km/h]
-     * @param vc double; flip-over speed below which we have congestion [km/h]
-     * @param sigma double; spatial kernel size in [m]
-     * @param tau double; temporal kernel size in [s]
-     * @param xMax double; maximum spatial range in [m]
-     * @param tMax double; maximum temporal range in [s]
+     * @param cCong shock wave speed in congestion [km/h]
+     * @param cFree shock wave speed in free flow [km/h]
+     * @param deltaV speed range between congestion and free flow [km/h]
+     * @param vc flip-over speed below which we have congestion [km/h]
+     * @param sigma spatial kernel size in [m]
+     * @param tau temporal kernel size in [s]
+     * @param xMax maximum spatial range in [m]
+     * @param tMax maximum temporal range in [s]
      */
     @SuppressWarnings("parameternumber")
     public Egtf(final double cCong, final double cFree, final double deltaV, final double vc, final double sigma,
@@ -161,8 +161,8 @@ public class Egtf
 
     /**
      * Return a data source, which is created if necessary.
-     * @param name String; unique name for the data source
-     * @return DataSource; data source
+     * @param name unique name for the data source
+     * @return data source
      * @throws IllegalStateException when data has been added without a data source
      */
     public DataSource getDataSource(final String name)
@@ -172,15 +172,13 @@ public class Egtf
             throw new IllegalStateException(
                     "Obtaining a (new) data source after data has been added without a data source is not allowed.");
         }
-        return this.dataSources.computeIfAbsent(name, (
-                key
-        ) -> new DataSource(key));
+        return this.dataSources.computeIfAbsent(name, (key) -> new DataSource(key));
     }
 
     /**
      * Removes all data from before the given time. This is useful in live usages of this class, where older data is no longer
      * required.
-     * @param time double; time before which all data can be removed
+     * @param time time before which all data can be removed
      */
     public synchronized void clearDataBefore(final double time)
     {
@@ -192,10 +190,10 @@ public class Egtf
 
     /**
      * Adds point data.
-     * @param quantity Quantity&lt;?, ?&gt;; quantity of the data
-     * @param location double; location in [m]
-     * @param time double; time in [s]
-     * @param value double; data value
+     * @param quantity quantity of the data
+     * @param location location in [m]
+     * @param time time in [s]
+     * @param value data value
      * @throws IllegalStateException if data was added with a data stream previously
      */
     public synchronized void addPointDataSI(final Quantity<?, ?> quantity, final double location, final double time,
@@ -208,10 +206,10 @@ public class Egtf
 
     /**
      * Adds point data.
-     * @param dataStream DataStream&lt;?&gt;; data stream of the data
-     * @param location double; location in [m]
-     * @param time double; time in [s]
-     * @param value double; data value
+     * @param dataStream data stream of the data
+     * @param location location in [m]
+     * @param time time in [s]
+     * @param value data value
      * @throws IllegalStateException if data was added with a quantity previously
      */
     public synchronized void addPointDataSI(final DataStream<?> dataStream, final double location, final double time,
@@ -227,10 +225,10 @@ public class Egtf
 
     /**
      * Adds vector data.
-     * @param quantity Quantity&lt;?, ?&gt;; quantity of the data
-     * @param location double[]; locations in [m]
-     * @param time double[]; times in [s]
-     * @param values double[]; data values in SI unit
+     * @param quantity quantity of the data
+     * @param location locations in [m]
+     * @param time times in [s]
+     * @param values data values in SI unit
      * @throws IllegalStateException if data was added with a data stream previously
      */
     public synchronized void addVectorDataSI(final Quantity<?, ?> quantity, final double[] location, final double[] time,
@@ -243,10 +241,10 @@ public class Egtf
 
     /**
      * Adds vector data.
-     * @param dataStream DataStream&lt;?&gt;; data stream of the data
-     * @param location double[]; locations in [m]
-     * @param time double[]; times in [s]
-     * @param values double[]; data values in SI unit
+     * @param dataStream data stream of the data
+     * @param location locations in [m]
+     * @param time times in [s]
+     * @param values data values in SI unit
      * @throws IllegalStateException if data was added with a quantity previously
      */
     public synchronized void addVectorDataSI(final DataStream<?> dataStream, final double[] location, final double[] time,
@@ -273,10 +271,10 @@ public class Egtf
 
     /**
      * Adds grid data.
-     * @param quantity Quantity&lt;?, ?&gt;; quantity of the data
-     * @param location double[]; locations in [m]
-     * @param time double[]; times in [s]
-     * @param values double[][]; data values in SI unit
+     * @param quantity quantity of the data
+     * @param location locations in [m]
+     * @param time times in [s]
+     * @param values data values in SI unit
      * @throws IllegalStateException if data was added with a data stream previously
      */
     public synchronized void addGridDataSI(final Quantity<?, ?> quantity, final double[] location, final double[] time,
@@ -289,10 +287,10 @@ public class Egtf
 
     /**
      * Adds grid data.
-     * @param dataStream DataStream&lt;?&gt;; data stream of the data
-     * @param location double[]; locations in [m]
-     * @param time double[]; times in [s]
-     * @param values double[][]; data values in SI unit
+     * @param dataStream data stream of the data
+     * @param location locations in [m]
+     * @param time times in [s]
+     * @param values data values in SI unit
      * @throws IllegalStateException if data was added with a quantity previously
      */
     public synchronized void addGridDataSI(final DataStream<?> dataStream, final double[] location, final double[] time,
@@ -341,8 +339,8 @@ public class Egtf
 
     /**
      * Returns a default data stream and checks that no data with a data stream was added.
-     * @param quantity Quantity&lt;?, ?&gt;; quantity
-     * @return DataStream&lt;?&gt;; default data stream
+     * @param quantity quantity
+     * @return default data stream
      * @throws IllegalStateException if data was added with a data stream previously
      */
     private DataStream<?> getDefaultDataStream(final Quantity<?, ?> quantity)
@@ -358,36 +356,31 @@ public class Egtf
             this.defaultDataSource = new DataSource("default");
             this.defaultDataStreams = new LinkedHashMap<>();
         }
-        return this.defaultDataStreams.computeIfAbsent(quantity, (
-                key
-        ) -> this.defaultDataSource.addStreamSI(quantity, 1.0, 1.0));
+        return this.defaultDataStreams.computeIfAbsent(quantity,
+                (key) -> this.defaultDataSource.addStreamSI(quantity, 1.0, 1.0));
     }
 
     /**
      * Returns data from a specific location as a subset from all data. An empty map is returned if no such data exists.
-     * @param location double; location in [m]
+     * @param location location in [m]
      * @return data from a specific location
      */
     private SortedMap<Double, Map<DataStream<?>, Double>> getSpatialData(final double location)
     {
-        return this.data.computeIfAbsent(location, (
-                key
-        ) -> new TreeMap<>());
+        return this.data.computeIfAbsent(location, (key) -> new TreeMap<>());
     }
 
     /**
      * Returns data from a specific time as a subset of data from a specific location. An empty map is returned if no such data
      * exists.
-     * @param spatialData Map&lt;Double, Map&lt;DataStream&lt;?&gt;, Double&gt;&gt;; spatially selected data
-     * @param time double; time in [s]
+     * @param spatialData spatially selected data
+     * @param time time in [s]
      * @return data from a specific time, from data from a specific location
      */
     private Map<DataStream<?>, Double> getSpacioTemporalData(final Map<Double, Map<DataStream<?>, Double>> spatialData,
             final double time)
     {
-        return spatialData.computeIfAbsent(time, (
-                key
-        ) -> new LinkedHashMap<>());
+        return spatialData.computeIfAbsent(time, (key) -> new LinkedHashMap<>());
     }
 
     // **********************
@@ -404,8 +397,8 @@ public class Egtf
 
     /**
      * Sets an exponential kernel with infinite range.
-     * @param sigma double; spatial kernel size
-     * @param tau double; temporal kernel size
+     * @param sigma spatial kernel size
+     * @param tau temporal kernel size
      */
     public void setKernelSI(final double sigma, final double tau)
     {
@@ -414,10 +407,10 @@ public class Egtf
 
     /**
      * Sets an exponential kernel with limited range.
-     * @param sigma double; spatial kernel size in [m]
-     * @param tau double; temporal kernel size in [s]
-     * @param xMax double; maximum spatial range in [m]
-     * @param tMax double; maximum temporal range in [s]
+     * @param sigma spatial kernel size in [m]
+     * @param tau temporal kernel size in [s]
+     * @param xMax maximum spatial range in [m]
+     * @param tMax maximum temporal range in [s]
      */
     public void setKernelSI(final double sigma, final double tau, final double xMax, final double tMax)
     {
@@ -426,8 +419,8 @@ public class Egtf
 
     /**
      * Sets a Gaussian kernel with infinite range.
-     * @param sigma double; spatial kernel size
-     * @param tau double; temporal kernel size
+     * @param sigma spatial kernel size
+     * @param tau temporal kernel size
      */
     public void setGaussKernelSI(final double sigma, final double tau)
     {
@@ -436,10 +429,10 @@ public class Egtf
 
     /**
      * Sets a Gaussian kernel with limited range.
-     * @param sigma double; spatial kernel size in [m]
-     * @param tau double; temporal kernel size in [s]
-     * @param xMax double; maximum spatial range in [m]
-     * @param tMax double; maximum temporal range in [s]
+     * @param sigma spatial kernel size in [m]
+     * @param tau temporal kernel size in [s]
+     * @param xMax maximum spatial range in [m]
+     * @param tMax maximum temporal range in [s]
      */
     public void setGaussKernelSI(final double sigma, final double tau, final double xMax, final double tMax)
     {
@@ -448,9 +441,9 @@ public class Egtf
 
     /**
      * Sets a kernel with limited range and provided shape. The shape allows using non-exponential kernels.
-     * @param xMax double; maximum spatial range
-     * @param tMax double; maximum temporal range
-     * @param shape KernelShape; shape of the kernel
+     * @param xMax maximum spatial range
+     * @param tMax maximum temporal range
+     * @param shape shape of the kernel
      */
     public synchronized void setKernelSI(final double xMax, final double tMax, final KernelShape shape)
     {
@@ -459,7 +452,7 @@ public class Egtf
 
     /**
      * Returns the wave speed in congestion.
-     * @return double; wave speed in congestion
+     * @return wave speed in congestion
      */
     final double getWaveSpeedCongestion()
     {
@@ -468,7 +461,7 @@ public class Egtf
 
     /**
      * Returns the wave speed in free flow.
-     * @return double; wave speed in free flow
+     * @return wave speed in free flow
      */
     final double getWaveSpeedFreeFlow()
     {
@@ -482,10 +475,10 @@ public class Egtf
     /**
      * Executes filtering in parallel. The returned listener can be used to report progress and wait until the filtering is
      * done. Finally, the filtering results can then be obtained from the listener.
-     * @param location double[]; location of output grid in [m]
-     * @param time double[]; time of output grid in [s]
-     * @param quantities Quantity&lt;?, ?&gt;...; quantities to calculate filtered data of
-     * @return EgtfParallelListener; listener to notify keep track of the progress
+     * @param location location of output grid in [m]
+     * @param time time of output grid in [s]
+     * @param quantities quantities to calculate filtered data of
+     * @return listener to notify keep track of the progress
      */
     public EgtfParallelListener filterParallelSI(final double[] location, final double[] time,
             final Quantity<?, ?>... quantities)
@@ -510,14 +503,14 @@ public class Egtf
     /**
      * Executes fast filtering in parallel. The returned listener can be used to report progress and wait until the filtering is
      * done. Finally, the filtering results can then be obtained from the listener.
-     * @param xMin double; minimum location value of output grid [m]
-     * @param xStep double; location step of output grid [m]
-     * @param xMax double; maximum location value of output grid [m]
-     * @param tMin double; minimum time value of output grid [s]
-     * @param tStep double; time step of output grid [s]
-     * @param tMax double; maximum time value of output grid [s]
-     * @param quantities Quantity&lt;?, ?&gt;...; quantities to calculate filtered data of
-     * @return EgtfParallelListener; listener to notify keep track of the progress
+     * @param xMin minimum location value of output grid [m]
+     * @param xStep location step of output grid [m]
+     * @param xMax maximum location value of output grid [m]
+     * @param tMin minimum time value of output grid [s]
+     * @param tStep time step of output grid [s]
+     * @param tMax maximum time value of output grid [s]
+     * @param quantities quantities to calculate filtered data of
+     * @return listener to notify keep track of the progress
      */
     public EgtfParallelListener filterParallelFastSI(final double xMin, final double xStep, final double xMax,
             final double tMin, final double tStep, final double tMax, final Quantity<?, ?>... quantities)
@@ -539,10 +532,10 @@ public class Egtf
 
     /**
      * Returns filtered data. This is the standard EGTF implementation.
-     * @param location double[]; location of output grid in [m]
-     * @param time double[]; time of output grid in [s]
-     * @param quantities Quantity&lt;?, ?&gt;...; quantities to calculate filtered data of
-     * @return Filter; filtered data, {@code null} when interrupted
+     * @param location location of output grid in [m]
+     * @param time time of output grid in [s]
+     * @param quantities quantities to calculate filtered data of
+     * @return filtered data, {@code null} when interrupted
      */
     @SuppressWarnings({"synthetic-access", "methodlength"})
     public Filter filterSI(final double[] location, final double[] time, final Quantity<?, ?>... quantities)
@@ -603,9 +596,8 @@ public class Egtf
                             if (map.containsKey(stream.getQuantity()) || stream.getQuantity().isSpeed())
                             {
                                 double v = vEntry.getValue();
-                                DualWeightedMean zCongFreeOfStream = zCongFree.computeIfAbsent(stream, (
-                                        key
-                                ) -> new DualWeightedMean());
+                                DualWeightedMean zCongFreeOfStream =
+                                        zCongFree.computeIfAbsent(stream, (key) -> new DualWeightedMean());
                                 zCongFreeOfStream.addCong(v, phiCong);
                                 zCongFreeOfStream.addFree(v, phiFree);
                             }
@@ -710,14 +702,14 @@ public class Egtf
      * <p>
      * More than being a fast implementation of the Adaptive Smoothing Method, this implementation includes all data source like
      * the Extended Generalized Treiber-Helbing Filter.
-     * @param xMin double; minimum location value of output grid [m]
-     * @param xStep double; location step of output grid [m]
-     * @param xMax double; maximum location value of output grid [m]
-     * @param tMin double; minimum time value of output grid [s]
-     * @param tStep double; time step of output grid [s]
-     * @param tMax double; maximum time value of output grid [s]
-     * @param quantities Quantity&lt;?, ?&gt;...; quantities to calculate filtered data of
-     * @return Filter; filtered data, {@code null} when interrupted
+     * @param xMin minimum location value of output grid [m]
+     * @param xStep location step of output grid [m]
+     * @param xMax maximum location value of output grid [m]
+     * @param tMin minimum time value of output grid [s]
+     * @param tStep time step of output grid [s]
+     * @param tMax maximum time value of output grid [s]
+     * @param quantities quantities to calculate filtered data of
+     * @return filtered data, {@code null} when interrupted
      */
     @SuppressWarnings("methodlength")
     public Filter filterFastSI(final double xMin, final double xStep, final double xMax, final double tMin, final double tStep,
@@ -793,12 +785,10 @@ public class Egtf
                         {
                             if (map.containsKey(timeEntry.getKey().getQuantity()) || timeEntry.getKey().getQuantity().isSpeed())
                             {
-                                dataSum.computeIfAbsent(timeEntry.getKey(), (
-                                        key
-                                ) -> new double[location.length][time.length])[i][j] += timeEntry.getValue();
-                                dataCount.computeIfAbsent(timeEntry.getKey(), (
-                                        key
-                                ) -> new double[location.length][time.length])[i][j]++;
+                                dataSum.computeIfAbsent(timeEntry.getKey(),
+                                        (key) -> new double[location.length][time.length])[i][j] += timeEntry.getValue();
+                                dataCount.computeIfAbsent(timeEntry.getKey(),
+                                        (key) -> new double[location.length][time.length])[i][j]++;
                             }
                         }
                     }
@@ -1000,10 +990,10 @@ public class Egtf
 
     /**
      * Returns an equidistant vector that includes 0.
-     * @param from double; lowest value to include
-     * @param step double; step
-     * @param to double; highest value to include
-     * @return double[]; equidistant vector that includes 0
+     * @param from lowest value to include
+     * @param step step
+     * @param to highest value to include
+     * @return equidistant vector that includes 0
      */
     private double[] equidistant(final double from, final double step, final double to)
     {
@@ -1032,7 +1022,7 @@ public class Egtf
 
     /**
      * Add listener.
-     * @param listener EgtfListener; listener
+     * @param listener listener
      */
     public final void addListener(final EgtfListener listener)
     {
@@ -1041,7 +1031,7 @@ public class Egtf
 
     /**
      * Remove listener.
-     * @param listener EgtfListener; listener
+     * @param listener listener
      */
     public final void removeListener(final EgtfListener listener)
     {
@@ -1050,8 +1040,8 @@ public class Egtf
 
     /**
      * Notify all listeners.
-     * @param progress double; progress, a value in the range [0 ... 1]
-     * @return boolean; whether the filter is interrupted
+     * @param progress progress, a value in the range [0 ... 1]
+     * @return whether the filter is interrupted
      */
     private boolean notifyListeners(final double progress)
     {
@@ -1089,8 +1079,8 @@ public class Egtf
 
         /**
          * Adds a congestion value with weight.
-         * @param value double; value
-         * @param weight double; weight
+         * @param value value
+         * @param weight weight
          */
         public void addCong(final double value, final double weight)
         {
@@ -1100,8 +1090,8 @@ public class Egtf
 
         /**
          * Adds a free flow value with weight.
-         * @param value double; value
-         * @param weight double; weight
+         * @param value value
+         * @param weight weight
          */
         public void addFree(final double value, final double weight)
         {
@@ -1111,7 +1101,7 @@ public class Egtf
 
         /**
          * Returns the weighted congestion mean of available data.
-         * @return double; weighted mean of available data
+         * @return weighted mean of available data
          */
         public double getCong()
         {
@@ -1120,7 +1110,7 @@ public class Egtf
 
         /**
          * Returns the weighted free flow mean of available data.
-         * @return double; weighted free flow mean of available data
+         * @return weighted free flow mean of available data
          */
         public double getFree()
         {
@@ -1129,7 +1119,7 @@ public class Egtf
 
         /**
          * Returns the sum of congestion weights.
-         * @return double; the sum of congestion weights
+         * @return the sum of congestion weights
          */
         public double getDenominatorCong()
         {
@@ -1138,7 +1128,7 @@ public class Egtf
 
         /**
          * Returns the sum of free flow weights.
-         * @return double; the sum of free flow weights
+         * @return the sum of free flow weights
          */
         public double getDenominatorFree()
         {
@@ -1168,8 +1158,8 @@ public class Egtf
 
         /**
          * Adds a value with weight.
-         * @param value double; value
-         * @param weight double; weight
+         * @param value value
+         * @param weight weight
          */
         public void add(final double value, final double weight)
         {
@@ -1179,7 +1169,7 @@ public class Egtf
 
         /**
          * Returns the weighted mean of available data.
-         * @return double; weighted mean of available data
+         * @return weighted mean of available data
          */
         public double get()
         {

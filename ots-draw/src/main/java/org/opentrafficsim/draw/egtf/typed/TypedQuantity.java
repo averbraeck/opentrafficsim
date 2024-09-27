@@ -88,8 +88,8 @@ public class TypedQuantity<U extends Unit<U>, T extends Scalar<U, T>, K extends 
 
     /**
      * Constructor.
-     * @param name String; name
-     * @param converter Converter&lt;K&gt;; converter for output format
+     * @param name name
+     * @param converter converter for output format
      */
     public TypedQuantity(final String name, final Converter<K> converter)
     {
@@ -98,9 +98,9 @@ public class TypedQuantity<U extends Unit<U>, T extends Scalar<U, T>, K extends 
 
     /**
      * Constructor. Private so only the default SPEED quantity is speed.
-     * @param name String; name
-     * @param speed boolean; whether this quantity is speed
-     * @param converter Converter&lt;K&gt;; converter for output format
+     * @param name name
+     * @param speed whether this quantity is speed
+     * @param converter converter for output format
      */
     protected TypedQuantity(final String name, final boolean speed, final Converter<K> converter)
     {

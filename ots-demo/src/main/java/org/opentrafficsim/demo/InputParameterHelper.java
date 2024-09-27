@@ -34,7 +34,7 @@ public final class InputParameterHelper implements ParameterFactory
 
     /**
      * Constructor.
-     * @param rootMap InputParameterMap; input parameter map
+     * @param rootMap input parameter map
      */
     public InputParameterHelper(final InputParameterMap rootMap)
     {
@@ -68,8 +68,8 @@ public final class InputParameterHelper implements ParameterFactory
 
     /**
      * Make a map of input parameters for a demo with a car/truck ratio and car/truck tabs with parameters.
-     * @param map InputParameterMap; the map to add the car/truck input parameters to
-     * @param probabilityDisplayPriority double; the display priority to use for the car probability in the generic map
+     * @param map the map to add the car/truck input parameters to
+     * @param probabilityDisplayPriority the display priority to use for the car probability in the generic map
      */
     public static void makeInputParameterMapCarTruck(final InputParameterMap map, final double probabilityDisplayPriority)
     {
@@ -102,8 +102,8 @@ public final class InputParameterHelper implements ParameterFactory
 
     /**
      * Make a map of input parameters for a demo with a car tabs with parameters.
-     * @param map InputParameterMap; the map to add the car input tab to
-     * @param displayPriority double; the display priority to use for the car tab in the generic map
+     * @param map the map to add the car input tab to
+     * @param displayPriority the display priority to use for the car tab in the generic map
      */
     public static void makeInputParameterMapCar(final InputParameterMap map, final double displayPriority)
     {
@@ -141,8 +141,8 @@ public final class InputParameterHelper implements ParameterFactory
 
     /**
      * Make a map of input parameters for a demo with a truck tabs with parameters.
-     * @param map InputParameterMap; the map to add the truck input tab to
-     * @param displayPriority double; the display priority to use for the truck map in the generic map
+     * @param map the map to add the truck input tab to
+     * @param displayPriority the display priority to use for the truck map in the generic map
      */
     public static void makeInputParameterMapTruck(final InputParameterMap map, final double displayPriority)
     {
@@ -181,7 +181,7 @@ public final class InputParameterHelper implements ParameterFactory
 
     /**
      * Get the car parameters as entered.
-     * @param rootMap InputParameterMap; the root map of the model with a 'car' tab with the parameters
+     * @param rootMap the root map of the model with a 'car' tab with the parameters
      * @return the parameters where a, b, s0 and tSafe have been updated with the user's choices
      * @throws ParameterException when the parameter was given an illegal setting
      * @throws InputParameterException when the input parameter could not be found
@@ -203,7 +203,7 @@ public final class InputParameterHelper implements ParameterFactory
 
     /**
      * Get the truck parameters as entered.
-     * @param rootMap InputParameterMap; the root map of the model with a 'truck' tab with the parameters
+     * @param rootMap the root map of the model with a 'truck' tab with the parameters
      * @return the parameters where a, b, s0 and tSafe have been updated with the user's choices
      * @throws ParameterException when the parameter was given an illegal setting
      * @throws InputParameterException when the input parameter could not be found

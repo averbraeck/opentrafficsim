@@ -60,7 +60,7 @@ public class SwingPlot extends JFrame
 
     /**
      * Construct a new Swing container for an AbstractPlot.
-     * @param plot AbstractPlot; the plot to embed
+     * @param plot the plot to embed
      */
     public SwingPlot(final AbstractPlot plot)
     {
@@ -73,7 +73,7 @@ public class SwingPlot extends JFrame
 
     /**
      * Add the chart.
-     * @param chart JFreeChart; the chart
+     * @param chart the chart
      */
     protected void setChart(final JFreeChart chart)
     {
@@ -246,7 +246,7 @@ public class SwingPlot extends JFrame
 
     /**
      * Manually set status label from sub class. Will be overwritten by a moving mouse pointer over the axes.
-     * @param label String; label to set
+     * @param label label to set
      */
     protected final void setStatusLabel(final String label)
     {
@@ -258,7 +258,7 @@ public class SwingPlot extends JFrame
 
     /**
      * Overridable method to add pop up items.
-     * @param popupMenu JPopupMenu; pop up menu
+     * @param popupMenu pop up menu
      */
     protected void addPopUpMenuItems(final JPopupMenu popupMenu)
     {
@@ -276,7 +276,7 @@ public class SwingPlot extends JFrame
 
     /**
      * Retrieve the plot.
-     * @return AbstractPlot; the plot
+     * @return the plot
      */
     public AbstractPlot getPlot()
     {

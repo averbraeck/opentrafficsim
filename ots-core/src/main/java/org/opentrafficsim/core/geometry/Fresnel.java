@@ -235,8 +235,8 @@ public class Fresnel
      * <br>
      * W.J. Cody (1968) Chebyshev approximations for the Fresnel integrals. Mathematics of Computation, Vol. 22, Issue 102, pp.
      * 450–453.
-     * @param x double; length along the standard Fresnel integral (no scaling).
-     * @return double[]; array with two double values c and s
+     * @param x length along the standard Fresnel integral (no scaling).
+     * @return array with two double values c and s
      * @see <a href="https://www.ams.org/journals/mcom/1968-22-102/S0025-5718-68-99871-2/S0025-5718-68-99871-2.pdf">Cody
      *      (1968)</a>
      */
@@ -301,10 +301,10 @@ public class Fresnel
 
     /**
      * Evaluate numerator or denominator of rational approximation.
-     * @param t double; value along the clothoid.
-     * @param coef double[]; rational approximation coefficients.
-     * @param sign double; sign of exponent, +1 for Cartesian rational approximation, -1 for polar approximation.
-     * @return double; numerator or denominator of rational approximation.
+     * @param t value along the clothoid.
+     * @param coef rational approximation coefficients.
+     * @param sign sign of exponent, +1 for Cartesian rational approximation, -1 for polar approximation.
+     * @return numerator or denominator of rational approximation.
      */
     private static double ratioEval(final double t, final double[] coef, final double sign)
     {

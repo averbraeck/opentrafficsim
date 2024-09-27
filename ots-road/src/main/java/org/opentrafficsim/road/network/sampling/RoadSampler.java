@@ -69,7 +69,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
     /**
      * Constructor which uses the operational plan updates of GTU's as sampling interval.
-     * @param network RoadNetwork; the network
+     * @param network the network
      * @throws NullPointerException if the simulator is {@code null}
      */
     public RoadSampler(final RoadNetwork network)
@@ -79,9 +79,9 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
     /**
      * Constructor which uses the operational plan updates of GTU's as sampling interval.
-     * @param extendedDataTypes Set&lt;ExtendedDataType&lt;?, ?, ?, ? super GtuDataRoad&gt;&gt;; extended data types
-     * @param filterDataTypes Set&lt;FilterDataType&lt;?, ? super GtuDataRoad&gt;&gt;; filter data types
-     * @param network RoadNetwork; the network
+     * @param extendedDataTypes extended data types
+     * @param filterDataTypes filter data types
+     * @param network the network
      * @throws NullPointerException if the simulator is {@code null}
      */
     public RoadSampler(final Set<ExtendedDataType<?, ?, ?, ? super GtuDataRoad>> extendedDataTypes,
@@ -96,8 +96,8 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
     /**
      * Constructor which uses the given frequency to determine the sampling interval.
-     * @param network RoadNetwork; the network
-     * @param frequency Frequency; sampling frequency
+     * @param network the network
+     * @param frequency sampling frequency
      * @throws NullPointerException if an input is {@code null}
      * @throws IllegalArgumentException if frequency is negative or zero
      */
@@ -108,10 +108,10 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
     /**
      * Constructor which uses the given frequency to determine the sampling interval.
-     * @param extendedDataTypes Set&lt;ExtendedDataType&lt;?, ?, ?, ? super GtuDataRoad&gt;&gt;; extended data types
-     * @param filterDataTypes Set&lt;FilterDataType&lt;?, ? super GtuDataRoad&gt;&gt;; filter data types
-     * @param network RoadNetwork; the network
-     * @param frequency Frequency; sampling frequency
+     * @param extendedDataTypes extended data types
+     * @param filterDataTypes filter data types
+     * @param network the network
+     * @param frequency sampling frequency
      * @throws NullPointerException if an input is {@code null}
      * @throws IllegalArgumentException if frequency is negative or zero
      */
@@ -324,9 +324,9 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
     /**
      * Schedules a sampling event for the given gtu on the given lane for the sampling interval from the current time.
-     * @param gtu LaneBasedGtu; gtu to sample
-     * @param lane Lane; lane where the gtu is at
-     * @param inTime Duration; relative time to schedule
+     * @param gtu gtu to sample
+     * @param lane lane where the gtu is at
+     * @param inTime relative time to schedule
      */
     private void scheduleSamplingInterval(final LaneBasedGtu gtu, final Lane lane, final Duration inTime)
     {
@@ -345,9 +345,9 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
     /**
      * Samples a gtu and schedules the next sampling event. This is used for interval-based sampling.
-     * @param gtu LaneBasedGtu; gtu to sample
-     * @param lane Lane; lane direction where the gtu is at
-     * @param scheduleNext boolean; whether to schedule the next event
+     * @param gtu gtu to sample
+     * @param lane lane direction where the gtu is at
+     * @param scheduleNext whether to schedule the next event
      */
     public final void notifySample(final LaneBasedGtu gtu, final Lane lane, final boolean scheduleNext)
     {
@@ -453,8 +453,8 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
     /**
      * Returns a factory to create a sampler.
-     * @param network RoadNetwork; network
-     * @return Factory; factory to create a sampler
+     * @param network network
+     * @return factory to create a sampler
      */
     public static Factory build(final RoadNetwork network)
     {
@@ -479,7 +479,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
         /**
          * Constructor.
-         * @param network RoadNetwork; network
+         * @param network network
          */
         Factory(final RoadNetwork network)
         {
@@ -488,8 +488,8 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
         /**
          * Register extended data type.
-         * @param extendedDataType ExtendedDataType&lt;?, ?, ?, ? super GtuDataRoad&gt;; extended data type
-         * @return Factory; this factory
+         * @param extendedDataType extended data type
+         * @return this factory
          */
         public Factory registerExtendedDataType(final ExtendedDataType<?, ?, ?, ? super GtuDataRoad> extendedDataType)
         {
@@ -500,8 +500,8 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
         /**
          * Register filter data type.
-         * @param filterDataType FilterDataType&lt;?, ? super GtuDataRoad&gt;; filter data type
-         * @return Factory; this factory
+         * @param filterDataType filter data type
+         * @return this factory
          */
         public Factory registerFilterDataType(final FilterDataType<?, ? super GtuDataRoad> filterDataType)
         {
@@ -512,8 +512,8 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
         /**
          * Sets the frequency. If no frequency is set, a sampler is created that records on move events of GTU's.
-         * @param frequency Frequency; frequency
-         * @return Factory; this factory
+         * @param frequency frequency
+         * @return this factory
          */
         public Factory setFrequency(final Frequency frequency)
         {
@@ -523,7 +523,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
         /**
          * Create sampler.
-         * @return RoadSampler; sampler
+         * @return sampler
          */
         public RoadSampler create()
         {

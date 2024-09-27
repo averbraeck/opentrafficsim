@@ -16,7 +16,7 @@ public class LengthBeginEndType extends ExpressionType<LengthBeginEnd>
 
     /**
      * Constructor with value.
-     * @param value LengthBeginEnd; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public LengthBeginEndType(final LengthBeginEnd value)
     {
@@ -25,7 +25,7 @@ public class LengthBeginEndType extends ExpressionType<LengthBeginEnd>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public LengthBeginEndType(final String expression)
     {
@@ -63,8 +63,8 @@ public class LengthBeginEndType extends ExpressionType<LengthBeginEnd>
 
         /**
          * Constructor with length.
-         * @param begin boolean; begin or end?
-         * @param offset Length; the offset, absolute = true
+         * @param begin begin or end?
+         * @param offset the offset, absolute = true
          */
         public LengthBeginEnd(final boolean begin, final Length offset)
         {
@@ -76,7 +76,7 @@ public class LengthBeginEndType extends ExpressionType<LengthBeginEnd>
 
         /**
          * Constructor with fraction.
-         * @param fraction double; the fraction, absolute = false
+         * @param fraction the fraction, absolute = false
          */
         public LengthBeginEnd(final double fraction)
         {

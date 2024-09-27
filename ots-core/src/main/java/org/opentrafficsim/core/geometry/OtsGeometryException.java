@@ -21,7 +21,7 @@ public class OtsGeometryException extends Exception
     }
 
     /**
-     * @param message String; message to display for this exception.
+     * @param message message to display for this exception.
      */
     public OtsGeometryException(final String message)
     {
@@ -29,7 +29,7 @@ public class OtsGeometryException extends Exception
     }
 
     /**
-     * @param cause Throwable; the exception that triggered this exception.
+     * @param cause the exception that triggered this exception.
      */
     public OtsGeometryException(final Throwable cause)
     {
@@ -37,8 +37,8 @@ public class OtsGeometryException extends Exception
     }
 
     /**
-     * @param message String; message to display for this exception.
-     * @param cause Throwable; the exception that triggered this exception.
+     * @param message message to display for this exception.
+     * @param cause the exception that triggered this exception.
      */
     public OtsGeometryException(final String message, final Throwable cause)
     {
@@ -46,10 +46,10 @@ public class OtsGeometryException extends Exception
     }
 
     /**
-     * @param message String; message to display for this exception.
-     * @param cause Throwable; the exception that triggered this exception.
-     * @param enableSuppression boolean; whether or not suppression is enabled or disabled
-     * @param writableStackTrace boolean; whether or not the stack trace should be writable
+     * @param message message to display for this exception.
+     * @param cause the exception that triggered this exception.
+     * @param enableSuppression whether or not suppression is enabled or disabled
+     * @param writableStackTrace whether or not the stack trace should be writable
      */
     public OtsGeometryException(final String message, final Throwable cause, final boolean enableSuppression,
             final boolean writableStackTrace)

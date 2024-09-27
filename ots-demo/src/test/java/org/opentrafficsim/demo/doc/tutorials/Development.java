@@ -99,14 +99,14 @@ public class Development
             }
             return out;
         }
-        
+
         // @docs/08-tutorials/development.md#how-to-make-a-property-historical
         public void setValue(final int i, final int j, final double value)
         {
             addEvent(new EventMatrix(now().si, i, j, this.matrix[i][j]));
             this.matrix[i][j] = value;
         }
-        
+
         // @docs/08-tutorials/development.md#how-to-make-a-property-historical
         public double[][] getMatrix(final Time time)
         {
@@ -117,9 +117,9 @@ public class Development
             }
             return out;
         }
-        
+
     }
-    
+
     // @docs/08-tutorials/development.md#how-to-make-a-property-historical
     public class EventMatrix extends EventValue<Double>
     {
@@ -128,8 +128,7 @@ public class Development
 
         private final int j;
 
-        public EventMatrix(final double time, final int i, final int j, 
-            final double value)
+        public EventMatrix(final double time, final int i, final int j, final double value)
         {
             super(time, value);
             this.i = i;

@@ -21,8 +21,8 @@ public class DiscreteDistLength extends DiscreteDistDoubleScalar.Rel<Length, Len
     private static final long serialVersionUID = 20180829L;
 
     /**
-     * @param distribution DistDiscrete; distribution
-     * @param unit LengthUnit; units
+     * @param distribution distribution
+     * @param unit units
      */
     public DiscreteDistLength(final DistDiscrete distribution, final LengthUnit unit)
     {

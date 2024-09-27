@@ -106,8 +106,8 @@ public class HierarchicalTypeTest
 
         /**
          * Construct a new SubType instance.
-         * @param id String; id of the new SubType
-         * @param parent SubType; parent of the new SubType instance
+         * @param id id of the new SubType
+         * @param parent parent of the new SubType instance
          * @throws NullPointerException ...
          */
         SubType(final String id, final SubType parent) throws NullPointerException
@@ -117,7 +117,7 @@ public class HierarchicalTypeTest
 
         /**
          * Construct a new SubType instance.
-         * @param id String; id of the new SubType
+         * @param id id of the new SubType
          * @throws NullPointerException ...
          */
         SubType(final String id) throws NullPointerException
@@ -162,7 +162,7 @@ public class HierarchicalTypeTest
 
         /**
          * Instantiate hierarchical type.
-         * @param id String; the id
+         * @param id the id
          * @param parent the parent or null
          * @throws NullPointerException when id is null
          */
@@ -201,7 +201,7 @@ public class HierarchicalTypeTest
 
         /**
          * Instantiate hierarchical type.
-         * @param id String; the id
+         * @param id the id
          * @param parent the parent or null
          * @throws NullPointerException when id is null
          */
@@ -219,7 +219,7 @@ public class HierarchicalTypeTest
 
         /**
          * Instantiate hierarchical type.
-         * @param id String; the id
+         * @param id the id
          * @param parent the parent or null
          * @throws NullPointerException when id is null
          */

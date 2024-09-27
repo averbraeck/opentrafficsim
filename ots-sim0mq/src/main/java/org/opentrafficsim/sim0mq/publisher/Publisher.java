@@ -58,7 +58,7 @@ public class Publisher extends AbstractTransceiver
 
     /**
      * Construct a Publisher for an OTS network with no additional subscription handlers.
-     * @param network Network; the OTS network
+     * @param network the OTS network
      * @throws RemoteException ...
      */
     public Publisher(final Network network) throws RemoteException
@@ -68,11 +68,9 @@ public class Publisher extends AbstractTransceiver
 
     /**
      * Construct a Publisher for an OTS network.
-     * @param network Network; the OTS network
-     * @param additionalSubscriptionHandlers List&lt;SubscriptionHandler&gt;; list of additional subscription handlers to
-     *            register (may be null)
-     * @param incomingDataHandlers List&lt;IncomingDataHandler&gt;; handlers for data not handled directly by the Publisher (may
-     *            be null).
+     * @param network the OTS network
+     * @param additionalSubscriptionHandlers list of additional subscription handlers to register (may be null)
+     * @param incomingDataHandlers handlers for data not handled directly by the Publisher (may be null).
      * @throws RemoteException ...
      */
     public Publisher(final Network network, final List<SubscriptionHandler> additionalSubscriptionHandlers,
@@ -303,7 +301,7 @@ public class Publisher extends AbstractTransceiver
 
     /**
      * Add a SubscriptionHandler to the map.
-     * @param subscriptionHandler SubscriptionHandler; the subscription handler to add to the map
+     * @param subscriptionHandler the subscription handler to add to the map
      */
     private void addSubscriptionHandler(final SubscriptionHandler subscriptionHandler)
     {
@@ -393,10 +391,10 @@ public class Publisher extends AbstractTransceiver
 
     /**
      * Execute one command.
-     * @param subscriptionHandlerName String; name of the SubscriptionHandler for which the command is destined
+     * @param subscriptionHandlerName name of the SubscriptionHandler for which the command is destined
      * @param command SubscriptionHandler.Command; the operation to perform
-     * @param address Object[]; the address on which to perform the operation
-     * @param returnWrapper ReturnWrapper; to transmit the result
+     * @param address the address on which to perform the operation
+     * @param returnWrapper to transmit the result
      * @throws RemoteException on RMI network failure
      * @throws SerializationException on illegal type in serialization
      * @throws Sim0MQException on communication error
@@ -416,10 +414,10 @@ public class Publisher extends AbstractTransceiver
 
     /**
      * Execute one command.
-     * @param subscriptionHandlerName String; name of the SubscriptionHandler for which the command is destined
-     * @param commandString String; the operation to perform
-     * @param address Object[]; the address on which to perform the operation
-     * @param returnWrapper ReturnWrapper; to transmit the result
+     * @param subscriptionHandlerName name of the SubscriptionHandler for which the command is destined
+     * @param commandString the operation to perform
+     * @param address the address on which to perform the operation
+     * @param returnWrapper to transmit the result
      * @throws RemoteException on RMI network failure
      * @throws SerializationException on illegal type in serialization
      * @throws Sim0MQException on communication error
@@ -434,8 +432,8 @@ public class Publisher extends AbstractTransceiver
 
     /**
      * Find the IncomingDataHandler for a particular key.
-     * @param key String; the key of the IncomingDataHandler
-     * @return IncomingDataHandler; or null if there is no IncomingDataHandler for the key
+     * @param key the key of the IncomingDataHandler
+     * @return or null if there is no IncomingDataHandler for the key
      */
     public IncomingDataHandler lookupIncomingDataHandler(final String key)
     {

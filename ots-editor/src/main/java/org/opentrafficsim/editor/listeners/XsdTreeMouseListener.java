@@ -46,9 +46,9 @@ public class XsdTreeMouseListener extends MouseAdapter
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
-     * @param treeTable JTreeTable; tree table.
-     * @param attributesTable JTable; attributes table.
+     * @param editor editor.
+     * @param treeTable tree table.
+     * @param attributesTable attributes table.
      */
     public XsdTreeMouseListener(final OtsEditor editor, final JTreeTable treeTable, final JTable attributesTable)
     {
@@ -152,8 +152,8 @@ public class XsdTreeMouseListener extends MouseAdapter
                     JMenuItem button = new JMenuItem(option.optionNode().getShortString());
                     if (!option.selected())
                     {
-                        button.addActionListener(new ChoiceListener(option.choice(), option.optionNode(), row,
-                                this.editor, this.treeTable, this.attributesTable));
+                        button.addActionListener(new ChoiceListener(option.choice(), option.optionNode(), row, this.editor,
+                                this.treeTable, this.attributesTable));
                     }
                     button.setFont(this.treeTable.getFont());
                     popup.add(button);
@@ -183,8 +183,8 @@ public class XsdTreeMouseListener extends MouseAdapter
     /**
      * Creates a popup panel with options for a node. These contain active consumers (editors), moving up/down, and addition and
      * removal.
-     * @param e MouseEvent; mouse event.
-     * @param treeNode XsdTreeNode; node that was clicked on.
+     * @param e mouse event.
+     * @param treeNode node that was clicked on.
      */
     private void createRightClickPopup(final MouseEvent e, final XsdTreeNode treeNode)
     {
@@ -243,10 +243,10 @@ public class XsdTreeMouseListener extends MouseAdapter
 
     /**
      * Adds default menu actions Add, Remove, Move up, and Move down, for each when appropriate.
-     * @param treeNode XsdTreeNode; node.
-     * @param popup JPopupMenu; popup menu.
-     * @param added boolean; whether any menu items were added before (which requires a separator).
-     * @return boolean; whether any items were added, going in to this method, or during the method.
+     * @param treeNode node.
+     * @param popup popup menu.
+     * @param added whether any menu items were added before (which requires a separator).
+     * @return whether any items were added, going in to this method, or during the method.
      */
     private boolean addDefaultActions(final XsdTreeNode treeNode, final JPopupMenu popup, final boolean added)
     {

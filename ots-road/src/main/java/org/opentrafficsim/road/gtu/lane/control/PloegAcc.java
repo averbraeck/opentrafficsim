@@ -27,7 +27,7 @@ public class PloegAcc extends LinearAcc
 
     /**
      * Constructor using default sensors with no delay.
-     * @param delayedActuation DelayedActuation; delayed actuation
+     * @param delayedActuation delayed actuation
      */
     public PloegAcc(final DelayedActuation delayedActuation)
     {

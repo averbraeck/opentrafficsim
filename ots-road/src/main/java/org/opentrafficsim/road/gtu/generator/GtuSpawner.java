@@ -47,8 +47,8 @@ public class GtuSpawner
 
     /**
      * Sets the use of default NL GTU templates.
-     * @param useDefaultGtuTemplate boolean; use of default NL GTU templates.
-     * @return this; for method chaining.
+     * @param useDefaultGtuTemplate use of default NL GTU templates.
+     * @return for method chaining.
      */
     public GtuSpawner setUseDefaultGtuTemplate(final boolean useDefaultGtuTemplate)
     {
@@ -58,8 +58,8 @@ public class GtuSpawner
 
     /**
      * Sets random stream.
-     * @param stream StreamInterface; random stream.
-     * @return this; for method chaining.
+     * @param stream random stream.
+     * @return for method chaining.
      */
     public GtuSpawner setStream(final StreamInterface stream)
     {
@@ -69,8 +69,8 @@ public class GtuSpawner
 
     /**
      * Sets no lane change distance.
-     * @param noLaneChangeDistance Length; no lane change distance.
-     * @return this; for method chaining.
+     * @param noLaneChangeDistance no lane change distance.
+     * @return for method chaining.
      */
     public GtuSpawner setNoLaneChangeDistance(final Length noLaneChangeDistance)
     {
@@ -80,8 +80,8 @@ public class GtuSpawner
 
     /**
      * Sets instantaneous lane changes.
-     * @param instantaneousLaneChanges boolean; instantaneous lane changes.
-     * @return this; for method chaining.
+     * @param instantaneousLaneChanges instantaneous lane changes.
+     * @return for method chaining.
      */
     public GtuSpawner setInstantaneousLaneChanges(final boolean instantaneousLaneChanges)
     {
@@ -91,8 +91,8 @@ public class GtuSpawner
 
     /**
      * Sets the error handler.
-     * @param errorHandler GtuErrorHandler; error handler.
-     * @return this; for method chaining.
+     * @param errorHandler error handler.
+     * @return for method chaining.
      */
     public GtuSpawner setErrorHandler(final GtuErrorHandler errorHandler)
     {
@@ -102,11 +102,11 @@ public class GtuSpawner
 
     /**
      * Create a single GTU.
-     * @param id String; id.
-     * @param templateGtuType LaneBasedGtuCharacteristics; characteristics.
-     * @param network RoadNetwork; network.
-     * @param speed Speed; speed.
-     * @param position LanePosition; position.
+     * @param id id.
+     * @param templateGtuType characteristics.
+     * @param network network.
+     * @param speed speed.
+     * @param position position.
      * @throws GtuException when initial GTU values are not correct
      * @throws OtsGeometryException when the initial path is wrong
      * @throws NetworkException when the GTU cannot be placed on the given lane

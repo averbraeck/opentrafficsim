@@ -29,7 +29,7 @@ public class DistractionFactory
 
     /**
      * Constructor.
-     * @param stream StreamInterface; random number stream
+     * @param stream random number stream
      */
     public DistractionFactory(final StreamInterface stream)
     {
@@ -38,9 +38,9 @@ public class DistractionFactory
 
     /**
      * Adds a default distraction.
-     * @param defaultDistraction DefaultDistraction; default distraction
-     * @param taskDemand double; task demand
-     * @return DistractionFactory; this factory for method chaining
+     * @param defaultDistraction default distraction
+     * @param taskDemand task demand
+     * @return this factory for method chaining
      */
     public final DistractionFactory addDistraction(final DefaultDistraction defaultDistraction, final double taskDemand)
     {
@@ -51,9 +51,9 @@ public class DistractionFactory
 
     /**
      * Adds a default distraction.
-     * @param defaultDistraction DefaultDistraction; default distraction
-     * @param taskSupplier TaskSupplier; task supplier
-     * @return DistractionFactory; this factory for method chaining
+     * @param defaultDistraction default distraction
+     * @param taskSupplier task supplier
+     * @return this factory for method chaining
      */
     public final DistractionFactory addDistraction(final DefaultDistraction defaultDistraction, final TaskSupplier taskSupplier)
     {
@@ -64,14 +64,14 @@ public class DistractionFactory
 
     /**
      * Helper method to create a distraction.
-     * @param id String; id
-     * @param description String; description
-     * @param frequency Frequency; frequency per exposed driver
-     * @param exposure double; exposure (value in range [0...1])
-     * @param averageDuration Duration; average duration
-     * @param stdDuration Duration; standard deviation of duration
-     * @param taskDemand double; task demand
-     * @return DistractionFactory; this factory for method chaining
+     * @param id id
+     * @param description description
+     * @param frequency frequency per exposed driver
+     * @param exposure exposure (value in range [0...1])
+     * @param averageDuration average duration
+     * @param stdDuration standard deviation of duration
+     * @param taskDemand task demand
+     * @return this factory for method chaining
      */
     public final DistractionFactory addDistraction(final String id, final String description, final Frequency frequency,
             final double exposure, final Duration averageDuration, final Duration stdDuration, final double taskDemand)
@@ -83,14 +83,14 @@ public class DistractionFactory
 
     /**
      * Helper method to create a distraction.
-     * @param id String; id
-     * @param description String; description
-     * @param frequency Frequency; frequency per exposed driver
-     * @param exposure double; exposure (value in range [0...1])
-     * @param averageDuration Duration; average duration
-     * @param stdDuration Duration; standard deviation of duration
-     * @param taskSupplier TaskSupplier; task supplier
-     * @return DistractionFactory; this factory for method chaining
+     * @param id id
+     * @param description description
+     * @param frequency frequency per exposed driver
+     * @param exposure exposure (value in range [0...1])
+     * @param averageDuration average duration
+     * @param stdDuration standard deviation of duration
+     * @param taskSupplier task supplier
+     * @return this factory for method chaining
      */
     public final DistractionFactory addDistraction(final String id, final String description, final Frequency frequency,
             final double exposure, final Duration averageDuration, final Duration stdDuration, final TaskSupplier taskSupplier)
@@ -102,7 +102,7 @@ public class DistractionFactory
 
     /**
      * Returns the list of distractions.
-     * @return List; list of distractions
+     * @return list of distractions
      */
     public final List<Distraction> build()
     {

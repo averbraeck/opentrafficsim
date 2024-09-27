@@ -22,7 +22,7 @@ public class GenerateParametersXml
 
     /**
      * Prints XML lines for all parameters (@code ParameterType) found.
-     * @param args String[]; args.
+     * @param args args.
      * @throws IllegalAccessException
      * @throws IllegalArgumentException
      * @throws ParameterException

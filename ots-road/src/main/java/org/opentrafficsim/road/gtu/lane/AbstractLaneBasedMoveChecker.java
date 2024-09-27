@@ -27,7 +27,7 @@ public abstract class AbstractLaneBasedMoveChecker implements EventListener
 
     /**
      * Constructor.
-     * @param network Network; network
+     * @param network network
      */
     public AbstractLaneBasedMoveChecker(final Network network)
     {
@@ -68,7 +68,7 @@ public abstract class AbstractLaneBasedMoveChecker implements EventListener
 
     /**
      * Check the move of the given GTU.
-     * @param gtu LaneBasedGtu; GTU.
+     * @param gtu GTU.
      * @throws Exception thrown when something is not all right
      */
     public abstract void checkMove(LaneBasedGtu gtu) throws Exception;

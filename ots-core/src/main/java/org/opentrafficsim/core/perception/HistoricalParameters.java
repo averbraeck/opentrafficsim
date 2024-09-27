@@ -26,8 +26,8 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
 
     /**
      * Constructor.
-     * @param manager HistoryManager; history manager
-     * @param parameters Parameters; initial parameter set
+     * @param manager history manager
+     * @param parameters initial parameter set
      */
     public HistoricalParameters(final HistoryManager manager, final Parameters parameters)
     {
@@ -37,7 +37,7 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
 
     /**
      * Get the parameters at the current simulation time.
-     * @return Parameters; parameters at the current simulation time
+     * @return parameters at the current simulation time
      */
     public Parameters getParameters()
     {
@@ -46,8 +46,8 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
 
     /**
      * Get the parameters at the given simulation time.
-     * @param time Time; simulation time
-     * @return Parameters; parameters at the given simulation time
+     * @param time simulation time
+     * @return parameters at the given simulation time
      */
     public Parameters getParameters(final Time time)
     {
@@ -132,8 +132,8 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
         private final Object value;
 
         /**
-         * @param parameter ParameterType&lt;T&gt;; parameter
-         * @param value T; parameter value
+         * @param parameter parameter
+         * @param value parameter value
          * @param <T> parameter value type
          */
         public <T> ParameterValueSet(final ParameterType<T> parameter, final T value)
@@ -183,9 +183,9 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
 
         /**
          * Constructor. New value is not required, as it's not required to restore the state from before the change.
-         * @param time double; time of event
-         * @param parameterType ParameterType&lt;T&gt;; parameter type
-         * @param parameters Parameters; parameters
+         * @param time time of event
+         * @param parameterType parameter type
+         * @param parameters parameters
          * @param <T> parameter value type
          */
         public <T> ParameterEvent(final double time, final ParameterType<T> parameterType, final Parameters parameters)
@@ -195,7 +195,7 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
 
         /**
          * Resets the parameter type to it's value before the change.
-         * @param parameters Parameters; parameters
+         * @param parameters parameters
          * @param <T> parameter value type
          */
         @SuppressWarnings("unchecked")

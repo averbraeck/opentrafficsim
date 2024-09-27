@@ -38,9 +38,9 @@ public class AnticipationSpeed implements PerceptionCollector<SpeedSet, LaneBase
 
     /**
      * Constructor.
-     * @param desiredSpeed Speed; desired speed
-     * @param lookAhead Length; look-ahead distance
-     * @param lane RelativeLane; lane
+     * @param desiredSpeed desired speed
+     * @param lookAhead look-ahead distance
+     * @param lane lane
      */
     public AnticipationSpeed(final Speed desiredSpeed, final Length lookAhead, final RelativeLane lane)
     {
@@ -112,8 +112,8 @@ public class AnticipationSpeed implements PerceptionCollector<SpeedSet, LaneBase
 
     /**
      * Anticipate a single leader by possibly lowering the anticipation speed.
-     * @param gtu Gtu; GTU
-     * @param distance Length; distance to GTU
+     * @param gtu GTU
+     * @param distance distance to GTU
      * @return possibly lowered anticipation speed
      */
     final double anticipateSingle(final Gtu gtu, final Length distance)
@@ -168,7 +168,7 @@ public class AnticipationSpeed implements PerceptionCollector<SpeedSet, LaneBase
 
         /**
          * Returns the speed regarding the left lane.
-         * @return Speed; speed regarding the left lane
+         * @return speed regarding the left lane
          */
         public final Speed getLeft()
         {
@@ -177,7 +177,7 @@ public class AnticipationSpeed implements PerceptionCollector<SpeedSet, LaneBase
 
         /**
          * Returns the speed regarding the current lane.
-         * @return Speed; speed regarding the current lane
+         * @return speed regarding the current lane
          */
         public final Speed getCurrent()
         {
@@ -186,7 +186,7 @@ public class AnticipationSpeed implements PerceptionCollector<SpeedSet, LaneBase
 
         /**
          * Returns the speed regarding the right lane.
-         * @return Speed; speed regarding the right lane
+         * @return speed regarding the right lane
          */
         public final Speed getRight()
         {

@@ -222,7 +222,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
     /**
      * Returns an array from a String.
-     * @param str String; string
+     * @param str string
      * @return double[] array
      */
     private static double[] arrayFromString(final String str)
@@ -363,7 +363,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
     /**
      * Returns the parameter factory.
-     * @return ParameterFactoryByType; parameter factory
+     * @return parameter factory
      */
     final ParameterFactoryByType getParameterFactory()
     {
@@ -390,7 +390,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
     /**
      * Adds travel time and delay for a single GTU.
-     * @param id String; id of the GTU
+     * @param id id of the GTU
      */
     private void measureTravelTime(final String id)
     {
@@ -473,7 +473,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
         /**
          * Constructor.
-         * @param defaultGenerator LaneBasedGtuCharacteristicsGenerator; generator for non-controlled GTU's
+         * @param defaultGenerator generator for non-controlled GTU's
          */
         ControlledStrategicalPlannerGenerator(final DefaultLaneBasedGtuCharacteristicsGeneratorOd defaultGenerator)
         {
@@ -573,8 +573,8 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
         /**
          * Constructor.
-         * @param gtu LaneBasedGtu; gtu
-         * @param laneChangeSystem AutomaticLaneChangeSystem; lane change system
+         * @param gtu gtu
+         * @param laneChangeSystem lane change system
          */
         ControlledTacticalPlanner(final LaneBasedGtu gtu, final AutomaticLaneChangeSystem laneChangeSystem)
         {
@@ -586,7 +586,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
         /**
          * Helper method to create perception.
-         * @param gtu LaneBasedGtu; gtu
+         * @param gtu gtu
          * @return LanePerception lane perception
          */
         private static LanePerception generatePerception(final LaneBasedGtu gtu)
@@ -678,9 +678,9 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
         /**
          * Update operational plan with actions to change lane. This method should be called by the tactical planner always.
-         * @param simplePlan SimpleOperationalPlan; plan
-         * @param parameters Parameters; parameters
-         * @return SimpleOperationalPlan; adapted plan
+         * @param simplePlan plan
+         * @param parameters parameters
+         * @return adapted plan
          * @throws OperationalPlanException if the system runs in to an error
          * @throws ParameterException if a parameter is missing
          */
@@ -689,14 +689,13 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
         /**
          * Returns the direction in which the system was initiated to perform a lane change.
-         * @return LateralDirectionality; direction in which the system was initiated to perform a lane change, {@code NONE} if
-         *         none
+         * @return direction in which the system was initiated to perform a lane change, {@code NONE} if none
          */
         LateralDirectionality initiatedLaneChange();
 
         /**
          * Initiate a lane change.
-         * @param dir LateralDirectionality; direction, use {@code NONE} to cancel
+         * @param dir direction, use {@code NONE} to cancel
          */
         void initiateLaneChange(LateralDirectionality dir);
 
@@ -730,9 +729,9 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
         /**
          * Constructor.
-         * @param gtu LaneBasedGtu; GTU
-         * @param carFollowingModel CarFollowingModel; car-following model
-         * @param settings Parameters; system settings
+         * @param gtu GTU
+         * @param carFollowingModel car-following model
+         * @param settings system settings
          */
         SyncAndAccept(final LaneBasedGtu gtu, final CarFollowingModel carFollowingModel, final Parameters settings)
         {
@@ -808,10 +807,10 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
         /**
          * Checks whether a gap can be accepted.
-         * @param neighbors Set&lt;HeadwayGtu&gt;; neighbors
-         * @param sli SpeedLimitInfo; speed limit info
-         * @param leaders boolean; whether we are dealing with leaders, or followers
-         * @return boolean; whether the gap is accepted
+         * @param neighbors neighbors
+         * @param sli speed limit info
+         * @param leaders whether we are dealing with leaders, or followers
+         * @return whether the gap is accepted
          * @throws ParameterException if a parameter is not defined
          */
         private boolean acceptGap(final Set<HeadwayGtu> neighbors, final SpeedLimitInfo sli, final boolean leaders)

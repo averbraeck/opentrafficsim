@@ -32,7 +32,7 @@ public class ContinuousPolyLine implements ContinuousLine
 
     /**
      * Define continuous line from polyline. Start and end point direction are derived from the line.
-     * @param line OtsLine2d; line.
+     * @param line line.
      */
     public ContinuousPolyLine(final PolyLine2d line)
     {
@@ -47,9 +47,9 @@ public class ContinuousPolyLine implements ContinuousLine
     /**
      * Define continuous line from polyline. Start and end point are given and may alter the direction at the endpoints
      * (slightly).
-     * @param line OtsLine2d; line.
-     * @param startPoint OrientedPoint2d; start point.
-     * @param endPoint OrientedPoint2d; end point.
+     * @param line line.
+     * @param startPoint start point.
+     * @param endPoint end point.
      */
     public ContinuousPolyLine(final PolyLine2d line, final OrientedPoint2d startPoint, final OrientedPoint2d endPoint)
     {
@@ -103,17 +103,17 @@ public class ContinuousPolyLine implements ContinuousLine
 
     /**
      * Polyline from continuous line. Returns the line as is.
-     * @return PolyLine2d; polyline.
+     * @return polyline.
      */
     public PolyLine2d flatten()
     {
         return this.line;
     }
-    
+
     /**
      * Returns the line as is. Flattener is ignored.
-     * @param flattener Flattener; flattener (ignored).
-     * @return PolyLine2d; flattened line.
+     * @param flattener flattener (ignored).
+     * @return flattened line.
      */
     @Override
     public PolyLine2d flatten(final Flattener flattener)
@@ -124,8 +124,8 @@ public class ContinuousPolyLine implements ContinuousLine
     /**
      * Returns an offset line. This is a regular offset line, with start and end points moved to be perpendicular to end point
      * directions.
-     * @param offsets FractionalLengthData; offset data.
-     * @return PolyLine2d; flattened line.
+     * @param offsets offset data.
+     * @return flattened line.
      */
     public PolyLine2d offset(final FractionalLengthData offsets)
     {
@@ -143,9 +143,9 @@ public class ContinuousPolyLine implements ContinuousLine
 
     /**
      * Returns the regular offset. Flattener is ignored.
-     * @param offsets FractionalLengthData; offset data.
-     * @param flattener Flattener; flattener (ignored).
-     * @return PolyLine2d; flattened line.
+     * @param offsets offset data.
+     * @param flattener flattener (ignored).
+     * @return flattened line.
      */
     @Override
     public PolyLine2d flattenOffset(final FractionalLengthData offsets, final Flattener flattener)

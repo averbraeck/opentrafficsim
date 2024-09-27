@@ -108,7 +108,7 @@ public class Diagram
 
     /**
      * Construct a new diagram.
-     * @param streams Set&lt;Short&gt;; the streams (numbered according to the Dutch standard) that cross the intersection.
+     * @param streams the streams (numbered according to the Dutch standard) that cross the intersection.
      * @throws TrafficControlException when a route is invalid
      */
     public Diagram(final Set<Short> streams) throws TrafficControlException
@@ -261,8 +261,8 @@ public class Diagram
 
     /**
      * Check that a particular stream exists. Beware that the keys in this.streams are Short.
-     * @param stream short; the number of the stream to check
-     * @return boolean; true if the stream exists; false if it does not exist
+     * @param stream the number of the stream to check
+     * @return true if the stream exists; false if it does not exist
      */
     private boolean streamExists(final short stream)
     {
@@ -271,8 +271,8 @@ public class Diagram
 
     /**
      * Report if object is inaccessible to all traffic.
-     * @param i int; the number of the object
-     * @return boolean; true if the object is inaccessible to all traffic
+     * @param i the number of the object
+     * @return true if the object is inaccessible to all traffic
      */
     public static final boolean isGrass(final int i)
     {
@@ -282,8 +282,8 @@ public class Diagram
 
     /**
      * Return the LaneType for a stream number.
-     * @param streamNumber int; the standard Dutch traffic stream number
-     * @return LaneType; the lane type of the stream; or null if the stream number is reserved or invalid
+     * @param streamNumber the standard Dutch traffic stream number
+     * @return the lane type of the stream; or null if the stream number is reserved or invalid
      */
     final LaneType laneType(final int streamNumber)
     {
@@ -323,9 +323,9 @@ public class Diagram
 
     /**
      * Return the rotated x value.
-     * @param xyPair XYPair; the XYPair
-     * @param rotation int; rotation in multiples of 90 degrees
-     * @return int; the x component of the rotated coordinates
+     * @param xyPair the XYPair
+     * @param rotation rotation in multiples of 90 degrees
+     * @return the x component of the rotated coordinates
      */
     final int rotatedX(final XYPair xyPair, final int rotation)
     {
@@ -347,9 +347,9 @@ public class Diagram
 
     /**
      * Return the rotated y value.
-     * @param xyPair XYPair; the XYPair
-     * @param rotation int; rotation in multiples of 90 degrees
-     * @return int; the y component of the rotated coordinates
+     * @param xyPair the XYPair
+     * @param rotation rotation in multiples of 90 degrees
+     * @return the y component of the rotated coordinates
      */
     final int rotatedY(final XYPair xyPair, final int rotation)
     {
@@ -411,8 +411,8 @@ public class Diagram
 
         /**
          * Construct a RouteStep that has a NO_OP command.
-         * @param x int; the X object at the end of this route step
-         * @param y int; the Y object at the end of this route step
+         * @param x the X object at the end of this route step
+         * @param y the Y object at the end of this route step
          */
         RouteStep(final int x, final int y)
         {
@@ -424,9 +424,9 @@ public class Diagram
 
         /**
          * Construct a RouteStep with a command condition.
-         * @param x int; the X object at the end of this route step
-         * @param y int; the Y object at the end of this route step
-         * @param command Command; a STOP_LINE or NO_OP command
+         * @param x the X object at the end of this route step
+         * @param y the Y object at the end of this route step
+         * @param command a STOP_LINE or NO_OP command
          * @throws TrafficControlException when an IF or ELSE_IF has an invalid streamCondition, or when an ELSE or END_IF has a
          *             valid streamCOndition
          */
@@ -446,8 +446,8 @@ public class Diagram
 
         /**
          * Construct a RouteStep with a command condition.
-         * @param command Command; an IF, ELSE, ENDIF, or ELSE_IF command
-         * @param streamCondition int; the stream that must exist for the condition to be true
+         * @param command an IF, ELSE, ENDIF, or ELSE_IF command
+         * @param streamCondition the stream that must exist for the condition to be true
          * @throws TrafficControlException when an IF or ELSE_IF has an invalid streamCondition, or when an ELSE or END_IF has a
          *             valid streamCOndition
          */
@@ -465,7 +465,7 @@ public class Diagram
 
         /**
          * Construct a RouteStep for ELSE or END_IF command.
-         * @param command Command; either <code>Command.ELSE</code> or <code>Command.END_IF</code>
+         * @param command either <code>Command.ELSE</code> or <code>Command.END_IF</code>
          * @throws TrafficControlException when the Command is not ELSE or END_IF
          */
         RouteStep(final Command command) throws TrafficControlException
@@ -480,7 +480,7 @@ public class Diagram
 
         /**
          * Retrieve the X object.
-         * @return int; the X object
+         * @return the X object
          */
         public int getX()
         {
@@ -489,7 +489,7 @@ public class Diagram
 
         /**
          * Retrieve the Y object.
-         * @return int; the Y object
+         * @return the Y object
          */
         public int getY()
         {
@@ -507,7 +507,7 @@ public class Diagram
 
         /**
          * Retrieve the stream condition.
-         * @return int; the streamCondition
+         * @return the streamCondition
          */
         public int getStreamCondition()
         {
@@ -537,8 +537,8 @@ public class Diagram
 
         /**
          * Construct a new XY pair.
-         * @param x int; the X value
-         * @param y int; the Y value
+         * @param x the X value
+         * @param y the Y value
          */
         XYPair(final int x, final int y)
         {
@@ -548,7 +548,7 @@ public class Diagram
 
         /**
          * Construct a new XY pair from a route step.
-         * @param routeStep RouteStep; the route step
+         * @param routeStep the route step
          */
         XYPair(final RouteStep routeStep)
         {
@@ -558,8 +558,8 @@ public class Diagram
 
         /**
          * Construct a rotated version of an XYPair.
-         * @param in XYPair; the initial version
-         * @param quadrant int; the quadrant
+         * @param in the initial version
+         * @param quadrant the quadrant
          */
         XYPair(final XYPair in, final int quadrant)
         {
@@ -569,7 +569,7 @@ public class Diagram
 
         /**
          * Retrieve the X value.
-         * @return int; the X value
+         * @return the X value
          */
         public int getX()
         {
@@ -578,7 +578,7 @@ public class Diagram
 
         /**
          * Retrieve the Y value.
-         * @return int; the Y value
+         * @return the Y value
          */
         public int getY()
         {
@@ -596,9 +596,9 @@ public class Diagram
 
     /**
      * Construct a route.
-     * @param quadrant int; the quadrant to assemble the route for
-     * @param steps RouteStep...; an array, or series of arguments of type RouteStep
-     * @return XYPair[]; an array of XY pairs describing the route through the intersection
+     * @param quadrant the quadrant to assemble the route for
+     * @param steps an array, or series of arguments of type RouteStep
+     * @return an array of XY pairs describing the route through the intersection
      * @throws TrafficLightException when the route contains commands other than NO_OP and STOP_LINE
      */
     private XYPair[] rotateRoute(final int quadrant, final RouteStep... steps) throws TrafficControlException
@@ -630,8 +630,8 @@ public class Diagram
 
     /**
      * Construct a route through the intersection.
-     * @param steps RouteStep...; the steps of the route description
-     * @return RouteStep[]; the route through the intersection
+     * @param steps the steps of the route description
+     * @return the route through the intersection
      * @throws TrafficControlException when something is very wrong
      */
     private RouteStep[] assembleRoute(final RouteStep... steps) throws TrafficControlException
@@ -647,9 +647,9 @@ public class Diagram
 
     /**
      * Return the Nth step in a route.
-     * @param pointNo int; the rank of the requested step
-     * @param steps RouteStep...; RouteStep... the steps
-     * @return RouteStep; the Nth step in the route or null if the route does not have <code>pointNo</code> steps
+     * @param pointNo the rank of the requested step
+     * @param steps RouteStep... the steps
+     * @return the Nth step in the route or null if the route does not have <code>pointNo</code> steps
      * @throws TrafficControlException when the command in a routestep is not recognized
      */
     private RouteStep routePoint(final int pointNo, final RouteStep... steps) throws TrafficControlException
@@ -786,8 +786,8 @@ public class Diagram
 
     /**
      * Fill one box taking care to rotate to display conventions.
-     * @param graphics Graphics2D; the graphics environment
-     * @param xyPair XYPair; the box to fill
+     * @param graphics the graphics environment
+     * @param xyPair the box to fill
      */
     private void fillXYPair(final Graphics2D graphics, final XYPair xyPair)
     {
@@ -797,7 +797,7 @@ public class Diagram
 
     /**
      * Test the Diagram code.
-     * @param args String[]; the command line arguments (not used)
+     * @param args the command line arguments (not used)
      */
     public static void main(final String[] args)
     {
@@ -851,8 +851,8 @@ public class Diagram
 
     /**
      * Make a check box to switch a particular stream number on or off.
-     * @param stream int; the stream number
-     * @param initialState boolean; if true; the check box will be checked
+     * @param stream the stream number
+     * @param initialState if true; the check box will be checked
      * @return JCheckBox
      */
     public static JCheckBox makeCheckBox(final int stream, final boolean initialState)

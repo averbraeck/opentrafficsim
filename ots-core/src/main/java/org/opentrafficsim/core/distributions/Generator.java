@@ -16,7 +16,7 @@ public interface Generator<O>
 {
     /**
      * Generate the next object.
-     * @return O; an object randomly selected from the stored collection
+     * @return an object randomly selected from the stored collection
      * @throws ProbabilityException if the stored collection is empty
      * @throws ParameterException in case of a parameter exception
      */

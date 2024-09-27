@@ -78,10 +78,10 @@ public class IncentiveRoute implements MandatoryIncentive
 
     /**
      * Calculates desire to leave a lane.
-     * @param params Parameters; parameters
-     * @param infra InfrastructurePerception; infrastructure perception
-     * @param lane RelativeLane; relative lane to evaluate
-     * @param speed Speed; speed
+     * @param params parameters
+     * @param infra infrastructure perception
+     * @param lane relative lane to evaluate
+     * @param speed speed
      * @return desire to leave a lane
      * @throws ParameterException in case of a parameter exception
      * @throws OperationalPlanException in case of perception exceptions
@@ -104,10 +104,10 @@ public class IncentiveRoute implements MandatoryIncentive
 
     /**
      * Calculates desire to leave a lane for a single infrastructure info.
-     * @param params Parameters; parameters
-     * @param x Length; remaining distance for lane changes
-     * @param n int; number of required lane changes
-     * @param v Speed; current speed
+     * @param params parameters
+     * @param x remaining distance for lane changes
+     * @param n number of required lane changes
+     * @param v current speed
      * @return desire to leave a lane for a single infrastructure info
      * @throws ParameterException in case of a parameter exception
      */

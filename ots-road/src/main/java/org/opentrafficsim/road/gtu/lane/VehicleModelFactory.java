@@ -23,7 +23,7 @@ public interface VehicleModelFactory
 
     /**
      * Factory returning the same instance always.
-     * @param vehicleModel VehicleModel; vehicle model
+     * @param vehicleModel vehicle model
      * @return fixed vehicle model
      */
     static VehicleModelFactory fixed(final VehicleModel vehicleModel)
@@ -40,7 +40,7 @@ public interface VehicleModelFactory
 
     /**
      * Create next vehicle model for given GTU type.
-     * @param gtuType GtuType; GTU type
+     * @param gtuType GTU type
      * @return next vehicle model for given GTU type
      */
     VehicleModel create(GtuType gtuType);

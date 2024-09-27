@@ -80,8 +80,8 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Construction of an empty network.
-     * @param id String; the network id.
-     * @param simulator OtsSimulatorInterface; the DSOL simulator engine
+     * @param id the network id.
+     * @param simulator the DSOL simulator engine
      */
     public Network(final String id, final OtsSimulatorInterface simulator)
     {
@@ -98,7 +98,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Return the simulator.
-     * @return OtsSimulatorInterface; the simulator
+     * @return the simulator
      */
     public OtsSimulatorInterface getSimulator()
     {
@@ -119,7 +119,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
     }
 
     /**
-     * @return the original NodeMap; only to be used in the 'network' package for cloning.
+     * @return only to be used in the 'network' package for cloning.
      */
     final Map<String, Node> getRawNodeMap()
     {
@@ -128,7 +128,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Register a node in the network.
-     * @param node Node; the node to add to the network.
+     * @param node the node to add to the network.
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
     public final void addNode(final Node node) throws NetworkException
@@ -143,7 +143,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Unregister a node from the network.
-     * @param node Node; the node to remove from the network.
+     * @param node the node to remove from the network.
      * @throws NetworkException if node does not exist in the network.
      */
     public final void removeNode(final Node node) throws NetworkException
@@ -158,7 +158,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Test whether a node is present in the network.
-     * @param node Node; the node to search for in the network.
+     * @param node the node to search for in the network.
      * @return whether the node is in this network
      */
     public final boolean containsNode(final Node node)
@@ -169,7 +169,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Test whether a node with a given id is present in the network.
-     * @param nodeId String; the id of the node to search for in the network.
+     * @param nodeId the id of the node to search for in the network.
      * @return whether the node is in this network
      */
     public final boolean containsNode(final String nodeId)
@@ -179,7 +179,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Retrieve a node with a given id from the network, or null if the id cannot be found.
-     * @param nodeId String; the id of the node to search for in the network.
+     * @param nodeId the id of the node to search for in the network.
      * @return the node or null if not present
      */
     public final Node getNode(final String nodeId)
@@ -191,9 +191,9 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
      * Return a list of Centroid nodes that have incoming connectors without corresponding outgoing connectors to the same node
      * or vice versa (which can be fully okay, especially when the lanes are a dead end, or when lanes / links only go in a
      * single direction).
-     * @param gtuType GtuType; the GTU type for which to check the connectors
-     * @return List&lt;Node&gt;; a list of Centroid nodes that have incoming connectors without corresponding outgoing
-     *         connectors to the same node or vice versa.
+     * @param gtuType the GTU type for which to check the connectors
+     * @return a list of Centroid nodes that have incoming connectors without corresponding outgoing connectors to the same node
+     *         or vice versa.
      */
     public List<Node> getUnbalancedCentroids(final GtuType gtuType)
     {
@@ -238,7 +238,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
     }
 
     /**
-     * @return the original LinkMap; only to be used in the 'network' package for cloning.
+     * @return only to be used in the 'network' package for cloning.
      */
     final Map<String, Link> getRawLinkMap()
     {
@@ -247,7 +247,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Register a link in the network.
-     * @param link Link; the link to add to the network.
+     * @param link the link to add to the network.
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
@@ -272,7 +272,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Unregister a link from the network.
-     * @param link Link; the link to remove from the network.
+     * @param link the link to remove from the network.
      * @throws NetworkException if link does not exist in the network.
      */
     public final void removeLink(final Link link) throws NetworkException
@@ -287,8 +287,8 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Find a link between node1 and node2 and return it if it exists in the network. If not, return null.
-     * @param node1 Node; first node
-     * @param node2 Node; second node
+     * @param node1 first node
+     * @param node2 second node
      * @return the link between node1 and node2 in the network or null if it does not exist.
      */
     public final Link getLink(final Node node1, final Node node2)
@@ -305,7 +305,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Test whether a link is present in the network.
-     * @param link Link; the link to search for in the network.
+     * @param link the link to search for in the network.
      * @return whether the link is in this network
      */
     public final boolean containsLink(final Link link)
@@ -315,7 +315,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Test whether a link with a given id is present in the network.
-     * @param linkId String; the id of the link to search for in the network.
+     * @param linkId the id of the link to search for in the network.
      * @return whether the link is in this network
      */
     public final boolean containsLink(final String linkId)
@@ -325,8 +325,8 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Find a link between node1 and node2 and return it if it exists in the network. If not, return null.
-     * @param nodeId1 String; id of the first node
-     * @param nodeId2 String; id of the second node
+     * @param nodeId1 id of the first node
+     * @param nodeId2 id of the second node
      * @return the link between node1 and node2 in the network or null if it does not exist.
      * @throws NetworkException if the node(s) cannot be found by their id
      */
@@ -345,7 +345,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Retrieve a node with a given id from the network, or null if the id cannot be found.
-     * @param linkId String; the id of the link to search for in the network.
+     * @param linkId the id of the link to search for in the network.
      * @return the link or null if not present
      */
     public final Link getLink(final String linkId)
@@ -359,8 +359,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Return an immutable map of all ObjectInterface implementing objects in the Network.
-     * @return ImmutableMap&lt;String, ObjectInterface&gt;; the immutable map of all ObjectInterface implementing objects in the
-     *         Network
+     * @return the immutable map of all ObjectInterface implementing objects in the Network
      */
     public final ImmutableMap<String, LocatedObject> getObjectMap()
     {
@@ -368,7 +367,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
     }
 
     /**
-     * @return the original ObjectMap; only to be used in the 'network' package for cloning.
+     * @return only to be used in the 'network' package for cloning.
      */
     final Map<String, LocatedObject> getRawObjectMap()
     {
@@ -378,10 +377,10 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
     /**
      * Return an immutable map of all ObjectInterface implementing objects in the network that are of type objectType, or any
      * sub type thereof.
-     * @param objectType Class&lt;T&gt;; the (sub-)type of ObjectInterface that the returned map is reduced to
+     * @param objectType the (sub-)type of ObjectInterface that the returned map is reduced to
      * @param <T> type of object
-     * @return ImmutableMap&lt;String, ObjectInterface&gt;; the immutable map of all ObjectInterface implementing objects in the
-     *         Network that are of the type objectType, or any sub type thereof
+     * @return the immutable map of all ObjectInterface implementing objects in the Network that are of the type objectType, or
+     *         any sub type thereof
      */
     @SuppressWarnings("unchecked")
     public final <T extends LocatedObject> ImmutableMap<String, T> getObjectMap(final Class<T> objectType)
@@ -400,10 +399,10 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Return object of given type with given id.
-     * @param objectType T; object type class
-     * @param objectId String; id of object
+     * @param objectType object type class
+     * @param objectId id of object
      * @param <T> object type
-     * @return T; object of given type with given id, {@code null} if no such object
+     * @return object of given type with given id, {@code null} if no such object
      */
     @SuppressWarnings("unchecked")
     public final <T extends LocatedObject> T getObject(final Class<T> objectType, final String objectId)
@@ -420,7 +419,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Add an ObjectInterface implementing object to the Network.
-     * @param object ObjectInterface; the object that implements ObjectInterface
+     * @param object the object that implements ObjectInterface
      * @throws NetworkException if link already exists in the network, if name of the object is not unique.
      */
     public final void addObject(final LocatedObject object) throws NetworkException
@@ -439,7 +438,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Remove an ObjectInterface implementing object form the Network.
-     * @param object ObjectInterface; the object that implements ObjectInterface
+     * @param object the object that implements ObjectInterface
      * @throws NetworkException if the object does not exist in the network.
      */
     public final void removeObject(final LocatedObject object) throws NetworkException
@@ -454,8 +453,8 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Test whether the object is present in the Network.
-     * @param object ObjectInterface; the object that is tested for presence
-     * @return boolean; whether the object is present in the Network
+     * @param object the object that is tested for presence
+     * @return whether the object is present in the Network
      */
     public final boolean containsObject(final LocatedObject object)
     {
@@ -467,8 +466,8 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
      * <p>
      * Note that the objectId should be the <b>fullId</b> of the object, including any additions such as lane ids, link ids,
      * etc.
-     * @param objectId String; the id that is tested for presence
-     * @return boolean; whether an object with the given id is present in the Network
+     * @param objectId the id that is tested for presence
+     * @return whether an object with the given id is present in the Network
      */
     public final boolean containsObject(final String objectId)
     {
@@ -481,8 +480,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Return an immutable map of all NonLocatedObject implementing objects in the Network.
-     * @return ImmutableMap&lt;String, ObjectInterface&gt;; the immutable map of all NonLocatedObject implementing objects in
-     *         the Network
+     * @return the immutable map of all NonLocatedObject implementing objects in the Network
      */
     public final ImmutableMap<String, NonLocatedObject> getNonLocatedObjectMap()
     {
@@ -490,7 +488,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
     }
 
     /**
-     * @return the original NonLocatedObjectMap; only to be used in the 'network' package for cloning.
+     * @return only to be used in the 'network' package for cloning.
      */
     final Map<String, NonLocatedObject> getRawNonLocatedObjectMap()
     {
@@ -500,9 +498,9 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
     /**
      * Return an immutable map of all NonLocatedObject implementing objects in the network that are of type objectType, or any
      * sub type thereof.
-     * @param objectType Class&lt;NonLocatedObject&gt;; the (sub-)type of NonLocatedObject that the returned map is reduced to
-     * @return ImmutableMap&lt;String, NonLocatedObject&gt;; the immutable map of all NonLocatedObject implementing objects in
-     *         the Network that are of the type objectType, or any sub type thereof
+     * @param objectType the (sub-)type of NonLocatedObject that the returned map is reduced to
+     * @return the immutable map of all NonLocatedObject implementing objects in the Network that are of the type objectType, or
+     *         any sub type thereof
      */
     public final ImmutableMap<String, NonLocatedObject> getNonLocatedObjectMap(final Class<NonLocatedObject> objectType)
     {
@@ -520,7 +518,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Add a NonLocatedObject implementing object to the Network.
-     * @param object NonLocatedObject; the object that implements ObjectInterface
+     * @param object the object that implements ObjectInterface
      * @throws NetworkException if link already exists in the network, if name of the object is not unique.
      */
     public final void addNonLocatedObject(final NonLocatedObject object) throws NetworkException
@@ -540,7 +538,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Remove a NonLocatedObject implementing object form the Network.
-     * @param object NonLocatedObject; the object that implements ObjectInterface
+     * @param object the object that implements ObjectInterface
      * @throws NetworkException if the object does not exist in the network.
      */
     public final void removeNonLocatedObject(final NonLocatedObject object) throws NetworkException
@@ -555,8 +553,8 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Test whether the NonLocatedObject is present in the Network.
-     * @param object NonLocatedObject; the object that is tested for presence
-     * @return boolean; whether the invisible object is present in the Network
+     * @param object the object that is tested for presence
+     * @return whether the invisible object is present in the Network
      */
     public final boolean containsNonLocatedObject(final NonLocatedObject object)
     {
@@ -568,8 +566,8 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
      * <p>
      * Note that the objectId should be the <b>fullId</b> of the object, including any additions such as lane ids, link ids,
      * etc.
-     * @param objectId String; the id that is tested for presence
-     * @return boolean; whether an invisible object with the given id is present in the Network
+     * @param objectId the id that is tested for presence
+     * @return whether an invisible object with the given id is present in the Network
      */
     public final boolean containsNonLocatedObject(final String objectId)
     {
@@ -582,7 +580,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Return an immutable map of routes that exist in the network for the GtuType.
-     * @param gtuType GtuType; the GtuType for which to retrieve the defined routes
+     * @param gtuType the GtuType for which to retrieve the defined routes
      * @return an immutable map of routes in the network for the given GtuType, or an empty Map if no routes are defined for the
      *         given GtuType.
      */
@@ -598,8 +596,8 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Add a route to the network.
-     * @param gtuType GtuType; the GtuType for which to add a route
-     * @param route Route; the route to add to the network.
+     * @param gtuType the GtuType for which to add a route
+     * @param route the route to add to the network.
      * @throws NetworkException if route already exists in the network, if name of the route is not unique, if one of the nodes
      *             of the route are not registered in the network.
      */
@@ -634,8 +632,8 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Remove the route from the network, e.g. because of road maintenance.
-     * @param gtuType GtuType; the GtuType for which to remove a route
-     * @param route Route; the route to remove from the network.
+     * @param gtuType the GtuType for which to remove a route
+     * @param route the route to remove from the network.
      * @throws NetworkException if route does not exist in the network.
      */
     public final void removeRoute(final GtuType gtuType, final Route route) throws NetworkException
@@ -651,8 +649,8 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Determine whether the provided route exists in the network for the given GtuType.
-     * @param gtuType GtuType; the GtuType for which to check whether the route exists
-     * @param route Route; the route to check for
+     * @param gtuType the GtuType for which to check whether the route exists
+     * @param route the route to check for
      * @return whether the route exists in the network for the given GtuType
      */
     public final boolean containsRoute(final GtuType gtuType, final Route route)
@@ -666,8 +664,8 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Determine whether a route with the given id exists in the network for the given GtuType.
-     * @param gtuType GtuType; the GtuType for which to check whether the route exists
-     * @param routeId String; the id of the route to check for
+     * @param gtuType the GtuType for which to check whether the route exists
+     * @param routeId the id of the route to check for
      * @return whether a route with the given id exists in the network for the given GtuType
      */
     public final boolean containsRoute(final GtuType gtuType, final String routeId)
@@ -681,7 +679,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Returns the route with given id or {@code null} if no such route is available.
-     * @param routeId String; route id
+     * @param routeId route id
      * @return route with given id or {@code null} if no such route is available
      */
     public final Route getRoute(final String routeId)
@@ -700,8 +698,8 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
     /**
      * Return the route with the given id in the network for the given GtuType, or null if it the route with the id does not
      * exist.
-     * @param gtuType GtuType; the GtuType for which to retrieve a route based on its id.
-     * @param routeId String; the route to search for in the network.
+     * @param gtuType the GtuType for which to retrieve a route based on its id.
+     * @param routeId the route to search for in the network.
      * @return the route or null if not present
      */
     public final Route getRoute(final GtuType gtuType, final String routeId)
@@ -716,11 +714,10 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
     /**
      * Return the the shortest route between two nodes in the network, via a list of intermediate nodes. If no path exists from
      * the start node to the end node via the intermediate nodes in the network, null is returned.
-     * @param gtuType GtuType; the GtuType for which to retrieve the defined routes
-     * @param nodeFrom Node; the start node.
-     * @param nodeTo Node; the end node.
-     * @return a set with routes from the start Node to the end Node in the network; if no route can be found, an empty set is
-     *         returned.
+     * @param gtuType the GtuType for which to retrieve the defined routes
+     * @param nodeFrom the start node.
+     * @param nodeTo the end node.
+     * @return if no route can be found, an empty set is returned.
      */
     public final Set<Route> getRoutesBetween(final GtuType gtuType, final Node nodeFrom, final Node nodeTo)
     {
@@ -749,9 +746,9 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
      * Calculate the shortest route between two nodes in the network. If no path exists from the start node to the end node in
      * the network, null is returned. This method returns a CompleteRoute, which includes all nodes to get from start to end. In
      * case the graph for the GtuType has not yet been built, this method will call the buildGraph method.
-     * @param gtuType GtuType; the GtuType for which to calculate the shortest route
-     * @param nodeFrom Node; the start node.
-     * @param nodeTo Node; the end node.
+     * @param gtuType the GtuType for which to calculate the shortest route
+     * @param nodeFrom the start node.
+     * @param nodeTo the end node.
      * @return the shortest route from the start Node to the end Node in the network. If no path exists from the start node to
      *         the end node in the network, null is returned.
      * @throws NetworkException in case nodes cannot be added to the route, e.g. because they are not directly connected. This
@@ -764,8 +761,8 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Builds a graph using the specified link weight.
-     * @param gtuType GtuType; GTU type
-     * @param linkWeight LinkWeight; link weight
+     * @param gtuType GTU type
+     * @param linkWeight link weight
      * @return SimpleDirectedWeightedGraph graph
      */
     private SimpleDirectedWeightedGraph<Node, Link> buildGraph(final GtuType gtuType, final LinkWeight linkWeight)
@@ -789,10 +786,10 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
      * Calculate the shortest route between two nodes in the network. If no path exists from the start node to the end node in
      * the network, null is returned. This method returns a CompleteRoute, which includes all nodes to get from start to end.
      * This method recalculates the graph.
-     * @param gtuType GtuType; the GtuType for which to calculate the shortest route
-     * @param nodeFrom Node; the start node.
-     * @param nodeTo Node; the end node.
-     * @param linkWeight LinkWeight; link weight.
+     * @param gtuType the GtuType for which to calculate the shortest route
+     * @param nodeFrom the start node.
+     * @param nodeTo the end node.
+     * @param linkWeight link weight.
      * @return the shortest route from the start Node to the end Node in the network. If no path exists from the start node to
      *         the end node in the network, null is returned.
      * @throws NetworkException in case nodes cannot be added to the route, e.g. because they are not directly connected. This
@@ -808,11 +805,10 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
      * Calculate the shortest route between two nodes in the network, via a list of intermediate nodes. If no path exists from
      * the start node to the end node via the intermediate nodes in the network, null is returned. This method returns a
      * CompleteRoute, which includes all nodes to get from start to end. This method recalculates the graph.
-     * @param gtuType GtuType; the GtuType for which to calculate the shortest route
-     * @param nodeFrom Node; the start node.
-     * @param nodeTo Node; the end node.
-     * @param nodesVia List&lt;Node&gt;; a number of nodes that the GTU has to pass between nodeFrom and nodeTo in the given
-     *            order.
+     * @param gtuType the GtuType for which to calculate the shortest route
+     * @param nodeFrom the start node.
+     * @param nodeTo the end node.
+     * @param nodesVia a number of nodes that the GTU has to pass between nodeFrom and nodeTo in the given order.
      * @return the shortest route between two nodes in the network, via the intermediate nodes. If no path exists from the start
      *         node to the end node via the intermediate nodes in the network, null is returned.
      * @throws NetworkException in case nodes cannot be added to the route, e.g. because they are not directly connected. This
@@ -828,12 +824,11 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
      * Calculate the shortest route between two nodes in the network, via a list of intermediate nodes. If no path exists from
      * the start node to the end node via the intermediate nodes in the network, null is returned. This method returns a
      * CompleteRoute, which includes all nodes to get from start to end. This method recalculates the graph.
-     * @param gtuType GtuType; the GtuType for which to calculate the shortest route
-     * @param nodeFrom Node; the start node.
-     * @param nodeTo Node; the end node.
-     * @param nodesVia List&lt;Node&gt;; a number of nodes that the GTU has to pass between nodeFrom and nodeTo in the given
-     *            order.
-     * @param linkWeight LinkWeight; link weight.
+     * @param gtuType the GtuType for which to calculate the shortest route
+     * @param nodeFrom the start node.
+     * @param nodeTo the end node.
+     * @param nodesVia a number of nodes that the GTU has to pass between nodeFrom and nodeTo in the given order.
+     * @param linkWeight link weight.
      * @return the shortest route between two nodes in the network, via the intermediate nodes. If no path exists from the start
      *         node to the end node via the intermediate nodes in the network, null is returned.
      * @throws NetworkException in case nodes cannot be added to the route, e.g. because they are not directly connected. This
@@ -888,8 +883,8 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
 
     /**
      * Returns the graph, possibly a stored one.
-     * @param gtuType GtuType; GTU type
-     * @param linkWeight LinkWeight; link weight
+     * @param gtuType GTU type
+     * @param linkWeight link weight
      * @return SimpleDirectedWeightedGraph
      */
     private SimpleDirectedWeightedGraph<Node, Link> getGraph(final GtuType gtuType, final LinkWeight linkWeight)
@@ -910,7 +905,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
     }
 
     /**
-     * @return routeMap; only to be used in the 'network' package for cloning.
+     * @return only to be used in the 'network' package for cloning.
      */
     final Map<GtuType, Map<String, Route>> getRawRouteMap()
     {
@@ -918,8 +913,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
     }
 
     /**
-     * @param newRouteMap Map&lt;GtuType,Map&lt;String,Route&gt;&gt;; the routeMap to set, only to be used in the 'network'
-     *            package for cloning.
+     * @param newRouteMap the routeMap to set, only to be used in the 'network' package for cloning.
      */
     public final void setRawRouteMap(final Map<GtuType, Map<String, Route>> newRouteMap)
     {

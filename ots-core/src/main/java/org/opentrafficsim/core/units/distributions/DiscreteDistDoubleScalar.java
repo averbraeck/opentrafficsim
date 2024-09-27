@@ -114,8 +114,8 @@ public interface DiscreteDistDoubleScalar
         private static final long serialVersionUID = 20150000L;
 
         /**
-         * @param distribution DistDiscrete; the wrapped distribution function.
-         * @param unit AU; the unit.
+         * @param distribution the wrapped distribution function.
+         * @param unit the unit.
          */
         public Abs(final DistDiscrete distribution, final AU unit)
         {
@@ -123,8 +123,8 @@ public interface DiscreteDistDoubleScalar
         }
 
         /**
-         * @param constant long; the constant value.
-         * @param unit AU; the unit.
+         * @param constant the constant value.
+         * @param unit the unit.
          */
         public Abs(final long constant, final AU unit)
         {
@@ -178,8 +178,8 @@ public interface DiscreteDistDoubleScalar
         private static final long serialVersionUID = 20150000L;
 
         /**
-         * @param distribution DistDiscrete; the wrapped distribution function.
-         * @param unit U; the unit.
+         * @param distribution the wrapped distribution function.
+         * @param unit the unit.
          */
         public Rel(final DistDiscrete distribution, final U unit)
         {
@@ -187,8 +187,8 @@ public interface DiscreteDistDoubleScalar
         }
 
         /**
-         * @param constant long; the constant value.
-         * @param unit U; the unit.
+         * @param constant the constant value.
+         * @param unit the unit.
          */
         public Rel(final long constant, final U unit)
         {

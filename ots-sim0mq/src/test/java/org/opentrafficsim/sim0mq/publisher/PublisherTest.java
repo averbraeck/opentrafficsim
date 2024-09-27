@@ -111,7 +111,7 @@ public class PublisherTest implements OtsModelInterface
     /**
      * Verify that <code>lastResult</code> is not null, an Object array of length 1 and the one and only element is a String
      * with the expected text.
-     * @param expectedText String; the expected text
+     * @param expectedText the expected text
      */
     public void checkLastResult(final String expectedText)
     {
@@ -179,7 +179,7 @@ public class PublisherTest implements OtsModelInterface
     /**
      * Open an URL, read it and store the contents in a string. Adapted from
      * https://stackoverflow.com/questions/4328711/read-url-to-string-in-few-lines-of-java-code
-     * @param url URL; the URL
+     * @param url the URL
      * @return String
      * @throws IOException when reading the file fails
      */
@@ -207,10 +207,10 @@ public class PublisherTest implements OtsModelInterface
         private final String xml;
 
         /**
-         * @param simulator OtsSimulatorInterface; the simulator
-         * @param shortName String; the model name
-         * @param description String; the model description
-         * @param xml String; the XML description of the simulation model
+         * @param simulator the simulator
+         * @param shortName the model name
+         * @param description the model description
+         * @param xml the XML description of the simulation model
          */
         TestModel(final OtsSimulatorInterface simulator, final String shortName, final String description, final String xml)
         {

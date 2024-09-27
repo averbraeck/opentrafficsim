@@ -30,7 +30,7 @@ public final class RoadNetworkUtils
 
     /**
      * Make a copy of the network, without GTUs and listeners.
-     * @param network RoadNetwork; the network to copy
+     * @param network the network to copy
      * @return a copy of the network
      */
     public static RoadNetwork copy(final RoadNetwork network)
@@ -41,7 +41,7 @@ public final class RoadNetworkUtils
 
     /**
      * Create an xml-version of the network.
-     * @param network RoadNetwork; the network to create an xml-version from
+     * @param network the network to create an xml-version from
      * @return an xml-string with the network
      */
     public static String toXml(final RoadNetwork network)
@@ -57,8 +57,8 @@ public final class RoadNetworkUtils
 
     /**
      * Create an xml-version of the network.
-     * @param network RoadNetwork; the network to create an xml-version from
-     * @param out OutputStream; the stream to write the xml-string with the network to
+     * @param network the network to create an xml-version from
+     * @param out the stream to write the xml-string with the network to
      */
     public static void toXml(final RoadNetwork network, final OutputStream out)
     {
@@ -68,8 +68,8 @@ public final class RoadNetworkUtils
 
     /**
      * Create an xml-version of the network.
-     * @param network RoadNetwork; the network to create an xml-version from
-     * @param writer Writer; the writer to write the xml-string with the network to
+     * @param network the network to create an xml-version from
+     * @param writer the writer to write the xml-string with the network to
      */
     public static void toXml(final RoadNetwork network, final Writer writer)
     {

@@ -51,10 +51,11 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
 
     /**
      * Constructor.
-     * @param extendedDataTypes Set&lt;ExtendedDataType&lt;?, ?, ?, ? super G&gt;&gt;; extended data types.
-     * @param filterDataTypes Set&lt;FilterDataType&lt;?, ? super G&gt;&gt;; filter data types.
+     * @param extendedDataTypes extended data types.
+     * @param filterDataTypes filter data types.
      */
-    public Sampler(final Set<ExtendedDataType<?, ?, ?, ? super G>> extendedDataTypes, final Set<FilterDataType<?, ? super G>> filterDataTypes)
+    public Sampler(final Set<ExtendedDataType<?, ?, ?, ? super G>> extendedDataTypes,
+            final Set<FilterDataType<?, ? super G>> filterDataTypes)
     {
         this.extendedDataTypes = new LinkedHashSet<>(extendedDataTypes);
         this.filterDataTypes = new LinkedHashSet<>(filterDataTypes);
@@ -63,7 +64,7 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
 
     /**
      * Underlying sampler data.
-     * @return SamplerData&lt;G&gt;; underlying sampler data
+     * @return underlying sampler data
      */
     public SamplerData<G> getSamplerData()
     {
@@ -72,7 +73,7 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
 
     /**
      * Whether this sampler has the given extended data type registered to it.
-     * @param extendedDataType ExtendedDataType&lt;?,?,?,?&gt;; extended data type
+     * @param extendedDataType extended data type
      * @return whether this sampler has the given extended data type registered to it
      */
     public boolean contains(final ExtendedDataType<?, ?, ?, ?> extendedDataType)
@@ -83,7 +84,7 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
     /**
      * Registers a space-time region. Data will be recorded across the entire length of a lane, but only during specified time
      * periods.
-     * @param spaceTimeRegion SpaceTimeRegion&lt;L&gt;; space-time region
+     * @param spaceTimeRegion space-time region
      * @throws IllegalStateException if data is not available from the requested start time
      */
     public final void registerSpaceTimeRegion(final SpaceTimeRegion<L> spaceTimeRegion)
@@ -125,8 +126,8 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
      * Schedules the start of recording for a given lane, i.e. the implementation has to invoke {@code startRecording} at the
      * specified time, with the given lane as input. In case multiple space time-regions are registered for the same lane, this
      * method is invoked whenever the next space-time region that is added has an earlier start time than any before.
-     * @param time Time; time to start recording
-     * @param lane L; lane to start recording
+     * @param time time to start recording
+     * @param lane lane to start recording
      */
     public abstract void scheduleStartRecording(Time time, L lane);
 
@@ -134,14 +135,14 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
      * Schedules the stop of recording for a given lane, i.e. the implementation has to invoke {@code stopRecording} at the
      * specified time, with the given lane as input. In case multiple space time-regions are registered for the same lane, this
      * method is invoked whenever the next space-time region that is added has a late end time than any before.
-     * @param time Time; time to stop recording
-     * @param lane L; lane to stop recording
+     * @param time time to stop recording
+     * @param lane lane to stop recording
      */
     public abstract void scheduleStopRecording(Time time, L lane);
 
     /**
      * Start recording at the given time (which should be the current time) on the given lane.
-     * @param lane L; lane
+     * @param lane lane
      */
     public final void startRecording(final L lane)
     {
@@ -156,13 +157,13 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
 
     /**
      * Adds listeners to start recording.
-     * @param lane L; lane to initialize recording for
+     * @param lane lane to initialize recording for
      */
     public abstract void initRecording(L lane);
 
     /**
      * Stop recording at given lane.
-     * @param lane L; lane
+     * @param lane lane
      */
     public final void stopRecording(final L lane)
     {
@@ -176,18 +177,18 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
 
     /**
      * Remove listeners to stop recording.
-     * @param lane L; lane
+     * @param lane lane
      */
     public abstract void finalizeRecording(L lane);
 
     /**
      * Creates a trajectory with the current snapshot of a GTU.
-     * @param lane L; lane the gtu is at
-     * @param position Length; position of the gtu on the lane
-     * @param speed Speed; speed of the gtu
-     * @param acceleration Acceleration; acceleration of the gtu
-     * @param time Time; current time
-     * @param gtu G; gtu
+     * @param lane lane the gtu is at
+     * @param position position of the gtu on the lane
+     * @param speed speed of the gtu
+     * @param acceleration acceleration of the gtu
+     * @param time current time
+     * @param gtu gtu
      */
     public final void processGtuAddEventWithMove(final L lane, final Length position, final Speed speed,
             final Acceleration acceleration, final Time time, final G gtu)
@@ -205,8 +206,8 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
 
     /**
      * Creates a trajectory, including filter data.
-     * @param lane L; lane the gtu is at
-     * @param gtu G; gtu
+     * @param lane lane the gtu is at
+     * @param gtu gtu
      */
     public final void processGtuAddEvent(final L lane, final G gtu)
     {
@@ -221,12 +222,12 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
     /**
      * Adds a new snapshot of a GTU to its recording trajectory, if recorded. This method may be invoked on GTU that are not
      * being recorded; the event will then be ignored.
-     * @param lane L; lane the gtu is at
-     * @param position Length; position of the gtu on the lane
-     * @param speed Speed; speed of the gtu
-     * @param acceleration Acceleration; acceleration of the gtu
-     * @param time Time; current time
-     * @param gtu G; gtu
+     * @param lane lane the gtu is at
+     * @param position position of the gtu on the lane
+     * @param speed speed of the gtu
+     * @param acceleration acceleration of the gtu
+     * @param time current time
+     * @param gtu gtu
      */
     public final void processGtuMoveEvent(final L lane, final Length position, final Speed speed,
             final Acceleration acceleration, final Time time, final G gtu)
@@ -251,12 +252,12 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
 
     /**
      * Finalizes a trajectory with the current snapshot of a GTU.
-     * @param lane L; lane the gtu is at
-     * @param position Length; position of the gtu on the lane
-     * @param speed Speed; speed of the gtu
-     * @param acceleration Acceleration; acceleration of the gtu
-     * @param time Time; current time
-     * @param gtu G; gtu
+     * @param lane lane the gtu is at
+     * @param position position of the gtu on the lane
+     * @param speed speed of the gtu
+     * @param acceleration acceleration of the gtu
+     * @param time current time
+     * @param gtu gtu
      */
     public final void processGtuRemoveEventWithMove(final L lane, final Length position, final Speed speed,
             final Acceleration acceleration, final Time time, final G gtu)
@@ -267,8 +268,8 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
 
     /**
      * Finalizes a trajectory.
-     * @param lane L; lane the gtu is at
-     * @param gtu G; gtu
+     * @param lane lane the gtu is at
+     * @param gtu gtu
      */
     public final void processGtuRemoveEvent(final L lane, final G gtu)
     {
@@ -288,7 +289,7 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
 
     /**
      * Gathers the filter data for filter data types.
-     * @param gtu G; gtu to return filter data for a GTU
+     * @param gtu gtu to return filter data for a GTU
      * @return filter data for the given gtu
      */
     private Map<FilterDataType<?, ? super G>, Object> makeFilterData(final G gtu)

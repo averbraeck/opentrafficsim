@@ -27,7 +27,7 @@ public class MapCrossSectionData implements CrossSectionElementData
 
     /** Location. */
     private final OrientedPoint2d location;
-    
+
     /** Center line. */
     protected final PolyLine2d centerLine;
 
@@ -39,10 +39,10 @@ public class MapCrossSectionData implements CrossSectionElementData
 
     /**
      * Constructor.
-     * @param linkNode XsdTreeNode; node representing the element.
-     * @param centerLine PolyLine2d; center line.
-     * @param contour PolyLine2d; contour.
-     * @param sliceInfo SliceInfo; slice info.
+     * @param linkNode node representing the element.
+     * @param centerLine center line.
+     * @param contour contour.
+     * @param sliceInfo slice info.
      */
     public MapCrossSectionData(final XsdTreeNode linkNode, final PolyLine2d centerLine, final Polygon2d contour,
             final SliceInfo sliceInfo)
@@ -78,7 +78,7 @@ public class MapCrossSectionData implements CrossSectionElementData
 
     /**
      * Returns the link id.
-     * @return String; link id.
+     * @return link id.
      */
     @Override
     public String getLinkId()
@@ -88,8 +88,8 @@ public class MapCrossSectionData implements CrossSectionElementData
 
     /**
      * Returns the lane width at the give position.
-     * @param position Length; position along the lane.
-     * @return Length; lane width at the position.
+     * @param position position along the lane.
+     * @return lane width at the position.
      */
     public Length getWidth(final Length position)
     {

@@ -247,7 +247,7 @@ public class InjectionsTest
 
     /**
      * Create Injections with only Table input.
-     * @param columns Column&lt;?&gt;...; columns.
+     * @param columns columns.
      * @return Injections with only Table input.
      */
     private Injections baseInjections(final Column<?>... columns)
@@ -257,7 +257,7 @@ public class InjectionsTest
 
     /**
      * Create Injections with Table input and with other input mocked.
-     * @param columns Column&lt;?&gt;...; columns.
+     * @param columns columns.
      * @return Injections with Table input and with other input mocked.
      */
     @SuppressWarnings("unchecked")
@@ -270,8 +270,8 @@ public class InjectionsTest
 
     /**
      * Create Injections with Table and default other input.
-     * @param table Table; table.
-     * @param network Network; network.
+     * @param table table.
+     * @param network network.
      * @return Injections with Table input and with other input mocked.
      */
     private Injections fullInjections(final Table table, final Network network)

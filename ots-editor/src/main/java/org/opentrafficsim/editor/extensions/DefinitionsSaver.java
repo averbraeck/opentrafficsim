@@ -29,7 +29,7 @@ public class DefinitionsSaver implements EventListener, Consumer<XsdTreeNode>
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
+     * @param editor editor.
      * @throws RemoteException if listener cannot be added.
      */
     public DefinitionsSaver(final OtsEditor editor) throws RemoteException

@@ -24,14 +24,14 @@ public interface HistoricalCollection<E> extends Collection<E>
 
     /**
      * Returns the current collection. This is not intended to be modified, and may be an unmodifiable.
-     * @return Collection; current collection
+     * @return current collection
      */
     Collection<E> get();
 
     /**
      * Returns a past collection.
-     * @param time Time; time to obtain the collection at
-     * @return Collection; past collection
+     * @param time time to obtain the collection at
+     * @return past collection
      */
     Collection<E> get(Time time);
 

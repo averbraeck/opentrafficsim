@@ -70,10 +70,10 @@ public class TrafficLightDetectorTest implements EventListener
 {
     /**
      * Build the test network.
-     * @param lengths double[]; The lengths of the subsequent lanes to construct; negative lengths indicate that the design
-     *            direction must be reversed
+     * @param lengths The lengths of the subsequent lanes to construct; negative lengths indicate that the design direction must
+     *            be reversed
      * @param simulator DevsSimulator.TimeDoubleUnit; the simulator
-     * @return Lane[]; an array of linearly connected (single) lanes
+     * @return an array of linearly connected (single) lanes
      * @throws NetworkException ...
      * @throws OtsGeometryException ...
      * @throws NamingException ...
@@ -115,8 +115,8 @@ public class TrafficLightDetectorTest implements EventListener
 
     /**
      * Figure out on which lane and at which position we are when we're a given distance from the origin.
-     * @param lanes Lane[]; the sequence of lanes
-     * @param position Length; the distance
+     * @param lanes the sequence of lanes
+     * @param position the distance
      * @return LanePosition
      * @throws GtuException should not happen; if it does; the test has failed
      */
@@ -186,9 +186,8 @@ public class TrafficLightDetectorTest implements EventListener
                         intermediateLanes.add(lane);
                     }
                 }
-                TrafficLightDetector tls =
-                        new TrafficLightDetector(sensorId, pA.lane(), pA.position(), pB.lane(), pB.position(),
-                                intermediateLanes, entryPosition, exitPosition, simulator, DefaultsRoadNl.TRAFFIC_LIGHT);
+                TrafficLightDetector tls = new TrafficLightDetector(sensorId, pA.lane(), pA.position(), pB.lane(),
+                        pB.position(), intermediateLanes, entryPosition, exitPosition, simulator, DefaultsRoadNl.TRAFFIC_LIGHT);
                 assertEquals(sensorId, tls.getId(), "Id should match the provided id");
                 assertEquals(simulator, tls.getSimulator(), "Simulator should match");
                 assertEquals(entryPosition, tls.getPositionTypeEntry(), "Entry position");
@@ -207,10 +206,10 @@ public class TrafficLightDetectorTest implements EventListener
                 Speed maximumSpeed = new Speed(90, SpeedUnit.KM_PER_HOUR);
                 LaneBasedGtu gtu =
                         new LaneBasedGtu("GTU1", gtuType, gtuLength, gtuWidth, maximumSpeed, gtuLength.times(0.5), network);
-//                Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
+                // Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(1);
                 Length initialPosition = new Length(pos, LengthUnit.METER);
                 LanePosition gtuPosition = findLaneAndPosition(lanes, initialPosition);
-//                initialLongitudinalPositions.add(new LanePosition(gtuPosition.getLane(), gtuPosition.getPosition()));
+                // initialLongitudinalPositions.add(new LanePosition(gtuPosition.getLane(), gtuPosition.getPosition()));
                 LanePosition initialLongitudinalPositions = new LanePosition(gtuPosition.lane(), gtuPosition.position());
                 Parameters parameters = DefaultTestParameters.create();
                 LaneChangeModel laneChangeModel = new Egoistic();

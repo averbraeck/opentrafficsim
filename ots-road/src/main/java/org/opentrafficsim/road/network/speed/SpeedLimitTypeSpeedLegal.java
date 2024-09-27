@@ -18,7 +18,7 @@ public class SpeedLimitTypeSpeedLegal extends SpeedLimitTypeSpeed implements Leg
 
     /**
      * Constructor.
-     * @param id String; id of this speed limit type, which must be unique
+     * @param id id of this speed limit type, which must be unique
      * @throws NullPointerException if id is null
      */
     public SpeedLimitTypeSpeedLegal(final String id)

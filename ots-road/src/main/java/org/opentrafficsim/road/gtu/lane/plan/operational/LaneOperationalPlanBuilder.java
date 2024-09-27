@@ -67,12 +67,12 @@ public final class LaneOperationalPlanBuilder
      * provided, until the end speed is reached. After this, constant end speed is used to reach the end point of the path.
      * There is no guarantee that the end speed is actually reached by this plan. If the end speed is zero, and it is reached
      * before completing the path, a truncated path that ends where the GTU stops is used instead.
-     * @param gtu LaneBasedGtu; the GTU for debugging purposes
-     * @param startTime Time; the current time or a time in the future when the plan should start
-     * @param startSpeed Speed; the speed at the start of the path
-     * @param acceleration Acceleration; the acceleration to use
-     * @param timeStep Duration; time step for the plan
-     * @param deviative boolean; whether the plan is deviative
+     * @param gtu the GTU for debugging purposes
+     * @param startTime the current time or a time in the future when the plan should start
+     * @param startSpeed the speed at the start of the path
+     * @param acceleration the acceleration to use
+     * @param timeStep time step for the plan
+     * @param deviative whether the plan is deviative
      * @return the operational plan to accomplish the given end speed
      * @throws OperationalPlanException when the construction of the operational path fails
      * @throws OtsGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
@@ -104,9 +104,9 @@ public final class LaneOperationalPlanBuilder
 
     /**
      * Creates a path along lane center lines.
-     * @param gtu LaneBasedGtu; gtu
-     * @param distance Length; minimum distance
-     * @return OtsLine2d; path along lane center lines
+     * @param gtu gtu
+     * @param distance minimum distance
+     * @return path along lane center lines
      * @throws OtsGeometryException when any of the OtsLine2d operations fails
      */
     public static OtsLine2d createPathAlongCenterLine(final LaneBasedGtu gtu, final Length distance) throws OtsGeometryException
@@ -202,15 +202,14 @@ public final class LaneOperationalPlanBuilder
      * provided, until the end speed is reached. After this, constant end speed is used to reach the end point of the path.
      * There is no guarantee that the end speed is actually reached by this plan. If the end speed is zero, and it is reached
      * before completing the path, a truncated path that ends where the GTU stops is used instead.
-     * @param gtu LaneBasedGtu; the GTU for debugging purposes
-     * @param laneChangeDirectionality LateralDirectionality; direction of lane change (on initiation only, after that not
-     *            important)
-     * @param startPosition OrientedPoint2d; current position
-     * @param startTime Time; the current time or a time in the future when the plan should start
-     * @param startSpeed Speed; the speed at the start of the path
-     * @param acceleration Acceleration; the acceleration to use
-     * @param timeStep Duration; time step for the plan
-     * @param laneChange LaneChange; lane change status
+     * @param gtu the GTU for debugging purposes
+     * @param laneChangeDirectionality direction of lane change (on initiation only, after that not important)
+     * @param startPosition current position
+     * @param startTime the current time or a time in the future when the plan should start
+     * @param startSpeed the speed at the start of the path
+     * @param acceleration the acceleration to use
+     * @param timeStep time step for the plan
+     * @param laneChange lane change status
      * @return the operational plan to accomplish the given end speed
      * @throws OperationalPlanException when the construction of the operational path fails
      * @throws OtsGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
@@ -274,10 +273,10 @@ public final class LaneOperationalPlanBuilder
 
     /**
      * Build an operational plan based on a simple operational plan and status info.
-     * @param gtu LaneBasedGtu; gtu
-     * @param startTime Time; start time for plan
-     * @param simplePlan SimpleOperationalPlan; simple operational plan
-     * @param laneChange LaneChange; lane change status
+     * @param gtu gtu
+     * @param startTime start time for plan
+     * @param simplePlan simple operational plan
+     * @param laneChange lane change status
      * @return operational plan
      * @throws ParameterException if parameter is not defined
      * @throws GtuException gtu exception
@@ -334,9 +333,9 @@ public final class LaneOperationalPlanBuilder
      * but at that point no time can be derived as the plan is required for that. Hence, this method can be scheduled at the
      * same time (sequentially after creation of the plan) to then schedule the actual finalization by deriving time from
      * distance with the plan.
-     * @param gtu LaneBasedGtu; gtu
-     * @param distance Length; distance
-     * @param laneChangeDirection LateralDirectionality; lane change direction
+     * @param gtu gtu
+     * @param distance distance
+     * @param laneChangeDirection lane change direction
      * @throws SimRuntimeException on bad time
      */
     public static void scheduleLaneChangeFinalization(final LaneBasedGtu gtu, final Length distance,

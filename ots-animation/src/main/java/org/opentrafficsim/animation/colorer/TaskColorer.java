@@ -58,7 +58,7 @@ public class TaskColorer implements GtuColorer
 
     /**
      * Constructor.
-     * @param id String; id
+     * @param id id
      */
     public TaskColorer(final String id)
     {

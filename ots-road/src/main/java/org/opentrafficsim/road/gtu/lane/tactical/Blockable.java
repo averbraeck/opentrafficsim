@@ -15,7 +15,7 @@ public interface Blockable
 
     /**
      * Returns whether the GTU is blocking conflicts.
-     * @return boolean; whether the GTU is blocking conflicts
+     * @return whether the GTU is blocking conflicts
      */
     boolean isBlocking();
 

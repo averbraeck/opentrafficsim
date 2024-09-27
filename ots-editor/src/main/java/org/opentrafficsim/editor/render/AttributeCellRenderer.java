@@ -62,7 +62,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
 
     /**
      * Constructor.
-     * @param infoIcon Icon; info icon.
+     * @param infoIcon info icon.
      */
     public AttributeCellRenderer(final Icon infoIcon)
     {

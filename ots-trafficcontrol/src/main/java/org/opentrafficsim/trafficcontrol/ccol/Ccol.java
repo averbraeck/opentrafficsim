@@ -68,13 +68,13 @@ public class Ccol extends LocalEventProducer implements ActuatedTrafficControlle
 
     /**
      * Construct a new CCOL communication link.
-     * @param id String; id of the traffic controller
-     * @param controlProgram String; name of the CCOL program that this CCOL link must communicate with
-     * @param trafficLights Set&lt;TrafficLight&gt;; the traffic lights. The ids of the traffic lights must end with two digits
-     *            that match the stream numbers as used in the traffic control program
-     * @param sensors Set&lt;TrafficLightSensor&gt;; the traffic sensors. The ids of the traffic sensors must end with three
-     *            digits; the first two of those must match the stream and sensor numbers used in the traffic control program
-     * @param simulator DevsSimulator&lt;Time, Duration, SimTimeDoubleUnit&gt;; the simulation engine
+     * @param id id of the traffic controller
+     * @param controlProgram name of the CCOL program that this CCOL link must communicate with
+     * @param trafficLights the traffic lights. The ids of the traffic lights must end with two digits that match the stream
+     *            numbers as used in the traffic control program
+     * @param sensors the traffic sensors. The ids of the traffic sensors must end with three digits; the first two of those
+     *            must match the stream and sensor numbers used in the traffic control program
+     * @param simulator the simulation engine
      * @throws TrafficControlException on failure to initialize the connection to the external CCOL program
      * @throws SimRuntimeException on failure to schedule the first evaluation event
      */
@@ -118,7 +118,7 @@ public class Ccol extends LocalEventProducer implements ActuatedTrafficControlle
 
     /**
      * Set the client socket (called from the accept thread).
-     * @param socket Socket; the socket returned by accept
+     * @param socket the socket returned by accept
      */
     void setClientSocket(final Socket socket)
     {
@@ -150,7 +150,7 @@ public class Ccol extends LocalEventProducer implements ActuatedTrafficControlle
 
     /**
      * Retrieve the client socket for shutdown.
-     * @return Socket; the socket for communication with the CCOL client
+     * @return the socket for communication with the CCOL client
      */
     Socket getClientSocket()
     {

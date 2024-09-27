@@ -31,8 +31,8 @@ public class AnimationGtuData implements GtuData
 
     /**
      * Constructor.
-     * @param gtuColorer GtuColorer; factory.
-     * @param gtu LaneBasedGtu; GTU.
+     * @param gtuColorer factory.
+     * @param gtu GTU.
      */
     public AnimationGtuData(final GtuColorer gtuColorer, final LaneBasedGtu gtu)
     {
@@ -134,7 +134,7 @@ public class AnimationGtuData implements GtuData
 
     /**
      * Returns the GTU.
-     * @return LaneBasedGtu; GTU.
+     * @return GTU.
      */
     public LaneBasedGtu getGtu()
     {

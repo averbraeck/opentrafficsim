@@ -19,8 +19,8 @@ public class ToggleButtonInfo
     private boolean visible;
 
     /**
-     * @param name String; the name of the button
-     * @param visible boolean; whether the class is initially shown or not
+     * @param name the name of the button
+     * @param visible whether the class is initially shown or not
      */
     protected ToggleButtonInfo(String name, boolean visible)
     {
@@ -69,10 +69,10 @@ public class ToggleButtonInfo
         private final String toolTipText;
 
         /**
-         * @param name String; the name of the button
-         * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the button holds (e.g., GTU.class)
-         * @param toolTipText String; the tool tip text to show when hovering over the button
-         * @param visible boolean; whether the class is initially shown or not
+         * @param name the name of the button
+         * @param locatableClass the class for which the button holds (e.g., GTU.class)
+         * @param toolTipText the tool tip text to show when hovering over the button
+         * @param visible whether the class is initially shown or not
          */
         public LocatableClass(String name, Class<? extends Locatable> locatableClass, String toolTipText, boolean visible)
         {
@@ -109,8 +109,8 @@ public class ToggleButtonInfo
     public static class Text extends ToggleButtonInfo
     {
         /**
-         * @param name String; the name of the button
-         * @param visible boolean; whether the class is initially shown or not
+         * @param name the name of the button
+         * @param visible whether the class is initially shown or not
          */
         public Text(String name, boolean visible)
         {
@@ -135,10 +135,10 @@ public class ToggleButtonInfo
         private final String toolTipText;
 
         /**
-         * @param name String; the name of the button
-         * @param layerName String; the GIS layer name
-         * @param toolTipText String; the tool tip text to show when hovering over the button
-         * @param visible boolean; whether the class is initially shown or not
+         * @param name the name of the button
+         * @param layerName the GIS layer name
+         * @param toolTipText the tool tip text to show when hovering over the button
+         * @param visible whether the class is initially shown or not
          */
         public Gis(String name, String layerName, String toolTipText, boolean visible)
         {

@@ -21,8 +21,8 @@ public class ContinuousDistEnergy extends ContinuousDistDoubleScalar.Rel<Energy,
     private static final long serialVersionUID = 20180829L;
 
     /**
-     * @param distribution DistContinuous; distribution
-     * @param unit EnergyUnit; units
+     * @param distribution distribution
+     * @param unit units
      */
     public ContinuousDistEnergy(final DistContinuous distribution, final EnergyUnit unit)
     {

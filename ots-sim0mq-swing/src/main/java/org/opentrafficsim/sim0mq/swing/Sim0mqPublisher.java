@@ -97,9 +97,9 @@ public final class Sim0mqPublisher
 
     /**
      * Create a new Sim0MQPublisher that is operated through //inproc sockets.
-     * @param zContext ZContext; needed to create the sockets
-     * @param controlInput String; PULL socket for control input
-     * @param resultOutput String; PUSH socket to output results
+     * @param zContext needed to create the sockets
+     * @param controlInput PULL socket for control input
+     * @param resultOutput PUSH socket to output results
      */
     public Sim0mqPublisher(final ZContext zContext, final String controlInput, final String resultOutput)
     {
@@ -113,7 +113,7 @@ public final class Sim0mqPublisher
 
     /**
      * Create a new Sim0MQPublisher that uses TCP transport.
-     * @param port int; port number to bind to
+     * @param port port number to bind to
      */
     public Sim0mqPublisher(final int port)
     {
@@ -125,12 +125,11 @@ public final class Sim0mqPublisher
 
     /**
      * Create a new Sim0MQPublisher that uses TCP transport.
-     * @param port int; port number to bind to
-     * @param preloadedSimulation AbstractSimulationScript; a fully loaded (but not started) simulation
-     * @param additionalSubscriptionHandlers List&lt;SubscriptionHandler&gt;; list of additional subscription handlers (may be
-     *            null)
-     * @param incomingDataHandlers List&lt;IncomfingDataHandler&gt;; list of additional handlers for incoming data that is not
-     *            handled by the standard Sim0MQPublisher (may be null)
+     * @param port port number to bind to
+     * @param preloadedSimulation a fully loaded (but not started) simulation
+     * @param additionalSubscriptionHandlers list of additional subscription handlers (may be null)
+     * @param incomingDataHandlers list of additional handlers for incoming data that is not handled by the standard
+     *            Sim0MQPublisher (may be null)
      * @throws RemoteException when construction of the Publisher failed
      */
     public Sim0mqPublisher(final int port, final AbstractSimulationScript preloadedSimulation,
@@ -151,10 +150,9 @@ public final class Sim0mqPublisher
 
     /**
      * Create a new Sim0MQPublisher that uses TCP transport.
-     * @param port int; port number to bind to
-     * @param preloadedSimulation AbstractSimulationScript; a fully loaded (but not started) simulation
-     * @param additionalSubscriptionHandlers List&lt;SubscriptionHandler&gt;; list of additional subscription handlers (may be
-     *            null)
+     * @param port port number to bind to
+     * @param preloadedSimulation a fully loaded (but not started) simulation
+     * @param additionalSubscriptionHandlers list of additional subscription handlers (may be null)
      * @throws RemoteException when construction of the Publisher failed
      */
     public Sim0mqPublisher(final int port, final AbstractSimulationScript preloadedSimulation,
@@ -226,11 +224,11 @@ public final class Sim0mqPublisher
 
     /**
      * Construct an OTS simulation experiment from an XML description.
-     * @param xml String; the XML encoded network
-     * @param simulationDuration Duration; total duration of the simulation
-     * @param warmupTime Duration; warm up time of the simulation
-     * @param seed Long; seed for the experiment
-     * @return String; null on success, description of the problem on error
+     * @param xml the XML encoded network
+     * @param simulationDuration total duration of the simulation
+     * @param warmupTime warm up time of the simulation
+     * @param seed seed for the experiment
+     * @return null on success, description of the problem on error
      */
     private String loadNetwork(final String xml, final Duration simulationDuration, final Duration warmupTime, final Long seed)
     {
@@ -290,9 +288,9 @@ public final class Sim0mqPublisher
 
     /**
      * Execute one remote control command.
-     * @param data byte[]; the SIM0MQ encoded command
+     * @param data the SIM0MQ encoded command
      * @param socketMap Map&lt;Long, ZMQ.Socket&gt;; cache of created sockets for returned messages
-     * @return boolean; true if another command can be processed after this one; false when no further commands can be processed
+     * @return true if another command can be processed after this one; false when no further commands can be processed
      */
     @SuppressWarnings("checkstyle:methodlength")
     private boolean handleCommand(final byte[] data, final Map<Long, ZMQ.Socket> socketMap)
@@ -510,9 +508,9 @@ class Sim0mqOtsModel extends AbstractOtsModel
     private final String xml;
 
     /**
-     * @param description String; the model description
-     * @param network RoadNetwork; the network
-     * @param xml String; the XML description of the simulation model
+     * @param description the model description
+     * @param network the network
+     * @param xml the XML description of the simulation model
      */
     Sim0mqOtsModel(final String description, final RoadNetwork network, final String xml)
     {

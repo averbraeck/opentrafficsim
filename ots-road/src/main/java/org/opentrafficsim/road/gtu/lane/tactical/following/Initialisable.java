@@ -21,7 +21,7 @@ public interface Initialisable
 
     /**
      * Initialize car-following model.
-     * @param gtu LaneBasedGtu; gtu
+     * @param gtu gtu
      */
     void init(LaneBasedGtu gtu);
 

@@ -62,9 +62,9 @@ public class LinkAnimation extends OtsRenderable<LinkData>
     private boolean dynamic = false;
 
     /**
-     * @param link LinkData; link data.
-     * @param contextualized Contextualized; context provider.
-     * @param width float; width
+     * @param link link data.
+     * @param contextualized context provider.
+     * @param width width
      * @throws NamingException for problems with registering in context
      * @throws RemoteException on communication failure
      */
@@ -81,8 +81,8 @@ public class LinkAnimation extends OtsRenderable<LinkData>
 
     /**
      * Sets the animation as dynamic, obtaining geometry at each draw.
-     * @param dynamic boolean; whether it is dynamic {@code false} by default.
-     * @return LinkAnimation; for method chaining.
+     * @param dynamic whether it is dynamic {@code false} by default.
+     * @return for method chaining.
      */
     public LinkAnimation setDynamic(final boolean dynamic)
     {
@@ -121,8 +121,8 @@ public class LinkAnimation extends OtsRenderable<LinkData>
     }
 
     /**
-     * @param endPoint Point2d; the end of the design line where a end point must be highlighted
-     * @param nextPoint Point2d; the point nearest <code>endPoint</code> (needed to figure out the direction of the design line)
+     * @param endPoint the end of the design line where a end point must be highlighted
+     * @param nextPoint the point nearest <code>endPoint</code> (needed to figure out the direction of the design line)
      * @return Path2D.Float; path to draw an end point.
      */
     private Path2D.Float getEndPoint(final Point2d endPoint, final Point2d nextPoint)
@@ -170,14 +170,14 @@ public class LinkAnimation extends OtsRenderable<LinkData>
         private static final long serialVersionUID = 20161211L;
 
         /**
-         * @param source LinkData; the object for which the text is displayed
-         * @param text Supplier&lt;String&gt;; the text to display
-         * @param dx float; the horizontal movement of the text, in meters
-         * @param dy float; the vertical movement of the text, in meters
-         * @param textPlacement TextAlignment; where to place the text
-         * @param color Color; the color of the text
-         * @param contextualized Contextualized; context provider.
-         * @param scaleDependentRendering ScaleDependentRendering; enables rendering in a scale dependent fashion
+         * @param source the object for which the text is displayed
+         * @param text the text to display
+         * @param dx the horizontal movement of the text, in meters
+         * @param dy the vertical movement of the text, in meters
+         * @param textPlacement where to place the text
+         * @param color the color of the text
+         * @param contextualized context provider.
+         * @param scaleDependentRendering enables rendering in a scale dependent fashion
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
@@ -213,13 +213,13 @@ public class LinkAnimation extends OtsRenderable<LinkData>
 
         /**
          * Returns whether this is a connector.
-         * @return boolean; whether this is a connector.
+         * @return whether this is a connector.
          */
         boolean isConnector();
 
         /**
          * Returns the design line.
-         * @return PolyLine2d; design line.
+         * @return design line.
          */
         PolyLine2d getDesignLine();
 

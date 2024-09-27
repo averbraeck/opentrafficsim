@@ -15,7 +15,7 @@ public class FieldType extends ExpressionType<Field>
 
     /**
      * Constructor with value.
-     * @param value Field; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public FieldType(final Field value)
     {
@@ -24,7 +24,7 @@ public class FieldType extends ExpressionType<Field>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public FieldType(final String expression)
     {

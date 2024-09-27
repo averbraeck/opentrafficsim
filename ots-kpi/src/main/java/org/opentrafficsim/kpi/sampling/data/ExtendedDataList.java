@@ -24,9 +24,9 @@ public abstract class ExtendedDataList<T, G extends GtuData> extends ExtendedDat
 
     /**
      * Constructor setting the id.
-     * @param id String; id
-     * @param description String; description
-     * @param type Class&lt;T&gt;; type class
+     * @param id id
+     * @param description description
+     * @param type type class
      */
     public ExtendedDataList(final String id, final String description, final Class<T> type)
     {

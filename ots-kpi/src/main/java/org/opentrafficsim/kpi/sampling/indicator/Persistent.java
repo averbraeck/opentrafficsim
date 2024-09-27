@@ -47,7 +47,7 @@ public class Persistent<U extends Unit<U>, T extends DoubleScalarRel<U, T>, W ex
 
     /**
      * Constructor.
-     * @param displayUnit U; unit used for displaying the persistent values, minimum, maximum, mean, etc.
+     * @param displayUnit unit used for displaying the persistent values, minimum, maximum, mean, etc.
      */
     public Persistent(final U displayUnit)
     {
@@ -73,8 +73,8 @@ public class Persistent<U extends Unit<U>, T extends DoubleScalarRel<U, T>, W ex
 
     /**
      * Adds a value with given weight to the persistent.
-     * @param value T; the value
-     * @param weight W; the weight
+     * @param value the value
+     * @param weight the weight
      */
     public void addValue(final T value, final W weight)
     {
@@ -111,7 +111,7 @@ public class Persistent<U extends Unit<U>, T extends DoubleScalarRel<U, T>, W ex
     }
 
     /**
-     * @param alpha double; confidence level
+     * @param alpha confidence level
      * @return both-side confidence interval
      */
     public ConfidenceInterval<T> getConfidenceInterval(final double alpha)
@@ -120,8 +120,8 @@ public class Persistent<U extends Unit<U>, T extends DoubleScalarRel<U, T>, W ex
     }
 
     /**
-     * @param alpha double; confidence level
-     * @param side IntervalSide; side of confidence interval
+     * @param alpha confidence level
+     * @param side side of confidence interval
      * @return confidence interval
      */
     public ConfidenceInterval<T> getConfidenceInterval(final double alpha, final IntervalSide side)
@@ -222,7 +222,7 @@ public class Persistent<U extends Unit<U>, T extends DoubleScalarRel<U, T>, W ex
     }
 
     /**
-     * @param valueSI double; si value
+     * @param valueSI si value
      * @return instantiate typed value from si value
      */
     private T instantiate(final double valueSI)
@@ -240,7 +240,7 @@ public class Persistent<U extends Unit<U>, T extends DoubleScalarRel<U, T>, W ex
 
     /**
      * returns the x-value of the given cumulativePropability.
-     * @param cumulativeProbability double; reflects cum prob
+     * @param cumulativeProbability reflects cum prob
      * @return double the inverse cumulative probability
      */
     private double getInverseCumulativeProbability(final double cumulativeProbability)

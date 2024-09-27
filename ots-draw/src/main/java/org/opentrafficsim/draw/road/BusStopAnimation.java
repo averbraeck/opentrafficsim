@@ -38,8 +38,8 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStopData>
 
     /**
      * Construct a DetectorAnimation.
-     * @param laneDetector BusStopData; the lane detector to draw
-     * @param contextualized Contextualized; context provider
+     * @param laneDetector the lane detector to draw
+     * @param contextualized context provider
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
@@ -99,13 +99,13 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStopData>
         private static final long serialVersionUID = 20161211L;
 
         /**
-         * @param source BusStopData; the object for which the text is displayed
-         * @param text Supplier&lt;String&gt;; the text to display
-         * @param dx float; the horizontal movement of the text, in meters
-         * @param dy float; the vertical movement of the text, in meters
-         * @param textPlacement TextAlignment; where to place the text
-         * @param color Color; the color of the text
-         * @param contextualized Contextualized; context provider
+         * @param source the object for which the text is displayed
+         * @param text the text to display
+         * @param dx the horizontal movement of the text, in meters
+         * @param dy the vertical movement of the text, in meters
+         * @param textPlacement where to place the text
+         * @param color the color of the text
+         * @param contextualized context provider
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */

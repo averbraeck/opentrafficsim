@@ -20,7 +20,7 @@ public interface TrafficPerception extends LaneBasedPerceptionCategory
 
     /**
      * Returns the perceived speed on the given lane.
-     * @param lane RelativeLane; lane
+     * @param lane lane
      * @return Speed perceived speed on the given lane
      * @throws ParameterException on parameter exception
      */
@@ -28,7 +28,7 @@ public interface TrafficPerception extends LaneBasedPerceptionCategory
 
     /**
      * Returns the perceived density on the given lane.
-     * @param lane RelativeLane; lane
+     * @param lane lane
      * @return LinearDensity perceived density on the given lane
      * @throws ParameterException on parameter exception
      */

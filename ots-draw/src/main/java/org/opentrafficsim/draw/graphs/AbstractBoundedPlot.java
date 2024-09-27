@@ -36,10 +36,10 @@ public abstract class AbstractBoundedPlot extends AbstractPlot
 
     /**
      * Constructor.
-     * @param scheduler PlotScheduler; scheduler
-     * @param caption String; caption
-     * @param updateInterval Duration; regular update interval (simulation time)
-     * @param delay Duration; amount of time that chart runs behind simulation to prevent gaps in the charted data
+     * @param scheduler scheduler
+     * @param caption caption
+     * @param updateInterval regular update interval (simulation time)
+     * @param delay amount of time that chart runs behind simulation to prevent gaps in the charted data
      */
     public AbstractBoundedPlot(final PlotScheduler scheduler, final String caption, final Duration updateInterval,
             final Duration delay)
@@ -101,7 +101,7 @@ public abstract class AbstractBoundedPlot extends AbstractPlot
 
     /**
      * Sets the lower domain bound.
-     * @param bound Double; use {@code null} to disable bound
+     * @param bound use {@code null} to disable bound
      */
     public void setLowerDomainBound(final Double bound)
     {
@@ -111,7 +111,7 @@ public abstract class AbstractBoundedPlot extends AbstractPlot
 
     /**
      * Sets the upper domain bound.
-     * @param bound Double; use {@code null} to disable bound
+     * @param bound use {@code null} to disable bound
      */
     public void setUpperDomainBound(final Double bound)
     {
@@ -121,7 +121,7 @@ public abstract class AbstractBoundedPlot extends AbstractPlot
 
     /**
      * Sets the lower range bound.
-     * @param bound Double; use {@code null} to disable bound
+     * @param bound use {@code null} to disable bound
      */
     public void setLowerRangeBound(final Double bound)
     {
@@ -131,7 +131,7 @@ public abstract class AbstractBoundedPlot extends AbstractPlot
 
     /**
      * Sets the upper range bound.
-     * @param bound Double; use {@code null} to disable bound
+     * @param bound use {@code null} to disable bound
      */
     public void setUpperRangeBound(final Double bound)
     {
@@ -141,9 +141,9 @@ public abstract class AbstractBoundedPlot extends AbstractPlot
 
     /**
      * Constrains axis.
-     * @param axis ValueAxis; axis
-     * @param min Double; minimum value, use {@code null} to apply no bound
-     * @param max Double; maximum value, use {@code null} to apply no bound
+     * @param axis axis
+     * @param min minimum value, use {@code null} to apply no bound
+     * @param max maximum value, use {@code null} to apply no bound
      */
     private void constrainAxis(final ValueAxis axis, final Double min, final Double max)
     {

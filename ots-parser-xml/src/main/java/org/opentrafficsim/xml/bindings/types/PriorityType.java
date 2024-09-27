@@ -15,7 +15,7 @@ public class PriorityType extends ExpressionType<Priority>
 
     /**
      * Constructor with value.
-     * @param value Priority; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public PriorityType(final Priority value)
     {
@@ -24,7 +24,7 @@ public class PriorityType extends ExpressionType<Priority>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public PriorityType(final String expression)
     {

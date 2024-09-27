@@ -22,7 +22,7 @@ public class MapPriorityData implements PriorityData
 
     /**
      * Constructor.
-     * @param linkData MapLinkData; link data.
+     * @param linkData link data.
      */
     public MapPriorityData(final MapLinkData linkData)
     {

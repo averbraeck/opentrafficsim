@@ -29,7 +29,7 @@ public class TaskHeadwayCollector implements PerceptionCollector<Duration, LaneB
 
     /**
      * Constructor.
-     * @param speed Speed; speed
+     * @param speed speed
      */
     public TaskHeadwayCollector(final Speed speed)
     {

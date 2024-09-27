@@ -47,9 +47,9 @@ public class TextProperties implements Serializable
 
     /**
      * Construct a set of text properties for animation with alignment, color and size.
-     * @param textAlignment TextAlignment; the text alignment (LEFT, CENTER or RIGHT)
-     * @param color Color; the color of the text
-     * @param fontSize float; the size of the font (in units of the animation, e.g., meters)
+     * @param textAlignment the text alignment (LEFT, CENTER or RIGHT)
+     * @param color the color of the text
+     * @param fontSize the size of the font (in units of the animation, e.g., meters)
      */
     public TextProperties(final TextAlignment textAlignment, final Color color, final float fontSize)
     {
@@ -58,11 +58,11 @@ public class TextProperties implements Serializable
 
     /**
      * Construct a set of text properties for animation with alignment, color and size.
-     * @param textAlignment TextAlignment; the text alignment (LEFT, CENTER or RIGHT)
-     * @param color Color; the color of the text, e.g., Color.RED
-     * @param fontSize float; the size of the font (in units of the animation, e.g., meters)
-     * @param font String; the name of the font, e.g., specified as Font.SERIF
-     * @param textAttributes Map&lt;TextAttribute,Object&gt;; a map of text attributes to set, e.g., UNDERLINE or WEIGHT
+     * @param textAlignment the text alignment (LEFT, CENTER or RIGHT)
+     * @param color the color of the text, e.g., Color.RED
+     * @param fontSize the size of the font (in units of the animation, e.g., meters)
+     * @param font the name of the font, e.g., specified as Font.SERIF
+     * @param textAttributes a map of text attributes to set, e.g., UNDERLINE or WEIGHT
      */
     public TextProperties(final TextAlignment textAlignment, final Color color, final float fontSize, final String font,
             final Map<TextAttribute, Object> textAttributes)
@@ -116,7 +116,7 @@ public class TextProperties implements Serializable
 
     /**
      * Set the weight to either WEIGHT_REGULAR or WEIGHT_BOLD.
-     * @param bold boolean; whether the font is bold or regular
+     * @param bold whether the font is bold or regular
      */
     public final void setBold(final boolean bold)
     {
@@ -125,7 +125,7 @@ public class TextProperties implements Serializable
 
     /**
      * Set the weight to one of multiple weight constants.
-     * @param weight TextWeight; the weight of the font to use
+     * @param weight the weight of the font to use
      */
     public final void setBold(final TextWeight weight)
     {
@@ -134,7 +134,7 @@ public class TextProperties implements Serializable
 
     /**
      * Set the posture to either POSTURE_REGULAR or POSTURE_OBLIQUE (italic).
-     * @param italic boolean; whether the font is italic or regular
+     * @param italic whether the font is italic or regular
      */
     public final void setItalic(final boolean italic)
     {
@@ -143,7 +143,7 @@ public class TextProperties implements Serializable
 
     /**
      * Set the width to WIDTH_CONDENSED, WIDTH_REGULAR, or WIDTH_EXTENDED.
-     * @param width TextWidth; the TextWidth to use
+     * @param width the TextWidth to use
      */
     public final void setWeightBold(final TextWidth width)
     {
@@ -152,7 +152,7 @@ public class TextProperties implements Serializable
 
     /**
      * Set the underline on or off.
-     * @param underline boolean; whether the font is underlined or regular
+     * @param underline whether the font is underlined or regular
      */
     public final void setUnderline(final boolean underline)
     {
@@ -161,7 +161,7 @@ public class TextProperties implements Serializable
 
     /**
      * Set the strikethrough on or off.
-     * @param strikethrough boolean; whether the font is strikethrough or regular
+     * @param strikethrough whether the font is strikethrough or regular
      */
     public final void setStrikethrough(final boolean strikethrough)
     {

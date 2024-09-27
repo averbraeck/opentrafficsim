@@ -16,7 +16,7 @@ public class IdmPlusMultiFactory extends AbstractIdmFactory<IdmPlusMulti>
 
     /**
      * Constructor.
-     * @param randomStream StreamInterface; random number stream
+     * @param randomStream random number stream
      */
     public IdmPlusMultiFactory(final StreamInterface randomStream)
     {

@@ -33,16 +33,13 @@ public class LaneBasedGtuTemplate extends GtuTemplate implements LaneBasedGtuCha
     private final Generator<Route> routeGenerator;
 
     /**
-     * @param gtuType GtuType; The GtuType to make it identifiable.
-     * @param lengthGenerator Generator&lt;Length&gt;; Generator&lt;Length&gt; generator for the length of the GTU type
-     *            (parallel with driving direction).
-     * @param widthGenerator Generator&lt;Length&gt;; generator for the width of the GTU type (perpendicular to driving
+     * @param gtuType The GtuType to make it identifiable.
+     * @param lengthGenerator Generator&lt;Length&gt; generator for the length of the GTU type (parallel with driving
      *            direction).
-     * @param maximumSpeedGenerator Generator&lt;Speed&gt;; generator for the maximum speed of the GTU type (in the driving
-     *            direction).
-     * @param strategicalPlannerFactory LaneBasedStrategicalPlannerFactory&lt;?&gt;; Factory for the strategical planner (e.g.,
-     *            route determination)
-     * @param routeGenerator Generator&lt;Route&gt;; route generator
+     * @param widthGenerator generator for the width of the GTU type (perpendicular to driving direction).
+     * @param maximumSpeedGenerator generator for the maximum speed of the GTU type (in the driving direction).
+     * @param strategicalPlannerFactory Factory for the strategical planner (e.g., route determination)
+     * @param routeGenerator route generator
      * @throws NullPointerException when one or more parameters are null
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -76,8 +73,7 @@ public class LaneBasedGtuTemplate extends GtuTemplate implements LaneBasedGtuCha
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return String.format("LaneBasedGtuTemplate [%s, %s]", this.strategicalPlannerFactory,
-                super.toString());
+        return String.format("LaneBasedGtuTemplate [%s, %s]", this.strategicalPlannerFactory, super.toString());
     }
 
 }

@@ -27,7 +27,7 @@ public abstract class HistoryManager
 
     /**
      * Registers a historical.
-     * @param historical HistoricalElement; historical to register.
+     * @param historical historical to register.
      */
     public void registerHistorical(final HistoricalElement historical)
     {
@@ -48,7 +48,7 @@ public abstract class HistoryManager
 
     /**
      * Returns the current simulation time. This is used by historicals to time-stamp state changes.
-     * @return Time; current simulation time.
+     * @return current simulation time.
      */
     abstract Time now();
 
@@ -67,7 +67,7 @@ public abstract class HistoryManager
     {
         /**
          * Removes events that are no longer needed to guarantee the history time. This is invoked by the history manager.
-         * @param history Duration; history time to keep
+         * @param history history time to keep
          */
         void cleanUpHistory(Duration history);
     }

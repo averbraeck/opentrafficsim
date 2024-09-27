@@ -22,8 +22,8 @@ public class ParameterTypeAcceleration extends ParameterTypeNumeric<Acceleration
 
     /**
      * Construct a new ParameterTypeAcceleration without default value and without check.
-     * @param id String; short name of the new ParameterTypeAcceleration
-     * @param description String; parameter description or full name of the new ParameterTypeAcceleration
+     * @param id short name of the new ParameterTypeAcceleration
+     * @param description parameter description or full name of the new ParameterTypeAcceleration
      */
     public ParameterTypeAcceleration(final String id, final String description)
     {
@@ -32,9 +32,9 @@ public class ParameterTypeAcceleration extends ParameterTypeNumeric<Acceleration
 
     /**
      * Construct a new ParameterTypeAcceleration with default value, without check.
-     * @param id String; short name of the new ParameterTypeAcceleration
-     * @param description String; parameter description or full name of the new ParameterTypeAcceleration
-     * @param defaultValue Acceleration; default value of the new ParameterTypeAcceleration
+     * @param id short name of the new ParameterTypeAcceleration
+     * @param description parameter description or full name of the new ParameterTypeAcceleration
+     * @param defaultValue default value of the new ParameterTypeAcceleration
      */
     public ParameterTypeAcceleration(final String id, final String description, final Acceleration defaultValue)
     {
@@ -43,9 +43,9 @@ public class ParameterTypeAcceleration extends ParameterTypeNumeric<Acceleration
 
     /**
      * Construct a new ParameterTypeAcceleration without default value, with check.
-     * @param id String; short name of the new ParameterTypeAcceleration
-     * @param description String; parameter description or full name of the new ParameterTypeAcceleration
-     * @param constraint Constraint&lt;? super Acceleration&gt;; constraint for parameter values
+     * @param id short name of the new ParameterTypeAcceleration
+     * @param description parameter description or full name of the new ParameterTypeAcceleration
+     * @param constraint constraint for parameter values
      */
     public ParameterTypeAcceleration(final String id, final String description,
             final Constraint<? super Acceleration> constraint)
@@ -55,11 +55,10 @@ public class ParameterTypeAcceleration extends ParameterTypeNumeric<Acceleration
 
     /**
      * Construct a new ParameterTypeAcceleration with default value and check.
-     * @param id String; short name of the new ParameterTypeAcceleration
-     * @param description String; parameter description or full name of the new ParameterTypeAcceleration
-     * @param defaultValue Acceleration; default value of the new ParameterTypeAcceleration
-     * @param constraint Constraint&lt;? super Acceleration&gt;; Constraint&lt;? super Acceleration&gt; constraint for parameter
-     *            values
+     * @param id short name of the new ParameterTypeAcceleration
+     * @param description parameter description or full name of the new ParameterTypeAcceleration
+     * @param defaultValue default value of the new ParameterTypeAcceleration
+     * @param constraint Constraint&lt;? super Acceleration&gt; constraint for parameter values
      */
     public ParameterTypeAcceleration(final String id, final String description, final Acceleration defaultValue,
             final Constraint<? super Acceleration> constraint)

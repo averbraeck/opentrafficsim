@@ -136,8 +136,8 @@ public class GtuFollowingModelTest implements UNITS
         AccelerationStep noLeader = gtuFollowingModel.computeAccelerationStepWithNoLeader(gtu, maxHeadway, speedLimit);
         // System.out.println("noLeader is " + noLeader);
         assertNotNull(noLeader, "result of computeAccelerationWithNoLeader is not null");
-        assertEquals(stepSize.getSI(), noLeader.getValidUntil().getSI(),
-                0.001, "result of computeAccelerationWithNoLeader is valid for " + stepSize);
+        assertEquals(stepSize.getSI(), noLeader.getValidUntil().getSI(), 0.001,
+                "result of computeAccelerationWithNoLeader is valid for " + stepSize);
         assertTrue(0 < noLeader.getAcceleration().getSI(), "acceleration of stationary gtu with no leader should be > 0");
         precision = Length.ZERO;
         try
@@ -286,29 +286,29 @@ public class GtuFollowingModelTest implements UNITS
 
     /**
      * Verify a result of computeAcceleration.
-     * @param description String; description of the result to check
+     * @param description description of the result to check
      * @param as AccelerationStep[2]; the result to verify
-     * @param a0 Acceleration; the expected acceleration in as[0]
-     * @param a1 Acceleration; the expected acceleration in as[1]
-     * @param validUntil Time; the expected validUntil value in both entries of as
+     * @param a0 the expected acceleration in as[0]
+     * @param a1 the expected acceleration in as[1]
+     * @param validUntil the expected validUntil value in both entries of as
      */
     private void checkAccelerationStep(final String description, final DualAccelerationStep as, final Acceleration a0,
             final Acceleration a1, final Time validUntil)
     {
         assertEquals(a0.getSI(), as.getLeaderAcceleration().getSI(), 0.001, description + ": a leader should be " + a0);
-        assertEquals(a0.getSI(), as.getLeaderAccelerationStep().getAcceleration().getSI(),
-                0.001, description + ": a leader should be " + a0);
-        assertEquals(validUntil.getSI(), as.getLeaderValidUntil().getSI(),
-                0.001, description + ": a leader should be valid until " + validUntil);
-        assertEquals(validUntil.getSI(), as.getLeaderAccelerationStep().getValidUntil().getSI(),
-                0.001, description + ": a leader should be valid until " + validUntil);
+        assertEquals(a0.getSI(), as.getLeaderAccelerationStep().getAcceleration().getSI(), 0.001,
+                description + ": a leader should be " + a0);
+        assertEquals(validUntil.getSI(), as.getLeaderValidUntil().getSI(), 0.001,
+                description + ": a leader should be valid until " + validUntil);
+        assertEquals(validUntil.getSI(), as.getLeaderAccelerationStep().getValidUntil().getSI(), 0.001,
+                description + ": a leader should be valid until " + validUntil);
         assertEquals(a1.getSI(), as.getFollowerAcceleration().getSI(), 0.001, description + ": a follower should be " + a1);
-        assertEquals(a1.getSI(), as.getFollowerAccelerationStep().getAcceleration().getSI(),
-                0.001, description + ": a follower should be " + a1);
-        assertEquals(validUntil.getSI(), as.getFollowerValidUntil().getSI(),
-                0.001, description + ": a follower should be valid until " + validUntil);
-        assertEquals(validUntil.getSI(), as.getFollowerValidUntil().getSI(),
-                0.001, description + ": a follower should be valid until " + validUntil);
+        assertEquals(a1.getSI(), as.getFollowerAccelerationStep().getAcceleration().getSI(), 0.001,
+                description + ": a follower should be " + a1);
+        assertEquals(validUntil.getSI(), as.getFollowerValidUntil().getSI(), 0.001,
+                description + ": a follower should be valid until " + validUntil);
+        assertEquals(validUntil.getSI(), as.getFollowerValidUntil().getSI(), 0.001,
+                description + ": a follower should be valid until " + validUntil);
     }
 
     /**

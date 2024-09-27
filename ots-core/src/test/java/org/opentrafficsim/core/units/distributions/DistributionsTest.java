@@ -80,7 +80,7 @@ public class DistributionsTest
 
     /**
      * Retrieve the current value of the nextDoubleResult field.
-     * @return double; the current value of the nextDoubleResult field
+     * @return the current value of the nextDoubleResult field
      */
     final double getDoubleNextResult()
     {
@@ -92,7 +92,7 @@ public class DistributionsTest
 
     /**
      * Retrieve the current value of the nextLongResult field.
-     * @return long; the current value of the nextLongResult field
+     * @return the current value of the nextLongResult field
      */
     final long getLongNextResult()
     {
@@ -180,7 +180,7 @@ public class DistributionsTest
 
     /**
      * Exercise continuous distribution of an Absolute unit.
-     * @param distribution DistContinuous; the random source
+     * @param distribution the random source
      * @param unit Unit
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -206,7 +206,7 @@ public class DistributionsTest
 
     /**
      * Exercise continuous distribution of a Relative unit.
-     * @param distribution DistContinuous; the random source
+     * @param distribution the random source
      * @param unit Unit
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -232,7 +232,7 @@ public class DistributionsTest
 
     /**
      * Exercise discrete distribution of an Absolute unit.
-     * @param distribution DistDiscrete; the random source
+     * @param distribution the random source
      * @param unit Unit
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -258,7 +258,7 @@ public class DistributionsTest
 
     /**
      * Exercise discrete distribution of a Relative unit.
-     * @param distribution DistContinuous; the random source
+     * @param distribution the random source
      * @param unit Unit
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -284,7 +284,7 @@ public class DistributionsTest
 
     /**
      * Exercise continuous distribution of an Absolute unit.
-     * @param distribution DistContinuous; the random source
+     * @param distribution the random source
      * @param unit Unit
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -310,7 +310,7 @@ public class DistributionsTest
 
     /**
      * Exercise continuous distribution of a Relative unit.
-     * @param distribution DistContinuous; the random source
+     * @param distribution the random source
      * @param unit Unit
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -336,7 +336,7 @@ public class DistributionsTest
 
     /**
      * Exercise discrete distribution of an Absolute unit.
-     * @param distribution DistDiscrete; the random source
+     * @param distribution the random source
      * @param unit Unit
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -362,7 +362,7 @@ public class DistributionsTest
 
     /**
      * Exercise discrete distribution of a Relative unit.
-     * @param distribution DistContinuous; the random source
+     * @param distribution the random source
      * @param unit Unit
      */
     @SuppressWarnings({"rawtypes", "unchecked"})

@@ -22,8 +22,8 @@ public class DiscreteDistDirection extends DiscreteDistDoubleScalar.Abs<Directio
     private static final long serialVersionUID = 20180829L;
 
     /**
-     * @param distribution DistDiscrete; distribution
-     * @param unit DirectionUnit; units
+     * @param distribution distribution
+     * @param unit units
      */
     public DiscreteDistDirection(final DistDiscrete distribution, final DirectionUnit unit)
     {

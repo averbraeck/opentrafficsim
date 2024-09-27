@@ -28,8 +28,8 @@ public class SpeedLimitInfo implements Serializable
 
     /**
      * Adds or overwrites the speed info of the given speed limit type.
-     * @param speedLimitType SpeedLimitType&lt;T&gt;; speed limit type to add info for
-     * @param speedInfo T; info regarding the speed limit type
+     * @param speedLimitType speed limit type to add info for
+     * @param speedInfo info regarding the speed limit type
      * @param <T> class of speed info
      * @throws NullPointerException if the speed limit type or speed info is null
      */
@@ -42,7 +42,7 @@ public class SpeedLimitInfo implements Serializable
 
     /**
      * Removes the speed info of given speed limit type.
-     * @param speedLimitType SpeedLimitType&lt;?&gt;; speed limit type of speed info to remove
+     * @param speedLimitType speed limit type of speed info to remove
      * @throws NullPointerException if the speed limit type is null
      */
     public final void removeSpeedInfo(final SpeedLimitType<?> speedLimitType)
@@ -53,7 +53,7 @@ public class SpeedLimitInfo implements Serializable
 
     /**
      * Whether speed info is present for the given speed limit type.
-     * @param speedLimitType SpeedLimitType&lt;?&gt;; speed limit type
+     * @param speedLimitType speed limit type
      * @return whether speed info is present for the given speed limit type
      */
     public final boolean containsType(final SpeedLimitType<?> speedLimitType)
@@ -63,7 +63,7 @@ public class SpeedLimitInfo implements Serializable
 
     /**
      * Returns the info regarding a specific speed limit type.
-     * @param speedLimitType SpeedLimitType&lt;T&gt;; speed limit type to return info for
+     * @param speedLimitType speed limit type to return info for
      * @param <T> class of speed limit type info
      * @return the speed limit type info
      * @throws NullPointerException if the speed limit type is null

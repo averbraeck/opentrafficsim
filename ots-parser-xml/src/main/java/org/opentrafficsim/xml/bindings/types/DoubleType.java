@@ -18,7 +18,7 @@ public class DoubleType extends ExpressionType<Double>
 
     /**
      * Constructor with value.
-     * @param value Double; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public DoubleType(final Double value)
     {
@@ -27,7 +27,7 @@ public class DoubleType extends ExpressionType<Double>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public DoubleType(final String expression)
     {

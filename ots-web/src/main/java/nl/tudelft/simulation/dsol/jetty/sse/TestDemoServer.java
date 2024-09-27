@@ -72,7 +72,7 @@ public class TestDemoServer
 
     /**
      * Run a SuperDemo OTS Web server.
-     * @param args String[]; not used
+     * @param args not used
      * @throws Exception o Jetty error
      */
     public static void main(final String[] args) throws Exception
@@ -222,7 +222,7 @@ public class TestDemoServer
 
         /**
          * Create the handler for Servlet requests.
-         * @param webServer DSOLWebServer; web server for callback of actions
+         * @param webServer web server for callback of actions
          */
         public XHRHandler(final TestDemoServer webServer)
         {
@@ -324,8 +324,8 @@ public class TestDemoServer
 
         /**
          * Add the right type of field for this parameter to the string buffer.
-         * @param answer StringBuffer; the buffer to add the XML-info for the parameter
-         * @param parameter InputParameter&lt;?,?&gt;; the input parameter to display
+         * @param answer the buffer to add the XML-info for the parameter
+         * @param parameter the input parameter to display
          */
         public void addParameterField(final StringBuffer answer, final InputParameter<?, ?> parameter)
         {

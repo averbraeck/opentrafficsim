@@ -184,15 +184,15 @@ public class Gtu extends LocalEventProducer
     private OtsBounds2d bounds;
 
     /**
-     * @param id String; the id of the GTU
-     * @param gtuType GtuType; the type of GTU, e.g. TruckType, CarType, BusType
-     * @param simulator OtsSimulatorInterface; the simulator to schedule plan changes on
-     * @param perceivableContext PerceivableContext; the perceivable context in which this GTU will be registered
-     * @param length Length; the maximum length of the GTU (parallel with driving direction)
-     * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
+     * @param id the id of the GTU
+     * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType
+     * @param simulator the simulator to schedule plan changes on
+     * @param perceivableContext the perceivable context in which this GTU will be registered
+     * @param length the maximum length of the GTU (parallel with driving direction)
+     * @param width the maximum width of the GTU (perpendicular to driving direction)
      * @param maximumSpeed Speed;the maximum speed of the GTU (in the driving direction)
-     * @param front Length; front distance relative to the reference position
-     * @param centerOfGravity Length; distance from the center of gravity to the reference position
+     * @param front front distance relative to the reference position
+     * @param centerOfGravity distance from the center of gravity to the reference position
      * @throws GtuException when the preconditions of the constructor are not met
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -251,10 +251,10 @@ public class Gtu extends LocalEventProducer
 
     /**
      * Initialize the GTU at a location and speed, and give it a mission to fulfill through the strategical planner.
-     * @param strategicalPlanner StrategicalPlanner; the strategical planner responsible for the overall 'mission' of the GTU,
-     *            usually indicating where it needs to go. It operates by instantiating tactical planners to do the work.
-     * @param initialLocation OrientedPoint2d; the initial location (and direction) of the GTU
-     * @param initialSpeed Speed; the initial speed of the GTU
+     * @param strategicalPlanner the strategical planner responsible for the overall 'mission' of the GTU, usually indicating
+     *            where it needs to go. It operates by instantiating tactical planners to do the work.
+     * @param initialLocation the initial location (and direction) of the GTU
+     * @param initialSpeed the initial speed of the GTU
      * @throws SimRuntimeException when scheduling after the first move fails
      * @throws GtuException when the preconditions of the parameters are not met or when the construction of the original
      *             waiting path fails
@@ -369,9 +369,8 @@ public class Gtu extends LocalEventProducer
      * This method can be overridden to carry out specific behavior during the execution of the plan (e.g., scheduling of
      * triggers, entering or leaving lanes, etc.). Please bear in mind that the call to super.move() is essential, and that one
      * has to take care to handle the situation that the plan gets interrupted.
-     * @param fromLocation OrientedPoint2d; the last known location (initial location, or end location of the previous
-     *            operational plan)
-     * @return boolean; whether an exception occurred
+     * @param fromLocation the last known location (initial location, or end location of the previous operational plan)
+     * @return whether an exception occurred
      * @throws SimRuntimeException when scheduling of the next move fails
      * @throws OperationalPlanException when there is a problem creating a good path for the GTU
      * @throws GtuException when there is a problem with the state of the GTU when planning a path
@@ -492,8 +491,8 @@ public class Gtu extends LocalEventProducer
 
     /**
      * Sets a tag, these are used for specific use cases of any sort.
-     * @param tag String; name of the tag.
-     * @param value String; value of the tag.
+     * @param tag name of the tag.
+     * @param value value of the tag.
      */
     public void setTag(final String tag, final String value)
     {
@@ -502,8 +501,8 @@ public class Gtu extends LocalEventProducer
 
     /**
      * Returns the value for the given tag, these are used for specific use cases of any sort.
-     * @param tag String; name of the tag.
-     * @return String; value of the tag, or {@code null} if it is not given to the GTU.
+     * @param tag name of the tag.
+     * @return value of the tag, or {@code null} if it is not given to the GTU.
      */
     public String getTag(final String tag)
     {
@@ -536,15 +535,15 @@ public class Gtu extends LocalEventProducer
         return this.parameters;
     }
 
-    /** @param parameters Parameters; parameters */
+    /** @param parameters parameters */
     public final void setParameters(final Parameters parameters)
     {
         this.parameters = parameters;
     }
 
     /**
-     * @return StrategicalPlanner; the planner responsible for the overall 'mission' of the GTU, usually indicating where it
-     *         needs to go. It operates by instantiating tactical planners to do the work.
+     * @return the planner responsible for the overall 'mission' of the GTU, usually indicating where it needs to go. It
+     *         operates by instantiating tactical planners to do the work.
      */
     public StrategicalPlanner getStrategicalPlanner()
     {
@@ -552,24 +551,24 @@ public class Gtu extends LocalEventProducer
     }
 
     /**
-     * @param time Time; time to obtain the strategical planner at
-     * @return StrategicalPlanner; the planner responsible for the overall 'mission' of the GTU, usually indicating where it
-     *         needs to go. It operates by instantiating tactical planners to do the work.
+     * @param time time to obtain the strategical planner at
+     * @return the planner responsible for the overall 'mission' of the GTU, usually indicating where it needs to go. It
+     *         operates by instantiating tactical planners to do the work.
      */
     public StrategicalPlanner getStrategicalPlanner(final Time time)
     {
         return this.strategicalPlanner.get(time);
     }
 
-    /** @return TacticalPlanner; the current tactical planner that can generate an operational plan */
+    /** @return the current tactical planner that can generate an operational plan */
     public TacticalPlanner<?, ?> getTacticalPlanner()
     {
         return getStrategicalPlanner().getTacticalPlanner();
     }
 
     /**
-     * @param time Time; time to obtain the tactical planner at
-     * @return TacticalPlanner; the tactical planner that can generate an operational plan at the given time
+     * @param time time to obtain the tactical planner at
+     * @return the tactical planner that can generate an operational plan at the given time
      */
     public TacticalPlanner<?, ?> getTacticalPlanner(final Time time)
     {
@@ -583,7 +582,7 @@ public class Gtu extends LocalEventProducer
     }
 
     /**
-     * @param time Time; time to obtain the operational plan at
+     * @param time time to obtain the operational plan at
      * @return the operational plan for the GTU at the given time.
      */
     public final OperationalPlan getOperationalPlan(final Time time)
@@ -593,7 +592,7 @@ public class Gtu extends LocalEventProducer
 
     /**
      * Set the operational plan. This method is for sub classes.
-     * @param operationalPlan OperationalPlan; operational plan.
+     * @param operationalPlan operational plan.
      */
     protected void setOperationalPlan(final OperationalPlan operationalPlan)
     {
@@ -601,7 +600,7 @@ public class Gtu extends LocalEventProducer
     }
 
     /**
-     * @return Length; the current odometer value.
+     * @return the current odometer value.
      */
     public final Length getOdometer()
     {
@@ -609,8 +608,8 @@ public class Gtu extends LocalEventProducer
     }
 
     /**
-     * @param time Time; time to obtain the odometer at
-     * @return Length; the odometer value at given time.
+     * @param time time to obtain the odometer at
+     * @return the odometer value at given time.
      */
     public final Length getOdometer(final Time time)
     {
@@ -641,7 +640,7 @@ public class Gtu extends LocalEventProducer
     }
 
     /**
-     * @param time Time; time at which to obtain the speed
+     * @param time time at which to obtain the speed
      * @return the current speed of the GTU, along the direction of movement.
      */
     public final Speed getSpeed(final Time time)
@@ -695,7 +694,7 @@ public class Gtu extends LocalEventProducer
     }
 
     /**
-     * @param time Time; time at which to obtain the acceleration
+     * @param time time at which to obtain the acceleration
      * @return the current acceleration of the GTU, along the direction of movement.
      */
     public final Acceleration getAcceleration(final Time time)
@@ -749,7 +748,7 @@ public class Gtu extends LocalEventProducer
     }
 
     /**
-     * @param maximumAcceleration Acceleration; set maximumAcceleration
+     * @param maximumAcceleration set maximumAcceleration
      */
     public final void setMaximumAcceleration(final Acceleration maximumAcceleration)
     {
@@ -770,7 +769,7 @@ public class Gtu extends LocalEventProducer
 
     /**
      * Set the maximum deceleration.
-     * @param maximumDeceleration Acceleration; set maximumDeceleration, must be a negative number
+     * @param maximumDeceleration set maximumDeceleration, must be a negative number
      */
     public final void setMaximumDeceleration(final Acceleration maximumDeceleration)
     {
@@ -824,8 +823,8 @@ public class Gtu extends LocalEventProducer
      * Return the shape of a dynamic object at time 'time'. Note that the getShape() method without a time returns the Minkowski
      * sum of all shapes of the spatial object for a validity time window, e.g., a contour that describes all locations of a GTU
      * for the next time step, i.e., the contour of the GTU belonging to the next operational plan.
-     * @param time Time; the time for which we want the shape
-     * @return OtsShape; the shape of the object at time 'time'
+     * @param time the time for which we want the shape
+     * @return the shape of the object at time 'time'
      */
     @Override
     public Polygon2d getShape(final Time time)
@@ -853,7 +852,7 @@ public class Gtu extends LocalEventProducer
      * Return the shape of the GTU for the validity time of the operational plan. Note that this method without a time returns
      * the Minkowski sum of all shapes of the spatial object for a validity time window, e.g., a contour that describes all
      * locations of a GTU for the next time step, i.e., the contour of the GTU belonging to the next operational plan.
-     * @return OtsShape; the shape of the object over the validity of the operational plan
+     * @return the shape of the object over the validity of the operational plan
      */
     @Override
     public Polygon2d getShape()
@@ -903,7 +902,7 @@ public class Gtu extends LocalEventProducer
 
     /**
      * Adds the provided GTU to this GTU, meaning it moves with this GTU.
-     * @param gtu Gtu; gtu to enter this GTU
+     * @param gtu gtu to enter this GTU
      * @throws GtuException if the gtu already has a parent
      */
     public void addGtu(final Gtu gtu) throws GtuException
@@ -914,7 +913,7 @@ public class Gtu extends LocalEventProducer
 
     /**
      * Removes the provided GTU from this GTU, meaning it no longer moves with this GTU.
-     * @param gtu Gtu; gtu to exit this GTU
+     * @param gtu gtu to exit this GTU
      */
     public void removeGtu(final Gtu gtu)
     {
@@ -931,7 +930,7 @@ public class Gtu extends LocalEventProducer
 
     /**
      * Set the parent GTU.
-     * @param gtu Gtu; parent GTU, may be {@code null}
+     * @param gtu parent GTU, may be {@code null}
      * @throws GtuException if the gtu already has a parent
      */
     public void setParent(final Gtu gtu) throws GtuException
@@ -942,7 +941,7 @@ public class Gtu extends LocalEventProducer
 
     /**
      * Returns the parent GTU, or {@code null} if this GTU has no parent.
-     * @return Gtu; parent GTU, or {@code null} if this GTU has no parent
+     * @return parent GTU, or {@code null} if this GTU has no parent
      */
     public Gtu getParent()
     {
@@ -951,7 +950,7 @@ public class Gtu extends LocalEventProducer
 
     /**
      * Returns the children GTU's.
-     * @return Set&lt;GTU&gt;; children GTU's
+     * @return children GTU's
      */
     public Set<Gtu> getChildren()
     {
@@ -968,7 +967,7 @@ public class Gtu extends LocalEventProducer
 
     /**
      * Sets the error handler.
-     * @param errorHandler GTUErrorHandler; error handler
+     * @param errorHandler error handler
      */
     public void setErrorHandler(final GtuErrorHandler errorHandler)
     {

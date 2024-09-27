@@ -21,7 +21,7 @@ public interface OtsLocatable extends Locatable
 
     /**
      * Returns the bounds relative to the location.
-     * @return OtsBounds2d; bounds relative to the location.
+     * @return bounds relative to the location.
      */
     @Override
     OtsBounds2d getBounds();

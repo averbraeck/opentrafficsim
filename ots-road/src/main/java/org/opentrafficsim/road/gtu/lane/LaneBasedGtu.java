@@ -172,13 +172,13 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Construct a Lane Based GTU.
-     * @param id String; the id of the GTU
-     * @param gtuType GtuType; the type of GTU, e.g. TruckType, CarType, BusType
-     * @param length Length; the maximum length of the GTU (parallel with driving direction)
-     * @param width Length; the maximum width of the GTU (perpendicular to driving direction)
+     * @param id the id of the GTU
+     * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType
+     * @param length the maximum length of the GTU (parallel with driving direction)
+     * @param width the maximum width of the GTU (perpendicular to driving direction)
      * @param maximumSpeed Speed;the maximum speed of the GTU (in the driving direction)
-     * @param front Length; front distance relative to the reference position
-     * @param network RoadNetwork; the network that the GTU is initially registered in
+     * @param front front distance relative to the reference position
+     * @param network the network that the GTU is initially registered in
      * @throws GtuException when initial values are not correct
      */
     public LaneBasedGtu(final String id, final GtuType gtuType, final Length length, final Length width,
@@ -191,9 +191,9 @@ public class LaneBasedGtu extends Gtu
     }
 
     /**
-     * @param strategicalPlanner LaneBasedStrategicalPlanner; the strategical planner (e.g., route determination) to use
-     * @param longitudinalPosition LanePosition; the initial position of the GTU
-     * @param initialSpeed Speed; the initial speed of the car on the lane
+     * @param strategicalPlanner the strategical planner (e.g., route determination) to use
+     * @param longitudinalPosition the initial position of the GTU
+     * @param initialSpeed the initial speed of the car on the lane
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GtuException when initial values are not correct
@@ -262,7 +262,7 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Reinitializes the GTU on the network using the existing strategical planner and zero speed.
-     * @param initialLongitudinalPosition LanePosition; initial position
+     * @param initialLongitudinalPosition initial position
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GtuException when initial values are not correct
@@ -276,7 +276,7 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Change lanes instantaneously.
-     * @param laneChangeDirection LateralDirectionality; the direction to change to
+     * @param laneChangeDirection the direction to change to
      * @throws GtuException in case lane change fails
      */
     public synchronized void changeLaneInstantaneously(final LateralDirectionality laneChangeDirection) throws GtuException
@@ -306,9 +306,9 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Enters lanes upstream and downstream of the new location after an instantaneous lane change or initialization.
-     * @param lane Lane; considered lane
-     * @param position Length; position to add GTU at
-     * @param dir int; below 0 for upstream, above 0 for downstream, 0 for both<br>
+     * @param lane considered lane
+     * @param position position to add GTU at
+     * @param dir below 0 for upstream, above 0 for downstream, 0 for both<br>
      * @throws GtuException on exception
      */
     // TODO: the below 0 and above 0 is NOT what is tested
@@ -384,7 +384,7 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Register on lanes in target lane.
-     * @param laneChangeDirection LateralDirectionality; direction of lane change
+     * @param laneChangeDirection direction of lane change
      * @throws GtuException exception
      */
     @SuppressWarnings("checkstyle:designforextension")
@@ -435,7 +435,7 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Performs the finalization of a lane change by leaving the from lanes.
-     * @param laneChangeDirection LateralDirectionality; direction of lane change
+     * @param laneChangeDirection direction of lane change
      * @throws GtuException if position or direction could not be obtained
      */
     @SuppressWarnings("checkstyle:designforextension")
@@ -480,7 +480,7 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Sets event to finalize lane change.
-     * @param event SimEventInterface&lt;SimTimeDoubleUnit&gt;; event
+     * @param event event
      */
     public void setFinalizeLaneChangeEvent(final SimEventInterface<Duration> event)
     {
@@ -812,7 +812,7 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Schedules all trigger events during the current operational plan on the lane.
-     * @param lane Lane; lane
+     * @param lane lane
      * @throws GtuException exception
      * @throws OperationalPlanException exception
      * @throws SimRuntimeException exception
@@ -839,7 +839,7 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Returns a safe distance beyond which a line will definitely not be crossed during the current operational plan.
-     * @return Length; safe distance beyond which a line will definitely not be crossed during the current operational plan
+     * @return safe distance beyond which a line will definitely not be crossed during the current operational plan
      * @throws OperationalPlanException exception
      */
     private Length remainingEventDistance() throws OperationalPlanException
@@ -855,8 +855,8 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Returns the next lane for a given lane to stay on the route.
-     * @param lane Lane; the lane for which we want to know the next Lane
-     * @return Lane; next lane, {@code null} if none
+     * @param lane the lane for which we want to know the next Lane
+     * @return next lane, {@code null} if none
      */
     public final Lane getNextLaneForRoute(final Lane lane)
     {
@@ -886,7 +886,7 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Returns a set of {@code Lane}s that can be followed considering the route.
-     * @param lane Lane; the lane for which we want to know the next Lane
+     * @param lane the lane for which we want to know the next Lane
      * @return set of {@code Lane}s that can be followed considering the route
      */
     public Set<Lane> getNextLanesForRoute(final Lane lane)
@@ -924,8 +924,8 @@ public class LaneBasedGtu extends Gtu
     /**
      * Returns an estimation of when the relative position will reach the line. Returns {@code null} if this does not occur
      * during the current operational plan.
-     * @param line PolyLine2d; line, i.e. lateral line at link start or lateral entrance of sensor
-     * @param relativePosition RelativePosition; position to cross the line
+     * @param line line, i.e. lateral line at link start or lateral entrance of sensor
+     * @param relativePosition position to cross the line
      * @return estimation of when the relative position will reach the line, {@code null} if this does not occur during the
      *         current operational plan
      * @throws GtuException position error
@@ -1021,7 +1021,7 @@ public class LaneBasedGtu extends Gtu
      * <b>Note:</b> If a GTU is registered in multiple parallel lanes, the lateralLaneChangeModel is used to determine the
      * center line of the vehicle at this point in time. Otherwise, the average of the center positions of the lines will be
      * taken.
-     * @param relativePosition RelativePosition; the position on the vehicle relative to the reference point.
+     * @param relativePosition the position on the vehicle relative to the reference point.
      * @return the lanes and the position on the lanes where the GTU is currently registered, for the given position of the GTU.
      * @throws GtuException when the vehicle is not on one of the lanes on which it is registered.
      */
@@ -1033,8 +1033,8 @@ public class LaneBasedGtu extends Gtu
     /**
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
      * vehicle is registered.
-     * @param relativePosition RelativePosition; the position on the vehicle relative to the reference point.
-     * @param when Time; the future time for which to calculate the positions.
+     * @param relativePosition the position on the vehicle relative to the reference point.
+     * @param when the future time for which to calculate the positions.
      * @return the lanes and the position on the lanes where the GTU will be registered at the time, for the given position of
      *         the GTU.
      * @throws GtuException when the vehicle is not on one of the lanes on which it is registered.
@@ -1055,9 +1055,9 @@ public class LaneBasedGtu extends Gtu
     /**
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane at the current
      * simulation time. <br>
-     * @param lane Lane; the position on this lane will be returned.
-     * @param relativePosition RelativePosition; the position on the vehicle relative to the reference point.
-     * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position, relative to the center line of the Lane.
+     * @param lane the position on this lane will be returned.
+     * @param relativePosition the position on the vehicle relative to the reference point.
+     * @return the position, relative to the center line of the Lane.
      * @throws GtuException when the vehicle is not on the given lane.
      */
     public final Length position(final Lane lane, final RelativePosition relativePosition) throws GtuException
@@ -1076,10 +1076,10 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane.
-     * @param lane Lane; the position on this lane will be returned.
-     * @param relativePosition RelativePosition; the position on the vehicle relative to the reference point.
-     * @param when Time; the future time for which to calculate the positions.
-     * @return DoubleScalarAbs&lt;LengthUnit&gt;; the position, relative to the center line of the Lane.
+     * @param lane the position on this lane will be returned.
+     * @param relativePosition the position on the vehicle relative to the reference point.
+     * @param when the future time for which to calculate the positions.
+     * @return the position, relative to the center line of the Lane.
      * @throws GtuException when the vehicle is not on the given lane.
      */
     public Length position(final Lane lane, final RelativePosition relativePosition, final Time when) throws GtuException
@@ -1234,7 +1234,7 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Return the current Lane, position and directionality of the GTU.
-     * @return LanePosition; the current Lane, position and directionality of the GTU
+     * @return the current Lane, position and directionality of the GTU
      * @throws GtuException in case the reference position of the GTU cannot be found on the lanes in its current path
      */
     @SuppressWarnings("checkstyle:designforextension")
@@ -1280,7 +1280,7 @@ public class LaneBasedGtu extends Gtu
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
      * vehicle is registered, as fractions of the length of the lane. This is important when we want to see if two vehicles are
      * next to each other and we compare an 'inner' and 'outer' curve.<br>
-     * @param relativePosition RelativePosition; the position on the vehicle relative to the reference point.
+     * @param relativePosition the position on the vehicle relative to the reference point.
      * @return the lanes and the position on the lanes where the GTU is currently registered, for the given position of the GTU.
      * @throws GtuException when the vehicle is not on one of the lanes on which it is registered.
      */
@@ -1293,8 +1293,8 @@ public class LaneBasedGtu extends Gtu
      * Return the longitudinal positions of a point relative to this GTU, relative to the center line of the Lanes in which the
      * vehicle is registered, as fractions of the length of the lane. This is important when we want to see if two vehicles are
      * next to each other and we compare an 'inner' and 'outer' curve.
-     * @param relativePosition RelativePosition; the position on the vehicle relative to the reference point.
-     * @param when Time; the future time for which to calculate the positions.
+     * @param relativePosition the position on the vehicle relative to the reference point.
+     * @param when the future time for which to calculate the positions.
      * @return the lanes and the position on the lanes where the GTU will be registered at the time, for the given position of
      *         the GTU.
      * @throws GtuException when the vehicle is not on one of the lanes on which it is registered.
@@ -1317,9 +1317,9 @@ public class LaneBasedGtu extends Gtu
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane, as a fraction
      * of the length of the lane. This is important when we want to see if two vehicles are next to each other and we compare an
      * 'inner' and 'outer' curve.
-     * @param lane Lane; the position on this lane will be returned.
-     * @param relativePosition RelativePosition; the position on the vehicle relative to the reference point.
-     * @param when Time; the future time for which to calculate the positions.
+     * @param lane the position on this lane will be returned.
+     * @param relativePosition the position on the vehicle relative to the reference point.
+     * @param when the future time for which to calculate the positions.
      * @return the fractional relative position on the lane at the given time.
      * @throws GtuException when the vehicle is not on the given lane.
      */
@@ -1333,8 +1333,8 @@ public class LaneBasedGtu extends Gtu
      * Return the longitudinal position of a point relative to this GTU, relative to the center line of the Lane, as a fraction
      * of the length of the lane. This is important when we want to see if two vehicles are next to each other and we compare an
      * 'inner' and 'outer' curve.<br>
-     * @param lane Lane; the position on this lane will be returned.
-     * @param relativePosition RelativePosition; the position on the vehicle relative to the reference point.
+     * @param lane the position on this lane will be returned.
+     * @param relativePosition the position on the vehicle relative to the reference point.
      * @return the fractional relative position on the lane at the given time.
      * @throws GtuException when the vehicle is not on the given lane.
      */
@@ -1345,8 +1345,8 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Add an event to the list of lane triggers scheduled for this GTU.
-     * @param lane Lane; the lane on which the event occurs
-     * @param event SimEventInterface&lt;SimTimeDoubleUnit&gt;; SimeEvent&lt;SimTimeDoubleUnit&gt; the event
+     * @param lane the lane on which the event occurs
+     * @param event SimeEvent&lt;SimTimeDoubleUnit&gt; the event
      */
     public final void addTrigger(final Lane lane, final SimEventInterface<Duration> event)
     {
@@ -1355,7 +1355,7 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Sets a vehicle model.
-     * @param vehicleModel VehicleModel; vehicle model
+     * @param vehicleModel vehicle model
      */
     public void setVehicleModel(final VehicleModel vehicleModel)
     {
@@ -1364,7 +1364,7 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Returns the vehicle model.
-     * @return VehicleModel; vehicle model
+     * @return vehicle model
      */
     public VehicleModel getVehicleModel()
     {
@@ -1452,7 +1452,7 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * This method returns the current desired speed of the GTU. This value is required often, so implementations can cache it.
-     * @return Speed; current desired speed
+     * @return current desired speed
      */
     public Speed getDesiredSpeed()
     {
@@ -1486,7 +1486,7 @@ public class LaneBasedGtu extends Gtu
     /**
      * This method returns the current car-following acceleration of the GTU. This value is required often, so implementations
      * can cache it.
-     * @return Acceleration; current car-following acceleration
+     * @return current car-following acceleration
      */
     public Acceleration getCarFollowingAcceleration()
     {
@@ -1525,7 +1525,7 @@ public class LaneBasedGtu extends Gtu
     }
 
     /**
-     * @param time Time; time to obtain the turn indicator status at
+     * @param time time to obtain the turn indicator status at
      * @return the status of the turn indicator at the given time
      */
     public final TurnIndicatorStatus getTurnIndicatorStatus(final Time time)
@@ -1535,7 +1535,7 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Set the status of the turn indicator.
-     * @param turnIndicatorStatus TurnIndicatorStatus; the new status of the turn indicator.
+     * @param turnIndicatorStatus the new status of the turn indicator.
      */
     public final void setTurnIndicatorStatus(final TurnIndicatorStatus turnIndicatorStatus)
     {
@@ -1544,8 +1544,8 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Returns the lateral position of the GTU relative to the lane center line. Negative values are towards the right.
-     * @param lane Lane; lane to consider (most important regarding left/right, not upstream downstream)
-     * @return Length; lateral position of the GTU relative to the lane center line
+     * @param lane lane to consider (most important regarding left/right, not upstream downstream)
+     * @return lateral position of the GTU relative to the lane center line
      * @throws GtuException when the vehicle is not on the given lane.
      */
     public Length getLateralPosition(final Lane lane) throws GtuException
@@ -1589,7 +1589,7 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Sets whether the GTU perform lane changes instantaneously or not.
-     * @param instantaneous boolean; whether the GTU perform lane changes instantaneously or not
+     * @param instantaneous whether the GTU perform lane changes instantaneously or not
      */
     public void setInstantaneousLaneChange(final boolean instantaneous)
     {
@@ -1598,7 +1598,7 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Returns whether the GTU perform lane changes instantaneously or not.
-     * @return boolean; whether the GTU perform lane changes instantaneously or not
+     * @return whether the GTU perform lane changes instantaneously or not
      */
     public boolean isInstantaneousLaneChange()
     {
@@ -1621,7 +1621,7 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Set distance over which the GTU should not change lane after being created.
-     * @param distance Length; distance over which the GTU should not change lane after being created
+     * @param distance distance over which the GTU should not change lane after being created
      */
     public final void setNoLaneChangeDistance(final Length distance)
     {
@@ -1645,7 +1645,7 @@ public class LaneBasedGtu extends Gtu
      * <br>
      * where c0 = 0.2, c1 = 0.15 and c3 = 0.00025 (with c2 = 0 implicit) are empirically derived averages, and g(v) is 0 below
      * 25 km/h or 1 otherwise, representing that the engine is disengaged at low speeds.
-     * @return boolean; whether the braking lights are on
+     * @return whether the braking lights are on
      */
     public boolean isBrakingLightsOn()
     {
@@ -1660,8 +1660,8 @@ public class LaneBasedGtu extends Gtu
      * <br>
      * where c0 = 0.2, c1 = 0.15 and c3 = 0.00025 (with c2 = 0 implicit) are empirically derived averages, and g(v) is 0 below
      * 25 km/h or 1 otherwise, representing that the engine is disengaged at low speeds.
-     * @param when Time; time
-     * @return boolean; whether the braking lights are on
+     * @param when time
+     * @return whether the braking lights are on
      */
     public boolean isBrakingLightsOn(final Time when)
     {
@@ -1672,8 +1672,8 @@ public class LaneBasedGtu extends Gtu
 
     /**
      * Get projected length on the lane.
-     * @param lane Lane; lane to project the vehicle on
-     * @return Length; the length on the lane, which is different from the actual length during deviative tactical plans
+     * @param lane lane to project the vehicle on
+     * @return the length on the lane, which is different from the actual length during deviative tactical plans
      * @throws GtuException when the vehicle is not on the given lane
      */
     public Length getProjectedLength(final Lane lane) throws GtuException
@@ -1699,7 +1699,7 @@ public class LaneBasedGtu extends Gtu
         private final List<Lane> lanes;
 
         /**
-         * @param lanes List&lt;Lane&gt;; lanes
+         * @param lanes lanes
          */
         protected CrossSection(final List<Lane> lanes)
         {

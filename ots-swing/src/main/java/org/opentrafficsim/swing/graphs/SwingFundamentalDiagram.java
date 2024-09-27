@@ -46,7 +46,7 @@ public class SwingFundamentalDiagram extends SwingPlot
 
     /**
      * Construct a new Swing container for FundamentalDiagram plot.
-     * @param plot FundamentalDiagram; the plot to embed
+     * @param plot the plot to embed
      */
     public SwingFundamentalDiagram(final FundamentalDiagram plot)
     {
@@ -295,7 +295,7 @@ public class SwingFundamentalDiagram extends SwingPlot
 
     /**
      * Retrieve the plot.
-     * @return AbstractPlot; the plot
+     * @return the plot
      */
     @Override
     public FundamentalDiagram getPlot()

@@ -15,11 +15,11 @@ import org.opentrafficsim.kpi.interfaces.LaneData;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <L> lane data type
- * @param lane L; lane
- * @param startPosition Length; start position
- * @param endPosition Length; end position
- * @param startTime Time; start time
- * @param endTime Time; end time
+ * @param lane lane
+ * @param startPosition start position
+ * @param endPosition end position
+ * @param startTime start time
+ * @param endTime end time
  */
 public record SpaceTimeRegion<L extends LaneData<L>>(L lane, Length startPosition, Length endPosition, Time startTime,
         Time endTime)
@@ -27,11 +27,11 @@ public record SpaceTimeRegion<L extends LaneData<L>>(L lane, Length startPositio
 
     /**
      * Creates a space-time region.
-     * @param lane L; lane
-     * @param startPosition Length; start position
-     * @param endPosition Length; end position
-     * @param startTime Time; start time
-     * @param endTime Time; end time
+     * @param lane lane
+     * @param startPosition start position
+     * @param endPosition end position
+     * @param startTime start time
+     * @param endTime end time
      * @throws IllegalArgumentException if start time is larger than end time
      */
     public SpaceTimeRegion

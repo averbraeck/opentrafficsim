@@ -22,19 +22,19 @@ public interface ContinuousLine
 
     /**
      * Start point.
-     * @return OrientedPoint2d; start point.
+     * @return start point.
      */
     OrientedPoint2d getStartPoint();
 
     /**
      * End point.
-     * @return OrientedPoint2d; end point.
+     * @return end point.
      */
     OrientedPoint2d getEndPoint();
 
     /**
      * Start direction.
-     * @return Direction; start point.
+     * @return start point.
      */
     default Direction getStartDirection()
     {
@@ -43,7 +43,7 @@ public interface ContinuousLine
 
     /**
      * End direction.
-     * @return Direction; end point.
+     * @return end point.
      */
     default Direction getEndDirection()
     {
@@ -52,19 +52,19 @@ public interface ContinuousLine
 
     /**
      * Start curvature.
-     * @return double; start curvature.
+     * @return start curvature.
      */
     double getStartCurvature();
 
     /**
      * End curvature.
-     * @return double; end curvature.
+     * @return end curvature.
      */
     double getEndCurvature();
 
     /**
      * Start radius.
-     * @return double; start radius.
+     * @return start radius.
      */
     default double getStartRadius()
     {
@@ -73,7 +73,7 @@ public interface ContinuousLine
 
     /**
      * End radius.
-     * @return double; end radius.
+     * @return end radius.
      */
     default double getEndRadius()
     {
@@ -82,22 +82,22 @@ public interface ContinuousLine
 
     /**
      * Flatten continuous line in to a polyline. Implementations should use the flattener when relevant and possible.
-     * @param flattener Flattener; flattener.
-     * @return PolyLine2d; flattened line.
+     * @param flattener flattener.
+     * @return flattened line.
      */
     PolyLine2d flatten(Flattener flattener);
 
     /**
      * Flatten continuous line offset in to a polyline. Implementations should use the flattener when relevant and possible.
-     * @param offsets FractionalLengthData; offset data.
-     * @param flattener Flattener; flattener.
-     * @return PolyLine2d; flattened line.
+     * @param offsets offset data.
+     * @param flattener flattener.
+     * @return flattened line.
      */
     PolyLine2d flattenOffset(FractionalLengthData offsets, Flattener flattener);
 
     /**
      * Return the length of the line.
-     * @return double; length of the line.
+     * @return length of the line.
      */
     double getLength();
 

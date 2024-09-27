@@ -42,8 +42,8 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
 
     /**
      * Constructor.
-     * @param perception LanePerception; perception
-     * @param headwayGtuType HeadwayGtuType; type of headway gtu to generate
+     * @param perception perception
+     * @param headwayGtuType type of headway gtu to generate
      */
     public DirectNeighborsPerception(final LanePerception perception, final HeadwayGtuType headwayGtuType)
     {
@@ -62,8 +62,8 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
 
     /**
      * Computes the first leaders regarding splits.
-     * @param lat LateralDirectionality; lateral directionality
-     * @return SortedSet&lt;HeadwayGtu&gt;; first leaders
+     * @param lat lateral directionality
+     * @return first leaders
      */
     private SortedSet<HeadwayGtu> computeFirstLeaders(final LateralDirectionality lat)
     {
@@ -94,8 +94,8 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
 
     /**
      * Computes the first followers regarding splits.
-     * @param lat LateralDirectionality; lateral directionality
-     * @return SortedSet&lt;HeadwayGtu&gt;; first followers
+     * @param lat lateral directionality
+     * @return first followers
      */
     private SortedSet<HeadwayGtu> computeFirstFollowers(final LateralDirectionality lat)
     {
@@ -126,8 +126,8 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
 
     /**
      * Computes whether there is a GTU alongside.
-     * @param lat LateralDirectionality; lateral directionality
-     * @return boolean; whether there is a GTU alongside
+     * @param lat lateral directionality
+     * @return whether there is a GTU alongside
      */
     public boolean computeGtuAlongside(final LateralDirectionality lat)
     {
@@ -171,7 +171,7 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
 
     /**
      * Computes leaders.
-     * @param lane RelativeLane; lane
+     * @param lane lane
      * @return perception iterable for leaders
      */
     private PerceptionCollectable<HeadwayGtu, LaneBasedGtu> computeLeaders(final RelativeLane lane)
@@ -224,7 +224,7 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
 
     /**
      * Computes followers.
-     * @param lane RelativeLane; lane
+     * @param lane lane
      * @return perception iterable for followers
      */
     private PerceptionCollectable<HeadwayGtu, LaneBasedGtu> computeFollowers(final RelativeLane lane)
@@ -269,7 +269,7 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
 
     /**
      * Checks that lateral directionality is either left or right and an existing lane.
-     * @param lat LateralDirectionality; LEFT or RIGHT
+     * @param lat LEFT or RIGHT
      * @throws ParameterException if parameter is not defined
      * @throws NullPointerException if {@code lat} is {@code null}
      * @throws IllegalArgumentException if {@code lat} is {@code NONE}

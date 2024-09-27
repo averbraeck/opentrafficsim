@@ -39,7 +39,7 @@ public interface NeighborsPerception extends LaneBasedPerceptionCategory
      * 
      * <b>Only vehicles who's rear is beyond the own front are considered, no alongside vehicles.</b><br>
      * <br>
-     * @param lat LateralDirectionality; LEFT or RIGHT
+     * @param lat LEFT or RIGHT
      * @return list of followers on a lane
      * @throws ParameterException if parameter is not defined
      * @throws NullPointerException if {@code lat} is {@code null}
@@ -65,7 +65,7 @@ public interface NeighborsPerception extends LaneBasedPerceptionCategory
      * 
      * <b>Only vehicles who's front is before the own rear are considered, no alongside vehicles.</b><br>
      * <br>
-     * @param lat LateralDirectionality; LEFT or RIGHT
+     * @param lat LEFT or RIGHT
      * @return list of followers on a lane
      * @throws ParameterException if parameter is not defined
      * @throws NullPointerException if {@code lat} is {@code null}
@@ -76,7 +76,7 @@ public interface NeighborsPerception extends LaneBasedPerceptionCategory
 
     /**
      * Whether there is a GTU alongside, i.e. with overlap, in an adjacent lane.
-     * @param lat LateralDirectionality; LEFT or RIGHT
+     * @param lat LEFT or RIGHT
      * @return whether there is a GTU alongside, i.e. with overlap, in an adjacent lane
      * @throws ParameterException if parameter is not defined
      * @throws NullPointerException if {@code lat} is {@code null}
@@ -87,7 +87,7 @@ public interface NeighborsPerception extends LaneBasedPerceptionCategory
     /**
      * Set of leaders on a lane, including adjacent GTU's who's FRONT is ahead of the own vehicle FRONT. Leaders are sorted by
      * distance.
-     * @param lane RelativeLane; relative lateral lane
+     * @param lane relative lateral lane
      * @return set of leaders on a lane, including adjacent GTU's who's FRONT is ahead of the own vehicle FRONT
      */
     PerceptionCollectable<HeadwayGtu, LaneBasedGtu> getLeaders(RelativeLane lane);
@@ -95,7 +95,7 @@ public interface NeighborsPerception extends LaneBasedPerceptionCategory
     /**
      * Set of followers on a lane, including adjacent GTU's who's FRONT is back of the own vehicle FRONT. Followers are sorted
      * by distance.
-     * @param lane RelativeLane; relative lateral lane
+     * @param lane relative lateral lane
      * @return set of followers on a lane, including adjacent GTU's who's FRONT is back of the own vehicle FRONT
      */
     PerceptionCollectable<HeadwayGtu, LaneBasedGtu> getFollowers(RelativeLane lane);

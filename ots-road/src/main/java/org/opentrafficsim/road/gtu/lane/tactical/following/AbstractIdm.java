@@ -27,7 +27,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-//@docs/06-behavior/parameters.md
+// @docs/06-behavior/parameters.md
 public abstract class AbstractIdm extends AbstractCarFollowingModel
 {
 
@@ -79,8 +79,8 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
 
     /**
      * Constructor with modular models for desired headway and desired speed.
-     * @param desiredHeadwayModel DesiredHeadwayModel; desired headway model
-     * @param desiredSpeedModel DesiredSpeedModel; desired speed model
+     * @param desiredHeadwayModel desired headway model
+     * @param desiredSpeedModel desired speed model
      */
     public AbstractIdm(final DesiredHeadwayModel desiredHeadwayModel, final DesiredSpeedModel desiredSpeedModel)
     {
@@ -93,12 +93,11 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
      * invoked to combine the free term with some implementation specific interaction term. The IDM free term is limited by a
      * deceleration of <code>B0</code> for cases where the current speed is above the desired speed. This method can be
      * overridden if the free term needs to be redefined.
-     * @param parameters Parameters; Parameters.
-     * @param speed Speed; Current speed.
-     * @param desiredSpeed Speed; Desired speed.
-     * @param desiredHeadway Length; Desired headway.
-     * @param leaders PerceptionIterable&lt;? extends Headway&gt;; Set of leader headways (guaranteed positive) and speeds,
-     *            ordered by headway (closest first).
+     * @param parameters Parameters.
+     * @param speed Current speed.
+     * @param desiredSpeed Desired speed.
+     * @param desiredHeadway Desired headway.
+     * @param leaders Set of leader headways (guaranteed positive) and speeds, ordered by headway (closest first).
      * @throws ParameterException If parameter exception occurs.
      * @return Car-following acceleration.
      */
@@ -125,13 +124,12 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
 
     /**
      * Combines an interaction term with the free term. There should be at least 1 leader for this method.
-     * @param aFree Acceleration; Free term of acceleration.
-     * @param parameters Parameters; Parameters.
-     * @param speed Speed; Current speed.
-     * @param desiredSpeed Speed; Desired speed.
-     * @param desiredHeadway Length; Desired headway.
-     * @param leaders PerceptionIterable&lt;? extends Headway&gt;; Set of leader headways (guaranteed positive) and speeds,
-     *            ordered by headway (closest first).
+     * @param aFree Free term of acceleration.
+     * @param parameters Parameters.
+     * @param speed Current speed.
+     * @param desiredSpeed Desired speed.
+     * @param desiredHeadway Desired headway.
+     * @param leaders Set of leader headways (guaranteed positive) and speeds, ordered by headway (closest first).
      * @return Combination of terms into a single acceleration.
      * @throws ParameterException In case of parameter exception.
      */
@@ -140,10 +138,10 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
 
     /**
      * Determines the dynamic desired headway, which is non-negative.
-     * @param parameters Parameters; Parameters.
-     * @param speed Speed; Current speed.
-     * @param desiredHeadway Length; Desired headway.
-     * @param leaderSpeed Speed; Speed of the leading vehicle.
+     * @param parameters Parameters.
+     * @param speed Current speed.
+     * @param desiredHeadway Desired headway.
+     * @param leaderSpeed Speed of the leading vehicle.
      * @return Dynamic desired headway.
      * @throws ParameterException In case of parameter exception.
      */
@@ -168,9 +166,9 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
 
     /**
      * Determines the dynamic headway term. May be used on individual leaders for multi-anticipative following.
-     * @param parameters Parameters; Parameters.
-     * @param speed Speed; Current speed.
-     * @param leaderSpeed Speed; Speed of the leading vehicle.
+     * @param parameters Parameters.
+     * @param speed Current speed.
+     * @param leaderSpeed Speed of the leading vehicle.
      * @return Dynamic headway term.
      * @throws ParameterException In case of parameter exception.
      */

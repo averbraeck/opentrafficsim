@@ -15,7 +15,7 @@ public class TailgatingType extends ExpressionType<Tailgating>
 
     /**
      * Constructor with value.
-     * @param value Tailgating; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public TailgatingType(final Tailgating value)
     {
@@ -24,7 +24,7 @@ public class TailgatingType extends ExpressionType<Tailgating>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public TailgatingType(final String expression)
     {

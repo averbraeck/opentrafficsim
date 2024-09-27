@@ -25,8 +25,8 @@ public abstract class AbstractHistoricalQueue<E, Q extends Queue<E>> extends Abs
 
     /**
      * Constructor.
-     * @param historyManager HistoryManager; history manager
-     * @param queue Q; initial queue
+     * @param historyManager history manager
+     * @param queue initial queue
      */
     protected AbstractHistoricalQueue(final HistoryManager historyManager, final Q queue)
     {

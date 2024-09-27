@@ -21,10 +21,10 @@ import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
 import org.opentrafficsim.xml.bindings.types.LengthBeginEndType.LengthBeginEnd;
 
 /**
- * Data class for objects that are drawn at a lane position. Implementations must call setLinkNode() in their constructor or
- * by some other dynamic means, or the XSD node must have a Link attribute that points to the XSD node of a link by a keyref.
- * This class will listen to attributes Id, Link, Lane and Position, and update visualization as needed. Attributes Id and Link
- * are optional.
+ * Data class for objects that are drawn at a lane position. Implementations must call setLinkNode() in their constructor or by
+ * some other dynamic means, or the XSD node must have a Link attribute that points to the XSD node of a link by a keyref. This
+ * class will listen to attributes Id, Link, Lane and Position, and update visualization as needed. Attributes Id and Link are
+ * optional.
  * <p>
  * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -63,9 +63,9 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
 
     /**
      * Constructor.
-     * @param map Map; map.
-     * @param node XsdTreeNode; node.
-     * @param editor OtsEditor; editor.
+     * @param map map.
+     * @param node node.
+     * @param editor editor.
      */
     public MapLaneBasedObjectData(final EditorMap map, final XsdTreeNode node, final OtsEditor editor)
     {
@@ -96,7 +96,7 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
     /**
      * Sets a node as link. Sub-classes may call this in their constructor if it is a fixed node. This class will listen to
      * changes in the Link attribute, and set a coupled node as link node if it exists.
-     * @param linkNode XsdTreeNode; link node.
+     * @param linkNode link node.
      */
     protected void setLinkNode(final XsdTreeNode linkNode)
     {
@@ -165,7 +165,7 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
 
     /**
      * Returns an id in the form {linkId}.{laneId}.{id} or {linkId}.{laneId}@{position} if the id is empty.
-     * @return String; id in link/lane/position form.
+     * @return id in link/lane/position form.
      */
     protected String getLinkLanePositionId()
     {
@@ -277,7 +277,7 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
 
     /**
      * Calculates the bounds. Can be overridden for objects with non-line shapes.
-     * @return OtsBounds2d; bounds of the object.
+     * @return bounds of the object.
      */
     protected OtsBounds2d calculateBounds()
     {

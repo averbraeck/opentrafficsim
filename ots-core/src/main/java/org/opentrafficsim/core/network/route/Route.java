@@ -44,8 +44,8 @@ public class Route implements Serializable, Identifiable
 
     /**
      * Create an empty route for the given GtuType.
-     * @param id String; the name of the route
-     * @param gtuType GtuType; the GtuType for which this is a route
+     * @param id the name of the route
+     * @param gtuType the GtuType for which this is a route
      */
     public Route(final String id, final GtuType gtuType)
     {
@@ -57,9 +57,9 @@ public class Route implements Serializable, Identifiable
     /**
      * Create a route based on an initial list of nodes. <br>
      * This constructor makes a defensive copy of the provided List.
-     * @param id String; the name of the route.
-     * @param gtuType GtuType; the GtuType for which this is a route
-     * @param nodes List&lt;Node&gt;; the initial list of nodes.
+     * @param id the name of the route.
+     * @param gtuType the GtuType for which this is a route
+     * @param nodes the initial list of nodes.
      * @throws NetworkException if intermediate nodes are missing in the route.
      */
     public Route(final String id, final GtuType gtuType, final List<Node> nodes) throws NetworkException
@@ -76,8 +76,8 @@ public class Route implements Serializable, Identifiable
             {
                 if (!fromNode.isConnectedTo(this.gtuType, toNode))
                 {
-                    throw new NetworkException("Route: node " + fromNode
-                            + " not directly or not directionally connected to node " + toNode);
+                    throw new NetworkException(
+                            "Route: node " + fromNode + " not directly or not directionally connected to node " + toNode);
                 }
             }
             fromNode = toNode;
@@ -130,8 +130,8 @@ public class Route implements Serializable, Identifiable
 
     /**
      * Add a node to the end of the node list.
-     * @param node Node; the node to add.
-     * @return Route; this route for method chaining
+     * @param node the node to add.
+     * @return this route for method chaining
      * @throws NetworkException in case node could not be added to the route.
      */
     public final Route addNode(final Node node) throws NetworkException
@@ -141,8 +141,8 @@ public class Route implements Serializable, Identifiable
             Node lastNode = getNodes().get(getNodes().size() - 1);
             if (!lastNode.isConnectedTo(this.gtuType, node))
             {
-                throw new NetworkException("Route: last node " + lastNode
-                        + " not directly or not directionally connected to node " + node);
+                throw new NetworkException(
+                        "Route: last node " + lastNode + " not directly or not directionally connected to node " + node);
             }
         }
         this.nodes.add(node);
@@ -160,7 +160,7 @@ public class Route implements Serializable, Identifiable
     }
 
     /**
-     * @param i int; the index of the node to obtain
+     * @param i the index of the node to obtain
      * @return node i.
      * @throws NetworkException if i &lt; 0 or i &gt; size
      */
@@ -211,8 +211,8 @@ public class Route implements Serializable, Identifiable
     /**
      * Return the index of a Node in this Route, or -1 if this Route does not contain the specified Node. <br>
      * If this route contains the Node more than once, the index of the first is returned.
-     * @param node Node; the Node to find
-     * @return int;
+     * @param node the Node to find
+     * @return
      */
     public final int indexOf(final Node node)
     {
@@ -220,7 +220,7 @@ public class Route implements Serializable, Identifiable
     }
 
     /**
-     * @param node Node; the Node to find
+     * @param node the Node to find
      * @return whether the route contains this node (quick using LinkedHashSet);
      */
     public final boolean contains(final Node node)
@@ -239,7 +239,7 @@ public class Route implements Serializable, Identifiable
 
     /**
      * Determine if this Route contains the specified Link.
-     * @param link Link; the link to check in the route.
+     * @param link the link to check in the route.
      * @return whether the link is part of the route or not.
      */
     public final boolean containsLink(final Link link)

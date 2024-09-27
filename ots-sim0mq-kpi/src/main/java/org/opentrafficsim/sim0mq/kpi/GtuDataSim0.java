@@ -24,9 +24,9 @@ public class GtuDataSim0 implements GtuData
     private final RouteData route;
 
     /**
-     * @param id String; the id
-     * @param gtuType GtuTypeData; the gtu type
-     * @param route RouteData; the route
+     * @param id the id
+     * @param gtuType the gtu type
+     * @param route the route
      */
     public GtuDataSim0(final String id, final String gtuType, final RouteData route)
     {
@@ -76,7 +76,7 @@ public class GtuDataSim0 implements GtuData
     {
         return null; // WS 30-09-2023 this project seems broken and I don't know what to return here; there is no network
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public int hashCode()

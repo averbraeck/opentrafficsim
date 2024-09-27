@@ -15,7 +15,7 @@ public class CooperationType extends ExpressionType<Cooperation>
 
     /**
      * Constructor with value.
-     * @param value Cooperation; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public CooperationType(final Cooperation value)
     {
@@ -24,7 +24,7 @@ public class CooperationType extends ExpressionType<Cooperation>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public CooperationType(final String expression)
     {

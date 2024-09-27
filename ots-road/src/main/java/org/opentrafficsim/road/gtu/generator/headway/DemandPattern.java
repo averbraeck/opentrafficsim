@@ -15,9 +15,9 @@ import org.opentrafficsim.road.od.Interpolation;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param demandVector FrequencyVector; demand vector
- * @param timeVector TimeVector; time vector
- * @param interpolation Interpolation; interpolation
+ * @param demandVector demand vector
+ * @param timeVector time vector
+ * @param interpolation interpolation
  */
 public record DemandPattern(FrequencyVector demandVector, TimeVector timeVector, Interpolation interpolation)
         implements Arrivals

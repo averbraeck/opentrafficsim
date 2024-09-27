@@ -20,7 +20,7 @@ public class AutomaticConnectorId extends AutomaticLinkId
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
+     * @param editor editor.
      */
     public AutomaticConnectorId(final OtsEditor editor)
     {

@@ -20,7 +20,7 @@ public class DetectorType extends GtuCompatibleInfraType<DetectorType, Detector>
 
     /**
      * Constructor for root-level types.
-     * @param id String; id.
+     * @param id id.
      */
     public DetectorType(final String id)
     {
@@ -29,8 +29,8 @@ public class DetectorType extends GtuCompatibleInfraType<DetectorType, Detector>
 
     /**
      * Constructor for types with parent.
-     * @param id String; id.
-     * @param parent DetectorType; parent type,
+     * @param id id.
+     * @param parent parent type,
      */
     public DetectorType(final String id, final DetectorType parent)
     {

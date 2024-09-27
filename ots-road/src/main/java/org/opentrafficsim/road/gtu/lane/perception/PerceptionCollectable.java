@@ -24,10 +24,10 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
 
     /**
      * Collect the underlying objects in to a perceived result. This methodology is loosely based on Stream.collect().
-     * @param collector PerceptionCollector&lt;C, ? super U, I&gt;; collector
+     * @param collector collector
      * @param <C> collection result type
      * @param <I> intermediate type
-     * @return C; collection result
+     * @return collection result
      */
     default <C, I> C collect(final PerceptionCollector<C, ? super U, I> collector)
     {
@@ -36,25 +36,24 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
 
     /**
      * Collect the underlying objects in to a perceived result. This methodology is loosely based on Stream.collect().
-     * @param identity Supplier&lt;I&gt;; the initial intermediate result value
-     * @param accumulator PerceptionAccumulator&lt;? super U, I&gt;; accumulator
-     * @param finalizer Function&lt;C, I&gt;; finalizer
+     * @param identity the initial intermediate result value
+     * @param accumulator accumulator
+     * @param finalizer finalizer
      * @param <C> collection result type
      * @param <I> intermediate type
-     * @return C; collection result
+     * @return collection result
      */
-    <C, I> C collect(Supplier<I> identity, PerceptionAccumulator<? super U, I> accumulator,
-            Function<I, C> finalizer);
+    <C, I> C collect(Supplier<I> identity, PerceptionAccumulator<? super U, I> accumulator, Function<I, C> finalizer);
 
     /**
      * Returns an iterator over the underlying objects.
-     * @return Iterator&lt;U&gt;; iterator
+     * @return iterator
      */
     Iterator<U> underlying();
 
     /**
      * Returns an iterator over the underlying objects coupled with the distance.
-     * @return Iterator&lt;UnderlyingDistance&lt;U&gt;&gt;; iterator
+     * @return iterator
      */
     Iterator<UnderlyingDistance<U>> underlyingWithDistance();
 
@@ -76,19 +75,19 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
     {
         /**
          * Returns the identity value, the initial intermediate value.
-         * @return I; identity value, the initial intermediate value
+         * @return identity value, the initial intermediate value
          */
         Supplier<I> getIdentity();
 
         /**
          * Returns the accumulator.
-         * @return PerceptionAccumulator; accumulator
+         * @return accumulator
          */
         PerceptionAccumulator<U, I> getAccumulator();
 
         /**
          * Returns the finalizer.
-         * @return PerceptionFinalizer; finalizer
+         * @return finalizer
          */
         Function<I, C> getFinalizer();
     }
@@ -110,10 +109,10 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
     {
         /**
          * Accumulate the next object to intermediate result.
-         * @param intermediate Intermediate&lt;I&gt;; intermediate result before accumulation of object
-         * @param object U; next object to include
-         * @param distance Length; distance to the considered object
-         * @return I; intermediate result after accumulation of object
+         * @param intermediate intermediate result before accumulation of object
+         * @param object next object to include
+         * @param distance distance to the considered object
+         * @return intermediate result after accumulation of object
          */
         Intermediate<I> accumulate(Intermediate<I> intermediate, U object, Length distance);
     }
@@ -143,7 +142,7 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
 
         /**
          * Constructor.
-         * @param object I; identity value
+         * @param object identity value
          */
         public Intermediate(final I object)
         {
@@ -152,7 +151,7 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
 
         /**
          * Get intermediate object.
-         * @return I; intermediate object
+         * @return intermediate object
          */
         public I getObject()
         {
@@ -161,7 +160,7 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
 
         /**
          * Set intermediate object.
-         * @param object I; intermediate object
+         * @param object intermediate object
          */
         public void setObject(final I object)
         {
@@ -170,7 +169,7 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
 
         /**
          * Returns the number of the underlying object currently being accumulated, starts at 0 for the first.
-         * @return int; number of the underlying object currently being accumulated
+         * @return number of the underlying object currently being accumulated
          */
         public int getNumber()
         {
@@ -195,7 +194,7 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
 
         /**
          * Method for the iterator to check if it can stop.
-         * @return boolean; whether the iterator can stop
+         * @return whether the iterator can stop
          */
         public boolean isStop()
         {
@@ -224,8 +223,8 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
         private final Length distance;
 
         /**
-         * @param object U; object
-         * @param distance Length; distance
+         * @param object object
+         * @param distance distance
          */
         public UnderlyingDistance(final U object, final Length distance)
         {
@@ -234,7 +233,7 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
         }
 
         /**
-         * @return U; object.
+         * @return object.
          */
         public U getObject()
         {
@@ -242,7 +241,7 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
         }
 
         /**
-         * @return Length; distance.
+         * @return distance.
          */
         public Length getDistance()
         {

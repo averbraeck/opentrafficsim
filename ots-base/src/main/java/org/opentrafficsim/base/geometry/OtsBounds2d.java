@@ -19,7 +19,7 @@ public interface OtsBounds2d extends Bounds<OtsBounds2d, Point2d, Drawable2d>
 
     /** Standard mid point. */
     static Point2d CENTER = new Point2d(0.0, 0.0);
-    
+
     /** {@inheritDoc} */
     @Override
     default double getMinX()
@@ -113,7 +113,7 @@ public interface OtsBounds2d extends Bounds<OtsBounds2d, Point2d, Drawable2d>
 
     /**
      * Returns a polygon representation of the bounds, such that an intersection can be derived.
-     * @return Polygon2d; polygon representation of the bounds.
+     * @return polygon representation of the bounds.
      */
     Polygon2d asPolygon();
 
@@ -121,8 +121,8 @@ public interface OtsBounds2d extends Bounds<OtsBounds2d, Point2d, Drawable2d>
      * Signed distance function. The coordinates must be transformed to this bound's space. Negative distances returned are
      * inside the bounds, with the absolute value of the distance towards the edge. The default implementation is based on the
      * polygon representation and is expensive.
-     * @param point Point2d; point for which distance is returned.
-     * @return double; distance from point to these bounds.
+     * @param point point for which distance is returned.
+     * @return distance from point to these bounds.
      */
     default double signedDistance(final Point2d point)
     {

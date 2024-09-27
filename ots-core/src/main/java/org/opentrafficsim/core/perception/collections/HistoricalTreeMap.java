@@ -26,7 +26,7 @@ public class HistoricalTreeMap<K, V> extends AbstractHistoricalNavigableMap<K, V
 
     /**
      * Constructor.
-     * @param historyManager HistoryManager; history manager
+     * @param historyManager history manager
      */
     public HistoricalTreeMap(final HistoryManager historyManager)
     {
@@ -35,8 +35,8 @@ public class HistoricalTreeMap<K, V> extends AbstractHistoricalNavigableMap<K, V
 
     /**
      * Constructor.
-     * @param historyManager HistoryManager; history manager
-     * @param m Map&lt;? extends K, ? extends V&gt;; initial map
+     * @param historyManager history manager
+     * @param m initial map
      */
     public HistoricalTreeMap(final HistoryManager historyManager, final Map<? extends K, ? extends V> m)
     {

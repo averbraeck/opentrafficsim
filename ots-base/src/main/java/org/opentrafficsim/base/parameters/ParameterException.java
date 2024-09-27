@@ -24,7 +24,7 @@ public class ParameterException extends Exception
 
     /**
      * Constructor with message.
-     * @param message String; Message.
+     * @param message Message.
      */
     public ParameterException(final String message)
     {
@@ -33,7 +33,7 @@ public class ParameterException extends Exception
 
     /**
      * Constructor with cause.
-     * @param cause Throwable; Cause.
+     * @param cause Cause.
      */
     public ParameterException(final Throwable cause)
     {
@@ -42,8 +42,8 @@ public class ParameterException extends Exception
 
     /**
      * Constructor with message and cause.
-     * @param message String; Message.
-     * @param cause Throwable; Cause.
+     * @param message Message.
+     * @param cause Cause.
      */
     public ParameterException(final String message, final Throwable cause)
     {
@@ -52,10 +52,10 @@ public class ParameterException extends Exception
 
     /**
      * Constructor with message and cause.
-     * @param message String; Message.
-     * @param cause Throwable; Cause.
-     * @param enableSuppression boolean; Whether to enable suppression.
-     * @param writableStackTrace boolean; Whether or not the stack trace should be writable.
+     * @param message Message.
+     * @param cause Cause.
+     * @param enableSuppression Whether to enable suppression.
+     * @param writableStackTrace Whether or not the stack trace should be writable.
      */
     public ParameterException(final String message, final Throwable cause, final boolean enableSuppression,
             final boolean writableStackTrace)

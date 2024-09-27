@@ -21,8 +21,8 @@ public class DiscreteDistTemperature extends DiscreteDistDoubleScalar.Rel<Temper
     private static final long serialVersionUID = 20180829L;
 
     /**
-     * @param distribution DistDiscrete; distribution
-     * @param unit TemperatureUnit; units
+     * @param distribution distribution
+     * @param unit units
      */
     public DiscreteDistTemperature(final DistDiscrete distribution, final TemperatureUnit unit)
     {

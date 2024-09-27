@@ -34,10 +34,10 @@ public class ContinuousArc implements ContinuousLine
 
     /**
      * Define arc by starting point, radius, curve direction, and length.
-     * @param startPoint OrientedPoint2d; starting point.
-     * @param radius double; radius (must be positive).
-     * @param left boolean; left curve, or right.
-     * @param length double; arc length.
+     * @param startPoint starting point.
+     * @param radius radius (must be positive).
+     * @param left left curve, or right.
+     * @param length arc length.
      */
     public ContinuousArc(final OrientedPoint2d startPoint, final double radius, final boolean left, final double length)
     {
@@ -47,10 +47,10 @@ public class ContinuousArc implements ContinuousLine
 
     /**
      * Define arc by starting point, radius, curve direction, and angle.
-     * @param startPoint OrientedPoint2d; starting point.
-     * @param radius double; radius (must be positive).
-     * @param left boolean; left curve, or right.
-     * @param angle Angle; angle of arc (must be positive).
+     * @param startPoint starting point.
+     * @param radius radius (must be positive).
+     * @param left left curve, or right.
+     * @param angle angle of arc (must be positive).
      */
     public ContinuousArc(final OrientedPoint2d startPoint, final double radius, final boolean left, final Angle angle)
     {
@@ -114,9 +114,9 @@ public class ContinuousArc implements ContinuousLine
 
     /**
      * Returns a point on the arc at a fraction along the arc.
-     * @param fraction double; fraction along the arc.
-     * @param offset double; offset relative to radius.
-     * @return Point2d; point on the arc at a fraction along the arc.
+     * @param fraction fraction along the arc.
+     * @param offset offset relative to radius.
+     * @return point on the arc at a fraction along the arc.
      */
     private Point2d getPoint(final double fraction, final double offset)
     {
@@ -129,8 +129,8 @@ public class ContinuousArc implements ContinuousLine
 
     /**
      * Returns the direction at given fraction along the arc.
-     * @param fraction double; fraction along the arc.
-     * @return double; direction at given fraction along the arc.
+     * @param fraction fraction along the arc.
+     * @return direction at given fraction along the arc.
      */
     private double getDirection(final double fraction)
     {

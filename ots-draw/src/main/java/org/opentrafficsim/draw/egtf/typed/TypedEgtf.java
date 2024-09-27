@@ -37,10 +37,10 @@ public class TypedEgtf extends Egtf
 
     /**
      * Constructor defining global settings. A default kernel is set.
-     * @param cCong Speed; shock wave speed in congestion
-     * @param cFree Speed; shock wave speed in free flow
-     * @param deltaV Speed; speed range between congestion and free flow
-     * @param vc Speed; flip-over speed below which we have congestion
+     * @param cCong shock wave speed in congestion
+     * @param cFree shock wave speed in free flow
+     * @param deltaV speed range between congestion and free flow
+     * @param vc flip-over speed below which we have congestion
      */
     public TypedEgtf(final Speed cCong, final Speed cFree, final Speed deltaV, final Speed vc)
     {
@@ -50,14 +50,14 @@ public class TypedEgtf extends Egtf
 
     /**
      * Convenience constructor that also sets a specified kernel.
-     * @param cCong Speed; shock wave speed in congestion
-     * @param cFree Speed; shock wave speed in free flow
-     * @param deltaV Speed; speed range between congestion and free flow
-     * @param vc Speed; flip-over speed below which we have congestion
-     * @param sigma Length; spatial kernel size
-     * @param tau Duration; temporal kernel size
-     * @param xMax Length; maximum spatial range
-     * @param tMax Duration; maximum temporal range
+     * @param cCong shock wave speed in congestion
+     * @param cFree shock wave speed in free flow
+     * @param deltaV speed range between congestion and free flow
+     * @param vc flip-over speed below which we have congestion
+     * @param sigma spatial kernel size
+     * @param tau temporal kernel size
+     * @param xMax maximum spatial range
+     * @param tMax maximum temporal range
      */
     @SuppressWarnings("parameternumber")
     public TypedEgtf(final Speed cCong, final Speed cFree, final Speed deltaV, final Speed vc, final Length sigma,
@@ -70,10 +70,10 @@ public class TypedEgtf extends Egtf
 
     /**
      * Adds point data.
-     * @param quantity Quantity&lt;Z, ?&gt;; quantity of the data
-     * @param location Length; location
-     * @param time Duration; time
-     * @param value Z; data value
+     * @param quantity quantity of the data
+     * @param location location
+     * @param time time
+     * @param value data value
      * @param <U> unit of type
      * @param <Z> value type
      * @throws IllegalStateException if data was added with a data stream previously
@@ -86,10 +86,10 @@ public class TypedEgtf extends Egtf
 
     /**
      * Adds point data.
-     * @param dataStream DataStream&lt;Z&gt;; data stream of the data
-     * @param location Length; location
-     * @param time Duration; time
-     * @param value Z; data value
+     * @param dataStream data stream of the data
+     * @param location location
+     * @param time time
+     * @param value data value
      * @param <U> unit of type
      * @param <Z> value type
      * @throws IllegalStateException if data was added with a quantity previously
@@ -102,10 +102,10 @@ public class TypedEgtf extends Egtf
 
     /**
      * Adds vector data.
-     * @param quantity Quantity&lt;Z, ?&gt;; quantity of the data
-     * @param location LengthVector; locations
-     * @param time DurationVector; times
-     * @param values DoubleVectorInterface&lt;U&gt;; data values
+     * @param quantity quantity of the data
+     * @param location locations
+     * @param time times
+     * @param values data values
      * @param <U> unit of type
      * @param <Z> value type
      * @throws IllegalStateException if data was added with a data stream previously
@@ -118,10 +118,10 @@ public class TypedEgtf extends Egtf
 
     /**
      * Adds vector data.
-     * @param dataStream DataStream&lt;Z&gt;; data stream of the data
-     * @param location LengthVector; locations
-     * @param time DurationVector; times
-     * @param values DoubleVectorInterface&lt;U&gt;; data values
+     * @param dataStream data stream of the data
+     * @param location locations
+     * @param time times
+     * @param values data values
      * @param <U> unit of type
      * @param <Z> value type
      * @throws IllegalStateException if data was added with a quantity previously
@@ -134,10 +134,10 @@ public class TypedEgtf extends Egtf
 
     /**
      * Adds grid data.
-     * @param quantity Quantity&lt;Z, ?&gt;; quantity of the data
-     * @param location LengthVector; locations
-     * @param time DurationVector; times
-     * @param values DoubleMatrixInterface&lt;U&gt;; data values
+     * @param quantity quantity of the data
+     * @param location locations
+     * @param time times
+     * @param values data values
      * @param <U> unit of type
      * @param <Z> value type
      * @throws IllegalStateException if data was added with a data stream previously
@@ -150,10 +150,10 @@ public class TypedEgtf extends Egtf
 
     /**
      * Adds grid data.
-     * @param dataStream DataStream&lt;Z&gt;; data stream of the data
-     * @param location LengthVector; locations
-     * @param time DurationVector; times
-     * @param values DoubleMatrixInterface&lt;U&gt;; data values
+     * @param dataStream data stream of the data
+     * @param location locations
+     * @param time times
+     * @param values data values
      * @param <U> unit of type
      * @param <Z> value type
      * @throws IllegalStateException if data was added with a quantity previously
@@ -167,7 +167,7 @@ public class TypedEgtf extends Egtf
     /**
      * Removes all data from before the given time. This is useful in live usages of this class, where older data is no longer
      * required.
-     * @param time Duration; time before which all data can be removed
+     * @param time time before which all data can be removed
      */
     public void clearDataBefore(final Duration time)
     {
@@ -176,8 +176,8 @@ public class TypedEgtf extends Egtf
 
     /**
      * Sets an exponential kernel with infinite range.
-     * @param sigma Length; spatial kernel size
-     * @param tau Duration; temporal kernel size
+     * @param sigma spatial kernel size
+     * @param tau temporal kernel size
      */
     public void setKernel(final Length sigma, final Duration tau)
     {
@@ -186,10 +186,10 @@ public class TypedEgtf extends Egtf
 
     /**
      * Returns an exponential kernel with limited range.
-     * @param sigma Length; spatial kernel size in [m]
-     * @param tau Duration; temporal kernel size in [s]
-     * @param xMax Length; maximum spatial range in [m]
-     * @param tMax Duration; maximum temporal range in [s]
+     * @param sigma spatial kernel size in [m]
+     * @param tau temporal kernel size in [s]
+     * @param xMax maximum spatial range in [m]
+     * @param tMax maximum temporal range in [s]
      */
     public void setKernel(final Length sigma, final Duration tau, final Length xMax, final Duration tMax)
     {
@@ -198,8 +198,8 @@ public class TypedEgtf extends Egtf
 
     /**
      * Sets a Gaussian kernel with infinite range.
-     * @param sigma Length; spatial kernel size
-     * @param tau Duration; temporal kernel size
+     * @param sigma spatial kernel size
+     * @param tau temporal kernel size
      */
     public void setGaussKernel(final Length sigma, final Duration tau)
     {
@@ -208,10 +208,10 @@ public class TypedEgtf extends Egtf
 
     /**
      * Returns a Gaussian kernel with limited range.
-     * @param sigma Length; spatial kernel size in [m]
-     * @param tau Duration; temporal kernel size in [s]
-     * @param xMax Length; maximum spatial range in [m]
-     * @param tMax Duration; maximum temporal range in [s]
+     * @param sigma spatial kernel size in [m]
+     * @param tau temporal kernel size in [s]
+     * @param xMax maximum spatial range in [m]
+     * @param tMax maximum temporal range in [s]
      */
     public void setGaussKernel(final Length sigma, final Duration tau, final Length xMax, final Duration tMax)
     {
@@ -220,9 +220,9 @@ public class TypedEgtf extends Egtf
 
     /**
      * Sets a kernel with limited range and provided shape. The shape allows using non-exponential kernels.
-     * @param xMax Length; maximum spatial range
-     * @param tMax Duration; maximum temporal range
-     * @param shape KernelShape; shape of the kernel
+     * @param xMax maximum spatial range
+     * @param tMax maximum temporal range
+     * @param shape shape of the kernel
      */
     public void setKernel(final Length xMax, final Duration tMax, final KernelShape shape)
     {
@@ -231,10 +231,10 @@ public class TypedEgtf extends Egtf
 
     /**
      * Returns filtered data.
-     * @param location LengthVector; location of output grid
-     * @param time DurationVector; time of output grid
-     * @param quantities Quantity&lt;?, ?&gt;...; quantities to calculate filtered data of
-     * @return Filter; filtered data, {@code null} when interrupted
+     * @param location location of output grid
+     * @param time time of output grid
+     * @param quantities quantities to calculate filtered data of
+     * @return filtered data, {@code null} when interrupted
      */
     public TypedFilter filter(final LengthVector location, final DurationVector time, final Quantity<?, ?>... quantities)
     {

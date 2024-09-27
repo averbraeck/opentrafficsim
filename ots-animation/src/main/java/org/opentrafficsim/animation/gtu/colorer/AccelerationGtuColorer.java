@@ -41,9 +41,8 @@ public class AccelerationGtuColorer implements GtuColorer, Serializable
 
     /**
      * Construct a new AccelerationGtuColorer.
-     * @param maximumDeceleration Acceleration; the deceleration (negative acceleration) that corresponds to the first (red)
-     *            legend entry
-     * @param maximumAcceleration Acceleration; the deceleration that corresponds to the last (blue) legend entry
+     * @param maximumDeceleration the deceleration (negative acceleration) that corresponds to the first (red) legend entry
+     * @param maximumAcceleration the deceleration that corresponds to the last (blue) legend entry
      */
     public AccelerationGtuColorer(final Acceleration maximumDeceleration, final Acceleration maximumAcceleration)
     {

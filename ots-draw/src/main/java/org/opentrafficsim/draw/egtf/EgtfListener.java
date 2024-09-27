@@ -15,7 +15,7 @@ public interface EgtfListener extends EventListener
 
     /**
      * Notifies progress.
-     * @param event EgtfEvent; event
+     * @param event event
      */
     void notifyProgress(EgtfEvent event);
 

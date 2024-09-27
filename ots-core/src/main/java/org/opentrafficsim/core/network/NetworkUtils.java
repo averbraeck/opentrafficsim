@@ -20,7 +20,7 @@ public final class NetworkUtils
 
     /**
      * Remove all objects and animation in the network.
-     * @param network Network; the network to destroy
+     * @param network the network to destroy
      */
     public static void destroy(final Network network)
     {

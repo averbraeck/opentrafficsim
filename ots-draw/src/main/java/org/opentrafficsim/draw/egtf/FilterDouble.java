@@ -25,9 +25,9 @@ public class FilterDouble implements Filter
 
     /**
      * Constructor.
-     * @param location double[]; grid locations of output data
-     * @param time double[]; grid times of output data
-     * @param map Map&lt;Quantity&lt;?, ?&gt;, double[][]&gt;; filtered data
+     * @param location grid locations of output data
+     * @param time grid times of output data
+     * @param map filtered data
      */
     protected FilterDouble(final double[] location, final double[] time, final Map<Quantity<?, ?>, double[][]> map)
     {

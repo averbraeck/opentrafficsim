@@ -23,8 +23,8 @@ public abstract class ExtendedDataDuration<G extends GtuData>
 
     /**
      * Constructor setting the id.
-     * @param id String; id
-     * @param description String; description
+     * @param id id
+     * @param description description
      */
     public ExtendedDataDuration(final String id, final String description)
     {

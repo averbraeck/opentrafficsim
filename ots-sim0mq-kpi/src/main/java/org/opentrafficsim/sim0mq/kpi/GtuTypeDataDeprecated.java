@@ -15,7 +15,7 @@ public class GtuTypeDataDeprecated
     private final String gtuTypeName;
 
     /**
-     * @param gtuTypeName String; gtu type name
+     * @param gtuTypeName gtu type name
      */
     public GtuTypeDataDeprecated(final String gtuTypeName)
     {
@@ -31,7 +31,7 @@ public class GtuTypeDataDeprecated
     }
 
     /** {@inheritDoc} */
-    //@Override
+    // @Override
     public String getId()
     {
         return this.gtuTypeName;

@@ -20,7 +20,7 @@ public abstract class AbstractOtsSimulationApplication implements Serializable
 
     /**
      * The application, which is model aware.
-     * @param model OtsModelInterface; the model that will be shown in the JFrame
+     * @param model the model that will be shown in the JFrame
      */
     public AbstractOtsSimulationApplication(final OtsModelInterface model)
     {

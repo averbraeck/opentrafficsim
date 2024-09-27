@@ -18,8 +18,8 @@ public interface ParameterFactory
 
     /**
      * Creates a set of parameters for the provided GTU type.
-     * @param parameters Parameters; parameters
-     * @param gtuType GtuType; GTU type
+     * @param parameters parameters
+     * @param gtuType GTU type
      * @throws ParameterException when illegal parameter value is set
      */
     void setValues(Parameters parameters, GtuType gtuType) throws ParameterException;

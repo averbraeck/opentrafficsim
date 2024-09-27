@@ -30,8 +30,8 @@ public class SpeedLimitType<T> implements Serializable, Identifiable, Type<Speed
 
     /**
      * Constructor.
-     * @param id String; id of this speed limit type, which must be unique
-     * @param infoClass Class&lt;T&gt;; class of the info related to this speed limit type
+     * @param id id of this speed limit type, which must be unique
+     * @param infoClass class of the info related to this speed limit type
      * @throws NullPointerException if id or info class is null
      */
     public SpeedLimitType(final String id, final Class<T> infoClass)

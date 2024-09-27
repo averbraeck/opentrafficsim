@@ -13,7 +13,7 @@ public class BooleanType extends ExpressionType<Boolean>
 
     /**
      * Constructor with value.
-     * @param value Boolean; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public BooleanType(final Boolean value)
     {
@@ -22,7 +22,7 @@ public class BooleanType extends ExpressionType<Boolean>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public BooleanType(final String expression)
     {

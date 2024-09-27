@@ -21,8 +21,8 @@ public class ContinuousDistLength extends ContinuousDistDoubleScalar.Rel<Length,
     private static final long serialVersionUID = 20180829L;
 
     /**
-     * @param distribution DistContinuous; distribution
-     * @param unit LengthUnit; units
+     * @param distribution distribution
+     * @param unit units
      */
     public ContinuousDistLength(final DistContinuous distribution, final LengthUnit unit)
     {

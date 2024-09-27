@@ -53,10 +53,10 @@ public final class ParseDistribution
 
     /**
      * Parse a relative unit distribution, e.g. <code>UNIFORM(1, 3) m</code>.
-     * @param streamMap StreamInformation; the map with streams from the RUN tag
-     * @param distribution ConstantDistType; the tag to parse, a sub type of ConstantDistType
-     * @param unit U; unit
-     * @param eval Eval; expression evaluator.
+     * @param streamMap the map with streams from the RUN tag
+     * @param distribution the tag to parse, a sub type of ConstantDistType
+     * @param unit unit
+     * @param eval expression evaluator.
      * @return a typed continuous random distribution.
      * @throws XmlParserException in case of a parse error.
      */
@@ -69,9 +69,9 @@ public final class ParseDistribution
 
     /**
      * Parse a discrete distribution.
-     * @param streamMap StreamInformation; map with stream information
-     * @param distType DiscreteDistType; the distribution to parse
-     * @param eval Eval; expression evaluator.
+     * @param streamMap map with stream information
+     * @param distType the distribution to parse
+     * @param eval expression evaluator.
      * @return the generated distribution.
      * @throws XmlParserException in case distribution unknown or parameter number does not match.
      */
@@ -114,9 +114,9 @@ public final class ParseDistribution
 
     /**
      * Parse a continuous distribution.
-     * @param streamMap StreamInformation; map with stream information
-     * @param distType ConstantDistType; the distribution to parse
-     * @param eval Eval; expression evaluator.
+     * @param streamMap map with stream information
+     * @param distType the distribution to parse
+     * @param eval expression evaluator.
      * @return the generated distribution.
      * @throws XmlParserException in case distribution unknown or parameter number does not match.
      */

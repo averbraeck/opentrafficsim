@@ -31,7 +31,7 @@ public class LinearAcc extends AbstractLinearFreeControl
 
     /**
      * Constructor using default sensors with no delay.
-     * @param delayedActuation DelayedActuation; delayed actuation
+     * @param delayedActuation delayed actuation
      */
     public LinearAcc(final DelayedActuation delayedActuation)
     {

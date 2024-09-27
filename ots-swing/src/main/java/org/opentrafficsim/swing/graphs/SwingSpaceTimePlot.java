@@ -26,7 +26,7 @@ public class SwingSpaceTimePlot extends SwingPlot
 
     /**
      * Construct a new Swing container for SpaceTimePlot.
-     * @param plot SpaceTimePlot; the plot to embed
+     * @param plot the plot to embed
      */
     public SwingSpaceTimePlot(final AbstractSpaceTimePlot plot)
     {

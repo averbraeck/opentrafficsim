@@ -27,7 +27,7 @@ public interface TacticalPlannerFactory<T extends TacticalPlanner>
 
     /**
      * Creates a new tactical planner for the given GTU.
-     * @param gtu Gtu; GTU
+     * @param gtu GTU
      * @return tactical planner for the given GTU
      * @throws GtuException if the gtu is not suitable in any way for the creation of the tactical planner
      */

@@ -25,7 +25,7 @@ public abstract class AbstractNodeDecorator implements EventListener
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
+     * @param editor editor.
      */
     public AbstractNodeDecorator(final OtsEditor editor)
     {
@@ -50,7 +50,7 @@ public abstract class AbstractNodeDecorator implements EventListener
 
     /**
      * Notified when a node has been created.
-     * @param node XsdTreeNode; created node.
+     * @param node created node.
      */
     public abstract void notifyCreated(XsdTreeNode node);
 

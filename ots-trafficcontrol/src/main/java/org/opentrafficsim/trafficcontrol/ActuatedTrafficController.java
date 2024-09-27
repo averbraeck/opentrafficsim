@@ -16,14 +16,14 @@ public interface ActuatedTrafficController extends TrafficController
 
     /**
      * Tell the traffic controller that the state of a detector has changed.
-     * @param detectorId String; id of the detector
-     * @param detectingGTU boolean;
+     * @param detectorId id of the detector
+     * @param detectingGTU
      */
     void updateDetector(String detectorId, boolean detectingGTU);
 
     /**
      * Retrieve the Swing (for now) container in which the controller displays its current state.
-     * @return Container; the display of the current state; may return null!
+     * @return the display of the current state; may return null!
      */
     Container getDisplayContainer();
 

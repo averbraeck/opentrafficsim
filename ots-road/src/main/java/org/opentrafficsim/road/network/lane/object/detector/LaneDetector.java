@@ -60,16 +60,16 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
 
     /**
      * Create a detector on a lane at a position on that lane.
-     * @param id String; the id of the detector.
-     * @param lane Lane; the lane for which this is a detector.
-     * @param longitudinalPosition Length; the position (between 0.0 and the length of the Lane) of the detector on the design
-     *            line of the lane.
+     * @param id the id of the detector.
+     * @param lane the lane for which this is a detector.
+     * @param longitudinalPosition the position (between 0.0 and the length of the Lane) of the detector on the design line of
+     *            the lane.
      * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the detector.
-     * @param simulator OtsSimulatorInterface; the simulator (needed to generate the animation).
-     * @param geometry PolyLine2d; the geometry of the object, which provides its location and bounds as well
-     * @param elevation Length; elevation of the detector
-     * @param detectorType DetectorType; detector type.
+     * @param simulator the simulator (needed to generate the animation).
+     * @param geometry the geometry of the object, which provides its location and bounds as well
+     * @param elevation elevation of the detector
+     * @param detectorType detector type.
      * @throws NetworkException when the position on the lane is out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -93,15 +93,15 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
 
     /**
      * Create a detector on a lane at a position on that lane at elevation <code>Detector.DEFAULT_DETECTOR_ELEVATION</code>.
-     * @param id String; the id of the detector.
-     * @param lane Lane; the lane for which this is a detector.
-     * @param longitudinalPosition Length; the position (between 0.0 and the length of the Lane) of the detector on the design
-     *            line of the lane.
+     * @param id the id of the detector.
+     * @param lane the lane for which this is a detector.
+     * @param longitudinalPosition the position (between 0.0 and the length of the Lane) of the detector on the design line of
+     *            the lane.
      * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the detector.
-     * @param simulator OtsSimulatorInterface; the simulator (needed to generate the animation).
-     * @param geometry PolyLine2d; the geometry of the object, which provides its location and bounds as well
-     * @param detectorType DetectorType; detector type.
+     * @param simulator the simulator (needed to generate the animation).
+     * @param geometry the geometry of the object, which provides its location and bounds as well
+     * @param detectorType detector type.
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public LaneDetector(final String id, final Lane lane, final Length longitudinalPosition,
@@ -115,14 +115,14 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
     /**
      * Create a new Detector on a lane at a position on that lane at elevation <code>Detector.DEFAULT_DETECTOR_ELEVATION</code>
      * and default geometry.
-     * @param id String; the id of the new Detector
-     * @param lane Lane; the lane on which the new Detector is positioned
-     * @param longitudinalPosition Length; the position (between 0.0 and the length of the Lane) of the detector on the design
-     *            line of the lane
+     * @param id the id of the new Detector
+     * @param lane the lane on which the new Detector is positioned
+     * @param longitudinalPosition the position (between 0.0 and the length of the Lane) of the detector on the design line of
+     *            the lane
      * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the detector.
-     * @param simulator OtsSimulatorInterface; the simulator (needed to generate the animation).
-     * @param detectorType DetectorType; detector type.
+     * @param simulator the simulator (needed to generate the animation).
+     * @param detectorType detector type.
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public LaneDetector(final String id, final Lane lane, final Length longitudinalPosition,
@@ -143,7 +143,7 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
     /**
      * Trigger an action on the GTU. Normally this is the GTU that triggered the detector. The typical call therefore is
      * <code>detector.trigger(this);</code>.
-     * @param gtu LaneBasedGtu; the GTU for which to carry out the trigger action.
+     * @param gtu the GTU for which to carry out the trigger action.
      */
     public final void trigger(final LaneBasedGtu gtu)
     {
@@ -154,7 +154,7 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
 
     /**
      * Implementation of the response to a trigger of this detector by a GTU.
-     * @param gtu LaneBasedGtu; the lane based GTU that triggered this detector.
+     * @param gtu the lane based GTU that triggered this detector.
      */
     protected abstract void triggerResponse(LaneBasedGtu gtu);
 
@@ -175,8 +175,8 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
 
     /**
      * Returns whether this Detector can detector GTUs of the given type.
-     * @param gtuType GtuType; GTU type.
-     * @return boolean; whether this Detector can detector GTUs of the given type.
+     * @param gtuType GTU type.
+     * @return whether this Detector can detector GTUs of the given type.
      */
     public final boolean isCompatible(final GtuType gtuType)
     {

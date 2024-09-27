@@ -90,12 +90,12 @@ public enum DefaultDistraction
 
     /**
      * Constructor.
-     * @param id String; id
-     * @param description String; description
-     * @param frequency Frequency; frequency per exposed driver
-     * @param exposure double; exposure (value in range [0...1])
-     * @param averageDuration Duration; average duration
-     * @param stdDuration Duration; standard deviation of duration
+     * @param id id
+     * @param description description
+     * @param frequency frequency per exposed driver
+     * @param exposure exposure (value in range [0...1])
+     * @param averageDuration average duration
+     * @param stdDuration standard deviation of duration
      */
     DefaultDistraction(final String id, final String description, final Frequency frequency, final double exposure,
             final Duration averageDuration, final Duration stdDuration)
@@ -110,9 +110,9 @@ public enum DefaultDistraction
 
     /**
      * Helper method to return a {@code Frequency} with little code.
-     * @param occurrences int; number of occurrences in data
-     * @param exposure double; exposure
-     * @return Frequency; frequency
+     * @param occurrences number of occurrences in data
+     * @param exposure exposure
+     * @return frequency
      */
     private static Frequency freq(final int occurrences, final double exposure)
     {
@@ -121,8 +121,8 @@ public enum DefaultDistraction
 
     /**
      * Helper method to return a {@code Duration} with little code.
-     * @param duration double; SI value of duration
-     * @return Duration; duration
+     * @param duration SI value of duration
+     * @return duration
      */
     private static Duration dur(final double duration)
     {
@@ -131,7 +131,7 @@ public enum DefaultDistraction
 
     /**
      * Returns the id.
-     * @return String; id
+     * @return id
      */
     public String getId()
     {
@@ -140,7 +140,7 @@ public enum DefaultDistraction
 
     /**
      * Returns the description.
-     * @return String; description
+     * @return description
      */
     public String getDescription()
     {
@@ -149,7 +149,7 @@ public enum DefaultDistraction
 
     /**
      * Returns the frequency per exposed driver.
-     * @return Frequency; frequency per exposed driver
+     * @return frequency per exposed driver
      */
     public Frequency getFrequency()
     {
@@ -158,7 +158,7 @@ public enum DefaultDistraction
 
     /**
      * Returns the exposure.
-     * @return double; exposure
+     * @return exposure
      */
     public double getExposure()
     {
@@ -167,7 +167,7 @@ public enum DefaultDistraction
 
     /**
      * Returns the average duration.
-     * @return Duration; average duration
+     * @return average duration
      */
     public Duration getAverageDuration()
     {
@@ -176,7 +176,7 @@ public enum DefaultDistraction
 
     /**
      * Returns the standard deviation of duration.
-     * @return Duration; standard deviation of duration
+     * @return standard deviation of duration
      */
     public Duration getStdDuration()
     {
@@ -185,8 +185,8 @@ public enum DefaultDistraction
 
     /**
      * Returns a default distraction from the id.
-     * @param id String; id
-     * @return DefaultDistraction; default distraction from id
+     * @param id id
+     * @return default distraction from id
      */
     public static DefaultDistraction getFromId(final String id)
     {

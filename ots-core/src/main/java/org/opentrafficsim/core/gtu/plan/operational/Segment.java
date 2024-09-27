@@ -21,10 +21,10 @@ import org.opentrafficsim.core.math.Solver;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param isStandStill boolean; whether this is a stand still segment
- * @param startSpeed Speed; start speed.
- * @param duration Duration; the duration of the acceleration for this segment.
- * @param acceleration Acceleration; acceleration of this segment.
+ * @param isStandStill whether this is a stand still segment
+ * @param startSpeed start speed.
+ * @param duration the duration of the acceleration for this segment.
+ * @param acceleration acceleration of this segment.
  */
 public record Segment(boolean isStandStill, Speed startSpeed, Duration duration, Acceleration acceleration)
         implements Serializable
@@ -35,9 +35,9 @@ public record Segment(boolean isStandStill, Speed startSpeed, Duration duration,
 
     /**
      * Constructor.
-     * @param startSpeed Speed; start speed.
-     * @param duration Duration; the duration of the acceleration for this segment.
-     * @param acceleration Acceleration; acceleration of this segment.
+     * @param startSpeed start speed.
+     * @param duration the duration of the acceleration for this segment.
+     * @param acceleration acceleration of this segment.
      */
     public Segment(final Speed startSpeed, final Duration duration, final Acceleration acceleration)
     {
@@ -46,7 +46,7 @@ public record Segment(boolean isStandStill, Speed startSpeed, Duration duration,
 
     /**
      * Constructor for stand-still segment.
-     * @param duration Duration; duration.
+     * @param duration duration.
      */
     private Segment(final Duration duration)
     {
@@ -55,7 +55,7 @@ public record Segment(boolean isStandStill, Speed startSpeed, Duration duration,
 
     /**
      * Returns the speed at the end of the segment.
-     * @return Speed; speed at the end of the segment.
+     * @return speed at the end of the segment.
      */
     public Speed endSpeed()
     {
@@ -64,7 +64,7 @@ public record Segment(boolean isStandStill, Speed startSpeed, Duration duration,
 
     /**
      * Returns the total distance traveled during the segment.
-     * @return Length; total distance traveled during the segment.
+     * @return total distance traveled during the segment.
      */
     public Length totalDistance()
     {
@@ -73,8 +73,8 @@ public record Segment(boolean isStandStill, Speed startSpeed, Duration duration,
 
     /**
      * Returns the speed at the given duration relative to the start of the segment.
-     * @param duration Duration; duration since start time of segment.
-     * @return Speed; speed at the given duration relative to the start of the segment.
+     * @param duration duration since start time of segment.
+     * @return speed at the given duration relative to the start of the segment.
      */
     public Speed speed(final Duration duration)
     {
@@ -89,8 +89,8 @@ public record Segment(boolean isStandStill, Speed startSpeed, Duration duration,
 
     /**
      * Return the distance traveled at the given duration relative to the start of the segment.
-     * @param duration Duration; duration since start time of segment.
-     * @return Length; distance traveled at the given duration relative to the start of the segment.
+     * @param duration duration since start time of segment.
+     * @return distance traveled at the given duration relative to the start of the segment.
      */
     public Length distance(final Duration duration)
     {
@@ -105,8 +105,8 @@ public record Segment(boolean isStandStill, Speed startSpeed, Duration duration,
 
     /**
      * Returns the duration within the segment it takes to travel the distance from the start of the segment.
-     * @param distance Length; distance from the start of the segment.
-     * @return Duration; duration within the segment it takes to travel the distance from the start of the segment.
+     * @param distance distance from the start of the segment.
+     * @return duration within the segment it takes to travel the distance from the start of the segment.
      */
     public Duration durationAtDistance(final Length distance)
     {
@@ -125,8 +125,8 @@ public record Segment(boolean isStandStill, Speed startSpeed, Duration duration,
 
     /**
      * Creates a stand-still segment.
-     * @param duration Duration; duration.
-     * @return Segment; segment with zero speed and acceleration.
+     * @param duration duration.
+     * @return segment with zero speed and acceleration.
      */
     public static Segment standStill(final Duration duration)
     {

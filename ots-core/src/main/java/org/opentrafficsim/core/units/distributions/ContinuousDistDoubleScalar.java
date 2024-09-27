@@ -114,8 +114,8 @@ public interface ContinuousDistDoubleScalar
         private static final long serialVersionUID = 20150000L;
 
         /**
-         * @param distribution DistContinuous; the wrapped distribution function.
-         * @param unit AU; the unit.
+         * @param distribution the wrapped distribution function.
+         * @param unit the unit.
          */
         public Abs(final DistContinuous distribution, final AU unit)
         {
@@ -123,8 +123,8 @@ public interface ContinuousDistDoubleScalar
         }
 
         /**
-         * @param constant double; the constant value.
-         * @param unit AU; the unit.
+         * @param constant the constant value.
+         * @param unit the unit.
          */
         public Abs(final double constant, final AU unit)
         {
@@ -179,8 +179,8 @@ public interface ContinuousDistDoubleScalar
         private static final long serialVersionUID = 20150000L;
 
         /**
-         * @param distribution DistContinuous; the wrapped distribution function.
-         * @param unit U; the unit.
+         * @param distribution the wrapped distribution function.
+         * @param unit the unit.
          */
         public Rel(final DistContinuous distribution, final U unit)
         {
@@ -188,8 +188,8 @@ public interface ContinuousDistDoubleScalar
         }
 
         /**
-         * @param constant double; the constant value.
-         * @param unit U; the unit.
+         * @param constant the constant value.
+         * @param unit the unit.
          */
         public Rel(final double constant, final U unit)
         {

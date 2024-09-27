@@ -39,7 +39,7 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
 
     /**
      * Constructor.
-     * @param document Document; XSD document.
+     * @param document XSD document.
      * @throws RemoteException when unable to listen for created nodes.
      */
     protected XsdTreeTableModel(final Document document) throws RemoteException
@@ -49,7 +49,7 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
 
     /**
      * Sets the tree table.
-     * @param treeTable JTreeTable; tree table.
+     * @param treeTable tree table.
      */
     public void setTreeTable(final JTreeTable treeTable)
     {
@@ -106,9 +106,9 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
 
     /**
      * Creates a string to display minOccurs and maxOccurs.
-     * @param minOccurs int; minOccurs.
-     * @param maxOccurs int; maxOccurs.
-     * @return String; string to display minOccurs and maxOccurs.
+     * @param minOccurs minOccurs.
+     * @param maxOccurs maxOccurs.
+     * @return string to display minOccurs and maxOccurs.
      */
     public String occurs(final int minOccurs, final int maxOccurs)
     {
@@ -167,7 +167,7 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
 
     /**
      * Apply the column widths to a newly created tree table.
-     * @param treeTable JTreeTable; tree table.
+     * @param treeTable tree table.
      */
     public static void applyColumnWidth(final JTreeTable treeTable)
     {

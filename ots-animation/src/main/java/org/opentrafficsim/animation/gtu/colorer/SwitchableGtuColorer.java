@@ -39,8 +39,8 @@ public class SwitchableGtuColorer implements GtuColorer, Serializable
 
     /**
      * Construct a new Switchable GtuColorer based on a list of colorers.
-     * @param activeIndex int; the index of the initially active colorer in the list (0-based).
-     * @param colorers GtuColorer...; the list of GtuColorer. List cannot be empty.
+     * @param activeIndex the index of the initially active colorer in the list (0-based).
+     * @param colorers the list of GtuColorer. List cannot be empty.
      * @throws IndexOutOfBoundsException when activeIndex &lt; 0 or larger than or equal to the number of colorers.
      */
     @SuppressWarnings("checkstyle:redundantthrows")
@@ -52,7 +52,7 @@ public class SwitchableGtuColorer implements GtuColorer, Serializable
 
     /**
      * Replace the currently active GtuColorer.
-     * @param activeIndex int; the index of the new active colorer in the list (0-based).
+     * @param activeIndex the index of the new active colorer in the list (0-based).
      * @throws IndexOutOfBoundsException when activeIndex &lt; 0 or larger than or equal to the number of colorers.
      */
     @SuppressWarnings("checkstyle:redundantthrows")
@@ -92,7 +92,7 @@ public class SwitchableGtuColorer implements GtuColorer, Serializable
 
     /**
      * Returns a builder for SwitchableGtuColorer.
-     * @return Builder; builder for SwitchableGtuColorer
+     * @return builder for SwitchableGtuColorer
      */
     public static final Builder builder()
     {
@@ -120,8 +120,8 @@ public class SwitchableGtuColorer implements GtuColorer, Serializable
 
         /**
          * Adds a colorer.
-         * @param colorer GtuColorer; colorer
-         * @return Builder; this builder for method chaining
+         * @param colorer colorer
+         * @return this builder for method chaining
          */
         public Builder addColorer(final GtuColorer colorer)
         {
@@ -131,8 +131,8 @@ public class SwitchableGtuColorer implements GtuColorer, Serializable
 
         /**
          * Adds a colorer, make it selected.
-         * @param colorer GtuColorer; colorer
-         * @return Builder; this builder for method chaining
+         * @param colorer colorer
+         * @return this builder for method chaining
          */
         public Builder addActiveColorer(final GtuColorer colorer)
         {
@@ -143,7 +143,7 @@ public class SwitchableGtuColorer implements GtuColorer, Serializable
 
         /**
          * Builds the colorer.
-         * @return SwitchableGtuColorer; colorer
+         * @return colorer
          */
         @SuppressWarnings("synthetic-access")
         public GtuColorer build()

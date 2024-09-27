@@ -91,10 +91,10 @@ public final class DemandParser
 
     /**
      * Parse the ROUTE tags.
-     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
-     * @param definitions Definitions; parsed definitions
-     * @param demand Demand; the Demand tag
-     * @param eval Eval; expression evaluator.
+     * @param otsNetwork the network to insert the parsed objects in
+     * @param definitions parsed definitions
+     * @param demand the Demand tag
+     * @param eval expression evaluator.
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
     static void parseRoutes(final RoadNetwork otsNetwork, final Definitions definitions, final Demand demand, final Eval eval)
@@ -119,10 +119,10 @@ public final class DemandParser
 
     /**
      * Parse the ShortestRoute tags.
-     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
-     * @param definitions Definitions; parsed definitions
-     * @param demand Demand; the Demand tag
-     * @param eval Eval; expression evaluator.
+     * @param otsNetwork the network to insert the parsed objects in
+     * @param definitions parsed definitions
+     * @param demand the Demand tag
+     * @param eval expression evaluator.
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
     static void parseShortestRoutes(final RoadNetwork otsNetwork, final Definitions definitions, final Demand demand,
@@ -246,9 +246,9 @@ public final class DemandParser
     /**
      * Returns the speed limit representative for the link. This is the highest speed limit defined on any lane for the GTU
      * type, or the maximum speed limit for any GTU type if no speed limit is defined for the given GTU type.
-     * @param link CrossSectionLink; link.
-     * @param gtuType GtuType; GTU type.
-     * @return Speed; speed limit representative for the link
+     * @param link link.
+     * @param gtuType GTU type.
+     * @return speed limit representative for the link
      */
     private static Speed getLinkSpeedLimit(final CrossSectionLink link, final GtuType gtuType)
     {
@@ -291,7 +291,7 @@ public final class DemandParser
 
     /**
      * Returns an A* heuristic that divides the euclidean distance by a maximum speed.
-     * @param maxSpeed Speed; maximum speed any GTU could reasonable have.
+     * @param maxSpeed maximum speed any GTU could reasonable have.
      * @return A* heuristic that divides the euclidean distance by a maximum speed
      */
     private static AStarAdmissibleHeuristic<Node> getTimeAStarHeuristic(final Speed maxSpeed)
@@ -309,9 +309,9 @@ public final class DemandParser
 
     /**
      * Parse the RouteMix tags.
-     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
-     * @param demand Demand; the Demand tag
-     * @param eval Eval; expression evaluator.
+     * @param otsNetwork the network to insert the parsed objects in
+     * @param demand the Demand tag
+     * @param eval expression evaluator.
      * @return id-based Map of routemix objects as FrequencyAndObject lists
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
@@ -338,9 +338,9 @@ public final class DemandParser
 
     /**
      * Parse the ShortestRouteMix tags.
-     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
-     * @param demand Demand; the Demand tag
-     * @param eval Eval; expression evaluator.
+     * @param otsNetwork the network to insert the parsed objects in
+     * @param demand the Demand tag
+     * @param eval expression evaluator.
      * @return id-based Map of routemix objects as FrequencyAndObject lists
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
@@ -367,14 +367,14 @@ public final class DemandParser
 
     /**
      * Parse the Generators.
-     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
-     * @param definitions Definitions; parsed definitions
-     * @param demand Network; the Network tag
+     * @param otsNetwork the network to insert the parsed objects in
+     * @param definitions parsed definitions
+     * @param demand the Network tag
      * @param gtuTemplates GtuTemplate tags
      * @param routeMixMap map with route mix entries
      * @param shortestRouteMixMap map with shortest route mix entries
      * @param streamInformation map with stream information
-     * @param eval Eval; expression evaluator.
+     * @param eval expression evaluator.
      * @return list of created GTU generators
      * @throws XmlParserException when the objects cannot be inserted into the network due to inconsistencies
      */
@@ -557,14 +557,14 @@ public final class DemandParser
 
     /**
      * Parse a GtuTemplate.
-     * @param templateTag GtuTemplate; tag of the GTU template.
-     * @param definitions Definitions; definitions.
-     * @param streamInformation StreamInformation; stream information.
-     * @param gtuTemplateId String; id of GTU template.
-     * @param routeGenerator Generator&lt;Route&gt;; route generator.
-     * @param strategicalFactory LaneBasedStrategicalRoutePlannerFactory; strategical factory.
-     * @param eval Eval; expression evaluator.
-     * @return LaneBasedGtuTemplate; parsed GTU template.
+     * @param templateTag tag of the GTU template.
+     * @param definitions definitions.
+     * @param streamInformation stream information.
+     * @param gtuTemplateId id of GTU template.
+     * @param routeGenerator route generator.
+     * @param strategicalFactory strategical factory.
+     * @param eval expression evaluator.
+     * @return parsed GTU template.
      * @throws XmlParserException if the GtuType is not defined.
      */
     private static LaneBasedGtuTemplate parseGtuTemplate(final GtuTemplate templateTag, final Definitions definitions,
@@ -588,10 +588,10 @@ public final class DemandParser
 
     /**
      * Parse a unit-based distribution into a Generator.
-     * @param streamMap StreamInformation; the map with predefined streams
-     * @param distribution ConstantDistType; the tag to parse (sub class of ConstantDistType)
-     * @param unit U; unit as taken from the tag
-     * @param eval Eval; expression evaluator.
+     * @param streamMap the map with predefined streams
+     * @param distribution the tag to parse (sub class of ConstantDistType)
+     * @param unit unit as taken from the tag
+     * @param eval expression evaluator.
      * @return the generator
      * @throws XmlParserException on parse error
      */
@@ -629,11 +629,11 @@ public final class DemandParser
 
     /**
      * Parse the Sinks.
-     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
-     * @param demand Network; the Network tag
-     * @param simulator OtsSimulatorInterface; the simulator
-     * @param definitions Definitions; type definitions.
-     * @param eval Eval; expression evaluator.
+     * @param otsNetwork the network to insert the parsed objects in
+     * @param demand the Network tag
+     * @param simulator the simulator
+     * @param definitions type definitions.
+     * @param eval expression evaluator.
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
     public static void parseSinks(final RoadNetwork otsNetwork, final Demand demand, final OtsSimulatorInterface simulator,

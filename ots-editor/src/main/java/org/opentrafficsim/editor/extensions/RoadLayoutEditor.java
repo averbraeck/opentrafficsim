@@ -29,13 +29,13 @@ public class RoadLayoutEditor implements EventListener, Consumer<XsdTreeNode>
 
     /** */
     private static final long serialVersionUID = 20230313L;
-    
+
     /** Editor. */
     private final OtsEditor editor;
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
+     * @param editor editor.
      * @throws IOException if icon cannot be loaded or listener cannot be added.
      */
     public RoadLayoutEditor(final OtsEditor editor) throws IOException
@@ -48,7 +48,7 @@ public class RoadLayoutEditor implements EventListener, Consumer<XsdTreeNode>
 
     /**
      * Temporary stub to create road layout pane.
-     * @return JComponent; component.
+     * @return component.
      */
     private static JComponent buildRoadLayoutPane()
     {
@@ -72,14 +72,13 @@ public class RoadLayoutEditor implements EventListener, Consumer<XsdTreeNode>
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
         {
             XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
-            if (node.getPathString().equals(XsdPaths.DEFINED_ROADLAYOUT)
-                    || node.getPathString().equals(XsdPaths.ROADLAYOUT))
+            if (node.getPathString().equals(XsdPaths.DEFINED_ROADLAYOUT) || node.getPathString().equals(XsdPaths.ROADLAYOUT))
             {
                 node.addConsumer("Edit...", this);
             }
         }
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public void accept(final XsdTreeNode t)

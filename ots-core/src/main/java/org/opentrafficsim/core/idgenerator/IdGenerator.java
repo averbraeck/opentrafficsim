@@ -24,7 +24,7 @@ public class IdGenerator implements Serializable, Supplier<String>
 
     /**
      * Construct a new IdGenerator.
-     * @param baseName String; all generated names start with this string
+     * @param baseName all generated names start with this string
      */
     public IdGenerator(final String baseName)
     {
@@ -33,7 +33,7 @@ public class IdGenerator implements Serializable, Supplier<String>
 
     /**
      * Generate an id.
-     * @return String; the generated id
+     * @return the generated id
      */
     @Override
     public final synchronized String get()

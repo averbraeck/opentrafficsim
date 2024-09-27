@@ -31,7 +31,7 @@ public class TaskLaneChanging extends TaskHeadwayBased
 
     /**
      * Constructor.
-     * @param lateralConsideration LateralConsideration; lateral consideration
+     * @param lateralConsideration lateral consideration
      */
     public TaskLaneChanging(final LateralConsideration lateralConsideration)
     {
@@ -121,10 +121,10 @@ public class TaskLaneChanging extends TaskHeadwayBased
         /**
          * Returns fraction of lateral consideration, &lt;0 for left lane, &gt;0 for right lane. Should be in the range -1 ...
          * 1.
-         * @param perception LanePerception; perception
-         * @param gtu LaneBasedGtu; gtu
-         * @param parameters Parameters; parameters
-         * @return double; demand of this task
+         * @param perception perception
+         * @param gtu gtu
+         * @param parameters parameters
+         * @return demand of this task
          * @throws ParameterException if a parameter is missing or out of bounds
          * @throws GtuException exceptions pertaining to the GTU
          */

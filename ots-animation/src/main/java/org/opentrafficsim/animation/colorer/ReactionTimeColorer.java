@@ -46,7 +46,7 @@ public class ReactionTimeColorer implements GtuColorer
 
     /**
      * Constructor.
-     * @param maxReactionTime Duration; maximum reaction time.
+     * @param maxReactionTime maximum reaction time.
      */
     public ReactionTimeColorer(final Duration maxReactionTime)
     {

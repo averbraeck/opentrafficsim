@@ -15,7 +15,7 @@ public class GapAcceptanceType extends ExpressionType<GapAcceptance>
 
     /**
      * Constructor with value.
-     * @param value GapAcceptance; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public GapAcceptanceType(final GapAcceptance value)
     {
@@ -24,7 +24,7 @@ public class GapAcceptanceType extends ExpressionType<GapAcceptance>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public GapAcceptanceType(final String expression)
     {

@@ -47,7 +47,7 @@ public class SocioDesiredSpeed implements DesiredSpeedModel, Initialisable
 
     /**
      * Constructor.
-     * @param baseModel DesiredSpeedModel; base model for desired speed
+     * @param baseModel base model for desired speed
      */
     public SocioDesiredSpeed(final DesiredSpeedModel baseModel)
     {

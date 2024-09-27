@@ -80,14 +80,14 @@ public class CrossSectionLink extends Link implements Serializable
 
     /**
      * Construction of a cross section link.
-     * @param network RoadNetwork; the network
-     * @param id String; the link id.
-     * @param startNode Node; the start node (directional).
-     * @param endNode Node; the end node (directional).
-     * @param linkType LinkType; the link type
-     * @param designLine OtsLine2d; the design line of the Link
-     * @param elevation FractionalLengthData; elevation given over fractional length, may be {@code null}.
-     * @param laneKeepingPolicy LaneKeepingPolicy; the policy to generally keep left, keep right, or keep lane
+     * @param network the network
+     * @param id the link id.
+     * @param startNode the start node (directional).
+     * @param endNode the end node (directional).
+     * @param linkType the link type
+     * @param designLine the design line of the Link
+     * @param elevation elevation given over fractional length, may be {@code null}.
+     * @param laneKeepingPolicy the policy to generally keep left, keep right, or keep lane
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */
@@ -110,7 +110,7 @@ public class CrossSectionLink extends Link implements Serializable
     /**
      * Add a cross section element at the end of the list. <br>
      * <b>Note:</b> LEFT is seen as a positive lateral direction, RIGHT as a negative lateral direction.
-     * @param cse CrossSectionElement; the cross section element to add.
+     * @param cse the cross section element to add.
      */
     protected final void addCrossSectionElement(final CrossSectionElement cse)
     {
@@ -133,7 +133,7 @@ public class CrossSectionLink extends Link implements Serializable
 
     /**
      * Retrieve a safe copy of the cross section element list.
-     * @return List&lt;CrossSectionElement&gt;; the cross section element list.
+     * @return the cross section element list.
      */
     public final List<CrossSectionElement> getCrossSectionElementList()
     {
@@ -142,7 +142,7 @@ public class CrossSectionLink extends Link implements Serializable
 
     /**
      * Retrieve the lane keeping policy.
-     * @return LaneKeepingPolicy; the lane keeping policy on this CrossSectionLink
+     * @return the lane keeping policy on this CrossSectionLink
      */
     public final LaneKeepingPolicy getLaneKeepingPolicy()
     {
@@ -151,8 +151,8 @@ public class CrossSectionLink extends Link implements Serializable
 
     /**
      * Find a cross section element with a specified id.
-     * @param id String; the id to search for
-     * @return CrossSectionElement; the cross section element with the given id, or null if not found
+     * @param id the id to search for
+     * @return the cross section element with the given id, or null if not found
      */
     public final CrossSectionElement getCrossSectionElement(final String id)
     {
@@ -168,25 +168,25 @@ public class CrossSectionLink extends Link implements Serializable
 
     /**
      * Return a safe copy of the list of lanes of this CrossSectionLink.
-     * @return List&lt;Lane&gt;; the list of lanes.
+     * @return the list of lanes.
      */
     public final List<Lane> getLanes()
     {
         return new ArrayList<>(this.lanes);
     }
-    
+
     /**
      * Return a safe copy of the list of shoulders of this CrossSectionLink.
-     * @return List&lt;Shoulder&gt;; the list of lanes.
+     * @return the list of lanes.
      */
     public final List<Shoulder> getShoulders()
     {
         return new ArrayList<>(this.shoulders);
     }
-    
+
     /**
      * Return a safe copy of the list of lanes and shoulders of this CrossSectionLink.
-     * @return List&lt;Lane&gt;; the list of lanes.
+     * @return the list of lanes.
      */
     public final List<Lane> getLanesAndShoulders()
     {
@@ -204,7 +204,7 @@ public class CrossSectionLink extends Link implements Serializable
     }
 
     /**
-     * @param priority Priority; set priority.
+     * @param priority set priority.
      */
     public final void setPriority(final Priority priority)
     {
@@ -213,7 +213,7 @@ public class CrossSectionLink extends Link implements Serializable
 
     /**
      * Returns the line over which GTUs enter and leave the link at the start node.
-     * @return PolyLine2d; line over which GTUs enter and leave the link at the start node
+     * @return line over which GTUs enter and leave the link at the start node
      */
     public PolyLine2d getStartLine()
     {
@@ -248,7 +248,7 @@ public class CrossSectionLink extends Link implements Serializable
 
     /**
      * Returns the line over which GTUs enter and leave the link at the end node.
-     * @return PolyLine2d; line over which GTUs enter and leave the link at the end node
+     * @return line over which GTUs enter and leave the link at the end node
      */
     public PolyLine2d getEndLine()
     {

@@ -53,7 +53,7 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
 
     /**
      * Construct a new OtsSearchPanel.
-     * @param otsAnimationPanel OtsAnimationPanel; the animation panel
+     * @param otsAnimationPanel the animation panel
      */
     public OtsSearchPanel(final OtsAnimationPanel otsAnimationPanel)
     {
@@ -106,9 +106,9 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
 
     /**
      * Update all values at once.
-     * @param objectKey String; key of the object type to search
-     * @param id String; id of object to search
-     * @param track boolean; if true; track continuously; if false; center on it, but do not track
+     * @param objectKey key of the object type to search
+     * @param id id of object to search
+     * @param track if true; track continuously; if false; center on it, but do not track
      */
     public void selectAndTrackObject(final String objectKey, final String id, final boolean track)
     {
@@ -178,7 +178,7 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
 
         /**
          * Construct a new ObjectKind (entry in the combo box).
-         * @param key String; the key of the new ObjectKind
+         * @param key the key of the new ObjectKind
          */
         ObjectKind(final String key)
         {
@@ -187,7 +187,7 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
 
         /**
          * Retrieve the key.
-         * @return String; the key
+         * @return the key
          */
         public Object getKey()
         {
@@ -196,9 +196,9 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
 
         /**
          * Lookup an object of type T in an OTS network.
-         * @param network Network; the OTS network
-         * @param id String; id of the object to return
-         * @return T; the object in the network of the correct type and matching id, or null if no matching object was found.
+         * @param network the OTS network
+         * @param id id of the object to return
+         * @return the object in the network of the correct type and matching id, or null if no matching object was found.
          */
         abstract T searchNetwork(Network network, String id);
 

@@ -1,7 +1,7 @@
 package org.opentrafficsim.editor;
 
 /**
- * Wraps a scenario node as an item in the dropdown menu. 
+ * Wraps a scenario node as an item in the dropdown menu.
  * <p>
  * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -13,10 +13,10 @@ public class ScenarioWrapper
 
     /** Scenario node. */
     private final XsdTreeNode scenarioNode;
-    
+
     /**
      * Constructor.
-     * @param scenarioNode XsdTreeNode; node of the scenario.
+     * @param scenarioNode node of the scenario.
      */
     public ScenarioWrapper(final XsdTreeNode scenarioNode)
     {
@@ -25,23 +25,23 @@ public class ScenarioWrapper
 
     /**
      * Returns whether this wraps the given node.
-     * @param node XsdTreeNode; node.
-     * @return boolean; whether this wraps the given node.
+     * @param node node.
+     * @return whether this wraps the given node.
      */
     public boolean isScenario(final XsdTreeNode node)
     {
         return node.equals(this.scenarioNode);
     }
-    
+
     /**
      * Returns the scenario node.
-     * @return XsdTreeNode; scenario node.
+     * @return scenario node.
      */
     public XsdTreeNode getScenarioNode()
     {
         return this.scenarioNode;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public String toString()
@@ -53,5 +53,5 @@ public class ScenarioWrapper
         String id = this.scenarioNode.getId();
         return id == null ? "(no id)" : id;
     }
-    
+
 }

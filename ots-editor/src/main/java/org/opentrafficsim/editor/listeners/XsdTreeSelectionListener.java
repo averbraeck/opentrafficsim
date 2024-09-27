@@ -26,27 +26,27 @@ import de.javagl.treetable.JTreeTable;
  */
 public class XsdTreeSelectionListener implements TreeSelectionListener, EventListener
 {
-    
+
     /** */
     private static final long serialVersionUID = 20230923L;
 
     /** Editor. */
     private final OtsEditor editor;
-    
+
     /** Tree table. */
     private final JTreeTable treeTable;
-    
+
     /** Attributes table. */
     private final JTable attributesTable;
 
     /** Node that we are listening to. */
     private XsdTreeNode listening;
-    
+
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
-     * @param treeTable JTreeTable; tree table.
-     * @param attributesTable JTable; attributes table.
+     * @param editor editor.
+     * @param treeTable tree table.
+     * @param attributesTable attributes table.
      */
     public XsdTreeSelectionListener(final OtsEditor editor, final JTreeTable treeTable, final JTable attributesTable)
     {
@@ -54,7 +54,7 @@ public class XsdTreeSelectionListener implements TreeSelectionListener, EventLis
         this.treeTable = treeTable;
         this.attributesTable = attributesTable;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public void valueChanged(final TreeSelectionEvent e)

@@ -59,8 +59,8 @@ public class LaneBasedStrategicalRoutePlanner implements LaneBasedStrategicalPla
     /**
      * Constructor for a strategical planner without route. This can only be used if the network does not have splits, or split
      * fractions are used.
-     * @param fixedTacticalPlanner LaneBasedTacticalPlanner; the tactical planner to use for the GTU
-     * @param gtu LaneBasedGtu; GTU
+     * @param fixedTacticalPlanner the tactical planner to use for the GTU
+     * @param gtu GTU
      * @throws GtuException if fixed tactical planner == null
      */
     public LaneBasedStrategicalRoutePlanner(final LaneBasedTacticalPlanner fixedTacticalPlanner, final LaneBasedGtu gtu)
@@ -72,12 +72,12 @@ public class LaneBasedStrategicalRoutePlanner implements LaneBasedStrategicalPla
     /**
      * Constructor for a strategical planner with route. If the route is {@code null}, a shortest path to the destination is
      * derived.
-     * @param fixedTacticalPlanner LaneBasedTacticalPlanner; the tactical planner to use for the GTU
-     * @param route Route; the route to drive
-     * @param gtu LaneBasedGtu; GTU
-     * @param origin Node; origin node
-     * @param destination Node; destination node
-     * @param routeGenerator RouteGeneratorOD; route generator
+     * @param fixedTacticalPlanner the tactical planner to use for the GTU
+     * @param route the route to drive
+     * @param gtu GTU
+     * @param origin origin node
+     * @param destination destination node
+     * @param routeGenerator route generator
      * @throws GtuException if fixed tactical planner == null
      */
     public LaneBasedStrategicalRoutePlanner(final LaneBasedTacticalPlanner fixedTacticalPlanner, final Route route,
@@ -262,7 +262,7 @@ public class LaneBasedStrategicalRoutePlanner implements LaneBasedStrategicalPla
 
     /**
      * Assures a route is available if a route is already present, or a destination and route supplier are provided.
-     * @param gtuType GtuType; the type of the GTU for which a route must be assured
+     * @param gtuType the type of the GTU for which a route must be assured
      */
     private void assureRoute(final GtuType gtuType)
     {
@@ -272,18 +272,18 @@ public class LaneBasedStrategicalRoutePlanner implements LaneBasedStrategicalPla
             List<Node> nodes = new ArrayList<>();
             if (this.origin != null)
             {
-                nodes.addAll(this.routeGenerator.getRoute(this.origin, ref.lane().getLink().getStartNode(), gtuType)
-                        .getNodes());
+                nodes.addAll(
+                        this.routeGenerator.getRoute(this.origin, ref.lane().getLink().getStartNode(), gtuType).getNodes());
             }
             else
             {
                 nodes.add(ref.lane().getLink().getStartNode());
             }
-            Route newRoute =
-                    this.routeGenerator.getRoute(ref.lane().getLink().getEndNode(), this.destination, gtuType);
+            Route newRoute = this.routeGenerator.getRoute(ref.lane().getLink().getEndNode(), this.destination, gtuType);
             nodes.addAll(newRoute.getNodes());
-            this.route = Try.assign(() -> new Route("Route for " + gtuType + " from " + this.origin + "to " + this.destination
-                    + " via " + ref.lane().getLink(), gtuType, nodes), "No route possible over nodes %s", nodes);
+            this.route = Try.assign(() -> new Route(
+                    "Route for " + gtuType + " from " + this.origin + "to " + this.destination + " via " + ref.lane().getLink(),
+                    gtuType, nodes), "No route possible over nodes %s", nodes);
         }
     }
 

@@ -12,9 +12,9 @@ public interface LookupEventProducer
 {
     /**
      * Find the EventProducerInterface with the given address.
-     * @param address Object[]; the address
-     * @param returnWrapper ReturnWrapper; to be used to send back complaints about bad addresses, etc.
-     * @return EventProducerInterface; can be null in case the address is (no longer) valid
+     * @param address the address
+     * @param returnWrapper to be used to send back complaints about bad addresses, etc.
+     * @return can be null in case the address is (no longer) valid
      * @throws SerializationException when an error occurs while serializing an error response
      * @throws Sim0MQException when an error occurs while serializing an error response
      */
@@ -22,7 +22,7 @@ public interface LookupEventProducer
 
     /**
      * Return a MetaData object that can be used to verify the correctness of an address for the <code>lookup</code> method.
-     * @return MetaData; to be used to verify the correctness of an address for the <code>lookup</code> method
+     * @return to be used to verify the correctness of an address for the <code>lookup</code> method
      */
     MetaData getAddressMetaData();
 

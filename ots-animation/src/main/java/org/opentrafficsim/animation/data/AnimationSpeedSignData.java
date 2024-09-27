@@ -22,7 +22,7 @@ public class AnimationSpeedSignData implements SpeedSignData
 
     /**
      * Constructor.
-     * @param speedSign SpeedSign; speed sign.
+     * @param speedSign speed sign.
      */
     public AnimationSpeedSignData(final SpeedSign speedSign)
     {
@@ -52,7 +52,7 @@ public class AnimationSpeedSignData implements SpeedSignData
 
     /**
      * Returns the speed sign.
-     * @return SpeedSign; speed sign.
+     * @return speed sign.
      */
     public SpeedSign getSpeedSign()
     {

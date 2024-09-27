@@ -92,7 +92,7 @@ public final class XmlParser implements Serializable
 
     /**
      * Constructor.
-     * @param network RoadNetwork; network.
+     * @param network network.
      */
     public XmlParser(final RoadNetwork network)
     {
@@ -101,7 +101,7 @@ public final class XmlParser implements Serializable
 
     /**
      * Set file name.
-     * @param filename String; file name.
+     * @param filename file name.
      * @return this parser for method chaining.
      * @throws IllegalStateException file, URL or stream has already been set.
      * @throws IOException file could not be opened.
@@ -115,7 +115,7 @@ public final class XmlParser implements Serializable
 
     /**
      * Set url.
-     * @param url URL; url.
+     * @param url url.
      * @return this parser for method chaining.
      * @throws IllegalStateException file, URL or stream has already been set.
      * @throws IOException file could not be opened.
@@ -129,7 +129,7 @@ public final class XmlParser implements Serializable
 
     /**
      * Set stream.
-     * @param stream InputStream; stream.
+     * @param stream stream.
      * @return this parser for method chaining.
      * @throws IllegalStateException file, URL or stream has already been set.
      */
@@ -142,7 +142,7 @@ public final class XmlParser implements Serializable
 
     /**
      * Set scenario to parse.
-     * @param scenario String; name of scenario to parse.
+     * @param scenario name of scenario to parse.
      * @return this parser for method chaining.
      */
     public XmlParser setScenario(final String scenario)
@@ -153,7 +153,7 @@ public final class XmlParser implements Serializable
 
     /**
      * Set whether to parse conflicts.
-     * @param parseConflicts boolean; whether to parse conflicts.
+     * @param parseConflicts whether to parse conflicts.
      * @return this parser for method chaining.
      */
     public XmlParser setParseConflict(final boolean parseConflicts)
@@ -190,8 +190,8 @@ public final class XmlParser implements Serializable
 
     /**
      * Parse an OTS XML input stream and build an OTS object.
-     * @param xmlStream inputStream; the xml stream
-     * @return Ots; the constructed OTS object
+     * @param xmlStream the xml stream
+     * @return the constructed OTS object
      * @throws JAXBException when the parsing fails
      * @throws ParserConfigurationException on error with parser configuration
      * @throws SAXException on error creating SAX parser
@@ -216,10 +216,10 @@ public final class XmlParser implements Serializable
 
     /**
      * Build the network from an OTS object (probably constructed by parsing an OTS XML file; e.g. the parseXML method).
-     * @param ots Ots; the OTS object
-     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
-     * @param scenario String; scenario name, may bee {@code null} to use default values.
-     * @param buildConflicts boolean; whether to build conflicts or not
+     * @param ots the OTS object
+     * @param otsNetwork the network to insert the parsed objects in
+     * @param scenario scenario name, may bee {@code null} to use default values.
+     * @param buildConflicts whether to build conflicts or not
      * @return the experiment based on the information in the RUN tag
      * @throws JAXBException when the parsing fails
      * @throws URISyntaxException when the filename is not valid
@@ -346,7 +346,7 @@ public final class XmlParser implements Serializable
     }
 
     /**
-     * @param args String[]; not used
+     * @param args not used
      * @throws Exception on parsing error
      */
     public static void main(final String[] args) throws Exception

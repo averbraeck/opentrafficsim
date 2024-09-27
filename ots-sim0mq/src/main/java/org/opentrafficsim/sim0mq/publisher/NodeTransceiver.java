@@ -34,8 +34,8 @@ public class NodeTransceiver extends AbstractTransceiver
 
     /**
      * Construct a new NodeTransceiver.
-     * @param network Network; the network
-     * @param nodeIdSource NodeIdTransceiver; the transceiver that can produce all Node ids in the Network
+     * @param network the network
+     * @param nodeIdSource the transceiver that can produce all Node ids in the Network
      */
     public NodeTransceiver(final Network network, final NodeIdTransceiver nodeIdSource)
     {

@@ -20,7 +20,7 @@ public class SpeedType extends ExpressionType<Speed>
 
     /**
      * Constructor with value.
-     * @param value Speed; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public SpeedType(final Speed value)
     {
@@ -29,7 +29,7 @@ public class SpeedType extends ExpressionType<Speed>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public SpeedType(final String expression)
     {

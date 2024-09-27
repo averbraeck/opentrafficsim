@@ -26,7 +26,7 @@ public class CollisionDetector extends AbstractLaneBasedMoveChecker
 
     /**
      * Constructor.
-     * @param network Network; network
+     * @param network network
      */
     public CollisionDetector(final Network network)
     {

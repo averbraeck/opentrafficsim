@@ -52,7 +52,9 @@ public class Documentation
 
         // @docs/05-perception/historical.md (without 'public abstract')
         abstract void set(T value);
+
         abstract T get();
+
         abstract T get(Time time);
 
         private Hist(final HistoryManager historyManager)
@@ -61,8 +63,7 @@ public class Documentation
             // @docs/05-perception/historical.md
             this.odometer = new HistoricalValue<>(historyManager, Length.ZERO);
         }
-        
-        
+
         T getValue(final Time time)
         {
             // @docs/05-perception/historical.md
@@ -70,15 +71,15 @@ public class Documentation
             return event == null ? null : event.getValue();
         }
     }
-    
+
     private void parameters() throws ParameterException
     {
         Parameters parameters = null;
-        
+
         // @docs/06-behavior/parameters.md
         parameters.setParameter(ParameterTypes.A, Acceleration.instantiateSI(1.4));
         Acceleration a = parameters.getParameter(ParameterTypes.A);
-        
+
         // @docs/06-behavior/parameters.md
         parameters.setParameterResettable(ParameterTypes.B, Acceleration.instantiateSI(3.5));
         parameters.resetParameter(ParameterTypes.B);

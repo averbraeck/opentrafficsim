@@ -20,9 +20,9 @@ public class MapSinkData extends MapLaneBasedObjectData implements SinkData
 
     /**
      * Constructor.
-     * @param map Map; map.
-     * @param node XsdTreeNode; node Ots.Network.Link.TrafficLight.
-     * @param editor OtsEditor; editor.
+     * @param map map.
+     * @param node node Ots.Network.Link.TrafficLight.
+     * @param editor editor.
      */
     public MapSinkData(final EditorMap map, final XsdTreeNode node, final OtsEditor editor)
     {

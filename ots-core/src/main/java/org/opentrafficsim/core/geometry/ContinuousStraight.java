@@ -28,8 +28,8 @@ public class ContinuousStraight implements ContinuousLine
 
     /**
      * Constructor.
-     * @param startPoint DirectedPoint; start point.
-     * @param length double; length.
+     * @param startPoint start point.
+     * @param length length.
      */
     public ContinuousStraight(final OrientedPoint2d startPoint, final double length)
     {
@@ -71,7 +71,7 @@ public class ContinuousStraight implements ContinuousLine
 
     /**
      * Polyline from continuous line. A straight uses no segments.
-     * @return PolyLine2d; polyline.
+     * @return polyline.
      */
     public PolyLine2d flatten()
     {
@@ -80,19 +80,19 @@ public class ContinuousStraight implements ContinuousLine
 
     /**
      * Returns a 2-point line. Flattener is ignored.
-     * @param flattener Flattener; flattener (ignored).
-     * @return PolyLine2d; flattened line.
+     * @param flattener flattener (ignored).
+     * @return flattened line.
      */
     @Override
     public PolyLine2d flatten(final Flattener flattener)
     {
         return flatten();
     }
-    
+
     /**
      * Offset polyline based on variable offset. A straight uses no segments, other than for varying offset.
-     * @param offsets FractionalLengthData; offsets, should contain keys 0.0 and 1.0.
-     * @return PolyLine2d; offset polyline.
+     * @param offsets offsets, should contain keys 0.0 and 1.0.
+     * @return offset polyline.
      */
     public PolyLine2d offset(final FractionalLengthData offsets)
     {
@@ -104,9 +104,9 @@ public class ContinuousStraight implements ContinuousLine
 
     /**
      * Returns the regular offset line of a 2-point line. Flattener is ignored.
-     * @param offsets FractionalLengthData; offset data.
-     * @param flattener Flattener; flattener (ignored).
-     * @return PolyLine2d; flattened line.
+     * @param offsets offset data.
+     * @param flattener flattener (ignored).
+     * @return flattened line.
      */
     @Override
     public PolyLine2d flattenOffset(final FractionalLengthData offsets, final Flattener flattener)

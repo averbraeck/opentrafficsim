@@ -22,8 +22,8 @@ public abstract class ExtendedDataNumber<G extends GtuData> extends ExtendedData
 
     /**
      * Constructor.
-     * @param id String; id
-     * @param description String; description
+     * @param id id
+     * @param description description
      */
     public ExtendedDataNumber(final String id, final String description)
     {

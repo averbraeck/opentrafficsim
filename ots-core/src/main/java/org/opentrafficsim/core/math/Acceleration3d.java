@@ -37,7 +37,7 @@ public class Acceleration3d implements Serializable
 
     /**
      * Construct a new Acceleration3d from vector of strongly typed Cartesian coordinates.
-     * @param acceleration AccelerationVector; the accelerations in 3D (YPR coded)
+     * @param acceleration the accelerations in 3D (YPR coded)
      * @throws ValueRuntimeException in case the vector does not have exactly three elements
      */
     public Acceleration3d(final AccelerationVector acceleration) throws ValueRuntimeException
@@ -51,9 +51,9 @@ public class Acceleration3d implements Serializable
 
     /**
      * Construct a new Acceleration3d from three strongly typed Cartesian coordinates.
-     * @param x Acceleration; the acceleration in the x-direction
-     * @param y Acceleration; the acceleration in the y-direction
-     * @param z Acceleration; the acceleration in the z-direction
+     * @param x the acceleration in the x-direction
+     * @param y the acceleration in the y-direction
+     * @param z the acceleration in the z-direction
      * @throws ValueRuntimeException in case the units are incorrect
      */
     public Acceleration3d(final Acceleration x, final Acceleration y, final Acceleration z) throws ValueRuntimeException
@@ -63,10 +63,10 @@ public class Acceleration3d implements Serializable
 
     /**
      * Construct a new Acceleration3d from three double Cartesian coordinates and a acceleration unit.
-     * @param x double; the acceleration in the x-direction
-     * @param y double; the acceleration in the y-direction
-     * @param z double; the acceleration in the z-direction
-     * @param unit AccelerationUnit; the unit of the xyz parameters
+     * @param x the acceleration in the x-direction
+     * @param y the acceleration in the y-direction
+     * @param z the acceleration in the z-direction
+     * @param unit the unit of the xyz parameters
      * @throws ValueRuntimeException in case the units are incorrect
      */
     public Acceleration3d(final double x, final double y, final double z, final AccelerationUnit unit)
@@ -77,9 +77,9 @@ public class Acceleration3d implements Serializable
 
     /**
      * Construct a new Acceleration3d from a strongly typed acceleration and polar coordinates.
-     * @param acceleration Acceleration; the acceleration in the direction of the angle along the vector
-     * @param theta Direction; the angle from the z direction
-     * @param phi Direction; the projected angle in the xy-plane from the x direction
+     * @param acceleration the acceleration in the direction of the angle along the vector
+     * @param theta the angle from the z direction
+     * @param phi the projected angle in the xy-plane from the x direction
      * @throws ValueRuntimeException in case the vector does not have exactly three elements
      */
     public Acceleration3d(final Acceleration acceleration, final Direction theta, final Direction phi)

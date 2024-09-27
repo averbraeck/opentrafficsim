@@ -41,9 +41,9 @@ public class CrossSectionElementAnimation<L extends CrossSectionElementData> ext
     private final Set<Path2D.Float> paths;
 
     /**
-     * @param source L; cross section element
-     * @param contextualized Contextualized; context provider
-     * @param color Color; the color to draw the shoulder with
+     * @param source cross section element
+     * @param contextualized context provider
+     * @param color the color to draw the shoulder with
      * @throws NamingException ne
      * @throws RemoteException on communication failure
      */
@@ -88,13 +88,13 @@ public class CrossSectionElementAnimation<L extends CrossSectionElementData> ext
     {
         /**
          * Returns the center line.
-         * @return PolyLine2d; center line.
+         * @return center line.
          */
         PolyLine2d getCenterLine();
 
         /**
          * Return the id of the link.
-         * @return String; link id.
+         * @return link id.
          */
         String getLinkId();
     }

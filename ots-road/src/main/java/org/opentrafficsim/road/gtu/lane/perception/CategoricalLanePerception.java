@@ -51,7 +51,7 @@ public class CategoricalLanePerception extends AbstractPerception<LaneBasedGtu> 
 
     /**
      * Create a new LanePerception module without mental module.
-     * @param gtu LaneBasedGtu; GTU
+     * @param gtu GTU
      */
     public CategoricalLanePerception(final LaneBasedGtu gtu)
     {
@@ -61,8 +61,8 @@ public class CategoricalLanePerception extends AbstractPerception<LaneBasedGtu> 
 
     /**
      * Create a new LanePerception module with mental module.
-     * @param gtu LaneBasedGtu; GTU
-     * @param mental Mental; mental module
+     * @param gtu GTU
+     * @param mental mental module
      */
     public CategoricalLanePerception(final LaneBasedGtu gtu, final Mental mental)
     {

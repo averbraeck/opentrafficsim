@@ -32,7 +32,7 @@ public class LayoutCustomizer implements EventListener, Consumer<XsdTreeNode>
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
+     * @param editor editor.
      * @throws RemoteException if listener cannot be added.
      */
     public LayoutCustomizer(final OtsEditor editor) throws RemoteException

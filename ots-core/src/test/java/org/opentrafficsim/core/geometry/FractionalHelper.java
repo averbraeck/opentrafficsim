@@ -21,7 +21,7 @@ public final class FractionalHelper
 
     /**
      * Test/development code for the fractional helper stuff.
-     * @param args String[]; the command line arguments (not used)
+     * @param args the command line arguments (not used)
      * @throws OtsGeometryException in case of error
      * @throws SecurityException ...
      * @throws NoSuchFieldException ...
@@ -187,7 +187,7 @@ public final class FractionalHelper
 
     /**
      * Dirty hack.
-     * @param line OtsLine2d; the line
+     * @param line the line
      * @return OTSPoine3D[]
      * @throws IllegalArgumentException ...
      * @throws IllegalAccessException ...

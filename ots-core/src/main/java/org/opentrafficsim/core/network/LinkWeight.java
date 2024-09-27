@@ -101,15 +101,15 @@ public interface LinkWeight
 
     /**
      * Returns the link weight.
-     * @param link Link; link
-     * @return double; link weight
+     * @param link link
+     * @return link weight
      */
     double getWeight(Link link);
 
     /**
      * Return a heuristic for the A* algorithm. The default value is {@code null} in which case {@code Network} will use a
      * regular Dijkstra shortest path algorithm.
-     * @return AStarAdmissibleHeuristic&lt;Node&gt;; heuristic for the A* algorithm, default is {@code null}.
+     * @return heuristic for the A* algorithm, default is {@code null}.
      */
     default AStarAdmissibleHeuristic<Node> getAStarHeuristic()
     {
@@ -118,7 +118,7 @@ public interface LinkWeight
 
     /**
      * Returns whether the link weights are static. In that case caching may be done on shortest routes.
-     * @return boolean; whether the link weights are static.
+     * @return whether the link weights are static.
      */
     default boolean isStatic()
     {

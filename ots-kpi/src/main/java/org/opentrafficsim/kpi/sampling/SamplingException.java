@@ -26,7 +26,7 @@ public class SamplingException extends Exception
 
     /**
      * Constructor.
-     * @param message String; String
+     * @param message String
      */
     public SamplingException(final String message)
     {
@@ -35,7 +35,7 @@ public class SamplingException extends Exception
 
     /**
      * Constructor.
-     * @param cause Throwable; Throwable
+     * @param cause Throwable
      */
     public SamplingException(final Throwable cause)
     {
@@ -44,8 +44,8 @@ public class SamplingException extends Exception
 
     /**
      * Constructor.
-     * @param message String; String
-     * @param cause Throwable; Throwable
+     * @param message String
+     * @param cause Throwable
      */
     public SamplingException(final String message, final Throwable cause)
     {
@@ -54,10 +54,10 @@ public class SamplingException extends Exception
 
     /**
      * Constructor.
-     * @param message String; description of the problem
-     * @param cause Throwable; the cause of this Exception
-     * @param enableSuppression boolean; whether or not suppression is enabled or disabled
-     * @param writableStackTrace boolean; whether or not the stack trace should be writable
+     * @param message description of the problem
+     * @param cause the cause of this Exception
+     * @param enableSuppression whether or not suppression is enabled or disabled
+     * @param writableStackTrace whether or not the stack trace should be writable
      */
     public SamplingException(final String message, final Throwable cause, final boolean enableSuppression,
             final boolean writableStackTrace)

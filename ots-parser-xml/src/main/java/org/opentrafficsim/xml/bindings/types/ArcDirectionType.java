@@ -15,7 +15,7 @@ public class ArcDirectionType extends ExpressionType<ArcDirection>
 
     /**
      * Constructor with value.
-     * @param value ArcDirection; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public ArcDirectionType(final ArcDirection value)
     {
@@ -24,17 +24,18 @@ public class ArcDirectionType extends ExpressionType<ArcDirection>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public ArcDirectionType(final String expression)
     {
         super(expression);
     }
-    
+
     /**
      * Direction of the arc; LEFT or RIGHT.
      * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
@@ -43,7 +44,7 @@ public class ArcDirectionType extends ExpressionType<ArcDirection>
     {
         /** Left = counter-clockwise. */
         LEFT,
-        
+
         /** Right = clockwise. */
         RIGHT;
     }

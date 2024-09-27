@@ -22,17 +22,17 @@ public interface CoupledValidator extends ValueValidator
 
     /**
      * Returns the coupled node. This is e.g. a LinkType node for the LinkType attribute of a Link node.
-     * @param node XsdTreeNode; node with attribute or value that is bounded by this validator.
-     * @return XsdTreeNode; node to which the given node is coupled.
+     * @param node node with attribute or value that is bounded by this validator.
+     * @return node to which the given node is coupled.
      */
     XsdTreeNode getCoupledKeyrefNode(final XsdTreeNode node);
 
     /**
      * Sets the given value on the attribute of the node, if the current value is not {@code null}. The node is invalidated
      * afterwards. This is used to not change values in keyrefs that match including null values.
-     * @param node XsdTreeNode; node.
-     * @param attribute String; attribute.
-     * @param value String; value.
+     * @param node node.
+     * @param attribute attribute.
+     * @param value value.
      */
     static void setAttributeIfNotNull(final XsdTreeNode node, final String attribute, final String value)
     {
@@ -46,8 +46,8 @@ public interface CoupledValidator extends ValueValidator
 
     /**
      * Sets the given value on the node, if the current value is not {@code null}. The node is invalidated afterwards.
-     * @param node XsdTreeNode; node. This is used to not change values in keyrefs that match including null values.
-     * @param value String; value.
+     * @param node node. This is used to not change values in keyrefs that match including null values.
+     * @param value value.
      */
     static void setValueIfNotNull(final XsdTreeNode node, final String value)
     {

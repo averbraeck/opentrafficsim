@@ -59,8 +59,8 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
     private final HeadwayGtuType headwayGtuType;
 
     /**
-     * @param perception LanePerception; perception
-     * @param headwayGtuType HeadwayGtuType; type of headway gtu to generate
+     * @param perception perception
+     * @param headwayGtuType type of headway gtu to generate
      */
     public DirectIntersectionPerception(final LanePerception perception, final HeadwayGtuType headwayGtuType)
     {
@@ -100,7 +100,7 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
 
     /**
      * Compute traffic lights.
-     * @param lane RelativeLane; lane
+     * @param lane lane
      * @return PerceptionCollectable of traffic lights
      */
     private PerceptionCollectable<HeadwayTrafficLight, TrafficLight> computeTrafficLights(final RelativeLane lane)
@@ -150,7 +150,7 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
 
     /**
      * Compute conflicts.
-     * @param lane RelativeLane; lane
+     * @param lane lane
      * @return PerceptionCollectable of conflicts
      */
     private PerceptionCollectable<HeadwayConflict, Conflict> computeConflicts(final RelativeLane lane)
@@ -265,8 +265,8 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
 
     /**
      * Compute whether there is a conflict alongside.
-     * @param lat LateralDirectionality; lateral directionality
-     * @return boolean; whether there is a conflict alongside
+     * @param lat lateral directionality
+     * @return whether there is a conflict alongside
      */
     private boolean computeConflictAlongside(final LateralDirectionality lat)
     {

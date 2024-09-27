@@ -72,11 +72,11 @@ public class OperationalPlan implements Serializable
 
     /**
      * Creates a stand-still plan at a point. A 1m path in the direction of the point is created.
-     * @param gtu Gtu; GTU.
-     * @param point OrientedPoint2d; point.
-     * @param startTime Time; start time.
-     * @param duration Duration; duration.
-     * @return OperationalPlan; stand-still plan.
+     * @param gtu GTU.
+     * @param point point.
+     * @param startTime start time.
+     * @param duration duration.
+     * @return stand-still plan.
      */
     public static OperationalPlan standStill(final Gtu gtu, final OrientedPoint2d point, final Time startTime,
             final Duration duration)
@@ -88,11 +88,11 @@ public class OperationalPlan implements Serializable
 
     /**
      * Construct an operational plan. The plan will be as long as the minimum of the path or segments allow.
-     * @param gtu Gtu; the GTU for debugging purposes
-     * @param path OtsLine2d; the path to follow from a certain time till a certain time. The path should have &lt;i&gt;at
-     *            least&lt;/i&gt; the length
-     * @param startTime Time; the absolute start time when we start executing the path
-     * @param segments Segments; the segments that make up the longitudinal dynamics
+     * @param gtu the GTU for debugging purposes
+     * @param path the path to follow from a certain time till a certain time. The path should have &lt;i&gt;at least&lt;/i&gt;
+     *            the length
+     * @param startTime the absolute start time when we start executing the path
+     * @param segments the segments that make up the longitudinal dynamics
      */
     public OperationalPlan(final Gtu gtu, final OtsLine2d path, final Time startTime, final Segments segments)
     {
@@ -148,7 +148,7 @@ public class OperationalPlan implements Serializable
     /**
      * Return the path that will be traveled. If the plan is a wait plan, the start point of the path is good; the end point of
      * the path is bogus (should only be used to determine the orientation of the GTU).
-     * @return OtsLine2d; the path
+     * @return the path
      */
     public OtsLine2d getPath()
     {
@@ -157,7 +157,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Return the (absolute) start time of the operational plan.
-     * @return Time; startTime
+     * @return startTime
      */
     public Time getStartTime()
     {
@@ -166,7 +166,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Return the start speed of the entire plan.
-     * @return Speed; startSpeed
+     * @return startSpeed
      */
     public Speed getStartSpeed()
     {
@@ -184,7 +184,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Return the time it will take to complete the entire operational plan.
-     * @return Duration; the time it will take to complete the entire operational plan
+     * @return the time it will take to complete the entire operational plan
      */
     public Duration getTotalDuration()
     {
@@ -193,7 +193,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Return the distance the entire operational plan will cover.
-     * @return Length; the distance of the entire operational plan
+     * @return the distance of the entire operational plan
      */
     public Length getTotalLength()
     {
@@ -202,7 +202,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Return the time it will take to complete the entire operational plan.
-     * @return Time; the time it will take to complete the entire operational plan
+     * @return the time it will take to complete the entire operational plan
      */
     public Time getEndTime()
     {
@@ -211,7 +211,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Provide the end location of this operational plan as a DirectedPoint.
-     * @return OrientedPoint2d; the end location
+     * @return the end location
      */
     public OrientedPoint2d getEndLocation()
     {
@@ -221,8 +221,8 @@ public class OperationalPlan implements Serializable
 
     /**
      * Returns the index of the segment covering the given time.
-     * @param time Time; time.
-     * @return int; index of the segment covering the given time.
+     * @param time time.
+     * @return index of the segment covering the given time.
      */
     private int getSegment(final Time time)
     {
@@ -237,7 +237,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Return the time when the GTU will reach the given distance.
-     * @param distance Length; the distance to calculate the time for
+     * @param distance the distance to calculate the time for
      * @return the time it will take to have traveled the given distance
      */
     public final Time timeAtDistance(final Length distance)
@@ -256,7 +256,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Calculate the location after the given duration since the start of the plan.
-     * @param duration Duration; the relative time to look for a location
+     * @param duration the relative time to look for a location
      * @return the location after the given duration since the start of the plan.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
@@ -267,7 +267,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Calculate the location at the given time.
-     * @param time Time; the absolute time to look for a location
+     * @param time the absolute time to look for a location
      * @return the location at the given time.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
@@ -282,8 +282,8 @@ public class OperationalPlan implements Serializable
 
     /**
      * Calculate the location after the given duration since the start of the plan.
-     * @param time Time; the relative time to look for a location
-     * @param pos RelativePosition; relative position
+     * @param time the relative time to look for a location
+     * @param pos relative position
      * @return the location after the given duration since the start of the plan.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
@@ -295,7 +295,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Calculate the speed of the GTU after the given duration since the start of the plan.
-     * @param time Duration; the relative time to look for a location
+     * @param time the relative time to look for a location
      * @return the location after the given duration since the start of the plan.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
@@ -306,7 +306,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Calculate the speed of the GTU at the given time.
-     * @param time Time; the absolute time to look for a location
+     * @param time the absolute time to look for a location
      * @return the location at the given time.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
@@ -320,8 +320,8 @@ public class OperationalPlan implements Serializable
 
     /**
      * Maximize to segment duration in case of double precision issue.
-     * @param durationInSegment Duration; duration in segment.
-     * @param segment int; segment number.
+     * @param durationInSegment duration in segment.
+     * @param segment segment number.
      * @return duration in segment, maximized to segment duration if beyond within 1e-6.
      */
     private Duration fixDoublePrecision(final Duration durationInSegment, final int segment)
@@ -336,7 +336,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Calculate the acceleration of the GTU after the given duration since the start of the plan.
-     * @param time Duration; the relative time to look for a location
+     * @param time the relative time to look for a location
      * @return the location after the given duration since the start of the plan.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
@@ -347,7 +347,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Calculate the acceleration of the GTU at the given time.
-     * @param time Time; the absolute time to look for a location
+     * @param time the absolute time to look for a location
      * @return the location at the given time.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
@@ -358,7 +358,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Calculate the distance traveled as part of this plan after the given duration since the start of the plan.
-     * @param duration Duration; the relative time to calculate the traveled distance
+     * @param duration the relative time to calculate the traveled distance
      * @return the distance traveled as part of this plan after the given duration since the start of the plan.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
@@ -369,7 +369,7 @@ public class OperationalPlan implements Serializable
 
     /**
      * Calculate the distance traveled as part of this plan at the given absolute time.
-     * @param time Time; the absolute time to calculate the traveled distance for as part of this plan
+     * @param time the absolute time to calculate the traveled distance for as part of this plan
      * @return the distance traveled as part of this plan at the given time
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
@@ -390,9 +390,9 @@ public class OperationalPlan implements Serializable
      * Calculates when the GTU will be at the given point. The point does not need to be at the traveled path, as the point is
      * projected to the path at 90 degrees. The point may for instance be the end of a lane, which is crossed by a GTU possibly
      * during a lane change.
-     * @param point OrientedPoint2d; point with angle, which will be projected to the path at 90 degrees
-     * @param upstream boolean; true if the point is upstream of the path
-     * @return Time; time at point
+     * @param point point with angle, which will be projected to the path at 90 degrees
+     * @param upstream true if the point is upstream of the path
+     * @return time at point
      */
     public final Time timeAtPoint(final OrientedPoint2d point, final boolean upstream)
     {

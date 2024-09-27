@@ -21,7 +21,7 @@ public class ClassNameTypeStringFunction extends AbstractStringFunction
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
+     * @param editor editor.
      */
     public ClassNameTypeStringFunction(final OtsEditor editor)
     {

@@ -19,7 +19,7 @@ public class AnimationStripeData extends AnimationCrossSectionElementData<Stripe
 
     /**
      * Constructor.
-     * @param stripe Stripe; stripe.
+     * @param stripe stripe.
      */
     public AnimationStripeData(final Stripe stripe)
     {

@@ -23,13 +23,13 @@ public interface OtsModelInterface extends DsolModel<Duration, OtsSimulatorInter
 
     /**
      * Return a very short description of the simulation.
-     * @return String; short description of the simulation
+     * @return short description of the simulation
      */
     String getShortName();
 
     /**
      * Return a description of the simulation (HTML formatted).
-     * @return String; HTML text describing the simulation
+     * @return HTML text describing the simulation
      */
     String getDescription();
 }

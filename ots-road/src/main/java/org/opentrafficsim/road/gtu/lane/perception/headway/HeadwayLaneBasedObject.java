@@ -17,7 +17,7 @@ public interface HeadwayLaneBasedObject extends Headway
 
     /**
      * Lane at which the object is located.
-     * @return Lane; lane at which the object is located
+     * @return lane at which the object is located
      */
     Lane getLane();
 

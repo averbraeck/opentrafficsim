@@ -23,14 +23,14 @@ public class CapacityLink extends Link implements Capacity
 
     /**
      * Construct a new link.
-     * @param network Network; the network.
-     * @param id String; the link id
-     * @param startNode Node; start node (directional)
-     * @param endNode Node; end node (directional)
-     * @param linkType LinkType; Link type to indicate compatibility with GTU types
-     * @param designLine OtsLine2d; the OtsLine2d design line of the Link
-     * @param elevation FractionalLengthData; elevation given over fractional length, may be {@code null}.
-     * @param capacity Frequency; link capacity in GTUs per hour // XXX per direction? which GtuType?
+     * @param network the network.
+     * @param id the link id
+     * @param startNode start node (directional)
+     * @param endNode end node (directional)
+     * @param linkType Link type to indicate compatibility with GTU types
+     * @param designLine the OtsLine2d design line of the Link
+     * @param elevation elevation given over fractional length, may be {@code null}.
+     * @param capacity link capacity in GTUs per hour // XXX per direction? which GtuType?
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network.
      */

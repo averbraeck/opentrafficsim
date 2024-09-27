@@ -55,17 +55,17 @@ public class SubscriptionHandler
 
     /**
      * Create a new SubscriptionHandler.
-     * @param id String; id of the new SubscriptionHandler
-     * @param listTransceiver TransceiverInterface; transceiver to retrieve the data of <i>the addressed object</i> right now
-     * @param eventProducerForAddRemoveOrChange LookupEventProducer; the event producer that can emit the
-     *            <code>addedEventType</code>, <code>removedEventType</code>, or <code>changeEventType</code> events
-     * @param addedEventType EventType; event type that signals that a new element has been added, should be null if there is no
-     *            added event type for the data
-     * @param removedEventType EventType; event type that signals that an element has been removed, should be null if there is
-     *            no removed event type for the data
-     * @param changeEventType EventType; event type that signals that an element has been changed, should be null if there is no
-     *            change event type for the data
-     * @param elementSubscriptionHandler SubscriptionHandler; SubscriptionHandler for events produced by the underlying elements
+     * @param id id of the new SubscriptionHandler
+     * @param listTransceiver transceiver to retrieve the data of <i>the addressed object</i> right now
+     * @param eventProducerForAddRemoveOrChange the event producer that can emit the <code>addedEventType</code>,
+     *            <code>removedEventType</code>, or <code>changeEventType</code> events
+     * @param addedEventType event type that signals that a new element has been added, should be null if there is no added
+     *            event type for the data
+     * @param removedEventType event type that signals that an element has been removed, should be null if there is no removed
+     *            event type for the data
+     * @param changeEventType event type that signals that an element has been changed, should be null if there is no change
+     *            event type for the data
+     * @param elementSubscriptionHandler SubscriptionHandler for events produced by the underlying elements
      */
     public SubscriptionHandler(final String id, final TransceiverInterface listTransceiver,
             final LookupEventProducer eventProducerForAddRemoveOrChange, final EventType addedEventType,
@@ -89,8 +89,8 @@ public class SubscriptionHandler
 
     /**
      * Report what payload is required to retrieve a list of all elements, or data and what format a result would have.
-     * @return MetaData; description of the payload required to retrieve a list of all elements, or data and what format a
-     *         result would have
+     * @return description of the payload required to retrieve a list of all elements, or data and what format a result would
+     *         have
      */
     public MetaData listRequestMetaData()
     {
@@ -99,7 +99,7 @@ public class SubscriptionHandler
 
     /**
      * Report what the payload format of the result of the list transceiver.
-     * @return MetaData; the payload format of the result of the list transceiver
+     * @return the payload format of the result of the list transceiver
      */
     public MetaData listResultMetaData()
     {
@@ -108,8 +108,8 @@ public class SubscriptionHandler
 
     /**
      * Retrieve a data collection.
-     * @param address Object[]; address of the requested data collection
-     * @param returnWrapper ReturnWrapper; to send back the result
+     * @param address address of the requested data collection
+     * @param returnWrapper to send back the result
      * @throws RemoteException when communication fails
      * @throws SerializationException on context error
      * @throws Sim0MQException on DSOL error
@@ -122,7 +122,7 @@ public class SubscriptionHandler
 
     /**
      * Retrieve the list transceiver (only for testing).
-     * @return TransceiverInterface; the list transceiver
+     * @return the list transceiver
      */
     public TransceiverInterface getListTransceiver()
     {
@@ -131,7 +131,7 @@ public class SubscriptionHandler
 
     /**
      * Return the set of supported commands.
-     * @return EnumSet&lt;Command&gt;; the set of supported commands.
+     * @return the set of supported commands.
      */
     public final EnumSet<Command> subscriptionOptions()
     {
@@ -162,9 +162,9 @@ public class SubscriptionHandler
 
     /**
      * Create a new subscription to ADD, REMOVE, or CHANGE events.
-     * @param address Object[]; the data that is required to find the correct EventProducer
-     * @param eventType EventType; one of the event types that the addressed EventProducer can fire
-     * @param returnWrapper ReturnWrapper; generates envelopes for the returned events
+     * @param address the data that is required to find the correct EventProducer
+     * @param eventType one of the event types that the addressed EventProducer can fire
+     * @param returnWrapper generates envelopes for the returned events
      * @throws RemoteException when communication fails
      * @throws SerializationException should never happen
      * @throws Sim0MQException should never happen
@@ -210,9 +210,9 @@ public class SubscriptionHandler
 
     /**
      * Cancel a subscription to ADD, REMOVE, or CHANGE events.
-     * @param address Object[]; the data that is required to find the correct EventProducer
-     * @param eventType EventType; one of the event types that the addressed EventProducer can fire
-     * @param returnWrapper ReturnWrapper; the ReturnWapper that sent the results until now
+     * @param address the data that is required to find the correct EventProducer
+     * @param eventType one of the event types that the addressed EventProducer can fire
+     * @param returnWrapper the ReturnWapper that sent the results until now
      * @throws RemoteException when communication fails
      * @throws SerializationException should never happen
      * @throws Sim0MQException should never happen
@@ -255,7 +255,7 @@ public class SubscriptionHandler
 
     /**
      * Retrieve the id of this SubscriptionHandler.
-     * @return String; the id of this SubscriptionHandler
+     * @return the id of this SubscriptionHandler
      */
     public final String getId()
     {
@@ -293,8 +293,8 @@ public class SubscriptionHandler
 
     /**
      * Convert a String representing a Command into that Command.
-     * @param commandString String; the string
-     * @return Command; the corresponding Command, or null if the <code>commandString</code> is not a valid Command
+     * @param commandString the string
+     * @return the corresponding Command, or null if the <code>commandString</code> is not a valid Command
      */
     public static Command lookupCommand(final String commandString)
     {
@@ -352,9 +352,9 @@ public class SubscriptionHandler
 
     /**
      * Execute one command.
-     * @param command Command; the command
+     * @param command the command
      * @param address Object[] the address of the object on which the command must be applied
-     * @param returnWrapper ReturnWrapper; envelope generator for replies
+     * @param returnWrapper envelope generator for replies
      * @throws RemoteException on communication failure
      * @throws SerializationException on illegal type in serialization
      * @throws Sim0MQException on communication error
@@ -480,8 +480,8 @@ public class SubscriptionHandler
 
     /**
      * Extract the class names from an array of ObjectDescriptor.
-     * @param objectDescriptors ObjectDescriptor[]; the array of ObjectDescriptor
-     * @return Object[]; the class names
+     * @param objectDescriptors the array of ObjectDescriptor
+     * @return the class names
      */
     private Object[] extractObjectDescriptorClassNames(final ObjectDescriptor[] objectDescriptors)
     {
@@ -495,8 +495,8 @@ public class SubscriptionHandler
 
     /**
      * Send data via Sim0MQ to master if (and only if) it is non-null.
-     * @param data Object[]; the data to transmit
-     * @param returnWrapper ReturnWrapper; envelope constructor for returned results
+     * @param data the data to transmit
+     * @param returnWrapper envelope constructor for returned results
      * @throws SerializationException on illegal type in serialization
      * @throws Sim0MQException on communication error
      */
@@ -534,7 +534,7 @@ class Subscription implements EventListener
 
     /**
      * Construct a new Subscription.
-     * @param returnWrapper ReturnWrapper; envelope generator for the messages
+     * @param returnWrapper envelope generator for the messages
      */
     Subscription(final ReturnWrapper returnWrapper)
     {

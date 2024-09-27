@@ -143,9 +143,9 @@ public class EditorMap extends JPanel implements EventListener
 
     /**
      * Constructor.
-     * @param animator AnimationUpdaterThread; thread for frequent painting.
-     * @param contextualized Contextualized; context provider.
-     * @param editor OtsEditor; editor.
+     * @param animator thread for frequent painting.
+     * @param contextualized context provider.
+     * @param editor editor.
      * @throws RemoteException context binding problem.
      * @throws NamingException context binding problem.
      */
@@ -387,8 +387,8 @@ public class EditorMap extends JPanel implements EventListener
 
     /**
      * Loads an icon from the given file. Returns {@code null} if the file can not be found.
-     * @param file String; file.
-     * @return Icon; icon.
+     * @param file file.
+     * @return icon.
      */
     private Icon loadIcon(final String file)
     {
@@ -433,12 +433,12 @@ public class EditorMap extends JPanel implements EventListener
      * Add a button for toggling an animatable class on or off. Button icons for which 'idButton' is true will be placed to the
      * right of the previous button, which should be the corresponding button without the id. An example is an icon for
      * showing/hiding the class 'Lane' followed by the button to show/hide the Lane ids.
-     * @param name String; the name of the button
-     * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the button holds (e.g., GTU.class)
-     * @param iconPath String; the path to the 24x24 icon to display
-     * @param toolTipText String; the tool tip text to show when hovering over the button
-     * @param initiallyVisible boolean; whether the class is initially shown or not
-     * @param idButton boolean; id button that needs to be placed next to the previous button
+     * @param name the name of the button
+     * @param locatableClass the class for which the button holds (e.g., GTU.class)
+     * @param iconPath the path to the 24x24 icon to display
+     * @param toolTipText the tool tip text to show when hovering over the button
+     * @param initiallyVisible whether the class is initially shown or not
+     * @param idButton id button that needs to be placed next to the previous button
      */
     public final void addToggle(final String name, final Class<? extends Locatable> locatableClass, final String iconPath,
             final String toolTipText, final boolean initiallyVisible, final boolean idButton)
@@ -499,8 +499,8 @@ public class EditorMap extends JPanel implements EventListener
 
     /**
      * Builds a map panel with an animator and context.
-     * @param editor OtsEditor; editor.
-     * @return Map; map.
+     * @param editor editor.
+     * @return map.
      * @throws RemoteException context binding problem.
      * @throws NamingException context binding problem.
      */
@@ -674,8 +674,8 @@ public class EditorMap extends JPanel implements EventListener
 
     /**
      * Returns whether the node is any of the visualized types.
-     * @param node XsdTreeNode; node.
-     * @return boolean; whether the node is any of the visualized types.
+     * @param node node.
+     * @return whether the node is any of the visualized types.
      */
     private boolean isType(final XsdTreeNode node)
     {
@@ -691,7 +691,7 @@ public class EditorMap extends JPanel implements EventListener
 
     /**
      * Set the data as being valid to draw.
-     * @param data MapData; data that is valid to draw.
+     * @param data data that is valid to draw.
      */
     public void setValid(final MapData data)
     {
@@ -734,7 +734,7 @@ public class EditorMap extends JPanel implements EventListener
 
     /**
      * Set the data as being invalid to draw.
-     * @param data MapData; data that is invalid to draw.
+     * @param data data that is invalid to draw.
      */
     // TODO: for some reason, this does not work... because data remains in JVM?
     public void setInvalid(final MapData data)
@@ -745,7 +745,7 @@ public class EditorMap extends JPanel implements EventListener
     /**
      * Adds a data representation of the node. This will not yet be drawn until the data object itself tells the map it is valid
      * to be drawn.
-     * @param node XsdTreeNode; node of element to draw.
+     * @param node node of element to draw.
      * @throws RemoteException context binding problem.
      */
     private void add(final XsdTreeNode node) throws RemoteException
@@ -798,7 +798,7 @@ public class EditorMap extends JPanel implements EventListener
 
     /**
      * Remove the drawing data of pertaining to the node.
-     * @param node XsdTreeNode; node.
+     * @param node node.
      */
     private void remove(final XsdTreeNode node)
     {
@@ -839,7 +839,7 @@ public class EditorMap extends JPanel implements EventListener
      * Reinitialize animation on object who's animator stores static information that depends on something that was changed.
      * This will create a new animation object. Only data objects that know their animations have static data, should call this.
      * And only when information changed on which the static data depends.
-     * @param node XsdTreeNode; node.
+     * @param node node.
      */
     public void reinitialize(final XsdTreeNode node)
     {
@@ -849,8 +849,8 @@ public class EditorMap extends JPanel implements EventListener
 
     /**
      * Returns the map data of the given XSD node.
-     * @param node XsdTreeNode; node.
-     * @return MapData; map data of the given XSD node, {@code null} if no such data.
+     * @param node node.
+     * @return map data of the given XSD node, {@code null} if no such data.
      */
     public MapData getData(final XsdTreeNode node)
     {
@@ -859,7 +859,7 @@ public class EditorMap extends JPanel implements EventListener
 
     /**
      * Add defined road layout.
-     * @param node XsdTreeNode; node of the defined road layout.
+     * @param node node of the defined road layout.
      */
     private void addRoadLayout(final XsdTreeNode node)
     {
@@ -873,7 +873,7 @@ public class EditorMap extends JPanel implements EventListener
 
     /**
      * Remove defined road layout.
-     * @param node XsdTreeNode; node of the defined road layout.
+     * @param node node of the defined road layout.
      */
     private void removeRoadLayout(final XsdTreeNode node)
     {
@@ -883,7 +883,7 @@ public class EditorMap extends JPanel implements EventListener
 
     /**
      * Sets the network level flattener.
-     * @param node XsdTreeNode; node of network flattener.
+     * @param node node of network flattener.
      */
     private void setNetworkFlattener(final XsdTreeNode node)
     {
@@ -916,8 +916,8 @@ public class EditorMap extends JPanel implements EventListener
 
     /**
      * Returns the road layout listener from which a {@code MapLinkData} can obtain offsets.
-     * @param node XsdTreeNode; node of a defined layout.
-     * @return RoadLayoutListener; listener, can be used to obtain offsets.
+     * @param node node of a defined layout.
+     * @return listener, can be used to obtain offsets.
      */
     RoadLayoutListener getRoadLayoutListener(final XsdTreeNode node)
     {
@@ -926,7 +926,7 @@ public class EditorMap extends JPanel implements EventListener
 
     /**
      * Remove animation.
-     * @param animation Renderable2d&lt;?&gt;; animation to remove.
+     * @param animation animation to remove.
      */
     void removeAnimation(final Renderable2d<?> animation)
     {
@@ -939,7 +939,7 @@ public class EditorMap extends JPanel implements EventListener
 
     /**
      * Returns the context.
-     * @return Contextualized; context.
+     * @return context.
      */
     Contextualized getContextualized()
     {
@@ -948,7 +948,7 @@ public class EditorMap extends JPanel implements EventListener
 
     /**
      * Returns the network level flattener, or a 64 segment flattener of none specified.
-     * @return Flattener; flattener.
+     * @return flattener.
      */
     public Flattener getNetworkFlattener()
     {

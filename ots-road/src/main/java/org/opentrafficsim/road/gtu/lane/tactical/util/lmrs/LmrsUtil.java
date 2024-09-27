@@ -83,14 +83,14 @@ public final class LmrsUtil implements LmrsParameters
 
     /**
      * Determines a simple representation of an operational plan.
-     * @param gtu LaneBasedGtu; gtu
-     * @param startTime Time; start time
-     * @param carFollowingModel CarFollowingModel; car-following model
-     * @param laneChange LaneChange; lane change status
-     * @param lmrsData LmrsData; LMRS data
-     * @param perception LanePerception; perception
-     * @param mandatoryIncentives Iterable&lt;MandatoryIncentive&gt;; set of mandatory lane change incentives
-     * @param voluntaryIncentives Iterable&lt;VoluntaryIncentive&gt;; set of voluntary lane change incentives
+     * @param gtu gtu
+     * @param startTime start time
+     * @param carFollowingModel car-following model
+     * @param laneChange lane change status
+     * @param lmrsData LMRS data
+     * @param perception perception
+     * @param mandatoryIncentives set of mandatory lane change incentives
+     * @param voluntaryIncentives set of voluntary lane change incentives
      * @return simple operational plan
      * @throws GtuException gtu exception
      * @throws NetworkException network exception
@@ -307,11 +307,11 @@ public final class LmrsUtil implements LmrsParameters
 
     /**
      * Minimizes the acceleration and sets the synchronization state if applicable.
-     * @param a Acceleration; previous acceleration
-     * @param aNew Acceleration; new acceleration
-     * @param lmrsData LmrsData; lmrs data
+     * @param a previous acceleration
+     * @param aNew new acceleration
+     * @param lmrsData lmrs data
      * @param state Synchronizable.State; synchronization state
-     * @return Acceleration; minimized acceleration
+     * @return minimized acceleration
      */
     private static Acceleration applyAcceleration(final Acceleration a, final Acceleration aNew, final LmrsData lmrsData,
             final Synchronizable.State state)
@@ -326,8 +326,8 @@ public final class LmrsUtil implements LmrsParameters
 
     /**
      * Sets the headway as a response to a new leader.
-     * @param params Parameters; parameters
-     * @param leader HeadwayGtu; leader
+     * @param params parameters
+     * @param leader leader
      * @throws ParameterException if DLC is not present
      */
     private static void initHeadwayRelaxation(final Parameters params, final HeadwayGtu leader) throws ParameterException
@@ -342,7 +342,7 @@ public final class LmrsUtil implements LmrsParameters
 
     /**
      * Updates the desired headway following an exponential shape approximated with fixed time step <code>DT</code>.
-     * @param params Parameters; parameters
+     * @param params parameters
      * @throws ParameterException in case of a parameter exception
      */
     private static void exponentialHeadwayRelaxation(final Parameters params) throws ParameterException
@@ -358,12 +358,12 @@ public final class LmrsUtil implements LmrsParameters
      * may be included partially. If both are positive or negative, voluntary desire is fully included. Otherwise, voluntary
      * desire is less considered within the range dSync &lt; |mandatory| &lt; dCoop. The absolute value is used as large
      * negative mandatory desire may also dominate voluntary desire.
-     * @param parameters Parameters; parameters
-     * @param perception LanePerception; perception
-     * @param carFollowingModel CarFollowingModel; car-following model
-     * @param mandatoryIncentives Iterable&lt;MandatoryIncentive&gt;; mandatory incentives
-     * @param voluntaryIncentives Iterable&lt;VoluntaryIncentive&gt;; voluntary incentives
-     * @param desireMap Map&lt;Class&lt;? extends Incentive&gt;,Desire&gt;; map where calculated desires are stored in
+     * @param parameters parameters
+     * @param perception perception
+     * @param carFollowingModel car-following model
+     * @param mandatoryIncentives mandatory incentives
+     * @param voluntaryIncentives voluntary incentives
+     * @param desireMap map where calculated desires are stored in
      * @return lane change desire for gtu
      * @throws ParameterException if a parameter is not defined
      * @throws GtuException if there is no mandatory incentive, the model requires at least one
@@ -435,16 +435,16 @@ public final class LmrsUtil implements LmrsParameters
 
     /**
      * Determine whether a lane change is acceptable (gap, lane markings, etc.).
-     * @param perception LanePerception; perception
-     * @param params Parameters; parameters
-     * @param sli SpeedLimitInfo; speed limit info
-     * @param cfm CarFollowingModel; car-following model
-     * @param desire double; level of lane change desire
-     * @param ownSpeed Speed; own speed
-     * @param ownAcceleration Acceleration; current car-following acceleration
-     * @param lat LateralDirectionality; lateral direction for synchronization
-     * @param gapAcceptance GapAcceptance; gap-acceptance model
-     * @param laneChange LaneChange; lane change
+     * @param perception perception
+     * @param params parameters
+     * @param sli speed limit info
+     * @param cfm car-following model
+     * @param desire level of lane change desire
+     * @param ownSpeed own speed
+     * @param ownAcceleration current car-following acceleration
+     * @param lat lateral direction for synchronization
+     * @param gapAcceptance gap-acceptance model
+     * @param laneChange lane change
      * @return whether a gap is acceptable
      * @throws ParameterException if a parameter is not defined
      * @throws OperationalPlanException perception exception
@@ -579,12 +579,12 @@ public final class LmrsUtil implements LmrsParameters
 
     /**
      * Returns a quickly determined acceleration to consider on an adjacent lane, following from conflicts and traffic lights.
-     * @param params Parameters; parameters
-     * @param sli SpeedLimitInfo; speed limit info
-     * @param cfm CarFollowingModel; car-following model
-     * @param ownSpeed Speed; own speed
-     * @param lat LateralDirectionality; lateral direction for synchronization
-     * @param intersection IntersectionPerception; intersection perception
+     * @param params parameters
+     * @param sli speed limit info
+     * @param cfm car-following model
+     * @param ownSpeed own speed
+     * @param lat lateral direction for synchronization
+     * @param intersection intersection perception
      * @return a quickly determined acceleration to consider on an adjacent lane, following from conflicts and traffic lights
      * @throws ParameterException if a parameter is not defined
      */
@@ -622,8 +622,8 @@ public final class LmrsUtil implements LmrsParameters
 
     /**
      * Sets value for T depending on level of lane change desire.
-     * @param params Parameters; parameters
-     * @param desire double; lane change desire
+     * @param params parameters
+     * @param desire lane change desire
      * @throws ParameterException if T, TMIN or TMAX is not in the parameters
      */
     static void setDesiredHeadway(final Parameters params, final double desire) throws ParameterException
@@ -636,7 +636,7 @@ public final class LmrsUtil implements LmrsParameters
 
     /**
      * Resets value for T depending on level of lane change desire.
-     * @param params Parameters; parameters
+     * @param params parameters
      * @throws ParameterException if T is not in the parameters
      */
     static void resetDesiredHeadway(final Parameters params) throws ParameterException
@@ -646,13 +646,13 @@ public final class LmrsUtil implements LmrsParameters
 
     /**
      * Determine acceleration from car-following with desire-adjusted headway.
-     * @param distance Length; distance from follower to leader
-     * @param followerSpeed Speed; speed of follower
-     * @param leaderSpeed Speed; speed of leader
-     * @param desire double; level of lane change desire
-     * @param params Parameters; parameters
-     * @param sli SpeedLimitInfo; speed limit info
-     * @param cfm CarFollowingModel; car-following model
+     * @param distance distance from follower to leader
+     * @param followerSpeed speed of follower
+     * @param leaderSpeed speed of leader
+     * @param desire level of lane change desire
+     * @param params parameters
+     * @param sli speed limit info
+     * @param cfm car-following model
      * @return acceleration from car-following
      * @throws ParameterException if a parameter is not defined
      */

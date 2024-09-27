@@ -34,8 +34,8 @@ public final class DocumentReader
 
     /**
      * Opens an XSD or XML file.
-     * @param file URI; file.
-     * @return Document; document, i.e. the root of the XSD file.
+     * @param file file.
+     * @return document, i.e. the root of the XSD file.
      * @throws SAXException exception
      * @throws IOException exception
      * @throws ParserConfigurationException exception
@@ -63,10 +63,10 @@ public final class DocumentReader
      * &lt;/xsd:sequence&gt;
      * </pre>
      * 
-     * @param node Node; node, either xsd:element or xsd:attribute.
-     * @param element String; either "xsd:documentation" or "xsd:appinfo".
-     * @param source String; name that the source attribute of the annotation should have.
-     * @return String; annotation value, {@code null} if not found.
+     * @param node node, either xsd:element or xsd:attribute.
+     * @param element either "xsd:documentation" or "xsd:appinfo".
+     * @param source name that the source attribute of the annotation should have.
+     * @return annotation value, {@code null} if not found.
      */
     public static String getAnnotation(final Node node, final String element, final String source)
     {
@@ -102,9 +102,9 @@ public final class DocumentReader
      *         ? node.getAttributes().getNamedItem(name).getNodeValue() : null;
      * </pre>
      * 
-     * @param node Node; node.
-     * @param name String; attribute name.
-     * @return String; value of the attribute in the node.
+     * @param node node.
+     * @param name attribute name.
+     * @return value of the attribute in the node.
      */
     public static String getAttribute(final Node node, final String name)
     {
@@ -114,9 +114,9 @@ public final class DocumentReader
 
     /**
      * Returns a child node of specified type. It should be a type of which there may be only one.
-     * @param node Node node;
-     * @param type String; child type, e.g. xsd:complexType.
-     * @return Node; child node of specified type.
+     * @param node
+     * @param type child type, e.g. xsd:complexType.
+     * @return child node of specified type.
      */
     public static Node getChild(final Node node, final String type)
     {
@@ -136,9 +136,9 @@ public final class DocumentReader
 
     /**
      * Returns child nodes of specified type.
-     * @param node Node node;
-     * @param type String; child type, e.g. xsd:field.
-     * @return ArayList&lt;Node&gt;; child nodes of specified type.
+     * @param node
+     * @param type child type, e.g. xsd:field.
+     * @return child nodes of specified type.
      */
     public static ArrayList<Node> getChildren(final Node node, final String type)
     {

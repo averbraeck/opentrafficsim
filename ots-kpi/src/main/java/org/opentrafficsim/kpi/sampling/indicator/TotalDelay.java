@@ -29,7 +29,7 @@ public class TotalDelay extends AbstractIndicator<Duration>
     private final Speed referenceSpeed;
 
     /**
-     * @param referenceSpeed Speed; reference speed for delay
+     * @param referenceSpeed reference speed for delay
      */
     public TotalDelay(final Speed referenceSpeed)
     {

@@ -22,8 +22,8 @@ public class DiscreteDistTime extends DiscreteDistDoubleScalar.Abs<Time, TimeUni
     private static final long serialVersionUID = 20180829L;
 
     /**
-     * @param distribution DistDiscrete; distribution
-     * @param unit TimeUnit; units
+     * @param distribution distribution
+     * @param unit units
      */
     public DiscreteDistTime(final DistDiscrete distribution, final TimeUnit unit)
     {

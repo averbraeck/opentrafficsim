@@ -23,8 +23,8 @@ public class DiscreteDistAbsoluteTemperature
     private static final long serialVersionUID = 20180829L;
 
     /**
-     * @param distribution DistDiscrete; distribution
-     * @param unit AbsoluteTemperatureUnit; units
+     * @param distribution distribution
+     * @param unit units
      */
     public DiscreteDistAbsoluteTemperature(final DistDiscrete distribution, final AbsoluteTemperatureUnit unit)
     {

@@ -89,9 +89,9 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
 
     /**
      * Instantiated a tactical planner with GTU following and lane change behavior.
-     * @param carFollowingModel GtuFollowingModelOld; Car-following model.
-     * @param laneChangeModel LaneChangeModel; Lane change model.
-     * @param gtu LaneBasedGtu; GTU
+     * @param carFollowingModel Car-following model.
+     * @param laneChangeModel Lane change model.
+     * @param gtu GTU
      */
     public LaneBasedCfLcTacticalPlanner(final GtuFollowingModelOld carFollowingModel, final LaneChangeModel laneChangeModel,
             final LaneBasedGtu gtu)
@@ -212,10 +212,10 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
     /**
      * TODO: move laneIncentives to LanePerception? Figure out if the default lane incentives are OK, or override them with
      * values that should keep this GTU on the intended route.
-     * @param gtu LaneBasedGtu; the GTU for which to calculate the incentives
-     * @param defaultLaneIncentives AccelerationVector; the three lane incentives for the next left adjacent lane, the current
-     *            lane and the next right adjacent lane
-     * @return AccelerationVector; the (possibly adjusted) lane incentives
+     * @param gtu the GTU for which to calculate the incentives
+     * @param defaultLaneIncentives the three lane incentives for the next left adjacent lane, the current lane and the next
+     *            right adjacent lane
+     * @return the (possibly adjusted) lane incentives
      * @throws NetworkException on network inconsistency
      * @throws ValueRuntimeException cannot happen
      * @throws GtuException when the position of the GTU cannot be correctly determined
@@ -251,9 +251,9 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
     /**
      * Figure out if the default lane incentives are OK, or override them with values that should keep this GTU from running out
      * of road at an upcoming lane drop.
-     * @param gtu LaneBasedGtu; the GTU for which to check the lane drops
-     * @param defaultLaneIncentives AccelerationVector; DoubleVector.Rel.Dense&lt;AccelerationUnit&gt; the three lane incentives
-     *            for the next left adjacent lane, the current lane and the next right adjacent lane
+     * @param gtu the GTU for which to check the lane drops
+     * @param defaultLaneIncentives DoubleVector.Rel.Dense&lt;AccelerationUnit&gt; the three lane incentives for the next left
+     *            adjacent lane, the current lane and the next right adjacent lane
      * @return DoubleVector.Rel.Dense&lt;AccelerationUnit&gt;; the (possibly adjusted) lane incentives
      * @throws NetworkException on network inconsistency
      * @throws ValueRuntimeException cannot happen
@@ -300,10 +300,10 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
 
     /**
      * Return the distance until the next lane drop in the specified (nearby) lane.
-     * @param gtu LaneBasedGtu; the GTU to determine the next lane drop for
-     * @param direction LateralDirectionality; one of the values <cite>LateralDirectionality.LEFT</cite> (use the left-adjacent
-     *            lane), or <cite>LateralDirectionality.RIGHT</cite> (use the right-adjacent lane), or <cite>null</cite> (use
-     *            the current lane)
+     * @param gtu the GTU to determine the next lane drop for
+     * @param direction one of the values <cite>LateralDirectionality.LEFT</cite> (use the left-adjacent lane), or
+     *            <cite>LateralDirectionality.RIGHT</cite> (use the right-adjacent lane), or <cite>null</cite> (use the current
+     *            lane)
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; distance until the next lane drop if it occurs within the TIMEHORIZON, or
      *         LaneBasedRouteNavigator.NOLANECHANGENEEDED if this lane can be followed until the next split junction or until
      *         beyond the TIMEHORIZON
@@ -356,8 +356,8 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
     /**
      * TODO: move suitability to LanePerception? Return the suitability for the current lane, left adjacent lane or right
      * adjacent lane.
-     * @param gtu LaneBasedGtu; the GTU for which to calculate the incentives
-     * @param direction LateralDirectionality; one of the values <cite>null</cite>, <cite>LateralDirectionality.LEFT</cite>, or
+     * @param gtu the GTU for which to calculate the incentives
+     * @param direction one of the values <cite>null</cite>, <cite>LateralDirectionality.LEFT</cite>, or
      *            <cite>LateralDirectionality.RIGHT</cite>
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the suitability of the lane for reaching the (next) destination
      * @throws NetworkException on network inconsistency
@@ -393,9 +393,9 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
 
     /**
      * Compute deceleration needed to stop at a specified distance.
-     * @param gtu LaneBasedGtu; the GTU for which to calculate the acceleration to come to a full stop at the distance
-     * @param stopDistance Length; the distance
-     * @return double; the acceleration (deceleration) needed to stop at the specified distance in m/s/s
+     * @param gtu the GTU for which to calculate the acceleration to come to a full stop at the distance
+     * @param stopDistance the distance
+     * @return the acceleration (deceleration) needed to stop at the specified distance in m/s/s
      */
     private double acceleration(final LaneBasedGtu gtu, final Length stopDistance)
     {
@@ -409,10 +409,10 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
     /**
      * Determine the suitability of being at a particular longitudinal position in a particular Lane for following this Route.
      * <br>
-     * @param lane Lane; the lane to consider
-     * @param longitudinalPosition Length; the longitudinal position in the lane
-     * @param gtu LaneBasedGtu; the GTU (used to check lane compatibility of lanes, and current lane the GTU is on)
-     * @param timeHorizon Duration; the maximum time that a driver may want to look ahead
+     * @param lane the lane to consider
+     * @param longitudinalPosition the longitudinal position in the lane
+     * @param gtu the GTU (used to check lane compatibility of lanes, and current lane the GTU is on)
+     * @param timeHorizon the maximum time that a driver may want to look ahead
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; a value that indicates within what distance the GTU should try to vacate this
      *         lane.
      * @throws NetworkException on network inconsistency, or when the continuation Link at a branch cannot be determined
@@ -587,13 +587,13 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
      * Compute the suitability of a lane from which lane changes are required to get to the next point on the Route.<br>
      * This method weighs the suitability of the nearest suitable lane by (m - n) / m where n is the number of lane changes
      * required and m is the total number of lanes in the CrossSectionLink.
-     * @param startLane Lane; the current lane of the GTU
-     * @param remainingDistance double; distance in m of GTU to first branch
-     * @param suitabilities Map&lt;Lane, Length&gt;; the set of suitable lanes and their suitability
-     * @param totalLanes int; total number of lanes compatible with the GTU type
-     * @param direction LateralDirectionality; the direction of the lane changes to attempt
-     * @param gtuType GtuType; the type of the GTU
-     * @return double; the suitability of the <cite>startLane</cite> for following the Route
+     * @param startLane the current lane of the GTU
+     * @param remainingDistance distance in m of GTU to first branch
+     * @param suitabilities the set of suitable lanes and their suitability
+     * @param totalLanes total number of lanes compatible with the GTU type
+     * @param direction the direction of the lane changes to attempt
+     * @param gtuType the type of the GTU
+     * @return the suitability of the <cite>startLane</cite> for following the Route
      */
     protected final Length computeSuitabilityWithLaneChanges(final Lane startLane, final double remainingDistance,
             final Map<Lane, Length> suitabilities, final int totalLanes, final LateralDirectionality direction,
@@ -631,9 +631,9 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
     /**
      * Determine how many lanes on a CrossSectionLink are compatible with a particular GTU type.<br>
      * TODO: this method should probably be moved into the CrossSectionLink class
-     * @param link CrossSectionLink; the link
-     * @param gtuType GtuType; the GTU type
-     * @return integer; the number of lanes on the link that are compatible with the GTU type
+     * @param link the link
+     * @param gtuType the GTU type
+     * @return the number of lanes on the link that are compatible with the GTU type
      */
     protected final int countCompatibleLanes(final CrossSectionLink link, final GtuType gtuType)
     {

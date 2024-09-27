@@ -30,10 +30,10 @@ public final class Draw
 
     /**
      * Returns a randomly drawn element using draw weights.
-     * @param map Map&lt;E, ? extends Double&gt;; map of elements and respective weights
-     * @param stream StreamInterface; random number stream
+     * @param map map of elements and respective weights
+     * @param stream random number stream
      * @param <E> element type
-     * @return E; randomly drawn element
+     * @return randomly drawn element
      */
     public static <E> E drawWeighted(final Map<E, ? extends Double> map, final StreamInterface stream)
     {
@@ -75,10 +75,10 @@ public final class Draw
 
     /**
      * Returns a randomly drawn element using uniform weights.
-     * @param collection Collection&lt;E&gt;; collection of elements
-     * @param stream StreamInterface; random number stream
+     * @param collection collection of elements
+     * @param stream random number stream
      * @param <E> element type
-     * @return E; randomly drawn element
+     * @return randomly drawn element
      */
     public static <E> E draw(final Collection<E> collection, final StreamInterface stream)
     {

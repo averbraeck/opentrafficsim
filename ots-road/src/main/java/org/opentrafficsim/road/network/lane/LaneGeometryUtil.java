@@ -42,10 +42,10 @@ public class LaneGeometryUtil
 
     /**
      * Create cross-section slices from constant values.
-     * @param designLine ContinuousLine; design line.
-     * @param offset Length; offset.
-     * @param width Length; width.
-     * @return List&lt;CrossSectionSlice&gt;; list of cross-section slices.
+     * @param designLine design line.
+     * @param offset offset.
+     * @param width width.
+     * @return list of cross-section slices.
      */
     public static List<CrossSectionSlice> getSlices(final ContinuousLine designLine, final Length offset, final Length width)
     {
@@ -55,12 +55,12 @@ public class LaneGeometryUtil
 
     /**
      * Create cross-section slices from start and end values.
-     * @param designLine ContinuousLine; design line.
-     * @param startOffset Length; start offset.
-     * @param endOffset Length; end offset.
-     * @param startWidth Length; start width.
-     * @param endWidth Length; end width.
-     * @return List&lt;CrossSectionSlice&gt;; list of cross-section slices.
+     * @param designLine design line.
+     * @param startOffset start offset.
+     * @param endOffset end offset.
+     * @param startWidth start width.
+     * @param endWidth end width.
+     * @return list of cross-section slices.
      */
     public static List<CrossSectionSlice> getSlices(final ContinuousLine designLine, final Length startOffset,
             final Length endOffset, final Length startWidth, final Length endWidth)
@@ -71,9 +71,9 @@ public class LaneGeometryUtil
 
     /**
      * Returns the offsets to use on a {@code ContinuousLine} for the left-hand edge.
-     * @param designLine ContinuousLine; design line.
-     * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
-     * @return FractionalLengthData; offsets at fractional lengths to use on a {@code ContinuousLine}.
+     * @param designLine design line.
+     * @param crossSectionSlices cross-section slices.
+     * @return offsets at fractional lengths to use on a {@code ContinuousLine}.
      */
     public static FractionalLengthData getCenterOffsets(final ContinuousLine designLine,
             final List<CrossSectionSlice> crossSectionSlices)
@@ -83,9 +83,9 @@ public class LaneGeometryUtil
 
     /**
      * Returns the offsets to use on a {@code ContinuousLine} for the left-hand edge.
-     * @param designLine ContinuousLine; design line.
-     * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
-     * @return FractionalLengthData; offsets at fractional lengths to use on a {@code ContinuousLine}.
+     * @param designLine design line.
+     * @param crossSectionSlices cross-section slices.
+     * @return offsets at fractional lengths to use on a {@code ContinuousLine}.
      */
     public static FractionalLengthData getLeftEdgeOffsets(final ContinuousLine designLine,
             final List<CrossSectionSlice> crossSectionSlices)
@@ -95,9 +95,9 @@ public class LaneGeometryUtil
 
     /**
      * Returns the offsets to use on a {@code ContinuousLine} for the right-hand edge.
-     * @param designLine ContinuousLine; design line.
-     * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
-     * @return FractionalLengthData; offsets at fractional lengths to use on a {@code ContinuousLine}.
+     * @param designLine design line.
+     * @param crossSectionSlices cross-section slices.
+     * @return offsets at fractional lengths to use on a {@code ContinuousLine}.
      */
     public static FractionalLengthData getRightEdgeOffsets(final ContinuousLine designLine,
             final List<CrossSectionSlice> crossSectionSlices)
@@ -107,10 +107,10 @@ public class LaneGeometryUtil
 
     /**
      * Returns the offsets to use on a {@code ContinuousLine}.
-     * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
-     * @param length double; length of the design line.
-     * @param widthFactor double; factor to use, typically -0.5 for right-hand, 0.0 for center, and 0.5 for left-hand.
-     * @return FractionalLengthData; offsets at fractional lengths to use on a {@code ContinuousLine}.
+     * @param crossSectionSlices cross-section slices.
+     * @param length length of the design line.
+     * @param widthFactor factor to use, typically -0.5 for right-hand, 0.0 for center, and 0.5 for left-hand.
+     * @return offsets at fractional lengths to use on a {@code ContinuousLine}.
      */
     private static FractionalLengthData getOffsets(final List<CrossSectionSlice> crossSectionSlices, final double length,
             final double widthFactor)
@@ -123,9 +123,9 @@ public class LaneGeometryUtil
 
     /**
      * Returns the contour based on left and right edge.
-     * @param leftEdge PolyLine2d; left edge, in design line direction.
-     * @param rightEdge PolyLine2d; right edge, in design line direction.
-     * @return Polygon2d; a closed loop of both edges.
+     * @param leftEdge left edge, in design line direction.
+     * @param rightEdge right edge, in design line direction.
+     * @return a closed loop of both edges.
      */
     public static Polygon2d getContour(final PolyLine2d leftEdge, final PolyLine2d rightEdge)
     {
@@ -138,13 +138,13 @@ public class LaneGeometryUtil
 
     /**
      * Creates a simple straight lane. This method exists to create lanes for simple tests.
-     * @param link CrossSectionLink; link.
-     * @param id String; id.
-     * @param offset Length; end offset.
-     * @param width Length; end width.
-     * @param laneType LaneType; lane type.
-     * @param speedLimits Map&lt;GtuType, Speed&gt;; speed limit map.
-     * @return Lane; lane.
+     * @param link link.
+     * @param id id.
+     * @param offset end offset.
+     * @param width end width.
+     * @param laneType lane type.
+     * @param speedLimits speed limit map.
+     * @return lane.
      */
     public static Lane createStraightLane(final CrossSectionLink link, final String id, final Length offset, final Length width,
             final LaneType laneType, final Map<GtuType, Speed> speedLimits)
@@ -154,15 +154,15 @@ public class LaneGeometryUtil
 
     /**
      * Creates a simple straight lane. This method exists to create lanes for simple tests.
-     * @param link CrossSectionLink; link.
-     * @param id String; id.
-     * @param startOffset Length; start offset.
-     * @param endOffset Length; end offset.
-     * @param startWidth Length; start width.
-     * @param endWidth Length; end width.
-     * @param laneType LaneType; lane type.
-     * @param speedLimits Map&lt;GtuType, Speed&gt;; speed limit map.
-     * @return Lane; lane.
+     * @param link link.
+     * @param id id.
+     * @param startOffset start offset.
+     * @param endOffset end offset.
+     * @param startWidth start width.
+     * @param endWidth end width.
+     * @param laneType lane type.
+     * @param speedLimits speed limit map.
+     * @return lane.
      */
     public static Lane createStraightLane(final CrossSectionLink link, final String id, final Length startOffset,
             final Length endOffset, final Length startWidth, final Length endWidth, final LaneType laneType,
@@ -177,12 +177,12 @@ public class LaneGeometryUtil
 
     /**
      * Creates a simple straight lane. This method exists to create lanes for simple tests.
-     * @param link CrossSectionLink; link.
-     * @param id String; id.
-     * @param slices List&lt;CrossSectionSlice&gt;; slices.
-     * @param laneType LaneType; lane type.
-     * @param speedLimits Map&lt;GtuType, Speed&gt;; speed limit map.
-     * @return Lane; lane.
+     * @param link link.
+     * @param id id.
+     * @param slices slices.
+     * @param laneType lane type.
+     * @param speedLimits speed limit map.
+     * @return lane.
      */
     public static Lane createStraightLane(final CrossSectionLink link, final String id, final List<CrossSectionSlice> slices,
             final LaneType laneType, final Map<GtuType, Speed> speedLimits)
@@ -200,11 +200,11 @@ public class LaneGeometryUtil
 
     /**
      * Creates a simple straight lane. This method exists to create lanes for simple tests.
-     * @param type Type; stripe type.
-     * @param link CrossSectionLink; link.
-     * @param offset Length; end offset.
-     * @param width Length; end width.
-     * @return Lane; lane.
+     * @param type stripe type.
+     * @param link link.
+     * @param offset end offset.
+     * @param width end width.
+     * @return lane.
      */
     public static Stripe createStraightStripe(final Type type, final CrossSectionLink link, final Length offset,
             final Length width)
@@ -222,14 +222,14 @@ public class LaneGeometryUtil
 
     /**
      * Creates a simple straight shoulder. This method exists to create shoulders for simple tests.
-     * @param link CrossSectionLink; link.
-     * @param id String; id.
-     * @param startOffset Length; start offset.
-     * @param endOffset Length; end offset.
-     * @param startWidth Length; start width.
-     * @param endWidth Length; end width.
-     * @param laneType LaneType; lane type.
-     * @return Lane; lane.
+     * @param link link.
+     * @param id id.
+     * @param startOffset start offset.
+     * @param endOffset end offset.
+     * @param startWidth start width.
+     * @param endWidth end width.
+     * @param laneType lane type.
+     * @return lane.
      */
     public static Object createStraightShoulder(final CrossSectionLink link, final String id, final Length startOffset,
             final Length endOffset, final Length startWidth, final Length endWidth, final LaneType laneType)

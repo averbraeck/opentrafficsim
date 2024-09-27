@@ -51,8 +51,8 @@ public class KeyValidator extends XPathValidator implements EventListener
 
     /**
      * Constructor.
-     * @param keyNode Node; node defining the xsd:key or xsd:unique.
-     * @param keyPath String; path where the key was defined.
+     * @param keyNode node defining the xsd:key or xsd:unique.
+     * @param keyPath path where the key was defined.
      */
     public KeyValidator(final Node keyNode, final String keyPath)
     {
@@ -213,9 +213,9 @@ public class KeyValidator extends XPathValidator implements EventListener
     }
 
     /**
-     * Remove node. This method is called internally for children of deactivated nodes, in
-     * which case we do not want to remove this validator as listener on the node, for when it gets activated later.
-     * @param node XsdTreeNode; node to remove.
+     * Remove node. This method is called internally for children of deactivated nodes, in which case we do not want to remove
+     * this validator as listener on the node, for when it gets activated later.
+     * @param node node to remove.
      */
     private void removeNodeKeepListening(final XsdTreeNode node)
     {
@@ -241,8 +241,8 @@ public class KeyValidator extends XPathValidator implements EventListener
     /**
      * Returns the present values of the fields for each node within the given context. Value sets containing {@code null} are
      * not returned, as these are invalid for xsd:key's, and ignored for xsd:unique's.
-     * @param node XsdTreeNode; node that is in the right context.
-     * @return Map&lt;XsdTreeNode, List&lt;String&gt;&gt;; list of all values per key node.
+     * @param node node that is in the right context.
+     * @return list of all values per key node.
      */
     protected Map<XsdTreeNode, List<String>> getAllValueSets(final XsdTreeNode node)
     {
@@ -266,10 +266,10 @@ public class KeyValidator extends XPathValidator implements EventListener
     /**
      * Returns whether there are or were duplicate keys such that no key change should result in a change of value at the
      * keyrefs.
-     * @param keyNode XsdTreeNode; node where key is changed.
-     * @param fieldIndex int; index of the field.
-     * @param previous String; previous value.
-     * @return boolean; whether there are duplicate keys.
+     * @param keyNode node where key is changed.
+     * @param fieldIndex index of the field.
+     * @param previous previous value.
+     * @return whether there are duplicate keys.
      */
     private boolean duplicateKeys(final XsdTreeNode keyNode, final int fieldIndex, final String previous)
     {
@@ -295,8 +295,8 @@ public class KeyValidator extends XPathValidator implements EventListener
      * Recursively removes or adds the children from an activated or deactivated node to/from this key. Children of a
      * deactivated node no longer have valid key values. Only active nodes are considered. However, when a node gets
      * deactivated, its children should be removed too. The argument {@code forceDoChildren} is {@code true} in that case.
-     * @param node XsdTreeNode; node to remove or add.
-     * @param active boolean; when node was activated, child nodes are add. Otherwise removed.
+     * @param node node to remove or add.
+     * @param active when node was activated, child nodes are add. Otherwise removed.
      */
     private void activationChanged(final XsdTreeNode node, final boolean active)
     {
@@ -319,9 +319,9 @@ public class KeyValidator extends XPathValidator implements EventListener
 
     /**
      * Update value in nodes that refer with xsd:keyref to a value that was changed.
-     * @param node XsdTreeNode; node on which the value was changed.
-     * @param fieldIndex int; index of field that was changed.
-     * @param newValue String; new value.
+     * @param node node on which the value was changed.
+     * @param fieldIndex index of field that was changed.
+     * @param newValue new value.
      */
     private void updateReferringKeyrefs(final XsdTreeNode node, final int fieldIndex, final String newValue)
     {
@@ -344,7 +344,7 @@ public class KeyValidator extends XPathValidator implements EventListener
 
     /**
      * Adds a keyref validator as listening to this key.
-     * @param keyrefValidator KeyrefValidator; keyref validator.
+     * @param keyrefValidator keyref validator.
      */
     public void addListeningKeyrefValidator(final KeyrefValidator keyrefValidator)
     {

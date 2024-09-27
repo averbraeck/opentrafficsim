@@ -187,7 +187,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
 
     /**
      * Main program.
-     * @param args String[]; the command line arguments (not used)
+     * @param args the command line arguments (not used)
      */
     public static void main(final String[] args)
     {
@@ -794,7 +794,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         private static final long serialVersionUID = 20200516L;
 
         /**
-         * @param plot FundamentalDiagram; fundamental diagram
+         * @param plot fundamental diagram
          */
         SwingFundamentalDiagramNoControl(final FundamentalDiagram plot)
         {

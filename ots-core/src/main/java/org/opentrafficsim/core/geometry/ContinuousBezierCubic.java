@@ -45,10 +45,10 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
 
     /**
      * Create a cubic Bezier.
-     * @param point1 Point2d; start point.
-     * @param point2 Point2d; first intermediate shape point.
-     * @param point3 Point2d; second intermediate shape point.
-     * @param point4 Point2d; end point.
+     * @param point1 start point.
+     * @param point2 first intermediate shape point.
+     * @param point3 second intermediate shape point.
+     * @param point4 end point.
      */
     public ContinuousBezierCubic(final Point2d point1, final Point2d point2, final Point2d point3, final Point2d point4)
     {
@@ -88,7 +88,7 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
 
     /**
      * Returns the root t values, where each of the sub-components derivative for x and y are 0.0.
-     * @return SortedSet&lt;Double&gt;; set of root t values, sorted and in the range (0, 1), exclusive.
+     * @return set of root t values, sorted and in the range (0, 1), exclusive.
      */
     private SortedSet<Double> getRoots()
     {
@@ -125,7 +125,7 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
 
     /**
      * Returns the inflection t values, where curvature changes sign.
-     * @return SortedSet&lt;Double&gt;; set of inflection t values, sorted and in the range (0, 1), exclusive.
+     * @return set of inflection t values, sorted and in the range (0, 1), exclusive.
      */
     private SortedSet<Double> getInflections()
     {
@@ -180,8 +180,8 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
 
     /**
      * Returns the offset t values.
-     * @param fractions Set&lt;Double&gt;; length fractions at which offsets are defined.
-     * @return SortedSet&lt;Double&gt;; set of offset t values, sorted and in the range (0, 1), exclusive.
+     * @param fractions length fractions at which offsets are defined.
+     * @return set of offset t values, sorted and in the range (0, 1), exclusive.
      */
     private SortedSet<Double> getOffsetT(final Set<Double> fractions)
     {
@@ -200,8 +200,8 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
     /**
      * Returns the t value at the provided length along the Bezier. This method uses an iterative approach with a precision of
      * 1e-6.
-     * @param len double; length along the Bezier.
-     * @return double; t value at the provided length along the Bezier.
+     * @param len length along the Bezier.
+     * @return t value at the provided length along the Bezier.
      */
     public double getT(final double len)
     {
@@ -228,8 +228,8 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
 
     /**
      * Splits the Bezier in two Beziers of the same order.
-     * @param t double; t value along the Bezier to apply the split.
-     * @return ContinuousBezierCubic[]; the Bezier before t, and the Bezier after t.
+     * @param t t value along the Bezier to apply the split.
+     * @return the Bezier before t, and the Bezier after t.
      */
     public ContinuousBezierCubic[] split(final double t)
     {
@@ -243,10 +243,10 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
 
     /**
      * Performs the iterative algorithm of Casteljau to derive the split Beziers.
-     * @param t double; t value along the Bezier to apply the split.
-     * @param p List&lt;Point2d&gt;; shape points of Bezier still to split.
-     * @param p1 List&lt;Point2d&gt;; shape points of first part, accumulated in the recursion.
-     * @param p2 List&lt;Point2d&gt;; shape points of first part, accumulated in the recursion.
+     * @param t t value along the Bezier to apply the split.
+     * @param p shape points of Bezier still to split.
+     * @param p1 shape points of first part, accumulated in the recursion.
+     * @param p2 shape points of first part, accumulated in the recursion.
      */
     private void split0(final double t, final List<Point2d> p, final List<Point2d> p1, final List<Point2d> p2)
     {
@@ -451,13 +451,13 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
 
     /**
      * Creates the offset Bezier of a Bezier segment. These segments are part of the offset procedure.
-     * @param offsets FractionalLengthData; offsets as defined for entire Bezier.
-     * @param lengthSoFar double; total length of previous segments.
-     * @param lengthTotal double; total length of full Bezier.
-     * @param sig double; sign of offset and offset slope
-     * @param first boolean; {@code true} for the first Bezier segment.
-     * @param last boolean; {@code true} for the last Bezier segment.
-     * @return ContinuousBezierCubic; offset Bezier.
+     * @param offsets offsets as defined for entire Bezier.
+     * @param lengthSoFar total length of previous segments.
+     * @param lengthTotal total length of full Bezier.
+     * @param sig sign of offset and offset slope
+     * @param first {@code true} for the first Bezier segment.
+     * @param last {@code true} for the last Bezier segment.
+     * @return offset Bezier.
      */
     private ContinuousBezierCubic offset(final FractionalLengthData offsets, final double lengthSoFar, final double lengthTotal,
             final double sig, final boolean first, final boolean last)

@@ -24,7 +24,7 @@ public abstract class AbstractNodeDecoratorRemove extends AbstractNodeDecorator
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
+     * @param editor editor.
      */
     public AbstractNodeDecoratorRemove(final OtsEditor editor)
     {
@@ -54,7 +54,7 @@ public abstract class AbstractNodeDecoratorRemove extends AbstractNodeDecorator
 
     /**
      * Notified when a node has been removed.
-     * @param node XsdTreeNode; removed node.
+     * @param node removed node.
      */
     public abstract void notifyRemoved(XsdTreeNode node);
 

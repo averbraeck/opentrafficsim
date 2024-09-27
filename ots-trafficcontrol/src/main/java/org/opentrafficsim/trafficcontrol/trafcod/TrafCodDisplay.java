@@ -46,9 +46,9 @@ public class TrafCodDisplay extends JPanel implements MouseMotionListener, Mouse
 
     /**
      * Construct a new TrafCODDisplay.
-     * @param image BufferedImage; the background image. This constructor does <b>not</b> make a deep copy of the image.
-     *            Modifications of the image after calling this constructor might have <i>interesting</i> consequences, but
-     *            should not result in crashes.
+     * @param image the background image. This constructor does <b>not</b> make a deep copy of the image. Modifications of the
+     *            image after calling this constructor might have <i>interesting</i> consequences, but should not result in
+     *            crashes.
      */
     public TrafCodDisplay(final BufferedImage image)
     {
@@ -59,8 +59,8 @@ public class TrafCodDisplay extends JPanel implements MouseMotionListener, Mouse
 
     /**
      * Look up a DetectorImage.
-     * @param id String; id of the DetectorImage
-     * @return DetectorImage; the detector image with matching id or null.
+     * @param id id of the DetectorImage
+     * @return the detector image with matching id or null.
      */
     public DetectorImage getDetectorImage(final String id)
     {
@@ -88,7 +88,7 @@ public class TrafCodDisplay extends JPanel implements MouseMotionListener, Mouse
 
     /**
      * Add one TrafCODObject to this TrafCODDisplay.
-     * @param trafCODObject TrafCODObject; the TrafCOD object that must be added
+     * @param trafCODObject the TrafCOD object that must be added
      */
     void addTrafCODObject(final TrafCODObject trafCODObject)
     {
@@ -164,16 +164,16 @@ interface TrafCODObject
 {
     /**
      * Draw yourself at the indicated location.
-     * @param g2 Graphics2D; the graphics context
+     * @param g2 the graphics context
      */
     void draw(Graphics2D g2);
 
     /**
      * Check if the given coordinates hit the TrafCODObject. If it does return a String to be used as a tool tip text. If the
      * coordinates do not hit this TrafCODObject return null.
-     * @param testX int; the x-coordinate
-     * @param testY int; the y-coordinate
-     * @return String; the tool tip text or null if the coordinates do not hit the TrafCodObject
+     * @param testX the x-coordinate
+     * @param testY the y-coordinate
+     * @return the tool tip text or null if the coordinates do not hit the TrafCodObject
      */
     String toolTipHit(int testX, int testY);
 
@@ -216,10 +216,10 @@ class DetectorImage implements TrafCODObject, EventListener
 
     /**
      * Construct a new DetectorImage.
-     * @param display TrafCODDisplay; the TrafCOD display on which this detector image will be rendered
-     * @param center Point2D; the center location of the detector image on the TrafCOD display
-     * @param id String; id used to match this detector with the TrafCOD detector input
-     * @param description String; name of the detector (displayed as tool tip text)
+     * @param display the TrafCOD display on which this detector image will be rendered
+     * @param center the center location of the detector image on the TrafCOD display
+     * @param id id used to match this detector with the TrafCOD detector input
+     * @param description name of the detector (displayed as tool tip text)
      */
     DetectorImage(final TrafCodDisplay display, final Point2D center, final String id, final String description)
     {
@@ -270,7 +270,7 @@ class DetectorImage implements TrafCODObject, EventListener
 
     /**
      * Retrieve the id of this DetectorImage.
-     * @return String; the id of this DetectorImage
+     * @return the id of this DetectorImage
      */
     public String getId()
     {
@@ -304,9 +304,9 @@ class TrafficLightImage extends LocalEventProducer implements TrafCODObject
 
     /**
      * Create a traffic light image.
-     * @param display TrafCODDisplay; the TrafCOD display on which this traffic light image will be rendered
-     * @param center Point2D; coordinates in the image where this traffic light is centered on
-     * @param description String; tool tip text for the new traffic light image
+     * @param display the TrafCOD display on which this traffic light image will be rendered
+     * @param center coordinates in the image where this traffic light is centered on
+     * @param description tool tip text for the new traffic light image
      */
     TrafficLightImage(final TrafCodDisplay display, final Point2D center, final String description)
     {
@@ -331,7 +331,7 @@ class TrafficLightImage extends LocalEventProducer implements TrafCODObject
 
     /**
      * Sets the traffic light color.
-     * @param trafficLightColor TrafficLightColor; traffic light color.
+     * @param trafficLightColor traffic light color.
      */
     public void setTrafficLightColor(final TrafficLightColor trafficLightColor)
     {

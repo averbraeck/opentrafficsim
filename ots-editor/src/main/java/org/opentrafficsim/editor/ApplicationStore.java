@@ -24,20 +24,20 @@ public class ApplicationStore
 
     /** Maximum number of recent files. */
     private static final int MAX = 10;
-    
+
     /** Store of loaded and set properties. */
     private final Properties store = new Properties();
 
     /** Application name. */
     private final String applicationName;
-    
+
     /** File to store settings. */
     private final String file;
 
     /**
      * Constructor. Properties are stored under "{user.home}/{enterprise}/{application}.ini".
-     * @param enterpriseName String; name of the enterprise.
-     * @param applicationName String; name of the application.
+     * @param enterpriseName name of the enterprise.
+     * @param applicationName name of the application.
      */
     public ApplicationStore(final String enterpriseName, final String applicationName)
     {
@@ -61,8 +61,8 @@ public class ApplicationStore
 
     /**
      * Returns the property value.
-     * @param key String; key.
-     * @return String; property value, or {@code null} if no value is given.
+     * @param key key.
+     * @return property value, or {@code null} if no value is given.
      */
     public synchronized String getProperty(final String key)
     {
@@ -72,8 +72,8 @@ public class ApplicationStore
 
     /**
      * Sets a property value.
-     * @param key String; key.
-     * @param value String; value.
+     * @param key key.
+     * @param value value.
      */
     public synchronized void setProperty(final String key, final String value)
     {
@@ -95,8 +95,8 @@ public class ApplicationStore
 
     /**
      * Returns recent files.
-     * @param key String; key under which files are stored.
-     * @return List&lt;String&gt;; files (recent to old).
+     * @param key key under which files are stored.
+     * @return files (recent to old).
      */
     public List<String> getRecentFiles(final String key)
     {
@@ -113,8 +113,8 @@ public class ApplicationStore
 
     /**
      * Add recent file. If the file is already in the list, it is moved to the front.
-     * @param key String; key under which files are stored.
-     * @param file String; latest file.
+     * @param key key under which files are stored.
+     * @param file latest file.
      */
     public void addRecentFile(final String key, final String file)
     {
@@ -132,11 +132,11 @@ public class ApplicationStore
         files.add(0, file);
         setFiles(key, files);
     }
-    
+
     /**
      * Clears a recent file.
-     * @param key String; key.
-     * @param file String; file.
+     * @param key key.
+     * @param file file.
      */
     public void removeRecentFile(final String key, final String file)
     {
@@ -144,11 +144,11 @@ public class ApplicationStore
         files.remove(file);
         setFiles(key, files);
     }
-    
+
     /**
      * Sets the files.
-     * @param key String; key.
-     * @param files List&lt;String&gt;; files.
+     * @param key key.
+     * @param files files.
      */
     private void setFiles(final String key, final List<String> files)
     {
@@ -158,10 +158,10 @@ public class ApplicationStore
         str.append(files.get(n - 1));
         setProperty(key, str.toString());
     }
-    
+
     /**
      * Removes key from the store.
-     * @param key String; key.
+     * @param key key.
      */
     public void clearProperty(final String key)
     {

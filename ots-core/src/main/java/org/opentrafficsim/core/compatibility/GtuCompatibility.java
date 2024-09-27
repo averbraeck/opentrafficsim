@@ -34,7 +34,7 @@ public class GtuCompatibility<T extends HierarchicalType<T, ?> & Compatibility<G
 
     /**
      * Construct a new Compatibility object with empty compatible and forbidden sets.
-     * @param infrastructure I; the infrastructure type, e.g. LinkType, LaneType, SensorType.
+     * @param infrastructure the infrastructure type, e.g. LinkType, LaneType, SensorType.
      */
     public GtuCompatibility(final T infrastructure)
     {
@@ -44,7 +44,7 @@ public class GtuCompatibility<T extends HierarchicalType<T, ?> & Compatibility<G
 
     /**
      * Construct a new Compatibility and deep copy the compatible and forbidden sets from an existing Compatibility.
-     * @param original GtuCompatibility&lt;I&gt;; the Compatibility from which the compatible and forbidden sets will be copied
+     * @param original the Compatibility from which the compatible and forbidden sets will be copied
      */
     public GtuCompatibility(final GtuCompatibility<T> original)
     {
@@ -54,8 +54,8 @@ public class GtuCompatibility<T extends HierarchicalType<T, ?> & Compatibility<G
 
     /**
      * Determine if this Compatibility allows or denies a particular GtuType.
-     * @param gtuType GtuType; the GtuType to check
-     * @return boolean; true if the GtuType is compatible; false if the GtuType is not compatible
+     * @param gtuType the GtuType to check
+     * @return true if the GtuType is compatible; false if the GtuType is not compatible
      */
     @Override
     public boolean isCompatible(final GtuType gtuType)
@@ -110,8 +110,8 @@ public class GtuCompatibility<T extends HierarchicalType<T, ?> & Compatibility<G
 
     /**
      * Add an compatible GtuType to this GtuCompatibility.
-     * @param gtuType GtuType; the GtuType to add to the compatible set of this Compatibility
-     * @return GTUCompatibility&lt;I&gt;; this GtuCompatibility for method call chaining
+     * @param gtuType the GtuType to add to the compatible set of this Compatibility
+     * @return this GtuCompatibility for method call chaining
      * @throws NullPointerException when <code>gtuType</code> is null
      * @throws OtsRuntimeException when changes are made to compatibility after results have been cached
      */
@@ -125,8 +125,8 @@ public class GtuCompatibility<T extends HierarchicalType<T, ?> & Compatibility<G
 
     /**
      * Add a incompatible GtuType to this GtuCompatibility.
-     * @param gtuType GtuType; the GtuType to add to the incompatible set of this Compatibility
-     * @return GTUCompatibility&lt;I&gt;; this GtuCompatibility for method call chaining
+     * @param gtuType the GtuType to add to the incompatible set of this Compatibility
+     * @return this GtuCompatibility for method call chaining
      * @throws NullPointerException when <code>gtuType</code> is null
      * @throws OtsRuntimeException when changes are made to compatibility after results have been cached
      */
@@ -150,7 +150,7 @@ public class GtuCompatibility<T extends HierarchicalType<T, ?> & Compatibility<G
     public void clearCompatibilityCache()
     {
         this.cachedCompatibilityMap.clear();
-        for (T infra: getInfrastructure().getChildren())
+        for (T infra : getInfrastructure().getChildren())
         {
             infra.clearCompatibilityCache();
         }

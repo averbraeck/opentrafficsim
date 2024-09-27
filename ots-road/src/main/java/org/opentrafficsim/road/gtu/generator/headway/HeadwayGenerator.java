@@ -29,8 +29,8 @@ public class HeadwayGenerator implements Generator<Duration>
 
     /**
      * Constructor.
-     * @param demand Frequency; demand.
-     * @param stream StreamInterface; the stream to use for generation.
+     * @param demand demand.
+     * @param stream the stream to use for generation.
      */
     public HeadwayGenerator(final Frequency demand, final StreamInterface stream)
     {

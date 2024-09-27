@@ -22,8 +22,8 @@ public class ParameterTypeLinearDensity extends ParameterTypeNumeric<LinearDensi
 
     /**
      * Construct a new ParameterTypeLinearDensity without default value and check.
-     * @param id String; short name of the new ParameterTypeLinearDensity
-     * @param description String; parameter description or full name of the new ParameterTypeLinearDensity
+     * @param id short name of the new ParameterTypeLinearDensity
+     * @param description parameter description or full name of the new ParameterTypeLinearDensity
      */
     public ParameterTypeLinearDensity(final String id, final String description)
     {
@@ -32,9 +32,9 @@ public class ParameterTypeLinearDensity extends ParameterTypeNumeric<LinearDensi
 
     /**
      * Construct a new ParameterTypeLinearDensity with default value, without check.
-     * @param id String; short name of the new ParameterTypeLinearDensity
-     * @param description String; parameter description or full name of the new ParameterTypeLinearDensity
-     * @param defaultValue LinearDensity; the default value of the new ParameterTypeLinearDensity
+     * @param id short name of the new ParameterTypeLinearDensity
+     * @param description parameter description or full name of the new ParameterTypeLinearDensity
+     * @param defaultValue the default value of the new ParameterTypeLinearDensity
      */
     public ParameterTypeLinearDensity(final String id, final String description, final LinearDensity defaultValue)
     {
@@ -43,9 +43,9 @@ public class ParameterTypeLinearDensity extends ParameterTypeNumeric<LinearDensi
 
     /**
      * Construct a new ParameterTypeLinearDensity without default value, with check.
-     * @param id String; short name of the new ParameterTypeLinearDensity
-     * @param description String; parameter description or full name of the new ParameterTypeLinearDensity
-     * @param constraint Constraint&lt;? super LinearDensity&gt;; constraint for parameter values
+     * @param id short name of the new ParameterTypeLinearDensity
+     * @param description parameter description or full name of the new ParameterTypeLinearDensity
+     * @param constraint constraint for parameter values
      */
     public ParameterTypeLinearDensity(final String id, final String description,
             final Constraint<? super LinearDensity> constraint)
@@ -55,10 +55,10 @@ public class ParameterTypeLinearDensity extends ParameterTypeNumeric<LinearDensi
 
     /**
      * Construct a new ParameterTypeLinearDensity with default value and check.
-     * @param id String; short name of the new ParameterTypeLinearDensity
-     * @param description String; parameter description or full name of the new ParameterTypeLinearDensity
-     * @param defaultValue LinearDensity; the default value of the new ParameterTypeLinearDensity
-     * @param constraint Constraint&lt;? super LinearDensity&gt;; constraint for parameter values
+     * @param id short name of the new ParameterTypeLinearDensity
+     * @param description parameter description or full name of the new ParameterTypeLinearDensity
+     * @param defaultValue the default value of the new ParameterTypeLinearDensity
+     * @param constraint constraint for parameter values
      */
     public ParameterTypeLinearDensity(final String id, final String description, final LinearDensity defaultValue,
             final Constraint<? super LinearDensity> constraint)

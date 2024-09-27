@@ -121,24 +121,24 @@ public class HeadwayGtuTest
 
     /**
      * Verify all fields in a HeadwayGtu.
-     * @param headwayGTU HeadwayGtu; the HeadwayGtu to check
-     * @param acceleration Acceleration; the expected return value for getAcceleration
-     * @param distance Length; the expected return value for getDistance
-     * @param gtuType GtuType; the expected return value for getGtuType
-     * @param id String; the expected return value for getId
+     * @param headwayGTU the HeadwayGtu to check
+     * @param acceleration the expected return value for getAcceleration
+     * @param distance the expected return value for getDistance
+     * @param gtuType the expected return value for getGtuType
+     * @param id the expected return value for getId
      * @param objectType Headway.ObjectType; the expected return value for getObjectType
-     * @param overlap Length; the expected return value for getOverlap
-     * @param overlapFront Length; the expected return value for getOverlapFront
-     * @param overlapRear Length; the expected return value for getOverlapRear
-     * @param speed Speed; the expected return value for getSpeed
-     * @param ahead boolean; the expected return value for isAhead
-     * @param behind boolean; the expected return value for isBehind
-     * @param breakingLights boolean; the expected return value for isBreakingLightsOn
-     * @param hazardLights boolean; the expected return value for isEmergencyLightsOn
-     * @param honk boolean; the expected return value for isHonking
-     * @param leftIndicator boolean; the expected return value for isLeftTurnIndicatorOn
-     * @param rightIndicator boolean; the expected return value for isRightTurnIndicatorOn
-     * @param parallel boolean; the expected return value for isParallel
+     * @param overlap the expected return value for getOverlap
+     * @param overlapFront the expected return value for getOverlapFront
+     * @param overlapRear the expected return value for getOverlapRear
+     * @param speed the expected return value for getSpeed
+     * @param ahead the expected return value for isAhead
+     * @param behind the expected return value for isBehind
+     * @param breakingLights the expected return value for isBreakingLightsOn
+     * @param hazardLights the expected return value for isEmergencyLightsOn
+     * @param honk the expected return value for isHonking
+     * @param leftIndicator the expected return value for isLeftTurnIndicatorOn
+     * @param rightIndicator the expected return value for isRightTurnIndicatorOn
+     * @param parallel the expected return value for isParallel
      */
     private void verifyFields(final HeadwayGtuSimple headwayGTU, final Acceleration acceleration, final Length distance,
             final GtuType gtuType, final String id, final Headway.ObjectType objectType, final Length overlap,

@@ -55,10 +55,10 @@ public final class LmrsData implements DesireBased, Synchronizable
     private boolean humanLongitudinalControl = true;
 
     /**
-     * @param synchronization Synchronization; synchronization
-     * @param cooperation Cooperation; cooperation
-     * @param gapAcceptance GapAcceptance; gap-acceptance
-     * @param tailgating Tailgating; tail gating
+     * @param synchronization synchronization
+     * @param cooperation cooperation
+     * @param gapAcceptance gap-acceptance
+     * @param tailgating tail gating
      */
     public LmrsData(final Synchronization synchronization, final Cooperation cooperation, final GapAcceptance gapAcceptance,
             final Tailgating tailgating)
@@ -71,7 +71,7 @@ public final class LmrsData implements DesireBased, Synchronizable
 
     /**
      * Checks if the given leader is a new leader.
-     * @param gtu HeadwayGtu; gtu to check
+     * @param gtu gtu to check
      * @return whether the gtu is a new leader
      */
     boolean isNewLeader(final HeadwayGtu gtu)
@@ -92,7 +92,7 @@ public final class LmrsData implements DesireBased, Synchronizable
 
     /**
      * Remembers the gtu that is synchronized to.
-     * @param gtu HeadwayGtu; gtu that is synchronized to
+     * @param gtu gtu that is synchronized to
      */
     void setSyncVehicle(final HeadwayGtu gtu)
     {
@@ -101,7 +101,7 @@ public final class LmrsData implements DesireBased, Synchronizable
 
     /**
      * Returns whether the provided gtu is the gtu that is synchronized to.
-     * @param gtu HeadwayGtu; gtu to inquiry
+     * @param gtu gtu to inquiry
      * @return whether the provided gtu is the gtu that is synchronized to
      */
     boolean isSyncVehicle(final HeadwayGtu gtu)
@@ -112,7 +112,7 @@ public final class LmrsData implements DesireBased, Synchronizable
     /**
      * Returns the gtu from the set that is the current sync vehicle, or {@code null} of there is no sync vehicle or it is not
      * in the set.
-     * @param adjLeaders PerceptionCollectable&lt;HeadwayGtu,LaneBasedGtu&gt;; leaders in adjacent lane
+     * @param adjLeaders leaders in adjacent lane
      * @return gtu from the set that is the current sync vehicle
      */
     HeadwayGtu getSyncVehicle(final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> adjLeaders)
@@ -176,7 +176,7 @@ public final class LmrsData implements DesireBased, Synchronizable
 
     /**
      * Returns the desire map.
-     * @return Map&lt;Class&lt;? extends Incentive&gt;, Desire&gt;; desire map
+     * @return desire map
      */
     Map<Class<? extends Incentive>, Desire> getDesireMap()
     {
@@ -208,7 +208,7 @@ public final class LmrsData implements DesireBased, Synchronizable
     }
 
     /**
-     * @param humanLongitudinalControl boolean; set humanLongitudinalControl.
+     * @param humanLongitudinalControl set humanLongitudinalControl.
      */
     public void setHumanLongitudinalControl(final boolean humanLongitudinalControl)
     {

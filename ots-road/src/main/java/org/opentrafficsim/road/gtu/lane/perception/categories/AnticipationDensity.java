@@ -117,7 +117,7 @@ public class AnticipationDensity implements PerceptionCollector<LinearDensity, G
         }
 
         /**
-         * @param distance Length; set distance.
+         * @param distance set distance.
          */
         public void setDistance(final Length distance)
         {

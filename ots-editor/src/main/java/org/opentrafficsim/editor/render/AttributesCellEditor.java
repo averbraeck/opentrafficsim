@@ -51,8 +51,8 @@ public class AttributesCellEditor extends DefaultCellEditor
 
     /**
      * Constructor.
-     * @param table JTable; table of the attributes.
-     * @param editor OtsEditor; editor.
+     * @param table table of the attributes.
+     * @param editor editor.
      */
     public AttributesCellEditor(final JTable table, final OtsEditor editor)
     {

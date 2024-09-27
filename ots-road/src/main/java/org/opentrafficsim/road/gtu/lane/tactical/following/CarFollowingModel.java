@@ -41,11 +41,10 @@ public interface CarFollowingModel extends DesiredHeadwayModel, DesiredSpeedMode
      * <li>The current speed being higher than the desired speed.</li>
      * <li>The headway being negative.</li>
      * </ul>
-     * @param parameters Parameters; parameters
-     * @param speed Speed; current speed
-     * @param speedLimitInfo SpeedLimitInfo; info regarding the desired speed for car-following
-     * @param leaders PerceptionIterable&lt;? extends Headway&gt;; set of leader headways and speeds, ordered by headway
-     *            (closest first)
+     * @param parameters parameters
+     * @param speed current speed
+     * @param speedLimitInfo info regarding the desired speed for car-following
+     * @param leaders set of leader headways and speeds, ordered by headway (closest first)
      * @throws ParameterException if parameter exception occurs
      * @return car-following acceleration
      */

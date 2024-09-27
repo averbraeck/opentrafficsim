@@ -41,8 +41,8 @@ public class PerceptionCollectableFiltered<H extends Headway, U> implements Perc
 
     /**
      * Constructor.
-     * @param collectable PerceptionCollectable&lt;H, U&gt;; collectable to filter.
-     * @param predicate Predicate&lt;H&gt;; predicate, should return {@code true} for items that remain in the collectable.
+     * @param collectable collectable to filter.
+     * @param predicate predicate, should return {@code true} for items that remain in the collectable.
      */
     public PerceptionCollectableFiltered(final PerceptionCollectable<H, U> collectable, final Predicate<H> predicate)
     {
@@ -114,7 +114,7 @@ public class PerceptionCollectableFiltered<H extends Headway, U> implements Perc
 
     /**
      * Prepares a next entry with headway and underlying object.
-     * @return boolean; whether a next entry was found.
+     * @return whether a next entry was found.
      */
     private boolean prepareNext()
     {
@@ -166,8 +166,8 @@ public class PerceptionCollectableFiltered<H extends Headway, U> implements Perc
 
         /**
          * Constructor.
-         * @param h H; headway object.
-         * @param u U; underlying object.
+         * @param h headway object.
+         * @param u underlying object.
          */
         Entry(final H h, final U u)
         {
@@ -200,7 +200,7 @@ public class PerceptionCollectableFiltered<H extends Headway, U> implements Perc
 
         /**
          * Constructor.
-         * @param converter Function&lt;Entry&lt;H, U&gt;, R&gt;; converter to return type.
+         * @param converter converter to return type.
          */
         FilterIterator(final Function<Entry<H, U>, R> converter)
         {

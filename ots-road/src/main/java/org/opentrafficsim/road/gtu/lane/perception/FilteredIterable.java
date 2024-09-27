@@ -27,8 +27,8 @@ public class FilteredIterable<T extends Headway> implements Iterable<T>
     private final Predicate<T> predicate;
 
     /**
-     * @param iterable Iterable&lt;T&gt;; iterable
-     * @param predicate Predicate&lt;T&gt;; predicate
+     * @param iterable iterable
+     * @param predicate predicate
      */
     public FilteredIterable(final Iterable<T> iterable, final Predicate<T> predicate)
     {

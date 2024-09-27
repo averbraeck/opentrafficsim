@@ -24,7 +24,7 @@ public class StripeType extends ExpressionType<Type>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public StripeType(final String expression)
     {

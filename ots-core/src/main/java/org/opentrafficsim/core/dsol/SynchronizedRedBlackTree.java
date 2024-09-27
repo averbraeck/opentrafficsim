@@ -11,7 +11,8 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 /**
  * A SynchronizedRedBlackTree implementation of the eventlistInterface. This implementation is based on Java's TreeSet.
  * <p>
- * (c) copyright 2002-2005 <a href="https://www.simulation.tudelft.nl">Delft University of Technology </a>, the Netherlands. <br>
+ * (c) copyright 2002-2005 <a href="https://www.simulation.tudelft.nl">Delft University of Technology </a>, the Netherlands.
+ * <br>
  * See for project information <a href="https://www.simulation.tudelft.nl"> www.simulation.tudelft.nl </a> <br>
  * License of use: <a href="http://www.gnu.org/copyleft/lesser.html">Lesser General Public License (LGPL) </a>, no warranty.
  * @author <a href="https://www.linkedin.com/in/peterhmjacobs">Peter Jacobs </a>

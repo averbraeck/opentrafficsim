@@ -37,7 +37,7 @@ public class OtsDevsRealTimeParallelMove extends DevsRealTimeAnimator<Duration>
 
     /**
      * Create a new OTSRealTimeClock.
-     * @param moveThreads int; The number of move threads to use
+     * @param moveThreads The number of move threads to use
      * @param simulatorId the id of the simulator to use in remote communication
      */
     public OtsDevsRealTimeParallelMove(final int moveThreads, final Serializable simulatorId)
@@ -57,7 +57,7 @@ public class OtsDevsRealTimeParallelMove extends DevsRealTimeAnimator<Duration>
     }
 
     /**
-     * @param moveThreads int; set moveThreads
+     * @param moveThreads set moveThreads
      */
     public final void setMoveThreads(final int moveThreads)
     {

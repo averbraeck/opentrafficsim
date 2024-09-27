@@ -29,7 +29,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
  * sharp bends. Therefore, algorithms implementing headway should only project the <i>reference point</i> of the reference GTU
  * on the center line of the adjacent lane, and then calculate the forward position and backward position on the adjacent lane
  * based on the reference point. Still, our human perception of what is parallel and what not, is not reflected by fractional
- * positions. 
+ * positions.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -51,12 +51,12 @@ public class HeadwayGtuReal extends AbstractHeadway implements HeadwayGtu
 
     /** Whether the GTU is facing the same direction. */
     private final boolean facingSameDirection;
-    
+
     /**
      * Construct a new Headway information object, for a GTU ahead of us or behind us.
-     * @param gtu LaneBasedGtu; the observed GTU, can not be null.
-     * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
-     * @param facingSameDirection boolean; whether the GTU is facing the same direction.
+     * @param gtu the observed GTU, can not be null.
+     * @param distance if this constructor is used, distance cannot be null.
+     * @param facingSameDirection whether the GTU is facing the same direction.
      * @throws GtuException when id is null, objectType is null, or parameters are inconsistent
      */
     public HeadwayGtuReal(final LaneBasedGtu gtu, final Length distance, final boolean facingSameDirection) throws GtuException
@@ -68,11 +68,11 @@ public class HeadwayGtuReal extends AbstractHeadway implements HeadwayGtu
 
     /**
      * Construct a new Headway information object, for a GTU parallel with us.
-     * @param gtu LaneBasedGtu; the observed GTU, can not be null.
+     * @param gtu the observed GTU, can not be null.
      * @param overlapFront the front-front distance to the other Gtu; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other Gtu; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other Gtu; if this constructor is used, this value cannot be null.
-     * @param facingSameDirection boolean; whether the GTU is facing the same direction.
+     * @param facingSameDirection whether the GTU is facing the same direction.
      * @throws GtuException when id is null, or parameters are inconsistent
      */
     public HeadwayGtuReal(final LaneBasedGtu gtu, final Length overlapFront, final Length overlap, final Length overlapRear,
@@ -85,7 +85,7 @@ public class HeadwayGtuReal extends AbstractHeadway implements HeadwayGtu
 
     /**
      * Creates speed limit prospect for given GTU.
-     * @param wrappedGtu LaneBasedGtu; gtu to the the speed limit prospect for
+     * @param wrappedGtu gtu to the the speed limit prospect for
      * @return speed limit prospect for given GTU
      */
     private SpeedLimitInfo getSpeedLimitInfo(final LaneBasedGtu wrappedGtu)

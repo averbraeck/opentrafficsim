@@ -100,10 +100,10 @@ public class Acceleration3dTest
 
     /**
      * Verify the x, y, z, theta, phi and norm of a Acceleration3d object.
-     * @param s3d Acceleration3d; the Acceleration3d object
-     * @param x double; the expected x value
-     * @param y double; the expected y value
-     * @param z double; the expected z value
+     * @param s3d the Acceleration3d object
+     * @param x the expected x value
+     * @param y the expected y value
+     * @param z the expected z value
      */
     private void checkAcceleration(final Acceleration3d s3d, final double x, final double y, final double z)
     {

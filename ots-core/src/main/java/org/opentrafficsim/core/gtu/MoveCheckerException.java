@@ -17,7 +17,7 @@ public class MoveCheckerException extends RuntimeException
     private static final long serialVersionUID = 20190806L;
 
     /**
-     * @param cause Throwable; original cause
+     * @param cause original cause
      */
     public MoveCheckerException(final Throwable cause)
     {

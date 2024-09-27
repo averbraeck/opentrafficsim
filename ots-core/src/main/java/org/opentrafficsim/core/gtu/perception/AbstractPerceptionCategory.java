@@ -43,7 +43,7 @@ public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Percep
 
     /**
      * Constructor setting the perception.
-     * @param perception P; perception
+     * @param perception perception
      */
     public AbstractPerceptionCategory(final P perception)
     {
@@ -97,10 +97,10 @@ public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Percep
      * return computeIfAbsent("speedLimit", () -&gt; computeEgoSpeed());
      * </pre>
      * 
-     * @param key Object; key defining which information is requested
-     * @param supplier Supplier&lt;T&gt;;
+     * @param key key defining which information is requested
+     * @param supplier
      * @param <T> value type
-     * @return T; cached or computed value
+     * @return cached or computed value
      */
     protected <T> T computeIfAbsent(final Object key, final Supplier<T> supplier)
     {
@@ -129,11 +129,11 @@ public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Percep
      * return computeIfAbsent("leaders", () -&gt; computeLeaders(lane))
      * </pre>
      * 
-     * @param key Object; key defining which information is requested, it may be contextual if it's context dependent
-     * @param supplier Supplier&lt;T&gt;;
-     * @param context Object; object defining the context, e.g. the lane for which the information is requested
+     * @param key key defining which information is requested, it may be contextual if it's context dependent
+     * @param supplier
+     * @param context object defining the context, e.g. the lane for which the information is requested
      * @param <T> value type
-     * @return T; cached or computed value
+     * @return cached or computed value
      */
     protected <T> T computeIfAbsent(final Object key, final Supplier<T> supplier, final Object context)
     {
@@ -142,9 +142,9 @@ public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Percep
 
     /**
      * Returns a key that is unique for the given information key and singled-object context.
-     * @param key Object; information key
-     * @param context Object; context, for example the lane to which the information applies
-     * @return Object; key that is unique for the given information key and singled-object context
+     * @param key information key
+     * @param context context, for example the lane to which the information applies
+     * @return key that is unique for the given information key and singled-object context
      */
     private Object contextualKey(final Object key, final Object context)
     {
@@ -180,12 +180,11 @@ public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Percep
      * return computeIfAbsent("neighbors", () -&gt; computeNeighbors(lane, longDir))
      * </pre>
      * 
-     * @param key Object; key defining which information is requested, it may be contextual if it's context dependent
-     * @param supplier Supplier&lt;T&gt;;
-     * @param context Object...; objects defining the context, e.g. the lane and direction for which the information is
-     *            requested
+     * @param key key defining which information is requested, it may be contextual if it's context dependent
+     * @param supplier
+     * @param context objects defining the context, e.g. the lane and direction for which the information is requested
      * @param <T> value type
-     * @return T; cached or computed value
+     * @return cached or computed value
      */
     protected <T> T computeIfAbsent(final Object key, final Supplier<T> supplier, final Object... context)
     {
@@ -194,9 +193,9 @@ public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Percep
 
     /**
      * Returns a key that is unique for the given information key and multi-object context.
-     * @param key Object; information key
-     * @param context Object...; context, for example the lane and longitudinal direction to which the information applies
-     * @return Object; key that is unique for the given information key and multi-object context
+     * @param key information key
+     * @param context context, for example the lane and longitudinal direction to which the information applies
+     * @return key that is unique for the given information key and multi-object context
      */
     @SuppressWarnings("unchecked")
     private Object contextualKey(final Object key, final Object... context)
@@ -219,7 +218,7 @@ public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Percep
     /**
      * Returns a string representation of the cache. This is in the form: {@code [speed=12.3m/s, acceleration=2.1m/s2]} and can
      * be used in {code toString()} methods of sub-classes.
-     * @return String; string representation of the cache.
+     * @return string representation of the cache.
      */
     protected String cacheAsString()
     {

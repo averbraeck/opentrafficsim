@@ -35,7 +35,7 @@ public abstract class AbstractLinearFreeControl extends AbstractActuatedControl
 
     /**
      * Constructor using default sensors with no delay.
-     * @param delayedActuation DelayedActuation; delayed actuation
+     * @param delayedActuation delayed actuation
      */
     public AbstractLinearFreeControl(final DelayedActuation delayedActuation)
     {
@@ -69,10 +69,10 @@ public abstract class AbstractLinearFreeControl extends AbstractActuatedControl
     /**
      * Returns the following acceleration of the longitudinal control. This method is only invoked if there is at least 1
      * leader.
-     * @param gtu LaneBasedGtu; gtu
-     * @param leaders PerceptionCollectable&lt;HeadwayGtu, LaneBasedGtu&gt;; leaders
-     * @param settings Parameters; system settings
-     * @return Acceleration; following acceleration of the longitudinal control
+     * @param gtu gtu
+     * @param leaders leaders
+     * @param settings system settings
+     * @return following acceleration of the longitudinal control
      * @throws ParameterException if parameter is not present
      */
     public abstract Acceleration getFollowingAcceleration(LaneBasedGtu gtu,

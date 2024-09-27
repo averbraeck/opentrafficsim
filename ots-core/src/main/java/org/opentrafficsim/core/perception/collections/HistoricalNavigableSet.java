@@ -20,15 +20,15 @@ public interface HistoricalNavigableSet<E> extends HistoricalSortedSet<E>, Navig
 
     /**
      * Returns the current navigable set.
-     * @return NavigableSet; current navigable set
+     * @return current navigable set
      */
     @Override
     NavigableSet<E> get();
 
     /**
      * Returns a past navigable set.
-     * @param time Time; time to obtain the navigable set at
-     * @return NavigableSet; past navigable set
+     * @param time time to obtain the navigable set at
+     * @return past navigable set
      */
     @Override
     NavigableSet<E> get(Time time);

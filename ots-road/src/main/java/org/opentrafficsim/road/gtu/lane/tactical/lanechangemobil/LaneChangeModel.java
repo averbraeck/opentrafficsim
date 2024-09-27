@@ -24,20 +24,20 @@ public interface LaneChangeModel
 {
     /**
      * Compute the acceleration and lane change.
-     * @param gtu LaneBasedGtu; the GTU for which the acceleration and lane change is computed
-     * @param sameLaneTraffic Collection&lt;Headway&gt;; the set of observable GTUs in the current lane (can not be null and may
-     *            include the <code>gtu</code>)
-     * @param rightLaneTraffic Collection&lt;Headway&gt;; the set of observable GTUs in the adjacent lane where GTUs should
-     *            drive in the absence of other traffic (must be null if there is no such lane)
-     * @param leftLaneTraffic Collection&lt;Headway&gt;; the set of observable GTUs in the adjacent lane into which GTUs should
-     *            merge to overtake other traffic (must be null if there is no such lane)
-     * @param speedLimit Speed; the local speed limit
-     * @param preferredLaneRouteIncentive Acceleration; route incentive to merge to the adjacent lane where GTUs should drive in
-     *            the absence of other traffic
-     * @param laneChangeThreshold Acceleration; threshold that prevents lane changes that have very little benefit
-     * @param nonPreferredLaneRouteIncentive Acceleration; route incentive to merge to the adjacent lane into which GTUs should
-     *            merge to overtake other traffic
-     * @return LaneMovementStep; the result of the lane change and GTU following model
+     * @param gtu the GTU for which the acceleration and lane change is computed
+     * @param sameLaneTraffic the set of observable GTUs in the current lane (can not be null and may include the
+     *            <code>gtu</code>)
+     * @param rightLaneTraffic the set of observable GTUs in the adjacent lane where GTUs should drive in the absence of other
+     *            traffic (must be null if there is no such lane)
+     * @param leftLaneTraffic the set of observable GTUs in the adjacent lane into which GTUs should merge to overtake other
+     *            traffic (must be null if there is no such lane)
+     * @param speedLimit the local speed limit
+     * @param preferredLaneRouteIncentive route incentive to merge to the adjacent lane where GTUs should drive in the absence
+     *            of other traffic
+     * @param laneChangeThreshold threshold that prevents lane changes that have very little benefit
+     * @param nonPreferredLaneRouteIncentive route incentive to merge to the adjacent lane into which GTUs should merge to
+     *            overtake other traffic
+     * @return the result of the lane change and GTU following model
      * @throws GtuException when the speed of the GTU can not be determined
      * @throws ParameterException in case of a parameter problem.
      * @throws OperationalPlanException if DefaultAlexander perception category is not present.
@@ -50,13 +50,13 @@ public interface LaneChangeModel
 
     /**
      * Return the name of this GTU following model.
-     * @return String; just the name of the GTU following model
+     * @return just the name of the GTU following model
      */
     String getName();
 
     /**
      * Return complete textual information about this instantiation of this GTU following model.
-     * @return String; the name and parameter values of the GTU following model
+     * @return the name and parameter values of the GTU following model
      */
     String getLongName();
 

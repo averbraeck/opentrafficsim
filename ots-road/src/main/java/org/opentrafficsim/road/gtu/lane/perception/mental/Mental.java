@@ -20,7 +20,7 @@ public interface Mental
 
     /**
      * Apply mental model on perception.
-     * @param perception LanePerception; perception
+     * @param perception perception
      * @throws ParameterException if a parameter is missing or out of bounds
      * @throws GtuException exceptions pertaining to the GTU
      */

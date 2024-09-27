@@ -40,9 +40,9 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
 
     /**
      * Constructor.
-     * @param keyNode Node; node defining the xsd:keyref.
-     * @param keyPath String; path where the keyref was defined.
-     * @param refer KeyValidator; key that is referred to by this xsd:keyref.
+     * @param keyNode node defining the xsd:keyref.
+     * @param keyPath path where the keyref was defined.
+     * @param refer key that is referred to by this xsd:keyref.
      */
     public KeyrefValidator(final Node keyNode, final String keyPath, final KeyValidator refer)
     {
@@ -147,9 +147,9 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
      * Checks that a set of values in a key, matches the values in a keyref node. Note, in dealing with null values the two sets
      * should <b>not</b> be given in the wrong order. It does not matter whether the keyref refers to a key or unique. In both
      * cases the values from a keyref are a match if all its non-null values match respective values in the key.
-     * @param keyValues List&lt;String&gt;; set of values from a key node.
-     * @param keyrefValues List&lt;String&gt;; set of values from a keyref node.
-     * @return boolean; whether the key values match the keyref values.
+     * @param keyValues set of values from a key node.
+     * @param keyrefValues set of values from a keyref node.
+     * @return whether the key values match the keyref values.
      */
     private boolean matchingKeyref(final List<String> keyValues, final List<String> keyrefValues)
     {
@@ -201,9 +201,9 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
 
     /**
      * Gathers xsd:key-level contexts from an xsd:keyref context that is larger than the key's.
-     * @param node XsdTreeNode; current node to browse the children of, or return in the set.
-     * @param remainingPath List&lt;XsdTreeNode&gt;; remaining intermediate levels, starting with the sub-level of the keyref.
-     * @param set Set&lt;XsdTreeNode&gt;; set to gather contexts in.
+     * @param node current node to browse the children of, or return in the set.
+     * @param remainingPath remaining intermediate levels, starting with the sub-level of the keyref.
+     * @param set set to gather contexts in.
      */
     private void gatherScopes(final XsdTreeNode node, final List<XsdTreeNode> remainingPath, final Set<XsdTreeNode> set)
     {
@@ -233,9 +233,9 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
 
     /**
      * Update value as it was changed at the key.
-     * @param node XsdTreeNode; node on which the value was changed.
-     * @param fieldIndex int; index of field that was changed.
-     * @param newValue String; new value.
+     * @param node node on which the value was changed.
+     * @param fieldIndex index of field that was changed.
+     * @param newValue new value.
      */
     public void updateFieldValue(final XsdTreeNode node, final int fieldIndex, final String newValue)
     {

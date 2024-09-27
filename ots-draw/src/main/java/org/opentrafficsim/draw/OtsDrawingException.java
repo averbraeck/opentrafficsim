@@ -20,7 +20,7 @@ public class OtsDrawingException extends Exception
     }
 
     /**
-     * @param message String; the error message
+     * @param message the error message
      */
     public OtsDrawingException(final String message)
     {
@@ -28,7 +28,7 @@ public class OtsDrawingException extends Exception
     }
 
     /**
-     * @param cause Throwable; the cause of the exception to be included
+     * @param cause the cause of the exception to be included
      */
     public OtsDrawingException(final Throwable cause)
     {
@@ -36,8 +36,8 @@ public class OtsDrawingException extends Exception
     }
 
     /**
-     * @param message String; the error message
-     * @param cause Throwable; the cause of the exception to be included
+     * @param message the error message
+     * @param cause the cause of the exception to be included
      */
     public OtsDrawingException(final String message, final Throwable cause)
     {

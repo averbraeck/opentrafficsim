@@ -31,9 +31,9 @@ public abstract class AbstractIncentivesTacticalPlanner extends AbstractLaneBase
 
     /**
      * Constructor.
-     * @param carFollowingModel CarFollowingModel; Car-following model.
-     * @param gtu LaneBasedGtu; GTU
-     * @param lanePerception LanePerception; perception
+     * @param carFollowingModel Car-following model.
+     * @param gtu GTU
+     * @param lanePerception perception
      */
     public AbstractIncentivesTacticalPlanner(final CarFollowingModel carFollowingModel, final LaneBasedGtu gtu,
             final LanePerception lanePerception)
@@ -77,7 +77,7 @@ public abstract class AbstractIncentivesTacticalPlanner extends AbstractLaneBase
 
     /**
      * Adds a mandatory incentive. Ignores {@code null}.
-     * @param incentive MandatoryIncentive; Incentive to add.
+     * @param incentive Incentive to add.
      */
     public final void addMandatoryIncentive(final MandatoryIncentive incentive)
     {
@@ -89,7 +89,7 @@ public abstract class AbstractIncentivesTacticalPlanner extends AbstractLaneBase
 
     /**
      * Adds a voluntary incentive. Ignores {@code null}.
-     * @param incentive VoluntaryIncentive; Incentive to add.
+     * @param incentive Incentive to add.
      */
     public final void addVoluntaryIncentive(final VoluntaryIncentive incentive)
     {
@@ -101,7 +101,7 @@ public abstract class AbstractIncentivesTacticalPlanner extends AbstractLaneBase
 
     /**
      * Adds an acceleration incentive. Ignores {@code null}.
-     * @param incentive AccelerationIncentive; Incentive to add.
+     * @param incentive Incentive to add.
      */
     public final void addAccelerationIncentive(final AccelerationIncentive incentive)
     {
@@ -131,7 +131,7 @@ public abstract class AbstractIncentivesTacticalPlanner extends AbstractLaneBase
 
     /**
      * Returns the mandatory incentives.
-     * @return ImmutableSet&lt;MandatoryIncentive&gt;; set of mandatory incentives
+     * @return set of mandatory incentives
      */
     public final ImmutableSet<MandatoryIncentive> getMandatoryIncentives()
     {
@@ -140,7 +140,7 @@ public abstract class AbstractIncentivesTacticalPlanner extends AbstractLaneBase
 
     /**
      * Returns the voluntary incentives.
-     * @return ImmutableSet&lt;VoluntaryIncentive&gt;; set of voluntary incentives
+     * @return set of voluntary incentives
      */
     public final ImmutableSet<VoluntaryIncentive> getVoluntaryIncentives()
     {
@@ -149,7 +149,7 @@ public abstract class AbstractIncentivesTacticalPlanner extends AbstractLaneBase
 
     /**
      * Returns the acceleration incentives.
-     * @return ImmutableSet&lt;AccelerationIncentive&gt;; set of acceleration incentives
+     * @return set of acceleration incentives
      */
     public final ImmutableSet<AccelerationIncentive> getAccelerationIncentives()
     {

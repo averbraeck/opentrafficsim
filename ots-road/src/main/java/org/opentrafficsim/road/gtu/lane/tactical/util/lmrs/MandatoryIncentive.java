@@ -21,10 +21,10 @@ public interface MandatoryIncentive extends Incentive
 
     /**
      * Determines level of lane change desire for a lane change incentive.
-     * @param parameters Parameters; parameters
-     * @param perception LanePerception; perception
-     * @param carFollowingModel CarFollowingModel; car-following model
-     * @param mandatoryDesire Desire; level of mandatory desire at current time
+     * @param parameters parameters
+     * @param perception perception
+     * @param carFollowingModel car-following model
+     * @param mandatoryDesire level of mandatory desire at current time
      * @return level of lane change desire for this incentive
      * @throws ParameterException if a parameter is not given or out of bounds
      * @throws OperationalPlanException in case of a perception exception

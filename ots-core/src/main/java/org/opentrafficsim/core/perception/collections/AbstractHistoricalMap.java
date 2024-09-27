@@ -38,8 +38,8 @@ public abstract class AbstractHistoricalMap<K, V, M extends Map<K, V>> extends A
 
     /**
      * Constructor.
-     * @param historyManager HistoryManager; history manager
-     * @param map M; initial map
+     * @param historyManager history manager
+     * @param map initial map
      */
     protected AbstractHistoricalMap(final HistoryManager historyManager, final M map)
     {
@@ -50,7 +50,7 @@ public abstract class AbstractHistoricalMap<K, V, M extends Map<K, V>> extends A
 
     /**
      * Returns the internal map.
-     * @return M; internal map
+     * @return internal map
      */
     protected M getMap()
     {
@@ -59,8 +59,8 @@ public abstract class AbstractHistoricalMap<K, V, M extends Map<K, V>> extends A
 
     /**
      * Fill map with the current map.
-     * @param map M; map to fill
-     * @return M; input map filled
+     * @param map map to fill
+     * @return input map filled
      */
     protected M fill(final M map)
     {
@@ -70,9 +70,9 @@ public abstract class AbstractHistoricalMap<K, V, M extends Map<K, V>> extends A
 
     /**
      * Fill map with the map at the given simulation time.
-     * @param time Time; time
-     * @param map M; map to fill
-     * @return M; input map filled
+     * @param time time
+     * @param map map to fill
+     * @return input map filled
      */
     protected M fill(final Time time, final M map)
     {
@@ -216,10 +216,10 @@ public abstract class AbstractHistoricalMap<K, V, M extends Map<K, V>> extends A
 
         /**
          * Constructor.
-         * @param time double; time of event
-         * @param key K; key of event
-         * @param contained boolean; whether the map contained the key prior to the event
-         * @param previousValue V; previous value in the map
+         * @param time time of event
+         * @param key key of event
+         * @param contained whether the map contained the key prior to the event
+         * @param previousValue previous value in the map
          */
         public EventMap(final double time, final K key, final boolean contained, final V previousValue)
         {
@@ -230,7 +230,7 @@ public abstract class AbstractHistoricalMap<K, V, M extends Map<K, V>> extends A
 
         /**
          * Restores the map to the state of before the event.
-         * @param map M; map to restore
+         * @param map map to restore
          */
         public void restore(final M map)
         {

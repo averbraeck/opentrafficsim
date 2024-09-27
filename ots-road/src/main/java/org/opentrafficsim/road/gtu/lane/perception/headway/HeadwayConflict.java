@@ -80,24 +80,22 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
 
     /**
      * Constructor.
-     * @param conflictType ConflictType; conflict type
-     * @param conflictPriority ConflictPriority; conflict priority
-     * @param conflictRuleType Class&lt;? extends ConflictRule&gt;; conflict rule type
-     * @param id String; id
-     * @param distance Length; distance
-     * @param length Length; length of the conflict
-     * @param conflictingLength Length; length of the conflict on the conflicting lane
-     * @param upstreamConflictingGTUs PerceptionCollectable&lt;HeadwayGtu,LaneBasedGtu&gt;; conflicting GTU's upstream of the
-     *            &lt;i&gt;start&lt;/i&gt; of the conflict
-     * @param downstreamConflictingGTUs PerceptionCollectable&lt;HeadwayGtu,LaneBasedGtu&gt;; conflicting GTU's downstream of
-     *            the &lt;i&gt;start&lt;/i&gt; of the conflict
-     * @param conflictingVisibility Length; visibility on the conflicting lane within which conflicting vehicles are visible
-     * @param conflictingSpeedLimit Speed; speed limit on the conflicting lane
-     * @param conflictingLink CrossSectionLink; conflicting link
-     * @param width Width; width progression of conflict
-     * @param stopLine HeadwayStopLine; stop line on the own lane
-     * @param conflictingStopLine HeadwayStopLine; stop line on the conflicting lane
-     * @param lane Lane; the lane
+     * @param conflictType conflict type
+     * @param conflictPriority conflict priority
+     * @param conflictRuleType conflict rule type
+     * @param id id
+     * @param distance distance
+     * @param length length of the conflict
+     * @param conflictingLength length of the conflict on the conflicting lane
+     * @param upstreamConflictingGTUs conflicting GTU's upstream of the &lt;i&gt;start&lt;/i&gt; of the conflict
+     * @param downstreamConflictingGTUs conflicting GTU's downstream of the &lt;i&gt;start&lt;/i&gt; of the conflict
+     * @param conflictingVisibility visibility on the conflicting lane within which conflicting vehicles are visible
+     * @param conflictingSpeedLimit speed limit on the conflicting lane
+     * @param conflictingLink conflicting link
+     * @param width width progression of conflict
+     * @param stopLine stop line on the own lane
+     * @param conflictingStopLine stop line on the conflicting lane
+     * @param lane the lane
      * @throws GtuException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -136,22 +134,20 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
 
     /**
      * Constructor without stop lines.
-     * @param conflictType ConflictType; conflict type
-     * @param conflictPriority ConflictPriority; conflict priority
-     * @param conflictRuleType Class&lt;? extends ConflictRule&gt;; conflict rule type
-     * @param id String; id
-     * @param distance Length; distance
-     * @param length Length; length of the conflict
-     * @param conflictingLength Length; length of the conflict on the conflicting lane
-     * @param upstreamConflictingGTUs PerceptionCollectable&lt;HeadwayGtu,LaneBasedGtu&gt;; conflicting GTU's upstream of the
-     *            &lt;i&gt;start&lt;/i&gt; of the conflict
-     * @param downstreamConflictingGTUs PerceptionCollectable&lt;HeadwayGtu,LaneBasedGtu&gt;; conflicting GTU's downstream of
-     *            the &lt;i&gt;start&lt;/i&gt; of the conflict
-     * @param conflictingVisibility Length; visibility on the conflicting lane within which conflicting vehicles are visible
-     * @param conflictingSpeedLimit Speed; speed limit on the conflicting lane
-     * @param conflictingLink CrossSectionLink; conflicting link
-     * @param width Width; width progression of conflict
-     * @param lane Lane; the lane
+     * @param conflictType conflict type
+     * @param conflictPriority conflict priority
+     * @param conflictRuleType conflict rule type
+     * @param id id
+     * @param distance distance
+     * @param length length of the conflict
+     * @param conflictingLength length of the conflict on the conflicting lane
+     * @param upstreamConflictingGTUs conflicting GTU's upstream of the &lt;i&gt;start&lt;/i&gt; of the conflict
+     * @param downstreamConflictingGTUs conflicting GTU's downstream of the &lt;i&gt;start&lt;/i&gt; of the conflict
+     * @param conflictingVisibility visibility on the conflicting lane within which conflicting vehicles are visible
+     * @param conflictingSpeedLimit speed limit on the conflicting lane
+     * @param conflictingLink conflicting link
+     * @param width width progression of conflict
+     * @param lane the lane
      * @throws GtuException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -317,8 +313,8 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
 
     /**
      * Set the distance of a traffic light upstream on the conflicting lane.
-     * @param trafficLightDistance Length; distance of a traffic light upstream on the conflicting lane.
-     * @param permittedConflict boolean; whether the conflict is permitted by the traffic light
+     * @param trafficLightDistance distance of a traffic light upstream on the conflicting lane.
+     * @param permittedConflict whether the conflict is permitted by the traffic light
      */
     public final void setConflictingTrafficLight(final Length trafficLightDistance, final boolean permittedConflict)
     {
@@ -328,8 +324,8 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
 
     /**
      * Returns the width at the given fraction.
-     * @param fraction double; fraction from 0 to 1
-     * @return Length; width at the given fraction
+     * @param fraction fraction from 0 to 1
+     * @return width at the given fraction
      */
     public final Length getWidthAtFraction(final double fraction)
     {
@@ -364,8 +360,8 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
         private final LengthVector width;
 
         /**
-         * @param fractions double[]; fractions, from 0 to 1
-         * @param width LengthVector; vector of equal length with widths
+         * @param fractions fractions, from 0 to 1
+         * @param width vector of equal length with widths
          */
         public Width(final double[] fractions, final LengthVector width)
         {
@@ -386,8 +382,8 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
 
         /**
          * Returns the width at the given fraction.
-         * @param fraction double; fraction from 0 to 1
-         * @return Length; width at the given fraction
+         * @param fraction fraction from 0 to 1
+         * @return width at the given fraction
          * @throws ValueRuntimeException when index is out of bounds
          */
         public Length getWidth(final double fraction) throws ValueRuntimeException
@@ -410,9 +406,9 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
 
         /**
          * Returns a linear width progression.
-         * @param startWidth Length; start width
-         * @param endWidth Length; end width
-         * @return Width; linear width progression
+         * @param startWidth start width
+         * @param endWidth end width
+         * @return linear width progression
          */
         public static Width linear(final Length startWidth, final Length endWidth)
         {

@@ -33,7 +33,7 @@ public class Category implements Serializable
     private final List<Object> objects = new ArrayList<>();
 
     /**
-     * @param categorization Categorization; categorization
+     * @param categorization categorization
      */
     private Category(final Categorization categorization)
     {
@@ -42,9 +42,9 @@ public class Category implements Serializable
     }
 
     /**
-     * @param categorization Categorization; categorization
-     * @param object1 Object; 1st object
-     * @param objects Object...; other objects
+     * @param categorization categorization
+     * @param object1 1st object
+     * @param objects other objects
      * @throws IllegalArgumentException if the objects do not comply with the categorization
      * @throws NullPointerException if any input is null
      */
@@ -73,7 +73,7 @@ public class Category implements Serializable
 
     /**
      * Returns the i'th object.
-     * @param i int; index of the object
+     * @param i index of the object
      * @return the i'th object
      * @throws IndexOutOfBoundsException if index i is out of bounds
      */
@@ -94,9 +94,9 @@ public class Category implements Serializable
 
     /**
      * Returns the object of this category pertaining to the specified class from the category.
-     * @param clazz Class&lt;T&gt;; class from categorization to get the category object for
+     * @param clazz class from categorization to get the category object for
      * @param <T> type of the object
-     * @return Object; object of this category pertaining to the specified class from the category
+     * @return object of this category pertaining to the specified class from the category
      */
     @SuppressWarnings("unchecked")
     public final <T> T get(final Class<T> clazz)

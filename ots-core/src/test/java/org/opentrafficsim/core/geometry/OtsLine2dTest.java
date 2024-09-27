@@ -124,7 +124,7 @@ public class OtsLine2dTest
 
     /**
      * Test all the constructors of Point2d.
-     * @param points Point2d[]; array of Point2d to test with
+     * @param points array of Point2d to test with
      * @throws OtsGeometryException should not happen; this test has failed if it does happen
      * @throws NetworkException should not happen; this test has failed if it does happen
      */
@@ -194,7 +194,7 @@ public class OtsLine2dTest
 
     /**
      * Print a Path2D to the console.
-     * @param path Path2D; the path
+     * @param path the path
      */
     public final void printPath2D(final Path2D path)
     {
@@ -222,8 +222,8 @@ public class OtsLine2dTest
 
     /**
      * Verify that a OtsLine2d contains the same points as an array of Point2d.
-     * @param line OtsLine2d; the OTS line
-     * @param points Point2d[]; the OTSPoint array
+     * @param line the OTS line
+     * @param points the OTSPoint array
      * @throws OtsGeometryException should not happen; this test has failed if it does happen
      */
     private void verifyPoints(final OtsLine2d line, final Point2d[] points) throws OtsGeometryException
@@ -287,10 +287,10 @@ public class OtsLine2dTest
 
     /**
      * Check the location returned by the various location methods.
-     * @param line OtsLine2d; the line
-     * @param fraction double; relative position to check
-     * @param expectedPoint Point2d; expected location of the result
-     * @param expectedZRotation double; expected Z rotation of the result
+     * @param line the line
+     * @param fraction relative position to check
+     * @param expectedPoint expected location of the result
+     * @param expectedZRotation expected Z rotation of the result
      * @throws OtsGeometryException on failure
      */
     private void checkGetLocation(final OtsLine2d line, final double fraction, final Point2d expectedPoint,
@@ -341,9 +341,9 @@ public class OtsLine2dTest
 
     /**
      * Verify the location and direction of a OrientedPoint2d.
-     * @param dp OrientedPoint2d; the OrientedPoint2d that should be verified
-     * @param expectedPoint Point2d; the expected location (or null if location should not be checked)
-     * @param expectedZRotation double; the expected Z rotation
+     * @param dp the OrientedPoint2d that should be verified
+     * @param expectedPoint the expected location (or null if location should not be checked)
+     * @param expectedZRotation the expected Z rotation
      */
     private void checkOrientedPoint2d(final OrientedPoint2d dp, final Point2d expectedPoint, final double expectedZRotation)
     {
@@ -440,7 +440,8 @@ public class OtsLine2dTest
         assertTrue(line.equals(line2), "OtsLine2d is equal ot other OtsLine2d that has the exact same list of Point2d");
         Point2d p2Same = new Point2d(3.1, 2.2);
         line2 = new OtsLine2d(new Point2d[] {p0, p1, p2Same});
-        assertTrue(line.equals(line2), "OtsLine2d is equal ot other OtsLine2d that has the exact same list of Point2d; even if some of "
+        assertTrue(line.equals(line2),
+                "OtsLine2d is equal ot other OtsLine2d that has the exact same list of Point2d; even if some of "
                         + "those point are different instances with the same coordinates");
         Point2d p2NotSame = new Point2d(3.1, 2.25);
         line2 = new OtsLine2d(new Point2d[] {p0, p1, p2NotSame});
@@ -448,8 +449,7 @@ public class OtsLine2dTest
         line2 = new OtsLine2d(new Point2d[] {p0, p1, p2, p2NotSame});
         assertFalse(line.equals(line2),
                 "OtsLine2d is not equal ot other OtsLine2d that has more points (but is identical up to the common length)");
-        assertFalse(
-                line2.equals(line),
+        assertFalse(line2.equals(line),
                 "OtsLine2d is not equal ot other OtsLine2d that has fewer points  (but is identical up to the common length)");
     }
 
@@ -859,15 +859,15 @@ public class OtsLine2dTest
         {
             OtsLine2d offsetLine = line.offsetLine(step);
             assertEquals(2, offsetLine.size(), "Offset line of a single straight segment has two points");
-            assertEquals(Math.abs(step), offsetLine.getFirst().distance(line.getFirst()),
-                    0.0001, "Distance between start points should be equal to offset");
-            assertEquals(Math.abs(step), offsetLine.getLast().distance(line.getLast()),
-                    0.0001, "Distance between end points should be equal to offset");
+            assertEquals(Math.abs(step), offsetLine.getFirst().distance(line.getFirst()), 0.0001,
+                    "Distance between start points should be equal to offset");
+            assertEquals(Math.abs(step), offsetLine.getLast().distance(line.getLast()), 0.0001,
+                    "Distance between end points should be equal to offset");
             // System.out.println("step: " + step);
             // System.out.println("reference: " + line);
             // System.out.println("offset: " + offsetLine);
-            assertEquals(lineLengthHorizontal,
-                    offsetLine.getLength().si, 0.001, "Length of offset line of straight segment should equal length of reference line");
+            assertEquals(lineLengthHorizontal, offsetLine.getLength().si, 0.001,
+                    "Length of offset line of straight segment should equal length of reference line");
         }
         Point2d via = new Point2d(2.5, 2.5);
         line = new OtsLine2d(from, via, to);
@@ -878,10 +878,10 @@ public class OtsLine2dTest
             // System.out.println("reference: " + line);
             // System.out.println("offset: " + offsetLine);
             assertTrue(2 <= offsetLine.size(), "Offset line has > 2 points");
-            assertEquals(Math.abs(step), offsetLine.getFirst().distance(line.getFirst()),
-                    0.0001, "Distance between start points should be equal to offset");
-            assertEquals(Math.abs(step), offsetLine.getLast().distance(line.getLast()),
-                    0.0001, "Distance between end points should be equal to offset");
+            assertEquals(Math.abs(step), offsetLine.getFirst().distance(line.getFirst()), 0.0001,
+                    "Distance between start points should be equal to offset");
+            assertEquals(Math.abs(step), offsetLine.getLast().distance(line.getLast()), 0.0001,
+                    "Distance between end points should be equal to offset");
         }
     }
 
@@ -1069,8 +1069,8 @@ public class OtsLine2dTest
         OtsLine2d truncatedLine = line.truncate(length);
         assertEquals(truncatedLine.get(0), from,
                 "Start of line truncated at full length is the same as start of the input line");
-        assertEquals(0, truncatedLine.get(1).distance(to),
-                0.0001, "End of line truncated at full length is about the same as end of input line");
+        assertEquals(0, truncatedLine.get(1).distance(to), 0.0001,
+                "End of line truncated at full length is about the same as end of input line");
         try
         {
             line.truncate(-0.1);
@@ -1092,21 +1092,21 @@ public class OtsLine2dTest
         truncatedLine = line.truncate(length / 2);
         assertEquals(truncatedLine.get(0), from, "Start of truncated line is the same as start of the input line");
         Point2d halfWay = new Point2d((from.x + to.x) / 2, (from.y + to.y) / 2);
-        assertEquals(0, halfWay.distance(truncatedLine.get(1)),
-                0.0001, "End of 50%, truncated 2-point line should be at the half way point");
+        assertEquals(0, halfWay.distance(truncatedLine.get(1)), 0.0001,
+                "End of 50%, truncated 2-point line should be at the half way point");
         Point2d intermediatePoint = new Point2d(20, 20);
         line = new OtsLine2d(from, intermediatePoint, to);
         length = from.distance(intermediatePoint) + intermediatePoint.distance(to);
         truncatedLine = line.truncate(length);
         assertEquals(truncatedLine.get(0), from,
                 "Start of line truncated at full length is the same as start of the input line");
-        assertEquals(0, truncatedLine.get(2).distance(to),
-                0.0001, "End of line truncated at full length is about the same as end of input line");
+        assertEquals(0, truncatedLine.get(2).distance(to), 0.0001,
+                "End of line truncated at full length is about the same as end of input line");
         truncatedLine = line.truncate(from.distance(intermediatePoint));
         assertEquals(truncatedLine.get(0), from,
                 "Start of line truncated at full length is the same as start of the input line");
-        assertEquals(0, truncatedLine.get(1).distance(intermediatePoint),
-                0.0001, "Line truncated at intermediate point ends at that intermediate point");
+        assertEquals(0, truncatedLine.get(1).distance(intermediatePoint), 0.0001,
+                "Line truncated at intermediate point ends at that intermediate point");
     }
 
     /**

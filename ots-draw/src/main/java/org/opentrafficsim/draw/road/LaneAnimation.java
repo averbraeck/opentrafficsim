@@ -51,9 +51,9 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
 
     /**
      * Animate a Lane.
-     * @param lane LaneData; the lane
-     * @param contextualized Contextualized; context provider
-     * @param color Color; Color of the lane.
+     * @param lane the lane
+     * @param contextualized context provider
+     * @param color Color of the lane.
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
@@ -110,8 +110,8 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
 
         /**
          * Construct a new CenterLine.
-         * @param centerLine OtsLine2d; the center line of a lane
-         * @param fullId String; lane id.
+         * @param centerLine the center line of a lane
+         * @param fullId lane id.
          */
         CenterLine(final PolyLine2d centerLine, final String fullId)
         {
@@ -137,7 +137,7 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
 
         /**
          * Retrieve the center line.
-         * @return OtsLine2d; the center line
+         * @return the center line
          */
         public PolyLine2d getCenterLine()
         {
@@ -175,8 +175,8 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
 
         /**
          * Construct a new CenterLineAnimation.
-         * @param centerLine CemterLine; the center line of a lane
-         * @param contextualized Contextualized; context provider
+         * @param centerLine the center line of a lane
+         * @param contextualized context provider
          * @throws NamingException when the name of this object is not unique
          * @throws RemoteException when communication with a remote process fails
          */
@@ -215,13 +215,13 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         private static final long serialVersionUID = 20161211L;
 
         /**
-         * @param source LaneData; the object for which the text is displayed
-         * @param text Supplier&lt;String&gt;; the text to display
-         * @param dx float; the horizontal movement of the text, in meters
-         * @param dy float; the vertical movement of the text, in meters
-         * @param textPlacement TextAlignment; where to place the text
-         * @param color Color; the color of the text
-         * @param contextualized Contextualized; context provider
+         * @param source the object for which the text is displayed
+         * @param text the text to display
+         * @param dx the horizontal movement of the text, in meters
+         * @param dy the vertical movement of the text, in meters
+         * @param textPlacement where to place the text
+         * @param color the color of the text
+         * @param contextualized context provider
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */

@@ -41,8 +41,8 @@ public abstract class OtsRenderable<L extends OtsLocatable> extends Renderable2d
 
     /**
      * Constructs a new Renderable2d.
-     * @param source T; the source
-     * @param contextProvider Contextualized; the object that can provide the context to store the animation objects
+     * @param source the source
+     * @param contextProvider the object that can provide the context to store the animation objects
      */
     public OtsRenderable(final L source, final Contextualized contextProvider)
     {
@@ -52,7 +52,7 @@ public abstract class OtsRenderable<L extends OtsLocatable> extends Renderable2d
     /**
      * Set standard rendering hints for this renderable to paint. The graphics should be reset using {@code resetRendering()}
      * after painting.
-     * @param graphics Graphics2D; graphics.
+     * @param graphics graphics.
      */
     protected void setRendering(final Graphics2D graphics)
     {
@@ -66,7 +66,7 @@ public abstract class OtsRenderable<L extends OtsLocatable> extends Renderable2d
 
     /**
      * Resets rendering hints that this renderable changed through {@code setRendering()}.
-     * @param graphics Graphics2D; graphics.
+     * @param graphics graphics.
      */
     protected void resetRendering(final Graphics2D graphics)
     {
@@ -96,8 +96,8 @@ public abstract class OtsRenderable<L extends OtsLocatable> extends Renderable2d
     /**
      * Returns a transformation by which absolute coordinates can be translated and rotated to the frame of the possibly
      * oriented location around which bounds are defined.
-     * @param location Point2d; location (can be an {@code Oriented}).
-     * @return Transform2d; transformation.
+     * @param location location (can be an {@code Oriented}).
+     * @return transformation.
      */
     public static Transform2d toBoundsTransform(final Point2d location)
     {

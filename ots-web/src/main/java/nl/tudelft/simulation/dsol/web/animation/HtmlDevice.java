@@ -21,7 +21,7 @@ public class HtmlDevice extends GraphicsDevice
     private GraphicsConfiguration[] htmlGraphicsConfigurations;
 
     /**
-     * @param htmlGraphicsConfiguration GraphicsConfiguration; the GraphicsConfiguration to add to the HTMLDevice
+     * @param htmlGraphicsConfiguration the GraphicsConfiguration to add to the HTMLDevice
      */
     public HtmlDevice(GraphicsConfiguration htmlGraphicsConfiguration)
     {

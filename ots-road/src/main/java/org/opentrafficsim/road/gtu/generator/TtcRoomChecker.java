@@ -38,7 +38,7 @@ public class TtcRoomChecker implements RoomChecker
 
     /**
      * Constructor.
-     * @param ttc Duration; time to collision
+     * @param ttc time to collision
      */
     public TtcRoomChecker(final Duration ttc)
     {
@@ -68,7 +68,7 @@ public class TtcRoomChecker implements RoomChecker
 
     /**
      * Returns the TTC value.
-     * @return Duration; TTC value
+     * @return TTC value
      */
     public final Duration getTtc()
     {

@@ -21,7 +21,7 @@ public final class DataSource
 
     /**
      * Constructor.
-     * @param name String; unique name
+     * @param name unique name
      */
     DataSource(final String name)
     {
@@ -30,7 +30,7 @@ public final class DataSource
 
     /**
      * Returns the name.
-     * @return String; name
+     * @return name
      */
     public String getName()
     {
@@ -39,11 +39,11 @@ public final class DataSource
 
     /**
      * Add a non-speed stream for the quantity to this data source.
-     * @param quantity Quantity&lt;T, ?&gt;; quantity
-     * @param thetaCong T; standard deviation of this quantity of measurements in congestion by this data source
-     * @param thetaFree T; standard deviation of this quantity of measurements in free flow by this data source
+     * @param quantity quantity
+     * @param thetaCong standard deviation of this quantity of measurements in congestion by this data source
+     * @param thetaFree standard deviation of this quantity of measurements in free flow by this data source
      * @param <T> implicit data type
-     * @return DataStream; the created data stream
+     * @return the created data stream
      * @throws IllegalArgumentException if the quantity is speed
      */
     public <T extends Number> DataStream<T> addStream(final Quantity<T, ?> quantity, final T thetaCong, final T thetaFree)
@@ -53,11 +53,11 @@ public final class DataSource
 
     /**
      * Add a stream for the quantity to this data source.
-     * @param quantity Quantity&lt;T, ?&gt;; quantity
-     * @param thetaCong double; standard deviation of this quantity of measurements in congestion by this data source in SI
-     * @param thetaFree double; standard deviation of this quantity of measurements in free flow by this data source in SI
+     * @param quantity quantity
+     * @param thetaCong standard deviation of this quantity of measurements in congestion by this data source in SI
+     * @param thetaFree standard deviation of this quantity of measurements in free flow by this data source in SI
      * @param <T> implicit data type
-     * @return DataStream; the created data stream
+     * @return the created data stream
      */
     public <T extends Number> DataStream<T> addStreamSI(final Quantity<T, ?> quantity, final double thetaCong,
             final double thetaFree)
@@ -79,8 +79,8 @@ public final class DataSource
     /**
      * Get a stream for the quantity of this data source. If no stream has been created, one will be created with 1.0 standard
      * deviation.
-     * @param quantity Quantity&lt;T, ?&gt;; quantity
-     * @return DataStream&lt;T&gt;; stream for the quantity of this data source
+     * @param quantity quantity
+     * @return stream for the quantity of this data source
      * @param <T> implicit data type
      */
     @SuppressWarnings({"unchecked"})

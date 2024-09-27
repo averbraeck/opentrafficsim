@@ -62,10 +62,10 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
 
     /**
      * Constructor.
-     * @param sampler Sampler&lt;G, L&gt;; sampler
-     * @param id String; id
-     * @param description String; description
-     * @param filterDataSet FilterDataSet; filter data
+     * @param sampler sampler
+     * @param id id
+     * @param description description
+     * @param filterDataSet filter data
      * @throws NullPointerException if sampling, description or filterDataSet is null
      */
     public Query(final Sampler<G, L> sampler, final String id, final String description, final FilterDataSet filterDataSet)
@@ -75,11 +75,11 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
 
     /**
      * Constructor with time interval.
-     * @param sampler Sampler&lt;G, L&gt;; sampler
-     * @param id String; id
-     * @param description String; description
-     * @param filterDataSet FilterDataSet; filter data
-     * @param interval Duration; interval to gather statistics over
+     * @param sampler sampler
+     * @param id id
+     * @param description description
+     * @param filterDataSet filter data
+     * @param interval interval to gather statistics over
      * @throws NullPointerException if sampling, description or filterDataSet is null
      */
     public Query(final Sampler<G, L> sampler, final String id, final String description, final FilterDataSet filterDataSet,
@@ -90,11 +90,11 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
 
     /**
      * Constructor with update frequency.
-     * @param sampler Sampler&lt;G, L&gt;; sampler
-     * @param id String; id
-     * @param description String; description
-     * @param filterDataSet FilterDataSet; filter data
-     * @param updateFrequency Frequency; update frequency
+     * @param sampler sampler
+     * @param id id
+     * @param description description
+     * @param filterDataSet filter data
+     * @param updateFrequency update frequency
      * @throws NullPointerException if sampling, description or filterDataSet is null
      */
     public Query(final Sampler<G, L> sampler, final String id, final String description, final FilterDataSet filterDataSet,
@@ -105,12 +105,12 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
 
     /**
      * Constructor with time interval and update frequency.
-     * @param sampler Sampler&lt;G, L&gt;; sampler
-     * @param id String; id
-     * @param description String; description
-     * @param filterDataSet FilterDataSet; filter data
-     * @param updateFrequency Frequency; update frequency
-     * @param interval Duration; interval to gather statistics over
+     * @param sampler sampler
+     * @param id id
+     * @param description description
+     * @param filterDataSet filter data
+     * @param updateFrequency update frequency
+     * @param interval interval to gather statistics over
      * @throws NullPointerException if sampling, description or filterDataSet is null
      */
     public Query(final Sampler<G, L> sampler, final String id, final String description, final FilterDataSet filterDataSet,
@@ -129,9 +129,9 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
 
     /**
      * Constructor without id.
-     * @param sampler Sampler&lt;G, L&gt;; sampler
-     * @param description String; description
-     * @param filterDataSet FilterDataSet; filter data
+     * @param sampler sampler
+     * @param description description
+     * @param filterDataSet filter data
      * @throws NullPointerException if sampling, description or filterDataSet is null
      */
     public Query(final Sampler<G, L> sampler, final String description, final FilterDataSet filterDataSet)
@@ -141,10 +141,10 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
 
     /**
      * Constructor without id, with time interval.
-     * @param sampler Sampler&lt;G, L&gt;; sampler
-     * @param description String; description
-     * @param filterDataSet filterDataSet; filter data
-     * @param interval Duration; interval to gather statistics over
+     * @param sampler sampler
+     * @param description description
+     * @param filterDataSet filter data
+     * @param interval interval to gather statistics over
      * @throws NullPointerException if sampling, description or filterDataSet is null
      */
     public Query(final Sampler<G, L> sampler, final String description, final FilterDataSet filterDataSet,
@@ -155,10 +155,10 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
 
     /**
      * Constructor without id, with time update frequency.
-     * @param sampler Sampler&lt;G, L&gt;; sampler
-     * @param description String; description
-     * @param filterDataSet filterDataSet; filter data
-     * @param updateFrequency Frequency; update frequency
+     * @param sampler sampler
+     * @param description description
+     * @param filterDataSet filter data
+     * @param updateFrequency update frequency
      * @throws NullPointerException if sampling, description or filterDataSet is null
      */
     public Query(final Sampler<G, L> sampler, final String description, final FilterDataSet filterDataSet,
@@ -169,11 +169,11 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
 
     /**
      * Constructor without id, with time interval and update frequency.
-     * @param sampler Sampler&lt;G, L&gt;; sampler
-     * @param description String; description
-     * @param filterDataSet filterDataSet; filter data
-     * @param updateFrequency Frequency; update frequency
-     * @param interval Duration; interval to gather statistics over
+     * @param sampler sampler
+     * @param description description
+     * @param filterDataSet filter data
+     * @param updateFrequency update frequency
+     * @param interval interval to gather statistics over
      * @throws NullPointerException if sampling, description or filterDataSet is null
      */
     public Query(final Sampler<G, L> sampler, final String description, final FilterDataSet filterDataSet,
@@ -184,7 +184,7 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
 
     /**
      * Returns the unique id for the query.
-     * @return String; the unique id for the query
+     * @return the unique id for the query
      */
     @Override
     public String getId()
@@ -194,7 +194,7 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
 
     /**
      * Returns the description.
-     * @return String; description
+     * @return description
      */
     public String getDescription()
     {
@@ -203,7 +203,7 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
 
     /**
      * Returns the update frequency.
-     * @return Frequency; updateFrequency.
+     * @return updateFrequency.
      */
     public Frequency getUpdateFrequency()
     {
@@ -212,7 +212,7 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
 
     /**
      * Returns the time interval.
-     * @return Duration; interval.
+     * @return interval.
      */
     public Duration getInterval()
     {
@@ -221,7 +221,7 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
 
     /**
      * Returns the number of filter datas.
-     * @return int; number of filter data entries
+     * @return number of filter data entries
      */
     public int filterSize()
     {
@@ -230,8 +230,7 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
 
     /**
      * Returns an iterator over the filter datas and the related data sets.
-     * @return Iterator&lt;Entry&lt;FilterDataType&lt;?, ?&gt;, Set&lt;?&gt;&gt;&gt;; iterator over filter data entries, removal
-     *         is not allowed
+     * @return iterator over filter data entries, removal is not allowed
      */
     public Iterator<Entry<FilterDataType<?, ?>, Set<?>>> getFilterDataSetIterator()
     {
@@ -240,11 +239,11 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
 
     /**
      * Defines a region in space and time for which this query is valid. All lanes in the link are included.
-     * @param link LinkData&lt;? extends L&gt;; link
-     * @param startPosition Length; start position
-     * @param endPosition Length; end position
-     * @param startTime Time; start time
-     * @param endTime Time; end time
+     * @param link link
+     * @param startPosition start position
+     * @param endPosition end position
+     * @param startTime start time
+     * @param endTime end time
      */
     public void addSpaceTimeRegionLink(final LinkData<? extends L> link, final Length startPosition, final Length endPosition,
             final Time startTime, final Time endTime)
@@ -267,11 +266,11 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
 
     /**
      * Defines a region in space and time for which this query is valid.
-     * @param lane L; lane
-     * @param startPosition Length; start position
-     * @param endPosition Length; end position
-     * @param startTime Time; start time
-     * @param endTime Time; end time
+     * @param lane lane
+     * @param startPosition start position
+     * @param endPosition end position
+     * @param startTime start time
+     * @param endTime end time
      */
     public void addSpaceTimeRegion(final L lane, final Length startPosition, final Length endPosition, final Time startTime,
             final Time endTime)
@@ -291,7 +290,7 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
 
     /**
      * Returns the number of space-time regions.
-     * @return int; number of space-time regions
+     * @return number of space-time regions
      */
     public int spaceTimeRegionSize()
     {
@@ -300,7 +299,7 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
 
     /**
      * Returns an iterator over the space-time regions.
-     * @return Iterator&lt;SpaceTimeRegion&lt;? extends L&gt;&gt;; iterator over space-time regions, removal is not allowed
+     * @return iterator over space-time regions, removal is not allowed
      */
     public Iterator<SpaceTimeRegion<? extends L>> getSpaceTimeIterator()
     {
@@ -311,9 +310,9 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
      * Returns a list of TrajectoryGroups in accordance with the query. Each {@code TrajectoryGroup} contains {@code Trajectory}
      * objects pertaining to a {@code SpaceTimeRegion} from the query. A {@code Trajectory} is only included if all the filter
      * data of this query accepts the trajectory. This method uses {@code Time.ZERO} as start.
-     * @param endTime Time; end time of interval to get trajectory groups for
+     * @param endTime end time of interval to get trajectory groups for
      * @param <T> underlying class of filter data type and its value
-     * @return List&lt;TrajectoryGroup&lt;G&gt;&gt;; list of trajectory groups in accordance with the query
+     * @return list of trajectory groups in accordance with the query
      */
     public <T> List<TrajectoryGroup<G>> getTrajectoryGroups(final Time endTime)
     {
@@ -324,10 +323,10 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
      * Returns a list of TrajectoryGroups in accordance with the query. Each {@code TrajectoryGroup} contains {@code Trajectory}
      * objects pertaining to a {@code SpaceTimeRegion} from the query. A {@code Trajectory} is only included if all the filter
      * data of this query accepts the trajectory.
-     * @param startTime Time; start time of interval to get trajectory groups for
-     * @param endTime Time; start time of interval to get trajectory groups for
+     * @param startTime start time of interval to get trajectory groups for
+     * @param endTime start time of interval to get trajectory groups for
      * @param <T> underlying class of filter data type and its value
-     * @return List&lt;TrajectoryGroup&lt;G&gt;&gt;; list of trajectory groups in accordance with the query
+     * @return list of trajectory groups in accordance with the query
      */
     @SuppressWarnings("unchecked")
     public <T> List<TrajectoryGroup<G>> getTrajectoryGroups(final Time startTime, final Time endTime)
@@ -405,8 +404,8 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
 
     /**
      * Returns a copy of the trajectory accept list, with all assumed not accepted.
-     * @param trajectoryAcceptList TrajectoryAcceptList; trajectory accept list to copy.
-     * @return TrajectoryAcceptList; copy of the trajectory accept list, with all assumed not accepted.
+     * @param trajectoryAcceptList trajectory accept list to copy.
+     * @return copy of the trajectory accept list, with all assumed not accepted.
      */
     private TrajectoryAcceptList copyTrajectoryAcceptList(final TrajectoryAcceptList trajectoryAcceptList)
     {
@@ -421,7 +420,7 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
 
     /**
      * Returns the sampler.
-     * @return Sampler&lt;G, L&gt;; sampler.
+     * @return sampler.
      */
     public Sampler<G, L> getSampler()
     {

@@ -234,7 +234,7 @@ public final class ToledoLaneChangeParameters
 
     /**
      * Fills parameters with default values for all Toledo parameters.
-     * @param parameters Parameters; parameters to fill
+     * @param parameters parameters to fill
      */
     public static void setDefaultParameters(final Parameters parameters)
     {

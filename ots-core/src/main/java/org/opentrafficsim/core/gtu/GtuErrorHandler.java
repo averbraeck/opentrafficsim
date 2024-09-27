@@ -36,8 +36,8 @@ public interface GtuErrorHandler
 
     /**
      * Handle exception.
-     * @param gtu Gtu; GTU
-     * @param ex Exception; exception to handle
+     * @param gtu GTU
+     * @param ex exception to handle
      * @throws Exception the exception may be thrown
      */
     void handle(Gtu gtu, Exception ex) throws Exception;

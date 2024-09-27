@@ -5,7 +5,7 @@ import org.opentrafficsim.kpi.sampling.data.ExtendedDataLength;
 import org.opentrafficsim.road.network.sampling.GtuDataRoad;
 
 /**
- * Extended data type in sampler to record world x coordinate. 
+ * Extended data type in sampler to record world x coordinate.
  * @author wjschakel
  */
 public class WorldYData extends ExtendedDataLength<GtuDataRoad>
@@ -25,5 +25,5 @@ public class WorldYData extends ExtendedDataLength<GtuDataRoad>
     {
         return convertValue((float) gtu.getGtu().getLocation().y);
     }
-    
+
 }

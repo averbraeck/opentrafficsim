@@ -96,7 +96,7 @@ public class AppearanceApplication extends JFrame
 
     /**
      * Constructor that sets the content pane.
-     * @param panel JPanel; content pane.
+     * @param panel content pane.
      */
     public AppearanceApplication(final JPanel panel)
     {
@@ -167,7 +167,7 @@ public class AppearanceApplication extends JFrame
 
             /**
              * Constructor.
-             * @param string String; string
+             * @param string string
              */
             AppearanceControlMenu(final String string)
             {
@@ -235,7 +235,7 @@ public class AppearanceApplication extends JFrame
 
     /**
      * Set font scale.
-     * @param fontScaleName String; font scale name.
+     * @param fontScaleName font scale name.
      */
     public void setFontScale(final String fontScaleName)
     {
@@ -245,7 +245,7 @@ public class AppearanceApplication extends JFrame
 
     /**
      * Sets an appearance.
-     * @param appearance Appearance; appearance
+     * @param appearance appearance
      */
     public void setAppearance(final Appearance appearance)
     {
@@ -266,8 +266,8 @@ public class AppearanceApplication extends JFrame
 
     /**
      * Sets an appearance recursively on components.
-     * @param c Component; visual component
-     * @param appear Appearance; look and feel
+     * @param c visual component
+     * @param appear look and feel
      */
     private void setAppearance(final Component c, final Appearance appear)
     {
@@ -331,18 +331,18 @@ public class AppearanceApplication extends JFrame
 
     /**
      * Change font on component.
-     * @param c Component; component
-     * @param font String; font name
+     * @param c component
+     * @param font font name
      */
     protected void changeFont(final Component c, final String font)
     {
         Font prev = c.getFont();
         c.setFont(new Font(font, prev.getStyle(), prev.getSize()));
     }
-    
+
     /**
      * Changes the font size of the component.
-     * @param c Component; component.
+     * @param c component.
      */
     protected void changeFontSize(final Component c)
     {
@@ -369,7 +369,7 @@ public class AppearanceApplication extends JFrame
 
     /**
      * Returns the appearance.
-     * @return Appearance; appearance
+     * @return appearance
      */
     public Appearance getAppearance()
     {
@@ -378,9 +378,9 @@ public class AppearanceApplication extends JFrame
 
     /**
      * Adds an appearance to the menu.
-     * @param group JMenu; menu to add item to
-     * @param appear Appearance; appearance this item selects
-     * @return JMenuItem; menu item
+     * @param group menu to add item to
+     * @param appear appearance this item selects
+     * @return menu item
      */
     private JMenuItem addAppearance(final JMenu group, final Appearance appear)
     {
@@ -399,9 +399,9 @@ public class AppearanceApplication extends JFrame
 
     /**
      * Adds an appearance to the menu.
-     * @param group JMenu; menu to add item to
-     * @param fontScaleName String; font scale name
-     * @return JMenuItem; menu item
+     * @param group menu to add item to
+     * @param fontScaleName font scale name
+     * @return menu item
      */
     private JMenuItem addFontsize(final JMenu group, final String fontScaleName)
     {
@@ -455,7 +455,7 @@ public class AppearanceApplication extends JFrame
 
         /**
          * Constructor.
-         * @param menu JMenu; menu
+         * @param menu menu
          */
         SubMenuShower(final JMenu menu)
         {
@@ -513,7 +513,7 @@ public class AppearanceApplication extends JFrame
 
         /**
          * Sets the path.
-         * @param path MenuElement[]; path
+         * @param path path
          */
         public static void setPath(final MenuElement[] path)
         {
@@ -522,8 +522,8 @@ public class AppearanceApplication extends JFrame
 
         /**
          * Constructor.
-         * @param text String; menu item text
-         * @param selected boolean; if the item is selected
+         * @param text menu item text
+         * @param selected if the item is selected
          */
         StayOpenCheckBoxMenuItem(final String text, final boolean selected)
         {

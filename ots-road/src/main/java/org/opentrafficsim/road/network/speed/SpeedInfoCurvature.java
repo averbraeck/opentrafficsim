@@ -16,7 +16,7 @@ import org.djutils.exceptions.Throw;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param radius Length; curvature radius
+ * @param radius curvature radius
  */
 public record SpeedInfoCurvature(Length radius) implements Serializable
 {
@@ -26,7 +26,7 @@ public record SpeedInfoCurvature(Length radius) implements Serializable
 
     /**
      * Constructor with curvature radius.
-     * @param radius Length; curvature radius
+     * @param radius curvature radius
      * @throws NullPointerException if radius is null
      */
     public SpeedInfoCurvature
@@ -36,7 +36,7 @@ public record SpeedInfoCurvature(Length radius) implements Serializable
 
     /**
      * Returns the speed for which the current lateral acceleration follows in the corner.
-     * @param acceleration Acceleration; acceleration to result from speed in corner
+     * @param acceleration acceleration to result from speed in corner
      * @return speed for which the current lateral acceleration follows in the corner
      * @throws NullPointerException if acceleration is null
      */

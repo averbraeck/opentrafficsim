@@ -42,10 +42,10 @@ public abstract class AbstractLineAnimation<T extends LaneBasedObjectData> exten
 
     /**
      * Construct the line animation.
-     * @param source T; source
-     * @param contextualized Contextualized; context provider
-     * @param length double; length of the line, as fraction of the lane width
-     * @param width Length; line width
+     * @param source source
+     * @param contextualized context provider
+     * @param length length of the line, as fraction of the lane width
+     * @param width line width
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
@@ -89,7 +89,7 @@ public abstract class AbstractLineAnimation<T extends LaneBasedObjectData> exten
     {
         /**
          * Returns the width of the lane.
-         * @return Length; width of the lane.
+         * @return width of the lane.
          */
         Length getLaneWidth();
 

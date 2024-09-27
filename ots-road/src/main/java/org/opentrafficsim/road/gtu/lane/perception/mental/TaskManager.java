@@ -23,10 +23,10 @@ public interface TaskManager
 {
     /**
      * Manage tasks.
-     * @param tasks Set&lt;Task&gt;; tasks
-     * @param perception LanePerception; perception
-     * @param gtu LaneBasedGtu; gtu
-     * @param parameters Parameters; parameters
+     * @param tasks tasks
+     * @param perception perception
+     * @param gtu gtu
+     * @param parameters parameters
      * @throws ParameterException if a parameter is missing or out of bounds
      * @throws GtuException exceptions pertaining to the GTU
      */

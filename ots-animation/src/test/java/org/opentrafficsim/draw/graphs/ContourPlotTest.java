@@ -100,9 +100,9 @@ public class ContourPlotTest implements UNITS
 
     /**
      * Create a network and a path for the tests.
-     * @param simulator OtsSimulatorInterface; the simulator
-     * @param network RoadNetwork; the network
-     * @return GraphPath&lt;LaneDataRoad&gt;; the dummy path
+     * @param simulator the simulator
+     * @param network the network
+     * @return the dummy path
      * @throws Exception when something goes wrong (should not happen)
      */
     private GraphPath<LaneDataRoad> dummyPath(final OtsSimulatorInterface simulator, final RoadNetwork network) throws Exception
@@ -240,11 +240,11 @@ public class ContourPlotTest implements UNITS
 
     /**
      * Debugging method.
-     * @param cp AbstractContourPlot&lt;?&gt;; a contour plot
-     * @param fromX int; lower bound of the x coordinate to print (inclusive)
-     * @param toX int; upper bound of the x coordinate to print (inclusive)
-     * @param fromY int; lower bound of the y coordinate to print (inclusive)
-     * @param toY int; upper bound of the y coordinate to print (inclusive)
+     * @param cp a contour plot
+     * @param fromX lower bound of the x coordinate to print (inclusive)
+     * @param toX upper bound of the x coordinate to print (inclusive)
+     * @param fromY lower bound of the y coordinate to print (inclusive)
+     * @param toY upper bound of the y coordinate to print (inclusive)
      */
     static void printMatrix(final AbstractContourPlot<?> cp, final int fromX, final int toX, final int fromY, final int toY)
     {
@@ -280,11 +280,11 @@ public class ContourPlotTest implements UNITS
 
     /**
      * Test various properties of a ContourPlot that has no observed data added.
-     * @param simulator OtsSimulatorInterface; the simulator
-     * @param cp AbstractContourPlot&lt;?&gt;; the ContourPlot to test
-     * @param path GraphPath&lt;?&gt;; the path
-     * @param expectedZValue double; the value that getZ and getZValue should return for a valid item when no car has passed
-     * @param expectedZValueWithTraffic double; the value that getZ and getZValue should return a valid item where a car has
+     * @param simulator the simulator
+     * @param cp the ContourPlot to test
+     * @param path the path
+     * @param expectedZValue the value that getZ and getZValue should return for a valid item when no car has passed
+     * @param expectedZValueWithTraffic the value that getZ and getZValue should return a valid item where a car has
      *            traveled at constant speed of 50 km/h. Supply Double.NaN if the value varies but differs from the value
      *            expected when no car has passed
      * @throws Exception when something goes wrong (should not happen)
@@ -743,17 +743,17 @@ public class ContourPlotTest implements UNITS
 
     /**
      * Create a new Car.
-     * @param id String; the name (number) of the Car
-     * @param gtuType GtuType; the type of the new car
-     * @param lane Lane; the lane on which the new Car is positioned
-     * @param initialPosition Length; the initial longitudinal position of the new Car
-     * @param initialSpeed Speed; the initial speed
-     * @param simulator OTSDEVVSimulator; the simulator that controls the new Car (and supplies the initial value for
+     * @param id the name (number) of the Car
+     * @param gtuType the type of the new car
+     * @param lane the lane on which the new Car is positioned
+     * @param initialPosition the initial longitudinal position of the new Car
+     * @param initialSpeed the initial speed
+     * @param simulator the simulator that controls the new Car (and supplies the initial value for
      *            getLastEvalutionTime())
-     * @param gtuFollowingModel GtuFollowingModel; the GTU following model
-     * @param laneChangeModel LaneChangeModel; the lane change model
+     * @param gtuFollowingModel the GTU following model
+     * @param laneChangeModel the lane change model
      * @param network the network
-     * @return Car; the new Car
+     * @return the new Car
      * @throws NamingException on network error when making the animation
      * @throws NetworkException when the GTU cannot be placed on the given lane.
      * @throws SimRuntimeException when the move method cannot be scheduled.
@@ -779,7 +779,7 @@ public class ContourPlotTest implements UNITS
 
     /**
      * Run the DensityContourPlot stand-alone for profiling.
-     * @param args String[]; the command line arguments (not used)
+     * @param args the command line arguments (not used)
      * @throws Exception when something goes wrong (should not happen)
      */
     public static void main(final String[] args) throws Exception

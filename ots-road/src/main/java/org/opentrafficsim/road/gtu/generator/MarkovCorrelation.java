@@ -130,8 +130,8 @@ public class MarkovCorrelation<S, I extends Number>
      * calculated by adding all reductions in a row to the diagonal value <i>p_ii</i> and using {@code eq. 1}.<br>
      * <br>
      * See also "Construction of Transition Matrices of Reversible Markov Chains" by Qian Jiang.
-     * @param state S; state
-     * @param correlation double; correlation
+     * @param state state
+     * @param correlation correlation
      * @throws IllegalArgumentException if correlation is not within the range (-1 ... 1), or the state is already defined
      * @throws NullPointerException if state is null
      */
@@ -188,9 +188,9 @@ public class MarkovCorrelation<S, I extends Number>
      * If the super state is only a virtual layer that should not in itself be a valid state of the system, it can simply be
      * excluded from obtaining a new state using {@code getState()}.<br>
      * <br>
-     * @param superState S; state of group
-     * @param state S; state to add
-     * @param correlation double; correlation
+     * @param superState state of group
+     * @param state state to add
+     * @param correlation correlation
      * @throws IllegalArgumentException if correlation is not within the range (0 ... 1), the state is already defined, or
      *             superState is not yet a state
      * @throws NullPointerException if an input is null
@@ -244,11 +244,11 @@ public class MarkovCorrelation<S, I extends Number>
      * Draws a next state from this Markov Chain process, with predefined state correlations, but dynamic intensities. Any
      * states that are present in the underlying Transition Matrix, but not present in the given states, are ignored. States
      * that are not present in the underlying Transition Matrix, are added to it with a correlation of 0.
-     * @param previousState S; previous state
-     * @param states S[]; set of states to consider
-     * @param steadyState I[]; current steady-state intensities of the states
-     * @param stream StreamInterface; to draw random numbers
-     * @return S; next state
+     * @param previousState previous state
+     * @param states set of states to consider
+     * @param steadyState current steady-state intensities of the states
+     * @param stream to draw random numbers
+     * @return next state
      * @throws IllegalArgumentException if number of states is not the same as the stead-state length
      * @throws NullPointerException if states, steadyState or stream is null
      */
@@ -310,8 +310,8 @@ public class MarkovCorrelation<S, I extends Number>
 
         /**
          * Constructor.
-         * @param state S; state
-         * @param correlation double; correlation
+         * @param state state
+         * @param correlation correlation
          */
         MarkovNode(final S state, final double correlation)
         {
@@ -321,7 +321,7 @@ public class MarkovCorrelation<S, I extends Number>
 
         /**
          * Returns the encapsulated state, which is either a fixed state, or the super-state of a group.
-         * @return S; encapsulated state, which is either a fixed state, or the super-state of a group
+         * @return encapsulated state, which is either a fixed state, or the super-state of a group
          */
         final S getState()
         {
@@ -330,7 +330,7 @@ public class MarkovCorrelation<S, I extends Number>
 
         /**
          * Returns the correlation.
-         * @return double; correlation
+         * @return correlation
          */
         final double getCorrelation()
         {
@@ -353,9 +353,9 @@ public class MarkovCorrelation<S, I extends Number>
 
         /**
          * Returns a state from this node, which is either a fixed state, or a randomly drawn state from a sub-group.
-         * @param previousState S; previous state
-         * @param stream StreamInterface; to draw random numbers
-         * @return S; state from this node, which is either a fixed state, or a randomly drawn state from a sub-group
+         * @param previousState previous state
+         * @param stream to draw random numbers
+         * @return state from this node, which is either a fixed state, or a randomly drawn state from a sub-group
          */
         abstract S drawState(S previousState, StreamInterface stream);
 
@@ -386,8 +386,8 @@ public class MarkovCorrelation<S, I extends Number>
 
         /**
          * Constructor.
-         * @param state S; super state representing the sub-group, or {@code null} for the root matrix.
-         * @param correlation double; correlation for the sub-group, or any value for the root matrix.
+         * @param state super state representing the sub-group, or {@code null} for the root matrix.
+         * @param correlation correlation for the sub-group, or any value for the root matrix.
          */
         TransitionMatrix(final S state, final double correlation)
         {
@@ -396,8 +396,8 @@ public class MarkovCorrelation<S, I extends Number>
 
         /**
          * Adds a node to the matrix.
-         * @param state S; state of the node
-         * @param node MarkovNode&lt;S, I&gt;; node
+         * @param state state of the node
+         * @param node node
          */
         void addNode(final S state, final MarkovNode<S, I> node)
         {
@@ -410,8 +410,8 @@ public class MarkovCorrelation<S, I extends Number>
         /**
          * Registers the state to belong to the group of super-state. This is used such that the matrix knows which previous
          * states to map to the group.
-         * @param superState S; super-state of the group
-         * @param state S; state inside the group
+         * @param superState super-state of the group
+         * @param state state inside the group
          */
         void registerInGroup(final S superState, final S state)
         {
@@ -427,7 +427,7 @@ public class MarkovCorrelation<S, I extends Number>
 
         /**
          * Removes the node from the matrix, including group registration. This is used to replace a state with a group.
-         * @param state S; state to remove
+         * @param state state to remove
          */
         void removeNode(final S state)
         {
@@ -450,9 +450,9 @@ public class MarkovCorrelation<S, I extends Number>
         /**
          * Returns a state from this matrix. This is done by calculating the row of the Markov Transition Chain for the given
          * previous state, and using those probabilities to draw an output state.
-         * @param previousState S; previous state
-         * @param stream StreamInterface; to draw random numbers
-         * @return S; state from this matrix
+         * @param previousState previous state
+         * @param stream to draw random numbers
+         * @return state from this matrix
          * @see MarkovCorrelation#addState(Object, double) algorithm for calculating the Transition Matrix
          */
         @Override
@@ -567,8 +567,8 @@ public class MarkovCorrelation<S, I extends Number>
 
         /**
          * Constructor.
-         * @param state S; state
-         * @param correlation double; correlation
+         * @param state state
+         * @param correlation correlation
          */
         FixedState(final S state, final double correlation)
         {
@@ -577,9 +577,9 @@ public class MarkovCorrelation<S, I extends Number>
 
         /**
          * Returns the state.
-         * @param previousState S; previous state
-         * @param stream StreamInterface; to draw random numbers
-         * @return state S; the state
+         * @param previousState previous state
+         * @param stream to draw random numbers
+         * @return the state
          */
         S drawState(final S previousState, final StreamInterface stream)
         {
@@ -588,7 +588,7 @@ public class MarkovCorrelation<S, I extends Number>
 
         /**
          * Sets the current intensity.
-         * @param intensity I; intensity
+         * @param intensity intensity
          */
         void setIntensity(final I intensity)
         {

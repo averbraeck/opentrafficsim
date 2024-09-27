@@ -44,11 +44,11 @@ public class Sim0MQPublisherTest
 
     /**
      * Verify an ACK or a NACK message.
-     * @param got byte[]; the not-yet-decoded message that is expected to decode into an ACK or a NACK
-     * @param field5 String; expected content for the message type id field
-     * @param field6 int; expected content for the message id field
-     * @param expectedValue Boolean; expected Boolean value for the first payload field (field 8)
-     * @param expectedDescription String; expected String value for the second and last payload field (field 9)
+     * @param got the not-yet-decoded message that is expected to decode into an ACK or a NACK
+     * @param field5 expected content for the message type id field
+     * @param field6 expected content for the message id field
+     * @param expectedValue expected Boolean value for the first payload field (field 8)
+     * @param expectedDescription expected String value for the second and last payload field (field 9)
      * @throws Sim0MQException when that happens, this test has failed
      * @throws SerializationException when that happens this test has failed
      */
@@ -71,12 +71,12 @@ public class Sim0MQPublisherTest
 
     /**
      * Wait for an incoming message and verify that it is an ACK or a NACK.
-     * @param receivedMessages List&lt;byte[]&gt;; the list where incoming messages should appear
-     * @param maximumSeconds double; maximum time to wait
-     * @param field5 String; expected content for the message type id field
-     * @param field6 int; expected content for the message id field
-     * @param expectedValue Boolean; expected Boolean value for the first payload field (field 8)
-     * @param expectedDescription String; expected String value for the second and last payload field (field 9)
+     * @param receivedMessages the list where incoming messages should appear
+     * @param maximumSeconds maximum time to wait
+     * @param field5 expected content for the message type id field
+     * @param field6 expected content for the message id field
+     * @param expectedValue expected Boolean value for the first payload field (field 8)
+     * @param expectedDescription expected String value for the second and last payload field (field 9)
      * @throws Sim0MQException when that happens, this test has failed
      * @throws SerializationException when that happens this test has failed
      * @throws InterruptedException when that happens this test has failed
@@ -257,9 +257,9 @@ public class Sim0MQPublisherTest
 
     /**
      * Wait for incoming messages up to one that has a specified conversation id, or until 1000 times time out.
-     * @param receivedMessages List&lt;byte[]&gt;; the list to monitor
-     * @param maximumSeconds double; how long to wait (in seconds)
-     * @param conversationId int; the conversation id to wait for
+     * @param receivedMessages the list to monitor
+     * @param maximumSeconds how long to wait (in seconds)
+     * @param conversationId the conversation id to wait for
      * @throws Sim0MQException when that happens, this test has failed
      * @throws SerializationException when that happens, this test has failed
      * @throws InterruptedException when that happens, this test has failed
@@ -290,8 +290,8 @@ public class Sim0MQPublisherTest
 
     /**
      * Sleep up to 1 second waiting for at least one message to be received.
-     * @param receivedMessages List&lt;byte[]&gt;; the list to monitor
-     * @param maximumSeconds double; how long to wait (in seconds)
+     * @param receivedMessages the list to monitor
+     * @param maximumSeconds how long to wait (in seconds)
      * @throws InterruptedException when that happens uncaught; this test has failed
      */
     static void waitForReceivedMessages(final List<byte[]> receivedMessages, final double maximumSeconds)
@@ -308,7 +308,7 @@ public class Sim0MQPublisherTest
     /**
      * Wrapper for ZMQ.Socket.send that may output some debugging information.
      * @param socket ZMQ.Socket; the socket to send onto
-     * @param message byte[]; the message to transmit
+     * @param message the message to transmit
      */
     static void sendCommand(final ZMQ.Socket socket, final byte[] message)
     {
@@ -337,8 +337,8 @@ public class Sim0MQPublisherTest
 
         /**
          * Repeatedly read all available messages.
-         * @param zContext ZContext; the ZContext needed to create the read socket
-         * @param storage List&lt;String&gt;; storage for the received messages
+         * @param zContext the ZContext needed to create the read socket
+         * @param storage storage for the received messages
          */
         ReadMessageThread(final ZContext zContext, final List<byte[]> storage)
         {
@@ -369,7 +369,7 @@ public class Sim0MQPublisherTest
     /**
      * Read as many messages from a ZMQ socket as are available. Do NOT block when there are no (more) messages to read.
      * @param socket ZMQ.Socket; the socket
-     * @return byte[][]; the read messages
+     * @return the read messages
      */
     public static byte[][] readMessages(final ZMQ.Socket socket)
     {
@@ -421,7 +421,7 @@ public class Sim0MQPublisherTest
 
         /**
          * Construct a new PublisherThread.
-         * @param zContext ZContext; needed to construct the PublisherExperimentUsingSockets
+         * @param zContext needed to construct the PublisherExperimentUsingSockets
          */
         PublisherThread(final ZContext zContext)
         {

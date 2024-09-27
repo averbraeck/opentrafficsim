@@ -31,7 +31,7 @@ public class RouteEditor implements EventListener, Consumer<XsdTreeNode>
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
+     * @param editor editor.
      * @throws RemoteException if listener cannot be added.
      */
     public RouteEditor(final OtsEditor editor) throws RemoteException
@@ -43,7 +43,7 @@ public class RouteEditor implements EventListener, Consumer<XsdTreeNode>
 
     /**
      * Temporary stub to create route pane.
-     * @return JComponent; component.
+     * @return component.
      */
     private static JComponent buildRoutePane()
     {

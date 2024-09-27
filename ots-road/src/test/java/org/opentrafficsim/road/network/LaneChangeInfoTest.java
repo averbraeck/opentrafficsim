@@ -227,10 +227,10 @@ public class LaneChangeInfoTest
 
     /**
      * Checks whether lane change info meets the provided direction, number of changes, and distance.
-     * @param laneChangeInfos ImmutableSortedSet&lt;LaneChangeInfo&gt;; lane change info to be tested
-     * @param lat LateralDirectionality; lateral direction of lane changes
-     * @param laneChanges int[]; number of lane changes for consecutive lane change infos
-     * @param distances double[]; distance for lane changes for consecutive lane change infos
+     * @param laneChangeInfos lane change info to be tested
+     * @param lat lateral direction of lane changes
+     * @param laneChanges number of lane changes for consecutive lane change infos
+     * @param distances distance for lane changes for consecutive lane change infos
      */
     private void check(final ImmutableSortedSet<LaneChangeInfo> laneChangeInfos, final LateralDirectionality lat,
             final int[] laneChanges, final double[] distances)

@@ -21,8 +21,8 @@ public class ContinuousDistArea extends ContinuousDistDoubleScalar.Rel<Area, Are
     private static final long serialVersionUID = 20180829L;
 
     /**
-     * @param distribution DistContinuous; distribution
-     * @param unit AreaUnit; units
+     * @param distribution distribution
+     * @param unit units
      */
     public ContinuousDistArea(final DistContinuous distribution, final AreaUnit unit)
     {

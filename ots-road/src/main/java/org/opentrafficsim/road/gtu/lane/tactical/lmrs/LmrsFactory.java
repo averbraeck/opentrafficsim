@@ -64,9 +64,8 @@ public class LmrsFactory extends AbstractLaneBasedTacticalPlannerFactory<Lmrs> i
 
     /**
      * Constructor using default incentives and passive synchronization.
-     * @param carFollowingModelFactory CarFollowingModelFactory&lt;? extends CarFollowingModel&gt;; factory of the car-following
-     *            model
-     * @param perceptionFactory PerceptionFactory; perception factory
+     * @param carFollowingModelFactory factory of the car-following model
+     * @param perceptionFactory perception factory
      */
     public LmrsFactory(final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory,
             final PerceptionFactory perceptionFactory)
@@ -80,16 +79,15 @@ public class LmrsFactory extends AbstractLaneBasedTacticalPlannerFactory<Lmrs> i
 
     /**
      * Constructor with full control over incentives and type of synchronization.
-     * @param carFollowingModelFactory CarFollowingModelFactory&lt;? extends CarFollowingModel&gt;; factory of the car-following
-     *            model
-     * @param perceptionFactory PerceptionFactory; perception factory
-     * @param synchronization Synchronization; type of synchronization
-     * @param cooperation Cooperation; type of cooperation
-     * @param gapAcceptance GapAcceptance; gap-acceptance
-     * @param tailgating Tailgating; tail gating
-     * @param mandatoryIncentives mandatory incentives; note that order may matter
-     * @param voluntaryIncentives voluntary incentives; note that order may matter
-     * @param accelerationIncentives Set&lt;AccelerationIncentive&gt;; acceleration incentives
+     * @param carFollowingModelFactory factory of the car-following model
+     * @param perceptionFactory perception factory
+     * @param synchronization type of synchronization
+     * @param cooperation type of cooperation
+     * @param gapAcceptance gap-acceptance
+     * @param tailgating tail gating
+     * @param mandatoryIncentives note that order may matter
+     * @param voluntaryIncentives note that order may matter
+     * @param accelerationIncentives acceleration incentives
      */
     public LmrsFactory(final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory,
             final PerceptionFactory perceptionFactory, final Synchronization synchronization, final Cooperation cooperation,

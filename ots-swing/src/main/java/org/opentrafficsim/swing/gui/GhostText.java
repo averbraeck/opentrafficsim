@@ -39,8 +39,8 @@ public class GhostText implements FocusListener, DocumentListener, PropertyChang
 
     /**
      * Constructor.
-     * @param textComp JTextComponent; text component to receive ghost text.
-     * @param ghostText String; ghost text.
+     * @param textComp text component to receive ghost text.
+     * @param ghostText ghost text.
      */
     public GhostText(final JTextComponent textComp, final String ghostText)
     {
@@ -85,7 +85,7 @@ public class GhostText implements FocusListener, DocumentListener, PropertyChang
 
     /**
      * Get ghost color.
-     * @return Color; ghost color.
+     * @return ghost color.
      */
     public Color getGhostColor()
     {
@@ -94,7 +94,7 @@ public class GhostText implements FocusListener, DocumentListener, PropertyChang
 
     /**
      * Set ghost color.
-     * @param ghostColor Color; ghost color.
+     * @param ghostColor ghost color.
      */
     public void setGhostColor(final Color ghostColor)
     {

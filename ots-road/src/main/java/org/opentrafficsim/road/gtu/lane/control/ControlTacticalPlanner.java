@@ -19,7 +19,7 @@ public interface ControlTacticalPlanner
     /**
      * Returns the system settings. This is used for sub-components that have no direct access to the settings. For example,
      * when initiating sensor perception.
-     * @return Parameters; system settings
+     * @return system settings
      */
     Parameters getSettings();
 

@@ -68,12 +68,12 @@ public class IdmOld extends AbstractGtuFollowingModelMobil implements Serializab
 
     /**
      * Construct a new IDM car following model.
-     * @param a Acceleration; the maximum acceleration of a stationary vehicle (normal value is 1.56 m/s/s)
-     * @param b Acceleration; the maximum deemed-safe deceleration (this is a positive value). Normal value is 2.09 m/s/s.
-     * @param s0 Length; the minimum stationary headway (normal value is 3 m)
-     * @param tSafe Duration; the minimum time-headway (normal value is 1.2 s)
-     * @param delta double; the speed limit adherence (1.0; mean free speed equals the speed limit; 1.1: mean free speed equals
-     *            110% of the speed limit; etc.)
+     * @param a the maximum acceleration of a stationary vehicle (normal value is 1.56 m/s/s)
+     * @param b the maximum deemed-safe deceleration (this is a positive value). Normal value is 2.09 m/s/s.
+     * @param s0 the minimum stationary headway (normal value is 3 m)
+     * @param tSafe the minimum time-headway (normal value is 1.2 s)
+     * @param delta the speed limit adherence (1.0; mean free speed equals the speed limit; 1.1: mean free speed equals 110% of
+     *            the speed limit; etc.)
      */
     public IdmOld(final Acceleration a, final Acceleration b, final Length s0, final Duration tSafe, final double delta)
     {
@@ -86,9 +86,9 @@ public class IdmOld extends AbstractGtuFollowingModelMobil implements Serializab
 
     /**
      * Desired speed (taking into account the urge to drive a little faster or slower than the posted speed limit).
-     * @param speedLimit Speed; the speed limit
-     * @param followerMaximumSpeed Speed; the maximum speed that the follower can drive
-     * @return DoubleScalarRel&lt;SpeedUnit&gt;; the desired speed
+     * @param speedLimit the speed limit
+     * @param followerMaximumSpeed the maximum speed that the follower can drive
+     * @return the desired speed
      */
     private Speed vDes(final Speed speedLimit, final Speed followerMaximumSpeed)
     {

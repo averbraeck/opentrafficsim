@@ -21,9 +21,9 @@ public class ParameterTypeClass<T> extends ParameterType<Class<? extends T>>
 
     /**
      * Constructor without default value and check.
-     * @param id String; Short name of parameter.
-     * @param description String; Parameter description or full name.
-     * @param valueClass Class&lt;Class&lt;? extends T&gt;&gt;; Class of the value.
+     * @param id Short name of parameter.
+     * @param description Parameter description or full name.
+     * @param valueClass Class of the value.
      */
     public ParameterTypeClass(final String id, final String description, final Class<Class<? extends T>> valueClass)
     {
@@ -32,10 +32,10 @@ public class ParameterTypeClass<T> extends ParameterType<Class<? extends T>>
 
     /**
      * Constructor with default value, without check.
-     * @param id String; Short name of parameter.
-     * @param description String; Parameter description or full name.
-     * @param valueClass Class&lt;Class&lt;? extends T&gt;&gt;; Class of the value.
-     * @param defaultValue Class&lt;? extends T&gt;; Default value.
+     * @param id Short name of parameter.
+     * @param description Parameter description or full name.
+     * @param valueClass Class of the value.
+     * @param defaultValue Default value.
      */
     public ParameterTypeClass(final String id, final String description, final Class<Class<? extends T>> valueClass,
             final Class<? extends T> defaultValue)
@@ -45,10 +45,10 @@ public class ParameterTypeClass<T> extends ParameterType<Class<? extends T>>
 
     /**
      * Constructor without default value, with check.
-     * @param id String; Short name of parameter.
-     * @param description String; Parameter description or full name.
-     * @param valueClass Class&lt;Class&lt;? extends T&gt;&gt;; Class of the value.
-     * @param constraint Constraint&lt;? super Class&lt;? extends T&gt;&gt;; Constraint for parameter values.
+     * @param id Short name of parameter.
+     * @param description Parameter description or full name.
+     * @param valueClass Class of the value.
+     * @param constraint Constraint for parameter values.
      */
     public ParameterTypeClass(final String id, final String description, final Class<Class<? extends T>> valueClass,
             final Constraint<? super Class<? extends T>> constraint)
@@ -58,11 +58,11 @@ public class ParameterTypeClass<T> extends ParameterType<Class<? extends T>>
 
     /**
      * Constructor with default value and check.
-     * @param id String; Short name of parameter.
-     * @param description String; Parameter description or full name.
-     * @param valueClass Class&lt;Class&lt;? extends T&gt;&gt;; Class of the value.
-     * @param defaultValue Class&lt;? extends T&gt;; Default value.
-     * @param constraint Constraint&lt;? super Class&lt;? extends T&gt;&gt;; Constraint for parameter values.
+     * @param id Short name of parameter.
+     * @param description Parameter description or full name.
+     * @param valueClass Class of the value.
+     * @param defaultValue Default value.
+     * @param constraint Constraint for parameter values.
      */
     public ParameterTypeClass(final String id, final String description, final Class<Class<? extends T>> valueClass,
             final Class<? extends T> defaultValue, final Constraint<? super Class<? extends T>> constraint)
@@ -73,7 +73,7 @@ public class ParameterTypeClass<T> extends ParameterType<Class<? extends T>>
     /**
      * Returns a typed class, where the type is {@code Class<? extends T>}, such that {@code ParameterTypeClass} instances can
      * easily be created.
-     * @param clazz Class&lt;T&gt;; class instance
+     * @param clazz class instance
      * @param <T> constraining class in parameter type, e.g. TacticalPlanner
      * @return typed class
      */

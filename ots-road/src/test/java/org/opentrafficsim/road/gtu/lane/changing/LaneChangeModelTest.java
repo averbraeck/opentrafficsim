@@ -83,12 +83,12 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
 
     /**
      * Create a Link.
-     * @param network RoadNetwork; the network
-     * @param name String; name of the new Link
-     * @param from Node; start node of the new Link
-     * @param to Node; end node of the new Link
-     * @param width Length; the width of the new Link
-     * @param simulator OtsSimulatorInterface; the simulator
+     * @param network the network
+     * @param name name of the new Link
+     * @param from start node of the new Link
+     * @param to end node of the new Link
+     * @param width the width of the new Link
+     * @param simulator the simulator
      * @return Link
      * @throws OtsGeometryException when coordinates cannot be calculated
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
@@ -109,11 +109,11 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
 
     /**
      * Create one Lane.
-     * @param link Link; the link that owns the new Lane
-     * @param id String; the id of the lane, has to be unique within the link
-     * @param laneType LaneType&lt;String&gt;; the type of the new Lane
-     * @param latPos Length; the lateral position of the new Lane with respect to the design line of the link
-     * @param width Length; the width of the new Lane
+     * @param link the link that owns the new Lane
+     * @param id the id of the lane, has to be unique within the link
+     * @param laneType the type of the new Lane
+     * @param latPos the lateral position of the new Lane with respect to the design line of the link
+     * @param width the width of the new Lane
      * @return Lane
      * @throws NamingException on ???
      * @throws NetworkException on ??
@@ -130,14 +130,14 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
 
     /**
      * Create a simple straight road with the specified number of Lanes.
-     * @param network RoadNetwork; the network
-     * @param name String; name of the Link
-     * @param from Node; starting node of the new Lane
-     * @param to Node; ending node of the new Lane
-     * @param laneType LaneType&lt;String&gt;; the type of GTU that can use the lanes
-     * @param laneCount int; number of lanes in the road
-     * @param simulator OtsSimulatorInterface; the simulator
-     * @return Lane&lt;String, String&gt;[]; array containing the new Lanes
+     * @param network the network
+     * @param name name of the Link
+     * @param from starting node of the new Lane
+     * @param to ending node of the new Lane
+     * @param laneType the type of GTU that can use the lanes
+     * @param laneCount number of lanes in the road
+     * @param simulator the simulator
+     * @return array containing the new Lanes
      * @throws Exception when something goes wrong (should not happen)
      */
     public static Lane[] makeMultiLane(final RoadNetwork network, final String name, final Node from, final Node to,
@@ -233,7 +233,8 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
             strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedCfLcTacticalPlanner(new IdmPlusOld(), laneChangeModel, collisionCar), collisionCar);
             collisionCar.setParameters(parameters);
-            collisionCar.init(strategicalPlanner, new LanePosition(lanes[1], new Length(pos, METER)), new Speed(100, KM_PER_HOUR));
+            collisionCar.init(strategicalPlanner, new LanePosition(lanes[1], new Length(pos, METER)),
+                    new Speed(100, KM_PER_HOUR));
             preferredLaneGTUs.clear();
             HeadwayGtuSimple collisionHWGTU = new HeadwayGtuSimple(collisionCar.getId(), collisionCar.getType(),
                     new Length(pos - reference.getSI(), LengthUnit.SI), collisionCar.getLength(), collisionCar.getWidth(),

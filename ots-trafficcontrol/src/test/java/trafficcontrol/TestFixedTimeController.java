@@ -260,8 +260,8 @@ public class TestFixedTimeController
         {
             assertTrue(trafficLightMap.containsKey(tl.getId()), "acquired traffic light is in the proved set");
         }
-        assertEquals(cycleTime.minus(preGreen).minus(green).minus(yellow).si, sg.getRed().si,
-                0.0001, "red time makes up remainder of cycle time");
+        assertEquals(cycleTime.minus(preGreen).minus(green).minus(yellow).si, sg.getRed().si, 0.0001,
+                "red time makes up remainder of cycle time");
     }
 
     /**
@@ -432,9 +432,9 @@ public class TestFixedTimeController
 
     /**
      * Check that the current state of a fixed time traffic light controller matches the design.
-     * @param simulator OtsSimulatorInterface; the simulator
-     * @param ftc FixedTimeController; the fixed time traffic light controller
-     * @param stopSimulatorOnError boolean; if true; stop the simulator on error; if false; execute the failing assert on error
+     * @param simulator the simulator
+     * @param ftc the fixed time traffic light controller
+     * @param stopSimulatorOnError if true; stop the simulator on error; if false; execute the failing assert on error
      */
     public void checkState(final OtsSimulatorInterface simulator, final FixedTimeController ftc,
             final boolean stopSimulatorOnError)
@@ -486,11 +486,9 @@ public class TestFixedTimeController
                     }
                     else
                     {
-                        assertEquals(
-                                expectedColor + " which is in phase " + phase + " of cycle time " + cycleTime,
-                                tl.getTrafficLightColor(),
-                                "Traffic light color mismatch at simulator time " + simulator.getSimulatorTime()
-                                        + " of signal group " + sg);
+                        assertEquals(expectedColor + " which is in phase " + phase + " of cycle time " + cycleTime,
+                                tl.getTrafficLightColor(), "Traffic light color mismatch at simulator time "
+                                        + simulator.getSimulatorTime() + " of signal group " + sg);
                     }
                 }
             }
@@ -511,8 +509,8 @@ public class TestFixedTimeController
 
     /**
      * Mock a traffic light.
-     * @param id String; value that will be returned by the getId method
-     * @param networkId String; name of network (prepended to id for result of getFullId method)
+     * @param id value that will be returned by the getId method
+     * @param networkId name of network (prepended to id for result of getFullId method)
      * @param simulator TODO
      * @return TrafficLight
      */

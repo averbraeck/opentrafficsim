@@ -116,8 +116,8 @@ public class ContinuousClothoid implements ContinuousLine
      * If the points approximate a straight line or circle, with a tolerance of up 1/10th of a degree, those respective lines
      * are created. The numerical approximation of the underlying Fresnal integral is different from the paper. See
      * {@code Clothoid.fresnal()}.
-     * @param startPoint OrientedPoint2d; start point.
-     * @param endPoint OrientedPoint2d; end point.
+     * @param startPoint start point.
+     * @param endPoint end point.
      * @see <a href="https://www.sciencedirect.com/science/article/pii/S0377042713006286">Connor and Krivodonova (2014)</a>
      * @see <a href="https://www.sciencedirect.com/science/article/pii/S0377042704000925">Waltona and Meek (2009)</a>
      */
@@ -258,10 +258,10 @@ public class ContinuousClothoid implements ContinuousLine
 
     /**
      * Create clothoid from one point based on curvature and A-value.
-     * @param startPoint OrientedPoint2d; start point.
-     * @param a Length; A-value.
-     * @param startCurvature double; start curvature.
-     * @param endCurvature double; end curvature;
+     * @param startPoint start point.
+     * @param a A-value.
+     * @param startCurvature start curvature.
+     * @param endCurvature end curvature;
      */
     public ContinuousClothoid(final OrientedPoint2d startPoint, final double a, final double startCurvature,
             final double endCurvature)
@@ -322,11 +322,11 @@ public class ContinuousClothoid implements ContinuousLine
      * Create clothoid from one point based on curvature and length. This method calculates the A-value as
      * <i>sqrt(L/|k2-k1|)</i>, where <i>L</i> is the length of the resulting clothoid, and <i>k2</i> and <i>k1</i> are the end
      * and start curvature.
-     * @param startPoint OrientedPoint2d; start point.
-     * @param length double; Length of the resulting clothoid.
-     * @param startCurvature double; start curvature.
-     * @param endCurvature double; end curvature;
-     * @return ContinuousClothoid; clothoid based on curvature and length.
+     * @param startPoint start point.
+     * @param length Length of the resulting clothoid.
+     * @param startCurvature start curvature.
+     * @param endCurvature end curvature;
+     * @return clothoid based on curvature and length.
      */
     public static ContinuousClothoid withLength(final OrientedPoint2d startPoint, final double length,
             final double startCurvature, final double endCurvature)
@@ -338,8 +338,8 @@ public class ContinuousClothoid implements ContinuousLine
 
     /**
      * Normalizes the angle to be in the range [-pi pi].
-     * @param angle double; angle.
-     * @return double; angle in the range [-pi pi].
+     * @param angle angle.
+     * @return angle in the range [-pi pi].
      */
     private static double normalizeAngle(final double angle)
     {
@@ -357,8 +357,8 @@ public class ContinuousClothoid implements ContinuousLine
 
     /**
      * Performs alpha to t variable change.
-     * @param alpha double; alpha value, must be positive.
-     * @return double; t value (length along the Fresnel integral, also known as x).
+     * @param alpha alpha value, must be positive.
+     * @return t value (length along the Fresnel integral, also known as x).
      */
     private static double alphaToT(final double alpha)
     {
@@ -367,10 +367,10 @@ public class ContinuousClothoid implements ContinuousLine
 
     /**
      * Returns theta value given shape to use. If no such value is found, the other shape may be attempted.
-     * @param phi1 double; phi1.
-     * @param phi2 double; phi2.
-     * @param cShape boolean; C-shaped, or S-shaped otherwise.
-     * @return double; theta value; the number of radians that is moved on to a side of the full clothoid.
+     * @param phi1 phi1.
+     * @param phi2 phi2.
+     * @param cShape C-shaped, or S-shaped otherwise.
+     * @return theta value; the number of radians that is moved on to a side of the full clothoid.
      */
     private static double getTheta(final double phi1, final double phi2, final boolean cShape)
     {
@@ -421,11 +421,11 @@ public class ContinuousClothoid implements ContinuousLine
      * Function who's solution <i>f</i>(<i>theta</i>) = 0 for the given value of <i>phi1</i> and <i>phi2</i> gives the angle
      * that solves fitting a C-shaped clothoid through two points. This assumes that <i>sign</i> = -1. If <i>sign</i> = 1, this
      * changes to <i>g</i>(<i>theta</i>) = 0 being a solution for an S-shaped clothoid.
-     * @param theta double; angle defining the curvature of the resulting clothoid.
-     * @param phi1 double; angle between the line through both end points, and the direction of the first point.
-     * @param phi2 double; angle between the line through both end points, and the direction of the last point.
-     * @param sign double; 1 for C-shaped, -1 for S-shaped.
-     * @return double; <i>f</i>(<i>theta</i>) for <i>sign</i> = -1, or <i>g</i>(<i>theta</i>) for <i>sign</i> = 1.
+     * @param theta angle defining the curvature of the resulting clothoid.
+     * @param phi1 angle between the line through both end points, and the direction of the first point.
+     * @param phi2 angle between the line through both end points, and the direction of the last point.
+     * @param sign 1 for C-shaped, -1 for S-shaped.
+     * @return <i>f</i>(<i>theta</i>) for <i>sign</i> = -1, or <i>g</i>(<i>theta</i>) for <i>sign</i> = 1.
      */
     private static double fTheta(final double theta, final double phi1, final double phi2, final double sign)
     {
@@ -479,7 +479,7 @@ public class ContinuousClothoid implements ContinuousLine
 
     /**
      * Return A, the clothoid scaling parameter.
-     * @return double; a, the clothoid scaling parameter.
+     * @return a, the clothoid scaling parameter.
      */
     public double getA()
     {
@@ -528,9 +528,9 @@ public class ContinuousClothoid implements ContinuousLine
 
     /**
      * Returns a point on the clothoid at a fraction of curvature along the clothoid.
-     * @param fraction double; fraction of curvature along the clothoid.
-     * @param offset double; offset relative to radius.
-     * @return Point2d; point on the clothoid at a fraction of curvature along the clothoid.
+     * @param fraction fraction of curvature along the clothoid.
+     * @param offset offset relative to radius.
+     * @return point on the clothoid at a fraction of curvature along the clothoid.
      */
     private Point2d getPoint(final double fraction, final double offset)
     {
@@ -545,8 +545,8 @@ public class ContinuousClothoid implements ContinuousLine
 
     /**
      * Returns the direction at given alpha.
-     * @param alpha double; alpha.
-     * @return double; direction at given alpha.
+     * @param alpha alpha.
+     * @return direction at given alpha.
      */
     private double getDirection(final double alpha)
     {
@@ -637,7 +637,7 @@ public class ContinuousClothoid implements ContinuousLine
     /**
      * Returns whether the shape was applied as a Clothoid, an Arc, or as a Straight, depending on start and end position and
      * direction.
-     * @return String; "Clothoid", "Arc" or "Straight".
+     * @return "Clothoid", "Arc" or "Straight".
      */
     public String getAppliedShape()
     {

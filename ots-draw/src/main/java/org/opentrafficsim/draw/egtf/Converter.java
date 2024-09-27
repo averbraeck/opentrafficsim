@@ -31,8 +31,8 @@ public interface Converter<K>
 
     /**
      * Convert the filtered data to an output format.
-     * @param filteredData double[][]; filtered data
-     * @return K; data in output format
+     * @param filteredData filtered data
+     * @return data in output format
      */
     K convert(double[][] filteredData);
 }

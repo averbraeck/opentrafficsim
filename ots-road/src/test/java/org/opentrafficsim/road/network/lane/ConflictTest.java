@@ -189,9 +189,9 @@ public class ConflictTest implements EventListener
 
     /**
      * Find all 2D (ignoring Z) intersections between two OtsLine2d objects.
-     * @param a Polygon2d; the first polyline
-     * @param b Polygon2d; the second polyline
-     * @return Set&lt;Point2d&gt;; the intersections
+     * @param a the first polyline
+     * @param b the second polyline
+     * @return the intersections
      */
     public Set<Point2d> intersections(final Polygon2d a, final Polygon2d b)
     {

@@ -40,10 +40,10 @@ public class BoundingRectangle implements OtsBounds2d
 
     /**
      * Constructor.
-     * @param minX double; minimum x coordinate.
-     * @param maxX double; maximum x coordinate.
-     * @param minY double; minimum y coordinate.
-     * @param maxY double; maximum y coordinate.
+     * @param minX minimum x coordinate.
+     * @param maxX maximum x coordinate.
+     * @param minY minimum y coordinate.
+     * @param maxY maximum y coordinate.
      */
     public BoundingRectangle(final double minX, final double maxX, final double minY, final double maxY)
     {

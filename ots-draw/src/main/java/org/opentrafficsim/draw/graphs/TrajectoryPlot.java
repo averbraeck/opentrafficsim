@@ -93,11 +93,11 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
 
     /**
      * Constructor.
-     * @param caption String; caption
-     * @param updateInterval Duration; regular update interval (simulation time)
-     * @param scheduler PlotScheduler; scheduler.
-     * @param samplerData SamplerData&lt;?&gt;; sampler data
-     * @param path GraphPath&lt;? extends LaneData&gt;; path
+     * @param caption caption
+     * @param updateInterval regular update interval (simulation time)
+     * @param scheduler scheduler.
+     * @param samplerData sampler data
+     * @param path path
      */
     public TrajectoryPlot(final String caption, final Duration updateInterval, final PlotScheduler scheduler,
             final SamplerData<?> samplerData, final GraphPath<? extends LaneData<?>> path)
@@ -157,7 +157,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
 
     /**
      * Create a chart.
-     * @return JFreeChart; chart
+     * @return chart
      */
     private JFreeChart createChart()
     {
@@ -287,8 +287,8 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
 
     /**
      * Get the trajectory of the series number.
-     * @param series int; series
-     * @return OffsetTrajectory; trajectory of the series number
+     * @param series series
+     * @return trajectory of the series number
      */
     private OffsetTrajectory getTrajectory(final int series)
     {
@@ -298,8 +298,8 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
 
     /**
      * Returns the lane number, and series number within the lane data.
-     * @param series int; overall series number
-     * @return int[]; lane number, and series number within the lane data
+     * @param series overall series number
+     * @return lane number, and series number within the lane data
      */
     private int[] getLaneAndSeriesNumber(final int series)
     {
@@ -462,11 +462,11 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
 
         /**
          * Construct a new TrajectoryAndLengthOffset object.
-         * @param trajectory Trajectory&lt;?&gt;; the trajectory
-         * @param offset Length; the length from the beginning of the sampled path to the start of the lane to which the
-         *            trajectory belongs
-         * @param scaleFactor double; scale factor for space dimension
-         * @param laneLength Length; length of the lane
+         * @param trajectory the trajectory
+         * @param offset the length from the beginning of the sampled path to the start of the lane to which the trajectory
+         *            belongs
+         * @param scaleFactor scale factor for space dimension
+         * @param laneLength length of the lane
          */
         OffsetTrajectory(final Trajectory<?> trajectory, final Length offset, final double scaleFactor, final Length laneLength)
         {
@@ -478,7 +478,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
 
         /**
          * Returns the number of measurements in the trajectory.
-         * @return int; number of measurements in the trajectory
+         * @return number of measurements in the trajectory
          */
         public final int size()
         {
@@ -531,8 +531,8 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
 
         /**
          * Returns the location, including offset, of an item.
-         * @param item int; item (sample) number
-         * @return double; location, including offset, of an item
+         * @param item item (sample) number
+         * @return location, including offset, of an item
          */
         public final double getX(final int item)
         {
@@ -542,8 +542,8 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
 
         /**
          * Returns the time of an item.
-         * @param item int; item (sample) number
-         * @return double; time of an item
+         * @param item item (sample) number
+         * @return time of an item
          */
         public final double getT(final int item)
         {
@@ -553,7 +553,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
 
         /**
          * Returns the ID of the GTU of this trajectory.
-         * @return String; the ID of the GTU of this trajectory
+         * @return the ID of the GTU of this trajectory
          */
         public final String getGtuId()
         {
@@ -580,7 +580,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
 
     /**
      * Retrieve the legend.
-     * @return LegendItemCollection; the legend
+     * @return the legend
      */
     public LegendItemCollection getLegend()
     {
@@ -589,7 +589,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
 
     /**
      * Retrieve the lane visibility flags.
-     * @return List&lt;Boolean&gt;; the lane visibility flags
+     * @return the lane visibility flags
      */
     public List<Boolean> getLaneVisible()
     {

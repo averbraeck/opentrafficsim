@@ -90,8 +90,8 @@ public class DrawTest
         {
             assertEquals(1, Draw.drawWeighted(population, new FixedStream(0.01 * step)), 0, "result should be 1");
         }
-        assertEquals(1, Draw.drawWeighted(population, new FixedStream(1.01)),
-                0, "If rounding errors cause no element to be selected; last element with nonzero probability is returned");
+        assertEquals(1, Draw.drawWeighted(population, new FixedStream(1.01)), 0,
+                "If rounding errors cause no element to be selected; last element with nonzero probability is returned");
         population.put(2, 0.9);
         for (int step = 0; step < 100; step++)
         {
@@ -168,8 +168,7 @@ public class DrawTest
 
         /**
          * Construct a new FixedStream.
-         * @param result double; the result of the nextDouble method. All other methods return a suitable approximation of this
-         *            value.
+         * @param result the result of the nextDouble method. All other methods return a suitable approximation of this value.
          */
         FixedStream(final double result)
         {

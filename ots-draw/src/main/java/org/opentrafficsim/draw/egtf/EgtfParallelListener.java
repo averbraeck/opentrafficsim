@@ -33,9 +33,9 @@ public class EgtfParallelListener implements EgtfListener
 
     /**
      * Waits until progress has been reached, or timeout was exceeded.
-     * @param untilProgress double; progress to wait until
-     * @param timeout long; time out in milliseconds
-     * @return double; value equal to or above untilProgress, or lower if the timeout was exceeded
+     * @param untilProgress progress to wait until
+     * @param timeout time out in milliseconds
+     * @return value equal to or above untilProgress, or lower if the timeout was exceeded
      * @throws InterruptedException when the calling thread is interrupted
      */
     public double wait(final double untilProgress, final long timeout) throws InterruptedException
@@ -56,7 +56,7 @@ public class EgtfParallelListener implements EgtfListener
 
     /**
      * Set the filter results, this is done by the EGTF.
-     * @param filter Filter; filter results
+     * @param filter filter results
      */
     public void setFilter(final Filter filter)
     {
@@ -70,7 +70,7 @@ public class EgtfParallelListener implements EgtfListener
 
     /**
      * Get the filter results after the EGTF is done.
-     * @return Filter; filter results
+     * @return filter results
      */
     public Filter getFilter()
     {

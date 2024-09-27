@@ -70,9 +70,9 @@ public class ContinuousBezierTest
 
     /**
      * Test point is approximately the same.
-     * @param point Point2d; point to test.
-     * @param x double; expected x coordinate.
-     * @param y double; expected y coordinate.
+     * @param point point to test.
+     * @param x expected x coordinate.
+     * @param y expected y coordinate.
      */
     private void isApproximal(final Point2d point, final double x, final double y)
     {

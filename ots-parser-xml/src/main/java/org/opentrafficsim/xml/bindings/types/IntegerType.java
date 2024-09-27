@@ -18,7 +18,7 @@ public class IntegerType extends ExpressionType<Integer>
 
     /**
      * Constructor with value.
-     * @param value Integer; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public IntegerType(final Integer value)
     {
@@ -27,7 +27,7 @@ public class IntegerType extends ExpressionType<Integer>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public IntegerType(final String expression)
     {

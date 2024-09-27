@@ -20,8 +20,8 @@ public interface DesiredHeadwayModel
 
     /**
      * Determines the desired headway in equilibrium conditions, i.e. no speed difference with the leader.
-     * @param parameters Parameters; parameters
-     * @param speed Speed; speed to determine the desired headway at
+     * @param parameters parameters
+     * @param speed speed to determine the desired headway at
      * @throws ParameterException if parameter exception occurs
      * @return desired headway
      */

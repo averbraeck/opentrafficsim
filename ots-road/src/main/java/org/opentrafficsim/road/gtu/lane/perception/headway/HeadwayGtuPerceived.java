@@ -23,10 +23,10 @@ public class HeadwayGtuPerceived extends HeadwayGtuRealCopy
     private static final long serialVersionUID = 20180405L;
 
     /**
-     * @param gtu LaneBasedGtu; gtu
-     * @param distance Length; distance
-     * @param speed Speed; speed
-     * @param acceleration Acceleration; acceleration
+     * @param gtu gtu
+     * @param distance distance
+     * @param speed speed
+     * @param acceleration acceleration
      * @throws GtuException ...
      */
     public HeadwayGtuPerceived(final LaneBasedGtu gtu, final Length distance, final Speed speed,
@@ -39,12 +39,12 @@ public class HeadwayGtuPerceived extends HeadwayGtuRealCopy
     }
 
     /**
-     * @param gtu LaneBasedGtu; gtu
-     * @param overlapFront Length; the overlap over the front of the GTU
-     * @param overlap Length; ???
-     * @param overlapRear Length; the overlap over the rear of the GTU
-     * @param speed Speed; speed
-     * @param acceleration Acceleration; acceleration
+     * @param gtu gtu
+     * @param overlapFront the overlap over the front of the GTU
+     * @param overlap ???
+     * @param overlapRear the overlap over the rear of the GTU
+     * @param speed speed
+     * @param acceleration acceleration
      * @throws GtuException ...
      */
     public HeadwayGtuPerceived(final LaneBasedGtu gtu, final Length overlapFront, final Length overlap,

@@ -15,7 +15,7 @@ public class InterpolationType extends ExpressionType<Interpolation>
 
     /**
      * Constructor with value.
-     * @param value Interpolation; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public InterpolationType(final Interpolation value)
     {
@@ -24,7 +24,7 @@ public class InterpolationType extends ExpressionType<Interpolation>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public InterpolationType(final String expression)
     {

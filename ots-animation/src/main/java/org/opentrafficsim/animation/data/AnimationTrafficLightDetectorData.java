@@ -22,7 +22,7 @@ public class AnimationTrafficLightDetectorData implements TrafficLightDetectorDa
 
     /**
      * Constructor.
-     * @param trafficLigthDetector TrafficLightDetector; traffic light detector.
+     * @param trafficLigthDetector traffic light detector.
      */
     public AnimationTrafficLightDetectorData(final TrafficLightDetector trafficLigthDetector)
     {
@@ -66,7 +66,7 @@ public class AnimationTrafficLightDetectorData implements TrafficLightDetectorDa
 
     /**
      * Returns the traffic light detector.
-     * @return TrafficLightDetector; traffic light detector.
+     * @return traffic light detector.
      */
     public TrafficLightDetector getTrafficLightDetector()
     {

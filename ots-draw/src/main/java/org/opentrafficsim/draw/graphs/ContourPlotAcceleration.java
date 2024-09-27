@@ -107,9 +107,9 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
 
     /**
      * Constructor.
-     * @param caption String; caption
-     * @param scheduler PlotScheduler; scheduler.
-     * @param dataPool ContourDataSource; data pool
+     * @param caption caption
+     * @param scheduler scheduler.
+     * @param dataPool data pool
      */
     public ContourPlotAcceleration(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool)
     {
@@ -119,7 +119,7 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
 
     /**
      * Creates a paint scale from red, via yellow to green.
-     * @return ContinuousColorPaintScale; paint scale
+     * @return paint scale
      */
     private static BoundsPaintScale createPaintScale()
     {

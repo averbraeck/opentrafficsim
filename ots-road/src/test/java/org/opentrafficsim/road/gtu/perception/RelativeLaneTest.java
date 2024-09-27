@@ -158,8 +158,8 @@ public class RelativeLaneTest
                 }
                 if (numLanes > 1 && ld == LateralDirectionality.RIGHT)
                 {
-                    assertEquals(new RelativeLane(LateralDirectionality.RIGHT, numLanes - 1),
-                            leftNeighbor, "left of right > 1 is right minus 1");
+                    assertEquals(new RelativeLane(LateralDirectionality.RIGHT, numLanes - 1), leftNeighbor,
+                            "left of right > 1 is right minus 1");
                 }
                 assertNotEquals(leftNeighbor.hashCode(), rl.hashCode(),
                         "hashCodes should be different for adjacent relative lanes");
@@ -174,8 +174,8 @@ public class RelativeLaneTest
                 }
                 if (numLanes > 1 && ld == LateralDirectionality.LEFT)
                 {
-                    assertEquals(new RelativeLane(LateralDirectionality.LEFT, numLanes - 1),
-                            rightNeighbor, "right of LEFT > 1 is left minus 1");
+                    assertEquals(new RelativeLane(LateralDirectionality.LEFT, numLanes - 1), rightNeighbor,
+                            "right of LEFT > 1 is left minus 1");
                 }
                 assertNotEquals(rightNeighbor.hashCode(), rl.hashCode(),
                         "hashCodes should be different for adjacent relative lanes");

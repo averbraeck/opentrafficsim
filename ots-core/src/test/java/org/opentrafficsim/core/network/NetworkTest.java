@@ -349,7 +349,7 @@ public class NetworkTest implements EventListener
         assertEquals(20.0 - 1.0 - 0.05, extent.getMinY(), 0.01, "extend bottom");
         assertEquals(10.0 + 1.0 + 0.05, extent.getMaxX(), 0.01, "extend right");
         assertEquals(20.0 + 1.0 + 0.05, extent.getMaxY(), 0.01, "extend top");
-        
+
         // Add another node (node has a bounding circle with radius 1, so diameter 2)
         new Node(network, "node2", new Point2d(110, 220));
         extent = network.getExtent();
@@ -649,8 +649,8 @@ public class NetworkTest implements EventListener
 
     /**
      * Construct a ring of 10 nodes with links in clockwise fashion.
-     * @param network Network; the network that will contain the nodes
-     * @return List&lt;Node&gt;; the constructed nodes (in clockwise order)
+     * @param network the network that will contain the nodes
+     * @return the constructed nodes (in clockwise order)
      * @throws NetworkException if that happens uncaught; this test has failed
      * @throws OtsGeometryException if that happens uncaught; this test has failed
      */
@@ -661,9 +661,9 @@ public class NetworkTest implements EventListener
 
     /**
      * Construct a ring of nodes with links in clockwise fashion.
-     * @param network Network; the network that will contain the nodes
-     * @param maxNode int; number of nodes on the ring
-     * @return List&lt;Node&gt;; the constructed nodes (in clockwise order)
+     * @param network the network that will contain the nodes
+     * @param maxNode number of nodes on the ring
+     * @return the constructed nodes (in clockwise order)
      * @throws NetworkException if that happens uncaught; this test has failed
      * @throws OtsGeometryException if that happens uncaught; this test has failed
      */
@@ -739,11 +739,11 @@ public class NetworkTest implements EventListener
      * Creates a random grid network, where each node is randomly located with a 'cell' surrounding it. These cells do not
      * overlap, guaranteeing a logical network, but with random lengths. The origin will be roughly in the middle, while the
      * destination will by roughly in the middle of the upper-right quadrant. The grid will have an overall spacing of 10m.
-     * @param network Network; network.
-     * @param gridSize int; the network will consist of gridSize x gridSize nodes.
-     * @param sigma double; Gaussian standard deviation for node location, assuming a unit grid with a spacing of 1.
-     * @param sigmaLim double; limits the random location between -sigmaLim and sigmaLim around its regular grid point.
-     * @return Node[]; origin (at index 0) and destination (at index 1) to use.
+     * @param network network.
+     * @param gridSize the network will consist of gridSize x gridSize nodes.
+     * @param sigma Gaussian standard deviation for node location, assuming a unit grid with a spacing of 1.
+     * @param sigmaLim limits the random location between -sigmaLim and sigmaLim around its regular grid point.
+     * @return origin (at index 0) and destination (at index 1) to use.
      * @throws NetworkException
      * @throws OtsGeometryException
      */
@@ -805,8 +805,8 @@ public class NetworkTest implements EventListener
 
     /**
      * Calculates length of the route.
-     * @param route Route; route.
-     * @return double; route length.
+     * @param route route.
+     * @return route length.
      * @throws NetworkException
      */
     private double routeLength(final Route route) throws NetworkException

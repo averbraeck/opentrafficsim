@@ -25,8 +25,8 @@ public class RDTests
 
     /**
      * Perform conversion to WGS84 and back and compare the results.
-     * @param description String; description of the test
-     * @param rdIn Point2D; location to test
+     * @param description description of the test
+     * @param rdIn location to test
      */
     final void forwardReverseCompare(final String description, final Point2D rdIn)
     {

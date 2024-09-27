@@ -13,8 +13,8 @@ public class StringType extends ExpressionType<String>
 
     /**
      * Constructor with input that is either the value or an expression.
-     * @param input String; input, either the value or an expression, may be {@code null} as value.
-     * @param isExpression boolean; whether the input is an expression.
+     * @param input input, either the value or an expression, may be {@code null} as value.
+     * @param isExpression whether the input is an expression.
      */
     public StringType(final String input, final boolean isExpression)
     {

@@ -32,9 +32,9 @@ public abstract class AbstractNodeDecoratorAttribute extends AbstractNodeDecorat
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
-     * @param predicate Predicate&lt;XsdTreeNode&gt;; predicate to accept nodes that should have this attribute decorator.
-     * @param attributes String...; attributes to trigger on.
+     * @param editor editor.
+     * @param predicate predicate to accept nodes that should have this attribute decorator.
+     * @param attributes attributes to trigger on.
      */
     public AbstractNodeDecoratorAttribute(final OtsEditor editor, final Predicate<XsdTreeNode> predicate,
             final String... attributes)
@@ -72,8 +72,8 @@ public abstract class AbstractNodeDecoratorAttribute extends AbstractNodeDecorat
 
     /**
      * Notified when a node has been removed.
-     * @param node XsdTreeNode; removed node.
-     * @param attribute String; attribute that has changed.
+     * @param node removed node.
+     * @param attribute attribute that has changed.
      */
     public abstract void notifyAttributeChanged(XsdTreeNode node, String attribute);
 

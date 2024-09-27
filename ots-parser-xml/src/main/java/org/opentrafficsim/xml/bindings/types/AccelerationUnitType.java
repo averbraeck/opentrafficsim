@@ -15,7 +15,7 @@ public class AccelerationUnitType extends ExpressionType<AccelerationUnit>
 
     /**
      * Constructor with value.
-     * @param value AccelerationUnit; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public AccelerationUnitType(final AccelerationUnit value)
     {
@@ -24,7 +24,7 @@ public class AccelerationUnitType extends ExpressionType<AccelerationUnit>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public AccelerationUnitType(final String expression)
     {

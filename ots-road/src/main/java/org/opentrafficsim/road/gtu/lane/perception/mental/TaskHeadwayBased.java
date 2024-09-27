@@ -24,7 +24,7 @@ public abstract class TaskHeadwayBased extends AbstractTask
 
     /**
      * Constructor.
-     * @param id String; id
+     * @param id id
      */
     public TaskHeadwayBased(final String id)
     {
@@ -55,7 +55,7 @@ public abstract class TaskHeadwayBased extends AbstractTask
 
     /**
      * Returns the current speed to translate a distance headway to a time headway.
-     * @return Speed; speed
+     * @return speed
      */
     protected Speed getSpeed()
     {
@@ -64,10 +64,10 @@ public abstract class TaskHeadwayBased extends AbstractTask
 
     /**
      * Returns a collector for the task demand.
-     * @param perception LanePerception; perception
-     * @param gtu LaneBasedGtu; gtu
-     * @param parameters Parameters; parameters
-     * @return Duration; headway, {@code null} of none.
+     * @param perception perception
+     * @param gtu gtu
+     * @param parameters parameters
+     * @return headway, {@code null} of none.
      * @throws ParameterException on invalid parameter
      */
     protected abstract Duration getHeadway(LanePerception perception, LaneBasedGtu gtu, Parameters parameters)

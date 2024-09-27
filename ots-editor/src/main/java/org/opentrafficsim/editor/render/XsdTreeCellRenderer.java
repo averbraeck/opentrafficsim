@@ -30,16 +30,16 @@ import org.opentrafficsim.editor.XsdTreeNode;
  */
 public class XsdTreeCellRenderer extends DefaultTreeCellRenderer
 {
-    
+
     /** */
     private static final long serialVersionUID = 20230221L;
 
     /** Number of pixels between icons when they are combined. */
     private static final int ICON_MARGIN = 3;
-    
+
     /** Editor. */
     private final OtsEditor editor;
-    
+
     /** Image for nodes with a consumer, typically an editor. */
     private final Image consumer;
 
@@ -51,14 +51,14 @@ public class XsdTreeCellRenderer extends DefaultTreeCellRenderer
 
     /**
      * Constructor. Loads icons.
-     * @param editor OtsEditor; editor.
+     * @param editor editor.
      * @throws IOException if an icon could not be loaded from resources.
      */
     public XsdTreeCellRenderer(final OtsEditor editor) throws IOException
     {
         this.editor = editor;
-        this.consumer = ImageIO.read(Resource.getResourceAsStream("./Application.png")).getScaledInstance(12, 12,
-                Image.SCALE_SMOOTH);
+        this.consumer =
+                ImageIO.read(Resource.getResourceAsStream("./Application.png")).getScaledInstance(12, 12, Image.SCALE_SMOOTH);
         this.description =
                 ImageIO.read(Resource.getResourceAsStream("./Info.png")).getScaledInstance(10, 10, Image.SCALE_SMOOTH);
         this.dropdown = ImageIO.read(Resource.getResourceAsStream("./dropdown.png"));
@@ -141,8 +141,8 @@ public class XsdTreeCellRenderer extends DefaultTreeCellRenderer
 
     /**
      * Pre-/appends the provided image to the left-hand or right-hand side of the current icon.
-     * @param iconImage Image; image to pre-/append.
-     * @param prepend boolean; when true, the image is prepended rather than appended.
+     * @param iconImage image to pre-/append.
+     * @param prepend when true, the image is prepended rather than appended.
      */
     private void preAppend(final Image iconImage, final boolean prepend)
     {
@@ -159,5 +159,5 @@ public class XsdTreeCellRenderer extends DefaultTreeCellRenderer
         g.drawImage(iconImage, x, dy, null);
         setIcon(new ImageIcon(image));
     }
-    
+
 }

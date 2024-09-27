@@ -182,7 +182,7 @@ public class StrategiesDemo extends AbstractSimulationScript
 
     /**
      * Main method.
-     * @param args String[]; arguments
+     * @param args arguments
      */
     public static void main(final String[] args)
     {
@@ -457,8 +457,8 @@ public class StrategiesDemo extends AbstractSimulationScript
 
         /**
          * Constructor.
-         * @param label JLabel; label
-         * @param network RoadNetwork; network
+         * @param label label
+         * @param network network
          */
         @SuppressWarnings("synthetic-access")
         KmplcListener(final JLabel label, final RoadNetwork network)
@@ -607,11 +607,11 @@ public class StrategiesDemo extends AbstractSimulationScript
 
     /**
      * Creates a GTU.
-     * @param lane Lane; lane
-     * @param pos Length; position
-     * @param gtuType GtuType; GTU type
-     * @param initialSpeed Speed; initial speed
-     * @param net RoadNetwork; network
+     * @param lane lane
+     * @param pos position
+     * @param gtuType GTU type
+     * @param initialSpeed initial speed
+     * @param net network
      * @throws NamingException on exception
      * @throws GtuException on exception
      * @throws NetworkException on exception

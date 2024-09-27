@@ -34,16 +34,16 @@ public class CompatibilityTest
         {
             return null;
         }
-        
+
     }
-    
+
     /** InfraType as a hierarchical type. */
     static class InfraType extends GtuCompatibleInfraType<InfraType, Infra>
     {
         /**
          * Instantiate an infrastructure type.
-         * @param id String; the id
-         * @param parent InfraType; the parent
+         * @param id the id
+         * @param parent the parent
          */
         InfraType(final String id, final InfraType parent)
         {
@@ -52,7 +52,7 @@ public class CompatibilityTest
 
         /**
          * Instantiate an infrastructure type without a parent.
-         * @param id String; the id
+         * @param id the id
          */
         InfraType(final String id)
         {

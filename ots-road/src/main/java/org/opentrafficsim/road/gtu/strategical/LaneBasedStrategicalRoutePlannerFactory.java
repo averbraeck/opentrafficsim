@@ -47,8 +47,7 @@ public class LaneBasedStrategicalRoutePlannerFactory
 
     /**
      * Constructor with factory for tactical planners.
-     * @param tacticalPlannerFactory LaneBasedTacticalPlannerFactory&lt;? extends LaneBasedTacticalPlanner&gt;; factory for
-     *            tactical planners
+     * @param tacticalPlannerFactory factory for tactical planners
      */
     public LaneBasedStrategicalRoutePlannerFactory(
             final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory)
@@ -60,9 +59,8 @@ public class LaneBasedStrategicalRoutePlannerFactory
 
     /**
      * Constructor with factory for tactical planners.
-     * @param tacticalPlannerFactory LaneBasedTacticalPlannerFactory&lt;? extends LaneBasedTacticalPlanner&gt;; factory for
-     *            tactical planners
-     * @param parametersFactory ParameterFactory; factory for parameters
+     * @param tacticalPlannerFactory factory for tactical planners
+     * @param parametersFactory factory for parameters
      */
     public LaneBasedStrategicalRoutePlannerFactory(
             final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory,
@@ -75,10 +73,9 @@ public class LaneBasedStrategicalRoutePlannerFactory
 
     /**
      * Constructor with factory for tactical planners.
-     * @param tacticalPlannerFactory LaneBasedTacticalPlannerFactory&lt;? extends LaneBasedTacticalPlanner&gt;; factory for
-     *            tactical planners
-     * @param parametersFactory ParameterFactory; factory for parameters
-     * @param routeGenerator RouteGenerator; route supplier
+     * @param tacticalPlannerFactory factory for tactical planners
+     * @param parametersFactory factory for parameters
+     * @param routeGenerator route supplier
      */
     public LaneBasedStrategicalRoutePlannerFactory(
             final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory,
@@ -106,8 +103,8 @@ public class LaneBasedStrategicalRoutePlannerFactory
 
     /**
      * Determine or return the next parameter set.
-     * @param gtuType GtuType; GTU type to generate parameters for
-     * @return Parameters; next parameter set
+     * @param gtuType GTU type to generate parameters for
+     * @return next parameter set
      * @throws GtuException on parameter exception
      */
     private Parameters peekParameters(final GtuType gtuType) throws GtuException
@@ -141,8 +138,8 @@ public class LaneBasedStrategicalRoutePlannerFactory
 
     /**
      * Returns the parameters for the next GTU.
-     * @param gtuType GtuType; GTU type of GTU to be generated
-     * @return Parameters; parameters for the next GTU
+     * @param gtuType GTU type of GTU to be generated
+     * @return parameters for the next GTU
      * @throws GtuException on parameter exception
      */
     protected final Parameters nextParameters(final GtuType gtuType) throws GtuException

@@ -42,7 +42,7 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
 
     /**
      * Private constructor.
-     * @param rank int; the rank
+     * @param rank the rank
      */
     private RelativeLane(final int rank)
     {
@@ -51,8 +51,8 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
 
     /**
      * Constructor.
-     * @param lat LateralDirectionality; lateral direction (use {@code null} for the current lane)
-     * @param numLanes int; number of lanes in the lateral direction (not important for the current lane)
+     * @param lat lateral direction (use {@code null} for the current lane)
+     * @param numLanes number of lanes in the lateral direction (not important for the current lane)
      * @throws IllegalArgumentException if numLanes is not at least 1, except if {@code lat == null} (current lane)
      * @throws IllegalArgumentException if numLanes is not 0 if {@code lat == null} (current lane)
      */
@@ -68,7 +68,7 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
 
     /**
      * Returns the lateral direction.
-     * @return LateralDirectionality; the lateral direction
+     * @return the lateral direction
      */
     public final LateralDirectionality getLateralDirectionality()
     {
@@ -79,7 +79,7 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
 
     /**
      * Returns the number of lanes in the lateral direction.
-     * @return int; number of lanes in the lateral direction
+     * @return number of lanes in the lateral direction
      */
     public final int getNumLanes()
     {
@@ -152,7 +152,7 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
     /**
      * Returns the relative lane relative to this lane, for example "the left lane" of "the 3rd right lane" is "the 2nd right
      * lane".
-     * @param relativeLane RelativeLane; relative lane to get of this lane
+     * @param relativeLane relative lane to get of this lane
      * @return relative lane relative to this lane
      */
     public final RelativeLane add(final RelativeLane relativeLane)

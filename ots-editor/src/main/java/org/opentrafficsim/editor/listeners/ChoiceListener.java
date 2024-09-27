@@ -33,7 +33,7 @@ public class ChoiceListener implements ActionListener
 
     /** Editor. */
     private final OtsEditor editor;
-    
+
     /** Tree table. */
     private final JTreeTable treeTable;
 
@@ -42,12 +42,12 @@ public class ChoiceListener implements ActionListener
 
     /**
      * Constructor.
-     * @param choiceNode XsdTreeNode; choice node of the choice.
-     * @param option XsdTreeNode; possibly selected option.
-     * @param reselectionRow int; row to reset selection.
-     * @param editor OtsEditor; editor.
-     * @param treeTable JTreeTable; tree table.
-     * @param attributesTable JTable; attributes table.
+     * @param choiceNode choice node of the choice.
+     * @param option possibly selected option.
+     * @param reselectionRow row to reset selection.
+     * @param editor editor.
+     * @param treeTable tree table.
+     * @param attributesTable attributes table.
      */
     public ChoiceListener(final XsdTreeNode choiceNode, final XsdTreeNode option, final int reselectionRow,
             final OtsEditor editor, final JTreeTable treeTable, final JTable attributesTable)

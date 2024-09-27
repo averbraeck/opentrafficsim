@@ -39,7 +39,7 @@ public class AbstractOtsSimulationApplicationTest
 
         /**
          * Construct a OtsSimulationApplication object.
-         * @param model OtsModelInterface; the model
+         * @param model the model
          */
         OtsSimulationApplication(final OtsModelInterface model)
         {

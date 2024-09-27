@@ -44,8 +44,8 @@ public class CoordinateTransformLonLatToXy implements CoordinateTransform, Seria
 
     /**
      * Transformation from: https://en.wikipedia.org/wiki/Geographic_coordinate_system.
-     * @param latCenter double; the latitude of the center point (0, 0)
-     * @param lonCenter double; the longitude of the center point (0, 0)
+     * @param latCenter the latitude of the center point (0, 0)
+     * @param lonCenter the longitude of the center point (0, 0)
      */
     public CoordinateTransformLonLatToXy(final double lonCenter, final double latCenter)
     {
@@ -66,8 +66,8 @@ public class CoordinateTransformLonLatToXy implements CoordinateTransform, Seria
 
     /**
      * Convert WGS84 coordinates to Cartesian coordinates.
-     * @param lon double; longitude in degrees
-     * @param lat double; latitude in degrees
+     * @param lon longitude in degrees
+     * @param lat latitude in degrees
      * @return double[]
      */
     public final double[] doubleTransformWgs84ToCartesianXy(final double lon, final double lat)

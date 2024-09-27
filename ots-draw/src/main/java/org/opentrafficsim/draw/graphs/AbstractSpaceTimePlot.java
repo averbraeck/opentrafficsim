@@ -36,11 +36,11 @@ public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
 
     /**
      * Constructor.
-     * @param caption String; caption
-     * @param updateInterval Duration; regular update interval (simulation time)
-     * @param scheduler PlotScheduler; scheduler.
-     * @param delay Duration; amount of time that chart runs behind simulation to prevent gaps in the charted data
-     * @param initialEnd Time; initial end time of plots, will be expanded if simulation time exceeds it
+     * @param caption caption
+     * @param updateInterval regular update interval (simulation time)
+     * @param scheduler scheduler.
+     * @param delay amount of time that chart runs behind simulation to prevent gaps in the charted data
+     * @param initialEnd initial end time of plots, will be expanded if simulation time exceeds it
      */
     public AbstractSpaceTimePlot(final String caption, final Duration updateInterval, final PlotScheduler scheduler,
             final Duration delay, final Time initialEnd)
@@ -94,8 +94,8 @@ public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
 
     /**
      * Update the fixed-ness of the domain range.
-     * @param fixed boolean; if true; the domain range will not update when new data becomes available; if false; the domain
-     *            range will update to show newly available data
+     * @param fixed if true; the domain range will not update when new data becomes available; if false; the domain range will
+     *            update to show newly available data
      */
     public void updateFixedDomainRange(final boolean fixed)
     {
@@ -106,7 +106,7 @@ public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
     /**
      * Sets the auto bounds without deactivating auto bounds through the axis change listener. This is used to initialize the
      * plot, and to update the plot when time is increased.
-     * @param plot XYPlot; plot with default zoom-all bounds set
+     * @param plot plot with default zoom-all bounds set
      */
     private void setAutoBounds(final XYPlot plot)
     {
@@ -143,7 +143,7 @@ public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
 
     /**
      * Returns the total path length.
-     * @return Length; total path length
+     * @return total path length
      */
     protected abstract Length getEndLocation();
 

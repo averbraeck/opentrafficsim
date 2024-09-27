@@ -59,8 +59,8 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
     private static final long serialVersionUID = 20170421L;
 
     /**
-     * @param model OtsModelInterface; the model
-     * @param animationPanel OtsAnimationPanel; the animation panel
+     * @param model the model
+     * @param animationPanel the animation panel
      * @throws OtsDrawingException on drawing error
      */
     public LoadXml(final OtsModelInterface model, final OtsAnimationPanel animationPanel) throws OtsDrawingException
@@ -70,7 +70,7 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
 
     /**
      * Load a network from an XML file; program entry point.
-     * @param args String[]; the command line arguments; optional name of file to load
+     * @param args the command line arguments; optional name of file to load
      * @throws IOException when the file could not be read
      * @throws InputParameterException should never happen
      * @throws OtsSimulationException when an error occurs during simulation
@@ -163,10 +163,10 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
         private final String xml;
 
         /**
-         * @param simulator OtsSimulatorInterface; the simulator
-         * @param shortName String; name of the model
-         * @param description String; description of the model
-         * @param xml String; the XML string
+         * @param simulator the simulator
+         * @param shortName name of the model
+         * @param description description of the model
+         * @param xml the XML string
          */
         XmlModel(final OtsSimulatorInterface simulator, final String shortName, final String description, final String xml)
         {

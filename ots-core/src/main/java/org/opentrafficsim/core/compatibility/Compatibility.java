@@ -48,28 +48,28 @@ public interface Compatibility<U extends HierarchicalType<U, ?>, I extends Hiera
      * forbidden combination, compatibility is false. If the compatibility is not explicitly false, the hierarchies will be
      * checked to look for an explicit compatibility that is true. If there is any, the result is true. If nothing is specified
      * in the hierarchies (neither true nor false), the compatibility is false.
-     * @param userType U; the type of the infrastructure user
-     * @return boolean; true if the user type is compatible with the infrastructure type
+     * @param userType the type of the infrastructure user
+     * @return true if the user type is compatible with the infrastructure type
      */
     boolean isCompatible(U userType);
 
     /**
      * Return whether the user type is compatible on this infrastructure level.
-     * @param userType U; the type of the infrastructure user
-     * @return Boolean; true if explicitly defined to be compatible on this level; false if explicitly defined to be
-     *         incompatible on this level; null if not defined on this level
+     * @param userType the type of the infrastructure user
+     * @return true if explicitly defined to be compatible on this level; false if explicitly defined to be incompatible on this
+     *         level; null if not defined on this level
      */
     Boolean isCompatibleOnInfraLevel(U userType);
 
     /**
      * Return the infrastructure for which this compatibility has been defined.
-     * @return I; the infrastructure for which this compatibility has been defined
+     * @return the infrastructure for which this compatibility has been defined
      */
     I getInfrastructure();
-    
+
     /**
-     * Remove the compatibility cache for this type and all its subtypes. 
+     * Remove the compatibility cache for this type and all its subtypes.
      */
     void clearCompatibilityCache();
-    
+
 }

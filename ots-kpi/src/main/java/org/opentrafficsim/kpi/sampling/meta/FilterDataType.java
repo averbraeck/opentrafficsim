@@ -24,9 +24,9 @@ public abstract class FilterDataType<T, G extends GtuData> extends DataType<T, G
 
     /**
      * Constructor setting the id.
-     * @param id String; id
-     * @param description String; description
-     * @param type Class&lt;T&gt;; type class
+     * @param id id
+     * @param description description
+     * @param type type class
      */
     public FilterDataType(final String id, final String description, final Class<T> type)
     {
@@ -46,9 +46,9 @@ public abstract class FilterDataType<T, G extends GtuData> extends DataType<T, G
      * <li>etc.</li>
      * </ol>
      * The default implementation is that of 1, checking that the filter data value is in the provided query set.<br>
-     * @param trajectoryAcceptList TrajectoryAcceptList; containing {@code Trajectory}'s and {@code TrajectoryGroup}'s
-     *            pertaining to a single GTU, all assumed not accepted
-     * @param querySet Set&lt;T&gt;; set of values in the query for this metadata type
+     * @param trajectoryAcceptList containing {@code Trajectory}'s and {@code TrajectoryGroup}'s pertaining to a single GTU, all
+     *            assumed not accepted
+     * @param querySet set of values in the query for this metadata type
      */
     @SuppressWarnings("checkstyle:designforextension")
     public void accept(final TrajectoryAcceptList trajectoryAcceptList, final Set<T> querySet)

@@ -108,7 +108,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     private TimeStampedObject<LanePathInfo> lanePathInfo;
 
     /**
-     * @param perception LanePerception; perception
+     * @param perception perception
      */
     public DirectDefaultSimplePerception(final LanePerception perception)
     {
@@ -456,7 +456,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     }
 
     /**
-     * @param lateralDirection LateralDirectionality; the direction to return the accessible adjacent lanes for
+     * @param lateralDirection the direction to return the accessible adjacent lanes for
      * @return TimeStamped accessibleAdjacentLanesRight, the accessible adjacent lanes on the right
      */
     public final TimeStampedObject<Map<Lane, Set<Lane>>> getTimeStampedAccessibleAdjacentLanes(
@@ -487,7 +487,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     }
 
     /**
-     * @param lateralDirection LateralDirectionality; the direction to return the neighboring headways for
+     * @param lateralDirection the direction to return the neighboring headways for
      * @return TimeStamped neighboringHeadwaysRight, the objects (e.g., GTUs) in parallel, in front and behind on the right
      *         neighboring lane, with their headway relative to our GTU, and information about the status of the adjacent
      *         objects
@@ -518,7 +518,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     }
 
     /**
-     * @param lateralDirection LateralDirectionality; the direction to return the parallel headways for
+     * @param lateralDirection the direction to return the parallel headways for
      * @return TimeStamped parallelHeadwaysRight, the parallel objects (e.g., GTUs) on the right, with information about their
      *         status and parallel overlap with our GTU.
      */
@@ -594,10 +594,9 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
      * traffic is not taken into account in the headway calculation. Instead, gap acceptance algorithms or their equivalent
      * should guide the merging behavior.<br>
      * <b>Note:</b> Headway is the net headway and calculated on a front-to-back basis.
-     * @param maxDistance the maximum distance to look for the nearest Gtu; positive values search forwards; negative values
-     *            search backwards
-     * @param gtu boolean; look for gtu if true, for an object if false
-     * @return HeadwayGtu; the headway and the GTU information
+     * @param maxDistance positive values search forwards; negative values search backwards
+     * @param gtu look for gtu if true, for an object if false
+     * @return the headway and the GTU information
      * @throws GtuException when there is an error with the next lanes in the network.
      * @throws NetworkException when there is a problem with the route planner
      */
@@ -617,12 +616,11 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
      * traffic is not taken into account in the headway calculation. Instead, gap acceptance algorithms or their equivalent
      * should guide the merging behavior.<br>
      * <b>Note:</b> Headway is the net headway and calculated on a front-to-back basis.
-     * @param lpi LanePathInfo; the lanePathInfo object that informs the headway algorithm in which lanes to look, and from
-     *            which position on the first lane.
-     * @param maxDistance the maximum distance to look for the nearest Gtu; positive values search forwards; negative values
-     *            search backwards
-     * @param gtu boolean; look for gtu if true, for an object if false
-     * @return HeadwayGtu; the headway and the GTU information
+     * @param lpi the lanePathInfo object that informs the headway algorithm in which lanes to look, and from which position on
+     *            the first lane.
+     * @param maxDistance positive values search forwards; negative values search backwards
+     * @param gtu look for gtu if true, for an object if false
+     * @return the headway and the GTU information
      * @throws GtuException when there is an error with the next lanes in the network.
      * @throws NetworkException when there is a problem with the route planner
      */
@@ -678,13 +676,13 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
 
     /**
      * Determine the positive headway on a lane, or null if no GTU or blocking object can be found on this lane.
-     * @param lane Lane; the lane to look at
-     * @param startPosSI double; the start position to look from in meters
-     * @param cumDistSI double; the cumulative distance that has already been observed on other lanes
-     * @param now Time; the current time to determine the GTU positions on the lane
+     * @param lane the lane to look at
+     * @param startPosSI the start position to look from in meters
+     * @param cumDistSI the cumulative distance that has already been observed on other lanes
+     * @param now the current time to determine the GTU positions on the lane
      * @return the HeadwayGtu, containing information on a GTU that is ahead of the given start position, or null if no GTU can
      *         be found on this lane
-     * @param gtu boolean; look for gtu if true, for an object if false
+     * @param gtu look for gtu if true, for an object if false
      * @throws GtuException when the GTUs ahead on the lane cannot be determined
      */
     private Headway headwayLane(final Lane lane, final double startPosSI, final double cumDistSI, final Time now,
@@ -723,7 +721,8 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
                 {
                     if (cumDistSI + objectDistanceSI > breakingDistance(MAX_RED_DECELERATION, getGtu().getSpeed()).si)
                     {
-                        return new HeadwayTrafficLightReal(tl, new Length(cumDistSI + objectDistanceSI, LengthUnit.SI), turnOnRed);
+                        return new HeadwayTrafficLightReal(tl, new Length(cumDistSI + objectDistanceSI, LengthUnit.SI),
+                                turnOnRed);
                     }
                     return new HeadwayTrafficLightReal(tl, new Length(cumDistSI + objectDistanceSI, LengthUnit.SI), turnOnRed);
                 }
@@ -735,7 +734,8 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
                     // getGtu().getSpeed().si * brakingTime - 0.5 * maxDecel * brakingTime * brakingTime;
                     if (cumDistSI + objectDistanceSI > breakingDistance(MAX_YELLOW_DECELERATION, getGtu().getSpeed()).si)
                     {
-                        return new HeadwayTrafficLightReal(tl, new Length(cumDistSI + objectDistanceSI, LengthUnit.SI), turnOnRed);
+                        return new HeadwayTrafficLightReal(tl, new Length(cumDistSI + objectDistanceSI, LengthUnit.SI),
+                                turnOnRed);
                     }
                 }
                 if (tl.getTrafficLightColor().isRed())
@@ -753,9 +753,9 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
 
     /**
      * Determine the braking distance.
-     * @param deceleration Acceleration; the applied deceleration (should have a negative value)
-     * @param initialSpeed Speed; the initial speed
-     * @return double; the breaking distance
+     * @param deceleration the applied deceleration (should have a negative value)
+     * @param initialSpeed the initial speed
+     * @return the breaking distance
      */
     private Length breakingDistance(final Acceleration deceleration, final Speed initialSpeed)
     {
@@ -766,7 +766,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
 
     /**
      * Returns a set of statuses for the GTU.
-     * @param gtu LaneBasedGtu; gtu
+     * @param gtu gtu
      * @return set of statuses for the GTU
      */
     private GtuStatus[] getGtuStatus(final LaneBasedGtu gtu)
@@ -795,8 +795,8 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
      * of the Lanes. When the Lanes (or underlying CrossSectionLinks) converge, "parallel" traffic is not taken into account in
      * the headway calculation. Instead, gap acceptance algorithms or their equivalent should guide the merging behavior.<br>
      * <b>Note:</b> Headway is the net headway and calculated on a back-to-front basis.
-     * @param maxDistance the maximum distance to look for the nearest Gtu; it should have a negative value to search backwards
-     * @return HeadwayGtu; the headway and the GTU information
+     * @param maxDistance it should have a negative value to search backwards
+     * @return the headway and the GTU information
      * @throws GtuException when there is an error with the next lanes in the network.
      * @throws NetworkException when there is a problem with the route planner
      */
@@ -833,15 +833,13 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     /**
      * Calculate the minimum headway, possibly on subsequent lanes, in backward direction (so between our back, and the other
      * GTU's front). Note: this method returns a POSITIVE number.
-     * @param lane Lane; the lane where we are looking right now
-     * @param lanePositionSI double; from which position on this lane do we start measuring? This is the current position of the
-     *            rear of the GTU when we measure in the lane where the original GTU is positioned, and lane.getLength() for
-     *            each subsequent lane.
-     * @param cumDistanceSI double; the distance we have already covered searching on previous lanes. Note: This is a POSITIVE
-     *            number.
-     * @param maxDistanceSI the maximum distance to look for in SI units; stays the same in subsequent calls. Note: this is a
-     *            POSITIVE number.
-     * @param when Time; the current or future time for which to calculate the headway
+     * @param lane the lane where we are looking right now
+     * @param lanePositionSI from which position on this lane do we start measuring? This is the current position of the rear of
+     *            the GTU when we measure in the lane where the original GTU is positioned, and lane.getLength() for each
+     *            subsequent lane.
+     * @param cumDistanceSI the distance we have already covered searching on previous lanes. Note: This is a POSITIVE number.
+     * @param maxDistanceSI stays the same in subsequent calls. Note: this is a POSITIVE number.
+     * @param when the current or future time for which to calculate the headway
      * @return the headway in SI units when we have found the GTU, or a null GTU with a distance of Double.MAX_VALUE meters when
      *         no other GTU could not be found within maxDistanceSI meters
      * @throws GtuException when there is a problem with the geometry of the network
@@ -896,8 +894,8 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     /**
      * Determine which GTUs are parallel with us on another lane, based on fractional positions. <br>
      * Note: When the GTU that calls the method is also registered on the given lane, it is excluded from the return set.
-     * @param lane Lane; the lane to look for parallel (partial or full overlapping) GTUs.
-     * @param when Time; the future time for which to calculate the headway
+     * @param lane the lane to look for parallel (partial or full overlapping) GTUs.
+     * @param when the future time for which to calculate the headway
      * @return the set of GTUs parallel to us on the other lane (partial overlap counts as parallel), based on fractional
      *         positions, or an empty set when no GTUs were found.
      * @throws GtuException when the vehicle's route is inconclusive, when vehicles are not registered correctly on their lanes,
@@ -956,9 +954,8 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
      * Determine which GTUs are parallel with us in a certain lateral direction, based on fractional positions. <br>
      * Note 1: This method will look to the adjacent lanes of all lanes where the vehicle has been registered.<br>
      * Note 2: When the GTU that calls the method is also registered on the given lane, it is excluded from the return set.
-     * @param lateralDirection LateralDirectionality; the direction of the adjacent lane(s) to look for parallel (partial or
-     *            full overlapping) GTUs.
-     * @param when Time; the future time for which to calculate the headway
+     * @param lateralDirection the direction of the adjacent lane(s) to look for parallel (partial or full overlapping) GTUs.
+     * @param when the future time for which to calculate the headway
      * @return the set of GTUs parallel to us on other lane(s) in the given direction (partial overlap counts as parallel),
      *         based on fractional positions, or an empty set when no GTUs were found.
      * @throws GtuException when the vehicle's route is inconclusive, when vehicles are not registered correctly on their lanes,
@@ -979,12 +976,11 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
 
     /**
      * Collect relevant traffic in adjacent lanes. Parallel traffic is included with headway equal to Double.NaN.
-     * @param directionality LateralDirectionality; either <cite>LateralDirectionality.LEFT</cite>, or
-     *            <cite>LateralDirectionality.RIGHT</cite>
-     * @param when Time; the (current) time
-     * @param maximumForwardHeadway Length; the maximum forward search distance
-     * @param maximumReverseHeadway Length; the maximum reverse search distance
-     * @return Collection&lt;LaneBasedGtu&gt;;
+     * @param directionality either <cite>LateralDirectionality.LEFT</cite>, or <cite>LateralDirectionality.RIGHT</cite>
+     * @param when the (current) time
+     * @param maximumForwardHeadway the maximum forward search distance
+     * @param maximumReverseHeadway the maximum reverse search distance
+     * @return
      * @throws NetworkException on network inconsistency
      * @throws GtuException on problems with the GTU state (e.g., position)
      * @throws ParameterException in case of a parameter problem
@@ -1053,10 +1049,9 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
 
     /**
      * Find a lanePathInfo left or right of the current LanePath.
-     * @param adjacentLane Lane; the start adjacent lane for which we calculate the LanePathInfo
-     * @param direction LateralDirectionality; either <cite>LateralDirectionality.LEFT</cite>, or
-     *            <cite>LateralDirectionality.RIGHT</cite>
-     * @param when Time; the (current) time
+     * @param adjacentLane the start adjacent lane for which we calculate the LanePathInfo
+     * @param direction either <cite>LateralDirectionality.LEFT</cite>, or <cite>LateralDirectionality.RIGHT</cite>
+     * @param when the (current) time
      * @return the adjacent LanePathInfo
      * @throws GtuException when the GTU was not initialized yet.
      * @throws NetworkException when the speed limit for a GTU type cannot be retrieved from the network.

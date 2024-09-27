@@ -34,10 +34,10 @@ public final class Break
     /**
      * Sets a break condition to true which is triggered by {@code onSub()} at a lower level where context is insufficient to
      * determine the break condition.
-     * @param perception Perception&lt;?&gt;; perception to obtain gtu from
-     * @param id String; GTU id to break on
-     * @param time double; time to break at (or after)
-     * @param additionalCondition boolean; additional condition
+     * @param perception perception to obtain gtu from
+     * @param id GTU id to break on
+     * @param time time to break at (or after)
+     * @param additionalCondition additional condition
      */
     public static void onSuper(final Perception<?> perception, final String id, final double time,
             final boolean additionalCondition)
@@ -49,10 +49,10 @@ public final class Break
     /**
      * Sets a break condition to true which is triggered by {@code onSub()} at a lower level where context is insufficient to
      * determine the break condition.
-     * @param gtu Gtu; GTU
-     * @param id String; GTU id to break on
-     * @param time double; time to break at (or after)
-     * @param additionalCondition boolean; additional condition
+     * @param gtu GTU
+     * @param id GTU id to break on
+     * @param time time to break at (or after)
+     * @param additionalCondition additional condition
      */
     public static void onSuper(final Gtu gtu, final String id, final double time, final boolean additionalCondition)
     {
@@ -76,7 +76,7 @@ public final class Break
      * This method can be used if the context of a lower-level function does not contain the information on which to break. This
      * method will only trigger a break if at a higher-level function where the context was sufficient, the break condition was
      * set to true using {@code onSuper()}.
-     * @param additionalCondition boolean; additional condition
+     * @param additionalCondition additional condition
      */
     public static void onSub(final boolean additionalCondition)
     {
@@ -87,10 +87,10 @@ public final class Break
     }
 
     /**
-     * @param perception Perception&lt;?&gt;; perception to obtain gtu from
-     * @param id String; GTU id to break on
-     * @param time String; time to break at (or after), in format ss, mm:ss or hh:mm:ss
-     * @param additionalCondition boolean; additional condition
+     * @param perception perception to obtain gtu from
+     * @param id GTU id to break on
+     * @param time time to break at (or after), in format ss, mm:ss or hh:mm:ss
+     * @param additionalCondition additional condition
      */
     public static void on(final Perception<?> perception, final String id, final String time, final boolean additionalCondition)
     {
@@ -99,7 +99,7 @@ public final class Break
 
     /**
      * Returns a double representation of a String time.
-     * @param time String; string format, ss, mm:ss or hh:mm:ss
+     * @param time string format, ss, mm:ss or hh:mm:ss
      * @return double representation of a String time
      */
     private static double timeFromString(final String time)
@@ -129,10 +129,10 @@ public final class Break
     }
 
     /**
-     * @param perception Perception&lt;?&gt;; perception to obtain gtu from
-     * @param id String; GTU id to break on
-     * @param time double; time to break at (or after)
-     * @param additionalCondition boolean; additional condition
+     * @param perception perception to obtain gtu from
+     * @param id GTU id to break on
+     * @param time time to break at (or after)
+     * @param additionalCondition additional condition
      */
     public static void on(final Perception<?> perception, final String id, final double time, final boolean additionalCondition)
     {
@@ -141,10 +141,10 @@ public final class Break
     }
 
     /**
-     * @param gtu Gtu; GTU
-     * @param id String; GTU id to break on
-     * @param time String; time to break at (or after), in format ss, mm:ss or hh:mm:ss
-     * @param additionalCondition boolean; additional condition
+     * @param gtu GTU
+     * @param id GTU id to break on
+     * @param time time to break at (or after), in format ss, mm:ss or hh:mm:ss
+     * @param additionalCondition additional condition
      */
     public static void on(final Gtu gtu, final String id, final String time, final boolean additionalCondition)
     {
@@ -152,10 +152,10 @@ public final class Break
     }
 
     /**
-     * @param gtu Gtu; GTU
-     * @param id String; GTU id to break on
-     * @param time double; time to break at (or after)
-     * @param additionalCondition boolean; additional condition
+     * @param gtu GTU
+     * @param id GTU id to break on
+     * @param time time to break at (or after)
+     * @param additionalCondition additional condition
      */
     public static void on(final Gtu gtu, final String id, final double time, final boolean additionalCondition)
     {

@@ -93,7 +93,7 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
     private final RoadNetwork network;
 
     /**
-     * @param simulator OtsSimulatorInterface; the simulator for this model
+     * @param simulator the simulator for this model
      */
     public CircularRoadModel(final OtsSimulatorInterface simulator)
     {
@@ -138,8 +138,8 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
     }
 
     /**
-     * @param index int; the rank number of the path
-     * @return List&lt;Lane&gt;; the set of lanes for the specified index
+     * @param index the rank number of the path
+     * @return the set of lanes for the specified index
      */
     public List<Lane> getPath(final int index)
     {
@@ -227,9 +227,9 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
 
     /**
      * Generate one gtu.
-     * @param initialPosition Length; the initial position of the new cars
-     * @param lane Lane; the lane on which the new cars are placed
-     * @param gtuType GtuType; the type of the new cars
+     * @param initialPosition the initial position of the new cars
+     * @param lane the lane on which the new cars are placed
+     * @param gtuType the type of the new cars
      * @throws SimRuntimeException cannot happen
      * @throws NetworkException on network inconsistency
      * @throws GtuException when something goes wrong during construction of the car
@@ -282,8 +282,8 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
 
     /**
      * Stop simulation and throw an Error.
-     * @param theSimulator OtsSimulatorInterface; the simulator
-     * @param errorMessage String; the error message
+     * @param theSimulator the simulator
+     * @param errorMessage the error message
      */
     public void stopSimulator(final OtsSimulatorInterface theSimulator, final String errorMessage)
     {

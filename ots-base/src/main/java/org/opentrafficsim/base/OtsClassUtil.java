@@ -25,7 +25,7 @@ public final class OtsClassUtil
     }
 
     /**
-     * @param object T; the object to provide the class for
+     * @param object the object to provide the class for
      * @param <T> the type
      * @return the class of the object
      */
@@ -36,7 +36,7 @@ public final class OtsClassUtil
     }
 
     /**
-     * @param object T; the object to provide the class list for
+     * @param object the object to provide the class list for
      * @param <T> the type
      * @return the class of the object
      */

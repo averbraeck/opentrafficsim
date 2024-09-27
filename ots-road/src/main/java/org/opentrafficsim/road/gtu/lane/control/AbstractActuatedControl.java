@@ -44,7 +44,7 @@ public abstract class AbstractActuatedControl implements LongitudinalControl
 
     /**
      * Constructor using default sensors with no delay.
-     * @param delayedActuation DelayedActuation; delayed actuation
+     * @param delayedActuation delayed actuation
      */
     public AbstractActuatedControl(final DelayedActuation delayedActuation)
     {
@@ -53,9 +53,9 @@ public abstract class AbstractActuatedControl implements LongitudinalControl
 
     /**
      * Delays the actuation of acceleration.
-     * @param desiredAcceleration Acceleration; desired acceleration
-     * @param gtu LaneBasedGtu; gtu
-     * @return Acceleration; delayed acceleration
+     * @param desiredAcceleration desired acceleration
+     * @param gtu gtu
+     * @return delayed acceleration
      */
     public Acceleration delayActuation(final Acceleration desiredAcceleration, final LaneBasedGtu gtu)
     {
@@ -84,10 +84,10 @@ public abstract class AbstractActuatedControl implements LongitudinalControl
 
     /**
      * Returns the desired acceleration from the longitudinal control.
-     * @param gtu LaneBasedGtu; gtu
-     * @param leaders PerceptionCollectable&lt;HeadwayGtu, LaneBasedGtu&gt;; leaders
-     * @param settings Parameters; system settings
-     * @return Acceleration; desired acceleration
+     * @param gtu gtu
+     * @param leaders leaders
+     * @param settings system settings
+     * @return desired acceleration
      * @throws ParameterException if parameter is not present
      */
     public abstract Acceleration getDesiredAcceleration(LaneBasedGtu gtu,

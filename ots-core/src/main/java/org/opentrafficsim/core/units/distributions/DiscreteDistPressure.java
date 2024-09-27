@@ -21,8 +21,8 @@ public class DiscreteDistPressure extends DiscreteDistDoubleScalar.Rel<Pressure,
     private static final long serialVersionUID = 20180829L;
 
     /**
-     * @param distribution DistDiscrete; distribution
-     * @param unit PressureUnit; units
+     * @param distribution distribution
+     * @param unit units
      */
     public DiscreteDistPressure(final DistDiscrete distribution, final PressureUnit unit)
     {

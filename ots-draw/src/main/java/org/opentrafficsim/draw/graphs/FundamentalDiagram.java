@@ -87,11 +87,11 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
     /**
      * Constructor.
-     * @param caption String; caption
-     * @param domainQuantity Quantity; initial quantity on the domain axis
-     * @param rangeQuantity Quantity; initial quantity on the range axis
-     * @param scheduler PlotScheduler; scheduler.
-     * @param source FdSource; source providing the data
+     * @param caption caption
+     * @param domainQuantity initial quantity on the domain axis
+     * @param rangeQuantity initial quantity on the range axis
+     * @param scheduler scheduler.
+     * @param source source providing the data
      * @param fdLine fundamental diagram line, may be {@code null}
      */
     public FundamentalDiagram(final String caption, final Quantity domainQuantity, final Quantity rangeQuantity,
@@ -140,7 +140,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
     /**
      * Create a chart.
-     * @return JFreeChart; chart
+     * @return chart
      */
     private JFreeChart createChart()
     {
@@ -419,32 +419,32 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
         /**
          * Returns an axis label of the quantity.
-         * @return String; axis label of the quantity
+         * @return axis label of the quantity
          */
         public abstract String label();
 
         /**
          * Formats a value for status display.
-         * @param value double; value
-         * @return String; formatted string including quantity
+         * @param value value
+         * @return formatted string including quantity
          */
         public abstract String format(double value);
 
         /**
          * Get scaled value in presentation unit.
-         * @param src FdSource; the data source
-         * @param series int; series number
-         * @param item int; item number in series
-         * @return double; scaled value in presentation unit
+         * @param src the data source
+         * @param series series number
+         * @param item item number in series
+         * @return scaled value in presentation unit
          */
         public abstract double getValue(FdSource src, int series, int item);
 
         /**
          * Compute the value of the 3rd quantity.
-         * @param pairing Quantity; quantity on other axis
-         * @param thisValue double; value of this quantity
-         * @param pairedValue double; value of the paired quantity on the other axis
-         * @return double; value of the 3rd quantity
+         * @param pairing quantity on other axis
+         * @param thisValue value of this quantity
+         * @param pairedValue value of the paired quantity on the other axis
+         * @return value of the 3rd quantity
          */
         public abstract double computeOther(Quantity pairing, double thisValue, double pairedValue);
 
@@ -465,7 +465,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
     {
         /**
          * Returns the possible intervals.
-         * @return double[]; possible intervals
+         * @return possible intervals
          */
         default double[] getPossibleAggregationPeriods()
         {
@@ -474,7 +474,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
         /**
          * Returns the possible frequencies, as a factor on 1 / 'aggregation interval'.
-         * @return int[]; possible frequencies
+         * @return possible frequencies
          */
         default int[] getPossibleUpdateFrequencies()
         {
@@ -483,7 +483,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
         /**
          * Add fundamental diagram. Used to notify diagrams when data has changed.
-         * @param fundamentalDiagram FundamentalDiagram; fundamental diagram
+         * @param fundamentalDiagram fundamental diagram
          */
         void addFundamentalDiagram(FundamentalDiagram fundamentalDiagram);
 
@@ -500,100 +500,100 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
         /**
          * The update interval.
-         * @return Duration; update interval
+         * @return update interval
          */
         Duration getUpdateInterval();
 
         /**
          * Changes the update interval.
-         * @param interval Duration; update interval
-         * @param time Time; time until which data has to be recalculated
+         * @param interval update interval
+         * @param time time until which data has to be recalculated
          */
         void setUpdateInterval(Duration interval, Time time);
 
         /**
          * The aggregation period.
-         * @return Duration; aggregation period
+         * @return aggregation period
          */
         Duration getAggregationPeriod();
 
         /**
          * Changes the aggregation period.
-         * @param period Duration; aggregation period
+         * @param period aggregation period
          */
         void setAggregationPeriod(Duration period);
 
         /**
          * Recalculates the data after the aggregation or update time was changed.
-         * @param time Time; time up to which recalculation is required
+         * @param time time up to which recalculation is required
          */
         void recalculate(Time time);
 
         /**
          * Return the delay for graph updates so future influencing events have occurred, e.d. GTU move's.
-         * @return Duration; graph delay
+         * @return graph delay
          */
         Duration getDelay();
 
         /**
          * Increase the time span.
-         * @param time Time; time to increase to
+         * @param time time to increase to
          */
         void increaseTime(Time time);
 
         /**
          * Returns the number of series (i.e. lanes or 1 for aggregated).
-         * @return int; number of series
+         * @return number of series
          */
         int getNumberOfSeries();
 
         /**
          * Returns a name of the series.
-         * @param series int; series number
-         * @return String; name of the series
+         * @param series series number
+         * @return name of the series
          */
         String getName(int series);
 
         /**
          * Returns the number of items in the series.
-         * @param series int; series number
-         * @return int; number of items in the series
+         * @param series series number
+         * @return number of items in the series
          */
         int getItemCount(int series);
 
         /**
          * Return the SI flow value of item in series.
-         * @param series int; series number
-         * @param item int; item number in the series
-         * @return double; SI flow value of item in series
+         * @param series series number
+         * @param item item number in the series
+         * @return SI flow value of item in series
          */
         double getFlow(int series, int item);
 
         /**
          * Return the SI density value of item in series.
-         * @param series int; series number
-         * @param item int; item number in the series
-         * @return double; SI density value of item in series
+         * @param series series number
+         * @param item item number in the series
+         * @return SI density value of item in series
          */
         double getDensity(int series, int item);
 
         /**
          * Return the SI speed value of item in series.
-         * @param series int; series number
-         * @param item int; item number in the series
-         * @return double; SI speed value of item in series
+         * @param series series number
+         * @param item item number in the series
+         * @return SI speed value of item in series
          */
         double getSpeed(int series, int item);
 
         /**
          * Returns whether this source aggregates lanes.
-         * @return boolean; whether this source aggregates lanes
+         * @return whether this source aggregates lanes
          */
         boolean isAggregate();
 
         /**
          * Sets the name of the series when aggregated, e.g. for legend. Default is "Aggregate".
-         * @param aggregateName String; name of the series when aggregated
+         * @param aggregateName name of the series when aggregated
          */
         void setAggregateName(String aggregateName);
     }
@@ -632,12 +632,12 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
     /**
      * Creates a {@code Source} from a sampler and positions.
-     * @param sampler Sampler&lt;?, L&gt;; sampler
-     * @param crossSection GraphCrossSection&lt;LaneData&gt;; cross section
-     * @param aggregateLanes boolean; whether to aggregate the positions
-     * @param aggregationTime Duration; aggregation time (and update time)
-     * @param harmonic boolean; harmonic mean
-     * @return Source; source for a fundamental diagram from a sampler and positions
+     * @param sampler sampler
+     * @param crossSection cross section
+     * @param aggregateLanes whether to aggregate the positions
+     * @param aggregationTime aggregation time (and update time)
+     * @param harmonic harmonic mean
+     * @return source for a fundamental diagram from a sampler and positions
      * @param <L> LaneData
      */
     @SuppressWarnings("methodlength")
@@ -650,11 +650,11 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
     /**
      * Creates a {@code Source} from a sampler and positions.
-     * @param sampler Sampler&lt;?, L&gt;; sampler
-     * @param path GraphPath&lt;LaneData&gt;; cross section
-     * @param aggregateLanes boolean; whether to aggregate the positions
-     * @param aggregationTime Duration; aggregation time (and update time)
-     * @return Source; source for a fundamental diagram from a sampler and positions
+     * @param sampler sampler
+     * @param path cross section
+     * @param aggregateLanes whether to aggregate the positions
+     * @param aggregationTime aggregation time (and update time)
+     * @return source for a fundamental diagram from a sampler and positions
      * @param <L> LaneData
      */
     public static <L extends LaneData<L>> FdSource sourceFromSampler(final Sampler<?, L> sampler, final GraphPath<L> path,
@@ -665,8 +665,8 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
     /**
      * Combines multiple sources in to one source.
-     * @param sources Map&lt;String, FdSource&gt;; sources coupled to their names for in the legend
-     * @return FdSource; combined source
+     * @param sources sources coupled to their names for in the legend
+     * @return combined source
      */
     public static FdSource combinedSource(final Map<String, FdSource> sources)
     {
@@ -687,10 +687,10 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         /**
          * Constructor.
          * @param sampler Sampler<?, ?>; sampler
-         * @param crossSection S; cross section
-         * @param aggregateLanes boolean; whether to aggregate the lanes
-         * @param aggregationPeriod Duration; initial aggregation {@link Period}
-         * @param harmonic boolean; harmonic mean
+         * @param crossSection cross section
+         * @param aggregateLanes whether to aggregate the lanes
+         * @param aggregationPeriod initial aggregation {@link Period}
+         * @param harmonic harmonic mean
          */
         CrossSectionSamplerFdSource(final Sampler<?, L> sampler, final S crossSection, final boolean aggregateLanes,
                 final Duration aggregationPeriod, final boolean harmonic)
@@ -752,9 +752,9 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         /**
          * Constructor.
          * @param sampler Sampler<?, ?>; sampler
-         * @param path S; path
-         * @param aggregateLanes boolean; whether to aggregate the lanes
-         * @param aggregationPeriod Duration; initial aggregation period
+         * @param path path
+         * @param aggregateLanes whether to aggregate the lanes
+         * @param aggregationPeriod initial aggregation period
          */
         PathSamplerFdSource(final Sampler<?, L> sampler, final S path, final boolean aggregateLanes,
                 final Duration aggregationPeriod)
@@ -848,9 +848,9 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         /**
          * Constructor.
          * @param sampler Sampler<?, ?>; sampler
-         * @param space S; space
-         * @param aggregateLanes boolean; whether to aggregate the lanes
-         * @param aggregationPeriod Duration; initial aggregation period
+         * @param space space
+         * @param aggregateLanes whether to aggregate the lanes
+         * @param aggregationPeriod initial aggregation period
          */
         AbstractSpaceSamplerFdSource(final Sampler<?, L> sampler, final S space, final boolean aggregateLanes,
                 final Duration aggregationPeriod)
@@ -878,7 +878,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
         /**
          * Returns the space.
-         * @return S; space
+         * @return space
          */
         protected S getSpace()
         {
@@ -1159,12 +1159,12 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
          * Returns the first and the second measurement of a trajectory. For a cross-section this is 1 and the vehicle speed if
          * the trajectory crosses the location, and for a path it is the traveled distance and the traveled time. If the
          * trajectory didn't cross the cross section or space-time range, both should be 0.
-         * @param trajectory Trajectory&lt;?&gt;; trajectory
-         * @param startTime Time; start time of aggregation period
-         * @param endTime Time; end time of aggregation period
-         * @param length Length; length of the section (to cut off possible lane overshoot of trajectories)
-         * @param series int; series number in the section
-         * @param measurements double[]; array with length 2 to place the first and second measurement in
+         * @param trajectory trajectory
+         * @param startTime start time of aggregation period
+         * @param endTime end time of aggregation period
+         * @param length length of the section (to cut off possible lane overshoot of trajectories)
+         * @param series series number in the section
+         * @param measurements array with length 2 to place the first and second measurement in
          */
         protected abstract void getMeasurements(Trajectory<?> trajectory, Time startTime, Time endTime, Length length,
                 int series, double[] measurements);
@@ -1176,18 +1176,18 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
          * The value will be divided by the aggregation time to calculate flow. Hence, for a cross section the first measurement
          * should be returned, while for a path the first measurement divided by the section length should be returned. That
          * will end up to equate to {@code q = sum(x)/XT}.
-         * @param first double; first measurement value
-         * @param second double; second measurement value
-         * @return double; flow
+         * @param first first measurement value
+         * @param second second measurement value
+         * @return flow
          */
         protected abstract double getVehicleCount(double first, double second);
 
         /**
          * Returns the speed of two related measurement values. For a cross section: vehicle count & sum of speeds (or sum of
          * inverted speeds for the harmonic mean). For a path: total traveled distance & total traveled time.
-         * @param first double; first measurement value
-         * @param second double; second measurement value
-         * @return double; speed
+         * @param first first measurement value
+         * @param second second measurement value
+         * @return speed
          */
         protected abstract double getSpeed(double first, double second);
 
@@ -1209,7 +1209,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
         /**
          * Constructor.
-         * @param sources Map&lt;String, FdSource&gt;; sources
+         * @param sources sources
          */
         MultiFdSource(final Map<String, FdSource> sources)
         {
@@ -1228,7 +1228,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
         /**
          * Returns from a series number overall, the index of the sub-source and the series index in that source.
-         * @param series int; overall series number
+         * @param series overall series number
          * @return index of the sub-source and the series index in that source
          */
         private int[] getSourceAndSeries(final int series)
@@ -1380,14 +1380,14 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
     {
         /**
          * Return the values for the given quantity. For two quantities, this should result in a 2D fundamental diagram line.
-         * @param quantity Quantity; quantity to return value for.
-         * @return double[]; values for quantity
+         * @param quantity quantity to return value for.
+         * @return values for quantity
          */
         double[] getValues(Quantity quantity);
 
         /**
          * Returns the name of the line, as shown in the legend.
-         * @return String; name of the line, as shown in the legend
+         * @return name of the line, as shown in the legend
          */
         String getName();
     }
@@ -1404,7 +1404,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
     /**
      * Get the data source.
-     * @return FdSource; the data source
+     * @return the data source
      */
     public FdSource getSource()
     {
@@ -1413,7 +1413,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
     /**
      * Retrievee the legend of this FundamentalDiagram.
-     * @return LegendItemCollection; the legend
+     * @return the legend
      */
     public LegendItemCollection getLegend()
     {
@@ -1422,7 +1422,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
     /**
      * Return the list of lane visibility flags.
-     * @return List&lt;Boolean&gt;; the list of lane visibility flags
+     * @return the list of lane visibility flags
      */
     public List<Boolean> getLaneVisible()
     {
@@ -1431,7 +1431,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
     /**
      * Return the domain quantity.
-     * @return Quantity; the domain quantity
+     * @return the domain quantity
      */
     public Quantity getDomainQuantity()
     {
@@ -1440,7 +1440,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
     /**
      * Set the domain quantity.
-     * @param domainQuantity Quantity; the new domain quantity
+     * @param domainQuantity the new domain quantity
      */
     public void setDomainQuantity(final Quantity domainQuantity)
     {
@@ -1449,7 +1449,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
     /**
      * Get the other (non domain; vertical axis) quantity.
-     * @return Quantity; the quantity for the vertical axis
+     * @return the quantity for the vertical axis
      */
     public Quantity getOtherQuantity()
     {
@@ -1458,7 +1458,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
     /**
      * Set the other (non domain; vertical axis) quantity.
-     * @param otherQuantity Quantity; the quantity for the vertical axis
+     * @param otherQuantity the quantity for the vertical axis
      */
     public void setOtherQuantity(final Quantity otherQuantity)
     {
@@ -1467,7 +1467,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
     /**
      * Get the range quantity.
-     * @return Quantity; the range quantity
+     * @return the range quantity
      */
     public Quantity getRangeQuantity()
     {
@@ -1476,7 +1476,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
     /**
      * Set the range quantity.
-     * @param rangeQuantity Quantity; the new range quantity
+     * @param rangeQuantity the new range quantity
      */
     public void setRangeQuantity(final Quantity rangeQuantity)
     {
@@ -1485,7 +1485,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
     /**
      * Retrieve the time info.
-     * @return String; the time info
+     * @return the time info
      */
     public String getTimeInfo()
     {
@@ -1494,7 +1494,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
     /**
      * Set the time info.
-     * @param timeInfo String; the new time info
+     * @param timeInfo the new time info
      */
     public void setTimeInfo(final String timeInfo)
     {
@@ -1503,7 +1503,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
 
     /**
      * Return whether the plot has a fundamental diagram line.
-     * @return boolean; whether the plot has a fundamental diagram line
+     * @return whether the plot has a fundamental diagram line
      */
     public boolean hasLineFD()
     {

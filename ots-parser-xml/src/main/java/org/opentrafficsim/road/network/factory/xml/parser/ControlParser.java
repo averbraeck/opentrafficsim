@@ -66,11 +66,11 @@ public final class ControlParser
 
     /**
      * Creates control objects.
-     * @param otsNetwork RoadNetwork; network
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param control List&lt;Control&gt;; control objects
-     * @param definitions Definitions; type definitions.
-     * @param eval Eval; expression evaluator.
+     * @param otsNetwork network
+     * @param simulator simulator
+     * @param control control objects
+     * @param definitions type definitions.
+     * @param eval expression evaluator.
      * @throws NetworkException when sensors could not be added to the network
      * @throws IOException when a TrafCOD engine cannot be loaded
      * @throws MalformedURLException when a TrafCOD engine cannot be loaded
@@ -129,7 +129,7 @@ public final class ControlParser
             String controllerName = trafCod.getId();
             String programString = trafCod.getProgram().getValue().get(eval);
             // TODO: use space
-            //String programSpace = trafCod.getProgram().getSpace().get(eval);
+            // String programSpace = trafCod.getProgram().getSpace().get(eval);
             List<String> program = null == programString ? TrafCod.loadTextFromURL(new URL(trafCod.getProgramFile()))
                     : Arrays.asList(programString.split("\n"));
             // Obtain the background image for the TrafCOD controller state display
@@ -141,7 +141,7 @@ public final class ControlParser
                 Encoding encoding = mapData.getEncoding().get(eval);
                 String encodedData = mapData.getValue().get(eval);
                 // TODO: use space
-                //String mapSpace = mapData.getSpace().get(eval);
+                // String mapSpace = mapData.getSpace().get(eval);
                 if (!Encoding.BASE64.equals(encoding))
                 {
                     throw new RuntimeException("Unexpected image encoding: " + encoding);
@@ -196,13 +196,12 @@ public final class ControlParser
                 {
                     // Handle single lane detector
                     SingleLane singleLaneDetector = detector.getSingleLane();
-                    CrossSectionLink link =
-                            (CrossSectionLink) otsNetwork.getLink(singleLaneDetector.getLink().get(eval));
+                    CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(singleLaneDetector.getLink().get(eval));
                     Lane lane = (Lane) link.getCrossSectionElement(singleLaneDetector.getLane().get(eval));
-                    Length entryPosition = ParseUtil
-                            .parseLengthBeginEnd(singleLaneDetector.getEntryPosition().get(eval), lane.getLength());
-                    Length exitPosition = ParseUtil
-                            .parseLengthBeginEnd(singleLaneDetector.getExitPosition().get(eval), lane.getLength());
+                    Length entryPosition =
+                            ParseUtil.parseLengthBeginEnd(singleLaneDetector.getEntryPosition().get(eval), lane.getLength());
+                    Length exitPosition =
+                            ParseUtil.parseLengthBeginEnd(singleLaneDetector.getExitPosition().get(eval), lane.getLength());
                     DetectorType detectorType = definitions.get(DetectorType.class, detector.getType().get(eval));
                     new TrafficLightDetector(detector.getId(), lane, entryPosition, lane, exitPosition, null,
                             RelativePosition.FRONT, RelativePosition.REAR, simulator, detectorType);
@@ -213,21 +212,18 @@ public final class ControlParser
                     MultipleLane multiLaneDetector = detector.getMultipleLane();
                     CrossSectionLink entryLink =
                             (CrossSectionLink) otsNetwork.getLink(multiLaneDetector.getEntryLink().get(eval));
-                    Lane entryLane =
-                            (Lane) entryLink.getCrossSectionElement(multiLaneDetector.getEntryLane().get(eval));
-                    Length entryPosition = ParseUtil.parseLengthBeginEnd(
-                            multiLaneDetector.getEntryPosition().get(eval), entryLane.getLength());
+                    Lane entryLane = (Lane) entryLink.getCrossSectionElement(multiLaneDetector.getEntryLane().get(eval));
+                    Length entryPosition = ParseUtil.parseLengthBeginEnd(multiLaneDetector.getEntryPosition().get(eval),
+                            entryLane.getLength());
                     CrossSectionLink exitLink =
                             (CrossSectionLink) otsNetwork.getLink(multiLaneDetector.getExitLink().get(eval));
-                    Lane exitLane =
-                            (Lane) exitLink.getCrossSectionElement(multiLaneDetector.getExitLane().get(eval));
-                    Length exitPosition = ParseUtil.parseLengthBeginEnd(
-                            multiLaneDetector.getExitPosition().get(eval), exitLane.getLength());
+                    Lane exitLane = (Lane) exitLink.getCrossSectionElement(multiLaneDetector.getExitLane().get(eval));
+                    Length exitPosition =
+                            ParseUtil.parseLengthBeginEnd(multiLaneDetector.getExitPosition().get(eval), exitLane.getLength());
                     List<Lane> intermediateLanes = new ArrayList<>();
                     for (LaneLinkType linkAndLane : multiLaneDetector.getIntermediateLanes())
                     {
-                        CrossSectionLink link =
-                                (CrossSectionLink) otsNetwork.getLink(linkAndLane.getLink().get(eval));
+                        CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(linkAndLane.getLink().get(eval));
                         intermediateLanes.add((Lane) link.getCrossSectionElement(linkAndLane.getLane().get(eval)));
                     }
                     DetectorType detectorType = definitions.get(DetectorType.class, detector.getType().get(eval));

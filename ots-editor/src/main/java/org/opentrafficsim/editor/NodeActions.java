@@ -30,8 +30,8 @@ public class NodeActions
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
-     * @param treeTable JTreeTable; tree table.
+     * @param editor editor.
+     * @param treeTable tree table.
      */
     public NodeActions(final OtsEditor editor, final JTreeTable treeTable)
     {
@@ -41,7 +41,7 @@ public class NodeActions
 
     /**
      * Add node.
-     * @param node XsdTreeNode; node.
+     * @param node node.
      */
     public void add(final XsdTreeNode node)
     {
@@ -53,7 +53,7 @@ public class NodeActions
 
     /**
      * Duplicate node.
-     * @param node XsdTreeNode; node.
+     * @param node node.
      */
     public void duplicate(final XsdTreeNode node)
     {
@@ -65,7 +65,7 @@ public class NodeActions
 
     /**
      * Remove node.
-     * @param node XsdTreeNode; node.
+     * @param node node.
      */
     public void remove(final XsdTreeNode node)
     {
@@ -86,7 +86,7 @@ public class NodeActions
 
     /**
      * Copy node.
-     * @param node XsdTreeNode; node.
+     * @param node node.
      */
     public void copy(final XsdTreeNode node)
     {
@@ -95,7 +95,7 @@ public class NodeActions
 
     /**
      * Cut node.
-     * @param node XsdTreeNode; node.
+     * @param node node.
      */
     public void cut(final XsdTreeNode node)
     {
@@ -107,7 +107,7 @@ public class NodeActions
 
     /**
      * Insert node.
-     * @param node XsdTreeNode; node.
+     * @param node node.
      */
     public void insert(final XsdTreeNode node)
     {
@@ -124,7 +124,7 @@ public class NodeActions
 
     /**
      * Paste node.
-     * @param node XsdTreeNode; node.
+     * @param node node.
      */
     public void paste(final XsdTreeNode node)
     {
@@ -156,9 +156,9 @@ public class NodeActions
 
     /**
      * Revolve to the next option of the node.
-     * @param node XsdTreeNode; node.
-     * @param options List&lt;XsdOption&gt;; options of the node. These are obtainable from the node, but already gathered by
-     *            the caller of this method and therefore forwarded for efficieny.
+     * @param node node.
+     * @param options options of the node. These are obtainable from the node, but already gathered by the caller of this method
+     *            and therefore forwarded for efficieny.
      */
     public void revolveOption(final XsdTreeNode node, final List<XsdOption> options)
     {
@@ -183,9 +183,9 @@ public class NodeActions
 
     /**
      * Expand, or collapse, node.
-     * @param node XsdTreeNode; node.
-     * @param path TreePath; path in the tree of the node.
-     * @param expanded boolean; whether the node is currently expanded.
+     * @param node node.
+     * @param path path in the tree of the node.
+     * @param expanded whether the node is currently expanded.
      */
     public void expand(final XsdTreeNode node, final TreePath path, final boolean expanded)
     {
@@ -207,8 +207,8 @@ public class NodeActions
 
     /**
      * Move node.
-     * @param node XsdTreeNode; node.
-     * @param down int; number of rows to move the node down.
+     * @param node node.
+     * @param down number of rows to move the node down.
      */
     public void move(final XsdTreeNode node, final int down)
     {

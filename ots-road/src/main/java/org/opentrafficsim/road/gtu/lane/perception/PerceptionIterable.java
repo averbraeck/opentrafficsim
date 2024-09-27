@@ -18,7 +18,7 @@ public interface PerceptionIterable<H extends Headway> extends Iterable<H>
 
     /**
      * Returns the first element.
-     * @return H; first element
+     * @return first element
      */
     H first();
 

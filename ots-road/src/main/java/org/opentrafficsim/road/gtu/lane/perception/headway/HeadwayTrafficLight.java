@@ -21,7 +21,7 @@ public interface HeadwayTrafficLight extends HeadwayLaneBasedObject
 
     /**
      * Whether the perceiving GTU may turn on red.
-     * @return boolean; whether the perceiving GTU may turn on red.
+     * @return whether the perceiving GTU may turn on red.
      */
     boolean canTurnOnRed();
 

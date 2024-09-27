@@ -61,11 +61,11 @@ public class TrafficLight extends AbstractLaneBasedObject
 
     /**
      * Construct an AbstractTrafficLight with specified elevation.
-     * @param id String; traffic light id
-     * @param lane Lane; lane where the traffic light is located
-     * @param longitudinalPosition Length; position of the traffic light on the lane, in the design direction
-     * @param simulator OtsSimulatorInterface; the simulator for animation and timed events
-     * @param height Length; the elevation of the traffic light
+     * @param id traffic light id
+     * @param lane lane where the traffic light is located
+     * @param longitudinalPosition position of the traffic light on the lane, in the design direction
+     * @param simulator the simulator for animation and timed events
+     * @param height the elevation of the traffic light
      * @throws NetworkException on failure to place the object
      */
     public TrafficLight(final String id, final Lane lane, final Length longitudinalPosition,
@@ -82,10 +82,10 @@ public class TrafficLight extends AbstractLaneBasedObject
 
     /**
      * Construct an AbstractTrafficLight at default elevation (use only on roads at elevation 0).
-     * @param id String; traffic light id
-     * @param lane Lane; lane where the traffic light is located
-     * @param longitudinalPosition Length; position of the traffic light on the lane, in the design direction
-     * @param simulator OtsSimulatorInterface; the simulator for animation and timed events
+     * @param id traffic light id
+     * @param lane lane where the traffic light is located
+     * @param longitudinalPosition position of the traffic light on the lane, in the design direction
+     * @param simulator the simulator for animation and timed events
      * @throws NetworkException on failure to place the object
      */
     public TrafficLight(final String id, final Lane lane, final Length longitudinalPosition,
@@ -96,7 +96,7 @@ public class TrafficLight extends AbstractLaneBasedObject
 
     /**
      * Get the current traffic light color.
-     * @return TrafficLightColor; current traffic light color.
+     * @return current traffic light color.
      */
     public final TrafficLightColor getTrafficLightColor()
     {
@@ -105,8 +105,8 @@ public class TrafficLight extends AbstractLaneBasedObject
 
     /**
      * Get the traffic light color in the past.
-     * @param time Time; time to obtain traffic light color.
-     * @return TrafficLightColor; current traffic light color.
+     * @param time time to obtain traffic light color.
+     * @return current traffic light color.
      */
     public final TrafficLightColor getTrafficLightColor(final Time time)
     {
@@ -115,7 +115,7 @@ public class TrafficLight extends AbstractLaneBasedObject
 
     /**
      * Set the new traffic light color.
-     * @param trafficLightColor TrafficLightColor; set the trafficLightColor
+     * @param trafficLightColor set the trafficLightColor
      */
     public final void setTrafficLightColor(final TrafficLightColor trafficLightColor)
     {
@@ -126,7 +126,7 @@ public class TrafficLight extends AbstractLaneBasedObject
 
     /**
      * Add node GTUs may turn to through red.
-     * @param node Node; node.
+     * @param node node.
      */
     public void addTurnOnRed(final Node node)
     {
@@ -139,9 +139,9 @@ public class TrafficLight extends AbstractLaneBasedObject
 
     /**
      * Whether a GTU can turn on red.
-     * @param route Route; route.
-     * @param gtuType GtuType; GTU type.
-     * @return boolean; whether a GTU can turn on red.
+     * @param route route.
+     * @param gtuType GTU type.
+     * @return whether a GTU can turn on red.
      */
     public boolean canTurnOnRed(final Route route, final GtuType gtuType)
     {

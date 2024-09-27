@@ -37,8 +37,8 @@ public class FixedAccelerationModel extends AbstractGtuFollowingModelMobil imple
 
     /**
      * Create a new FixedAccelerationModel.
-     * @param acceleration Acceleration; the acceleration that will be returned by the computeAcceleration methods
-     * @param duration Duration; the duration that the acceleration will be maintained
+     * @param acceleration the acceleration that will be returned by the computeAcceleration methods
+     * @param duration the duration that the acceleration will be maintained
      */
     public FixedAccelerationModel(final Acceleration acceleration, final Duration duration)
     {
@@ -48,7 +48,7 @@ public class FixedAccelerationModel extends AbstractGtuFollowingModelMobil imple
 
     /**
      * Retrieve the duration of this FixedAccelerationModel.
-     * @return Duration; the duration of this FixedAccelerationModel
+     * @return the duration of this FixedAccelerationModel
      */
     public final Duration getDuration()
     {
@@ -57,7 +57,7 @@ public class FixedAccelerationModel extends AbstractGtuFollowingModelMobil imple
 
     /**
      * Retrieve the acceleration of this FixedAccelerationModel.
-     * @return Acceleration; the acceleration of this FixedAccelerationModel
+     * @return the acceleration of this FixedAccelerationModel
      */
     public final Acceleration getAcceleration()
     {

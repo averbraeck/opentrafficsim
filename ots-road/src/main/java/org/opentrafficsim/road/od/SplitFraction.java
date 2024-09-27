@@ -49,10 +49,10 @@ public class SplitFraction
 
     /**
      * Constructor.
-     * @param node Node; node
-     * @param interpolation Interpolation; interpolation
-     * @param random StreamInterface; random stream
-     * @param simulator OtsSimulatorInterface; simulator
+     * @param node node
+     * @param interpolation interpolation
+     * @param random random stream
+     * @param simulator simulator
      */
     public SplitFraction(final Node node, final Interpolation interpolation, final StreamInterface random,
             final OtsSimulatorInterface simulator)
@@ -65,9 +65,9 @@ public class SplitFraction
 
     /**
      * Add fraction to link for gtu type, this will apply to all time.
-     * @param link Link; link
-     * @param gtuType GtuType; gtu type
-     * @param fraction double; fraction
+     * @param link link
+     * @param gtuType gtu type
+     * @param fraction fraction
      */
     public void addFraction(final Link link, final GtuType gtuType, final double fraction)
     {
@@ -91,10 +91,10 @@ public class SplitFraction
 
     /**
      * Add fraction to link over time for gtu type.
-     * @param link Link; link
-     * @param gtuType GtuType; gtu type
-     * @param time DurationVector; time
-     * @param fraction double[]; fraction
+     * @param link link
+     * @param gtuType gtu type
+     * @param time time
+     * @param fraction fraction
      */
     public void addFraction(final Link link, final GtuType gtuType, final DurationVector time, final double[] fraction)
     {
@@ -128,7 +128,7 @@ public class SplitFraction
     /**
      * Draw next link based on split fractions. If no fractions were defined, split fractions are determined based on the number
      * of lanes per link.
-     * @param gtuType GtuType; gtuType
+     * @param gtuType gtuType
      * @return next link
      */
     public Link draw(final GtuType gtuType)

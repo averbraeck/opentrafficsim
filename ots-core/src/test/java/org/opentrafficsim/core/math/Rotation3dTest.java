@@ -136,10 +136,10 @@ public class Rotation3dTest
 
     /**
      * Verify the values of the fields in a Direction3d.
-     * @param r3da Direction3d; the Direction3d
-     * @param roll double; the expected roll value
-     * @param pitch double; the expected pitch value
-     * @param yaw double; the expected yaw value
+     * @param r3da the Direction3d
+     * @param roll the expected roll value
+     * @param pitch the expected pitch value
+     * @param yaw the expected yaw value
      */
     private void checkRotation3d(final Direction3d r3da, final double roll, final double pitch, final double yaw)
     {
@@ -150,10 +150,10 @@ public class Rotation3dTest
 
     /**
      * Verify the values of the fields in a Angle3d.
-     * @param r3dr Angle3d; the Angle3d
-     * @param roll double; the expected roll value
-     * @param pitch double; the expected pitch value
-     * @param yaw double; the expected yaw value
+     * @param r3dr the Angle3d
+     * @param roll the expected roll value
+     * @param pitch the expected pitch value
+     * @param yaw the expected yaw value
      */
     private void checkRotation3d(final Angle3d r3dr, final double roll, final double pitch, final double yaw)
     {

@@ -26,7 +26,7 @@ public class PloegCacc extends PloegAcc
 
     /**
      * Constructor using default sensors with no delay.
-     * @param delayedActuation DelayedActuation; delayed actuation
+     * @param delayedActuation delayed actuation
      */
     public PloegCacc(final DelayedActuation delayedActuation)
     {

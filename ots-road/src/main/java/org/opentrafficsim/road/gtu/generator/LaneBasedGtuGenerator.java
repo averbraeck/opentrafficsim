@@ -137,15 +137,14 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
 
     /**
      * Construct a new lane base GTU generator.
-     * @param id String; name of the new GTU generator
-     * @param interarrivelTimeGenerator Generator&lt;Duration&gt;; generator for the interval times between GTUs
-     * @param laneBasedGtuCharacteristicsGenerator LaneBasedGtuCharacteristicsGenerator; generator of the characteristics of
-     *            each GTU
-     * @param generatorPositions GeneratorPositions; location and initial direction provider for all generated GTUs
-     * @param network RoadNetwork; the OTS network that owns the generated GTUs
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param roomChecker RoomChecker; the way that this generator checks that there is sufficient room to place a new GTU
-     * @param idGenerator Supplier&lt;String&gt;; id generator
+     * @param id name of the new GTU generator
+     * @param interarrivelTimeGenerator generator for the interval times between GTUs
+     * @param laneBasedGtuCharacteristicsGenerator generator of the characteristics of each GTU
+     * @param generatorPositions location and initial direction provider for all generated GTUs
+     * @param network the OTS network that owns the generated GTUs
+     * @param simulator simulator
+     * @param roomChecker the way that this generator checks that there is sufficient room to place a new GTU
+     * @param idGenerator id generator
      * @throws SimRuntimeException when <cite>startTime</cite> lies before the current simulation time
      * @throws ProbabilityException pe
      * @throws ParameterException if drawing from the interarrival generator fails
@@ -181,7 +180,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
 
     /**
      * Sets the initial distance over which lane changes shouldn't be performed.
-     * @param noLaneChangeDistance Length; initial distance over which lane changes shouldn't be performed
+     * @param noLaneChangeDistance initial distance over which lane changes shouldn't be performed
      */
     public void setNoLaneChangeDistance(final Length noLaneChangeDistance)
     {
@@ -190,7 +189,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
 
     /**
      * Sets whether GTUs will change lane instantaneously.
-     * @param instantaneous boolean; whether GTUs will change lane instantaneously
+     * @param instantaneous whether GTUs will change lane instantaneously
      */
     public void setInstantaneousLaneChange(final boolean instantaneous)
     {
@@ -199,7 +198,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
 
     /**
      * Sets the GTU error handler.
-     * @param gtuErrorHandler GTUErrorHandler; GTU error handler
+     * @param gtuErrorHandler GTU error handler
      */
     public void setErrorHandler(final GtuErrorHandler gtuErrorHandler)
     {
@@ -210,7 +209,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
      * Sets what order should be used for the ids. By default this is in the order of successful GTU generation. If however the
      * id generator is an instance of {@code Injections} with an id column, it is by default in the order of characteristics
      * drawing.
-     * @param idsInCharacteristicsOrder boolean; ids in order of drawing characteristics, or successful generation otherwise.
+     * @param idsInCharacteristicsOrder ids in order of drawing characteristics, or successful generation otherwise.
      */
     public void setIdsInCharacteristicsOrder(final boolean idsInCharacteristicsOrder)
     {
@@ -274,7 +273,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
 
     /**
      * Check if the queue is non-empty and, if it is, try to place the GTUs in the queue on the road.
-     * @param position GeneratorLanePosition; position
+     * @param position position
      * @throws SimRuntimeException should never happen
      * @throws GtuException when something wrong in the definition of the GTU
      * @throws OtsGeometryException when something is wrong in the definition of the GTU
@@ -330,8 +329,8 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
     /**
      * Adds a GTU to the generation queue. This method ignores whether vehicle generation is enabled at the location. This
      * allows an external party to govern (over some time) what vehicles are generated.
-     * @param characteristics LaneBasedGtuCharacteristics; characteristics of GTU to add to the queue
-     * @param lane Lane; position to generate the GTU at
+     * @param characteristics characteristics of GTU to add to the queue
+     * @param lane position to generate the GTU at
      */
     public final void queueGtu(final LaneBasedGtuCharacteristics characteristics, final Lane lane)
     {
@@ -359,8 +358,8 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
     /**
      * Places the characteristics in the queue pertaining to the position, and schedules a call to {@code tryToPlace} now if the
      * queue length is 1.
-     * @param lanePosition GeneratorLanePosition; position to generate the GTU at
-     * @param characteristics LaneBasedGtuCharacteristics; characteristics of GTU to add to the queue
+     * @param lanePosition position to generate the GTU at
+     * @param characteristics characteristics of GTU to add to the queue
      * @throws SimRuntimeException when an event is scheduled in the past
      */
     private void queueGtu(final GeneratorLanePosition lanePosition, final LaneBasedGtuCharacteristics characteristics)
@@ -388,9 +387,9 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
 
     /**
      * Places a GTU, regardless of whether it has room. The user of this method should verify this is the case.
-     * @param characteristics LaneBasedGtuCharacteristics; characteristics
-     * @param position LanePosition; position
-     * @param speed Speed; speed
+     * @param characteristics characteristics
+     * @param position position
+     * @param speed speed
      * @throws NamingException on exception
      * @throws GtuException on exception
      * @throws NetworkException on exception
@@ -417,10 +416,10 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
 
     /**
      * Adds the first GTU on the lane to the set, or any number or leaders on downstream lane(s) if there is no GTU on the lane.
-     * @param lane Lane; lane to search on
-     * @param startDistance Length; distance from generator location (nose) to start of the lane
-     * @param beyond Length; location to search downstream of which is the generator position, or the start for downstream lanes
-     * @param set Set&lt;HeadwayGtu&gt;; set to add the GTU's to
+     * @param lane lane to search on
+     * @param startDistance distance from generator location (nose) to start of the lane
+     * @param beyond location to search downstream of which is the generator position, or the start for downstream lanes
+     * @param set set to add the GTU's to
      * @throws GtuException if a GTU is incorrectly positioned on a lane
      */
     private void getFirstLeaders(final Lane lane, final Length startDistance, final Length beyond, final Set<HeadwayGtu> set)
@@ -466,7 +465,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
 
     /**
      * Retrieve the id of this LaneBasedGtuGenerator.
-     * @return String; the id of this LaneBasedGtuGenerator
+     * @return the id of this LaneBasedGtuGenerator
      */
     @Override
     public final String getId()
@@ -477,9 +476,9 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
     /**
      * Disable the vehicle generator during the specific time. Underlying processes such as drawing characteristics and headways
      * are continued, but simply will not result in the queuing of the GTU.
-     * @param start Time; start time
-     * @param end Time; end time
-     * @param lane Lane; lane to disable generation on
+     * @param start start time
+     * @param end end time
+     * @param lane lane to disable generation on
      * @throws SimRuntimeException if time is incorrect
      */
     public void disable(final Time start, final Time end, final Lane lane) throws SimRuntimeException
@@ -491,7 +490,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
 
     /**
      * Disables the generator.
-     * @param lane Lane; lanes to disable generation on
+     * @param lane lanes to disable generation on
      */
     @SuppressWarnings("unused")
     private void disable(final Lane lane)
@@ -562,8 +561,8 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
 
     /**
      * Returns the number of GTUs in queue at the position.
-     * @param position GeneratorLanePosition; position.
-     * @return int; number of GTUs in queue at the position.
+     * @param position position.
+     * @return number of GTUs in queue at the position.
      */
     private int getQueueLength(final GeneratorLanePosition position)
     {
@@ -590,12 +589,11 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
          * Return the maximum safe speed and position for a new GTU with the specified characteristics. Returns
          * {@code Placement.NO} if there is no safe speed and position. This method might be called with an empty leader set
          * such that the desired speed can be implemented.
-         * @param leaders SortedSet&lt;HeadwayGtu&gt;; leaders, usually 1, possibly more after a branch
-         * @param characteristics LaneBasedGtuCharacteristics; characteristics of the proposed new GTU
-         * @param since Duration; time since the GTU wanted to arrive
-         * @param initialPosition LanePosition; initial position
-         * @return Speed; maximum safe speed, or null if a GTU with the specified characteristics cannot be placed at the
-         *         current time
+         * @param leaders leaders, usually 1, possibly more after a branch
+         * @param characteristics characteristics of the proposed new GTU
+         * @param since time since the GTU wanted to arrive
+         * @param initialPosition initial position
+         * @return maximum safe speed, or null if a GTU with the specified characteristics cannot be placed at the current time
          * @throws NetworkException this method may throw a NetworkException if it encounters an error in the network structure
          * @throws GtuException on parameter exception
          */
@@ -637,8 +635,8 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
 
         /**
          * Constructor.
-         * @param speed Speed; speed
-         * @param position LanePosition; position
+         * @param speed speed
+         * @param position position
          */
         public Placement(final Speed speed, final LanePosition position)
         {
@@ -659,7 +657,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
 
         /**
          * Returns the speed.
-         * @return Speed; speed
+         * @return speed
          */
         public Speed getSpeed()
         {
@@ -668,7 +666,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
 
         /**
          * Returns the position.
-         * @return LanePosition; position
+         * @return position
          */
         public LanePosition getPosition()
         {

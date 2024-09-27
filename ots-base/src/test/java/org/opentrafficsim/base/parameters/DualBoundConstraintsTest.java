@@ -42,10 +42,10 @@ public class DualBoundConstraintsTest
 
     /**
      * Create a DoubleBound for the given values and test it.
-     * @param low double; the low limit of the DoubleBound
-     * @param high double; the high limit of the DoubleBound
-     * @param includeLow boolean; does the DoubleBound include the low limit value
-     * @param includeHigh boolean; does the DoubleBound include the high limit value
+     * @param low the low limit of the DoubleBound
+     * @param high the high limit of the DoubleBound
+     * @param includeLow does the DoubleBound include the low limit value
+     * @param includeHigh does the DoubleBound include the high limit value
      */
     public final void checkConstraint(final double low, final double high, final boolean includeLow, final boolean includeHigh)
     {

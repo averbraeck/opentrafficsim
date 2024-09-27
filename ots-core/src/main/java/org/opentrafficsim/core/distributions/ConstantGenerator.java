@@ -19,7 +19,7 @@ public class ConstantGenerator<O> implements Generator<O>
 
     /**
      * Constructor.
-     * @param value O; value
+     * @param value value
      */
     public ConstantGenerator(final O value)
     {
@@ -35,7 +35,7 @@ public class ConstantGenerator<O> implements Generator<O>
 
     /**
      * Returns the value.
-     * @return O; value
+     * @return value
      */
     public O getValue()
     {

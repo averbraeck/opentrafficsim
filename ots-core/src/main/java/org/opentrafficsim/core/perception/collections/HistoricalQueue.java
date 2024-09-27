@@ -20,15 +20,15 @@ public interface HistoricalQueue<E> extends HistoricalCollection<E>, Queue<E>
 
     /**
      * Returns the current queue.
-     * @return Queue; current queue
+     * @return current queue
      */
     @Override
     Queue<E> get();
 
     /**
      * Returns a past queue.
-     * @param time Time; time to obtain the queue at
-     * @return Queue; past queue
+     * @param time time to obtain the queue at
+     * @return past queue
      */
     @Override
     Queue<E> get(Time time);

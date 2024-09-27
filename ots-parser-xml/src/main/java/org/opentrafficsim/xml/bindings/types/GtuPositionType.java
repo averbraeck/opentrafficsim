@@ -16,7 +16,7 @@ public class GtuPositionType extends ExpressionType<GtuPosition>
 
     /**
      * Constructor with value.
-     * @param value GtuPosition; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public GtuPositionType(final GtuPosition value)
     {
@@ -25,7 +25,7 @@ public class GtuPositionType extends ExpressionType<GtuPosition>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public GtuPositionType(final String expression)
     {

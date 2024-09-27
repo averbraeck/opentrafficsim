@@ -15,7 +15,7 @@ import org.opentrafficsim.xml.bindings.types.AccelerationType;
  */
 public class AccelerationAdapter extends ScalarAdapter<Acceleration, AccelerationType>
 {
-    
+
     /** {@inheritDoc} */
     @Override
     public AccelerationType unmarshal(final String field)
@@ -34,5 +34,5 @@ public class AccelerationAdapter extends ScalarAdapter<Acceleration, Acceleratio
             throw exception;
         }
     }
-    
+
 }

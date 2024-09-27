@@ -40,10 +40,10 @@ public final class GraphUtil
     /**
      * Helper method for quick filtering of trajectories by checking if the time of the trajectory has overlap with the given
      * time.
-     * @param trajectory Trajectory&lt;?&gt;; trajectory
-     * @param startTime Time; start time
-     * @param endTime Time; end time
-     * @return boolean; true if the trajectory should be considered for the given time
+     * @param trajectory trajectory
+     * @param startTime start time
+     * @param endTime end time
+     * @return true if the trajectory should be considered for the given time
      */
     public static boolean considerTrajectory(final Trajectory<?> trajectory, final Time startTime, final Time endTime)
     {
@@ -61,10 +61,10 @@ public final class GraphUtil
     /**
      * Helper method for quick filtering of trajectories by checking if the position of the trajectory has overlap with the
      * given range.
-     * @param trajectory Trajectory&lt;?&gt;; trajectory
-     * @param startPosition Length; start position
-     * @param endPosition Length; end position
-     * @return boolean; true if the trajectory should be considered for the given time
+     * @param trajectory trajectory
+     * @param startPosition start position
+     * @param endPosition end position
+     * @return true if the trajectory should be considered for the given time
      */
     public static boolean considerTrajectory(final Trajectory<?> trajectory, final Length startPosition,
             final Length endPosition)
@@ -84,9 +84,9 @@ public final class GraphUtil
      * Ensures that the given capacity is available in the array. The array may become or may be longer than the required
      * capacity. This method assumes that the array has non-zero length, and that the capacity required is at most 1 more than
      * what the array can provide.
-     * @param data double[]; data array
-     * @param capacity int; required capacity
-     * @return double[]; array with at least the requested capacity
+     * @param data data array
+     * @param capacity required capacity
+     * @return array with at least the requested capacity
      */
     public static double[] ensureCapacity(final double[] data, final int capacity)
     {
@@ -103,9 +103,9 @@ public final class GraphUtil
      * Ensures that the given capacity is available in the array. The array may become or may be longer than the required
      * capacity. This method assumes that the array has non-zero length, and that the capacity required is at most 1 more than
      * what the array can provide.
-     * @param data float[]; data array
-     * @param capacity int; required capacity
-     * @return float[]; array with at least the requested capacity
+     * @param data data array
+     * @param capacity required capacity
+     * @return array with at least the requested capacity
      */
     public static float[] ensureCapacity(final float[] data, final int capacity)
     {
@@ -122,9 +122,9 @@ public final class GraphUtil
      * Ensures that the given capacity is available in the array. The array may become or may be longer than the required
      * capacity. This method assumes that the array has non-zero length, and that the capacity required is at most 1 more than
      * what the array can provide.
-     * @param data int[]; data array
-     * @param capacity int; required capacity
-     * @return int[]; array with at least the requested capacity
+     * @param data data array
+     * @param capacity required capacity
+     * @return array with at least the requested capacity
      */
     public static int[] ensureCapacity(final int[] data, final int capacity)
     {
@@ -139,12 +139,11 @@ public final class GraphUtil
 
     /**
      * Returns a chart listener that allows the series to be enabled and disabled by clicking on the respective legend item.
-     * @param legend LegendItemCollection; legend
-     * @param visibility List&lt;Boolean&gt;; visibility of each series; the listener will store visibility in this list, which
-     *            an {@code AbstractRenderer} can use in {@code isSeriesVisible(series)} to show or hide the series
+     * @param legend legend
+     * @param visibility visibility of each series; the listener will store visibility in this list, which an
+     *            {@code AbstractRenderer} can use in {@code isSeriesVisible(series)} to show or hide the series
      * @param <K> underlying key type of the series
-     * @return ChartMouseListener; listener that will allow series to be enabled and disabled by clicking on the respective
-     *         legend item
+     * @return listener that will allow series to be enabled and disabled by clicking on the respective legend item
      */
     @SuppressWarnings("unchecked")
     public static <K> ChartMouseListener getToggleSeriesByLegendListener(final LegendItemCollection legend,

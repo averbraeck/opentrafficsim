@@ -24,7 +24,7 @@ public class SubCollectionConstraint<T> implements Constraint<Collection<T>>
     protected final Collection<T> objects;
 
     /**
-     * @param objects Collection&lt;T&gt;; acceptable objects
+     * @param objects acceptable objects
      */
     public SubCollectionConstraint(final Collection<T> objects)
     {
@@ -50,7 +50,7 @@ public class SubCollectionConstraint<T> implements Constraint<Collection<T>>
 
     /**
      * Creates a new instance with given collection.
-     * @param objs T...; acceptable objects
+     * @param objs acceptable objects
      * @param <T> type
      * @return new instance with given collection
      */

@@ -47,9 +47,9 @@ public interface RouteGenerator
 
     /**
      * Returns a default route generator for shortest routes based on the given stream.
-     * @param stream StreamInterface; random number stream
-     * @param linkWeight LinkWeight; link weight.
-     * @return RouteSupplier; default route generator for shortest routes based on the given stream
+     * @param stream random number stream
+     * @param linkWeight link weight.
+     * @return default route generator for shortest routes based on the given stream
      */
     static RouteGenerator getDefaultRouteSupplier(final StreamInterface stream, final LinkWeight linkWeight)
     {
@@ -77,8 +77,8 @@ public interface RouteGenerator
 
         /**
          * Constructor.
-         * @param stream StreamInterface; stream of random numbers
-         * @param linkWeight LinkWeight; link weight.
+         * @param stream stream of random numbers
+         * @param linkWeight link weight.
          */
         public DefaultRouteGenerator(final StreamInterface stream, final LinkWeight linkWeight)
         {
@@ -164,10 +164,10 @@ public interface RouteGenerator
 
     /**
      * Returns a route.
-     * @param origin Node; origin
-     * @param destination Node; destination
-     * @param gtuType GtuType; gtu type
-     * @return Route; route
+     * @param origin origin
+     * @param destination destination
+     * @param gtuType gtu type
+     * @return route
      */
     Route getRoute(Node origin, Node destination, GtuType gtuType);
 }

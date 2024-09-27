@@ -91,16 +91,16 @@ public final class OdParser
 
     /**
      * Creates generators and returns OD matrices.
-     * @param otsNetwork RoadNetwork; network
-     * @param definitions Definitions; parsed definitions.
-     * @param demand Demand; demand
+     * @param otsNetwork network
+     * @param definitions parsed definitions.
+     * @param demand demand
      * @param gtuTemplates Map&lt;String, org.opentrafficsim.xml.generated.GtuTemplate&gt;; GTU templates
-     * @param definedLaneBiases Map&lt;String, LaneBias&lt;?&gt;&gt;; defined lane biases
-     * @param factories Map&lt;String, LaneBasedStrategicalPlannerFactory&lt;?&gt;&gt;; factories from model parser
-     * @param modelIdReferrals Map&lt;String, String&gt;; model id referrals
-     * @param streamMap Map&lt;String, StreamInformation&gt;; stream map
-     * @param eval Eval; expression evaluator.
-     * @return List&lt;LaneBasedGtuGenerator&gt;; generators
+     * @param definedLaneBiases defined lane biases
+     * @param factories factories from model parser
+     * @param modelIdReferrals model id referrals
+     * @param streamMap stream map
+     * @param eval expression evaluator.
+     * @return generators
      * @throws XmlParserException if the OD contains an inconsistency or error
      */
     public static List<LaneBasedGtuGenerator> parseDemand(final RoadNetwork otsNetwork, final Definitions definitions,
@@ -199,11 +199,11 @@ public final class OdParser
 
     /**
      * Parse categories (save them in a map), and derive the categorization.
-     * @param otsNetwork RoadNetwork; network to obtain routes and lanes in categories.
-     * @param definitions Definitions; definitions to get GTU types in categories.
-     * @param od Od; OD with categories.
-     * @param categories Map&lt;String, Category&gt;; map to store categories in.
-     * @param eval Eval; expression evaluator.
+     * @param otsNetwork network to obtain routes and lanes in categories.
+     * @param definitions definitions to get GTU types in categories.
+     * @param od OD with categories.
+     * @param categories map to store categories in.
+     * @param eval expression evaluator.
      * @return Categorization
      * @throws XmlParserException when a category does not match the categorization.
      */
@@ -281,11 +281,11 @@ public final class OdParser
 
     /**
      * Add cell data to OD matrix.
-     * @param categories Map&lt;String, Category&gt;; map of parsed categories.
-     * @param globalFactor double; factor on entire OD.
-     * @param odMatrix OdMatrix; OD matrix to set demand data in.
-     * @param demandPerOD MultiKeyMap&lt;Set&lt;Cell&gt;&gt;; cell tags per origin and destination node.
-     * @param eval Eval; expression evaluator.
+     * @param categories map of parsed categories.
+     * @param globalFactor factor on entire OD.
+     * @param odMatrix OD matrix to set demand data in.
+     * @param demandPerOD cell tags per origin and destination node.
+     * @param eval expression evaluator.
      * @throws XmlParserException when data in inconsistently defined.
      */
     private static void addDemand(final Map<String, Category> categories, final double globalFactor, final OdMatrix odMatrix,
@@ -403,17 +403,17 @@ public final class OdParser
 
     /**
      * Parse OD options.
-     * @param otsNetwork RoadNetwork; network to obtain routes and lanes in categories.
-     * @param definitions Definitions; definitions to get GTU types in categories.
-     * @param templates Set&lt;GtuTemplate&gt;; parsed GTU templates.
-     * @param definedLaneBiases Map&lt;String, LaneBias&gt;; parsed lane biases.
-     * @param factories Map&lt;String, LaneBasedStrategicalPlannerFactory&lt;?&gt;&gt;; parsed model factories.
-     * @param modelIdReferrals Map&lt;String, String&gt;; model id referrals.
-     * @param streamMap StreamInformation; parsed random streams.
+     * @param otsNetwork network to obtain routes and lanes in categories.
+     * @param definitions definitions to get GTU types in categories.
+     * @param templates parsed GTU templates.
+     * @param definedLaneBiases parsed lane biases.
+     * @param factories parsed model factories.
+     * @param modelIdReferrals model id referrals.
+     * @param streamMap parsed random streams.
      * @param odOptionsMap Map&lt;String, org.opentrafficsim.xml.generated.OdOptions&gt;; gathered OdOptions tags.
-     * @param od Od; OD tag.
-     * @param categorization Categorization; categorization.
-     * @param eval Eval; expression evaluator.
+     * @param od OD tag.
+     * @param categorization categorization.
+     * @param eval expression evaluator.
      * @return OdOptions.
      * @throws XmlParserException when options in OD are not defined, or Markov chain not well defined.
      */
@@ -524,15 +524,15 @@ public final class OdParser
 
     /**
      * Parse OD model option.
-     * @param otsNetwork RoadNetwork; network to obtain routes and lanes in categories.
-     * @param definitions Definitions; definitions to get GTU types in categories.
-     * @param factories Map&lt;String, LaneBasedStrategicalPlannerFactory&lt;?&gt;&gt;; parsed model factories.
-     * @param modelIdReferrals Map&lt;String, String&gt;; model id referrals.
-     * @param odOptions OdOptions; OD options.
-     * @param templates Set&lt;GtuTemplate&gt;; parsed GTU templates.
-     * @param defaultLmrsFactory LaneBasedStrategicalRoutePlannerFactory; default LMRS factory.
-     * @param option OdOptionItem; OD option item tag.
-     * @param eval Eval; expression evaluator.
+     * @param otsNetwork network to obtain routes and lanes in categories.
+     * @param definitions definitions to get GTU types in categories.
+     * @param factories parsed model factories.
+     * @param modelIdReferrals model id referrals.
+     * @param odOptions OD options.
+     * @param templates parsed GTU templates.
+     * @param defaultLmrsFactory default LMRS factory.
+     * @param option OD option item tag.
+     * @param eval expression evaluator.
      * @throws XmlParserException when a non-existent model is referred.
      */
     private static void parseModelOption(final RoadNetwork otsNetwork, final Definitions definitions,
@@ -600,10 +600,10 @@ public final class OdParser
     }
 
     /**
-     * @param definitions Definitions; definitions to get GTU types in categories.
+     * @param definitions definitions to get GTU types in categories.
      * @param gtuTemplates Map&lt;String, org.opentrafficsim.xml.generated.GtuTemplate&gt;; GTU template tags.
-     * @param streamMap StreamInformation; random streams.
-     * @param eval Eval; expression evaluator.
+     * @param streamMap random streams.
+     * @param eval expression evaluator.
      * @return GTU templates.
      * @throws XmlParserException when a distribution cannot be parsed.
      */
@@ -642,9 +642,9 @@ public final class OdParser
 
     /**
      * Parse the value of a LevelTimeType that specifies flow (i.e. with 'veh' per time unit).
-     * @param string String; value of LevelTimeType
-     * @param factor double; total applicable factor on this level
-     * @return Frequency; resulting frequency
+     * @param string value of LevelTimeType
+     * @param factor total applicable factor on this level
+     * @return resulting frequency
      */
     private static Frequency parseLevel(final String string, final double factor)
     {
@@ -653,8 +653,8 @@ public final class OdParser
 
     /**
      * Sorts LevelTimeType in a list by the time value, if any.
-     * @param levelTime List&lt;LevelTimeType&gt;; sorted list
-     * @param eval Eval; expression evaluator.
+     * @param levelTime sorted list
+     * @param eval expression evaluator.
      */
     private static void sortLevelTime(final List<LevelTimeType> levelTime, final Eval eval)
     {
@@ -683,9 +683,9 @@ public final class OdParser
 
     /**
      * Parse a list of {@code LevelTimeType} to a {@code TimeVector}.
-     * @param list List&lt;LevelTimeType&gt;; list of time information
-     * @param eval Eval; expression evaluator.
-     * @return TimeVector; time vector
+     * @param list list of time information
+     * @param eval expression evaluator.
+     * @return time vector
      * @throws XmlParserException if global time has no values
      */
     private static TimeVector parseTimeVector(final List<LevelTimeType> list, final Eval eval) throws XmlParserException
@@ -701,13 +701,13 @@ public final class OdParser
 
     /**
      * Set option.
-     * @param odOptions OdOptions; OD options to set the option in
-     * @param option Option&lt;T&gt;; option to set
-     * @param value T; value to set the option to
-     * @param options OdOptionsItem; used to set the option on the right level (Link type, origin node, lane
-     * @param otsNetwork RoadNetwork; to get the link type, origin node or lane from
-     * @param definitions Definitions; parsed definitions.
-     * @param eval Eval; expression evaluator.
+     * @param odOptions OD options to set the option in
+     * @param option option to set
+     * @param value value to set the option to
+     * @param options used to set the option on the right level (Link type, origin node, lane
+     * @param otsNetwork to get the link type, origin node or lane from
+     * @param definitions parsed definitions.
+     * @param eval expression evaluator.
      * @param <T> option value type
      */
     private static <T> void setOption(final OdOptions odOptions, final Option<T> option, final T value,
@@ -737,9 +737,9 @@ public final class OdParser
 
     /**
      * Returns the ID of a default model, referred if there is a referral specified.
-     * @param model String; model
-     * @param modelIdReferrals String; model ID
-     * @param eval Eval; expression evaluator.
+     * @param model model
+     * @param modelIdReferrals model ID
+     * @param eval expression evaluator.
      * @return ID of a model, referred if there is a referral specified
      */
     private static String getModelId(final DefaultModel model, final Map<String, String> modelIdReferrals, final Eval eval)
@@ -753,9 +753,9 @@ public final class OdParser
 
     /**
      * Returns the ID of a model, referred if there is a referral specified.
-     * @param model String; model
-     * @param modelIdReferrals String; model ID
-     * @param eval Eval; expression evaluator.
+     * @param model model
+     * @param modelIdReferrals model ID
+     * @param eval expression evaluator.
      * @return ID of a model, referred if there is a referral specified
      */
     private static String getModelId(final Model model, final Map<String, String> modelIdReferrals, final Eval eval)

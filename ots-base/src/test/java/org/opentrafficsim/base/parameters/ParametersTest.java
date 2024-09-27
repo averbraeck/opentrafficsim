@@ -458,23 +458,21 @@ public class ParametersTest implements ConstraintInterface
         Parameters params2 = new ParameterSet();
         params1.setParameter(a1, 4.0);
         params2.setParameter(a2, 4.0);
-        assertEquals(params1.getParameter(a1), params2.getParameter(a2),
-                0.0, "Equal double values from different parameter types should be equal.");
+        assertEquals(params1.getParameter(a1), params2.getParameter(a2), 0.0,
+                "Equal double values from different parameter types should be equal.");
 
         // equal DoubleScalar.Rel values should be equal from different characteristic sets
         ParameterTypeLinearDensity b1 = new ParameterTypeLinearDensity("b", "blong");
         ParameterTypeLinearDensity b2 = new ParameterTypeLinearDensity("b", "blong");
         params1.setParameter(b1, new LinearDensity(4.0, LinearDensityUnit.SI));
         params2.setParameter(b2, new LinearDensity(4.0, LinearDensityUnit.SI));
-        assertEquals(
-                params1.getParameter(b1),
-                params2.getParameter(b2), "Equal DoubleScalar.Rel values from different parameter types and different characteristics should be equal.");
+        assertEquals(params1.getParameter(b1), params2.getParameter(b2),
+                "Equal DoubleScalar.Rel values from different parameter types and different characteristics should be equal.");
 
         // equal DoubleScalar.Rel values should be equal from the same characteristic set
         params1.setParameter(b2, new LinearDensity(4.0, LinearDensityUnit.SI));
-        assertEquals(
-                params1.getParameter(b1),
-                params1.getParameter(b2), "Equal DoubleScalar.Rel values from different parameter types and the same characteristics should be equal.");
+        assertEquals(params1.getParameter(b1), params1.getParameter(b2),
+                "Equal DoubleScalar.Rel values from different parameter types and the same characteristics should be equal.");
 
         // values of parameter types with different value classes are not equal
         params1.setParameter(a1, 4.0);

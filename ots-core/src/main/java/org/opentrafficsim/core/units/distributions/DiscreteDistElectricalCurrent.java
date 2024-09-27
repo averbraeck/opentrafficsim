@@ -21,8 +21,8 @@ public class DiscreteDistElectricalCurrent extends DiscreteDistDoubleScalar.Rel<
     private static final long serialVersionUID = 20180829L;
 
     /**
-     * @param distribution DistDiscrete; distribution
-     * @param unit ElectricalCurrentUnit; units
+     * @param distribution distribution
+     * @param unit units
      */
     public DiscreteDistElectricalCurrent(final DistDiscrete distribution, final ElectricalCurrentUnit unit)
     {

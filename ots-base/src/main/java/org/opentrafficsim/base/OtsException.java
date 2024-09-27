@@ -23,7 +23,7 @@ public class OtsException extends Exception
 
     /**
      * Create an exception with a message.
-     * @param message String; the message to include in the exception
+     * @param message the message to include in the exception
      */
     public OtsException(final String message)
     {
@@ -32,7 +32,7 @@ public class OtsException extends Exception
 
     /**
      * Create an exception with an underlying cause.
-     * @param cause Throwable; the underlying cause of the exception
+     * @param cause the underlying cause of the exception
      */
     public OtsException(final Throwable cause)
     {
@@ -41,8 +41,8 @@ public class OtsException extends Exception
 
     /**
      * Create an exception with an underlying cause and a message.
-     * @param message String; the message to include in the exception
-     * @param cause Throwable; the underlying cause of the exception
+     * @param message the message to include in the exception
+     * @param cause the underlying cause of the exception
      */
     public OtsException(final String message, final Throwable cause)
     {

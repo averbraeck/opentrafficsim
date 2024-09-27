@@ -15,7 +15,7 @@ public class DurationUnitType extends ExpressionType<DurationUnit>
 
     /**
      * Constructor with value.
-     * @param value DurationUnit; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public DurationUnitType(final DurationUnit value)
     {
@@ -24,7 +24,7 @@ public class DurationUnitType extends ExpressionType<DurationUnit>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public DurationUnitType(final String expression)
     {

@@ -51,9 +51,9 @@ public final class TransformWgs84DutchRdNew
 
     /**
      * Convert from WGS84 to RD coordinates.
-     * @param wgs84East double; Degrees East of Greenwich
-     * @param wgs84North double; Degrees North of the equator
-     * @return Point2D; equivalent location in the Dutch RD system
+     * @param wgs84East Degrees East of Greenwich
+     * @param wgs84North Degrees North of the equator
+     * @return equivalent location in the Dutch RD system
      */
     private static Point2D.Double ellipseWgs84ToRd(final double wgs84East, final double wgs84North)
     {
@@ -105,9 +105,9 @@ public final class TransformWgs84DutchRdNew
 
     /**
      * Convert coordinates from WGS84 to the Dutch RD system.
-     * @param rdX double; X coordinate in the Dutch RD system
-     * @param rdY double; Y coordinate in the Dutch RD system
-     * @return Point2D; equivalent location in the WGS84 system
+     * @param rdX X coordinate in the Dutch RD system
+     * @param rdY Y coordinate in the Dutch RD system
+     * @return equivalent location in the WGS84 system
      * @throws IllegalArgumentException when the given coordinates are not within the area of the Dutch RD system
      */
     private static Point2D rdToEllipseWgs84(final double rdX, final double rdY) throws IllegalArgumentException
@@ -160,8 +160,8 @@ public final class TransformWgs84DutchRdNew
 
     /**
      * Convert a coordinate pair in the local system to WGS84 coordinates.
-     * @param local Point2D; coordinates in the local system.
-     * @return Point2D; the equivalent location in degrees in the WGS84 coordinate system
+     * @param local coordinates in the local system.
+     * @return the equivalent location in degrees in the WGS84 coordinate system
      * @throws IllegalArgumentException when <cite>local</cite> is not valid in the local system
      */
     public static Point2D toWgs84(final Point2D local) throws IllegalArgumentException
@@ -171,9 +171,9 @@ public final class TransformWgs84DutchRdNew
 
     /**
      * Convert a coordinate pair in the local system to WGS84 coordinates.
-     * @param localX double; X-coordinate in the local system
-     * @param localY double; Y-coordinate in the local system
-     * @return Point2D; the equivalent location in degrees in the WGS84 coordinate system
+     * @param localX X-coordinate in the local system
+     * @param localY Y-coordinate in the local system
+     * @return the equivalent location in degrees in the WGS84 coordinate system
      * @throws IllegalArgumentException when <cite>localX</cite>, <cite>localY</cite> is not valid in the local system
      */
     public static Point2D toWgs84(final double localX, final double localY) throws IllegalArgumentException
@@ -183,8 +183,8 @@ public final class TransformWgs84DutchRdNew
 
     /**
      * Convert a coordinate pair in WGS84 coordinates to local coordinates.
-     * @param wgs84 Point2D; coordinates in degrees in the WGS84 coordinate system
-     * @return Point2D; the equivalent location in the local coordinate system
+     * @param wgs84 coordinates in degrees in the WGS84 coordinate system
+     * @return the equivalent location in the local coordinate system
      * @throws IllegalArgumentException when <cite>wgs84</cite> is not valid in the local system
      */
     public static Point2D fromWgs84(final Point2D wgs84) throws IllegalArgumentException
@@ -194,9 +194,9 @@ public final class TransformWgs84DutchRdNew
 
     /**
      * Convert a coordinate pair in WGS84 coordinates to local coordinates.
-     * @param wgs84East double; East coordinate in degrees in the WGS84 system (negative value indicates West)
-     * @param wgs84North double; North coordinate in degrees in the WGS84 system (negative value indicates South)
-     * @return Point2D; the equivalent location in the local coordinate system
+     * @param wgs84East East coordinate in degrees in the WGS84 system (negative value indicates West)
+     * @param wgs84North North coordinate in degrees in the WGS84 system (negative value indicates South)
+     * @return the equivalent location in the local coordinate system
      * @throws IllegalArgumentException when <cite>wgs84</cite> is not valid in the local system
      */
     public static Point2D fromWgs84(final double wgs84East, final double wgs84North) throws IllegalArgumentException
@@ -210,7 +210,7 @@ public final class TransformWgs84DutchRdNew
      * range is not adequately described by a rectangular bounding box, conversions for some areas within this bounding box may
      * also fail (with an IllegalArgumentException). There is no guarantee that the result of a conversion lies within the
      * bounding box for the reverse conversion.
-     * @return Rectangle2D; bounding box in WGS84 degrees
+     * @return bounding box in WGS84 degrees
      */
     public static Rectangle2D fromWgs84Bounds()
     {
@@ -224,7 +224,7 @@ public final class TransformWgs84DutchRdNew
      * range is not adequately described by a rectangular bounding box, conversions for some areas within this bounding box may
      * also fail (with an IllegalArgumentException). There is no guarantee that the result of a conversion lies within the
      * bounding box for the reverse conversion.
-     * @return Rectangle2D; bounding box of the local coordinate system
+     * @return bounding box of the local coordinate system
      */
     public static Rectangle2D toWgs84Bounds()
     {

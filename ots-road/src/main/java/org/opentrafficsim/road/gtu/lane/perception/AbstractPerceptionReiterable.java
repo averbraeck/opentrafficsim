@@ -43,7 +43,7 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
 
     /**
      * Constructor.
-     * @param perceivingGtu LaneBasedGtu; perceiving GTU
+     * @param perceivingGtu perceiving GTU
      */
     protected AbstractPerceptionReiterable(final LaneBasedGtu perceivingGtu)
     {
@@ -52,7 +52,7 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
 
     /**
      * Returns the GTU.
-     * @return LaneBasedGtu; GTU
+     * @return GTU
      */
     protected LaneBasedGtu getGtu()
     {
@@ -61,7 +61,7 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
 
     /**
      * Returns the primary iterator.
-     * @return Iterator; primary iterator
+     * @return primary iterator
      */
     final Iterator<PrimaryIteratorEntry> getPrimaryIterator()
     {
@@ -74,16 +74,16 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
 
     /**
      * Returns the primary iterator. This method is called once by AbstractPerceptionReiterable.
-     * @return Iterator; primary iterator
+     * @return primary iterator
      */
     protected abstract Iterator<PrimaryIteratorEntry> primaryIterator();
 
     /**
      * Returns a perceived version of the underlying object.
-     * @param perceivingGtu LaneBasedGtu; perceiving GTU
-     * @param object U; underlying object
-     * @param distance Length; distance to the object
-     * @return H; perceived version of the underlying object
+     * @param perceivingGtu perceiving GTU
+     * @param object underlying object
+     * @param distance distance to the object
+     * @return perceived version of the underlying object
      * @throws GtuException on exception
      * @throws ParameterException on invalid parameter value or missing parameter
      */
@@ -115,7 +115,7 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
 
     /**
      * Adds an iterator entry to the internal linked list.
-     * @param next PrimaryIteratorEntry; next object
+     * @param next next object
      */
     @SuppressWarnings("synthetic-access")
     final void addNext(final PrimaryIteratorEntry next)
@@ -303,9 +303,9 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
     /**
      * Helper method that assures that a next entry is available, if the primary iterator has a next value. This method may be
      * used by any process that derives from the primary iterator.
-     * @param next SecondaryIteratorEntry; currently known next entry
-     * @param lastReturned SecondaryIteratorEntry; entry of last returned object or value
-     * @return IteratorEntry; next entry
+     * @param next currently known next entry
+     * @param lastReturned entry of last returned object or value
+     * @return next entry
      */
     synchronized SecondaryIteratorEntry assureNext(final SecondaryIteratorEntry next, final SecondaryIteratorEntry lastReturned)
     {
@@ -352,8 +352,8 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
 
         /**
          * Constructor.
-         * @param object U; object
-         * @param distance Length; distance
+         * @param object object
+         * @param distance distance
          */
         public PrimaryIteratorEntry(final U object, final Length distance)
         {
@@ -370,7 +370,7 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
 
         /**
          * Returns the object.
-         * @return U; object
+         * @return object
          */
         protected U getObject()
         {
@@ -405,8 +405,8 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
 
         /**
          * Constructor.
-         * @param object U; object
-         * @param distance Length; distance to object
+         * @param object object
+         * @param distance distance to object
          */
         SecondaryIteratorEntry(final U object, final Length distance)
         {
@@ -416,7 +416,7 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
 
         /**
          * Returns the perceived version of the object.
-         * @return H; perceived version of the object
+         * @return perceived version of the object
          */
         H getValue()
         {

@@ -36,7 +36,7 @@ public class Speed3d implements Serializable
 
     /**
      * Construct a new Speed3d from vector of strongly typed Cartesian coordinates.
-     * @param speed SpeedVector; the speeds in 3D (YPR coded)
+     * @param speed the speeds in 3D (YPR coded)
      * @throws ValueRuntimeException in case the vector does not have exactly three elements
      */
     public Speed3d(final SpeedVector speed) throws ValueRuntimeException
@@ -50,9 +50,9 @@ public class Speed3d implements Serializable
 
     /**
      * Construct a new Speed3d from three strongly typed Cartesian coordinates.
-     * @param x Speed; the speed in the x-direction
-     * @param y Speed; the speed in the y-direction
-     * @param z Speed; the speed in the z-direction
+     * @param x the speed in the x-direction
+     * @param y the speed in the y-direction
+     * @param z the speed in the z-direction
      * @throws ValueRuntimeException in case the units are incorrect
      */
     public Speed3d(final Speed x, final Speed y, final Speed z) throws ValueRuntimeException
@@ -62,10 +62,10 @@ public class Speed3d implements Serializable
 
     /**
      * Construct a new Speed3d from three double Cartesian coordinates and a speed unit.
-     * @param x double; the speed in the x-direction
-     * @param y double; the speed in the y-direction
-     * @param z double; the speed in the z-direction
-     * @param unit SpeedUnit; the unit of the xyz parameters
+     * @param x the speed in the x-direction
+     * @param y the speed in the y-direction
+     * @param z the speed in the z-direction
+     * @param unit the unit of the xyz parameters
      * @throws ValueRuntimeException in case the units are incorrect
      */
     public Speed3d(final double x, final double y, final double z, final SpeedUnit unit) throws ValueRuntimeException
@@ -75,9 +75,9 @@ public class Speed3d implements Serializable
 
     /**
      * Construct a new Speed3d from a strongly typed speed and polar coordinates.
-     * @param speed Speed; the speed in the direction of the angle along the vector
-     * @param theta Direction; the angle from the z direction
-     * @param phi Direction; the projected angle in the xy-plane from the x direction
+     * @param speed the speed in the direction of the angle along the vector
+     * @param theta the angle from the z direction
+     * @param phi the projected angle in the xy-plane from the x direction
      * @throws ValueRuntimeException in case the vector does not have exactly three elements
      */
     public Speed3d(final Speed speed, final Direction theta, final Direction phi) throws ValueRuntimeException

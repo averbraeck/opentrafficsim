@@ -21,8 +21,8 @@ public class DiscreteDistArea extends DiscreteDistDoubleScalar.Rel<Area, AreaUni
     private static final long serialVersionUID = 20180829L;
 
     /**
-     * @param distribution DistDiscrete; distribution
-     * @param unit AreaUnit; units
+     * @param distribution distribution
+     * @param unit units
      */
     public DiscreteDistArea(final DistDiscrete distribution, final AreaUnit unit)
     {

@@ -22,7 +22,7 @@ public interface TrafficController extends EventProducer, EventListener, NonLoca
 {
     /**
      * Retrieve the Id of the traffic light controller.
-     * @return String; the id of the traffic light controller
+     * @return the id of the traffic light controller
      */
     @Override
     String getId();

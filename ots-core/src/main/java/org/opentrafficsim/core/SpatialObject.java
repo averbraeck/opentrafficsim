@@ -17,7 +17,7 @@ public interface SpatialObject
 {
     /**
      * Return the shape of the object.
-     * @return OtsShape; the shape of the object
+     * @return the shape of the object
      */
     Polygon2d getShape();
 

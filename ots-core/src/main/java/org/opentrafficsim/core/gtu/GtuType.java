@@ -39,7 +39,7 @@ public final class GtuType extends HierarchicalType<GtuType, Gtu>
 
     /**
      * Constructor for root-level GTU types. The parent will be {@code null}.
-     * @param id String; The id of the GtuType to make it identifiable.
+     * @param id The id of the GtuType to make it identifiable.
      * @throws NullPointerException if the id is null
      */
     public GtuType(final String id) throws NullPointerException
@@ -48,8 +48,8 @@ public final class GtuType extends HierarchicalType<GtuType, Gtu>
     }
 
     /**
-     * @param id String; The id of the GtuType to make it identifiable.
-     * @param parent GtuType; parent GTU type.
+     * @param id The id of the GtuType to make it identifiable.
+     * @param parent parent GTU type.
      * @throws NullPointerException if the id is null
      */
     public GtuType(final String id, final GtuType parent) throws NullPointerException
@@ -60,7 +60,7 @@ public final class GtuType extends HierarchicalType<GtuType, Gtu>
     /**
      * Returns the marker. If no marker is specified, the marker of the parent type is requested. If there is also no parent
      * type, {@code Marker.CIRCLE} is returned.
-     * @return Marker; returns the marker to draw a GTU with when zoomed out.
+     * @return returns the marker to draw a GTU with when zoomed out.
      */
     public Marker getMarker()
     {
@@ -69,7 +69,7 @@ public final class GtuType extends HierarchicalType<GtuType, Gtu>
 
     /**
      * Sets the marker.
-     * @param marker Marker; marker, may be {@code null} in which case the parent type is referred to.
+     * @param marker marker, may be {@code null} in which case the parent type is referred to.
      */
     public void setMarker(final Marker marker)
     {
@@ -78,8 +78,8 @@ public final class GtuType extends HierarchicalType<GtuType, Gtu>
 
     /**
      * Register a supplier for default GTU types.
-     * @param gtuType GtuType; default GTU type.
-     * @param defaults BiFunction&lt;GtuType, StreamInterface, TemplateGtuType&gt;; supplier of the template.
+     * @param gtuType default GTU type.
+     * @param defaults supplier of the template.
      */
     public static void registerTemplateSupplier(final GtuType gtuType,
             final BiFunction<GtuType, StreamInterface, GtuTemplate> defaults)
@@ -89,9 +89,9 @@ public final class GtuType extends HierarchicalType<GtuType, Gtu>
 
     /**
      * Returns default characteristics for given GtuType.
-     * @param gtuType GtuType; GtuType GTU type
-     * @param network Network; the network to use as a key
-     * @param randomStream StreamInterface; stream for random numbers
+     * @param gtuType GtuType GTU type
+     * @param network the network to use as a key
+     * @param randomStream stream for random numbers
      * @return default characteristics for given GtuType
      * @throws GtuException if there are no default characteristics for the GTU type
      */

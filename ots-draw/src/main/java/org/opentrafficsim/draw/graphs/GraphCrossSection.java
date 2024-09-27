@@ -33,9 +33,9 @@ public class GraphCrossSection<S> extends AbstractGraphSpace<S>
 
     /**
      * Constructor for a one-series cross section.
-     * @param seriesName String; name of series
-     * @param section Section&lt;S&gt;; section
-     * @param position Length; position on the section
+     * @param seriesName name of series
+     * @param section section
+     * @param position position on the section
      */
     public GraphCrossSection(final String seriesName, final Section<S> section, final Length position)
     {
@@ -58,9 +58,9 @@ public class GraphCrossSection<S> extends AbstractGraphSpace<S>
 
     /**
      * Constructor.
-     * @param seriesNames List&lt;String&gt;; names of series
-     * @param section Section&lt;S&gt;; section
-     * @param positions List&lt;Length&gt;; position on the section
+     * @param seriesNames names of series
+     * @param section section
+     * @param positions position on the section
      */
     public GraphCrossSection(final List<String> seriesNames, final Section<S> section, final List<Length> positions)
     {
@@ -71,8 +71,8 @@ public class GraphCrossSection<S> extends AbstractGraphSpace<S>
 
     /**
      * Returns the underlying source of the series.
-     * @param series int; series number
-     * @return S; underlying source of the series
+     * @param series series number
+     * @return underlying source of the series
      */
     public S getSource(final int series)
     {
@@ -90,8 +90,8 @@ public class GraphCrossSection<S> extends AbstractGraphSpace<S>
 
     /**
      * Returns the position on the underlying source of the series.
-     * @param series int; series number
-     * @return Length; position on the underlying source of the series
+     * @param series series number
+     * @return position on the underlying source of the series
      */
     public Length position(final int series)
     {

@@ -54,7 +54,7 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
     public static ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 
     /**
-     * @param perception LanePerception; perception
+     * @param perception perception
      */
     public DirectInfrastructurePerception(final LanePerception perception)
     {
@@ -107,9 +107,9 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
 
     /**
      * Compute lane change info.
-     * @param lane RelativeLane; lane.
-     * @param laneLaw LaneLaw; lane change law.
-     * @return SortedSet&lt;InfrastructureLaneChangeInfo&gt;; lane change info.
+     * @param lane lane.
+     * @param laneLaw lane change law.
+     * @return lane change info.
      */
     private SortedSet<LaneChangeInfo> computeLaneChangeInfo(final RelativeLane lane, final LaneAccessLaw laneLaw)
     {
@@ -171,8 +171,8 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
 
     /**
      * Compute speed limit prospect.
-     * @param lane RelativeLane; lane.
-     * @return SpeedLimitProspect; speed limit prospect.
+     * @param lane lane.
+     * @return speed limit prospect.
      */
     private SpeedLimitProspect computeSpeedLimitProspect(final RelativeLane lane)
     {
@@ -189,10 +189,10 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
 
     /**
      * Compute lane change possibility.
-     * @param fromLane RelativeLane; lane to possibly change from.
-     * @param lat LateralDirectionality; direction to change to.
-     * @param accessLaw LaneAccessLaw; legal or physical.
-     * @return Length; length over which a lane change is possible, or not for a negative value.
+     * @param fromLane lane to possibly change from.
+     * @param lat direction to change to.
+     * @param accessLaw legal or physical.
+     * @return length over which a lane change is possible, or not for a negative value.
      */
     private Length computeLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat,
             final LaneAccessLaw accessLaw)
@@ -254,10 +254,10 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
 
     /**
      * Returns whether the lane change is possible.
-     * @param record LaneRecord; record.
-     * @param lat LateralDirectionality; direction of lane change.
-     * @param accessLaw LaneAccessLaw; legal or physical.
-     * @return boolean; whether the lane change is possible.
+     * @param record record.
+     * @param lat direction of lane change.
+     * @param accessLaw legal or physical.
+     * @return whether the lane change is possible.
      */
     private boolean canChange(final LaneRecord record, final LateralDirectionality lat, final LaneAccessLaw accessLaw)
     {
@@ -268,7 +268,7 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
 
     /**
      * Returns the lane structure.
-     * @return LaneStructure; lane structure.
+     * @return lane structure.
      */
     private LaneStructure getLaneStructure()
     {

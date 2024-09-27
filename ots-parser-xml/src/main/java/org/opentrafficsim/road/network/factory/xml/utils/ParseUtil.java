@@ -37,8 +37,8 @@ public final class ParseUtil
     /**
      * Returns all objects of given type from the list of all objects. The returned list may be altered as it is not backed by
      * the input list.
-     * @param objectList List&lt;?&gt;; list of objects
-     * @param clazz Class&lt;T&gt;; class of type of objects to return
+     * @param objectList list of objects
+     * @param clazz class of type of objects to return
      * @param <T> type
      * @return list of all objects of given type from the list of all objects
      */
@@ -60,7 +60,7 @@ public final class ParseUtil
      * Find and return the stream belonging to te streamId.
      * @param streamInformation the map with streams from the RUN tag
      * @param streamSource the stream source
-     * @param eval Eval; expression evaluator.
+     * @param eval expression evaluator.
      * @return the stream belonging to te streamId
      * @throws XmlParserException when the stream could not be found
      */
@@ -86,11 +86,11 @@ public final class ParseUtil
         }
         return streamInformation.getStream(streamId);
     }
-    
+
     /**
      * Parse LengthBeginEnd for a Lane.
-     * @param lbe LengthBeginEnd; the begin, end, fraction, or offset from begin or end on the lane
-     * @param laneLength Length; the length of the lane
+     * @param lbe the begin, end, fraction, or offset from begin or end on the lane
+     * @param laneLength the length of the lane
      * @return the offset on the lane
      */
     public static Length parseLengthBeginEnd(final LengthBeginEnd lbe, final Length laneLength)
@@ -110,9 +110,9 @@ public final class ParseUtil
 
     /**
      * Parse room checker.
-     * @param roomChecker RoomCheckerType; room checker type
-     * @param eval Eval; expression evaluator.
-     * @return RoomChecker; parsed room checker
+     * @param roomChecker room checker type
+     * @param eval expression evaluator.
+     * @return parsed room checker
      */
     public static RoomChecker parseRoomChecker(final RoomCheckerType roomChecker, final Eval eval)
     {

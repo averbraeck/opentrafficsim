@@ -147,12 +147,12 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
 
     /**
      * Construct a panel that looks like the DSOLPanel for quick building of OTS applications.
-     * @param extent Rectangle2D; bottom left corner, length and width of the area (world) to animate.
-     * @param size Dimension; the size to be used for the animation.
-     * @param simulator OTSAnimator; the simulator or animator of the model.
-     * @param otsModel OtsModelInterface; the builder and rebuilder of the simulation, based on properties.
-     * @param gtuColorer GtuColorer; the colorer to use for the GTUs.
-     * @param network Network; network
+     * @param extent bottom left corner, length and width of the area (world) to animate.
+     * @param size the size to be used for the animation.
+     * @param simulator the simulator or animator of the model.
+     * @param otsModel the builder and rebuilder of the simulation, based on properties.
+     * @param gtuColorer the colorer to use for the GTUs.
+     * @param network network
      * @throws RemoteException when notification of the animation panel fails
      * @throws DsolException when simulator does not implement AnimatorInterface
      */
@@ -237,9 +237,9 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
 
     /**
      * Change auto pan target.
-     * @param newAutoPanId String; id of object to track (or
-     * @param newAutoPanKind String; kind of object to track
-     * @param newAutoPanTrack boolean; if true; tracking is continuously; if false; tracking is once
+     * @param newAutoPanId id of object to track (or
+     * @param newAutoPanKind kind of object to track
+     * @param newAutoPanTrack if true; tracking is continuously; if false; tracking is once
      */
     public void setAutoPan(final String newAutoPanId, final OtsSearchPanel.ObjectKind<?> newAutoPanKind,
             final boolean newAutoPanTrack)
@@ -258,11 +258,11 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
 
     /**
      * Create a button.
-     * @param name String; name of the button
-     * @param iconPath String; path to the resource
-     * @param actionCommand String; the action command
-     * @param toolTipText String; the hint to show when the mouse hovers over the button
-     * @param enabled boolean; true if the new button must initially be enable; false if it must initially be disabled
+     * @param name name of the button
+     * @param iconPath path to the resource
+     * @param actionCommand the action command
+     * @param toolTipText the hint to show when the mouse hovers over the button
+     * @param enabled true if the new button must initially be enable; false if it must initially be disabled
      * @return JButton
      */
     private JButton makeButton(final String name, final String iconPath, final String actionCommand, final String toolTipText,
@@ -284,12 +284,12 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
      * Add a button for toggling an animatable class on or off. Button icons for which 'idButton' is true will be placed to the
      * right of the previous button, which should be the corresponding button without the id. An example is an icon for
      * showing/hiding the class 'Lane' followed by the button to show/hide the Lane ids.
-     * @param name String; the name of the button
-     * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the button holds (e.g., GTU.class)
-     * @param iconPath String; the path to the 24x24 icon to display
-     * @param toolTipText String; the tool tip text to show when hovering over the button
-     * @param initiallyVisible boolean; whether the class is initially shown or not
-     * @param idButton boolean; id button that needs to be placed next to the previous button
+     * @param name the name of the button
+     * @param locatableClass the class for which the button holds (e.g., GTU.class)
+     * @param iconPath the path to the 24x24 icon to display
+     * @param toolTipText the tool tip text to show when hovering over the button
+     * @param initiallyVisible whether the class is initially shown or not
+     * @param idButton id button that needs to be placed next to the previous button
      */
     public final void addToggleAnimationButtonIcon(final String name, final Class<? extends Locatable> locatableClass,
             final String iconPath, final String toolTipText, final boolean initiallyVisible, final boolean idButton)
@@ -337,10 +337,10 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
 
     /**
      * Add a button for toggling an animatable class on or off.
-     * @param name String; the name of the button
-     * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the button holds (e.g., GTU.class)
-     * @param toolTipText String; the tool tip text to show when hovering over the button
-     * @param initiallyVisible boolean; whether the class is initially shown or not
+     * @param name the name of the button
+     * @param locatableClass the class for which the button holds (e.g., GTU.class)
+     * @param toolTipText the tool tip text to show when hovering over the button
+     * @param initiallyVisible whether the class is initially shown or not
      */
     public final void addToggleAnimationButtonText(final String name, final Class<? extends Locatable> locatableClass,
             final String toolTipText, final boolean initiallyVisible)
@@ -374,7 +374,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
 
     /**
      * Add a text to explain animatable classes.
-     * @param text String; the text to show
+     * @param text the text to show
      */
     public final void addToggleText(final String text)
     {
@@ -387,9 +387,9 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
 
     /**
      * Add buttons for toggling all GIS layers on or off.
-     * @param header String; the name of the group of layers
-     * @param gisMap GisRenderable2d; the GIS map for which the toggles have to be added
-     * @param toolTipText String; the tool tip text to show when hovering over the button
+     * @param header the name of the group of layers
+     * @param gisMap the GIS map for which the toggles have to be added
+     * @param toolTipText the tool tip text to show when hovering over the button
      */
     public final void addAllToggleGISButtonText(final String header, final GisRenderable2d gisMap, final String toolTipText)
     {
@@ -410,10 +410,10 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
 
     /**
      * Add a button to toggle a GIS Layer on or off.
-     * @param layerName String; the name of the layer
-     * @param displayName String; the name to display next to the tick box
-     * @param gisMap GisRenderable2d; the map
-     * @param toolTipText String; the tool tip text
+     * @param layerName the name of the layer
+     * @param displayName the name to display next to the tick box
+     * @param gisMap the map
+     * @param toolTipText the tool tip text
      */
     public final void addToggleGISButtonText(final String layerName, final String displayName, final GisRenderable2d gisMap,
             final String toolTipText)
@@ -439,7 +439,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
 
     /**
      * Set a GIS layer to be shown in the animation to true.
-     * @param layerName String; the name of the GIS-layer that has to be shown.
+     * @param layerName the name of the GIS-layer that has to be shown.
      */
     public final void showGISLayer(final String layerName)
     {
@@ -461,7 +461,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
 
     /**
      * Set a GIS layer to be hidden in the animation to true.
-     * @param layerName String; the name of the GIS-layer that has to be hidden.
+     * @param layerName the name of the GIS-layer that has to be hidden.
      */
     public final void hideGISLayer(final String layerName)
     {
@@ -483,7 +483,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
 
     /**
      * Toggle a GIS layer to be displayed in the animation to its reverse value.
-     * @param layerName String; the name of the GIS-layer that has to be turned off or vice versa.
+     * @param layerName the name of the GIS-layer that has to be turned off or vice versa.
      */
     public final void toggleGISLayer(final String layerName)
     {
@@ -562,7 +562,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
 
     /**
      * Creates a demo panel within the animation area.
-     * @param position String; any string from BorderLayout indicating the position of the demo panel, except CENTER.
+     * @param position any string from BorderLayout indicating the position of the demo panel, except CENTER.
      * @throws IllegalStateException if the panel was already created
      */
     public void createDemoPanel(final DemoPanelPosition position)
@@ -584,7 +584,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
 
     /**
      * Return a panel for on-screen demo controls. The panel is create on first call.
-     * @return JPanel; panel
+     * @return panel
      */
     public JPanel getDemoPanel()
     {
@@ -623,7 +623,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
 
     /**
      * Update the checkmark related to a programmatically changed animation state.
-     * @param locatableClass Class&lt;? extends Locatable&gt;; class to show the checkmark for
+     * @param locatableClass class to show the checkmark for
      */
     public final void updateAnimationClassCheckBox(final Class<? extends Locatable> locatableClass)
     {
@@ -699,7 +699,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         private OtsAnimationPanel panel;
 
         /**
-         * @param panel OtsAnimationPanel; the OTSControlpanel container.
+         * @param panel the OTSControlpanel container.
          */
         public DisposeOnCloseThread(final OtsAnimationPanel panel)
         {
@@ -875,10 +875,10 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
 
         /**
          * Constructor.
-         * @param extent Rectangle2D; home extent
-         * @param size Dimension; size
-         * @param simulator SimulatorInterface&lt;?, ?, ?&gt;; simulator
-         * @param network Network; network
+         * @param extent home extent
+         * @param size size
+         * @param simulator simulator
+         * @param network network
          * @throws RemoteException on remote animation error
          * @throws DsolException when simulator does not implement AnimatorInterface
          */
@@ -961,9 +961,9 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
 
         /**
          * Zoom vertical.
-         * @param factor double; The zoom factor
-         * @param mouseX int; x-position of the mouse around which we zoom
-         * @param mouseY int; y-position of the mouse around which we zoom
+         * @param factor The zoom factor
+         * @param mouseX x-position of the mouse around which we zoom
+         * @param mouseY y-position of the mouse around which we zoom
          */
         final synchronized void zoomVertical(final double factor, final int mouseX, final int mouseY)
         {
@@ -978,9 +978,9 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
 
         /**
          * Zoom horizontal.
-         * @param factor double; The zoom factor
-         * @param mouseX int; x-position of the mouse around which we zoom
-         * @param mouseY int; y-position of the mouse around which we zoom
+         * @param factor The zoom factor
+         * @param mouseX x-position of the mouse around which we zoom
+         * @param mouseY y-position of the mouse around which we zoom
          */
         final synchronized void zoomHorizontal(final double factor, final int mouseX, final int mouseY)
         {
@@ -995,7 +995,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
 
         /**
          * returns the list of selected objects at a certain mousePoint.
-         * @param mousePoint Point2D; the mousePoint
+         * @param mousePoint the mousePoint
          * @return the selected objects
          */
         @SuppressWarnings("synthetic-access")
@@ -1087,7 +1087,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         private final String direction;
 
         /**
-         * @param direction String; value used in {@code BorderLayout}
+         * @param direction value used in {@code BorderLayout}
          */
         DemoPanelPosition(final String direction)
         {
@@ -1095,7 +1095,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         }
 
         /**
-         * @return direction String; value used in {@code BorderLayout}
+         * @return value used in {@code BorderLayout}
          */
         public String getBorderLayoutPosition()
         {
