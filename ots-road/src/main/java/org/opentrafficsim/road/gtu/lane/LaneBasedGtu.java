@@ -176,7 +176,7 @@ public class LaneBasedGtu extends Gtu
      * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType
      * @param length the maximum length of the GTU (parallel with driving direction)
      * @param width the maximum width of the GTU (perpendicular to driving direction)
-     * @param maximumSpeed Speed;the maximum speed of the GTU (in the driving direction)
+     * @param maximumSpeed the maximum speed of the GTU (in the driving direction)
      * @param front front distance relative to the reference position
      * @param network the network that the GTU is initially registered in
      * @throws GtuException when initial values are not correct
