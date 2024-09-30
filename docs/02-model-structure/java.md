@@ -129,7 +129,7 @@ Next, we give an example of _super_ generics, which are often considered vague, 
     }
 ```
 
-Next, we show an example using quite some type arguments, to show that although at first glance this may seem unclear, it makes perfect sense. The example discusses a `PerceptionCollectable`. It is designed to allow iteration over perceived representations of type `H` regarding underlying objects in simulation of type `U`. Furthermore, it can perceive a collected result of type `C`, resulting from considering all objects of type `U` together. Finally, as the collected (accumulated) result is determined, there is an intermediate result of type `I`. As a concrete example, density may be determined by considering leaders of type `U = GTU`, perceived as `H = HeadwayGTU`, resulting in a density `C = LinearDensity`, with an intermediate type `I` which is some class that stores a cumulative GTU count, and the distance over which these GTUs are found. The identity returns an initial value for this (count = 0), while the accumulator increases the result for every next GTU, and the finalizer translates the last intermediate result in a density. We again see the `super` keyword, as for instance we could have a `PerceptionCollectable` of lane-based GTUs with `U = LaneBasedGTU`. From the set of lane-based GTUs we could use an accumulator of GTUs (so a superclass of `LaneBasedGTU`) as for instance only speed is used, which GTUs also have. Without the super keyword, a `PerceptionAccumulator<GTU, ?>` could not be used.
+Next, we show an example using quite some type arguments, to show that although at first glance this may seem unclear, it makes perfect sense. The example discusses a `PerceptionCollectable`. It is designed to allow iteration over perceived representations of type `H` regarding underlying objects in simulation of type `U`. Furthermore, it can perceive a collected result of type `C`, resulting from considering all objects of type `U` together. Finally, as the collected (accumulated) result is determined, there is an intermediate result of type `I`. As a concrete example, density may be determined by considering leaders of type `U = Gtu`, perceived as `H = HeadwayGtu`, resulting in a density `C = LinearDensity`, with an intermediate type `I` which is some class that stores a cumulative GTU count, and the distance over which these GTUs are found. The identity returns an initial value for this (count = 0), while the accumulator increases the result for every next GTU, and the finalizer translates the last intermediate result in a density. We again see the `super` keyword, as for instance we could have a `PerceptionCollectable` of lane-based GTUs with `U = LaneBasedGtu`. From the set of lane-based GTUs we could use an accumulator of GTUs (so a superclass of `LaneBasedGtu`) as for instance only speed is used, which GTUs also have. Without the super keyword, a `PerceptionAccumulator<Gtu, ?>` could not be used.
 
 ```java
     public interface PerceptionCollectable<H extends Headway, U> 
@@ -141,14 +141,13 @@ Next, we show an example using quite some type arguments, to show that although 
     }
 ```
 
-At the beginning of this section it was mentioned that good design should hide much of the underlying java generics being used in lower level classes. Though this is true, it doesn’t excuse the developer of low-level functionality from using comprehensive java generics. As an example of how comprehensive java generics can be hidden, consider the class `Length`. Below the definition of its comprehensive super class is shown. Users of `Length` have to define _no type argument_, but lower level classes make sure that correct calculations are made (e.g. adding `Length` and not `Speed`) and only units pertaining to the length quantity are used.
+At the beginning of this section it was mentioned that good design should hide much of the underlying java generics being used in lower level classes. Though this is true, it doesn’t excuse the developer of low-level functionality from using comprehensive java generics. As an example of how comprehensive java generics can be hidden, consider the class `Length`. Below the definition of its 2nd comprehensive super class is shown. Users of `Length` have to define _no type argument_, but lower level classes make sure that correct calculations are made (e.g. adding `Length` and not `Speed`) and only units pertaining to the length quantity are used.
 
 ```java
-    public interface PerceptionCollectable<H extends Headway, U> extends PerceptionIterable<H>
-    {
-        <C, I> C collect(Supplier<I> identity, PerceptionAccumulator<? super U, I> accumulator,
-                PerceptionFinalizer<C, I> finalizer);
-    }
+public abstract class DoubleScalarRelWithAbs<AU extends AbsoluteLinearUnit<AU, RU>,
+        A extends DoubleScalarAbs<AU, A, RU, R>, RU extends Unit<RU>,
+        R extends DoubleScalarRelWithAbs<AU, A, RU, R>> extends DoubleScalarRel<RU, R>
+        implements RelWithAbs<AU, A, RU, R>
 ```
 
 These are just a few examples of how java generics is used in OTS. If done well, it’s only a ‘relative headache’ at one location, while providing high flexibility, reusability and cleaner and more intuitive code elsewhere.
