@@ -12,16 +12,56 @@ Eclipse is an Integrated Development Environment (IDE), which is a tool that off
 * Checkstyle; checkstyle is a plugin for Eclipse which prescribes a consistent way of formatting code between developers of OTS. Think about line length, bracket placement, etc.
 
 <table border=1 id="figure-2.2" style="text-align: center">
-    <tr><td colspan=6><b>ots-demo</b><br><i>contains demo's and should be the starting point for getting to know OTS</i></td></tr>
-    <tr><td rowspan=2 width=20%><b>ots-parser-osm</b><br><i>open streetmap network import</i></td><td width=20%><b>ots-swing</b><br><i>java based animation</i></td><td colspan=2><b>ots-web</b><br><i>browser based animation</i></td><td colspan=2 width=40%><b>ots-parser-xml</b><br><i>native xml network import</i></td></tr>
-    <tr><td colspan=4><b>ots-draw</b><br><i>swing mimicking fuctionality</i></td><td rowspan=2 width=20%><b>ots-trafficcontrol</b><br><i>event-based traffic control</i></td></tr>
-    <tr><td colspan=5><b>ots-animation</b><br><i>animation functionality independent of implementation</i></td></tr>
-    <tr><td colspan=6><b>ots-road</b><br><i>microscopic simulation of vehicular traffic</i></td></tr>
-    <tr><td colspan=3><b>ots-core</b><br><i>core of traffic simulation including network representation and macroscopic models</i></td><td colspan=3><b>ots-kpi</b><br><i>stand-alone key-performance-indicator module, including trajectory sampling</i></td></tr>
-    <tr><td colspan=6><b>ots-base</b><br><i>contains some generic simulation utilities such as parameter management</i></td></tr>
+    <tr>
+        <td colspan=4><b>ots-demo</b> | <b>ots-editor</b><br><i>demo's and user interface, this should be the starting point for getting to know OTS</i></td>
+    </tr>
+    <tr>
+        <td colspan=2 width=50%><b>ots-parser-xml</b><br><i>native xml import</i></td>
+        <td colspan=2><b>ots-swing</b><br><i>java based animation</i></td>
+    </tr>
+    <tr>
+        <td colspan=2><b>ots-trafficcontrol</b><br><i>event-based traffic control</i></td>
+        <td colspan=2><b>ots-animation</b><br><i>animation functionality independent of implementation</i></td>
+    </tr>
+    <tr>
+        <td colspan=3 width=75%><b>ots-road</b><br><i>microscopic simulation of vehicular traffic</i></td>
+        <td colspan=1><b>ots-draw</b><br><i>swing mimicking fuctionality</i></td>
+    </tr>
+    <tr>
+        <td colspan=2><b>ots-core</b><br><i>core of traffic simulation including network representation and macroscopic models</i></td>
+        <td colspan=2><b>ots-kpi</b><br><i>stand-alone key-performance-indicator module, including trajectory sampling</i></td>
+    </tr>
+    <tr>
+        <td colspan=4><b>ots-base</b><br><i>contains some generic simulation utilities such as parameter management</i></td>
+    </tr>
 </table>
-<i>Figure 2.2: OTS project dependencies. Projects depend on the projects directly below them. Project <b>ots-parser-xml</b> also depends on a separate project <b>ots-xsd</b>, containing xml specifications.</i>
+<i>Figure 2.2: OTS project dependencies. Projects depend on the projects directly below them.</i>
 
+Other dependencies are:
+<ul>
+    <li><b>ots-web</b> <i>web-based visualization</i>
+        <ul>
+            <li><b>ots-parser-xml</b></li>
+            <li><b>ots-animation</b></li>
+        </ul>
+    </li>
+    <li><b>ots-sim0mq-swing</b> <i>databus communication examples</i>
+        <ul>
+            <li><b>ots-sim0mq</b></li>
+            <li><b>ots-swing</b></li>
+        </ul>
+    </li>
+    <li><b>ots-sim0mq-kpi</b> <i>databus communication kpi examples</i>
+        <ul>
+            <li><b>ots-sim0mq</b></li>
+        </ul>
+    </li>
+    <li><b>ots-sim0mq</b> <i>databus communication</i>
+        <ul>
+            <li><b>ots-parser-xml</b></li>
+        </ul>
+    </li>
+</ul>
 
 ## Commit check list
 
