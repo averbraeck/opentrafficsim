@@ -214,7 +214,7 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      * @param <U> underlying object type
      */
-    class UnderlyingDistance<U> implements Comparable<UnderlyingDistance<?>>
+    class UnderlyingDistance<U> implements Comparable<UnderlyingDistance<U>>
     {
         /** Object. */
         private final U object;
@@ -250,9 +250,26 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
 
         /** {@inheritDoc} */
         @Override
-        public int compareTo(final UnderlyingDistance<?> o)
+        public int compareTo(final UnderlyingDistance<U> o)
         {
-            return this.distance.compareTo(o.distance);
+            int out = this.distance.compareTo(o.distance);
+            if (out != 0)
+            {
+                return out;
+            }
+            if (this.object == null)
+            {
+                if (o.object == null)
+                {
+                    return 0;
+                }
+                return -1;
+            }
+            if (o.object == null)
+            {
+                return 1;
+            }
+            return Integer.compare(this.object.hashCode(), o.object.hashCode());
         }
     }
 
