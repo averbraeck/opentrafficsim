@@ -50,7 +50,7 @@ The collector of type `PerceptionCollector` is merely a combination of three com
 PerceptionCollector&lt;C, U, I&gt;
 &lfloor; Identity (Supplier&lt;I&gt;)
 &lfloor; Accumulator (PerceptionAccumulator&lt;U, I&gt;)
-&lfloor; Finalizer (PerceptionFinalizer&lt;C, I&gt;)
+&lfloor; Finalizer (Function&lt;C, I&gt;)
 </pre>
 
 As an example, suppose the density needs to be derived from a set of leading GTUs. The intermediate type is a small class that has a number of GTUs and a distance. The identity supplies one such object with a zero count and a `null` distance. The accumulator adds 1 to the count, and sets the distance to the considered GTU (note that we iterate close to far). Once all GTUs are considered, the finalizer divides the distance by the GTU count, and returns a density value. For other implementations the intermediate type may be the same as the collected type, meaning that the finalizer simply forwards the last intermediate result.
