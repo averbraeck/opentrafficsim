@@ -1893,7 +1893,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
     @Override
     public String toString()
     {
-        return "TrafCOD [ie=" + getId() + "]";
+        return "TrafCOD [id=" + getId() + "]";
     }
 
 }
