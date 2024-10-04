@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.base.OtsClassUtil;
 import org.opentrafficsim.base.parameters.ParameterTypeClass;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
@@ -44,14 +43,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
 {
 
     /** Tactical planner parameter. */
-    public static final ParameterTypeClass<LaneBasedTacticalPlanner> TACTICAL_PLANNER;
-
-    static
-    {
-        Class<LaneBasedTacticalPlanner> type = LaneBasedTacticalPlanner.class;
-        TACTICAL_PLANNER = new ParameterTypeClass<>("tactical planner", "Tactical planner class.",
-                OtsClassUtil.getTypedClass(type), Lmrs.class);
-    }
+    public static final ParameterTypeClass<LaneBasedTacticalPlanner> LANE_TACTICAL_PLANNER = new ParameterTypeClass<>(
+            "lane tactical planner", "Lane-based tactical planner class.", LaneBasedTacticalPlanner.class, Lmrs.class);
 
     /** */
     private static final long serialVersionUID = 20151125L;
