@@ -31,8 +31,8 @@ public interface CarFollowingModel extends DesiredHeadwayModel, DesiredSpeedMode
 {
 
     /** Parameter type for car-following model. */
-    ParameterTypeClass<CarFollowingModel> CAR_FOLLOWING_MODEL = new ParameterTypeClass<>("cf.model", "car-following model",
-            ParameterTypeClass.getValueClass(CarFollowingModel.class));
+    ParameterTypeClass<CarFollowingModel> CAR_FOLLOWING_MODEL =
+            new ParameterTypeClass<>("cf.model", "car-following model", CarFollowingModel.class, IdmPlus.class);
 
     /**
      * Determination of car-following acceleration, possibly based on multiple leaders. The implementation should be able to
@@ -65,7 +65,7 @@ public interface CarFollowingModel extends DesiredHeadwayModel, DesiredSpeedMode
 
     /** {@inheritDoc} */
     @Override
-    default void init(LaneBasedGtu gtu)
+    default void init(final LaneBasedGtu gtu)
     {
         //
     }

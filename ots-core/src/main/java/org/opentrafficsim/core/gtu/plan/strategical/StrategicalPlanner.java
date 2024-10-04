@@ -25,8 +25,8 @@ public interface StrategicalPlanner
 {
 
     /** Parameter type for strategical planner. */
-    ParameterTypeClass<StrategicalPlanner> STRATEGICAL_PLANNER = new ParameterTypeClass<>("strat.plan.", "Strategcial planner",
-            ParameterTypeClass.getValueClass(StrategicalPlanner.class));
+    ParameterTypeClass<StrategicalPlanner> STRATEGICAL_PLANNER =
+            new ParameterTypeClass<>("strat.plan.", "Strategcial planner", StrategicalPlanner.class);
 
     /**
      * Returns the GTU.

@@ -25,9 +25,9 @@ public class ParameterTypeClass<T> extends ParameterType<Class<? extends T>>
      * @param description Parameter description or full name.
      * @param valueClass Class of the value.
      */
-    public ParameterTypeClass(final String id, final String description, final Class<Class<? extends T>> valueClass)
+    public ParameterTypeClass(final String id, final String description, final Class<T> valueClass)
     {
-        super(id, description, valueClass);
+        super(id, description, getTypedClass(valueClass));
     }
 
     /**
@@ -37,10 +37,10 @@ public class ParameterTypeClass<T> extends ParameterType<Class<? extends T>>
      * @param valueClass Class of the value.
      * @param defaultValue Default value.
      */
-    public ParameterTypeClass(final String id, final String description, final Class<Class<? extends T>> valueClass,
+    public ParameterTypeClass(final String id, final String description, final Class<T> valueClass,
             final Class<? extends T> defaultValue)
     {
-        super(id, description, valueClass, defaultValue);
+        super(id, description, getTypedClass(valueClass), defaultValue);
     }
 
     /**
@@ -50,10 +50,10 @@ public class ParameterTypeClass<T> extends ParameterType<Class<? extends T>>
      * @param valueClass Class of the value.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeClass(final String id, final String description, final Class<Class<? extends T>> valueClass,
+    public ParameterTypeClass(final String id, final String description, final Class<T> valueClass,
             final Constraint<? super Class<? extends T>> constraint)
     {
-        super(id, description, valueClass, constraint);
+        super(id, description, getTypedClass(valueClass), constraint);
     }
 
     /**
@@ -64,23 +64,21 @@ public class ParameterTypeClass<T> extends ParameterType<Class<? extends T>>
      * @param defaultValue Default value.
      * @param constraint Constraint for parameter values.
      */
-    public ParameterTypeClass(final String id, final String description, final Class<Class<? extends T>> valueClass,
+    public ParameterTypeClass(final String id, final String description, final Class<T> valueClass,
             final Class<? extends T> defaultValue, final Constraint<? super Class<? extends T>> constraint)
     {
-        super(id, description, valueClass, defaultValue, constraint);
+        super(id, description, getTypedClass(valueClass), defaultValue, constraint);
     }
-
+    
     /**
-     * Returns a typed class, where the type is {@code Class<? extends T>}, such that {@code ParameterTypeClass} instances can
-     * easily be created.
-     * @param clazz class instance
-     * @param <T> constraining class in parameter type, e.g. TacticalPlanner
-     * @return typed class
+     * @param object the object to provide the class for
+     * @param <T> the type
+     * @return the class of the object
      */
     @SuppressWarnings("unchecked")
-    public static <T> Class<Class<? extends T>> getValueClass(final Class<T> clazz)
+    private static <T> Class<T> getTypedClass(final T object)
     {
-        return (Class<Class<? extends T>>) clazz.getClass();
+        return (Class<T>) object.getClass();
     }
 
     /** {@inheritDoc} */

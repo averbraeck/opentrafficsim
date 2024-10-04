@@ -41,7 +41,7 @@ public interface TacticalPlanner<G extends Gtu, P extends Perception<G>>
     /** Parameter type for tactical planner. */
     @SuppressWarnings("rawtypes")
     ParameterTypeClass<TacticalPlanner> TACTICAL_PLANNER =
-            new ParameterTypeClass<>("tac.plan.", "Tactical planner", ParameterTypeClass.getValueClass(TacticalPlanner.class));
+            new ParameterTypeClass<>("tac.plan.", "Tactical planner", TacticalPlanner.class);
 
     /**
      * Returns the GTU.
