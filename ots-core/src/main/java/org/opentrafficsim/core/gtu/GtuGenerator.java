@@ -21,7 +21,7 @@ public interface GtuGenerator extends NonLocatedObject
 
     /**
      * Returns the positions.
-     * @return Set&lt;GtuGeneratorPosition&gt;; set of positions.
+     * @return set of positions.
      */
     Set<GtuGeneratorPosition> getPositions();
 
@@ -40,7 +40,7 @@ public interface GtuGenerator extends NonLocatedObject
     {
         /**
          * Returns the number of GTUs in the queue.
-         * @return int; number of GTUs in the queue.
+         * @return number of GTUs in the queue.
          */
         int getQueueCount();
     }

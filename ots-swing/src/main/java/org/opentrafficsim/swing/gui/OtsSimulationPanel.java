@@ -53,14 +53,14 @@ public class OtsSimulationPanel extends JPanel
 
     /**
      * Construct a panel that looks like the DSOLPanel for quick building of OTS applications.
-     * @param simulator OtsSimulatorInterface; the simulator or animator of the model.
-     * @param otsModel OtsModelInterface; the model with its properties.
+     * @param simulator the simulator or animator of the model.
+     * @param otsModel the model with its properties.
      * @throws RemoteException when communications to a remote machine fails
      */
     public OtsSimulationPanel(final OtsSimulatorInterface simulator, final OtsModelInterface otsModel) throws RemoteException
     {
         AppearanceApplication.setDefaultFont();
-        
+
         this.simulator = simulator;
         this.otsModel = otsModel;
 
@@ -117,7 +117,7 @@ public class OtsSimulationPanel extends JPanel
 
     /**
      * Return the OtsControlPanel of this OtsSimulationPanel.
-     * @return OtsControlPanel; the OTS control panel
+     * @return the OTS control panel
      */
     public final OtsControlPanel getOtsControlPanel()
     {
@@ -182,7 +182,7 @@ public class OtsSimulationPanel extends JPanel
         private static final long serialVersionUID = 20180206L;
 
         /**
-         * @param tabPlacement int; tabPlacement
+         * @param tabPlacement tabPlacement
          */
         AppearanceControlTabbedContentPane(final int tabPlacement)
         {

@@ -22,9 +22,9 @@ public class Kernel
 
     /**
      * Constructor.
-     * @param xMax double; maximum spatial range
-     * @param tMax double; maximum temporal range
-     * @param shape KernelShape; shape of the kernel
+     * @param xMax maximum spatial range
+     * @param tMax maximum temporal range
+     * @param shape shape of the kernel
      */
     Kernel(final double xMax, final double tMax, final KernelShape shape)
     {
@@ -35,10 +35,10 @@ public class Kernel
 
     /**
      * Returns a weight assuming given propagation speed.
-     * @param c double; assumed propagation speed
-     * @param dx double; distance between measurement and estimated point
-     * @param dt double; time between measurement and estimated point
-     * @return double; weight assuming given propagation speed
+     * @param c assumed propagation speed
+     * @param dx distance between measurement and estimated point
+     * @param dt time between measurement and estimated point
+     * @return weight assuming given propagation speed
      */
     final double weight(final double c, final double dx, final double dt)
     {
@@ -47,8 +47,8 @@ public class Kernel
 
     /**
      * Returns the from location of the valid data range.
-     * @param x double; location of estimated point
-     * @return double; from location of the valid data range
+     * @param x location of estimated point
+     * @return from location of the valid data range
      */
     final double fromLocation(final double x)
     {
@@ -57,8 +57,8 @@ public class Kernel
 
     /**
      * Returns the to location of the valid data range.
-     * @param x double; location of estimated point
-     * @return double; to location of the valid data range
+     * @param x location of estimated point
+     * @return to location of the valid data range
      */
     final double toLocation(final double x)
     {
@@ -67,8 +67,8 @@ public class Kernel
 
     /**
      * Returns the from time of the valid data range.
-     * @param t double; time of estimated point
-     * @return double; from time of the valid data range
+     * @param t time of estimated point
+     * @return from time of the valid data range
      */
     final double fromTime(final double t)
     {
@@ -77,8 +77,8 @@ public class Kernel
 
     /**
      * Returns the to time of the valid data range.
-     * @param t double; time of estimated point
-     * @return double; to time of the valid data range
+     * @param t time of estimated point
+     * @return to time of the valid data range
      */
     final double toTime(final double t)
     {

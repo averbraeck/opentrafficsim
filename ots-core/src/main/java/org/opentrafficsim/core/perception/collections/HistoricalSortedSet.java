@@ -20,15 +20,15 @@ public interface HistoricalSortedSet<E> extends HistoricalSet<E>, SortedSet<E>
 
     /**
      * Returns the current sorted set.
-     * @return SortedSet; current sorted set
+     * @return current sorted set
      */
     @Override
     SortedSet<E> get();
 
     /**
      * Returns a past sorted set.
-     * @param time Time; time to obtain the sorted set at
-     * @return SortedSet; past sorted set
+     * @param time time to obtain the sorted set at
+     * @return past sorted set
      */
     @Override
     SortedSet<E> get(Time time);

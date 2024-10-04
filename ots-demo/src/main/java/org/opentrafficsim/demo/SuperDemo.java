@@ -135,7 +135,7 @@ public class SuperDemo extends JFrame
     }
 
     /**
-     * @param args String[]; should be empty
+     * @param args should be empty
      */
     public static void main(final String[] args)
     {
@@ -170,9 +170,9 @@ public class SuperDemo extends JFrame
         private final String description;
 
         /**
-         * @param name String; the demo name
-         * @param clazz Class&lt;? extends OtsSwingApplication&gt;; the demo class
-         * @param description String; the demo description
+         * @param name the demo name
+         * @param clazz the demo class
+         * @param description the demo description
          */
         Demo(final String name, final Class<? extends OtsSwingApplication<? extends OtsModelInterface>> clazz,
                 final String description)

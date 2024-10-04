@@ -73,9 +73,9 @@ public class LaneBasedGtuTest implements UNITS
      * Test if a Truck covering a specified range of lanes can <i>see</i> a Car covering a specified range of lanes. <br>
      * The network is a linear array of Nodes connected by 5-Lane Links. In the middle, the Nodes are very closely spaced. A
      * truck is positioned over those center Nodes ensuring it covers several of the short Lanes in succession.
-     * @param truckFromLane int; lowest rank of lane range of the truck
-     * @param truckUpToLane int; highest rank of lane range of the truck
-     * @param carLanesCovered int; number of lanes that the car covers
+     * @param truckFromLane lowest rank of lane range of the truck
+     * @param truckUpToLane highest rank of lane range of the truck
+     * @param carLanesCovered number of lanes that the car covers
      * @throws Exception when something goes wrong (should not happen)
      */
     private void leaderFollowerParallel(final int truckFromLane, final int truckUpToLane, final int carLanesCovered)
@@ -167,24 +167,22 @@ public class LaneBasedGtuTest implements UNITS
             }
         }
         // Make sure we tested them all
-        assertEquals(laneCount * links.size(),
-                lanesChecked, "lanesChecked should equals the number of Links times the number of lanes on each Link");
+        assertEquals(laneCount * links.size(), lanesChecked,
+                "lanesChecked should equals the number of Links times the number of lanes on each Link");
         assertEquals(truckPositions.size(), found, "Truck should be registered in " + truckPositions.size() + " lanes");
         Length forwardMaxDistance = truck.getParameters().getParameter(ParameterTypes.LOOKAHEAD);
         // TODO see how we can ask the vehicle to look this far ahead
         truck.getTacticalPlanner().getPerception().perceive();
         Headway leader = truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class)
                 .getForwardHeadwayGtu();
-        assertTrue(
-                forwardMaxDistance.getSI() >= leader.getDistance().si && leader.getDistance().si > 0,
+        assertTrue(forwardMaxDistance.getSI() >= leader.getDistance().si && leader.getDistance().si > 0,
                 "With one vehicle in the network forward headway should return a value larger than zero, and smaller than maxDistance");
         assertEquals(null, leader.getId(), "With one vehicle in the network forward headwayGTU should return null");
         // TODO see how we can ask the vehicle to look this far behind
         Length reverseMaxDistance = truck.getParameters().getParameter(ParameterTypes.LOOKBACKOLD);
         Headway follower = truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class)
                 .getBackwardHeadway();
-        assertTrue(
-                Math.abs(reverseMaxDistance.getSI()) >= Math.abs(follower.getDistance().si) && follower.getDistance().si < 0,
+        assertTrue(Math.abs(reverseMaxDistance.getSI()) >= Math.abs(follower.getDistance().si) && follower.getDistance().si < 0,
                 "With one vehicle in the network reverse headway should return a value less than zero, and smaller than |maxDistance|");
         assertEquals(null, follower.getId(), "With one vehicle in the network reverse headwayGTU should return null");
         Length carLength = new Length(4, METER);
@@ -241,8 +239,8 @@ public class LaneBasedGtuTest implements UNITS
                 double expectedReverseHeadway = laneRank + carLanesCovered - 1 < truckFromLane || laneRank > truckUpToLane
                         || step + carLength.getSI() >= truckPosition.getSI() ? Double.MAX_VALUE
                                 : truckPosition.getSI() - carLength.getSI() - step;
-                assertEquals(expectedReverseHeadway, actualReverseHeadway,
-                        0.1, "Reverse headway should return " + expectedReverseHeadway);
+                assertEquals(expectedReverseHeadway, actualReverseHeadway, 0.1,
+                        "Reverse headway should return " + expectedReverseHeadway);
                 String followerGtuId = follower.getId();
                 if (expectedReverseHeadway == Double.MAX_VALUE)
                 {
@@ -271,8 +269,8 @@ public class LaneBasedGtuTest implements UNITS
                     expectedHeadway = laneIndex < laneRank || laneIndex > laneRank + carLanesCovered - 1
                             || step - truckLength.getSI() - truckPosition.getSI() <= 0 ? Double.MAX_VALUE
                                     : step - truckLength.getSI() - truckPosition.getSI();
-                    assertEquals(expectedHeadway, actualHeadway,
-                            0.001, "Headway on lane " + laneIndex + " should be " + expectedHeadway);
+                    assertEquals(expectedHeadway, actualHeadway, 0.001,
+                            "Headway on lane " + laneIndex + " should be " + expectedHeadway);
                     leaderGtuId = leader.getId();
                     if (laneIndex >= laneRank && laneIndex <= laneRank + carLanesCovered - 1
                             && step - truckLength.getSI() - truckPosition.getSI() > 0)
@@ -289,8 +287,8 @@ public class LaneBasedGtuTest implements UNITS
                     expectedReverseHeadway = laneIndex < laneRank || laneIndex > laneRank + carLanesCovered - 1
                             || step + carLength.getSI() >= truckPosition.getSI() ? Double.MAX_VALUE
                                     : truckPosition.getSI() - carLength.getSI() - step;
-                    assertEquals(expectedReverseHeadway,
-                            actualReverseHeadway, 0.001, "Headway on lane " + laneIndex + " should be " + expectedReverseHeadway);
+                    assertEquals(expectedReverseHeadway, actualReverseHeadway, 0.001,
+                            "Headway on lane " + laneIndex + " should be " + expectedReverseHeadway);
                     followerGtuId = follower.getId();
                     if (laneIndex >= laneRank && laneIndex <= laneRank + carLanesCovered - 1
                             && step + carLength.getSI() < truckPosition.getSI())
@@ -449,11 +447,11 @@ public class LaneBasedGtuTest implements UNITS
 
     /**
      * Create the Map that records in which lane a GTU is registered.
-     * @param totalLongitudinalPosition Length; the front position of the GTU from the start of the chain of Links
-     * @param gtuLength Length; the length of the GTU
-     * @param links ArrayList&lt;CrossSectionLink&lt;?,?&gt;&gt;; the list of Links
-     * @param fromLaneRank int; lowest rank of lanes that the GTU must be registered on (0-based)
-     * @param uptoLaneRank int; highest rank of lanes that the GTU must be registered on (0-based)
+     * @param totalLongitudinalPosition the front position of the GTU from the start of the chain of Links
+     * @param gtuLength the length of the GTU
+     * @param links the list of Links
+     * @param fromLaneRank lowest rank of lanes that the GTU must be registered on (0-based)
+     * @param uptoLaneRank highest rank of lanes that the GTU must be registered on (0-based)
      * @return the Set of the LanePositions that the GTU is registered on
      */
     private Set<LanePosition> buildPositionsSet(final Length totalLongitudinalPosition, final Length gtuLength,
@@ -467,7 +465,7 @@ public class LaneBasedGtuTest implements UNITS
             double frontPositionInLink = totalLongitudinalPosition.getSI() - cumulativeLength + gtuLength.getSI();
             double rearPositionInLink = frontPositionInLink - gtuLength.getSI();
             double midPositionInLink = frontPositionInLink - gtuLength.getSI() / 2.0;
-//            double linkEnd = cumulativeLength + linkLength;
+            // double linkEnd = cumulativeLength + linkLength;
             // System.out.println("cumulativeLength: " + cumulativeLength + ", linkEnd: " + linkEnd + ", frontpos: "
             // + frontPositionInLink + ", rearpos: " + rearPositionInLink);
             if (rearPositionInLink < linkLength && frontPositionInLink >= 0)
@@ -487,10 +485,10 @@ public class LaneBasedGtuTest implements UNITS
         }
         return result;
     }
-    
+
     /**
      * Returns the reference position from the set of positions.
-     * @param positions Set&lt;LanePosition&gt;; positions.
+     * @param positions positions.
      * @return reference position.
      */
     private LanePosition getReferencePosition(final Set<LanePosition> positions)
@@ -507,8 +505,8 @@ public class LaneBasedGtuTest implements UNITS
 
     /**
      * Find the Nth Lane on a Link.
-     * @param link Link; the Link
-     * @param rank int; the zero-based rank of the Lane to return
+     * @param link the Link
+     * @param rank the zero-based rank of the Lane to return
      * @return Lane
      */
     private Lane getNthLane(final CrossSectionLink link, int rank)

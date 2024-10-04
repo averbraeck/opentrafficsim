@@ -43,10 +43,10 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
 
     /**
      * Constructor.
-     * @param lane Lane; lane.
-     * @param relativeLane RelativeLane; relative lane.
-     * @param startDistance Length; start distance.
-     * @param mergeDistance Length; merge distance, i.e. the distance after which this road merges with the road the GTU is at.
+     * @param lane lane.
+     * @param relativeLane relative lane.
+     * @param startDistance start distance.
+     * @param mergeDistance merge distance, i.e. the distance after which this road merges with the road the GTU is at.
      */
     public LaneRecord(final Lane lane, final RelativeLane relativeLane, final Length startDistance, final Length mergeDistance)
     {
@@ -58,7 +58,7 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
 
     /**
      * Returns the lane.
-     * @return Lane; lane.
+     * @return lane.
      */
     @Override
     public Lane getLane()
@@ -68,7 +68,7 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
 
     /**
      * Returns the relative lane.
-     * @return RelativeLane; relative lane.
+     * @return relative lane.
      */
     public RelativeLane getRelativeLane()
     {
@@ -77,7 +77,7 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
 
     /**
      * Returns the start distance. This value is negative for anything upstream of the reference point of the GTU.
-     * @return Length; start distance.
+     * @return start distance.
      */
     @Override
     public Length getStartDistance()
@@ -87,7 +87,7 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
 
     /**
      * Returns the end distance. This value is negative for anything upstream of the reference point of the GTU.
-     * @return Length; end distance.
+     * @return end distance.
      */
     public Length getEndDistance()
     {
@@ -103,7 +103,7 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
 
     /**
      * Returns the merge distance, i.e. the distance after which this road merges with the road the GTU is at.
-     * @return Length; merge distance.
+     * @return merge distance.
      */
     public Length getMergeDistance()
     {
@@ -112,7 +112,7 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
 
     /**
      * Add downstream lane.
-     * @param downstream LaneRecord; downstream lane.
+     * @param downstream downstream lane.
      */
     public void addNext(final LaneRecord downstream)
     {
@@ -128,7 +128,7 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
 
     /**
      * Add downstream lane.
-     * @param upstream LaneRecord; downstream lane.
+     * @param upstream downstream lane.
      */
     public void addPrev(final LaneRecord upstream)
     {
@@ -144,7 +144,7 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
 
     /**
      * Add lateral lane.
-     * @param lateral LaneRecord; downstream lane.
+     * @param lateral downstream lane.
      */
     public void addLateral(final LaneRecord lateral)
     {
@@ -153,7 +153,7 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
 
     /**
      * Get lateral lanes.
-     * @return Set&lt;LaneRecorde&gt;; lateral lanes.
+     * @return lateral lanes.
      */
     public Set<LaneRecord> lateral()
     {
@@ -162,8 +162,8 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
 
     /**
      * Returns whether the record is on the route.
-     * @param route Route; route.
-     * @return boolean; whether the record is on the route
+     * @param route route.
+     * @return whether the record is on the route
      */
     public boolean isOnRoute(final Route route)
     {
@@ -178,7 +178,7 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
         to = route.indexOf(link.getEndNode());
         return from != -1 && to != -1 && to - from == 1;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public boolean isDownstreamBranch()

@@ -30,7 +30,7 @@ public class TrafCodEditor implements EventListener, Consumer<XsdTreeNode>
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
+     * @param editor editor.
      * @throws RemoteException if listener cannot be added.
      */
     public TrafCodEditor(final OtsEditor editor) throws RemoteException

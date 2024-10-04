@@ -21,15 +21,15 @@ public interface HistoricalNavigableMap<K, V> extends HistoricalSortedMap<K, V>,
 
     /**
      * Returns the current navigable map.
-     * @return NavigableMap; current navigable map
+     * @return current navigable map
      */
     @Override
     NavigableMap<K, V> get();
 
     /**
      * Returns a past navigable map.
-     * @param time Time; time to obtain the navigable map at
-     * @return NavigableMap; past navigable map
+     * @param time time to obtain the navigable map at
+     * @return past navigable map
      */
     @Override
     NavigableMap<K, V> get(Time time);

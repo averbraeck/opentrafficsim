@@ -44,8 +44,8 @@ public class LaneMovementStep implements Serializable
 
     /**
      * Construct a new LaneChangeModelResult.
-     * @param gfmr AccelerationStep; the acceleration and duration of validity of this result.
-     * @param laneChange LateralDirectionality; this has one of the values:
+     * @param gfmr the acceleration and duration of validity of this result.
+     * @param laneChange this has one of the values:
      *            <table >
      *            <caption>&nbsp;</caption>
      *            <tr>

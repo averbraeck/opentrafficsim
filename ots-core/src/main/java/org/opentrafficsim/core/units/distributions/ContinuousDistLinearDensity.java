@@ -21,8 +21,8 @@ public class ContinuousDistLinearDensity extends ContinuousDistDoubleScalar.Rel<
     private static final long serialVersionUID = 20180829L;
 
     /**
-     * @param distribution DistContinuous; distribution
-     * @param unit LinearDensityUnit; units
+     * @param distribution distribution
+     * @param unit units
      */
     public ContinuousDistLinearDensity(final DistContinuous distribution, final LinearDensityUnit unit)
     {

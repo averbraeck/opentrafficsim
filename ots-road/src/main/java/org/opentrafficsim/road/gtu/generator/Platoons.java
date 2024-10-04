@@ -90,8 +90,8 @@ public abstract class Platoons<T>
 
     /**
      * Constructor.
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param position Lane; position
+     * @param simulator simulator
+     * @param position position
      */
     private Platoons(final OtsSimulatorInterface simulator, final Lane position)
     {
@@ -101,11 +101,11 @@ public abstract class Platoons<T>
 
     /**
      * Creates a {@code Platoon&lt;Category&gt;} instance for platoons.
-     * @param characteristics GtuCharacteristicsGeneratorOD; characteristics generator
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param stream StreamInterface; random number stream
-     * @param position Lane; position
-     * @return Platoons&lt;Category&gt;; platoons based on OD
+     * @param characteristics characteristics generator
+     * @param simulator simulator
+     * @param stream random number stream
+     * @param position position
+     * @return platoons based on OD
      */
     public static Platoons<Category> ofCategory(final LaneBasedGtuCharacteristicsGeneratorOd characteristics,
             final OtsSimulatorInterface simulator, final StreamInterface stream, final Lane position)
@@ -132,11 +132,11 @@ public abstract class Platoons<T>
 
     /**
      * Creates a {@code Platoon&lt;GtuType&gt;} instance for platoons.
-     * @param characteristics LaneBasedGtuCharacteristicsGenerator; characteristics generator
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param stream StreamInterface; random number stream
-     * @param position Lane; position
-     * @return Platoons&lt;GtuType&gt;; platoons based on OD
+     * @param characteristics characteristics generator
+     * @param simulator simulator
+     * @param stream random number stream
+     * @param position position
+     * @return platoons based on OD
      */
     @SuppressWarnings("synthetic-access")
     public static Platoons<GtuType> ofGtuType(final LaneBasedGtuCharacteristicsGenerator characteristics,
@@ -162,9 +162,9 @@ public abstract class Platoons<T>
     /**
      * Add a platoon. The generator is disabled during the provided time frame. Individual GTU's should be added using
      * {@code addGtu}.
-     * @param start Time; start time
-     * @param end Time; end time
-     * @return Platoons&lt;T&gt;; for method chaining
+     * @param start start time
+     * @param end end time
+     * @return for method chaining
      * @throws SimRuntimeException on exception
      */
     public Platoons<T> addPlatoon(final Time start, final Time end) throws SimRuntimeException
@@ -180,10 +180,10 @@ public abstract class Platoons<T>
 
     /**
      * Fix all info except time for GTU's added hereafter.
-     * @param origin Node; origin
-     * @param destination Node; destination
-     * @param category T; category
-     * @return Platoons&lt;T&gt;; for method chaining
+     * @param origin origin
+     * @param destination destination
+     * @param category category
+     * @return for method chaining
      */
     public Platoons<T> fixInfo(final Node origin, final Node destination, final T category)
     {
@@ -196,8 +196,8 @@ public abstract class Platoons<T>
     /**
      * Add GTU to the current platoon. Per platoon, GTU may be given in any order. This method uses info set with
      * {@code fixInfo}.
-     * @param time Time; time of generation
-     * @return Platoons&lt;T&gt;; for method chaining
+     * @param time time of generation
+     * @return for method chaining
      * @throws IllegalStateException if no fixed info was set using {@code fixInfo}
      */
     public Platoons<T> addGtu(final Time time)
@@ -209,11 +209,11 @@ public abstract class Platoons<T>
 
     /**
      * Add GTU to the current platoon. Per platoon, GTU may be given in any order.
-     * @param time Time; time of generation
-     * @param origin Node; origin
-     * @param destination Node; destination
-     * @param category T; category
-     * @return Platoons&lt;T&gt;; for method chaining
+     * @param time time of generation
+     * @param origin origin
+     * @param destination destination
+     * @param category category
+     * @return for method chaining
      * @throws IllegalStateException if no platoon was started or time is outside of the platoon time range
      */
     public Platoons<T> addGtu(final Time time, final Node origin, final Node destination, final T category)
@@ -230,7 +230,7 @@ public abstract class Platoons<T>
 
     /**
      * Sets the generator and starts the events.
-     * @param generator LaneBasedGtuGenerator; GTU generator
+     * @param generator GTU generator
      * @throws SimRuntimeException if start of first platoon is in the past
      */
     public void start(final LaneBasedGtuGenerator generator) throws SimRuntimeException
@@ -252,7 +252,7 @@ public abstract class Platoons<T>
 
     /**
      * Returns the vehicle generator for sub classes.
-     * @return LaneBasedGtuGenerator; vehicle generator for sub classes
+     * @return vehicle generator for sub classes
      */
     protected LaneBasedGtuGenerator getGenerator()
     {
@@ -261,7 +261,7 @@ public abstract class Platoons<T>
 
     /**
      * Returns the position for sub classes.
-     * @return Set&lt;Lane&gt;; position for sub classes
+     * @return position for sub classes
      */
     protected Lane getPosition()
     {
@@ -284,11 +284,11 @@ public abstract class Platoons<T>
     /**
      * Creates a demand vector in which the platoon demand has been compensated from the input demand vector. Only demand
      * pertaining to the location where the platoons are generated should be compensated.
-     * @param category T; category
-     * @param demand FrequencyVector; demand vector
-     * @param time TimeVector; time vector
-     * @param interpolation Interpolation; interpolation
-     * @return FrequencyVector; demand vector in which the platoon demand has been compensated from the input demand vector
+     * @param category category
+     * @param demand demand vector
+     * @param time time vector
+     * @param interpolation interpolation
+     * @return demand vector in which the platoon demand has been compensated from the input demand vector
      */
     public FrequencyVector compensate(final T category, final FrequencyVector demand, final TimeVector time,
             final Interpolation interpolation)
@@ -346,7 +346,7 @@ public abstract class Platoons<T>
 
     /**
      * Places the next platoon GTU and schedules the next one.
-     * @param platoonGtu PlatoonGtu&lt;T&gt;; info of GTU to generate
+     * @param platoonGtu info of GTU to generate
      * @throws SimRuntimeException on exception
      * @throws NamingException on exception
      * @throws GtuException on exception
@@ -387,10 +387,10 @@ public abstract class Platoons<T>
 
         /**
          * Constructor.
-         * @param time Time; time to generate
-         * @param origin Node; origin
-         * @param destination Node; destination
-         * @param category K; category
+         * @param time time to generate
+         * @param origin origin
+         * @param destination destination
+         * @param category category
          */
         PlatoonGtu(final Time time, final Node origin, final Node destination, final K category)
         {

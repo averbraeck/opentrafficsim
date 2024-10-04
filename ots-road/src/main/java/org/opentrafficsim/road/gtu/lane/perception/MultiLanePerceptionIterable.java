@@ -39,7 +39,7 @@ public class MultiLanePerceptionIterable<H extends Headway, U> extends AbstractP
 
     /**
      * Constructor.
-     * @param perceivingGtu LaneBasedGtu; perceiving GTU
+     * @param perceivingGtu perceiving GTU
      */
     public MultiLanePerceptionIterable(final LaneBasedGtu perceivingGtu)
     {
@@ -48,8 +48,8 @@ public class MultiLanePerceptionIterable<H extends Headway, U> extends AbstractP
 
     /**
      * Adds an iterable for a lane.
-     * @param lane RelativeLane; lane
-     * @param iterable AbstractPerceptionReiterable&lt;H, U&gt;; iterable
+     * @param lane lane
+     * @param iterable iterable
      */
     public void addIterable(final RelativeLane lane, final AbstractPerceptionReiterable<H, U> iterable)
     {

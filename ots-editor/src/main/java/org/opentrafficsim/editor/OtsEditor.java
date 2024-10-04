@@ -505,7 +505,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Batch run.
-     * @param all boolean; all scenarios, or only the selected scenario.
+     * @param all all scenarios, or only the selected scenario.
      */
     protected void runBatch(final boolean all)
     {
@@ -535,7 +535,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Returns the undo unit.
-     * @return Undo; undo unit.
+     * @return undo unit.
      */
     public Undo getUndo()
     {
@@ -544,8 +544,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Shows and selects the given node in the tree.
-     * @param node XsdTreeNode; node.
-     * @param attribute String; attribute name, may be {@code null} to just show the node.
+     * @param node node.
+     * @param attribute attribute name, may be {@code null} to just show the node.
      */
     public void show(final XsdTreeNode node, final String attribute)
     {
@@ -606,7 +606,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Sets a status label.
-     * @param label String; status label.
+     * @param label status label.
      */
     public void setStatusLabel(final String label)
     {
@@ -784,9 +784,9 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     /**
      * Sets coupled node from user action, i.e. the node that contains the key value to which a user selected node with keyref
      * refers to.
-     * @param coupledNode XsdTreeNode; key node that is coupled to from a keyref node, may be {@code null}.
-     * @param backNode XsdTreeNode; keyref node that is coupled from to a key node, may be {@code null}.
-     * @param backAttribute String; attribute in keyref node that refers to coupled node, may be {@code null}.
+     * @param coupledNode key node that is coupled to from a keyref node, may be {@code null}.
+     * @param backNode keyref node that is coupled from to a key node, may be {@code null}.
+     * @param backAttribute attribute in keyref node that refers to coupled node, may be {@code null}.
      */
     public void setCoupledNode(final XsdTreeNode coupledNode, final XsdTreeNode backNode, final String backAttribute)
     {
@@ -808,7 +808,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Sets whether there are unsaved changes, resulting in a * in the window name, and confirmation pop-ups upon file changes.
-     * @param unsavedChanges boolean; whether there are unsaved changes.
+     * @param unsavedChanges whether there are unsaved changes.
      */
     public void setUnsavedChanges(final boolean unsavedChanges)
     {
@@ -827,7 +827,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Sets a new schema in the GUI.
-     * @param xsdDocument Document; main node from an XSD schema file.
+     * @param xsdDocument main node from an XSD schema file.
      * @throws IOException when a resource could not be loaded.
      */
     @SuppressWarnings("checkstyle:hiddenfield")
@@ -1159,8 +1159,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     /**
      * Adds a listener to a popup to remove the popop from the component when the popup becomes invisible. This makes sure that
      * a right-clicks on another location that should show a different popup, is not overruled by the popup of a previous click.
-     * @param popup JPopupMenu; popup menu.
-     * @param component JComponent; component from which the menu will be removed.
+     * @param popup popup menu.
+     * @param component component from which the menu will be removed.
      */
     public void preparePopupRemoval(final JPopupMenu popup, final JComponent component)
     {
@@ -1191,8 +1191,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     /**
      * Sets a custom icon for nodes that comply to the path. The path may be an absolute path (e.g. "Ots.Network.Connector") or
      * a relative path (e.g. ".Node"). The image should be a filename relative in resources.
-     * @param path String; path.
-     * @param icon ImageIcon; image icon.
+     * @param path path.
+     * @param icon image icon.
      */
     public void setCustomIcon(final String path, final ImageIcon icon)
     {
@@ -1201,12 +1201,12 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Loads an icon, possibly rescaled.
-     * @param image String; image filename, relative in resources.
-     * @param width int; width to resize to, may be -1 to leave as is.
-     * @param height int; width to resize to, may be -1 to leave as is.
-     * @param bgWidth int; background image width icon will be centered in, may be -1 to leave as is.
-     * @param bgHeight int; background image height icon will be centered in, may be -1 to leave as is.
-     * @return ImageIcon; image icon.
+     * @param image image filename, relative in resources.
+     * @param width width to resize to, may be -1 to leave as is.
+     * @param height width to resize to, may be -1 to leave as is.
+     * @param bgWidth background image width icon will be centered in, may be -1 to leave as is.
+     * @param bgHeight background image height icon will be centered in, may be -1 to leave as is.
+     * @return image icon.
      * @throws IOException if the file is not in resources.
      */
     public static ImageIcon loadIcon(final String image, final int width, final int height, final int bgWidth,
@@ -1231,8 +1231,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Obtains a custom icon for the path, or {@code null} if there is no custom icon specified for the path.
-     * @param path String; node path.
-     * @return Icon; custom icon, or {@code null} if there is no custom icon specified for the path.
+     * @param path node path.
+     * @return custom icon, or {@code null} if there is no custom icon specified for the path.
      */
     public Icon getCustomIcon(final String path)
     {
@@ -1262,7 +1262,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Sets the node that is the currently selected choice.
-     * @param choiceNode XsdTreeNode; node that is the currently selected choice.
+     * @param choiceNode node that is the currently selected choice.
      */
     public void setChoiceNode(final XsdTreeNode choiceNode)
     {
@@ -1287,10 +1287,10 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Adds a tab to the main window.
-     * @param name String; name of the tab.
-     * @param icon Icon; icon for the tab, may be {@code null}.
-     * @param component Component; component that will fill the tab.
-     * @param tip String; tool-tip for the tab, may be {@code null}.
+     * @param name name of the tab.
+     * @param icon icon for the tab, may be {@code null}.
+     * @param component component that will fill the tab.
+     * @param tip tool-tip for the tab, may be {@code null}.
      */
     public void addTab(final String name, final Icon icon, final Component component, final String tip)
     {
@@ -1299,8 +1299,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Returns the component of the tab with given name.
-     * @param name String; name of the tab.
-     * @return Component; component of the tab with given name.
+     * @param name name of the tab.
+     * @return component of the tab with given name.
      */
     public Component getTab(final String name)
     {
@@ -1316,7 +1316,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Place focus on the tab with given name.
-     * @param name String; name of the tab.
+     * @param name name of the tab.
      */
     public void focusTab(final String name)
     {
@@ -1333,8 +1333,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
      * Requests the user to confirm the deletion of a node. The default button is "Ok". The window popping up is considered
      * sufficient warning, and in this way a speedy succession of "del" and "enter" may delete a consecutive range of nodes to
      * be deleted.
-     * @param node XsdTreeNode; node.
-     * @return boolean; {@code true} if the user confirms node removal.
+     * @param node node.
+     * @return {@code true} if the user confirms node removal.
      */
     public boolean confirmNodeRemoval(final XsdTreeNode node)
     {
@@ -1344,7 +1344,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Shows a dialog in a modal pane to confirm discarding unsaved changes.
-     * @return boolean; whether unsaved changes can be discarded.
+     * @return whether unsaved changes can be discarded.
      */
     private boolean confirmDiscardChanges()
     {
@@ -1358,7 +1358,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Shows a description in a modal pane.
-     * @param description String; description.
+     * @param description description.
      */
     public void showDescription(final String description)
     {
@@ -1396,9 +1396,9 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     /**
      * Places a popup with options under the cell that is being clicked in a table. The popup will show items relevant to what
      * is being typed in the cell. The maximum number of items shown is limited to {@code MAX_DROPDOWN_ITEMS}.
-     * @param allOptions List&lt;String&gt;; list of all options, will be filtered when typing.
-     * @param table JTable; table, will be either the tree table or the attributes table.
-     * @param action Consumer&lt;String&gt;; action to perform based on the option in the popup that was selected.
+     * @param allOptions list of all options, will be filtered when typing.
+     * @param table table, will be either the tree table or the attributes table.
+     * @param action action to perform based on the option in the popup that was selected.
      */
     public void optionsPopup(final List<String> allOptions, final JTable table, final Consumer<String> action)
     {
@@ -1530,8 +1530,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Updates the options that are shown within an dropdown menu based on an indent from scrolling.
-     * @param popup JPopupMenu; dropdown menu.
-     * @return boolean; whether at least one item is visible.
+     * @param popup dropdown menu.
+     * @return whether at least one item is visible.
      */
     private boolean showOptionsInScope(final JPopupMenu popup)
     {
@@ -1553,9 +1553,9 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Places a popup either below or above a given rectangle, based on surrounding space in the window.
-     * @param popup JPopupMenu; popup.
-     * @param rectangle Rectangle; rectangle of cell being edited, relative to the parent component.
-     * @param parent JComponent; component containing the cell.
+     * @param popup popup.
+     * @param rectangle rectangle of cell being edited, relative to the parent component.
+     * @param parent component containing the cell.
      */
     private void placePopup(final JPopupMenu popup, final Rectangle rectangle, final JComponent parent)
     {
@@ -1615,10 +1615,10 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Load file.
-     * @param file File; file to load.
-     * @param status String; status message in status bar to show upon loading.
-     * @param updateRecentFiles boolean; whether to include the opened file in recent files.
-     * @return boolean; whether the file was successfully loaded.
+     * @param file file to load.
+     * @param status status message in status bar to show upon loading.
+     * @param updateRecentFiles whether to include the opened file in recent files.
+     * @return whether the file was successfully loaded.
      */
     private boolean loadFile(final File file, final String status, final boolean updateRecentFiles)
     {
@@ -1684,7 +1684,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Shows a dialog to define a file and saves in to it.
-     * @param root XsdTreeNode; root node of tree to save, can be a sub-tree of the full tree.
+     * @param root root node of tree to save, can be a sub-tree of the full tree.
      */
     public void saveFileAs(final XsdTreeNode root)
     {
@@ -1720,9 +1720,9 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Performs the actual saving, either from {@code saveFile()} or {@code saveFileAs()}.
-     * @param file File; file to save.
-     * @param root XsdTreeNode; root node of tree to save, can be a sub-tree of the full tree.
-     * @param storeAsRecent boolean; whether to store the file under recent files.
+     * @param file file to save.
+     * @param root root node of tree to save, can be a sub-tree of the full tree.
+     * @param storeAsRecent whether to store the file under recent files.
      */
     private void save(final File file, final XsdTreeNode root, final boolean storeAsRecent)
     {
@@ -1929,8 +1929,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     /**
      * Limits the length of a tooltip message. This is to prevent absurd tooltip texts based on really long patterns that should
      * be matched. Will return {@code null} if the input is {@code null}.
-     * @param message String; tooltip message, may be {@code null}.
-     * @return String; possibly shortened tooltip message.
+     * @param message tooltip message, may be {@code null}.
+     * @return possibly shortened tooltip message.
      */
     public static String limitTooltip(final String message)
     {
@@ -1947,9 +1947,9 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Filter options, leaving only those that start with the current value.
-     * @param options List&lt;String&gt;; options to filter.
-     * @param currentValue String; current value.
-     * @return List&lt;String&gt;; filtered options.
+     * @param options options to filter.
+     * @param currentValue current value.
+     * @return filtered options.
      */
     private static List<String> filterOptions(final List<String> options, final String currentValue)
     {
@@ -1959,7 +1959,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Adds a listener to the cell editor of the attributes table.
-     * @param listener CellEditorListener; listener to the cell editor of the attributes table.
+     * @param listener listener to the cell editor of the attributes table.
      */
     public void addAttributeCellEditorListener(final CellEditorListener listener)
     {
@@ -1968,8 +1968,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Sets a node in the clipboard.
-     * @param clipboard XsdTreeNode; node to set in the clipboard.
-     * @param cut boolean; whether the node was cut.
+     * @param clipboard node to set in the clipboard.
+     * @param cut whether the node was cut.
      */
     public void setClipboard(final XsdTreeNode clipboard, final boolean cut)
     {
@@ -1979,7 +1979,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Returns the clipboard node.
-     * @return XsdTreeNode; clipboard node.
+     * @return clipboard node.
      */
     public XsdTreeNode getClipboard()
     {
@@ -2003,7 +2003,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Returns the node actions.
-     * @return NodeActions; node actions.
+     * @return node actions.
      */
     public NodeActions getNodeActions()
     {
@@ -2021,7 +2021,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     /**
      * Return an evaluator to evaluate expression values. This evaluator uses the input parameters of the currently selected
      * scenario.
-     * @return Eval; evaluator to evaluate expression values.
+     * @return evaluator to evaluate expression values.
      */
     public Eval getEval()
     {
@@ -2043,7 +2043,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Adds listener to changes in the evaluator, i.e. added, removed or changed input parameters.
-     * @param listener EvalListener; listener.
+     * @param listener listener.
      */
     public void addEvalListener(final EvalListener listener)
     {
@@ -2052,7 +2052,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Removes listener to changes in the evaluator, i.e. added, removed or changed input parameters.
-     * @param listener EvalListener; listener.
+     * @param listener listener.
      */
     public void removeEvalListener(final EvalListener listener)
     {

@@ -13,9 +13,9 @@ import org.djunits.value.vdouble.scalar.Speed;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param headway Length; headway
- * @param speed Speed; speed
- * @param acceleration Acceleration; acceleration
+ * @param headway headway
+ * @param speed speed
+ * @param acceleration acceleration
  */
 public record NeighborTriplet(Length headway, Speed speed, Acceleration acceleration)
 {

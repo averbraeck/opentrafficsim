@@ -43,11 +43,11 @@ public final class TrafficLightUtil
      * model and the constant deceleration, it is ensured that comfortable deceleration is applied if approaching a red traffic
      * light from far away, while strong deceleration is only applied if required and appropriately represents stopping for
      * yellow.
-     * @param parameters Parameters; parameters
-     * @param headwayTrafficLights Iterable&lt;HeadwayTrafficLight&gt;; set of headway traffic lights
-     * @param carFollowingModel CarFollowingModel; car following model
-     * @param speed Speed; speed
-     * @param speedLimitInfo SpeedLimitInfo; speed limit info
+     * @param parameters parameters
+     * @param headwayTrafficLights set of headway traffic lights
+     * @param carFollowingModel car following model
+     * @param speed speed
+     * @param speedLimitInfo speed limit info
      * @return acceleration as response to a traffic light, being positive infinity if ignored
      * @throws ParameterException if a parameter is not defined
      * @throws NullPointerException if any input is null
@@ -75,11 +75,11 @@ public final class TrafficLightUtil
      * which usually occurs only during the yellow phase. By using the highest acceleration of the car-following model and the
      * constant deceleration, it is ensured that comfortable deceleration is applied if approaching a red traffic light from far
      * away, while strong deceleration is only applied if required and appropriately represents stopping for yellow.
-     * @param parameters Parameters; parameters
-     * @param headwayTrafficLight HeadwayTrafficLight; headway traffic light
-     * @param carFollowingModel CarFollowingModel; car following model
-     * @param speed Speed; speed
-     * @param speedLimitInfo SpeedLimitInfo; speed limit info
+     * @param parameters parameters
+     * @param headwayTrafficLight headway traffic light
+     * @param carFollowingModel car following model
+     * @param speed speed
+     * @param speedLimitInfo speed limit info
      * @return acceleration as response to a traffic light, being positive infinity if ignored
      * @throws ParameterException if a parameter is not defined
      * @throws NullPointerException if any input is null

@@ -36,8 +36,8 @@ public class ProbabilityDistributionEditor extends JPanel
 
     /**
      * Construct a graphical ProbabilityDistributioneEditor.
-     * @param elementNames String[]; the names of the elements of the probability distribution
-     * @param values Double[]; the initial values of the probabilities (should add up to 1.0 and should have same length as
+     * @param elementNames the names of the elements of the probability distribution
+     * @param values the initial values of the probabilities (should add up to 1.0 and should have same length as
      *            <cite>elementNames</cite>)
      */
     public ProbabilityDistributionEditor(final String[] elementNames, final Double[] values)
@@ -83,7 +83,7 @@ public class ProbabilityDistributionEditor extends JPanel
 
     /**
      * Retrieve the current probability values.
-     * @return Double[]; the probability values
+     * @return the probability values
      */
     public final Double[] getProbabilities()
     {

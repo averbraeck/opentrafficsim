@@ -20,7 +20,7 @@ public class FrequencyType extends ExpressionType<Frequency>
 
     /**
      * Constructor with value.
-     * @param value Frequency; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public FrequencyType(final Frequency value)
     {
@@ -29,7 +29,7 @@ public class FrequencyType extends ExpressionType<Frequency>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public FrequencyType(final String expression)
     {

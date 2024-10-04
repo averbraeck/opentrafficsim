@@ -16,7 +16,7 @@ public class AnimationShoulderData extends AnimationCrossSectionElementData<Lane
 
     /**
      * Constructor.
-     * @param shoulder Lane; shoulder.
+     * @param shoulder shoulder.
      */
     public AnimationShoulderData(final Lane shoulder)
     {

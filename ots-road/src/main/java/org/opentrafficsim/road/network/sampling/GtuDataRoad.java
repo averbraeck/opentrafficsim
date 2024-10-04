@@ -23,7 +23,7 @@ public class GtuDataRoad implements GtuData
     private final LaneBasedGtu gtu;
 
     /**
-     * @param gtu LaneBasedGtu; gtu
+     * @param gtu gtu
      */
     public GtuDataRoad(final LaneBasedGtu gtu)
     {

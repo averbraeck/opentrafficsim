@@ -44,7 +44,7 @@ public interface Tailgating
         {
             //
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public String toString()
@@ -82,7 +82,7 @@ public interface Tailgating
                 throw new RuntimeException("Could not obtain or set parameter value.", exception);
             }
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public String toString()
@@ -128,7 +128,7 @@ public interface Tailgating
                 throw new RuntimeException("Could not obtain or set parameter value.", exception);
             }
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public String toString()
@@ -139,13 +139,13 @@ public interface Tailgating
 
     /**
      * Returns a normalized social pressure, equal to (vDesired - vLead) / vGain.
-     * @param speed Speed; speed
-     * @param vCong Speed; speed indicating congestion
-     * @param desiredSpeed Speed; desired speed
-     * @param leaderSpeed Speed; leader speed
-     * @param vGain Speed; vGain parameter
-     * @param headway Length; headway to the leader
-     * @param x0 Length; anticipation distance
+     * @param speed speed
+     * @param vCong speed indicating congestion
+     * @param desiredSpeed desired speed
+     * @param leaderSpeed leader speed
+     * @param vGain vGain parameter
+     * @param headway headway to the leader
+     * @param x0 anticipation distance
      * @return normalized social pressure
      */
     static double socialPressure(final Speed speed, final Speed vCong, final Speed desiredSpeed, final Speed leaderSpeed,
@@ -161,8 +161,8 @@ public interface Tailgating
 
     /**
      * Apply tailgating.
-     * @param perception LanePerception; perception
-     * @param parameters Parameters; parameters
+     * @param perception perception
+     * @param parameters parameters
      */
     void tailgate(LanePerception perception, Parameters parameters);
 

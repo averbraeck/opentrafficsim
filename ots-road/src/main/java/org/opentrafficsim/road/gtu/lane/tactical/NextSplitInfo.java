@@ -17,11 +17,10 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param nextSplitNode Node; the first subsequent node at which the route splits.
- * @param correctCurrentLanes Set&lt;Lane&gt;; the lane(s) and/or adjacent lane(s) on which the reference point of the GTU is
- *            registered that lead us in the direction of the route provided by the strategical planner.
- * @param requiredDirection LateralDirectionality; required direction for lane changes for this split, beyond lane on current
- *            link
+ * @param nextSplitNode the first subsequent node at which the route splits.
+ * @param correctCurrentLanes the lane(s) and/or adjacent lane(s) on which the reference point of the GTU is registered that
+ *            lead us in the direction of the route provided by the strategical planner.
+ * @param requiredDirection required direction for lane changes for this split, beyond lane on current link
  */
 public record NextSplitInfo(Node nextSplitNode, Set<Lane> correctCurrentLanes, LateralDirectionality requiredDirection)
         implements Serializable
@@ -31,9 +30,9 @@ public record NextSplitInfo(Node nextSplitNode, Set<Lane> correctCurrentLanes, L
     private static final long serialVersionUID = 20151231L;
 
     /**
-     * @param nextSplitNode Node; the first subsequent node at which the route splits.
-     * @param correctCurrentLanes Set&lt;Lane&gt;; the lane(s) and/or adjacent lane(s) on which the reference point of the GTU
-     *            is registered that lead us in the direction of the route provided by the strategical planner.
+     * @param nextSplitNode the first subsequent node at which the route splits.
+     * @param correctCurrentLanes the lane(s) and/or adjacent lane(s) on which the reference point of the GTU is registered that
+     *            lead us in the direction of the route provided by the strategical planner.
      */
     public NextSplitInfo(final Node nextSplitNode, final Set<Lane> correctCurrentLanes)
     {

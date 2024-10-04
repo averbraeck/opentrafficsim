@@ -284,11 +284,11 @@ public class Sim0mqKpiTransceiver implements Serializable
 
     // /**
     // * Construct a new ImbKpiTransceiver.
-    // * @param connector Connector; the IMB connector
-    // * @param time Time; time of creation
-    // * @param networkId String; the network id
-    // * @param query Query; the statistics query
-    // * @param transmissionInterval Duration; the interval between generation of graphs
+    // * @param connector the IMB connector
+    // * @param time time of creation
+    // * @param networkId the network id
+    // * @param query the statistics query
+    // * @param transmissionInterval the interval between generation of graphs
     // * @throws IMBException when the post of the IMB message fails
     // */
     // public Sim0MQKpiTransceiver(final Connector connector, Time time, String networkId, final Query query,

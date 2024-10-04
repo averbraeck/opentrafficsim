@@ -53,10 +53,10 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
 
     /**
      * Constructor using route supplier, provided GTU templates and provided strategical planner factory supplier.
-     * @param gtuTypeGenerator Generator&lt;GtuType&gt;; GTU type generator
-     * @param templates Set&lt;TemplateGTUType&gt;; templates
-     * @param factory DefaultGtuCharacteristicsGeneratorOd&lt;?&gt;; strategical factory supplier
-     * @param vehicleModelFactory VehicleModelFactory; vehicle model factory
+     * @param gtuTypeGenerator GTU type generator
+     * @param templates templates
+     * @param factory strategical factory supplier
+     * @param vehicleModelFactory vehicle model factory
      */
     private DefaultLaneBasedGtuCharacteristicsGeneratorOd(final Generator<GtuType> gtuTypeGenerator,
             final Set<GtuTemplate> templates, final LaneBasedStrategicalPlannerFactory<?> factory,
@@ -121,8 +121,8 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
 
     /**
      * Returns a strategical model factory for a standard LMRS model, to be used in {@code Factory}.
-     * @param stream StreamInterface; random number stream.
-     * @return LaneBasedStrategicalRoutePlannerFactory; factory for a standard LMRS model.
+     * @param stream random number stream.
+     * @return factory for a standard LMRS model.
      */
     public static LaneBasedStrategicalRoutePlannerFactory defaultLmrs(final StreamInterface stream)
     {
@@ -158,7 +158,7 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
 
         /**
          * Constructor.
-         * @param factory LaneBasedStrategicalPlannerFactory&lt;?&gt;; set factorySupplier.
+         * @param factory set factorySupplier.
          */
         public Factory(final LaneBasedStrategicalPlannerFactory<?> factory)
         {
@@ -166,8 +166,8 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
         }
 
         /**
-         * @param gtuTypeGenerator Generator&lt;GtuType&gt;; set gtuTypeGenerator.
-         * @return Factory; this factory for method chaining
+         * @param gtuTypeGenerator set gtuTypeGenerator.
+         * @return this factory for method chaining
          */
         public Factory setGtuTypeGenerator(final Generator<GtuType> gtuTypeGenerator)
         {
@@ -176,8 +176,8 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
         }
 
         /**
-         * @param templates Set&lt;TemplateGTUType&gt;; set templates.
-         * @return Factory; this factory for method chaining
+         * @param templates set templates.
+         * @return this factory for method chaining
          */
         public Factory setTemplates(final Set<GtuTemplate> templates)
         {
@@ -186,8 +186,8 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
         }
 
         /**
-         * @param vehicleModelFactory VehicleModelFactory; set vehicleModelFactory.
-         * @return Factory; this factory for method chaining
+         * @param vehicleModelFactory set vehicleModelFactory.
+         * @return this factory for method chaining
          */
         public Factory setVehicleModelGenerator(final VehicleModelFactory vehicleModelFactory)
         {

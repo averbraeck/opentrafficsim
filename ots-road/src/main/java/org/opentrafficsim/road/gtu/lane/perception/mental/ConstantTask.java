@@ -20,8 +20,8 @@ public class ConstantTask extends AbstractTask
 {
     /**
      * Constructor.
-     * @param id String; id
-     * @param taskDemand double; task demand
+     * @param id id
+     * @param taskDemand task demand
      */
     public ConstantTask(final String id, final double taskDemand)
     {

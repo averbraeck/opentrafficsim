@@ -41,9 +41,9 @@ public class HistoryManagerDevs extends HistoryManager implements EventListener
 
     /**
      * Constructor.
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param history Duration; time over which history is guaranteed
-     * @param cleanUpInterval Duration; clean-up interval
+     * @param simulator simulator
+     * @param history time over which history is guaranteed
+     * @param cleanUpInterval clean-up interval
      */
     public HistoryManagerDevs(final OtsSimulatorInterface simulator, final Duration history, final Duration cleanUpInterval)
     {
@@ -51,8 +51,7 @@ public class HistoryManagerDevs extends HistoryManager implements EventListener
         this.history = history;
         this.cleanUpInterval = cleanUpInterval;
         cleanUpHistory(); // start clean-up event chain
-        Try.execute(() -> this.simulator.addListener(this, Replication.END_REPLICATION_EVENT),
-                "Unable to add listener.");
+        Try.execute(() -> this.simulator.addListener(this, Replication.END_REPLICATION_EVENT), "Unable to add listener.");
     }
 
     /** {@inheritDoc} */

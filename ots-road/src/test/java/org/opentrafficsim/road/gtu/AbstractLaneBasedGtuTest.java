@@ -137,8 +137,8 @@ public class AbstractLaneBasedGtuTest implements UNITS
         assertEquals(carWidth, car.getWidth(), "Width should be identical to the provided width");
         assertEquals(carLength, car.getLength(), "Length should be identical to the provided length");
         assertEquals(gtuType, car.getType(), "GTU type should be identical to the provided one");
-        assertEquals(positionA.getSI(), car.position(lanesGroupA[1], car.getReference()).getSI(),
-                0.0001, "front in lanesGroupA[1] is positionA");
+        assertEquals(positionA.getSI(), car.position(lanesGroupA[1], car.getReference()).getSI(), 0.0001,
+                "front in lanesGroupA[1] is positionA");
         // assertEquals("acceleration is 0", 0, car.getAcceleration().getSI(), 0.00001);
         // edit wouter schakel: fixed acceleration model has a=2.0m/s^2, first plan is made during initialization
         assertEquals(2.0, car.getAcceleration().getSI(), 0.00001, "acceleration is 2");
@@ -155,7 +155,7 @@ public class AbstractLaneBasedGtuTest implements UNITS
         // {
         // // Ignore
         // }
-        for (Lane[] laneGroup : new Lane[][] {lanesGroupA})//, lanesGroupB})
+        for (Lane[] laneGroup : new Lane[][] {lanesGroupA})// , lanesGroupB})
         {
             for (int laneIndex = 0; laneIndex < laneGroup.length; laneIndex++)
             {
@@ -246,8 +246,8 @@ public class AbstractLaneBasedGtuTest implements UNITS
             // }
             Speed longitudinalSpeed = car.getSpeed();
             double expectedLongitudinalSpeed = initialSpeed.getSI() + stepTime.getSI() * acceleration.getSI();
-            assertEquals(expectedLongitudinalSpeed, longitudinalSpeed.getSI(),
-                    0.00001, "longitudinal speed is " + expectedLongitudinalSpeed);
+            assertEquals(expectedLongitudinalSpeed, longitudinalSpeed.getSI(), 0.00001,
+                    "longitudinal speed is " + expectedLongitudinalSpeed);
             for (RelativePosition relativePosition : new RelativePosition[] {car.getFront(), car.getRear()})
             {
                 Map<Lane, Double> positions = car.fractionalPositions(relativePosition);
@@ -255,10 +255,10 @@ public class AbstractLaneBasedGtuTest implements UNITS
                 Double pos = positions.get(lanesGroupA[1]);
                 // System.out.println("Fractional positions: " + positions);
                 assertTrue(null != pos, "Car should be in lane 1 of lane group A");
-                assertEquals(pos, car.fractionalPosition(lanesGroupA[1], relativePosition),
-                        0.0000001, "fractional position should be equal to result of fractionalPosition(lane, ...)");
+                assertEquals(pos, car.fractionalPosition(lanesGroupA[1], relativePosition), 0.0000001,
+                        "fractional position should be equal to result of fractionalPosition(lane, ...)");
             }
-            for (Lane[] laneGroup : new Lane[][] {lanesGroupA})//, lanesGroupB})
+            for (Lane[] laneGroup : new Lane[][] {lanesGroupA})// , lanesGroupB})
             {
                 for (int laneIndex = 0; laneIndex < laneGroup.length; laneIndex++)
                 {
@@ -288,8 +288,8 @@ public class AbstractLaneBasedGtuTest implements UNITS
                                 expectedPosition = expectedPosition.plus(relativePosition.dx());
                                 // System.out.println("reported position: " + position);
                                 // System.out.println("expected position: " + expectedPosition);
-                                assertEquals(expectedPosition.getSI(), position.getSI(),
-                                        0.0001, "Position should match initial position");
+                                assertEquals(expectedPosition.getSI(), position.getSI(), 0.0001,
+                                        "Position should match initial position");
                             }
                         }
                         catch (GtuException ne)
@@ -319,8 +319,8 @@ public class AbstractLaneBasedGtuTest implements UNITS
                                 // System.out.println("reported position: " + position);
                                 // System.out.println("expected position: " + expectedPosition);
                                 double expectedFractionalPosition = expectedPosition.getSI() / lane.getLength().getSI();
-                                assertEquals(expectedFractionalPosition, fractionalPosition,
-                                        0.000001, "Position should match initial position");
+                                assertEquals(expectedFractionalPosition, fractionalPosition, 0.000001,
+                                        "Position should match initial position");
                             }
                         }
                         catch (GtuException ne)
@@ -346,8 +346,8 @@ public class AbstractLaneBasedGtuTest implements UNITS
             Map<Lane, Double> positions = car.fractionalPositions(relativePosition);
             Double pos = positions.get(lanesGroupA[1]);
             assertTrue(null != pos, "Car should be in lane 1 of lane group A");
-            assertEquals(pos, car.fractionalPosition(lanesGroupA[1], relativePosition),
-                    0.0000001, "fractional position should be equal to result of fractionalPosition(lane, ...)");
+            assertEquals(pos, car.fractionalPosition(lanesGroupA[1], relativePosition), 0.0000001,
+                    "fractional position should be equal to result of fractionalPosition(lane, ...)");
             pos = positions.get(lanesGroupC[0]);
         }
         // TODO removeLane should throw an Error when the car is not on that lane (currently this is silently ignored)

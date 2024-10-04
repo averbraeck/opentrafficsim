@@ -35,6 +35,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayG
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuReal;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
+import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLightReal;
 import org.opentrafficsim.road.gtu.lane.perception.structure.LaneRecordInterface;
 import org.opentrafficsim.road.gtu.lane.perception.structure.SimpleLaneRecord;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -135,13 +136,13 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
     /**
      * Construct a new Conflict.
-     * @param lane Lane; lane where this conflict starts
-     * @param longitudinalPosition Length; position of start of conflict on lane
-     * @param length Length; length of the conflict along the lane centerline
-     * @param geometry Polygon2d; geometry of conflict
-     * @param conflictType ConflictType; conflict type, i.e. crossing, merge or split
-     * @param conflictRule ConflictRule; conflict rule, i.e. determines priority, give way, stop or all-stop
-     * @param permitted boolean; whether the conflict is permitted in traffic light control
+     * @param lane lane where this conflict starts
+     * @param longitudinalPosition position of start of conflict on lane
+     * @param length length of the conflict along the lane centerline
+     * @param geometry geometry of conflict
+     * @param conflictType conflict type, i.e. crossing, merge or split
+     * @param conflictRule conflict rule, i.e. determines priority, give way, stop or all-stop
+     * @param permitted whether the conflict is permitted in traffic light control
      * @throws NetworkException when the position on the lane is out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -191,7 +192,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
     /**
      * Make sure the conflict can provide the given upstream visibility.
-     * @param visibility Length; visibility to guarantee
+     * @param visibility visibility to guarantee
      */
     private void provideUpstreamVisibility(final Length visibility)
     {
@@ -205,7 +206,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
     /**
      * Make sure the conflict can provide the given downstream visibility.
-     * @param visibility Length; visibility to guarantee
+     * @param visibility visibility to guarantee
      */
     private void provideDownstreamVisibility(final Length visibility)
     {
@@ -219,10 +220,10 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
     /**
      * Provides the upstream GTUs.
-     * @param perceivingGtu LaneBasedGtu; perceiving GTU
-     * @param headwayGtuType HeadwayGtuType; headway GTU type to use
-     * @param visibility Length; distance over which GTU's are provided
-     * @return PerceptionIterable&lt;HeadwayGtU&gt;; iterable over the upstream GTUs
+     * @param perceivingGtu perceiving GTU
+     * @param headwayGtuType headway GTU type to use
+     * @param visibility distance over which GTU's are provided
+     * @return iterable over the upstream GTUs
      */
     public PerceptionCollectable<HeadwayGtu, LaneBasedGtu> getUpstreamGtus(final LaneBasedGtu perceivingGtu,
             final HeadwayGtuType headwayGtuType, final Length visibility)
@@ -268,10 +269,10 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
     /**
      * Provides the downstream GTUs.
-     * @param perceivingGtu LaneBasedGtu; perceiving GTU
-     * @param headwayGtuType HeadwayGtuType; headway GTU type to use
-     * @param visibility Length; distance over which GTU's are provided
-     * @return PerceptionIterable&lt;HeadwayGtU&gt;; iterable over the downstream GTUs
+     * @param perceivingGtu perceiving GTU
+     * @param headwayGtuType headway GTU type to use
+     * @param visibility distance over which GTU's are provided
+     * @return iterable over the downstream GTUs
      */
     public PerceptionCollectable<HeadwayGtu, LaneBasedGtu> getDownstreamGtus(final LaneBasedGtu perceivingGtu,
             final HeadwayGtuType headwayGtuType, final Length visibility)
@@ -358,7 +359,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     {
         return this.conflictRule.determinePriority(this);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public Polygon2d getGeometry()
@@ -392,8 +393,8 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
     /**
      * Returns the distance to an upstream traffic light.
-     * @param maxDistance Length; maximum distance of traffic light
-     * @return Length; distance to upstream traffic light, infinite if beyond maximum distance
+     * @param maxDistance maximum distance of traffic light
+     * @return distance to upstream traffic light, infinite if beyond maximum distance
      */
     public Length getTrafficLightDistance(final Length maxDistance)
     {
@@ -413,7 +414,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                             protected HeadwayTrafficLight perceive(final LaneBasedGtu perceivingGtu, final TrafficLight object,
                                     final Length distance) throws GtuException, ParameterException
                             {
-                                return new HeadwayTrafficLight(object, distance, false);
+                                return new HeadwayTrafficLightReal(object, distance, false);
                             }
                         };
                 if (!it.isEmpty())
@@ -431,18 +432,18 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
     /**
      * Creates a pair of conflicts.
-     * @param conflictType ConflictType; conflict type, i.e. crossing, merge or split
-     * @param conflictRule ConflictRule; conflict rule
-     * @param permitted boolean; whether the conflict is permitted in traffic light control
-     * @param lane1 Lane; lane of conflict 1
-     * @param longitudinalPosition1 Length; longitudinal position of conflict 1
-     * @param length1 Length; {@code Length} of conflict 1
-     * @param geometry1 Polygon2d; geometry of conflict 1
-     * @param lane2 Lane; lane of conflict 2
-     * @param longitudinalPosition2 Length; longitudinal position of conflict 2
-     * @param length2 Length; {@code Length} of conflict 2
-     * @param geometry2 Polygon2d; geometry of conflict 2
-     * @param simulator OtsSimulatorInterface; the simulator for animation and timed events
+     * @param conflictType conflict type, i.e. crossing, merge or split
+     * @param conflictRule conflict rule
+     * @param permitted whether the conflict is permitted in traffic light control
+     * @param lane1 lane of conflict 1
+     * @param longitudinalPosition1 longitudinal position of conflict 1
+     * @param length1 {@code Length} of conflict 1
+     * @param geometry1 geometry of conflict 1
+     * @param lane2 lane of conflict 2
+     * @param longitudinalPosition2 longitudinal position of conflict 2
+     * @param length2 {@code Length} of conflict 2
+     * @param geometry2 geometry of conflict 2
+     * @param simulator the simulator for animation and timed events
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -498,9 +499,9 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
         /**
          * Construct a new ConflictEnd object.
-         * @param conflict Conflict; conflict at start of conflict area
-         * @param lane Lane; lane
-         * @param longitudinalPosition Length; position along the lane of the end of the conflict
+         * @param conflict conflict at start of conflict area
+         * @param lane lane
+         * @param longitudinalPosition position along the lane of the end of the conflict
          * @throws NetworkException on network exception
          * @throws OtsGeometryException does not happen
          */
@@ -563,10 +564,10 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
         /**
          * Constructor.
-         * @param gtu LaneBasedGtu; gtu
-         * @param overlapFront Length; front overlap
-         * @param overlap Length; overlap
-         * @param overlapRear Length; rear overlap
+         * @param gtu gtu
+         * @param overlapFront front overlap
+         * @param overlap overlap
+         * @param overlapRear rear overlap
          * @throws GtuException on exception
          */
         ConflictGtu(final LaneBasedGtu gtu, final Length overlapFront, final Length overlap, final Length overlapRear)
@@ -578,8 +579,8 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
         /**
          * Constructor.
-         * @param gtu LaneBasedGtu; gtu
-         * @param distance Length; distance
+         * @param gtu gtu
+         * @param distance distance
          * @throws GtuException on exception
          */
         ConflictGtu(final LaneBasedGtu gtu, final Length distance) throws GtuException
@@ -662,7 +663,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
         /**
          * Constructor.
-         * @param wrappedType HeadwayGtuType; wrapped headway type
+         * @param wrappedType wrapped headway type
          */
         OverlapHeadway(final HeadwayGtuType wrappedType)
         {
@@ -749,11 +750,11 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         private final Iterator<HeadwayGtu> baseIterator;
 
         /**
-         * @param perceivingGtu LaneBasedGtu; perceiving GTU
-         * @param headwayGtuType HeadwayGtuType; HeadwayGtu type
-         * @param visibility Length; guaranteed visibility
-         * @param downstream boolean; downstream (or upstream) neighbors
-         * @param base AbstractPerceptionIterable&lt;HeadwayGtu, LaneBasedGtu, Integer&gt;; base iterable from the conflict
+         * @param perceivingGtu perceiving GTU
+         * @param headwayGtuType HeadwayGtu type
+         * @param visibility guaranteed visibility
+         * @param downstream downstream (or upstream) neighbors
+         * @param base base iterable from the conflict
          */
         ConflictGtuIterable(final LaneBasedGtu perceivingGtu, final HeadwayGtuType headwayGtuType, final Length visibility,
                 final boolean downstream, final AbstractPerceptionIterable<HeadwayGtu, LaneBasedGtu, Integer> base)

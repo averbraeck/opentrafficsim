@@ -115,10 +115,10 @@ public final class OdApplier
      * For zone GTU generation one {@code LaneBasedGtuGenerator} is created, with one single source of demand data, specifying
      * demand towards all destinations. A single {@code MarkovChain} may be used. Traffic is distributed over possible
      * {@code Connectors} based on their link-weight, or the number of lanes of the connected links if no weight is given.
-     * @param network RoadNetwork; network
-     * @param od OdMatrix; OD matrix
-     * @param odOptions OdOptions; options for vehicle generation
-     * @param detectorType DetectorType; detector type.
+     * @param network network
+     * @param od OD matrix
+     * @param odOptions options for vehicle generation
+     * @param detectorType detector type.
      * @return Map&lt;String, GeneratorObjects&gt; map of generator id's and created generator objects mainly for testing
      * @throws ParameterException if a parameter is missing
      * @throws SimRuntimeException if this method is called after simulation time 0
@@ -183,14 +183,12 @@ public final class OdApplier
      * destination is obtained or created, with possible {@code MarkovChain}. For zone GTU generation, the looping is a more
      * straight-forward creation of nodes from origin, and for destination and category. The result of lane-based GTU generation
      * is given in the input map, for zone GTU generation the single origin demand node is returned by the method.
-     * @param od OdMatrix; OD matrix.
-     * @param odOptions OdOptions; OD options.
-     * @param stream StreamInterface; random number stream.
-     * @param origin Node; origin node.
-     * @param originNodePerLane Map&lt;Lane, DemandNode&lt;Node, DemandNode&lt;Node, DemandNode&lt;Category, ?&gt;&gt;&gt;&gt;;
-     *            map of origin demand node per lane, populated for lane-based GTU generation.
-     * @return DemandNode&lt;Node, DemandNode&lt;Node, DemandNode&lt;Category, ?&gt;&gt;&gt;; demand node structure for the
-     *         entire generator in case of zone GTU generation.
+     * @param od OD matrix.
+     * @param odOptions OD options.
+     * @param stream random number stream.
+     * @param origin origin node.
+     * @param originNodePerLane map of origin demand node per lane, populated for lane-based GTU generation.
+     * @return demand node structure for the entire generator in case of zone GTU generation.
      */
     private static DemandNode<Node, DemandNode<Node, DemandNode<Category, ?>>> buildDemandNodeTree(final OdMatrix od,
             final OdOptions odOptions, final StreamInterface stream, final Node origin,
@@ -276,8 +274,7 @@ public final class OdApplier
     /**
      * Returns a set of positions for GTU generation from each lane defined in demand. Stores the positions with the coupled
      * demand node.
-     * @param originNodePerLane Map&lt;Lane, DemandNode&lt;Node, DemandNode&lt;Node, DemandNode&lt;Category, ?&gt;&gt;&gt;&gt;;
-     *            map with a demand node per lane.
+     * @param originNodePerLane map with a demand node per lane.
      * @param initialPositions Map&lt;DemandNode&lt;Node, DemandNode&lt;Node, DemandNode&lt;Category, ?&gt;&gt;&gt;,
      *            Set&lt;LanePosition&gt;&gt;; map with positions per demand node.
      */
@@ -300,10 +297,10 @@ public final class OdApplier
      * a link is a {@code Connector}, a link weight and via-node over that link are stored in the provided maps, for later use
      * in constructing weighted generator positions. For each {@code CrossSectionLink} attached to the via-node, or to the first
      * link if there was no {@code Connector}, positions are generated.
-     * @param origin Node; origin node for the zone.
-     * @param linkWeights Map&lt;CrossSectionLink, Double&gt;; link weight map to place link weights in.
-     * @param viaNodes Map&lt;CrossSectionLink, Node&gt;; via node map to place via nodes in.
-     * @return Set&lt;LanePosition&gt;; gathered lane positions.
+     * @param origin origin node for the zone.
+     * @param linkWeights link weight map to place link weights in.
+     * @param viaNodes via node map to place via nodes in.
+     * @return gathered lane positions.
      */
     private static Set<LanePosition> gatherPositionsZone(final Node origin, final Map<CrossSectionLink, Double> linkWeights,
             final Map<CrossSectionLink, Node> viaNodes)
@@ -360,16 +357,16 @@ public final class OdApplier
      * via nodes should be {@code null} for lane-based GTU generation. Furthermore, the lane is then used to obtain OD option
      * values possibly specified at the lane level. Other than that, for either lane-based or zone GTU generation, a
      * {@code LaneBasedGtuGenerator} is created for each initial position given.
-     * @param network RoadNetwork; network.
-     * @param odOptions OdOptions; od options.
-     * @param simulator OtsSimulatorInterface; simulator.
-     * @param laneBased boolean; lane in category.
-     * @param stream StreamInterface; random number stream.
-     * @param output Map&lt;String, GeneratorObjects&gt;; map that output elements will be stored in.
+     * @param network network.
+     * @param odOptions od options.
+     * @param simulator simulator.
+     * @param laneBased lane in category.
+     * @param stream random number stream.
+     * @param output map that output elements will be stored in.
      * @param initialPositions Map&lt;DemandNode&lt;Node, DemandNode&lt;Node, DemandNode&lt;Category, ?&gt;&gt;&gt;,
      *            Set&lt;LanePosition&gt;&gt;; sorted initial positions.
-     * @param linkWeights Map&lt;CrossSectionLink, Double&gt;; weights per link, may be {@code null}.
-     * @param viaNodes Map&lt;CrossSectionLink, Node&gt;; nodes to select from for zone, may be {@code null}.
+     * @param linkWeights weights per link, may be {@code null}.
+     * @param viaNodes nodes to select from for zone, may be {@code null}.
      * @throws ParameterException if drawing from the inter-arrival generator fails
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -467,8 +464,8 @@ public final class OdApplier
 
     /**
      * Obtains a stream for vehicle generation.
-     * @param simulator OtsSimulatorInterface; simulator.
-     * @return StreamInterface; stream for vehicle generation.
+     * @param simulator simulator.
+     * @return stream for vehicle generation.
      */
     private static StreamInterface getStream(final OtsSimulatorInterface simulator)
     {
@@ -492,9 +489,9 @@ public final class OdApplier
 
     /**
      * Create destination sensors at all lanes connected to a destination node. This method considers connectors too.
-     * @param destination Node; destination node
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param detectorType DetectorType; detector type.
+     * @param destination destination node
+     * @param simulator simulator
+     * @param detectorType detector type.
      */
     private static void createSensorsAtDestination(final Node destination, final OtsSimulatorInterface simulator,
             final DetectorType detectorType)
@@ -514,9 +511,9 @@ public final class OdApplier
 
     /**
      * Create sensors at all lanes connected to this node. This method does not handle connectors.
-     * @param destination Node; the destination node
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param detectorType DetectorType; detector type.
+     * @param destination the destination node
+     * @param simulator simulator
+     * @param detectorType detector type.
      */
     private static void createSensorsAtDestinationNode(final Node destination, final OtsSimulatorInterface simulator,
             final DetectorType detectorType)
@@ -556,7 +553,7 @@ public final class OdApplier
 
     /**
      * Returns the common ancestor {@code LinkType} of all links connected to the node, moving through connectors.
-     * @param node Node; origin node
+     * @param node origin node
      * @return common ancestor {@code LinkType} of all links connected to the node, moving through connectors
      */
     private static LinkType getLinkTypeFromNode(final Node node)
@@ -566,8 +563,8 @@ public final class OdApplier
 
     /**
      * Returns the common ancestor {@code LinkType} of all links connected to the node, moving through connectors.
-     * @param node Node; origin node
-     * @param ignoreConnectors boolean; ignore connectors
+     * @param node origin node
+     * @param ignoreConnectors ignore connectors
      * @return common ancestor {@code LinkType} of all links connected to the node, moving through connectors
      */
     private static LinkType getLinkTypeFromNode0(final Node node, final boolean ignoreConnectors)
@@ -603,10 +600,10 @@ public final class OdApplier
 
     /**
      * Returns a sorted map.
-     * @param map Map&lt;K, V&gt;; input map
+     * @param map input map
      * @param <K> key type (implemented for cleaner code only)
      * @param <V> value type (implemented for cleaner code only)
-     * @return Map; sorted map
+     * @return sorted map
      */
     private static <K, V extends Set<LanePosition>> Map<K, V> sortByValue(final Map<K, V> map)
     {
@@ -635,9 +632,9 @@ public final class OdApplier
 
     /**
      * Adds {@code LanePosition}s to the input set, for {@code Lane}s on the given link, starting at the given {@code Node}.
-     * @param link CrossSectionLink; link with lanes to add positions for
-     * @param node Node; node on the side where positions should be placed
-     * @param positionSet Set&lt;LanePosition&gt;; set to add position to
+     * @param link link with lanes to add positions for
+     * @param node node on the side where positions should be placed
+     * @param positionSet set to add position to
      */
     private static void setLanePosition(final CrossSectionLink link, final Node node, final Set<LanePosition> positionSet)
     {
@@ -701,9 +698,9 @@ public final class OdApplier
 
         /**
          * Constructor for branching node, with Markov selection.
-         * @param object T; node object
-         * @param stream StreamInterface; random stream to draw child node
-         * @param markov MarkovChain; Markov chain
+         * @param object node object
+         * @param stream random stream to draw child node
+         * @param markov Markov chain
          */
         DemandNode(final T object, final StreamInterface stream, final MarkovChain markov)
         {
@@ -715,8 +712,8 @@ public final class OdApplier
 
         /**
          * Constructor for leaf node, without Markov selection.
-         * @param object T; node object
-         * @param demandPattern DemandPattern; demand data
+         * @param object node object
+         * @param demandPattern demand data
          */
         DemandNode(final T object, final DemandPattern demandPattern)
         {
@@ -728,7 +725,7 @@ public final class OdApplier
 
         /**
          * Adds child to a branching node.
-         * @param child K; child node
+         * @param child child node
          */
         public void addChild(final K child)
         {
@@ -737,8 +734,8 @@ public final class OdApplier
 
         /**
          * Adds child to a branching node.
-         * @param child K; child node
-         * @param gtuType GtuType; gtu type for Markov chain
+         * @param child child node
+         * @param gtuType gtu type for Markov chain
          */
         public void addLeaf(final K child, final GtuType gtuType)
         {
@@ -760,8 +757,8 @@ public final class OdApplier
 
         /**
          * Randomly draws a child node.
-         * @param time Time; simulation time
-         * @return K; randomly drawn child node
+         * @param time simulation time
+         * @return randomly drawn child node
          */
         public K draw(final Time time)
         {
@@ -808,7 +805,7 @@ public final class OdApplier
 
         /**
          * Returns the node object.
-         * @return T; node object
+         * @return node object
          */
         public T getObject()
         {
@@ -817,7 +814,7 @@ public final class OdApplier
 
         /**
          * Returns the child that pertains to specified object or {@code null} if no such child is present.
-         * @param obj Object; child object
+         * @param obj child object
          * @return child that pertains to specified object or {@code null} if no such child is present
          */
         public K getChild(final Object obj)
@@ -890,7 +887,7 @@ public final class OdApplier
 
         /**
          * Constructor.
-         * @param markov MarkovCorrelation&lt;GtuType, Frequency&gt;; Markov correlation for GTU type selection
+         * @param markov Markov correlation for GTU type selection
          */
         MarkovChain(final MarkovCorrelation<GtuType, Frequency> markov)
         {
@@ -899,9 +896,9 @@ public final class OdApplier
 
         /**
          * Returns a next GTU type drawn using a Markov chain.
-         * @param gtuTypes GtuType[]; GtuTypes to consider
-         * @param intensities Frequency[]; frequency for each GTU type, i.e. the steady-state
-         * @param stream StreamInterface; stream for random numbers
+         * @param gtuTypes GtuTypes to consider
+         * @param intensities frequency for each GTU type, i.e. the steady-state
+         * @param stream stream for random numbers
          * @return next GTU type drawn using a Markov chain
          */
         public GtuType draw(final GtuType[] gtuTypes, final Frequency[] intensities, final StreamInterface stream)
@@ -921,9 +918,9 @@ public final class OdApplier
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
-     * @param generator LaneBasedGtuGenerator; main generator for GTU's
-     * @param headwayGenerator Generator&lt;Duration&gt;; generator of headways
-     * @param characteristicsGenerator LaneBasedGtuCharacteristicsGenerator; generator of GTU characteristics
+     * @param generator main generator for GTU's
+     * @param headwayGenerator generator of headways
+     * @param characteristicsGenerator generator of GTU characteristics
      */
     public static record GeneratorObjects(LaneBasedGtuGenerator generator, Generator<Duration> headwayGenerator,
             LaneBasedGtuCharacteristicsGenerator characteristicsGenerator)

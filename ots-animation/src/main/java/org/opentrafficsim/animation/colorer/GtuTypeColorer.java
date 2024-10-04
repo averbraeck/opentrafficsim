@@ -51,7 +51,7 @@ public class GtuTypeColorer implements GtuColorer, Serializable
 
     /**
      * Adds a GTU type to the list with color based on the type.
-     * @param gtuType GtuType; GTU type
+     * @param gtuType GTU type
      * @return this GTUTypeColorer
      */
     public GtuTypeColorer add(final GtuType gtuType)
@@ -67,8 +67,8 @@ public class GtuTypeColorer implements GtuColorer, Serializable
 
     /**
      * Adds a GTU type to the list with given color.
-     * @param gtuType GtuType; GTU type
-     * @param color Color; color
+     * @param gtuType GTU type
+     * @param color color
      * @return this GTUTypeColorer
      */
     public GtuTypeColorer add(final GtuType gtuType, final Color color)
@@ -79,8 +79,8 @@ public class GtuTypeColorer implements GtuColorer, Serializable
 
     /**
      * Returns a colorer from a map.
-     * @param gtuTypeColors Map&lt;GtuType, Color&gt;; colors per GTU type in the GTU type colorer.
-     * @return GtuTypeColorer; based on the map.
+     * @param gtuTypeColors colors per GTU type in the GTU type colorer.
+     * @return based on the map.
      */
     public static GtuTypeColorer fromMap(final Map<GtuType, Color> gtuTypeColors)
     {

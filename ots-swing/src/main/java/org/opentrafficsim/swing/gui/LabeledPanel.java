@@ -18,7 +18,7 @@ public class LabeledPanel extends JPanel
 
     /**
      * Create a JPanel with border and caption.
-     * @param caption String; the caption of the LabeledPanel
+     * @param caption the caption of the LabeledPanel
      */
     public LabeledPanel(final String caption)
     {

@@ -74,7 +74,7 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Construct a new OtsLine2d.
-     * @param points Point2d...; the array of points to construct this OtsLine2d from.
+     * @param points the array of points to construct this OtsLine2d from.
      */
     public OtsLine2d(final Point2d... points)
     {
@@ -83,7 +83,7 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Creates a new OtsLine2d based on 2d information. Elevation will be 0.
-     * @param line2d PolyLine2d; 2d information.
+     * @param line2d 2d information.
      */
     public OtsLine2d(final PolyLine2d line2d)
     {
@@ -92,7 +92,7 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Construct a new OtsLine2d, and immediately make the length-indexed line.
-     * @param line2d PolyLine2d; the 2d line.
+     * @param line2d the 2d line.
      */
     private void init(final PolyLine2d line2d)
     {
@@ -108,8 +108,8 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Construct parallel line.<br>
-     * @param offset double; offset distance from the reference line; positive is LEFT, negative is RIGHT
-     * @return OtsLine2d; the line that has the specified offset from the reference line
+     * @param offset offset distance from the reference line; positive is LEFT, negative is RIGHT
+     * @return the line that has the specified offset from the reference line
      */
     public final OtsLine2d offsetLine(final double offset)
     {
@@ -119,9 +119,9 @@ public class OtsLine2d implements Locatable, Serializable
     /**
      * Clean up a list of points that describe a polyLine by removing points that lie within epsilon distance of a more
      * straightened version of the line. <br>
-     * @param epsilon double; maximal deviation
-     * @param useHorizontalDistance boolean; if true; the horizontal distance is used; if false; the 3D distance is used
-     * @return OtsLine2d; a new OtsLine2d containing all the remaining points
+     * @param epsilon maximal deviation
+     * @param useHorizontalDistance if true; the horizontal distance is used; if false; the 3D distance is used
+     * @return a new OtsLine2d containing all the remaining points
      */
     @Deprecated
     public final OtsLine2d noiseFilterRamerDouglasPeucker(final double epsilon, final boolean useHorizontalDistance)
@@ -162,7 +162,7 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Returns a 2d representation of this line.
-     * @return PolyLine2d; Returns a 2d representation of this line.
+     * @return Returns a 2d representation of this line.
      */
     public PolyLine2d getLine2d()
     {
@@ -172,9 +172,9 @@ public class OtsLine2d implements Locatable, Serializable
     /**
      * Create a line at linearly varying offset from this line. The offset may change linearly from its initial value at the
      * start of the reference line to its final offset value at the end of the reference line.
-     * @param offsetAtStart double; offset at the start of the reference line (positive value is Left, negative value is Right)
-     * @param offsetAtEnd double; offset at the end of the reference line (positive value is Left, negative value is Right)
-     * @return OtsLine2d; the OtsLine2d of the line at linearly changing offset of the reference line
+     * @param offsetAtStart offset at the start of the reference line (positive value is Left, negative value is Right)
+     * @param offsetAtEnd offset at the end of the reference line (positive value is Left, negative value is Right)
+     * @return the OtsLine2d of the line at linearly changing offset of the reference line
      */
     public final OtsLine2d offsetLine(final double offsetAtStart, final double offsetAtEnd)
     {
@@ -185,9 +185,9 @@ public class OtsLine2d implements Locatable, Serializable
      * Create a line at linearly varying offset from this line. The offset may change linearly from its initial value at the
      * start of the reference line via a number of intermediate offsets at intermediate positions to its final offset value at
      * the end of the reference line.
-     * @param relativeFractions double[]; positional fractions for which the offsets have to be generated
-     * @param offsets double[]; offsets at the relative positions (positive value is Left, negative value is Right)
-     * @return Geometry; the Geometry of the line at linearly changing offset of the reference line
+     * @param relativeFractions positional fractions for which the offsets have to be generated
+     * @param offsets offsets at the relative positions (positive value is Left, negative value is Right)
+     * @return the Geometry of the line at linearly changing offset of the reference line
      * @throws OtsGeometryException when this method fails to create the offset line
      */
     public final OtsLine2d offsetLine(final double[] relativeFractions, final double[] offsets) throws OtsGeometryException
@@ -197,8 +197,8 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Concatenate several OtsLine2d instances.
-     * @param lines OtsLine2d...; OtsLine2d... one or more OtsLine2d. The last point of the first
-     *            &lt;strong&gt;must&lt;/strong&gt; match the first of the second, etc.
+     * @param lines OtsLine2d... one or more OtsLine2d. The last point of the first &lt;strong&gt;must&lt;/strong&gt; match the
+     *            first of the second, etc.
      * @return OtsLine2d
      */
     public static OtsLine2d concatenate(final OtsLine2d... lines)
@@ -208,9 +208,9 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Concatenate two OtsLine2d instances. This method is separate for efficiency reasons.
-     * @param toleranceSI double; the tolerance between the end point of a line and the first point of the next line
-     * @param line1 OtsLine2d; first line
-     * @param line2 OtsLine2d; second line
+     * @param toleranceSI the tolerance between the end point of a line and the first point of the next line
+     * @param line1 first line
+     * @param line2 second line
      * @return OtsLine2d
      */
     public static OtsLine2d concatenate(final double toleranceSI, final OtsLine2d line1, final OtsLine2d line2)
@@ -220,9 +220,9 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Concatenate several OtsLine2d instances.
-     * @param toleranceSI double; the tolerance between the end point of a line and the first point of the next line
-     * @param lines OtsLine2d...; OtsLine2d... one or more OtsLine2d. The last point of the first
-     *            &lt;strong&gt;must&lt;/strong&gt; match the first of the second, etc.
+     * @param toleranceSI the tolerance between the end point of a line and the first point of the next line
+     * @param lines OtsLine2d... one or more OtsLine2d. The last point of the first &lt;strong&gt;must&lt;/strong&gt; match the
+     *            first of the second, etc.
      * @return OtsLine2d
      */
     public static OtsLine2d concatenate(final double toleranceSI, final OtsLine2d... lines)
@@ -237,7 +237,7 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Construct a new OtsLine2d with all points of this OtsLine2d in reverse order.
-     * @return OtsLine2d; the new OtsLine2d
+     * @return the new OtsLine2d
      */
     public final OtsLine2d reverse()
     {
@@ -246,9 +246,9 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Construct a new OtsLine2d covering the indicated fraction of this OtsLine2d.
-     * @param start double; starting point, valid range [0..<cite>end</cite>)
-     * @param end double; ending point, valid range (<cite>start</cite>..1]
-     * @return OtsLine2d; the new OtsLine2d
+     * @param start starting point, valid range [0..<cite>end</cite>)
+     * @param end ending point, valid range (<cite>start</cite>..1]
+     * @return the new OtsLine2d
      */
     public final OtsLine2d extractFractional(final double start, final double end)
     {
@@ -257,10 +257,10 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Create a new OtsLine2d that covers a sub-section of this OtsLine2d.
-     * @param start Length; the length along this OtsLine2d where the sub-section starts, valid range [0..<cite>end</cite>)
-     * @param end Length; length along this OtsLine2d where the sub-section ends, valid range
-     *            (<cite>start</cite>..<cite>length</cite> (length is the length of this OtsLine2d)
-     * @return OtsLine2d; the selected sub-section
+     * @param start the length along this OtsLine2d where the sub-section starts, valid range [0..<cite>end</cite>)
+     * @param end length along this OtsLine2d where the sub-section ends, valid range (<cite>start</cite>..<cite>length</cite>
+     *            (length is the length of this OtsLine2d)
+     * @return the selected sub-section
      */
     public final OtsLine2d extract(final Length start, final Length end)
     {
@@ -269,10 +269,10 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Create a new OtsLine2d that covers a sub-section of this OtsLine2d.
-     * @param start double; length along this OtsLine2d where the sub-section starts, valid range [0..<cite>end</cite>)
-     * @param end double; length along this OtsLine2d where the sub-section ends, valid range
-     *            (<cite>start</cite>..<cite>length</cite> (length is the length of this OtsLine2d)
-     * @return OtsLine2d; the selected sub-section
+     * @param start length along this OtsLine2d where the sub-section starts, valid range [0..<cite>end</cite>)
+     * @param end length along this OtsLine2d where the sub-section ends, valid range (<cite>start</cite>..<cite>length</cite>
+     *            (length is the length of this OtsLine2d)
+     * @return the selected sub-section
      */
     public final OtsLine2d extract(final double start, final double end)
     {
@@ -281,7 +281,7 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Create an OtsLine2d, while cleaning repeating successive points.
-     * @param points Point2d...; the coordinates of the line as OtsPoint3d
+     * @param points the coordinates of the line as OtsPoint3d
      * @return the line
      * @throws OtsGeometryException when number of points &lt; 2
      */
@@ -297,9 +297,9 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Create an OtsLine2d, while cleaning repeating successive points.
-     * @param pointList List&lt;Point2d&gt;; list of the coordinates of the line as OtsPoint3d; any duplicate points in this
-     *            list are removed (this method may modify the provided list)
-     * @return OtsLine2d; the line
+     * @param pointList list of the coordinates of the line as OtsPoint3d; any duplicate points in this list are removed (this
+     *            method may modify the provided list)
+     * @return the line
      * @throws OtsGeometryException when number of non-equal points &lt; 2
      */
     public static OtsLine2d createAndCleanOtsLine2d(final List<Point2d> pointList) throws OtsGeometryException
@@ -309,7 +309,7 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Construct a new OtsLine2d from a List&lt;OtsPoint3d&gt;.
-     * @param pointList List&lt;OtsPoint3d&gt;; the list of points to construct this OtsLine2d from.
+     * @param pointList the list of points to construct this OtsLine2d from.
      * @throws OtsGeometryException when the provided points do not constitute a valid line (too few points or identical
      *             adjacent points)
      */
@@ -320,7 +320,7 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Construct a new OtsShape (closed shape) from a Path2D. Elevation will be 0.
-     * @param path Path2D; the Path2D to construct this OtsLine2d from.
+     * @param path the Path2D to construct this OtsLine2d from.
      * @throws OtsGeometryException when the provided points do not constitute a valid line (too few points or identical
      *             adjacent points)
      */
@@ -376,8 +376,8 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Return one point of this OtsLine2d.
-     * @param i int; the index of the point to retrieve
-     * @return Point2d; the i-th point of the line
+     * @param i the index of the point to retrieve
+     * @return the i-th point of the line
      * @throws OtsGeometryException when i &lt; 0 or i &gt; the number of points
      */
     public final Point2d get(final int i) throws OtsGeometryException
@@ -411,7 +411,7 @@ public class OtsLine2d implements Locatable, Serializable
     /**
      * Get the location at a position on the line, with its direction. Position can be below 0 or more than the line length. In
      * that case, the position will be extrapolated in the direction of the line at its start or end.
-     * @param position Length; the position on the line for which to calculate the point on, before, of after the line
+     * @param position the position on the line for which to calculate the point on, before, of after the line
      * @return a directed point
      */
     public final OrientedPoint2d getLocationExtended(final Length position)
@@ -422,8 +422,7 @@ public class OtsLine2d implements Locatable, Serializable
     /**
      * Get the location at a position on the line, with its direction. Position can be below 0 or more than the line length. In
      * that case, the position will be extrapolated in the direction of the line at its start or end.
-     * @param positionSI double; the position on the line for which to calculate the point on, before, of after the line, in SI
-     *            units
+     * @param positionSI the position on the line for which to calculate the point on, before, of after the line, in SI units
      * @return a directed point
      */
     public final synchronized OrientedPoint2d getLocationExtendedSI(final double positionSI)
@@ -434,7 +433,7 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Get the location at a fraction of the line, with its direction. Fraction should be between 0.0 and 1.0.
-     * @param fraction double; the fraction for which to calculate the point on the line
+     * @param fraction the fraction for which to calculate the point on the line
      * @return a directed point
      * @throws OtsGeometryException when fraction less than 0.0 or more than 1.0.
      */
@@ -449,8 +448,8 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Get the location at a fraction of the line, with its direction. Fraction should be between 0.0 and 1.0.
-     * @param fraction double; the fraction for which to calculate the point on the line
-     * @param tolerance double; the delta from 0.0 and 1.0 that will be forgiven
+     * @param fraction the fraction for which to calculate the point on the line
+     * @param tolerance the delta from 0.0 and 1.0 that will be forgiven
      * @return a directed point
      * @throws OtsGeometryException when fraction less than 0.0 or more than 1.0.
      */
@@ -467,7 +466,7 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Get the location at a fraction of the line (or outside the line), with its direction.
-     * @param fraction double; the fraction for which to calculate the point on the line
+     * @param fraction the fraction for which to calculate the point on the line
      * @return a directed point
      */
     public final OrientedPoint2d getLocationFractionExtended(final double fraction)
@@ -477,7 +476,7 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Get the location at a position on the line, with its direction. Position should be between 0.0 and line length.
-     * @param position Length; the position on the line for which to calculate the point on the line
+     * @param position the position on the line for which to calculate the point on the line
      * @return a directed point
      * @throws OtsGeometryException when position less than 0.0 or more than line length.
      */
@@ -488,8 +487,8 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Binary search for a position on the line.
-     * @param pos double; the position to look for.
-     * @return the index below the position; the position is between points[index] and points[index+1]
+     * @param pos the position to look for.
+     * @return the position is between points[index] and points[index+1]
      * @throws OtsGeometryException when index could not be found
      */
     private int find(final double pos) throws OtsGeometryException
@@ -527,7 +526,7 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Get the location at a position on the line, with its direction. Position should be between 0.0 and line length.
-     * @param positionSI double; the position on the line for which to calculate the point on the line
+     * @param positionSI the position on the line for which to calculate the point on the line
      * @return a directed point
      * @throws OtsGeometryException when position less than 0.0 or more than line length.
      */
@@ -539,7 +538,7 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Truncate a line at the given length (less than the length of the line, and larger than zero) and return a new line.
-     * @param lengthSI double; the location where to truncate the line
+     * @param lengthSI the location where to truncate the line
      * @return a new OtsLine2d truncated at the exact position where line.getLength() == lengthSI
      * @throws OtsGeometryException when position less than 0.0 or more than line length.
      */
@@ -551,8 +550,8 @@ public class OtsLine2d implements Locatable, Serializable
     /**
      * Returns the fractional position along this line of the orthogonal projection of point (x, y) on this line. If the point
      * is not orthogonal to the closest line segment, the nearest point is selected.
-     * @param x double; x-coordinate of point to project
-     * @param y double; y-coordinate of point to project
+     * @param x x-coordinate of point to project
+     * @param y y-coordinate of point to project
      * @return fractional position along this line of the orthogonal projection on this line of a point
      */
     public final double projectOrthogonal(final double x, final double y)
@@ -609,11 +608,11 @@ public class OtsLine2d implements Locatable, Serializable
      * </ol>
      * In the latter two cases the projection is undefined and a orthogonal projection is returned if
      * {@code orthoFallback = true}, or {@code NaN} if {@code orthoFallback = false}.
-     * @param start Direction; direction in first point
-     * @param end Direction; direction in last point
-     * @param x double; x-coordinate of point to project
-     * @param y double; y-coordinate of point to project
-     * @param fallback FractionalFallback; fallback method for when fractional projection fails
+     * @param start direction in first point
+     * @param end direction in last point
+     * @param x x-coordinate of point to project
+     * @param y y-coordinate of point to project
+     * @param fallback fallback method for when fractional projection fails
      * @return fractional position along this line of the fractional projection on that line of a point
      */
     public final synchronized double projectFractional(final Direction start, final Direction end, final double x,
@@ -768,10 +767,10 @@ public class OtsLine2d implements Locatable, Serializable
 
         /**
          * Returns fraction for when fractional projection fails as the point is beyond the line or from numerical limitations.
-         * @param line OtsLine2d; line
-         * @param x double; x coordinate of point
-         * @param y double; y coordinate of point
-         * @return double; fraction for when fractional projection fails
+         * @param line line
+         * @param x x coordinate of point
+         * @param y y coordinate of point
+         * @return fraction for when fractional projection fails
          */
         abstract double getFraction(OtsLine2d line, double x, double y);
 
@@ -780,8 +779,8 @@ public class OtsLine2d implements Locatable, Serializable
     /**
      * Determines all helpers (points and/or directions) for fractional projection and stores fixed information in properties
      * while returning the first and last center points (.
-     * @param start Direction; direction in first point
-     * @param end Direction; direction in last point
+     * @param start direction in first point
+     * @param end direction in last point
      */
     private synchronized void determineFractionalHelpers(final Direction start, final Direction end)
     {
@@ -879,11 +878,11 @@ public class OtsLine2d implements Locatable, Serializable
      * This method is used, rather than {@code Point2d.intersectionOfLines()} because this method will return {@code null} if
      * the determinant &lt; 0.0000001, rather than determinant &eq; 0.0. The benefit of this is that intersections are not so
      * far away, that any calculations with them cause underflow or overflow issues.
-     * @param line1P1 Point2d; point 1 of line 1.
-     * @param line1P2 Point2d; point 2 of line 1.
-     * @param line2P1 Point2d; point 1 of line 2.
-     * @param line2P2 Point2d; point 2 of line 2.
-     * @return Point2d; intersection of lines, or {@code null} for (nearly) parallel lines.
+     * @param line1P1 point 1 of line 1.
+     * @param line1P2 point 2 of line 1.
+     * @param line2P1 point 1 of line 2.
+     * @param line2P2 point 2 of line 2.
+     * @return intersection of lines, or {@code null} for (nearly) parallel lines.
      */
     private Point2d intersectionOfLines(final Point2d line1P1, final Point2d line1P2, final Point2d line2P1,
             final Point2d line2P2)
@@ -907,7 +906,7 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Helper method for fractional projection which returns an offset line to the left of a segment at a distance of 1.
-     * @param segment int; segment number
+     * @param segment segment number
      * @return parallel line to the left of a segment at a distance of 1
      */
     private synchronized PolyLine2d unitOffsetSegment(final int segment)
@@ -921,8 +920,8 @@ public class OtsLine2d implements Locatable, Serializable
      * fraction. The radius at a vertex is calculated as the radius of a circle that is equidistant from both edges connected to
      * the vertex. The circle center is on a line perpendicular to the shortest edge, crossing through the middle of the
      * shortest edge. This method ignores Z components.
-     * @param fraction double; fraction along the line, between 0.0 and 1.0 (both inclusive)
-     * @return Length; radius; the local radius; or si field set to Double.NaN if line is totally straight
+     * @param fraction fraction along the line, between 0.0 and 1.0 (both inclusive)
+     * @return radius; the local radius; or si field set to Double.NaN if line is totally straight
      * @throws OtsGeometryException fraction out of bounds
      */
     // TODO: move to djutils?
@@ -964,8 +963,8 @@ public class OtsLine2d implements Locatable, Serializable
      * The radius at a vertex is calculated as the radius of a circle that is equidistant from both edges connected to the
      * vertex. The circle center is on a line perpendicular to the shortest edge, crossing through the middle of the shortest
      * edge. This function ignores Z components.
-     * @param index int; index of the vertex in range [1 ... size() - 2]
-     * @return Length; radius at the vertex
+     * @param index index of the vertex in range [1 ... size() - 2]
+     * @return radius at the vertex
      * @throws OtsGeometryException if the index is out of bounds
      */
     // TODO: move to djutils? Note, uses fractionalHelperCenters
@@ -1012,8 +1011,8 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Returns the length fraction at the vertex.
-     * @param index int; index of vertex [0 ... size() - 1]
-     * @return double; length fraction at the vertex
+     * @param index index of vertex [0 ... size() - 1]
+     * @return length fraction at the vertex
      * @throws OtsGeometryException if the index is out of bounds
      */
     public double getVertexFraction(final int index) throws OtsGeometryException
@@ -1025,7 +1024,7 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Retrieve the centroid of this OtsLine2d.
-     * @return OtsPoint3d; the centroid of this OtsLine2d
+     * @return the centroid of this OtsLine2d
      */
     public final Point2d getCentroid()
     {
@@ -1038,7 +1037,7 @@ public class OtsLine2d implements Locatable, Serializable
 
     /**
      * Get the bounding rectangle of this OtsLine2d.
-     * @return Rectangle2D; the bounding rectangle of this OtsLine2d
+     * @return the bounding rectangle of this OtsLine2d
      */
     public final Bounds2d getEnvelope()
     {

@@ -31,8 +31,8 @@ public interface ValueValidator extends Comparable<ValueValidator>
 
     /**
      * Returns message why a value is invalid, or {@code null} if the value is valid.
-     * @param node XsdTreeNode; supplied to verify with context, e.g. value combinations.
-     * @return String; message why a value is invalid, or {@code null} if the value is valid.
+     * @param node supplied to verify with context, e.g. value combinations.
+     * @return message why a value is invalid, or {@code null} if the value is valid.
      */
     String validate(XsdTreeNode node);
 
@@ -42,9 +42,9 @@ public interface ValueValidator extends Comparable<ValueValidator>
      * required. The field object is stored in an {@code XsdTreeNode} when the validator is assigned to a particular attribute
      * or the node value. Note that only the field name is usually insufficient, as the node itself, an attribute, or any child,
      * may have the same name.
-     * @param node XsdTreeNode; node that is in the appropriate context.
-     * @param field Object; field for which to obtain the options.
-     * @return List&lt;String&gt;; options, {@code null} if this is not an xsd:keyref restriction.
+     * @param node node that is in the appropriate context.
+     * @param field field for which to obtain the options.
+     * @return options, {@code null} if this is not an xsd:keyref restriction.
      */
     default List<String> getOptions(final XsdTreeNode node, final Object field)
     {
@@ -53,10 +53,10 @@ public interface ValueValidator extends Comparable<ValueValidator>
 
     /**
      * Report first encountered problem in validating the value of the node.
-     * @param xsdNode Node; node.
-     * @param value String; value.
-     * @param schema XsdSchema; schema for type retrieval.
-     * @return String; first encountered problem in validating the value of the node, {@code null} if there is no problem.
+     * @param xsdNode node.
+     * @param value value.
+     * @param schema schema for type retrieval.
+     * @return first encountered problem in validating the value of the node, {@code null} if there is no problem.
      */
     static String reportInvalidValue(final Node xsdNode, final String value, final Schema schema)
     {
@@ -75,10 +75,10 @@ public interface ValueValidator extends Comparable<ValueValidator>
 
     /**
      * Validates an includes file by checking whether it can be found.
-     * @param fileName String; file name and path, possibly relative.
-     * @param fallback String; fallback file name and path, possibly relative.
-     * @param directory String; base directory for relative paths.
-     * @return String; first encountered problem in validating the value of the include, {@code null} if there is no problem.
+     * @param fileName file name and path, possibly relative.
+     * @param fallback fallback file name and path, possibly relative.
+     * @param directory base directory for relative paths.
+     * @return first encountered problem in validating the value of the include, {@code null} if there is no problem.
      */
     static String reportInvalidInclude(final String fileName, final String fallback, final String directory)
     {
@@ -112,10 +112,10 @@ public interface ValueValidator extends Comparable<ValueValidator>
 
     /**
      * Report first encountered problem in validating the attribute value.
-     * @param xsdNode Node; node, should be an xsd:attribute.
-     * @param value String; value.
-     * @param schema XsdSchema; schema for type retrieval.
-     * @return String; first encountered problem in validating the attribute value, {@code null} if there is no problem.
+     * @param xsdNode node, should be an xsd:attribute.
+     * @param value value.
+     * @param schema schema for type retrieval.
+     * @return first encountered problem in validating the attribute value, {@code null} if there is no problem.
      */
     static String reportInvalidAttributeValue(final Node xsdNode, final String value, final Schema schema)
     {
@@ -129,9 +129,9 @@ public interface ValueValidator extends Comparable<ValueValidator>
 
     /**
      * Returns all restrictions for the given node.
-     * @param xsdNode Node; node.
-     * @param schema XsdSchema; schema.
-     * @return List&lt;Node&gt;; list of xsd:restriction nodes applicable to the input node.
+     * @param xsdNode node.
+     * @param schema schema.
+     * @return list of xsd:restriction nodes applicable to the input node.
      */
     static List<Node> getRestrictions(final Node xsdNode, final Schema schema)
     {
@@ -142,9 +142,9 @@ public interface ValueValidator extends Comparable<ValueValidator>
 
     /**
      * Returns the base type of the given node, e.g. xsd:double. In case an xsd:union is encountered, this is returned.
-     * @param xsdNode Node; node.
-     * @param schema XsdSchema; schema.
-     * @return String; base type of the given node, e.g. xsd:double.
+     * @param xsdNode node.
+     * @param schema schema.
+     * @return base type of the given node, e.g. xsd:double.
      */
     static String getBaseType(final Node xsdNode, final Schema schema)
     {
@@ -157,14 +157,14 @@ public interface ValueValidator extends Comparable<ValueValidator>
      * Report first encountered problem in validating the value by a type, or when {@code value = null} scan all restrictions
      * and place them in the input list, and/or find the base type and store it in the base type list. The attribute input
      * defines the attribute in the node that may refer to a type containing restrictions.
-     * @param appInfoNode Node; node having possible xsd:appinfo for a message.
-     * @param node Node; type node.
-     * @param attribute String; "type" on normal calls, "base" on recursive calls.
-     * @param value String; value.
-     * @param schema XsdSchema; schema for type retrieval.
-     * @param restrictions List&lt;Node&gt;; list that xsd:restriction nodes will be placed in to.
-     * @param baseType List&lt;String&gt;; may be filled with 1 base type, e.g. xsd:double.
-     * @return String; first encountered problem in validating the value by a type, {@code null} if there is no problem.
+     * @param appInfoNode node having possible xsd:appinfo for a message.
+     * @param node type node.
+     * @param attribute "type" on normal calls, "base" on recursive calls.
+     * @param value value.
+     * @param schema schema for type retrieval.
+     * @param restrictions list that xsd:restriction nodes will be placed in to.
+     * @param baseType may be filled with 1 base type, e.g. xsd:double.
+     * @return first encountered problem in validating the value by a type, {@code null} if there is no problem.
      */
     private static String reportTypeNonCompliance(final Node appInfoNode, final Node node, final String attribute,
             final String value, final Schema schema, final List<Node> restrictions, final List<String> baseType)
@@ -264,12 +264,12 @@ public interface ValueValidator extends Comparable<ValueValidator>
 
     /**
      * Report non-compliance of a single type, e.g. for each in {@code memberTypes} of an {@code xsd:union}.
-     * @param type String; type name.
-     * @param value String; value.
-     * @param schema XsdSchema; schema for type retrieval.
-     * @param restrictions List&lt;Node&gt;; list that xsd:restriction nodes will be placed in to.
-     * @param baseType List&lt;String&gt;; may be filled with 1 base type, e.g. xsd:double.
-     * @return String; first encountered problem in validating the value by a type, {@code null} if there is no problem.
+     * @param type type name.
+     * @param value value.
+     * @param schema schema for type retrieval.
+     * @param restrictions list that xsd:restriction nodes will be placed in to.
+     * @param baseType may be filled with 1 base type, e.g. xsd:double.
+     * @return first encountered problem in validating the value by a type, {@code null} if there is no problem.
      */
     private static String reportSingleTypeNonCompliance(final String type, final String value, final Schema schema,
             final List<Node> restrictions, final List<String> baseType)
@@ -304,9 +304,9 @@ public interface ValueValidator extends Comparable<ValueValidator>
 
     /**
      * Report first encountered problem in validating a native type, e.g. xsd:int or xsd:anyURI.
-     * @param type String; type.
-     * @param value String; value.
-     * @return String; first encountered problem in validating a native type, {@code null} if there is no problem.
+     * @param type type.
+     * @param value value.
+     * @return first encountered problem in validating a native type, {@code null} if there is no problem.
      */
     private static String reportNativeTypeNonCompliance(final String type, final String value)
     {
@@ -399,10 +399,10 @@ public interface ValueValidator extends Comparable<ValueValidator>
 
     /**
      * Report first encountered problem in validating the value by a restriction.
-     * @param appInfoNode Node; node having possible xsd:appinfo for a message with source="pattern".
-     * @param node Node; node, must be an xsd:restriction.
-     * @param value String; value.
-     * @return String; first encountered problem in validating the value by a restriction.
+     * @param appInfoNode node having possible xsd:appinfo for a message with source="pattern".
+     * @param node node, must be an xsd:restriction.
+     * @param value value.
+     * @return first encountered problem in validating the value by a restriction.
      */
     private static String reportRestrictionNonCompliance(final Node appInfoNode, final Node node, final String value)
     {

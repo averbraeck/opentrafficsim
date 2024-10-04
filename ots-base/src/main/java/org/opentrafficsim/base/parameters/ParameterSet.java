@@ -49,7 +49,7 @@ public class ParameterSet implements Parameters, Serializable
 
     /**
      * Constructor which creates a copy of the input set.
-     * @param parameters Parameters; input set to copy into the new Parameters object
+     * @param parameters input set to copy into the new Parameters object
      */
     public ParameterSet(final Parameters parameters)
     {
@@ -87,9 +87,9 @@ public class ParameterSet implements Parameters, Serializable
 
     /**
      * Sets a parameter value while checking conditions.
-     * @param parameterType ParameterType&lt;T&gt;; the parameter type
-     * @param value T; new value for the parameter
-     * @param resettable boolean; whether the parameter set should be resettable
+     * @param parameterType the parameter type
+     * @param value new value for the parameter
+     * @param resettable whether the parameter set should be resettable
      * @param <T> Class of the value
      * @throws ParameterException If the value does not comply with constraints.
      */
@@ -183,7 +183,7 @@ public class ParameterSet implements Parameters, Serializable
 
     /**
      * Returns a safe copy of the parameters.
-     * @return Map&lt;AbstractParameterType&lt;?&gt;&gt;; a safe copy of the parameters, e.g., for printing
+     * @return a safe copy of the parameters, e.g., for printing
      */
     public final Map<ParameterType<?>, Object> getParameters()
     {
@@ -192,9 +192,9 @@ public class ParameterSet implements Parameters, Serializable
 
     /**
      * Sets the default value of a parameter. Default value sets are not resettable.
-     * @param parameter ParameterType&lt;T&gt;; the parameter to set the default value of
+     * @param parameter the parameter to set the default value of
      * @param <T> Class of the value
-     * @return Parameters; this set of parameters (for method chaining)
+     * @return this set of parameters (for method chaining)
      * @throws ParameterException if the parameter type has no default value
      */
     public final <T> ParameterSet setDefaultParameter(final ParameterType<T> parameter) throws ParameterException
@@ -215,8 +215,8 @@ public class ParameterSet implements Parameters, Serializable
     /**
      * Sets the default values of all accessible parameters defined in the given class. Default value sets are not
      * resettable.<br>
-     * @param clazz Class&lt;?&gt;; class with parameters
-     * @return Parameters; this set of parameters (for method chaining)
+     * @param clazz class with parameters
+     * @return this set of parameters (for method chaining)
      */
     public final ParameterSet setDefaultParameters(final Class<?> clazz)
     {
@@ -225,7 +225,7 @@ public class ParameterSet implements Parameters, Serializable
 
     /**
      * Sets the default values of all accessible parameters defined in the given class. Default value sets are not resettable.
-     * @param clazz Class&lt;?&gt;; class with parameters
+     * @param clazz class with parameters
      * @param <T> Class of the value
      * @return this set of parameters (for method chaining)
      */
@@ -283,7 +283,7 @@ public class ParameterSet implements Parameters, Serializable
 
     /**
      * Sets the parameters of this set in the given set.
-     * @param params Parameters; parameters to set the values in
+     * @param params parameters to set the values in
      * @param <T> parameter value type
      */
     @SuppressWarnings("unchecked")

@@ -37,7 +37,7 @@ public interface AppearanceControl extends nl.tudelft.simulation.dsol.swing.gui.
 
     /**
      * Returns the font size. May be {@code null} to ignore font size.
-     * @return Integer; font size, may be {@code null} to ignore font size from appearance.
+     * @return font size, may be {@code null} to ignore font size from appearance.
      */
     default Integer getFontSize()
     {

@@ -29,16 +29,16 @@ public interface DynamicSpatialObject extends SpatialObject
      * Return the shape of a dynamic object at time 'time'. Note that the getShape() method without a time returns the Minkowski
      * sum of all shapes of the spatial object for a validity time window, e.g., a contour that describes all locations of a GTU
      * for the next time step, i.e., the contour of the GTU belonging to the next operational plan.
-     * @param time Time; the time for which we want the shape
-     * @return OtsShape; the shape of the object at time 'time'
+     * @param time the time for which we want the shape
+     * @return the shape of the object at time 'time'
      */
     Polygon2d getShape(Time time);
 
     /**
      * Return the contour of the dynamic object at the right position and in the right direction.
-     * @param shape OtsShape; the shape to translate and rotate for point p
-     * @param p OrientedPoint2d; the location and direction of the reference point of the object
-     * @return Polygon2d; the contour of the dynamic object at the right position and in the right direction
+     * @param shape the shape to translate and rotate for point p
+     * @param p the location and direction of the reference point of the object
+     * @return the contour of the dynamic object at the right position and in the right direction
      * @throws OtsGeometryException on invalid geometry after transformation
      */
     default Polygon2d transformShape(final Polygon2d shape, final OrientedPoint2d p) throws OtsGeometryException

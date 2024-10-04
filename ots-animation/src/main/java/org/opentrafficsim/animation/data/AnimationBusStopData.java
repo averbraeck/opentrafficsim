@@ -13,10 +13,10 @@ import org.opentrafficsim.road.network.lane.object.BusStop;
  */
 public class AnimationBusStopData extends AnimationLaneBasedObjectData<BusStop> implements BusStopData
 {
-    
+
     /**
      * Constructor.
-     * @param busStop BusStop; bus stop.
+     * @param busStop bus stop.
      */
     public AnimationBusStopData(final BusStop busStop)
     {
@@ -29,5 +29,5 @@ public class AnimationBusStopData extends AnimationLaneBasedObjectData<BusStop> 
     {
         return "Bus stop " + getObject().getFullId();
     }
-    
+
 }

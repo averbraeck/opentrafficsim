@@ -58,9 +58,9 @@ public class CycleTimeLightController implements RampMeteringLightController
     private Map<TrafficLight, SimEventInterface<Duration>> greenEvents = new LinkedHashMap<>();
 
     /**
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param trafficLights List&lt;TrafficLight&gt;; traffic lights
-     * @param detectorType DetectorType; detector type.
+     * @param simulator simulator
+     * @param trafficLights traffic lights
+     * @param detectorType detector type.
      */
     public CycleTimeLightController(final OtsSimulatorInterface simulator, final List<TrafficLight> trafficLights,
             final DetectorType detectorType)
@@ -102,7 +102,7 @@ public class CycleTimeLightController implements RampMeteringLightController
 
     /**
      * Starts the cycle.
-     * @param cycleTime Duration; cycle time
+     * @param cycleTime cycle time
      */
     @Override
     public void enable(final Duration cycleTime)
@@ -121,7 +121,7 @@ public class CycleTimeLightController implements RampMeteringLightController
 
     /**
      * Sets the traffic light to red. Can be scheduled.
-     * @param trafficLight TrafficLight; traffic light
+     * @param trafficLight traffic light
      */
     protected void setRed(final TrafficLight trafficLight)
     {
@@ -132,7 +132,7 @@ public class CycleTimeLightController implements RampMeteringLightController
 
     /**
      * Sets the traffic light to green. Can be scheduled and remembers the green time.
-     * @param trafficLight TrafficLight; traffic light
+     * @param trafficLight traffic light
      */
     protected void setGreen(final TrafficLight trafficLight)
     {
@@ -153,9 +153,9 @@ public class CycleTimeLightController implements RampMeteringLightController
         private final TrafficLight trafficLight;
 
         /**
-         * @param trafficLight TrafficLight; traffic light
-         * @param simulator TimeDoubleUnit; simulator
-         * @param detectorType DetectorType; detector type.
+         * @param trafficLight traffic light
+         * @param simulator simulator
+         * @param detectorType detector type.
          * @throws NetworkException when the position on the lane is out of bounds
          */
         RampMeteringDetector(final TrafficLight trafficLight, final OtsSimulatorInterface simulator,

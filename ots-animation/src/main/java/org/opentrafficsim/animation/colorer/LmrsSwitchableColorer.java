@@ -38,7 +38,7 @@ public class LmrsSwitchableColorer extends SwitchableGtuColorer
 
     /**
      * Constructor.
-     * @param gtuTypeColors Map&lt;GtuType, Color&gt;; colors per GTU type in the GTU type colorer.
+     * @param gtuTypeColors colors per GTU type in the GTU type colorer.
      * @throws IndexOutOfBoundsException initial index out of bounds
      */
     public LmrsSwitchableColorer(final Map<GtuType, Color> gtuTypeColors) throws IndexOutOfBoundsException

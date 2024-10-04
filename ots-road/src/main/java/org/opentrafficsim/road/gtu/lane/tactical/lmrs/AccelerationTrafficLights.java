@@ -39,10 +39,10 @@ public class AccelerationTrafficLights implements AccelerationIncentive
                 perception.getPerceptionCategory(IntersectionPerception.class).getTrafficLights(lane);
         if (!lane.isCurrent() && mergeDistance.gt0())
         {
-            it = new FilteredIterable<>(it, (
-                    trafficLight
-            ) ->
-            { return trafficLight.getDistance().gt(mergeDistance); });
+            it = new FilteredIterable<>(it, (trafficLight) ->
+            {
+                return trafficLight.getDistance().gt(mergeDistance);
+            });
         }
         it = onRoute(it, gtu);
         simplePlan.minimizeAcceleration(

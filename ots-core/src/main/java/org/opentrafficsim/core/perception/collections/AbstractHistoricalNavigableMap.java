@@ -28,8 +28,8 @@ public abstract class AbstractHistoricalNavigableMap<K, V, M extends NavigableMa
 
     /**
      * Constructor.
-     * @param historyManager HistoryManager; history manager
-     * @param map M; initial map
+     * @param historyManager history manager
+     * @param map initial map
      */
     protected AbstractHistoricalNavigableMap(final HistoryManager historyManager, final M map)
     {

@@ -63,13 +63,13 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements DesireBas
 
     /**
      * Constructor setting the car-following model.
-     * @param carFollowingModel CarFollowingModel; Car-following model.
-     * @param gtu LaneBasedGtu; GTU
-     * @param lanePerception LanePerception; perception
-     * @param synchronization Synchronization; type of synchronization
-     * @param cooperation Cooperation; type of cooperation
-     * @param gapAcceptance GapAcceptance; gap-acceptance
-     * @param tailgating Tailgating; tail gating
+     * @param carFollowingModel Car-following model.
+     * @param gtu GTU
+     * @param lanePerception perception
+     * @param synchronization type of synchronization
+     * @param cooperation type of cooperation
+     * @param gapAcceptance gap-acceptance
+     * @param tailgating tail gating
      */
     public Lmrs(final CarFollowingModel carFollowingModel, final LaneBasedGtu gtu, final LanePerception lanePerception,
             final Synchronization synchronization, final Cooperation cooperation, final GapAcceptance gapAcceptance,

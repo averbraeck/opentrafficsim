@@ -13,13 +13,13 @@ public enum DrawLevel
 {
     /** Annotation level (e.g. draggable for editing). */
     ANNOTATION(0.0004),
-    
+
     /** Snap level (e.g. line indicating where draggable can be). */
     SNAP(0.0003),
-    
+
     /** Selection indicator level. */
     SELECTION(0.0002),
-    
+
     /** Label level. */
     LABEL(0.0001),
 
@@ -31,7 +31,7 @@ public enum DrawLevel
 
     /** Center line level. */
     CENTER_LINE(-0.0002),
-    
+
     /** Line level. */
     LINK(-0.0003),
 
@@ -52,7 +52,7 @@ public enum DrawLevel
 
     /**
      * Constructor.
-     * @param z double; z-level.
+     * @param z z-level.
      */
     DrawLevel(final double z)
     {
@@ -61,7 +61,7 @@ public enum DrawLevel
 
     /**
      * Z-level.
-     * @return double; z-level.
+     * @return z-level.
      */
     public double getZ()
     {

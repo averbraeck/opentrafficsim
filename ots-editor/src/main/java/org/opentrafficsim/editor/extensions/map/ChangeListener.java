@@ -40,7 +40,7 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
 
     /** Root element. */
     private final XsdTreeNodeRoot root;
-    
+
     /** Main node, under which elements are located. */
     private final XsdTreeNode node;
 
@@ -58,8 +58,8 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
 
     /**
      * Constructor.
-     * @param node XsdTreeNode; node of the layout, either in definitions or under a link.
-     * @param eval Supplier&lt;Eval&gt;; supplier of expression evaluator, either from the main map, or from a map link data.
+     * @param node node of the layout, either in definitions or under a link.
+     * @param eval supplier of expression evaluator, either from the main map, or from a map link data.
      */
     public ChangeListener(final XsdTreeNode node, final Supplier<Eval> eval)
     {
@@ -97,7 +97,7 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
 
     /**
      * Removes this as listener from all nodes under the node recursively.
-     * @param node XsdTreeNode; node to remove as listener from, including from child nodes.
+     * @param node node to remove as listener from, including from child nodes.
      */
     private void removeAsListener(final XsdTreeNode node)
     {
@@ -159,7 +159,7 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
 
     /**
      * Returns a current valid evaluator.
-     * @return Eval; evaluator.
+     * @return evaluator.
      */
     public Eval getEval()
     {
@@ -168,8 +168,8 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
 
     /**
      * Returns whether the node may be ignored. This can be overridden by subclasses.
-     * @param node XsdTreeNode; node.
-     * @return boolean; whether the node may be ignored.
+     * @param node node.
+     * @return whether the node may be ignored.
      */
     protected boolean canBeIgnored(final XsdTreeNode node)
     {
@@ -178,7 +178,7 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
 
     /**
      * Returns the main node.
-     * @return XsdTreeNode; main node.
+     * @return main node.
      */
     public XsdTreeNode getNode()
     {
@@ -187,7 +187,7 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
 
     /**
      * Returns the data that the node of this listener represents.
-     * @return T; data that the node of this listener represents.
+     * @return data that the node of this listener represents.
      */
     public final T getData()
     {
@@ -201,7 +201,7 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
 
     /**
      * Calculates the data. This is called when data is required by a listener and the there have been changes.
-     * @return T; calculated data based on content of the main node.
+     * @return calculated data based on content of the main node.
      */
     abstract T calculateData();
 

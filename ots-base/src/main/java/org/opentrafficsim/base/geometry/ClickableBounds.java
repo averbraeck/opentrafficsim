@@ -33,8 +33,8 @@ public class ClickableBounds
 
     /**
      * Creates bounds that are at least 2m of size in the x and y direction.
-     * @param bounds Bounds&lt;?, ?, ?&gt;; actual object bounds.
-     * @return Bounds&lt;?, ?, ?&gt;; bounds that are at least 2m of size in the x and y direction.
+     * @param bounds actual object bounds.
+     * @return bounds that are at least 2m of size in the x and y direction.
      */
     public static OtsBounds2d get(final Bounds<?, ?, ?> bounds)
     {
@@ -58,8 +58,8 @@ public class ClickableBounds
 
     /**
      * Creates bounds that are clickable from a line, generating an area of 2m wide.
-     * @param flattenedLine PolyLine2d; line.
-     * @return BoundingPolygon; bounding polygon.
+     * @param flattenedLine line.
+     * @return bounding polygon.
      */
     public static BoundingPolygon get(final PolyLine2d flattenedLine)
     {

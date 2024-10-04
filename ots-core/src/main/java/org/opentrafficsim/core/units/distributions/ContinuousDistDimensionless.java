@@ -21,8 +21,8 @@ public class ContinuousDistDimensionless extends ContinuousDistDoubleScalar.Rel<
     private static final long serialVersionUID = 20180829L;
 
     /**
-     * @param distribution DistContinuous; distribution
-     * @param unit DimensionlessUnit; units
+     * @param distribution distribution
+     * @param unit units
      */
     public ContinuousDistDimensionless(final DistContinuous distribution, final DimensionlessUnit unit)
     {

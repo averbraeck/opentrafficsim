@@ -20,7 +20,7 @@ public class LengthType extends ExpressionType<Length>
 
     /**
      * Constructor with value.
-     * @param value Length; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public LengthType(final Length value)
     {
@@ -29,7 +29,7 @@ public class LengthType extends ExpressionType<Length>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public LengthType(final String expression)
     {

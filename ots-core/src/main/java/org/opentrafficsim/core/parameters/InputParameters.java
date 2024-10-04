@@ -13,9 +13,9 @@ public interface InputParameters
 
     /**
      * Returns the value for a parameter of given name.
-     * @param parameter String; parameter name.
+     * @param parameter parameter name.
      * @return value for a parameter of given name.
      */
     Object getValue(String parameter);
-    
+
 }

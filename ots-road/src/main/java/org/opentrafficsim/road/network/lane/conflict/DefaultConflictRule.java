@@ -85,11 +85,11 @@ public class DefaultConflictRule implements ConflictRule
 
     /**
      * Determine conflict rules.
-     * @param lane1 Lane; lane 1
-     * @param longitudinalPosition1 Length; position 1
-     * @param lane2 Lane; lane 2
-     * @param longitudinalPosition2 Length; position 2
-     * @param conflictType ConflictType; conflict type
+     * @param lane1 lane 1
+     * @param longitudinalPosition1 position 1
+     * @param lane2 lane 2
+     * @param longitudinalPosition2 position 2
+     * @param conflictType conflict type
      * @return conflict rule 1 and 2
      */
     private static ConflictPriority[] getConflictRules(final Lane lane1, final Length longitudinalPosition1, final Lane lane2,

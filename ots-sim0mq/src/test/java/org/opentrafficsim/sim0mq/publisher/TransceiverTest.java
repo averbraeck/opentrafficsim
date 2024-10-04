@@ -130,8 +130,8 @@ public class TransceiverTest
         assertEquals(1, gtuIdTransceiver.getResultFields().size(), "result has one field");
         assertEquals(String[].class, gtuIdTransceiver.getResultFields().getObjectClass(0),
                 "type of the result field is String");
-        assertEquals("String array filled with all currently valid GTU ids", gtuIdTransceiver.getResultFields().getObjectDescription(0),
-                "description of the result field");
+        assertEquals("String array filled with all currently valid GTU ids",
+                gtuIdTransceiver.getResultFields().getObjectDescription(0), "description of the result field");
         try
         {
             gtuIdTransceiver.getResultFields().getObjectClass(1);
@@ -297,8 +297,8 @@ public class TransceiverTest
             assertEquals(gtuType.getId(), gtuResult[1], "gtu type matches");
             assertEquals(gtu.getLocation().x, ((PositionVector) gtuResult[2]).get(0).si, 0.0000, "x matches");
             assertEquals(gtu.getLocation().y, ((PositionVector) gtuResult[2]).get(1).si, 0.0000, "y matches");
-            assertEquals(new Direction(gtu.getLocation().getDirZ(), DirectionUnit.EAST_DEGREE).si, ((Direction) gtuResult[3]).si,
-                    0.0001, "direction matches");
+            assertEquals(new Direction(gtu.getLocation().getDirZ(), DirectionUnit.EAST_DEGREE).si,
+                    ((Direction) gtuResult[3]).si, 0.0001, "direction matches");
             assertEquals(gtu.getSpeed(), gtuResult[4], "speed");
             assertEquals(gtu.getAcceleration(), gtuResult[5], "acceleration");
         }
@@ -358,8 +358,8 @@ public class TransceiverTest
                 "need id of a link and id of a CrossSectionElement"), "Bad address");
         assertNull(checkAckNack(lanegit, new Object[] {"Non existing link", "Non existing lane"}, false,
                 "Network does not contain a link with id"), "Non existing link");
-        assertNull(checkAckNack(lanegit, new Object[] {"1 to 2", "Non existing lane"},
-                false, "does not contain a cross section element with id"), "Existing link but non existing lane");
+        assertNull(checkAckNack(lanegit, new Object[] {"1 to 2", "Non existing lane"}, false,
+                "does not contain a cross section element with id"), "Existing link but non existing lane");
         assertNull(checkAckNack(lanegit, new Object[] {"1 to 2", stripeId}, false, "is not a lane"),
                 "Existing link, but non a lane");
 
@@ -491,7 +491,8 @@ public class TransceiverTest
         assertTrue(cset.toString().startsWith("CrossSectionElementTransceiver"), "toString returns something descriptive");
 
         assertNull(checkAckNack(cset, null, false, "Address may not be null"), "Bad address");
-        assertNull(checkAckNack(cset, new Object[] {"bad", "address", "has", "too", "many", "fields"}, false, "has wrong length"),
+        assertNull(
+                checkAckNack(cset, new Object[] {"bad", "address", "has", "too", "many", "fields"}, false, "has wrong length"),
                 "Bad address");
         assertNull(checkAckNack(cset, new Object[] {"1 to 2", -1}, false, "valid range is"), "Bad address");
         assertNull(checkAckNack(cset, new Object[] {"NON EXISTENT LINK", 0}, false, "Network does not contain a link with id"),
@@ -514,13 +515,12 @@ public class TransceiverTest
 
     /**
      * Call the get method of a TransceiverInterface and verify most of the results.
-     * @param transceiver TransceiverInterface; the transceiver to test
-     * @param address Object[]; the argument of the get method of the transceiver
-     * @param expectedAckNack Boolean; null if neither an ACK nor a NACK is expected, Boolean.FALSE if a NACK is expected,
-     *            Boolean.TRUE if an ACK is expected
-     * @param expectedInPayload String; text that should occur in the payload of the ACK or NACK, or null if no ACK or NACK is
-     *            expected
-     * @return Object[]; the result of the get method should be null if an ACK or a NACK was received; non-null otherwise
+     * @param transceiver the transceiver to test
+     * @param address the argument of the get method of the transceiver
+     * @param expectedAckNack null if neither an ACK nor a NACK is expected, Boolean.FALSE if a NACK is expected, Boolean.TRUE
+     *            if an ACK is expected
+     * @param expectedInPayload text that should occur in the payload of the ACK or NACK, or null if no ACK or NACK is expected
+     * @return the result of the get method should be null if an ACK or a NACK was received; non-null otherwise
      * @throws SerializationException if that happens, this test has failed
      * @throws Sim0MQException if that happens, this test has failed
      * @throws RemoteException if that happens, this test has failed
@@ -616,12 +616,12 @@ class MyMockGTU
     private final OtsSimulatorInterface simulator;
 
     /**
-     * @param name String; the name of the mocked GTU
-     * @param gtuType GtuType; the GTU type
-     * @param location OrientedPoint2d; the location of the mocked GTU
-     * @param speed Speed; the speed of the mocked GTU
-     * @param acceleration Acceleration; the acceleration of the mocked GTU
-     * @param simulator OtsSimulatorInterface; (mocked) simulator
+     * @param name the name of the mocked GTU
+     * @param gtuType the GTU type
+     * @param location the location of the mocked GTU
+     * @param speed the speed of the mocked GTU
+     * @param acceleration the acceleration of the mocked GTU
+     * @param simulator (mocked) simulator
      * @throws RemoteException cannot happen ...
      */
     MyMockGTU(final String name, final GtuType gtuType, final OrientedPoint2d location, final Speed speed,
@@ -660,7 +660,7 @@ class NoTransceiver
 
     /**
      * Construct a NoTransceiver object.
-     * @param payload String; the payload
+     * @param payload the payload
      */
     NoTransceiver(final String payload)
     {
@@ -669,7 +669,7 @@ class NoTransceiver
 
     /**
      * Retrieve the payload.
-     * @return String; the payload
+     * @return the payload
      */
     public String getPayload()
     {

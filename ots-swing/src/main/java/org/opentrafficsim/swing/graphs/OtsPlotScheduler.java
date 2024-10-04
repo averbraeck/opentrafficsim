@@ -30,7 +30,7 @@ public class OtsPlotScheduler implements PlotScheduler
 
     /**
      * Constructor.
-     * @param simulator OtsSimulatorInterface; simulator.
+     * @param simulator simulator.
      */
     public OtsPlotScheduler(final OtsSimulatorInterface simulator)
     {

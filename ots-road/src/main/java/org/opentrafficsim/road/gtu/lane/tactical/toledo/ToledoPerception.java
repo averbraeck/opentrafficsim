@@ -44,7 +44,7 @@ public class ToledoPerception extends AbstractPerceptionCategory<LaneBasedGtu, L
     private final DirectInfrastructurePerception infrastructureCategory;
 
     /**
-     * @param perception LanePerception; perception
+     * @param perception perception
      */
     public ToledoPerception(final LanePerception perception)
     {
@@ -54,7 +54,7 @@ public class ToledoPerception extends AbstractPerceptionCategory<LaneBasedGtu, L
 
     /**
      * Updates the infrastructural lane change info.
-     * @param lane RelativeLane; relative lateral lane
+     * @param lane relative lateral lane
      * @throws GtuException when GTU is not initialized
      */
     public void updateInfrastructureLaneChangeInfo(final RelativeLane lane) throws GtuException
@@ -82,7 +82,7 @@ public class ToledoPerception extends AbstractPerceptionCategory<LaneBasedGtu, L
      *     (--------) Off-ramp:  3 lane changes in 600m (200m per lane change)
      * </pre>
      * 
-     * @param lane RelativeLane; relative lateral lane
+     * @param lane relative lateral lane
      * @return infrastructure lane change info of a lane
      */
     public final SortedSet<LaneChangeInfo> getInfrastructureLaneChangeInfo(final RelativeLane lane)
@@ -111,7 +111,7 @@ public class ToledoPerception extends AbstractPerceptionCategory<LaneBasedGtu, L
      *     (--------) Off-ramp:  3 lane changes in 600m (200m per lane change)
      * </pre>
      * 
-     * @param lane RelativeLane; relative lateral lane
+     * @param lane relative lateral lane
      * @return time stamped infrastructure lane change info of a lane
      */
     public final TimeStampedObject<SortedSet<LaneChangeInfo>> getTimeStampedInfrastructureLaneChangeInfo(
@@ -122,7 +122,7 @@ public class ToledoPerception extends AbstractPerceptionCategory<LaneBasedGtu, L
 
     /**
      * Returns the prospect for speed limits on a lane (dynamic speed limits may vary between lanes).
-     * @param lane RelativeLane; relative lateral lane
+     * @param lane relative lateral lane
      * @return prospect for speed limits on a lane
      */
     public final SpeedLimitProspect getSpeedLimitProspect(final RelativeLane lane)
@@ -132,8 +132,8 @@ public class ToledoPerception extends AbstractPerceptionCategory<LaneBasedGtu, L
 
     /**
      * Returns the distance over which a lane change remains legally possible.
-     * @param fromLane RelativeLane; lane from which the lane change possibility is requested
-     * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
+     * @param fromLane lane from which the lane change possibility is requested
+     * @param lat LEFT or RIGHT, null not allowed
      * @return distance over which a lane change remains possible
      * @throws NullPointerException if {@code lat == null}
      */
@@ -144,8 +144,8 @@ public class ToledoPerception extends AbstractPerceptionCategory<LaneBasedGtu, L
 
     /**
      * Returns the distance over which a lane change remains physically possible.
-     * @param fromLane RelativeLane; lane from which the lane change possibility is requested
-     * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
+     * @param fromLane lane from which the lane change possibility is requested
+     * @param lat LEFT or RIGHT, null not allowed
      * @return distance over which a lane change remains possible
      * @throws NullPointerException if {@code lat == null}
      */

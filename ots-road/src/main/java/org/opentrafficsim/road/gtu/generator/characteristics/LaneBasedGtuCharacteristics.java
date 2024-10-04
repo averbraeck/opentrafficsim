@@ -37,13 +37,12 @@ public class LaneBasedGtuCharacteristics extends GtuCharacteristics
 
     /**
      * Construct a new set of lane based GTU characteristics.
-     * @param gtuCharacteristics GtuCharacteristics; characteristics of the super GTU type to be used for the GTU
-     * @param laneBasedStrategicalPlannerFactory LaneBasedStrategicalPlannerFactory&lt;?&gt;; the strategical planner for the
-     *            GTU
-     * @param route Route; route
-     * @param origin Node; origin
-     * @param destination Node; destination
-     * @param vehicleModel VehicleModel; vehicle model
+     * @param gtuCharacteristics characteristics of the super GTU type to be used for the GTU
+     * @param laneBasedStrategicalPlannerFactory the strategical planner for the GTU
+     * @param route route
+     * @param origin origin
+     * @param destination destination
+     * @param vehicleModel vehicle model
      */
     public LaneBasedGtuCharacteristics(final GtuCharacteristics gtuCharacteristics,
             final LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory, final Route route,
@@ -60,7 +59,7 @@ public class LaneBasedGtuCharacteristics extends GtuCharacteristics
     }
 
     /**
-     * @return LaneBasedStrategicalPlannerFactory; the strategical planner factory for the GTU
+     * @return the strategical planner factory for the GTU
      */
     public final LaneBasedStrategicalPlannerFactory<?> getStrategicalPlannerFactory()
     {
@@ -68,7 +67,7 @@ public class LaneBasedGtuCharacteristics extends GtuCharacteristics
     }
 
     /**
-     * @return Route; route
+     * @return route
      */
     public final Route getRoute()
     {
@@ -76,7 +75,7 @@ public class LaneBasedGtuCharacteristics extends GtuCharacteristics
     }
 
     /**
-     * @return Node; origin
+     * @return origin
      */
     public Node getOrigin()
     {
@@ -84,7 +83,7 @@ public class LaneBasedGtuCharacteristics extends GtuCharacteristics
     }
 
     /**
-     * @return Node; destination
+     * @return destination
      */
     public Node getDestination()
     {
@@ -93,7 +92,7 @@ public class LaneBasedGtuCharacteristics extends GtuCharacteristics
 
     /**
      * Returns the vehicle model.
-     * @return VehicleModel; vehicle model
+     * @return vehicle model
      */
     public VehicleModel getVehicleModel()
     {

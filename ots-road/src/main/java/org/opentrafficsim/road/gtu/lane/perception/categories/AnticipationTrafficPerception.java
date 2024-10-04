@@ -63,7 +63,7 @@ public class AnticipationTrafficPerception extends AbstractPerceptionCategory<La
 
     /**
      * Constructor.
-     * @param perception LanePerception; perception
+     * @param perception perception
      */
     public AnticipationTrafficPerception(final LanePerception perception)
     {
@@ -100,12 +100,12 @@ public class AnticipationTrafficPerception extends AbstractPerceptionCategory<La
     /**
      * Returns the anticipation speed in a lane. GTU's in adjacent lanes with their indicator towards the given lane are
      * included in the evaluation.
-     * @param lane RelativeLane; lane to assess
-     * @param params Parameters; parameters
-     * @param neighbors NeighborsPerception; neighbors perception
-     * @param infra InfrastructurePerception; infrastructure perception
-     * @param desiredSpeed Speed; desired speed
-     * @return Speed; anticipation speed in lane
+     * @param lane lane to assess
+     * @param params parameters
+     * @param neighbors neighbors perception
+     * @param infra infrastructure perception
+     * @param desiredSpeed desired speed
+     * @return anticipation speed in lane
      * @throws ParameterException on missing parameter
      */
     private Speed anticipationSpeed(final RelativeLane lane, final Parameters params, final NeighborsPerception neighbors,
@@ -139,10 +139,10 @@ public class AnticipationTrafficPerception extends AbstractPerceptionCategory<La
 
     /**
      * Anticipate speed from the GTUs in one lane. This affects up to 3 lanes, all this information is stored.
-     * @param lane RelativeLane; lane to assess
-     * @param params Parameters; parameters
-     * @param neighbors NeighborsPerception; neighbors perception
-     * @param desiredSpeed Speed; desired speed
+     * @param lane lane to assess
+     * @param params parameters
+     * @param neighbors neighbors perception
+     * @param desiredSpeed desired speed
      * @throws ParameterException on missing parameter
      */
     private void anticipateSpeedFromLane(final RelativeLane lane, final Parameters params, final NeighborsPerception neighbors,

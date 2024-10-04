@@ -32,10 +32,10 @@ public final class TestIntersectionPerformance
 
     /**
      * Create and return an Polygon2d.
-     * @param numVertices int; the number of vertices in the constructed Polygon2d
-     * @param r double; double radius of the constructed Polygon2d
-     * @param cX double; x-coordinate of the center of the constructed Polygon2d
-     * @param cY double; y-coordinate of the center of the constructed Polygon2d
+     * @param numVertices the number of vertices in the constructed Polygon2d
+     * @param r double radius of the constructed Polygon2d
+     * @param cX x-coordinate of the center of the constructed Polygon2d
+     * @param cY y-coordinate of the center of the constructed Polygon2d
      * @return Polygon2d
      * @throws OtsGeometryException when the number of vertices is less than two, or the radius is 0;
      */
@@ -53,13 +53,13 @@ public final class TestIntersectionPerformance
 
     /**
      * Perform a test.
-     * @param numShapes int; number of shapes to construct
-     * @param numVertices int; number of vertices in each constructed shape
-     * @param desiredHitFraction double; intended fraction of shapes that overlap a randomly selected shape
-     * @param numRuns int; number of runs to execute
-     * @param verbose boolean; if true; print details of each run
-     * @param variant int; variant of the collision tester to use
-     * @return Results; collected statistics of this test
+     * @param numShapes number of shapes to construct
+     * @param numVertices number of vertices in each constructed shape
+     * @param desiredHitFraction intended fraction of shapes that overlap a randomly selected shape
+     * @param numRuns number of runs to execute
+     * @param verbose if true; print details of each run
+     * @param variant variant of the collision tester to use
+     * @return collected statistics of this test
      * @throws OtsGeometryException when the number of vertices iss less than two
      */
     public static Results baseTest(final int numShapes, final int numVertices, final double desiredHitFraction,
@@ -129,7 +129,7 @@ public final class TestIntersectionPerformance
 
     /**
      * Measure the performance.
-     * @param args String[]; command line arguments (not used)
+     * @param args command line arguments (not used)
      * @throws OtsGeometryException ...
      * @throws IOException ...
      */
@@ -174,8 +174,8 @@ public final class TestIntersectionPerformance
 
         /**
          * Construct a Results object.
-         * @param numShapes int; number of shapes constructed
-         * @param numVertices int; number of vertices per shape
+         * @param numShapes number of shapes constructed
+         * @param numVertices number of vertices per shape
          */
         Results(final int numShapes, final int numVertices)
         {
@@ -185,9 +185,9 @@ public final class TestIntersectionPerformance
 
         /**
          * Add the result of one run.
-         * @param numTests int; number of tests executed
-         * @param numHits int; number of hits detected in <cite>numTests</cite> tests
-         * @param executionTime double; total execution time for <cite>numTests</cite> tests
+         * @param numTests number of tests executed
+         * @param numHits number of hits detected in <cite>numTests</cite> tests
+         * @param executionTime total execution time for <cite>numTests</cite> tests
          */
         public void addResult(final int numTests, final int numHits, final double executionTime)
         {
@@ -209,7 +209,7 @@ public final class TestIntersectionPerformance
 
         /**
          * Retrieve the number of shapes used in the tests.
-         * @return int; the number of shapes
+         * @return the number of shapes
          */
         public int getNumShapes()
         {
@@ -218,7 +218,7 @@ public final class TestIntersectionPerformance
 
         /**
          * Retrieve the number of vertices per shape.
-         * @return int; the number of vertices per shape
+         * @return the number of vertices per shape
          */
         public int getNumVertices()
         {
@@ -227,7 +227,7 @@ public final class TestIntersectionPerformance
 
         /**
          * Report number of statistics collected.
-         * @return int; the number of samples stored
+         * @return the number of samples stored
          */
         public final int size()
         {
@@ -236,7 +236,7 @@ public final class TestIntersectionPerformance
 
         /**
          * Retrieve the Result object at the specified index.
-         * @param index int; the index of the requested result
+         * @param index the index of the requested result
          * @return Result
          */
         public final Result getResult(final int index)
@@ -246,9 +246,9 @@ public final class TestIntersectionPerformance
 
         /**
          * Return the results as a String.
-         * @param removeOutliers boolean; if true; remove highest and lowest values
-         * @param verbose boolean; if true; print some diagnostics on the console
-         * @return String; textual representation of this Results
+         * @param removeOutliers if true; remove highest and lowest values
+         * @param verbose if true; print some diagnostics on the console
+         * @return textual representation of this Results
          */
         public String result(final boolean removeOutliers, final boolean verbose)
         {
@@ -328,9 +328,9 @@ public final class TestIntersectionPerformance
 
             /**
              * Construct one Result.
-             * @param numTests int; number of tests executed
-             * @param numHits int; number of hits detected in <cite>numTests</cite> tests
-             * @param executionTime double; total execution time for <cite>numTests</cite> tests
+             * @param numTests number of tests executed
+             * @param numHits number of hits detected in <cite>numTests</cite> tests
+             * @param executionTime total execution time for <cite>numTests</cite> tests
              */
             Result(final int numTests, final int numHits, final double executionTime)
             {
@@ -340,7 +340,7 @@ public final class TestIntersectionPerformance
             }
 
             /**
-             * @return int; the number of tests executed
+             * @return the number of tests executed
              */
             public final int getNumTests()
             {
@@ -348,7 +348,7 @@ public final class TestIntersectionPerformance
             }
 
             /**
-             * @return int; the number of tests executed
+             * @return the number of tests executed
              */
             public final int getNumHits()
             {
@@ -356,7 +356,7 @@ public final class TestIntersectionPerformance
             }
 
             /**
-             * @return int; the number of tests executed
+             * @return the number of tests executed
              */
             public final double getExecutionTime()
             {

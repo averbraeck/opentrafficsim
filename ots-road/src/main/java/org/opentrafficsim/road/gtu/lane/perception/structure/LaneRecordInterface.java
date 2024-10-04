@@ -21,38 +21,38 @@ public interface LaneRecordInterface<R extends LaneRecordInterface<R>>
 
     /**
      * Returns a list of next lanes.
-     * @return List; list of next lanes
+     * @return list of next lanes
      */
     Set<? extends R> getNext();
 
     /**
      * Returns a list of previous lanes.
-     * @return List; list of previous lanes
+     * @return list of previous lanes
      */
     Set<? extends R> getPrev();
 
     /**
      * Returns the distance from a reference to the start of this lane, negative for upstream distance.
-     * @return Length; the distance from a reference to the start of this lane, negative for upstream distance
+     * @return the distance from a reference to the start of this lane, negative for upstream distance
      */
     Length getStartDistance();
 
     /**
      * Returns the length of the lane.
-     * @return Length; length of the lane.
+     * @return length of the lane.
      */
     Length getLength();
 
     /**
      * Returns the lane.
-     * @return Lane lane;
+     * @return
      */
     Lane getLane();
 
     /**
      * Returns the distance from the reference to the given location.
-     * @param position Length; position on the lane
-     * @return Length; distance from the reference to the given location
+     * @param position position on the lane
+     * @return distance from the reference to the given location
      */
     default Length getDistanceToPosition(final Length position)
     {
@@ -62,7 +62,7 @@ public interface LaneRecordInterface<R extends LaneRecordInterface<R>>
     /**
      * Returns whether the record is part of the downstream branch. This means the GTU can potentially get here and the lane is
      * not upstream or on the other branch upstream of a merge. Default implementation returns {@code true}.
-     * @return Boolean; whether the record is part of the downstream branch
+     * @return whether the record is part of the downstream branch
      */
     default boolean isDownstreamBranch()
     {

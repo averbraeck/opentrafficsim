@@ -25,8 +25,8 @@ public class TotalNumberOfStops extends AbstractIndicator<Dimensionless>
 
     /** {@inheritDoc} */
     @Override
-    protected <G extends GtuData> Dimensionless calculate(final Query<G, ?> query, final Time startTime,
-            final Time endTime, final List<TrajectoryGroup<G>> trajectoryGroups)
+    protected <G extends GtuData> Dimensionless calculate(final Query<G, ?> query, final Time startTime, final Time endTime,
+            final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         int sum = 0;
         for (TrajectoryGroup<?> trajectoryGroup : trajectoryGroups)

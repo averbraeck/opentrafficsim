@@ -47,11 +47,10 @@ public interface GeneratorPositions
 
     /**
      * Draw a new position to generate a GTU.
-     * @param gtuType GtuType; GTU type.
-     * @param characteristics LaneBasedGtuCharacteristics; characteristics of the generated GTU.
-     * @param unplaced Map&lt;CrossSectionLink, Map&lt;Integer, Integer&gt;&gt;; number of unplaced GTUs per lane, counting from
-     *            the right and starting at 1.
-     * @return GeneratorLanePosition; new position to generate a GTU.
+     * @param gtuType GTU type.
+     * @param characteristics characteristics of the generated GTU.
+     * @param unplaced number of unplaced GTUs per lane, counting from the right and starting at 1.
+     * @return new position to generate a GTU.
      * @throws GtuException when the underlying structure is inconsistent for drawing
      */
     GeneratorLanePosition draw(GtuType gtuType, LaneBasedGtuCharacteristics characteristics,
@@ -66,9 +65,9 @@ public interface GeneratorPositions
     /**
      * Create a GeneratorPositions object to draw positions from. The given positions are grouped per link. Lanes are drawn
      * without bias. Each link receives a weight equal to the number of lanes.
-     * @param positions Set&lt;LanePosition&gt;; all considered positions, each lane is considered separately
-     * @param stream StreamInterface; stream for random numbers
-     * @return GeneratorPositions; object to draw positions from
+     * @param positions all considered positions, each lane is considered separately
+     * @param stream stream for random numbers
+     * @return object to draw positions from
      */
     static GeneratorPositions create(final Set<LanePosition> positions, final StreamInterface stream)
     {
@@ -78,10 +77,10 @@ public interface GeneratorPositions
     /**
      * Create a GeneratorPositions object to draw positions from. The given positions are grouped per link. Each link receives a
      * weight equal to the number of lanes.
-     * @param positions Set&lt;LanePosition&gt;; all considered positions, each lane is considered separately
-     * @param stream StreamInterface; stream for random numbers
-     * @param biases LaneBiases; lane biases for GTU types
-     * @return GeneratorPositions; object to draw positions from
+     * @param positions all considered positions, each lane is considered separately
+     * @param stream stream for random numbers
+     * @param biases lane biases for GTU types
+     * @return object to draw positions from
      */
     static GeneratorPositions create(final Set<LanePosition> positions, final StreamInterface stream, final LaneBiases biases)
     {
@@ -91,11 +90,11 @@ public interface GeneratorPositions
     /**
      * Create a GeneratorPositions object to draw positions from. The given positions are grouped per link. Lanes are drawn
      * without bias.
-     * @param positions Set&lt;LanePosition&gt;; all considered positions, each lane is considered separately
-     * @param stream StreamInterface; stream for random numbers
-     * @param linkWeights Map&lt;CrossSectionLink, Double&gt;; weight per link direction
-     * @param viaNodes Map&lt;CrossSectionLink, Node&gt;; nodes connectors feed to for each link where GTU's will be generated
-     * @return GeneratorPositions; object to draw positions from
+     * @param positions all considered positions, each lane is considered separately
+     * @param stream stream for random numbers
+     * @param linkWeights weight per link direction
+     * @param viaNodes nodes connectors feed to for each link where GTU's will be generated
+     * @return object to draw positions from
      */
     static GeneratorPositions create(final Set<LanePosition> positions, final StreamInterface stream,
             final Map<CrossSectionLink, Double> linkWeights, final Map<CrossSectionLink, Node> viaNodes)
@@ -105,12 +104,12 @@ public interface GeneratorPositions
 
     /**
      * Create a GeneratorPositions object to draw positions from. The given positions are grouped per link.
-     * @param positions Set&lt;LanePosition&gt;; all considered positions, each lane is considered separately
-     * @param stream StreamInterface; stream for random numbers
-     * @param laneBiases LaneBiases; lane biases for GTU types
-     * @param linkWeights Map&lt;CrossSectionLink, Double&gt;; weight per link
-     * @param viaNodes Map&lt;CrossSectionLink, Node&gt;; nodes connectors feed to for each link where GTU's will be generated
-     * @return GeneratorPositions; object to draw positions from
+     * @param positions all considered positions, each lane is considered separately
+     * @param stream stream for random numbers
+     * @param laneBiases lane biases for GTU types
+     * @param linkWeights weight per link
+     * @param viaNodes nodes connectors feed to for each link where GTU's will be generated
+     * @return object to draw positions from
      */
     static GeneratorPositions create(final Set<LanePosition> positions, final StreamInterface stream,
             final LaneBiases laneBiases, final Map<CrossSectionLink, Double> linkWeights,
@@ -215,9 +214,9 @@ public interface GeneratorPositions
 
         /**
          * Constructor.
-         * @param laneNumber int; lane number, where 1 is the right-most lane
-         * @param position LanePosition; position set, representing a single GTU position on the network
-         * @param link CrossSectionLink; link
+         * @param laneNumber lane number, where 1 is the right-most lane
+         * @param position position set, representing a single GTU position on the network
+         * @param link link
          */
         GeneratorLanePosition(final int laneNumber, final LanePosition position, final CrossSectionLink link)
         {
@@ -237,8 +236,8 @@ public interface GeneratorPositions
 
         /**
          * Returns whether this lane is accessible to the GTU type.
-         * @param gtuType GtuType; gtu type
-         * @return boolean; whether this lane is accessible to the GTU type
+         * @param gtuType gtu type
+         * @return whether this lane is accessible to the GTU type
          */
         boolean allows(final GtuType gtuType)
         {
@@ -247,7 +246,7 @@ public interface GeneratorPositions
 
         /**
          * Returns the contained position set, representing a single GTU position on the network.
-         * @return LanePosition; contained position set, representing a single GTU position on the network
+         * @return contained position set, representing a single GTU position on the network
          */
         LanePosition getPosition()
         {
@@ -256,7 +255,7 @@ public interface GeneratorPositions
 
         /**
          * Returns the link.
-         * @return CrossSectionLink; link
+         * @return link
          */
         CrossSectionLink getLink()
         {
@@ -335,10 +334,10 @@ public interface GeneratorPositions
 
         /**
          * Constructor.
-         * @param positions List&lt;GeneratorLanePosition&gt;; contained lanes
-         * @param link Link; the link
-         * @param stream StreamInterface; stream
-         * @param laneBiases LaneBiases; lane biases
+         * @param positions contained lanes
+         * @param link the link
+         * @param stream stream
+         * @param laneBiases lane biases
          */
         GeneratorLinkPosition(final List<GeneratorLanePosition> positions, final Link link, final StreamInterface stream,
                 final LaneBiases laneBiases)
@@ -353,12 +352,12 @@ public interface GeneratorPositions
 
         /**
          * Constructor.
-         * @param positions List&lt;GeneratorLanePosition&gt;; contained lanes
-         * @param link Link; the link
-         * @param stream StreamInterface; stream
-         * @param laneBiases LaneBiases; lane biases
-         * @param weight double; weight for drawing this link
-         * @param viaNode Node; node by which a connector connects
+         * @param positions contained lanes
+         * @param link the link
+         * @param stream stream
+         * @param laneBiases lane biases
+         * @param weight weight for drawing this link
+         * @param viaNode node by which a connector connects
          */
         GeneratorLinkPosition(final List<GeneratorLanePosition> positions, final Link link, final StreamInterface stream,
                 final LaneBiases laneBiases, final double weight, final Node viaNode)
@@ -373,7 +372,7 @@ public interface GeneratorPositions
 
         /**
          * Return the link.
-         * @return CrossSectionLink; link
+         * @return link
          */
         Link getLink()
         {
@@ -382,8 +381,8 @@ public interface GeneratorPositions
 
         /**
          * Returns the weight for this link. This is either a predefined weight, or the number of lanes for the GTU type.
-         * @param gtuType GtuType; GTU type
-         * @return double; weight for this link
+         * @param gtuType GTU type
+         * @return weight for this link
          */
         double getWeight(final GtuType gtuType)
         {
@@ -405,8 +404,8 @@ public interface GeneratorPositions
 
         /**
          * Returns the number of accessible lanes for the GTU type.
-         * @param gtuType GtuType; GTU type
-         * @return int; number of accessible lanes for the GTU type
+         * @param gtuType GTU type
+         * @return number of accessible lanes for the GTU type
          */
         int getNumberOfLanes(final GtuType gtuType)
         {
@@ -423,12 +422,12 @@ public interface GeneratorPositions
 
         /**
          * Draws a specific GeneratorLanePosition utilizing lane biases of GTU types.
-         * @param gtuType GtuType; GTU type
-         * @param unplaced Map&lt;Integer, Integer&gt;; number of unplaced GTUs per lane. The lane number should match with
+         * @param gtuType GTU type
+         * @param unplaced number of unplaced GTUs per lane. The lane number should match with
          *            {@code GeneratorLanePosition.getLaneNumber()}, where 1 is the right-most lane. Missing lanes are assumed
          *            to have no queue.
-         * @param desiredSpeed Speed; desired speed, possibly used to determine the biased road position
-         * @return GeneratorLanePosition; specific GeneratorLanePosition utilizing lane biases of GTU types
+         * @param desiredSpeed desired speed, possibly used to determine the biased road position
+         * @return specific GeneratorLanePosition utilizing lane biases of GTU types
          */
         GeneratorLanePosition draw(final GtuType gtuType, final Map<Integer, Integer> unplaced, final Speed desiredSpeed)
         {
@@ -474,8 +473,8 @@ public interface GeneratorPositions
         }
 
         /**
-         * @param gtuType GtuType; GTU type
-         * @return Speed; speed limit
+         * @param gtuType GTU type
+         * @return speed limit
          */
         public Speed speedLimit(final GtuType gtuType)
         {
@@ -521,7 +520,7 @@ public interface GeneratorPositions
 
         /**
          * Constructor.
-         * @param positions List&lt;GeneratorLinkPosition&gt;; contained links
+         * @param positions contained links
          */
         GeneratorZonePosition(final List<GeneratorLinkPosition> positions)
         {
@@ -531,12 +530,12 @@ public interface GeneratorPositions
         /**
          * Draws a GeneratorLinkPosition using number of accessible lanes for the GtuType as weight, and a GeneratorLanePosition
          * from that.
-         * @param gtuType GtuType; GTU type
-         * @param stream StreamInterface; stream for random numbers
-         * @param destination Node; destination node
-         * @param route Route; route, may be {@code null}
-         * @return GeneratorLanePosition; draws a LinkPosition using number of accessible lanes for the GtuType as weight, and a
-         *         GeneratorLanePosition from that
+         * @param gtuType GTU type
+         * @param stream stream for random numbers
+         * @param destination destination node
+         * @param route route, may be {@code null}
+         * @return draws a LinkPosition using number of accessible lanes for the GtuType as weight, and a GeneratorLanePosition
+         *         from that
          */
         GeneratorLinkPosition draw(final GtuType gtuType, final StreamInterface stream, final Node destination,
                 final Route route)
@@ -611,9 +610,9 @@ public interface GeneratorPositions
 
         /**
          * Adds a GTU bias for randomly drawing a lane.
-         * @param gtuType GtuType; gtu type
-         * @param bias LaneBias; bias
-         * @return LaneBiases; lane biases for method chaining
+         * @param gtuType gtu type
+         * @param bias bias
+         * @return lane biases for method chaining
          */
         public LaneBiases addBias(final GtuType gtuType, final LaneBias bias)
         {
@@ -625,7 +624,7 @@ public interface GeneratorPositions
 
         /**
          * Whether a bias is defined for the given type.
-         * @param gtuType GtuType; GTU type
+         * @param gtuType GTU type
          * @return whether a bias is defined for the given type
          */
         public boolean contains(final GtuType gtuType)
@@ -635,8 +634,8 @@ public interface GeneratorPositions
 
         /**
          * Returns the bias of given GTU type, or {@code Bias.None} if none defined for the GTU type.
-         * @param gtuType GtuType; GTU type
-         * @return Bias; bias of the GTU type
+         * @param gtuType GTU type
+         * @return bias of the GTU type
          */
         public LaneBias getBias(final GtuType gtuType)
         {
@@ -701,8 +700,8 @@ public interface GeneratorPositions
 
         /**
          * Returns a bias by speed with normal extent.
-         * @param leftSpeed Speed; desired speed for full left bias
-         * @param rightSpeed Speed; desired speed for full right bias
+         * @param leftSpeed desired speed for full left bias
+         * @param rightSpeed desired speed for full right bias
          * @return bias by speed with normal extent
          */
         public static LaneBias bySpeed(final Speed leftSpeed, final Speed rightSpeed)
@@ -712,8 +711,8 @@ public interface GeneratorPositions
 
         /**
          * Returns a bias by speed with normal extent. Convenience km/h input.
-         * @param leftSpeedKm double; desired speed for full left bias
-         * @param rightSpeedKm double; desired speed for full right bias
+         * @param leftSpeedKm desired speed for full left bias
+         * @param rightSpeedKm desired speed for full right bias
          * @return bias by speed with normal extent
          */
         public static LaneBias bySpeed(final double leftSpeedKm, final double rightSpeedKm)
@@ -732,9 +731,9 @@ public interface GeneratorPositions
 
         /**
          * Constructor.
-         * @param roadPosition RoadPosition; lateral position on the road (0 = right, 0.5 = middle, 1 = left)
-         * @param bias double; bias extent, lower values create more spread traffic, 0.0 causes no lane preference
-         * @param stickyLanes double; number of lanes to consider in either direction, including the preferred lane
+         * @param roadPosition lateral position on the road (0 = right, 0.5 = middle, 1 = left)
+         * @param bias bias extent, lower values create more spread traffic, 0.0 causes no lane preference
+         * @param stickyLanes number of lanes to consider in either direction, including the preferred lane
          */
         public LaneBias(final RoadPosition roadPosition, final double bias, final double stickyLanes)
         {
@@ -773,11 +772,11 @@ public interface GeneratorPositions
          * <i>latBiasLane</i> &#61; 1 + <i>roadPosition</i>*(<i>numberOfLanes</i> - 1), i.e. ranging from 1 to 4 on a 4-lane
          * road. For lanes that are beyond the number of sticky lanes, the weight is always 0.<br>
          * <br>
-         * @param laneNumFromRight int; number of lane counted from right to left
-         * @param numberOfLanes int; total number of lanes
-         * @param numberOfUnplacedGTUs int; number of GTU's in the generation queue
-         * @param desiredSpeed Speed; desired speed, possibly used to determine the biased road position
-         * @return double; random draw weight for given lane
+         * @param laneNumFromRight number of lane counted from right to left
+         * @param numberOfLanes total number of lanes
+         * @param numberOfUnplacedGTUs number of GTU's in the generation queue
+         * @param desiredSpeed desired speed, possibly used to determine the biased road position
+         * @return random draw weight for given lane
          */
         public double calculateWeight(final int laneNumFromRight, final int numberOfLanes, final int numberOfUnplacedGTUs,
                 final Speed desiredSpeed)
@@ -870,7 +869,7 @@ public interface GeneratorPositions
 
         /**
          * Returns the road position (0.0 = right, 1.0 = left).
-         * @param desiredSpeed Speed; desired speed at the generator
+         * @param desiredSpeed desired speed at the generator
          * @return road position (0.0 = right, 1.0 = left)
          */
         double getValue(Speed desiredSpeed);
@@ -894,7 +893,7 @@ public interface GeneratorPositions
 
             /**
              * Constructor.
-             * @param value double; road position
+             * @param value road position
              */
             public ByValue(final double value)
             {
@@ -970,8 +969,8 @@ public interface GeneratorPositions
 
             /**
              * Constructor.
-             * @param leftSpeed Speed; desired speed at left side of the road
-             * @param rightSpeed Speed; desired speed at right side of the road
+             * @param leftSpeed desired speed at left side of the road
+             * @param rightSpeed desired speed at right side of the road
              */
             public BySpeed(final Speed leftSpeed, final Speed rightSpeed)
             {

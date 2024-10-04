@@ -21,8 +21,8 @@ public class EgtfEvent extends EventObject
 
     /**
      * Constructor.
-     * @param egtf EGTF; egtf
-     * @param progress double; progress, a value in the range [0 ... 1]
+     * @param egtf egtf
+     * @param progress progress, a value in the range [0 ... 1]
      */
     EgtfEvent(final Egtf egtf, final double progress)
     {
@@ -32,7 +32,7 @@ public class EgtfEvent extends EventObject
 
     /**
      * Returns the progress, a value in the range [0 ... 1].
-     * @return double; progress, a value in the range [0 ... 1]
+     * @return progress, a value in the range [0 ... 1]
      */
     public final double getProgress()
     {

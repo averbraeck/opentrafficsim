@@ -81,8 +81,8 @@ public class SamplerData<G extends GtuData> extends Table
 
     /**
      * Constructor.
-     * @param extendedDataTypes Set&lt;? extends ExtendedDataType&lt;?, ?, ?, ? super G&gt;&gt;; extended data types.
-     * @param filterDataTypes Set&lt;FilterDataType&lt;?, ? super G&gt;&gt;; filter data types.
+     * @param extendedDataTypes extended data types.
+     * @param filterDataTypes filter data types.
      */
     public SamplerData(final Set<ExtendedDataType<?, ?, ?, ? super G>> extendedDataTypes,
             final Set<FilterDataType<?, ? super G>> filterDataTypes)
@@ -121,10 +121,10 @@ public class SamplerData<G extends GtuData> extends Table
 
     /**
      * Generates the columns based on base information and the extended and filter types.
-     * @param extendedDataTypes2 Set&lt;? extends ExtendedDataType&lt;?, ?, ?, ? super G2&gt;&gt;; extended data types.
-     * @param filterDataTypes2 Set&lt;FilterDataType&lt;?, ? super G2&gt;&gt;; filter data types.
+     * @param extendedDataTypes2 extended data types.
+     * @param filterDataTypes2 filter data types.
      * @param <G2> type to bound extended and filter data types.
-     * @return Collection&lt;Column&lt;?&gt;&gt;; columns.
+     * @return columns.
      */
     private static <G2> Collection<Column<?>> generateColumns(
             final Set<ExtendedDataType<?, ?, ?, ? super G2>> extendedDataTypes2,
@@ -147,8 +147,8 @@ public class SamplerData<G extends GtuData> extends Table
 
     /**
      * Returns the unit for values in an extended data type.
-     * @param extendedDataType DataType&lt;?, ?&gt;; extended data type.
-     * @return String; representation of the unit
+     * @param extendedDataType extended data type.
+     * @return representation of the unit
      */
     private static String getUnit(final DataType<?, ?> extendedDataType)
     {
@@ -183,7 +183,7 @@ public class SamplerData<G extends GtuData> extends Table
 
     /**
      * Stores a trajectory group with the lane direction.
-     * @param lane LaneData; lane direction
+     * @param lane lane direction
      * @param trajectoryGroup trajectory group for given lane direction
      */
     protected final void putTrajectoryGroup(final LaneData<?> lane, final TrajectoryGroup<G> trajectoryGroup)
@@ -193,7 +193,7 @@ public class SamplerData<G extends GtuData> extends Table
 
     /**
      * Returns the set of lane directions.
-     * @return Set&lt;LaneData&gt;; lane directions
+     * @return lane directions
      */
     public final Set<LaneData<?>> getLanes()
     {
@@ -202,7 +202,7 @@ public class SamplerData<G extends GtuData> extends Table
 
     /**
      * Returns whether there is data for the give lane.
-     * @param lane LaneData; lane
+     * @param lane lane
      * @return whether there is data for the give lane
      */
     public final boolean contains(final LaneData<?> lane)
@@ -212,7 +212,7 @@ public class SamplerData<G extends GtuData> extends Table
 
     /**
      * Returns the trajectory group of given lane.
-     * @param lane LaneData; lane
+     * @param lane lane
      * @return trajectory group of given lane, {@code null} if none
      */
     public final TrajectoryGroup<G> getTrajectoryGroup(final LaneData<?> lane)
@@ -222,7 +222,7 @@ public class SamplerData<G extends GtuData> extends Table
 
     /**
      * Write the contents of the sampler in to a file. By default this is zipped.
-     * @param file String; file
+     * @param file file
      */
     public final void writeToFile(final String file)
     {
@@ -231,8 +231,8 @@ public class SamplerData<G extends GtuData> extends Table
 
     /**
      * Write the contents of the sampler in to a file.
-     * @param file String; file
-     * @param compression Compression; how to compress the data
+     * @param file file
+     * @param compression how to compress the data
      */
     public final void writeToFile(final String file, final Compression compression)
     {
@@ -380,7 +380,7 @@ public class SamplerData<G extends GtuData> extends Table
 
         /**
          * Returns an array with the base data. The array is of size to also contain the extended and filter data.
-         * @param trajectoryIndex int; trajectory index in the current trajectory.
+         * @param trajectoryIndex trajectory index in the current trajectory.
          * @return Object[] base data of size to also contain the extended and filter data.
          * @throws SamplingException if data can not be obtained.
          */

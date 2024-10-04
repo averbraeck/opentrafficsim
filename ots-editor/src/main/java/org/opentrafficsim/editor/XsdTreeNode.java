@@ -243,7 +243,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * Constructor for root node, based on an {@code XsdSchema}. Note: {@code XsdTreeNodeRoot} should be used for the root. The
      * {@code XsdSchema} that will be available to all nodes in the tree.
-     * @param schema XsdSchema; XSD schema.
+     * @param schema XSD schema.
      */
     protected XsdTreeNode(final Schema schema)
     {
@@ -261,9 +261,9 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Construct a node without referring node.
-     * @param parent XsdTreeNode; parent.
-     * @param xsdNode Node; XSD node that this tree node represents.
-     * @param hiddenNodes ImmutableList&lt;Node&gt;; nodes between the XSD node of the parent, and this tree node's XSD node.
+     * @param parent parent.
+     * @param xsdNode XSD node that this tree node represents.
+     * @param hiddenNodes nodes between the XSD node of the parent, and this tree node's XSD node.
      */
     XsdTreeNode(final XsdTreeNode parent, final Node xsdNode, final ImmutableList<Node> hiddenNodes)
     {
@@ -304,11 +304,11 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * &lt;/xsd:element&gt;
      * </pre>
      * 
-     * @param parent XsdTreeNode; parent.
-     * @param xsdNode Node; XSD node that this tree node represents.
-     * @param hiddenNodes ImmutableList&lt;Node&gt;; nodes between the XSD node of the parent, and this tree node's XSD node.
-     * @param referringXsdNode Node; original node that referred to {@code Node} through a ref={ref} or type={type} attribute,
-     *            it is used for naming and occurrence, may be {@code null} if not applicable.
+     * @param parent parent.
+     * @param xsdNode XSD node that this tree node represents.
+     * @param hiddenNodes nodes between the XSD node of the parent, and this tree node's XSD node.
+     * @param referringXsdNode original node that referred to {@code Node} through a ref={ref} or type={type} attribute, it is
+     *            used for naming and occurrence, may be {@code null} if not applicable.
      */
     XsdTreeNode(final XsdTreeNode parent, final Node xsdNode, final ImmutableList<Node> hiddenNodes,
             final Node referringXsdNode)
@@ -381,7 +381,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Builds the path location, e.g. "Ots.Definitions.RoadLayouts".
-     * @return String; the path location.
+     * @return the path location.
      */
     private String buildPathLocation()
     {
@@ -401,7 +401,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns the path from root to this node.
-     * @return List&lt;XsdTreeNode&gt;; list of node along the path.
+     * @return list of node along the path.
      */
     public List<XsdTreeNode> getPath()
     {
@@ -412,7 +412,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns the root node.
-     * @return XsdTreeNodeRoot; root node.
+     * @return root node.
      */
     public XsdTreeNodeRoot getRoot()
     {
@@ -423,7 +423,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * Returns the name of this node, as appropriate in XML. Examples are Node, RoadLayout, and TacticalPlanner. Most typically
      * this is the "name" attribute of an xsd:element. In other cases it is the ref={ref} attribute of the referring
      * {@code Node}. In rare cases it is "xi:include".
-     * @return String; name of this node, as appropriate in XML.
+     * @return name of this node, as appropriate in XML.
      */
     public String getNodeName()
     {
@@ -445,7 +445,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns whether this node is (part of) a choice, i.e. should show an option can be set here.
-     * @return boolean; whether this node is (part of) a choice, i.e. should show an option can be set here.
+     * @return whether this node is (part of) a choice, i.e. should show an option can be set here.
      */
     public boolean isChoice()
     {
@@ -454,7 +454,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns a list of options.
-     * @return List&lt;XsdOption&gt;; list of options.
+     * @return list of options.
      */
     public List<XsdOption> getOptions()
     {
@@ -473,7 +473,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Sets the node as newly selected option. All current nodes from the choice set are removed from the parent node.
-     * @param node XsdTreeNode; newly selected node. Must be part of the choice that this node represents.
+     * @param node newly selected node. Must be part of the choice that this node represents.
      */
     public void setOption(final XsdTreeNode node)
     {
@@ -494,7 +494,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns the selected option.
-     * @return XsdTreeNode; selected option.
+     * @return selected option.
      */
     public XsdTreeNode getOption()
     {
@@ -503,8 +503,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Sets the given node as child of this node.
-     * @param index int; index to insert the node.
-     * @param child XsdTreeNode; child node.
+     * @param index index to insert the node.
+     * @param child child node.
      */
     public void setChild(final int index, final XsdTreeNode child)
     {
@@ -522,7 +522,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Remove all option values from parent, and return appropriate index to insert newly chosen option.
-     * @return int; insertion index for new options.
+     * @return insertion index for new options.
      */
     private int removeAnyFromParent()
     {
@@ -579,7 +579,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns the number of children; directly for an {@code XsdTreeTableModel}.
-     * @return int; number of children.
+     * @return number of children.
      */
     public int getChildCount()
     {
@@ -593,8 +593,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns the child at given index; directly for an {@code XsdTreeTableModel}.
-     * @param index int; child index.
-     * @return XsdTreeNode; child.
+     * @param index child index.
+     * @return child.
      */
     public XsdTreeNode getChild(final int index)
     {
@@ -605,8 +605,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * Returns the first child with given name. The node may be within a series of xsd:sequence and xsd:choice/xsd:all
      * intermediate nodes.
-     * @param name String; child name.
-     * @return XsdTreeNode; child.
+     * @param name child name.
+     * @return child.
      */
     public XsdTreeNode getFirstChild(final String name)
     {
@@ -635,7 +635,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns a list of the child nodes.
-     * @return List&lt;XsdTreeNode&gt;; list of the child nodes; safe copy.
+     * @return list of the child nodes; safe copy.
      */
     public List<XsdTreeNode> getChildren()
     {
@@ -783,8 +783,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Finds attributes in a nested way, looking up base types.
-     * @param node Node; node.
-     * @param specificity int; specificity of type, reflects layers, used to find the most specific description.
+     * @param node node.
+     * @param specificity specificity of type, reflects layers, used to find the most specific description.
      */
     private void findAttributes(final Node node, final int specificity)
     {
@@ -833,7 +833,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns the number of attributes; directly for an {@code XsdAttributesTableModel}.
-     * @return int; number of attributes.
+     * @return number of attributes.
      */
     public int attributeCount()
     {
@@ -847,8 +847,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns the attributes at given index; directly for an {@code XsdAttributesTableModel}.
-     * @param index int; attribute index.
-     * @return Node; attribute node.
+     * @param index attribute index.
+     * @return attribute node.
      */
     public Node getAttributeNode(final int index)
     {
@@ -858,8 +858,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Sets an attribute value; directly for an {@code XsdAttributesTableModel}.
-     * @param index int; index of the attribute.
-     * @param value String; value of the attribute.
+     * @param index index of the attribute.
+     * @param value value of the attribute.
      */
     @SuppressWarnings("checkstyle:hiddenfield")
     public void setAttributeValue(final int index, final String value)
@@ -869,8 +869,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Sets an attribute value; directly for an {@code XsdAttributesTableModel}.
-     * @param name String; name of the attribute.
-     * @param value String; value of the attribute.
+     * @param name name of the attribute.
+     * @param value value of the attribute.
      */
     @SuppressWarnings("checkstyle:hiddenfield")
     public void setAttributeValue(final String name, final String value)
@@ -899,8 +899,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns an attribute value; directly for an {@code XsdAttributesTableModel}.
-     * @param index int; index of the attribute.
-     * @return String; value of the attribute.
+     * @param index index of the attribute.
+     * @return value of the attribute.
      */
     public String getAttributeValue(final int index)
     {
@@ -911,8 +911,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns the default value for the attribute.
-     * @param index int; attribute index.
-     * @return String; default value for the attribute, or {@code null} if there is no default value.
+     * @param index attribute index.
+     * @return default value for the attribute, or {@code null} if there is no default value.
      */
     public String getDefaultAttributeValue(final int index)
     {
@@ -923,8 +923,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns the value of an attribute.
-     * @param attribute String; name of the attribute.
-     * @return String; value of the attribute.
+     * @param attribute name of the attribute.
+     * @return value of the attribute.
      * @throws IllegalStateException when the node does not have the attribute.
      */
     public String getAttributeValue(final String attribute)
@@ -935,8 +935,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns the index of the named attribute.
-     * @param attribute String; attribute name.
-     * @return int; index of the named attribute.
+     * @param attribute attribute name.
+     * @return index of the named attribute.
      * @throws NoSuchElementException when the attribute is not in this node.
      */
     public int getAttributeIndexByName(final String attribute)
@@ -961,8 +961,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns the name of the indexed attribute.
-     * @param index int; attribute index.
-     * @return String; name of the indexed attribute.
+     * @param index attribute index.
+     * @return name of the indexed attribute.
      */
     public String getAttributeNameByIndex(final int index)
     {
@@ -972,8 +972,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns whether this node has an attribute with given name.
-     * @param attribute String; attribute name.
-     * @return boolean; whether this node has an attribute with given name.
+     * @param attribute attribute name.
+     * @return whether this node has an attribute with given name.
      */
     public boolean hasAttribute(final String attribute)
     {
@@ -994,7 +994,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * Returns whether the node is active. If not, it only exists to show the user what type of node may be created here, or as
      * a choice option currently not chosen.
-     * @return boolean; whether the node is active.
+     * @return whether the node is active.
      */
     public boolean isActive()
     {
@@ -1075,7 +1075,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns whether this node has an attribute named "Id".
-     * @return boolean; whether this node has an attribute named "Id".
+     * @return whether this node has an attribute named "Id".
      */
     public boolean isIdentifiable()
     {
@@ -1103,7 +1103,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Sets the value for an attribute with name "Id".
-     * @param id String; value to set.
+     * @param id value to set.
      */
     public void setId(final String id)
     {
@@ -1113,7 +1113,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns the value of an attribute with name "Id".
-     * @return String; value of an attribute with name "Id".
+     * @return value of an attribute with name "Id".
      */
     public String getId()
     {
@@ -1124,7 +1124,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * Returns whether this node is editable; i.e. whether a value can be set on the node, i.e. has a simple value, e.g.
      * &lt;Node&gt;Simple value&lt;/Node&gt;.
-     * @return boolean; whether this node is editable, i.e. whether a value can be set on the node.
+     * @return whether this node is editable, i.e. whether a value can be set on the node.
      */
     public boolean isEditable()
     {
@@ -1195,7 +1195,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns whether this node exists as its loaded from an include.
-     * @return boolean; whether this node exists as its loaded from an include.
+     * @return whether this node exists as its loaded from an include.
      */
     public boolean isInclude()
     {
@@ -1204,7 +1204,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Sets the value on this node.
-     * @param value String; value to set.
+     * @param value value to set.
      */
     public void setValue(final String value)
     {
@@ -1221,7 +1221,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns the value of this node.
-     * @return String; value of this node.
+     * @return value of this node.
      */
     public String getValue()
     {
@@ -1230,7 +1230,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns whether a node of the same type may be added next to this node under the parent. This is based on maxOccurs.
-     * @return boolean; whether a node of the same type may be added next to this node under the parent.
+     * @return whether a node of the same type may be added next to this node under the parent.
      */
     public boolean isAddable()
     {
@@ -1240,7 +1240,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * Adds a node of similar type next to this node under the parent. If the node is a choice, the same selected option will be
      * set in the added node. In this way the user sees that node option copied.
-     * @return XsdTreeNode; added node.
+     * @return added node.
      */
     public XsdTreeNode add()
     {
@@ -1274,7 +1274,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Creates a full copy of this node, next to this node under the same parent.
-     * @return XsdTreeNode; newly created node.
+     * @return newly created node.
      */
     public XsdTreeNode duplicate()
     {
@@ -1283,8 +1283,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Duplicates this node, but under the given parent node.
-     * @param newParent XsdTreeNode; parent node.
-     * @return XsdTreeNode; newly created node.
+     * @param newParent parent node.
+     * @return newly created node.
      */
     public XsdTreeNode duplicate(final XsdTreeNode newParent)
     {
@@ -1301,7 +1301,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Creates an empty copy of this node, i.e. without children, options, attributes.
-     * @return XsdTreeNode; empty copy.
+     * @return empty copy.
      */
     public XsdTreeNode emptyCopy()
     {
@@ -1310,8 +1310,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns an empty copy of this node under the given parent.
-     * @param newParent XsdTreeNode; new parent.
-     * @return XsdTreeNode; empty copy.
+     * @param newParent new parent.
+     * @return empty copy.
      */
     private XsdTreeNode emptyCopy(final XsdTreeNode newParent)
     {
@@ -1332,7 +1332,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Copies the active status, value, choice, attributes and children of this node in to the given node.
-     * @param copyNode XsdTreeNode; node to copy data in to.
+     * @param copyNode node to copy data in to.
      */
     public void copyInto(final XsdTreeNode copyNode)
     {
@@ -1403,7 +1403,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns whether this node may be removed without violating "minOccurs" constraints.
-     * @return boolean; whether this node may be removed without violating "minOccurs" constraints.
+     * @return whether this node may be removed without violating "minOccurs" constraints.
      */
     public boolean isRemovable()
     {
@@ -1484,7 +1484,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns whether the node can be moved up in the parent.
-     * @return boolean; whether the node can be moved up in the parent.
+     * @return whether the node can be moved up in the parent.
      */
     public boolean canMoveUp()
     {
@@ -1494,7 +1494,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns whether the node can be moved down in the parent.
-     * @return boolean; whether the node can be moved down in the parent.
+     * @return whether the node can be moved down in the parent.
      */
     public boolean canMoveDown()
     {
@@ -1507,7 +1507,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * considered the same type differs between a choice node, and a regular node. In case of a choice, all siblings that have a
      * type equal to <i>any</i> of the choice options, are considered siblings. They are all instances of the same choice,
      * although they are different options.
-     * @return List&lt;Integer&gt;; list of indices within the parents child list, regarding sibling nodes of the same type.
+     * @return list of indices within the parents child list, regarding sibling nodes of the same type.
      */
     private List<Integer> siblingPositions()
     {
@@ -1545,7 +1545,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Move the node to a different position in the parent, relative to the current position.
-     * @param down int; number of moves down. May be negative for up.
+     * @param down number of moves down. May be negative for up.
      */
     public void move(final int down)
     {
@@ -1558,7 +1558,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns the minimum number of this element under the parent node, as defined in minOccurs in XSD.
-     * @return int; minimum number of this element under the parent node, as defined in minOccurs in XSD.
+     * @return minimum number of this element under the parent node, as defined in minOccurs in XSD.
      */
     public int minOccurs()
     {
@@ -1568,7 +1568,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * Returns the maximum number of this element under the parent node, as defined in maxOccurs in XSD. The XSD value
      * "unbounded" results in a value of -1.
-     * @return int; maximum number of this element under the parent node, as defined in maxOccurs in XSD.
+     * @return maximum number of this element under the parent node, as defined in maxOccurs in XSD.
      */
     public int maxOccurs()
     {
@@ -1578,7 +1578,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * Returns the path string of this element, e.g. "Ots.Definitions.RoadLayouts". This is used to identify each unique type of
      * element.
-     * @return String; path string of this element, e.g. "Ots.Definitions.RoadLayouts".
+     * @return path string of this element, e.g. "Ots.Definitions.RoadLayouts".
      */
     public String getPathString()
     {
@@ -1625,7 +1625,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * Returns whether the node, and all its children recursively, is valid. This means all required values are supplied, and
      * all supplied values comply to their respective types and constraints.
-     * @return boolean; whether the node is valid.
+     * @return whether the node is valid.
      */
     public boolean isValid()
     {
@@ -1681,7 +1681,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Invalidates entire tree in a nested manner. Triggered after the path of the current file changes in the root node.
-     * @param node XsdTreeNode; node to nest through.
+     * @param node node to nest through.
      */
     void invalidateAll(final XsdTreeNode node)
     {
@@ -1703,7 +1703,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns whether the value, any of the attributes, or any of the sub-elements, has an expression.
-     * @return boolean; whether the node has an expression.
+     * @return whether the node has an expression.
      */
     public boolean hasExpression()
     {
@@ -1737,7 +1737,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns whether the value is an expression.
-     * @return boolean; whether the value is an expression.
+     * @return whether the value is an expression.
      */
     public boolean valueIsExpression()
     {
@@ -1746,8 +1746,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns whether the attribute is an expression.
-     * @param index int; attribute index.
-     * @return boolean; whether the attribute is an expression.
+     * @param index attribute index.
+     * @return whether the attribute is an expression.
      */
     public boolean attributeIsExpression(final int index)
     {
@@ -1757,7 +1757,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns whether the Id is an expression.
-     * @return boolean; whether the Id is an expression.
+     * @return whether the Id is an expression.
      */
     public boolean idIsExpression()
     {
@@ -1766,7 +1766,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Adds a validator for the node.
-     * @param validator Function&lt;XsdTreeNode, String&gt;; validator.
+     * @param validator validator.
      */
     public void addNodeValidator(final Function<XsdTreeNode, String> validator)
     {
@@ -1775,8 +1775,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Adds a validator for the value.
-     * @param validator ValueValidator; validator.
-     * @param field Object; field.
+     * @param validator validator.
+     * @param field field.
      */
     public void addValueValidator(final ValueValidator validator, final Object field)
     {
@@ -1785,8 +1785,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Adds a validator for the value of an attribute.
-     * @param attribute String; attribute name.
-     * @param validator ValueValidator; validator.
+     * @param attribute attribute name.
+     * @param validator validator.
      */
     public void addAttributeValidator(final String attribute, final ValueValidator validator)
     {
@@ -1796,9 +1796,9 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * Adds a validator for the value of an attribute. The field object is any object that is returned to the validator in its
      * {@code getOptions()} method, such that it can know for which field option values should be given.
-     * @param attribute String; attribute name.
-     * @param validator ValueValidator; validator.
-     * @param field Object; field.
+     * @param attribute attribute name.
+     * @param validator validator.
+     * @param field field.
      */
     public void addAttributeValidator(final String attribute, final ValueValidator validator, final Object field)
     {
@@ -1809,7 +1809,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * Returns a message why the id is invalid, or {@code null} if it is valid. This should only be used to determine a GUI
      * indication on an invalid Id. For other cases processing the attributes includes the Id.
-     * @return String; message why the id is invalid, or {@code null} if it is valid.
+     * @return message why the id is invalid, or {@code null} if it is valid.
      */
     public String reportInvalidId()
     {
@@ -1823,7 +1823,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * Returns a message why the node is invalid, or {@code null} if it is valid. This only concerns validators on node level,
      * i.e. not on attribute or value level. E.g. because the node is duplicate in its parent.
-     * @return String; message why the id is invalid, or {@code null} if it is valid.
+     * @return message why the id is invalid, or {@code null} if it is valid.
      */
     public String reportInvalidNode()
     {
@@ -1846,7 +1846,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns a message why the value is invalid, or {@code null} if it is valid.
-     * @return String; message why the value is invalid, or {@code null} if it is valid.
+     * @return message why the value is invalid, or {@code null} if it is valid.
      */
     public String reportInvalidValue()
     {
@@ -1879,8 +1879,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns a message why the attribute value is invalid, or {@code null} if it is valid.
-     * @param index int; index of the attribute.
-     * @return String; message why the attribute value is invalid, or {@code null} if it is valid.
+     * @param index index of the attribute.
+     * @return message why the attribute value is invalid, or {@code null} if it is valid.
      */
     public String reportInvalidAttributeValue(final int index)
     {
@@ -1933,7 +1933,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns all restrictions for the value. These are not sorted and may contain duplicates.
-     * @return List&lt;String&gt;; list of restrictions for the value.
+     * @return list of restrictions for the value.
      */
     public List<String> getValueRestrictions()
     {
@@ -1953,8 +1953,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns all restrictions for the given attribute. These are not sorted and may contain duplicates.
-     * @param index int; attribute number.
-     * @return List&lt;String&gt;; list of restrictions for the attribute.
+     * @param index attribute number.
+     * @return list of restrictions for the attribute.
      */
     public List<String> getAttributeRestrictions(final int index)
     {
@@ -1977,8 +1977,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns the node to which an attribute refers via a KeyValidator.
-     * @param index int; index of the attribute.
-     * @return XsdTreeNode; node to which an attribute refers via a KeyValidator, or {@code null} if no such node.
+     * @param index index of the attribute.
+     * @return node to which an attribute refers via a KeyValidator, or {@code null} if no such node.
      */
     public XsdTreeNode getCoupledKeyrefNodeAttribute(final int index)
     {
@@ -1987,8 +1987,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns the node to which an attribute refers via a KeyValidator.
-     * @param attribute String; attribute name.
-     * @return XsdTreeNode; node to which an attribute refers via a KeyValidator, or {@code null} if no such node.
+     * @param attribute attribute name.
+     * @return node to which an attribute refers via a KeyValidator, or {@code null} if no such node.
      */
     public XsdTreeNode getCoupledKeyrefNodeAttribute(final String attribute)
     {
@@ -2001,7 +2001,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns the node to which the value refers via a KeyValidator.
-     * @return XsdTreeNode; node to which the value refers via a KeyValidator, or {@code null} if no such node.
+     * @return node to which the value refers via a KeyValidator, or {@code null} if no such node.
      */
     public XsdTreeNode getCoupledKeyrefNodeValue()
     {
@@ -2010,8 +2010,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Return coupled node via a key validator.
-     * @param validators Set&lt;ValueValidator&gt;; validators.
-     * @return XsdTreeNode; coupled node via a key validator.
+     * @param validators validators.
+     * @return coupled node via a key validator.
      */
     private XsdTreeNode getCoupledKeyrefNode(final Set<ValueValidator> validators)
     {
@@ -2030,7 +2030,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * Returns all restrictions for Id attribute. These are not sorted and may contain duplicates. Id restrictions may be valid
      * if the Id field point to another element.
-     * @return List&lt;String&gt;; list of restrictions for the Id.
+     * @return list of restrictions for the Id.
      */
     public List<String> getIdRestrictions()
     {
@@ -2039,9 +2039,9 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns options based on a set of validators.
-     * @param validators Map&lt;ValueValidator, Object&gt;; validators.
-     * @param field String; field, attribute or child element, for which to obtain the options.
-     * @return List&lt;String&gt;; list of options.
+     * @param validators validators.
+     * @param field field, attribute or child element, for which to obtain the options.
+     * @return list of options.
      */
     private List<String> getOptionsFromValidators(final Map<ValueValidator, Object> validators, final String field)
     {
@@ -2068,8 +2068,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns the base type of the attribute, e.g. xsd:double.
-     * @param index int; attribute index.
-     * @return String; base type of the attribute, e.g. xsd:double.
+     * @param index attribute index.
+     * @return base type of the attribute, e.g. xsd:double.
      */
     public String getAttributeBaseType(final int index)
     {
@@ -2082,8 +2082,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns whether this node is of the type defined by the path.
-     * @param path String; path of the type in dotted xpath notation, e.g. "SignalGroup.TrafficLight".
-     * @return boolean; whether this node is of the type defined by the path.
+     * @param path path of the type in dotted xpath notation, e.g. "SignalGroup.TrafficLight".
+     * @return whether this node is of the type defined by the path.
      */
     public boolean isType(final String path)
     {
@@ -2111,8 +2111,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * Returns whether this node can contain the information of the given node. This only check equivalence of the underlying
      * XSD node. The referring node may be different, as two elements may refer to the same type.
-     * @param copied XsdTreeNode; node that was copied, and may be pasted/inserted here.
-     * @return boolean; whether this node can contain the information of the given node.
+     * @param copied node that was copied, and may be pasted/inserted here.
+     * @return whether this node can contain the information of the given node.
      */
     public boolean canContain(final XsdTreeNode copied)
     {
@@ -2127,7 +2127,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * This function can be set externally and supplies an additional {@code String} to clarify this node in the tree.
      * @param stringFunction Function&lt;XsdTreeNode, String&gt; string function.
-     * @param overwrite boolean; overwrite existing. When {@code true}, a possible existing string function is overwritten.
+     * @param overwrite overwrite existing. When {@code true}, a possible existing string function is overwritten.
      */
     public void setStringFunction(final Function<XsdTreeNode, String> stringFunction, final boolean overwrite)
     {
@@ -2139,8 +2139,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * A consumer can be set externally and will receive this node when its menu item is selected.
-     * @param menuItem String; name of item as presented to the user.
-     * @param consumer Consumer&lt;XsdTreeNode&gt;; editor.
+     * @param menuItem name of item as presented to the user.
+     * @param consumer editor.
      */
     public void addConsumer(final String menuItem, final Consumer<XsdTreeNode> consumer)
     {
@@ -2149,7 +2149,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns whether this node has any consumers.
-     * @return boolean; whether this node has any consumers.
+     * @return whether this node has any consumers.
      */
     public boolean hasConsumer()
     {
@@ -2158,7 +2158,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns the description of this node.
-     * @return String; description of this node, {@code null} if there is none.
+     * @return description of this node, {@code null} if there is none.
      */
     public String getDescription()
     {
@@ -2168,7 +2168,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns the menu items for which this node has consumers.
-     * @return Set&lt;String&gt;; menu items for which this node has consumers.
+     * @return menu items for which this node has consumers.
      */
     public Set<String> getConsumerMenuItems()
     {
@@ -2177,7 +2177,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Triggers the node to be consumed.
-     * @param menuItem String; menu item.
+     * @param menuItem menu item.
      */
     public void consume(final String menuItem)
     {
@@ -2188,7 +2188,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns a string that is the name of the node, without any additional information on id and additional string function.
-     * @return String; string that is the name of the node.
+     * @return string that is the name of the node.
      */
     public String getShortString()
     {
@@ -2247,7 +2247,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
 
     /**
      * Returns the short string, appended with any additional information on id and additional string function.
-     * @return String; short string, appended with any additional information on id and additional string function.
+     * @return short string, appended with any additional information on id and additional string function.
      */
     @Override
     public String toString()
@@ -2289,8 +2289,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * If this node represents a sequence as a choice option, all children are saved directly under the given XML parent node,
      * and no information of this node itself is saved (as such nodes have no attributes or value). In other words, in that case
      * this node is only a virtual layer presented to the user, but does not result in a layer in XML.
-     * @param document Document; used to create the new XML node.
-     * @param xmlParent Node; parent XML node.
+     * @param document used to create the new XML node.
+     * @param xmlParent parent XML node.
      */
     public void saveXmlNodes(final Document document, final Node xmlParent)
     {
@@ -2358,7 +2358,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * Parses the information from an XML node into this node. This entails a tag value, attributes, and children, for as far as
      * each of these is present. In a recursive manner, all child nodes are further loaded.
-     * @param nodeXml Node; node from XML.
+     * @param nodeXml node from XML.
      */
     public void loadXmlNodes(final Node nodeXml)
     {
@@ -2498,9 +2498,9 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * value {@code indices[1]} is used as input to know where to continue in a second call to this method after an earlier call
      * came across an XML node that could not be loaded. In {@code indices[1]} the index of the last child node in to which XML
      * data was loaded is given.
-     * @param indices List&lt;Integer&gt;; index of the first XML child node to load, and first XsdTreeNode index to use.
-     * @param childrenXml NodeList; list of XML child nodes as specified within one parent XML tag.
-     * @param loadingSubSequence boolean; whether this call is loading children as a sub-sequence.
+     * @param indices index of the first XML child node to load, and first XsdTreeNode index to use.
+     * @param childrenXml list of XML child nodes as specified within one parent XML tag.
+     * @param loadingSubSequence whether this call is loading children as a sub-sequence.
      */
     protected void loadChildren(final List<Integer> indices, final NodeList childrenXml, final boolean loadingSubSequence)
     {
@@ -2653,8 +2653,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * a recursive manner).</li>
      * </ol>
      * Given the recursive nature of 2 and 3, in the end some node has a name equal to the tag from XML.
-     * @param nameXml String; tag name from XML.
-     * @return boolean; whether this node is relevant to contain the information of the given tag name from XML.
+     * @param nameXml tag name from XML.
+     * @return whether this node is relevant to contain the information of the given tag name from XML.
      */
     private boolean isRelevantNode(final String nameXml)
     {

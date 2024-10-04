@@ -49,9 +49,9 @@ public interface DelayedActuation
 
     /**
      * Delays the actuation of acceleration.
-     * @param desiredAcceleration Acceleration; desired acceleration
-     * @param gtu LaneBasedGtu; gtu
-     * @return Acceleration; delayed acceleration
+     * @param desiredAcceleration desired acceleration
+     * @param gtu gtu
+     * @return delayed acceleration
      */
     Acceleration delayActuation(Acceleration desiredAcceleration, LaneBasedGtu gtu);
 

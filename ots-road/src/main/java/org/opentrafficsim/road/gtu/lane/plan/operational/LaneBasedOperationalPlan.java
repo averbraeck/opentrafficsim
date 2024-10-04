@@ -37,18 +37,17 @@ public class LaneBasedOperationalPlan extends OperationalPlan
 
     /**
      * Construct an operational plan with or without a lane change.
-     * @param gtu LaneBasedGtu; the GTU for debugging purposes
-     * @param path OtsLine2d; the path to follow from a certain time till a certain time. The path should have &lt;i&gt;at
-     *            least&lt;/i&gt; the length
-     * @param startTime Time; the absolute start time when we start executing the path
-     * @param segments Segments; the segments that make up the path with an acceleration, constant
-     *            speed or deceleration profile
-     * @param deviative boolean; whether the path is not along lane center lines
+     * @param gtu the GTU for debugging purposes
+     * @param path the path to follow from a certain time till a certain time. The path should have &lt;i&gt;at least&lt;/i&gt;
+     *            the length
+     * @param startTime the absolute start time when we start executing the path
+     * @param segments the segments that make up the path with an acceleration, constant speed or deceleration profile
+     * @param deviative whether the path is not along lane center lines
      * @throws OperationalPlanException when the path is too short for the operation
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public LaneBasedOperationalPlan(final LaneBasedGtu gtu, final OtsLine2d path, final Time startTime,
-            final Segments segments, final boolean deviative) throws OperationalPlanException
+    public LaneBasedOperationalPlan(final LaneBasedGtu gtu, final OtsLine2d path, final Time startTime, final Segments segments,
+            final boolean deviative) throws OperationalPlanException
     {
         super(gtu, path, startTime, segments);
         this.deviative = deviative;
@@ -66,8 +65,8 @@ public class LaneBasedOperationalPlan extends OperationalPlan
     /**
      * Returns the total length along the reference lane that the GTU travels. In case of a deviative plan this involves
      * projection of the actual path to the lane center lines.
-     * @param gtu LaneBasedGtu; GTU
-     * @return Length; total length along the path
+     * @param gtu GTU
+     * @return total length along the path
      * @throws GtuException if the GTU has not reference position
      */
     public final Length getTotalLengthAlongLane(final LaneBasedGtu gtu) throws GtuException
@@ -84,8 +83,8 @@ public class LaneBasedOperationalPlan extends OperationalPlan
 
     /**
      * Helper method to get rotation at start or end of lane.
-     * @param lane Lane; lane
-     * @param start boolean; start (or end)
+     * @param lane lane
+     * @param start start (or end)
      * @return rotation at start or end of lane
      */
     private double getRotZAtFraction(final Lane lane, final boolean start)
@@ -104,9 +103,9 @@ public class LaneBasedOperationalPlan extends OperationalPlan
 
     /**
      * Returns the distance along the reference lane that the GTU travels from the current location up to the point.
-     * @param gtu LaneBasedGtu; GTU
-     * @param point OrientedPoint2d; point where the GTU is or will be
-     * @return Length; total length along the path
+     * @param gtu GTU
+     * @param point point where the GTU is or will be
+     * @return total length along the path
      * @throws GtuException if the GTU has not reference position
      */
     public final Length getDistanceAlongLane(final LaneBasedGtu gtu, final OrientedPoint2d point) throws GtuException

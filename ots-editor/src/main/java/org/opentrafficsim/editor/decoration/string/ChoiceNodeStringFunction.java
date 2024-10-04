@@ -24,7 +24,7 @@ public class ChoiceNodeStringFunction extends AbstractNodeDecorator
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
+     * @param editor editor.
      */
     public ChoiceNodeStringFunction(final OtsEditor editor)
     {
@@ -69,7 +69,7 @@ public class ChoiceNodeStringFunction extends AbstractNodeDecorator
 
     /**
      * Sets the right string function if the node may only contain one child node which is a choice.
-     * @param node XsdTreeNode; node.
+     * @param node node.
      */
     private void setStringFunctionWhenOnlyChoice(final XsdTreeNode node)
     {

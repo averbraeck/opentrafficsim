@@ -41,19 +41,17 @@ public class PhoneColorer implements GtuColorer
         }
         return UNKNOWN;
     }
-    
+
     // @docs/08-tutorials/visualization.md#how-to-add-a-gtu-colorer
     @Override
     public String toString()
     {
         return "Phone";
     }
-    
+
     // @docs/08-tutorials/visualization.md#how-to-add-a-gtu-colorer
     public interface PhonePlanner
     {
         public boolean isOnThePhone();
     }
 }
-
-

@@ -40,11 +40,11 @@ public interface InfrastructurePerception extends LaneBasedPerceptionCategory
      *     (--------) Off-ramp:  3 lane changes in 600m (200m per lane change)
      * </pre>
      * 
-     * @param lane RelativeLane; relative lateral lane
+     * @param lane relative lateral lane
      * @return infrastructure lane change info of a lane
      */
     SortedSet<LaneChangeInfo> getLegalLaneChangeInfo(RelativeLane lane);
-    
+
     /**
      * Returns infrastructure lane change info of a lane. A set is returned as multiple points may force lane changes. Which
      * point is considered most critical is a matter of driver interpretation and may change over time. This is shown below.
@@ -65,14 +65,14 @@ public interface InfrastructurePerception extends LaneBasedPerceptionCategory
      *     (--------) Off-ramp:  3 lane changes in 600m (200m per lane change)
      * </pre>
      * 
-     * @param lane RelativeLane; relative lateral lane
+     * @param lane relative lateral lane
      * @return infrastructure lane change info of a lane
      */
-   SortedSet<LaneChangeInfo> getPhysicalLaneChangeInfo(RelativeLane lane);
+    SortedSet<LaneChangeInfo> getPhysicalLaneChangeInfo(RelativeLane lane);
 
     /**
      * Returns the prospect for speed limits on a lane (dynamic speed limits may vary between lanes).
-     * @param lane RelativeLane; relative lateral lane
+     * @param lane relative lateral lane
      * @return prospect for speed limits on a lane
      */
     SpeedLimitProspect getSpeedLimitProspect(RelativeLane lane);
@@ -80,8 +80,8 @@ public interface InfrastructurePerception extends LaneBasedPerceptionCategory
     /**
      * Returns the distance over which a lane change remains legally possible. Negative values indicate the distance over which
      * a lane change is legally not possible.
-     * @param fromLane RelativeLane; lane from which the lane change possibility is requested
-     * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
+     * @param fromLane lane from which the lane change possibility is requested
+     * @param lat LEFT or RIGHT, null not allowed
      * @return distance over which a lane change remains possible
      * @throws NullPointerException if {@code lat == null}
      */
@@ -90,8 +90,8 @@ public interface InfrastructurePerception extends LaneBasedPerceptionCategory
     /**
      * Returns the distance over which a lane change remains physically possible. Negative values indicate the distance over
      * which a lane change is physically not possible.
-     * @param fromLane RelativeLane; lane from which the lane change possibility is requested
-     * @param lat LateralDirectionality; LEFT or RIGHT, null not allowed
+     * @param fromLane lane from which the lane change possibility is requested
+     * @param lat LEFT or RIGHT, null not allowed
      * @return distance over which a lane change remains possible
      * @throws NullPointerException if {@code lat == null}
      */

@@ -22,7 +22,7 @@ public abstract class AbstractGraphSpace<S> implements Iterable<S>
 
     /**
      * Constructor.
-     * @param seriesNames List&lt;String&gt;; names of series
+     * @param seriesNames names of series
      */
     public AbstractGraphSpace(final List<String> seriesNames)
     {
@@ -31,8 +31,8 @@ public abstract class AbstractGraphSpace<S> implements Iterable<S>
 
     /**
      * Returns the name of the series.
-     * @param series int; series
-     * @return String; name of the series
+     * @param series series
+     * @return name of the series
      */
     public String getName(final int series)
     {
@@ -41,7 +41,7 @@ public abstract class AbstractGraphSpace<S> implements Iterable<S>
 
     /**
      * Returns the number of series.
-     * @return int; number of series
+     * @return number of series
      */
     public int getNumberOfSeries()
     {
@@ -50,8 +50,8 @@ public abstract class AbstractGraphSpace<S> implements Iterable<S>
 
     /**
      * Returns an iterator over the sources on the given series.
-     * @param series int; number of the series
-     * @return Iterator&lt;S&gt;; iterator over the sources on the given series
+     * @param series number of the series
+     * @return iterator over the sources on the given series
      */
     abstract Iterator<S> iterator(int series);
 

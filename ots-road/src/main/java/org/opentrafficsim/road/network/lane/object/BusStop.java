@@ -48,12 +48,12 @@ public class BusStop extends AbstractLaneBasedObject
     private final GtuType busType;
 
     /**
-     * @param id String; id
-     * @param lane Lane; lane
-     * @param longitudinalPosition Length; position
-     * @param name String; name of stop
-     * @param simulator OtsSimulatorInterface; the simulator to schedule on
-     * @param busType GtuType; bus type.
+     * @param id id
+     * @param lane lane
+     * @param longitudinalPosition position
+     * @param name name of stop
+     * @param simulator the simulator to schedule on
+     * @param busType bus type.
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public BusStop(final String id, final Lane lane, final Length longitudinalPosition, final String name,
@@ -67,7 +67,7 @@ public class BusStop extends AbstractLaneBasedObject
 
     /**
      * Sets the lines.
-     * @param lines Set&lt;String&gt;; lines that stop at this location
+     * @param lines lines that stop at this location
      */
     public final void setLines(final Set<String> lines)
     {

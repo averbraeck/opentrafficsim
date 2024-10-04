@@ -32,8 +32,8 @@ public abstract class XPathValidator implements ValueValidator
 
     /**
      * Constructor.
-     * @param keyNode Node; node defining the xsd:key, xsd:unique or xsd:keyref.
-     * @param keyPath String; path where the key was defined.
+     * @param keyNode node defining the xsd:key, xsd:unique or xsd:keyref.
+     * @param keyPath path where the key was defined.
      */
     public XPathValidator(final Node keyNode, final String keyPath)
     {
@@ -51,7 +51,7 @@ public abstract class XPathValidator implements ValueValidator
 
     /**
      * Returns the name of the key, i.e. {@code <xsd:keyref name="Name">}.
-     * @return String; name of the key.
+     * @return name of the key.
      */
     public String getKeyName()
     {
@@ -61,7 +61,7 @@ public abstract class XPathValidator implements ValueValidator
     /**
      * Returns the type {@code String} for which the xsd:key, xsd:unique or xsd:keyref applies, i.e. "GtuTypes.GtuType" for
      * {@code <xsd:selector xpath=".//ots:GtuTypes/ots:GtuType" />}. Note that multiple paths may be defined separated by "|".
-     * @return String[]; type for which the xsd:key or xsd:keyref applies.
+     * @return type for which the xsd:key or xsd:keyref applies.
      */
     public String[] getSelectorTypeString()
     {
@@ -73,8 +73,8 @@ public abstract class XPathValidator implements ValueValidator
      * Gathers all the field values, i.e. attribute, child element value, or own value. As validators are registered with the
      * node that has the value, attributes are gathered from the given node, while element values are taken from the correctly
      * named children of the parent. Empty values are returned as {@code null}.
-     * @param node XsdTreeNode; node for which to get the information.
-     * @return List&lt;String&gt;; field values.
+     * @param node node for which to get the information.
+     * @return field values.
      */
     protected List<String> gatherFieldValues(final XsdTreeNode node)
     {
@@ -102,8 +102,8 @@ public abstract class XPathValidator implements ValueValidator
     /**
      * Returns a node that represent the proper context. This is a parent node of the given node, at the level where the
      * xsd:key, xsd:unique or xsd:keyref was defined.
-     * @param node XsdTreeNode; any node somewhere in the context, i.e. subtree.
-     * @return XsdTreeNode; node that represents the proper context.
+     * @param node any node somewhere in the context, i.e. subtree.
+     * @return node that represents the proper context.
      */
     protected XsdTreeNode getContext(final XsdTreeNode node)
     {
@@ -122,7 +122,7 @@ public abstract class XPathValidator implements ValueValidator
 
     /**
      * Returns the path at which the xsd:key, xsd:unique or xsd:keyref is defined.
-     * @return String; path at which the xsd:key or xsd:keyref is defined.
+     * @return path at which the xsd:key or xsd:keyref is defined.
      */
     public String getKeyPath()
     {
@@ -131,7 +131,7 @@ public abstract class XPathValidator implements ValueValidator
 
     /**
      * Returns the path at which the xsd:key, xsd:unique or xsd:keyref is defined, with dots escaped.
-     * @return String; path at which the xsd:key or xsd:keyref is defined.
+     * @return path at which the xsd:key or xsd:keyref is defined.
      */
     public String getKeyPathPattern()
     {
@@ -140,8 +140,8 @@ public abstract class XPathValidator implements ValueValidator
 
     /**
      * Returns whether the given node is of the correct type and in the correct context for this validator.
-     * @param node XsdTreeNode; node.
-     * @return boolean; whether the given node is of the correct type and in the correct context for this validator.
+     * @param node node.
+     * @return whether the given node is of the correct type and in the correct context for this validator.
      */
     protected boolean isSelectedInContext(final XsdTreeNode node)
     {
@@ -160,14 +160,14 @@ public abstract class XPathValidator implements ValueValidator
      * Adds node to this key, if applicable. Nodes are stored per parent instance that defines the context at the level of the
      * path at which the key was defined. This method is called by a listener that the root node has set up, for every created
      * node.
-     * @param node XsdTreeNode; node to add.
+     * @param node node to add.
      */
     abstract public void addNode(XsdTreeNode node);
 
     /**
      * Remove node. It is removed from all contexts and listening keyrefs. This method is called by a listener that the root
      * node has set up, for every removed node.
-     * @param node XsdTreeNode; node to remove.
+     * @param node node to remove.
      */
     abstract public void removeNode(XsdTreeNode node);
 
@@ -181,8 +181,8 @@ public abstract class XPathValidator implements ValueValidator
      * <li>"." will be placed at the start, unless the path starts with "@" in which case an empty string is returned.</li>
      * </ul>
      * All characters are escaped for regular expression as required.
-     * @param path String; xpath.
-     * @return String; suitable for pattern appending.
+     * @param path xpath.
+     * @return suitable for pattern appending.
      */
     protected static String appendPattern(final String path)
     {
@@ -213,8 +213,8 @@ public abstract class XPathValidator implements ValueValidator
 
     /**
      * Transforms an xpath specified path to a path that is presentable to the user.
-     * @param path String; xpath specified path.
-     * @return String; path that is presentable to the user.
+     * @param path xpath specified path.
+     * @return path that is presentable to the user.
      */
     protected static String user(final String path)
     {
@@ -242,7 +242,7 @@ public abstract class XPathValidator implements ValueValidator
 
         /**
          * Constructor.
-         * @param fullFieldPath String; complete field path, e.g. "@GtuType" or "@Id|ots:TrafficLight"
+         * @param fullFieldPath complete field path, e.g. "@GtuType" or "@Id|ots:TrafficLight"
          */
         public Field(final String fullFieldPath)
         {
@@ -263,8 +263,8 @@ public abstract class XPathValidator implements ValueValidator
 
         /**
          * Returns which field path is valid for the given node.
-         * @param node XsdTreeNode; node.
-         * @return int; index of the valid field name.
+         * @param node node.
+         * @return index of the valid field name.
          */
         public int getValidPathIndex(final XsdTreeNode node)
         {
@@ -300,8 +300,8 @@ public abstract class XPathValidator implements ValueValidator
 
         /**
          * Returns the field path at the given index. Any superfluous occurrence of "/./" has been changed to "/".
-         * @param index int; index.
-         * @return String; field path at the given index.
+         * @param index index.
+         * @return field path at the given index.
          */
         public String getFieldPath(final int index)
         {
@@ -310,8 +310,8 @@ public abstract class XPathValidator implements ValueValidator
 
         /**
          * Returns the field value of the given node.
-         * @param node XsdTreeNode; node.
-         * @return String; value of the given node for this field.
+         * @param node node.
+         * @return value of the given node for this field.
          */
         public String getValue(final XsdTreeNode node)
         {
@@ -359,9 +359,9 @@ public abstract class XPathValidator implements ValueValidator
         /**
          * Returns child value by recursively moving down nodes. If the child path ends with an attribute, the attribute value
          * of the node is returned.
-         * @param node XsdTreeNode; node.
-         * @param path String; path.
-         * @return String; value of child element.
+         * @param node node.
+         * @param path path.
+         * @return value of child element.
          * @throws NoSuchElementException if there is no such child that can deliver a value.
          */
         private String getChildValue(final XsdTreeNode node, final String path) throws NoSuchElementException
@@ -425,7 +425,7 @@ public abstract class XPathValidator implements ValueValidator
 
         /**
          * Returns the field name.
-         * @return String; field name.
+         * @return field name.
          */
         public String getFullFieldName()
         {

@@ -42,10 +42,10 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, D
     private final Length height;
 
     /**
-     * @param id String; the id
-     * @param location OrientedPoint2d; location.
-     * @param geometry PolyLine2d; the top-level 2D outline of the object
-     * @param height Length; the height of the object
+     * @param id the id
+     * @param location location.
+     * @param geometry the top-level 2D outline of the object
+     * @param height the height of the object
      */
     protected StaticObject(final String id, final OrientedPoint2d location, final PolyLine2d geometry, final Length height)
     {
@@ -76,9 +76,9 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, D
 
     /**
      * Make a static object and carry out the initialization after it has been fully created.
-     * @param id String; the id
-     * @param geometry Polygon2d; the top-level 2D outline of the object
-     * @param height Length; the height of the object
+     * @param id the id
+     * @param geometry the top-level 2D outline of the object
+     * @param height the height of the object
      * @return the static object
      * @throws NetworkException e.g. on error registering the object in the network
      */
@@ -92,8 +92,8 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, D
 
     /**
      * Make a static object with zero height and carry out the initialization after it has been fully created.
-     * @param id String; the id
-     * @param geometry Polygon2d; the top-level 2D outline of the object
+     * @param id the id
+     * @param geometry the top-level 2D outline of the object
      * @return the static object
      * @throws NetworkException e.g. on error registering the object in the network
      */

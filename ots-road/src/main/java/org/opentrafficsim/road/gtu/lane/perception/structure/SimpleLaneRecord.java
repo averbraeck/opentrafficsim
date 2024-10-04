@@ -40,9 +40,9 @@ public class SimpleLaneRecord implements LaneRecordInterface<SimpleLaneRecord>
 
     /**
      * Constructor.
-     * @param lane Lane; lane
-     * @param startDistance Length; distance to start
-     * @param gtuType GtuType; GTU type
+     * @param lane lane
+     * @param startDistance distance to start
+     * @param gtuType GTU type
      */
     public SimpleLaneRecord(final Lane lane, final Length startDistance, final GtuType gtuType)
     {

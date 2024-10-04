@@ -72,9 +72,9 @@ public final class ConflictBuilder
 
     /**
      * Build conflicts on network.
-     * @param network RoadNetwork; network
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param widthGenerator WidthGenerator; width generator
+     * @param network network
+     * @param simulator simulator
+     * @param widthGenerator width generator
      * @throws OtsGeometryException in case of geometry exception
      */
     public static void buildConflicts(final RoadNetwork network, final OtsSimulatorInterface simulator,
@@ -85,11 +85,11 @@ public final class ConflictBuilder
 
     /**
      * Build conflicts on network.
-     * @param network RoadNetwork; network
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param widthGenerator WidthGenerator; width generator
-     * @param ignoreList LaneCombinationList; lane combinations to ignore
-     * @param permittedList LaneCombinationList; lane combinations that are permitted by traffic control
+     * @param network network
+     * @param simulator simulator
+     * @param widthGenerator width generator
+     * @param ignoreList lane combinations to ignore
+     * @param permittedList lane combinations that are permitted by traffic control
      * @throws OtsGeometryException in case of geometry exception
      */
     public static void buildConflicts(final RoadNetwork network, final OtsSimulatorInterface simulator,
@@ -101,8 +101,8 @@ public final class ConflictBuilder
 
     /**
      * Returns all the lanes in the network.
-     * @param network RoadNetwork; network.
-     * @return List&lt;Lane&gt;; list if all lanes.
+     * @param network network.
+     * @return list if all lanes.
      */
     private static List<Lane> getLanes(final RoadNetwork network)
     {
@@ -127,9 +127,9 @@ public final class ConflictBuilder
 
     /**
      * Build conflicts on list of lanes.
-     * @param lanes List&lt;Lane&gt;; lanes
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param widthGenerator WidthGenerator; width generator
+     * @param lanes lanes
+     * @param simulator simulator
+     * @param widthGenerator width generator
      * @throws OtsGeometryException in case of geometry exception
      */
     public static void buildConflicts(final List<Lane> lanes, final OtsSimulatorInterface simulator,
@@ -140,12 +140,12 @@ public final class ConflictBuilder
 
     /**
      * Build conflicts on list of lanes.
-     * @param lanes List&lt;Lane&gt;; list of Lanes
-     * @param simulator OtsSimulatorInterface; the simulator
-     * @param widthGenerator WidthGenerator; the width generator
-     * @param ignoreList LaneCombinationList; lane combinations to ignore
-     * @param permittedList LaneCombinationList; lane combinations that are permitted by traffic control
-     * @param conflictId String; identification of the conflict (null value permitted)
+     * @param lanes list of Lanes
+     * @param simulator the simulator
+     * @param widthGenerator the width generator
+     * @param ignoreList lane combinations to ignore
+     * @param permittedList lane combinations that are permitted by traffic control
+     * @param conflictId identification of the conflict (null value permitted)
      * @throws OtsGeometryException in case of geometry exception
      */
     public static void buildConflicts(final List<Lane> lanes, final OtsSimulatorInterface simulator,
@@ -207,10 +207,10 @@ public final class ConflictBuilder
 
     /**
      * Build conflict on single lane pair. Connecting lanes are determined.
-     * @param lane1 Lane; lane 1
-     * @param lane2 Lane; lane 2
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param widthGenerator WidthGenerator; width generator
+     * @param lane1 lane 1
+     * @param lane2 lane 2
+     * @param simulator simulator
+     * @param widthGenerator width generator
      * @throws OtsGeometryException in case of geometry exception
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -222,11 +222,11 @@ public final class ConflictBuilder
 
     /**
      * Build conflict on single lane pair. Connecting lanes are determined.
-     * @param lane1 Lane; lane 1
-     * @param lane2 Lane; lane 2
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param widthGenerator WidthGenerator; width generator
-     * @param permitted boolean; conflict permitted by traffic control
+     * @param lane1 lane 1
+     * @param lane2 lane 2
+     * @param simulator simulator
+     * @param widthGenerator width generator
+     * @param permitted conflict permitted by traffic control
      * @throws OtsGeometryException in case of geometry exception
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -250,19 +250,19 @@ public final class ConflictBuilder
 
     /**
      * Build conflicts on single lane pair.
-     * @param lane1 Lane; lane 1
-     * @param down1 Set&lt;Lane&gt;; downstream lanes 1
-     * @param up1 Set&lt;Lane&gt;; upstream lanes 1
-     * @param lane2 Lane; lane 2
-     * @param down2 Set&lt;Lane&gt;; downstream lane 2
-     * @param up2 Set&lt;Lane&gt;; upstream lanes 2
-     * @param permitted boolean; conflict permitted by traffic control
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param widthGenerator WidthGenerator; width generator
-     * @param leftEdges Map&lt;Lane, OtsLine2d&gt;; cache of left edge lines
-     * @param rightEdges Map&lt;Lane, OtsLine2d&gt;; cache of right edge lines
+     * @param lane1 lane 1
+     * @param down1 downstream lanes 1
+     * @param up1 upstream lanes 1
+     * @param lane2 lane 2
+     * @param down2 downstream lane 2
+     * @param up2 upstream lanes 2
+     * @param permitted conflict permitted by traffic control
+     * @param simulator simulator
+     * @param widthGenerator width generator
+     * @param leftEdges cache of left edge lines
+     * @param rightEdges cache of right edge lines
      * @param intersectionCheck indicate whether we have to do a contour intersection check still
-     * @param conflictId String; identification of the conflict (may be null)
+     * @param conflictId identification of the conflict (may be null)
      * @throws OtsGeometryException in case of geometry exception
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      */
@@ -471,13 +471,13 @@ public final class ConflictBuilder
 
     /**
      * Build a merge conflict.
-     * @param lane1 Lane; lane 1
-     * @param f1start double; start fraction 1
-     * @param lane2 Lane; lane 2
-     * @param f2start double; start fraction 2
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param widthGenerator WidthGenerator; width generator
-     * @param permitted boolean; conflict permitted by traffic control
+     * @param lane1 lane 1
+     * @param f1start start fraction 1
+     * @param lane2 lane 2
+     * @param f2start start fraction 2
+     * @param simulator simulator
+     * @param widthGenerator width generator
+     * @param permitted conflict permitted by traffic control
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      * @throws OtsGeometryException in case of geometry exception
      */
@@ -524,12 +524,12 @@ public final class ConflictBuilder
 
     /**
      * Build a split conflict.
-     * @param lane1 Lane; lane 1
-     * @param f1end double; end fraction 1
-     * @param lane2 Lane; lane 2
-     * @param f2end double; end fraction 2
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param widthGenerator WidthGenerator; width generator
+     * @param lane1 lane 1
+     * @param f1end end fraction 1
+     * @param lane2 lane 2
+     * @param f2end end fraction 2
+     * @param simulator simulator
+     * @param widthGenerator width generator
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      * @throws OtsGeometryException in case of geometry exception
      */
@@ -562,15 +562,15 @@ public final class ConflictBuilder
 
     /**
      * Build a crossing conflict.
-     * @param lane1 Lane; lane 1
-     * @param f1start double; start fraction 1
-     * @param f1end double; end fraction 1
-     * @param lane2 Lane; lane 2
-     * @param f2start double; start fraction 2
-     * @param f2end double; end fraction 2
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param widthGenerator WidthGenerator; width generator
-     * @param permitted boolean; conflict permitted by traffic control
+     * @param lane1 lane 1
+     * @param f1start start fraction 1
+     * @param f1end end fraction 1
+     * @param lane2 lane 2
+     * @param f2start start fraction 2
+     * @param f2end end fraction 2
+     * @param simulator simulator
+     * @param widthGenerator width generator
+     * @param permitted conflict permitted by traffic control
      * @throws NetworkException if the combination of conflict type and both conflict rules is not correct
      * @throws OtsGeometryException in case of geometry exception
      */
@@ -634,10 +634,10 @@ public final class ConflictBuilder
 
     /**
      * Creates geometry for conflict.
-     * @param lane Lane; lane
-     * @param fStart double; longitudinal fraction of start
-     * @param fEnd double; longitudinal fraction of end
-     * @param widthGenerator WidthGenerator; width generator
+     * @param lane lane
+     * @param fStart longitudinal fraction of start
+     * @param fEnd longitudinal fraction of end
+     * @param widthGenerator width generator
      * @return geometry for conflict
      * @throws OtsGeometryException in case of geometry exception
      */
@@ -706,9 +706,9 @@ public final class ConflictBuilder
         private final int combo;
 
         /**
-         * @param fraction1 double; fraction on lane 1
-         * @param fraction2 double; fraction on lane 1
-         * @param combo int; edge combination number
+         * @param fraction1 fraction on lane 1
+         * @param fraction2 fraction on lane 1
+         * @param combo edge combination number
          */
         Intersection(final double fraction1, final double fraction2, final int combo)
         {
@@ -807,9 +807,9 @@ public final class ConflictBuilder
 
         /**
          * Returns a set of intersections, sorted by the fraction on line 1.
-         * @param line1 OtsLine2d; line 1
-         * @param line2 OtsLine2d; line 2
-         * @param combo int; edge combination number
+         * @param line1 line 1
+         * @param line2 line 2
+         * @param combo edge combination number
          * @return set of intersections, sorted by the fraction on line 1
          * @throws OtsGeometryException in case of geometry exception
          */
@@ -886,8 +886,8 @@ public final class ConflictBuilder
 
         /**
          * Returns the begin width of this lane.
-         * @param lane Lane; lane
-         * @param fraction double; fraction
+         * @param lane lane
+         * @param fraction fraction
          * @return begin width of this lane
          */
         double getWidth(Lane lane, double fraction);
@@ -913,7 +913,7 @@ public final class ConflictBuilder
 
         /**
          * Constructor with width.
-         * @param width Length; width
+         * @param width width
          */
         public FixedWidthGenerator(final Length width)
         {
@@ -955,7 +955,7 @@ public final class ConflictBuilder
 
         /**
          * Constructor with width factor.
-         * @param factor double; width factor
+         * @param factor width factor
          */
         public RelativeWidthGenerator(final double factor)
         {
@@ -988,9 +988,9 @@ public final class ConflictBuilder
 
     /**
      * Build conflicts on network; parallel implementation.
-     * @param network RoadNetwork; network
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param widthGenerator WidthGenerator; width generator
+     * @param network network
+     * @param simulator simulator
+     * @param widthGenerator width generator
      * @throws OtsGeometryException in case of geometry exception
      */
     public static void buildConflictsParallel(final RoadNetwork network, final OtsSimulatorInterface simulator,
@@ -1001,11 +1001,11 @@ public final class ConflictBuilder
 
     /**
      * Build conflicts on network; parallel implementation.
-     * @param network RoadNetwork; network
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param widthGenerator WidthGenerator; width generator
-     * @param ignoreList LaneCombinationList; lane combinations to ignore
-     * @param permittedList LaneCombinationList; lane combinations that are permitted by traffic control
+     * @param network network
+     * @param simulator simulator
+     * @param widthGenerator width generator
+     * @param ignoreList lane combinations to ignore
+     * @param permittedList lane combinations that are permitted by traffic control
      * @throws OtsGeometryException in case of geometry exception
      */
     public static void buildConflictsParallel(final RoadNetwork network, final OtsSimulatorInterface simulator,
@@ -1017,9 +1017,9 @@ public final class ConflictBuilder
 
     /**
      * Build conflicts on list of lanes; parallel implementation.
-     * @param lanes List&lt;Lane&gt;; lanes
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param widthGenerator WidthGenerator; width generator
+     * @param lanes lanes
+     * @param simulator simulator
+     * @param widthGenerator width generator
      * @throws OtsGeometryException in case of geometry exception
      */
     public static void buildConflictsParallel(final List<Lane> lanes, final OtsSimulatorInterface simulator,
@@ -1030,11 +1030,11 @@ public final class ConflictBuilder
 
     /**
      * Build conflicts on list of lanes; parallel implementation. Small jobs.
-     * @param lanes List&lt;Lane&gt;; list of Lanes
-     * @param simulator OtsSimulatorInterface; the simulator
-     * @param widthGenerator WidthGenerator; the width generator
-     * @param ignoreList LaneCombinationList; lane combinations to ignore
-     * @param permittedList LaneCombinationList; lane combinations that are permitted by traffic control
+     * @param lanes list of Lanes
+     * @param simulator the simulator
+     * @param widthGenerator the width generator
+     * @param ignoreList lane combinations to ignore
+     * @param permittedList lane combinations that are permitted by traffic control
      * @throws OtsGeometryException in case of geometry exception
      */
     public static void buildConflictsParallelSmall(final List<Lane> lanes, final OtsSimulatorInterface simulator,
@@ -1151,11 +1151,11 @@ public final class ConflictBuilder
 
     /**
      * Build conflicts on list of lanes; parallel implementation. Big jobs.
-     * @param lanes List&lt;Lane&gt;; list of Lanes
-     * @param simulator OtsSimulatorInterface; the simulator
-     * @param widthGenerator WidthGenerator; the width generator
-     * @param ignoreList LaneCombinationList; lane combinations to ignore
-     * @param permittedList LaneCombinationList; lane combinations that are permitted by traffic control
+     * @param lanes list of Lanes
+     * @param simulator the simulator
+     * @param widthGenerator the width generator
+     * @param ignoreList lane combinations to ignore
+     * @param permittedList lane combinations that are permitted by traffic control
      * @throws OtsGeometryException in case of geometry exception
      */
     public static void buildConflictsParallelBig(final List<Lane> lanes, final OtsSimulatorInterface simulator,
@@ -1245,10 +1245,10 @@ public final class ConflictBuilder
     /**
      * Build conflicts on network using only the groups of links that have been identified as candidates with conflicts;
      * parallel implementation.
-     * @param network RoadNetwork; network
-     * @param conflictCandidateMap Map&lt;String, Set&lt;Link&gt;&gt;; the map of the conflicting links to implement
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param widthGenerator WidthGenerator; width generator
+     * @param network network
+     * @param conflictCandidateMap the map of the conflicting links to implement
+     * @param simulator simulator
+     * @param widthGenerator width generator
      * @throws OtsGeometryException in case of geometry exception
      */
     public static void buildConflictsParallel(final RoadNetwork network, final Map<String, Set<Link>> conflictCandidateMap,
@@ -1299,8 +1299,8 @@ public final class ConflictBuilder
 
         /**
          * Constructor.
-         * @param nrOfJobs AtomicInteger; number of jobs to do.
-         * @param cbr ConflictBuilderRecordSmall; the record to execute.
+         * @param nrOfJobs number of jobs to do.
+         * @param cbr the record to execute.
          */
         CbrTaskSmall(final AtomicInteger nrOfJobs, final ConflictBuilderRecordSmall cbr)
         {
@@ -1336,17 +1336,17 @@ public final class ConflictBuilder
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
-     * @param lane1 Lane; lane 1
-     * @param down1 Set&lt;Lane&gt;; downstream lanes 1
-     * @param up1 Set&lt;Lane&gt;; upstream lanes 1
-     * @param lane2 Lane; lane 2
-     * @param down2 Set&lt;Lane&gt;; downstream lane 2
-     * @param up2 Set&lt;Lane&gt;; upstream lanes 2
-     * @param permitted boolean; conflict permitted by traffic control
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param widthGenerator WidthGenerator; width generator
-     * @param leftEdges Map&lt;Lane, OtsLine2d&gt;; cache of left edge lines
-     * @param rightEdges Map&lt;Lane, OtsLine2d&gt;; cache of right edge lines
+     * @param lane1 lane 1
+     * @param down1 downstream lanes 1
+     * @param up1 upstream lanes 1
+     * @param lane2 lane 2
+     * @param down2 downstream lane 2
+     * @param up2 upstream lanes 2
+     * @param permitted conflict permitted by traffic control
+     * @param simulator simulator
+     * @param widthGenerator width generator
+     * @param leftEdges cache of left edge lines
+     * @param rightEdges cache of right edge lines
      */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     static record ConflictBuilderRecordSmall(Lane lane1, Set<Lane> down1, Set<Lane> up1, Lane lane2, Set<Lane> down2,
@@ -1377,8 +1377,8 @@ public final class ConflictBuilder
 
         /**
          * Constructor.
-         * @param nrOfJobs AtomicInteger; number of jobs to do.
-         * @param cbr ConflictBuilderRecordBig; the record to execute.
+         * @param nrOfJobs number of jobs to do.
+         * @param cbr the record to execute.
          */
         CbrTaskBig(final AtomicInteger nrOfJobs, final ConflictBuilderRecordBig cbr)
         {
@@ -1454,14 +1454,14 @@ public final class ConflictBuilder
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
-     * @param starti int; the start index
+     * @param starti the start index
      * @param lanes List of lanes
      * @param ignoreList list of lane combinations to ignore
      * @param permittedList list of lane combinations to permit
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param widthGenerator WidthGenerator; width generator
-     * @param leftEdges Map&lt;Lane, OtsLine2d&gt;; cache of left edge lines
-     * @param rightEdges Map&lt;Lane, OtsLine2d&gt;; cache of right edge lines
+     * @param simulator simulator
+     * @param widthGenerator width generator
+     * @param leftEdges cache of left edge lines
+     * @param rightEdges cache of right edge lines
      */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     static record ConflictBuilderRecordBig(int starti, List<Lane> lanes, LaneCombinationList ignoreList,

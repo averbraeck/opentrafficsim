@@ -27,7 +27,7 @@ public class FractionalLengthData
 
     /**
      * Create FractionalLengthData.
-     * @param data double...; fractional length - value pairs. Fractional lengths do not need to be in order.
+     * @param data fractional length - value pairs. Fractional lengths do not need to be in order.
      * @throws IllegalArgumentException when the number of input values is not even or 0.
      * @throws IllegalArgumentException when a fractional value is not in the range [0 ... 1].
      */
@@ -45,7 +45,7 @@ public class FractionalLengthData
 
     /**
      * Create FractionalLengthData.
-     * @param data Map&lt;Double, Double&gt;; fractional length - value pairs. Fractional lengths do not need to be in order.
+     * @param data fractional length - value pairs. Fractional lengths do not need to be in order.
      * @throws IllegalArgumentException when the input data is null or empty.
      * @throws IllegalArgumentException when a fractional value is not in the range [0 ... 1].
      */
@@ -64,8 +64,8 @@ public class FractionalLengthData
      * Returns the data at given fractional length. If only data beyond the fractional length is available, the first available
      * value is returned. If only data before the fractional length is available, the last available value is returned.
      * Otherwise data is linearly interpolated.
-     * @param fractionalLength double; fractional length, may be outside range [0 ... 1].
-     * @return double; interpolated or extended value.
+     * @param fractionalLength fractional length, may be outside range [0 ... 1].
+     * @return interpolated or extended value.
      */
     public double get(final double fractionalLength)
     {
@@ -90,8 +90,8 @@ public class FractionalLengthData
 
     /**
      * Returns the derivative of the data with respect to fractional length.
-     * @param fractionalLength double; fractional length, may be outside range [0 ... 1].
-     * @return double; derivative of the data with respect to fractional length.
+     * @param fractionalLength fractional length, may be outside range [0 ... 1].
+     * @return derivative of the data with respect to fractional length.
      */
     public double getDerivative(final double fractionalLength)
     {
@@ -115,7 +115,7 @@ public class FractionalLengthData
 
     /**
      * Returns the fractional lengths in the underlying data.
-     * @return ImmutableNavigableSet&lt;Double&gt;; fractional lengths in the underlying data.
+     * @return fractional lengths in the underlying data.
      */
     public ImmutableNavigableSet<Double> getFractionalLengths()
     {
@@ -124,7 +124,7 @@ public class FractionalLengthData
 
     /**
      * Returns the values in the underlying data.
-     * @return ImmutableSet&lt;Double&gt;; values in the underlying data.
+     * @return values in the underlying data.
      */
     public ImmutableSet<Double> getValues()
     {
@@ -133,7 +133,7 @@ public class FractionalLengthData
 
     /**
      * Returns fractional lengths in array form, including 0.0 and 1.0.
-     * @return double[]; fractional lengths.
+     * @return fractional lengths.
      */
     public double[] getFractionalLengthsAsArray()
     {
@@ -149,7 +149,7 @@ public class FractionalLengthData
 
     /**
      * Returns fractional lengths in array form, including values at 0.0 and 1.0.
-     * @return double[]; fractional lengths.
+     * @return fractional lengths.
      */
     public double[] getValuesAsArray()
     {
@@ -165,7 +165,7 @@ public class FractionalLengthData
 
     /**
      * Returns the data including entries at 0.0 and 1.0.
-     * @return NavigableMap&lt;Double, Double&gt;; data with fill range.
+     * @return data with fill range.
      */
     private final NavigableMap<Double, Double> fullRange()
     {
@@ -177,7 +177,7 @@ public class FractionalLengthData
 
     /**
      * Returns the number of data points.
-     * @return int; number of data points.
+     * @return number of data points.
      */
     public int size()
     {
@@ -186,8 +186,8 @@ public class FractionalLengthData
 
     /**
      * Create FractionalLengthData.
-     * @param data double...; fractional length - value pairs. Fractional lengths do not need to be in order.
-     * @return FractionalLengthData; fractional length data.
+     * @param data fractional length - value pairs. Fractional lengths do not need to be in order.
+     * @return fractional length data.
      * @throws IllegalArgumentException when the number of input values is not even or 0.
      * @throws IllegalArgumentException when a fractional value is not in the range [0 ... 1].
      */

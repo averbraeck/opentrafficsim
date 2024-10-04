@@ -16,7 +16,7 @@ public interface Constraint<T>
 
     /**
      * Checks whether the value complies with constraints.
-     * @param value T; Value to check.
+     * @param value Value to check.
      * @return Whether the value complies with constraints.
      */
     boolean accept(T value);

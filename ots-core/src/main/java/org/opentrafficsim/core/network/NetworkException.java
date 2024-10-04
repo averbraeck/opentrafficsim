@@ -24,7 +24,7 @@ public class NetworkException extends Exception
     }
 
     /**
-     * @param message String; String
+     * @param message String
      */
     public NetworkException(final String message)
     {
@@ -32,7 +32,7 @@ public class NetworkException extends Exception
     }
 
     /**
-     * @param cause Throwable; Throwable
+     * @param cause Throwable
      */
     public NetworkException(final Throwable cause)
     {
@@ -40,8 +40,8 @@ public class NetworkException extends Exception
     }
 
     /**
-     * @param message String; String
-     * @param cause Throwable; Throwable
+     * @param message String
+     * @param cause Throwable
      */
     public NetworkException(final String message, final Throwable cause)
     {
@@ -49,10 +49,10 @@ public class NetworkException extends Exception
     }
 
     /**
-     * @param message String; description of the problem
-     * @param cause Throwable; the cause of this ValueRuntimeException
-     * @param enableSuppression boolean; whether or not suppression is enabled or disabled
-     * @param writableStackTrace boolean; whether or not the stack trace should be writable
+     * @param message description of the problem
+     * @param cause the cause of this ValueRuntimeException
+     * @param enableSuppression whether or not suppression is enabled or disabled
+     * @param writableStackTrace whether or not the stack trace should be writable
      */
     public NetworkException(final String message, final Throwable cause, final boolean enableSuppression,
             final boolean writableStackTrace)

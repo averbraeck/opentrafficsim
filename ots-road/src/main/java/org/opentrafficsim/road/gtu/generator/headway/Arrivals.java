@@ -24,9 +24,9 @@ public interface Arrivals
      * the caller is processing a time slice after {@code time}, hence it's the slice start. If {@code sliceStart = false} the
      * demand value of before the slice boundary should be returned. For continuous demand patterns, {@code sliceStart} can be
      * ignored.
-     * @param time Time; simulation time
-     * @param sliceStart boolean; whether the time is at the start of an arbitrary time slice
-     * @return Frequency; returns the total demand for branching nodes, or the demand at a leaf node, at the given time
+     * @param time simulation time
+     * @param sliceStart whether the time is at the start of an arbitrary time slice
+     * @return returns the total demand for branching nodes, or the demand at a leaf node, at the given time
      */
     Frequency getFrequency(Time time, boolean sliceStart);
 
@@ -35,7 +35,7 @@ public interface Arrivals
      * slice starts as soon as the current slice ends, where each slice has it's own linear (or constant) demand. Thus, any
      * change of slope in the demand pattern initiates a new slice. If {@code time} is equal to a time slice boundary, the next
      * value should be returned.
-     * @param time Time; time after which the first slice start time is requested
+     * @param time time after which the first slice start time is requested
      * @return start time of the next time slice after the given time or {@code null} if no such slice exists
      */
     Time nextTimeSlice(Time time);

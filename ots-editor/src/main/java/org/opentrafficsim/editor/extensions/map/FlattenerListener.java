@@ -30,8 +30,8 @@ public class FlattenerListener extends ChangeListener<Flattener>
 
     /**
      * Constructor.
-     * @param flattenerNode XsdTreeNode; node of the flattener, either at the network or at a link.
-     * @param eval Supplier&lt;Eval&gt;; supplier of expression evaluator, either from the main map, or from a map link data.
+     * @param flattenerNode node of the flattener, either at the network or at a link.
+     * @param eval supplier of expression evaluator, either from the main map, or from a map link data.
      */
     public FlattenerListener(final XsdTreeNode flattenerNode, final Supplier<Eval> eval)
     {
@@ -75,8 +75,8 @@ public class FlattenerListener extends ChangeListener<Flattener>
 
     /**
      * Returns a safe deviation value (>=0.001).
-     * @param node XsdTreeNode; deviation node.
-     * @return double; safe deviation value.
+     * @param node deviation node.
+     * @return safe deviation value.
      */
     private double getDeviation(final XsdTreeNode node)
     {
@@ -86,8 +86,8 @@ public class FlattenerListener extends ChangeListener<Flattener>
 
     /**
      * Returns a safe angle value (>=0.01).
-     * @param node XsdTreeNode; angle node.
-     * @return double; safe angle value.
+     * @param node angle node.
+     * @return safe angle value.
      */
     private double getAngle(final XsdTreeNode node)
     {

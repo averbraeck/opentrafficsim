@@ -24,8 +24,8 @@ public final class Colors
 
     /**
      * Returns a color for the index. Modulo is applied for indices outside of the normal range.
-     * @param index int; index.
-     * @return Color; color for index.
+     * @param index index.
+     * @return color for index.
      */
     public static Color get(final int index)
     {
@@ -34,8 +34,8 @@ public final class Colors
 
     /**
      * Returns the name of a color for the index. Modulo is applied for indices outside of the normal range.
-     * @param index int; index.
-     * @return String; name of color for index.
+     * @param index index.
+     * @return name of color for index.
      */
     public static String name(final int index)
     {
@@ -44,8 +44,8 @@ public final class Colors
 
     /**
      * Returns the modulo of the index given the number of colors we have.
-     * @param index int; index.
-     * @return int; index in range of colors.
+     * @param index index.
+     * @return index in range of colors.
      */
     private static int mod(final int index)
     {

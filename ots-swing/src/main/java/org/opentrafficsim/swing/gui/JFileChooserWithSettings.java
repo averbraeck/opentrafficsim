@@ -26,7 +26,7 @@ public class JFileChooserWithSettings extends JFileChooser
 
     /**
      * Constructor that adds components to the left of the 'Save' and 'Cancel' button.
-     * @param components Component...; Components... components to add
+     * @param components Components... components to add
      */
     public JFileChooserWithSettings(final Component... components)
     {

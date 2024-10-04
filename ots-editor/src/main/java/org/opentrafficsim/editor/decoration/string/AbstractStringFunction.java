@@ -32,8 +32,8 @@ public abstract class AbstractStringFunction extends AbstractNodeDecorator
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
-     * @param predicate Predicate&lt;XsdTreeNode&gt;; predicate to accept nodes that should have this string function.
+     * @param editor editor.
+     * @param predicate predicate to accept nodes that should have this string function.
      */
     public AbstractStringFunction(final OtsEditor editor, final Predicate<XsdTreeNode> predicate)
     {

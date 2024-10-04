@@ -23,7 +23,7 @@ public class AnimationCrossSectionElementData<T extends CrossSectionElement> imp
 
     /**
      * Constructor.
-     * @param element T; cross section element.
+     * @param element cross section element.
      */
     public AnimationCrossSectionElementData(final T element)
     {
@@ -60,7 +60,7 @@ public class AnimationCrossSectionElementData<T extends CrossSectionElement> imp
 
     /**
      * Returns the cross section element.
-     * @return T; cross-section element.
+     * @return cross-section element.
      */
     public T getElement()
     {

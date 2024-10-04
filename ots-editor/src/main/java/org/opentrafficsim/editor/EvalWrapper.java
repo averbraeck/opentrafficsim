@@ -61,7 +61,7 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
+     * @param editor editor.
      */
     public EvalWrapper(final OtsEditor editor)
     {
@@ -70,8 +70,8 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
 
     /**
      * Returns expression evaluator.
-     * @param scenario ScenarioWrapper; selected scenario (of type as listed in dropdown menu).
-     * @return Eval; expression evaluator.
+     * @param scenario selected scenario (of type as listed in dropdown menu).
+     * @return expression evaluator.
      */
     public Eval getEval(final ScenarioWrapper scenario)
     {
@@ -112,7 +112,7 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
 
     /**
      * Returns the last evaluator that was valid, i.e. did not have a circular dependency between input parameters.
-     * @return Eval; last valid evaluator.
+     * @return last valid evaluator.
      */
     public Eval getLastValidEval()
     {
@@ -228,7 +228,7 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
 
     /**
      * Register the given node as a parameter.
-     * @param node XsdTreeNode; node (default or scenario input parameter).
+     * @param node node (default or scenario input parameter).
      */
     private void registerParameter(final XsdTreeNode node)
     {
@@ -269,7 +269,7 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
 
     /**
      * Adds listener to changes in the evaluator, i.e. added, removed or changed input parameters.
-     * @param listener EvalListener; listener.
+     * @param listener listener.
      */
     public void addListener(final EvalListener listener)
     {
@@ -278,7 +278,7 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
 
     /**
      * Removes listener to changes in the evaluator, i.e. added, removed or changed input parameters.
-     * @param listener EvalListener; listener.
+     * @param listener listener.
      */
     public void removeListener(final EvalListener listener)
     {
@@ -287,8 +287,8 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
 
     /**
      * Parameter representation of a node suitable for parsing an {@code Eval}.
-     * @param node XsdTreeNode; node, must be a default or scenario input parameter node.
-     * @return ParameterWrapper; parameter representation of a node suitable for parsing an {@code Eval}.
+     * @param node node, must be a default or scenario input parameter node.
+     * @return parameter representation of a node suitable for parsing an {@code Eval}.
      */
     private ParameterWrapper wrap(final XsdTreeNode node)
     {

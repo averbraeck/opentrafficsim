@@ -25,7 +25,7 @@ public class TypedFilter implements Filter
 
     /**
      * Constructor.
-     * @param filter Filter; wrapped filter
+     * @param filter wrapped filter
      */
     TypedFilter(final Filter filter)
     {
@@ -41,7 +41,7 @@ public class TypedFilter implements Filter
 
     /**
      * Returns the grid location.
-     * @return LengthVector; grid location
+     * @return grid location
      */
     public LengthVector getLocationVector()
     {
@@ -57,7 +57,7 @@ public class TypedFilter implements Filter
 
     /**
      * Returns the grid time.
-     * @return DurationVector; grid time
+     * @return grid time
      */
     public DurationVector getTimeVector()
     {

@@ -34,8 +34,8 @@ public class Distribution<O> implements Generator<O>, Serializable
 
     /**
      * Construct a new Distribution.
-     * @param generators List&lt;FrequencyAndObject&lt;O&gt;&gt;; the generators and their frequencies (or probabilities)
-     * @param stream StreamInterface; source for randomness
+     * @param generators the generators and their frequencies (or probabilities)
+     * @param stream source for randomness
      * @throws ProbabilityException when a frequency (or probability) is negative, or when generators is null or stream is null
      */
     public Distribution(final List<FrequencyAndObject<O>> generators, final StreamInterface stream) throws ProbabilityException
@@ -50,7 +50,7 @@ public class Distribution<O> implements Generator<O>, Serializable
 
     /**
      * Construct a new Distribution with no generators.
-     * @param stream StreamInterface; source for randomness
+     * @param stream source for randomness
      * @throws ProbabilityException when a frequency (or probability) is negative, or when generators is null or stream is null
      */
     public Distribution(final StreamInterface stream) throws ProbabilityException
@@ -111,8 +111,8 @@ public class Distribution<O> implements Generator<O>, Serializable
 
     /**
      * Append a generator to the internally stored list.
-     * @param generator FrequencyAndObject&lt;O&gt;; the generator to add
-     * @return Distribution&lt;O&gt;; this
+     * @param generator the generator to add
+     * @return this
      * @throws ProbabilityException when frequency less than zero
      */
     public final Distribution<O> add(final FrequencyAndObject<O> generator) throws ProbabilityException
@@ -122,9 +122,9 @@ public class Distribution<O> implements Generator<O>, Serializable
 
     /**
      * Insert a generator at the specified position in the internally stored list.
-     * @param index int; position to store the generator
-     * @param generator FrequencyAndObject&lt;O&gt;; the generator to add
-     * @return Distribution&lt;O&gt;; this
+     * @param index position to store the generator
+     * @param generator the generator to add
+     * @return this
      * @throws ProbabilityException when frequency less than zero
      */
     public final Distribution<O> add(final int index, final FrequencyAndObject<O> generator) throws ProbabilityException
@@ -138,7 +138,7 @@ public class Distribution<O> implements Generator<O>, Serializable
 
     /**
      * Remove the generator at the specified position from the internally stored list.
-     * @param index int; the position
+     * @param index the position
      * @return this
      * @throws IndexOutOfBoundsException when index is &lt; 0 or &gt;= size
      * @throws ProbabilityException if the sum of the remaining probabilities or frequencies adds up to 0
@@ -152,8 +152,8 @@ public class Distribution<O> implements Generator<O>, Serializable
 
     /**
      * Replace the generator at the specified position.
-     * @param index int; the position of the generator that must be replaced
-     * @param generator FrequencyAndObject&lt;O&gt;; the new generator and the frequency (or probability)
+     * @param index the position of the generator that must be replaced
+     * @param generator the new generator and the frequency (or probability)
      * @return this
      * @throws ProbabilityException when the frequency (or probability) &lt; 0, or when index is &lt; 0 or &gt;= size
      */
@@ -175,8 +175,8 @@ public class Distribution<O> implements Generator<O>, Serializable
 
     /**
      * Alter the frequency (or probability) of one of the stored generators.
-     * @param index int; index of the stored generator
-     * @param frequency double; new frequency (or probability)
+     * @param index index of the stored generator
+     * @param frequency new frequency (or probability)
      * @return this
      * @throws ProbabilityException when the frequency (or probability) &lt; 0, or when index is &lt; 0 or &gt;= size
      */
@@ -199,8 +199,8 @@ public class Distribution<O> implements Generator<O>, Serializable
 
     /**
      * Retrieve one of the internally stored generators.
-     * @param index int; the index of the FrequencyAndObject to retrieve
-     * @return FrequencyAndObject&lt;O&gt;; the generator stored at position <cite>index</cite>
+     * @param index the index of the FrequencyAndObject to retrieve
+     * @return the generator stored at position <cite>index</cite>
      * @throws ProbabilityException when index &lt; 0 or &gt;= size()
      */
     public final FrequencyAndObject<O> get(final int index) throws ProbabilityException
@@ -217,7 +217,7 @@ public class Distribution<O> implements Generator<O>, Serializable
 
     /**
      * Report the number of generators.
-     * @return int; the number of generators
+     * @return the number of generators
      */
     public final int size()
     {
@@ -309,8 +309,8 @@ public class Distribution<O> implements Generator<O>, Serializable
 
         /**
          * Construct a new FrequencyAndObject instance.
-         * @param frequency double; the (<b>not cumulative</b>) frequency (or probability) of the <cite>generatingObject</cite>
-         * @param object O; an object
+         * @param frequency the (<b>not cumulative</b>) frequency (or probability) of the <cite>generatingObject</cite>
+         * @param object an object
          */
         public FrequencyAndObject(final double frequency, final O object)
         {
@@ -320,7 +320,7 @@ public class Distribution<O> implements Generator<O>, Serializable
 
         /**
          * Retrieve the frequency (or probability) of this FrequencyAndObject.
-         * @return double; the frequency (or probability) of this FrequencyAndObject
+         * @return the frequency (or probability) of this FrequencyAndObject
          */
         public final double getFrequency()
         {
@@ -329,7 +329,7 @@ public class Distribution<O> implements Generator<O>, Serializable
 
         /**
          * Call the draw method of the generatingObject and return its result.
-         * @return O; the result of a call to the draw method of the generatingObject
+         * @return the result of a call to the draw method of the generatingObject
          */
         public final O getObject()
         {

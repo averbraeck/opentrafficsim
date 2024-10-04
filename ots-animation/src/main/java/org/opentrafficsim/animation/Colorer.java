@@ -17,7 +17,7 @@ public interface Colorer<D extends Drawable>
 {
     /**
      * Get the color, based on the Drawable object.
-     * @param drawable D; the object to determine the color for
+     * @param drawable the object to determine the color for
      * @return the (fill, line) color of the drawable object
      */
     Color getColor(D drawable);

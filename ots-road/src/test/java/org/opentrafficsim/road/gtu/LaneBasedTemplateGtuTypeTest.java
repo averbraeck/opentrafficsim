@@ -258,11 +258,11 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
 
     /**
      * Verify all the values in a TemplateGTUType&lt;String&gt;.
-     * @param templateGtuType TemplateGTUType&lt;String&gt;; the TemplateGTUType
-     * @param gtuType String; the expected id
-     * @param length Length; the expected length
-     * @param width Length; the expected width
-     * @param maximumSpeed Speed; the expected maximum speed
+     * @param templateGtuType the TemplateGTUType
+     * @param gtuType the expected id
+     * @param length the expected length
+     * @param width the expected width
+     * @param maximumSpeed the expected maximum speed
      * @throws ProbabilityException in case of probability drawing exception
      * @throws ParameterException in case of a parameter problem.
      * @throws GtuException in case of a GTU exception
@@ -278,8 +278,8 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
         LaneBasedGtuCharacteristics characteristics = templateGtuType.draw();
         assertEquals(length.draw().getSI(), characteristics.getLength().getSI(), 0.0001, "Length should be " + length);
         assertEquals(width.draw().getSI(), characteristics.getWidth().getSI(), 0.0001, "Width should be " + width);
-        assertEquals(maximumSpeed.draw().getSI(), characteristics.getMaximumSpeed().getSI(),
-                0.0001, "Maximum speed should be " + maximumSpeed);
+        assertEquals(maximumSpeed.draw().getSI(), characteristics.getMaximumSpeed().getSI(), 0.0001,
+                "Maximum speed should be " + maximumSpeed);
     }
 
     /**

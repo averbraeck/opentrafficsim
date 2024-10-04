@@ -38,8 +38,7 @@ public class SpeedLimit extends ExtendedDataSpeed<GtuDataRoad>
         LaneBasedGtu laneGtu = gtu.getGtu();
         try
         {
-            return new FloatSpeed(laneGtu.getReferencePosition().lane().getSpeedLimit(laneGtu.getType()).si,
-                    SpeedUnit.SI);
+            return new FloatSpeed(laneGtu.getReferencePosition().lane().getSpeedLimit(laneGtu.getType()).si, SpeedUnit.SI);
         }
         catch (NetworkException | GtuException exception)
         {

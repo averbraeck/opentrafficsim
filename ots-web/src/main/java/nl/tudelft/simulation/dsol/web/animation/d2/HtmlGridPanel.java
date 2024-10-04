@@ -118,7 +118,7 @@ public class HtmlGridPanel implements ImageObserver
 
     /**
      * constructs a new VisualizationPanel.
-     * @param extent Bounds2d; the extent to show.
+     * @param extent the extent to show.
      */
     public HtmlGridPanel(final Bounds2d extent)
     {
@@ -127,8 +127,8 @@ public class HtmlGridPanel implements ImageObserver
 
     /**
      * constructs a new VisualizationPanel.
-     * @param extent Bounds2d; the initial extent.
-     * @param size Dimension; the size of the panel in pixels.
+     * @param extent the initial extent.
+     * @param size the size of the panel in pixels.
      */
     public HtmlGridPanel(final Bounds2d extent, final Dimension size)
     {
@@ -155,7 +155,7 @@ public class HtmlGridPanel implements ImageObserver
 
     /**
      * Draw the grid.
-     * @param g HTMLGraphics2D; the virtual Graphics2D canvas to enable writing to the browser
+     * @param g the virtual Graphics2D canvas to enable writing to the browser
      */
     public void paintComponent(final HtmlGraphics2d g)
     {
@@ -172,7 +172,7 @@ public class HtmlGridPanel implements ImageObserver
 
     /**
      * show the grid?
-     * @param bool boolean; true/false
+     * @param bool true/false
      */
     public final synchronized void showGrid(final boolean bool)
     {
@@ -191,7 +191,7 @@ public class HtmlGridPanel implements ImageObserver
 
     /**
      * set a new extent for this panel.
-     * @param extent Bounds2d; set a new extent
+     * @param extent set a new extent
      */
     public final void setExtent(final Bounds2d extent)
     {
@@ -201,7 +201,7 @@ public class HtmlGridPanel implements ImageObserver
 
     /**
      * Set the world coordinates based on a mouse move.
-     * @param point Point2d; the x,y world coordinates
+     * @param point the x,y world coordinates
      */
     public final synchronized void setWorldCoordinate(final Point2d point)
     {
@@ -238,7 +238,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
-     * @param showToolTip boolean; set showToolTip
+     * @param showToolTip set showToolTip
      */
     public final synchronized void setShowToolTip(final boolean showToolTip)
     {
@@ -247,8 +247,8 @@ public class HtmlGridPanel implements ImageObserver
 
     /**
      * pans the panel in a specified direction.
-     * @param direction int; the direction
-     * @param percentage double; the percentage
+     * @param direction the direction
+     * @param percentage the percentage
      */
     public final synchronized void pan(final int direction, final double percentage)
     {
@@ -302,7 +302,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
-     * @param showGrid boolean; The showGrid to set.
+     * @param showGrid The showGrid to set.
      */
     public final void setShowGrid(final boolean showGrid)
     {
@@ -311,7 +311,7 @@ public class HtmlGridPanel implements ImageObserver
 
     /**
      * zooms in/out.
-     * @param factor double; The zoom factor
+     * @param factor The zoom factor
      */
     public final synchronized void zoom(final double factor)
     {
@@ -320,9 +320,9 @@ public class HtmlGridPanel implements ImageObserver
 
     /**
      * zooms in/out.
-     * @param factor double; The zoom factor
-     * @param mouseX int; x-position of the mouse around which we zoom
-     * @param mouseY int; y-position of the mouse around which we zoom
+     * @param factor The zoom factor
+     * @param mouseX x-position of the mouse around which we zoom
+     * @param mouseY y-position of the mouse around which we zoom
      */
     public final synchronized void zoom(final double factor, final int mouseX, final int mouseY)
     {
@@ -339,7 +339,7 @@ public class HtmlGridPanel implements ImageObserver
     /**
      * Added to make sure the recursive render-call calls THIS render method instead of a potential super-class defined
      * 'paintComponent' render method.
-     * @param g Graphics; the graphics object
+     * @param g the graphics object
      */
     protected synchronized void drawGrid(final Graphics g)
     {
@@ -447,7 +447,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
-     * @param renderableScale RenderableScale; set renderableScale
+     * @param renderableScale set renderableScale
      */
     public final void setRenderableScale(final RenderableScale renderableScale)
     {
@@ -472,7 +472,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
-     * @param size Dimension; set size
+     * @param size set size
      */
     public final void setSize(final Dimension size)
     {
@@ -488,7 +488,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
-     * @param background Color; set background
+     * @param background set background
      */
     public final void setBackground(final Color background)
     {
@@ -520,7 +520,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
-     * @param preferredSize Dimension; set preferredSize
+     * @param preferredSize set preferredSize
      */
     public final void setPreferredSize(final Dimension preferredSize)
     {
@@ -536,7 +536,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
-     * @param toolTipText String; set toolTipText
+     * @param toolTipText set toolTipText
      */
     public final void setToolTipText(final String toolTipText)
     {
@@ -552,7 +552,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
-     * @param showing boolean; set showing
+     * @param showing set showing
      */
     public final void setShowing(final boolean showing)
     {
@@ -568,7 +568,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
-     * @param font Font; set font
+     * @param font set font
      */
     public final void setFont(final Font font)
     {
@@ -576,7 +576,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
-     * @param font Font; the font to calculate the fontmetrics for
+     * @param font the font to calculate the fontmetrics for
      * @return fontMetrics
      */
     public final FontMetrics getFontMetrics(final Font font)

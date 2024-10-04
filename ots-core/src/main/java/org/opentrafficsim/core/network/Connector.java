@@ -25,11 +25,11 @@ public class Connector extends Link
 
     /**
      * Construct a new link.
-     * @param network Network; the network to which the link belongs
-     * @param id String; the link id
-     * @param startNode Node; start node (directional)
-     * @param endNode Node; end node (directional)
-     * @param linkType LinkType; Link type to indicate compatibility with GTU types
+     * @param network the network to which the link belongs
+     * @param id the link id
+     * @param startNode start node (directional)
+     * @param endNode end node (directional)
+     * @param linkType Link type to indicate compatibility with GTU types
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, if the start node or
      *             the end node of the link are not registered in the network, or if neither node is a centroid.
      */
@@ -45,7 +45,7 @@ public class Connector extends Link
 
     /**
      * Sets the demand weight. This is only applicable to links of type CONNECTOR.
-     * @param demandWeight double; demand weight, which is any positive value
+     * @param demandWeight demand weight, which is any positive value
      */
     public final void setDemandWeight(final double demandWeight)
     {
@@ -63,7 +63,7 @@ public class Connector extends Link
 
     /**
      * Returns the demand weight.
-     * @return double; demand weight, any positive value.
+     * @return demand weight, any positive value.
      */
     public final double getDemandWeight()
     {

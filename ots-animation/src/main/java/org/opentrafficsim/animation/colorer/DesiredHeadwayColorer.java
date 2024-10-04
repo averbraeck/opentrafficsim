@@ -65,8 +65,8 @@ public class DesiredHeadwayColorer implements GtuColorer, Serializable
 
     /**
      * Constructor using input Tmin and Tmax.
-     * @param tMin Duration; minimum headway
-     * @param tMax Duration; maximum headway
+     * @param tMin minimum headway
+     * @param tMax maximum headway
      */
     public DesiredHeadwayColorer(final Duration tMin, final Duration tMax)
     {

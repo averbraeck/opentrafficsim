@@ -26,9 +26,9 @@ public class CustomSimulation extends OtsSimulationApplication<CustomSimulation.
 
     /**
      * Create a custom simulation.
-     * @param title String; the title of the Frame
-     * @param panel OtsAnimationPanel; the tabbed panel to display
-     * @param model CustomModel; the model
+     * @param title the title of the Frame
+     * @param panel the tabbed panel to display
+     * @param model the model
      * @throws OtsDrawingException on animation error
      */
     public CustomSimulation(final String title, final OtsAnimationPanel panel, final CustomModel model)
@@ -39,9 +39,9 @@ public class CustomSimulation extends OtsSimulationApplication<CustomSimulation.
 
     /**
      * Start the simulation.
-     * @param exitOnClose boolean; when running stand-alone: true; when running as part of a demo: false
-     * @param simulator OtsAnimator; simulator.
-     * @param model CustomModel; model.
+     * @param exitOnClose when running stand-alone: true; when running as part of a demo: false
+     * @param simulator simulator.
+     * @param model model.
      */
     public static void demo(final boolean exitOnClose, final OtsAnimator simulator, final CustomModel model)
     {
@@ -62,7 +62,8 @@ public class CustomSimulation extends OtsSimulationApplication<CustomSimulation.
     /**
      * Custom simulation.
      * <p>
-     * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+     * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      */
@@ -76,7 +77,7 @@ public class CustomSimulation extends OtsSimulationApplication<CustomSimulation.
 
         /**
          * Constructor.
-         * @param simulator OtsSimulatorInterface; the simulator for this model
+         * @param simulator the simulator for this model
          */
         public CustomModel(final OtsSimulatorInterface simulator)
         {
@@ -106,5 +107,5 @@ public class CustomSimulation extends OtsSimulationApplication<CustomSimulation.
             return this.network;
         }
     }
-    
+
 }

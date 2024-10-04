@@ -28,20 +28,20 @@ public interface DirectedLaneChangeModel
 {
     /**
      * Compute the acceleration and lane change.
-     * @param gtu LaneBasedGtu; the GTU for which the acceleration and lane change is computed
-     * @param direction LateralDirectionality; the direction of the lane we want to change to
-     * @param sameLaneTraffic Collection&lt;Headway&gt;; the set of information about observable GTUs in the current lane (can
-     *            not be null and may include the <code>gtu</code>)
-     * @param otherLaneTraffic Collection&lt;Headway&gt;; the set of information about observable GTUs in the adjacent lane
-     *            where GTUs should drive in the absence of other traffic (must be null if there is no such lane)
-     * @param maxDistance Length; the maximum distance that the current GTU can drive, e.g. due to a lane drop
-     * @param speedLimit Speed; the local speed limit
-     * @param otherLaneRouteIncentive Acceleration; route incentive to merge to the adjacent lane where GTUs should drive in the
-     *            absence of other traffic
-     * @param laneChangeThreshold Acceleration; threshold that prevents lane changes that have very little benefit merge to
-     *            overtake other traffic
-     * @param laneChangeTime Duration; time spent to overtake
-     * @return LaneMovementStep; the result of the lane change and GTU following model
+     * @param gtu the GTU for which the acceleration and lane change is computed
+     * @param direction the direction of the lane we want to change to
+     * @param sameLaneTraffic the set of information about observable GTUs in the current lane (can not be null and may include
+     *            the <code>gtu</code>)
+     * @param otherLaneTraffic the set of information about observable GTUs in the adjacent lane where GTUs should drive in the
+     *            absence of other traffic (must be null if there is no such lane)
+     * @param maxDistance the maximum distance that the current GTU can drive, e.g. due to a lane drop
+     * @param speedLimit the local speed limit
+     * @param otherLaneRouteIncentive route incentive to merge to the adjacent lane where GTUs should drive in the absence of
+     *            other traffic
+     * @param laneChangeThreshold threshold that prevents lane changes that have very little benefit merge to overtake other
+     *            traffic
+     * @param laneChangeTime time spent to overtake
+     * @return the result of the lane change and GTU following model
      * @throws GtuException when the position of the GTU on the lane(s) cannot be determined
      * @throws ParameterException in case of a parameter problem.
      * @throws OperationalPlanException if DefaultAlexander perception category is not present
@@ -57,13 +57,13 @@ public interface DirectedLaneChangeModel
 
     /**
      * Return the name of this GTU following model.
-     * @return String; just the name of the GTU following model
+     * @return just the name of the GTU following model
      */
     String getName();
 
     /**
      * Return complete textual information about this instantiation of this GTU following model.
-     * @return String; the name and parameter values of the GTU following model
+     * @return the name and parameter values of the GTU following model
      */
     String getLongName();
 

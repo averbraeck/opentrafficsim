@@ -26,8 +26,8 @@ public class SliceInfo
 
     /**
      * Constructor.
-     * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; slices.
-     * @param length Length; length of element for which slices are defined.
+     * @param crossSectionSlices slices.
+     * @param length length of element for which slices are defined.
      */
     public SliceInfo(final List<CrossSectionSlice> crossSectionSlices, final Length length)
     {
@@ -37,8 +37,8 @@ public class SliceInfo
 
     /**
      * Retrieve the lateral offset from the Link design line at the specified longitudinal position.
-     * @param fractionalPosition double; fractional longitudinal position on this Lane
-     * @return Length; the lateralCenterPosition at the specified longitudinal position
+     * @param fractionalPosition fractional longitudinal position on this Lane
+     * @return the lateralCenterPosition at the specified longitudinal position
      */
     public final Length getLateralCenterPosition(final double fractionalPosition)
     {
@@ -58,8 +58,8 @@ public class SliceInfo
 
     /**
      * Return the width of this CrossSectionElement at a specified fractional longitudinal position.
-     * @param fractionalPosition double; the fractional longitudinal position
-     * @return Length; the width of this CrossSectionElement at the specified fractional longitudinal position.
+     * @param fractionalPosition the fractional longitudinal position
+     * @return the width of this CrossSectionElement at the specified fractional longitudinal position.
      */
     public final Length getWidth(final double fractionalPosition)
     {
@@ -79,8 +79,8 @@ public class SliceInfo
 
     /**
      * Calculate the slice the fractional position is in.
-     * @param fractionalPosition double; the fractional position between 0 and 1 compared to the design line
-     * @return int; the lower slice number between 0 and number of slices - 1.
+     * @param fractionalPosition the fractional position between 0 and 1 compared to the design line
+     * @return the lower slice number between 0 and number of slices - 1.
      */
     private int calculateSliceNumber(final double fractionalPosition)
     {
@@ -97,9 +97,9 @@ public class SliceInfo
 
     /**
      * Returns the fractional position along the segment between two cross-section slices.
-     * @param fractionalPosition double; fractional position on the whole link.
-     * @param sliceNumber int; slice number at the start of the segment.
-     * @return double; fractional position along the segment between two cross-section slices.
+     * @param fractionalPosition fractional position on the whole link.
+     * @param sliceNumber slice number at the start of the segment.
+     * @return fractional position along the segment between two cross-section slices.
      */
     private double fractionalPositionSegment(final double fractionalPosition, final int sliceNumber)
     {
@@ -110,7 +110,7 @@ public class SliceInfo
 
     /**
      * Retrieve the offset from the design line at the begin of the parent link.
-     * @return Length; the offset of this CrossSectionElement at the begin of the parent link
+     * @return the offset of this CrossSectionElement at the begin of the parent link
      */
     public final Length getOffsetAtBegin()
     {
@@ -119,7 +119,7 @@ public class SliceInfo
 
     /**
      * Retrieve the offset from the design line at the end of the parent link.
-     * @return Length; the offset of this CrossSectionElement at the end of the parent link
+     * @return the offset of this CrossSectionElement at the end of the parent link
      */
     public final Length getOffsetAtEnd()
     {
@@ -128,7 +128,7 @@ public class SliceInfo
 
     /**
      * Retrieve the width at the begin of the parent link.
-     * @return Length; the width of this CrossSectionElement at the begin of the parent link
+     * @return the width of this CrossSectionElement at the begin of the parent link
      */
     public final Length getBeginWidth()
     {
@@ -137,7 +137,7 @@ public class SliceInfo
 
     /**
      * Retrieve the width at the end of the parent link.
-     * @return Length; the width of this CrossSectionElement at the end of the parent link
+     * @return the width of this CrossSectionElement at the end of the parent link
      */
     public final Length getEndWidth()
     {
@@ -147,8 +147,8 @@ public class SliceInfo
     /**
      * Return the lateral offset from the design line of the parent Link of the Left or Right boundary of this
      * CrossSectionElement at the specified fractional longitudinal position.
-     * @param lateralDirection LateralDirectionality; LEFT, or RIGHT
-     * @param fractionalLongitudinalPosition double; ranges from 0.0 (begin of parentLink) to 1.0 (end of parentLink)
+     * @param lateralDirection LEFT, or RIGHT
+     * @param fractionalLongitudinalPosition ranges from 0.0 (begin of parentLink) to 1.0 (end of parentLink)
      * @return Length
      */
     public final Length getLateralBoundaryPosition(final LateralDirectionality lateralDirection,

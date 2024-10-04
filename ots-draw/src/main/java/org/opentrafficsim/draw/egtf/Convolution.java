@@ -27,7 +27,7 @@ public final class Convolution
 
     /**
      * Program entry point.
-     * @param args String...; the command line arguments (not used)
+     * @param args the command line arguments (not used)
      */
     public static void main(final String... args)
     {
@@ -80,9 +80,9 @@ public final class Convolution
 
     /**
      * Convolution of two matrices using fast fourier transform.
-     * @param a double[][]; the kernel matrix
-     * @param b double[][]; the data matrix
-     * @return double[][]; convolution of a over b, same size as b
+     * @param a the kernel matrix
+     * @param b the data matrix
+     * @return convolution of a over b, same size as b
      */
     private static double[][] conv(final double[][] a, final double[][] b)
     {
@@ -112,9 +112,9 @@ public final class Convolution
 
     /**
      * Convolution of two matrices using fast fourier transform.
-     * @param a double[][]; the kernel matrix
-     * @param b double[][]; the data matrix
-     * @return double[][]; convolution of a over b, same size as b
+     * @param a the kernel matrix
+     * @param b the data matrix
+     * @return convolution of a over b, same size as b
      */
     public static double[][] convolution(final double[][] a, final double[][] b)
     {
@@ -153,10 +153,10 @@ public final class Convolution
 
     /**
      * Adds zeros to a matrix to obtain size {@code i x j}.
-     * @param x double[][]; original matrix
-     * @param i int; number of desired rows
-     * @param j int; number of desired columns
-     * @return double[][]; {@code x} padded with zeros
+     * @param x original matrix
+     * @param i number of desired rows
+     * @param j number of desired columns
+     * @return {@code x} padded with zeros
      */
     private static double[][] zeroPadding(final double[][] x, final int i, final int j)
     {
@@ -173,8 +173,8 @@ public final class Convolution
 
     /**
      * Two-dimensional fast fourier transform.
-     * @param x double[][]; matrix, this data is affected by the method
-     * @return Complex[]; array of complex objects, each representing a row of complex values
+     * @param x matrix, this data is affected by the method
+     * @return array of complex objects, each representing a row of complex values
      */
     private static Complex[] fft2(final double[][] x)
     {
@@ -207,8 +207,8 @@ public final class Convolution
     /**
      * Fast fourier transform using Cooley–Tukey algorithm. This method is based on
      * https://introcs.cs.princeton.edu/java/97data/FFT.java.html.
-     * @param x Complex; vector of complex objects
-     * @return Complex; vector after fourier transform
+     * @param x vector of complex objects
+     * @return vector after fourier transform
      */
     private static Complex fft(final Complex x)
     {
@@ -257,7 +257,7 @@ public final class Convolution
 
     /**
      * Two-dimensional inverse fourier transform. Result is stored in the input objects.
-     * @param x Complex[]; array of complex objects, each representing a row of complex values
+     * @param x array of complex objects, each representing a row of complex values
      */
     private static void ifft2(final Complex[] x)
     {
@@ -288,7 +288,7 @@ public final class Convolution
 
     /**
      * Inverse fourier transform. Result is stored in the input object.
-     * @param x Complex; vector of complex values
+     * @param x vector of complex values
      */
     private static void ifft(final Complex x)
     {
@@ -332,7 +332,7 @@ public final class Convolution
 
         /**
          * Constructor for zero imaginary part.
-         * @param x double[]; real part
+         * @param x real part
          */
         Complex(final double[] x)
         {
@@ -342,8 +342,8 @@ public final class Convolution
 
         /**
          * Constructor.
-         * @param re double[]; real part
-         * @param im double[]; imaginary part;
+         * @param re real part
+         * @param im imaginary part;
          */
         Complex(final double[] re, final double[] im)
         {

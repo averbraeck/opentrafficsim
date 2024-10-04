@@ -58,9 +58,9 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
 
     /**
      * Create a Networks Swing application.
-     * @param title String; the title of the Frame
-     * @param panel OtsAnimationPanel; the tabbed panel to display
-     * @param model NetworksModel; the model
+     * @param title the title of the Frame
+     * @param panel the tabbed panel to display
+     * @param model the model
      * @throws OtsDrawingException on animation error
      */
     public NetworksSwing(final String title, final OtsAnimationPanel panel, final NetworksModel model)
@@ -80,7 +80,7 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
 
     /**
      * Main program.
-     * @param args String[]; the command line arguments (not used)
+     * @param args the command line arguments (not used)
      */
     public static void main(final String[] args)
     {
@@ -89,7 +89,7 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
 
     /**
      * Start the demo.
-     * @param exitOnClose boolean; when running stand-alone: true; when running as part of a demo: false
+     * @param exitOnClose when running stand-alone: true; when running as part of a demo: false
      */
     public static void demo(final boolean exitOnClose)
     {
@@ -122,7 +122,7 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
 
     /**
      * Add the statistics tabs.
-     * @param simulator OtsSimulatorInterface; the simulator on which sampling can be scheduled
+     * @param simulator the simulator on which sampling can be scheduled
      */
     protected final void addStatisticsTabs(final OtsSimulatorInterface simulator)
     {
@@ -161,7 +161,7 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
         private static final long serialVersionUID = 1L;
 
         /**
-         * @param inputParameterMap InputParameterMap; the parameter map to display
+         * @param inputParameterMap the parameter map to display
          */
         NetworksParameterDialog(final InputParameterMap inputParameterMap)
         {
@@ -212,7 +212,7 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
 
         /**
          * Construct a tabbed parameter dialog that is not a part of a higher dialog.
-         * @param inputParameterMap InputParameterMap; the parameter map to use
+         * @param inputParameterMap the parameter map to use
          * @return whether the data was entered correctly or not
          */
         public static boolean process(final InputParameterMap inputParameterMap)
@@ -237,8 +237,8 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
 
         /**
          * Create a string field on the screen.
-         * @param panel JPanel; panel to add the field to
-         * @param parameter InputParameterSelectionMap&lt;K,T&gt;; the parameter
+         * @param panel panel to add the field to
+         * @param parameter the parameter
          */
         public InputFieldSelectionMapRadio(final JPanel panel, final InputParameterSelectionMap<K, T> parameter)
         {

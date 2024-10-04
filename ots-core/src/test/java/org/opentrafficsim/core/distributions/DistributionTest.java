@@ -419,15 +419,16 @@ public class DistributionTest
         FrequencyAndObject<String> fao2 = new FrequencyAndObject<>(Math.PI, "One");
         assertTrue(fao1.equals(fao2),
                 "FrequencyAndObject is equal to another FrequencyAndObject with same frequency and same object");
-        assertEquals(fao1.hashCode(),
-                fao2.hashCode(), "FrequencyAndObject has same hashCode as another FrequencyAndObject with same frequency and same object");
+        assertEquals(fao1.hashCode(), fao2.hashCode(),
+                "FrequencyAndObject has same hashCode as another FrequencyAndObject with same frequency and same object");
         fao2 = new FrequencyAndObject<>(Math.PI, "Two");
         assertFalse(fao1.equals(fao2),
                 "FrequencyAndObject is not equal to another FrequencyAndObject with same frequency but other object");
         fao2 = new FrequencyAndObject<>(Math.E, "One");
         assertFalse(fao1.equals(fao2),
                 "FrequencyAndObject is not equal to another FrequencyAndObject with different frequency but same object");
-        assertNotEquals(fao1.hashCode(), fao2.hashCode(), "FrequencyAndObject has different hashCode than another FrequencyAndObject with different frequency "
+        assertNotEquals(fao1.hashCode(), fao2.hashCode(),
+                "FrequencyAndObject has different hashCode than another FrequencyAndObject with different frequency "
                         + "and same object");
         fao2 = new FrequencyAndObject<>(Math.PI, null);
         assertFalse(fao1.equals(fao2),

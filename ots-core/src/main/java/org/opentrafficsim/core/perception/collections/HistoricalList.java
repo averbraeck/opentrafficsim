@@ -24,15 +24,15 @@ public interface HistoricalList<E> extends HistoricalCollection<E>, List<E>
 
     /**
      * Returns the current list.
-     * @return List; current list
+     * @return current list
      */
     @Override
     List<E> get();
 
     /**
      * Returns a past list.
-     * @param time Time; time to obtain the list at
-     * @return List; past list
+     * @param time time to obtain the list at
+     * @return past list
      */
     @Override
     List<E> get(Time time);

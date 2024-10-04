@@ -15,7 +15,7 @@ public class LinearDensityUnitType extends ExpressionType<LinearDensityUnit>
 
     /**
      * Constructor with value.
-     * @param value LinearDensityUnit; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public LinearDensityUnitType(final LinearDensityUnit value)
     {
@@ -24,7 +24,7 @@ public class LinearDensityUnitType extends ExpressionType<LinearDensityUnit>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public LinearDensityUnitType(final String expression)
     {

@@ -15,7 +15,7 @@ public class FrequencyUnitType extends ExpressionType<FrequencyUnit>
 
     /**
      * Constructor with value.
-     * @param value FrequencyUnit; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public FrequencyUnitType(final FrequencyUnit value)
     {
@@ -24,7 +24,7 @@ public class FrequencyUnitType extends ExpressionType<FrequencyUnit>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public FrequencyUnitType(final String expression)
     {

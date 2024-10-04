@@ -29,8 +29,8 @@ public abstract class SingleCrossSectionSwitch implements RampMeteringSwitch
 
     /**
      * Constructor.
-     * @param interval Duration; interval
-     * @param detectors List&lt;Detector&gt;; detectors
+     * @param interval interval
+     * @param detectors detectors
      */
     public SingleCrossSectionSwitch(final Duration interval, final List<LoopDetector> detectors)
     {
@@ -50,7 +50,7 @@ public abstract class SingleCrossSectionSwitch implements RampMeteringSwitch
 
     /**
      * Returns the mean speed over the detectors.
-     * @return Speed; mean speed over the detectors
+     * @return mean speed over the detectors
      */
     protected final Speed meanSpeed()
     {
@@ -69,7 +69,7 @@ public abstract class SingleCrossSectionSwitch implements RampMeteringSwitch
 
     /**
      * Returns the mean flow over the detectors.
-     * @return Frequency; mean flow over the detectors
+     * @return mean flow over the detectors
      */
     protected final Frequency meanFlow()
     {
@@ -78,7 +78,7 @@ public abstract class SingleCrossSectionSwitch implements RampMeteringSwitch
 
     /**
      * Returns the total flow over the detectors.
-     * @return Frequency; total flow over the detectors
+     * @return total flow over the detectors
      */
     protected final Frequency totalFlow()
     {

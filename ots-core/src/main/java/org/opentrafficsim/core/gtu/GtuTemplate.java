@@ -44,17 +44,14 @@ public class GtuTemplate implements Serializable, Generator<GtuCharacteristics>
     private final Generator<Acceleration> maxDeceleration;
 
     /**
-     * @param gtuType GtuType; GtuType, the GtuType to make it identifiable.
-     * @param lengthGenerator Generator&lt;Length&gt;; generator for the length of the GTU type (parallel with driving
-     *            direction).
-     * @param widthGenerator Generator&lt;Length&gt;; generator for the width of the GTU type (perpendicular to driving
-     *            direction).
-     * @param maximumSpeedGenerator Generator&lt;Speed&gt;; generator for the maximum speed of the GTU type (in the driving
-     *            direction).
+     * @param gtuType GtuType, the GtuType to make it identifiable.
+     * @param lengthGenerator generator for the length of the GTU type (parallel with driving direction).
+     * @param widthGenerator generator for the width of the GTU type (perpendicular to driving direction).
+     * @param maximumSpeedGenerator generator for the maximum speed of the GTU type (in the driving direction).
      * @throws NullPointerException when one of the arguments is null
      */
-    public GtuTemplate(final GtuType gtuType, final Generator<Length> lengthGenerator,
-            final Generator<Length> widthGenerator, final Generator<Speed> maximumSpeedGenerator) throws NullPointerException
+    public GtuTemplate(final GtuType gtuType, final Generator<Length> lengthGenerator, final Generator<Length> widthGenerator,
+            final Generator<Speed> maximumSpeedGenerator) throws NullPointerException
     {
         this(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator,
                 new ConstantGenerator<>(Acceleration.instantiateSI(3.0)),
@@ -62,20 +59,16 @@ public class GtuTemplate implements Serializable, Generator<GtuCharacteristics>
     }
 
     /**
-     * @param gtuType GtuType; GtuType, the GtuType to make it identifiable.
-     * @param lengthGenerator Generator&lt;Length&gt;; generator for the length of the GTU type (parallel with driving
-     *            direction).
-     * @param widthGenerator Generator&lt;Length&gt;; generator for the width of the GTU type (perpendicular to driving
-     *            direction).
-     * @param maximumSpeedGenerator Generator&lt;Speed&gt;; generator for the maximum speed of the GTU type (in the driving
-     *            direction).
-     * @param maximumAccelerationGenerator Generator&lt;Acceleration&gt;; generator for the maximum acceleration of the GTU type
-     * @param maximumDecelerationGenerator Generator&lt;Acceleration&gt;; generator for the maximum deceleration of the GTU type
+     * @param gtuType GtuType, the GtuType to make it identifiable.
+     * @param lengthGenerator generator for the length of the GTU type (parallel with driving direction).
+     * @param widthGenerator generator for the width of the GTU type (perpendicular to driving direction).
+     * @param maximumSpeedGenerator generator for the maximum speed of the GTU type (in the driving direction).
+     * @param maximumAccelerationGenerator generator for the maximum acceleration of the GTU type
+     * @param maximumDecelerationGenerator generator for the maximum deceleration of the GTU type
      * @throws NullPointerException when one of the arguments is null
      */
-    public GtuTemplate(final GtuType gtuType, final Generator<Length> lengthGenerator,
-            final Generator<Length> widthGenerator, final Generator<Speed> maximumSpeedGenerator,
-            final Generator<Acceleration> maximumAccelerationGenerator,
+    public GtuTemplate(final GtuType gtuType, final Generator<Length> lengthGenerator, final Generator<Length> widthGenerator,
+            final Generator<Speed> maximumSpeedGenerator, final Generator<Acceleration> maximumAccelerationGenerator,
             final Generator<Acceleration> maximumDecelerationGenerator) throws NullPointerException
     {
         Throw.whenNull(gtuType, "gtuType is null");
@@ -96,7 +89,7 @@ public class GtuTemplate implements Serializable, Generator<GtuCharacteristics>
     /**
      * Returns the same Characteristics, but pertaining to a different GTU type. This is useful for when the GTU type is used
      * for other purposes in simulation, where the {@code GtuCharacteristics} should be the same.
-     * @param newGtuType GtuType; the new GTU type.
+     * @param newGtuType the new GTU type.
      * @return Copy of this {@code TemplateGTUType} linked to the new GTU type.
      */
     public GtuTemplate copyForGtuType(final GtuType newGtuType)

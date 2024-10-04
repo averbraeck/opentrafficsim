@@ -77,10 +77,10 @@ public final class Trajectory<G extends GtuData>
     private final LaneData<?> lane;
 
     /**
-     * @param gtu GtuData; GTU of this trajectory, only the id is stored.
-     * @param filterData Map&lt;FilterDataType&lt;?, ? super G&gt;, Object&gt;; filter data
-     * @param extendedData Set&lt;ExtendedDataType&lt;?, ? ,? , ? super G&gt;&gt;; types of extended data
-     * @param lane LaneData&lt;?&gt;; lane of travel
+     * @param gtu GTU of this trajectory, only the id is stored.
+     * @param filterData filter data
+     * @param extendedData types of extended data
+     * @param lane lane of travel
      */
     public Trajectory(final GtuData gtu, final Map<FilterDataType<?, ? super G>, Object> filterData,
             final Set<ExtendedDataType<?, ?, ?, ? super G>> extendedData, final LaneData<?> lane)
@@ -90,10 +90,10 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Private constructor for creating subsets.
-     * @param gtuId String; GTU id
-     * @param filterData Map&lt;FilterDataType&lt;?, ? super G&gt;, Object&gt;; filter data
-     * @param extendedData Set&lt;ExtendedDataType&lt;?, ?, ?, ? super G&gt;&gt;; types of extended data
-     * @param lane LaneData&lt;?&gt;; lane of travel
+     * @param gtuId GTU id
+     * @param filterData filter data
+     * @param extendedData types of extended data
+     * @param lane lane of travel
      */
     private Trajectory(final String gtuId, final Map<FilterDataType<?, ? super G>, Object> filterData,
             final Set<ExtendedDataType<?, ?, ?, ? super G>> extendedData, final LaneData<?> lane)
@@ -113,11 +113,11 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Adds values of position, speed, acceleration and time.
-     * @param position Length; position is relative to the start of the lane in the direction of the design line, i.e.
-     *            irrespective of the travel direction, also when trajectories have been truncated at a position x &gt; 0
-     * @param speed Speed; speed
-     * @param acceleration Acceleration; acceleration
-     * @param time Time; time
+     * @param position position is relative to the start of the lane in the direction of the design line, i.e. irrespective of
+     *            the travel direction, also when trajectories have been truncated at a position x &gt; 0
+     * @param speed speed
+     * @param acceleration acceleration
+     * @param time time
      */
     public void add(final Length position, final Speed speed, final Acceleration acceleration, final Time time)
     {
@@ -126,12 +126,12 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Adds values of position, speed, acceleration and time.
-     * @param position Length; position is relative to the start of the lane in the direction of the design line, i.e.
-     *            irrespective of the travel direction, also when trajectories have been truncated at a position x &gt; 0
-     * @param speed Speed; speed
-     * @param acceleration Acceleration; acceleration
-     * @param time Time; time
-     * @param gtu G; gtu to add extended data for
+     * @param position position is relative to the start of the lane in the direction of the design line, i.e. irrespective of
+     *            the travel direction, also when trajectories have been truncated at a position x &gt; 0
+     * @param speed speed
+     * @param acceleration acceleration
+     * @param time time
+     * @param gtu gtu to add extended data for
      */
     public void add(final Length position, final Speed speed, final Acceleration acceleration, final Time time, final G gtu)
     {
@@ -164,8 +164,8 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Append value of the extended data type.
-     * @param extendedDataType ExtendedDataType&lt;T, ?, S, ? super G&gt;; extended data type
-     * @param gtu G; gtu
+     * @param extendedDataType extended data type
+     * @param gtu gtu
      * @param <T> extended data value type
      * @param <S> extended data storage data type
      */
@@ -236,8 +236,8 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Returns the last index with a position smaller than or equal to the given position.
-     * @param position float; position
-     * @return int; last index with a position smaller than or equal to the given position
+     * @param position position
+     * @return last index with a position smaller than or equal to the given position
      */
     public int binarySearchX(final float position)
     {
@@ -251,8 +251,8 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Returns the last index with a time smaller than or equal to the given time.
-     * @param time float; time
-     * @return int; last index with a time smaller than or equal to the given time
+     * @param time time
+     * @return last index with a time smaller than or equal to the given time
      */
     public int binarySearchT(final float time)
     {
@@ -266,7 +266,7 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Returns {@code x} value of a single sample.
-     * @param index int; index
+     * @param index index
      * @return {@code x} value of a single sample
      * @throws SamplingException if the index is out of bounds
      */
@@ -278,7 +278,7 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Returns {@code v} value of a single sample.
-     * @param index int; index
+     * @param index index
      * @return {@code v} value of a single sample
      * @throws SamplingException if the index is out of bounds
      */
@@ -290,7 +290,7 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Returns {@code a} value of a single sample.
-     * @param index int; index
+     * @param index index
      * @return {@code a} value of a single sample
      * @throws SamplingException if the index is out of bounds
      */
@@ -302,7 +302,7 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Returns {@code t} value of a single sample.
-     * @param index int; index
+     * @param index index
      * @return {@code t} value of a single sample
      * @throws SamplingException if the index is out of bounds
      */
@@ -314,8 +314,8 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Returns extended data type value of a single sample.
-     * @param extendedDataType ExtendedDataType&lt;T,?,S,?&gt;; data type from which to retrieve the data
-     * @param index int; index for which to retrieve the data
+     * @param extendedDataType data type from which to retrieve the data
+     * @param index index for which to retrieve the data
      * @param <T> scalar type of extended data type
      * @param <S> storage type of extended data type
      * @return extended data type value of a single sample
@@ -331,7 +331,7 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Throws an exception if the sample index is out of bounds.
-     * @param index int; sample index
+     * @param index sample index
      * @throws SamplingException if the sample index is out of bounds
      */
     private void checkSample(final int index) throws SamplingException
@@ -441,7 +441,7 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Returns whether the filter data is contained.
-     * @param filterDataType MetaDataType&lt;?, ?&gt;; filter data type
+     * @param filterDataType filter data type
      * @return whether the trajectory contains the filter data of give type
      */
     public boolean contains(final FilterDataType<?, ?> filterDataType)
@@ -451,7 +451,7 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Returns the value of the filter data.
-     * @param filterDataType MetaDataType&lt;T, ?&gt;; filter data type
+     * @param filterDataType filter data type
      * @param <T> class of filter data
      * @return value of filter data
      */
@@ -472,7 +472,7 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Returns whether ths extended data type is contained.
-     * @param extendedDataType ExtendedDataType&lt;?,?,?,?&gt;; extended data type
+     * @param extendedDataType extended data type
      * @return whether the trajectory contains the extended data of give type
      */
     public boolean contains(final ExtendedDataType<?, ?, ?, ?> extendedDataType)
@@ -482,7 +482,7 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Returns the output data of the extended data type.
-     * @param extendedDataType ExtendedDataType&lt;?,O,S,?&gt;; extended data type to return
+     * @param extendedDataType extended data type to return
      * @param <O> output type
      * @param <S> storage type
      * @return values of extended data type
@@ -508,10 +508,10 @@ public final class Trajectory<G extends GtuData>
     /**
      * Returns a space-time view of this trajectory. This is much more efficient than {@code subSet()} as no trajectory is
      * copied. The limitation is that only distance and time (and mean speed) in the space-time view can be obtained.
-     * @param startPosition Length; start position
-     * @param endPosition Length; end position
-     * @param startTime Time; start time
-     * @param endTime Time; end time
+     * @param startPosition start position
+     * @param endPosition end position
+     * @param startTime start time
+     * @param endTime end time
      * @return space-time view of this trajectory
      */
     public SpaceTimeView getSpaceTimeView(final Length startPosition, final Length endPosition, final Time startTime,
@@ -552,8 +552,8 @@ public final class Trajectory<G extends GtuData>
     /**
      * Copies the trajectory but with a subset of the data. Longitudinal entry is only true if the original trajectory has true,
      * and the subset is from the start.
-     * @param startPosition Length; start position
-     * @param endPosition Length; end position
+     * @param startPosition start position
+     * @param endPosition end position
      * @return subset of the trajectory
      * @throws NullPointerException if an input is null
      * @throws IllegalArgumentException of minLength is smaller than maxLength
@@ -573,8 +573,8 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Copies the trajectory but with a subset of the data.
-     * @param startTime Time; start time
-     * @param endTime Time; end time
+     * @param startTime start time
+     * @param endTime end time
      * @return subset of the trajectory
      * @throws NullPointerException if an input is null
      * @throws IllegalArgumentException of minTime is smaller than maxTime
@@ -593,10 +593,10 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Copies the trajectory but with a subset of the data.
-     * @param startPosition Length; start position
-     * @param endPosition Length; end position
-     * @param startTime Time; start time
-     * @param endTime Time; end time
+     * @param startPosition start position
+     * @param endPosition end position
+     * @param startTime start time
+     * @param endTime end time
      * @return subset of the trajectory
      * @throws NullPointerException if an input is null
      * @throws IllegalArgumentException of minLength/Time is smaller than maxLength/Time
@@ -620,8 +620,8 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Determine spatial boundaries.
-     * @param startPosition Length; start position
-     * @param endPosition Length; end position
+     * @param startPosition start position
+     * @param endPosition end position
      * @return spatial boundaries
      */
     private Boundaries spaceBoundaries(final Length startPosition, final Length endPosition)
@@ -640,8 +640,8 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Determine temporal boundaries.
-     * @param startTime Time; start time
-     * @param endTime Time; end time
+     * @param startTime start time
+     * @param endTime end time
      * @return spatial boundaries
      */
     private Boundaries timeBoundaries(final Time startTime, final Time endTime)
@@ -660,9 +660,9 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Returns the boundary at the given position.
-     * @param position float; position
-     * @param end boolean; whether the end of a range is searched
-     * @return Boundary; boundary at the given position
+     * @param position position
+     * @param end whether the end of a range is searched
+     * @return boundary at the given position
      */
     private Boundary getBoundaryAtPosition(final float position, final boolean end)
     {
@@ -677,9 +677,9 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Returns the boundary at the given time.
-     * @param time float; time
-     * @param end boolean; whether the end of a range is searched
-     * @return Boundary; boundary at the given time
+     * @param time time
+     * @param end whether the end of a range is searched
+     * @return boundary at the given time
      */
     private Boundary getBoundaryAtTime(final float time, final boolean end)
     {
@@ -694,8 +694,8 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Returns an interpolated time at the given position.
-     * @param position Length; position
-     * @return Time; interpolated time at the given position
+     * @param position position
+     * @return interpolated time at the given position
      */
     public Time getTimeAtPosition(final Length position)
     {
@@ -704,8 +704,8 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Returns an interpolated speed at the given position.
-     * @param position Length; position
-     * @return Speed; interpolated speed at the given position
+     * @param position position
+     * @return interpolated speed at the given position
      */
     public Speed getSpeedAtPosition(final Length position)
     {
@@ -714,8 +714,8 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Returns an interpolated acceleration at the given position.
-     * @param position Length; position
-     * @return Acceleration; interpolated acceleration at the given position
+     * @param position position
+     * @return interpolated acceleration at the given position
      */
     public Acceleration getAccelerationAtPosition(final Length position)
     {
@@ -724,8 +724,8 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Returns an interpolated position at the given time.
-     * @param time Time; time
-     * @return Length; interpolated position at the given time
+     * @param time time
+     * @return interpolated position at the given time
      */
     public Length getPositionAtTime(final Time time)
     {
@@ -734,8 +734,8 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Returns an interpolated speed at the given time.
-     * @param time Time; time
-     * @return Speed; interpolated speed at the given time
+     * @param time time
+     * @return interpolated speed at the given time
      */
     public Speed getSpeedAtTime(final Time time)
     {
@@ -744,8 +744,8 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Returns an interpolated acceleration at the given time.
-     * @param time Time; time
-     * @return Acceleration; interpolated acceleration at the given time
+     * @param time time
+     * @return interpolated acceleration at the given time
      */
     public Acceleration getAccelerationAtTime(final Time time)
     {
@@ -754,7 +754,7 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Copies the trajectory but with a subset of the data. Data is taken from position (from + fFrom) to (to + fTo).
-     * @param bounds Boundaries; boundaries
+     * @param bounds boundaries
      * @param <T> type of underlying extended data value
      * @param <S> storage type
      * @return subset of the trajectory
@@ -922,8 +922,8 @@ public final class Trajectory<G extends GtuData>
         public final double fraction;
 
         /**
-         * @param index int; rounded down index
-         * @param fraction double; fraction
+         * @param index rounded down index
+         * @param fraction fraction
          */
         Boundary(final int index, final double fraction)
         {
@@ -940,8 +940,8 @@ public final class Trajectory<G extends GtuData>
 
         /**
          * Returns the value at the boundary in the array.
-         * @param array float[]; float[] array
-         * @return double; value at the boundary in the array
+         * @param array float[] array
+         * @return value at the boundary in the array
          */
         public double getValue(final float[] array)
         {
@@ -987,10 +987,10 @@ public final class Trajectory<G extends GtuData>
         public final double fTo;
 
         /**
-         * @param from int; from index, rounded down
-         * @param fFrom double; from index, fraction
-         * @param to int; to index, rounded down
-         * @param fTo double; to index, fraction
+         * @param from from index, rounded down
+         * @param fFrom from index, fraction
+         * @param to to index, rounded down
+         * @param fTo to index, fraction
          */
         Boundaries(final int from, final double fFrom, final int to, final double fTo)
         {
@@ -1012,7 +1012,7 @@ public final class Trajectory<G extends GtuData>
 
         /**
          * Returns the intersect of both boundaries.
-         * @param boundaries Boundaries; boundaries
+         * @param boundaries boundaries
          * @return intersect of both boundaries
          */
         public Boundaries intersect(final Boundaries boundaries)
@@ -1081,8 +1081,8 @@ public final class Trajectory<G extends GtuData>
 
         /**
          * Constructor.
-         * @param distance Length; distance
-         * @param time Duration; time
+         * @param distance distance
+         * @param time time
          */
         private SpaceTimeView(final Length distance, final Duration time)
         {
@@ -1092,7 +1092,7 @@ public final class Trajectory<G extends GtuData>
 
         /**
          * Returns the distance.
-         * @return Length; distance
+         * @return distance
          */
         public Length getDistance()
         {
@@ -1101,7 +1101,7 @@ public final class Trajectory<G extends GtuData>
 
         /**
          * Returns the time.
-         * @return Duration; time
+         * @return time
          */
         public Duration getTime()
         {

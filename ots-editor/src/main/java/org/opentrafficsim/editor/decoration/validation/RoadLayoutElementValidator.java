@@ -71,10 +71,10 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
-     * @param path String; path of nodes to validate.
-     * @param layoutCoupling LayoutCoupling; defines how the layout is coupled.
-     * @param attribute String; attribute that is validated.
+     * @param editor editor.
+     * @param path path of nodes to validate.
+     * @param layoutCoupling defines how the layout is coupled.
+     * @param attribute attribute that is validated.
      */
     public RoadLayoutElementValidator(final OtsEditor editor, final String path, final LayoutCoupling layoutCoupling,
             final String attribute)
@@ -224,7 +224,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
 
     /**
      * Updates all nodes in the given set, if they are active.
-     * @param set Set&lt;XsdTreeNode&gt;; set.
+     * @param set set.
      */
     private final void updateAllActive(final Set<XsdTreeNode> set)
     {
@@ -239,7 +239,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
 
     /**
      * Updates node.
-     * @param node XsdTreeNode; node to update.
+     * @param node node to update.
      */
     private void update(final XsdTreeNode node)
     {
@@ -396,8 +396,8 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
 
     /**
      * Return the layout node attached to a link, i.e. the layout defined under it, or a defined layout that is referred to.
-     * @param linkNode XsdTreeNode; link node.
-     * @return XsdTreeNode; layout node.
+     * @param linkNode link node.
+     * @return layout node.
      */
     private final XsdTreeNode getLayoutFromLink(final XsdTreeNode linkNode)
     {
@@ -466,7 +466,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
 
         /**
          * Constructor.
-         * @param update boolean; whether to update, or only change coupled id's and invalidate.
+         * @param update whether to update, or only change coupled id's and invalidate.
          */
         public IdListener(final boolean update)
         {
@@ -475,8 +475,8 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
 
         /**
          * Adds node that will be triggered upon id change.
-         * @param node XsdTreeNode; node to add.
-         * @return IdListener; this for method chaining.
+         * @param node node to add.
+         * @return this for method chaining.
          */
         private IdListener addNode(final XsdTreeNode node)
         {
@@ -486,7 +486,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
 
         /**
          * Removes node that will be triggered upon id change.
-         * @param node XsdTreeNode; node to remove.
+         * @param node node to remove.
          */
         private void removeNode(final XsdTreeNode node)
         {

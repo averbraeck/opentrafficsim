@@ -35,8 +35,8 @@ public class TotalDelayReference extends AbstractIndicator<Duration>
 
     /** {@inheritDoc} */
     @Override
-    protected final <G extends GtuData> Duration calculate(final Query<G, ?> query, final Time startTime,
-            final Time endTime, final List<TrajectoryGroup<G>> trajectoryGroups)
+    protected final <G extends GtuData> Duration calculate(final Query<G, ?> query, final Time startTime, final Time endTime,
+            final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         Map<String, Duration> gtuTimes = new LinkedHashMap<>();
         Map<String, Duration> gtuRefTimes = new LinkedHashMap<>();

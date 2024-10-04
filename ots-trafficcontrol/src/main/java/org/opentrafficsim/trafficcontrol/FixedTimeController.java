@@ -54,12 +54,12 @@ public class FixedTimeController extends AbstractTrafficController
 
     /**
      * Constructor for fixed time traffic controller.
-     * @param id String; id
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param network Network; network
-     * @param offset Duration; off set from simulation start time
-     * @param cycleTime Duration; cycle time
-     * @param signalGroups Set&lt;SignalGroup&gt;; signal groups
+     * @param id id
+     * @param simulator simulator
+     * @param network network
+     * @param offset off set from simulation start time
+     * @param cycleTime cycle time
+     * @param signalGroups signal groups
      * @throws SimRuntimeException simulator is past zero time
      */
     public FixedTimeController(final String id, final OtsSimulatorInterface simulator, final Network network,
@@ -248,8 +248,8 @@ public class FixedTimeController extends AbstractTrafficController
 
     /**
      * Initiates all traffic control events.
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param network Network; network
+     * @param simulator simulator
+     * @param network network
      * @throws SimRuntimeException when traffic light does not exist in the network
      */
     @SuppressWarnings("unused")
@@ -355,11 +355,11 @@ public class FixedTimeController extends AbstractTrafficController
 
         /**
          * Constructor without pre-green duration.
-         * @param id String; id
-         * @param trafficLightIds Set&lt;String&gt;; traffic light ids
-         * @param offset Duration; offset from start of cycle
-         * @param green Duration; green duration
-         * @param yellow Duration; yellow duration
+         * @param id id
+         * @param trafficLightIds traffic light ids
+         * @param offset offset from start of cycle
+         * @param green green duration
+         * @param yellow yellow duration
          */
         public SignalGroup(final String id, final Set<String> trafficLightIds, final Duration offset, final Duration green,
                 final Duration yellow)
@@ -369,12 +369,12 @@ public class FixedTimeController extends AbstractTrafficController
 
         /**
          * Constructor with pre-green duration.
-         * @param id String; id
-         * @param trafficLightIds Set&lt;String&gt;; traffic light ids
-         * @param offset Duration; offset from start of cycle
-         * @param preGreen Duration; pre-green duration
-         * @param green Duration; green duration
-         * @param yellow Duration; yellow duration
+         * @param id id
+         * @param trafficLightIds traffic light ids
+         * @param offset offset from start of cycle
+         * @param preGreen pre-green duration
+         * @param green green duration
+         * @param yellow yellow duration
          */
         public SignalGroup(final String id, final Set<String> trafficLightIds, final Duration offset, final Duration preGreen,
                 final Duration green, final Duration yellow)
@@ -410,10 +410,10 @@ public class FixedTimeController extends AbstractTrafficController
         /**
          * Connect to the traffic lights in the network, initialize the traffic lights to their initial color and schedule the
          * first transitions.
-         * @param controllerOffset Duration;
-         * @param cycleTime Duration;
-         * @param theSimulator OtsSimulatorInterface;
-         * @param network Network;
+         * @param controllerOffset
+         * @param cycleTime
+         * @param theSimulator
+         * @param network
          * @throws SimRuntimeException when traffic light does not exist in the network
          */
         public void startup(final Duration controllerOffset, final Duration cycleTime, final OtsSimulatorInterface theSimulator,
@@ -523,7 +523,7 @@ public class FixedTimeController extends AbstractTrafficController
 
         /**
          * Change the color of our traffic lights.
-         * @param trafficLightColor TrafficLightColor; the new traffic light color to show
+         * @param trafficLightColor the new traffic light color to show
          */
         private void setTrafficLights(final TrafficLightColor trafficLightColor)
         {
@@ -633,7 +633,7 @@ public class FixedTimeController extends AbstractTrafficController
 
         /**
          * Retrieve the current color of this SignalGroup.
-         * @return TrafficLightColor; the current color of this signal group.
+         * @return the current color of this signal group.
          */
         public TrafficLightColor getCurrentColor()
         {
@@ -665,8 +665,8 @@ public class FixedTimeController extends AbstractTrafficController
 
         /**
          * Construct a new Flank.
-         * @param offset double; offset within the cycle time
-         * @param newColor TrafficLightColor; color to show after this transition
+         * @param offset offset within the cycle time
+         * @param newColor color to show after this transition
          */
         Flank(final double offset, final TrafficLightColor newColor)
         {
@@ -676,7 +676,7 @@ public class FixedTimeController extends AbstractTrafficController
 
         /**
          * Retrieve the offset.
-         * @return double; the offset
+         * @return the offset
          */
         public double getOffset()
         {
@@ -685,7 +685,7 @@ public class FixedTimeController extends AbstractTrafficController
 
         /**
          * Retrieve the color after this transition.
-         * @return TrafficLightColor; the color after this transition
+         * @return the color after this transition
          */
         public TrafficLightColor getTrafficLightColor()
         {

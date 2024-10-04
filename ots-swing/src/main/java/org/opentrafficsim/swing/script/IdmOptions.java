@@ -49,7 +49,7 @@ public class IdmOptions
 
     /**
      * Returns the maximum acceleration of cars.
-     * @return Acceleration; maximum acceleration of cars
+     * @return maximum acceleration of cars
      */
     public Acceleration getACar()
     {
@@ -58,7 +58,7 @@ public class IdmOptions
 
     /**
      * Returns the maximum acceleration of trucks.
-     * @return Acceleration; maximum acceleration of truck
+     * @return maximum acceleration of truck
      */
     public Acceleration getATruck()
     {
@@ -67,7 +67,7 @@ public class IdmOptions
 
     /**
      * Returns the maximum comfortable deceleration.
-     * @return Acceleration; maximum comfortable deceleration
+     * @return maximum comfortable deceleration
      */
     public Acceleration getB()
     {
@@ -76,7 +76,7 @@ public class IdmOptions
 
     /**
      * Returns the minimum desired headway.
-     * @return Duration; minimum desired headway
+     * @return minimum desired headway
      */
     public Duration getTMin()
     {
@@ -85,7 +85,7 @@ public class IdmOptions
 
     /**
      * Returns the normal desired headway.
-     * @return Duration; normal desired headway
+     * @return normal desired headway
      */
     public Duration getTMax()
     {

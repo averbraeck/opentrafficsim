@@ -31,8 +31,8 @@ public class XsdTreeKeyListener extends KeyAdapter
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
-     * @param treeTable JTreeTable; tree table.
+     * @param editor editor.
+     * @param treeTable tree table.
      */
     public XsdTreeKeyListener(final OtsEditor editor, final JTreeTable treeTable)
     {

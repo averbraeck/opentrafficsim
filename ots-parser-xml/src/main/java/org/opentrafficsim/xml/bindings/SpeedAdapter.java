@@ -15,7 +15,7 @@ import org.opentrafficsim.xml.bindings.types.SpeedType;
  */
 public class SpeedAdapter extends ScalarAdapter<Speed, SpeedType>
 {
-    
+
     /** {@inheritDoc} */
     @Override
     public SpeedType unmarshal(final String field)

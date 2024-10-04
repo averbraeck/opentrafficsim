@@ -34,8 +34,8 @@ public class GtuTransceiver extends AbstractEventTransceiver
 
     /**
      * Construct a GtuTransceiver.
-     * @param network Network; the Network
-     * @param gtuIdSource GtuIdTransceiver; the transceiver that can produce all active GTU ids in the Network
+     * @param network the Network
+     * @param gtuIdSource the transceiver that can produce all active GTU ids in the Network
      */
     public GtuTransceiver(final Network network, final GtuIdTransceiver gtuIdSource)
     {

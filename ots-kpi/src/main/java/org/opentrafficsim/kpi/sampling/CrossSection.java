@@ -32,7 +32,7 @@ public class CrossSection implements Serializable
 
     /**
      * Constructor with set of lane positions.
-     * @param lanePositions Set&lt;LanePosition&gt;; set of lane locations
+     * @param lanePositions set of lane locations
      */
     public CrossSection(final Set<LanePosition> lanePositions)
     {
@@ -42,8 +42,8 @@ public class CrossSection implements Serializable
 
     /**
      * Constructor with link and fraction.
-     * @param link LinkData&lt;?&gt;; link
-     * @param fraction double; fraction on link
+     * @param link link
+     * @param fraction fraction on link
      * @throws SamplingException if an input is null
      */
     public CrossSection(final LinkData<?> link, final double fraction) throws SamplingException

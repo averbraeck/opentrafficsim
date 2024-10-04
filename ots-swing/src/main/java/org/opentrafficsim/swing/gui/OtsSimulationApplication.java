@@ -25,8 +25,8 @@ public class OtsSimulationApplication<T extends OtsModelInterface> extends OtsSw
     private final OtsAnimationPanel animationPanel;
 
     /**
-     * @param model T; model
-     * @param panel OtsAnimationPanel; animation panel
+     * @param model model
+     * @param panel animation panel
      * @throws OtsDrawingException on animation error
      */
     public OtsSimulationApplication(final T model, final OtsAnimationPanel panel) throws OtsDrawingException
@@ -67,7 +67,7 @@ public class OtsSimulationApplication<T extends OtsModelInterface> extends OtsSw
 
     /**
      * Returns the animation panel.
-     * @return OtsAnimationPanel; animation panel
+     * @return animation panel
      */
     public OtsAnimationPanel getAnimationPanel()
     {

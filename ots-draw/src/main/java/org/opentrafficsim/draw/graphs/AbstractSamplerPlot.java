@@ -41,12 +41,12 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
 
     /**
      * Constructor.
-     * @param caption String; caption
-     * @param updateInterval Duration; regular update interval (simulation time)
-     * @param scheduler PlotScheduler; scheduler.
-     * @param samplerData SamplerData&lt;?&gt;; sampler data
-     * @param path GraphPath&lt;? extends LaneData&gt;; path
-     * @param delay Duration; amount of time that chart runs behind simulation to prevent gaps in the charted data
+     * @param caption caption
+     * @param updateInterval regular update interval (simulation time)
+     * @param scheduler scheduler.
+     * @param samplerData sampler data
+     * @param path path
+     * @param delay amount of time that chart runs behind simulation to prevent gaps in the charted data
      */
     public AbstractSamplerPlot(final String caption, final Duration updateInterval, final PlotScheduler scheduler,
             final SamplerData<?> samplerData, final GraphPath<? extends LaneData<?>> path, final Duration delay)
@@ -63,8 +63,8 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
 
     /**
      * Returns all trajectories for the series, in order of the path.
-     * @param series int; series number
-     * @return List&lt;TrajectoryGroup&gt;; the trajectories
+     * @param series series number
+     * @return the trajectories
      */
     protected List<TrajectoryGroup<?>> getTrajectories(final int series)
     {
@@ -83,7 +83,7 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
 
     /**
      * Returns the path.
-     * @return GraphPath&lt;? extends LaneData&gt;; the path
+     * @return the path
      */
     public final GraphPath<? extends LaneData<?>> getPath()
     {
@@ -99,7 +99,7 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
 
     /**
      * Returns the sampler data.
-     * @return SamplerData&lt;?&gt;; sampler.
+     * @return sampler.
      */
     protected final SamplerData<?> getSamplerData()
     {

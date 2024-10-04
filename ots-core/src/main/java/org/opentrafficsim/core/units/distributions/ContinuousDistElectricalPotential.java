@@ -22,8 +22,8 @@ public class ContinuousDistElectricalPotential
     private static final long serialVersionUID = 20180829L;
 
     /**
-     * @param distribution DistContinuous; distribution
-     * @param unit ElectricalPotentialUnit; units
+     * @param distribution distribution
+     * @param unit units
      */
     public ContinuousDistElectricalPotential(final DistContinuous distribution, final ElectricalPotentialUnit unit)
     {

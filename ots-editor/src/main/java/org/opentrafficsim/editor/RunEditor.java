@@ -31,7 +31,7 @@ public final class RunEditor
 
     /**
      * Runs the editor.
-     * @param args String[]; arguments.
+     * @param args arguments.
      * @throws IOException exception
      * @throws SAXException exception
      * @throws ParserConfigurationException exception

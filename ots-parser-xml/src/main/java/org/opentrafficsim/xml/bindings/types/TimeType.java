@@ -20,7 +20,7 @@ public class TimeType extends ExpressionType<Time>
 
     /**
      * Constructor with value.
-     * @param value Time; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public TimeType(final Time value)
     {
@@ -29,7 +29,7 @@ public class TimeType extends ExpressionType<Time>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public TimeType(final String expression)
     {

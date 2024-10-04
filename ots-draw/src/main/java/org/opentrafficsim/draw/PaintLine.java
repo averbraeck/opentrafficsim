@@ -31,7 +31,7 @@ public final class PaintLine
 
     /**
      * Returns drawable path of the line.
-     * @param line PolyLine2d; array of points
+     * @param line array of points
      * @return Path2D.Float drawable path.
      */
     public static Path2D.Float getPath(final PolyLine2d line)
@@ -41,8 +41,8 @@ public final class PaintLine
 
     /**
      * Returns drawable path of the line.
-     * @param referencePoint Point2d; the reference point
-     * @param line PolyLine2d; array of points
+     * @param referencePoint the reference point
+     * @param line array of points
      * @return Path2D.Float drawable path.
      */
     public static Path2D.Float getPath(final Point2d referencePoint, final PolyLine2d line)
@@ -52,8 +52,8 @@ public final class PaintLine
 
     /**
      * Returns drawable path of the line.
-     * @param referencePoint OrientedPoint2d; the reference point
-     * @param line PolyLine2d; array of points
+     * @param referencePoint the reference point
+     * @param line array of points
      * @return Path2D.Float drawable path.
      */
     public static Path2D.Float getPath(final OrientedPoint2d referencePoint, final PolyLine2d line)
@@ -72,9 +72,9 @@ public final class PaintLine
 
     /**
      * Paint line.
-     * @param graphics Graphics2D; the graphics environment
-     * @param color Color; the color to use
-     * @param width double; the width to use
+     * @param graphics the graphics environment
+     * @param color the color to use
+     * @param width the width to use
      * @param path Path2D.Float; drawable path
      */
     public static void paintLine(final Graphics2D graphics, final Color color, final double width, final Path2D.Float path)

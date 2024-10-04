@@ -22,8 +22,8 @@ public class ContinuousDistPosition extends ContinuousDistDoubleScalar.Abs<Posit
     private static final long serialVersionUID = 20180829L;
 
     /**
-     * @param distribution DistContinuous; distribution
-     * @param unit PositionUnit; units
+     * @param distribution distribution
+     * @param unit units
      */
     public ContinuousDistPosition(final DistContinuous distribution, final PositionUnit unit)
     {

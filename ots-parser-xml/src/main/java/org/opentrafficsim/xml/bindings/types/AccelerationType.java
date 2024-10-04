@@ -20,7 +20,7 @@ public class AccelerationType extends ExpressionType<Acceleration>
 
     /**
      * Constructor with value.
-     * @param value Acceleration; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public AccelerationType(final Acceleration value)
     {
@@ -29,7 +29,7 @@ public class AccelerationType extends ExpressionType<Acceleration>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public AccelerationType(final String expression)
     {

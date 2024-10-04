@@ -21,8 +21,8 @@ public class DiscreteDistVolume extends DiscreteDistDoubleScalar.Rel<Volume, Vol
     private static final long serialVersionUID = 20180829L;
 
     /**
-     * @param distribution DistDiscrete; distribution
-     * @param unit VolumeUnit; units
+     * @param distribution distribution
+     * @param unit units
      */
     public DiscreteDistVolume(final DistDiscrete distribution, final VolumeUnit unit)
     {

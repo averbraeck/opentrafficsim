@@ -20,8 +20,8 @@ public interface DesiredSpeedModel
 
     /**
      * Determines the desired speed.
-     * @param parameters Parameters; parameters
-     * @param speedInfo SpeedLimitInfo; info regarding the desired speed for car-following
+     * @param parameters parameters
+     * @param speedInfo info regarding the desired speed for car-following
      * @throws ParameterException if parameter exception occurs
      * @return desired speed
      */

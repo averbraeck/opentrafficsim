@@ -39,8 +39,8 @@ public class AttributesTableModel extends AbstractTableModel
 
     /**
      * Constructor.
-     * @param node XsdTreeNode; node of which the attributes are displayed.
-     * @param treeTable JTreeTable; tree table.
+     * @param node node of which the attributes are displayed.
+     * @param treeTable tree table.
      */
     public AttributesTableModel(final XsdTreeNode node, final JTreeTable treeTable)
     {
@@ -132,7 +132,7 @@ public class AttributesTableModel extends AbstractTableModel
 
     /**
      * Returns the underlying node for which attributes are shown.
-     * @return XsdTreeNode; underlying node for which attributes are shown.
+     * @return underlying node for which attributes are shown.
      */
     public XsdTreeNode getNode()
     {
@@ -141,7 +141,7 @@ public class AttributesTableModel extends AbstractTableModel
 
     /**
      * Apply the column widths to a newly created table.
-     * @param attributeTable JTable; table.
+     * @param attributeTable table.
      */
     public static void applyColumnWidth(final JTable attributeTable)
     {

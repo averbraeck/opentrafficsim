@@ -44,7 +44,7 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
 
     /**
      * Construct a DirectedLaneChangeModel.
-     * @param perception LanePerception; the perception.
+     * @param perception the perception.
      */
     public AbstractDirectedLaneChangeModel(final LanePerception perception)
     {
@@ -104,10 +104,10 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
     /**
      * Return the weighted acceleration as described by the personality. This incorporates the personality of the driver to the
      * lane change decisions.
-     * @param accelerationStep DualAccelerationStep; the DualAccelerationStep that contains the AccelerationStep that the
-     *            reference GTU will make and the AccelerationStep that the (new) follower GTU will make
-     * @return Acceleration; the acceleration that the personality of the driver uses (in a comparison to a similarly computed
-     *         acceleration in the non-, or different-lane-changed state) to decide if a lane change should be performed
+     * @param accelerationStep the DualAccelerationStep that contains the AccelerationStep that the reference GTU will make and
+     *            the AccelerationStep that the (new) follower GTU will make
+     * @return the acceleration that the personality of the driver uses (in a comparison to a similarly computed acceleration in
+     *         the non-, or different-lane-changed state) to decide if a lane change should be performed
      */
     public abstract Acceleration applyDriverPersonality(DualAccelerationStep accelerationStep);
 

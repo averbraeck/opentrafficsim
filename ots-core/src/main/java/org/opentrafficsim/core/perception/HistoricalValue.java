@@ -26,7 +26,7 @@ public class HistoricalValue<T> extends AbstractHistorical<T, EventValue<T>> imp
 
     /**
      * Constructor.
-     * @param historyManager HistoryManager; history manager
+     * @param historyManager history manager
      */
     public HistoricalValue(final HistoryManager historyManager)
     {
@@ -35,8 +35,8 @@ public class HistoricalValue<T> extends AbstractHistorical<T, EventValue<T>> imp
 
     /**
      * Constructor.
-     * @param historyManager HistoryManager; history manager
-     * @param initialValue T; initial value
+     * @param historyManager history manager
+     * @param initialValue initial value
      */
     public HistoricalValue(final HistoryManager historyManager, final T initialValue)
     {

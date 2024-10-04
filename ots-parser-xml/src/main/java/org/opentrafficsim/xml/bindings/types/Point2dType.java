@@ -15,7 +15,7 @@ public class Point2dType extends ExpressionType<Point2d>
 
     /**
      * Constructor with value.
-     * @param value Point2d; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public Point2dType(final Point2d value)
     {
@@ -24,7 +24,7 @@ public class Point2dType extends ExpressionType<Point2d>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public Point2dType(final String expression)
     {

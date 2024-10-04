@@ -32,8 +32,8 @@ public final class OtsGeometryUtil
 
     /**
      * Print one Point2d on the console.
-     * @param prefix String; text to put before the output
-     * @param point Point2d; the coordinate to print
+     * @param prefix text to put before the output
+     * @param point the coordinate to print
      * @return String
      */
     public static String printCoordinate(final String prefix, final Point2d point)
@@ -43,10 +43,10 @@ public final class OtsGeometryUtil
 
     /**
      * Build a string description from an array of coordinates.
-     * @param prefix String; text to put before the coordinates
-     * @param coordinates Point2d[]; the points to print
-     * @param separator String; prepended to each coordinate
-     * @return String; description of the array of coordinates
+     * @param prefix text to put before the coordinates
+     * @param coordinates the points to print
+     * @param separator prepended to each coordinate
+     * @return description of the array of coordinates
      */
     public static String printCoordinates(final String prefix, final Point2d[] coordinates, final String separator)
     {
@@ -55,10 +55,10 @@ public final class OtsGeometryUtil
 
     /**
      * Build a string description from an OtsLine2d.
-     * @param prefix String; text to put before the coordinates
-     * @param line OtsLine2d; the line for which to print the points
-     * @param separator String; prepended to each coordinate
-     * @return String; description of the OtsLine2d
+     * @param prefix text to put before the coordinates
+     * @param line the line for which to print the points
+     * @param separator prepended to each coordinate
+     * @return description of the OtsLine2d
      */
     public static String printCoordinates(final String prefix, final OtsLine2d line, final String separator)
     {
@@ -67,12 +67,12 @@ public final class OtsGeometryUtil
 
     /**
      * Built a string description from part of an array of coordinates.
-     * @param prefix String; text to put before the output
-     * @param points OtsPoint3d[]; the coordinates to print
-     * @param fromIndex int; index of the first coordinate to print
-     * @param toIndex int; one higher than the index of the last coordinate to print
-     * @param separator String; prepended to each coordinate
-     * @return String; description of the selected part of the array of coordinates
+     * @param prefix text to put before the output
+     * @param points the coordinates to print
+     * @param fromIndex index of the first coordinate to print
+     * @param toIndex one higher than the index of the last coordinate to print
+     * @param separator prepended to each coordinate
+     * @return description of the selected part of the array of coordinates
      */
     public static String printCoordinates(final String prefix, final Point2d[] points, final int fromIndex, final int toIndex,
             final String separator)
@@ -91,10 +91,10 @@ public final class OtsGeometryUtil
 
     /**
      * Returns the number of segments to use for a given maximum spatial error, and radius.
-     * @param maxSpatialError double; maximum spatial error.
-     * @param angle Angle; angle of arc at radius.
-     * @param r double; critical radius (largest radius).
-     * @return int; number of segments to use for a given maximum spatial error, and radius.
+     * @param maxSpatialError maximum spatial error.
+     * @param angle angle of arc at radius.
+     * @param r critical radius (largest radius).
+     * @return number of segments to use for a given maximum spatial error, and radius.
      */
     public static int getNumSegmentsForRadius(final double maxSpatialError, final Angle angle, final double r)
     {
@@ -118,9 +118,9 @@ public final class OtsGeometryUtil
     /**
      * Returns a point on a line through the given point, perpendicular to the given direction, at the offset distance. A
      * negative offset is towards the right hand side relative to the direction.
-     * @param point OrientedPoint2d; point.
-     * @param offset double; offset, negative values are to the right.
-     * @return OrientedPoint2d; offset point.
+     * @param point point.
+     * @param offset offset, negative values are to the right.
+     * @return offset point.
      */
     public static OrientedPoint2d offsetPoint(final OrientedPoint2d point, final double offset)
     {
@@ -132,10 +132,10 @@ public final class OtsGeometryUtil
      * Create a line at linearly varying offset from this line. The offset may change linearly from its initial value at the
      * start of the reference line via a number of intermediate offsets at intermediate positions to its final offset value at
      * the end of the reference line.
-     * @param line PolyLine2d; reference line.
-     * @param relativeFractions double[]; positional fractions for which the offsets have to be generated
-     * @param offsets double[]; offsets at the relative positions (positive value is Left, negative value is Right)
-     * @return PolyLine2d; the PolyLine2d of the line at multi-linearly changing offset of the reference line
+     * @param line reference line.
+     * @param relativeFractions positional fractions for which the offsets have to be generated
+     * @param offsets offsets at the relative positions (positive value is Left, negative value is Right)
+     * @return the PolyLine2d of the line at multi-linearly changing offset of the reference line
      * @throws OtsGeometryException when this method fails to create the offset line
      */
     // TODO: move this to PolyLine2d in djutils?

@@ -20,7 +20,7 @@ public interface GtuColorer extends Colorer<Gtu>
 {
     /**
      * Return a list of legend entries (useful to make a legend of the colors used to render the GTUs).
-     * @return List&lt;LegendEntry&gt;; the list of legend entries; the caller should not (try to) modify this List
+     * @return the list of legend entries; the caller should not (try to) modify this List
      */
     List<LegendEntry> getLegend();
 
@@ -49,9 +49,9 @@ public interface GtuColorer extends Colorer<Gtu>
 
         /**
          * Construct a new LegendEntry.
-         * @param color Color; the color of the new LegendEntry
-         * @param name String; the name of the new LegendEntry (should be terse)
-         * @param description String; description of the new LegendEntry (may use HTML)
+         * @param color the color of the new LegendEntry
+         * @param name the name of the new LegendEntry (should be terse)
+         * @param description description of the new LegendEntry (may use HTML)
          */
         public LegendEntry(final Color color, final String name, final String description)
         {
@@ -61,7 +61,7 @@ public interface GtuColorer extends Colorer<Gtu>
         }
 
         /**
-         * @return Color; the color of this LegendEntry
+         * @return the color of this LegendEntry
          */
         public final Color getColor()
         {

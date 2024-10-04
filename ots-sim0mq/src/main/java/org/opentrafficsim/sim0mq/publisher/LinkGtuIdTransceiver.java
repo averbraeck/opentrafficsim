@@ -28,7 +28,7 @@ public class LinkGtuIdTransceiver extends AbstractTransceiver
 
     /**
      * Construct a GtuIdTransceiver.
-     * @param network Network; the OTS network
+     * @param network the OTS network
      */
     public LinkGtuIdTransceiver(final Network network)
     {

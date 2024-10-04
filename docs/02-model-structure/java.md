@@ -12,16 +12,56 @@ Eclipse is an Integrated Development Environment (IDE), which is a tool that off
 * Checkstyle; checkstyle is a plugin for Eclipse which prescribes a consistent way of formatting code between developers of OTS. Think about line length, bracket placement, etc.
 
 <table border=1 id="figure-2.2" style="text-align: center">
-    <tr><td colspan=6><b>ots-demo</b><br><i>contains demo's and should be the starting point for getting to know OTS</i></td></tr>
-    <tr><td rowspan=2 width=20%><b>ots-parser-osm</b><br><i>open streetmap network import</i></td><td width=20%><b>ots-swing</b><br><i>java based animation</i></td><td colspan=2><b>ots-web</b><br><i>browser based animation</i></td><td colspan=2 width=40%><b>ots-parser-xml</b><br><i>native xml network import</i></td></tr>
-    <tr><td colspan=4><b>ots-draw</b><br><i>swing mimicking fuctionality</i></td><td rowspan=2 width=20%><b>ots-trafficcontrol</b><br><i>event-based traffic control</i></td></tr>
-    <tr><td colspan=5><b>ots-animation</b><br><i>animation functionality independent of implementation</i></td></tr>
-    <tr><td colspan=6><b>ots-road</b><br><i>microscopic simulation of vehicular traffic</i></td></tr>
-    <tr><td colspan=3><b>ots-core</b><br><i>core of traffic simulation including network representation and macroscopic models</i></td><td colspan=3><b>ots-kpi</b><br><i>stand-alone key-performance-indicator module, including trajectory sampling</i></td></tr>
-    <tr><td colspan=6><b>ots-base</b><br><i>contains some generic simulation utilities such as parameter management</i></td></tr>
+    <tr>
+        <td colspan=4><b>ots-demo</b> | <b>ots-editor</b><br><i>demo's and user interface, this should be the starting point for getting to know OTS</i></td>
+    </tr>
+    <tr>
+        <td colspan=2 width=50%><b>ots-parser-xml</b><br><i>native xml import</i></td>
+        <td colspan=2><b>ots-swing</b><br><i>java based animation</i></td>
+    </tr>
+    <tr>
+        <td colspan=2><b>ots-trafficcontrol</b><br><i>event-based traffic control</i></td>
+        <td colspan=2><b>ots-animation</b><br><i>animation functionality independent of implementation</i></td>
+    </tr>
+    <tr>
+        <td colspan=3 width=75%><b>ots-road</b><br><i>microscopic simulation of vehicular traffic</i></td>
+        <td colspan=1><b>ots-draw</b><br><i>swing mimicking fuctionality</i></td>
+    </tr>
+    <tr>
+        <td colspan=2><b>ots-core</b><br><i>core of traffic simulation including network representation and macroscopic models</i></td>
+        <td colspan=2><b>ots-kpi</b><br><i>stand-alone key-performance-indicator module, including trajectory sampling</i></td>
+    </tr>
+    <tr>
+        <td colspan=4><b>ots-base</b><br><i>contains some generic simulation utilities such as parameter management</i></td>
+    </tr>
 </table>
-<i>Figure 2.2: OTS project dependencies. Projects depend on the projects directly below them. Project <b>ots-parser-xml</b> also depends on a separate project <b>ots-xsd</b>, containing xml specifications.</i>
+<i>Figure 2.2: OTS project dependencies. Projects depend on the projects directly below them.</i>
 
+Other dependencies are:
+<ul>
+    <li><b>ots-web</b> <i>web-based visualization</i>
+        <ul>
+            <li><b>ots-parser-xml</b></li>
+            <li><b>ots-animation</b></li>
+        </ul>
+    </li>
+    <li><b>ots-sim0mq-swing</b> <i>databus communication examples</i>
+        <ul>
+            <li><b>ots-sim0mq</b></li>
+            <li><b>ots-swing</b></li>
+        </ul>
+    </li>
+    <li><b>ots-sim0mq-kpi</b> <i>databus communication kpi examples</i>
+        <ul>
+            <li><b>ots-sim0mq</b></li>
+        </ul>
+    </li>
+    <li><b>ots-sim0mq</b> <i>databus communication</i>
+        <ul>
+            <li><b>ots-parser-xml</b></li>
+        </ul>
+    </li>
+</ul>
 
 ## Commit check list
 
@@ -89,7 +129,7 @@ Next, we give an example of _super_ generics, which are often considered vague, 
     }
 ```
 
-Next, we show an example using quite some type arguments, to show that although at first glance this may seem unclear, it makes perfect sense. The example discusses a `PerceptionCollectable`. It is designed to allow iteration over perceived representations of type `H` regarding underlying objects in simulation of type `U`. Furthermore, it can perceive a collected result of type `C`, resulting from considering all objects of type `U` together. Finally, as the collected (accumulated) result is determined, there is an intermediate result of type `I`. As a concrete example, density may be determined by considering leaders of type `U = GTU`, perceived as `H = HeadwayGTU`, resulting in a density `C = LinearDensity`, with an intermediate type `I` which is some class that stores a cumulative GTU count, and the distance over which these GTUs are found. The identity returns an initial value for this (count = 0), while the accumulator increases the result for every next GTU, and the finalizer translates the last intermediate result in a density. We again see the `super` keyword, as for instance we could have a `PerceptionCollectable` of lane-based GTUs with `U = LaneBasedGTU`. From the set of lane-based GTUs we could use an accumulator of GTUs (so a superclass of `LaneBasedGTU`) as for instance only speed is used, which GTUs also have. Without the super keyword, a `PerceptionAccumulator<GTU, ?>` could not be used.
+Next, we show an example using quite some type arguments, to show that although at first glance this may seem unclear, it makes perfect sense. The example discusses a `PerceptionCollectable`. It is designed to allow iteration over perceived representations of type `H` regarding underlying objects in simulation of type `U`. Furthermore, it can perceive a collected result of type `C`, resulting from considering all objects of type `U` together. Finally, as the collected (accumulated) result is determined, there is an intermediate result of type `I`. As a concrete example, density may be determined by considering leaders of type `U = Gtu`, perceived as `H = HeadwayGtu`, resulting in a density `C = LinearDensity`, with an intermediate type `I` which is some class that stores a cumulative GTU count, and the distance over which these GTUs are found. The identity returns an initial value for this (count = 0), while the accumulator increases the result for every next GTU, and the finalizer translates the last intermediate result in a density. We again see the `super` keyword, as for instance we could have a `PerceptionCollectable` of lane-based GTUs with `U = LaneBasedGtu`. From the set of lane-based GTUs we could use an accumulator of GTUs (so a superclass of `LaneBasedGtu`) as for instance only speed is used, which GTUs also have. Without the super keyword, a `PerceptionAccumulator<Gtu, ?>` could not be used.
 
 ```java
     public interface PerceptionCollectable<H extends Headway, U> 
@@ -97,18 +137,17 @@ Next, we show an example using quite some type arguments, to show that although 
     {
         <C, I> C collect(Supplier<I> identity, 
                 PerceptionAccumulator<? super U, I> accumulator, 
-                PerceptionFinalizer<C, I> finalizer);
+                Function<I, C> finalizer);
     }
 ```
 
-At the beginning of this section it was mentioned that good design should hide much of the underlying java generics being used in lower level classes. Though this is true, it doesn’t excuse the developer of low-level functionality from using comprehensive java generics. As an example of how comprehensive java generics can be hidden, consider the class `Length`. Below the definition of its comprehensive super class is shown. Users of `Length` have to define _no type argument_, but lower level classes make sure that correct calculations are made (e.g. adding `Length` and not `Speed`) and only units pertaining to the length quantity are used.
+At the beginning of this section it was mentioned that good design should hide much of the underlying java generics being used in lower level classes. Though this is true, it doesn’t excuse the developer of low-level functionality from using comprehensive java generics. As an example of how comprehensive java generics can be hidden, consider the class `Length`. Below the definition of its 2nd comprehensive super class is shown. Users of `Length` have to define _no type argument_, but lower level classes make sure that correct calculations are made (e.g. adding `Length` and not `Speed`) and only units pertaining to the length quantity are used.
 
 ```java
-    public interface PerceptionCollectable<H extends Headway, U> extends PerceptionIterable<H>
-    {
-        <C, I> C collect(Supplier<I> identity, PerceptionAccumulator<? super U, I> accumulator,
-                PerceptionFinalizer<C, I> finalizer);
-    }
+public abstract class DoubleScalarRelWithAbs<AU extends AbsoluteLinearUnit<AU, RU>,
+        A extends DoubleScalarAbs<AU, A, RU, R>, RU extends Unit<RU>,
+        R extends DoubleScalarRelWithAbs<AU, A, RU, R>> extends DoubleScalarRel<RU, R>
+        implements RelWithAbs<AU, A, RU, R>
 ```
 
 These are just a few examples of how java generics is used in OTS. If done well, it’s only a ‘relative headache’ at one location, while providing high flexibility, reusability and cleaner and more intuitive code elsewhere.

@@ -18,8 +18,8 @@ public abstract class ExtendedDataString<G extends GtuData> extends ExtendedData
 
     /**
      * Constructor.
-     * @param id String; id
-     * @param description String; description
+     * @param id id
+     * @param description description
      */
     public ExtendedDataString(final String id, final String description)
     {

@@ -32,8 +32,8 @@ public class FixedColor implements GtuColorer, Serializable
 
     /**
      * Constructor.
-     * @param color Color; the color
-     * @param name String; color name
+     * @param color the color
+     * @param name color name
      */
     public FixedColor(final Color color, final String name)
     {
@@ -43,7 +43,7 @@ public class FixedColor implements GtuColorer, Serializable
 
     /**
      * Constructor.
-     * @param color Color; the color
+     * @param color the color
      */
     public FixedColor(final Color color)
     {

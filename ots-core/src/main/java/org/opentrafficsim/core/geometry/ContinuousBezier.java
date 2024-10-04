@@ -69,7 +69,7 @@ public class ContinuousBezier
 
     /**
      * Returns the derivative for a Bezier, which is a Bezier of 1 order lower.
-     * @return ContinuousBezier; derivative Bezier.
+     * @return derivative Bezier.
      */
     public ContinuousBezier derivative()
     {
@@ -87,7 +87,7 @@ public class ContinuousBezier
 
     /**
      * Returns the estimated length using the method of numerical approach of Legendre-Gauss, which is quite accurate.
-     * @return double; estimated length.
+     * @return estimated length.
      */
     public double length()
     {
@@ -104,8 +104,8 @@ public class ContinuousBezier
 
     /**
      * Return the point for the given t value.
-     * @param t double; t value, moving from 0 to 1 along the Bezier.
-     * @return Point2d; point of the Bezier at t.
+     * @param t t value, moving from 0 to 1 along the Bezier.
+     * @return point of the Bezier at t.
      */
     public Point2d at(final double t)
     {
@@ -121,7 +121,7 @@ public class ContinuousBezier
 
     /**
      * Returns the curvature at the given t value.
-     * @param t double; t value, moving from 0 to 1 along the Bezier.
+     * @param t t value, moving from 0 to 1 along the Bezier.
      * @return double curvature at the given t value.
      */
     public double curvature(final double t)

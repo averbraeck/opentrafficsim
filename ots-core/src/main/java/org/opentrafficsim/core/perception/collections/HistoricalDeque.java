@@ -20,15 +20,15 @@ public interface HistoricalDeque<E> extends HistoricalQueue<E>, Deque<E>
 
     /**
      * Returns the current deque.
-     * @return Deque; current deque
+     * @return current deque
      */
     @Override
     Deque<E> get();
 
     /**
      * Returns a past deque.
-     * @param time Time; time to obtain the deque at
-     * @return Deque; past deque
+     * @param time time to obtain the deque at
+     * @return past deque
      */
     @Override
     Deque<E> get(Time time);

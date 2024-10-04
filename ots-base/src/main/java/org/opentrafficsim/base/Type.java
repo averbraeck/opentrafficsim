@@ -24,7 +24,7 @@ public interface Type<T extends Type<T>> extends Serializable
      * <code>speedLimitType.isType(SpeedLimitType.CURVATURE)</code>.<br>
      * <br>
      * Note that it is <b>not</b> safe to use <code>speedLimitType == SpeedLimitType.CURVATURE</code>.
-     * @param type T; type instance to compare to
+     * @param type type instance to compare to
      * @return whether this type is the same type as the given type
      */
     default boolean isType(final T type)

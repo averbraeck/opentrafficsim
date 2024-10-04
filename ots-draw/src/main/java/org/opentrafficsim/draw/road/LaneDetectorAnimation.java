@@ -43,9 +43,9 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends TextAni
 
     /**
      * Constructor. This constructor creates no text type. The method {@code ofGenericType()} uses this.
-     * @param laneDetector L; the lane detector to draw.
-     * @param contextualized Contextualized; context provider.
-     * @param color Color; the display color of the detector.
+     * @param laneDetector the lane detector to draw.
+     * @param contextualized context provider.
+     * @param color the display color of the detector.
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
@@ -58,9 +58,9 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends TextAni
 
     /**
      * This method produces a detector animation that toggles generally for all LaneDetectorData and its respective text id.
-     * @param laneDetector L; detector data.
-     * @param contextualized Contextualized; context provider.
-     * @param color Color; color.
+     * @param laneDetector detector data.
+     * @param contextualized context provider.
+     * @param color color.
      * @return animation for generic lane detector type.
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
@@ -79,10 +79,10 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends TextAni
      * This constructor uses a provider for the text animation. This should provide an animation that extends
      * {@code TextAnimation} and implements the right tagging interface to toggle the correct label belonging to L.
      * Alternatively, the toggle can be specified to the class that extends {@code TextAnimation} directly.
-     * @param laneDetector L; the lane detector to draw.
-     * @param contextualized Contextualized; context provider.
-     * @param color Color; the display color of the detector.
-     * @param textSupplier Function&lt;Float, Text&gt;; text supplier.
+     * @param laneDetector the lane detector to draw.
+     * @param contextualized context provider.
+     * @param color the display color of the detector.
+     * @param textSupplier text supplier.
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
@@ -142,13 +142,13 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends TextAni
         private static final long serialVersionUID = 20161211L;
 
         /**
-         * @param source LaneDetectorData; the object for which the text is displayed
-         * @param text Supplier&lt;String&gt;; the text to display
-         * @param dx float; the horizontal movement of the text, in meters
-         * @param dy float; the vertical movement of the text, in meters
-         * @param textPlacement TextAlignment; where to place the text
-         * @param color Color; the color of the text
-         * @param contextualized Contextualized; context provider
+         * @param source the object for which the text is displayed
+         * @param text the text to display
+         * @param dx the horizontal movement of the text, in meters
+         * @param dy the vertical movement of the text, in meters
+         * @param textPlacement where to place the text
+         * @param color the color of the text
+         * @param contextualized context provider
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
@@ -207,9 +207,9 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends TextAni
 
             /**
              * Constructor.
-             * @param laneDetector LoopDetectorData; loop detector data.
-             * @param dy float; vertical spacing.
-             * @param contextualized Contextualized; context provider.
+             * @param laneDetector loop detector data.
+             * @param dy vertical spacing.
+             * @param contextualized context provider.
              * @throws NamingException when animation context cannot be created or retrieved
              * @throws RemoteException when remote context cannot be found
              */
@@ -249,9 +249,9 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends TextAni
 
             /**
              * Constructor.
-             * @param sink SinkData; loop detector data.
-             * @param dy float; vertical spacing.
-             * @param contextualized Contextualized; context provider.
+             * @param sink loop detector data.
+             * @param dy vertical spacing.
+             * @param contextualized context provider.
              * @throws NamingException when animation context cannot be created or retrieved
              * @throws RemoteException when remote context cannot be found
              */

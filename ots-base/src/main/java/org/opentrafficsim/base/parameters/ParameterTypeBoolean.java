@@ -18,8 +18,8 @@ public class ParameterTypeBoolean extends ParameterType<Boolean> implements Seri
 
     /**
      * Construct a new ParameterTypeBoolean without default value.
-     * @param id String; short name of the new ParameterTypeBoolean
-     * @param description String; parameter description or full name of the new ParameterTypeBoolean
+     * @param id short name of the new ParameterTypeBoolean
+     * @param description parameter description or full name of the new ParameterTypeBoolean
      */
     public ParameterTypeBoolean(final String id, final String description)
     {
@@ -28,9 +28,9 @@ public class ParameterTypeBoolean extends ParameterType<Boolean> implements Seri
 
     /**
      * Construct a new ParameterTypeBoolean with default value.
-     * @param id String; short name of the new ParameterTypeBoolean
-     * @param description String; parameter description or full name of the new ParameterTypeBoolean
-     * @param defaultValue boolean; the default value of the new ParameterTypeBoolean
+     * @param id short name of the new ParameterTypeBoolean
+     * @param description parameter description or full name of the new ParameterTypeBoolean
+     * @param defaultValue the default value of the new ParameterTypeBoolean
      */
     public ParameterTypeBoolean(final String id, final String description, final boolean defaultValue)
     {

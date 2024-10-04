@@ -38,9 +38,9 @@ public class TimeStampedObjectTest
 
     /**
      * Verify all fields in a TimeStampedObject.
-     * @param tso TimeStampedObject&lt;String&gt;; the TimeStampedObject
-     * @param string String; the object that should be returned by the getObject method of the TimeStampedObject
-     * @param time Time; the time that should be returned by the getTimeStamp method of the TimeStampedObject
+     * @param tso the TimeStampedObject
+     * @param string the object that should be returned by the getObject method of the TimeStampedObject
+     * @param time the time that should be returned by the getTimeStamp method of the TimeStampedObject
      */
     private void verifyFields(final TimeStampedObject<String> tso, final String string, final Time time)
     {

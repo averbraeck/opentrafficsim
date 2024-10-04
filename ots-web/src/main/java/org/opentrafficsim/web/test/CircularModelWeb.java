@@ -23,7 +23,7 @@ import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialo
 public class CircularModelWeb extends OtsWebServer
 {
     /**
-     * @param title String; the tile for the model
+     * @param title the tile for the model
      * @param simulator DevsRealTimeAnimator.TimeDouble; the simulator
      * @param model the model
      * @throws Exception on jetty error
@@ -37,7 +37,7 @@ public class CircularModelWeb extends OtsWebServer
     }
 
     /**
-     * @param args String[]; arguments, expected to be empty
+     * @param args arguments, expected to be empty
      * @throws Exception on error
      */
     public static void main(final String[] args) throws Exception

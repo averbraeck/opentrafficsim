@@ -25,11 +25,9 @@ public class RoadLayoutOffsets
     /**
      * Calculate the offsets for the RoadLayout. Note that offsets can be different for begin and end, and that they can be
      * specified from the right, left or center of the lane/stripe.
-     * @param elements Iterable&lt;OffsetElement&gt;; offset element
-     * @param cseDataList List&lt;CseData&gt;; the list of offsets and widths for each tag, in order of definition in the
-     *            RoadLayout tag
-     * @param cseObjectMap Map&lt;Object, Integer&gt;; the map of the tags to the index in the list, to be able to find them
-     *            quickly
+     * @param elements offset element
+     * @param cseDataList the list of offsets and widths for each tag, in order of definition in the RoadLayout tag
+     * @param cseObjectMap the map of the tags to the index in the list, to be able to find them quickly
      */
     @SuppressWarnings("checkstyle:methodlength")
     public static void calculateOffsets(final Iterator<OffsetElement> elements, final List<CseData> cseDataList,
@@ -131,12 +129,10 @@ public class RoadLayoutOffsets
      * Calculate the offsets for the RoadLayout. Note that offsets can be different for begin and end, and that they can be
      * specified from the right, left or center of the lane/stripe. The overall Link can have an additional start offset and end
      * offset that has to be added to the already calculated offsets.
-     * @param roadLayoutTag BasicRoadLayout; the tag for the road layout containing all lanes and stripes
-     * @param cseDataList List&lt;CseData&gt;; the list of offsets and widths for each tag, in order of definition in the
-     *            RoadLayout tag
-     * @param cseTagMap Map&lt;Object, Integer&gt;; the map of the tags to the index in the list, to be able to find them
-     *            quickly
-     * @param eval Eval; expression evaluator.
+     * @param roadLayoutTag the tag for the road layout containing all lanes and stripes
+     * @param cseDataList the list of offsets and widths for each tag, in order of definition in the RoadLayout tag
+     * @param cseTagMap the map of the tags to the index in the list, to be able to find them quickly
+     * @param eval expression evaluator.
      */
     @SuppressWarnings("checkstyle:methodlength")
     public static void calculateOffsets(final BasicRoadLayout roadLayoutTag, final List<CseData> cseDataList,
@@ -255,11 +251,11 @@ public class RoadLayoutOffsets
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
-     * @param widthStart Length; start width.
-     * @param widthEnd Length; end width.
-     * @param centerOffsetStart Length; start offset.
-     * @param centerOffsetEnd Length; end offset.
-     * @param object Object; underlying object providing width and offset.
+     * @param widthStart start width.
+     * @param widthEnd end width.
+     * @param centerOffsetStart start offset.
+     * @param centerOffsetEnd end offset.
+     * @param object underlying object providing width and offset.
      */
     public static record OffsetElement(Length widthStart, Length widthEnd, Length centerOffsetStart, Length centerOffsetEnd,
             Object object)
@@ -297,7 +293,7 @@ public class RoadLayoutOffsets
 
         /**
          * Constructor.
-         * @param offsetElement OffsetElement; offset element.
+         * @param offsetElement offset element.
          */
         public CseData(final OffsetElement offsetElement)
         {

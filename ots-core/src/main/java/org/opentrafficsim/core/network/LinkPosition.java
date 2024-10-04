@@ -14,8 +14,8 @@ import org.djunits.value.vdouble.scalar.Length;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param link Link; the link
- * @param fractionalLongitudinalPosition double; fractional position
+ * @param link the link
+ * @param fractionalLongitudinalPosition fractional position
  */
 public record LinkPosition(Link link, double fractionalLongitudinalPosition) implements Serializable
 {
@@ -24,8 +24,8 @@ public record LinkPosition(Link link, double fractionalLongitudinalPosition) imp
 
     /**
      * Create a link combined with a position on that link.
-     * @param link Link; the link
-     * @param position Length; position
+     * @param link the link
+     * @param position position
      */
     public LinkPosition(final Link link, final Length position)
     {
@@ -34,7 +34,7 @@ public record LinkPosition(Link link, double fractionalLongitudinalPosition) imp
 
     /**
      * Return the length of the link.
-     * @return Length; the length of the link
+     * @return the length of the link
      */
     public Length getLinkLength()
     {

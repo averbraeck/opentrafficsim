@@ -15,7 +15,7 @@ public class LaneKeepingPolicyType extends ExpressionType<LaneKeepingPolicy>
 
     /**
      * Constructor with value.
-     * @param value LaneKeepingPolicy; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public LaneKeepingPolicyType(final LaneKeepingPolicy value)
     {
@@ -24,7 +24,7 @@ public class LaneKeepingPolicyType extends ExpressionType<LaneKeepingPolicy>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public LaneKeepingPolicyType(final String expression)
     {

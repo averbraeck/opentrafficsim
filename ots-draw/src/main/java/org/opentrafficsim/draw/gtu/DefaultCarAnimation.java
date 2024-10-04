@@ -68,8 +68,8 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
 
     /**
      * Construct the DefaultCarAnimation for a LaneBasedIndividualCar.
-     * @param gtu GtuData; the Car to draw
-     * @param contextualized Contextualized; context provider
+     * @param gtu the Car to draw
+     * @param contextualized context provider
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
@@ -226,13 +226,13 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
         private boolean isTextDestroyed = false;
 
         /**
-         * @param source GtuData; the object for which the text is displayed
-         * @param text Supplier&lt;String&gt;; the text to display
-         * @param dx float; the horizontal movement of the text, in meters
-         * @param dy float; the vertical movement of the text, in meters
-         * @param textAlignment TextAlignment; where to place the text
-         * @param color Color; the color of the text
-         * @param contextualized Contextualized; context provider
+         * @param source the object for which the text is displayed
+         * @param text the text to display
+         * @param dx the horizontal movement of the text, in meters
+         * @param dy the vertical movement of the text, in meters
+         * @param textAlignment where to place the text
+         * @param color the color of the text
+         * @param contextualized context provider
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
@@ -244,13 +244,13 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
         }
 
         /**
-         * @param source GtuData; the object for which the text is displayed
-         * @param text Supplier&lt;String&gt;; the text to display
-         * @param dx float; the horizontal movement of the text, in meters
-         * @param dy float; the vertical movement of the text, in meters
-         * @param textAlignment TextAlignment; where to place the text
-         * @param color Color; the color of the text
-         * @param contextualized Contextualized; context provider
+         * @param source the object for which the text is displayed
+         * @param text the text to display
+         * @param dx the horizontal movement of the text, in meters
+         * @param dy the vertical movement of the text, in meters
+         * @param textAlignment where to place the text
+         * @param color the color of the text
+         * @param contextualized context provider
          * @param background TextAnimation.ContrastToBackground; connection to retrieve the current background color
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
@@ -287,49 +287,49 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
     {
         /**
          * Returns the GTU color.
-         * @return Color; GTU color.
+         * @return GTU color.
          */
         Color getColor();
 
         /**
          * Returns the length.
-         * @return Length; length.
+         * @return length.
          */
         Length getLength();
 
         /**
          * Returns the width.
-         * @return Length; width.
+         * @return width.
          */
         Length getWidth();
 
         /**
          * Returns the distance towards the front.
-         * @return Length; distance towards the front.
+         * @return distance towards the front.
          */
         Length getFront();
 
         /**
          * Returns the distance towards the rear.
-         * @return Length; distance towards the rear.
+         * @return distance towards the rear.
          */
         Length getRear();
 
         /**
          * Returns whether the left indicator is on.
-         * @return boolean; whether the left indicator is on.
+         * @return whether the left indicator is on.
          */
         boolean leftIndicatorOn();
 
         /**
          * Returns whether the right indicator is on.
-         * @return boolean; whether the right indicator is on.
+         * @return whether the right indicator is on.
          */
         boolean rightIndicatorOn();
 
         /**
          * Returns the shape of a marker to show when zoomed out.
-         * @return RectangularShape; shape of a marker to show when zoomed out.
+         * @return shape of a marker to show when zoomed out.
          */
         default RectangularShape getMarker()
         {
@@ -338,7 +338,7 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
 
         /**
          * Returns whether the braking lights are on.
-         * @return boolean; whether the braking lights are on.
+         * @return whether the braking lights are on.
          */
         boolean isBrakingLightsOn();
 

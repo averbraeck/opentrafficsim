@@ -41,7 +41,7 @@ public class TJunctionModel extends AbstractOtsModel
     private RoadNetwork network;
 
     /**
-     * @param simulator OtsSimulatorInterface; the simulator for this model
+     * @param simulator the simulator for this model
      */
     public TJunctionModel(final OtsSimulatorInterface simulator)
     {
@@ -66,8 +66,7 @@ public class TJunctionModel extends AbstractOtsModel
 
             // add trafficlight after
             Lane lane = ((CrossSectionLink) this.network.getLink("ECE")).getLanes().get(0);
-            TrafficLight trafficLight =
-                    new TrafficLight("light", lane, new Length(50.0, LengthUnit.SI), this.simulator);
+            TrafficLight trafficLight = new TrafficLight("light", lane, new Length(50.0, LengthUnit.SI), this.simulator);
             trafficLight.setTrafficLightColor(TrafficLightColor.RED);
             changePhase(trafficLight);
 
@@ -80,7 +79,7 @@ public class TJunctionModel extends AbstractOtsModel
 
     /**
      * Changes color of traffic light.
-     * @param trafficLight SimpleTrafficLight; traffic light
+     * @param trafficLight traffic light
      * @throws SimRuntimeException scheduling error
      */
     private void changePhase(final TrafficLight trafficLight) throws SimRuntimeException

@@ -73,8 +73,8 @@ public class OdOptions
 
     /**
      * Set option value.
-     * @param option Option&lt;K&gt;; option
-     * @param value K; option value
+     * @param option option
+     * @param value option value
      * @param <K> value type
      * @return this option set
      */
@@ -86,9 +86,9 @@ public class OdOptions
 
     /**
      * Set option value for lane.
-     * @param lane Lane; lane
-     * @param option Option&lt;K&gt;; option
-     * @param value K; option value
+     * @param lane lane
+     * @param option option
+     * @param value option value
      * @param <K> value type
      * @return this option set
      */
@@ -100,9 +100,9 @@ public class OdOptions
 
     /**
      * Set option value for node.
-     * @param node Node; node
-     * @param option Option&lt;K&gt;; option
-     * @param value K; option value
+     * @param node node
+     * @param option option
+     * @param value option value
      * @param <K> value type
      * @return this option set
      */
@@ -114,9 +114,9 @@ public class OdOptions
 
     /**
      * Set option value for link type.
-     * @param linkType LinkType; link type
-     * @param option Option&lt;K&gt;; option
-     * @param value K; option value
+     * @param linkType link type
+     * @param option option
+     * @param value option value
      * @param <K> value type
      * @return this option set
      */
@@ -135,12 +135,12 @@ public class OdOptions
      * <li>None (global option value)</li>
      * <li>Default option value</li>
      * </ul>
-     * @param option Option&lt;K&gt;; option
-     * @param lane Lane; lane to obtain specific option value, may be null
-     * @param node Node; node to obtain specific option value, may be null
-     * @param linkType LinkType; link type to obtain specific option value, may be null
+     * @param option option
+     * @param lane lane to obtain specific option value, may be null
+     * @param node node to obtain specific option value, may be null
+     * @param linkType link type to obtain specific option value, may be null
      * @param <K> value type
-     * @return K; option value
+     * @return option value
      */
     public final <K> K get(final Option<K> option, final Lane lane, final Node node, final LinkType linkType)
     {
@@ -191,8 +191,8 @@ public class OdOptions
 
         /**
          * Constructor.
-         * @param id String; id
-         * @param defaultValue K; default value
+         * @param id id
+         * @param defaultValue default value
          */
         Option(final String id, final K defaultValue)
         {
@@ -287,9 +287,9 @@ public class OdOptions
 
         /**
          * Set value in option set.
-         * @param category C; category
-         * @param option Option&lt;K&gt;; option
-         * @param value K; value
+         * @param category category
+         * @param option option
+         * @param value value
          * @param <K> option value type
          */
         public <K> void set(final C category, final Option<K> option, final K value)
@@ -305,8 +305,8 @@ public class OdOptions
 
         /**
          * Returns the option value for the category.
-         * @param category C; category
-         * @param option Option&lt;K&gt;; option
+         * @param category category
+         * @param option option
          * @return option value for the category
          * @param <K> value type
          */

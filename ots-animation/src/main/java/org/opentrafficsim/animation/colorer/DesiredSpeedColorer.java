@@ -37,8 +37,8 @@ public class DesiredSpeedColorer implements GtuColorer, Serializable
 
     /**
      * Construct a new SpeedGtuColorer.
-     * @param minimumSpeed Speed; the speed at (and below) which the returned color will be red
-     * @param maximumSpeed Speed; the speed at (and above) which the returned color will be green
+     * @param minimumSpeed the speed at (and below) which the returned color will be red
+     * @param maximumSpeed the speed at (and above) which the returned color will be green
      */
     public DesiredSpeedColorer(final Speed minimumSpeed, final Speed maximumSpeed)
     {

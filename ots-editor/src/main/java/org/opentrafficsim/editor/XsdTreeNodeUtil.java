@@ -43,8 +43,8 @@ public final class XsdTreeNodeUtil
 
     /**
      * Add xsd all validator to the given node.
-     * @param shared XsdTreeNode; shared xsd:all node.
-     * @param node XsdTreeNode; xsd:all node, or one of its children.
+     * @param shared shared xsd:all node.
+     * @param node xsd:all node, or one of its children.
      */
     public static void addXsdAllValidator(final XsdTreeNode shared, final XsdTreeNode node)
     {
@@ -56,9 +56,9 @@ public final class XsdTreeNodeUtil
 
     /**
      * Parses the minOcccurs or maxOccurs value from given node. If it is not supplied, the default of 1 is given.
-     * @param node Node; node.
-     * @param attribute String; "minOccurs" or "maxOccurs".
-     * @return int; value of occurs, -1 represents "unbounded".
+     * @param node node.
+     * @param attribute "minOccurs" or "maxOccurs".
+     * @return value of occurs, -1 represents "unbounded".
      */
     static int getOccurs(final Node node, final String attribute)
     {
@@ -76,15 +76,15 @@ public final class XsdTreeNodeUtil
 
     /**
      * Main expansion algorithm. Loops all child XSD nodes, and selects those that define next elements.
-     * @param node Node; node to get the children of.
-     * @param parentNode XsdTreeNode; parent node for the created children.
-     * @param children List&lt;XsdTreeNode&gt;; list to add the children to. This may be different from
-     *            {@code parentNode.children} due to layered choice structures.
-     * @param hiddenNodes ImmutableList&lt;Node&gt;; nodes between the XSD node of the parent, and this tree node's XSD node.
-     * @param schema XsdSchema; schema to get types and referred elements from.
-     * @param flattenSequence boolean; when true, treats an xsd:sequence child as an extension of the node. In the context of a
-     *            choice this should remain separated.
-     * @param skip int; child index to skip, this is used when copying choice options from an option that is already created.
+     * @param node node to get the children of.
+     * @param parentNode parent node for the created children.
+     * @param children list to add the children to. This may be different from {@code parentNode.children} due to layered choice
+     *            structures.
+     * @param hiddenNodes nodes between the XSD node of the parent, and this tree node's XSD node.
+     * @param schema schema to get types and referred elements from.
+     * @param flattenSequence when true, treats an xsd:sequence child as an extension of the node. In the context of a choice
+     *            this should remain separated.
+     * @param skip child index to skip, this is used when copying choice options from an option that is already created.
      */
     static void addChildren(final Node node, final XsdTreeNode parentNode, final List<XsdTreeNode> children,
             final ImmutableList<Node> hiddenNodes, final Schema schema, final boolean flattenSequence, final int skip)
@@ -199,9 +199,9 @@ public final class XsdTreeNodeUtil
 
     /**
      * Returns a copy of the input list, with the extra node appended at the end.
-     * @param hiddenNodes ImmutableList&lt;Node&gt;; hidden nodes list.
-     * @param node Node; node to append.
-     * @return ImmutableList&lt;Node&gt;; copy of the input list, with the extra node appended at the end.
+     * @param hiddenNodes hidden nodes list.
+     * @param node node to append.
+     * @return copy of the input list, with the extra node appended at the end.
      */
     static ImmutableList<Node> append(final ImmutableList<Node> hiddenNodes, final Node node)
     {
@@ -213,8 +213,8 @@ public final class XsdTreeNodeUtil
 
     /**
      * Returns a list of options derived from a list of restrictions (xsd:restriction).
-     * @param restrictions List&lt;Node&gt;; list of restrictions.
-     * @return List&lt;String&gt;; list of options.
+     * @param restrictions list of restrictions.
+     * @return list of options.
      */
     static List<String> getOptionsFromRestrictions(final List<Node> restrictions)
     {
@@ -232,8 +232,8 @@ public final class XsdTreeNodeUtil
 
     /**
      * Recursively throws creation events for all current nodes in the tree. This method is for {@code XsdTreeNodeRoot}.
-     * @param node XsdTreeNode; node.
-     * @param listener EventListener; listener.
+     * @param node node.
+     * @param listener listener.
      * @throws RemoteException if event cannot be fired.
      */
     protected static void fireCreatedEventOnExistingNodes(final XsdTreeNode node, final EventListener listener)
@@ -257,9 +257,9 @@ public final class XsdTreeNodeUtil
 
     /**
      * Takes the minimum of both indices, while ignoring negative values (indicating an element was not found for deletion).
-     * @param insertIndex int; previously determined insertion index; may be updated to lower value.
-     * @param removeIndex int; index of element that is removed.
-     * @return int; minimum of both indices, while ignoring negative values.
+     * @param insertIndex previously determined insertion index; may be updated to lower value.
+     * @param removeIndex index of element that is removed.
+     * @return minimum of both indices, while ignoring negative values.
      */
     static int resolveInsertion(final int insertIndex, final int removeIndex)
     {
@@ -273,11 +273,10 @@ public final class XsdTreeNodeUtil
      * containing multiple xsd:extension and their referred base types. An xsd:sequence is also common. Adding children in the
      * order as they appear per {@code Node}, and in the order the {@code Node}'s are given, results in an overall order
      * suitable for XML.
-     * @param node Node; node to expand further.
-     * @param hiddenNodes ImmutableList&lt;Node&gt;; nodes between the XSD node of the parent, and this tree node's XSD node.
-     * @param schema XsdSchema; schema to retrieve types.
-     * @return Map&lt;Node, ImmutableList&lt;Node&gt;&gt;; map of nodes containing relevant children at the level of the input
-     *         node, and their appropriate hidden nodes.
+     * @param node node to expand further.
+     * @param hiddenNodes nodes between the XSD node of the parent, and this tree node's XSD node.
+     * @param schema schema to retrieve types.
+     * @return map of nodes containing relevant children at the level of the input node, and their appropriate hidden nodes.
      */
     static Map<Node, ImmutableList<Node>> getRelevantNodesWithChildren(final Node node, final ImmutableList<Node> hiddenNodes,
             final Schema schema)
@@ -320,9 +319,9 @@ public final class XsdTreeNodeUtil
     /**
      * Returns whether nodes are of the same type. This regards the referring XSD node if it exists, otherwise it regards the
      * regular XSD node.
-     * @param node1 XsdTreeNode; node 1.
-     * @param node2 XsdTreeNode; node 1.
-     * @return boolean; whether nodes are of the same type.
+     * @param node1 node 1.
+     * @param node2 node 1.
+     * @return whether nodes are of the same type.
      */
     static boolean haveSameType(final XsdTreeNode node1, final XsdTreeNode node2)
     {
@@ -333,10 +332,10 @@ public final class XsdTreeNodeUtil
     /**
      * Returns the element referred to by ref={ref} in an xsd:element. Will return {@code XiIncludeNode.XI_INCLUDE} for
      * xi:include.
-     * @param node Node; node, must have ref={ref} attribute.
-     * @param ref String; value of ref={ref}.
-     * @param schema XsdSchema; schema to take element from.
-     * @return Node; element referred to by ref={ref} in an xsd:element.
+     * @param node node, must have ref={ref} attribute.
+     * @param ref value of ref={ref}.
+     * @param schema schema to take element from.
+     * @return element referred to by ref={ref} in an xsd:element.
      */
     static Node ref(final Node node, final String ref, final Schema schema)
     {
@@ -352,10 +351,10 @@ public final class XsdTreeNodeUtil
     /**
      * Returns the element referred to by type={type} in an xsd:element. Ignores all types starting with "xsd:" as these are
      * standard types to which user input can be validated directly.
-     * @param node Node; node, must have type={type} attribute.
-     * @param type String; value of type={type}.
-     * @param schema XsdSchema; schema to take type from.
-     * @return Node; element referred to by type={type} in an xsd:element.
+     * @param node node, must have type={type} attribute.
+     * @param type value of type={type}.
+     * @param schema schema to take type from.
+     * @return element referred to by type={type} in an xsd:element.
      */
     static Node type(final Node node, final String type, final Schema schema)
     {
@@ -370,8 +369,8 @@ public final class XsdTreeNodeUtil
 
     /**
      * Adds a thin space before each capital character in a {@code String}, except the first.
-     * @param name String; name of node.
-     * @return String; input string but with a thin space before each capital character, except the first.
+     * @param name name of node.
+     * @return input string but with a thin space before each capital character, except the first.
      */
     static String separatedName(final String name)
     {
@@ -392,8 +391,8 @@ public final class XsdTreeNodeUtil
 
     /**
      * Returns whether the two values are equal, where {@code null} is consider equal to an empty string.
-     * @param value1 String; value 1.
-     * @param value2 String; value 2.
+     * @param value1 value 1.
+     * @param value2 value 2.
      * @return whether the two values are equal, where {@code null} is consider equal to an empty string.
      */
     public static boolean valuesAreEqual(final String value1, final String value2)

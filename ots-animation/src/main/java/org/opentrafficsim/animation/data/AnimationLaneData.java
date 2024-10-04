@@ -17,7 +17,7 @@ public class AnimationLaneData extends AnimationCrossSectionElementData<Lane> im
 
     /**
      * Constructor.
-     * @param lane Lane; lane.
+     * @param lane lane.
      */
     public AnimationLaneData(final Lane lane)
     {

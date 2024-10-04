@@ -43,7 +43,7 @@ public class ColorControlPanel extends JPanel implements ActionListener
     /**
      * Add a ColorControlPanel to an AnimationPanel. Initially the ColorControlPanel will have no items. Items are added with
      * the <code>addItem</code> method. The first item added automatically becomes the active one.
-     * @param gtuColorer GtuColorer; the switchable GTU colorer that will be controlled by this ColorControlPanel
+     * @param gtuColorer the switchable GTU colorer that will be controlled by this ColorControlPanel
      */
     public ColorControlPanel(final GtuColorer gtuColorer)
     {
@@ -75,7 +75,7 @@ public class ColorControlPanel extends JPanel implements ActionListener
 
     /**
      * Add one item to this ColorControlPanel. The <cite>getName</cite> method of the
-     * @param colorer GtuColorer; the GtuColorer that will be added
+     * @param colorer the GtuColorer that will be added
      */
     public final void addItem(final GtuColorer colorer)
     {

@@ -59,11 +59,11 @@ public abstract class CrossSectionElement extends LocalEventProducer
 
     /**
      * Constructor.
-     * @param link CrossSectionLink; link.
-     * @param id String; id.
-     * @param centerLine PolyLine2d; center line.
-     * @param contour Polygon2d; contour shape.
-     * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
+     * @param link link.
+     * @param id id.
+     * @param centerLine center line.
+     * @param contour contour shape.
+     * @param crossSectionSlices cross-section slices.
      * @throws NetworkException when no cross-section slice is defined.
      */
     public CrossSectionElement(final CrossSectionLink link, final String id, final OtsLine2d centerLine,
@@ -92,7 +92,7 @@ public abstract class CrossSectionElement extends LocalEventProducer
 
     /**
      * Returns the link of this cross-section element.
-     * @return CrossSectionLink; link of this cross-section element.
+     * @return link of this cross-section element.
      */
     public final CrossSectionLink getLink()
     {
@@ -109,8 +109,8 @@ public abstract class CrossSectionElement extends LocalEventProducer
 
     /**
      * Retrieve the lateral offset from the Link design line at the specified longitudinal position.
-     * @param fractionalPosition double; fractional longitudinal position on this Lane
-     * @return Length; the lateralCenterPosition at the specified longitudinal position
+     * @param fractionalPosition fractional longitudinal position on this Lane
+     * @return the lateralCenterPosition at the specified longitudinal position
      */
     public final Length getLateralCenterPosition(final double fractionalPosition)
     {
@@ -119,8 +119,8 @@ public abstract class CrossSectionElement extends LocalEventProducer
 
     /**
      * Retrieve the lateral offset from the Link design line at the specified longitudinal position.
-     * @param longitudinalPosition Length; the longitudinal position on this Lane
-     * @return Length; the lateralCenterPosition at the specified longitudinal position
+     * @param longitudinalPosition the longitudinal position on this Lane
+     * @return the lateralCenterPosition at the specified longitudinal position
      */
     public final Length getLateralCenterPosition(final Length longitudinalPosition)
     {
@@ -129,8 +129,8 @@ public abstract class CrossSectionElement extends LocalEventProducer
 
     /**
      * Return the width of this CrossSectionElement at a specified longitudinal position.
-     * @param longitudinalPosition Length; the longitudinal position
-     * @return Length; the width of this CrossSectionElement at the specified longitudinal position.
+     * @param longitudinalPosition the longitudinal position
+     * @return the width of this CrossSectionElement at the specified longitudinal position.
      */
     public final Length getWidth(final Length longitudinalPosition)
     {
@@ -139,8 +139,8 @@ public abstract class CrossSectionElement extends LocalEventProducer
 
     /**
      * Return the width of this CrossSectionElement at a specified fractional longitudinal position.
-     * @param fractionalPosition double; the fractional longitudinal position
-     * @return Length; the width of this CrossSectionElement at the specified fractional longitudinal position.
+     * @param fractionalPosition the fractional longitudinal position
+     * @return the width of this CrossSectionElement at the specified fractional longitudinal position.
      */
     public final Length getWidth(final double fractionalPosition)
     {
@@ -149,7 +149,7 @@ public abstract class CrossSectionElement extends LocalEventProducer
 
     /**
      * Return the length of this CrossSectionElement as measured along the design line (which equals the center line).
-     * @return Length; the length of this CrossSectionElement
+     * @return the length of this CrossSectionElement
      */
     public final Length getLength()
     {
@@ -158,7 +158,7 @@ public abstract class CrossSectionElement extends LocalEventProducer
 
     /**
      * Retrieve the offset from the design line at the begin of the parent link.
-     * @return Length; the offset of this CrossSectionElement at the begin of the parent link
+     * @return the offset of this CrossSectionElement at the begin of the parent link
      */
     public final Length getOffsetAtBegin()
     {
@@ -167,7 +167,7 @@ public abstract class CrossSectionElement extends LocalEventProducer
 
     /**
      * Retrieve the offset from the design line at the end of the parent link.
-     * @return Length; the offset of this CrossSectionElement at the end of the parent link
+     * @return the offset of this CrossSectionElement at the end of the parent link
      */
     public final Length getOffsetAtEnd()
     {
@@ -176,7 +176,7 @@ public abstract class CrossSectionElement extends LocalEventProducer
 
     /**
      * Retrieve the width at the begin of the parent link.
-     * @return Length; the width of this CrossSectionElement at the begin of the parent link
+     * @return the width of this CrossSectionElement at the begin of the parent link
      */
     public final Length getBeginWidth()
     {
@@ -185,7 +185,7 @@ public abstract class CrossSectionElement extends LocalEventProducer
 
     /**
      * Retrieve the width at the end of the parent link.
-     * @return Length; the width of this CrossSectionElement at the end of the parent link
+     * @return the width of this CrossSectionElement at the end of the parent link
      */
     public final Length getEndWidth()
     {
@@ -194,7 +194,7 @@ public abstract class CrossSectionElement extends LocalEventProducer
 
     /**
      * Retrieve the Z offset (used to determine what covers what when drawing).
-     * @return double; the Z-offset for drawing (what's on top, what's underneath).
+     * @return the Z-offset for drawing (what's on top, what's underneath).
      */
     @Override
     public double getZ()
@@ -205,7 +205,7 @@ public abstract class CrossSectionElement extends LocalEventProducer
 
     /**
      * Retrieve the center line of this CrossSectionElement.
-     * @return OtsLine2d; the center line of this CrossSectionElement
+     * @return the center line of this CrossSectionElement
      */
     public final OtsLine2d getCenterLine()
     {
@@ -214,7 +214,7 @@ public abstract class CrossSectionElement extends LocalEventProducer
 
     /**
      * Retrieve the contour of this CrossSectionElement.
-     * @return Polygon2d; the contour of this CrossSectionElement
+     * @return the contour of this CrossSectionElement
      */
     public final Polygon2d getContour()
     {
@@ -223,7 +223,7 @@ public abstract class CrossSectionElement extends LocalEventProducer
 
     /**
      * Retrieve the id of this CrossSectionElement.
-     * @return String; the id of this CrossSectionElement
+     * @return the id of this CrossSectionElement
      */
     @Override
     public final String getId()
@@ -233,7 +233,7 @@ public abstract class CrossSectionElement extends LocalEventProducer
 
     /**
      * Retrieve the id of this CrossSectionElement.
-     * @return String; the id of this CrossSectionElement
+     * @return the id of this CrossSectionElement
      */
     public final String getFullId()
     {
@@ -243,8 +243,8 @@ public abstract class CrossSectionElement extends LocalEventProducer
     /**
      * Return the lateral offset from the design line of the parent Link of the Left or Right boundary of this
      * CrossSectionElement at the specified fractional longitudinal position.
-     * @param lateralDirection LateralDirectionality; LEFT, or RIGHT
-     * @param fractionalLongitudinalPosition double; ranges from 0.0 (begin of parentLink) to 1.0 (end of parentLink)
+     * @param lateralDirection LEFT, or RIGHT
+     * @param fractionalLongitudinalPosition ranges from 0.0 (begin of parentLink) to 1.0 (end of parentLink)
      * @return Length
      */
     public final Length getLateralBoundaryPosition(final LateralDirectionality lateralDirection,
@@ -256,8 +256,8 @@ public abstract class CrossSectionElement extends LocalEventProducer
     /**
      * Return the lateral offset from the design line of the parent Link of the Left or Right boundary of this
      * CrossSectionElement at the specified longitudinal position.
-     * @param lateralDirection LateralDirectionality; LEFT, or RIGHT
-     * @param longitudinalPosition Length; the position along the length of this CrossSectionElement
+     * @param lateralDirection LEFT, or RIGHT
+     * @param longitudinalPosition the position along the length of this CrossSectionElement
      * @return Length
      */
     public final Length getLateralBoundaryPosition(final LateralDirectionality lateralDirection,
@@ -284,8 +284,8 @@ public abstract class CrossSectionElement extends LocalEventProducer
 
     /**
      * Returns the elevation at the given position.
-     * @param position Length; position.
-     * @return Length; elevation at the given position.
+     * @param position position.
+     * @return elevation at the given position.
      */
     public Length getElevation(final Length position)
     {
@@ -294,8 +294,8 @@ public abstract class CrossSectionElement extends LocalEventProducer
 
     /**
      * Returns the elevation at the given fractional position.
-     * @param fractionalPosition double; fractional position.
-     * @return Length; elevation at the given fractional position.
+     * @param fractionalPosition fractional position.
+     * @return elevation at the given fractional position.
      */
     public Length getElevation(final double fractionalPosition)
     {
@@ -304,8 +304,8 @@ public abstract class CrossSectionElement extends LocalEventProducer
 
     /**
      * Returns the grade at the given position, given as delta_h / delta_f, where f is fractional position.
-     * @param position Length; position.
-     * @return double; grade at the given position.
+     * @param position position.
+     * @return grade at the given position.
      */
     public double getGrade(final Length position)
     {
@@ -314,8 +314,8 @@ public abstract class CrossSectionElement extends LocalEventProducer
 
     /**
      * Returns the grade at the given fractional position, given as delta_h / delta_f, where f is fractional position.
-     * @param fractionalPosition double; fractional position.
-     * @return double; grade at the given fractional position.
+     * @param fractionalPosition fractional position.
+     * @return grade at the given fractional position.
      */
     public double getGrade(final double fractionalPosition)
     {

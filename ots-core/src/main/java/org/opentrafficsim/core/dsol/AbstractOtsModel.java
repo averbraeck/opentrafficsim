@@ -28,7 +28,7 @@ public abstract class AbstractOtsModel extends AbstractDsolModel<Duration, OtsSi
 
     /**
      * Instantiate an abstract OtsModel. The name and description will be set as the class name.
-     * @param simulator OtsSimulatorInterface; the simulator to use
+     * @param simulator the simulator to use
      */
     public AbstractOtsModel(final OtsSimulatorInterface simulator)
     {
@@ -39,9 +39,9 @@ public abstract class AbstractOtsModel extends AbstractDsolModel<Duration, OtsSi
 
     /**
      * Instantiate an abstract OtsModel.
-     * @param simulator OtsSimulatorInterface; the simulator to use
-     * @param shortName String; a very short description of the simulation
-     * @param description String; a description of the simulation (HTML formatted)
+     * @param simulator the simulator to use
+     * @param shortName a very short description of the simulation
+     * @param description a description of the simulation (HTML formatted)
      */
     public AbstractOtsModel(final OtsSimulatorInterface simulator, final String shortName, final String description)
     {
@@ -50,10 +50,10 @@ public abstract class AbstractOtsModel extends AbstractDsolModel<Duration, OtsSi
 
     /**
      * Instantiate an abstract OtsModel with an initial set of streams (e.g., with seed management).
-     * @param simulator OtsSimulatorInterface; the simulator to use
-     * @param shortName String; a very short description of the simulation
-     * @param description String; a description of the simulation (HTML formatted)
-     * @param streamInformation StreamInformation; the initial set of streams (e.g., with seed management)
+     * @param simulator the simulator to use
+     * @param shortName a very short description of the simulation
+     * @param description a description of the simulation (HTML formatted)
+     * @param streamInformation the initial set of streams (e.g., with seed management)
      */
     public AbstractOtsModel(final OtsSimulatorInterface simulator, final String shortName, final String description,
             final StreamInformation streamInformation)
@@ -67,7 +67,7 @@ public abstract class AbstractOtsModel extends AbstractDsolModel<Duration, OtsSi
 
     /**
      * Create the default initial streams.
-     * @return StreamInformation; the default initial streams
+     * @return the default initial streams
      */
     public static StreamInformation setInitialStreams()
     {
@@ -85,7 +85,7 @@ public abstract class AbstractOtsModel extends AbstractDsolModel<Duration, OtsSi
     }
 
     /**
-     * @param shortName String; set shortName
+     * @param shortName set shortName
      */
     public final void setShortName(final String shortName)
     {
@@ -100,7 +100,7 @@ public abstract class AbstractOtsModel extends AbstractDsolModel<Duration, OtsSi
     }
 
     /**
-     * @param description String; set description
+     * @param description set description
      */
     public final void setDescription(final String description)
     {

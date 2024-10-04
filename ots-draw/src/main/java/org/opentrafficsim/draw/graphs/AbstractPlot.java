@@ -86,10 +86,10 @@ public abstract class AbstractPlot implements Identifiable, Dataset
 
     /**
      * Constructor.
-     * @param scheduler PlotScheduler; scheduler.
-     * @param caption String; caption
-     * @param updateInterval Duration; regular update interval (simulation time)
-     * @param delay Duration; amount of time that chart runs behind simulation to prevent gaps in the charted data
+     * @param scheduler scheduler.
+     * @param caption caption
+     * @param updateInterval regular update interval (simulation time)
+     * @param delay amount of time that chart runs behind simulation to prevent gaps in the charted data
      */
     public AbstractPlot(final PlotScheduler scheduler, final String caption, final Duration updateInterval,
             final Duration delay)
@@ -104,7 +104,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
 
     /**
      * Sets the chart and adds menus and listeners.
-     * @param chart JFreeChart; chart
+     * @param chart chart
      */
     @SuppressWarnings("methodlength")
     protected void setChart(final JFreeChart chart)
@@ -127,10 +127,10 @@ public abstract class AbstractPlot implements Identifiable, Dataset
 
     /**
      * Returns the chart as a byte array representing a png image.
-     * @param width int; width
-     * @param height int; height
-     * @param fontSize double; font size (16 is the original on screen size)
-     * @return byte[]; the chart as a byte array representing a png image
+     * @param width width
+     * @param height height
+     * @param fontSize font size (16 is the original on screen size)
+     * @return the chart as a byte array representing a png image
      * @throws IOException on IO exception
      */
     public byte[] encodeAsPng(final int width, final int height, final double fontSize) throws IOException
@@ -170,7 +170,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
      * but the auto bounds command comes from the {@code ChartPanel} that this class creates. In case the used plot is a
      * {@code XYPlot}, this method is then invoked. Sub classes with auto domain bounds that work with an {@code XYPlot} should
      * implement this. The method is not abstract as the use of {@code XYPlot} is not obligated.
-     * @param plot XYPlot; plot
+     * @param plot plot
      */
     public void setAutoBoundDomain(final XYPlot plot)
     {
@@ -182,7 +182,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
      * but the auto bounds command comes from the {@code ChartPanel} that this class creates. In case the used plot is a
      * {@code XYPlot}, this method is then invoked. Sub classes with auto range bounds that work with an {@code XYPlot} should
      * implement this. The method is not abstract as the use of {@code XYPlot} is not obligated.
-     * @param plot XYPlot; plot
+     * @param plot plot
      */
     public void setAutoBoundRange(final XYPlot plot)
     {
@@ -191,21 +191,21 @@ public abstract class AbstractPlot implements Identifiable, Dataset
 
     /**
      * Return the graph type for transceiver.
-     * @return GraphType; the graph type.
+     * @return the graph type.
      */
     public abstract GraphType getGraphType();
 
     /**
      * Returns the status label when the mouse is over the given location.
-     * @param domainValue double; domain value (x-axis)
-     * @param rangeValue double; range value (y-axis)
-     * @return String; status label when the mouse is over the given location
+     * @param domainValue domain value (x-axis)
+     * @param rangeValue range value (y-axis)
+     * @return status label when the mouse is over the given location
      */
     public abstract String getStatusLabel(double domainValue, double rangeValue);
 
     /**
      * Increase the simulated time span.
-     * @param time Time; time to increase to
+     * @param time time to increase to
      */
     protected abstract void increaseTime(Time time);
 
@@ -223,7 +223,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
 
     /**
      * Returns the chart.
-     * @return JFreeChart; chart
+     * @return chart
      */
     public final JFreeChart getChart()
     {
@@ -253,7 +253,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
 
     /**
      * Sets a new update interval.
-     * @param interval Duration; update interval
+     * @param interval update interval
      */
     public final void setUpdateInterval(final Duration interval)
     {
@@ -266,7 +266,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
 
     /**
      * Returns time until which data should be plotted.
-     * @return Time; time until which data should be plotted
+     * @return time until which data should be plotted
      */
     public final Time getUpdateTime()
     {
@@ -297,7 +297,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
 
     /**
      * Retrieve the caption.
-     * @return String; the caption of the plot
+     * @return the caption of the plot
      */
     public String getCaption()
     {

@@ -43,7 +43,7 @@ public final class PublisherDemo
 
     /**
      * Test code.
-     * @param args String[]; the command line arguments (not used)
+     * @param args the command line arguments (not used)
      * @throws IOException ...
      * @throws NamingException ...
      * @throws SimRuntimeException ...
@@ -150,7 +150,7 @@ public final class PublisherDemo
     /**
      * Wrapper for ZMQ.Socket.send that may output some debugging information.
      * @param socket ZMQ.Socket; the socket to send onto
-     * @param message byte[]; the message to transmit
+     * @param message the message to transmit
      */
     static void sendCommand(final ZMQ.Socket socket, final byte[] message)
     {
@@ -179,8 +179,8 @@ public final class PublisherDemo
 
         /**
          * Repeatedly read all available messages.
-         * @param zContext ZContext; the ZContext needed to create the read socket
-         * @param storage List&lt;String&gt;; storage for the received messages
+         * @param zContext the ZContext needed to create the read socket
+         * @param storage storage for the received messages
          */
         ReadMessageThread(final ZContext zContext, final List<byte[]> storage)
         {
@@ -211,7 +211,7 @@ public final class PublisherDemo
     /**
      * Read as many messages from a ZMQ socket as are available. Do NOT block when there are no (more) messages to read.
      * @param socket ZMQ.Socket; the socket
-     * @return byte[][]; the read messages
+     * @return the read messages
      */
     public static byte[][] readMessages(final ZMQ.Socket socket)
     {
@@ -263,7 +263,7 @@ public final class PublisherDemo
 
         /**
          * Construct a new PublisherThread.
-         * @param zContext ZContext; needed to construct the PublisherExperimentUsingSockets
+         * @param zContext needed to construct the PublisherExperimentUsingSockets
          */
         PublisherThread(final ZContext zContext)
         {

@@ -30,9 +30,9 @@ public abstract class MapData implements EvalListener
 
     /**
      * Constructor.
-     * @param map Map; map.
-     * @param node XsdTreeNode; tree node.
-     * @param editor OtsEditor; editor.
+     * @param map map.
+     * @param node tree node.
+     * @param editor editor.
      */
     public MapData(final EditorMap map, final XsdTreeNode node, final OtsEditor editor)
     {
@@ -44,7 +44,7 @@ public abstract class MapData implements EvalListener
 
     /**
      * Returns the tree node.
-     * @return XsdTreeNode; tree node.
+     * @return tree node.
      */
     public XsdTreeNode getNode()
     {
@@ -53,7 +53,7 @@ public abstract class MapData implements EvalListener
 
     /**
      * Returns the evaluator for expressions.
-     * @return Eval; evaluator for expressions.
+     * @return evaluator for expressions.
      */
     public Eval getEval()
     {
@@ -87,9 +87,9 @@ public abstract class MapData implements EvalListener
 
     /**
      * Returns the map.
-     * @return Map; map.
+     * @return map.
      */
-    // If public, this will remove the map from the tabbed pane when the inspector wants a renderer for this element, which is 
+    // If public, this will remove the map from the tabbed pane when the inspector wants a renderer for this element, which is
     // the panel itself. It gets 'reparented' towards the cell in the inspection window.
     protected EditorMap getMap()
     {
@@ -101,10 +101,10 @@ public abstract class MapData implements EvalListener
      * set a {@code null} value. If the value is an invalid expression, or the value cannot be unmarshalled by the adapter, no
      * change is made.
      * @param <T> type of the value to set.
-     * @param setter Consumer&lt;T&gt;; setter that receives a successfully derived value.
-     * @param adapter ExpressionAdapter&lt;T, ?&gt;; adapter.
-     * @param node XsdTreeNode; node that has the attribute, will often be {@code getNode()}.
-     * @param attribute String; name of the attribute.
+     * @param setter setter that receives a successfully derived value.
+     * @param adapter adapter.
+     * @param node node that has the attribute, will often be {@code getNode()}.
+     * @param attribute name of the attribute.
      */
     protected <T> void setValue(final Consumer<T> setter, final ExpressionAdapter<T, ?> adapter, final XsdTreeNode node,
             final String attribute)

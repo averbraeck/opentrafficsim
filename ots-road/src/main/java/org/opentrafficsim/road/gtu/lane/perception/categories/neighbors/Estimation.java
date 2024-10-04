@@ -23,10 +23,10 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalA
  */
 public interface Estimation
 {
-    
+
     /** Over-estimation parameter type. Negative values reflect under-estimation. */
     ParameterTypeDouble OVER_EST = new ParameterTypeDouble("OVER_EST", "Over estimation factor.", 1.0);
-    
+
     /** No estimation errors. */
     Estimation NONE = new Estimation()
     {
@@ -39,7 +39,7 @@ public interface Estimation
                     getEgoSpeed(perceivingGtu).plus(getDelayedSpeedDifference(perceivingGtu, perceivedGtu, when)),
                     perceivedGtu.getAcceleration(when));
         }
-        
+
         /** {@inheritDoc} */
         @Override
         public String toString()
@@ -61,12 +61,12 @@ public interface Estimation
 
     /**
      * Estimate headway, speed and acceleration.
-     * @param perceivingGtu LaneBasedGtu; perceiving GTU
-     * @param perceivedGtu LaneBasedGtu; perceived GTU
-     * @param distance Length; actual headway at 'now' (i.e. not at 'when' if there is a reaction time)
-     * @param downstream boolean; downstream (or upstream) neighbor
-     * @param when Time; moment of perception, reaction time included
-     * @return NeighborTriplet; perceived headway, speed and acceleration
+     * @param perceivingGtu perceiving GTU
+     * @param perceivedGtu perceived GTU
+     * @param distance actual headway at 'now' (i.e. not at 'when' if there is a reaction time)
+     * @param downstream downstream (or upstream) neighbor
+     * @param when moment of perception, reaction time included
+     * @return perceived headway, speed and acceleration
      * @throws ParameterException on invalid parameter value or if parameter is not available
      */
     NeighborTriplet estimate(LaneBasedGtu perceivingGtu, LaneBasedGtu perceivedGtu, Length distance, boolean downstream,
@@ -74,12 +74,12 @@ public interface Estimation
 
     /**
      * Returns a delayed headway.
-     * @param perceivingGtu LaneBasedGtu; perceiving GTU
-     * @param perceivedGtu LaneBasedGtu; perceived GTU
-     * @param distance Length; actual headway at 'now' (i.e. not at 'when' if there is a reaction time)
-     * @param downstream boolean; downstream (or upstream) neighbor
-     * @param when Time; moment of perception, reaction time included
-     * @return Length; delayed headway
+     * @param perceivingGtu perceiving GTU
+     * @param perceivedGtu perceived GTU
+     * @param distance actual headway at 'now' (i.e. not at 'when' if there is a reaction time)
+     * @param downstream downstream (or upstream) neighbor
+     * @param when moment of perception, reaction time included
+     * @return delayed headway
      */
     default Length getDelayedHeadway(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu, final Length distance,
             final boolean downstream, final Time when)
@@ -96,8 +96,8 @@ public interface Estimation
     /**
      * Returns the ego speed. This is the speed used in AbstractLaneBasedGtu.getCarFollowingAcceleration(), and hence this is
      * the reference speed for the stimulus of speed difference.
-     * @param perceivingGtu LaneBasedGtu; perceiving GTU
-     * @return Speed; ego speed
+     * @param perceivingGtu perceiving GTU
+     * @return ego speed
      */
     default Speed getEgoSpeed(final LaneBasedGtu perceivingGtu)
     {
@@ -114,10 +114,10 @@ public interface Estimation
 
     /**
      * Returns a delayed speed difference (other minus ego).
-     * @param perceivingGtu LaneBasedGtu; perceiving GTU
-     * @param perceivedGtu LaneBasedGtu; perceived GTU
-     * @param when Time; moment of perception, reaction time included
-     * @return Speed; delayed speed difference (other minus ego)
+     * @param perceivingGtu perceiving GTU
+     * @param perceivedGtu perceived GTU
+     * @param when moment of perception, reaction time included
+     * @return delayed speed difference (other minus ego)
      */
     default Speed getDelayedSpeedDifference(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu, final Time when)
     {

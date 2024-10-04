@@ -43,8 +43,8 @@ public abstract class AbstractLaneBasedTacticalPlannerFactory<T extends LaneBase
 
     /**
      * Constructor.
-     * @param carFollowingModelFactory CarFollowingModelFactory&lt;? extends CarFollowingModel&gt;; car-following model factory
-     * @param perceptionFactory PerceptionFactory; perception factory
+     * @param carFollowingModelFactory car-following model factory
+     * @param perceptionFactory perception factory
      */
     public AbstractLaneBasedTacticalPlannerFactory(
             final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory,
@@ -57,7 +57,7 @@ public abstract class AbstractLaneBasedTacticalPlannerFactory<T extends LaneBase
     /**
      * Returns the next car following model, which will be a fixed peeked instance until {@code nextCarFollowingModel()} is
      * called.
-     * @return CarFollowingModel; next car following model
+     * @return next car following model
      */
     private CarFollowingModel peekCarFollowingModel()
     {
@@ -71,8 +71,8 @@ public abstract class AbstractLaneBasedTacticalPlannerFactory<T extends LaneBase
 
     /**
      * Returns the next car following model.
-     * @param gtu LaneBasedGtu; gtu
-     * @return CarFollowingModel; next car following model
+     * @param gtu gtu
+     * @return next car following model
      */
     protected final CarFollowingModel nextCarFollowingModel(final LaneBasedGtu gtu)
     {
@@ -85,7 +85,7 @@ public abstract class AbstractLaneBasedTacticalPlannerFactory<T extends LaneBase
     /**
      * Returns the parameters for the car-following model using the factory. This method should be used in the
      * {@code getParameters()} method of implementing sub-classes.
-     * @return Parameters; parameters for the car-following model using the factory
+     * @return parameters for the car-following model using the factory
      * @throws ParameterException on illegal parameter value
      */
     protected final Parameters getCarFollowingParameters() throws ParameterException
@@ -96,7 +96,7 @@ public abstract class AbstractLaneBasedTacticalPlannerFactory<T extends LaneBase
     /**
      * Returns a {@code String} representation of the car-following model factory. This method may be used in the
      * {@code toString()} method of implementing sub-classes.
-     * @return String; representation of the car-following model factory
+     * @return representation of the car-following model factory
      */
     protected final String getCarFollowingModelFactoryString()
     {
@@ -138,7 +138,7 @@ public abstract class AbstractLaneBasedTacticalPlannerFactory<T extends LaneBase
 
     /**
      * Returns the perception factory.
-     * @return PerceptionFactory; perception factory
+     * @return perception factory
      */
     public PerceptionFactory getPerceptionFactory()
     {

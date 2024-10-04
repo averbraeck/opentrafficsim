@@ -37,9 +37,9 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuData> extends DataT
 
     /**
      * Constructor setting the id.
-     * @param id String; id
-     * @param description String; description
-     * @param type Class&lt;T&gt;; type class
+     * @param id id
+     * @param description description
+     * @param type type class
      */
     public ExtendedDataType(final String id, final String description, final Class<T> type)
     {
@@ -48,7 +48,7 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuData> extends DataT
 
     /**
      * Returns the current value of the gtu.
-     * @param gtu G; gtu
+     * @param gtu gtu
      * @return current value of the gtu
      */
     @Override
@@ -56,17 +56,17 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuData> extends DataT
 
     /**
      * Returns an updated list/array/vector of the storage type, including a new value at given index.
-     * @param storage S; storage
-     * @param index int; index to store next value
-     * @param value T; value to add
+     * @param storage storage
+     * @param index index to store next value
+     * @param value value to add
      * @return updated list/array/vector of the storage type, including a new value at given index
      */
     public abstract S setValue(S storage, int index, T value);
 
     /**
      * Returns a specific output value. This is used to store extended data types as generic file, i.e. text file.
-     * @param output O; output
-     * @param index int; index of value to return
+     * @param output output
+     * @param index index of value to return
      * @return the i'th output value
      * @throws SamplingException when {@code i} is out of bounds.
      */
@@ -74,8 +74,8 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuData> extends DataT
 
     /**
      * Returns a specific storage value. This is used to bypass conversion to the output type when trajectories are cut.
-     * @param storage S; storage
-     * @param index int; index of value to return
+     * @param storage storage
+     * @param index index of value to return
      * @return the i'th output value
      * @throws SamplingException when {@code i} is out of bounds.
      */
@@ -89,25 +89,25 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuData> extends DataT
 
     /**
      * Convert storage type to output type.
-     * @param storage S; stored data
-     * @param size int; size of trajectory
+     * @param storage stored data
+     * @param size size of trajectory
      * @return converted output
      */
     public abstract O convert(S storage, int size);
 
     /**
      * Parses a stored string representation to original type.
-     * @param string String; stored string representation
-     * @return T; value in original type
+     * @param string stored string representation
+     * @return value in original type
      */
     public abstract T parseValue(String string);
 
     /**
      * Interpolate value between two measured values. The default implementation takes a linear interpolation over time for
      * {@link DoubleScalar}, {@link FloatScalar}, {@link Double} and {@link Float}, or the closest value in time otherwise.
-     * @param value0 T; first value
-     * @param value1 T; second value
-     * @param f double; interpolation fraction
+     * @param value0 first value
+     * @param value1 second value
+     * @param f interpolation fraction
      * @param <AU> unit of value, if values are {@code DoubleScalar}
      * @param <RU> the corresponding relative unit
      * @param <R> the relative double type

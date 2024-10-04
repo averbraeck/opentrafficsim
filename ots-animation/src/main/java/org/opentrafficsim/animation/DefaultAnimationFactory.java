@@ -114,9 +114,9 @@ public class DefaultAnimationFactory implements EventListener
     /**
      * Creates animations for nodes, links and lanes. The class will subscribe to the network and listen to changes, so the
      * adding and removing of GTUs and Objects is animated correctly.
-     * @param network Network; the network
-     * @param gtuColorer GtuColorer; GTU colorer
-     * @param animateNetwork boolean; whether to animate the current network objects
+     * @param network the network
+     * @param gtuColorer GTU colorer
+     * @param animateNetwork whether to animate the current network objects
      * @throws OtsDrawingException on drawing error
      */
     protected DefaultAnimationFactory(final Network network, final GtuColorer gtuColorer, final boolean animateNetwork)
@@ -204,9 +204,9 @@ public class DefaultAnimationFactory implements EventListener
     /**
      * Creates animations for nodes, links, lanes and GTUs. This can be used if the network is not read from XML. The class will
      * subscribe to the network and listen to changes, so the adding and removing of GTUs and Objects is animated correctly.
-     * @param network Network; the network
-     * @param contextualized Contextualized; context provider
-     * @param gtuColorer GtuColorer; GTU colorer
+     * @param network the network
+     * @param contextualized context provider
+     * @param gtuColorer GTU colorer
      * @return the DefaultAnimationFactory
      * @throws OtsDrawingException on drawing error
      */
@@ -219,8 +219,8 @@ public class DefaultAnimationFactory implements EventListener
     /**
      * Creates animations for nodes, links, lanes and GTUs. This can be used if the network is read from XML. The class will
      * subscribe to the network and listen to changes, so the adding and removing of GTUs and Objects is animated correctly.
-     * @param network Network; the network
-     * @param gtuColorer GtuColorer; GTU colorer
+     * @param network the network
+     * @param gtuColorer GTU colorer
      * @return the DefaultAnimationFactory
      * @throws OtsDrawingException on drawing error
      */
@@ -284,7 +284,7 @@ public class DefaultAnimationFactory implements EventListener
 
     /**
      * Draw the GTU (scheduled method).
-     * @param gtu LaneBasedGtu; the GTU to draw
+     * @param gtu the GTU to draw
      */
     protected void animateGTU(final LaneBasedGtu gtu)
     {
@@ -302,7 +302,7 @@ public class DefaultAnimationFactory implements EventListener
 
     /**
      * Draw the static object.
-     * @param object ObjectInterface; the object to draw
+     * @param object the object to draw
      */
     protected void animateLocatedObject(final LocatedObject object)
     {
@@ -372,7 +372,7 @@ public class DefaultAnimationFactory implements EventListener
 
     /**
      * Draw non-located objects.
-     * @param object NonLocatedObject; the object to draw.
+     * @param object the object to draw.
      */
     protected void animateNonLocatedObject(final NonLocatedObject object)
     {

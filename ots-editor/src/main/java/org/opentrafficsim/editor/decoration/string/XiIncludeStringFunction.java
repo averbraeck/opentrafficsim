@@ -23,7 +23,7 @@ public class XiIncludeStringFunction extends AbstractStringFunction
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
+     * @param editor editor.
      */
     public XiIncludeStringFunction(final OtsEditor editor)
     {

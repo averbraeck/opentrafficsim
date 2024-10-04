@@ -191,8 +191,8 @@ public class ContourDataSource
 
     /**
      * Constructor using default granularities.
-     * @param samplerData SamplerData&lt;?&gt;; sampler data
-     * @param path GraphPath&lt;? extends LaneData&gt;; path
+     * @param samplerData sampler data
+     * @param path path
      */
     public ContourDataSource(final SamplerData<?> samplerData, final GraphPath<? extends LaneData<?>> path)
     {
@@ -203,20 +203,20 @@ public class ContourDataSource
 
     /**
      * Constructor for non-default input.
-     * @param samplerData SamplerData&lt;?&gt;; sampler data
-     * @param delay Duration; delay so critical future events have occurred, e.g. GTU's next move's to extend trajectories
-     * @param path GraphPath&lt;? extends LaneData&gt;; path
-     * @param spaceGranularity double[]; granularity options for space dimension
-     * @param initSpaceIndex int; initial selected space granularity
-     * @param timeGranularity double[]; granularity options for time dimension
-     * @param initTimeIndex int; initial selected time granularity
-     * @param start Time; start time
-     * @param initialEnd Time; initial end time of plots, will be expanded if simulation time exceeds it
+     * @param samplerData sampler data
+     * @param delay delay so critical future events have occurred, e.g. GTU's next move's to extend trajectories
+     * @param path path
+     * @param spaceGranularity granularity options for space dimension
+     * @param initSpaceIndex initial selected space granularity
+     * @param timeGranularity granularity options for time dimension
+     * @param initTimeIndex initial selected time granularity
+     * @param start start time
+     * @param initialEnd initial end time of plots, will be expanded if simulation time exceeds it
      */
     @SuppressWarnings("parameternumber")
-    public ContourDataSource(final SamplerData<?> samplerData, final Duration delay, final GraphPath<? extends LaneData<?>> path,
-            final double[] spaceGranularity, final int initSpaceIndex, final double[] timeGranularity, final int initTimeIndex,
-            final Time start, final Time initialEnd)
+    public ContourDataSource(final SamplerData<?> samplerData, final Duration delay,
+            final GraphPath<? extends LaneData<?>> path, final double[] spaceGranularity, final int initSpaceIndex,
+            final double[] timeGranularity, final int initTimeIndex, final Time start, final Time initialEnd)
     {
         this.samplerData = samplerData;
         this.updateInterval = Duration.instantiateSI(timeGranularity[initTimeIndex]);
@@ -239,7 +239,7 @@ public class ContourDataSource
 
     /**
      * Returns the sampler data for an {@code AbstractContourPlot} using this {@code ContourDataSource}.
-     * @return SamplerData&lt;?&gt;; the sampler
+     * @return the sampler
      */
     public final SamplerData<?> getSamplerData()
     {
@@ -248,7 +248,7 @@ public class ContourDataSource
 
     /**
      * Returns the update interval for an {@code AbstractContourPlot} using this {@code ContourDataSource}.
-     * @return Duration; update interval
+     * @return update interval
      */
     final Duration getUpdateInterval()
     {
@@ -257,7 +257,7 @@ public class ContourDataSource
 
     /**
      * Returns the delay for an {@code AbstractContourPlot} using this {@code ContourDataSource}.
-     * @return Duration; delay
+     * @return delay
      */
     final Duration getDelay()
     {
@@ -266,7 +266,7 @@ public class ContourDataSource
 
     /**
      * Returns the path for an {@code AbstractContourPlot} using this {@code ContourDataSource}.
-     * @return GraphPath&lt;? extends LaneData&gt;; the path
+     * @return the path
      */
     final GraphPath<? extends LaneData<?>> getPath()
     {
@@ -275,7 +275,7 @@ public class ContourDataSource
 
     /**
      * Register a contour plot to this data pool. The contour constructor will do this.
-     * @param contourPlot AbstractContourPlot&lt;?&gt;; contour plot
+     * @param contourPlot contour plot
      */
     final void registerContourPlot(final AbstractContourPlot<?> contourPlot)
     {
@@ -289,8 +289,8 @@ public class ContourDataSource
 
     /**
      * Returns the bin count.
-     * @param dimension Dimension; space or time
-     * @return int; bin count
+     * @param dimension space or time
+     * @return bin count
      */
     final int getBinCount(final Dimension dimension)
     {
@@ -299,9 +299,9 @@ public class ContourDataSource
 
     /**
      * Returns the size of a bin. Usually this is equal to the granularity, except for the last which is likely smaller.
-     * @param dimension Dimension; space or time
-     * @param item int; item number (cell number in contour plot)
-     * @return double; the size of a bin
+     * @param dimension space or time
+     * @param item item number (cell number in contour plot)
+     * @return the size of a bin
      */
     final synchronized double getBinSize(final Dimension dimension, final int item)
     {
@@ -312,9 +312,9 @@ public class ContourDataSource
 
     /**
      * Returns the value on the axis of an item.
-     * @param dimension Dimension; space or time
-     * @param item int; item number (cell number in contour plot)
-     * @return double; the value on the axis of this item
+     * @param dimension space or time
+     * @param item item number (cell number in contour plot)
+     * @return the value on the axis of this item
      */
     final double getAxisValue(final Dimension dimension, final int item)
     {
@@ -327,9 +327,9 @@ public class ContourDataSource
 
     /**
      * Returns the axis bin number of the given value.
-     * @param dimension Dimension; space or time
-     * @param value double; value
-     * @return int; axis bin number of the given value
+     * @param dimension space or time
+     * @param value value
+     * @return axis bin number of the given value
      */
     final int getAxisBin(final Dimension dimension, final double value)
     {
@@ -342,8 +342,8 @@ public class ContourDataSource
 
     /**
      * Returns the available granularities that a linked plot may use.
-     * @param dimension Dimension; space or time
-     * @return double[]; available granularities that a linked plot may use
+     * @param dimension space or time
+     * @return available granularities that a linked plot may use
      */
     @SuppressWarnings("synthetic-access")
     public final double[] getGranularities(final Dimension dimension)
@@ -353,8 +353,8 @@ public class ContourDataSource
 
     /**
      * Returns the selected granularity that a linked plot should use.
-     * @param dimension Dimension; space or time
-     * @return double; granularity that a linked plot should use
+     * @param dimension space or time
+     * @return granularity that a linked plot should use
      */
     @SuppressWarnings("synthetic-access")
     public final double getGranularity(final Dimension dimension)
@@ -364,7 +364,7 @@ public class ContourDataSource
 
     /**
      * Called by {@code AbstractContourPlot} to update the time. This will invalidate the plot triggering a redraw.
-     * @param updateTime Time; current time
+     * @param updateTime current time
      */
     @SuppressWarnings("synthetic-access")
     final synchronized void increaseTime(final Time updateTime)
@@ -385,8 +385,8 @@ public class ContourDataSource
 
     /**
      * Sets the granularity of the plot. This will invalidate the plot triggering a redraw.
-     * @param dimension Dimension; space or time
-     * @param granularity double; granularity in space or time (SI unit)
+     * @param dimension space or time
+     * @param granularity granularity in space or time (SI unit)
      */
     public final synchronized void setGranularity(final Dimension dimension, final double granularity)
     {
@@ -412,7 +412,7 @@ public class ContourDataSource
 
     /**
      * Sets bi-linear interpolation enabled or disabled. This will invalidate the plot triggering a redraw.
-     * @param interpolate boolean; whether to enable interpolation
+     * @param interpolate whether to enable interpolation
      */
     @SuppressWarnings("synthetic-access")
     public final void setInterpolate(final boolean interpolate)
@@ -434,7 +434,7 @@ public class ContourDataSource
 
     /**
      * Sets the adaptive smoothing enabled or disabled. This will invalidate the plot triggering a redraw.
-     * @param smooth boolean; whether to smooth the plor
+     * @param smooth whether to smooth the plor
      */
     public final void setSmooth(final boolean smooth)
     {
@@ -461,7 +461,7 @@ public class ContourDataSource
      * this method is called. This method will in all cases add an update request to the updater, working in another thread. It
      * will invoke method {@code update()}. That method utilizes a synchronized block to obtain all synchronization sensitive
      * data, before starting the actual work.
-     * @param t Time; time up to which to show data
+     * @param t time up to which to show data
      */
     private synchronized void invalidate(final Time t)
     {
@@ -494,7 +494,7 @@ public class ContourDataSource
      * up where this update left off. During the smoothing this method doesn't stop for an increased update time, as that will
      * leave a gap in the smoothed data. Note that smoothing either smoothes all data (when {@code redo = true}), or only the
      * last part that falls within the kernel.
-     * @param t Time; time up to which to show data
+     * @param t time up to which to show data
      */
     @SuppressWarnings({"synthetic-access", "methodlength"})
     private void update(final Time t)
@@ -822,13 +822,13 @@ public class ContourDataSource
 
     /**
      * Add additional data to stored intermediate result.
-     * @param additionalIntermediate Map&lt;ContourDataType&lt;?, ?&gt;, Object&gt;; intermediate storage map
-     * @param contourDataType ContourDataType&lt;?, ?&gt;; additional data type
-     * @param included List&lt;TrajectoryGroup&lt;?&gt;&gt;; trajectories
-     * @param xStart List&lt;Length&gt;; start distance per trajectory group
-     * @param xEnd List&lt;Length&gt;; end distance per trajectory group
-     * @param tFrom Time; start time
-     * @param tTo Time; end time
+     * @param additionalIntermediate intermediate storage map
+     * @param contourDataType additional data type
+     * @param included trajectories
+     * @param xStart start distance per trajectory group
+     * @param xEnd end distance per trajectory group
+     * @param tFrom start time
+     * @param tTo end time
      * @param <I> intermediate data type
      */
     @SuppressWarnings("unchecked")
@@ -842,9 +842,9 @@ public class ContourDataSource
 
     /**
      * Stores a finalized result for additional data.
-     * @param additionalIntermediate Map&lt;ContourDataType&lt;?, ?&gt;, Object&gt;; intermediate storage map
-     * @param contourDataType ContourDataType&lt;?, ?&gt;; additional data type
-     * @return float; finalized results for a cell
+     * @param additionalIntermediate intermediate storage map
+     * @param contourDataType additional data type
+     * @return finalized results for a cell
      * @param <I> intermediate data type
      */
     @SuppressWarnings("unchecked")
@@ -856,9 +856,9 @@ public class ContourDataSource
 
     /**
      * Helper method to fill smoothed data in to raw data.
-     * @param raw float[][]; the raw unsmoothed data
-     * @param rawCol int; column from which onward to fill smoothed data in to the raw data which is used for plotting
-     * @param smoothed double[][]; smoothed data returned by {@code EGTF}
+     * @param raw the raw unsmoothed data
+     * @param rawCol column from which onward to fill smoothed data in to the raw data which is used for plotting
+     * @param smoothed smoothed data returned by {@code EGTF}
      */
     private void overwriteSmoothed(final float[][] raw, final int rawCol, final double[][] smoothed)
     {
@@ -878,8 +878,8 @@ public class ContourDataSource
 
     /**
      * Returns the speed of the cell pertaining to plot item.
-     * @param item int; plot item
-     * @return double; speed of the cell, calculated as 'total distance' / 'total space'.
+     * @param item plot item
+     * @return speed of the cell, calculated as 'total distance' / 'total space'.
      */
     public double getSpeed(final int item)
     {
@@ -892,8 +892,8 @@ public class ContourDataSource
 
     /**
      * Returns the total distance traveled in the cell pertaining to plot item.
-     * @param item int; plot item
-     * @return double; total distance traveled in the cell
+     * @param item plot item
+     * @return total distance traveled in the cell
      */
     public double getTotalDistance(final int item)
     {
@@ -906,8 +906,8 @@ public class ContourDataSource
 
     /**
      * Returns the total time traveled in the cell pertaining to plot item.
-     * @param item int; plot item
-     * @return double; total time traveled in the cell
+     * @param item plot item
+     * @return total time traveled in the cell
      */
     public double getTotalTime(final int item)
     {
@@ -920,8 +920,8 @@ public class ContourDataSource
 
     /**
      * Returns data of the given {@code ContourDataType} for a specific item.
-     * @param item int; plot item
-     * @param contourDataType ContourDataType&lt;?, ?&gt;; contour data type
+     * @param item plot item
+     * @param contourDataType contour data type
      * @return data of the given {@code ContourDataType} for a specific item
      */
     public double get(final int item, final ContourDataType<?, ?> contourDataType)
@@ -935,8 +935,8 @@ public class ContourDataSource
 
     /**
      * Returns the time bin number of the item.
-     * @param item int; item number
-     * @return int; time bin number of the item
+     * @param item item number
+     * @return time bin number of the item
      */
     private int getTimeBin(final int item)
     {
@@ -947,8 +947,8 @@ public class ContourDataSource
 
     /**
      * Returns the space bin number of the item.
-     * @param item int; item number
-     * @return int; space bin number of the item
+     * @param item item number
+     * @return space bin number of the item
      */
     private int getSpaceBin(final int item)
     {
@@ -996,8 +996,8 @@ public class ContourDataSource
 
         /**
          * Returns the {@code Axis} object.
-         * @param dataPool ContourDataSource; data pool
-         * @return Axis; axis
+         * @param dataPool data pool
+         * @return axis
          */
         protected abstract Axis getAxis(ContourDataSource dataPool);
     }
@@ -1035,10 +1035,10 @@ public class ContourDataSource
 
         /**
          * Constructor.
-         * @param minValue double; minimum value
-         * @param maxValue double; maximum value
-         * @param granularity double; initial granularity
-         * @param granularities double[]; possible granularities
+         * @param minValue minimum value
+         * @param maxValue maximum value
+         * @param granularity initial granularity
+         * @param granularities possible granularities
          */
         Axis(final double minValue, final double maxValue, final double granularity, final double[] granularities)
         {
@@ -1050,7 +1050,7 @@ public class ContourDataSource
 
         /**
          * Sets the maximum value.
-         * @param maxValue double; maximum value
+         * @param maxValue maximum value
          */
         void setMaxValue(final double maxValue)
         {
@@ -1063,7 +1063,7 @@ public class ContourDataSource
 
         /**
          * Sets the granularity.
-         * @param granularity double; granularity
+         * @param granularity granularity
          */
         void setGranularity(final double granularity)
         {
@@ -1076,7 +1076,7 @@ public class ContourDataSource
 
         /**
          * Returns the ticks, which are calculated if needed.
-         * @return double[]; ticks
+         * @return ticks
          */
         double[] getTicks()
         {
@@ -1102,7 +1102,7 @@ public class ContourDataSource
 
         /**
          * Calculates the number of bins.
-         * @return int; number of bins
+         * @return number of bins
          */
         int getBinCount()
         {
@@ -1111,8 +1111,8 @@ public class ContourDataSource
 
         /**
          * Calculates the center value of a bin.
-         * @param bin int; bin number
-         * @return double; center value of the bin
+         * @param bin bin number
+         * @return center value of the bin
          */
         double getBinValue(final int bin)
         {
@@ -1121,8 +1121,8 @@ public class ContourDataSource
 
         /**
          * Looks up the bin number of the value.
-         * @param value double; value
-         * @return int; bin number
+         * @param value value
+         * @return bin number
          */
         int getValueBin(final double value)
         {
@@ -1141,7 +1141,7 @@ public class ContourDataSource
 
         /**
          * Sets interpolation, important is it required the data to have an additional row or column.
-         * @param interpolate boolean; interpolation
+         * @param interpolate interpolation
          */
         void setInterpolate(final boolean interpolate)
         {
@@ -1154,7 +1154,7 @@ public class ContourDataSource
 
         /**
          * Retrieve the interpolate flag.
-         * @return boolean; true if interpolation is on; false if interpolation is off
+         * @return true if interpolation is on; false if interpolation is off
          */
         public boolean isInterpolate()
         {
@@ -1196,27 +1196,27 @@ public class ContourDataSource
 
         /**
          * Calculate value from provided trajectories that apply to a single grid cell on a single series (lane).
-         * @param intermediate I; intermediate value of previous series, starts as the identity
-         * @param trajectories List&lt;TrajectoryGroup&lt;?&gt;&gt;; trajectories, all groups overlap the requested space-time
-         * @param xFrom List&lt;Length&gt;; start location of cell on the section
-         * @param xTo List&lt;Length&gt;; end location of cell on the section.
-         * @param tFrom Time; start time of cell
-         * @param tTo Time; end time of cell
-         * @return I; intermediate value
+         * @param intermediate intermediate value of previous series, starts as the identity
+         * @param trajectories trajectories, all groups overlap the requested space-time
+         * @param xFrom start location of cell on the section
+         * @param xTo end location of cell on the section.
+         * @param tFrom start time of cell
+         * @param tTo end time of cell
+         * @return intermediate value
          */
         I processSeries(I intermediate, List<TrajectoryGroup<?>> trajectories, List<Length> xFrom, List<Length> xTo, Time tFrom,
                 Time tTo);
 
         /**
          * Returns the final value of the intermediate result after all lanes.
-         * @param intermediate I; intermediate result after all lanes
-         * @return Z; final value
+         * @param intermediate intermediate result after all lanes
+         * @return final value
          */
         Z finalize(I intermediate);
 
         /**
          * Returns the quantity that is being plotted on the z-axis for the EGTF filter.
-         * @return Quantity&lt;Z, ?&gt;; quantity that is being plotted on the z-axis for the EGTF filter
+         * @return quantity that is being plotted on the z-axis for the EGTF filter
          */
         Quantity<Z, ?> getQuantity();
     }

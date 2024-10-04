@@ -21,8 +21,8 @@ public class DiscreteDistTorque extends DiscreteDistDoubleScalar.Rel<Torque, Tor
     private static final long serialVersionUID = 20180829L;
 
     /**
-     * @param distribution DistDiscrete; distribution
-     * @param unit TorqueUnit; units
+     * @param distribution distribution
+     * @param unit units
      */
     public DiscreteDistTorque(final DistDiscrete distribution, final TorqueUnit unit)
     {

@@ -29,7 +29,7 @@ public class BoundingCircle implements OtsBounds2d
 
     /**
      * Constructor.
-     * @param radius double; radius.
+     * @param radius radius.
      */
     public BoundingCircle(final double radius)
     {

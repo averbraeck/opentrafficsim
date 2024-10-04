@@ -28,8 +28,8 @@ public abstract class AbstractHistoricalSortedSet<E, S extends SortedSet<E>> ext
 
     /**
      * Constructor.
-     * @param historyManager HistoryManager; history manager
-     * @param set S; initial set
+     * @param historyManager history manager
+     * @param set initial set
      */
     protected AbstractHistoricalSortedSet(final HistoryManager historyManager, final S set)
     {

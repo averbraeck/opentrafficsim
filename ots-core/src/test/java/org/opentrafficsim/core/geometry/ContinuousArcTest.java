@@ -221,8 +221,8 @@ public class ContinuousArcTest
             PolyLine2d line1 = arc.flattenOffset(offsets, maxAngle1);
             offsets = FractionalLengthData.of(0.0, 0.25, 1.0, -0.5);
             PolyLine2d line2 = arc.flattenOffset(offsets, maxAngle1);
-            assertEquals(line1.size(),
-                    line2.size(), "Mirrored half circles result in the same number of segments, whereever it is on the arc");
+            assertEquals(line1.size(), line2.size(),
+                    "Mirrored half circles result in the same number of segments, whereever it is on the arc");
 
             // different spatial errors
             offsets = FractionalLengthData.of(0.0, -0.5);
@@ -258,9 +258,9 @@ public class ContinuousArcTest
 
     /**
      * Test point is approximately the same.
-     * @param point Point2d; point to test.
-     * @param x double; expected x coordinate.
-     * @param y double; expected y coordinate.
+     * @param point point to test.
+     * @param x expected x coordinate.
+     * @param y expected y coordinate.
      */
     private void isApproximal(final Point2d point, final double x, final double y)
     {
@@ -270,9 +270,9 @@ public class ContinuousArcTest
 
     /**
      * Returns the expected number of segments on an arc.
-     * @param maxAngleDegrees double; maxAngle allowed in degrees.
-     * @param arcAngle double; total circle arc.
-     * @return double; expected number of segments on an arc.
+     * @param maxAngleDegrees maxAngle allowed in degrees.
+     * @param arcAngle total circle arc.
+     * @return expected number of segments on an arc.
      */
     private int numSegExpect(final double maxAngleDegrees, final double arcAngle)
     {

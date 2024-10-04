@@ -47,7 +47,7 @@ public class GtuGeneratorPositionAnimation extends OtsRenderable<GtuGeneratorPos
     /**
      * Add chevron to drawing path.
      * @param path Path2D.Float; path.
-     * @param number int; number of the chevron.
+     * @param number number of the chevron.
      */
     private static void addChevron(final Path2D.Float path, final int number)
     {
@@ -63,8 +63,8 @@ public class GtuGeneratorPositionAnimation extends OtsRenderable<GtuGeneratorPos
 
     /**
      * Constructor.
-     * @param source GtuGeneratorPositionData; source.
-     * @param contextProvider OtsSimulatorInterface; simulator.
+     * @param source source.
+     * @param contextProvider simulator.
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException when remote context cannot be found
      */
@@ -103,8 +103,8 @@ public class GtuGeneratorPositionAnimation extends OtsRenderable<GtuGeneratorPos
 
         /**
          * Constructor.
-         * @param source GtuGeneratorPositionData; source.
-         * @param contextualized Contextualized; context provider
+         * @param source source.
+         * @param contextualized context provider
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException when remote context cannot be found
          */
@@ -129,7 +129,7 @@ public class GtuGeneratorPositionAnimation extends OtsRenderable<GtuGeneratorPos
     {
         /**
          * Returns the queue count.
-         * @return int; queue count.
+         * @return queue count.
          */
         int getQueueCount();
 

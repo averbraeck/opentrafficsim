@@ -28,8 +28,8 @@ public class Definitions
     /**
      * Add a type (e.g. a GtuType instance).
      * @param <T> type type (e.g. GtuType).
-     * @param typeClass Class&lt;T&gt;; class of type (e.g. GtuType.class).
-     * @param t T; type instance (e.g DefaultsNl.CAR).
+     * @param typeClass class of type (e.g. GtuType.class).
+     * @param t type instance (e.g DefaultsNl.CAR).
      */
     public <T extends HierarchicalType<T, ?>> void add(final Class<T> typeClass, final T t)
     {
@@ -41,9 +41,9 @@ public class Definitions
     /**
      * Obtain a type by its id. Returns {@code null} if it is not present.
      * @param <T> type type (e.g. GtuType).
-     * @param typeClass typeClass Class&lt;T&gt;; class of type (e.g. GtuType.class).
-     * @param id String; id of the class.
-     * @return T; instance with given id, or {@code null} if it is not present.
+     * @param typeClass class of type (e.g. GtuType.class).
+     * @param id id of the class.
+     * @return instance with given id, or {@code null} if it is not present.
      */
     @SuppressWarnings("unchecked")
     public <T extends HierarchicalType<T, ?>> T get(final Class<T> typeClass, final String id)
@@ -56,8 +56,8 @@ public class Definitions
     /**
      * Obtain all present type of given type type.
      * @param <T> type type (e.g. GtuType).
-     * @param typeClass typeClass Class&lt;T&gt;; class of type (e.g. GtuType.class).
-     * @return ImmutableMap&lt;String, T&gt;; map of all types of give type type, empty if there are no types of the type type.
+     * @param typeClass class of type (e.g. GtuType.class).
+     * @return map of all types of give type type, empty if there are no types of the type type.
      */
     @SuppressWarnings("unchecked")
     public <T extends HierarchicalType<T, ?>> ImmutableMap<String, T> getAll(final Class<T> typeClass)

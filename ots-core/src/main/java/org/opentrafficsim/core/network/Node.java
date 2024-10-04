@@ -67,9 +67,9 @@ public class Node
 
     /**
      * Construction of a Node. Direction will be 0.0.
-     * @param network Network; the network.
-     * @param id String; the id of the Node.
-     * @param point Point2d; the point with usually an x and y setting.
+     * @param network the network.
+     * @param id the id of the Node.
+     * @param point the point with usually an x and y setting.
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
     public Node(final Network network, final String id, final Point2d point) throws NetworkException
@@ -79,10 +79,10 @@ public class Node
 
     /**
      * Construction of a Node.
-     * @param network Network; the network.
-     * @param id String; the id of the Node.
-     * @param point Point2d; the point with usually an x and y setting.
-     * @param heading Direction; heading
+     * @param network the network.
+     * @param id the id of the Node.
+     * @param point the point with usually an x and y setting.
+     * @param heading heading
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
     public Node(final Network network, final String id, final Point2d point, final Direction heading) throws NetworkException
@@ -92,9 +92,9 @@ public class Node
 
     /**
      * Construction of a Node.
-     * @param network Network; the network.
-     * @param id String; the id of the Node.
-     * @param point OrientedPoint2d; the point with usually an x and y setting.
+     * @param network the network.
+     * @param id the id of the Node.
+     * @param point the point with usually an x and y setting.
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
     public Node(final Network network, final String id, final OrientedPoint2d point) throws NetworkException
@@ -117,7 +117,7 @@ public class Node
 
     /**
      * Return the network in which this link is registered. Cannot be null.
-     * @return Network; the network in which this link is registered
+     * @return the network in which this link is registered
      */
     public Network getNetwork()
     {
@@ -133,7 +133,7 @@ public class Node
 
     /**
      * Returns the point without direction.
-     * @return Point2d; point.
+     * @return point.
      */
     public OrientedPoint2d getPoint()
     {
@@ -149,7 +149,7 @@ public class Node
 
     /**
      * Returns the heading.
-     * @return Direction; heading.
+     * @return heading.
      */
     public Direction getHeading()
     {
@@ -158,7 +158,7 @@ public class Node
 
     /**
      * Add a link to this Node.
-     * @param link Link; the link to add.
+     * @param link the link to add.
      */
     public void addLink(final Link link)
     {
@@ -168,7 +168,7 @@ public class Node
 
     /**
      * Remove a link from this Node.
-     * @param link Link; the link to remove.
+     * @param link the link to remove.
      */
     public void removeLink(final Link link)
     {
@@ -179,9 +179,9 @@ public class Node
     /**
      * Add a single connection for a GTU type to the connections map. The data structures will be created if it does not exist
      * yet.
-     * @param gtuType GtuType; the GTU type for which this connection is made
-     * @param incomingLink Link; the link that connects to this Node
-     * @param outgoingLink Link; the link that the GTU can use to depart from this Node when coming from the incoming link
+     * @param gtuType the GTU type for which this connection is made
+     * @param incomingLink the link that connects to this Node
+     * @param outgoingLink the link that the GTU can use to depart from this Node when coming from the incoming link
      * @throws NetworkException in case one of the links is not (correctly) connected to this Node
      */
     public void addConnection(final GtuType gtuType, final Link incomingLink, final Link outgoingLink) throws NetworkException
@@ -235,10 +235,9 @@ public class Node
     /**
      * Add a set of connections for a GTU type to the connections map. The data structures will be created if it does not exist
      * yet.
-     * @param gtuType GtuType; the GTU type for which this connection is made
-     * @param incomingLink Link; the link that connects to this Node
-     * @param outgoingLinks Set&lt;Link&gt;; a set of links that the GTU can use to depart from this Node when coming from the
-     *            incoming link
+     * @param gtuType the GTU type for which this connection is made
+     * @param incomingLink the link that connects to this Node
+     * @param outgoingLinks a set of links that the GTU can use to depart from this Node when coming from the incoming link
      * @throws NetworkException in case one of the links is not (correctly) connected to this Node
      */
     public void addConnections(final GtuType gtuType, final Link incomingLink, final Set<Link> outgoingLinks)
@@ -295,7 +294,7 @@ public class Node
 
     /**
      * Returns the links connected to this node.
-     * @return ImmutableSet&lt;Link&gt;; links.
+     * @return links.
      */
     public ImmutableSet<Link> getLinks()
     {
@@ -308,8 +307,8 @@ public class Node
 
     /**
      * Determine the links connecting from the previous link via this Node for the given GTU type.
-     * @param gtuType GtuType; the GTU type to determine the next links for
-     * @param prevLink Link; the incoming link to the Node
+     * @param gtuType the GTU type to determine the next links for
+     * @param prevLink the incoming link to the Node
      * @return a set of links connecting from the previous link via this Node for the given GTU type
      * @throws NetworkException if the incoming link is not connected to this node for the given GTU type
      */
@@ -361,8 +360,8 @@ public class Node
     /**
      * Check if the current node is linked to the given Node for the given GtuType. This means there is a direct Link from this
      * node to toNode for the provided GtuType.
-     * @param gtuType GtuType; the GTU type to check the connection for.
-     * @param toNode Node; the to node
+     * @param gtuType the GTU type to check the connection for.
+     * @param toNode the to node
      * @return whether two nodes are linked for the GTU type.
      */
     public boolean isConnectedTo(final GtuType gtuType, final Node toNode)
@@ -379,7 +378,7 @@ public class Node
 
     /**
      * Checks whether the node has only connector links going in and/or out, and no other links.
-     * @return boolean; whether the node is a centroid, i.e. it <b>only</b> has connector links going in and out
+     * @return whether the node is a centroid, i.e. it <b>only</b> has connector links going in and out
      */
     public boolean isCentroid()
     {

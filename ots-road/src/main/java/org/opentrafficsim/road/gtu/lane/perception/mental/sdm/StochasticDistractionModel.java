@@ -57,10 +57,10 @@ public class StochasticDistractionModel implements EventListener
 
     /**
      * Constructor. This model will react to GTU's being created in simulation and apply distractions.
-     * @param allowMultiTasking boolean; whether to allow multi-tasking
-     * @param distractions List&lt;Distraction&gt;; list of distractions
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param network RoadNetwork; network
+     * @param allowMultiTasking whether to allow multi-tasking
+     * @param distractions list of distractions
+     * @param simulator simulator
+     * @param network network
      */
     public StochasticDistractionModel(final boolean allowMultiTasking, final List<Distraction> distractions,
             final OtsSimulatorInterface simulator, final RoadNetwork network)
@@ -78,9 +78,9 @@ public class StochasticDistractionModel implements EventListener
 
     /**
      * Start a distraction.
-     * @param gtu LaneBasedGtu; gtu to start the distraction on
-     * @param distraction Distraction; distraction
-     * @param scheduleNext boolean; whether to schedule the next distraction (not if starting from queue)
+     * @param gtu gtu to start the distraction on
+     * @param distraction distraction
+     * @param scheduleNext whether to schedule the next distraction (not if starting from queue)
      * @throws SimRuntimeException on time error
      */
     public void startDistraction(final LaneBasedGtu gtu, final Distraction distraction, final boolean scheduleNext)
@@ -101,8 +101,7 @@ public class StochasticDistractionModel implements EventListener
             Task task = distraction.getTask(gtu);
             ((Fuller) gtu.getTacticalPlanner().getPerception().getMental()).addTask(task);
             // stop the distraction
-            this.simulator.scheduleEventRel(distraction.nextDuration(), this, "stopDistraction",
-                    new Object[] {gtu, task});
+            this.simulator.scheduleEventRel(distraction.nextDuration(), this, "stopDistraction", new Object[] {gtu, task});
         }
         else
         {
@@ -123,8 +122,8 @@ public class StochasticDistractionModel implements EventListener
 
     /**
      * Stops a distraction task.
-     * @param gtu LaneBasedGtu; gtu to stop the task for
-     * @param task Task; task to stop
+     * @param gtu gtu to stop the task for
+     * @param task task to stop
      * @throws SimRuntimeException on time error
      */
     public void stopDistraction(final LaneBasedGtu gtu, final Task task) throws SimRuntimeException

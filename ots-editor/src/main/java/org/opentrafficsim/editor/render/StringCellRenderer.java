@@ -34,7 +34,7 @@ public class StringCellRenderer extends JLabel implements TableCellRenderer
 
     /**
      * Constructor.
-     * @param treeTable JTreeTable; tree table.
+     * @param treeTable tree table.
      */
     public StringCellRenderer(final JTreeTable treeTable)
     {

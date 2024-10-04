@@ -26,7 +26,7 @@ public abstract class Defaults
 
     /**
      * Constructor.
-     * @param locale Locale; locale.
+     * @param locale locale.
      */
     protected Defaults(final Locale locale)
     {
@@ -35,7 +35,7 @@ public abstract class Defaults
 
     /**
      * Returns the locale.
-     * @return Locale; locale.
+     * @return locale.
      */
     public Locale getLocale()
     {
@@ -45,24 +45,24 @@ public abstract class Defaults
     /**
      * Returns a default value of a type, indicated by its name. This should only be used by parsers. Simulations defined in
      * code should access the relevant static fields directly for code maintainability.
-     * @param clazz Class&lt;T&gt;; class instance of type T.
-     * @param name String; name referring to a default through static field names, e.g. "NL.VEHICLE".
+     * @param clazz class instance of type T.
+     * @param name name referring to a default through static field names, e.g. "NL.VEHICLE".
      * @param <T> type of the value.
-     * @return T; returned default value, {@code null} if the default could not be found.
+     * @return returned default value, {@code null} if the default could not be found.
      */
     public static <T> T getByName(final Class<T> clazz, final String name)
     {
         return getByName(Defaults.class, clazz, name);
     }
-    
+
     /**
      * Returns a default value of a type, indicated by its name. This should only be used by parsers. Simulations defined in
      * code should access the relevant static fields directly for code maintainability.
-     * @param defaultsClass Class&lt;? extends Defaults&gt;; defaults class.
-     * @param clazz Class&lt;T&gt;; class instance of type T.
-     * @param name String; name referring to a default through static field names, e.g. "NL.VEHICLE".
+     * @param defaultsClass defaults class.
+     * @param clazz class instance of type T.
+     * @param name name referring to a default through static field names, e.g. "NL.VEHICLE".
      * @param <T> type of the value.
-     * @return T; returned default value, {@code null} if the default could not be found.
+     * @return returned default value, {@code null} if the default could not be found.
      */
     @SuppressWarnings("unchecked")
     protected static <T> T getByName(final Class<? extends Defaults> defaultsClass, final Class<T> clazz, final String name)

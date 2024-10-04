@@ -20,9 +20,9 @@ public final class Scalar3d
     }
 
     /**
-     * @param r double; the radius
-     * @param theta double; the angle from the z direction
-     * @param phi double; the projected angle in the xy-plane from the x direction
+     * @param r the radius
+     * @param theta the angle from the z direction
+     * @param phi the projected angle in the xy-plane from the x direction
      * @return a double array [x, y, z] with cartesian coordinates
      */
     public static double[] polarToCartesian(final double r, final double theta, final double phi)
@@ -40,9 +40,9 @@ public final class Scalar3d
 
     /**
      * Get the (polar) radius based on Cartesian coordinates.
-     * @param x double; the x-coordinate
-     * @param y double; the y-coordinate
-     * @param z double; the z-coordinate
+     * @param x the x-coordinate
+     * @param y the y-coordinate
+     * @param z the z-coordinate
      * @return the radius, which is the distance from (0,0,0)
      */
     public static double cartesianToRadius(final double x, final double y, final double z)
@@ -52,9 +52,9 @@ public final class Scalar3d
 
     /**
      * Get the (polar) theta angle, which is the angle from the z-direction, from Cartesian coordinates.
-     * @param x double; the x-coordinate
-     * @param y double; the y-coordinate
-     * @param z double; the z-coordinate
+     * @param x the x-coordinate
+     * @param y the y-coordinate
+     * @param z the z-coordinate
      * @return the radius, which is the distance from (0,0,0)
      */
     public static Direction cartesianToTheta(final double x, final double y, final double z)
@@ -65,8 +65,8 @@ public final class Scalar3d
 
     /**
      * Get the (polar) phi angle, which is the projected angle in the xy-plane from the x direction.
-     * @param x double; the x-coordinate
-     * @param y double; the y-coordinate
+     * @param x the x-coordinate
+     * @param y the y-coordinate
      * @return the projected angle of direction in the xy-plane
      */
     public static Direction cartesianToPhi(final double x, final double y)

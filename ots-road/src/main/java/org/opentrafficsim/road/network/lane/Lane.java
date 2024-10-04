@@ -189,13 +189,13 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Constructor specifying geometry.
-     * @param link CrossSectionLink; link.
-     * @param id String; the id of this lane within the link; should be unique within the link.
-     * @param centerLine OtsLine2d; center line.
-     * @param contour Polygon2d; contour shape.
-     * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
-     * @param laneType LaneType; lane type.
-     * @param speedLimitMap Map&lt;GtuType, Speed&gt;; the speed limit on this lane, specified per GTU Type.
+     * @param link link.
+     * @param id the id of this lane within the link; should be unique within the link.
+     * @param centerLine center line.
+     * @param contour contour shape.
+     * @param crossSectionSlices cross-section slices.
+     * @param laneType lane type.
+     * @param speedLimitMap the speed limit on this lane, specified per GTU Type.
      * @throws NetworkException when no cross-section slice is defined.
      */
     public Lane(final CrossSectionLink link, final String id, final OtsLine2d centerLine, final Polygon2d contour,
@@ -210,8 +210,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Obtains the history manager from the parent link.
-     * @param parentLink CrossSectionLink; parent link
-     * @return HistoryManager; history manager
+     * @param parentLink parent link
+     * @return history manager
      */
     private HistoryManager getManager(final CrossSectionLink parentLink)
     {
@@ -223,12 +223,12 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     /**
      * Retrieve one of the sets of neighboring Lanes that is accessible for the given type of GTU. A defensive copy of the
      * internal data structure is returned.
-     * @param direction LateralDirectionality; either LEFT or RIGHT, relative to the DESIGN LINE of the link (and the direction
-     *            of the center line of the lane). In terms of offsets, 'left' lanes always have a more positive offset than the
-     *            current lane, and 'right' lanes a more negative offset.
-     * @param gtuType GtuType; the GTU type to check the accessibility for
-     * @param legal boolean; whether to check legal possibility
-     * @return Set&lt;Lane&gt;; the indicated set of neighboring Lanes
+     * @param direction either LEFT or RIGHT, relative to the DESIGN LINE of the link (and the direction of the center line of
+     *            the lane). In terms of offsets, 'left' lanes always have a more positive offset than the current lane, and
+     *            'right' lanes a more negative offset.
+     * @param gtuType the GTU type to check the accessibility for
+     * @param legal whether to check legal possibility
+     * @return the indicated set of neighboring Lanes
      */
     private Set<Lane> neighbors(final LateralDirectionality direction, final GtuType gtuType, final boolean legal)
     {
@@ -258,13 +258,13 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * Determine whether another lane is adjacent to this lane (dependent on distance) and accessible (dependent on stripes) for
      * a certain GTU type (dependent on usability of the adjacent lane for that GTU type). This method assumes that when there
      * is NO stripe between two adjacent lanes that are accessible for the GTU type, the GTU can enter that lane. <br>
-     * @param lane Lane; the other lane to evaluate
-     * @param direction LateralDirectionality; the direction to look at, relative to the DESIGN LINE of the link. This is a very
-     *            important aspect to note: all information is stored relative to the direction of the design line, and not in a
-     *            driving direction, which can vary for lanes that can be driven in two directions (e.g. at overtaking).
-     * @param gtuType GtuType; the GTU type to check the accessibility for
-     * @param legal boolean; whether to check legal possibility
-     * @return boolean; true if the other lane is adjacent to this lane and accessible for the given GTU type; false otherwise
+     * @param lane the other lane to evaluate
+     * @param direction the direction to look at, relative to the DESIGN LINE of the link. This is a very important aspect to
+     *            note: all information is stored relative to the direction of the design line, and not in a driving direction,
+     *            which can vary for lanes that can be driven in two directions (e.g. at overtaking).
+     * @param gtuType the GTU type to check the accessibility for
+     * @param legal whether to check legal possibility
+     * @return true if the other lane is adjacent to this lane and accessible for the given GTU type; false otherwise
      */
     private boolean laterallyAdjacentAndAccessible(final Lane lane, final LateralDirectionality direction,
             final GtuType gtuType, final boolean legal)
@@ -359,7 +359,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Insert a detector at the right place in the detector list of this Lane.
-     * @param detector Detector; the detector to add
+     * @param detector the detector to add
      * @throws NetworkException when the position of the detector is beyond (or before) the range of this Lane
      */
     public final void addDetector(final LaneDetector detector) throws NetworkException
@@ -388,7 +388,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Remove a detector from the detector list of this Lane.
-     * @param detector Detector; the detector to remove.
+     * @param detector the detector to remove.
      * @throws NetworkException when the detector was not found on this Lane
      */
     public final void removeDetector(final LaneDetector detector) throws NetworkException
@@ -411,10 +411,10 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     /**
      * Retrieve the list of Detectors of this Lane in the specified distance range for the given GtuType. The resulting list is
      * a defensive copy.
-     * @param minimumPosition Length; the minimum distance on the Lane (inclusive)
-     * @param maximumPosition Length; the maximum distance on the Lane (inclusive)
-     * @param gtuType GtuType; the GTU type to provide the detectors for
-     * @return List&lt;Detector&gt;; list of the detectors in the specified range. This is a defensive copy.
+     * @param minimumPosition the minimum distance on the Lane (inclusive)
+     * @param maximumPosition the maximum distance on the Lane (inclusive)
+     * @param gtuType the GTU type to provide the detectors for
+     * @return list of the detectors in the specified range. This is a defensive copy.
      */
     public final List<LaneDetector> getDetectors(final Length minimumPosition, final Length maximumPosition,
             final GtuType gtuType)
@@ -437,8 +437,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     /**
      * Retrieve the list of Detectors of this Lane that are triggered by the given GtuType. The resulting list is a defensive
      * copy.
-     * @param gtuType GtuType; the GTU type to provide the detectors for
-     * @return List&lt;Detector&gt;; list of the detectors, in ascending order for the location on the Lane
+     * @param gtuType the GTU type to provide the detectors for
+     * @return list of the detectors, in ascending order for the location on the Lane
      */
     public final List<LaneDetector> getDetectors(final GtuType gtuType)
     {
@@ -458,7 +458,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Retrieve the list of all Detectors of this Lane. The resulting list is a defensive copy.
-     * @return List&lt;Detector&gt;; list of the detectors, in ascending order for the location on the Lane
+     * @return list of the detectors, in ascending order for the location on the Lane
      */
     public final List<LaneDetector> getDetectors()
     {
@@ -479,9 +479,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Retrieve the list of Detectors of this Lane for the given GtuType. The resulting Map is a defensive copy.
-     * @param gtuType GtuType; the GTU type to provide the detectors for
-     * @return SortedMap&lt;Double, List&lt;Detector&gt;&gt;; all detectors on this lane for the given GtuType as a map per
-     *         distance
+     * @param gtuType the GTU type to provide the detectors for
+     * @return all detectors on this lane for the given GtuType as a map per distance
      */
     public final SortedMap<Double, List<LaneDetector>> getDetectorMap(final GtuType gtuType)
     {
@@ -509,9 +508,9 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Schedule triggering of the detectors for a certain time step; from now until the nextEvaluationTime of the GTU.
-     * @param gtu LaneBasedGtu; the lane based GTU for which to schedule triggering of the detectors.
-     * @param referenceStartSI double; the SI distance of the GTU reference point on the lane at the current time
-     * @param referenceMoveSI double; the SI distance travelled in the next time step.
+     * @param gtu the lane based GTU for which to schedule triggering of the detectors.
+     * @param referenceStartSI the SI distance of the GTU reference point on the lane at the current time
+     * @param referenceMoveSI the SI distance travelled in the next time step.
      * @throws NetworkException when GTU not on this lane.
      * @throws SimRuntimeException when method cannot be scheduled.
      */
@@ -572,7 +571,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     /**
      * Insert a laneBasedObject at the right place in the laneBasedObject list of this Lane. Register it in the network WITH the
      * Lane id.
-     * @param laneBasedObject LaneBasedObject; the laneBasedObject to add
+     * @param laneBasedObject the laneBasedObject to add
      * @throws NetworkException when the position of the laneBasedObject is beyond (or before) the range of this Lane
      */
     public final synchronized void addLaneBasedObject(final LaneBasedObject laneBasedObject) throws NetworkException
@@ -600,7 +599,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Remove a laneBasedObject from the laneBasedObject list of this Lane.
-     * @param laneBasedObject LaneBasedObject; the laneBasedObject to remove.
+     * @param laneBasedObject the laneBasedObject to remove.
      * @throws NetworkException when the laneBasedObject was not found on this Lane
      */
     public final synchronized void removeLaneBasedObject(final LaneBasedObject laneBasedObject) throws NetworkException
@@ -623,9 +622,9 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     /**
      * Retrieve the list of LaneBasedObjects of this Lane in the specified distance range. The resulting list is a defensive
      * copy.
-     * @param minimumPosition Length; the minimum distance on the Lane (inclusive)
-     * @param maximumPosition Length; the maximum distance on the Lane (inclusive)
-     * @return List&lt;LaneBasedObject&gt;; list of the laneBasedObject in the specified range. This is a defensive copy.
+     * @param minimumPosition the minimum distance on the Lane (inclusive)
+     * @param maximumPosition the maximum distance on the Lane (inclusive)
+     * @return list of the laneBasedObject in the specified range. This is a defensive copy.
      */
     public final List<LaneBasedObject> getLaneBasedObjects(final Length minimumPosition, final Length maximumPosition)
     {
@@ -645,7 +644,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Retrieve the list of all LaneBasedObjects of this Lane. The resulting list is a defensive copy.
-     * @return List&lt;LaneBasedObject&gt;; list of the laneBasedObjects, in ascending order for the location on the Lane
+     * @return list of the laneBasedObjects, in ascending order for the location on the Lane
      */
     public final List<LaneBasedObject> getLaneBasedObjects()
     {
@@ -666,7 +665,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Retrieve the list of LaneBasedObjects of this Lane. The resulting Map is a defensive copy.
-     * @return SortedMap&lt;Double, List&lt;LaneBasedObject&gt;&gt;; all laneBasedObjects on this lane
+     * @return all laneBasedObjects on this lane
      */
     public final SortedMap<Double, List<LaneBasedObject>> getLaneBasedObjectMap()
     {
@@ -685,8 +684,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Transform a fraction on the lane to a relative length (can be less than zero or larger than the lane length).
-     * @param fraction double; fraction relative to the lane length.
-     * @return Length; the longitudinal length corresponding to the fraction.
+     * @param fraction fraction relative to the lane length.
+     * @return the longitudinal length corresponding to the fraction.
      */
     public final Length position(final double fraction)
     {
@@ -699,8 +698,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Transform a fraction on the lane to a relative length in SI units (can be less than zero or larger than the lane length).
-     * @param fraction double; fraction relative to the lane length.
-     * @return double; length corresponding to the fraction, in SI units.
+     * @param fraction fraction relative to the lane length.
+     * @return length corresponding to the fraction, in SI units.
      */
     public final double positionSI(final double fraction)
     {
@@ -709,8 +708,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Transform a position on the lane (can be less than zero or larger than the lane length) to a fraction.
-     * @param position Length; relative length on the lane (may be less than zero or larger than the lane length).
-     * @return fraction double; fraction relative to the lane length.
+     * @param position relative length on the lane (may be less than zero or larger than the lane length).
+     * @return fraction relative to the lane length.
      */
     public final double fraction(final Length position)
     {
@@ -719,8 +718,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Transform a position on the lane in SI units (can be less than zero or larger than the lane length) to a fraction.
-     * @param positionSI double; relative length on the lane in SI units (may be less than zero or larger than the lane length).
-     * @return double; fraction relative to the lane length.
+     * @param positionSI relative length on the lane in SI units (may be less than zero or larger than the lane length).
+     * @return fraction relative to the lane length.
      */
     public final double fractionSI(final double positionSI)
     {
@@ -736,10 +735,10 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Add a LaneBasedGtu to the list of this Lane.
-     * @param gtu LaneBasedGtu; the GTU to add
-     * @param fractionalPosition double; the fractional position that the newly added GTU will have on this Lane
-     * @return int; the rank that the newly added GTU has on this Lane (should be 0, except when the GTU enters this Lane due to
-     *         a lane change operation)
+     * @param gtu the GTU to add
+     * @param fractionalPosition the fractional position that the newly added GTU will have on this Lane
+     * @return the rank that the newly added GTU has on this Lane (should be 0, except when the GTU enters this Lane due to a
+     *         lane change operation)
      * @throws GtuException when the fractionalPosition is outside the range 0..1, or the GTU is already registered on this Lane
      */
     // @docs/02-model-structure/djutils.md#event-producers-and-listeners
@@ -781,10 +780,10 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Add a LaneBasedGtu to the list of this Lane.
-     * @param gtu LaneBasedGtu; the GTU to add
-     * @param longitudinalPosition Length; the longitudinal position that the newly added GTU will have on this Lane
-     * @return int; the rank that the newly added GTU has on this Lane (should be 0, except when the GTU enters this Lane due to
-     *         a lane change operation)
+     * @param gtu the GTU to add
+     * @param longitudinalPosition the longitudinal position that the newly added GTU will have on this Lane
+     * @return the rank that the newly added GTU has on this Lane (should be 0, except when the GTU enters this Lane due to a
+     *         lane change operation)
      * @throws GtuException when longitudinalPosition is negative or exceeds the length of this Lane
      */
     public final int addGtu(final LaneBasedGtu gtu, final Length longitudinalPosition) throws GtuException
@@ -794,9 +793,9 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Remove a GTU from the GTU list of this lane.
-     * @param gtu LaneBasedGtu; the GTU to remove.
-     * @param removeFromParentLink boolean; when the GTU leaves the last lane of the parentLink of this Lane
-     * @param position Length; last position of the GTU
+     * @param gtu the GTU to remove.
+     * @param removeFromParentLink when the GTU leaves the last lane of the parentLink of this Lane
+     * @param position last position of the GTU
      */
     // @docs/02-model-structure/djutils.md#event-producers-and-listeners
     public final void removeGtu(final LaneBasedGtu gtu, final boolean removeFromParentLink, final Length position)
@@ -818,7 +817,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Get the last GTU on the lane, relative to a driving direction on this lane.
-     * @return LaneBasedGtu; the last GTU on this lane in the given direction, or null if no GTU could be found.
+     * @return the last GTU on this lane in the given direction, or null if no GTU could be found.
      * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
     public final LaneBasedGtu getLastGtu() throws GtuException
@@ -832,7 +831,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Get the first GTU on the lane, relative to a driving direction on this lane.
-     * @return LaneBasedGtu; the first GTU on this lane in the given direction, or null if no GTU could be found.
+     * @return the first GTU on this lane in the given direction, or null if no GTU could be found.
      * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
     public final LaneBasedGtu getFirstGtu() throws GtuException
@@ -847,11 +846,10 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     /**
      * Get the first GTU where the relativePosition is in front of another GTU on the lane, in a driving direction on this lane,
      * compared to the DESIGN LINE.
-     * @param position Length; the position before which the relative position of a GTU will be searched.
+     * @param position the position before which the relative position of a GTU will be searched.
      * @param relativePosition RelativePosition.TYPE; the relative position we want to compare against
-     * @param when Time; the time for which to evaluate the positions.
-     * @return LaneBasedGtu; the first GTU before a position on this lane in the given direction, or null if no GTU could be
-     *         found.
+     * @param when the time for which to evaluate the positions.
+     * @return the first GTU before a position on this lane in the given direction, or null if no GTU could be found.
      * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
     public final LaneBasedGtu getGtuAhead(final Length position, final RelativePosition.Type relativePosition, final Time when)
@@ -877,11 +875,10 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     /**
      * Get the first GTU where the relativePosition is behind a certain position on the lane, in a driving direction on this
      * lane, compared to the DESIGN LINE.
-     * @param position Length; the position before which the relative position of a GTU will be searched.
+     * @param position the position before which the relative position of a GTU will be searched.
      * @param relativePosition RelativePosition.TYPE; the relative position of the GTU we are looking for.
-     * @param when Time; the time for which to evaluate the positions.
-     * @return LaneBasedGtu; the first GTU after a position on this lane in the given direction, or null if no GTU could be
-     *         found.
+     * @param when the time for which to evaluate the positions.
+     * @return the first GTU after a position on this lane in the given direction, or null if no GTU could be found.
      * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
     public final LaneBasedGtu getGtuBehind(final Length position, final RelativePosition.Type relativePosition, final Time when)
@@ -906,9 +903,9 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Searches for objects just before and after a given position.
-     * @param positions Positions; functional interface returning positions at indices
-     * @param listSize int; number of objects in the underlying list
-     * @param position double; position
+     * @param positions functional interface returning positions at indices
+     * @param listSize number of objects in the underlying list
+     * @param position position
      * @return int[2]; Where int[0] is the index of the object with lower position, and int[1] with higher. In case an object is
      *         exactly at the position int[1] - int[0] = 2. If all objects have a higher position int[0] = -1, if all objects
      *         have a lower position int[1] = listSize.
@@ -975,9 +972,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * Get the first object where the relativePosition is in front of a certain position on the lane, in a driving direction on
      * this lane, compared to the DESIGN LINE. Perception should iterate over results from this method to see what is most
      * limiting.
-     * @param position Length; the position after which the relative position of an object will be searched.
-     * @return List&lt;LaneBasedObject&gt;; the first object(s) before a position on this lane in the given direction, or null
-     *         if no object could be found.
+     * @param position the position after which the relative position of an object will be searched.
+     * @return the first object(s) before a position on this lane in the given direction, or null if no object could be found.
      */
     public final List<LaneBasedObject> getObjectAhead(final Length position)
     {
@@ -995,9 +991,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * Get the first object where the relativePosition is behind of a certain position on the lane, in a driving direction on
      * this lane, compared to the DESIGN LINE. Perception should iterate over results from this method to see what is most
      * limiting.
-     * @param position Length; the position after which the relative position of an object will be searched.
-     * @return List&lt;LaneBasedObject&gt;; the first object(s) after a position on this lane in the given direction, or null if
-     *         no object could be found.
+     * @param position the position after which the relative position of an object will be searched.
+     * @return the first object(s) after a position on this lane in the given direction, or null if no object could be found.
      */
     public final List<LaneBasedObject> getObjectBehind(final Length position)
     {
@@ -1080,7 +1075,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Forces the next lanes to be as specified. For specific GTU types, a subset of these lanes is taken.
-     * @param lanes Set&lt;Lane&gt;; lanes to set as next lanes.
+     * @param lanes lanes to set as next lanes.
      */
     public void forceNextLanes(final Set<Lane> lanes)
     {
@@ -1148,7 +1143,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Forces the previous lanes to be as specified. For specific GTU types, a subset of these lanes is taken.
-     * @param lanes Set&lt;Lane&gt;; lanes to set as previous lanes.
+     * @param lanes lanes to set as previous lanes.
      */
     public void forcePrevLanes(final Set<Lane> lanes)
     {
@@ -1163,8 +1158,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * A lane is called adjacent to another lane if the lateral edges are not more than a delta distance apart. This means that
      * a lane that <i>overlaps</i> with another lane is <b>not</b> returned as an adjacent lane. <br>
      * <b>Note:</b> LEFT and RIGHT are seen from the direction of the GTU, in its forward driving direction. <br>
-     * @param lateralDirection LateralDirectionality; LEFT or RIGHT.
-     * @param gtuType GtuType; the type of GTU for which to return the adjacent lanes.
+     * @param lateralDirection LEFT or RIGHT.
+     * @param gtuType the type of GTU for which to return the adjacent lanes.
      * @return the set of lanes that are accessible, or null if there is no lane that is accessible with a matching driving
      *         direction.
      */
@@ -1181,8 +1176,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * A lane is called adjacent to another lane if the lateral edges are not more than a delta distance apart. This means that
      * a lane that <i>overlaps</i> with another lane is <b>not</b> returned as an adjacent lane. <br>
      * <b>Note:</b> LEFT and RIGHT are seen from the direction of the GTU, in its forward driving direction. <br>
-     * @param lateralDirection LateralDirectionality; LEFT or RIGHT.
-     * @param gtuType GtuType; the type of GTU for which to return the adjacent lanes.
+     * @param lateralDirection LEFT or RIGHT.
+     * @param gtuType the type of GTU for which to return the adjacent lanes.
      * @return the set of lanes that are accessible, or null if there is no lane that is accessible with a matching driving
      *         direction.
      */
@@ -1201,9 +1196,9 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Returns one adjacent lane.
-     * @param laneChangeDirection LateralDirectionality; lane change direction
-     * @param gtuType GtuType; GTU type.
-     * @return Lane; adjacent lane, {@code null} if none
+     * @param laneChangeDirection lane change direction
+     * @param gtuType GTU type.
+     * @return adjacent lane, {@code null} if none
      */
     public Lane getAdjacentLane(final LateralDirectionality laneChangeDirection, final GtuType gtuType)
     {
@@ -1218,7 +1213,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     /**
      * Get the speed limit of this lane, which can differ per GTU type. E.g., cars might be allowed to drive 120 km/h and trucks
      * 90 km/h.
-     * @param gtuType GtuType; the GTU type to provide the speed limit for
+     * @param gtuType the GTU type to provide the speed limit for
      * @return the speedLimit.
      * @throws NetworkException on network inconsistency
      */
@@ -1287,8 +1282,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * certain GtuTypes to a different value. An example is a lane on a highway where all vehicles, except truck (CAR, BUS,
      * MOTORCYCLE, etc.), can drive 120 km/h, but trucks are allowed only 90 km/h. In that case, set the speed limit for
      * GtuType.ALL to 120 km/h, and for TRUCK to 90 km/h.
-     * @param gtuType GtuType; the GTU type to provide the speed limit for
-     * @param speedLimit Speed; the speed limit for this gtu type
+     * @param gtuType the GTU type to provide the speed limit for
+     * @param speedLimit the speed limit for this gtu type
      */
     public final void setSpeedLimit(final GtuType gtuType, final Speed speedLimit)
     {
@@ -1302,7 +1297,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * speed limit of GtuType.ALL. <br>
      * <b>Note</b>: if no speed limit is known for a GtuType, getSpeedLimit will throw a NetworkException when the speed limit
      * is retrieved for that GtuType.
-     * @param gtuType GtuType; the GTU type to provide the speed limit for
+     * @param gtuType the GTU type to provide the speed limit for
      */
     public final void removeSpeedLimit(final GtuType gtuType)
     {
@@ -1329,7 +1324,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Returns the list of GTU's at the specified time.
-     * @param time Time; time
+     * @param time time
      * @return list of GTU's at the specified times
      */
     public final List<LaneBasedGtu> getGtuList(final Time time)
@@ -1345,7 +1340,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Returns the number of GTU's.
-     * @return int; number of GTU's.
+     * @return number of GTU's.
      */
     public final int numberOfGtus()
     {
@@ -1354,8 +1349,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Returns the number of GTU's at specified time.
-     * @param time Time; time
-     * @return int; number of GTU's.
+     * @param time time
+     * @return number of GTU's.
      */
     public final int numberOfGtus(final Time time)
     {
@@ -1364,8 +1359,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Returns the index of the given GTU, or -1 if not present.
-     * @param gtu LaneBasedGtu; gtu to get the index of
-     * @return int; index of the given GTU, or -1 if not present
+     * @param gtu gtu to get the index of
+     * @return index of the given GTU, or -1 if not present
      */
     public final int indexOfGtu(final LaneBasedGtu gtu)
     {
@@ -1384,9 +1379,9 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Returns the index of the given GTU, or -1 if not present, at specified time.
-     * @param gtu LaneBasedGtu; gtu to get the index of
-     * @param time Time; time
-     * @return int; index of the given GTU, or -1 if not present
+     * @param gtu gtu to get the index of
+     * @param time time
+     * @return index of the given GTU, or -1 if not present
      */
     public final int indexOfGtu(final LaneBasedGtu gtu, final Time time)
     {
@@ -1406,8 +1401,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Returns the index'th GTU.
-     * @param index int; index of the GTU
-     * @return LaneBasedGtu; the index'th GTU
+     * @param index index of the GTU
+     * @return the index'th GTU
      */
     public final LaneBasedGtu getGtu(final int index)
     {
@@ -1416,9 +1411,9 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Returns the index'th GTU at specified time.
-     * @param index int; index of the GTU
-     * @param time Time; time
-     * @return LaneBasedGtu; the index'th GTU
+     * @param index index of the GTU
+     * @param time time
+     * @return the index'th GTU
      */
     public final LaneBasedGtu getGtu(final int index, final Time time)
     {
@@ -1427,8 +1422,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Returns the covered distance driven to the given fractional position.
-     * @param fraction double; fractional position
-     * @return Length; covered distance driven to the given fractional position
+     * @param fraction fractional position
+     * @return covered distance driven to the given fractional position
      */
     public final Length coveredDistance(final double fraction)
     {
@@ -1437,8 +1432,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Returns the remaining distance to be driven from the given fractional position.
-     * @param fraction double; fractional position
-     * @return Length; remaining distance to be driven from the given fractional position
+     * @param fraction fractional position
+     * @return remaining distance to be driven from the given fractional position
      */
     public final Length remainingDistance(final double fraction)
     {
@@ -1447,8 +1442,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Returns the fraction along the design line for having covered the given distance.
-     * @param distance Length; covered distance
-     * @return double; fraction along the design line for having covered the given distance
+     * @param distance covered distance
+     * @return fraction along the design line for having covered the given distance
      */
     @Deprecated
     public final double fractionAtCoveredDistance(final Length distance)
@@ -1519,8 +1514,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     {
         /**
          * Returns the position of the index'th element.
-         * @param index int; index
-         * @return double; position of the index'th element
+         * @param index index
+         * @return position of the index'th element
          * @throws GtuException on exception
          */
         double get(int index) throws GtuException;

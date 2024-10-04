@@ -132,13 +132,13 @@ public interface GapAcceptance
 
     /**
      * Determine whether a gap is acceptable.
-     * @param perception LanePerception; perception
-     * @param params Parameters; parameters
-     * @param sli SpeedLimitInfo; speed limit info
-     * @param cfm CarFollowingModel; car-following model
-     * @param desire double; level of lane change desire
-     * @param ownSpeed Speed; own speed
-     * @param lat LateralDirectionality; lateral direction for synchronization
+     * @param perception perception
+     * @param params parameters
+     * @param sli speed limit info
+     * @param cfm car-following model
+     * @param desire level of lane change desire
+     * @param ownSpeed own speed
+     * @param lat lateral direction for synchronization
      * @return whether a gap is acceptable
      * @throws ParameterException if a parameter is not defined
      * @throws OperationalPlanException perception exception
@@ -164,14 +164,14 @@ public interface GapAcceptance
 
     /**
      * Determine whether a gap is acceptable.
-     * @param perception LanePerception; perception
-     * @param params Parameters; parameters
-     * @param sli SpeedLimitInfo; speed limit info
-     * @param cfm CarFollowingModel; car-following model
-     * @param desire double; level of lane change desire
-     * @param ownSpeed Speed; own speed
-     * @param ownAcceleration Acceleration; current car-following acceleration
-     * @param lat LateralDirectionality; lateral direction for synchronization
+     * @param perception perception
+     * @param params parameters
+     * @param sli speed limit info
+     * @param cfm car-following model
+     * @param desire level of lane change desire
+     * @param ownSpeed own speed
+     * @param ownAcceleration current car-following acceleration
+     * @param lat lateral direction for synchronization
      * @return whether a gap is acceptable
      * @throws ParameterException if a parameter is not defined
      * @throws OperationalPlanException perception exception

@@ -15,8 +15,7 @@ import org.opentrafficsim.xml.bindings.types.ExpressionType;
  * @param <S> unit type
  * @param <E> expression type
  */
-public abstract class ScalarAdapter<S extends DoubleScalar<?, S>, E extends ExpressionType<S>>
-        extends ExpressionAdapter<S, E>
+public abstract class ScalarAdapter<S extends DoubleScalar<?, S>, E extends ExpressionType<S>> extends ExpressionAdapter<S, E>
 {
 
     /** {@inheritDoc} */

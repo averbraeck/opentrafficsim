@@ -28,8 +28,8 @@ public abstract class AbstractHistoricalNavigableSet<E, S extends NavigableSet<E
 
     /**
      * Constructor.
-     * @param historyManager HistoryManager; history manager
-     * @param set S; initial set
+     * @param historyManager history manager
+     * @param set initial set
      */
     protected AbstractHistoricalNavigableSet(final HistoryManager historyManager, final S set)
     {

@@ -21,16 +21,15 @@ import org.opentrafficsim.road.network.lane.Lane;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param path OtsLine2d; the path it the GTU keeps driving in the same lane, and follows the route if possible in the same
- *            lane. The path stops when the lane or a continuation lane does not lead in the direction of the route provided by
- *            the strategical planner.
- * @param laneList List&lt;Lane&gt;; the current lane on which the reference point of the GTU is registered (if the GTU is
- *            registered on multiple lanes with the reference point, one lane is chosen where the reference point has a
- *            fractional lane position between 0.0 and 1.0), and consecutive lanes that follow the route if possible in the same
- *            lane. The list of lanes stops when a continuation lane does not lead in the direction of the route provided by the
- *            strategical planner.
- * @param referencePosition Length; the start point on the first lane in the laneList. When this is a point that represents a
- *            GTU position, it should represent the reference point of the GTU.
+ * @param path the path it the GTU keeps driving in the same lane, and follows the route if possible in the same lane. The path
+ *            stops when the lane or a continuation lane does not lead in the direction of the route provided by the strategical
+ *            planner.
+ * @param laneList the current lane on which the reference point of the GTU is registered (if the GTU is registered on multiple
+ *            lanes with the reference point, one lane is chosen where the reference point has a fractional lane position
+ *            between 0.0 and 1.0), and consecutive lanes that follow the route if possible in the same lane. The list of lanes
+ *            stops when a continuation lane does not lead in the direction of the route provided by the strategical planner.
+ * @param referencePosition the start point on the first lane in the laneList. When this is a point that represents a GTU
+ *            position, it should represent the reference point of the GTU.
  */
 public record LanePathInfo(OtsLine2d path, List<Lane> laneList, Length referencePosition) implements Serializable
 {

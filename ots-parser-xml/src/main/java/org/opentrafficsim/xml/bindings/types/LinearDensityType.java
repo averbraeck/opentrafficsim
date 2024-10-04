@@ -21,7 +21,7 @@ public class LinearDensityType extends ExpressionType<LinearDensity>
 
     /**
      * Constructor with value.
-     * @param value LinearDensity; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public LinearDensityType(final LinearDensity value)
     {
@@ -30,7 +30,7 @@ public class LinearDensityType extends ExpressionType<LinearDensity>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public LinearDensityType(final String expression)
     {

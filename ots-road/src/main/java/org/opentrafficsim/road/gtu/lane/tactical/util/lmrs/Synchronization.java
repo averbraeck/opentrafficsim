@@ -467,9 +467,9 @@ public interface Synchronization extends LmrsParameters
 
     /**
      * Returns the distance to the next merge, stopping within this distance is futile for a lane change.
-     * @param perception LanePerception; perception
-     * @param lat LateralDirectionality; lateral direction
-     * @return Length; distance to the next merge
+     * @param perception perception
+     * @param lat lateral direction
+     * @return distance to the next merge
      * @throws OperationalPlanException if there is no infrastructure perception
      */
     public static Length getMergeDistance(final LanePerception perception, final LateralDirectionality lat)
@@ -488,15 +488,15 @@ public interface Synchronization extends LmrsParameters
 
     /**
      * Determine acceleration for synchronization.
-     * @param perception LanePerception; perception
-     * @param params Parameters; parameters
-     * @param sli SpeedLimitInfo; speed limit info
-     * @param cfm CarFollowingModel; car-following model
-     * @param desire double; level of lane change desire
-     * @param lat LateralDirectionality; lateral direction for synchronization
-     * @param lmrsData LmrsData; LMRS data
-     * @param laneChange LaneChange; lane change
-     * @param initiatedLaneChange LateralDirectionality; lateral direction of initiated lane change
+     * @param perception perception
+     * @param params parameters
+     * @param sli speed limit info
+     * @param cfm car-following model
+     * @param desire level of lane change desire
+     * @param lat lateral direction for synchronization
+     * @param lmrsData LMRS data
+     * @param laneChange lane change
+     * @param initiatedLaneChange lateral direction of initiated lane change
      * @return acceleration for synchronization
      * @throws ParameterException if a parameter is not defined
      * @throws OperationalPlanException perception exception
@@ -507,10 +507,10 @@ public interface Synchronization extends LmrsParameters
 
     /**
      * Returns a headway (length) to allow space to perform a lane change at low speeds.
-     * @param headway Headway; headway
-     * @param parameters Parameters; parameters
-     * @param laneChange LaneChange; lane change
-     * @return Length; distance to allow space to perform a lane change at low speeds
+     * @param headway headway
+     * @param parameters parameters
+     * @param laneChange lane change
+     * @return distance to allow space to perform a lane change at low speeds
      * @throws ParameterException if parameter VCONG is not available
      */
     static Length headwayWithLcSpace(final Headway headway, final Parameters parameters, final LaneChange laneChange)
@@ -526,9 +526,9 @@ public interface Synchronization extends LmrsParameters
     /**
      * Return limited deceleration. Deceleration is limited to {@code b} for {@code d < dCoop}. Beyond {@code dCoop} the limit
      * is a linear interpolation between {@code b} and {@code bCrit}.
-     * @param a Acceleration; acceleration to limit
-     * @param desire double; lane change desire
-     * @param params Parameters; parameters
+     * @param a acceleration to limit
+     * @param desire lane change desire
+     * @param params parameters
      * @return limited deceleration
      * @throws ParameterException when parameter is no available or value out of range
      */
@@ -553,10 +553,10 @@ public interface Synchronization extends LmrsParameters
 
     /**
      * Returns the upstream gtu of the given gtu.
-     * @param gtu HeadwayGtu; gtu
-     * @param leaders PerceptionCollectable&lt;HeadwayGtu,LaneBasedGtu&gt;; leaders of own vehicle
-     * @param follower HeadwayGtu; following vehicle of own vehicle
-     * @param ownLength Length; own vehicle length
+     * @param gtu gtu
+     * @param leaders leaders of own vehicle
+     * @param follower following vehicle of own vehicle
+     * @param ownLength own vehicle length
      * @return upstream gtu of the given gtu
      */
     static HeadwayGtu getFollower(final HeadwayGtu gtu, final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders,
@@ -576,14 +576,14 @@ public interface Synchronization extends LmrsParameters
 
     /**
      * Calculates acceleration by following an adjacent vehicle, with tagging along if desire is not very high and speed is low.
-     * @param leader HeadwayGtu; leader
-     * @param followerSpeed Speed; follower speed
-     * @param followerLength Length; follower length
-     * @param tagSpeed Speed; maximum tag along speed
-     * @param desire double; lane change desire
-     * @param params Parameters; parameters
-     * @param sli SpeedLimitInfo; speed limit info
-     * @param cfm CarFollowingModel; car-following model
+     * @param leader leader
+     * @param followerSpeed follower speed
+     * @param followerLength follower length
+     * @param tagSpeed maximum tag along speed
+     * @param desire lane change desire
+     * @param params parameters
+     * @param sli speed limit info
+     * @param cfm car-following model
      * @return acceleration by following an adjacent vehicle including tagging along
      * @throws ParameterException if a parameter is not present
      */
@@ -616,20 +616,20 @@ public interface Synchronization extends LmrsParameters
 
     /**
      * Returns whether a driver estimates it can be ahead of an adjacent vehicle for merging.
-     * @param adjacentVehicle HeadwayGtu; adjacent vehicle
-     * @param xCur Length; remaining distance
-     * @param nCur int; number of lane changes to perform
-     * @param ownSpeed Speed; own speed
-     * @param ownLength Length; own length
-     * @param tagSpeed Speed; maximum tag along speed
-     * @param dCoop double; cooperation threshold
-     * @param b Acceleration; critical deceleration
-     * @param tMin Duration; minimum headway
-     * @param tMax Duration; normal headway
-     * @param x0 Length; anticipation distance
-     * @param t0 Duration; anticipation time
-     * @param lc Duration; lane change duration
-     * @param desire double; lane change desire
+     * @param adjacentVehicle adjacent vehicle
+     * @param xCur remaining distance
+     * @param nCur number of lane changes to perform
+     * @param ownSpeed own speed
+     * @param ownLength own length
+     * @param tagSpeed maximum tag along speed
+     * @param dCoop cooperation threshold
+     * @param b critical deceleration
+     * @param tMin minimum headway
+     * @param tMax normal headway
+     * @param x0 anticipation distance
+     * @param t0 anticipation time
+     * @param lc lane change duration
+     * @param desire lane change desire
      * @return whether a driver estimates it can be ahead of an adjacent vehicle for merging
      * @throws ParameterException if parameter is not defined
      */
@@ -672,12 +672,12 @@ public interface Synchronization extends LmrsParameters
 
     /**
      * Returns the required buffer space to perform a lane change and further lane changes.
-     * @param speed Speed; representative speed
-     * @param nCur int; number of required lane changes
-     * @param x0 Length; anticipation distance
-     * @param t0 Duration; anticipation time
-     * @param lc Duration; lane change duration
-     * @param dCoop double; cooperation threshold
+     * @param speed representative speed
+     * @param nCur number of required lane changes
+     * @param x0 anticipation distance
+     * @param t0 anticipation time
+     * @param lc lane change duration
+     * @param dCoop cooperation threshold
      * @return required buffer space to perform a lane change and further lane changes
      */
     static Length requiredBufferSpace(final Speed speed, final int nCur, final Length x0, final Duration t0, final Duration lc,
@@ -690,12 +690,12 @@ public interface Synchronization extends LmrsParameters
 
     /**
      * Calculates acceleration to stop for a split or dead-end, accounting for infrastructure.
-     * @param xCur Length; remaining distance to end
-     * @param xMerge Length; distance until merge point
-     * @param params Parameters; parameters
-     * @param ownSpeed Speed; own speed
-     * @param cfm CarFollowingModel; car-following model
-     * @param sli SpeedLimitInfo; speed limit info
+     * @param xCur remaining distance to end
+     * @param xMerge distance until merge point
+     * @param params parameters
+     * @param ownSpeed own speed
+     * @param cfm car-following model
+     * @param sli speed limit info
      * @return acceleration to stop for a split or dead-end, accounting for infrastructure
      * @throws ParameterException if parameter is not defined
      */
@@ -730,8 +730,8 @@ public interface Synchronization extends LmrsParameters
 
     /**
      * Returns the leader of one gtu from a set.
-     * @param gtu HeadwayGtu; gtu
-     * @param leaders SortedSet&lt;HeadwayGtu&gt;; leaders
+     * @param gtu gtu
+     * @param leaders leaders
      * @return leader of one gtu from a set
      */
     static HeadwayGtu getTargetLeader(final HeadwayGtu gtu, final SortedSet<HeadwayGtu> leaders)

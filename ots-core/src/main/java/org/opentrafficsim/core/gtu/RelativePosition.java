@@ -15,10 +15,10 @@ import org.djunits.value.vdouble.scalar.Length;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param dx Length; positive x is in the normal direction of movement.
- * @param dy Length; positive y is left compared to the normal direction of movement (seen from the top).
- * @param dz Length; positive z is up.
- * @param type TYPE; type of relative position (FRONT, BACK, etc.).
+ * @param dx positive x is in the normal direction of movement.
+ * @param dy positive y is left compared to the normal direction of movement (seen from the top).
+ * @param dz positive z is up.
+ * @param type type of relative position (FRONT, BACK, etc.).
  */
 public record RelativePosition(Length dx, Length dy, Length dz, Type type) implements Serializable
 {
@@ -49,7 +49,7 @@ public record RelativePosition(Length dx, Length dy, Length dz, Type type) imple
             new RelativePosition(Length.ZERO, Length.ZERO, Length.ZERO, RelativePosition.REFERENCE);
 
     /**
-     * @param p RelativePosition; a relative position to make a deep copy of.
+     * @param p a relative position to make a deep copy of.
      */
     public RelativePosition(final RelativePosition p)
     {
@@ -79,7 +79,7 @@ public record RelativePosition(Length dx, Length dy, Length dz, Type type) imple
         private final int hash;
 
         /**
-         * @param name String; the type name.
+         * @param name the type name.
          */
         public Type(final String name)
         {

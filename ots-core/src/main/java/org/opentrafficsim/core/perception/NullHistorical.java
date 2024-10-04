@@ -22,7 +22,7 @@ public class NullHistorical<T> implements Historical<T>
 
     /**
      * Constructor.
-     * @param value T; value
+     * @param value value
      */
     public NullHistorical(final T value)
     {

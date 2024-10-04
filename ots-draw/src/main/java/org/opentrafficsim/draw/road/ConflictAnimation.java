@@ -41,8 +41,8 @@ public class ConflictAnimation extends AbstractLineAnimation<ConflictData>
     private final Set<Path2D.Float> paths;
 
     /**
-     * @param source ConflictData; the conflict to draw
-     * @param contextualized Contextualized; context provider
+     * @param source the conflict to draw
+     * @param contextualized context provider
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException on communication failure
      */
@@ -108,25 +108,25 @@ public class ConflictAnimation extends AbstractLineAnimation<ConflictData>
     {
         /**
          * Returns the conflict color.
-         * @return Color; conflict color.
+         * @return conflict color.
          */
         Color getColor();
 
         /**
          * Returns the contour.
-         * @return List&lt;Point2d&gt;; points.
+         * @return points.
          */
         List<Point2d> getContour();
 
         /**
          * Whether the conflict is a crossing.
-         * @return boolean; whether the conflict is a crossing.
+         * @return whether the conflict is a crossing.
          */
         boolean isCrossing();
 
         /**
          * Whether the conflict is a permitted conflict.
-         * @return boolean; whether the conflict is a permitted conflict.
+         * @return whether the conflict is a permitted conflict.
          */
         boolean isPermitted();
     }

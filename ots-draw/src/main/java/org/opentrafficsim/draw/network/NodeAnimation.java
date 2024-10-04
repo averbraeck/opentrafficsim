@@ -41,8 +41,8 @@ public class NodeAnimation extends OtsRenderable<NodeData>
     private Text text;
 
     /**
-     * @param node NodeData; node data.
-     * @param contextualized Contextualized; context provider
+     * @param node node data.
+     * @param contextualized context provider
      * @throws NamingException when animation context cannot be found.
      * @throws RemoteException on communication failure
      */
@@ -105,14 +105,14 @@ public class NodeAnimation extends OtsRenderable<NodeData>
         private static final long serialVersionUID = 20161211L;
 
         /**
-         * @param source NodeData; the object for which the text is displayed
-         * @param text Supplier&lt;String&gt;; the text to display
-         * @param dx float; the horizontal movement of the text, in meters
-         * @param dy float; the vertical movement of the text, in meters
-         * @param textPlacement TextAlignment; where to place the text
-         * @param color Color; the color of the text
-         * @param contextualized Contextualized; context provider
-         * @param scaleDependentRendering ScaleDependendentRendering; size limiter for text animation
+         * @param source the object for which the text is displayed
+         * @param text the text to display
+         * @param dx the horizontal movement of the text, in meters
+         * @param dy the vertical movement of the text, in meters
+         * @param textPlacement where to place the text
+         * @param color the color of the text
+         * @param contextualized context provider
+         * @param scaleDependentRendering size limiter for text animation
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */

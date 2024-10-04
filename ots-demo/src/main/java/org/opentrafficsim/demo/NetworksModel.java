@@ -148,7 +148,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
     private DistContinuous headwayGenerator;
 
     /**
-     * @param simulator OtsSimulatorInterface; the simulator for this model
+     * @param simulator the simulator for this model
      */
     public NetworksModel(final OtsSimulatorInterface simulator)
     {
@@ -358,8 +358,8 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
 
     /**
      * Add a generator to an array of Lane.
-     * @param lanes Lane[]; the lanes that must get a generator at the start
-     * @return Lane[]; the lanes
+     * @param lanes the lanes that must get a generator at the start
+     * @return the lanes
      * @throws GtuException when lane position out of bounds
      * @throws SimRuntimeException when generation scheduling fails
      * @throws ProbabilityException when probability distribution is wrong
@@ -378,7 +378,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
 
     /**
      * Build a generator.
-     * @param lane Lane; the lane on which the generated GTUs are placed
+     * @param lane the lane on which the generated GTUs are placed
      * @return LaneBasedGtuGenerator
      * @throws GtuException when lane position out of bounds
      * @throws SimRuntimeException when generation scheduling fails
@@ -423,15 +423,14 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
     }
 
     /**
-     * @param randStream StreamInterface; the random stream to use
-     * @param lane Lane; reference lane to generate GTUs on
+     * @param randStream the random stream to use
+     * @param lane reference lane to generate GTUs on
      * @param lengthDistribution ContinuousDistDoubleScalar.Rel&lt;Length,LengthUnit&gt;; distribution of the GTU length
      * @param widthDistribution ContinuousDistDoubleScalar.Rel&lt;Length,LengthUnit&gt;; distribution of the GTU width
      * @param maximumSpeedDistribution ContinuousDistDoubleScalar.Rel&lt;Speed,SpeedUnit&gt;; distribution of the GTU's maximum
      *            speed
-     * @param initialPositions Set&lt;LanePosition&gt;; initial position(s) of the GTU on the Lane(s)
-     * @param strategicalPlannerFactory LaneBasedStrategicalPlannerFactory&lt;?&gt;; factory to generate the strategical planner
-     *            for the GTU
+     * @param initialPositions initial position(s) of the GTU on the Lane(s)
+     * @param strategicalPlannerFactory factory to generate the strategical planner for the GTU
      * @return template for a GTU
      * @throws GtuException when characteristics cannot be initialized
      */
@@ -470,9 +469,9 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
 
     /**
      * Append a sink to each lane of an array of Lanes.
-     * @param lanes Lane[]; the array of lanes
-     * @param laneType LaneType; the LaneType for cars
-     * @return Lane[]; the lanes
+     * @param lanes the array of lanes
+     * @param laneType the LaneType for cars
+     * @return the lanes
      * @throws NetworkException on network inconsistency
      * @throws OtsGeometryException on problem making the path for a link
      */
@@ -537,8 +536,8 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
     }
 
     /**
-     * @param index int; the rank number of the path
-     * @return List&lt;Lane&gt;; the set of lanes for the specified index
+     * @param index the rank number of the path
+     * @return the set of lanes for the specified index
      */
     public final List<Lane> getPath(final int index)
     {
@@ -547,7 +546,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
 
     /**
      * Return the number of paths that can be used to show graphs.
-     * @return int; the number of paths that can be used to show graphs
+     * @return the number of paths that can be used to show graphs
      */
     public final int pathCount()
     {

@@ -14,7 +14,7 @@ import org.opentrafficsim.editor.XsdTreeNodeRoot;
 
 /**
  * Listener to all changes, which notifies the user subtly that changes were made. This listener also keeps the scenario drop
- * down list up to date. 
+ * down list up to date.
  * <p>
  * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -23,7 +23,7 @@ import org.opentrafficsim.editor.XsdTreeNodeRoot;
  */
 public class ChangesListener implements EventListener
 {
-    
+
     /** */
     private static final long serialVersionUID = 20230311L;
 
@@ -48,8 +48,8 @@ public class ChangesListener implements EventListener
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
-     * @param scenario JComboBox&lt;ScenarioWrapper&gt;; scenario drop down list.
+     * @param editor editor.
+     * @param scenario scenario drop down list.
      */
     public ChangesListener(final OtsEditor editor, final JComboBox<ScenarioWrapper> scenario)
     {
@@ -134,7 +134,7 @@ public class ChangesListener implements EventListener
 
     /**
      * Insert scenario node in drop down list.
-     * @param node XsdTreeNode; scenario node Ots.Scenarios.Scenario.
+     * @param node scenario node Ots.Scenarios.Scenario.
      */
     private void insertScenario(final XsdTreeNode node)
     {
@@ -162,7 +162,7 @@ public class ChangesListener implements EventListener
 
     /**
      * Remove scenario node from drop down list.
-     * @param node XsdTreeNode; scenario node Ots.Scenarios.Scenario.
+     * @param node scenario node Ots.Scenarios.Scenario.
      */
     private void removeScenario(final XsdTreeNode node)
     {

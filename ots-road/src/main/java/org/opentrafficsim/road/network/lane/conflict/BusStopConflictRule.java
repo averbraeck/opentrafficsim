@@ -33,8 +33,8 @@ public class BusStopConflictRule implements ConflictRule
 
     /**
      * Constructor.
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param busType GtuType; GTU type for buses.
+     * @param simulator simulator
+     * @param busType GTU type for buses.
      */
     public BusStopConflictRule(final OtsSimulatorInterface simulator, final GtuType busType)
     {

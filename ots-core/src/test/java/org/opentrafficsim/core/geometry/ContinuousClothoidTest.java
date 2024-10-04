@@ -148,11 +148,11 @@ public class ContinuousClothoidTest
 
     /**
      * Verifies a line by comparing theoretical and numerical values.
-     * @param start OtsPoint3d; theoretical start point.
-     * @param clothoid ClothoidInfo; created clothoid.
-     * @param line PolyLine2d; flattened line.
-     * @param startCurvature LinearDensity; start curvature, may be {@code null} if no theoretical value available.
-     * @param endCurvature LinearDensity; end curvature, may be {@code null} if no theoretical value available.
+     * @param start theoretical start point.
+     * @param clothoid created clothoid.
+     * @param line flattened line.
+     * @param startCurvature start curvature, may be {@code null} if no theoretical value available.
+     * @param endCurvature end curvature, may be {@code null} if no theoretical value available.
      * @param a Length A-value, may be {@code null} if no theoretical value available.
      * @throws OtsGeometryException if segment number is not available on the line
      */
@@ -193,7 +193,7 @@ public class ContinuousClothoidTest
     public void testOffset()
     {
         Flattener flattener = new NumSegments(32);
-        // point A somewhere on y-axis 
+        // point A somewhere on y-axis
         for (double yA = -30.0; yA < 35.0; yA += 20.0)
         {
             // point B somewhere on x-axis
@@ -221,9 +221,9 @@ public class ContinuousClothoidTest
 
     /**
      * Return the angle from a line segment.
-     * @param line PolyLine2d; line.
-     * @param segment int; segment number.
-     * @return double; angle of the line segment.
+     * @param line line.
+     * @param segment segment number.
+     * @return angle of the line segment.
      * @throws OtsGeometryException if segment number is not available on the line
      */
     private static double getAngle(final PolyLine2d line, final int segment) throws OtsGeometryException
@@ -233,8 +233,8 @@ public class ContinuousClothoidTest
 
     /**
      * Normalizes the angle to be in the range [-pi pi].
-     * @param angle double; angle.
-     * @return double; angle in the range [-pi pi].
+     * @param angle angle.
+     * @return angle in the range [-pi pi].
      */
     private static double normalizeAngle(final double angle)
     {

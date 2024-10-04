@@ -142,15 +142,15 @@ public class ModelParser
 
     /**
      * Parse parameter factories.
-     * @param definitions Definitions; parsed definitions.
-     * @param models List&lt;MODEL&gt;; models
-     * @param eval Eval; expression evaluator
-     * @param parameterTypes Map&lt;String, ParameterType&lt;?&gt;&gt;; parameter types
-     * @param streamMap Map&lt;String, StreamInformation&gt;; stream information
+     * @param definitions parsed definitions.
+     * @param models models
+     * @param eval expression evaluator
+     * @param parameterTypes parameter types
+     * @param streamMap stream information
      * @param <U> a unit
      * @param <T> a scalar type
      * @param <K> a parameter type value
-     * @return Map&lt;String, ParameterFactory&lt;?&gt;&gt;; parameter factories by model ID
+     * @return parameter factories by model ID
      * @throws XmlParserException unknown value, missing constructor, etc.
      */
     @SuppressWarnings("unchecked")
@@ -318,11 +318,11 @@ public class ModelParser
      * Parses a correlation.
      * @param <F> value type of first parameter.
      * @param <T> value type of then parameter.
-     * @param gtuType GtuType; GTU type for which the correlation applies.
-     * @param correlationTag Correlation; correlation tag.
-     * @param parameterTypes Map&lt;String, ParameterType&lt;?&gt;&gt;; parameter types.
-     * @param parameterFactory ParameterFactoryByType; parameter factory.
-     * @param eval Eval; evaluator (to evaluate First and Then node values).
+     * @param gtuType GTU type for which the correlation applies.
+     * @param correlationTag correlation tag.
+     * @param parameterTypes parameter types.
+     * @param parameterFactory parameter factory.
+     * @param eval evaluator (to evaluate First and Then node values).
      */
     @SuppressWarnings("unchecked")
     private static <F, T> void parseCorrelation(final GtuType gtuType,
@@ -432,11 +432,11 @@ public class ModelParser
      * Correlates parameters using an expression.
      * @param <F> value type of first parameter.
      * @param <T> value type of then parameter.
-     * @param first F; value of first parameter.
-     * @param then T; value of then parameter.
-     * @param expression String; expression of the correlation.
+     * @param first value of first parameter.
+     * @param then value of then parameter.
+     * @param expression expression of the correlation.
      * @param clazz Class<?>; type of T, not explicit as equivalence is not derivable in the calling context.
-     * @return T; correlated new value of then parameter.
+     * @return correlated new value of then parameter.
      */
     @SuppressWarnings("unchecked")
     private static <F, T> T correlateFromExpression(final F first, final T then, final String expression, final Class<?> clazz)
@@ -485,16 +485,16 @@ public class ModelParser
 
     /**
      * Creates strategical planner factories for models.
-     * @param otsNetwork RoadNetwork; network
-     * @param models List&lt;MODEL&gt;; models
-     * @param eval Eval; expression evaluator
-     * @param parameterTypes Map&lt;String, ParameterType&lt;?&gt;&gt;; parameter types
-     * @param streamInformation Map&lt;String, StreamInformation&gt;; stream information
-     * @param parameterFactory ParameterFactory; parameter factories
+     * @param otsNetwork network
+     * @param models models
+     * @param eval expression evaluator
+     * @param parameterTypes parameter types
+     * @param streamInformation stream information
+     * @param parameterFactory parameter factories
      * @param <U> a unit
      * @param <T> a scalar type
      * @param <K> a parameter type value
-     * @return Map&lt;String, LaneBasedStrategicalPlannerFactory&lt;?&gt;&gt;; strategical planner factories by model ID
+     * @return strategical planner factories by model ID
      * @throws XmlParserException unknown value, missing constructor, etc.
      */
     public static <U extends Unit<U>, T extends DoubleScalarRel<U, T>,
@@ -547,9 +547,9 @@ public class ModelParser
     /**
      * Parse Lmrs model.
      * @param lmrs org.opentrafficsim.xml.generated.ModelType.TacticalPlanner.Lmrs; Lmrs information
-     * @param streamInformation Map&lt;String, StreamInformation&gt;; stream information
-     * @param eval Eval; expression evaluator.
-     * @return LaneBasedTacticalPlannerFactory&lt;Lmrs&gt;; Lmrs factory
+     * @param streamInformation stream information
+     * @param eval expression evaluator.
+     * @return Lmrs factory
      * @throws XmlParserException unknown value, missing constructor, etc.
      */
     @SuppressWarnings("unchecked")
@@ -650,10 +650,10 @@ public class ModelParser
 
     /**
      * Parse car-following model.
-     * @param carFollowingModel CarFollowingModelType; car-following model information
-     * @param streamInformation Map&lt;String, StreamInformation&gt;; stream information
-     * @param eval Eval; expression evaluator.
-     * @return CarFollowingModelFactory&lt;? extends CarFollowingModel&gt;; car-following model factory
+     * @param carFollowingModel car-following model information
+     * @param streamInformation stream information
+     * @param eval expression evaluator.
+     * @return car-following model factory
      * @throws XmlParserException unknown value, missing constructor, etc.
      */
     private static CarFollowingModelFactory<? extends CarFollowingModel> parseCarFollowingModel(
@@ -709,8 +709,8 @@ public class ModelParser
 
     /**
      * Parse desired headway model.
-     * @param desiredHeadwayModel DesiredHeadwayModelType; desired headway model tag.
-     * @param eval Eval; expression evaluator.
+     * @param desiredHeadwayModel desired headway model tag.
+     * @param eval expression evaluator.
      * @return Factory for desired headway model.
      * @throws XmlParserException when no supported tag is provided.
      */
@@ -746,8 +746,8 @@ public class ModelParser
 
     /**
      * Parse desired speed model.
-     * @param desiredSpeedModel DesiredSpeedModelType; desired speed model tag.
-     * @param eval Eval; expression evaluator.
+     * @param desiredSpeedModel desired speed model tag.
+     * @param eval expression evaluator.
      * @return Factory for desired headway model.
      * @throws XmlParserException when no supported tag is provided.
      */
@@ -811,7 +811,7 @@ public class ModelParser
     /**
      * Returns a factory for a class with empty constructor. The parameters statically defined in the class will be provided by
      * the factory with default values, e.g. {@code static MyClass.MY_PARAMETER = new ParameterTypeAcceleration(...)}.
-     * @param clazz Class&lt;T&gt;; class.
+     * @param clazz class.
      * @param <T> model component type .
      * @return Factory for component.
      * @throws XmlParserException if the class or empty constructor cannot be found.
@@ -857,16 +857,16 @@ public class ModelParser
     {
         /**
          * Returns component.
-         * @return T; component.
+         * @return component.
          */
         T get();
     }
 
     /**
      * Parse perception for any tactical planner that has PerceptionType to support perception.
-     * @param perception PerceptionType; perception xml information
-     * @param eval Eval; expression evaluator.
-     * @return PerceptionFactory; parsed perception factory
+     * @param perception perception xml information
+     * @param eval expression evaluator.
+     * @return parsed perception factory
      * @throws XmlParserException unknown value, missing constructor, etc.
      */
     @SuppressWarnings("unchecked")

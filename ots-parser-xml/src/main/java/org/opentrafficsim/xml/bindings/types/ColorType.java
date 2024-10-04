@@ -15,7 +15,7 @@ public class ColorType extends ExpressionType<Color>
 
     /**
      * Constructor with value.
-     * @param value Color; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public ColorType(final Color value)
     {
@@ -24,7 +24,7 @@ public class ColorType extends ExpressionType<Color>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public ColorType(final String expression)
     {

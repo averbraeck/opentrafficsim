@@ -188,7 +188,7 @@ public class ToledoCarFollowing extends AbstractCarFollowingModel
 
     /**
      * Returns the density based on the leaders in veh/km.
-     * @param leaders PerceptionIterable&lt;? extends Headway&gt;; leading vehicles
+     * @param leaders leading vehicles
      * @return density based on the leaders in veh/km
      */
     private double getDensity(final PerceptionIterable<? extends Headway> leaders)

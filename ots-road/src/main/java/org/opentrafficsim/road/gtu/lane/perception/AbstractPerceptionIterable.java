@@ -56,13 +56,13 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
 
     /**
      * Constructor.
-     * @param perceivingGtu LaneBasedGtu; perceiving GTU
-     * @param root LaneRecord&lt;?&gt;; root record
-     * @param initialPosition Length; initial position
-     * @param downstream boolean; search downstream (or upstream)
-     * @param maxDistance Length; max distance to search
-     * @param relativePosition RelativePosition; position to which distance are calculated by subclasses
-     * @param route Route; route of the GTU, may be {@code null}
+     * @param perceivingGtu perceiving GTU
+     * @param root root record
+     * @param initialPosition initial position
+     * @param downstream search downstream (or upstream)
+     * @param maxDistance max distance to search
+     * @param relativePosition position to which distance are calculated by subclasses
+     * @param route route of the GTU, may be {@code null}
      */
     public AbstractPerceptionIterable(final LaneBasedGtu perceivingGtu, final LaneRecordInterface<?> root,
             final Length initialPosition, final boolean downstream, final Length maxDistance,
@@ -79,7 +79,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
 
     /**
      * Whether the iterable searches downstream.
-     * @return boolean; whether the iterable searches downstream
+     * @return whether the iterable searches downstream
      */
     public boolean isDownstream()
     {
@@ -98,9 +98,9 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
      * This method should not check the distance towards objects with the maximum distance. The counter will be {@code null} for
      * the first object(s). For following object(s) it is whatever value is given with the previous output {@code Entry}. Hence,
      * this method maintains its own counting system.
-     * @param record LaneRecord&lt;?&gt;; record representing the lane and direction
-     * @param position Length; position to look beyond
-     * @param counter C; counter
+     * @param record record representing the lane and direction
+     * @param position position to look beyond
+     * @param counter counter
      * @return next object(s) on the lane or {@code null} if none
      * @throws GtuException on any exception in the process
      */
@@ -109,17 +109,16 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
     /**
      * Returns the distance to the object. The position fed in to this method is directly taken from an {@code Entry} returned
      * by {@code getNext}. The two methods need to be consistent with each other.
-     * @param object U; underlying object
-     * @param record LaneRecord&lt;?&gt;; record representing the lane and direction
-     * @param position Length; position of the object on the lane
-     * @return Length; distance to the object
+     * @param object underlying object
+     * @param record record representing the lane and direction
+     * @param position position of the object on the lane
+     * @return distance to the object
      */
     protected abstract Length getDistance(U object, LaneRecordInterface<?> record, Length position);
 
     /**
      * Returns the longitudinal length of the relevant relative position such that distances to this points can be calculated.
-     * @return Length; the longitudinal length of the relevant relative position such that distances to this points can be
-     *         calculated
+     * @return the longitudinal length of the relevant relative position such that distances to this points can be calculated
      */
     protected Length getDx()
     {
@@ -215,7 +214,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
 
         /**
          * Prevents that duplicate (and further) records are returned for the given object as splits later on merge.
-         * @param object U; object for which a {@code PrimaryIteratorEntry} will be returned
+         * @param object object for which a {@code PrimaryIteratorEntry} will be returned
          */
         private void preventDuplicateEntries(final U object)
         {
@@ -254,8 +253,8 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
 
         /**
          * Iterative method that continues a search on the next lanes if no object is found.
-         * @param record LaneRecord&lt;?&gt;; record
-         * @param position Length; position
+         * @param record record
+         * @param position position
          */
         @SuppressWarnings("synthetic-access")
         private void prepareNext(final LaneRecordInterface<?> record, final Length position)
@@ -340,8 +339,8 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
 
     /**
      * Returns whether the record is on the route.
-     * @param record LaneRecord&lt;?&gt;; record
-     * @return boolean; whether the record is on the route
+     * @param record record
+     * @return whether the record is on the route
      */
     final boolean isOnRoute(final LaneRecordInterface<?> record)
     {
@@ -386,9 +385,9 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
 
         /**
          * Constructor.
-         * @param object U; object
-         * @param counter C; counter, may be {@code null}
-         * @param position Length; position
+         * @param object object
+         * @param counter counter, may be {@code null}
+         * @param position position
          */
         public Entry(final U object, final C counter, final Length position)
         {
@@ -400,9 +399,9 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
 
         /**
          * Constructor.
-         * @param set Set&lt;U&gt;; set
-         * @param counter C; counter, may be {@code null}
-         * @param position Length; position
+         * @param set set
+         * @param counter counter, may be {@code null}
+         * @param position position
          */
         public Entry(final Set<U> set, final C counter, final Length position)
         {
@@ -423,7 +422,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
 
         /**
          * Returns the underlying object. Use {@code !isSet()} to check whether there is an object.
-         * @return U; underlying set
+         * @return underlying set
          */
         public U getObject()
         {
@@ -432,7 +431,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
 
         /**
          * Returns the underlying set. Use {@code isSet()} to check whether there is a set.
-         * @return Set&lt;U&gt;; underlying set
+         * @return underlying set
          */
         public Set<U> getSet()
         {

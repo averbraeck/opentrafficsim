@@ -36,13 +36,13 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
 
     /**
      * Construct a new AbstractLanebasedObject with the required fields.
-     * @param id String; the id of the new object
-     * @param lane Lane; The lane on which the new object resides. If the new object is a Sensor; it is automatically registered
-     *            on the lane
-     * @param longitudinalPosition Length; The position (between 0.0 and the length of the Lane) of the sensor on the design
-     *            line of the lane
-     * @param geometry PolyLine2d; the geometry of the object, which provides its location and bounds as well
-     * @param height Length; the height of the object, in case it is a 3D object
+     * @param id the id of the new object
+     * @param lane The lane on which the new object resides. If the new object is a Sensor; it is automatically registered on
+     *            the lane
+     * @param longitudinalPosition The position (between 0.0 and the length of the Lane) of the sensor on the design line of the
+     *            lane
+     * @param geometry the geometry of the object, which provides its location and bounds as well
+     * @param height the height of the object, in case it is a 3D object
      * @throws NetworkException when the position on the lane is out of bounds
      */
     protected AbstractLaneBasedObject(final String id, final Lane lane, final Length longitudinalPosition,
@@ -61,9 +61,9 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
 
     /**
      * Returns the oriented point of the position on a lane.
-     * @param lane Lane; lane.
-     * @param longitudinalPosition Length; longitudinal position.
-     * @return OrientedPoint2d; oriented point of the position on a lane.
+     * @param lane lane.
+     * @param longitudinalPosition longitudinal position.
+     * @return oriented point of the position on a lane.
      */
     private static OrientedPoint2d getPoint(final Lane lane, final Length longitudinalPosition)
     {
@@ -72,11 +72,11 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
 
     /**
      * Construct a new LaneBasedObject with the required fields.
-     * @param id String; the id of the new AbstractLaneBasedObject
-     * @param lane Lane; The lane for which this is a sensor
-     * @param longitudinalPosition Length; The position (between 0.0 and the length of the Lane) of the sensor on the design
-     *            line of the lane
-     * @param geometry PolyLine2d; the geometry of the object, which provides its location and bounds as well
+     * @param id the id of the new AbstractLaneBasedObject
+     * @param lane The lane for which this is a sensor
+     * @param longitudinalPosition The position (between 0.0 and the length of the Lane) of the sensor on the design line of the
+     *            lane
+     * @param geometry the geometry of the object, which provides its location and bounds as well
      * @throws NetworkException when the position on the lane is out of bounds
      */
     protected AbstractLaneBasedObject(final String id, final Lane lane, final Length longitudinalPosition,

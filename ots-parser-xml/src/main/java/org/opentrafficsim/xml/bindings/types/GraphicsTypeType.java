@@ -15,7 +15,7 @@ public class GraphicsTypeType extends ExpressionType<GraphicsType>
 
     /**
      * Constructor with value.
-     * @param value GraphicsType; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public GraphicsTypeType(final GraphicsType value)
     {
@@ -24,7 +24,7 @@ public class GraphicsTypeType extends ExpressionType<GraphicsType>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public GraphicsTypeType(final String expression)
     {

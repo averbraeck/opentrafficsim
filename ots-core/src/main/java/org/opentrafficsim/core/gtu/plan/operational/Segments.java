@@ -38,8 +38,8 @@ public class Segments
      * Add a constant acceleration segment. The start speed is set equal to the end speed of the previous segment. If the
      * acceleration reaches stand-still during the provided duration, two segments are added. The first with given negative
      * acceleration until stand-still, and a second stand-still segment for the remainder of the duration.
-     * @param duration Duration; segment duration.
-     * @param acceleration Acceleration; segment acceleration.
+     * @param duration segment duration.
+     * @param acceleration segment acceleration.
      */
     public void add(final Duration duration, final Acceleration acceleration)
     {
@@ -49,9 +49,9 @@ public class Segments
 
     /**
      * Adds a segment.
-     * @param startSpeed Speed; start speed.
-     * @param duration Duration; segment duration.
-     * @param acceleration Acceleration; segment acceleration.
+     * @param startSpeed start speed.
+     * @param duration segment duration.
+     * @param acceleration segment acceleration.
      */
     private void add(final Speed startSpeed, final Duration duration, final Acceleration acceleration)
     {
@@ -69,7 +69,7 @@ public class Segments
 
     /**
      * Returns the number of segments.
-     * @return int; number of segments.
+     * @return number of segments.
      */
     public int size()
     {
@@ -78,8 +78,8 @@ public class Segments
 
     /**
      * Returns a specific segment.
-     * @param index int; segment index.
-     * @return Segment; specific segment.
+     * @param index segment index.
+     * @return specific segment.
      */
     public Segment get(final int index)
     {
@@ -88,7 +88,7 @@ public class Segments
 
     /**
      * Returns an immutable list of the segments.
-     * @return ImmutableList&lt;Segment&gt;; segment list.
+     * @return segment list.
      */
     public ImmutableList<Segment> getSegments()
     {
@@ -100,10 +100,10 @@ public class Segments
      * equal to the end speed of the previous segment. If the acceleration reaches stand-still during the provided duration, two
      * segments are added. The first with given negative acceleration until stand-still, and a second stand-still segment for
      * the remainder of the duration.
-     * @param startSpeed Speed; start speed of the first segment.
-     * @param duration Duration; segment duration.
-     * @param acceleration Acceleration; segment acceleration.
-     * @return Segments; segments.
+     * @param startSpeed start speed of the first segment.
+     * @param duration segment duration.
+     * @param acceleration segment acceleration.
+     * @return segments.
      */
     public static Segments off(final Speed startSpeed, final Duration duration, final Acceleration acceleration)
     {
@@ -115,8 +115,8 @@ public class Segments
     /**
      * Create a stand-still segment. The start speed will be set to {@code Speed.ZERO} regardless of the end speed of the
      * previous segment in order to prevent drifting due to rounding errors.
-     * @param duration Duration; segment duration.
-     * @return Segment; stand-still segment.
+     * @param duration segment duration.
+     * @return stand-still segment.
      */
     public static Segments standStill(final Duration duration)
     {

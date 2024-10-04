@@ -60,9 +60,9 @@ public interface HeadwayGtu extends Headway
     /**
      * Creates a copy with different headway, speed and possibly acceleration. It may not be alongside. This method is used to
      * anticipate movement of a neighboring GTU.
-     * @param headway Length; headway
-     * @param speed Speed; speed
-     * @param acceleration Acceleration; acceleration
+     * @param headway headway
+     * @param speed speed
+     * @param acceleration acceleration
      * @return copy with different headway, speed and possibly acceleration
      */
     HeadwayGtu moved(Length headway, Speed speed, Acceleration acceleration);
@@ -112,13 +112,13 @@ public interface HeadwayGtu extends Headway
 
     /**
      * Returns the perceived desired speed of the neighbor.
-     * @return Speed; perceived desired speed of the neighbor
+     * @return perceived desired speed of the neighbor
      */
     Speed getDesiredSpeed();
 
     /**
      * Returns the width of the GTU.
-     * @return Length; width of the GTU
+     * @return width of the GTU
      */
     Length getWidth();
 

@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories.neighbors;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Duration;
@@ -9,7 +10,6 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.Intermediate;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionAccumulator;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionCollector;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionFinalizer;
 
 /**
  * Simple collector implementation to obtain time headway.
@@ -29,7 +29,7 @@ public class TaskHeadwayCollector implements PerceptionCollector<Duration, LaneB
 
     /**
      * Constructor.
-     * @param speed Speed; speed
+     * @param speed speed
      */
     public TaskHeadwayCollector(final Speed speed)
     {
@@ -42,6 +42,7 @@ public class TaskHeadwayCollector implements PerceptionCollector<Duration, LaneB
     {
         return new Supplier<Duration>()
         {
+            /** {@inheritDoc} */
             @Override
             public Duration get()
             {
@@ -56,7 +57,7 @@ public class TaskHeadwayCollector implements PerceptionCollector<Duration, LaneB
     {
         return new PerceptionAccumulator<LaneBasedGtu, Duration>()
         {
-            @SuppressWarnings("synthetic-access")
+            /** {@inheritDoc} */
             @Override
             public Intermediate<Duration> accumulate(final Intermediate<Duration> intermediate, final LaneBasedGtu object,
                     final Length distance)
@@ -70,12 +71,13 @@ public class TaskHeadwayCollector implements PerceptionCollector<Duration, LaneB
 
     /** {@inheritDoc} */
     @Override
-    public PerceptionFinalizer<Duration, Duration> getFinalizer()
+    public Function<Duration, Duration> getFinalizer()
     {
-        return new PerceptionFinalizer<Duration, Duration>()
+        return new Function<Duration, Duration>()
         {
+            /** {@inheritDoc} */
             @Override
-            public Duration collect(final Duration intermediate)
+            public Duration apply(final Duration intermediate)
             {
                 return intermediate == null ? intermediate : (intermediate.gt0() ? intermediate : Duration.ZERO);
             }

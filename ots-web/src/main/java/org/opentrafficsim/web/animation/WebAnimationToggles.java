@@ -44,7 +44,7 @@ public final class WebAnimationToggles
 
     /**
      * Set all commonly used animation on, and create the toggles on the left hand side.
-     * @param panel HTMLAnimationPanel; the Animation panel to add the toggle to.
+     * @param panel the Animation panel to add the toggle to.
      */
     public static void setTextAnimationTogglesFull(final HtmlAnimationPanel panel)
     {
@@ -73,7 +73,7 @@ public final class WebAnimationToggles
 
     /**
      * Set the most common animation on, and create the toggles on the left hand side.
-     * @param panel HTMLAnimationPanel; the Animation panel to add the toggle to.
+     * @param panel the Animation panel to add the toggle to.
      */
     public static void setTextAnimationTogglesStandard(final HtmlAnimationPanel panel)
     {
@@ -102,8 +102,8 @@ public final class WebAnimationToggles
 
     /**
      * Set a class to be shown in the animation to true.
-     * @param panel OtsAnimationPanel; the HTMLAnimationPanel where the animation of a class has to be switched off
-     * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the animation has to be shown.
+     * @param panel the HTMLAnimationPanel where the animation of a class has to be switched off
+     * @param locatableClass the class for which the animation has to be shown.
      */
     public final static void showAnimationClass(final HtmlAnimationPanel panel, final Class<? extends Locatable> locatableClass)
     {
@@ -112,8 +112,8 @@ public final class WebAnimationToggles
 
     /**
      * Set a class to be shown in the animation to false.
-     * @param panel HTMLAnimationPanel; the HTMLAnimationPanel where the animation of a class has to be switched off
-     * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the animation has to be shown.
+     * @param panel the HTMLAnimationPanel where the animation of a class has to be switched off
+     * @param locatableClass the class for which the animation has to be shown.
      */
     public final static void hideAnimationClass(final HtmlAnimationPanel panel, final Class<? extends Locatable> locatableClass)
     {
@@ -122,7 +122,7 @@ public final class WebAnimationToggles
 
     /**
      * Set all commonly used animation on, and create the toggles on the left hand side.
-     * @param panel HTMLAnimationPanel; the HTMLAnimationPanel where classes are shown or not.
+     * @param panel the HTMLAnimationPanel where classes are shown or not.
      */
     public static void showAnimationFull(final HtmlAnimationPanel panel)
     {
@@ -150,7 +150,7 @@ public final class WebAnimationToggles
 
     /**
      * Set the most common animation on, and create the toggles on the left hand side.
-     * @param panel OtsAnimationPanel; the WrappableAnimation.
+     * @param panel the WrappableAnimation.
      */
     public static void showAnimationStandard(final HtmlAnimationPanel panel)
     {

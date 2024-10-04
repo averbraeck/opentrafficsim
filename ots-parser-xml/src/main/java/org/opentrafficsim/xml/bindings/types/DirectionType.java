@@ -20,7 +20,7 @@ public class DirectionType extends ExpressionType<Direction>
 
     /**
      * Constructor with value.
-     * @param value Direction; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public DirectionType(final Direction value)
     {
@@ -29,7 +29,7 @@ public class DirectionType extends ExpressionType<Direction>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public DirectionType(final String expression)
     {

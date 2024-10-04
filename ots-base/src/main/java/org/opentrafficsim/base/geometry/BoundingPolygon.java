@@ -1,6 +1,8 @@
 package org.opentrafficsim.base.geometry;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.djutils.draw.Transform2d;
 import org.djutils.draw.line.PolyLine2d;
@@ -24,7 +26,7 @@ public class BoundingPolygon implements OtsBounds2d
 
     /**
      * Constructor.
-     * @param polygon Polygon2d; polygon.
+     * @param polygon polygon.
      */
     public BoundingPolygon(final Polygon2d polygon)
     {
@@ -40,31 +42,26 @@ public class BoundingPolygon implements OtsBounds2d
 
     /**
      * Translates absolute geometry to bounds relative to location, including rotation.
-     * @param location OrientedPoint2d; location.
-     * @param geometry PolyLine2d; geometry..
-     * @return BoundingPolygon; bounded polygon.
+     * @param location location.
+     * @param geometry geometry..
+     * @return bounded polygon.
      */
     public static BoundingPolygon geometryToBounds(final OrientedPoint2d location, final PolyLine2d geometry)
     {
         Transform2d transformation = OtsRenderable.toBoundsTransform(location);
         Iterator<Point2d> itSource = geometry.getPoints();
-        Iterator<Point2d> itTarget = new Iterator<>()
+        Point2d prev = null;
+        List<Point2d> points = new ArrayList<>();
+        while (itSource.hasNext())
         {
-            /** {@inheritDoc} */
-            @Override
-            public boolean hasNext()
+            Point2d next = transformation.transform(itSource.next());
+            if (!next.equals(prev))
             {
-                return itSource.hasNext();
+                points.add(next);
             }
-
-            /** {@inheritDoc} */
-            @Override
-            public Point2d next()
-            {
-                return transformation.transform(itSource.next());
-            }
-        };
-        BoundingPolygon b = new BoundingPolygon(new Polygon2d(itTarget));
+            prev = next;
+        }
+        BoundingPolygon b = new BoundingPolygon(new Polygon2d(points));
         return b;
     }
 

@@ -60,16 +60,16 @@ public interface StrategicalPlanner
 
     /**
      * Get tactical planner for the GTU. The stratigical planner is free to dynamically change this.
-     * @param time Time; time at which to obtain the tactical planner
+     * @param time time at which to obtain the tactical planner
      * @return tactical planner
      */
     TacticalPlanner<?, ?> getTacticalPlanner(Time time);
 
     /**
      * Determine the next node in a network based on a current Link we are on.
-     * @param link Link; the link we are on
-     * @param gtuType GtuType; the GtuType to determine the next node for
-     * @return Node; the next node in the route AFTER the current link
+     * @param link the link we are on
+     * @param gtuType the GtuType to determine the next node for
+     * @return the next node in the route AFTER the current link
      * @throws NetworkException when no route planner is present or the final node in the current link cannot be found in the
      *             route
      */
@@ -80,9 +80,9 @@ public interface StrategicalPlanner
 
     /**
      * Determine the next link in a network based on a current Link we are on.
-     * @param previousLink Link; the link before the node to avoid U-turn
-     * @param gtuType GtuType; the GtuType to determine the next node for
-     * @return Link; the next link in the route AFTER the current link
+     * @param previousLink the link before the node to avoid U-turn
+     * @param gtuType the GtuType to determine the next node for
+     * @return the next link in the route AFTER the current link
      * @throws NetworkException when no route planner is present or the final node in the current link cannot be found in the
      *             route
      */

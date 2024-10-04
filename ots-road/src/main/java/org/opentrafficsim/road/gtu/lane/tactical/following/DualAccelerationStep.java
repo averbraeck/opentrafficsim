@@ -27,8 +27,8 @@ public class DualAccelerationStep implements Serializable
 
     /**
      * Create a new DualAccelerationStep.
-     * @param leaderAccelerationStep AccelerationStep; the acceleration and time step size for the leader
-     * @param followerAccelerationStep AccelerationStep; the acceleration and time step size for the (new) follower
+     * @param leaderAccelerationStep the acceleration and time step size for the leader
+     * @param followerAccelerationStep the acceleration and time step size for the (new) follower
      */
     public DualAccelerationStep(final AccelerationStep leaderAccelerationStep, final AccelerationStep followerAccelerationStep)
     {
@@ -38,7 +38,7 @@ public class DualAccelerationStep implements Serializable
 
     /**
      * Retrieve the AccelerationStep for the leader GTU.
-     * @return AccelerationStep; the acceleration and time step size for the leader
+     * @return the acceleration and time step size for the leader
      */
     public final AccelerationStep getLeaderAccelerationStep()
     {
@@ -47,7 +47,7 @@ public class DualAccelerationStep implements Serializable
 
     /**
      * Retrieve the AccelerationStep for the (new) follower GTU.
-     * @return AccelerationStep; the acceleration and time step size for the (new) follower
+     * @return the acceleration and time step size for the (new) follower
      */
     public final AccelerationStep getFollowerAccelerationStep()
     {
@@ -56,7 +56,7 @@ public class DualAccelerationStep implements Serializable
 
     /**
      * Return the acceleration of the leader.
-     * @return DoubleScalar&lt;AccelerationUnit&gt;; the acceleration of the leader
+     * @return the acceleration of the leader
      */
     public final Acceleration getLeaderAcceleration()
     {
@@ -65,7 +65,7 @@ public class DualAccelerationStep implements Serializable
 
     /**
      * Return the acceleration of the follower.
-     * @return DoubleScalar&lt;AccelerationUnit&gt;; the acceleration of the follower
+     * @return the acceleration of the follower
      */
     public final Acceleration getFollowerAcceleration()
     {
@@ -74,7 +74,7 @@ public class DualAccelerationStep implements Serializable
 
     /**
      * Return the time up to which the result of the leader is valid.
-     * @return DoubleScalar&lt;TimeUnit&gt;; the time up to which the result of the leader is valid
+     * @return the time up to which the result of the leader is valid
      */
     public final Time getLeaderValidUntil()
     {
@@ -83,7 +83,7 @@ public class DualAccelerationStep implements Serializable
 
     /**
      * Return the time up to which the result of the follower is valid.
-     * @return DoubleScalar&lt;TimeUnit&gt;; the time up to which the result of the follower is valid
+     * @return the time up to which the result of the follower is valid
      */
     public final Time getFollowerValidUntil()
     {

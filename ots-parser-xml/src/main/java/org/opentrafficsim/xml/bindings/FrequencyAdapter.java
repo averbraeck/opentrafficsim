@@ -15,7 +15,7 @@ import org.opentrafficsim.xml.bindings.types.FrequencyType;
  */
 public class FrequencyAdapter extends ScalarAdapter<Frequency, FrequencyType>
 {
-    
+
     /** {@inheritDoc} */
     @Override
     public FrequencyType unmarshal(final String field)

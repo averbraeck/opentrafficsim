@@ -48,7 +48,7 @@ public final class DefaultDecorator
 
     /**
      * Decorates the editor with custom icons, tabs, string functions and custom editors.
-     * @param editor OtsEditor; editor.
+     * @param editor editor.
      * @throws IOException if a resource cannot be loaded.
      * @throws NamingException when registering objects does not work
      */
@@ -147,7 +147,7 @@ public final class DefaultDecorator
 
     /**
      * Temporary stub to create parameters pane.
-     * @return JComponent; component.
+     * @return component.
      */
     private static JComponent buildParameterPane()
     {
@@ -159,7 +159,7 @@ public final class DefaultDecorator
 
     /**
      * Temporary stub to create text pane.
-     * @return JComponent; component.
+     * @return component.
      */
     private static JComponent buildTextPane()
     {
@@ -186,7 +186,7 @@ public final class DefaultDecorator
 
         /**
          * Constructor.
-         * @param editor OtsEditor; editor.
+         * @param editor editor.
          */
         public NodeCreatedRemovedPrinter(final OtsEditor editor)
         {

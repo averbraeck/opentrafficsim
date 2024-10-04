@@ -77,7 +77,7 @@ public class Schema
 
     /**
      * Constructs the XML Schema information from a document.
-     * @param document Document; main document, other files may be included from within the file.
+     * @param document main document, other files may be included from within the file.
      */
     public Schema(final Document document)
     {
@@ -140,7 +140,7 @@ public class Schema
         // allElements = new LinkedHashSet<>(this.elements.keySet());
         // allElements.removeIf((key) -> !key.startsWith("Ots."));
         // allElements.forEach((key) -> System.out.println(key));
-        
+
         System.out.println("Root found as '" + DocumentReader.getAttribute(this.getRoot(), "name") + "'.");
         System.out.println("Read " + this.readFiles.size() + " files.");
         System.out.println("Read " + this.elements.size() + " elements.");
@@ -180,9 +180,9 @@ public class Schema
      * <li>xsd:key, xsd:keyref and xsd:unique nodes are stored for later checks.</li>
      * <li>All other child nodes are recursively read.</li>
      * </ul>
-     * @param path String; node path.
-     * @param node Node; xsd:attribute node.
-     * @param extendPath boolean; whether the path should be extended with this node.
+     * @param path node path.
+     * @param node xsd:attribute node.
+     * @param extendPath whether the path should be extended with this node.
      */
     private void read(final String path, final Node node, final boolean extendPath)
     {
@@ -318,8 +318,8 @@ public class Schema
     /**
      * Checks for recursion. This is recognized as the same end of the path, is duplicated in an equal sub-path before that end.
      * For example CarFollowingModel{.Socio}{.Socio} or CarFollowingModel{.Socio.Parent}{.Socio.Parent}.
-     * @param path String; node path.
-     * @return boolean; true if the path contains recursion.
+     * @param path node path.
+     * @return true if the path contains recursion.
      */
     private boolean recursion(final String path)
     {
@@ -350,9 +350,9 @@ public class Schema
      * Queues reading the node at specified path. This is used to start all the reading, and to delay reading that is dependent
      * on parent types to be loaded. When the read is queued as a parent type is not yet loaded, the path should not be extended
      * upon the queued read. The path will have been extended in processing the child element itself.
-     * @param path String; node path.
-     * @param node Node; node.
-     * @param extendPath boolean; whether the path should be extended with this node.
+     * @param path node path.
+     * @param node node.
+     * @param extendPath whether the path should be extended with this node.
      */
     private void queue(final String path, final Node node, final boolean extendPath)
     {
@@ -361,8 +361,8 @@ public class Schema
 
     /**
      * Reads further from an included file.
-     * @param path String; node path.
-     * @param node Node; xsd:include node.
+     * @param path node path.
+     * @param node xsd:include node.
      */
     private void include(final String path, final Node node)
     {
@@ -384,8 +384,8 @@ public class Schema
 
     /**
      * Returns the path, with separator at the end, relative to which an include in the node should be found.
-     * @param node Node; node.
-     * @return String; path, with separator at the end, relative to which an include in the node should be found.
+     * @param node node.
+     * @return path, with separator at the end, relative to which an include in the node should be found.
      */
     private String folder(final Node node)
     {
@@ -401,8 +401,8 @@ public class Schema
 
     /**
      * Reads further from an element node.
-     * @param path String; node path.
-     * @param node Node; xsd:element node.
+     * @param path node path.
+     * @param node xsd:element node.
      */
     private void element(final String path, final Node node)
     {
@@ -435,8 +435,8 @@ public class Schema
      * Reads further from an element node with a ref={ref} attribute. If the ref equals "xi:include" it is ignored, as this
      * specifies that the XML file can include another XML file. It does not specify the schema further. If the referred type is
      * not yet loaded, reading from this ref node is placed at the back of the queue.
-     * @param path String; node path.
-     * @param node Node; xsd:element node.
+     * @param path node path.
+     * @param node xsd:element node.
      */
     private void ref(final String path, final Node node)
     {
@@ -459,8 +459,8 @@ public class Schema
 
     /**
      * Reads further from an attribute node.
-     * @param path String; node path.
-     * @param node Node; xsd:attribute node.
+     * @param path node path.
+     * @param node xsd:attribute node.
      */
     private void attribute(final String path, final Node node)
     {
@@ -475,8 +475,8 @@ public class Schema
 
     /**
      * Stores documentation at the current path.
-     * @param path String; node path.
-     * @param node Node; xsd:attribute node.
+     * @param path node path.
+     * @param node xsd:attribute node.
      */
     private void documentation(final String path, final Node node)
     {
@@ -486,8 +486,8 @@ public class Schema
 
     /**
      * Read union node.
-     * @param path String; node path.
-     * @param node Node; xsd:union node.
+     * @param path node path.
+     * @param node xsd:union node.
      */
     private void union(final String path, final Node node)
     {
@@ -520,9 +520,9 @@ public class Schema
 
         /**
          * Constructor.
-         * @param path String; node path.
-         * @param node Node; xsd:attribute node.
-         * @param extendPath boolean; whether the path should be extended with this node.
+         * @param path node path.
+         * @param node xsd:attribute node.
+         * @param extendPath whether the path should be extended with this node.
          */
         RecursionElement(final String path, final Node node, final boolean extendPath)
         {
@@ -533,7 +533,7 @@ public class Schema
 
         /**
          * Returns the path.
-         * @return String; path.
+         * @return path.
          */
         public String getPath()
         {
@@ -542,7 +542,7 @@ public class Schema
 
         /**
          * Returns the node.
-         * @return Node; node.
+         * @return node.
          */
         public Node getNode()
         {
@@ -551,7 +551,7 @@ public class Schema
 
         /**
          * Returns whether to extend the path.
-         * @return boolean; whether to extend the path.
+         * @return whether to extend the path.
          */
         public boolean isExtendPath()
         {
@@ -648,8 +648,8 @@ public class Schema
     /**
      * Checks that all xsd:key or xsd:unique refer to a loaded type with their xsd:selector node. And that all xsd:field nodes
      * point to existing attributes in loaded types. This method assumes only attributes (@) and no elements (ots:) are checked.
-     * @param label String; "Key" or "Unique" for command line messaging.
-     * @param map Map&lt;Node, String&gt;; map of nodes, either xsd:key or xsd:unique.
+     * @param label "Key" or "Unique" for command line messaging.
+     * @param map map of nodes, either xsd:key or xsd:unique.
      */
     private void checkKeyOrUniques(final String label, final Map<String, Node> map)
     {
@@ -715,9 +715,9 @@ public class Schema
 
     /**
      * Returns loaded elements referred to from an xsd:selector child of the given node.
-     * @param context String; context.
-     * @param node Node; node (xsd:key, xsd:keyref or xsd:unique).
-     * @return List&lt;Node&gt;; elements referred to from an xsd:selector child of the given node.
+     * @param context context.
+     * @param node node (xsd:key, xsd:keyref or xsd:unique).
+     * @return elements referred to from an xsd:selector child of the given node.
      */
     private List<Node> getSelectedElements(final String context, final Node node)
     {
@@ -750,7 +750,8 @@ public class Schema
             {
                 for (Entry<String, Node> entry : this.elements.entrySet())
                 {
-                    if (!entry.getKey().startsWith("Ots.") && entry.getKey().endsWith(selector.replace(".//", "").replace("/", ".")))
+                    if (!entry.getKey().startsWith("Ots.")
+                            && entry.getKey().endsWith(selector.replace(".//", "").replace("/", ".")))
                     {
                         nodes.add(entry.getValue());
                     }
@@ -766,8 +767,8 @@ public class Schema
 
     /**
      * Reads the xpath from an xsd:selector child of the given node.
-     * @param node Node; node (xsd:key, xsd:keyref or xsd:unique).
-     * @return String; xpath from an xsd:selector child of the given node.
+     * @param node node (xsd:key, xsd:keyref or xsd:unique).
+     * @return xpath from an xsd:selector child of the given node.
      */
     private String getXpath(final Node node)
     {
@@ -782,8 +783,8 @@ public class Schema
      * xsd:complexType in which an xsd:attribute with the specified name is defined, because it has a child xsd:complexType
      * meeting the same criteria, or because it is found in an underlying xsd:extension. For an xsd:extension, the attribute is
      * sought in both the base type, and in the specified extension elements.
-     * @param node Node; node.
-     * @param name String; attribute name, i.e. &lt;xsd:attribute name={name} ... &gt;.
+     * @param node node.
+     * @param name attribute name, i.e. &lt;xsd:attribute name={name} ... &gt;.
      * @return whether the given node defines an element to have a specified attribute.
      */
     private boolean hasElementAttribute(final Node node, final String name)
@@ -802,9 +803,9 @@ public class Schema
      * node. Otherwise, first a child node of viaType is taken, and the children nodes of that node are considered. If this
      * method encounters an xsd:complexContent child that itself has a xsd:extension child, both the extended type and the
      * specified extension elements, are considered.
-     * @param node Node; node.
-     * @param name String; attribute name, i.e. &lt;xsd:attribute name={name} ... &gt;.
-     * @param viaType String; viaType, can be used for recursion with or without an intermediate child layer.
+     * @param node node.
+     * @param name attribute name, i.e. &lt;xsd:attribute name={name} ... &gt;.
+     * @param viaType viaType, can be used for recursion with or without an intermediate child layer.
      * @return whether the given node defines an element to have a specified attribute.
      */
     private boolean hasElementAttribute(final Node node, final String name, final String viaType)
@@ -851,7 +852,7 @@ public class Schema
 
     /**
      * Get the root node.
-     * @return Node; root node.
+     * @return root node.
      */
     public Node getRoot()
     {
@@ -860,8 +861,8 @@ public class Schema
 
     /**
      * Returns the node for the given path.
-     * @param path String; path.
-     * @return Node; type.
+     * @param path path.
+     * @return type.
      */
     public Node getElement(final String path)
     {
@@ -870,8 +871,8 @@ public class Schema
 
     /**
      * Returns the type, as pointed to by base={base}.
-     * @param base String; type.
-     * @return String; type, as pointed to by base={base}.
+     * @param base type.
+     * @return type, as pointed to by base={base}.
      */
     public Node getType(final String base)
     {
@@ -880,7 +881,7 @@ public class Schema
 
     /**
      * Returns the xsd:key and the paths where they are defined.
-     * @return Map&lt;String, Node&gt;; xsd:key and the paths where they are defined.
+     * @return xsd:key and the paths where they are defined.
      */
     public Map<String, Node> keys()
     {
@@ -889,7 +890,7 @@ public class Schema
 
     /**
      * Returns the xsd:keyref and the paths where they are defined.
-     * @return Map&lt;String, Node&gt;; xsd:keyref and the paths where they are defined.
+     * @return xsd:keyref and the paths where they are defined.
      */
     public Map<String, Node> keyrefs()
     {
@@ -898,7 +899,7 @@ public class Schema
 
     /**
      * Returns the xsd:unique and the paths where they are defined.
-     * @return Map&lt;String, Node&gt;; xsd:unique and the paths where they are defined.
+     * @return xsd:unique and the paths where they are defined.
      */
     public Map<String, Node> uniques()
     {
@@ -907,9 +908,9 @@ public class Schema
 
     /**
      * Return whether the given node is of the type.
-     * @param node Node; node.
-     * @param path String; path of the type in dotted xpath notation, e.g. "SignalGroup.TrafficLight".
-     * @return boolean; whether the given node is of the type.
+     * @param node node.
+     * @param path path of the type in dotted xpath notation, e.g. "SignalGroup.TrafficLight".
+     * @return whether the given node is of the type.
      */
     public boolean isType(final Node node, final String path)
     {

@@ -68,9 +68,9 @@ public abstract class OtsWebServer implements EventListener
     private HtmlAnimationPanel animationPanel;
 
     /**
-     * @param title String; the title for the model window
-     * @param simulator OtsSimulatorInterface; the simulator
-     * @param extent Bounds2d; the extent to use for the graphics (min/max coordinates)
+     * @param title the title for the model window
+     * @param simulator the simulator
+     * @param extent the extent to use for the graphics (min/max coordinates)
      * @throws Exception in case jetty crashes
      */
     public OtsWebServer(final String title, final OtsSimulatorInterface simulator, final Bounds2d extent) throws Exception
@@ -93,8 +93,8 @@ public abstract class OtsWebServer implements EventListener
             this.animationPanel = new HtmlAnimationPanel(extent, this.simulator);
             WebAnimationToggles.setTextAnimationTogglesStandard(this.animationPanel);
             // get the already created elements in context(/animation/D2)
-            this.animationPanel.notify(new TimedEvent(Replication.START_REPLICATION_EVENT,
-                    null, this.simulator.getSimulatorTime()));
+            this.animationPanel
+                    .notify(new TimedEvent(Replication.START_REPLICATION_EVENT, null, this.simulator.getSimulatorTime()));
         }
 
         new ServerThread().start();
@@ -214,7 +214,7 @@ public abstract class OtsWebServer implements EventListener
     }
 
     /**
-     * @param speedFactor double; the new speed factor
+     * @param speedFactor the new speed factor
      */
     protected void setSpeedFactor(final double speedFactor)
     {
@@ -259,7 +259,7 @@ public abstract class OtsWebServer implements EventListener
 
         /**
          * Create the handler for Servlet requests.
-         * @param webServer OtsWebServer; web server for callback of actions
+         * @param webServer web server for callback of actions
          */
         public XHRHandler(final OtsWebServer webServer)
         {
@@ -593,8 +593,8 @@ public abstract class OtsWebServer implements EventListener
         }
 
         /**
-         * @param active boolean; is the simulation active?
-         * @param started boolean; has the simulation been started?
+         * @param active is the simulation active?
+         * @param started has the simulation been started?
          * @return XML message to send to the server
          */
         private String controlButtonResponse(final boolean active, final boolean started)
@@ -621,7 +621,7 @@ public abstract class OtsWebServer implements EventListener
 
         /**
          * Return the toggle button info for the toggle panel.
-         * @param panel HTMLAnimationPanel; the HTMLAnimationPanel
+         * @param panel the HTMLAnimationPanel
          * @return the String that can be parsed by the select.html iframe
          */
         private String getToggles(final HtmlAnimationPanel panel)
@@ -649,7 +649,7 @@ public abstract class OtsWebServer implements EventListener
 
         /**
          * Returns the simulation speed.
-         * @param simTime double; simulation time
+         * @param simTime simulation time
          * @return simulation speed
          */
         private double getSimulationSpeed(final double simTime)

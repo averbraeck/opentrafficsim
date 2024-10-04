@@ -35,8 +35,8 @@ public abstract class StaticFieldAdapter<T, E extends ExpressionType<T>> extends
 
     /**
      * Constructor.
-     * @param valueType Class&lt;T&gt;; value type.
-     * @param expressionType Class&lt;E&gt;; expression type.
+     * @param valueType value type.
+     * @param expressionType expression type.
      */
     protected StaticFieldAdapter(final Class<T> valueType, final Class<E> expressionType)
     {

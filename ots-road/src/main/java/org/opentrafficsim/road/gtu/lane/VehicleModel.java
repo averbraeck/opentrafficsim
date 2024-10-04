@@ -54,9 +54,9 @@ public interface VehicleModel
 
     /**
      * Returns a bounded acceleration.
-     * @param acceleration Acceleration; intended acceleration
-     * @param gtu LaneBasedGtu; gtu
-     * @return Acceleration; possible acceleration
+     * @param acceleration intended acceleration
+     * @param gtu gtu
+     * @return possible acceleration
      */
     Acceleration boundAcceleration(Acceleration acceleration, LaneBasedGtu gtu);
 
@@ -98,8 +98,8 @@ public interface VehicleModel
         private final double momentOfInertiaAboutZ;
 
         /**
-         * @param mass Mass; mass
-         * @param momentOfInertiaAboutZ double; moment of inertia about z-axis
+         * @param mass mass
+         * @param momentOfInertiaAboutZ moment of inertia about z-axis
          */
         public MassBased(final Mass mass, final double momentOfInertiaAboutZ)
         {

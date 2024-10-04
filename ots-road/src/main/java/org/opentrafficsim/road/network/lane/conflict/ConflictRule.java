@@ -15,7 +15,7 @@ public interface ConflictRule
 
     /**
      * Determines the priority for the given conflict.
-     * @param conflict Conflict; conflict
+     * @param conflict conflict
      * @return priority for the given conflict
      */
     ConflictPriority determinePriority(Conflict conflict);

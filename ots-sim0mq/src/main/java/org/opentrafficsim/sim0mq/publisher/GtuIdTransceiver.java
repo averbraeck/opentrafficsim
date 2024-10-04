@@ -20,7 +20,7 @@ public class GtuIdTransceiver extends AbstractIdTransceiver
 {
     /**
      * Construct a GtuIdTransceiver.
-     * @param network Network; the OTS network
+     * @param network the OTS network
      */
     public GtuIdTransceiver(final Network network)
     {

@@ -25,7 +25,7 @@ public class LinkDataRoad implements LinkData<LaneDataRoad>
     private final CrossSectionLink link;
 
     /**
-     * @param link CrossSectionLink; wrapped link
+     * @param link wrapped link
      */
     public LinkDataRoad(final CrossSectionLink link)
     {

@@ -20,7 +20,7 @@ public class LinkType extends GtuCompatibleInfraType<LinkType, Link>
 
     /**
      * Constructor for root-level Link types. The parent will be {@code null}.
-     * @param id String; the id of the link type (may not be {@code null}).
+     * @param id the id of the link type (may not be {@code null}).
      */
     public LinkType(final String id)
     {
@@ -29,8 +29,8 @@ public class LinkType extends GtuCompatibleInfraType<LinkType, Link>
 
     /**
      * Create a new Link type.
-     * @param id String; the id of the link type (may not be {@code null}).
-     * @param parent LinkType; the parent type (may be {@code null}).
+     * @param id the id of the link type (may not be {@code null}).
+     * @param parent the parent type (may be {@code null}).
      */
     public LinkType(final String id, final LinkType parent)
     {

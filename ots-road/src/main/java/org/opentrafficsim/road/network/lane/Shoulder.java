@@ -29,12 +29,12 @@ public class Shoulder extends Lane
 
     /**
      * Constructor specifying geometry.
-     * @param link CrossSectionLink; link.
-     * @param id String; the id of this lane within the link; should be unique within the link.
-     * @param centerLine OtsLine2d; center line.
-     * @param contour Polygon2d; contour shape.
-     * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
-     * @param laneType LaneType; lane type.
+     * @param link link.
+     * @param id the id of this lane within the link; should be unique within the link.
+     * @param centerLine center line.
+     * @param contour contour shape.
+     * @param crossSectionSlices cross-section slices.
+     * @param laneType lane type.
      * @throws NetworkException when no cross-section slice is defined.
      */
     public Shoulder(final CrossSectionLink link, final String id, final OtsLine2d centerLine, final Polygon2d contour,
@@ -45,9 +45,9 @@ public class Shoulder extends Lane
 
     /**
      * Returns one adjacent lane.
-     * @param laneChangeDirection LateralDirectionality; lane change direction
-     * @param gtuType GtuType; GTU type.
-     * @return Lane; adjacent lane, {@code null} if none
+     * @param laneChangeDirection lane change direction
+     * @param gtuType GTU type.
+     * @return adjacent lane, {@code null} if none
      */
     @Override
     public Lane getAdjacentLane(final LateralDirectionality laneChangeDirection, final GtuType gtuType)

@@ -46,8 +46,8 @@ public class SimpleOperationalPlan implements Serializable
     private final Duration duration;
 
     /**
-     * @param acceleration Acceleration; acceleration
-     * @param duration Duration; duration
+     * @param acceleration acceleration
+     * @param duration duration
      */
     public SimpleOperationalPlan(final Acceleration acceleration, final Duration duration)
     {
@@ -55,9 +55,9 @@ public class SimpleOperationalPlan implements Serializable
     }
 
     /**
-     * @param acceleration Acceleration; acceleration
-     * @param duration Duration; duration
-     * @param laneChangeDirection LateralDirectionality; lane change direction, may be {@code null}.
+     * @param acceleration acceleration
+     * @param duration duration
+     * @param laneChangeDirection lane change direction, may be {@code null}.
      */
     public SimpleOperationalPlan(final Acceleration acceleration, final Duration duration,
             final LateralDirectionality laneChangeDirection)
@@ -81,7 +81,7 @@ public class SimpleOperationalPlan implements Serializable
 
     /**
      * Sets acceleration.
-     * @param acceleration Acceleration; acceleration
+     * @param acceleration acceleration
      */
     public final void setAcceleration(final Acceleration acceleration)
     {
@@ -115,7 +115,7 @@ public class SimpleOperationalPlan implements Serializable
 
     /**
      * Set minimum of current and given acceleration.
-     * @param a Acceleration; acceleration to set if lower than current acceleration
+     * @param a acceleration to set if lower than current acceleration
      */
     public final void minimizeAcceleration(final Acceleration a)
     {
@@ -126,7 +126,7 @@ public class SimpleOperationalPlan implements Serializable
 
     /**
      * Check acceleration level.
-     * @param a Acceleration; acceleration
+     * @param a acceleration
      */
     private void checkAcceleration(final Acceleration a)
     {
@@ -185,7 +185,7 @@ public class SimpleOperationalPlan implements Serializable
 
     /**
      * Set left indicator intent. Intent with smallest provided distance has priority.
-     * @param distance Length; distance to object pertaining to the turn indicator intent
+     * @param distance distance to object pertaining to the turn indicator intent
      */
     public final void setIndicatorIntentLeft(final Length distance)
     {
@@ -206,7 +206,7 @@ public class SimpleOperationalPlan implements Serializable
 
     /**
      * Set right indicator intent. Intent with smallest provided distance has priority.
-     * @param distance Length; distance to object pertaining to the turn indicator intent
+     * @param distance distance to object pertaining to the turn indicator intent
      */
     public final void setIndicatorIntentRight(final Length distance)
     {
@@ -226,7 +226,7 @@ public class SimpleOperationalPlan implements Serializable
 
     /**
      * Compares distances and returns whether the given distance (and intent) can be ignored.
-     * @param distance Length; distance to object of intent
+     * @param distance distance to object of intent
      * @return whether the given distance can be ignored
      */
     private boolean compareAndIgnore(final Length distance)
@@ -262,7 +262,7 @@ public class SimpleOperationalPlan implements Serializable
     }
 
     /**
-     * @param gtu LaneBasedGtu; LaneBasedGtu to set the indicator on
+     * @param gtu LaneBasedGtu to set the indicator on
      * @throws GtuException if GTU does not support the indicator
      */
     public final void setTurnIndicator(final LaneBasedGtu gtu) throws GtuException

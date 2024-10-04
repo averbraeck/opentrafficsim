@@ -23,11 +23,11 @@ public class MapShoulderData extends MapCrossSectionData implements ShoulderData
 
     /**
      * Constructor.
-     * @param startOffset Length; start offset.
-     * @param linkNode XsdTreeNode; node representing the element.
-     * @param centerLine PolyLine2d; center line.
-     * @param contour PolyLine2d; contour.
-     * @param sliceInfo SliceInfo; slice info.
+     * @param startOffset start offset.
+     * @param linkNode node representing the element.
+     * @param centerLine center line.
+     * @param contour contour.
+     * @param sliceInfo slice info.
      */
     public MapShoulderData(final Length startOffset, final XsdTreeNode linkNode, final PolyLine2d centerLine,
             final Polygon2d contour, final SliceInfo sliceInfo)

@@ -29,8 +29,8 @@ public abstract class AbstractHistoricalList<E, L extends List<E>> extends Abstr
 
     /**
      * Constructor.
-     * @param historyManager HistoryManager; history manager
-     * @param list L; initial list
+     * @param historyManager history manager
+     * @param list initial list
      */
     protected AbstractHistoricalList(final HistoryManager historyManager, final L list)
     {
@@ -171,9 +171,9 @@ public abstract class AbstractHistoricalList<E, L extends List<E>> extends Abstr
 
         /**
          * Constructor.
-         * @param time double; time of event
-         * @param value E; value of event
-         * @param index int; index
+         * @param time time of event
+         * @param value value of event
+         * @param index index
          */
         public EventList(final double time, final E value, final int index)
         {
@@ -210,9 +210,9 @@ public abstract class AbstractHistoricalList<E, L extends List<E>> extends Abstr
 
         /**
          * Constructor.
-         * @param time double; time of event
-         * @param value E; value of event
-         * @param index int; index
+         * @param time time of event
+         * @param value value of event
+         * @param index index
          */
         public AddEvent(final double time, final E value, final int index)
         {
@@ -253,9 +253,9 @@ public abstract class AbstractHistoricalList<E, L extends List<E>> extends Abstr
 
         /**
          * Constructor.
-         * @param time double; time of event
-         * @param value E; value of event
-         * @param index int; index the value is at
+         * @param time time of event
+         * @param value value of event
+         * @param index index the value is at
          */
         public RemoveEvent(final double time, final E value, final int index)
         {

@@ -15,7 +15,7 @@ public class EstimationType extends ExpressionType<Estimation>
 
     /**
      * Constructor with value.
-     * @param value Estimation; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public EstimationType(final Estimation value)
     {
@@ -24,7 +24,7 @@ public class EstimationType extends ExpressionType<Estimation>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public EstimationType(final String expression)
     {

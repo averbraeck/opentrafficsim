@@ -41,11 +41,11 @@ public class Stripe extends CrossSectionElement
 
     /**
      * Constructor specifying geometry.
-     * @param type Type; stripe type defining appearance and default permeability.
-     * @param link CrossSectionLink; link.
-     * @param centerLine OtsLine2d; center line.
-     * @param contour Polygon2d; contour shape.
-     * @param crossSectionSlices List&lt;CrossSectionSlice&gt;; cross-section slices.
+     * @param type stripe type defining appearance and default permeability.
+     * @param link link.
+     * @param centerLine center line.
+     * @param contour contour shape.
+     * @param crossSectionSlices cross-section slices.
      * @throws NetworkException when no cross-section slice is defined.
      */
     public Stripe(final Type type, final CrossSectionLink link, final OtsLine2d centerLine, final Polygon2d contour,
@@ -58,7 +58,7 @@ public class Stripe extends CrossSectionElement
 
     /**
      * Returns the stripe type.
-     * @return Type; stripe type.
+     * @return stripe type.
      */
     public Type getType()
     {
@@ -68,7 +68,7 @@ public class Stripe extends CrossSectionElement
     /**
      * Sets an overruling stripe type. This can be used for e.g. rush-hour lanes, without changing the appearance of the stripe.
      * Note that custom set permeabilities (addPermeability()) remain active.
-     * @param overruleType Type; overruling stripe type.
+     * @param overruleType overruling stripe type.
      */
     public void setOverruleType(final Type overruleType)
     {
@@ -85,7 +85,7 @@ public class Stripe extends CrossSectionElement
 
     /**
      * Returns the currently active stripe type.
-     * @return Type; the currently active stripe type.
+     * @return the currently active stripe type.
      */
     private Type activeType()
     {
@@ -96,8 +96,8 @@ public class Stripe extends CrossSectionElement
      * Add lateral permeability for a GTU type in the direction of the design line of the overarching CrossSectionLink. Add NONE
      * to prevent lane changes relative to the stripe type. Add LEFT or RIGHT, or both in two calls, to enable lane changes
      * relative to the stripe type.
-     * @param gtuType GtuType; GTU type to add permeability for.
-     * @param lateralDirection LateralDirectionality; direction to add compared to the direction of the design line.
+     * @param gtuType GTU type to add permeability for.
+     * @param lateralDirection direction to add compared to the direction of the design line.
      */
     public void addPermeability(final GtuType gtuType, final LateralDirectionality lateralDirection)
     {
@@ -110,9 +110,8 @@ public class Stripe extends CrossSectionElement
 
     /**
      * Returns whether the given GTU type is allowed to cross the line in the given lateral direction.
-     * @param gtuType GtuType; GTU type to look for.
-     * @param lateralDirection LateralDirectionality; direction to look for (LEFT or RIGHT) compared to the direction of the
-     *            design line.
+     * @param gtuType GTU type to look for.
+     * @param lateralDirection direction to look for (LEFT or RIGHT) compared to the direction of the design line.
      * @return whether the road marker is permeable for the GTU type.
      */
     public final boolean isPermeable(final GtuType gtuType, final LateralDirectionality lateralDirection)
@@ -166,25 +165,25 @@ public class Stripe extends CrossSectionElement
 
         /** Right permeable. */
         private final boolean right;
-        
+
         /** Default width. */
         private final Length defaultWidth;
 
         /**
          * Constructor setting permeability.
-         * @param left boolean; left permeability.
-         * @param right boolean; right permeability.
+         * @param left left permeability.
+         * @param right right permeability.
          */
         Type(final boolean left, final boolean right)
         {
             this(left, right, new Length(20.0, LengthUnit.CENTIMETER));
         }
-        
+
         /**
          * Constructor setting permeability.
-         * @param left boolean; left permeability.
-         * @param right boolean; right permeability.
-         * @param defaultWidth Length; default width.
+         * @param left left permeability.
+         * @param right right permeability.
+         * @param defaultWidth default width.
          */
         Type(final boolean left, final boolean right, final Length defaultWidth)
         {
@@ -195,7 +194,7 @@ public class Stripe extends CrossSectionElement
 
         /**
          * Returns the left permeability.
-         * @return boolean; left permeability.
+         * @return left permeability.
          */
         public boolean left()
         {
@@ -204,16 +203,16 @@ public class Stripe extends CrossSectionElement
 
         /**
          * Returns the right permeability.
-         * @return boolean; right permeability.
+         * @return right permeability.
          */
         public boolean right()
         {
             return this.right;
         }
-        
+
         /**
          * Returns the default width.
-         * @return Length; default width.
+         * @return default width.
          */
         public Length defaultWidth()
         {

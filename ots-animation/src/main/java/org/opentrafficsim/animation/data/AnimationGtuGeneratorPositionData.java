@@ -22,7 +22,7 @@ public class AnimationGtuGeneratorPositionData implements GtuGeneratorPositionDa
 
     /**
      * Constructor.
-     * @param position GtuGeneratorPosition; position within a generator.
+     * @param position position within a generator.
      */
     public AnimationGtuGeneratorPositionData(final GtuGeneratorPosition position)
     {
@@ -53,7 +53,7 @@ public class AnimationGtuGeneratorPositionData implements GtuGeneratorPositionDa
 
     /**
      * Returns the generator position.
-     * @return GtuGeneratorPosition; generator position.
+     * @return generator position.
      */
     public GtuGeneratorPosition getGeneratorPosition()
     {

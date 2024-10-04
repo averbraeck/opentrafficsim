@@ -15,7 +15,7 @@ public interface Controllable
 
     /**
      * Returns the control state.
-     * @return State; control state
+     * @return control state
      */
     State getControlState();
 
@@ -44,7 +44,7 @@ public interface Controllable
 
         /**
          * Returns whether this is NONE.
-         * @return boolean; whether this is NONE
+         * @return whether this is NONE
          */
         public boolean isNone()
         {
@@ -53,7 +53,7 @@ public interface Controllable
 
         /**
          * Returns whether this is DISABLED.
-         * @return boolean; whether this is DISABLED
+         * @return whether this is DISABLED
          */
         public boolean isDisabled()
         {
@@ -62,7 +62,7 @@ public interface Controllable
 
         /**
          * Returns whether this is ENABLED.
-         * @return boolean; whether this is ENABLED
+         * @return whether this is ENABLED
          */
         public boolean isEnabled()
         {

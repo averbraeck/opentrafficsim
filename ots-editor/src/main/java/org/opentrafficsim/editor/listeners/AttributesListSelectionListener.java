@@ -40,8 +40,8 @@ public class AttributesListSelectionListener implements ListSelectionListener, E
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
-     * @param attributesTable JTable; table with attributes.
+     * @param editor editor.
+     * @param attributesTable table with attributes.
      */
     public AttributesListSelectionListener(final OtsEditor editor, final JTable attributesTable)
     {

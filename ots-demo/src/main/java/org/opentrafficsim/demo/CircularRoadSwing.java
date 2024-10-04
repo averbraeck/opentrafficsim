@@ -65,9 +65,9 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
 
     /**
      * Create a CircularRoad Swing application.
-     * @param title String; the title of the Frame
-     * @param panel OtsAnimationPanel; the tabbed panel to display
-     * @param model CircularRoadModel; the model
+     * @param title the title of the Frame
+     * @param panel the tabbed panel to display
+     * @param model the model
      * @throws OtsDrawingException on animation error
      */
     public CircularRoadSwing(final String title, final OtsAnimationPanel panel, final CircularRoadModel model)
@@ -90,7 +90,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
 
     /**
      * Main program.
-     * @param args String[]; the command line arguments (not used)
+     * @param args the command line arguments (not used)
      */
     public static void main(final String[] args)
     {
@@ -157,8 +157,8 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
 
     /**
      * Find the start simulation button and click it.
-     * @param component Component; some component that could be the start button, or a container that contains the start button
-     * @return boolean; true if the start button was found (and clicked); false otherwise
+     * @param component some component that could be the start button, or a container that contains the start button
+     * @return true if the start button was found (and clicked); false otherwise
      */
     public static boolean clickStart(final Component component)
     {
@@ -187,8 +187,8 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
 
     /**
      * Click the button that starts the animated simulation.
-     * @param component Component; some component that (hopefully) is, or contains the start button
-     * @return boolean; true if the button was found (and clicked); false if the start button was not found
+     * @param component some component that (hopefully) is, or contains the start button
+     * @return true if the button was found (and clicked); false if the start button was not found
      */
     public static boolean clickRunPause(final Component component)
     {
@@ -218,7 +218,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
 
     /**
      * Start the demo.
-     * @param exitOnClose boolean; when running stand-alone: true; when running as part of a demo: false
+     * @param exitOnClose when running stand-alone: true; when running as part of a demo: false
      */
     public static void demo(final boolean exitOnClose)
     {
@@ -292,7 +292,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
 
     /**
      * Add the statistics tabs.
-     * @param simulator OtsSimulatorInterface; the simulator on which sampling can be scheduled
+     * @param simulator the simulator on which sampling can be scheduled
      */
     protected final void addStatisticsTabs(final OtsSimulatorInterface simulator)
     {

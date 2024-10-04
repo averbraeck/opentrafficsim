@@ -32,7 +32,7 @@ public class XsdAllValidator implements Function<XsdTreeNode, String>, EventList
 
     /**
      * Constructor.
-     * @param root XsdTreeNodeRoot; root.
+     * @param root root.
      */
     public XsdAllValidator(final XsdTreeNodeRoot root)
     {
@@ -41,7 +41,7 @@ public class XsdAllValidator implements Function<XsdTreeNode, String>, EventList
 
     /**
      * Add node to this validator.
-     * @param node XsdTreeNode; node.
+     * @param node node.
      */
     public void addNode(final XsdTreeNode node)
     {
@@ -55,7 +55,7 @@ public class XsdAllValidator implements Function<XsdTreeNode, String>, EventList
 
     /**
      * Remove node from this validator.
-     * @param node XsdTreeNode; node.
+     * @param node node.
      */
     private void removeNode(final XsdTreeNode node)
     {
@@ -87,8 +87,8 @@ public class XsdAllValidator implements Function<XsdTreeNode, String>, EventList
 
     /**
      * Returns whether the nodes are equal by path string and value.
-     * @param node1 XsdTreeNode; node 1.
-     * @param node2 XsdTreeNode; node 2.
+     * @param node1 node 1.
+     * @param node2 node 2.
      * @return whether the nodes are equal by path string and value.
      */
     private final static boolean nodesEqual(final XsdTreeNode node1, final XsdTreeNode node2)

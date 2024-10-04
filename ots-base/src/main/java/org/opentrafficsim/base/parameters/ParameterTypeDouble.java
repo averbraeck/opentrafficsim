@@ -22,8 +22,8 @@ public class ParameterTypeDouble extends ParameterTypeNumeric<Double> implements
 
     /**
      * Construct a new ParameterTypeDouble without default value and check.
-     * @param id String; short name of the new ParameterTypeDouble
-     * @param description String; parameter description or full name of the new ParameterTypeDouble
+     * @param id short name of the new ParameterTypeDouble
+     * @param description parameter description or full name of the new ParameterTypeDouble
      */
     public ParameterTypeDouble(final String id, final String description)
     {
@@ -32,9 +32,9 @@ public class ParameterTypeDouble extends ParameterTypeNumeric<Double> implements
 
     /**
      * Construct a new ParameterTypeDouble with default value, without check.
-     * @param id String; short name of the new ParameterTypeDouble
-     * @param description String; parameter description or full name of the new ParameterTypeDouble
-     * @param defaultValue double; the default value of the new ParametertypeDouble
+     * @param id short name of the new ParameterTypeDouble
+     * @param description parameter description or full name of the new ParameterTypeDouble
+     * @param defaultValue the default value of the new ParametertypeDouble
      */
     public ParameterTypeDouble(final String id, final String description, final double defaultValue)
     {
@@ -43,9 +43,9 @@ public class ParameterTypeDouble extends ParameterTypeNumeric<Double> implements
 
     /**
      * Construct a new ParameterTypeDouble without default value, with check.
-     * @param id String; short name of the new ParameterTypeDouble
-     * @param description String; parameter description or full name of the new ParameterTypeDouble
-     * @param constraint Constrain&lt;? super Double&gt;; constraint for parameter values
+     * @param id short name of the new ParameterTypeDouble
+     * @param description parameter description or full name of the new ParameterTypeDouble
+     * @param constraint constraint for parameter values
      */
     public ParameterTypeDouble(final String id, final String description, final Constraint<? super Double> constraint)
     {
@@ -54,10 +54,10 @@ public class ParameterTypeDouble extends ParameterTypeNumeric<Double> implements
 
     /**
      * Construct a new ParameterTypeDouble with default value and check.
-     * @param id String; short name of the new ParameterTypeDouble
-     * @param description String; parameter description or full name of the new ParameterTypeDouble
-     * @param defaultValue double; the default value of the new ParameterTypeDouble
-     * @param constraint Constraint&lt;? super Double&gt;; constraint for parameter values
+     * @param id short name of the new ParameterTypeDouble
+     * @param description parameter description or full name of the new ParameterTypeDouble
+     * @param defaultValue the default value of the new ParameterTypeDouble
+     * @param constraint constraint for parameter values
      */
     public ParameterTypeDouble(final String id, final String description, final double defaultValue,
             final Constraint<? super Double> constraint)
@@ -67,10 +67,10 @@ public class ParameterTypeDouble extends ParameterTypeNumeric<Double> implements
 
     /**
      * Construct a new ParameterTypeDouble with default value and check.
-     * @param id String; short name of the new ParameterTypeDouble
-     * @param description String; parameter description or full name of the new ParameterTypeDouble
-     * @param defaultValue Double; default value for the new ParameterTypeDouble
-     * @param constraint Constraint&lt;Number&gt;; constraint for parameter values
+     * @param id short name of the new ParameterTypeDouble
+     * @param description parameter description or full name of the new ParameterTypeDouble
+     * @param defaultValue default value for the new ParameterTypeDouble
+     * @param constraint constraint for parameter values
      */
     public ParameterTypeDouble(final String id, final String description, final Double defaultValue,
             final Constraint<Number> constraint)

@@ -27,7 +27,7 @@ public class EventSerializer<E extends Event> implements Serializer<Event>
 
     /**
      * Construct a new EventSerializer for the specified <code>EventType</code>.
-     * @param eventType EventType; the event type
+     * @param eventType the event type
      */
     EventSerializer(final EventType eventType)
     {

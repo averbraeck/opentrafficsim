@@ -37,7 +37,7 @@ public class FixedLaneChangeModel implements LaneChangeModel, Serializable
 
     /**
      * Construct a FixedLaneChangeModel.
-     * @param laneChange LateralDirectionality; the lane change that (always) be returned by this FixedLaneChangeModel.
+     * @param laneChange the lane change that (always) be returned by this FixedLaneChangeModel.
      */
     public FixedLaneChangeModel(final LateralDirectionality laneChange)
     {

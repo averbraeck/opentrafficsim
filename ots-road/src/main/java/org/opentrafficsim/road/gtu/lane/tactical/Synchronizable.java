@@ -15,7 +15,7 @@ public interface Synchronizable
 
     /**
      * Returns the synchronization state.
-     * @return State; synchronization state
+     * @return synchronization state
      */
     State getSynchronizationState();
 
@@ -46,7 +46,7 @@ public interface Synchronizable
 
         /**
          * Returns whether this is NONE.
-         * @return boolean; whether this is NONE
+         * @return whether this is NONE
          */
         public boolean isNone()
         {
@@ -55,7 +55,7 @@ public interface Synchronizable
 
         /**
          * Returns whether this is SYNCHRONIZING.
-         * @return boolean; whether this is SYNCHRONIZING
+         * @return whether this is SYNCHRONIZING
          */
         public boolean isSycnhronizing()
         {
@@ -64,7 +64,7 @@ public interface Synchronizable
 
         /**
          * Returns whether this is INDICATING.
-         * @return boolean; whether this is INDICATING
+         * @return whether this is INDICATING
          */
         public boolean isIndicating()
         {
@@ -73,7 +73,7 @@ public interface Synchronizable
 
         /**
          * Returns whether this is COOPERATING.
-         * @return boolean; whether this is COOPERATING
+         * @return whether this is COOPERATING
          */
         public boolean isCooperating()
         {

@@ -70,8 +70,8 @@ public class OtsWebModel implements EventListener
     private boolean killed = false;
 
     /**
-     * @param title String; the title for the model window
-     * @param simulator OtsSimulatorInterface; the simulator
+     * @param title the title for the model window
+     * @param simulator the simulator
      * @throws Exception in case jetty crashes
      */
     public OtsWebModel(final String title, final OtsSimulatorInterface simulator) throws Exception
@@ -94,8 +94,8 @@ public class OtsWebModel implements EventListener
             this.animationPanel = new HtmlAnimationPanel(extent, this.simulator);
             WebAnimationToggles.setTextAnimationTogglesStandard(this.animationPanel);
             // get the already created elements in context(/animation/D2)
-            this.animationPanel.notify(
-                    new TimedEvent<>(Replication.START_REPLICATION_EVENT, null, this.simulator.getSimulatorTime()));
+            this.animationPanel
+                    .notify(new TimedEvent<>(Replication.START_REPLICATION_EVENT, null, this.simulator.getSimulatorTime()));
         }
     }
 
@@ -132,7 +132,7 @@ public class OtsWebModel implements EventListener
     }
 
     /**
-     * @param killed boolean; set killed
+     * @param killed set killed
      */
     public final void setKilled(final boolean killed)
     {
@@ -195,7 +195,7 @@ public class OtsWebModel implements EventListener
     }
 
     /**
-     * @param speedFactor double; the new speed factor
+     * @param speedFactor the new speed factor
      */
     protected void setSpeedFactor(final double speedFactor)
     {
@@ -221,10 +221,10 @@ public class OtsWebModel implements EventListener
 
     /**
      * Delegate handle method from the main web server for this particular model.
-     * @param target String; t
-     * @param baseRequest Request; br
-     * @param request HttpServletRequest; r
-     * @param response HttpServletResponse; re
+     * @param target t
+     * @param baseRequest br
+     * @param request r
+     * @param response re
      * @throws IOException on error
      * @throws ServletException on error
      */
@@ -560,8 +560,8 @@ public class OtsWebModel implements EventListener
     }
 
     /**
-     * @param active boolean; is the simulation active?
-     * @param started boolean; has the simulation been started?
+     * @param active is the simulation active?
+     * @param started has the simulation been started?
      * @return XML message to send to the server
      */
     private String controlButtonResponse(final boolean active, final boolean started)
@@ -588,7 +588,7 @@ public class OtsWebModel implements EventListener
 
     /**
      * Return the toggle button info for the toggle panel.
-     * @param panel HTMLAnimationPanel; the HTMLAnimationPanel
+     * @param panel the HTMLAnimationPanel
      * @return the String that can be parsed by the select.html iframe
      */
     private String getToggles(final HtmlAnimationPanel panel)
@@ -616,7 +616,7 @@ public class OtsWebModel implements EventListener
 
     /**
      * Returns the simulation speed.
-     * @param simTime double; simulation time
+     * @param simTime simulation time
      * @return simulation speed
      */
     private double getSimulationSpeed(final double simTime)

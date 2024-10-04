@@ -39,8 +39,8 @@ public class LaneBasedCfLcTacticalPlannerFactory
 
     /**
      * Constructor with fixed stateless car-following and lane change model.
-     * @param carFollowingModel GtuFollowingModelOld; car following model
-     * @param laneChangeModel LaneChangeModel; lane change model
+     * @param carFollowingModel car following model
+     * @param laneChangeModel lane change model
      */
     public LaneBasedCfLcTacticalPlannerFactory(final GtuFollowingModelOld carFollowingModel,
             final LaneChangeModel laneChangeModel)

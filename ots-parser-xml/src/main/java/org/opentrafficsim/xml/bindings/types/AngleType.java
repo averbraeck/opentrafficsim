@@ -20,7 +20,7 @@ public class AngleType extends ExpressionType<Angle>
 
     /**
      * Constructor with value.
-     * @param value Angle; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public AngleType(final Angle value)
     {
@@ -29,7 +29,7 @@ public class AngleType extends ExpressionType<Angle>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public AngleType(final String expression)
     {

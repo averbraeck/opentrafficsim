@@ -42,8 +42,8 @@ public class SpeedSignAnimation extends OtsRenderable<SpeedSignData>
     private static final double EDGE = 1.3;
 
     /**
-     * @param source SpeedSignData; speed sign
-     * @param contextualized Contextualized; context provider
+     * @param source speed sign
+     * @param contextualized context provider
      * @throws NamingException ne
      * @throws RemoteException on communication failure
      */
@@ -101,7 +101,7 @@ public class SpeedSignAnimation extends OtsRenderable<SpeedSignData>
     {
         /**
          * Returns the speed.
-         * @return Speed; speed.
+         * @return speed.
          */
         Speed getSpeed();
 

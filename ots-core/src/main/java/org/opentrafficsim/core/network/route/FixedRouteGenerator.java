@@ -21,7 +21,7 @@ public class FixedRouteGenerator extends ConstantGenerator<Route> implements Ser
 
     /**
      * Construct a new FixedRouteGenerator.
-     * @param route Route; the CompleteRoute to generate
+     * @param route the CompleteRoute to generate
      */
     public FixedRouteGenerator(final Route route)
     {

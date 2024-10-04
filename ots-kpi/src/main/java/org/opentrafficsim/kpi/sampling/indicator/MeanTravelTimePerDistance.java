@@ -26,7 +26,7 @@ public class MeanTravelTimePerDistance extends AbstractIndicator<Duration>
     private final MeanSpeed meanSpeed;
 
     /**
-     * @param meanSpeed MeanSpeed; mean speed indicator
+     * @param meanSpeed mean speed indicator
      */
     public MeanTravelTimePerDistance(final MeanSpeed meanSpeed)
     {

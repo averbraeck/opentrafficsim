@@ -75,10 +75,10 @@ public abstract class AbstractHeadway implements Headway
 
     /**
      * Construct a new Headway information object, for an object in front, behind, or in parallel with us. <br>
-     * @param distance Length; the distance to the other object
-     * @param overlapFront Length; the front-front distance to the other object
-     * @param overlap Length; the 'center' overlap with the other object
-     * @param overlapRear Length; the rear-rear distance to the other object
+     * @param distance the distance to the other object
+     * @param overlapFront the front-front distance to the other object
+     * @param overlap the 'center' overlap with the other object
+     * @param overlapRear the rear-rear distance to the other object
      * @throws GtuException when id is null, or parameters are inconsistent
      */
     protected AbstractHeadway(final Length distance, final Length overlapFront, final Length overlap, final Length overlapRear)
@@ -98,7 +98,7 @@ public abstract class AbstractHeadway implements Headway
 
     /**
      * Construct a new Headway information object, for an object ahead of us or behind us.
-     * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
+     * @param distance if this constructor is used, distance cannot be null.
      * @throws GtuException when id is null, or parameters are inconsistent
      */
     public AbstractHeadway(final Length distance) throws GtuException

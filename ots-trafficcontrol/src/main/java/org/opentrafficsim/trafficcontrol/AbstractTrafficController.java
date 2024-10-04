@@ -24,8 +24,8 @@ public abstract class AbstractTrafficController extends LocalEventProducer imple
 
     /**
      * Constructor for traffic controller.
-     * @param id String; id
-     * @param simulator OtsSimulatorInterface; simulator
+     * @param id id
+     * @param simulator simulator
      */
     public AbstractTrafficController(final String id, final OtsSimulatorInterface simulator)
     {

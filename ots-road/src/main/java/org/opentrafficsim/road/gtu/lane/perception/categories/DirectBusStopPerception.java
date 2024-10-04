@@ -45,7 +45,7 @@ public class DirectBusStopPerception extends AbstractPerceptionCategory<LaneBase
     protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 
     /**
-     * @param perception LanePerception; perception
+     * @param perception perception
      */
     public DirectBusStopPerception(final LanePerception perception)
     {
@@ -58,10 +58,10 @@ public class DirectBusStopPerception extends AbstractPerceptionCategory<LaneBase
     {
         return this.computeIfAbsent("busStops", () -> computeBusStops());
     }
-    
+
     /**
      * Returns bus stops.
-     * @return PerceptionCollectable&lt;HeadwayBusStop, BusStop&gt;; bus stops
+     * @return bus stops
      */
     public final PerceptionCollectable<HeadwayBusStop, BusStop> computeBusStops()
     {
@@ -70,8 +70,8 @@ public class DirectBusStopPerception extends AbstractPerceptionCategory<LaneBase
             MultiLanePerceptionIterable<HeadwayBusStop, BusStop> stops = new MultiLanePerceptionIterable<>(getGtu());
             for (RelativeLane lane : getPerception().getLaneStructure().getRootCrossSection())
             {
-                Iterable<Entry<BusStop>> busStops = getPerception().getLaneStructure().getDownstreamObjects(lane,
-                        BusStop.class, RelativePosition.FRONT, true);
+                Iterable<Entry<BusStop>> busStops = getPerception().getLaneStructure().getDownstreamObjects(lane, BusStop.class,
+                        RelativePosition.FRONT, true);
 
                 LaneRecord record = getPerception().getLaneStructure().getRootRecord(lane);
                 Length pos = record.getStartDistance().neg();

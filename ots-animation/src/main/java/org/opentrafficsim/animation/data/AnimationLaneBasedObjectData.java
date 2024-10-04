@@ -24,7 +24,7 @@ public abstract class AnimationLaneBasedObjectData<T extends LaneBasedObject> im
 
     /**
      * Constructor.
-     * @param laneBasedObject T; laneBasedObject.
+     * @param laneBasedObject laneBasedObject.
      */
     public AnimationLaneBasedObjectData(final T laneBasedObject)
     {
@@ -61,7 +61,7 @@ public abstract class AnimationLaneBasedObjectData<T extends LaneBasedObject> im
 
     /**
      * Returns the wrapped object.
-     * @return T; wrapped object.
+     * @return wrapped object.
      */
     public T getObject()
     {

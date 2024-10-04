@@ -20,7 +20,7 @@ public class DurationType extends ExpressionType<Duration>
 
     /**
      * Constructor with value.
-     * @param value Duration; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public DurationType(final Duration value)
     {
@@ -29,7 +29,7 @@ public class DurationType extends ExpressionType<Duration>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public DurationType(final String expression)
     {

@@ -67,10 +67,10 @@ public class IncentiveStayRight implements VoluntaryIncentive
 
     /**
      * Returns the urgency to leave a lane.
-     * @param laneChangeInfo SortedSet&lt;InfrastructureLaneChangeInfo&gt;; lane change info on the lane
-     * @param parameters Parameters; parameters
-     * @param speed Speed; current speed
-     * @return double; urgency to leave the lane
+     * @param laneChangeInfo lane change info on the lane
+     * @param parameters parameters
+     * @param speed current speed
+     * @return urgency to leave the lane
      * @throws ParameterException if parameter is not given
      */
     private double urgency(final SortedSet<LaneChangeInfo> laneChangeInfo, final Parameters parameters, final Speed speed)

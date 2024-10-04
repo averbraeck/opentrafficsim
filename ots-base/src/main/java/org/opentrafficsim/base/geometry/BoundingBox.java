@@ -25,8 +25,8 @@ public class BoundingBox implements OtsBounds2d
 
     /**
      * Constructor.
-     * @param dx double; complete length along x dimension.
-     * @param dy double; complete length along y dimension.
+     * @param dx complete length along x dimension.
+     * @param dy complete length along y dimension.
      */
     public BoundingBox(final double dx, final double dy)
     {

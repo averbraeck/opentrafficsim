@@ -362,11 +362,11 @@ public class LoopDetector extends LaneDetector
 
     /**
      * Constructor for regular Dutch dual-loop detectors measuring flow and mean speed aggregated over 60s.
-     * @param id String; detector id
-     * @param lane Lane; lane
-     * @param longitudinalPosition Length; position
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param detectorType DetectorType; detector type.
+     * @param id detector id
+     * @param lane lane
+     * @param longitudinalPosition position
+     * @param simulator simulator
+     * @param detectorType detector type.
      * @throws NetworkException on network exception
      */
     public LoopDetector(final String id, final Lane lane, final Length longitudinalPosition, final DetectorType detectorType,
@@ -379,15 +379,15 @@ public class LoopDetector extends LaneDetector
 
     /**
      * Constructor.
-     * @param id String; detector id
-     * @param lane Lane; lane
-     * @param longitudinalPosition Length; position
-     * @param length Length; length
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param firstAggregation Time; time of first aggregation
-     * @param aggregation Duration; aggregation period
-     * @param measurements DetectorMeasurement&lt;?, ?&gt;...; measurements to obtain
-     * @param detectorType DetectorType; detector type.
+     * @param id detector id
+     * @param lane lane
+     * @param longitudinalPosition position
+     * @param length length
+     * @param simulator simulator
+     * @param firstAggregation time of first aggregation
+     * @param aggregation aggregation period
+     * @param measurements measurements to obtain
+     * @param detectorType detector type.
      * @throws NetworkException on network exception
      */
     public LoopDetector(final String id, final Lane lane, final Length longitudinalPosition, final Length length,
@@ -419,11 +419,11 @@ public class LoopDetector extends LaneDetector
 
             /**
              * Constructor.
-             * @param idRear String; id
-             * @param laneRear Lane; lane
-             * @param longitudinalPositionRear Length; position
-             * @param simulatorRear OtsSimulatorInterface; simulator
-             * @param detectorType DetectorType; detector type.
+             * @param idRear id
+             * @param laneRear lane
+             * @param longitudinalPositionRear position
+             * @param simulatorRear simulator
+             * @param detectorType detector type.
              * @throws NetworkException on network exception
              */
             @SuppressWarnings("synthetic-access")
@@ -472,9 +472,9 @@ public class LoopDetector extends LaneDetector
 
     /**
      * Accumulates a measurement.
-     * @param measurement DetectorMeasurement&lt;C, ?&gt;; measurement to accumulate
-     * @param gtu LaneBasedGtu; gtu
-     * @param front boolean; triggered by front entering (or rear leaving when false)
+     * @param measurement measurement to accumulate
+     * @param gtu gtu
+     * @param front triggered by front entering (or rear leaving when false)
      * @param <C> accumulated type
      */
     @SuppressWarnings("unchecked")
@@ -525,7 +525,7 @@ public class LoopDetector extends LaneDetector
 
     /**
      * Returns whether the detector has aggregated data available.
-     * @return boolean; whether the detector has aggregated data available
+     * @return whether the detector has aggregated data available
      */
     public boolean hasLastValue()
     {
@@ -543,7 +543,7 @@ public class LoopDetector extends LaneDetector
 
     /**
      * Returns the last value of the detector measurement.
-     * @param detectorMeasurement DetectorMeasurement&lt;?,A&gt;; detector measurement
+     * @param detectorMeasurement detector measurement
      * @return last value of the detector measurement
      * @param <A> aggregate value type of the detector measurement
      */
@@ -556,9 +556,9 @@ public class LoopDetector extends LaneDetector
 
     /**
      * Aggregates a periodic measurement.
-     * @param measurement DetectorMeasurement&lt;C, A&gt;; measurement to aggregate
-     * @param gtuCount int; number of GTUs
-     * @param agg Duration; aggregation period
+     * @param measurement measurement to aggregate
+     * @param gtuCount number of GTUs
+     * @param agg aggregation period
      * @param <C> accumulated type
      * @param <A> aggregated type
      */
@@ -570,10 +570,10 @@ public class LoopDetector extends LaneDetector
 
     /**
      * Returns the aggregated value of the measurement.
-     * @param measurement DetectorMeasurement&lt;C, A&gt;; measurement to aggregate
-     * @param gtuCount int; number of GTUs
-     * @param agg Duration; aggregation period
-     * @return A; aggregated value of the measurement
+     * @param measurement measurement to aggregate
+     * @param gtuCount number of GTUs
+     * @param agg aggregation period
+     * @return aggregated value of the measurement
      * @param <C> accumulated type
      * @param <A> aggregated type
      */
@@ -585,7 +585,7 @@ public class LoopDetector extends LaneDetector
 
     /**
      * Returns a map of non-periodic measurements, mapping measurement type and the data.
-     * @return Map&lt;DetectorMeasurement, Object&gt;; map of non-periodic measurements
+     * @return map of non-periodic measurements
      */
     private Map<LoopDetectorMeasurement<?, ?>, Object> getNonPeriodicMeasurements()
     {
@@ -603,8 +603,8 @@ public class LoopDetector extends LaneDetector
 
     /**
      * Returns a Table with loop detector positions.
-     * @param network RoadNetwork; network from which all detectors are found.
-     * @return Table; with loop detector positions.
+     * @param network network from which all detectors are found.
+     * @return with loop detector positions.
      */
     public static Table asTablePositions(final RoadNetwork network)
     {
@@ -644,7 +644,7 @@ public class LoopDetector extends LaneDetector
 
             /**
              * Returns this table instance for inner classes as {@code Table.this} is not possible in an anonymous Table class.
-             * @return Table; this table instance for inner classes.
+             * @return this table instance for inner classes.
              */
             private Table table()
             {
@@ -662,8 +662,8 @@ public class LoopDetector extends LaneDetector
 
     /**
      * Returns a Table with all periodic data, such as flow and speed per minute.
-     * @param network RoadNetwork; network from which all detectors are found.
-     * @return Table; with all periodic data, such as flow and speed per minute.
+     * @param network network from which all detectors are found.
+     * @return with all periodic data, such as flow and speed per minute.
      */
     public static Table asTablePeriodicData(final RoadNetwork network)
     {
@@ -747,7 +747,7 @@ public class LoopDetector extends LaneDetector
 
             /**
              * Returns this table instance for inner classes as {@code Table.this} is not possible in an anonymous Table class.
-             * @return Table; this table instance for inner classes.
+             * @return this table instance for inner classes.
              */
             private Table table()
             {
@@ -765,8 +765,8 @@ public class LoopDetector extends LaneDetector
 
     /**
      * Returns a Table with all non-periodic data, such as vehicle passage times or platoon counts.
-     * @param network RoadNetwork; network from which all detectors are found.
-     * @return Table; with all non-periodic data, such as vehicle passage times or platoon counts.
+     * @param network network from which all detectors are found.
+     * @return with all non-periodic data, such as vehicle passage times or platoon counts.
      */
     public static Table asTableNonPeriodicData(final RoadNetwork network)
     {
@@ -844,7 +844,7 @@ public class LoopDetector extends LaneDetector
 
             /**
              * Returns this table instance for inner classes as {@code Table.this} is not possible in an anonymous Table class.
-             * @return Table; this table instance for inner classes.
+             * @return this table instance for inner classes.
              */
             private Table table()
             {
@@ -862,8 +862,8 @@ public class LoopDetector extends LaneDetector
 
     /**
      * Gathers all loop detectors from the network and puts them in a set sorted by loop detector id.
-     * @param network RoadNetwork; network.
-     * @return Set&lt;LoopDetector&gt;; set of loop detector sorted by loop detector id.
+     * @param network network.
+     * @return set of loop detector sorted by loop detector id.
      */
     private static Set<LoopDetector> getLoopDetectors(final RoadNetwork network)
     {
@@ -881,9 +881,9 @@ public class LoopDetector extends LaneDetector
 
     /**
      * Returns all measurement type that are found accross a set of loop detectors.
-     * @param detectors Set&lt;LoopDetector&gt;; set of loop detectors.
-     * @param periodic boolean; gather the periodic measurements {@code true}, or the non-periodic measurements {@code false}.
-     * @return Set&lt;LoopDetectorMeasurement&lt;?, ?&gt;&gt;; set of periodic or non-periodic measurements from the detectors.
+     * @param detectors set of loop detectors.
+     * @param periodic gather the periodic measurements {@code true}, or the non-periodic measurements {@code false}.
+     * @return set of periodic or non-periodic measurements from the detectors.
      */
     private static Set<LoopDetectorMeasurement<?, ?>> getMeasurements(final Set<LoopDetector> detectors, final boolean periodic)
     {
@@ -909,60 +909,60 @@ public class LoopDetector extends LaneDetector
     {
         /**
          * Returns the initial value before accumulation.
-         * @return C; initial value before accumulation
+         * @return initial value before accumulation
          */
         C identity();
 
         /**
          * Returns an accumulated value for when the front reaches the detector. GTU's may trigger an exit without having
          * triggered an entry due to a lane change. Reversely, GTU's may not trigger an exit while they did trigger an entry.
-         * @param cumulative C; accumulated value
-         * @param gtu LaneBasedGtu; gtu
-         * @param loopDetector Detector; loop detector
-         * @return C; accumulated value
+         * @param cumulative accumulated value
+         * @param gtu gtu
+         * @param loopDetector loop detector
+         * @return accumulated value
          */
         C accumulateEntry(C cumulative, LaneBasedGtu gtu, LoopDetector loopDetector);
 
         /**
          * Returns an accumulated value for when the rear leaves the detector. GTU's may trigger an exit without having
          * triggered an entry due to a lane change. Reversely, GTU's may not trigger an exit while they did trigger an entry.
-         * @param cumulative C; accumulated value
-         * @param gtu LaneBasedGtu; gtu
-         * @param loopDetector Detector; loop detector
-         * @return C; accumulated value
+         * @param cumulative accumulated value
+         * @param gtu gtu
+         * @param loopDetector loop detector
+         * @return accumulated value
          */
         C accumulateExit(C cumulative, LaneBasedGtu gtu, LoopDetector loopDetector);
 
         /**
          * Returns whether the measurement aggregates every aggregation period (or only over the entire simulation).
-         * @return boolean; whether the measurement aggregates every aggregation period (or only over the entire simulation)
+         * @return whether the measurement aggregates every aggregation period (or only over the entire simulation)
          */
         boolean isPeriodic();
 
         /**
          * Returns an aggregated value.
-         * @param cumulative C; accumulated value
-         * @param gtuCount int; GTU gtuCount
-         * @param aggregation Duration; aggregation period
-         * @return A; aggregated value
+         * @param cumulative accumulated value
+         * @param gtuCount GTU gtuCount
+         * @param aggregation aggregation period
+         * @return aggregated value
          */
         A aggregate(C cumulative, int gtuCount, Duration aggregation);
 
         /**
          * Returns the value name.
-         * @return String; value name
+         * @return value name
          */
         String getName();
 
         /**
          * Measurement description.
-         * @return String; measurement description.
+         * @return measurement description.
          */
         String getDescription();
 
         /**
          * Returns the unit string, default is {@code null}.
-         * @return String; unit string.
+         * @return unit string.
          */
         default String getUnit()
         {
@@ -971,7 +971,7 @@ public class LoopDetector extends LaneDetector
 
         /**
          * Returns the data type.
-         * @return Class&lt;?&gt;; data type.
+         * @return data type.
          */
         Class<?> getValueType();
     }
@@ -995,7 +995,7 @@ public class LoopDetector extends LaneDetector
 
         /**
          * Constructor.
-         * @param threshold Duration; maximum time between two vehicles that are considered to be in the same platoon
+         * @param threshold maximum time between two vehicles that are considered to be in the same platoon
          */
         public PlatoonSizes(final Duration threshold)
         {

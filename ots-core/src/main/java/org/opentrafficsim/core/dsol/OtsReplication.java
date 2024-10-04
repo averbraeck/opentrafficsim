@@ -26,10 +26,10 @@ public class OtsReplication extends SingleReplication<Duration>
 
     /**
      * Create a new OTSReplication.
-     * @param id String; id of the new OTSReplication
-     * @param startTime Time; the start time of the new OTSReplication
-     * @param warmupPeriod Duration; the warmup period of the new OTSReplication
-     * @param runLength Duration; the run length of the new OTSReplication
+     * @param id id of the new OTSReplication
+     * @param startTime the start time of the new OTSReplication
+     * @param warmupPeriod the warmup period of the new OTSReplication
+     * @param runLength the run length of the new OTSReplication
      * @throws NamingException when the context for the replication cannot be created
      */
     public OtsReplication(final String id, final Time startTime, final Duration warmupPeriod, final Duration runLength)
@@ -42,8 +42,8 @@ public class OtsReplication extends SingleReplication<Duration>
     /**
      * Returns the history manager. If none was set, one is created coupled to the simulator using 0s of history and 10s
      * clean-up time.
-     * @param simulator OtsSimulatorInterface; simulator
-     * @return HistoryManager; history manager
+     * @param simulator simulator
+     * @return history manager
      */
     public HistoryManager getHistoryManager(final OtsSimulatorInterface simulator)
     {
@@ -56,7 +56,7 @@ public class OtsReplication extends SingleReplication<Duration>
 
     /**
      * Set history manager.
-     * @param historyManager HistoryManager; history manager to set
+     * @param historyManager history manager to set
      */
     public void setHistoryManager(final HistoryManager historyManager)
     {
@@ -65,7 +65,7 @@ public class OtsReplication extends SingleReplication<Duration>
 
     /**
      * Return the absolute start time of the simulation.
-     * @return Time; the absolute start time of the simulation
+     * @return the absolute start time of the simulation
      */
     public Time getStartTimeAbs()
     {

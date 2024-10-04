@@ -53,7 +53,7 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
 
     /**
      * Constructor.
-     * @param historyManager HistoryManager; history manager
+     * @param historyManager history manager
      */
     protected AbstractHistorical(final HistoryManager historyManager)
     {
@@ -64,7 +64,7 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
 
     /**
      * Returns the current time.
-     * @return Time; current time
+     * @return current time
      */
     protected final Time now()
     {
@@ -73,8 +73,8 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
 
     /**
      * Returns a list of events, ordered last to first, that includes all events <i>after</i> {@code time}.
-     * @param time Time; past time up to which to include events
-     * @return List; list of events, ordered last to first, that includes all events <i>after</i> {@code time}
+     * @param time past time up to which to include events
+     * @return list of events, ordered last to first, that includes all events <i>after</i> {@code time}
      */
     protected final List<E> getEvents(final Time time)
     {
@@ -90,8 +90,8 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
 
     /**
      * Returns the most recent event from <i>before</i> or on {@code time}, or the oldest if no such event.
-     * @param time Time; past time at which to obtain event
-     * @return E; most recent event from <i>before</i> {@code time}
+     * @param time past time at which to obtain event
+     * @return most recent event from <i>before</i> {@code time}
      */
     protected final E getEvent(final Time time)
     {
@@ -116,7 +116,7 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
 
     /**
      * Returns the last event.
-     * @return E; last event
+     * @return last event
      */
     protected final E getLastEvent()
     {
@@ -125,8 +125,8 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
 
     /**
      * Returns whether the state at the given time is equal to the state at the current time.
-     * @param time Time; time
-     * @return boolean; whether the state at the given time is equal to the state at the current time
+     * @param time time
+     * @return whether the state at the given time is equal to the state at the current time
      */
     protected final boolean isLastState(final Time time)
     {
@@ -135,7 +135,7 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
 
     /**
      * Removes the given event.
-     * @param event E; event to remove
+     * @param event event to remove
      */
     protected final void removeEvent(final E event)
     {
@@ -144,7 +144,7 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
 
     /**
      * Adds the event to the list of events.
-     * @param event E; event to add
+     * @param event event to add
      */
     protected final void addEvent(final E event)
     {
@@ -178,7 +178,7 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
 
         /**
          * Returns the time of this event.
-         * @return double; time of this event
+         * @return time of this event
          */
         double getTime();
 
@@ -207,8 +207,8 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
 
         /**
          * Constructor.
-         * @param time double; time of event
-         * @param value T; value of event
+         * @param time time of event
+         * @param value value of event
          */
         public EventValue(final double time, final T value)
         {
@@ -225,7 +225,7 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
 
         /**
          * Returns the value of this event.
-         * @return T; value of this event
+         * @return value of this event
          */
         public T getValue()
         {

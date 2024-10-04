@@ -27,12 +27,12 @@ public final class IconWriter
      */
     private IconWriter()
     {
-        
+
     }
-    
+
     /**
      * Writes some icons for the editor.
-     * @param args String[]; arguments.
+     * @param args arguments.
      * @throws IOException on write exception.
      */
     public static void main(final String[] args) throws IOException
@@ -50,7 +50,7 @@ public final class IconWriter
         g.drawOval(3, 3, 9, 9);
         image = next(image, "OTS_node.png", 16);
         g = getGraphics(image);
-        
+
         g.setColor(orange);
         g.fillOval(3, 3, 9, 9);
         g.setColor(Color.BLACK);
@@ -70,7 +70,7 @@ public final class IconWriter
         g.drawOval(0, 9, 5, 5);
         image = next(image, "OTS_link.png", 16);
         g = getGraphics(image);
-        
+
         g.setColor(Color.BLACK);
         g.setStroke(new BasicStroke(1.0f));
         g.drawLine(3, 12, 11, 2);
@@ -131,27 +131,29 @@ public final class IconWriter
         g.drawLine(10, 13, 9, 2);
         image = next(image, "OTS_road.png", 24);
         g = getGraphics(image);
-        
+
         g.rotate(Math.PI / 4.0);
         g.setColor(Color.WHITE);
-        g.fillRect((int) (6 * Math.sqrt(2.0)), (int) (-6 * Math.sqrt(2.0)), (int) (12 * Math.sqrt(2.0)), (int) (12 * Math.sqrt(2.0)));
+        g.fillRect((int) (6 * Math.sqrt(2.0)), (int) (-6 * Math.sqrt(2.0)), (int) (12 * Math.sqrt(2.0)),
+                (int) (12 * Math.sqrt(2.0)));
         g.setColor(Color.BLACK);
         double r = 6.5;
-        RoundRectangle2D.Double shape = new RoundRectangle2D.Double(11.5 * Math.sqrt(2.0)-r, -r, 2.0 * r, 2.0 * r, 0.25 * r, 0.25 * r);
+        RoundRectangle2D.Double shape =
+                new RoundRectangle2D.Double(11.5 * Math.sqrt(2.0) - r, -r, 2.0 * r, 2.0 * r, 0.25 * r, 0.25 * r);
         g.draw(shape);
         r = 13.0 / 3.0;
         g.setColor(new Color(255, 204, 0));
-        shape = new RoundRectangle2D.Double(11.5 * Math.sqrt(2.0)-r, -r, 2.0 * r, 2.0 * r, 0.15 * r, 0.15 * r);
+        shape = new RoundRectangle2D.Double(11.5 * Math.sqrt(2.0) - r, -r, 2.0 * r, 2.0 * r, 0.15 * r, 0.15 * r);
         g.fill(shape);
         image = next(image, ".\\icons\\Priority24.png", 16);
     }
 
     /**
      * Saves the previous image. Creates a new empty image for the next.
-     * @param image BufferedImage; image to save.
-     * @param saveFile String; file name to same image.
-     * @param size int; size of icon.
-     * @return BufferedImage; next empty image to draw in.
+     * @param image image to save.
+     * @param saveFile file name to same image.
+     * @param size size of icon.
+     * @return next empty image to draw in.
      * @throws IOException on read or write exception.
      */
     private static BufferedImage next(final BufferedImage image, final String saveFile, final int size) throws IOException
@@ -167,8 +169,8 @@ public final class IconWriter
 
     /**
      * Gets the graphics from an image with anti-aliasing enabled.
-     * @param image BufferedImage; image to return the graphics for.
-     * @return Graphics2D; graphics.
+     * @param image image to return the graphics for.
+     * @return graphics.
      */
     private static Graphics2D getGraphics(final BufferedImage image)
     {

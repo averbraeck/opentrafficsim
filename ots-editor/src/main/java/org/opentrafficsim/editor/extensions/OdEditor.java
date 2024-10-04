@@ -31,7 +31,7 @@ public class OdEditor implements EventListener
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
+     * @param editor editor.
      * @throws IOException if icon cannot be loaded or listener cannot be added.
      */
     public OdEditor(final OtsEditor editor) throws IOException
@@ -44,7 +44,7 @@ public class OdEditor implements EventListener
 
     /**
      * Temporary stub to create OD pane.
-     * @return JComponent; component.
+     * @return component.
      */
     private static JComponent buildOdPane()
     {

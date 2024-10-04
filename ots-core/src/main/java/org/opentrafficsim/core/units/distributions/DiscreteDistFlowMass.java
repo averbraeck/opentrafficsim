@@ -21,8 +21,8 @@ public class DiscreteDistFlowMass extends DiscreteDistDoubleScalar.Rel<FlowMass,
     private static final long serialVersionUID = 20180829L;
 
     /**
-     * @param distribution DistDiscrete; distribution
-     * @param unit FlowMassUnit; units
+     * @param distribution distribution
+     * @param unit units
      */
     public DiscreteDistFlowMass(final DistDiscrete distribution, final FlowMassUnit unit)
     {

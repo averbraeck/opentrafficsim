@@ -27,8 +27,8 @@ public interface Flattener
 
     /**
      * Flatten continuous line in to a polyline.
-     * @param line FlattableLine; line function.
-     * @return PolyLine2d; flattened line.
+     * @param line line function.
+     * @return flattened line.
      */
     PolyLine2d flatten(FlattableLine line);
 
@@ -50,7 +50,7 @@ public interface Flattener
 
         /**
          * Constructor.
-         * @param numSegments int; number of segments, must be at least 1.
+         * @param numSegments number of segments, must be at least 1.
          */
         public NumSegments(final int numSegments)
         {
@@ -90,7 +90,7 @@ public interface Flattener
 
         /**
          * Constructor.
-         * @param maxDeviation int; maximum deviation, must be above 0.0.
+         * @param maxDeviation maximum deviation, must be above 0.0.
          */
         public MaxDeviation(final double maxDeviation)
         {
@@ -174,8 +174,8 @@ public interface Flattener
 
         /**
          * Constructor.
-         * @param maxDeviation int; maximum deviation, must be above 0.0.
-         * @param maxAngle int; maximum angle, must be above 0.0.
+         * @param maxDeviation maximum deviation, must be above 0.0.
+         * @param maxAngle maximum angle, must be above 0.0.
          */
         public MaxDeviationAndAngle(final double maxDeviation, final double maxAngle)
         {
@@ -284,7 +284,7 @@ public interface Flattener
 
         /**
          * Constructor.
-         * @param maxAngle int; maximum angle.
+         * @param maxAngle maximum angle.
          */
         public MaxAngle(final double maxAngle)
         {

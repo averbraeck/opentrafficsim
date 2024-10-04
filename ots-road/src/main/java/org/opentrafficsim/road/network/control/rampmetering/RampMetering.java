@@ -27,9 +27,9 @@ public class RampMetering
     private final RampMeteringLightController rampLightController;
 
     /**
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param rampSwitch RampMeteringSwitch; ramp metering switch
-     * @param rampLightController RampMeteringLightController; ramp metering light controller
+     * @param simulator simulator
+     * @param rampSwitch ramp metering switch
+     * @param rampLightController ramp metering light controller
      */
     public RampMetering(final OtsSimulatorInterface simulator, final RampMeteringSwitch rampSwitch,
             final RampMeteringLightController rampLightController)

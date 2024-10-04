@@ -91,19 +91,18 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * Construct a new TextAnimation.
-     * @param source L; the object for which the text is displayed
-     * @param text Supplier&lt;String&gt;; the text to display
-     * @param dx float; the horizontal movement of the text, in meters
-     * @param dy float; the vertical movement of the text, in meters
-     * @param textAlignment TextAlignment; where to place the text
-     * @param color Color; the color of the text
-     * @param fontSize float; the size of the font; default = 2.0 (meters)
-     * @param minFontSize float; minimum font size resulting from scaling
-     * @param maxFontSize float; maximum font size resulting from scaling
-     * @param contextualized Contextualized; context provider.
-     * @param background ContrastToBackground; allows querying the background color and adaptation of the actual color of the
-     *            text to ensure contrast
-     * @param scaleDependentRendering ScaleDependentRendering; suppress rendering when font scale is too small
+     * @param source the object for which the text is displayed
+     * @param text the text to display
+     * @param dx the horizontal movement of the text, in meters
+     * @param dy the vertical movement of the text, in meters
+     * @param textAlignment where to place the text
+     * @param color the color of the text
+     * @param fontSize the size of the font; default = 2.0 (meters)
+     * @param minFontSize minimum font size resulting from scaling
+     * @param maxFontSize maximum font size resulting from scaling
+     * @param contextualized context provider.
+     * @param background allows querying the background color and adaptation of the actual color of the text to ensure contrast
+     * @param scaleDependentRendering suppress rendering when font scale is too small
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException when remote context cannot be found
      */
@@ -136,17 +135,17 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * Construct a new TextAnimation without contrast to background protection and no minimum font scale.
-     * @param source L; the object for which the text is displayed
-     * @param text Supplier&lt;String&gt;; the text to display
-     * @param dx float; the horizontal movement of the text, in meters
-     * @param dy float; the vertical movement of the text, in meters
-     * @param textAlignment TextAlignment; where to place the text
-     * @param color Color; the color of the text
-     * @param fontSize float; the size of the font; default = 2.0 (meters)
-     * @param minFontSize float; minimum font size resulting from scaling
-     * @param maxFontSize float; maximum font size resulting from scaling
-     * @param contextualized Contextualized; context provider
-     * @param scaleDependentRendering ScaleDependentRendering; render text only when bigger than minimum scale
+     * @param source the object for which the text is displayed
+     * @param text the text to display
+     * @param dx the horizontal movement of the text, in meters
+     * @param dy the vertical movement of the text, in meters
+     * @param textAlignment where to place the text
+     * @param color the color of the text
+     * @param fontSize the size of the font; default = 2.0 (meters)
+     * @param minFontSize minimum font size resulting from scaling
+     * @param maxFontSize maximum font size resulting from scaling
+     * @param contextualized context provider
+     * @param scaleDependentRendering render text only when bigger than minimum scale
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException when remote context cannot be found
      */
@@ -161,14 +160,14 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
     }
 
     /**
-     * @param source L; the object for which the text is displayed
-     * @param text Supplier&lt;String&gt;; the text to display
-     * @param dx float; the horizontal movement of the text, in meters
-     * @param dy float; the vertical movement of the text, in meters
-     * @param textAlignment TextAlignment; where to place the text
-     * @param color Color; the color of the text
-     * @param contextualized Contextualized; context provider
-     * @param scaleDependentRendering ScaleDependentRendering; render text only when bigger than minimum scale
+     * @param source the object for which the text is displayed
+     * @param text the text to display
+     * @param dx the horizontal movement of the text, in meters
+     * @param dy the vertical movement of the text, in meters
+     * @param textAlignment where to place the text
+     * @param color the color of the text
+     * @param contextualized context provider
+     * @param scaleDependentRendering render text only when bigger than minimum scale
      * @throws NamingException when animation context cannot be created or retrieved
      * @throws RemoteException when remote context cannot be found
      */
@@ -181,8 +180,8 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * Sets whether the location of this text is dynamic.
-     * @param dynamic boolean; whether the location of this text is dynamic.
-     * @return T; for method chaining.
+     * @param dynamic whether the location of this text is dynamic.
+     * @return for method chaining.
      */
     @SuppressWarnings("unchecked")
     public T setDynamic(final boolean dynamic)
@@ -225,8 +224,8 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * paint() method so it can be overridden or extended.
-     * @param graphics Graphics2D; the graphics object
-     * @param observer ImageObserver; the observer
+     * @param graphics the graphics object
+     * @param observer the observer
      */
     @SuppressWarnings("checkstyle:designforextension")
     public void paint(final Graphics2D graphics, final ImageObserver observer)
@@ -300,9 +299,9 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * Returns whether two colors are similar.
-     * @param color1 Color; color 1.
-     * @param color2 Color; color 2.
-     * @return boolean; whether two colors are similar.
+     * @param color1 color 1.
+     * @param color2 color 2.
+     * @return whether two colors are similar.
      */
     private boolean isSimilar(final Color color1, final Color color2)
     {
@@ -315,7 +314,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * Destroy the text animation.
-     * @param contextProvider Contextualized; the object with a Context
+     * @param contextProvider the object with a Context
      */
     public final void destroy(final Contextualized contextProvider)
     {
@@ -324,7 +323,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * Retrieve the source.
-     * @return L; the source
+     * @return the source
      */
     protected final L getSource()
     {
@@ -333,7 +332,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * Retrieve dx.
-     * @return float; the value of dx
+     * @return the value of dx
      */
     protected final float getDx()
     {
@@ -342,7 +341,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * Retrieve dy.
-     * @return float; the value of dy
+     * @return the value of dy
      */
     protected final float getDy()
     {
@@ -351,8 +350,8 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * Sets a new offset.
-     * @param x float; dx
-     * @param y float; dy
+     * @param x dx
+     * @param y dy
      */
     protected final void setXY(final float x, final float y)
     {
@@ -369,7 +368,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * Retrieve the text alignment.
-     * @return TextAlignment; the text alignment
+     * @return the text alignment
      */
     protected final TextAlignment getTextAlignment()
     {
@@ -378,7 +377,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * Retrieve the font size.
-     * @return float; the font size
+     * @return the font size
      */
     protected final float getFontSize()
     {
@@ -387,7 +386,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * Retrieve the font.
-     * @return Font; the font
+     * @return the font
      */
     protected final Font getFont()
     {
@@ -396,7 +395,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * Retrieve the current text.
-     * @return String; the current text
+     * @return the current text
      */
     protected final String getText()
     {
@@ -405,7 +404,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * Update the text.
-     * @param text Supplier&lt;String&gt;; the new text
+     * @param text the new text
      */
     public final void setText(final Supplier<String> text)
     {
@@ -414,7 +413,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * Retrieve the current color.
-     * @return Color; the current color
+     * @return the current color
      */
     protected final Color getColor()
     {
@@ -423,7 +422,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * Update the color.
-     * @param color Color; the new color
+     * @param color the new color
      */
     protected final void setColor(final Color color)
     {
@@ -432,7 +431,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * Retrieve the current flip status.
-     * @return boolean; the current flip status
+     * @return the current flip status
      */
     public final boolean isFlip()
     {
@@ -441,7 +440,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * Update the flip status.
-     * @param flip boolean; the new flip status
+     * @param flip the new flip status
      */
     public final void setFlip(final boolean flip)
     {
@@ -450,7 +449,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * Retrieve the current rotation status.
-     * @return boolean; the current rotation status
+     * @return the current rotation status
      */
     public final boolean isRotate()
     {
@@ -459,7 +458,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * Update the rotation status.
-     * @param rotate boolean; the new rotation status
+     * @param rotate the new rotation status
      */
     public final void setRotate(final boolean rotate)
     {
@@ -469,7 +468,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * Retrieve the current scale status.
-     * @return boolean; the current scale status
+     * @return the current scale status
      */
     public final boolean isScale()
     {
@@ -478,7 +477,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * Update the scale status.
-     * @param scale boolean; the new scale status
+     * @param scale the new scale status
      */
     public final void setScale(final boolean scale)
     {
@@ -487,7 +486,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * Retrieve the current translate status.
-     * @return boolean; the current translate status
+     * @return the current translate status
      */
     public final boolean isTranslate()
     {
@@ -496,7 +495,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * Update the translate status.
-     * @param translate boolean; the new translate status
+     * @param translate the new translate status
      */
     public final void setTranslate(final boolean translate)
     {
@@ -521,8 +520,8 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
         /**
          * Construct a new AnimationImpl.
-         * @param source TextAnimation; the source
-         * @param contextualized Contextualized; context provider.
+         * @param source the source
+         * @param contextualized context provider.
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException when remote context cannot be found
          */
@@ -556,7 +555,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /**
      * Retrieve the scale dependent rendering qualifier (used in cloning).
-     * @return ScaleDependentRendering; the rendering qualifier of this TextAnimation
+     * @return the rendering qualifier of this TextAnimation
      */
     protected ScaleDependentRendering getScaleDependentRendering()
     {
@@ -570,7 +569,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
     {
         /**
          * Retrieve the color of the background.
-         * @return Color; the (current) color of the background
+         * @return the (current) color of the background
          */
         Color getBackgroundColor();
     }
@@ -582,9 +581,8 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
     {
         /**
          * Determine if a Text should be rendered, depending on the scale.
-         * @param scale double; the current font scale
-         * @return boolean; true if the text should be rendered at the scale; false if the text should not be rendered at the
-         *         scale
+         * @param scale the current font scale
+         * @return true if the text should be rendered at the scale; false if the text should not be rendered at the scale
          */
         boolean isRendered(double scale);
     }

@@ -37,7 +37,7 @@ public abstract class ExpressionType<T>
 
     /**
      * Constructor with value.
-     * @param value T; value.
+     * @param value value.
      */
     @SuppressWarnings("unchecked")
     public ExpressionType(final T value)
@@ -50,8 +50,8 @@ public abstract class ExpressionType<T>
 
     /**
      * Constructor with value and type function.
-     * @param value T; value.
-     * @param toType Function&lt;Object, T&gt;; function to convert output from expression to the right type.
+     * @param value value.
+     * @param toType function to convert output from expression to the right type.
      */
     public ExpressionType(final T value, final Function<Object, T> toType)
     {
@@ -63,7 +63,7 @@ public abstract class ExpressionType<T>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression, without { }.
+     * @param expression expression, without { }.
      */
     @SuppressWarnings("unchecked")
     public ExpressionType(final String expression)
@@ -78,8 +78,8 @@ public abstract class ExpressionType<T>
 
     /**
      * Constructor with expression and type function.
-     * @param expression String; expression, without { }.
-     * @param toType Function&lt;Object, T&gt;; function to convert output from expression to the right type.
+     * @param expression expression, without { }.
+     * @param toType function to convert output from expression to the right type.
      */
     public ExpressionType(final String expression, final Function<Object, T> toType)
     {
@@ -93,8 +93,8 @@ public abstract class ExpressionType<T>
 
     /**
      * Constructor specifically for the subclass that has {@code T = String}, as this creates ambiguous constructors.
-     * @param input String; input, either the value or an expression, may be {@code null} as value.
-     * @param isExpression boolean; whether the input is an expression.
+     * @param input input, either the value or an expression, may be {@code null} as value.
+     * @param isExpression whether the input is an expression.
      */
     @SuppressWarnings("unchecked")
     ExpressionType(final String input, final boolean isExpression)
@@ -117,7 +117,7 @@ public abstract class ExpressionType<T>
 
     /**
      * Returns the value, either directly, or from an internal expression and using the input parameters.
-     * @param eval Eval; expression evaluator.
+     * @param eval expression evaluator.
      * @return value, either directly, or from an internal expression and using the input parameters
      */
     public T get(final Eval eval)
@@ -127,7 +127,7 @@ public abstract class ExpressionType<T>
 
     /**
      * Returns whether this instance wraps an expression (or a value otherwise).
-     * @return boolean; whether this instance wraps an expression (or a value otherwise)
+     * @return whether this instance wraps an expression (or a value otherwise)
      */
     public boolean isExpression()
     {
@@ -136,7 +136,7 @@ public abstract class ExpressionType<T>
 
     /**
      * Returns the expression.
-     * @return String; expression.
+     * @return expression.
      */
     public String getExpression()
     {
@@ -147,7 +147,7 @@ public abstract class ExpressionType<T>
 
     /**
      * Returns the expression enclosed in brackets { }. This is useful to marshal an expression value in an adapter.
-     * @return String; expression enclosed in brackets { }.
+     * @return expression enclosed in brackets { }.
      */
     public String getBracedExpression()
     {

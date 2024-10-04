@@ -19,20 +19,20 @@ public interface Historical<T>
     /**
      * Set value at the current simulation time. If a value is already given at this time, it is overwritten. Values should be
      * set in chronological order.
-     * @param value T; value
+     * @param value value
      */
     void set(T value);
 
     /**
      * Get value at current simulation time.
-     * @return T; value at current simulation time
+     * @return value at current simulation time
      */
     T get();
 
     /**
      * Get value at given time.
-     * @param time Time; time to get the value
-     * @return T; value at current time
+     * @param time time to get the value
+     * @return value at current time
      * @throws NullPointerException when time is null
      */
     T get(Time time);

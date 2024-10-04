@@ -30,7 +30,7 @@ public class CrossSectionElementTransceiver extends AbstractTransceiver
 
     /**
      * Construct a new CrossSectionElementTransceiver for an OTS network.
-     * @param network Network; the OTS network
+     * @param network the OTS network
      */
     public CrossSectionElementTransceiver(final Network network)
     {
@@ -81,8 +81,8 @@ public class CrossSectionElementTransceiver extends AbstractTransceiver
             return null;
         }
         CrossSectionElement cse = cseList.get(rank);
-        return new Object[] {cse.getId(), cse.getClass().getName(), cse.getLength(), cse.getWidth(0),
-                cse.getOffsetAtBegin(), cse.getWidth(1.0), cse.getOffsetAtEnd()};
+        return new Object[] {cse.getId(), cse.getClass().getName(), cse.getLength(), cse.getWidth(0), cse.getOffsetAtBegin(),
+                cse.getWidth(1.0), cse.getOffsetAtEnd()};
     }
 
     /** {@inheritDoc} */

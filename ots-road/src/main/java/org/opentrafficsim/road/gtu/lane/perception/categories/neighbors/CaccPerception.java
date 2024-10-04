@@ -38,7 +38,7 @@ public class CaccPerception extends AbstractPerceptionCategory<LaneBasedGtu, Lan
 
     /**
      * Constructor using default sensors with zero delay.
-     * @param perception LanePerception; perception
+     * @param perception perception
      */
     public CaccPerception(final LanePerception perception)
     {
@@ -47,8 +47,8 @@ public class CaccPerception extends AbstractPerceptionCategory<LaneBasedGtu, Lan
 
     /**
      * Constructor using specified sensors.
-     * @param perception LanePerception; perception
-     * @param sensors HeadwayGtuType; onboard sensor information
+     * @param perception perception
+     * @param sensors onboard sensor information
      */
     public CaccPerception(final LanePerception perception, final HeadwayGtuType sensors)
     {

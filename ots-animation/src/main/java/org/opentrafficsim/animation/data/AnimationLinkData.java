@@ -22,7 +22,7 @@ public class AnimationLinkData implements LinkData
 
     /**
      * Constructor.
-     * @param link Link; link.
+     * @param link link.
      */
     public AnimationLinkData(final Link link)
     {
@@ -66,7 +66,7 @@ public class AnimationLinkData implements LinkData
 
     /**
      * Returns the link.
-     * @return Link; link.
+     * @return link.
      */
     public Link getLink()
     {

@@ -145,12 +145,12 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
 
     /**
      * Construct a new TrafCOD traffic light controller.
-     * @param controllerName String; name of this TrafCOD traffic light controller
-     * @param trafCodURL URL; the URL of the TrafCOD rules
-     * @param simulator OtsSimulatorInterface; the simulation engine
-     * @param display Container; if non-null, a controller display is constructed and shown in the supplied container
-     * @param displayBackground BufferedImage; background for controller display image
-     * @param displayObjectLocations List&lt;String&gt;; list of sensors and traffic lights and their locations on the
+     * @param controllerName name of this TrafCOD traffic light controller
+     * @param trafCodURL the URL of the TrafCOD rules
+     * @param simulator the simulation engine
+     * @param display if non-null, a controller display is constructed and shown in the supplied container
+     * @param displayBackground background for controller display image
+     * @param displayObjectLocations list of sensors and traffic lights and their locations on the
      *            <code>displayBackGround</code>
      * @throws TrafficControlException when a rule cannot be parsed
      * @throws SimRuntimeException when scheduling the first evaluation event fails
@@ -165,11 +165,11 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
 
     /**
      * Construct a new TrafCOD traffic light controller.
-     * @param controllerName String; name of this TrafCOD traffic light controller
-     * @param trafCODRules List&lt;String&gt;; the TrafCOD rules
-     * @param simulator OtsSimulatorInterface; the simulation engine
-     * @param displayBackground BufferedImage; background for controller display image
-     * @param displayObjectLocations List&lt;String&gt;; list of sensors and traffic lights and their locations on the
+     * @param controllerName name of this TrafCOD traffic light controller
+     * @param trafCODRules the TrafCOD rules
+     * @param simulator the simulation engine
+     * @param displayBackground background for controller display image
+     * @param displayObjectLocations list of sensors and traffic lights and their locations on the
      *            <code>displayBackGround</code>
      * @throws TrafficControlException when a rule cannot be parsed
      * @throws SimRuntimeException when scheduling the first evaluation event fails
@@ -222,8 +222,8 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
 
     /**
      * Read a text from a URL and convert it to a list of strings.
-     * @param url URL; the URL to open and read
-     * @return List&lt;String&gt;; the lines read from the URL (trimmed).
+     * @param url the URL to open and read
+     * @return the lines read from the URL (trimmed).
      * @throws IOException when opening or reading the URL failed.
      */
     public static List<String> loadTextFromURL(final URL url) throws IOException
@@ -546,8 +546,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
     /**
      * Construct the display of this TrafCOD machine and connect it to the displayed traffic lights and sensors to this TrafCOD
      * machine.
-     * @param rules List&lt;String&gt;; the individual lines that specify the graphics file and the locations of the sensor and
-     *            lights in the image
+     * @param rules the individual lines that specify the graphics file and the locations of the sensor and lights in the image
      * @throws TrafficControlException when the tfg data is invalid
      * @throws IOException when reading the background image fails
      */
@@ -594,7 +593,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
                     if (v.isOutput() && v.getStream() == streamNumber)
                     {
                         // TODO: coupling between traffic light and tli via pub/sub, not as direct output of control
-                        //v.addOutput(tli);
+                        // v.addOutput(tli);
                     }
                 }
             }
@@ -632,9 +631,9 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
 
     /**
      * Extract two coordinates from a line of text.
-     * @param line String; the text
-     * @param useFirstCoordinates boolean; if true; process the first pair of integer values; if false; use the second pair of
-     *            integer values
+     * @param line the text
+     * @param useFirstCoordinates if true; process the first pair of integer values; if false; use the second pair of integer
+     *            values
      * @return Point2D
      * @throws TrafficControlException when the coordinates could not be parsed
      */
@@ -662,7 +661,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
 
     /**
      * Decrement all running timers.
-     * @return int; the total number of timers that expired
+     * @return the total number of timers that expired
      * @throws TrafficControlException Should never happen
      */
     private int decrementTimers() throws TrafficControlException
@@ -751,7 +750,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
 
     /**
      * Evaluate all expressions and return the number of changed variables.
-     * @return int; the number of changed variables
+     * @return the number of changed variables
      * @throws TrafficControlException when evaluation of a rule fails
      */
     private int evalExpressionsOnce() throws TrafficControlException
@@ -773,8 +772,8 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
 
     /**
      * Evaluate a rule.
-     * @param rule Object[]; the tokenised rule
-     * @return boolean; true if the variable that is affected by the rule has changed; false if no variable was changed
+     * @param rule the tokenised rule
+     * @return true if the variable that is affected by the rule has changed; false if no variable was changed
      * @throws TrafficControlException when evaluation of the rule fails
      */
     private boolean evalRule(final Object[] rule) throws TrafficControlException
@@ -921,8 +920,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
      * of a binary operator with higher binding strength is encountered, that operator takes precedence over the pending
      * operator. To evaluate an expression, call evalExpr with a bindingStrength value of 0. On return verify that currentToken
      * has incremented to the end of the expression and that there is one value (the result) on the stack.
-     * @param bindingStrength int; the binding strength of a not yet applied binary operator (higher value must be applied
-     *            first)
+     * @param bindingStrength the binding strength of a not yet applied binary operator (higher value must be applied first)
      * @throws TrafficControlException when the expression is not valid
      */
     private void evalExpr(final int bindingStrength) throws TrafficControlException
@@ -1020,7 +1018,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
 
     /**
      * Evaluate the right-hand-side of an expression.
-     * @param bindingStrength int; the binding strength of the most recent, not yet applied, binary operator
+     * @param bindingStrength the binding strength of the most recent, not yet applied, binary operator
      * @throws TrafficControlException when the RHS of an expression is invalid
      */
     private void evalRHS(final int bindingStrength) throws TrafficControlException
@@ -1138,7 +1136,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
 
     /**
      * Push a value on the evaluation stack.
-     * @param value int; the value to push on the evaluation stack
+     * @param value the value to push on the evaluation stack
      */
     private void push(final int value)
     {
@@ -1147,7 +1145,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
 
     /**
      * Remove the last not-yet-removed value from the evaluation stack and return it.
-     * @return int; the last non-yet-removed value on the evaluation stack
+     * @return the last non-yet-removed value on the evaluation stack
      * @throws TrafficControlException when the stack is empty
      */
     private int pop() throws TrafficControlException
@@ -1161,10 +1159,10 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
 
     /**
      * Print a tokenized rule.
-     * @param tokens Object[]; the tokens
-     * @param printValues boolean; if true; print the values of all encountered variable; if false; do not print the values of
-     *            all encountered variable
-     * @return String; a textual approximation of the original rule
+     * @param tokens the tokens
+     * @param printValues if true; print the values of all encountered variable; if false; do not print the values of all
+     *            encountered variable
+     * @return a textual approximation of the original rule
      * @throws TrafficControlException when tokens does not match the expected grammar
      */
     static String printRule(final Object[] tokens, final boolean printValues) throws TrafficControlException
@@ -1371,9 +1369,9 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
 
     /**
      * Parse one TrafCOD rule.
-     * @param rawRule String; the TrafCOD rule
-     * @param locationDescription String; description of the location (file, line) where the rule was found
-     * @return Object[]; array filled with the tokenized rule
+     * @param rawRule the TrafCOD rule
+     * @param locationDescription description of the location (file, line) where the rule was found
+     * @return array filled with the tokenized rule
      * @throws TrafficControlException when the rule is not a valid TrafCOD rule
      */
     private Object[] parse(final String rawRule, final String locationDescription) throws TrafficControlException
@@ -1649,9 +1647,9 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
 
     /**
      * Check if a String begins with the text of a supplied String (ignoring case).
-     * @param sought String; the sought pattern (NOT a regular expression)
-     * @param supplied String; the String that might start with the sought string
-     * @return boolean; true if the supplied String begins with the sought String (case insensitive)
+     * @param sought the sought pattern (NOT a regular expression)
+     * @param supplied the String that might start with the sought string
+     * @return true if the supplied String begins with the sought String (case insensitive)
      */
     private boolean stringBeginsWithIgnoreCase(final String sought, final String supplied)
     {
@@ -1664,8 +1662,8 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
 
     /**
      * Generate the key for a variable name and stream for use in this.variables.
-     * @param name String; name of the variable
-     * @param stream short; stream of the variable
+     * @param name name of the variable
+     * @param stream stream of the variable
      * @return String
      */
     private String variableKey(final String name, final short stream)
@@ -1679,12 +1677,11 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
 
     /**
      * Lookup or create a new Variable.
-     * @param name String; name of the variable
-     * @param stream short; stream number of the variable
-     * @param flags EnumSet&lt;Flags&gt;; some (possibly empty) combination of Flags.HAS_START_RULE and Flags.HAS_END_RULE; no
-     *            other flags are allowed
-     * @param location String; description of the location in the TrafCOD file that triggered the call to this method
-     * @return Variable; the new (or already existing) variable
+     * @param name name of the variable
+     * @param stream stream number of the variable
+     * @param flags some (possibly empty) combination of Flags.HAS_START_RULE and Flags.HAS_END_RULE; no other flags are allowed
+     * @param location description of the location in the TrafCOD file that triggered the call to this method
+     * @return the new (or already existing) variable
      * @throws TrafficControlException if the variable already exists and already has (one of) the specified flag(s)
      */
     private Variable installVariable(final String name, final short stream, final EnumSet<Flags> flags, final String location)
@@ -1732,7 +1729,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
 
     /**
      * Retrieve the structure number.
-     * @return int; the structureNumber
+     * @return the structureNumber
      */
     public int getStructureNumber()
     {
@@ -1753,9 +1750,9 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
     /**
      * Switch tracing of all variables of a particular traffic stream, or all variables that do not have an associated traffic
      * stream on or off.
-     * @param stream int; the traffic stream number, or <code>TrafCOD.NO_STREAM</code> to affect all variables that do not have
-     *            an associated traffic stream
-     * @param trace boolean; if true; switch on tracing; if false; switch off tracing
+     * @param stream the traffic stream number, or <code>TrafCOD.NO_STREAM</code> to affect all variables that do not have an
+     *            associated traffic stream
+     * @param trace if true; switch on tracing; if false; switch off tracing
      */
     public void traceVariablesOfStream(final int stream, final boolean trace)
     {
@@ -1777,10 +1774,10 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
 
     /**
      * Switch tracing of one variable on or off.
-     * @param variableName String; name of the variable
-     * @param stream int; traffic stream of the variable, or <code>TrafCOD.NO_STREAM</code> to select a variable that does not
-     *            have an associated traffic stream
-     * @param trace boolean; if true; switch on tracing; if false; switch off tracing
+     * @param variableName name of the variable
+     * @param stream traffic stream of the variable, or <code>TrafCOD.NO_STREAM</code> to select a variable that does not have
+     *            an associated traffic stream
+     * @param trace if true; switch on tracing; if false; switch off tracing
      */
     public void traceVariable(final String variableName, final int stream, final boolean trace)
     {
@@ -1867,8 +1864,8 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
 
     /**
      * Fire an event on behalf of this TrafCOD engine (used for tracing variable changes).
-     * @param eventType EventType; the type of the event
-     * @param payload Object[]; the payload of the event
+     * @param eventType the type of the event
+     * @param payload the payload of the event
      */
     void fireTrafCODEvent(final EventType eventType, final Object[] payload)
     {
@@ -1917,8 +1914,8 @@ class NameAndStream
 
     /**
      * Parse a TrafCOD identifier and extract all required information.
-     * @param text String; the TrafCOD identifier (may be followed by more text)
-     * @param locationDescription String; description of the location in the input file
+     * @param text the TrafCOD identifier (may be followed by more text)
+     * @param locationDescription description of the location in the input file
      * @throws TrafficControlException when text is not a valid TrafCOD variable name
      */
     NameAndStream(final String text, final String locationDescription) throws TrafficControlException
@@ -2003,7 +2000,7 @@ class NameAndStream
 
     /**
      * Retrieve the stream number.
-     * @return short; the stream number
+     * @return the stream number
      */
     public short getStream()
     {
@@ -2012,7 +2009,7 @@ class NameAndStream
 
     /**
      * Retrieve the name.
-     * @return String; the name (without the stream number)
+     * @return the name (without the stream number)
      */
     public String getName()
     {
@@ -2021,7 +2018,7 @@ class NameAndStream
 
     /**
      * Retrieve the number of characters consumed from the input.
-     * @return int; the number of characters consumed from the input
+     * @return the number of characters consumed from the input
      */
     public int getNumberOfChars()
     {
@@ -2087,7 +2084,7 @@ class Variable implements EventListener
 
     /**
      * Retrieve the number of rules that refer to this variable.
-     * @return int; the number of rules that refer to this variable
+     * @return the number of rules that refer to this variable
      */
     public int getRefCount()
     {
@@ -2096,8 +2093,7 @@ class Variable implements EventListener
 
     /**
      * Retrieve the traffic lights controlled by this variable.
-     * @return Set&lt;TrafficLight&gt;; the traffic lights controlled by this variable, or null when this variable has no
-     *         traffic lights
+     * @return the traffic lights controlled by this variable, or null when this variable has no traffic lights
      */
     public Set<TrafficLight> getTrafficLights()
     {
@@ -2106,9 +2102,9 @@ class Variable implements EventListener
 
     /**
      * Construct a new Variable.
-     * @param name String; name of the new variable (without the stream number)
-     * @param stream short; stream number to which the new Variable is associated
-     * @param trafCOD TrafCOD; the TrafCOD engine
+     * @param name name of the new variable (without the stream number)
+     * @param stream stream number to which the new Variable is associated
+     * @param trafCOD the TrafCOD engine
      */
     Variable(final String name, final short stream, final TrafCod trafCOD)
     {
@@ -2132,7 +2128,7 @@ class Variable implements EventListener
 
     /**
      * Retrieve the name of this variable.
-     * @return String; the name (without the stream number) of this Variable
+     * @return the name (without the stream number) of this Variable
      */
     public String getName()
     {
@@ -2141,7 +2137,7 @@ class Variable implements EventListener
 
     /**
      * Link a detector variable to a sensor.
-     * @param sensor TrafficLightSensor; the sensor
+     * @param sensor the sensor
      * @throws TrafficControlException when this variable is not a detector
      */
     public void subscribeToDetector(final TrafficLightDetector sensor) throws TrafficControlException
@@ -2174,9 +2170,8 @@ class Variable implements EventListener
 
     /**
      * Decrement the value of a timer.
-     * @param timeStamp10 int; the current simulator time in tenths of a second
-     * @return boolean; true if the timer expired due to this call; false if the timer is still running, or expired before this
-     *         call
+     * @param timeStamp10 the current simulator time in tenths of a second
+     * @return true if the timer expired due to this call; false if the timer is still running, or expired before this call
      * @throws TrafficControlException when this Variable is not a timer
      */
     public boolean decrementTimer(final int timeStamp10) throws TrafficControlException
@@ -2206,7 +2201,7 @@ class Variable implements EventListener
 
     /**
      * Retrieve the color for an output Variable.
-     * @return int; the color code for this Variable
+     * @return the color code for this Variable
      * @throws TrafficControlException if this Variable is not an output
      */
     public TrafficLightColor getColor() throws TrafficControlException
@@ -2220,7 +2215,7 @@ class Variable implements EventListener
 
     /**
      * Report whether a change in this variable must be published.
-     * @return boolean; true if this Variable is an output; false if this Variable is not an output
+     * @return true if this Variable is an output; false if this Variable is not an output
      */
     public boolean isOutput()
     {
@@ -2229,7 +2224,7 @@ class Variable implements EventListener
 
     /**
      * Report of this Variable identifies the current conflict group.
-     * @return boolean; true if this Variable identifies the current conflict group; false if it does not.
+     * @return true if this Variable identifies the current conflict group; false if it does not.
      */
     public boolean isConflictGroup()
     {
@@ -2238,7 +2233,7 @@ class Variable implements EventListener
 
     /**
      * Retrieve the rank of the conflict group that this Variable represents.
-     * @return int; the rank of the conflict group that this Variable represents
+     * @return the rank of the conflict group that this Variable represents
      * @throws TrafficControlException if this Variable is not a conflict group identifier
      */
     public int conflictGroupRank() throws TrafficControlException
@@ -2252,7 +2247,7 @@ class Variable implements EventListener
 
     /**
      * Report if this Variable is a detector.
-     * @return boolean; true if this Variable is a detector; false if this Variable is not a detector
+     * @return true if this Variable is a detector; false if this Variable is not a detector
      */
     public boolean isDetector()
     {
@@ -2260,11 +2255,11 @@ class Variable implements EventListener
     }
 
     /**
-     * @param newValue int; the new value of this Variable
-     * @param timeStamp10 int; the time stamp of this update
-     * @param cause CausePrinter; rule, timer, or detector that caused the change
-     * @param trafCODController TrafCOD; the TrafCOD controller
-     * @return boolean; true if the value of this variable changed
+     * @param newValue the new value of this Variable
+     * @param timeStamp10 the time stamp of this update
+     * @param cause rule, timer, or detector that caused the change
+     * @param trafCODController the TrafCOD controller
+     * @return true if the value of this variable changed
      */
     public boolean setValue(final int newValue, final int timeStamp10, final CausePrinter cause,
             final TrafCod trafCODController)
@@ -2306,8 +2301,8 @@ class Variable implements EventListener
 
     /**
      * Copy the state of this variable from another variable. Only used when cloning the TrafCOD engine.
-     * @param fromVariable Variable; the variable whose state is copied
-     * @param newNetwork Network; the Network that contains the new traffic control engine
+     * @param fromVariable the variable whose state is copied
+     * @param newNetwork the Network that contains the new traffic control engine
      * @throws NetworkException when the clone of a traffic light of fromVariable does not exist in newNetwork
      */
     public void cloneState(final Variable fromVariable, final Network newNetwork) throws NetworkException
@@ -2343,7 +2338,7 @@ class Variable implements EventListener
 
     /**
      * Retrieve the start value of this timer in units of 0.1 seconds (1 second is represented by the value 10).
-     * @return int; the timerMax10 value
+     * @return the timerMax10 value
      * @throws TrafficControlException when this class is not a Timer
      */
     public int getTimerMax() throws TrafficControlException
@@ -2357,7 +2352,7 @@ class Variable implements EventListener
 
     /**
      * Retrieve the current value of this Variable.
-     * @return int; the value of this Variable
+     * @return the value of this Variable
      */
     public int getValue()
     {
@@ -2366,7 +2361,7 @@ class Variable implements EventListener
 
     /**
      * Set one flag.
-     * @param flag Flags; Flags
+     * @param flag Flags
      */
     public void setFlag(final Flags flag)
     {
@@ -2375,7 +2370,7 @@ class Variable implements EventListener
 
     /**
      * Clear one flag.
-     * @param flag Flags; the flag to clear
+     * @param flag the flag to clear
      */
     public void clearFlag(final Flags flag)
     {
@@ -2384,7 +2379,7 @@ class Variable implements EventListener
 
     /**
      * Report whether this Variable is a timer.
-     * @return boolean; true if this Variable is a timer; false if this variable is not a timer
+     * @return true if this Variable is a timer; false if this variable is not a timer
      */
     public boolean isTimer()
     {
@@ -2419,7 +2414,7 @@ class Variable implements EventListener
 
     /**
      * Make this variable an output variable and set the color value.
-     * @param colorValue int; the output value (as used in the TrafCOD file)
+     * @param colorValue the output value (as used in the TrafCOD file)
      * @throws TrafficControlException when the colorValue is invalid, or this method is called more than once for this variable
      */
     public void setOutput(final int colorValue) throws TrafficControlException
@@ -2454,7 +2449,7 @@ class Variable implements EventListener
 
     /**
      * Add a traffic light to this variable.
-     * @param trafficLight TrafficLight; the traffic light to add
+     * @param trafficLight the traffic light to add
      * @throws TrafficControlException when this variable is not an output
      */
     public void addOutput(final TrafficLight trafficLight) throws TrafficControlException
@@ -2468,7 +2463,7 @@ class Variable implements EventListener
 
     /**
      * Set the maximum time of this timer.
-     * @param value10 int; the maximum time in 0.1 s
+     * @param value10 the maximum time in 0.1 s
      * @throws TrafficControlException when this Variable is not a timer
      */
     public void setTimerMax(final int value10) throws TrafficControlException
@@ -2492,7 +2487,7 @@ class Variable implements EventListener
 
     /**
      * Set the description of the rule that starts this variable.
-     * @param startSource String; description of the rule that starts this variable
+     * @param startSource description of the rule that starts this variable
      * @throws TrafficControlException when a start source has already been set
      */
     public void setStartSource(final String startSource) throws TrafficControlException
@@ -2516,7 +2511,7 @@ class Variable implements EventListener
 
     /**
      * Set the description of the rule that ends this variable.
-     * @param endSource String; description of the rule that ends this variable
+     * @param endSource description of the rule that ends this variable
      * @throws TrafficControlException when an end source has already been set
      */
     public void setEndSource(final String endSource) throws TrafficControlException
@@ -2531,7 +2526,7 @@ class Variable implements EventListener
 
     /**
      * Retrieve the stream to which this variable belongs.
-     * @return short; the stream to which this variable belongs
+     * @return the stream to which this variable belongs
      */
     public short getStream()
     {
@@ -2547,7 +2542,7 @@ class Variable implements EventListener
 
     /**
      * Convert selected fields to a String.
-     * @param printFlags EnumSet&lt;PrintFlags&gt;; the set of fields to convert
+     * @param printFlags the set of fields to convert
      * @return String
      */
     public String toString(final EnumSet<PrintFlags> printFlags)
@@ -2684,7 +2679,7 @@ class CausePrinter
 
     /**
      * Construct a new CausePrinter object.
-     * @param cause Object; this should be either a String, or a Object[] that contains a tokenized TrafCOD rule.
+     * @param cause this should be either a String, or a Object[] that contains a tokenized TrafCOD rule.
      */
     CausePrinter(final Object cause)
     {

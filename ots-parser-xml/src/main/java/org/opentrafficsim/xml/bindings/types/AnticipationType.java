@@ -15,7 +15,7 @@ public class AnticipationType extends ExpressionType<Anticipation>
 
     /**
      * Constructor with value.
-     * @param value Anticipation; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public AnticipationType(final Anticipation value)
     {
@@ -24,7 +24,7 @@ public class AnticipationType extends ExpressionType<Anticipation>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public AnticipationType(final String expression)
     {

@@ -405,8 +405,8 @@ public class NodeTest
 
     /**
      * Put some Links in a Set and return that Set.
-     * @param links Link...; the links
-     * @return Set&lt;Link&gt;; the set that contains only the given link
+     * @param links the links
+     * @return the set that contains only the given link
      */
     private Set<Link> wrap(final Link... links)
     {

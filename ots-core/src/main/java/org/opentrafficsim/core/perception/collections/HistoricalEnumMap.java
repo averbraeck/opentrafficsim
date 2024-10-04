@@ -28,8 +28,8 @@ public class HistoricalEnumMap<K extends Enum<K>, V> extends AbstractHistoricalM
 
     /**
      * Constructor.
-     * @param historyManager HistoryManager; history manager
-     * @param clazz Class&lt;K&gt;; enum class
+     * @param historyManager history manager
+     * @param clazz enum class
      */
     public HistoricalEnumMap(final HistoryManager historyManager, final Class<K> clazz)
     {
@@ -39,9 +39,9 @@ public class HistoricalEnumMap<K extends Enum<K>, V> extends AbstractHistoricalM
 
     /**
      * Constructor.
-     * @param historyManager HistoryManager; history manager
-     * @param m EnumMap&lt;K, ? extends V&gt;; initial map
-     * @param clazz Class&lt;K&gt;; enum class
+     * @param historyManager history manager
+     * @param m initial map
+     * @param clazz enum class
      */
     public HistoricalEnumMap(final HistoryManager historyManager, final EnumMap<K, ? extends V> m, final Class<K> clazz)
     {

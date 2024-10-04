@@ -22,7 +22,7 @@ public class CorrelationStringFunction extends AbstractStringFunction
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
+     * @param editor editor.
      */
     public CorrelationStringFunction(final OtsEditor editor)
     {

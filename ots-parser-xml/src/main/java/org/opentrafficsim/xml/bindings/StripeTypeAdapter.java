@@ -17,7 +17,7 @@ import org.opentrafficsim.xml.bindings.types.StripeType;
  */
 public class StripeTypeAdapter extends ExpressionAdapter<Type, StripeType>
 {
-    
+
     /** Dictionary. */
     private final static Map<String, String> DICTIONARY =
             Map.of("|", "SOLID", ":", "DASHED", "||", "DOUBLE", "|:", "LEFT", ":|", "RIGHT");

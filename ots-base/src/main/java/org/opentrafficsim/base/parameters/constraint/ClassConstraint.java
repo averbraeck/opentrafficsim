@@ -19,7 +19,7 @@ public final class ClassConstraint<T> extends CollectionConstraint<Class<? exten
 {
 
     /**
-     * @param classes Collection&lt;Class&lt;? extends T&gt;&gt;; acceptable classes
+     * @param classes acceptable classes
      */
     private ClassConstraint(final Collection<Class<? extends T>> classes)
     {
@@ -28,7 +28,7 @@ public final class ClassConstraint<T> extends CollectionConstraint<Class<? exten
 
     /**
      * Creates a new instance with given collection.
-     * @param objs Class&lt;? extends T&gt;...; acceptable classes
+     * @param objs acceptable classes
      * @param <T> type class
      * @return new instance with given collection
      */

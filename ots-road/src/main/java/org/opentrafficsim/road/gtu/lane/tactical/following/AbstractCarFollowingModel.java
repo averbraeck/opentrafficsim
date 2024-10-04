@@ -30,8 +30,8 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
     private DesiredSpeedModel desiredSpeedModel;
 
     /**
-     * @param desiredHeadwayModel DesiredHeadwayModel; desired headway model
-     * @param desiredSpeedModel DesiredSpeedModel; desired speed model
+     * @param desiredHeadwayModel desired headway model
+     * @param desiredSpeedModel desired speed model
      */
     public AbstractCarFollowingModel(final DesiredHeadwayModel desiredHeadwayModel, final DesiredSpeedModel desiredSpeedModel)
     {
@@ -79,12 +79,11 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
 
     /**
      * Determination of car-following acceleration, possibly based on multiple leaders.
-     * @param parameters Parameters; parameters
-     * @param speed Speed; current speed
-     * @param desiredSpeed Speed; desired speed
-     * @param desiredHeadway Length; desired headway
-     * @param leaders PerceptionIterable&lt;? extends Headway&gt;; set of leader headways (guaranteed positive) and speeds,
-     *            ordered by headway (closest first)
+     * @param parameters parameters
+     * @param speed current speed
+     * @param desiredSpeed desired speed
+     * @param desiredHeadway desired headway
+     * @param leaders set of leader headways (guaranteed positive) and speeds, ordered by headway (closest first)
      * @return car-following acceleration
      * @throws ParameterException if parameter exception occurs
      */

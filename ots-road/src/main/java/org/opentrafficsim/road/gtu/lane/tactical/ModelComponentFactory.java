@@ -45,7 +45,7 @@ public interface ModelComponentFactory
      * The same holds for static utilities that are used. Parameters should be defined at the utility class, and parameters of
      * used utilities should be included.<br>
      * <br>
-     * @return Parameters; parameters for the given component
+     * @return parameters for the given component
      * @throws ParameterException on parameter exception
      */
     Parameters getParameters() throws ParameterException;

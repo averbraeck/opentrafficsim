@@ -44,20 +44,20 @@ public interface PlotScheduler
 
     /**
      * Returns the time.
-     * @return Time; time.
+     * @return time.
      */
     Time getTime();
 
     /**
      * Cancel event on plot.
-     * @param abstractPlot AbstractPlot; plot.
+     * @param abstractPlot plot.
      */
     void cancelEvent(AbstractPlot abstractPlot);
 
     /**
      * Schedule {@code update()} call on abstractPlot
-     * @param time Time; time.
-     * @param abstractPlot AbstractPlot; plot.
+     * @param time time.
+     * @param abstractPlot plot.
      */
     void scheduleUpdate(Time time, AbstractPlot abstractPlot);
 

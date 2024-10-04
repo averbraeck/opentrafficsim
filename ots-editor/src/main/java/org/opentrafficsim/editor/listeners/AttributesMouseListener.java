@@ -21,17 +21,17 @@ import org.opentrafficsim.editor.XsdTreeNode;
  */
 public class AttributesMouseListener extends MouseAdapter
 {
-    
+
     /** Editor. */
     private final OtsEditor editor;
-    
+
     /** Table with attributes. */
     private final JTable attributesTable;
-    
+
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
-     * @param attributesTable JTable; table with attributes.
+     * @param editor editor.
+     * @param attributesTable table with attributes.
      */
     public AttributesMouseListener(final OtsEditor editor, final JTable attributesTable)
     {
@@ -87,5 +87,5 @@ public class AttributesMouseListener extends MouseAdapter
             }
         }
     }
-    
+
 }

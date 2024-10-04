@@ -64,8 +64,8 @@ public class BufferingTests
             // Ignore expected exception
         }
 
-        //OtsLine2d offsetLine = referenceLine.offsetLine(relativeFractions, offsets);
-        //System.out.println(offsetLine.toPlot());
+        // OtsLine2d offsetLine = referenceLine.offsetLine(relativeFractions, offsets);
+        // System.out.println(offsetLine.toPlot());
     }
 
 }

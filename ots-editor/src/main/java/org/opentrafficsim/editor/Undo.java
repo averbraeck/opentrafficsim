@@ -55,9 +55,9 @@ public class Undo implements EventListener
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
-     * @param undoItem AbstractButton; undo GUI item.
-     * @param redoItem AbstractButton; redo GUI item.
+     * @param editor editor.
+     * @param undoItem undo GUI item.
+     * @param redoItem redo GUI item.
      */
     public Undo(final OtsEditor editor, final AbstractButton undoItem, final AbstractButton redoItem)
     {
@@ -82,7 +82,7 @@ public class Undo implements EventListener
 
     /**
      * Tells the undo unit to ignore all changes. Reset this by calling {@code clear()}. Useful during file loading.
-     * @param ignore boolean; ignore changes.
+     * @param ignore ignore changes.
      */
     public void setIgnoreChanges(final boolean ignore)
     {
@@ -91,9 +91,9 @@ public class Undo implements EventListener
 
     /**
      * Starts a new action, which groups all sub-actions until a new action is started.
-     * @param type ActionType; action type.
-     * @param node XsdTreeNode; node on which the action is applied, i.e. node that should be selected on undo/redo.
-     * @param attribute String; attribute name, may be null for actions that are not an attribute value change.
+     * @param type action type.
+     * @param node node on which the action is applied, i.e. node that should be selected on undo/redo.
+     * @param attribute attribute name, may be null for actions that are not an attribute value change.
      */
     public void startAction(final ActionType type, final XsdTreeNode node, final String attribute)
     {
@@ -128,7 +128,7 @@ public class Undo implements EventListener
 
     /**
      * Adds sub action to current action.
-     * @param subAction SubAction; sub action.
+     * @param subAction sub action.
      */
     private void add(final SubAction subAction)
     {
@@ -148,7 +148,7 @@ public class Undo implements EventListener
 
     /**
      * Returns whether an undo is available.
-     * @return boolean; whether an undo is available.
+     * @return whether an undo is available.
      */
     public boolean canUndo()
     {
@@ -157,7 +157,7 @@ public class Undo implements EventListener
 
     /**
      * Returns whether a redo is available.
-     * @return boolean; whether a redo is available.
+     * @return whether a redo is available.
      */
     public boolean canRedo()
     {
@@ -400,7 +400,7 @@ public class Undo implements EventListener
 
     /**
      * Sets the node to show in the tree after the action.
-     * @param node XsdTreeNode; node to show in the tree after the action.
+     * @param node node to show in the tree after the action.
      */
     public void setPostActionShowNode(final XsdTreeNode node)
     {
@@ -451,9 +451,9 @@ public class Undo implements EventListener
 
         /**
          * Constructor.
-         * @param undo Runnable; undo runnable.
-         * @param redo Runnable; redo runnable.
-         * @param string String; string representation of this sub action.
+         * @param undo undo runnable.
+         * @param redo redo runnable.
+         * @param string string representation of this sub action.
          */
         public SubActionRunnable(final Runnable undo, final Runnable redo, final String string)
         {
@@ -515,11 +515,11 @@ public class Undo implements EventListener
 
         /**
          * Constructor.
-         * @param type ActionType; type of the action, as presented with the undo/redo buttons.
-         * @param subActions Deque&lt;SubAction&gt;; queue of sub actions.
-         * @param node XsdTreeNode; node involved in the action.
-         * @param parent XsdTreeNode; parent node of the node involved in the action.
-         * @param attribute String; attribute for an attribute change, {@code null} otherwise.
+         * @param type type of the action, as presented with the undo/redo buttons.
+         * @param subActions queue of sub actions.
+         * @param node node involved in the action.
+         * @param parent parent node of the node involved in the action.
+         * @param attribute attribute for an attribute change, {@code null} otherwise.
          */
         public Action(final ActionType type, final Deque<SubAction> subActions, final XsdTreeNode node,
                 final XsdTreeNode parent, final String attribute)

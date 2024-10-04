@@ -27,10 +27,10 @@ public final class DataStream<T extends Number>
 
     /**
      * Constructor.
-     * @param dataSource DataSource; data source
-     * @param quantity Quantity&lt;T, ?&gt;; quantity
-     * @param thetaCong double; standard deviation in congestion
-     * @param thetaFree double; standard deviation in free flow
+     * @param dataSource data source
+     * @param quantity quantity
+     * @param thetaCong standard deviation in congestion
+     * @param thetaFree standard deviation in free flow
      */
     DataStream(final DataSource dataSource, final Quantity<T, ?> quantity, final double thetaCong, final double thetaFree)
     {
@@ -46,7 +46,7 @@ public final class DataStream<T extends Number>
 
     /**
      * Returns the data source.
-     * @return DataSource; the data source
+     * @return the data source
      */
     DataSource getDataSource()
     {
@@ -55,7 +55,7 @@ public final class DataStream<T extends Number>
 
     /**
      * Returns the quantity.
-     * @return Quantity; the quantity
+     * @return the quantity
      */
     Quantity<T, ?> getQuantity()
     {
@@ -64,7 +64,7 @@ public final class DataStream<T extends Number>
 
     /**
      * Returns the standard deviation in congestion.
-     * @return double; the standard deviation in congestion
+     * @return the standard deviation in congestion
      */
     double getThetaCong()
     {
@@ -73,7 +73,7 @@ public final class DataStream<T extends Number>
 
     /**
      * Returns the standard deviation in free flow.
-     * @return double; the standard deviation in free flow
+     * @return the standard deviation in free flow
      */
     double getThetaFree()
     {

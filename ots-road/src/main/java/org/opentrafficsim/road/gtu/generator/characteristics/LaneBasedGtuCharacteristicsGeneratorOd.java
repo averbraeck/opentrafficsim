@@ -23,10 +23,10 @@ public interface LaneBasedGtuCharacteristicsGeneratorOd
 
     /**
      * Generate new {@code LaneBasedGtuCharacteristics} using given input from OD.
-     * @param origin Node; origin
-     * @param destination Node; destination
-     * @param category Category; category (GTU type, route, or more)
-     * @param randomStream StreamInterface; stream for random numbers
+     * @param origin origin
+     * @param destination destination
+     * @param category category (GTU type, route, or more)
+     * @param randomStream stream for random numbers
      * @return LaneBasedGtuCharacteristics
      * @throws GtuException if characteristics could not be generated for the GTUException
      */

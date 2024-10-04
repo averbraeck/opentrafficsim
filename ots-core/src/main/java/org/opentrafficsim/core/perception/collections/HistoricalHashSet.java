@@ -26,7 +26,7 @@ public class HistoricalHashSet<E> extends AbstractHistoricalCollection<E, Linked
 
     /**
      * Constructor.
-     * @param historyManager HistoryManager; history manager
+     * @param historyManager history manager
      */
     public HistoricalHashSet(final HistoryManager historyManager)
     {
@@ -35,8 +35,8 @@ public class HistoricalHashSet<E> extends AbstractHistoricalCollection<E, Linked
 
     /**
      * Constructor.
-     * @param historyManager HistoryManager; history manager
-     * @param c Collection&lt;? extends E&gt;; initial collection
+     * @param historyManager history manager
+     * @param c initial collection
      */
     public HistoricalHashSet(final HistoryManager historyManager, final Collection<? extends E> c)
     {

@@ -33,7 +33,7 @@ public enum TextWidth
     private final Number value;
 
     /**
-     * @param value Number; the corresponding TextAttribute constant
+     * @param value the corresponding TextAttribute constant
      */
     TextWidth(final Number value)
     {

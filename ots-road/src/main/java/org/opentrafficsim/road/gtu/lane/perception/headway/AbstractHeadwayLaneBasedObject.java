@@ -25,13 +25,13 @@ public abstract class AbstractHeadwayLaneBasedObject extends AbstractHeadwayCopy
 
     /**
      * Construct a new Headway information object, for a non-moving object parallel with us.
-     * @param objectType ObjectType; the perceived object type, can be null if object type unknown.
-     * @param id String; the id of the object for comparison purposes, can not be null.
+     * @param objectType the perceived object type, can be null if object type unknown.
+     * @param id the id of the object for comparison purposes, can not be null.
      * @param overlapFront the front-front distance to the other object; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other object; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other object; if this constructor is used, this value cannot be null.
-     * @param length the length of the other object; if this constructor is used, length cannot be null.
-     * @param lane Lane; the lane.
+     * @param length if this constructor is used, length cannot be null.
+     * @param lane the lane.
      * @throws GtuException when id is null, or parameters are inconsistent
      */
     public AbstractHeadwayLaneBasedObject(final ObjectType objectType, final String id, final Length overlapFront,
@@ -43,12 +43,12 @@ public abstract class AbstractHeadwayLaneBasedObject extends AbstractHeadwayCopy
 
     /**
      * Construct a new Headway information object, for a non-moving object parallel with us.
-     * @param objectType ObjectType; the perceived object type, can be null if object type unknown.
-     * @param id String; the id of the object for comparison purposes, can not be null.
+     * @param objectType the perceived object type, can be null if object type unknown.
+     * @param id the id of the object for comparison purposes, can not be null.
      * @param overlapFront the front-front distance to the other object; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other object; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other object; if this constructor is used, this value cannot be null.
-     * @param lane Lane; the lane.
+     * @param lane the lane.
      * @throws GtuException when id is null, or parameters are inconsistent
      */
     public AbstractHeadwayLaneBasedObject(final ObjectType objectType, final String id, final Length overlapFront,
@@ -60,11 +60,11 @@ public abstract class AbstractHeadwayLaneBasedObject extends AbstractHeadwayCopy
 
     /**
      * Construct a new Headway information object, for a non-moving object ahead of us or behind us.
-     * @param objectType ObjectType; the perceived object type, can be null if object type unknown.
-     * @param id String; the id of the object for comparison purposes, can not be null.
-     * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
-     * @param length the length of the other object; if this constructor is used, length cannot be null.
-     * @param lane Lane; the lane.
+     * @param objectType the perceived object type, can be null if object type unknown.
+     * @param id the id of the object for comparison purposes, can not be null.
+     * @param distance if this constructor is used, distance cannot be null.
+     * @param length if this constructor is used, length cannot be null.
+     * @param lane the lane.
      * @throws GtuException when id is null, or parameters are inconsistent
      */
     public AbstractHeadwayLaneBasedObject(final ObjectType objectType, final String id, final Length distance,
@@ -76,10 +76,10 @@ public abstract class AbstractHeadwayLaneBasedObject extends AbstractHeadwayCopy
 
     /**
      * Construct a new Headway information object, for a non-moving object ahead of us or behind us.
-     * @param objectType ObjectType; the perceived object type, can be null if object type unknown.
-     * @param id String; the id of the object for comparison purposes, can not be null.
-     * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
-     * @param lane Lane; the lane.
+     * @param objectType the perceived object type, can be null if object type unknown.
+     * @param id the id of the object for comparison purposes, can not be null.
+     * @param distance if this constructor is used, distance cannot be null.
+     * @param lane the lane.
      * @throws GtuException when id is null, or parameters are inconsistent
      */
     public AbstractHeadwayLaneBasedObject(final ObjectType objectType, final String id, final Length distance, final Lane lane)

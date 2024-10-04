@@ -14,7 +14,7 @@ public class ClassType extends ExpressionType<Class>
 
     /**
      * Constructor with value.
-     * @param value Class&lt;?&gt;; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public ClassType(final Class<?> value)
     {
@@ -23,7 +23,7 @@ public class ClassType extends ExpressionType<Class>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public ClassType(final String expression)
     {

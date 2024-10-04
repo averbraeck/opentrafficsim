@@ -32,9 +32,9 @@ public class AccelerationStep implements Serializable
 
     /**
      * Create a new GtuFollowingModelResult.
-     * @param acceleration Acceleration; computed acceleration
-     * @param validUntil Time; time when this result expires
-     * @param duration Duration; duration of the time step
+     * @param acceleration computed acceleration
+     * @param validUntil time when this result expires
+     * @param duration duration of the time step
      */
     public AccelerationStep(final Acceleration acceleration, final Time validUntil, final Duration duration)
     {

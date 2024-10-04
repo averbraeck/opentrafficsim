@@ -31,13 +31,13 @@ public interface DirectionalOccupancyDetector extends Serializable, Identifiable
 
     /**
      * Return the entry position of this DirectionalOccupancyDetector.
-     * @return LaneBasedObject; the lane and position on the lane where GTU entry is detected
+     * @return the lane and position on the lane where GTU entry is detected
      */
     LaneBasedObject getLanePositionEntry();
 
     /**
      * Return the exit position of this DirectionalOccupancyDetector.
-     * @return LaneBasedObject; the lane and position on the lane where GTU exit is detected
+     * @return the lane and position on the lane where GTU exit is detected
      */
     LaneBasedObject getLanePositionExit();
 

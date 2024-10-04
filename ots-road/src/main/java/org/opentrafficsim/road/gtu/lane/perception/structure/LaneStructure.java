@@ -60,10 +60,9 @@ public class LaneStructure
 
     /**
      * Constructor.
-     * @param gtu LaneBasedGtu; the GTU.
-     * @param upstream Length; guaranteed distance within which objects are found upstream of the GTU, or upstream of downstream
-     *            merge.
-     * @param downstream Length; guaranteed distance within which objects are found downstream of the GTU.
+     * @param gtu the GTU.
+     * @param upstream guaranteed distance within which objects are found upstream of the GTU, or upstream of downstream merge.
+     * @param downstream guaranteed distance within which objects are found downstream of the GTU.
      */
     public LaneStructure(final LaneBasedGtu gtu, final Length upstream, final Length downstream)
     {
@@ -77,11 +76,11 @@ public class LaneStructure
      * roads, e.g. from the main line on the right-most lane, the right-hand relative lane can give objects upstream of two
      * on-ramps that are very close by, or even the shoulder. Objects that are partially downstream are also included.
      * @param <T> type of {@code LaneBasedObject}.
-     * @param relativeLane RelativeLane; lane.
-     * @param clazz Class&lt;T&gt;; class of lane-based object type.
+     * @param relativeLane lane.
+     * @param clazz class of lane-based object type.
      * @param position RelativePosition.Type; position relative to which objects are found and distances are given.
-     * @param onRoute boolean; whether the objects have to be on-route.
-     * @return Iterator&lt;Entry&lt;T&gt;&gt;; iterator over objects.
+     * @param onRoute whether the objects have to be on-route.
+     * @return iterator over objects.
      */
     public <T extends LaneBasedObject> Iterable<Entry<T>> getDownstreamObjects(final RelativeLane relativeLane,
             final Class<T> clazz, final RelativePosition.Type position, final boolean onRoute)
@@ -123,10 +122,10 @@ public class LaneStructure
      * roads, e.g. from the main line on the right-most lane, the right-hand relative lane can give objects upstream of two
      * on-ramps that are very close by, or even the shoulder. Objects that are partially upstream are also included.
      * @param <T> type of {@code LaneBasedObject}.
-     * @param relativeLane RelativeLane; lane.
-     * @param clazz Class&lt;T&gt;; class of lane-based object type.
+     * @param relativeLane lane.
+     * @param clazz class of lane-based object type.
      * @param position RelativePosition.Type; position relative to which objects are found and distances are given.
-     * @return Iterator&lt;Entry&lt;T&gt;&gt;; iterator over objects.
+     * @return iterator over objects.
      */
     public <T extends LaneBasedObject> Iterable<Entry<T>> getUpstreamObjects(final RelativeLane relativeLane,
             final Class<T> clazz, final RelativePosition.Type position)
@@ -168,12 +167,12 @@ public class LaneStructure
      * Returns an iterator over GTUs perceived on a relative lane, ordered close to far. This can be GTUs on different roads,
      * e.g. from the main line on the right-most lane, the right-hand relative lane can give objects upstream of two on-ramps
      * that are very close by, or even the shoulder.
-     * @param relativeLane RelativeLane; lane.
-     * @param egoPosition RelativePosition; position of ego GTU relative to which objects are found.
-     * @param otherPosition RelativePosition; position of other GTU that must be downstream of egoPosition.
-     * @param egoDistancePosition RelativePosition; position of ego GTU from which the distance is determined.
-     * @param otherDistancePosition RelativePosition; position of other GTU to which the distance is determined.
-     * @return Iterator&lt;Entry&lt;LaneBasedGtu&gt;&gt;; iterator over GTUs.
+     * @param relativeLane lane.
+     * @param egoPosition position of ego GTU relative to which objects are found.
+     * @param otherPosition position of other GTU that must be downstream of egoPosition.
+     * @param egoDistancePosition position of ego GTU from which the distance is determined.
+     * @param otherDistancePosition position of other GTU to which the distance is determined.
+     * @return iterator over GTUs.
      */
     public Iterable<Entry<LaneBasedGtu>> getDownstreamGtus(final RelativeLane relativeLane,
             final RelativePosition.Type egoPosition, final RelativePosition.Type otherPosition,
@@ -220,12 +219,12 @@ public class LaneStructure
      * Returns an iterator over GTUs perceived on a relative lane, ordered close to far. This can be GTUs on different roads,
      * e.g. from the main line on the right-most lane, the right-hand relative lane can give objects upstream of two on-ramps
      * that are very close by, or even the shoulder.
-     * @param relativeLane RelativeLane; lane.
-     * @param egoPosition RelativePosition; position of ego GTU relative to which objects are found.
-     * @param otherPosition RelativePosition; position of other GTU that must be upstream of egoPosition.
-     * @param egoDistancePosition RelativePosition; position of ego GTU from which the distance is determined.
-     * @param otherDistancePosition RelativePosition; position of other GTU to which the distance is determined.
-     * @return Iterator&lt;Entry&lt;LaneBasedGtu&gt;&gt;; iterator over GTUs.
+     * @param relativeLane lane.
+     * @param egoPosition position of ego GTU relative to which objects are found.
+     * @param otherPosition position of other GTU that must be upstream of egoPosition.
+     * @param egoDistancePosition position of ego GTU from which the distance is determined.
+     * @param otherDistancePosition position of other GTU to which the distance is determined.
+     * @return iterator over GTUs.
      */
     public Iterable<Entry<LaneBasedGtu>> getUpstreamGtus(final RelativeLane relativeLane,
             final RelativePosition.Type egoPosition, final RelativePosition.Type otherPosition,
@@ -280,12 +279,12 @@ public class LaneStructure
      * e.g. from the main line on the right-most lane, the right-hand relative lane can give objects upstream of two on-ramps
      * that are very close by, or even the shoulder. This function differs from {@code getDownstreamGtus()} in that it will halt
      * further searching on on branch it finds a GTU on.
-     * @param relativeLane RelativeLane; lane.
-     * @param egoPosition RelativePosition; position of ego GTU relative to which objects are found.
-     * @param otherPosition RelativePosition; position of other GTU that must be downstream of egoPosition.
-     * @param egoDistancePosition RelativePosition; position of ego GTU from which the distance is determined.
-     * @param otherDistancePosition RelativePosition; position of other GTU to which the distance is determined.
-     * @return Iterator&lt;Entry&lt;LaneBasedGtu&gt;&gt;; iterator over GTUs.
+     * @param relativeLane lane.
+     * @param egoPosition position of ego GTU relative to which objects are found.
+     * @param otherPosition position of other GTU that must be downstream of egoPosition.
+     * @param egoDistancePosition position of ego GTU from which the distance is determined.
+     * @param otherDistancePosition position of other GTU to which the distance is determined.
+     * @return iterator over GTUs.
      */
     public Iterable<Entry<LaneBasedGtu>> getFirstDownstreamGtus(final RelativeLane relativeLane,
             final RelativePosition.Type egoPosition, final RelativePosition.Type otherPosition,
@@ -319,12 +318,12 @@ public class LaneStructure
      * e.g. from the main line on the right-most lane, the right-hand relative lane can give objects upstream of two on-ramps
      * that are very close by, or even the shoulder. This function differs from {@code getDownstreamGtus()} in that it will halt
      * further searching on on branch it finds a GTU on.
-     * @param relativeLane RelativeLane; lane.
-     * @param egoPosition RelativePosition; position of ego GTU relative to which objects are found.
-     * @param otherPosition RelativePosition; position of other GTU that must be upstream of egoPosition.
-     * @param egoDistancePosition RelativePosition; position of ego GTU from which the distance is determined.
-     * @param otherDistancePosition RelativePosition; position of other GTU to which the distance is determined.
-     * @return Iterator&lt;Entry&lt;LaneBasedGtu&gt;&gt;; iterator over GTUs.
+     * @param relativeLane lane.
+     * @param egoPosition position of ego GTU relative to which objects are found.
+     * @param otherPosition position of other GTU that must be upstream of egoPosition.
+     * @param egoDistancePosition position of ego GTU from which the distance is determined.
+     * @param otherDistancePosition position of other GTU to which the distance is determined.
+     * @return iterator over GTUs.
      */
     public Iterable<Entry<LaneBasedGtu>> getFirstUpstreamGtus(final RelativeLane relativeLane,
             final RelativePosition.Type egoPosition, final RelativePosition.Type otherPosition,
@@ -366,9 +365,9 @@ public class LaneStructure
     /**
      * Recursively move to upstream records if the relative position is upstream of the record, to start a downstream search
      * from these upstream records.
-     * @param record LaneRecord; current record in search.
+     * @param record current record in search.
      * @param position RelativePosition.Type; relative position type.
-     * @return Collection&lt;LaneRecord&gt;; records to start from.
+     * @return records to start from.
      */
     private Collection<LaneRecord> startDownstream(final LaneRecord record, final RelativePosition.Type position)
     {
@@ -387,9 +386,9 @@ public class LaneStructure
     /**
      * Recursively move to downstream records if the relative position is downstream of the record, to start an upstream search
      * from these downstream records.
-     * @param record LaneRecord; current record in search.
+     * @param record current record in search.
      * @param position RelativePosition.Type; relative position type.
-     * @return Collection&lt;LaneRecord&gt;; records to start from.
+     * @return records to start from.
      */
     private Collection<LaneRecord> startUpstream(final LaneRecord record, final RelativePosition.Type position)
     {
@@ -407,10 +406,10 @@ public class LaneStructure
 
     /**
      * Returns the position of the GTU on the lane of the given record.
-     * @param gtu LaneBasedGtu; gtu.
-     * @param record LaneRecord; lane record.
+     * @param gtu gtu.
+     * @param record lane record.
      * @param positionType RelativePosition.Type; relative position type.
-     * @return Length; position of the GTU on the lane of the given record.
+     * @return position of the GTU on the lane of the given record.
      */
     private final Length position(final LaneBasedGtu gtu, final LaneRecord record, final RelativePosition.Type positionType)
     {
@@ -627,7 +626,7 @@ public class LaneStructure
     /**
      * Adds the lane to the cross-section, if the zero position is somewhere on the lane (negative start distance, positive end
      * distance).
-     * @param record LaneRecord; record.
+     * @param record record.
      */
     private void addToCrossSection(final LaneRecord record)
     {
@@ -639,8 +638,8 @@ public class LaneStructure
 
     /**
      * Returns the links upstream of the lane.
-     * @param lane Lane; lane.
-     * @return Set&lt;Link&gt;; upstream lanes.
+     * @param lane lane.
+     * @return upstream lanes.
      */
     private Set<Link> getUpstreamLinks(final Lane lane)
     {
@@ -654,7 +653,7 @@ public class LaneStructure
 
     /**
      * Returns all the lanes that are in the root cross-section, i.e. to our direct left and right.
-     * @return SortedSet&lt;RelativeLane&gt;; set of lanes in the root cross-section.
+     * @return set of lanes in the root cross-section.
      */
     public SortedSet<RelativeLane> getRootCrossSection()
     {
@@ -664,8 +663,8 @@ public class LaneStructure
 
     /**
      * Returns whether the lane exists within the structure.
-     * @param lane RelativeLane; lane.
-     * @return boolean; whether the lane exists within the structure.
+     * @param lane lane.
+     * @return whether the lane exists within the structure.
      */
     public boolean exists(final RelativeLane lane)
     {
@@ -675,8 +674,8 @@ public class LaneStructure
 
     /**
      * Returns the root record on the given lane.
-     * @param lane RelativeLane; lane.
-     * @return LaneRecord; root record on the lane.
+     * @param lane lane.
+     * @return root record on the lane.
      */
     public LaneRecord getRootRecord(final RelativeLane lane)
     {
@@ -686,8 +685,8 @@ public class LaneStructure
 
     /**
      * Returns the set of records in the cross-section on the given lane.
-     * @param lane RelativeLane; lane.
-     * @return Set&lt;LaneRecord&gt;; set of records in the cross-section on the given lane.
+     * @param lane lane.
+     * @return set of records in the cross-section on the given lane.
      */
     public Set<LaneRecord> getCrossSectionRecords(final RelativeLane lane)
     {
@@ -741,13 +740,13 @@ public class LaneStructure
 
         /**
          * Constructor.
-         * @param relativeLane RelativeLane; relative lane.
-         * @param clazz Class&lt;T&gt;; class of lane-based object type.
-         * @param range Length; range within which objects are included.
-         * @param starter Function&lt;LaneRecord2, Collection&lt;LaneRecord2&gt;&gt;; starter.
-         * @param navigator Function&lt;LaneRecord, Collection&lt;LaneRecord2&gt;&gt;; navigator.
-         * @param lister Function&lt;LaneRecord, List&lt;?&gt;&gt;; obtains ordered list of objects from lane.
-         * @param distancer BiFunction&lt;T, LaneRecord, Length&gt;; returns distance of object.
+         * @param relativeLane relative lane.
+         * @param clazz class of lane-based object type.
+         * @param range range within which objects are included.
+         * @param starter starter.
+         * @param navigator navigator.
+         * @param lister obtains ordered list of objects from lane.
+         * @param distancer returns distance of object.
          */
         public NavigatingIterable(final RelativeLane relativeLane, final Class<T> clazz, final Length range,
                 final Function<LaneRecord, Collection<LaneRecord>> starter,
@@ -846,7 +845,7 @@ public class LaneStructure
                 /**
                  * Updates the map so it contains a record only if it has an object to return. If not, further records are added
                  * to the map through the navigator and consecutively checked.
-                 * @param record LaneRecord; lane record.
+                 * @param record lane record.
                  */
                 private void updateMapRecursive(final LaneRecord record)
                 {
@@ -898,10 +897,10 @@ public class LaneStructure
 
         /**
          * Constructor. The lister may return objects of any type. This class will check whether objects are of type T.
-         * @param record LaneRecord; lane record.
-         * @param clazz Class&lt;T&gt;; class of lane-based object type.
-         * @param lister Function&lt;LaneRecord, List&lt;?&gt;&gt;; obtains ordered list of objects from lane.
-         * @param distancer BiFunction&lt;T, LaneRecord, Length&gt;; returns distance of object.
+         * @param record lane record.
+         * @param clazz class of lane-based object type.
+         * @param lister obtains ordered list of objects from lane.
+         * @param distancer returns distance of object.
          */
         public ObjectIterator(final LaneRecord record, final Class<T> clazz, final Function<LaneRecord, List<?>> lister,
                 final BiFunction<T, LaneRecord, Length> distancer)
@@ -936,7 +935,7 @@ public class LaneStructure
 
         /**
          * Returns the entry that {@code next()} will return, without advancing the iterator.
-         * @return Entry&lt;T&gt;; poll entry.
+         * @return poll entry.
          */
         public Entry<T> poll()
         {
@@ -961,9 +960,9 @@ public class LaneStructure
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      * @param <T> type of object.
-     * @param distance Length; distance to object.
-     * @param merge Length; distance until the road of the object and the road of the perceiving GTU merge.
-     * @param object T; the perceived object.
+     * @param distance distance to object.
+     * @param merge distance until the road of the object and the road of the perceiving GTU merge.
+     * @param object the perceived object.
      */
     public record Entry<T>(Length distance, Length merge, T object)
     {

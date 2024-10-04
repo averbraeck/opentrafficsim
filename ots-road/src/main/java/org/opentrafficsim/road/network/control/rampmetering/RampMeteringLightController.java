@@ -22,7 +22,7 @@ public interface RampMeteringLightController
 
     /**
      * Enables, or keep enabled, the controller.
-     * @param cycleTime Duration; cycle time
+     * @param cycleTime cycle time
      */
     void enable(Duration cycleTime);
 

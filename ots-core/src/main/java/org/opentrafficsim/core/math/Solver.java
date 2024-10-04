@@ -24,10 +24,10 @@ public final class Solver
     /**
      * Solve quadratic equation <cite>ax<sup>2</sup>+bx+c=0</cite> for <cite>x</cite>. Degenerate case <cite>a == 0</cite> is
      * allowed.
-     * @param a double; the coefficient of <cite>x<sup>2</sup></cite>
-     * @param b double; the coefficient of <cite>x</cite>
-     * @param c double;
-     * @return double[]; array with zero, one, or two elements (depending on the number of solutions of the equation)
+     * @param a the coefficient of <cite>x<sup>2</sup></cite>
+     * @param b the coefficient of <cite>x</cite>
+     * @param c
+     * @return array with zero, one, or two elements (depending on the number of solutions of the equation)
      */
     public static double[] solve(final double a, final double b, final double c)
     {
@@ -52,11 +52,11 @@ public final class Solver
 
     /**
      * Solve a quadratic or linear equation and return the solution that is closest (but not less than) a boundary.
-     * @param lowerBound double; minimum value of good solution
-     * @param a double; quadratic coefficient
-     * @param b double; linear coefficient
-     * @param c double; value of the quadratic function for x==0
-     * @return double; the solution that is closest (but not less than) a boundary
+     * @param lowerBound minimum value of good solution
+     * @param a quadratic coefficient
+     * @param b linear coefficient
+     * @param c value of the quadratic function for x==0
+     * @return the solution that is closest (but not less than) a boundary
      * @throws ValueRuntimeException if there is no acceptable solution
      */
     public static double firstSolutionAfter(final double lowerBound, final double a, final double b, final double c)
@@ -93,10 +93,10 @@ public final class Solver
 
     /**
      * Solve linear equation <cite>ax+b=0</cite> for <cite>x</cite>.
-     * @param a double; the coefficient of <cite>x</cite>
-     * @param b double;
-     * @return double[]; array with one or zero elements (depending on the number of solutions of the equation). The case where
-     *         both <cite>a</cite> and <cite>b</cite> are zero returns an array of length 0.
+     * @param a the coefficient of <cite>x</cite>
+     * @param b
+     * @return array with one or zero elements (depending on the number of solutions of the equation). The case where both
+     *         <cite>a</cite> and <cite>b</cite> are zero returns an array of length 0.
      */
     public static double[] solve(final double a, final double b)
     {

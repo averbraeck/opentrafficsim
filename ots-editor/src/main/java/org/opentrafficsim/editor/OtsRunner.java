@@ -37,20 +37,19 @@ public class OtsRunner extends OtsSimulationApplication<OtsRunnerModel>
 
     /**
      * Run a simulation.
-     * @param panel OtsAnimationPanel; the tabbed panel to display
-     * @param model TJunctionModel; the model
+     * @param panel the tabbed panel to display
+     * @param model the model
      * @throws OtsDrawingException on animation error
      */
-    public OtsRunner(final OtsAnimationPanel panel, final OtsRunnerModel model)
-            throws OtsDrawingException
+    public OtsRunner(final OtsAnimationPanel panel, final OtsRunnerModel model) throws OtsDrawingException
     {
         super(model, panel);
     }
 
     /**
      * Run single run from a file.
-     * @param file File; XML file.
-     * @param scenario String; scenario, may be {@code null}.
+     * @param file XML file.
+     * @param scenario scenario, may be {@code null}.
      */
     public static void runSingle(final File file, final String scenario)
     {
@@ -70,8 +69,7 @@ public class OtsRunner extends OtsSimulationApplication<OtsRunnerModel>
             exception.printStackTrace();
         }
     }
-    
-    
+
     /** {@inheritDoc} */
     @Override
     protected void setAnimationToggles()
@@ -89,18 +87,18 @@ public class OtsRunner extends OtsSimulationApplication<OtsRunnerModel>
 
         /** File. */
         private File file;
-        
+
         /** Scenario. */
         private String scenario;
-        
+
         /** The network. */
         private RoadNetwork network;
-        
+
         /**
          * Constructor.
-         * @param simulator OtsSimulatorInterface; simulator.
-         * @param file File; XML file.
-         * @param scenario String; scenario, may be {@code null}.
+         * @param simulator simulator.
+         * @param file XML file.
+         * @param scenario scenario, may be {@code null}.
          */
         public OtsRunnerModel(final OtsSimulatorInterface simulator, final File file, final String scenario)
         {

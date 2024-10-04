@@ -63,8 +63,8 @@ public final class Adapters
      * Integer, Length, LinearDensity, Point2d, String, and Stripe.Type.
      * @param <T> output type of the adapter.
      * @param <E> expression type of the adapter.
-     * @param clazz Class&lt;T&gt;; class of the output type of the adapter.
-     * @return ExpressionAdapter&lt;T, ?&gt;; adapter.
+     * @param clazz class of the output type of the adapter.
+     * @return adapter.
      */
     @SuppressWarnings("unchecked")
     public static <T, E extends ExpressionType<T>> ExpressionAdapter<T, E> get(final Class<T> clazz)
@@ -78,8 +78,8 @@ public final class Adapters
      * Add an adapter for the given class.
      * @param <T> output type of the adapter.
      * @param <E> expression type of the adapter.
-     * @param clazz Class&lt;T&gt;; class of the output type of the adapter.
-     * @param adapter ExpressionAdapter&lt;T, ?&gt;; adapter.
+     * @param clazz class of the output type of the adapter.
+     * @param adapter adapter.
      */
     public static <T, E extends ExpressionType<T>> void set(final Class<T> clazz, final ExpressionAdapter<T, E> adapter)
     {

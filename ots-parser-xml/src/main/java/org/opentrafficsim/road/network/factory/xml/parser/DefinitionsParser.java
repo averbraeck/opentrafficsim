@@ -53,12 +53,12 @@ public final class DefinitionsParser
 
     /**
      * Parse the Definitions tag in the OTS XML file.
-     * @param definitions Definitions; the Definitions tag
+     * @param definitions the Definitions tag
      * @param roadLayoutMap temporary storage for the road layouts
      * @param gtuTemplates map of GTU templates for the OD and/or Generators
      * @param laneBiases map of lane biases for the OD parser
      * @param linkTypeSpeedLimitMap map with speed limit information per link type
-     * @param eval Eval; expression evaluator.
+     * @param eval expression evaluator.
      * @return the parsed definitions
      * @throws XmlParserException on parsing error
      */
@@ -156,12 +156,12 @@ public final class DefinitionsParser
      * is called for each tag, with the generated type instance if {@code G} is a <i>generated</i> {@code HierarchicalType}, or
      * {@code null} otherwise.
      * @param definitions org.opentrafficsim.xml.generated.Definitions; definitions tag.
-     * @param parsedDefinitions Definitions; parsed definitions, to get definitions from and store {@code HierarchicalType}s in.
-     * @param typesTagClass Class&lt;L&gt;; generated class of XML tag containing type tags, e.g. LaneTypes (generated).
-     * @param typeTagClass Class&lt;G&gt;; generated class of XML tag defining type instance, e.g. LaneType (generated).
-     * @param typeClass Class&lt;T&gt;; OTS class of type, e.g. LaneType (from ots-road).
-     * @param consumer BiConsumer&lt;G, ? super T&gt;; consumer for specific parsing of the type, may be {@code null}.
-     * @param eval Eval; expression evaluator.
+     * @param parsedDefinitions parsed definitions, to get definitions from and store {@code HierarchicalType}s in.
+     * @param typesTagClass generated class of XML tag containing type tags, e.g. LaneTypes (generated).
+     * @param typeTagClass generated class of XML tag defining type instance, e.g. LaneType (generated).
+     * @param typeClass OTS class of type, e.g. LaneType (from ots-road).
+     * @param consumer consumer for specific parsing of the type, may be {@code null}.
+     * @param eval expression evaluator.
      * @param <L> generated class type of XML tag containing type tags, e.g. LaneTypes (generated).
      * @param <G> generated class type of XML tag defining type instance, e.g. LaneType (generated).
      * @param <T> OTS class type of type, e.g. LaneType (from ots-road).
@@ -247,8 +247,8 @@ public final class DefinitionsParser
     /**
      * Parse a single lane bias from XML.
      * @param laneBias org.opentrafficsim.xml.generated.LaneBias; lane bias to parse.
-     * @param eval Eval; expression evaluator.
-     * @return LaneBias; parsed lane bias.
+     * @param eval expression evaluator.
+     * @return parsed lane bias.
      */
     public static LaneBias parseLaneBias(final org.opentrafficsim.xml.generated.LaneBias laneBias, final Eval eval)
     {
@@ -287,13 +287,13 @@ public final class DefinitionsParser
 
     /**
      * Return parsed definition specified by a field in an element.
-     * @param clazz Class&lt;T&gt;; class of element type.
-     * @param parsedDefinitions Definitions; parsed definitions.
-     * @param stringType StringType; string type containing value to obtain.
-     * @param type String; definition type being parsed, e.g. LaneType.
-     * @param elementId String; id of element being parsed.
-     * @param field String; field in element being obtained, e.g. GtuType or Parent.
-     * @param eval Eval; expression evaluator.
+     * @param clazz class of element type.
+     * @param parsedDefinitions parsed definitions.
+     * @param stringType string type containing value to obtain.
+     * @param type definition type being parsed, e.g. LaneType.
+     * @param elementId id of element being parsed.
+     * @param field field in element being obtained, e.g. GtuType or Parent.
+     * @param eval expression evaluator.
      * @param <T> element type
      * @return parsed element.
      * @throws XmlParserException when the desired element is not in the parsed definitions.
@@ -310,9 +310,9 @@ public final class DefinitionsParser
 
     /**
      * Return parsed definition.
-     * @param clazz Class&lt;T&gt;; class of element type.
-     * @param definitionId String; id of definition to obtain.
-     * @param road boolean; {@code true} to use {@code DefaultsRoad}, otherwise {@code Defaults}.
+     * @param clazz class of element type.
+     * @param definitionId id of definition to obtain.
+     * @param road {@code true} to use {@code DefaultsRoad}, otherwise {@code Defaults}.
      * @param <T> element type
      * @return parsed element.
      * @throws XmlParserException when the desired element is not in the parsed definitions.
@@ -329,9 +329,9 @@ public final class DefinitionsParser
 
     /**
      * Parse the ParameterType tags in the OTS XML file.
-     * @param definitions Definitions; the Definitions tag
+     * @param definitions the Definitions tag
      * @param parameterMap map to store parameter type by id
-     * @param eval Eval; expression evaluator.
+     * @param eval expression evaluator.
      * @throws XmlParserException if the field in a ParameterType does not refer to a ParameterType&lt;?&gt;
      */
     public static void parseParameterTypes(final org.opentrafficsim.xml.generated.Definitions definitions,
@@ -376,8 +376,8 @@ public final class DefinitionsParser
     {
         /**
          * Accept input.
-         * @param g G; tag type.
-         * @param t T; type type.
+         * @param g tag type.
+         * @param t type type.
          * @throws XmlParserException when tag refers to non existent type
          */
         void accept(G g, T t) throws XmlParserException;

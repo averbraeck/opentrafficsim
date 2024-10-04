@@ -15,10 +15,10 @@ public class LongType extends ExpressionType<Long>
 
     /** Function to convert output from expression to the right type. */
     private static final Function<Object, Long> TO_TYPE = (o) -> ((Number) o).longValue();
-    
+
     /**
      * Constructor with value.
-     * @param value Long; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public LongType(final Long value)
     {
@@ -27,7 +27,7 @@ public class LongType extends ExpressionType<Long>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public LongType(final String expression)
     {

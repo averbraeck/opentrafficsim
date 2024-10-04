@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.metadata.MetaData;
@@ -15,6 +16,8 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.core.perception.Historical;
+import org.opentrafficsim.core.perception.HistoricalValue;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
@@ -27,6 +30,7 @@ import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class TrafficLight extends AbstractLaneBasedObject
 {
@@ -34,7 +38,7 @@ public class TrafficLight extends AbstractLaneBasedObject
     private static final long serialVersionUID = 20230216L;
 
     /** The color of the traffic light. */
-    private TrafficLightColor trafficLightColor;
+    private final Historical<TrafficLightColor> trafficLightColor;
 
     /** The simulator to schedule events on. */
     private final OtsSimulatorInterface simulator;
@@ -57,11 +61,11 @@ public class TrafficLight extends AbstractLaneBasedObject
 
     /**
      * Construct an AbstractTrafficLight with specified elevation.
-     * @param id String; traffic light id
-     * @param lane Lane; lane where the traffic light is located
-     * @param longitudinalPosition Length; position of the traffic light on the lane, in the design direction
-     * @param simulator OtsSimulatorInterface; the simulator for animation and timed events
-     * @param height Length; the elevation of the traffic light
+     * @param id traffic light id
+     * @param lane lane where the traffic light is located
+     * @param longitudinalPosition position of the traffic light on the lane, in the design direction
+     * @param simulator the simulator for animation and timed events
+     * @param height the elevation of the traffic light
      * @throws NetworkException on failure to place the object
      */
     public TrafficLight(final String id, final Lane lane, final Length longitudinalPosition,
@@ -71,17 +75,17 @@ public class TrafficLight extends AbstractLaneBasedObject
 
         Throw.whenNull(simulator, "Simulator may not be null");
         this.simulator = simulator;
-        this.trafficLightColor = TrafficLightColor.RED;
-
+        this.trafficLightColor =
+                new HistoricalValue<>(simulator.getReplication().getHistoryManager(simulator), TrafficLightColor.RED);
         init();
     }
 
     /**
      * Construct an AbstractTrafficLight at default elevation (use only on roads at elevation 0).
-     * @param id String; traffic light id
-     * @param lane Lane; lane where the traffic light is located
-     * @param longitudinalPosition Length; position of the traffic light on the lane, in the design direction
-     * @param simulator OtsSimulatorInterface; the simulator for animation and timed events
+     * @param id traffic light id
+     * @param lane lane where the traffic light is located
+     * @param longitudinalPosition position of the traffic light on the lane, in the design direction
+     * @param simulator the simulator for animation and timed events
      * @throws NetworkException on failure to place the object
      */
     public TrafficLight(final String id, final Lane lane, final Length longitudinalPosition,
@@ -92,27 +96,37 @@ public class TrafficLight extends AbstractLaneBasedObject
 
     /**
      * Get the current traffic light color.
-     * @return TrafficLightColor; current traffic light color.
+     * @return current traffic light color.
      */
     public final TrafficLightColor getTrafficLightColor()
     {
-        return this.trafficLightColor;
+        return this.trafficLightColor.get();
+    }
+
+    /**
+     * Get the traffic light color in the past.
+     * @param time time to obtain traffic light color.
+     * @return current traffic light color.
+     */
+    public final TrafficLightColor getTrafficLightColor(final Time time)
+    {
+        return this.trafficLightColor.get(time);
     }
 
     /**
      * Set the new traffic light color.
-     * @param trafficLightColor TrafficLightColor; set the trafficLightColor
+     * @param trafficLightColor set the trafficLightColor
      */
     public final void setTrafficLightColor(final TrafficLightColor trafficLightColor)
     {
-        this.trafficLightColor = trafficLightColor;
+        this.trafficLightColor.set(trafficLightColor);
         fireTimedEvent(TRAFFICLIGHT_CHANGE_EVENT, new Object[] {getId(), this, trafficLightColor},
                 this.simulator.getSimulatorTime());
     }
 
     /**
      * Add node GTUs may turn to through red.
-     * @param node Node; node.
+     * @param node node.
      */
     public void addTurnOnRed(final Node node)
     {
@@ -125,9 +139,9 @@ public class TrafficLight extends AbstractLaneBasedObject
 
     /**
      * Whether a GTU can turn on red.
-     * @param route Route; route.
-     * @param gtuType GtuType; GTU type.
-     * @return boolean; whether a GTU can turn on red.
+     * @param route route.
+     * @param gtuType GTU type.
+     * @return whether a GTU can turn on red.
      */
     public boolean canTurnOnRed(final Route route, final GtuType gtuType)
     {
@@ -166,7 +180,7 @@ public class TrafficLight extends AbstractLaneBasedObject
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "SimpleTrafficLight [trafficLightColor=" + getTrafficLightColor() + "]";
+        return "TrafficLight [trafficLightColor=" + getTrafficLightColor() + "]";
     }
 
 }

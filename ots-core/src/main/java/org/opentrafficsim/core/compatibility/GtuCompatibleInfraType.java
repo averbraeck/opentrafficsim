@@ -28,8 +28,8 @@ public abstract class GtuCompatibleInfraType<T extends GtuCompatibleInfraType<T,
 
     /**
      * Instantiate an infrastructure type.
-     * @param id String; the id
-     * @param parent InfraType; the parent
+     * @param id the id
+     * @param parent the parent
      */
     @SuppressWarnings("unchecked")
     public GtuCompatibleInfraType(final String id, final T parent)
@@ -40,7 +40,7 @@ public abstract class GtuCompatibleInfraType<T extends GtuCompatibleInfraType<T,
 
     /**
      * Instantiate an infrastructure type without a parent.
-     * @param id String; the id
+     * @param id the id
      */
     public GtuCompatibleInfraType(final String id)
     {
@@ -49,8 +49,8 @@ public abstract class GtuCompatibleInfraType<T extends GtuCompatibleInfraType<T,
 
     /**
      * Add an compatible GtuType to this GtuCompatibility.
-     * @param gtuType GtuType; the GtuType to add to the compatible set of this Compatibility
-     * @return GtuCompatibility&lt;I&gt;; this GtuCompatibility for method call chaining
+     * @param gtuType the GtuType to add to the compatible set of this Compatibility
+     * @return this GtuCompatibility for method call chaining
      * @throws NullPointerException when <code>gtuType</code> is null
      * @throws OtsRuntimeException when changes are made to compatibility after results have been cached
      */
@@ -62,8 +62,8 @@ public abstract class GtuCompatibleInfraType<T extends GtuCompatibleInfraType<T,
 
     /**
      * Add a incompatible GtuType to this GtuCompatibility.
-     * @param gtuType GtuType; the GtuType to add to the incompatible set of this Compatibility
-     * @return GtuCompatibility&lt;I&gt;; this GtuCompatibility for method call chaining
+     * @param gtuType the GtuType to add to the incompatible set of this Compatibility
+     * @return this GtuCompatibility for method call chaining
      * @throws NullPointerException when <code>gtuType</code> is null
      * @throws OtsRuntimeException when changes are made to compatibility after results have been cached
      */
@@ -107,7 +107,7 @@ public abstract class GtuCompatibleInfraType<T extends GtuCompatibleInfraType<T,
 
     /**
      * Return the GTU compatibility of this infra type.
-     * @return gtuCompatibility GtuCompatibility&lt;I&gt;; the GTU compatibility of this infra type
+     * @return the GTU compatibility of this infra type
      */
     public GtuCompatibility<T> getGtuCompatibility()
     {

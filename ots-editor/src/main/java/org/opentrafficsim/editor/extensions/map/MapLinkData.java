@@ -155,9 +155,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
     /**
      * Constructor.
-     * @param map Map; map.
-     * @param linkNode XsdTreeNode; node Ots.Network.Link.
-     * @param editor OtsEditor; editor.
+     * @param map map.
+     * @param linkNode node Ots.Network.Link.
+     * @param editor editor.
      */
     public MapLinkData(final EditorMap map, final XsdTreeNode linkNode, final OtsEditor editor)
     {
@@ -400,9 +400,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     /**
      * Replaces the old node with the new node, adding and removing this as a listener as required. If a node refers to a
      * default input parameter node, the node that the input parameter id refers to is found instead.
-     * @param oldNode XsdTreeNode; former node.
-     * @param newNode XsdTreeNode; new node.
-     * @return XsdTreeNode; the actual new node (Ots.Network.Node).
+     * @param oldNode former node.
+     * @param newNode new node.
+     * @return the actual new node (Ots.Network.Node).
      */
     private XsdTreeNode replaceNode(final XsdTreeNode oldNode, final XsdTreeNode newNode)
     {
@@ -436,8 +436,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
     /**
      * Finds the network node that the value of an input parameter node refers to.
-     * @param inputParameter XsdTreeNode; input parameter node (default).
-     * @return XsdTreeNode; the actual node (Ots.Network.Node).
+     * @param inputParameter input parameter node (default).
+     * @return the actual node (Ots.Network.Node).
      */
     private XsdTreeNode getInputNode(final XsdTreeNode inputParameter)
     {
@@ -462,7 +462,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
     /**
      * The map was notified a new coordinate node was added. The node may or may not be part of this link.
-     * @param node XsdTreeNode; added coordinate node.
+     * @param node added coordinate node.
      */
     public void addCoordinate(final XsdTreeNode node)
     {
@@ -477,7 +477,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
     /**
      * The map was notified a coordinate node was removed. The node may or may not be part of this link.
-     * @param node XsdTreeNode; removed coordinate node.
+     * @param node removed coordinate node.
      */
     public void removeCoordinate(final XsdTreeNode node)
     {
@@ -692,7 +692,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
     /**
      * Notification from the Map that a node (Ots.Network.Node) id was changed.
-     * @param node XsdTreeNode; node.
+     * @param node node.
      */
     public void notifyNodeIdChanged(final XsdTreeNode node)
     {
@@ -704,9 +704,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     /**
      * Returns the value with appropriate adapter, or {@code null} if the value is {@code null}.
      * @param <T> type of the value after unmarshaling.
-     * @param value String; value.
-     * @param adapter ExpressionAdapter&lt;T, ?&gt;; adapter for values of type T.
-     * @return T; unmarshaled value.
+     * @param value value.
+     * @param adapter adapter for values of type T.
+     * @return unmarshaled value.
      */
     private <T> T orNull(final String value, final ExpressionAdapter<T, ?> adapter)
     {
@@ -723,8 +723,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
     /**
      * Returns the editor lane data for the lane of given id.
-     * @param laneId String; id.
-     * @return EditorLaneData; editor lane data for the lane of given id.
+     * @param laneId id.
+     * @return editor lane data for the lane of given id.
      */
     public MapLaneData getLaneData(final String laneId)
     {
@@ -1008,7 +1008,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
         /**
          * Set the given attribute from the shape node.
-         * @param attribute String; attribute name.
+         * @param attribute attribute name.
          */
         private void setAttribute(final String attribute)
         {
@@ -1042,9 +1042,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         /**
          * Returns the attribute value with appropriate adapter, or {@code null} if the attribute is not given.
          * @param <T> type of the attribute value after unmarshaling.
-         * @param attribute String; attribute.
-         * @param adapter ExpressionAdapter&lt;T, ?&gt;; adapter for values of type T.
-         * @return T; unmarshaled value.
+         * @param attribute attribute.
+         * @param adapter adapter for values of type T.
+         * @return unmarshaled value.
          */
         private <T> T getOrNull(final String attribute, final ExpressionAdapter<T, ?> adapter)
         {
@@ -1054,9 +1054,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
         /**
          * Returns the continuous line.
-         * @param from OrientedPoint2d; possibly offset start point.
-         * @param to OrientedPoint2d; possibly offset end point.
-         * @return PolyLine2d; line from the shape and attributes.
+         * @param from possibly offset start point.
+         * @param to possibly offset end point.
+         * @return line from the shape and attributes.
          */
         public ContinuousLine getContiuousLine(final OrientedPoint2d from, final OrientedPoint2d to)
         {
@@ -1140,7 +1140,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
     /**
      * Returns the start curvature from the clothoid.
-     * @return Length; start curvature from the clothoid.
+     * @return start curvature from the clothoid.
      */
     public LinearDensity getClothoidStartCurvature()
     {
@@ -1153,7 +1153,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
     /**
      * Returns the end curvature from the clothoid.
-     * @return Length; end curvature from the clothoid.
+     * @return end curvature from the clothoid.
      */
     public LinearDensity getClothoidEndCurvature()
     {
@@ -1166,7 +1166,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
     /**
      * Returns the length from the clothoid.
-     * @return Length; length from the clothoid.
+     * @return length from the clothoid.
      */
     public Length getClothoidLength()
     {
@@ -1179,7 +1179,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
     /**
      * Returns the A value from the clothoid.
-     * @return Length; A value from the clothoid.
+     * @return A value from the clothoid.
      */
     public Length getClothoidA()
     {
@@ -1193,7 +1193,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     /**
      * Returns whether the shape was applied as a Clothoid, an Arc, or as a Straight, depending on start and end position and
      * direction.
-     * @return String; "Clothoid", "Arc" or "Straight".
+     * @return "Clothoid", "Arc" or "Straight".
      */
     public String getClothoidAppliedShape()
     {

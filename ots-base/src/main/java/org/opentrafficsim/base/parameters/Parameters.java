@@ -15,8 +15,8 @@ public interface Parameters
 
     /**
      * Set parameter value of given parameter type.
-     * @param parameterType ParameterType&lt;T&gt;; the parameter type.
-     * @param value T; new value for the parameter of type <code>parameterType</code>.
+     * @param parameterType the parameter type.
+     * @param value new value for the parameter of type <code>parameterType</code>.
      * @param <T> Class of value.
      * @throws ParameterException If the value does not comply with value type constraints.
      */
@@ -25,8 +25,8 @@ public interface Parameters
 
     /**
      * Set parameter value of given parameter type, store old value to allow a reset.
-     * @param parameterType ParameterType&lt;T&gt;; the parameter type.
-     * @param value T; new value for the parameter of type <code>parameterType</code>.
+     * @param parameterType the parameter type.
+     * @param value new value for the parameter of type <code>parameterType</code>.
      * @param <T> Class of value.
      * @throws ParameterException If the value does not comply with value type constraints.
      */
@@ -34,16 +34,16 @@ public interface Parameters
 
     /**
      * Resets the parameter value to the value from before the last set. This goes only a single value back.
-     * @param parameterType ParameterType&lt;?&gt;; the parameter type.
+     * @param parameterType the parameter type.
      * @throws ParameterException If the parameter was never set.
      */
     void resetParameter(ParameterType<?> parameterType) throws ParameterException;
 
     /**
      * Get parameter of given type.
-     * @param parameterType ParameterType&lt;T&gt;; the parameter type.
+     * @param parameterType the parameter type.
      * @param <T> Class of value.
-     * @return T; parameter of the requested type if it exists
+     * @return parameter of the requested type if it exists
      * @throws ParameterException If the parameter was never set.
      */
     // @docs/06-behavior/parameters.md (without throws)
@@ -52,7 +52,7 @@ public interface Parameters
     /**
      * Returns a parameter value, or {@code null} if not present. This can be used to prevent frequent calls to both
      * {@code contains()} and {@code getParameter()} in performance critical code.
-     * @param parameterType ParameterType&lt;T&gt;; parameter type
+     * @param parameterType parameter type
      * @param <T> type of parameter value
      * @return parameter value, or {@code null} if not present
      */
@@ -60,14 +60,14 @@ public interface Parameters
 
     /**
      * Indicate whether the given parameter type has been set.
-     * @param parameterType ParameterType&lt;?&gt;; the parameter type to check
-     * @return boolean; true if <code>parameterType</code> has been set; false if <code>parameterType</code> has not been set
+     * @param parameterType the parameter type to check
+     * @return true if <code>parameterType</code> has been set; false if <code>parameterType</code> has not been set
      */
     boolean contains(ParameterType<?> parameterType);
 
     /**
      * Sets the parameters of this set in the given set.
-     * @param parameters Parameters; parameters to set the values in
+     * @param parameters parameters to set the values in
      */
     void setAllIn(Parameters parameters);
 

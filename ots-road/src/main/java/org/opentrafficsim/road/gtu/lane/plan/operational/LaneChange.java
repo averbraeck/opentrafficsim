@@ -77,7 +77,7 @@ public class LaneChange implements Serializable
 
     /**
      * Constructor.
-     * @param gtu LaneBasedGtu; gtu
+     * @param gtu gtu
      */
     public LaneChange(final LaneBasedGtu gtu)
     {
@@ -86,8 +86,8 @@ public class LaneChange implements Serializable
 
     /**
      * Constructor.
-     * @param minimumLaneChangeDistance Length; minimum lane change distance
-     * @param desiredLaneChangeDuration Duration; deaired lane change duration
+     * @param minimumLaneChangeDistance minimum lane change distance
+     * @param desiredLaneChangeDuration deaired lane change duration
      */
     public LaneChange(final Length minimumLaneChangeDistance, final Duration desiredLaneChangeDuration)
     {
@@ -97,7 +97,7 @@ public class LaneChange implements Serializable
 
     /**
      * Returns the minimum lane change distance.
-     * @return Length; minimum lane change distance
+     * @return minimum lane change distance
      */
     public Length getMinimumLaneChangeDistance()
     {
@@ -106,7 +106,7 @@ public class LaneChange implements Serializable
 
     /**
      * Sets the desired lane change duration. Should be set by a tactical planner.
-     * @param duration Duration; desired lane change duration
+     * @param duration desired lane change duration
      */
     public void setDesiredLaneChangeDuration(final Duration duration)
     {
@@ -117,7 +117,7 @@ public class LaneChange implements Serializable
      * Sets the distance within which a lane change should be finished. Should be set by a tactical planner. In case of a single
      * lane change required before some point, this is not required as the found center line length is intrinsically limited.
      * For multiple lane changes being required, space after a lane change is required.
-     * @param boundary Length; boundary
+     * @param boundary boundary
      */
     public void setBoundary(final Length boundary)
     {
@@ -126,7 +126,7 @@ public class LaneChange implements Serializable
 
     /**
      * Returns the fraction of the lane change performed.
-     * @return double; fraction of lane change performed
+     * @return fraction of lane change performed
      */
     public double getFraction()
     {
@@ -135,7 +135,7 @@ public class LaneChange implements Serializable
 
     /**
      * Sets a lane change path.
-     * @param laneChangePath LaneChangePath; lane change path
+     * @param laneChangePath lane change path
      */
     public void setLaneChangePath(final LaneChangePath laneChangePath)
     {
@@ -171,7 +171,7 @@ public class LaneChange implements Serializable
 
     /**
      * Return lateral lane change direction.
-     * @return LateralDirectionality; lateral lane change direction
+     * @return lateral lane change direction
      */
     public final LateralDirectionality getDirection()
     {
@@ -182,7 +182,7 @@ public class LaneChange implements Serializable
      * Second lane of lane change relative to the reference lane. Note that the reference lane may either be the source or the
      * target lane. Thus, the second lane during a lane change may either be the left or right lane, regardless of the lane
      * change direction.
-     * @param gtu LaneBasedGtu; the GTU
+     * @param gtu the GTU
      * @return target lane of lane change
      * @throws OperationalPlanException If no lane change is being performed.
      */
@@ -211,13 +211,13 @@ public class LaneChange implements Serializable
 
     /**
      * Returns the path for a lane change. Lane change initialization and finalization events are automatically performed.
-     * @param timeStep Duration; plan time step
-     * @param gtu LaneBasedGtu; gtu
-     * @param from LanePosition; current position on the from lane (i.e. not necessarily the reference position)
-     * @param startPosition OrientedPoint2d; current position in 2D
-     * @param planDistance Length; absolute distance that will be covered during the time step
-     * @param laneChangeDirection LateralDirectionality; lane change direction
-     * @return OtsLine2d; path
+     * @param timeStep plan time step
+     * @param gtu gtu
+     * @param from current position on the from lane (i.e. not necessarily the reference position)
+     * @param startPosition current position in 2D
+     * @param planDistance absolute distance that will be covered during the time step
+     * @param laneChangeDirection lane change direction
+     * @return path
      * @throws OtsGeometryException on path or shape error
      */
     public final OtsLine2d getPath(final Duration timeStep, final LaneBasedGtu gtu, final LanePosition from,
@@ -426,10 +426,10 @@ public class LaneChange implements Serializable
 
     /**
      * Returns a line from the lane center lines, cutting of at the from position and the end fractional position.
-     * @param lanes List&lt;Lane&gt;; lanes
-     * @param startFractionalPosition double; current fractional GTU position on first lane
-     * @param endFractionalPosition double; target fractional GTU position on last lane
-     * @return OtsLine2d; line from the lane center lines
+     * @param lanes lanes
+     * @param startFractionalPosition current fractional GTU position on first lane
+     * @param endFractionalPosition target fractional GTU position on last lane
+     * @return line from the lane center lines
      * @throws OtsGeometryException on fraction outside of range
      */
     private OtsLine2d getLine(final List<Lane> lanes, final double startFractionalPosition, final double endFractionalPosition)
@@ -465,9 +465,9 @@ public class LaneChange implements Serializable
 
     /**
      * Checks whether the given GTU has sufficient space relative to a {@code Headway}.
-     * @param gtu LaneBasedGtu; gtu
-     * @param headway Headway; headway
-     * @return boolean; whether the given GTU has sufficient space relative to a {@code Headway}
+     * @param gtu gtu
+     * @param headway headway
+     * @return whether the given GTU has sufficient space relative to a {@code Headway}
      */
     public boolean checkRoom(final LaneBasedGtu gtu, final Headway headway)
     {
@@ -656,17 +656,17 @@ public class LaneChange implements Serializable
             /**
              * Attempts to derive a path. If the resulting path is shorter than {@code planDistance} (e.g. lane change towards
              * the inside of a curve), this method calls itself using a larger look-ahead distance.
-             * @param planDistance Length; plan distance
-             * @param meanSpeed Speed; mean speed during plan
-             * @param buffer double; buffer factor to assure sufficient path length is found, increased recursively
-             * @param width double; lateral deviation from from lanes at lane change end
-             * @param from LanePosition; current position on the from-lanes
-             * @param startPosition OrientedPoint2d; current 2D position
-             * @param fromLine OtsLine2d; from line
-             * @param toLine OtsLine2d; to line
-             * @param laneChangeDuration Duration; current considered duration of the entire lane change
-             * @param lcFraction double; lane change fraction at beginning of the plan
-             * @param dFraction double; additional lane change fraction to be made during the plan
+             * @param planDistance plan distance
+             * @param meanSpeed mean speed during plan
+             * @param buffer buffer factor to assure sufficient path length is found, increased recursively
+             * @param width lateral deviation from from lanes at lane change end
+             * @param from current position on the from-lanes
+             * @param startPosition current 2D position
+             * @param fromLine from line
+             * @param toLine to line
+             * @param laneChangeDuration current considered duration of the entire lane change
+             * @param lcFraction lane change fraction at beginning of the plan
+             * @param dFraction additional lane change fraction to be made during the plan
              * @return OtsLine2d a (partial) path for a lane change
              * @throws OtsGeometryException on wrong fractional position
              */
@@ -697,18 +697,18 @@ public class LaneChange implements Serializable
 
             /**
              * Returns the fractional lateral deviation given a fraction of lane change being completed.
-             * @param lcFraction double; fraction of lane change
-             * @return double; lateral deviation
+             * @param lcFraction fraction of lane change
+             * @return lateral deviation
              */
             protected abstract double lateralFraction(double lcFraction);
 
             /**
              * Returns the angle, relative to the lane center line, at the given cumulative length for a lane change of given
              * total length and lateral deviation.
-             * @param width double; lateral deviation from from lanes at lane change end
-             * @param cumulLcLength double; cumulative length (along from lanes) covered so far
-             * @param totalLcLength double; total (along from lanes) length to cover in lane change
-             * @return double; angle, relative to the lane center line
+             * @param width lateral deviation from from lanes at lane change end
+             * @param cumulLcLength cumulative length (along from lanes) covered so far
+             * @param totalLcLength total (along from lanes) length to cover in lane change
+             * @return angle, relative to the lane center line
              */
             protected abstract double angle(double width, double cumulLcLength, double totalLcLength);
         }
@@ -788,15 +788,15 @@ public class LaneChange implements Serializable
 
             /**
              * Transform lateral to longitudinal fraction.
-             * @param lateralFraction double; lateral fraction
-             * @return double; transformation of lateral to longitudinal fraction
+             * @param lateralFraction lateral fraction
+             * @return transformation of lateral to longitudinal fraction
              */
             abstract double longitudinalFraction(double lateralFraction);
 
             /**
              * Transform longitudinal to lateral fraction.
-             * @param longitudinalFraction double; longitudinal fraction
-             * @return double; transformation of longitudinal to lateral fraction
+             * @param longitudinalFraction longitudinal fraction
+             * @return transformation of longitudinal to lateral fraction
              */
             abstract double lateralFraction(double longitudinalFraction);
 
@@ -807,16 +807,16 @@ public class LaneChange implements Serializable
          * should return a valid path. This path should at least have a length of {@code planDistance}, unless the lane change
          * will be finished during the coming time step. In that case, the caller of this method is to lengthen the path along
          * the center line of the target lane.
-         * @param timeStep Duration; time step
-         * @param planDistance Length; distance covered during the operational plan
-         * @param meanSpeed Speed; mean speed during time step
-         * @param from LanePosition; current position on the from-lanes
-         * @param startPosition OrientedPoint2d; current 2D position
-         * @param laneChangeDirection LateralDirectionality; lane change direction
-         * @param fromLine OtsLine2d; from line
-         * @param toLine OtsLine2d; to line
-         * @param laneChangeDuration Duration; current considered duration of the entire lane change
-         * @param lcFraction double; fraction of lane change done so far
+         * @param timeStep time step
+         * @param planDistance distance covered during the operational plan
+         * @param meanSpeed mean speed during time step
+         * @param from current position on the from-lanes
+         * @param startPosition current 2D position
+         * @param laneChangeDirection lane change direction
+         * @param fromLine from line
+         * @param toLine to line
+         * @param laneChangeDuration current considered duration of the entire lane change
+         * @param lcFraction fraction of lane change done so far
          * @return OtsLine2d a (partial) path for a lane change
          * @throws OtsGeometryException on wrong fractional position
          */

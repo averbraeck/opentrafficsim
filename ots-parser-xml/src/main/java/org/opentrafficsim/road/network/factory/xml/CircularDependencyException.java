@@ -25,8 +25,8 @@ public class CircularDependencyException extends RuntimeException
 
     /**
      * Constructor with message and cause.
-     * @param message String; message
-     * @param cause Throwable; cause
+     * @param message message
+     * @param cause cause
      */
     public CircularDependencyException(final String message, final Throwable cause)
     {
@@ -35,7 +35,7 @@ public class CircularDependencyException extends RuntimeException
 
     /**
      * Constructor with message.
-     * @param message String; message
+     * @param message message
      */
     public CircularDependencyException(final String message)
     {
@@ -44,7 +44,7 @@ public class CircularDependencyException extends RuntimeException
 
     /**
      * Constructor with cause.
-     * @param cause Throwable; cause
+     * @param cause cause
      */
     public CircularDependencyException(final Throwable cause)
     {

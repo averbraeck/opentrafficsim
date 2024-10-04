@@ -51,8 +51,8 @@ public interface TacticalPlanner<G extends Gtu, P extends Perception<G>>
 
     /**
      * generate an operational plan, for now or for in the future.
-     * @param startTime Time; the time from which the new operational plan has to be operational
-     * @param locationAtStartTime OrientedPoint2d; the location of the GTU at the start time of the new plan
+     * @param startTime the time from which the new operational plan has to be operational
+     * @param locationAtStartTime the location of the GTU at the start time of the new plan
      * @return a new operational plan
      * @throws OperationalPlanException when there is a problem planning a path in the network
      * @throws GtuException when there is a problem with the state of the GTU when planning a path

@@ -20,16 +20,16 @@ import org.opentrafficsim.road.network.lane.Lane;
  */
 public interface LaneBasedObject extends LocatedObject
 {
-    
+
     /** @return The lane for which this is a sensor. */
     Lane getLane();
 
     /** @return the position (between 0.0 and the length of the Lane) of the sensor on the design line of the lane. */
     Length getLongitudinalPosition();
-    
+
     /**
      * Returns the length of the object. The default value is zero.
-     * @return Length; length of the object.
+     * @return length of the object.
      */
     default Length getLength()
     {
@@ -42,8 +42,8 @@ public interface LaneBasedObject extends LocatedObject
 
     /**
      * Make a geometry perpendicular to the center line of the lane with a length 90% of the width of the lane.
-     * @param lane Lane; the lane for which to make a perpendicular geometry
-     * @param longitudinalPosition Length; the position on the lane
+     * @param lane the lane for which to make a perpendicular geometry
+     * @param longitudinalPosition the position on the lane
      * @return an OtsLine2d that describes the line
      */
     static PolyLine2d makeGeometry(final Lane lane, final Length longitudinalPosition)
@@ -53,9 +53,9 @@ public interface LaneBasedObject extends LocatedObject
 
     /**
      * Make a geometry perpendicular to the center line of the lane with a length of given fraction of the width of the lane.
-     * @param lane Lane; the lane for which to make a perpendicular geometry
-     * @param longitudinalPosition Length; the position on the lane
-     * @param relativeWidth double; lane width to use
+     * @param lane the lane for which to make a perpendicular geometry
+     * @param longitudinalPosition the position on the lane
+     * @param relativeWidth lane width to use
      * @return an OtsLine2d that describes the line
      */
     static PolyLine2d makeGeometry(final Lane lane, final Length longitudinalPosition, final double relativeWidth)

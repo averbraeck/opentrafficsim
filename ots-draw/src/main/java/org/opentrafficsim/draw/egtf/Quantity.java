@@ -32,8 +32,8 @@ public class Quantity<T extends Number, K>
 
     /**
      * Constructor.
-     * @param name String; name
-     * @param converter Converter&lt;K&gt;; converter for output format
+     * @param name name
+     * @param converter converter for output format
      */
     public Quantity(final String name, final Converter<K> converter)
     {
@@ -42,9 +42,9 @@ public class Quantity<T extends Number, K>
 
     /**
      * Constructor. Protected so only the default SPEED_SI quantity is speed.
-     * @param name String; name
-     * @param speed boolean; whether this quantity is speed
-     * @param converter Converter&lt;K&gt;; converter for output format
+     * @param name name
+     * @param speed whether this quantity is speed
+     * @param converter converter for output format
      */
     protected Quantity(final String name, final boolean speed, final Converter<K> converter)
     {
@@ -55,7 +55,7 @@ public class Quantity<T extends Number, K>
 
     /**
      * Returns a quantity with {@code double[][]} containing SI values as output format.
-     * @param name String; name
+     * @param name name
      * @return quantity with {@code double[][]} containing SI values as output format
      */
     public static Quantity<?, double[][]> si(final String name)
@@ -65,7 +65,7 @@ public class Quantity<T extends Number, K>
 
     /**
      * Returns the name.
-     * @return String; name
+     * @return name
      */
     public final String getName()
     {
@@ -74,7 +74,7 @@ public class Quantity<T extends Number, K>
 
     /**
      * Returns whether this quantity is speed.
-     * @return boolean; whether this quantity is speed
+     * @return whether this quantity is speed
      */
     final boolean isSpeed()
     {
@@ -83,8 +83,8 @@ public class Quantity<T extends Number, K>
 
     /**
      * Converts the filtered data to an output format.
-     * @param data double[][]; filtered data
-     * @return K; output data
+     * @param data filtered data
+     * @return output data
      */
     final K convert(final double[][] data)
     {
@@ -148,7 +148,7 @@ public class Quantity<T extends Number, K>
 
         /**
          * Constructor.
-         * @param name String; String name
+         * @param name String name
          */
         SI(final String name)
         {

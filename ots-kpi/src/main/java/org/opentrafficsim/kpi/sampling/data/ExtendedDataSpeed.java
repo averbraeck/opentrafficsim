@@ -22,8 +22,8 @@ public abstract class ExtendedDataSpeed<G extends GtuData> extends ExtendedDataF
 
     /**
      * Constructor setting the id.
-     * @param id String; id
-     * @param description String; description
+     * @param id id
+     * @param description description
      */
     public ExtendedDataSpeed(final String id, final String description)
     {

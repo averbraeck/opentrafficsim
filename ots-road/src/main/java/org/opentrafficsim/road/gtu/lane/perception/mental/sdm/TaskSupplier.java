@@ -20,8 +20,8 @@ public interface TaskSupplier
 
     /**
      * Returns a task for the given GTU.
-     * @param gtu LaneBasedGtu; gtu
-     * @return Task; task for given GTU
+     * @param gtu gtu
+     * @return task for given GTU
      */
     Task getTask(LaneBasedGtu gtu);
 
@@ -38,8 +38,8 @@ public interface TaskSupplier
 
         /**
          * Constructor.
-         * @param id String; id
-         * @param taskDemand double; task demand
+         * @param id id
+         * @param taskDemand task demand
          */
         public Constant(final String id, final double taskDemand)
         {

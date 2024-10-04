@@ -98,8 +98,8 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
 
     /**
      * constructs a new AnimationPanel.
-     * @param homeExtent Bounds2d; the extent of the panel
-     * @param simulator SimulatorInterface&lt;?,?,?&gt;; the simulator of which we want to know the events for animation
+     * @param homeExtent the extent of the panel
+     * @param simulator the simulator of which we want to know the events for animation
      * @throws RemoteException on network error for one of the listeners
      */
     public HtmlAnimationPanel(final Bounds2d homeExtent, final OtsSimulatorInterface simulator) throws RemoteException
@@ -155,7 +155,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
 
     /**
      * Test whether the element needs to be shown on the screen or not.
-     * @param element Renderable2dInterface&lt;? extends Locatable&gt;; the renderable element to test
+     * @param element the renderable element to test
      * @return whether the element needs to be shown or not
      */
     public boolean isShowElement(final Renderable2dInterface<? extends Locatable> element)
@@ -166,7 +166,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
     /**
      * Test whether a certain class needs to be shown on the screen or not. The class needs to implement Locatable, otherwise it
      * cannot be shown at all.
-     * @param locatableClass Class&lt;? extends Locatable&gt;; the class to test
+     * @param locatableClass the class to test
      * @return whether the class needs to be shown or not
      */
     public boolean isShowClass(final Class<? extends Locatable> locatableClass)
@@ -253,7 +253,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
 
     /**
      * Add a locatable object to the animation.
-     * @param element Renderable2dInterface&lt;? extends Locatable&gt;; the element to add to the animation
+     * @param element the element to add to the animation
      */
     public void objectAdded(final Renderable2dInterface<? extends Locatable> element)
     {
@@ -266,7 +266,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
 
     /**
      * Remove a locatable object from the animation.
-     * @param element Renderable2dInterface&lt;? extends Locatable&gt;; the element to add to the animation
+     * @param element the element to add to the animation
      */
     public void objectRemoved(final Renderable2dInterface<? extends Locatable> element)
     {
@@ -279,7 +279,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
 
     /**
      * Calculate the full extent based on the current positions of the objects.
-     * @return Bounds2d; the full extent of the animation.
+     * @return the full extent of the animation.
      */
     public synchronized Bounds2d fullExtent()
     {
@@ -330,7 +330,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
 
     /**
      * Set a class to be shown in the animation to true.
-     * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the animation has to be shown.
+     * @param locatableClass the class for which the animation has to be shown.
      */
     public void showClass(final Class<? extends Locatable> locatableClass)
     {
@@ -342,7 +342,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
 
     /**
      * Set a class to be hidden in the animation to true.
-     * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the animation has to be hidden.
+     * @param locatableClass the class for which the animation has to be hidden.
      */
     public void hideClass(final Class<? extends Locatable> locatableClass)
     {
@@ -354,8 +354,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
 
     /**
      * Toggle a class to be displayed in the animation to its reverse value.
-     * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which a visible animation has to be turned off or
-     *            vice versa.
+     * @param locatableClass the class for which a visible animation has to be turned off or vice versa.
      */
     public void toggleClass(final Class<? extends Locatable> locatableClass)
     {
@@ -394,7 +393,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
     }
 
     /**
-     * @param dragLineEnabled boolean; the dragLineEnabled to set.
+     * @param dragLineEnabled the dragLineEnabled to set.
      */
     public final void setDragLineEnabled(final boolean dragLineEnabled)
     {
@@ -407,10 +406,10 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
 
     /**
      * Add a button for toggling an animatable class on or off.
-     * @param name String; the name of the button
-     * @param locatableClass Class&lt;? extends Locatable&gt;; the class for which the button holds (e.g., GTU.class)
-     * @param toolTipText String; the tool tip text to show when hovering over the button
-     * @param initiallyVisible boolean; whether the class is initially shown or not
+     * @param name the name of the button
+     * @param locatableClass the class for which the button holds (e.g., GTU.class)
+     * @param toolTipText the tool tip text to show when hovering over the button
+     * @param initiallyVisible whether the class is initially shown or not
      */
     public final void addToggleAnimationButtonText(final String name, final Class<? extends Locatable> locatableClass,
             final String toolTipText, final boolean initiallyVisible)
@@ -432,7 +431,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
 
     /**
      * Show a Locatable class based on the name.
-     * @param name String; the name of the class to show
+     * @param name the name of the class to show
      */
     public final void showClass(final String name)
     {
@@ -441,7 +440,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
 
     /**
      * Hide a Locatable class based on the name.
-     * @param name String; the name of the class to hide
+     * @param name the name of the class to hide
      */
     public final void hideClass(final String name)
     {
@@ -450,7 +449,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
 
     /**
      * Add a text to explain animatable classes.
-     * @param text String; the text to show
+     * @param text the text to show
      */
     public final void addToggleText(final String text)
     {
@@ -459,9 +458,9 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
 
     /**
      * Add buttons for toggling all GIS layers on or off.
-     * @param header String; the name of the group of layers
-     * @param gisMap GisRenderable2d; the GIS map for which the toggles have to be added
-     * @param toolTipText String; the tool tip text to show when hovering over the button
+     * @param header the name of the group of layers
+     * @param gisMap the GIS map for which the toggles have to be added
+     * @param toolTipText the tool tip text to show when hovering over the button
      */
     public final void addAllToggleGISButtonText(final String header, final GisRenderable2d gisMap, final String toolTipText)
     {
@@ -482,10 +481,10 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
 
     /**
      * Add a button to toggle a GIS Layer on or off.
-     * @param layerName String; the name of the layer
-     * @param displayName String; the name to display next to the tick box
-     * @param gisMap GisRenderable2d; the map
-     * @param toolTipText String; the tool tip text
+     * @param layerName the name of the layer
+     * @param displayName the name to display next to the tick box
+     * @param gisMap the map
+     * @param toolTipText the tool tip text
      */
     public final void addToggleGISButtonText(final String layerName, final String displayName, final GisRenderable2d gisMap,
             final String toolTipText)
@@ -498,7 +497,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
 
     /**
      * Set a GIS layer to be shown in the animation to true.
-     * @param layerName String; the name of the GIS-layer that has to be shown.
+     * @param layerName the name of the GIS-layer that has to be shown.
      */
     public final void showGISLayer(final String layerName)
     {
@@ -519,7 +518,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
 
     /**
      * Set a GIS layer to be hidden in the animation to true.
-     * @param layerName String; the name of the GIS-layer that has to be hidden.
+     * @param layerName the name of the GIS-layer that has to be hidden.
      */
     public final void hideGISLayer(final String layerName)
     {
@@ -540,7 +539,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
 
     /**
      * Toggle a GIS layer to be displayed in the animation to its reverse value.
-     * @param layerName String; the name of the GIS-layer that has to be turned off or vice versa.
+     * @param layerName the name of the GIS-layer that has to be turned off or vice versa.
      */
     public final void toggleGISLayer(final String layerName)
     {

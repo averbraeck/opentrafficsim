@@ -53,13 +53,13 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
 
     /**
      * Constructor with specified paint scale.
-     * @param caption String; caption
-     * @param scheduler PlotScheduler; scheduler.
-     * @param dataPool ContourDataSource; data pool
-     * @param paintScale BoundsPaintScale; paint scale
-     * @param legendStep Z; increment between color legend entries
-     * @param legendFormat String; format string for the captions in the color legend
-     * @param valueFormat String; format string used to create status label (under the mouse)
+     * @param caption caption
+     * @param scheduler scheduler.
+     * @param dataPool data pool
+     * @param paintScale paint scale
+     * @param legendStep increment between color legend entries
+     * @param legendFormat format string for the captions in the color legend
+     * @param valueFormat format string used to create status label (under the mouse)
      */
     public AbstractContourPlot(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool,
             final BoundsPaintScale paintScale, final Z legendStep, final String legendFormat, final String valueFormat)
@@ -81,14 +81,14 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
 
     /**
      * Constructor with default paint scale.
-     * @param caption String; caption
-     * @param scheduler PlotScheduler; scheduler.
-     * @param dataPool ContourDataSource; data pool
-     * @param legendStep Z; increment between color legend entries
-     * @param legendFormat String; format string for the captions in the color legend
-     * @param minValue Z; minimum value
-     * @param maxValue Z; maximum value
-     * @param valueFormat String; format string used to create status label (under the mouse)
+     * @param caption caption
+     * @param scheduler scheduler.
+     * @param dataPool data pool
+     * @param legendStep increment between color legend entries
+     * @param legendFormat format string for the captions in the color legend
+     * @param minValue minimum value
+     * @param maxValue maximum value
+     * @param valueFormat format string used to create status label (under the mouse)
      */
     @SuppressWarnings("parameternumber")
     public AbstractContourPlot(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool,
@@ -99,9 +99,9 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
 
     /**
      * Creates a default paint scale from red, via yellow to green.
-     * @param minValue Number; minimum value
-     * @param maxValue Number; maximum value
-     * @return BoundsPaintScale; default paint scale
+     * @param minValue minimum value
+     * @param maxValue maximum value
+     * @return default paint scale
      */
     private static BoundsPaintScale createPaintScale(final Number minValue, final Number maxValue)
     {
@@ -115,7 +115,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
 
     /**
      * Create a chart.
-     * @return JFreeChart; chart
+     * @return chart
      */
     private JFreeChart createChart()
     {
@@ -140,7 +140,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
 
     /**
      * Returns the time granularity, just for information.
-     * @return double; time granularity
+     * @return time granularity
      */
     public double getTimeGranularity()
     {
@@ -149,7 +149,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
 
     /**
      * Returns the space granularity, just for information.
-     * @return double; space granularity
+     * @return space granularity
      */
     public double getSpaceGranularity()
     {
@@ -159,7 +159,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
     /**
      * Sets the correct space granularity radio button to selected. This is done from a {@code DataPool} to keep multiple plots
      * consistent.
-     * @param granularity double; space granularity
+     * @param granularity space granularity
      */
     public final void setSpaceGranularity(final double granularity)
     {
@@ -170,7 +170,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
     /**
      * Sets the correct time granularity radio button to selected. This is done from a {@code DataPool} to keep multiple plots
      * consistent.
-     * @param granularity double; time granularity
+     * @param granularity time granularity
      */
     public final void setTimeGranularity(final double granularity)
     {
@@ -181,7 +181,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
     /**
      * Sets the check box for interpolated rendering and block renderer setting. This is done from a {@code DataPool} to keep
      * multiple plots consistent.
-     * @param interpolate boolean; selected or not
+     * @param interpolate selected or not
      */
     public final void setInterpolation(final boolean interpolate)
     {
@@ -192,7 +192,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
 
     /**
      * Returns the data pool for sub classes.
-     * @return ContourDataSource; data pool for subclasses
+     * @return data pool for subclasses
      */
     public final ContourDataSource getDataPool()
     {
@@ -287,9 +287,9 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
 
     /**
      * Returns the status label when the mouse is over the given location.
-     * @param domainValue double; domain value (x-axis)
-     * @param rangeValue double; range value (y-axis)
-     * @return String; status label when the mouse is over the given location
+     * @param domainValue domain value (x-axis)
+     * @param rangeValue range value (y-axis)
+     * @return status label when the mouse is over the given location
      */
     @Override
     public final String getStatusLabel(final double domainValue, final double rangeValue)
@@ -318,23 +318,23 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
 
     /**
      * Obtain value for cell from the data pool.
-     * @param item int; item number
-     * @param cellLength double; cell length
-     * @param cellSpan double; cell duration
-     * @return double; value for cell from the data pool
+     * @param item item number
+     * @param cellLength cell length
+     * @param cellSpan cell duration
+     * @return value for cell from the data pool
      */
     protected abstract double getValue(int item, double cellLength, double cellSpan);
 
     /**
      * Scale the value from SI to the desired unit for users.
-     * @param si double; SI value
-     * @return double; scaled value
+     * @param si SI value
+     * @return scaled value
      */
     protected abstract double scale(double si);
 
     /**
      * Returns the contour data type for use in a {@code ContourDataSource}.
-     * @return CountorDataType; contour data type
+     * @return contour data type
      */
     protected abstract ContourDataType<Z, ?> getContourDataType();
 

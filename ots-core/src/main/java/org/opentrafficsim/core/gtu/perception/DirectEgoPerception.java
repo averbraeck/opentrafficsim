@@ -27,7 +27,7 @@ public class DirectEgoPerception<G extends Gtu, P extends Perception<G>> extends
 
     /**
      * Constructor.
-     * @param perception P; perception
+     * @param perception perception
      */
     public DirectEgoPerception(final P perception)
     {

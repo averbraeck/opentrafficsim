@@ -20,7 +20,7 @@ public class AnimationPriorityData implements PriorityData
 
     /**
      * Constructor.
-     * @param link CrossSectionLink; link.
+     * @param link link.
      */
     public AnimationPriorityData(final CrossSectionLink link)
     {

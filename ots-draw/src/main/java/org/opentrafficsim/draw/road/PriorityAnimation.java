@@ -48,8 +48,8 @@ public class PriorityAnimation extends OtsRenderable<PriorityData>
 
     /**
      * Constructor.
-     * @param source PriorityData; source.
-     * @param contextProvider Contextualized; contextualized.
+     * @param source source.
+     * @param contextProvider contextualized.
      */
     public PriorityAnimation(final PriorityData source, final Contextualized contextProvider)
     {
@@ -115,11 +115,11 @@ public class PriorityAnimation extends OtsRenderable<PriorityData>
 
     /**
      * Paint octagon.
-     * @param graphics Graphics2D; graphics.
-     * @param radius double; radius (half width).
-     * @param color Color; color.
-     * @param fill boolean; fill (or draw line).
-     * @param shadow boolean; whether this is shadow.
+     * @param graphics graphics.
+     * @param radius radius (half width).
+     * @param color color.
+     * @param fill fill (or draw line).
+     * @param shadow whether this is shadow.
      */
     private void paintOctagon(final Graphics2D graphics, final double radius, final Color color, final boolean fill,
             final boolean shadow)
@@ -149,11 +149,11 @@ public class PriorityAnimation extends OtsRenderable<PriorityData>
             graphics.draw(path);
         }
     }
-    
+
     /**
      * Paints a bus.
-     * @param graphics Graphics2D; graphics.
-     * @param blue Color; color used for blue background.
+     * @param graphics graphics.
+     * @param blue color used for blue background.
      */
     private void paintBus(final Graphics2D graphics, final Color blue)
     {
@@ -199,11 +199,11 @@ public class PriorityAnimation extends OtsRenderable<PriorityData>
 
     /**
      * Paint diamond.
-     * @param graphics Graphics2D; graphics.
-     * @param radius double; radius (half width).
-     * @param color Color; color.
-     * @param fill boolean; fill (or draw line).
-     * @param shadow boolean; whether this is shadow.
+     * @param graphics graphics.
+     * @param radius radius (half width).
+     * @param color color.
+     * @param fill fill (or draw line).
+     * @param shadow whether this is shadow.
      */
     private void paintDiamond(final Graphics2D graphics, final double radius, final Color color, final boolean fill,
             final boolean shadow)
@@ -235,11 +235,11 @@ public class PriorityAnimation extends OtsRenderable<PriorityData>
 
     /**
      * Paint triangle.
-     * @param graphics Graphics2D; graphics.
-     * @param radius double; radius (half width).
-     * @param color Color; color.
-     * @param fill boolean; fill (or draw line).
-     * @param shadow boolean; whether this is shadow.
+     * @param graphics graphics.
+     * @param radius radius (half width).
+     * @param color color.
+     * @param fill fill (or draw line).
+     * @param shadow whether this is shadow.
      */
     private void paintTriangle(final Graphics2D graphics, final double radius, final Color color, final boolean fill,
             final boolean shadow)
@@ -268,11 +268,11 @@ public class PriorityAnimation extends OtsRenderable<PriorityData>
 
     /**
      * Paint string.
-     * @param graphics Graphicsd2; graphics.
-     * @param text String; text.
-     * @param color Color; color.
-     * @param fontSize float; font size.
-     * @param dy float; distance down from object location.
+     * @param graphics graphics.
+     * @param text text.
+     * @param color color.
+     * @param fontSize font size.
+     * @param dy distance down from object location.
      */
     private void paintString(final Graphics2D graphics, final String text, final Color color, final float fontSize,
             final float dy)
@@ -332,37 +332,37 @@ public class PriorityAnimation extends OtsRenderable<PriorityData>
 
         /**
          * Returns whether the priority is all stop.
-         * @return boolean; whether the priority is all stop.
+         * @return whether the priority is all stop.
          */
         boolean isAllStop();
 
         /**
          * Returns whether the priority is bus stop.
-         * @return boolean; whether the priority is bus stop.
+         * @return whether the priority is bus stop.
          */
         boolean isBusStop();
 
         /**
          * Returns whether the priority is none.
-         * @return boolean; whether the priority is none.
+         * @return whether the priority is none.
          */
         boolean isNone();
 
         /**
          * Returns whether the priority is priority.
-         * @return boolean; whether the priority is priority.
+         * @return whether the priority is priority.
          */
         boolean isPriority();
 
         /**
          * Returns whether the priority is stop.
-         * @return boolean; whether the priority is stop.
+         * @return whether the priority is stop.
          */
         boolean isStop();
 
         /**
          * Returns whether the priority is yield.
-         * @return boolean; whether the priority is yield.
+         * @return whether the priority is yield.
          */
         boolean isYield();
     }

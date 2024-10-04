@@ -21,9 +21,9 @@ public class RouteData
     private final String endNode;
 
     /**
-     * @param routeName String; name of the route
-     * @param startNode String; data of the start node of the route
-     * @param endNode String; data of the end node of the route
+     * @param routeName name of the route
+     * @param startNode data of the start node of the route
+     * @param endNode data of the end node of the route
      */
     public RouteData(final String routeName, final String startNode, final String endNode)
     {

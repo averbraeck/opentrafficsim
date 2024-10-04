@@ -21,8 +21,8 @@ public class ContinuousDistElectricalCharge extends ContinuousDistDoubleScalar.R
     private static final long serialVersionUID = 20180829L;
 
     /**
-     * @param distribution DistContinuous; distribution
-     * @param unit ElectricalChargeUnit; units
+     * @param distribution distribution
+     * @param unit units
      */
     public ContinuousDistElectricalCharge(final DistContinuous distribution, final ElectricalChargeUnit unit)
     {

@@ -34,8 +34,8 @@ public class RoadLayoutListener extends ChangeListener<Map<XsdTreeNode, CseData>
 
     /**
      * Constructor.
-     * @param layoutNode XsdTreeNode; node of the layout, either in definitions or under a link.
-     * @param eval Supplier&lt;Eval&gt;; supplier of expression evaluator, either from the main map, or from a map link data.
+     * @param layoutNode node of the layout, either in definitions or under a link.
+     * @param eval supplier of expression evaluator, either from the main map, or from a map link data.
      */
     public RoadLayoutListener(final XsdTreeNode layoutNode, final Supplier<Eval> eval)
     {
@@ -44,8 +44,8 @@ public class RoadLayoutListener extends ChangeListener<Map<XsdTreeNode, CseData>
 
     /**
      * Obtain a {@code Length} from the value of the given node. This method will return {@code null} for invalid values.
-     * @param valueNode XsdTreeNode; node with value that is a length.
-     * @return Length; value of the given node.
+     * @param valueNode node with value that is a length.
+     * @return value of the given node.
      */
     private Length getLength(final XsdTreeNode valueNode)
     {
@@ -77,7 +77,7 @@ public class RoadLayoutListener extends ChangeListener<Map<XsdTreeNode, CseData>
     /**
      * Returns the offsets of the layout this listener is listening to. This is cached so defined road layouts can be
      * efficiently used.
-     * @return Map&lt;XsdTreeNode, CseData&gt;; offsets.
+     * @return offsets.
      */
     @Override
     Map<XsdTreeNode, CseData> calculateData()

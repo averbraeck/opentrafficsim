@@ -25,7 +25,7 @@ public final class Resource
 
     /**
      * Obtains stream for resource, either in IDE or java.
-     * @param name String; name of resource
+     * @param name name of resource
      * @return the resolved input stream
      */
     public static InputStream getResourceAsStream(final String name)
@@ -42,10 +42,10 @@ public final class Resource
         }
         throw new RuntimeException("Unable to load resource " + name);
     }
-    
+
     /**
      * Obtains URI for resource, either in IDE or java.
-     * @param name String; name of resource
+     * @param name name of resource
      * @return the resolved URI
      * @throws URISyntaxException when the file name is malformed.
      */
@@ -62,7 +62,7 @@ public final class Resource
             return Resource.class.getResource("/resources" + name).toURI();
         }
         throw new RuntimeException("Unable to load resource " + name);
-        
+
     }
 
 }

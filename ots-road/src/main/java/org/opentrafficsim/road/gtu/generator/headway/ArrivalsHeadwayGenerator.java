@@ -39,10 +39,10 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
     private boolean first = true;
 
     /**
-     * @param arrivals Arrivals; arrivals
-     * @param simulator OtsSimulatorInterface; simulator
-     * @param stream StreamInterface; random stream to draw headway
-     * @param distribution HeadwayDistribution; random headway distribution
+     * @param arrivals arrivals
+     * @param simulator simulator
+     * @param stream random stream to draw headway
+     * @param distribution random headway distribution
      */
     public ArrivalsHeadwayGenerator(final Arrivals arrivals, final OtsSimulatorInterface simulator,
             final StreamInterface stream, final HeadwayDistribution distribution)
@@ -82,7 +82,7 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
      * (linear demand), a vehicle will simply arrive between 299s and 300s.</li>
      * </ul>
      * <br>
-     * @return Duration; new headway
+     * @return new headway
      * @throws ProbabilityException if the stored collection is empty
      * @throws ParameterException in case of a parameter exception
      */
@@ -310,7 +310,7 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
         /**
          * Draws a randomized headway factor. The average value returned is always 1.0. The returned value is applied on the
          * demand pattern by (reversed) integration to derive actual headways.
-         * @param randomStream StreamInterface; random number stream
+         * @param randomStream random number stream
          * @return randomized headway factor
          */
         double draw(StreamInterface randomStream);

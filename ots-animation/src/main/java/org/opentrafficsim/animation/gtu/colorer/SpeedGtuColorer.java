@@ -33,7 +33,7 @@ public class SpeedGtuColorer implements GtuColorer, Serializable
 
     /**
      * Construct a new SpeedGtuColorer.
-     * @param maximumSpeed Speed; the speed at (and above) which the returned color will be green
+     * @param maximumSpeed the speed at (and above) which the returned color will be green
      */
     public SpeedGtuColorer(final Speed maximumSpeed)
     {

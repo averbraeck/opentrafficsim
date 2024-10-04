@@ -49,8 +49,8 @@ public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDet
 
     /**
      * Construct a TrafficLightDetectorAnimation.
-     * @param detector TrafficLightSensor; the traffic light detector that will be animated
-     * @param contextualized Contextualized; context provider
+     * @param detector the traffic light detector that will be animated
+     * @param contextualized context provider
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
@@ -105,13 +105,13 @@ public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDet
         private static final long serialVersionUID = 20161211L;
 
         /**
-         * @param source TrafficLightDetectorData; the object for which the text is displayed
-         * @param text Supplier&lt;String&gt;; the text to display
-         * @param dx float; the horizontal movement of the text, in meters
-         * @param dy float; the vertical movement of the text, in meters
-         * @param textPlacement TextAlignment; where to place the text
-         * @param color Color; the color of the text
-         * @param contextualized Contextualized; context provider
+         * @param source the object for which the text is displayed
+         * @param text the text to display
+         * @param dx the horizontal movement of the text, in meters
+         * @param dy the vertical movement of the text, in meters
+         * @param textPlacement where to place the text
+         * @param color the color of the text
+         * @param contextualized context provider
          * @throws NamingException when animation context cannot be created or retrieved
          * @throws RemoteException - when remote context cannot be found
          */
@@ -143,13 +143,13 @@ public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDet
     {
         /**
          * Returns the geometry.
-         * @return PolyLine2d; geometry.
+         * @return geometry.
          */
         PolyLine2d getGeometry();
 
         /**
          * Returns whether the detector is occupied.
-         * @return boolean; whether the detector is occupied.
+         * @return whether the detector is occupied.
          */
         boolean getOccupancy();
 

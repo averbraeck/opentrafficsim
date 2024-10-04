@@ -67,7 +67,6 @@ public class SplitColorer implements GtuColorer
         try
         {
             refPos = laneGtu.getReferencePosition();
-
         }
         catch (GtuException exception)
         {
@@ -96,7 +95,6 @@ public class SplitColorer implements GtuColorer
             }
             catch (NetworkException exception)
             {
-                // System.err.println("Network exception while defining split color for GTU.");
                 return UNKNOWN;
             }
         }
@@ -108,17 +106,19 @@ public class SplitColorer implements GtuColorer
             return UNKNOWN;
         }
 
-        // split, sort next links
+        // split
         try
         {
-            double preAngle = link.getDesignLine().getLocationFraction(1.0).getDirZ();
-            Point2d pre = link.getDesignLine().getLast();
-            List<Double> angles = new ArrayList<>();
-            List<Link> links = new ArrayList<>();
+            double preAngle = preLink.getDesignLine().getLocationFraction(1.0).getDirZ();
+            double angleLeft = 0.0;
+            double angleRight = 0.0;
+            Link linkLeft = null;
+            Link linkRight = null;
             for (Link nextLink : nextLinks)
             {
-                double angle = getAngle(pre, nextLink.getStartNode().equals(link.getStartNode())
-                        ? nextLink.getDesignLine().get(1) : nextLink.getDesignLine().get(nextLink.getDesignLine().size() - 2));
+                double angle = nextLink.getStartNode().equals(link.getStartNode())
+                        ? nextLink.getDesignLine().getLocationFraction(0.0).getDirZ()
+                        : nextLink.getDesignLine().getLocationFraction(1.0).getDirZ() + Math.PI;
                 angle -= preAngle; // difference with from
                 while (angle < -Math.PI)
                 {
@@ -128,35 +128,22 @@ public class SplitColorer implements GtuColorer
                 {
                     angle -= Math.PI * 2;
                 }
-                if (angles.isEmpty() || angle < angles.get(0))
+                if (angle < angleRight)
                 {
-                    angles.add(0, angle);
-                    links.add(0, nextLink);
+                    angleRight = angle;
+                    linkRight = nextLink;
                 }
-                else if (angle > angles.get(angles.size() - 1))
+                else if (angle > angleLeft)
                 {
-                    angles.add(angle);
-                    links.add(nextLink);
-                }
-                else
-                {
-                    for (double a : angles)
-                    {
-                        if (a > angle)
-                        {
-                            int index = angles.indexOf(angle);
-                            angles.add(index, angle);
-                            links.add(index, nextLink);
-                        }
-                    }
+                    angleLeft = angle;
+                    linkLeft = nextLink;
                 }
             }
-            int index = links.indexOf(link);
-            if (index == 0)
+            if (link.equals(linkRight))
             {
                 return RIGHT;
             }
-            else if (index == links.size() - 1)
+            else if (link.equals(linkLeft))
             {
                 return LEFT;
             }
@@ -167,17 +154,6 @@ public class SplitColorer implements GtuColorer
             // should not happen as the fractions are 0.0 and 1.0
             throw new RuntimeException("Angle could not be calculated.", exception);
         }
-    }
-
-    /**
-     * Returns the angle between two points.
-     * @param from Point2d; from point
-     * @param to Point2d; to point
-     * @return angle between two points
-     */
-    private double getAngle(final Point2d from, final Point2d to)
-    {
-        return Math.atan2(to.x - from.x, to.y - from.y);
     }
 
     /** {@inheritDoc} */

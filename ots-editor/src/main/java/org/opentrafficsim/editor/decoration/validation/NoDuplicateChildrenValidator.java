@@ -39,9 +39,9 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecoratorRemove im
 
     /**
      * Constructor.
-     * @param editor OtsEditor; editor.
-     * @param path String; path location of nodes to attach to, i.e. the parent of the nodes that are potentially duplicate.
-     * @param children String...; children each of which may not have duplicates. Use none to check all children.
+     * @param editor editor.
+     * @param path path location of nodes to attach to, i.e. the parent of the nodes that are potentially duplicate.
+     * @param children children each of which may not have duplicates. Use none to check all children.
      */
     public NoDuplicateChildrenValidator(final OtsEditor editor, final String path, final String... children)
     {
@@ -119,8 +119,8 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecoratorRemove im
 
     /**
      * Returns whether the nodes are equal by path string and value.
-     * @param node1 XsdTreeNode; node 1.
-     * @param node2 XsdTreeNode; node 2.
+     * @param node1 node 1.
+     * @param node2 node 2.
      * @return whether the nodes are equal by path string and value.
      */
     private final static boolean nodesEqual(final XsdTreeNode node1, final XsdTreeNode node2)

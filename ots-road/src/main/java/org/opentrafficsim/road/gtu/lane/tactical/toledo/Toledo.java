@@ -80,8 +80,8 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
     /**
      * Constructor.
-     * @param carFollowingModel CarFollowingModel; Car-following model.
-     * @param gtu LaneBasedGtu; GTU
+     * @param carFollowingModel Car-following model.
+     * @param gtu GTU
      */
     public Toledo(final CarFollowingModel carFollowingModel, final LaneBasedGtu gtu)
     {
@@ -285,10 +285,10 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
     /**
      * Returns info regarding a gap.
-     * @param params Parameters; parameters
-     * @param perception LanePerception; perception
-     * @param gap Gap; gap
-     * @param lane RelativeLane; lane
+     * @param params parameters
+     * @param perception perception
+     * @param gap gap
+     * @param lane lane
      * @return utility of gap
      * @throws ParameterException if parameter is not given
      * @throws OperationalPlanException perception exception
@@ -463,13 +463,13 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
     /**
      * Returns info regarding gap-acceptance.
-     * @param gtu LaneBasedGtu; GTU
-     * @param params Parameters; parameters
-     * @param perception LanePerception; perception
-     * @param emuTg double; emu from target gap model
-     * @param eLead double; lead error
-     * @param eLag double; lag error
-     * @param lane RelativeLane; lane to evaluate
+     * @param gtu GTU
+     * @param params parameters
+     * @param perception perception
+     * @param emuTg emu from target gap model
+     * @param eLead lead error
+     * @param eLag lag error
+     * @param lane lane to evaluate
      * @return info regarding gap-acceptance
      * @throws ParameterException if parameter is not defined
      * @throws OperationalPlanException perception exception
@@ -555,12 +555,12 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
     /**
      * Returns the utility of a lane.
-     * @param gtu LaneBasedGtu; GTU
-     * @param params Parameters; parameters
-     * @param perception LanePerception; perception
-     * @param emuGa double; emu from gap acceptance model
-     * @param sli SpeedLimitInfo; speed limit info
-     * @param lane RelativeLane; lane to evaluate
+     * @param gtu GTU
+     * @param params parameters
+     * @param perception perception
+     * @param emuGa emu from gap acceptance model
+     * @param sli speed limit info
+     * @param lane lane to evaluate
      * @return utility of lane
      * @throws ParameterException if parameter is not defined
      * @throws OperationalPlanException perception exception
@@ -578,13 +578,13 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
         // get infrastructure info
         boolean takeNextOffRamp = false;
-//        for (LaneChangeInfo info : toledo.getInfrastructureLaneChangeInfo(RelativeLane.CURRENT))
-//        {
-//             if (info.getSplitNumber() == 1)
-//             {
-//             takeNextOffRamp = true;
-//             }
-//        }
+        // for (LaneChangeInfo info : toledo.getInfrastructureLaneChangeInfo(RelativeLane.CURRENT))
+        // {
+        // if (info.getSplitNumber() == 1)
+        // {
+        // takeNextOffRamp = true;
+        // }
+        // }
         int deltaNextExit = takeNextOffRamp ? 1 : 0;
 
         Length dExit;
@@ -705,9 +705,9 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
     /**
      * Returns the density in the given lane based on the following and leading vehicles.
-     * @param gtu LaneBasedGtu; subject GTU
-     * @param perception LanePerception; perception
-     * @param lane RelativeLane; lane to get density of
+     * @param gtu subject GTU
+     * @param perception perception
+     * @param lane lane to get density of
      * @return density in the given lane based on the following and leading vehicles
      * @throws OperationalPlanException perception exception
      */
@@ -738,7 +738,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
     /**
      * Returns the cumulative density function (CDF) at given value of the standard normal distribution.
-     * @param x double; value
+     * @param x value
      * @return cumulative density function (CDF) at given value of the standard normal distribution
      */
     private static double cumNormDist(final double x)
@@ -748,7 +748,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
     /**
      * Error function approximation using Horner's method.
-     * @param x double; value
+     * @param x value
      * @return error function approximation
      */
     private static double erf(final double x)
@@ -765,7 +765,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
     /**
      * Returns the probability density function (PDF) at given value of the standard normal distribution.
-     * @param x double; value
+     * @param x value
      * @return probability density function (PDF) at given value of the standard normal distribution
      */
     private static double normDist(final double x)
@@ -826,10 +826,10 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         private final Speed speed;
 
         /**
-         * @param utility double; utility of gap
-         * @param length Length; length of the gap
-         * @param distance Length; distance towards the gap
-         * @param speed Speed; speed of the vehicle in front or behind the gap, always the closest
+         * @param utility utility of gap
+         * @param length length of the gap
+         * @param distance distance towards the gap
+         * @param speed speed of the vehicle in front or behind the gap, always the closest
          */
         GapInfo(final double utility, final Length length, final Length distance, final Speed speed)
         {
@@ -905,8 +905,8 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         private final boolean acceptable;
 
         /**
-         * @param emu double; emu
-         * @param acceptable boolean; whether gap is acceptable
+         * @param emu emu
+         * @param acceptable whether gap is acceptable
          */
         GapAcceptanceInfo(final double emu, final boolean acceptable)
         {

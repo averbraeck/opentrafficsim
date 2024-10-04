@@ -36,7 +36,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
 
     /** */
     private static final long serialVersionUID = 20230224L;
-    
+
     /** Schema location. This can't be set in the editor, but when it is given within a loaded file, we also save it. */
     private String schemaLocation;
 
@@ -65,7 +65,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
 
     /**
      * Constructor for root node, based on a schema.
-     * @param schema XsdSchema; XSD Schema.
+     * @param schema XSD Schema.
      * @throws RemoteException when unable to listen for created nodes.
      */
     public XsdTreeNodeRoot(final Schema schema) throws RemoteException
@@ -77,7 +77,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
 
     /**
      * Returns the directory.
-     * @return String; directory.
+     * @return directory.
      */
     public String getDirectory()
     {
@@ -86,7 +86,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
 
     /**
      * Set the directory.
-     * @param directory String; directory.
+     * @param directory directory.
      */
     public void setDirectory(final String directory)
     {
@@ -98,7 +98,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
         // invalidate entire tree, as saving may trigger relative paths to includes to become ok, causing types to be found
         invalidateAll(this);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public XsdTreeNodeRoot getRoot()
@@ -130,7 +130,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
     /**
      * Sets up the listener that reports on new and removed nodes for each xsd:key, xsd:keyref and xsd:unique. It is up to each
      * key to determine whether the node is relevant for the key.
-     * @param schema XsdSchema; schema.
+     * @param schema schema.
      * @throws RemoteException when unable to listen for created nodes.
      */
     private void setupXPathListener(final Schema schema) throws RemoteException
@@ -171,7 +171,6 @@ public class XsdTreeNodeRoot extends XsdTreeNode
                 }
             }
         }
-        
 
         EventListener listener = new EventListener()
         {
@@ -210,16 +209,16 @@ public class XsdTreeNodeRoot extends XsdTreeNode
 
     /**
      * Sets the scehame location. This can't happen through the editor, but it may be set when loading a file.
-     * @param schemaLocation String; schema location.
+     * @param schemaLocation schema location.
      */
     public void setSchemaLocation(final String schemaLocation)
     {
         this.schemaLocation = schemaLocation;
     }
-    
+
     /**
-     * Returns the schema location. If it is not {@code null} it was set during file loading, and will be saved too. 
-     * @return String; schema location.
+     * Returns the schema location. If it is not {@code null} it was set during file loading, and will be saved too.
+     * @return schema location.
      */
     public String getSchemaLocation()
     {

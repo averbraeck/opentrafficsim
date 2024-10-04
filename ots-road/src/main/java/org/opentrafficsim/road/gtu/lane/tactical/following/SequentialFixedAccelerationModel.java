@@ -44,8 +44,8 @@ public class SequentialFixedAccelerationModel extends AbstractGtuFollowingModelM
 
     /**
      * Construct a SequentialFixedAccelerationModel with empty list of FixedAccelerationModel steps.
-     * @param simulator OtsSimulatorInterface; the simulator (needed to obtain the current simulation time)
-     * @param maximumSafeDeceleration Acceleration; specified maximum safe deceleration
+     * @param simulator the simulator (needed to obtain the current simulation time)
+     * @param maximumSafeDeceleration specified maximum safe deceleration
      */
     public SequentialFixedAccelerationModel(final OtsSimulatorInterface simulator, final Acceleration maximumSafeDeceleration)
     {
@@ -55,9 +55,9 @@ public class SequentialFixedAccelerationModel extends AbstractGtuFollowingModelM
 
     /**
      * Construct a SequentialFixedAccelerationModel and load it with a list of FixedAccelerationModel steps.
-     * @param simulator OtsSimulatorInterface; the simulator (needed to obtain the current simulation time)
-     * @param maximumSafeDeceleration Acceleration; specified maximum safe deceleration
-     * @param steps Set&lt;FixedAccelerationModel&gt;; the list of FixedAccelerationModel steps.
+     * @param simulator the simulator (needed to obtain the current simulation time)
+     * @param maximumSafeDeceleration specified maximum safe deceleration
+     * @param steps the list of FixedAccelerationModel steps.
      */
     public SequentialFixedAccelerationModel(final OtsSimulatorInterface simulator, final Acceleration maximumSafeDeceleration,
             final Set<FixedAccelerationModel> steps)
@@ -68,8 +68,8 @@ public class SequentialFixedAccelerationModel extends AbstractGtuFollowingModelM
 
     /**
      * Add one FixedAccelerationModel step to this SequentialFixedAccelerationModel.
-     * @param step FixedAccelerationModel; the step to add
-     * @return SequentialFixedAccelerationModel; this modified SequentialFixedAccelerationModel
+     * @param step the step to add
+     * @return this modified SequentialFixedAccelerationModel
      */
     public final SequentialFixedAccelerationModel addStep(final FixedAccelerationModel step)
     {
@@ -79,7 +79,7 @@ public class SequentialFixedAccelerationModel extends AbstractGtuFollowingModelM
 
     /**
      * Retrieve the number of FixedAccelerationModel steps in this SequentialFixedAccelerationModel.
-     * @return int; the number of steps in this SequentialFixedAccelerationModel
+     * @return the number of steps in this SequentialFixedAccelerationModel
      */
     public final int size()
     {
@@ -88,7 +88,7 @@ public class SequentialFixedAccelerationModel extends AbstractGtuFollowingModelM
 
     /**
      * Retrieve one FixedAccelerationModel step.
-     * @param index int; the index of the retrieved FixedAccelerationModel step
+     * @param index the index of the retrieved FixedAccelerationModel step
      * @return FixedAccelerationModel
      */
     public final FixedAccelerationModel get(final int index)
@@ -98,7 +98,7 @@ public class SequentialFixedAccelerationModel extends AbstractGtuFollowingModelM
 
     /**
      * Retrieve the simulation time at the end of the Nth step of this SequentialFixedAccelerationModel.
-     * @param index int; the step
+     * @param index the step
      * @return Time
      */
     public final Time timeAfterCompletionOfStep(final int index)
@@ -116,7 +116,7 @@ public class SequentialFixedAccelerationModel extends AbstractGtuFollowingModelM
 
     /**
      * Find the FixedAccelerationModel that starts at the current simulator time.
-     * @return FixedAccelerationModel; the FixedAccelerationModel that starts at the current simulator time
+     * @return the FixedAccelerationModel that starts at the current simulator time
      */
     private FixedAccelerationModel getAccelerationModel()
     {

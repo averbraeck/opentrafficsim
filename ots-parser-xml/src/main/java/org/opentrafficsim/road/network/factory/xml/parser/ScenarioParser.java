@@ -36,9 +36,9 @@ public class ScenarioParser
 
     /**
      * Parse input parameters for scenario.
-     * @param scenarios Scenarios; scenarios tag.
-     * @param scenario String; name of scenario tp parse.
-     * @return Eval; expression evaluator for all expression in XML.
+     * @param scenarios scenarios tag.
+     * @param scenario name of scenario tp parse.
+     * @return expression evaluator for all expression in XML.
      */
     public static Eval parseInputParameters(final Scenarios scenarios, final String scenario)
     {
@@ -74,8 +74,8 @@ public class ScenarioParser
 
     /**
      * Parse input parameters for scenario.
-     * @param scenariosWrapper ScenariosWrapper; scenarios wrapper, from XML or Xsd Tree nodes in editor.
-     * @return Eval; expression evaluator for all expression in XML.
+     * @param scenariosWrapper scenarios wrapper, from XML or Xsd Tree nodes in editor.
+     * @return expression evaluator for all expression in XML.
      */
     public static Eval parseInputParameters(final ScenariosWrapper scenariosWrapper)
     {
@@ -109,8 +109,8 @@ public class ScenarioParser
 
     /**
      * Creates parsable parameters from an InputParameters XML tag (default or of a scenario).
-     * @param inputParameters InputParameters; parameters XML tag.
-     * @return ITerable&lt;ParameterWrapper&gt;; parameters in generic form for parsing.
+     * @param inputParameters parameters XML tag.
+     * @return parameters in generic form for parsing.
      */
     private static Iterable<ParameterWrapper> getInputParameterIterator(final InputParameters inputParameters)
     {
@@ -199,9 +199,9 @@ public class ScenarioParser
 
     /**
      * Parse input parameters.
-     * @param inputParameters Iterable&lt;ParameterWrapper&gt;; xml tag.
-     * @param map Map&lt;String, Supplier&lt;?&gt;&gt;; map that underlines inputParameters.
-     * @param retrieve ParameterMap; value retrieval.
+     * @param inputParameters xml tag.
+     * @param map map that underlines inputParameters.
+     * @param retrieve value retrieval.
      */
     private static void parseInputParameters(final Iterable<ParameterWrapper> inputParameters,
             final Map<String, Supplier<?>> map, final ParameterMap retrieve)
@@ -218,9 +218,9 @@ public class ScenarioParser
 
     /**
      * Parse model ID referrals.
-     * @param scenario List&lt;ScenarioType&gt;; scenario
-     * @param demand Demand; demand
-     * @param eval Eval; expression evaluator.
+     * @param scenario scenario
+     * @param demand demand
+     * @param eval expression evaluator.
      * @return map from ID to ID
      */
     public static final Map<String, String> parseModelIdReferral(final List<ScenarioType> scenario, final Demand demand,
@@ -256,13 +256,13 @@ public class ScenarioParser
     {
         /**
          * Returns default parameters in generic form for parsing.
-         * @return Iterable&lt;ParameterWrapper&gt;; default parameters in generic form for parsing.
+         * @return default parameters in generic form for parsing.
          */
         Iterable<ParameterWrapper> getDefaultInputParameters();
 
         /**
          * Returns scenario parameters in generic form for parsing.
-         * @return Iterable&lt;ParameterWrapper&gt;; scenario parameters in generic form for parsing.
+         * @return scenario parameters in generic form for parsing.
          */
         Iterable<ParameterWrapper> getScenarioInputParameters();
     }
@@ -275,8 +275,8 @@ public class ScenarioParser
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
-     * @param id String; id.
-     * @param value ExpressionType&lt;?&gt;; value expression type.
+     * @param id id.
+     * @param value value expression type.
      */
     public static record ParameterWrapper(String id, ExpressionType<?> value)
             implements Identifiable, Supplier<ExpressionType<?>>
@@ -318,7 +318,7 @@ public class ScenarioParser
 
         /**
          * Constructor.
-         * @param map Map&lt;String, Supplier&lt;?&gt;&gt;; map that underlines input parameters.
+         * @param map map that underlines input parameters.
          */
         public ParameterMap(final Map<String, Supplier<?>> map)
         {
@@ -327,7 +327,7 @@ public class ScenarioParser
 
         /**
          * Set scenario input parameters.
-         * @param scenario ParameterMap; parameter map of the scenario.
+         * @param scenario parameter map of the scenario.
          */
         public void setScenarioMap(final ParameterMap scenario)
         {

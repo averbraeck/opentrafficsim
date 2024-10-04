@@ -26,7 +26,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * sharp bends. Therefore, algorithms implementing headway should only project the <i>reference point</i> of the reference GTU
  * on the center line of the adjacent lane, and then calculate the forward position and backward position on the adjacent lane
  * based on the reference point. Still, our human perception of what is parallel and what not, is not reflected by fractional
- * positions. 
+ * positions.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -54,19 +54,19 @@ public class HeadwayGtuRealCopy extends AbstractHeadwayGtu
 
     /**
      * Protected constructor for moved copies or subclasses.
-     * @param id String; id
-     * @param gtuType GtuType; GTU type
-     * @param distance Length; distance
-     * @param length Length; length
-     * @param width Length; width
-     * @param speed Speed; speed
-     * @param acceleration Acceleration; acceleration
-     * @param carFollowingModel CarFollowingModel; car-following model
-     * @param parameters Parameters; parameters
-     * @param speedLimitInfo SpeedLimitInfo; speed limit info
-     * @param route Route; route
-     * @param desiredSpeed Speed; desired speed
-     * @param gtuStatus GtuStatus...; gtu status
+     * @param id id
+     * @param gtuType GTU type
+     * @param distance distance
+     * @param length length
+     * @param width width
+     * @param speed speed
+     * @param acceleration acceleration
+     * @param carFollowingModel car-following model
+     * @param parameters parameters
+     * @param speedLimitInfo speed limit info
+     * @param route route
+     * @param desiredSpeed desired speed
+     * @param gtuStatus gtu status
      * @throws GtuException when id is null, objectType is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -84,21 +84,21 @@ public class HeadwayGtuRealCopy extends AbstractHeadwayGtu
 
     /**
      * Protected constructor for moved copies or subclasses.
-     * @param id String; id
-     * @param gtuType GtuType; GTU type
+     * @param id id
+     * @param gtuType GTU type
      * @param overlapFront the front-front distance to the other Gtu; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other Gtu; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other Gtu; if this constructor is used, this value cannot be null.
-     * @param length Length; length
-     * @param width Length; width
-     * @param speed Speed; speed
-     * @param acceleration Acceleration; acceleration
-     * @param carFollowingModel CarFollowingModel; car-following model
-     * @param parameters Parameters; parameters
-     * @param speedLimitInfo SpeedLimitInfo; speed limit info
-     * @param route Route; route
-     * @param desiredSpeed Speed; desired speed
-     * @param gtuStatus GtuStatus...; gtu status
+     * @param length length
+     * @param width width
+     * @param speed speed
+     * @param acceleration acceleration
+     * @param carFollowingModel car-following model
+     * @param parameters parameters
+     * @param speedLimitInfo speed limit info
+     * @param route route
+     * @param desiredSpeed desired speed
+     * @param gtuStatus gtu status
      * @throws GtuException when id is null, objectType is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
@@ -118,8 +118,8 @@ public class HeadwayGtuRealCopy extends AbstractHeadwayGtu
 
     /**
      * Construct a new Headway information object, for a GTU ahead of us or behind us.
-     * @param gtu LaneBasedGtu; the observed GTU, can not be null.
-     * @param distance the distance to the other object; if this constructor is used, distance cannot be null.
+     * @param gtu the observed GTU, can not be null.
+     * @param distance if this constructor is used, distance cannot be null.
      * @throws GtuException when id is null, objectType is null, or parameters are inconsistent
      */
     public HeadwayGtuRealCopy(final LaneBasedGtu gtu, final Length distance) throws GtuException
@@ -134,7 +134,7 @@ public class HeadwayGtuRealCopy extends AbstractHeadwayGtu
 
     /**
      * Construct a new Headway information object, for a GTU parallel with us.
-     * @param gtu LaneBasedGtu; the observed GTU, can not be null.
+     * @param gtu the observed GTU, can not be null.
      * @param overlapFront the front-front distance to the other Gtu; if this constructor is used, this value cannot be null.
      * @param overlap the 'center' overlap with the other Gtu; if this constructor is used, this value cannot be null.
      * @param overlapRear the rear-rear distance to the other Gtu; if this constructor is used, this value cannot be null.

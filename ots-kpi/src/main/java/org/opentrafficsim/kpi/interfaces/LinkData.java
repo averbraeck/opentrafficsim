@@ -21,13 +21,13 @@ public interface LinkData<L extends LaneData<L>> extends Identifiable
 
     /**
      * Returns the length of the link.
-     * @return Length; length of the link
+     * @return length of the link
      */
     Length getLength();
 
     /**
      * Returns the lanes of the link.
-     * @return List&lt;L&gt;; list of lanes of the link
+     * @return list of lanes of the link
      */
     List<L> getLaneDatas();
 

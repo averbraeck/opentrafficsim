@@ -22,17 +22,16 @@ public interface TransceiverInterface extends Identifiable
 {
     /**
      * Specification of arguments needed in a request.
-     * @return MetaData; the specification of arguments needed in a request
+     * @return the specification of arguments needed in a request
      */
     MetaData getAddressFields();
 
     /**
      * Retrieve the TransceiverInterface that can be used to get detailed information about a single object.
-     * @param addressLevel int; index of the argument in the address fields
-     * @param returnWrapper ReturnWrapper; to be used to report problems
-     * @return TransceiverInterface; to be used to get valid values for argument <code>addressLevel</code>, or null if valid
-     *         values for the argument at index <code>addressLevel</code> can not be obtained through a TransceiverInterface
-     *         object
+     * @param addressLevel index of the argument in the address fields
+     * @param returnWrapper to be used to report problems
+     * @return to be used to get valid values for argument <code>addressLevel</code>, or null if valid values for the argument
+     *         at index <code>addressLevel</code> can not be obtained through a TransceiverInterface object
      * @throws SerializationException when the ReturnWrapper fails
      * @throws Sim0MQException when the ReturnWrapper fails
      */
@@ -46,7 +45,7 @@ public interface TransceiverInterface extends Identifiable
 
     /**
      * Report if this transceiver has an id source.
-     * @return boolean; true if this transceiver has an id source; false if this transceiver does not have an id source
+     * @return true if this transceiver has an id source; false if this transceiver does not have an id source
      */
     default boolean hasIdSource()
     {
@@ -56,15 +55,15 @@ public interface TransceiverInterface extends Identifiable
 
     /**
      * Report the specification of a result of the transceiver.
-     * @return MetaData; the specification of a result from the transceiver
+     * @return the specification of a result from the transceiver
      */
     MetaData getResultFields();
 
     /**
      * Retrieve the data.
-     * @param address Object[]; the address of the data to retrieve
-     * @param returnWrapper ReturnWrapper; to be used to report problems
-     * @return Object[]; the retrieved data, or null when no object with the address could be found
+     * @param address the address of the data to retrieve
+     * @param returnWrapper to be used to report problems
+     * @return the retrieved data, or null when no object with the address could be found
      * @throws RemoteException when communication needed to retrieve the data failed
      * @throws SerializationException when encoding an error message fails
      * @throws Sim0MQException when encoding an error message fails

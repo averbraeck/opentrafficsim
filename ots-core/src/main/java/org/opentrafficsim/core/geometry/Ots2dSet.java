@@ -50,8 +50,8 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
      * Construct an empty Ots2dSet for a rectangular region. Objects that do not intersect this region will never be stored in
      * this Ots2dSet. (Trying to add such a Polygon2d is <b>not</b> an error; the <code>add</code> method will return false,
      * indicating that the set has not been modified.)
-     * @param boundingBox Rectangle2D; the region
-     * @param minimumCellSize double; resolution of the underlying quad tree
+     * @param boundingBox the region
+     * @param minimumCellSize resolution of the underlying quad tree
      * @throws OtsGeometryException when the bounding box covers no surface
      */
     public Ots2dSet(final Bounds2d boundingBox, final double minimumCellSize) throws OtsGeometryException
@@ -214,8 +214,8 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
 
     /**
      * Return the set of all shapes in this Ots2dSet that intersect the given rectangle.
-     * @param rectangle Rectangle2D; the rectangle
-     * @return Set&lt;Polygon2d&gt;; the shapes that intersect the rectangle
+     * @param rectangle the rectangle
+     * @return the shapes that intersect the rectangle
      */
     public final Set<Polygon2d> intersectingShapes(final Bounds2d rectangle)
     {
@@ -224,7 +224,7 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
 
     /**
      * Recursively print this Ots2dSet.
-     * @param recursionDepth int; maximum depth to recurse
+     * @param recursionDepth maximum depth to recurse
      * @return String
      */
     final String toString(final int recursionDepth)
@@ -242,8 +242,8 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
 
     /**
      * Return all Polygon2ds in this Ots2dSet that intersect a given Polygon2d.
-     * @param shape Polygon2d; the given Polygon2d
-     * @return Set&lt;Polygon2d&gt;; all Polygon2ds in this Ots2dSet that intersect <code>shape</code>
+     * @param shape the given Polygon2d
+     * @return all Polygon2ds in this Ots2dSet that intersect <code>shape</code>
      */
     public final Set<Polygon2d> intersectingShapes(final Polygon2d shape)
     {
@@ -262,8 +262,8 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
 
     /**
      * Return an ASCII art rendering of this Ots2dSet.
-     * @param recursionDepth int; maximum recursion depth
-     * @return String; a somewhat human readable rendering of this Ots2dSet
+     * @param recursionDepth maximum recursion depth
+     * @return a somewhat human readable rendering of this Ots2dSet
      */
     public final String toStringGraphic(final int recursionDepth)
     {
@@ -347,7 +347,7 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
 
         /**
          * Construct a new QuadTreeNode.
-         * @param boundingBox Rectangle2D; the bounding box of the area of the new QuadTreeNode
+         * @param boundingBox the bounding box of the area of the new QuadTreeNode
          */
         @SuppressWarnings("synthetic-access")
         QuadTreeNode(final Bounds2d boundingBox)
@@ -360,8 +360,8 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
 
         /**
          * Return a Set containing all Polygon2ds in this QuadTreeNode that intersect a rectangular area.
-         * @param rectangle Bounds2d; the area
-         * @return Set&lt;Polygon2d&gt;; the set
+         * @param rectangle the area
+         * @return the set
          */
         public Set<Polygon2d> intersectingShapes(final Bounds2d rectangle)
         {
@@ -394,8 +394,8 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
 
         /**
          * Test if this QuadTreeNode intersects a rectangular area.
-         * @param rectangle Bounds2d; the rectangular area
-         * @return boolean; true if the rectangular area intersects this QuadTreeNode; false otherwise
+         * @param rectangle the rectangular area
+         * @return true if the rectangular area intersects this QuadTreeNode; false otherwise
          */
         private boolean intersects(final Bounds2d rectangle)
         {
@@ -416,8 +416,8 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
 
         /**
          * Remove a Polygon2d from this QuadTreeNode.
-         * @param shape Polygon2d; the shape that must be removed.
-         * @return boolean; true if this node (or a sub-node) was altered; false otherwise
+         * @param shape the shape that must be removed.
+         * @return true if this node (or a sub-node) was altered; false otherwise
          */
         public boolean remove(final Polygon2d shape)
         {
@@ -454,7 +454,7 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
 
         /**
          * Check if this QuadTreeNode is empty.
-         * @return boolean; true if this QuadTreeNode is empty
+         * @return true if this QuadTreeNode is empty
          */
         private boolean isEmpty()
         {
@@ -478,8 +478,8 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
 
         /**
          * Test if the area of this QuadTree intersects a Polygon2d.
-         * @param shape Polygon2d; the shape
-         * @return boolean; true if the area of this QuadTree intersects the shape; false otherwise
+         * @param shape the shape
+         * @return true if the area of this QuadTree intersects the shape; false otherwise
          */
         public boolean intersects(final Polygon2d shape)
         {
@@ -488,8 +488,8 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
 
         /**
          * Construct a Polygon2d from a Rectangle2D.
-         * @param rectangle Rectangle2D; the rectangle
-         * @return Polygon2d; a new Polygon2d
+         * @param rectangle the rectangle
+         * @return a new Polygon2d
          */
         private Polygon2d rectangleShape(final Bounds2d rectangle)
         {
@@ -503,8 +503,8 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
 
         /**
          * Add a Polygon2d to this QuadTreeNode.
-         * @param shape Polygon2d; the shape
-         * @return boolean; true if this QuadTreeNode changed as a result of this operation
+         * @param shape the shape
+         * @return true if this QuadTreeNode changed as a result of this operation
          */
         public final boolean add(final Polygon2d shape)
         {
@@ -574,8 +574,8 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
 
         /**
          * Helper function for toString.
-         * @param recursionDepth int; maximum number of levels to print recursively
-         * @param index int; index in leaves
+         * @param recursionDepth maximum number of levels to print recursively
+         * @param index index in leaves
          * @return String
          */
         private String printLeaf(final int recursionDepth, final int index)
@@ -595,7 +595,7 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
 
         /**
          * Recursively print this QuadTreeNode.
-         * @param recursionDepth int; maximum depth to recurse
+         * @param recursionDepth maximum depth to recurse
          * @return String
          */
         final String toString(final int recursionDepth)
@@ -608,7 +608,7 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
 
         /**
          * Print the leaves of this QuadTreeNode.
-         * @param recursionDepth int; maximum depth to recurse
+         * @param recursionDepth maximum depth to recurse
          * @return String
          */
         private String subNodes(final int recursionDepth)
@@ -630,8 +630,8 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
 
         /**
          * Return concatenation of a number of copies of a string.
-         * @param count int; number of copies to concatenate
-         * @param string String; the string to repeat
+         * @param count number of copies to concatenate
+         * @param string the string to repeat
          * @return String
          */
         private String repeat(final int count, final String string)
@@ -659,8 +659,8 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
         /**
          * Similar to toStringGraphic, but with QuadTreeNode argument which can be null. <br>
          * This code is <b>not</b> optimized for performance; the repeated use of String.split is probably expensive.
-         * @param qtn QuadTreeNode; the QuadTreeNode to render. Can be null.
-         * @param recursionDepth int; levels to recurse
+         * @param qtn the QuadTreeNode to render. Can be null.
+         * @param recursionDepth levels to recurse
          * @return String
          */
         private String subStringGraphic(final QuadTreeNode qtn, final int recursionDepth)
@@ -744,7 +744,7 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
 
         /**
          * Return a String depicting this QuadTreeNode.
-         * @param recursionDepth int; levels to recurse
+         * @param recursionDepth levels to recurse
          * @return String
          */
         public final String toStringGraphic(final int recursionDepth)

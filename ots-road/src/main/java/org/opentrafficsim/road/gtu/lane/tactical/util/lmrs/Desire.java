@@ -15,8 +15,8 @@ import org.opentrafficsim.core.network.LateralDirectionality;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param left double; Left desire.
- * @param right double; Right desire.
+ * @param left Left desire.
+ * @param right Right desire.
  */
 public record Desire(double left, double right) implements Serializable
 {
@@ -29,8 +29,8 @@ public record Desire(double left, double right) implements Serializable
 
     /**
      * Constructor which sets the supplied desire. Desire is limited to a maximum of 1.
-     * @param left double; Left desire.
-     * @param right double; Right desire.
+     * @param left Left desire.
+     * @param right Right desire.
      */
     public Desire(final double left, final double right)
     {
@@ -40,8 +40,8 @@ public record Desire(double left, double right) implements Serializable
 
     /**
      * Constructor which sets the supplied desire. Desire is limited to a maximum of 1.
-     * @param left Dimensionless; Left desire.
-     * @param right Dimensionless; Right desire.
+     * @param left Left desire.
+     * @param right Right desire.
      */
     public Desire(final Dimensionless left, final Dimensionless right)
     {
@@ -50,7 +50,7 @@ public record Desire(double left, double right) implements Serializable
 
     /**
      * Returns desire in the given direction.
-     * @param dir LateralDirectionality; Direction for the desire to return.
+     * @param dir Direction for the desire to return.
      * @return Desire in the given direction.
      */
     public final double get(final LateralDirectionality dir)

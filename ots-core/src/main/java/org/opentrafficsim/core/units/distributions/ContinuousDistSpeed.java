@@ -21,8 +21,8 @@ public class ContinuousDistSpeed extends ContinuousDistDoubleScalar.Rel<Speed, S
     private static final long serialVersionUID = 20180829L;
 
     /**
-     * @param distribution DistContinuous; distribution
-     * @param unit SpeedUnit; units
+     * @param distribution distribution
+     * @param unit units
      */
     public ContinuousDistSpeed(final DistContinuous distribution, final SpeedUnit unit)
     {

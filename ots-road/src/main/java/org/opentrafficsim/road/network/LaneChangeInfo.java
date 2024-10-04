@@ -13,10 +13,10 @@ import org.opentrafficsim.core.network.LateralDirectionality;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param numberOfLaneChanges int; required number of lane changes
- * @param remainingDistance Length; remaining distance
- * @param deadEnd boolean; whether the need to change lane comes from a dead-end
- * @param lateralDirectionality LateralDirectionality; lateral directionality of required lane changes
+ * @param numberOfLaneChanges required number of lane changes
+ * @param remainingDistance remaining distance
+ * @param deadEnd whether the need to change lane comes from a dead-end
+ * @param lateralDirectionality lateral directionality of required lane changes
  */
 public record LaneChangeInfo(int numberOfLaneChanges, Length remainingDistance, boolean deadEnd,
         LateralDirectionality lateralDirectionality) implements Comparable<LaneChangeInfo>
@@ -24,10 +24,10 @@ public record LaneChangeInfo(int numberOfLaneChanges, Length remainingDistance, 
 
     /**
      * Constructor.
-     * @param numberOfLaneChanges int; required number of lane changes
-     * @param remainingDistance Length; remaining distance
-     * @param deadEnd boolean; whether the need to change lane comes from a dead-end
-     * @param lateralDirectionality LateralDirectionality; lateral directionality of required lane changes
+     * @param numberOfLaneChanges required number of lane changes
+     * @param remainingDistance remaining distance
+     * @param deadEnd whether the need to change lane comes from a dead-end
+     * @param lateralDirectionality lateral directionality of required lane changes
      */
     public LaneChangeInfo
     {

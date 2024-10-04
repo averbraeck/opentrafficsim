@@ -101,10 +101,10 @@ public final class NetworkParser
 
     /**
      * Parse the Nodes.
-     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
-     * @param network Network; the Network tag
-     * @param nodeDirections Map&lt;String,Direction&gt;; a map of the node ids and their default directions
-     * @param eval Eval; expression evaluator.
+     * @param otsNetwork the network to insert the parsed objects in
+     * @param network the Network tag
+     * @param nodeDirections a map of the node ids and their default directions
+     * @param eval expression evaluator.
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
     public static void parseNodes(final RoadNetwork otsNetwork, final Network network,
@@ -123,9 +123,9 @@ public final class NetworkParser
     /**
      * Calculate the default angles of the Nodes, in case they have not been set. This is based on the Straight Link elements in
      * the XML file.
-     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
-     * @param network Network; the Network tag
-     * @param eval Eval; expression evaluator.
+     * @param otsNetwork the network to insert the parsed objects in
+     * @param network the Network tag
+     * @param eval expression evaluator.
      * @return a map of nodes and their default direction
      */
     public static Map<String, Direction> calculateNodeAngles(final RoadNetwork otsNetwork, final Network network,
@@ -173,14 +173,14 @@ public final class NetworkParser
 
     /**
      * Build the links with the correct design line.
-     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
-     * @param definitions Definitions; parsed definitions.
-     * @param network Network; the Network tag
-     * @param nodeDirections Map&lt;String,Direction&gt;; a map of the node ids and their default directions
-     * @param simulator OtsSimulatorInterface; the simulator
-     * @param designLines Map&lt;String, ContinuousLine&gt;; map to store created design lines.
-     * @param flatteners Map&lt;String, Flattener&gt;; flattener per link id.
-     * @param eval Eval; expression evaluator.
+     * @param otsNetwork the network to insert the parsed objects in
+     * @param definitions parsed definitions.
+     * @param network the Network tag
+     * @param nodeDirections a map of the node ids and their default directions
+     * @param simulator the simulator
+     * @param designLines map to store created design lines.
+     * @param flatteners flattener per link id.
+     * @param eval expression evaluator.
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      * @throws OtsGeometryException when the design line is invalid
      */
@@ -330,15 +330,15 @@ public final class NetworkParser
 
     /**
      * Build the links with the correct design line.
-     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
-     * @param definitions Definitions; parsed definitions.
-     * @param network Network; the Network tag
-     * @param simulator OtsSimulatorInterface; the simulator
+     * @param otsNetwork the network to insert the parsed objects in
+     * @param definitions parsed definitions.
+     * @param network the Network tag
+     * @param simulator the simulator
      * @param roadLayoutMap the map of the tags of the predefined RoadLayout tags in Definitions
      * @param linkTypeSpeedLimitMap map of speed limits per link type
-     * @param designLines Map&lt;String, ContinuousLine&gt;; design lines per link id.
-     * @param flatteners Map&lt;String, Flattener&gt;; flattener per link id.
-     * @param eval Eval; expression evaluator.
+     * @param designLines design lines per link id.
+     * @param flatteners flattener per link id.
+     * @param eval expression evaluator.
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      * @throws OtsGeometryException when the design line is invalid
      * @throws XmlParserException when the stripe type cannot be recognized
@@ -452,7 +452,7 @@ public final class NetworkParser
                 else if (cseTag instanceof CseShoulder)
                 {
                     CseShoulder shoulderTag = (CseShoulder) cseTag;
-                    // FIXME:  laneType is a mandatory field, but parsing or eclipse is not taking the new field
+                    // FIXME: laneType is a mandatory field, but parsing or eclipse is not taking the new field
                     // although specified in XML, the value is always null
                     LaneType laneType = shoulderTag.getLaneType() == null ? SHOULDER
                             : definitions.get(LaneType.class, shoulderTag.getLaneType().get(eval));
@@ -479,21 +479,21 @@ public final class NetworkParser
             }
         }
     }
-    
+
     /** Temporary fix for CseShoulder.getLaneType() always being null. */
     // FIXME
     private static final LaneType SHOULDER = new LaneType("Shoulder");
 
     /**
      * Parse a stripe on a road.
-     * @param csl CrossSectionLink; the CrossSectionLine
-     * @param designLine ContinuousLine; design line.
-     * @param flattener Flattener; flattener.
-     * @param startOffset Length; the offset of the start node
-     * @param endOffset Length; the offset of the end node
-     * @param stripeTag CseStripe; the CseStripe tag in the XML file
-     * @param cseList List&lt;CrossSectionElement&gt;; the list of CrossSectionElements to which the stripes should be added
-     * @param eval Eval; expression evaluator.
+     * @param csl the CrossSectionLine
+     * @param designLine design line.
+     * @param flattener flattener.
+     * @param startOffset the offset of the start node
+     * @param endOffset the offset of the end node
+     * @param stripeTag the CseStripe tag in the XML file
+     * @param cseList the list of CrossSectionElements to which the stripes should be added
+     * @param eval expression evaluator.
      * @throws OtsGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id of the stripe not unique
      * @throws XmlParserException when the stripe type cannot be recognized
@@ -517,9 +517,9 @@ public final class NetworkParser
 
     /**
      * Build conflicts.
-     * @param otsNetwork RoadNetwork; the network to insert the parsed objects in
-     * @param network Network; the Network tag
-     * @param eval Eval; expression evaluator.
+     * @param otsNetwork the network to insert the parsed objects in
+     * @param network the Network tag
+     * @param eval expression evaluator.
      * @throws OtsGeometryException if building conflicts fails
      * @throws XmlParserException if Conflicts tag contains no valid element
      */
@@ -580,9 +580,9 @@ public final class NetworkParser
 
     /**
      * Returns a flattener. If the flattener tag is empty, the flattener is obtained from the network.
-     * @param defaultFlattener Flattener; default flattener from the network, may be {@code null} to parse default flattener.
-     * @param flattenerType FlattenerType; XML tag of flattener.
-     * @param eval Eval; evaluator.
+     * @param defaultFlattener default flattener from the network, may be {@code null} to parse default flattener.
+     * @param flattenerType XML tag of flattener.
+     * @param eval evaluator.
      * @return Flattener.
      * @throws NetworkException if the flattener is not correctly defined.
      */
@@ -620,8 +620,8 @@ public final class NetworkParser
 
     /**
      * Returns a safe deviation value (>=0.001).
-     * @param length Length; deviation.
-     * @return double; safe deviation.
+     * @param length deviation.
+     * @return safe deviation.
      */
     private static double getDeviation(final Length length)
     {
@@ -630,8 +630,8 @@ public final class NetworkParser
 
     /**
      * Returns a safe angle value (>=0.01).
-     * @param angle Length; angle.
-     * @return double; safe angle.
+     * @param angle angle.
+     * @return safe angle.
      */
     private static double getAngle(final Angle angle)
     {

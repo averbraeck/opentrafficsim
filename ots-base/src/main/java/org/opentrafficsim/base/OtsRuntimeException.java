@@ -2,7 +2,7 @@ package org.opentrafficsim.base;
 
 /**
  * OtsRuntimeException is a generic runtime exception for the OTS project. Runtime exceptions do ot have to be declared in the
- * header of the method or constructor. 
+ * header of the method or constructor.
  * <p>
  * Copyright (c) 2022-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -24,7 +24,7 @@ public class OtsRuntimeException extends RuntimeException
 
     /**
      * Create an exception with a message.
-     * @param message String; the message to include in the exception
+     * @param message the message to include in the exception
      */
     public OtsRuntimeException(final String message)
     {
@@ -33,7 +33,7 @@ public class OtsRuntimeException extends RuntimeException
 
     /**
      * Create an exception with an underlying cause.
-     * @param cause Throwable; the underlying cause of the exception
+     * @param cause the underlying cause of the exception
      */
     public OtsRuntimeException(final Throwable cause)
     {
@@ -42,8 +42,8 @@ public class OtsRuntimeException extends RuntimeException
 
     /**
      * Create an exception with an underlying cause and a message.
-     * @param message String; the message to include in the exception
-     * @param cause Throwable; the underlying cause of the exception
+     * @param message the message to include in the exception
+     * @param cause the underlying cause of the exception
      */
     public OtsRuntimeException(final String message, final Throwable cause)
     {

@@ -22,9 +22,9 @@ public abstract class AbstractEventTransceiver extends AbstractTransceiver
 {
     /**
      * Construct a new AbstractEventTransceiver.
-     * @param id String; name of the new AbstractEventTransceiver
-     * @param addressFields MetaData; address format accepted by the new AbstractEventTransceiver
-     * @param eventType EventType; type of the event that the AbstractEventTransceiver can subscribe to in the network
+     * @param id name of the new AbstractEventTransceiver
+     * @param addressFields address format accepted by the new AbstractEventTransceiver
+     * @param eventType type of the event that the AbstractEventTransceiver can subscribe to in the network
      */
     public AbstractEventTransceiver(final String id, final MetaData addressFields, final EventType eventType)
     {
@@ -34,8 +34,8 @@ public abstract class AbstractEventTransceiver extends AbstractTransceiver
     /**
      * Construct a Sim0MQ MetaData object that corresponds to the MetaData of DJUTILS EventType. Classes that do not have a
      * corresponding Sim0MQ type will result in a ClassCastException.
-     * @param eventType EventType; the event type
-     * @return MetaData; a MetaData object that corresponds to the MetaData of the event type
+     * @param eventType the event type
+     * @return a MetaData object that corresponds to the MetaData of the event type
      * @throws ClassCastException when the <code>eventType</code> contains a class that cannot be carried over Sim0MQ
      */
     public static MetaData constructResultFields(final EventType eventType) throws ClassCastException

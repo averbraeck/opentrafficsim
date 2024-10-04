@@ -20,15 +20,15 @@ public interface HistoricalSet<E> extends HistoricalCollection<E>, Set<E>
 
     /**
      * Returns the current set.
-     * @return Set; current set
+     * @return current set
      */
     @Override
     Set<E> get();
 
     /**
      * Returns a past set.
-     * @param time Time; time to obtain the set at
-     * @return Set; past set
+     * @param time time to obtain the set at
+     * @return past set
      */
     @Override
     Set<E> get(Time time);

@@ -20,8 +20,8 @@ public class ParameterTypeString extends ParameterType<String>
     private static final long serialVersionUID = 20170911L;
 
     /**
-     * @param id String; short name of the new ParameterTypeString
-     * @param description String; description or full name of the new ParameterTypeString
+     * @param id short name of the new ParameterTypeString
+     * @param description description or full name of the new ParameterTypeString
      */
     public ParameterTypeString(final String id, final String description)
     {
@@ -29,9 +29,9 @@ public class ParameterTypeString extends ParameterType<String>
     }
 
     /**
-     * @param id String; short name of the new ParameterTypeString
-     * @param description String; description or full name of the new ParameterTypeString
-     * @param defaultValue String; default value of the new ParameterTypeString
+     * @param id short name of the new ParameterTypeString
+     * @param description description or full name of the new ParameterTypeString
+     * @param defaultValue default value of the new ParameterTypeString
      */
     public ParameterTypeString(final String id, final String description, final String defaultValue)
     {
@@ -39,9 +39,9 @@ public class ParameterTypeString extends ParameterType<String>
     }
 
     /**
-     * @param id String; short name of the new ParameterTypeString
-     * @param description String; description or full name of the new ParameterTypeString
-     * @param constraint Constraint&lt;? super String&gt;; constraint that applies to the value of the new ParameterTypeString
+     * @param id short name of the new ParameterTypeString
+     * @param description description or full name of the new ParameterTypeString
+     * @param constraint constraint that applies to the value of the new ParameterTypeString
      */
     public ParameterTypeString(final String id, final String description, final Constraint<? super String> constraint)
     {
@@ -49,10 +49,10 @@ public class ParameterTypeString extends ParameterType<String>
     }
 
     /**
-     * @param id String; short name of the new ParameterTypeString
-     * @param description String; description or full name of the new ParameterTypeString
-     * @param defaultValue String; default value of the new ParameterTypeString
-     * @param constraint Constraint&lt;? super String&gt;; constraint that applies to the value of the new ParameterTypeString
+     * @param id short name of the new ParameterTypeString
+     * @param description description or full name of the new ParameterTypeString
+     * @param defaultValue default value of the new ParameterTypeString
+     * @param constraint constraint that applies to the value of the new ParameterTypeString
      */
     public ParameterTypeString(final String id, final String description, final String defaultValue,
             final Constraint<? super String> constraint)

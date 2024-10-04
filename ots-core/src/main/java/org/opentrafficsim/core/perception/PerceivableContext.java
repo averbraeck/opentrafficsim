@@ -33,33 +33,33 @@ public interface PerceivableContext extends Identifiable
 
     /**
      * Get a GTU in the model.
-     * @param gtuId String; the id of the GTU
+     * @param gtuId the id of the GTU
      * @return a GTU as registered in the current model, or null when the id could not be found.
      */
     Gtu getGTU(String gtuId);
 
     /**
      * Add a GTU to the network.
-     * @param gtu Gtu; the GTU to add
+     * @param gtu the GTU to add
      */
     void addGTU(Gtu gtu);
 
     /**
      * Remove a GTU from the network.
-     * @param gtu Gtu; the GTU to remove
+     * @param gtu the GTU to remove
      */
     void removeGTU(Gtu gtu);
 
     /**
      * Test whether a GTU is registered in the network.
-     * @param gtu Gtu; the GTU to search for
+     * @param gtu the GTU to search for
      * @return whether the network contains this GTU
      */
     boolean containsGTU(Gtu gtu);
 
     /**
      * Test whether a GTU ID is registered in the network.
-     * @param gtuId String; the GTU ID to search for
+     * @param gtuId the GTU ID to search for
      * @return whether the network contains a GTU with this ID
      */
     boolean containsGtuId(String gtuId);

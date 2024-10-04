@@ -207,7 +207,7 @@ public class LaneTest implements UNITS
 
     /**
      * Add/Remove some sensor to/from a lane and see if the expected events occur.
-     * @param lane Lane; the lane to manipulate
+     * @param lane the lane to manipulate
      * @throws NetworkException when this happens uncaught; this test has failed
      */
     public final void sensorTest(final Lane lane) throws NetworkException
@@ -422,7 +422,7 @@ public class LaneTest implements UNITS
 
         /**
          * Retrieve the collected events.
-         * @return List&lt;EventInterface&gt;; the events
+         * @return the events
          */
         public List<Event> getEvents()
         {
@@ -450,8 +450,8 @@ public class LaneTest implements UNITS
 
         /**
          * Construct a new Mocked Detector.
-         * @param id String; result of the getId() method of the mocked Detector
-         * @param position Length; result of the getLongitudinalPosition of the mocked Detector
+         * @param id result of the getId() method of the mocked Detector
+         * @param position result of the getLongitudinalPosition of the mocked Detector
          */
         MockSensor(final String id, final Length position)
         {
@@ -467,7 +467,7 @@ public class LaneTest implements UNITS
 
         /**
          * Retrieve the mocked sensor.
-         * @return Detector; the mocked sensor
+         * @return the mocked sensor
          */
         public LaneDetector getMock()
         {
@@ -476,7 +476,7 @@ public class LaneTest implements UNITS
 
         /**
          * Retrieve the position of the mocked sensor.
-         * @return Length; the longitudinal position of the mocked sensor
+         * @return the longitudinal position of the mocked sensor
          */
         public Length getLongitudinalPosition()
         {
@@ -507,8 +507,8 @@ public class LaneTest implements UNITS
 
         /**
          * Construct a new Mocked Detector.
-         * @param id String; result of the getId() method of the mocked Detector
-         * @param position Length; result of the getLongitudinalPosition of the mocked Detector
+         * @param id result of the getId() method of the mocked Detector
+         * @param position result of the getLongitudinalPosition of the mocked Detector
          */
         MockLaneBasedObject(final String id, final Length position)
         {
@@ -522,7 +522,7 @@ public class LaneTest implements UNITS
 
         /**
          * Retrieve the mocked LaneBasedObject.
-         * @return LaneBasedObject; the mocked LaneBasedObject
+         * @return the mocked LaneBasedObject
          */
         public LaneBasedObject getMock()
         {
@@ -531,7 +531,7 @@ public class LaneTest implements UNITS
 
         /**
          * Retrieve the position of the mocked sensor.
-         * @return Length; the longitudinal position of the mocked sensor
+         * @return the longitudinal position of the mocked sensor
          */
         public Length getLongitudinalPosition()
         {
@@ -752,13 +752,13 @@ public class LaneTest implements UNITS
      * Verify that a point at specified distance along and across from the design line of the parent Link of a Lane is inside
      * c.q. outside the contour of a Lane. The test uses an implementation that is as independent as possible of the Geometry
      * class methods.
-     * @param lane Lane; the lane
-     * @param longitudinal double; the longitudinal position along the design line of the parent Link of the Lane. This design
-     *            line is expected to be straight and the longitudinal position may be negative (indicating a point before the
-     *            start of the Link) and it may exceed the length of the Link (indicating a point beyond the end of the Link)
-     * @param lateral double; the lateral offset from the design line of the link (positive is left, negative is right)
-     * @param expectedResult boolean; true if the calling method expects the point to be within the contour of the Lane, false
-     *            if the calling method expects the point to be outside the contour of the Lane
+     * @param lane the lane
+     * @param longitudinal the longitudinal position along the design line of the parent Link of the Lane. This design line is
+     *            expected to be straight and the longitudinal position may be negative (indicating a point before the start of
+     *            the Link) and it may exceed the length of the Link (indicating a point beyond the end of the Link)
+     * @param lateral the lateral offset from the design line of the link (positive is left, negative is right)
+     * @param expectedResult true if the calling method expects the point to be within the contour of the Lane, false if the
+     *            calling method expects the point to be outside the contour of the Lane
      */
     private void checkInside(final Lane lane, final double longitudinal, final double lateral, final boolean expectedResult)
     {

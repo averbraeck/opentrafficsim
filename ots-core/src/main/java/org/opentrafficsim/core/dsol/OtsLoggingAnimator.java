@@ -54,12 +54,11 @@ public class OtsLoggingAnimator extends OtsAnimator
 
     /**
      * Initialize a simulation engine without animation; the easy way. PauseOnError is set to true;
-     * @param startTime Time; the start time of the simulation
-     * @param warmupPeriod Duration; the warm up period of the simulation (use new Duration(0, SECOND) if you don't know what
-     *            this is)
-     * @param runLength Duration; the duration of the simulation
-     * @param model OtsModelInterface; the simulation to execute
-     * @param streams Map&lt;String, StreamInterface&gt;; streams
+     * @param startTime the start time of the simulation
+     * @param warmupPeriod the warm up period of the simulation (use new Duration(0, SECOND) if you don't know what this is)
+     * @param runLength the duration of the simulation
+     * @param model the simulation to execute
+     * @param streams streams
      * @throws SimRuntimeException when e.g., warmupPeriod is larger than runLength
      * @throws NamingException when the context for the replication cannot be created
      */
@@ -122,8 +121,7 @@ public class OtsLoggingAnimator extends OtsAnimator
         /* wall clock milliseconds per 1 simulation clock millisecond. */
         double msec1 = simulatorTimeForWallClockMillis(1.0).doubleValue();
 
-        while (this.isStartingOrRunning() && !this.eventList.isEmpty()
-                && this.simulatorTime.le(this.replication.getEndTime()))
+        while (this.isStartingOrRunning() && !this.eventList.isEmpty() && this.simulatorTime.le(this.replication.getEndTime()))
         {
             // check if speedFactor has changed. If yes: re-baseline.
             if (currentSpeedFactor != this.getSpeedFactor())

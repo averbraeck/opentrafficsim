@@ -28,8 +28,8 @@ public class MeanSpeed extends AbstractIndicator<Speed>
     private final TotalTravelTime travelTime;
 
     /**
-     * @param travelDistance TotalTravelDistance; travel distance indicator
-     * @param travelTime TotalTravelTime; travel time indicator
+     * @param travelDistance travel distance indicator
+     * @param travelTime travel time indicator
      */
     public MeanSpeed(final TotalTravelDistance travelDistance, final TotalTravelTime travelTime)
     {

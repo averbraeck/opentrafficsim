@@ -15,7 +15,7 @@ public class HeadwayDistributionType extends ExpressionType<HeadwayDistribution>
 
     /**
      * Constructor with value.
-     * @param value HeadwayDistribution; value, may be {@code null}.
+     * @param value value, may be {@code null}.
      */
     public HeadwayDistributionType(final HeadwayDistribution value)
     {
@@ -24,7 +24,7 @@ public class HeadwayDistributionType extends ExpressionType<HeadwayDistribution>
 
     /**
      * Constructor with expression.
-     * @param expression String; expression.
+     * @param expression expression.
      */
     public HeadwayDistributionType(final String expression)
     {

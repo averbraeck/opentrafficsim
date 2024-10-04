@@ -18,7 +18,7 @@ import org.opentrafficsim.core.perception.PerceivedObject;
  * sharp bends. Therefore, algorithms implementing headway should only project the <i>reference point</i> of the reference GTU
  * on the center line of the adjacent lane, and then calculate the forward position and backward position on the adjacent lane
  * based on the reference point. Still, our human perception of what is parallel and what not, is not reflected by fractional
- * positions. 
+ * positions.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -97,35 +97,34 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
     }
 
     /**
-     * @return String; the id of the other object for comparison purposes, cannot be null.
+     * @return the id of the other object for comparison purposes, cannot be null.
      */
     @Override
     String getId();
 
     /**
-     * @return Length; the length of the other object; can be null if unknown.
+     * @return the length of the other object; can be null if unknown.
      */
     Length getLength();
 
     /**
-     * @return Speed; the (perceived) speed of the other object; can be null if unknown.
+     * @return the (perceived) speed of the other object; can be null if unknown.
      */
     Speed getSpeed();
 
     /**
      * Retrieve the strongly typed distance to the other object.
-     * @return Length; the distance to the object, return value null indicates that the other object is parallel to the
-     *         reference object
+     * @return the distance to the object, return value null indicates that the other object is parallel to the reference object
      */
     Length getDistance();
 
     /**
-     * @return Length; the (perceived) object Type, can be null if no object type unknown.
+     * @return the (perceived) object Type, can be null if no object type unknown.
      */
     ObjectType getObjectType();
 
     /**
-     * @return Acceleration; acceleration the (perceived) acceleration of the other object; can be null if unknown.
+     * @return acceleration the (perceived) acceleration of the other object; can be null if unknown.
      */
     Acceleration getAcceleration();
 
@@ -143,7 +142,7 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
      * | a  | b |     c   |
      * </pre>
      * 
-     * @return Length; the (perceived) front overlap to the other object or null if there is no overlap.
+     * @return the (perceived) front overlap to the other object or null if there is no overlap.
      */
     Length getOverlapFront();
 
@@ -161,7 +160,7 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
      * | a  | b |     c   |
      * </pre>
      * 
-     * @return Length; the (perceived) rear overlap to the other object or null if there is no overlap.
+     * @return the (perceived) rear overlap to the other object or null if there is no overlap.
      */
     Length getOverlapRear();
 

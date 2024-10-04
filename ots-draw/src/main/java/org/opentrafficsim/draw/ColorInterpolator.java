@@ -20,10 +20,10 @@ public final class ColorInterpolator
 
     /**
      * Generate a Color that is interpolated between two given Color values. Interpolation is simply done per channel (R, G, B).
-     * @param zero Color; the color that corresponds to ratio == 0
-     * @param one Color; the color that corresponds to ratio == 1
-     * @param ratio double; the ratio (should be between 0 and 1)
-     * @return Color; the interpolated color
+     * @param zero the color that corresponds to ratio == 0
+     * @param one the color that corresponds to ratio == 1
+     * @param ratio the ratio (should be between 0 and 1)
+     * @return the interpolated color
      */
     public static Color interpolateColor(final Color zero, final Color one, final double ratio)
     {

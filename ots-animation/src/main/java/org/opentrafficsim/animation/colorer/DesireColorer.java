@@ -65,8 +65,8 @@ public abstract class DesireColorer implements GtuColorer, Serializable
 
     /**
      * Returns a color based on desire.
-     * @param dLeft double; left desire
-     * @param dRight double; right desire
+     * @param dLeft left desire
+     * @param dRight right desire
      * @return color based on desire
      */
     protected final Color getColor(final double dLeft, final double dRight)

@@ -18,10 +18,10 @@ public final class XsdPaths
 
     /** Defined road layout path. */
     public static final String DEFINED_ROADLAYOUT = DEFINITIONS + ".RoadLayouts.RoadLayout";
-    
+
     /** Network path. */
     public static final String NETWORK = "Ots.Network";
-    
+
     /** Connector path. */
     public static final String CONNECTOR = NETWORK + ".Connector";
 
@@ -30,40 +30,40 @@ public final class XsdPaths
 
     /** Link path. */
     public static final String LINK = NETWORK + ".Link";
-    
+
     /** Traffic light path. */
     public static final String TRAFFIC_LIGHT = LINK + ".TrafficLight";
-    
+
     /** Polyline coordinate path. */
     public static final String POLYLINE_COORDINATE = LINK + ".Polyline.Coordinate";
-    
+
     /** Road layout path. */
     public static final String ROADLAYOUT = LINK + ".RoadLayout";
-    
+
     /** OD options item path. */
     public static final String OD_OPTIONS_ITEM = "Ots.Demand.OdOptions.OdOptionsItem";
-    
+
     /** Generator path. */
     public static final String GENERATOR = "Ots.Demand.Generator";
-    
+
     /** List generator path. */
     public static final String LIST_GENERATOR = "Ots.Demand.ListGenerator";
-    
+
     /** Sink path. */
     public static final String SINK = "Ots.Demand.Sink";
-    
+
     /** Correlation path. */
     public static final String CORRELATION = "Ots.Models.Model.ModelParameters.Correlation";
 
     /** Scenarios path. */
     public static final String SCENARIOS = "Ots.Scenarios";
-    
+
     /** Default input parameters path. */
     public static final String DEFAULT_INPUT_PARAMETERS = SCENARIOS + ".DefaultInputParameters";
-    
+
     /** Default string input parameter path. */
     public static final String DEFAULT_INPUT_PARAMETER_STRING = DEFAULT_INPUT_PARAMETERS + ".String";
-    
+
     /** Scenario path. */
     public static final String SCENARIO = SCENARIOS + ".Scenario";
 
