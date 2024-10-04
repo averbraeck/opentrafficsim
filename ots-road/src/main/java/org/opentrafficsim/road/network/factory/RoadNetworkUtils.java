@@ -19,6 +19,7 @@ import nl.tudelft.simulation.naming.context.JvmContext;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  */
+// TODO: SKL 2024.10.04 do we need this class? It is the only cause for the xstream dependency in ots-road
 public final class RoadNetworkUtils
 {
 

@@ -579,7 +579,6 @@ public class LaneStructure
                             visited.add(lane);
                             addToCrossSection(lat);
                             // from the cross-section directly from the root, we initiate both an upstream and downstream search
-                            // if (this.rootCrossSection.contains(record))
                             if (this.rootCrossSection.containsValue(record))
                             {
                                 // this.rootCrossSection.add(lat);
