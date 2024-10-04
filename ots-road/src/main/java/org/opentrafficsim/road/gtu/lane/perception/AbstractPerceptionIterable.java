@@ -12,11 +12,11 @@ import java.util.TreeMap;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.structure.LaneRecordInterface;
 
@@ -29,11 +29,13 @@ import org.opentrafficsim.road.gtu.lane.perception.structure.LaneRecordInterface
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ * @param <P> perceiving object type
  * @param <H> headway type
  * @param <U> underlying object type
  * @param <C> counter type
  */
-public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extends AbstractPerceptionReiterable<H, U>
+public abstract class AbstractPerceptionIterable<P extends OtsLocatable, H extends Headway, U, C>
+        extends AbstractPerceptionReiterable<P, H, U>
 {
 
     /** Root record. */
@@ -56,7 +58,7 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
 
     /**
      * Constructor.
-     * @param perceivingGtu perceiving GTU
+     * @param perceivingObject perceiving object
      * @param root root record
      * @param initialPosition initial position
      * @param downstream search downstream (or upstream)
@@ -64,11 +66,10 @@ public abstract class AbstractPerceptionIterable<H extends Headway, U, C> extend
      * @param relativePosition position to which distance are calculated by subclasses
      * @param route route of the GTU, may be {@code null}
      */
-    public AbstractPerceptionIterable(final LaneBasedGtu perceivingGtu, final LaneRecordInterface<?> root,
-            final Length initialPosition, final boolean downstream, final Length maxDistance,
-            final RelativePosition relativePosition, final Route route)
+    public AbstractPerceptionIterable(final P perceivingObject, final LaneRecordInterface<?> root, final Length initialPosition,
+            final boolean downstream, final Length maxDistance, final RelativePosition relativePosition, final Route route)
     {
-        super(perceivingGtu);
+        super(perceivingObject);
         this.root = root;
         this.initialPosition = initialPosition;
         this.downstream = downstream;

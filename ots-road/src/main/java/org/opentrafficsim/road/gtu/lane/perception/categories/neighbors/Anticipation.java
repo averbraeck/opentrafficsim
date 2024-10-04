@@ -31,13 +31,6 @@ public interface Anticipation
 
         /** {@inheritDoc} */
         @Override
-        public Length egoAnticipation(final Speed speed, final Acceleration acceleration, final Duration duration)
-        {
-            return Length.ZERO;
-        }
-
-        /** {@inheritDoc} */
-        @Override
         public String toString()
         {
             return "NONE";
@@ -50,20 +43,13 @@ public interface Anticipation
         /** {@inheritDoc} */
         @Override
         public NeighborTriplet anticipate(final NeighborTriplet neighborTriplet, final Duration duration,
-                final Length traveledDistance, final boolean downstream)
+                final Length traveledDistanceReference, final boolean downstream)
         {
             // upstream neighbor approaches when faster
-            Length distance =
-                    downstream ? neighborTriplet.headway().plus(neighborTriplet.speed().times(duration)).minus(traveledDistance)
-                            : neighborTriplet.headway().minus(neighborTriplet.speed().times(duration)).plus(traveledDistance);
+            Length distance = downstream
+                    ? neighborTriplet.headway().plus(neighborTriplet.speed().times(duration)).minus(traveledDistanceReference)
+                    : neighborTriplet.headway().minus(neighborTriplet.speed().times(duration)).plus(traveledDistanceReference);
             return new NeighborTriplet(distance, neighborTriplet.speed(), neighborTriplet.acceleration());
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Length egoAnticipation(final Speed speed, final Acceleration acceleration, final Duration duration)
-        {
-            return speed.times(duration);
         }
 
         /** {@inheritDoc} */
@@ -80,7 +66,7 @@ public interface Anticipation
         /** {@inheritDoc} */
         @Override
         public NeighborTriplet anticipate(final NeighborTriplet neighborTriplet, final Duration duration,
-                final Length traveledDistance, final boolean downstream)
+                final Length traveledDistanceReference, final boolean downstream)
         {
             if (neighborTriplet.speed().si < -neighborTriplet.acceleration().si * duration.si)
             {
@@ -90,7 +76,7 @@ public interface Anticipation
                 // upstream neighbor approaches when faster
                 return new NeighborTriplet(
                         Length.instantiateSI(
-                                neighborTriplet.headway().si + (downstream ? 1.0 : -1.0) * (dx - traveledDistance.si)),
+                                neighborTriplet.headway().si + (downstream ? 1.0 : -1.0) * (dx - traveledDistanceReference.si)),
                         Speed.ZERO, Acceleration.ZERO);
             }
             double dx = neighborTriplet.speed().si * duration.si
@@ -98,15 +84,9 @@ public interface Anticipation
             double dv = neighborTriplet.acceleration().si * duration.si;
             // upstream neighbor approaches when faster
             return new NeighborTriplet(
-                    Length.instantiateSI(neighborTriplet.headway().si + (downstream ? 1.0 : -1.0) * (dx - traveledDistance.si)),
+                    Length.instantiateSI(
+                            neighborTriplet.headway().si + (downstream ? 1.0 : -1.0) * (dx - traveledDistanceReference.si)),
                     Speed.instantiateSI(neighborTriplet.speed().si + dv), neighborTriplet.acceleration());
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Length egoAnticipation(final Speed speed, final Acceleration acceleration, final Duration duration)
-        {
-            return speed.times(duration);
         }
 
         /** {@inheritDoc} */
@@ -121,18 +101,11 @@ public interface Anticipation
      * Anticipate movement.
      * @param neighborTriplet headway, speed and acceleration
      * @param duration duration
-     * @param traveledDistance distance the subject vehicle traveled during the anticipation time
+     * @param traveledDistanceReference distance the reference object traveled during the anticipation time
      * @param downstream whether the perceived GTU is downstream
      * @return anticipated info
      */
-    NeighborTriplet anticipate(NeighborTriplet neighborTriplet, Duration duration, Length traveledDistance, boolean downstream);
+    NeighborTriplet anticipate(NeighborTriplet neighborTriplet, Duration duration, Length traveledDistanceReference,
+            boolean downstream);
 
-    /**
-     * Anticipate own movement.
-     * @param speed current speed
-     * @param acceleration current acceleration
-     * @param duration anticipation time
-     * @return anticipated distance traveled
-     */
-    Length egoAnticipation(Speed speed, Acceleration acceleration, Duration duration);
 }

@@ -128,7 +128,8 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
 
                     /** {@inheritDoc} */
                     @Override
-                    public AbstractPerceptionReiterable<HeadwayTrafficLight, TrafficLight>.PrimaryIteratorEntry next()
+                    public AbstractPerceptionReiterable<LaneBasedGtu, HeadwayTrafficLight,
+                            TrafficLight>.PrimaryIteratorEntry next()
                     {
                         org.opentrafficsim.road.gtu.lane.perception.structure.LaneStructure.Entry<TrafficLight> entry =
                                 iterator.next();
@@ -139,8 +140,8 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
 
             /** {@inheritDoc} */
             @Override
-            protected HeadwayTrafficLight perceive(final LaneBasedGtu perceivingGtu, final TrafficLight trafficLight,
-                    final Length distance) throws GtuException, ParameterException
+            protected HeadwayTrafficLight perceive(final TrafficLight trafficLight, final Length distance)
+                    throws GtuException, ParameterException
             {
                 return new HeadwayTrafficLightReal(trafficLight, distance,
                         trafficLight.canTurnOnRed(route, getPerception().getGtu().getType()));
@@ -177,7 +178,7 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
 
                     /** {@inheritDoc} */
                     @Override
-                    public AbstractPerceptionReiterable<HeadwayConflict, Conflict>.PrimaryIteratorEntry next()
+                    public AbstractPerceptionReiterable<LaneBasedGtu, HeadwayConflict, Conflict>.PrimaryIteratorEntry next()
                     {
                         org.opentrafficsim.road.gtu.lane.perception.structure.LaneStructure.Entry<Conflict> entry =
                                 iterator.next();
@@ -188,7 +189,7 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
 
             /** {@inheritDoc} */
             @Override
-            protected HeadwayConflict perceive(final LaneBasedGtu perceivingGtu, final Conflict conflict, final Length distance)
+            protected HeadwayConflict perceive(final Conflict conflict, final Length distance)
                     throws GtuException, ParameterException
             {
                 Conflict otherConflict = conflict.getOtherConflict();
@@ -201,7 +202,8 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
                 CrossSectionLink conflictingLink = otherConflict.getLane().getLink();
 
                 // TODO get from link combination (needs to be a map property on the links)
-                Length lookAhead = Try.assign(() -> getGtu().getParameters().getParameter(LOOKAHEAD), "Parameter not present.");
+                Length lookAhead =
+                        Try.assign(() -> getObject().getParameters().getParameter(LOOKAHEAD), "Parameter not present.");
                 Length conflictingVisibility = lookAhead;
                 Speed conflictingSpeedLimit;
                 try
@@ -218,10 +220,10 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
                 HeadwayConflict headwayConflict;
                 try
                 {
-                    PerceptionCollectable<HeadwayGtu, LaneBasedGtu> upstreamConflictingGTUs = otherConflict
-                            .getUpstreamGtus(getGtu(), DirectIntersectionPerception.this.headwayGtuType, conflictingVisibility);
+                    PerceptionCollectable<HeadwayGtu, LaneBasedGtu> upstreamConflictingGTUs = otherConflict.getUpstreamGtus(
+                            getObject(), DirectIntersectionPerception.this.headwayGtuType, conflictingVisibility);
                     PerceptionCollectable<HeadwayGtu, LaneBasedGtu> downstreamConflictingGTUs = otherConflict.getDownstreamGtus(
-                            getGtu(), DirectIntersectionPerception.this.headwayGtuType, conflictingVisibility);
+                            getObject(), DirectIntersectionPerception.this.headwayGtuType, conflictingVisibility);
                     // TODO stop lines (current models happen not to use this, but should be possible)
                     HeadwayStopLine stopLine = new HeadwayStopLine("stopLineId", Length.ZERO, conflict.getLane());
                     HeadwayStopLine conflictingStopLine =
@@ -248,7 +250,7 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
                             HeadwayConflict.Width.linear(startWidth, endWidth), stopLine, conflictingStopLine, thisLane);
 
                     Length trafficLightDistance = conflict.getOtherConflict()
-                            .getTrafficLightDistance(perceivingGtu.getParameters().getParameter(ParameterTypes.LOOKAHEAD));
+                            .getTrafficLightDistance(getObject().getParameters().getParameter(ParameterTypes.LOOKAHEAD));
                     if (trafficLightDistance != null && trafficLightDistance.le(lookAhead))
                     {
                         headwayConflict.setConflictingTrafficLight(trafficLightDistance, conflict.isPermitted());

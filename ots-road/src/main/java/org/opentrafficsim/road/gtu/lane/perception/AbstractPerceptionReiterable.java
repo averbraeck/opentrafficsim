@@ -6,9 +6,9 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 
 /**
@@ -23,10 +23,12 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ * @param <P> perceiving object type
  * @param <H> headway type
  * @param <U> underlying object type
  */
-public abstract class AbstractPerceptionReiterable<H extends Headway, U> implements PerceptionCollectable<H, U>
+public abstract class AbstractPerceptionReiterable<P extends OtsLocatable, H extends Headway, U>
+        implements PerceptionCollectable<H, U>
 {
 
     /** First entry. */
@@ -38,25 +40,25 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
     /** Primary iterator. */
     private Iterator<PrimaryIteratorEntry> primaryIterator;
 
-    /** Perceiving GTU. */
-    private final LaneBasedGtu gtu;
+    /** Perceiving object. */
+    private final P perceivingObject;
 
     /**
      * Constructor.
-     * @param perceivingGtu perceiving GTU
+     * @param perceivingObject perceiving object.
      */
-    protected AbstractPerceptionReiterable(final LaneBasedGtu perceivingGtu)
+    protected AbstractPerceptionReiterable(final P perceivingObject)
     {
-        this.gtu = perceivingGtu;
+        this.perceivingObject = perceivingObject;
     }
 
     /**
-     * Returns the GTU.
-     * @return GTU
+     * Returns the perceiving object.
+     * @return perceiving object.
      */
-    protected LaneBasedGtu getGtu()
+    protected P getObject()
     {
-        return this.gtu;
+        return this.perceivingObject;
     }
 
     /**
@@ -80,15 +82,13 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
 
     /**
      * Returns a perceived version of the underlying object.
-     * @param perceivingGtu perceiving GTU
      * @param object underlying object
      * @param distance distance to the object
      * @return perceived version of the underlying object
      * @throws GtuException on exception
      * @throws ParameterException on invalid parameter value or missing parameter
      */
-    protected abstract H perceive(LaneBasedGtu perceivingGtu, U object, Length distance)
-            throws GtuException, ParameterException;
+    protected abstract H perceive(U object, Length distance) throws GtuException, ParameterException;
 
     /** {@inheritDoc} */
     @Override
@@ -428,7 +428,7 @@ public abstract class AbstractPerceptionReiterable<H extends Headway, U> impleme
                 */
                 try
                 {
-                    this.value = perceive(AbstractPerceptionReiterable.this.getGtu(), this.object, this.distance);
+                    this.value = perceive(this.object, this.distance);
                 }
                 catch (Exception e)
                 {

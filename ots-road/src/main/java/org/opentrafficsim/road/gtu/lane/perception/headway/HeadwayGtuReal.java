@@ -187,6 +187,15 @@ public class HeadwayGtuReal extends AbstractHeadway implements HeadwayGtu
         }
         return gtuStatus.toArray(new GtuStatus[gtuStatus.size()]);
     }
+    
+    /**
+     * Returns the wrapped GTU.
+     * @return wrapped GTU.
+     */
+    public LaneBasedGtu getGtu()
+    {
+        return this.gtu;
+    }
 
     /** {@inheritDoc} */
     @Override

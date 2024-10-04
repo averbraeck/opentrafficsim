@@ -8,9 +8,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 
 /**
@@ -22,10 +22,12 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ * @param <P> perceiving object type
  * @param <H> headway type
  * @param <U> underlying headway type
  */
-public class MultiLanePerceptionIterable<H extends Headway, U> extends AbstractPerceptionReiterable<H, U>
+public class MultiLanePerceptionIterable<P extends OtsLocatable, H extends Headway, U>
+        extends AbstractPerceptionReiterable<P, H, U>
 {
 
     /** Set of iterators per lane. */
@@ -35,15 +37,15 @@ public class MultiLanePerceptionIterable<H extends Headway, U> extends AbstractP
     private final Map<U, RelativeLane> laneMap = new LinkedHashMap<>();
 
     /** Map of iterable per lane. */
-    private final Map<RelativeLane, AbstractPerceptionReiterable<H, U>> iterables = new LinkedHashMap<>();
+    private final Map<RelativeLane, AbstractPerceptionReiterable<P, H, U>> iterables = new LinkedHashMap<>();
 
     /**
      * Constructor.
-     * @param perceivingGtu perceiving GTU
+     * @param perceivingObject perceiving object
      */
-    public MultiLanePerceptionIterable(final LaneBasedGtu perceivingGtu)
+    public MultiLanePerceptionIterable(final P perceivingObject)
     {
-        super(perceivingGtu);
+        super(perceivingObject);
     }
 
     /**
@@ -51,7 +53,7 @@ public class MultiLanePerceptionIterable<H extends Headway, U> extends AbstractP
      * @param lane lane
      * @param iterable iterable
      */
-    public void addIterable(final RelativeLane lane, final AbstractPerceptionReiterable<H, U> iterable)
+    public void addIterable(final RelativeLane lane, final AbstractPerceptionReiterable<P, H, U> iterable)
     {
         this.iterators.put(lane, iterable.getPrimaryIterator());
         this.iterables.put(lane, iterable);
@@ -154,9 +156,8 @@ public class MultiLanePerceptionIterable<H extends Headway, U> extends AbstractP
 
     /** {@inheritDoc} */
     @Override
-    public H perceive(final LaneBasedGtu perceivingGtu, final U object, final Length distance)
-            throws GtuException, ParameterException
+    public H perceive(final U object, final Length distance) throws GtuException, ParameterException
     {
-        return this.iterables.get(this.laneMap.get(object)).perceive(perceivingGtu, object, distance);
+        return this.iterables.get(this.laneMap.get(object)).perceive(object, distance);
     }
 }

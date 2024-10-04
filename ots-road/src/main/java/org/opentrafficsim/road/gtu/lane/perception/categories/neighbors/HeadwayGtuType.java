@@ -4,6 +4,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -12,6 +13,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuPerceived;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuReal;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuRealCopy;
+import org.opentrafficsim.road.network.lane.conflict.Conflict;
 
 /**
  * Whether a GTU needs to be wrapped, or information should be copied for later and unaltered use.
@@ -80,6 +82,7 @@ public interface HeadwayGtuType
      * Creates a headway object from a GTU, downstream or upstream. The default implementation figures out from possible
      * negative distance whether a parallel GTU should be created.
      * @param perceivingGtu perceiving GTU
+     * @param reference reference object to which distance is given (and to which perception errors should apply, e.g. Conflict)
      * @param perceivedGtu perceived GTU
      * @param distance distance
      * @param downstream downstream (or upstream) neighbor
@@ -87,8 +90,9 @@ public interface HeadwayGtuType
      * @throws GtuException when headway object cannot be created
      * @throws ParameterException on invalid parameter value or missing parameter
      */
-    default HeadwayGtu createHeadwayGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
-            final Length distance, final boolean downstream) throws GtuException, ParameterException
+    default HeadwayGtu createHeadwayGtu(final LaneBasedGtu perceivingGtu, final OtsLocatable reference,
+            final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream)
+            throws GtuException, ParameterException
     {
         if (distance.ge0())
         {
@@ -98,10 +102,23 @@ public interface HeadwayGtuType
             }
             return createUpstreamGtu(perceivingGtu, perceivedGtu, distance);
         }
-        Throw.when(-distance.si > perceivingGtu.getLength().si + perceivedGtu.getLength().si, IllegalStateException.class,
+        Length length;
+        if (perceivingGtu.equals(reference))
+        {
+            length = perceivingGtu.getLength();
+        }
+        else if (reference instanceof Conflict conflict)
+        {
+            length = conflict.getLength();
+        }
+        else
+        {
+            length = Length.ZERO;
+        }
+        Throw.when(-distance.si > length.si + perceivedGtu.getLength().si, IllegalStateException.class,
                 "A GTU (%s) that is supposedly %s is actually %s.", perceivedGtu.getId(),
                 downstream ? "downstream" : "upstream", downstream ? "upstream" : "downstream");
-        Length overlapRear = distance.plus(perceivingGtu.getLength());
+        Length overlapRear = distance.plus(length);
         Length overlap = distance.neg();
         Length overlapFront = distance.plus(perceivedGtu.getLength());
         if (overlapRear.lt0())
@@ -197,8 +214,9 @@ public interface HeadwayGtuType
 
         /** {@inheritDoc} */
         @Override
-        public HeadwayGtu createHeadwayGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
-                final Length distance, final boolean downstream) throws GtuException, ParameterException
+        public HeadwayGtu createHeadwayGtu(final LaneBasedGtu perceivingGtu, final OtsLocatable reference,
+                final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream)
+                throws GtuException, ParameterException
         {
             Time now = perceivedGtu.getSimulator().getSimulatorAbsTime();
             if (this.updateTime == null || now.si > this.updateTime.si)
@@ -211,9 +229,11 @@ public interface HeadwayGtuType
                     // never go backwards in time if the reaction time increases
                     this.when = whenTemp;
                 }
-                this.traveledDistance = perceivingGtu.getOdometer().minus(perceivingGtu.getOdometer(this.when));
+                this.traveledDistance = perceivingGtu.equals(reference)
+                        ? perceivingGtu.getOdometer().minus(perceivingGtu.getOdometer(this.when)) : Length.ZERO;
             }
-            NeighborTriplet triplet = this.estimation.estimate(perceivingGtu, perceivedGtu, distance, downstream, this.when);
+            NeighborTriplet triplet =
+                    this.estimation.estimate(perceivingGtu, reference, perceivedGtu, distance, downstream, this.when);
             triplet = this.anticipation.anticipate(triplet, this.tr, this.traveledDistance, downstream);
             return new HeadwayGtuPerceived(perceivedGtu, triplet.headway(), triplet.speed(), triplet.acceleration());
         }
@@ -223,7 +243,7 @@ public interface HeadwayGtuType
         public HeadwayGtu createDownstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length distance) throws GtuException, ParameterException
         {
-            return createHeadwayGtu(perceivingGtu, perceivedGtu, distance, true);
+            return createHeadwayGtu(perceivingGtu, perceivingGtu, perceivedGtu, distance, true);
         }
 
         /** {@inheritDoc} */
@@ -231,7 +251,7 @@ public interface HeadwayGtuType
         public HeadwayGtu createUpstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length distance) throws GtuException, ParameterException
         {
-            return createHeadwayGtu(perceivingGtu, perceivedGtu, distance, false);
+            return createHeadwayGtu(perceivingGtu, perceivingGtu, perceivedGtu, distance, false);
         }
 
         /** {@inheritDoc} */

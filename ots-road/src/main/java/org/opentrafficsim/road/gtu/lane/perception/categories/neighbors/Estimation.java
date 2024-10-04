@@ -4,6 +4,7 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
@@ -32,11 +33,13 @@ public interface Estimation
     {
         /** {@inheritDoc} */
         @Override
-        public NeighborTriplet estimate(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
-                final Length distance, final boolean downstream, final Time when) throws ParameterException
+        public NeighborTriplet estimate(final LaneBasedGtu perceivingGtu, final OtsLocatable reference,
+                final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream, final Time when)
+                throws ParameterException
         {
-            return new NeighborTriplet(getDelayedHeadway(perceivingGtu, perceivedGtu, distance, downstream, when),
-                    getEgoSpeed(perceivingGtu).plus(getDelayedSpeedDifference(perceivingGtu, perceivedGtu, when)),
+            return new NeighborTriplet(getDelayedDistance(perceivingGtu, reference, perceivedGtu, distance, downstream, when),
+                    getEgoSpeed(perceivingGtu, reference)
+                            .plus(getDelayedSpeedDifference(perceivingGtu, reference, perceivedGtu, when)),
                     perceivedGtu.getAcceleration(when));
         }
 
@@ -62,6 +65,7 @@ public interface Estimation
     /**
      * Estimate headway, speed and acceleration.
      * @param perceivingGtu perceiving GTU
+     * @param reference reference object, e.g. the perceiving GTU, or a Conflict
      * @param perceivedGtu perceived GTU
      * @param distance actual headway at 'now' (i.e. not at 'when' if there is a reaction time)
      * @param downstream downstream (or upstream) neighbor
@@ -69,23 +73,29 @@ public interface Estimation
      * @return perceived headway, speed and acceleration
      * @throws ParameterException on invalid parameter value or if parameter is not available
      */
-    NeighborTriplet estimate(LaneBasedGtu perceivingGtu, LaneBasedGtu perceivedGtu, Length distance, boolean downstream,
-            Time when) throws ParameterException;
+    NeighborTriplet estimate(LaneBasedGtu perceivingGtu, OtsLocatable reference, LaneBasedGtu perceivedGtu, Length distance,
+            boolean downstream, Time when) throws ParameterException;
 
     /**
-     * Returns a delayed headway.
+     * Returns a delayed distance. For a static reference this is the current distance minus the odometer difference of the
+     * perceived GTU over the delay. In case the reference is the perceiving GTU, the odometer difference over the delay of the
+     * perceiving GTU is added.
      * @param perceivingGtu perceiving GTU
+     * @param reference reference object, e.g. the perceiving GTU, or a Conflict
      * @param perceivedGtu perceived GTU
-     * @param distance actual headway at 'now' (i.e. not at 'when' if there is a reaction time)
+     * @param distance actual distance at 'now' (i.e. not at 'when' if there is a reaction time)
      * @param downstream downstream (or upstream) neighbor
      * @param when moment of perception, reaction time included
      * @return delayed headway
      */
-    default Length getDelayedHeadway(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu, final Length distance,
-            final boolean downstream, final Time when)
+    default Length getDelayedDistance(final LaneBasedGtu perceivingGtu, final OtsLocatable reference,
+            final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream, final Time when)
     {
-        double delta = (perceivedGtu.getOdometer().si - perceivedGtu.getOdometer(when).si)
-                - (perceivingGtu.getOdometer().si - perceivingGtu.getOdometer(when).si);
+        double delta = (perceivedGtu.getOdometer().si - perceivedGtu.getOdometer(when).si);
+        if (perceivingGtu.equals(reference))
+        {
+            delta -= (perceivingGtu.getOdometer().si - perceivingGtu.getOdometer(when).si);
+        }
         if (downstream)
         {
             delta = -delta; // faster leader increases the headway, faster follower reduces the headway
@@ -94,13 +104,18 @@ public interface Estimation
     }
 
     /**
-     * Returns the ego speed. This is the speed used in AbstractLaneBasedGtu.getCarFollowingAcceleration(), and hence this is
-     * the reference speed for the stimulus of speed difference.
+     * Returns the ego speed. If the perceiving GTU is the reference, it is the speed of the perceiving GTU. Otherwise zero
+     * speed is returned, assuming a static reference.
      * @param perceivingGtu perceiving GTU
+     * @param reference reference object, e.g. the perceiving GTU, or a Conflict
      * @return ego speed
      */
-    default Speed getEgoSpeed(final LaneBasedGtu perceivingGtu)
+    default Speed getEgoSpeed(final LaneBasedGtu perceivingGtu, final OtsLocatable reference)
     {
+        if (!perceivingGtu.equals(reference))
+        {
+            return Speed.ZERO;
+        }
         try
         {
             return perceivingGtu.getTacticalPlanner().getPerception().getPerceptionCategory(EgoPerception.class).getSpeed();
@@ -113,15 +128,23 @@ public interface Estimation
     }
 
     /**
-     * Returns a delayed speed difference (other minus ego).
+     * Returns a delayed speed difference (other minus ego). If the perceiving GTU is the reference, this is the speed
+     * difference between the two GTUs. Otherwise it is the speed of the perceived GTU (i.e. speed difference to a static
+     * object).
      * @param perceivingGtu perceiving GTU
+     * @param reference reference object, e.g. the perceiving GTU, or a Conflict
      * @param perceivedGtu perceived GTU
      * @param when moment of perception, reaction time included
      * @return delayed speed difference (other minus ego)
      */
-    default Speed getDelayedSpeedDifference(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu, final Time when)
+    default Speed getDelayedSpeedDifference(final LaneBasedGtu perceivingGtu, final OtsLocatable reference,
+            final LaneBasedGtu perceivedGtu, final Time when)
     {
-        return Speed.instantiateSI(perceivedGtu.getSpeed(when).si - perceivingGtu.getSpeed(when).si);
+        if (perceivingGtu.equals(reference))
+        {
+            return perceivedGtu.getSpeed(when).minus(perceivingGtu.getSpeed(when));
+        }
+        return perceivedGtu.getSpeed(when);
     }
 
     /**
@@ -139,15 +162,17 @@ public interface Estimation
     {
         /** {@inheritDoc} */
         @Override
-        public NeighborTriplet estimate(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
-                final Length distance, final boolean downstream, final Time when) throws ParameterException
+        public NeighborTriplet estimate(final LaneBasedGtu perceivingGtu, final OtsLocatable reference,
+                final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream, final Time when)
+                throws ParameterException
         {
             double sign = perceivingGtu.getParameters().getParameter(OVER_EST);
             double factor = 1.0 + sign * (perceivingGtu.getParameters().getParameter(AdaptationSituationalAwareness.SA_MAX)
                     - perceivingGtu.getParameters().getParameter(AdaptationSituationalAwareness.SA));
-            Length headway = getDelayedHeadway(perceivingGtu, perceivedGtu, distance, downstream, when).times(factor);
-            Speed speed =
-                    getEgoSpeed(perceivingGtu).plus(getDelayedSpeedDifference(perceivingGtu, perceivedGtu, when).times(factor));
+            Length headway =
+                    getDelayedDistance(perceivingGtu, reference, perceivedGtu, distance, downstream, when).times(factor);
+            Speed speed = getEgoSpeed(perceivingGtu, reference)
+                    .plus(getDelayedSpeedDifference(perceivingGtu, reference, perceivedGtu, when).times(factor));
             Acceleration acceleration = perceivedGtu.getAcceleration(when);
             return new NeighborTriplet(headway, speed, acceleration);
         }

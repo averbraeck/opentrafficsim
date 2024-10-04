@@ -67,7 +67,8 @@ public class DirectBusStopPerception extends AbstractPerceptionCategory<LaneBase
     {
         try
         {
-            MultiLanePerceptionIterable<HeadwayBusStop, BusStop> stops = new MultiLanePerceptionIterable<>(getGtu());
+            MultiLanePerceptionIterable<LaneBasedGtu, HeadwayBusStop, BusStop> stops =
+                    new MultiLanePerceptionIterable<>(getGtu());
             for (RelativeLane lane : getPerception().getLaneStructure().getRootCrossSection())
             {
                 Iterable<Entry<BusStop>> busStops = getPerception().getLaneStructure().getDownstreamObjects(lane, BusStop.class,
@@ -77,12 +78,12 @@ public class DirectBusStopPerception extends AbstractPerceptionCategory<LaneBase
                 Length pos = record.getStartDistance().neg();
                 pos = pos.plus(getGtu().getFront().dx());
 
-                AbstractPerceptionReiterable<HeadwayBusStop, BusStop> it =
-                        new AbstractPerceptionReiterable<HeadwayBusStop, BusStop>(getGtu())
+                AbstractPerceptionReiterable<LaneBasedGtu, HeadwayBusStop, BusStop> it =
+                        new AbstractPerceptionReiterable<LaneBasedGtu, HeadwayBusStop, BusStop>(getGtu())
                         {
                             /** {@inheritDoc} */
                             @Override
-                            protected Iterator<AbstractPerceptionReiterable<HeadwayBusStop,
+                            protected Iterator<AbstractPerceptionReiterable<LaneBasedGtu, HeadwayBusStop,
                                     BusStop>.PrimaryIteratorEntry> primaryIterator()
                             {
                                 Iterator<Entry<BusStop>> iterator = busStops.iterator();
@@ -97,7 +98,8 @@ public class DirectBusStopPerception extends AbstractPerceptionCategory<LaneBase
 
                                     /** {@inheritDoc} */
                                     @Override
-                                    public AbstractPerceptionReiterable<HeadwayBusStop, BusStop>.PrimaryIteratorEntry next()
+                                    public AbstractPerceptionReiterable<LaneBasedGtu, HeadwayBusStop,
+                                            BusStop>.PrimaryIteratorEntry next()
                                     {
                                         Entry<BusStop> entry = iterator.next();
                                         return new PrimaryIteratorEntry(entry.object(), entry.distance());
@@ -107,8 +109,8 @@ public class DirectBusStopPerception extends AbstractPerceptionCategory<LaneBase
 
                             /** {@inheritDoc} */
                             @Override
-                            protected HeadwayBusStop perceive(final LaneBasedGtu perceivingGtu, final BusStop object,
-                                    final Length distance) throws GtuException, ParameterException
+                            protected HeadwayBusStop perceive(final BusStop object, final Length distance)
+                                    throws GtuException, ParameterException
                             {
                                 Set<String> conflictIds = new LinkedHashSet<>();
                                 for (Conflict conflict : object.getConflicts())

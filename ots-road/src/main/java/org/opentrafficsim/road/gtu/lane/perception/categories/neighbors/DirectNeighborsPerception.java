@@ -196,7 +196,7 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
 
                     /** {@inheritDoc} */
                     @Override
-                    public AbstractPerceptionReiterable<HeadwayGtu, LaneBasedGtu>.PrimaryIteratorEntry next()
+                    public AbstractPerceptionReiterable<LaneBasedGtu, HeadwayGtu, LaneBasedGtu>.PrimaryIteratorEntry next()
                     {
                         Entry<LaneBasedGtu> entry = iterator.next();
                         return new PrimaryIteratorEntry(entry.object(), entry.distance());
@@ -206,10 +206,10 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
 
             /** {@inheritDoc} */
             @Override
-            protected HeadwayGtu perceive(final LaneBasedGtu perceivingGtu, final LaneBasedGtu object, final Length distance)
+            protected HeadwayGtu perceive(final LaneBasedGtu object, final Length distance)
                     throws GtuException, ParameterException
             {
-                return DirectNeighborsPerception.this.headwayGtuType.createDownstreamGtu(perceivingGtu, object, distance);
+                return DirectNeighborsPerception.this.headwayGtuType.createDownstreamGtu(getObject(), object, distance);
             }
         };
     }
@@ -249,7 +249,7 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
 
                     /** {@inheritDoc} */
                     @Override
-                    public AbstractPerceptionReiterable<HeadwayGtu, LaneBasedGtu>.PrimaryIteratorEntry next()
+                    public AbstractPerceptionReiterable<LaneBasedGtu, HeadwayGtu, LaneBasedGtu>.PrimaryIteratorEntry next()
                     {
                         Entry<LaneBasedGtu> entry = iterator.next();
                         return new PrimaryIteratorEntry(entry.object(), entry.distance());
@@ -259,10 +259,10 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
 
             /** {@inheritDoc} */
             @Override
-            protected HeadwayGtu perceive(final LaneBasedGtu perceivingGtu, final LaneBasedGtu object, final Length distance)
+            protected HeadwayGtu perceive(final LaneBasedGtu object, final Length distance)
                     throws GtuException, ParameterException
             {
-                return DirectNeighborsPerception.this.headwayGtuType.createUpstreamGtu(perceivingGtu, object, distance);
+                return DirectNeighborsPerception.this.headwayGtuType.createUpstreamGtu(getObject(), object, distance);
             }
         };
     }
