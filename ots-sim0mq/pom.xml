@@ -14,11 +14,6 @@
   <dependencies>
 
     <dependency>
-      <groupId>org.opentrafficsim</groupId>
-      <artifactId>ots-road</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>org.sim0mq</groupId>
       <artifactId>sim0mq</artifactId>
     </dependency>
@@ -26,7 +21,7 @@
     <dependency>
       <groupId>org.opentrafficsim</groupId>
       <artifactId>ots-parser-xml</artifactId>
-    </dependency>
-  
+    </dependency> 
+     
   </dependencies>
 </project>

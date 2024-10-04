@@ -24,21 +24,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.djutils</groupId>
-      <artifactId>djutils-draw</artifactId>
-    </dependency>
-
-	<dependency>
-      <groupId>nl.tudelft.simulation</groupId>
-      <artifactId>dsol-animation</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>nl.tudelft.simulation</groupId>
-      <artifactId>dsol-introspection</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>org.jfree</groupId>
       <artifactId>jfreechart</artifactId>
     </dependency>

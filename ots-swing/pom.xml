@@ -13,11 +13,6 @@
   <description>Swing UI classes for OTS</description>
 
   <dependencies>
-  
-    <dependency>
-      <groupId>org.opentrafficsim</groupId>
-      <artifactId>ots-road</artifactId>
-    </dependency>
     
     <dependency>
       <groupId>org.opentrafficsim</groupId>

@@ -26,11 +26,6 @@
 
     <dependency>
       <groupId>nl.tudelft.simulation</groupId>
-      <artifactId>dsol-animation</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>nl.tudelft.simulation</groupId>
       <artifactId>dsol-animation-gis</artifactId>
     </dependency>
 

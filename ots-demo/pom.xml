@@ -12,38 +12,17 @@
   <description>Demo classes for the OpenTrafficSim project</description>
 
   <dependencies>
-    <dependency>
-      <groupId>org.opentrafficsim</groupId>
-      <artifactId>ots-road</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.opentrafficsim</groupId>
-      <artifactId>ots-animation</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.opentrafficsim</groupId>
-      <artifactId>ots-trafficcontrol</artifactId>
-    </dependency>
+  
     <dependency>
       <groupId>org.opentrafficsim</groupId>
       <artifactId>ots-parser-xml</artifactId>
-    </dependency>
+    </dependency> 
+    
     <dependency>
       <groupId>org.opentrafficsim</groupId>
       <artifactId>ots-swing</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.opentrafficsim</groupId>
-      <artifactId>ots-web</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.opentrafficsim</groupId>
-      <artifactId>ots-sim0mq-swing</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.sim0mq</groupId>
-      <artifactId>sim0mq</artifactId>
-    </dependency>
+    
   </dependencies>
 
   <repositories>
