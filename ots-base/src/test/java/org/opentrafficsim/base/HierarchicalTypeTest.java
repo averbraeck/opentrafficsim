@@ -255,5 +255,13 @@ public class HierarchicalTypeTest
         assertTrue(zt1.isOfType(car));
         assertTrue(zt1.isOfType(vehicle));
         // Ztype is of course strange. So this should not compile: ZType zt2 = new ZType("zt2", zt1);
+        
+        // ofType tests
+        X xCar = new X(car);
+        X xVehicle = new X(vehicle);
+        assertTrue(xCar.isOfType(vehicle));
+        assertFalse(xCar.isOfType(truck));
+        assertFalse(xVehicle.isOfType(car));
+        // this should not compile: xCar.isOfType(highway);
     }
 }
