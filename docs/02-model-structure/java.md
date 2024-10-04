@@ -34,6 +34,9 @@ Eclipse is an Integrated Development Environment (IDE), which is a tool that off
     <tr>
         <td colspan=4><b>ots-base</b><br><i>contains some generic simulation utilities such as parameter management</i></td>
     </tr>
+    <tr>
+        <td colspan=4><b>ots</b><br><i> the main project containing compilation standards, github workflows, documentation source code and general settings files</i></td>
+    </tr>
 </table>
 <i>Figure 2.2: OTS project dependencies. Projects depend on the projects directly below them.</i>
 
