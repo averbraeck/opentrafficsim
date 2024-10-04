@@ -249,11 +249,11 @@ public class HierarchicalTypeTest
         YType highway = new YType("highway", road);
         assertTrue(highway.isOfType(road));
         assertFalse(road.isOfType(highway));
-        // this does not compile: YType yt1 = new YType("yt1", vehicle);
+        // this should not compile: YType yt1 = new YType("yt1", vehicle);
         ZType zt1 = new ZType("zt1", car);
         assertEquals(car, zt1.getParent());
         assertTrue(zt1.isOfType(car));
         assertTrue(zt1.isOfType(vehicle));
-        // Ztype is of course strange. So this does not compile: ZType zt2 = new ZType("zt2", zt1);
+        // Ztype is of course strange. So this should not compile: ZType zt2 = new ZType("zt2", zt1);
     }
 }
