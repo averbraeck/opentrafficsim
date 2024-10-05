@@ -60,8 +60,8 @@
     <jakarta.annotation.version>3.0.0</jakarta.annotation.version>
     <treetable.version>0.0.2</treetable.version>
 
-    <junit.version>5.11.0</junit.version>
-    <mockito.version>5.12.0</mockito.version>
+    <junit.version>5.11.2</junit.version>
+    <mockito.version>5.14.1</mockito.version>
 
     <maven.compiler.version>3.13.0</maven.compiler.version>
     <maven.site.version>4.0.0-M16</maven.site.version>
