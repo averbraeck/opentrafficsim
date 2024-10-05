@@ -1,12 +1,12 @@
-package org.opentrafficsim.base.geometry;
+package org.opentrafficsim.draw;
 
 import java.util.List;
 
-import org.djutils.draw.bounds.Bounds;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.base.geometry.PolygonShape;
 
 /**
  * Creates bounds that are at least 2m of size in the x and y direction, useful for animation objects a user may click on.
@@ -37,7 +37,7 @@ public final class ClickableBounds
      * @param bounds actual object bounds.
      * @return bounds that are at least 2m of size in the x and y direction.
      */
-    public static Bounds2d get(final Bounds<?, ?, ?> bounds)
+    public static Bounds2d get(final Bounds2d bounds)
     {
         if (bounds.getDeltaX() < 2 * R_MIN)
         {
@@ -54,7 +54,7 @@ public final class ClickableBounds
             double y = (bounds.getMinY() + bounds.getMaxY()) / 2.0;
             return new Bounds2d(bounds.getMinX(), bounds.getMaxX(), y - R_MIN, y + R_MIN);
         }
-        return new Bounds2d(bounds.getMinX(), bounds.getMaxX(), bounds.getMinY(), bounds.getMaxY());
+        return bounds;
     }
 
     /**

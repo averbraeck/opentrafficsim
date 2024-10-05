@@ -10,6 +10,7 @@ import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
+import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
@@ -52,7 +53,7 @@ public class AnimationGtuData implements GtuData
     @Override
     public Bounds2d getBounds()
     {
-        return this.gtu.getBounds();
+        return ClickableBounds.get(this.gtu.getBounds());
     }
     
     /** {@inheritDoc} */

@@ -46,6 +46,7 @@ import org.opentrafficsim.core.geometry.ContinuousPolyLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
 import org.opentrafficsim.core.geometry.Flattener;
 import org.opentrafficsim.core.geometry.OtsGeometryUtil;
+import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation;
@@ -548,7 +549,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         this.location = new OrientedPoint2d(ray.x, ray.y, ray.phi);
         this.contour =
                 new Polygon2d(PolyLine2d.concatenate(this.flattenedDesignLine, this.flattenedDesignLine.reverse()).getPoints());
-        this.bounds = OtsLocatable.asBounds(this);
+        this.bounds = ClickableBounds.get(OtsLocatable.asBounds(this));
         if (this.priorityAnimation != null)
         {
             getMap().removeAnimation(this.priorityAnimation);

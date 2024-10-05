@@ -4,6 +4,7 @@ import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 
@@ -35,7 +36,7 @@ public class AnimationCrossSectionElementData<T extends CrossSectionElement> imp
     @Override
     public Bounds2d getBounds()
     {
-        return this.element.getBounds();
+        return ClickableBounds.get(this.element.getBounds());
     }
     
     /** {@inheritDoc} */

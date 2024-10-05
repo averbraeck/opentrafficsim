@@ -7,6 +7,7 @@ import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.road.network.lane.SliceInfo;
@@ -55,7 +56,7 @@ public class MapCrossSectionData implements CrossSectionElementData
         this.location = new OrientedPoint2d(ray.x, ray.y, ray.phi);
         this.centerLine = centerLine;
         this.contour = contour;
-        this.bounds = OtsLocatable.asBounds(this);
+        this.bounds = ClickableBounds.get(OtsLocatable.asBounds(this));
         this.sliceInfo = sliceInfo;
     }
 
@@ -70,7 +71,7 @@ public class MapCrossSectionData implements CrossSectionElementData
     @Override
     public Bounds2d getBounds()
     {
-        return this.bounds;
+        return ClickableBounds.get(this.bounds);
     }
 
     /** {@inheritDoc} */

@@ -55,7 +55,7 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
     private OrientedPoint2d location;
 
     /** Bounds. */
-    private Bounds2d bounds = new Bounds2d(1.0, 0.25);
+    private Bounds2d bounds = new Bounds2d(2.0, 2.0);
     
     /** Contour. */
     private Polygon2d contour;

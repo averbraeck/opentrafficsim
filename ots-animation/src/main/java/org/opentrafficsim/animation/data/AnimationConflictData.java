@@ -6,6 +6,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.road.ConflictAnimation.ConflictData;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 
@@ -50,7 +51,7 @@ public class AnimationConflictData implements ConflictData
     @Override
     public Bounds2d getBounds()
     {
-        return this.conflict.getBounds();
+        return ClickableBounds.get(this.conflict.getBounds());
     }
 
     /** {@inheritDoc} */
