@@ -51,7 +51,6 @@
     <djutils.version>2.2.2</djutils.version>
     <dsol.version>4.2.3</dsol.version>
     <sim0mq.version>2.1.3</sim0mq.version>
-    <jts.version>1.19.0</jts.version>
     <jfreechart.version>1.5.5</jfreechart.version>
     <apache.poi.version>5.3.0</apache.poi.version>
     <jgrapht.version>1.5.2</jgrapht.version>
@@ -333,12 +332,6 @@
       </dependency>
 
       <dependency>
-        <groupId>org.locationtech.jts</groupId>
-        <artifactId>jts-core</artifactId>
-        <version>${jts.version}</version>
-      </dependency>
-
-      <dependency>
         <groupId>org.apache.poi</groupId>
         <artifactId>poi</artifactId>
         <version>${apache.poi.version}</version>
@@ -525,7 +518,6 @@
             <offlineLink><url>https://djutils.org/docs/latest/djutils-draw/apidocs/</url></offlineLink>
             <offlineLink><url>http://www.jdom.org/docs/apidocs/</url></offlineLink>
             <offlineLink><url>https://sim0mq.org/docs/latest/apidocs/</url></offlineLink>
-            <offlineLink><url>https://jar-download.com/artifacts/org.locationtech.jts/jts-core/1.19.0/documentation/</url></offlineLink>
             <offlineLink><url>http://poi.apache.org/apidocs/5.0/</url></offlineLink>
             <offlineLink><url>https://junit.org/junit5/docs/current/api/</url></offlineLink>
             <offlineLink><url>https://javadoc.io/doc/org.eclipse.jetty/jetty-server/latest/org.eclipse.jetty.server/</url></offlineLink>
@@ -794,7 +786,6 @@
             <offlineLink><url>https://djutils.org/docs/latest/djutils-draw/apidocs/</url></offlineLink>
             <offlineLink><url>http://www.jdom.org/docs/apidocs/</url></offlineLink>
             <offlineLink><url>https://sim0mq.org/docs/latest/apidocs/</url></offlineLink>
-            <offlineLink><url>https://jar-download.com/artifacts/org.locationtech.jts/jts-core/1.19.0/documentation/</url></offlineLink>
             <offlineLink><url>http://poi.apache.org/apidocs/5.0/</url></offlineLink>
             <offlineLink><url>https://junit.org/junit5/docs/current/api/</url></offlineLink>
             <offlineLink><url>https://javadoc.io/doc/org.eclipse.jetty/jetty-server/latest/org.eclipse.jetty.server/</url></offlineLink>
