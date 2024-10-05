@@ -79,7 +79,6 @@
     <maven.jxr.version>3.4.0</maven.jxr.version>
     <maven.taglist.version>3.1.0</maven.taglist.version>
     <maven.pmd.version>3.24.0</maven.pmd.version>
-    <!--maven.changes.version>2.12.1</maven.changes.version-->
     <flatten.maven.version>1.6.0</flatten.maven.version>
     <maven.deploy.version>3.1.3</maven.deploy.version>
     <nexus-staging.version>1.7.0</nexus-staging.version>
@@ -898,19 +897,6 @@
           <skipEmptyReport>false</skipEmptyReport>
         </configuration>
       </plugin>
-
-      <!--plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-changes-plugin</artifactId>
-        <version>${maven.changes.version}</version>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>changes-report</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin-->
 
     </plugins>
   </reporting>
