@@ -52,7 +52,6 @@
     <dsol.version>4.2.3</dsol.version>
     <sim0mq.version>2.1.3</sim0mq.version>
     <jfreechart.version>1.5.5</jfreechart.version>
-    <apache.poi.version>5.3.0</apache.poi.version>
     <jgrapht.version>1.5.2</jgrapht.version>
     <xstream.version>1.4.20</xstream.version>
     <jaxb.version>2.3.1</jaxb.version>
@@ -332,18 +331,6 @@
       </dependency>
 
       <dependency>
-        <groupId>org.apache.poi</groupId>
-        <artifactId>poi</artifactId>
-        <version>${apache.poi.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.poi</groupId>
-        <artifactId>poi-ooxml</artifactId>
-        <version>${apache.poi.version}</version>
-      </dependency>
-
-      <dependency>
         <groupId>org.jgrapht</groupId>
         <artifactId>jgrapht-core</artifactId>
         <version>${jgrapht.version}</version>
@@ -518,16 +505,10 @@
             <offlineLink><url>https://djutils.org/docs/latest/djutils-draw/apidocs/</url></offlineLink>
             <offlineLink><url>http://www.jdom.org/docs/apidocs/</url></offlineLink>
             <offlineLink><url>https://sim0mq.org/docs/latest/apidocs/</url></offlineLink>
-            <offlineLink><url>http://poi.apache.org/apidocs/5.0/</url></offlineLink>
             <offlineLink><url>https://junit.org/junit5/docs/current/api/</url></offlineLink>
             <offlineLink><url>https://javadoc.io/doc/org.eclipse.jetty/jetty-server/latest/org.eclipse.jetty.server/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/jakarta.annotation/jakarta.annotation-api/latest/jakarta.annotation/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/org.openstreetmap.osmosis/osmosis-core/latest/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/org.openstreetmap.osmosis/osmosis-pbf/latest/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/org.openstreetmap.osmosis/osmosis-set/latest/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/org.openstreetmap.osmosis/osmosis-osm-binary/latest/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/org.openstreetmap.osmosis/osmosis-xml/latest/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/de.siegmar/fastcsv/latest/de.siegmar.fastcsv/</url></offlineLink>
+            <offlineLink><url>https://javadoc.io/doc/jakarta.annotation/jakarta.annotation-api/latest/jakarta.annotation/</url></offlineLink>            <offlineLink><url>https://javadoc.io/doc/de.siegmar/fastcsv/latest/de.siegmar.fastcsv/</url></offlineLink>
+
             <offlineLink><url>https://jgrapht.org/javadoc/</url></offlineLink>
             <offlineLink><url>https://x-stream.github.io/javadoc/</url></offlineLink>
           </offlineLinks>
@@ -786,15 +767,9 @@
             <offlineLink><url>https://djutils.org/docs/latest/djutils-draw/apidocs/</url></offlineLink>
             <offlineLink><url>http://www.jdom.org/docs/apidocs/</url></offlineLink>
             <offlineLink><url>https://sim0mq.org/docs/latest/apidocs/</url></offlineLink>
-            <offlineLink><url>http://poi.apache.org/apidocs/5.0/</url></offlineLink>
             <offlineLink><url>https://junit.org/junit5/docs/current/api/</url></offlineLink>
             <offlineLink><url>https://javadoc.io/doc/org.eclipse.jetty/jetty-server/latest/org.eclipse.jetty.server/</url></offlineLink>
             <offlineLink><url>https://javadoc.io/doc/jakarta.annotation/jakarta.annotation-api/latest/jakarta.annotation/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/org.openstreetmap.osmosis/osmosis-core/latest/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/org.openstreetmap.osmosis/osmosis-pbf/latest/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/org.openstreetmap.osmosis/osmosis-set/latest/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/org.openstreetmap.osmosis/osmosis-osm-binary/latest/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/org.openstreetmap.osmosis/osmosis-xml/latest/</url></offlineLink>
             <offlineLink><url>https://javadoc.io/doc/de.siegmar/fastcsv/latest/de.siegmar.fastcsv/</url></offlineLink>
             <offlineLink><url>https://jgrapht.org/javadoc/</url></offlineLink>
             <offlineLink><url>https://x-stream.github.io/javadoc/</url></offlineLink>
