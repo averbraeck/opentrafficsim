@@ -1,14 +1,6 @@
 package org.opentrafficsim.base.geometry;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.djutils.draw.Transform2d;
-import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.OrientedPoint2d;
-import org.djutils.draw.point.Point2d;
 
 /**
  * Bounds defined by a polygon.
@@ -38,31 +30,6 @@ public class PolygonShape implements OtsShape
     public Polygon2d asPolygon()
     {
         return this.polygon;
-    }
-
-    /**
-     * Translates absolute geometry to bounds relative to location, including rotation.
-     * @param location location.
-     * @param geometry geometry..
-     * @return bounded polygon.
-     */
-    public static PolygonShape geometryToBounds(final OrientedPoint2d location, final PolyLine2d geometry)
-    {
-        Transform2d transformation = OtsRenderable.toBoundsTransform(location);
-        Iterator<Point2d> itSource = geometry.getPoints();
-        Point2d prev = null;
-        List<Point2d> points = new ArrayList<>();
-        while (itSource.hasNext())
-        {
-            Point2d next = transformation.transform(itSource.next());
-            if (!next.equals(prev))
-            {
-                points.add(next);
-            }
-            prev = next;
-        }
-        PolygonShape b = new PolygonShape(new Polygon2d(points));
-        return b;
     }
 
 }

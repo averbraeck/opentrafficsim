@@ -33,7 +33,7 @@ public class MapPriorityData implements PriorityData
     {
         this.location = linkData.getDesignLine().getLocationFractionExtended(0.5);
         this.linkData = linkData;
-        this.contour = OtsLocatable.asPolygon(this);
+        this.contour = OtsLocatable.boundsAsContour(this);
     }
 
     /** {@inheritDoc} */

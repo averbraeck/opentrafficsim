@@ -72,7 +72,7 @@ public class MapNodeData extends MapData implements NodeData, EventListener
         {
             throw new RuntimeException(e);
         }
-        this.contour = OtsLocatable.asPolygon(this);
+        this.contour = OtsLocatable.boundsAsContour(this);
     }
 
     /** {@inheritDoc} */

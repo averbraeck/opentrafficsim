@@ -549,7 +549,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         this.location = new OrientedPoint2d(ray.x, ray.y, ray.phi);
         this.contour =
                 new Polygon2d(PolyLine2d.concatenate(this.flattenedDesignLine, this.flattenedDesignLine.reverse()).getPoints());
-        this.bounds = ClickableBounds.get(OtsLocatable.asBounds(this));
+        this.bounds = ClickableBounds.get(OtsLocatable.contourAsBounds(this));
         if (this.priorityAnimation != null)
         {
             getMap().removeAnimation(this.priorityAnimation);

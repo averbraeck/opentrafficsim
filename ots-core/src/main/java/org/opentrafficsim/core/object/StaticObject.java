@@ -56,7 +56,7 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, D
         this.contour = contour;
         this.location = location;
 
-        this.bounds = OtsLocatable.asBounds(this);
+        this.bounds = OtsLocatable.contourAsBounds(this);
         this.height = height;
     }
 

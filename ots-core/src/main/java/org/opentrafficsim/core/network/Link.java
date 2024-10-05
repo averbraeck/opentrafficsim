@@ -126,7 +126,7 @@ public class Link extends LocalEventProducer
         this.contour = new Polygon2d(
                 PolyLine2d.concatenate(this.designLine.getLine2d(), this.designLine.getLine2d().reverse()).getPoints());
         this.location = this.designLine.getLocationFractionExtended(0.5);
-        this.bounds = OtsLocatable.asBounds(this);
+        this.bounds = OtsLocatable.contourAsBounds(this);
         this.network.addLink(this);
     }
 

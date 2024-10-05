@@ -79,7 +79,7 @@ public abstract class CrossSectionElement extends LocalEventProducer
         this.centerLine = centerLine;
         this.location = centerLine.getLocationFractionExtended(0.5);
         this.contour = contour;
-        this.bounds = OtsLocatable.asBounds(this);
+        this.bounds = OtsLocatable.contourAsBounds(this);
 
         this.sliceInfo = new SliceInfo(crossSectionSlices, link.getLength());
 

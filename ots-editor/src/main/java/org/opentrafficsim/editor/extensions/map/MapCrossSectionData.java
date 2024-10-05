@@ -56,7 +56,7 @@ public class MapCrossSectionData implements CrossSectionElementData
         this.location = new OrientedPoint2d(ray.x, ray.y, ray.phi);
         this.centerLine = centerLine;
         this.contour = contour;
-        this.bounds = ClickableBounds.get(OtsLocatable.asBounds(this));
+        this.bounds = ClickableBounds.get(OtsLocatable.contourAsBounds(this));
         this.sliceInfo = sliceInfo;
     }
 

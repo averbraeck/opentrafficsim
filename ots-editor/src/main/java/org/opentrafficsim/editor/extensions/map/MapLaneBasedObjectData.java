@@ -281,7 +281,7 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
         this.bounds = calculateBounds();
         Ray2d ray = laneData.getCenterLine().getLocationExtended(this.positionFromStart.si);
         this.location = new OrientedPoint2d(ray.x, ray.y, ray.phi);
-        this.contour = OtsLocatable.asPolygon(this);
+        this.contour = OtsLocatable.boundsAsContour(this);
         setValid();
     }
 

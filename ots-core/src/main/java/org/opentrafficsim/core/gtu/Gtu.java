@@ -835,7 +835,7 @@ public class Gtu extends LocalEventProducer
                 this.shape = new Polygon2d(new Point2d(-0.5 * l, -0.5 * w), new Point2d(-0.5 * l, 0.5 * w),
                         new Point2d(0.5 * l, 0.5 * w), new Point2d(0.5 * l, -0.5 * w));
             }
-            Polygon2d s = transformShape(this.shape, this.operationalPlan.get(time).getLocation(time));
+            Polygon2d s = OtsLocatable.transformContour(this.shape, this.operationalPlan.get(time).getLocation(time));
             System.out.println("gtu " + getId() + ", shape(t)=" + s);
             return s;
         }

@@ -117,7 +117,7 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         {
             this.centerLine = centerLine;
             this.location = new OrientedPoint2d(this.centerLine.getBounds().midPoint(), 0.0);
-            this.bounds = ClickableBounds.get(OtsLocatable.asBounds(this));
+            this.bounds = ClickableBounds.get(OtsLocatable.contourAsBounds(this));
             this.fullId = fullId;
         }
 
