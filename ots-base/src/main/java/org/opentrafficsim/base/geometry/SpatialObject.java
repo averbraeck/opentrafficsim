@@ -17,8 +17,8 @@ public interface SpatialObject
 {
 
     /**
-     * Return the contour of the object.
-     * @return the contour of the object
+     * Returns the contour of the object in world coordinates.
+     * @return the contour of the object in world coordinates
      */
     Polygon2d getContour();
 

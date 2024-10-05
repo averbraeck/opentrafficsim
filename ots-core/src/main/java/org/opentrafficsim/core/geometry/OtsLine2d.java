@@ -1035,15 +1035,6 @@ public class OtsLine2d implements Locatable, Serializable
         return this.centroid;
     }
 
-    /**
-     * Get the bounding rectangle of this OtsLine2d.
-     * @return the bounding rectangle of this OtsLine2d
-     */
-    public final Bounds2d getEnvelope()
-    {
-        return this.line2d.getBounds();
-    }
-
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
@@ -1059,7 +1050,7 @@ public class OtsLine2d implements Locatable, Serializable
     {
         if (this.bounds == null)
         {
-            Bounds2d envelope = getEnvelope();
+            Bounds2d envelope = this.line2d.getBounds();
             this.bounds = new Bounds2d(envelope.getDeltaX(), envelope.getDeltaY());
         }
         return this.bounds;

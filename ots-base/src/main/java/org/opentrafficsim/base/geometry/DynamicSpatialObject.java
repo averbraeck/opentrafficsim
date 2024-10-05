@@ -21,9 +21,10 @@ public interface DynamicSpatialObject extends SpatialObject
 {
 
     /**
-     * Return the contour of a dynamic object at time 'time'. Note that the getContour() method without a time returns the
-     * Minkowski sum of all shapes of the spatial object for a validity time window, e.g., a contour that describes all
-     * locations of a GTU for the next time step, i.e., the contour of the GTU belonging to the next operational plan.
+     * Return the contour of a dynamic object at time 'time' in world coordinates. Note that the getContour() method without a
+     * time returns the Minkowski sum of all shapes of the spatial object for a validity time window, e.g., a contour that
+     * describes all locations of a GTU for the next time step, i.e., the contour of the GTU belonging to the next operational
+     * plan.
      * @param time the time for which we want the shape
      * @return the shape of the object at time 'time'
      */

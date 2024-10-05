@@ -38,7 +38,7 @@ public class Node
     /** */
     private static final long serialVersionUID = 20150722L;
 
-    /** the Network. */
+    /** The Network. */
     private final Network network;
 
     /** The node id. */
@@ -47,8 +47,8 @@ public class Node
     /** The point. */
     private final OrientedPoint2d point;
 
-    /** the shape. */
-    private final Polygon2d shape;
+    /** The contour. */
+    private final Polygon2d contour;
 
     /** The links connected to the Node. */
     private final Set<Link> links = new LinkedHashSet<>();
@@ -108,7 +108,7 @@ public class Node
 
         double x = this.point.x;
         double y = this.point.y;
-        this.shape = new Polygon2d(new Point2d(x - 0.5, y - 0.5), new Point2d(x - 0.5, y + 0.5), new Point2d(x + 0.5, y + 0.5),
+        this.contour = new Polygon2d(new Point2d(x - 0.5, y - 0.5), new Point2d(x - 0.5, y + 0.5), new Point2d(x + 0.5, y + 0.5),
                 new Point2d(x + 0.5, y - 0.5));
 
         this.network.addNode(this);
@@ -143,7 +143,7 @@ public class Node
     @Override
     public Polygon2d getContour()
     {
-        return this.shape;
+        return this.contour;
     }
 
     /**
