@@ -51,17 +51,15 @@
     <djutils.version>2.2.2</djutils.version>
     <dsol.version>4.2.3</dsol.version>
     <sim0mq.version>2.1.3</sim0mq.version>
-    <jts.version>1.19.0</jts.version>
     <jfreechart.version>1.5.5</jfreechart.version>
-    <apache.poi.version>5.3.0</apache.poi.version>
     <jgrapht.version>1.5.2</jgrapht.version>
     <xstream.version>1.4.20</xstream.version>
     <jaxb.version>2.3.1</jaxb.version>
     <jakarta.annotation.version>3.0.0</jakarta.annotation.version>
     <treetable.version>0.0.2</treetable.version>
 
-    <junit.version>5.11.0</junit.version>
-    <mockito.version>5.12.0</mockito.version>
+    <junit.version>5.11.2</junit.version>
+    <mockito.version>5.14.1</mockito.version>
 
     <maven.compiler.version>3.13.0</maven.compiler.version>
     <maven.site.version>4.0.0-M16</maven.site.version>
@@ -81,7 +79,6 @@
     <maven.jxr.version>3.4.0</maven.jxr.version>
     <maven.taglist.version>3.1.0</maven.taglist.version>
     <maven.pmd.version>3.24.0</maven.pmd.version>
-    <!--maven.changes.version>2.12.1</maven.changes.version-->
     <flatten.maven.version>1.6.0</flatten.maven.version>
     <maven.deploy.version>3.1.3</maven.deploy.version>
     <nexus-staging.version>1.7.0</nexus-staging.version>
@@ -333,32 +330,8 @@
       </dependency>
 
       <dependency>
-        <groupId>org.locationtech.jts</groupId>
-        <artifactId>jts-core</artifactId>
-        <version>${jts.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.poi</groupId>
-        <artifactId>poi</artifactId>
-        <version>${apache.poi.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.poi</groupId>
-        <artifactId>poi-ooxml</artifactId>
-        <version>${apache.poi.version}</version>
-      </dependency>
-
-      <dependency>
         <groupId>org.jgrapht</groupId>
         <artifactId>jgrapht-core</artifactId>
-        <version>${jgrapht.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jgrapht</groupId>
-        <artifactId>jgrapht-ext</artifactId>
         <version>${jgrapht.version}</version>
       </dependency>
 
@@ -525,17 +498,9 @@
             <offlineLink><url>https://djutils.org/docs/latest/djutils-draw/apidocs/</url></offlineLink>
             <offlineLink><url>http://www.jdom.org/docs/apidocs/</url></offlineLink>
             <offlineLink><url>https://sim0mq.org/docs/latest/apidocs/</url></offlineLink>
-            <offlineLink><url>https://jar-download.com/artifacts/org.locationtech.jts/jts-core/1.19.0/documentation/</url></offlineLink>
-            <offlineLink><url>http://poi.apache.org/apidocs/5.0/</url></offlineLink>
             <offlineLink><url>https://junit.org/junit5/docs/current/api/</url></offlineLink>
             <offlineLink><url>https://javadoc.io/doc/org.eclipse.jetty/jetty-server/latest/org.eclipse.jetty.server/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/jakarta.annotation/jakarta.annotation-api/latest/jakarta.annotation/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/org.openstreetmap.osmosis/osmosis-core/latest/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/org.openstreetmap.osmosis/osmosis-pbf/latest/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/org.openstreetmap.osmosis/osmosis-set/latest/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/org.openstreetmap.osmosis/osmosis-osm-binary/latest/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/org.openstreetmap.osmosis/osmosis-xml/latest/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/de.siegmar/fastcsv/latest/de.siegmar.fastcsv/</url></offlineLink>
+            <offlineLink><url>https://javadoc.io/doc/jakarta.annotation/jakarta.annotation-api/latest/jakarta.annotation/</url></offlineLink>            <offlineLink><url>https://javadoc.io/doc/de.siegmar/fastcsv/latest/de.siegmar.fastcsv/</url></offlineLink>
             <offlineLink><url>https://jgrapht.org/javadoc/</url></offlineLink>
             <offlineLink><url>https://x-stream.github.io/javadoc/</url></offlineLink>
           </offlineLinks>
@@ -794,16 +759,9 @@
             <offlineLink><url>https://djutils.org/docs/latest/djutils-draw/apidocs/</url></offlineLink>
             <offlineLink><url>http://www.jdom.org/docs/apidocs/</url></offlineLink>
             <offlineLink><url>https://sim0mq.org/docs/latest/apidocs/</url></offlineLink>
-            <offlineLink><url>https://jar-download.com/artifacts/org.locationtech.jts/jts-core/1.19.0/documentation/</url></offlineLink>
-            <offlineLink><url>http://poi.apache.org/apidocs/5.0/</url></offlineLink>
             <offlineLink><url>https://junit.org/junit5/docs/current/api/</url></offlineLink>
             <offlineLink><url>https://javadoc.io/doc/org.eclipse.jetty/jetty-server/latest/org.eclipse.jetty.server/</url></offlineLink>
             <offlineLink><url>https://javadoc.io/doc/jakarta.annotation/jakarta.annotation-api/latest/jakarta.annotation/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/org.openstreetmap.osmosis/osmosis-core/latest/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/org.openstreetmap.osmosis/osmosis-pbf/latest/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/org.openstreetmap.osmosis/osmosis-set/latest/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/org.openstreetmap.osmosis/osmosis-osm-binary/latest/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/org.openstreetmap.osmosis/osmosis-xml/latest/</url></offlineLink>
             <offlineLink><url>https://javadoc.io/doc/de.siegmar/fastcsv/latest/de.siegmar.fastcsv/</url></offlineLink>
             <offlineLink><url>https://jgrapht.org/javadoc/</url></offlineLink>
             <offlineLink><url>https://x-stream.github.io/javadoc/</url></offlineLink>
@@ -939,19 +897,6 @@
           <skipEmptyReport>false</skipEmptyReport>
         </configuration>
       </plugin>
-
-      <!--plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-changes-plugin</artifactId>
-        <version>${maven.changes.version}</version>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>changes-report</report>
-            </reports>
-          </reportSet>
-        </reportSets>
-      </plugin-->
 
     </plugins>
   </reporting>
