@@ -1,7 +1,6 @@
 package org.opentrafficsim.editor.extensions.map;
 
-import org.opentrafficsim.base.geometry.BoundingRectangle;
-import org.opentrafficsim.base.geometry.OtsBounds2d;
+import org.djutils.draw.bounds.Bounds2d;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
 import org.opentrafficsim.editor.OtsEditor;
@@ -38,9 +37,9 @@ public class MapGeneratorData extends MapLaneBasedObjectData implements GtuGener
 
     /** {@inheritDoc} */
     @Override
-    protected OtsBounds2d calculateBounds()
+    protected Bounds2d calculateBounds()
     {
-        return new BoundingRectangle(0.0, 4.75, -1.0, 1.0);
+        return new Bounds2d(0.0, 4.75, -1.0, 1.0);
     }
 
     /** {@inheritDoc} */

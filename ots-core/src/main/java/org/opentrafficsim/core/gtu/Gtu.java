@@ -21,6 +21,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.PositionVector;
 import org.djutils.base.Identifiable;
+import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
@@ -36,15 +37,12 @@ import org.djutils.immutablecollections.ImmutableSet;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.HierarchicallyTyped;
-import org.opentrafficsim.base.geometry.BoundingRectangle;
-import org.opentrafficsim.base.geometry.OtsBounds2d;
+import org.opentrafficsim.base.geometry.DynamicSpatialObject;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.DynamicSpatialObject;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.RelativePosition.Type;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
@@ -181,7 +179,7 @@ public class Gtu extends LocalEventProducer
     private final Map<String, String> tags = new LinkedHashMap<>();
 
     /** Bounds. */
-    private OtsBounds2d bounds;
+    private Bounds2d bounds;
 
     /**
      * @param id the id of the GTU
@@ -236,7 +234,7 @@ public class Gtu extends LocalEventProducer
         this.relativePositions.put(RelativePosition.REFERENCE, RelativePosition.REFERENCE_POSITION);
         this.relativePositions.put(RelativePosition.CENTER,
                 new RelativePosition(Length.ZERO, Length.ZERO, Length.ZERO, RelativePosition.CENTER));
-        this.bounds = new BoundingRectangle(getRear().dx().si, getFront().dx().si, -dy2.si, dy2.si);
+        this.bounds = new Bounds2d(front.minus(length).si, front.si, -width.si / 2.0, width.si / 2.0);
 
         // Contour positions. For now, a rectangle with the four corners.
         for (int i = -1; i <= 1; i += 2)
@@ -334,9 +332,8 @@ public class Gtu extends LocalEventProducer
 
     /** {@inheritDoc} */
     @Override
-    public final OtsBounds2d getBounds()
+    public final Bounds2d getBounds()
     {
-        // TODO: inconsistent with reference point, this is just half width/length
         return this.bounds;
     }
 
@@ -827,7 +824,7 @@ public class Gtu extends LocalEventProducer
      * @return the shape of the object at time 'time'
      */
     @Override
-    public Polygon2d getShape(final Time time)
+    public Polygon2d getContour(final Time time)
     {
         try
         {
@@ -842,7 +839,7 @@ public class Gtu extends LocalEventProducer
             System.out.println("gtu " + getId() + ", shape(t)=" + s);
             return s;
         }
-        catch (OtsGeometryException | OperationalPlanException exception)
+        catch (OperationalPlanException exception)
         {
             throw new RuntimeException(exception);
         }
@@ -855,7 +852,7 @@ public class Gtu extends LocalEventProducer
      * @return the shape of the object over the validity of the operational plan
      */
     @Override
-    public Polygon2d getShape()
+    public Polygon2d getContour()
     {
         try
         {

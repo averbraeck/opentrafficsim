@@ -6,9 +6,10 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
-import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
@@ -49,9 +50,16 @@ public class AnimationGtuData implements GtuData
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getBounds()
+    public Bounds2d getBounds()
     {
         return this.gtu.getBounds();
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public Polygon2d getContour()
+    {
+        return this.gtu.getContour();
     }
 
     /** {@inheritDoc} */

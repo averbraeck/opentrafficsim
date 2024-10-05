@@ -1,8 +1,9 @@
 package org.opentrafficsim.animation.data;
 
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
-import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.draw.road.SpeedSignAnimation.SpeedSignData;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 
@@ -38,9 +39,16 @@ public class AnimationSpeedSignData implements SpeedSignData
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getBounds()
+    public Bounds2d getBounds()
     {
         return this.speedSign.getBounds();
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public Polygon2d getContour()
+    {
+        throw new UnsupportedOperationException("A SpeedSign has no contour.");
     }
 
     /** {@inheritDoc} */

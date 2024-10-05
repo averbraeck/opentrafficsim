@@ -4,14 +4,14 @@ import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 
 /**
- * Bounding rectangle; this is a non-centered box.
+ * Shape defined by an offset rectangle.
  * <p>
  * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class BoundingRectangle implements OtsBounds2d
+public class OffsetRectangleShape implements OtsShape
 {
 
     /** Minimum x coordinate. */
@@ -45,7 +45,7 @@ public class BoundingRectangle implements OtsBounds2d
      * @param minY minimum y coordinate.
      * @param maxY maximum y coordinate.
      */
-    public BoundingRectangle(final double minX, final double maxX, final double minY, final double maxY)
+    public OffsetRectangleShape(final double minX, final double maxX, final double minY, final double maxY)
     {
         this.minX = minX;
         this.maxX = maxX;
@@ -54,6 +54,41 @@ public class BoundingRectangle implements OtsBounds2d
         this.dx = (maxX - minX) / 2.0;
         this.dy = (maxY - minY) / 2.0;
         this.midPoint = new Point2d(minX + this.dx, minY + this.dy);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double getMinX()
+    {
+        return this.minX;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double getMaxX()
+    {
+        return this.maxX;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double getMinY()
+    {
+        return this.minY;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double getMaxY()
+    {
+        return this.maxY;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean contains(final Point2d point) throws NullPointerException
+    {
+        return this.minX < point.x & point.x < this.maxX & this.minY < point.y & point.y < this.maxY;
     }
 
     /** {@inheritDoc} */

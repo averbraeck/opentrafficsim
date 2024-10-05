@@ -36,7 +36,7 @@ public class Distraction extends AbstractLaneBasedObject
     public Distraction(final String id, final Lane lane, final Length longitudinalPosition,
             final OtsSimulatorInterface simulator, final DistractionProfile profile) throws NetworkException
     {
-        super(id, lane, longitudinalPosition, LaneBasedObject.makeGeometry(lane, longitudinalPosition), Length.ZERO);
+        super(id, lane, longitudinalPosition, LaneBasedObject.makeLine(lane, longitudinalPosition), Length.ZERO);
         this.profile = profile;
 
         init();

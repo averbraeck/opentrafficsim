@@ -5,13 +5,12 @@ import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
+import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.base.geometry.BoundingPolygon;
-import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.geometry.OtsLine2d;
@@ -55,7 +54,7 @@ public abstract class CrossSectionElement extends LocalEventProducer
     private final OrientedPoint2d location;
 
     /** Bounding box. */
-    private final OtsBounds2d bounds;
+    private final Bounds2d bounds;
 
     /**
      * Constructor.
@@ -80,7 +79,7 @@ public abstract class CrossSectionElement extends LocalEventProducer
         this.centerLine = centerLine;
         this.location = centerLine.getLocationFractionExtended(0.5);
         this.contour = contour;
-        this.bounds = BoundingPolygon.geometryToBounds(this.location, contour);
+        this.bounds = OtsLocatable.asBounds(this);
 
         this.sliceInfo = new SliceInfo(crossSectionSlices, link.getLength());
 
@@ -212,19 +211,14 @@ public abstract class CrossSectionElement extends LocalEventProducer
         return this.centerLine;
     }
 
-    /**
-     * Retrieve the contour of this CrossSectionElement.
-     * @return the contour of this CrossSectionElement
-     */
+    /** {@inheritDoc} */
+    @Override
     public final Polygon2d getContour()
     {
         return this.contour;
     }
 
-    /**
-     * Retrieve the id of this CrossSectionElement.
-     * @return the id of this CrossSectionElement
-     */
+    /** {@inheritDoc} */
     @Override
     public final String getId()
     {
@@ -277,7 +271,7 @@ public abstract class CrossSectionElement extends LocalEventProducer
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public OtsBounds2d getBounds()
+    public Bounds2d getBounds()
     {
         return this.bounds;
     }

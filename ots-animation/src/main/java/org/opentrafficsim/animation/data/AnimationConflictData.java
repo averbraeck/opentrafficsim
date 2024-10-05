@@ -1,12 +1,11 @@
 package org.opentrafficsim.animation.data;
 
 import java.awt.Color;
-import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
-import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.draw.road.ConflictAnimation.ConflictData;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 
@@ -23,9 +22,6 @@ public class AnimationConflictData implements ConflictData
 
     /** Conflict. */
     private final Conflict conflict;
-
-    /** Contour. */
-    private List<Point2d> contour = null;
 
     /**
      * Constructor.
@@ -52,7 +48,7 @@ public class AnimationConflictData implements ConflictData
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getBounds()
+    public Bounds2d getBounds()
     {
         return this.conflict.getBounds();
     }
@@ -83,14 +79,9 @@ public class AnimationConflictData implements ConflictData
 
     /** {@inheritDoc} */
     @Override
-    public List<Point2d> getContour()
+    public Polygon2d getContour()
     {
-        if (this.contour == null)
-        {
-            // this creates a new list every time, so we cache it
-            this.contour = this.conflict.getGeometry().getPointList();
-        }
-        return this.contour;
+        return this.conflict.getContour();
     }
 
     /** {@inheritDoc} */

@@ -828,7 +828,7 @@ public class LaneBasedGtu extends Gtu
             for (LaneDetector detector : list)
             {
                 RelativePosition pos = this.getRelativePositions().get(detector.getPositionType());
-                Time time = timeAtLine(detector.getGeometry(), pos);
+                Time time = timeAtLine(detector.getLine(), pos);
                 if (time != null && !Double.isNaN(time.si))
                 {
                     this.sensorEvents.add(getSimulator().scheduleEventAbsTime(time, detector, "trigger", new Object[] {this}));
@@ -974,13 +974,20 @@ public class LaneBasedGtu extends Gtu
                 double projectionFraction = line.projectOrthogonalFractionalExtended(points[i]);
                 if (0.0 <= projectionFraction && projectionFraction <= 1.0)
                 {
-                    Point2d projection = line.getLocationFraction(projectionFraction);
-                    double distance = projection.distance(points[i]);
-                    if (distance < 1e-6)
+                    try
                     {
-                        // CategoryLogger.always().error("GTU {} enters cross-section through forced intersection of lines.",
-                        // getId()); // this line pops up a lot in certain simulations making them slow
-                        intersect = projection;
+                        Point2d projection = line.getLocationFraction(projectionFraction);
+                        double distance = projection.distance(points[i]);
+                        if (distance < 1e-6)
+                        {
+                            // CategoryLogger.always().error("GTU {} enters cross-section through forced intersection of
+                            // lines.", getId()); // this line pops up a lot in certain simulations making them slow
+                            intersect = projection;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Point2d projection = line.getLocationFraction(projectionFraction);
                     }
                 }
             }

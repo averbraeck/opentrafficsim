@@ -7,7 +7,7 @@ import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.base.geometry.BoundingPolygon;
+import org.opentrafficsim.base.geometry.PolygonShape;
 
 public class BoundingPolygonTest
 {
@@ -50,7 +50,7 @@ public class BoundingPolygonTest
         Polygon2d geometry = new Polygon2d(points);
 
         OrientedPoint2d location = new OrientedPoint2d(58.80088902117715, -3.9849279565065774, 2.1161468637905547);
-        BoundingPolygon.geometryToBounds(location, geometry);
+        PolygonShape.geometryToBounds(location, geometry);
     }
 
 }

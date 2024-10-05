@@ -6,6 +6,8 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.event.EventType;
@@ -14,11 +16,8 @@ import org.djutils.exceptions.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.HierarchicallyTyped;
-import org.opentrafficsim.base.geometry.BoundingPolygon;
-import org.opentrafficsim.base.geometry.ClickableBounds;
-import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
-import org.opentrafficsim.core.SpatialObject;
+import org.opentrafficsim.base.geometry.SpatialObject;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.FractionalLengthData;
@@ -82,10 +81,10 @@ public class Link extends LocalEventProducer
     private final FractionalLengthData elevation;
 
     /** the shape. */
-    private final Polygon2d shape;
+    private final Polygon2d contour;
 
     /** Bounds. */
-    private final OtsBounds2d bounds;
+    private final Bounds2d bounds;
 
     /** The GTUs on this Link. */
     private final Set<Gtu> gtus = new LinkedHashSet<>();
@@ -124,10 +123,10 @@ public class Link extends LocalEventProducer
         this.endNode.addLink(this);
         this.designLine = designLine;
         this.elevation = elevation;
-        this.shape = new Polygon2d(this.designLine.offsetLine(0.5).getPoints());
+        this.contour = new Polygon2d(
+                PolyLine2d.concatenate(this.designLine.getLine2d(), this.designLine.getLine2d().reverse()).getPoints());
         this.location = this.designLine.getLocationFractionExtended(0.5);
-        this.bounds =
-                BoundingPolygon.geometryToBounds(this.location, ClickableBounds.get(this.designLine.getLine2d()).asPolygon());
+        this.bounds = OtsLocatable.asBounds(this);
         this.network.addLink(this);
     }
 
@@ -242,9 +241,9 @@ public class Link extends LocalEventProducer
 
     /** {@inheritDoc} */
     @Override
-    public Polygon2d getShape()
+    public Polygon2d getContour()
     {
-        return this.shape;
+        return this.contour;
     }
 
     /**
@@ -276,7 +275,7 @@ public class Link extends LocalEventProducer
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public OtsBounds2d getBounds()
+    public Bounds2d getBounds()
     {
         return this.bounds;
     }

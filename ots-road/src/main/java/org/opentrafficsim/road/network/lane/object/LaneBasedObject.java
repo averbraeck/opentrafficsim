@@ -44,11 +44,11 @@ public interface LaneBasedObject extends LocatedObject
      * Make a geometry perpendicular to the center line of the lane with a length 90% of the width of the lane.
      * @param lane the lane for which to make a perpendicular geometry
      * @param longitudinalPosition the position on the lane
-     * @return an OtsLine2d that describes the line
+     * @return an polygon that describes the object
      */
-    static PolyLine2d makeGeometry(final Lane lane, final Length longitudinalPosition)
+    static PolyLine2d makeLine(final Lane lane, final Length longitudinalPosition)
     {
-        return makeGeometry(lane, longitudinalPosition, 0.9);
+        return makeLine(lane, longitudinalPosition, 0.9);
     }
 
     /**
@@ -58,7 +58,7 @@ public interface LaneBasedObject extends LocatedObject
      * @param relativeWidth lane width to use
      * @return an OtsLine2d that describes the line
      */
-    static PolyLine2d makeGeometry(final Lane lane, final Length longitudinalPosition, final double relativeWidth)
+    static PolyLine2d makeLine(final Lane lane, final Length longitudinalPosition, final double relativeWidth)
     {
         Throw.whenNull(lane, "lane is null");
         Throw.whenNull(longitudinalPosition, "position is null");

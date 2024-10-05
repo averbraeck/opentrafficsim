@@ -10,11 +10,11 @@ import java.util.function.Supplier;
 import javax.naming.NamingException;
 
 import org.djutils.base.Identifiable;
+import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
-import org.opentrafficsim.base.geometry.BoundingPolygon;
 import org.opentrafficsim.base.geometry.ClickableBounds;
-import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsRenderable;
 import org.opentrafficsim.draw.DrawLevel;
@@ -103,7 +103,7 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         private final OrientedPoint2d location;
 
         /** Bounds. */
-        private final OtsBounds2d bounds;
+        private final Bounds2d bounds;
 
         /** Lane id. */
         private final String fullId;
@@ -117,7 +117,7 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         {
             this.centerLine = centerLine;
             this.location = new OrientedPoint2d(this.centerLine.getBounds().midPoint(), 0.0);
-            this.bounds = ClickableBounds.get(BoundingPolygon.geometryToBounds(this.location, centerLine).asPolygon());
+            this.bounds = ClickableBounds.get(OtsLocatable.asBounds(this));
             this.fullId = fullId;
         }
 
@@ -130,9 +130,16 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
 
         /** {@inheritDoc} */
         @Override
-        public final OtsBounds2d getBounds()
+        public final Bounds2d getBounds()
         {
             return this.bounds;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Polygon2d getContour()
+        {
+            return new Polygon2d(this.centerLine.getPoints());
         }
 
         /**
@@ -157,6 +164,7 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         {
             return "Center line " + this.fullId;
         }
+
     }
 
     /**

@@ -727,11 +727,7 @@ public class LaneTest implements UNITS
                                 // System.out.println(" my bbox is " + minX + "," + minY + " - " + maxX + "," + maxY);
                                 // System.out.println("the bbox is " + (bbLow.x + l.x) + "," + (bbLow.y + l.y) + " - "
                                 // + (bbHigh.x + l.x) + "," + (bbHigh.y + l.y));
-                                Transform2d transform = new Transform2d();
-                                transform.translate(l.x, l.y);
-                                transform.rotation(l.dirZ);
-                                Polygon2d pol = new Polygon2d(transform.transform(lane.getBounds().asPolygon().getPoints()));
-                                Bounds<?, ?, ?> bb = pol.getBounds();
+                                Bounds<?, ?, ?> bb = lane.getContour().getBounds();
                                 double boundsMinX = bb.getMinX();
                                 double boundsMinY = bb.getMinY();
                                 double boundsMaxX = bb.getMaxX();

@@ -28,7 +28,7 @@ import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.HierarchicallyTyped;
-import org.opentrafficsim.core.SpatialObject;
+import org.opentrafficsim.base.geometry.SpatialObject;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -724,13 +724,6 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     public final double fractionSI(final double positionSI)
     {
         return positionSI / getLength().si;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Polygon2d getShape()
-    {
-        return getContour();
     }
 
     /**

@@ -52,7 +52,7 @@ public class CrossSectionElementAnimation<L extends CrossSectionElementData> ext
     {
         super(source, contextualized);
         this.color = color;
-        this.paths = PaintPolygons.getPaths(getSource().getBounds().asPolygon().getPointList());
+        this.paths = PaintPolygons.getPaths(OtsLocatable.relativeContour(source).getPointList());
     }
 
     /** {@inheritDoc} */
@@ -112,7 +112,7 @@ public class CrossSectionElementAnimation<L extends CrossSectionElementData> ext
     {
         /** {@inheritDoc} */
         @Override
-        default public double getZ()
+        default double getZ()
         {
             return DrawLevel.SHOULDER.getZ();
         }

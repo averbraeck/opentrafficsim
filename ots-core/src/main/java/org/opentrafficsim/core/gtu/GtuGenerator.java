@@ -3,6 +3,8 @@ package org.opentrafficsim.core.gtu;
 import java.util.Set;
 
 import org.djutils.base.Identifiable;
+import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.core.object.NonLocatedObject;
 
@@ -43,6 +45,18 @@ public interface GtuGenerator extends NonLocatedObject
          * @return number of GTUs in the queue.
          */
         int getQueueCount();
+
+        /** {@inheritDoc} */
+        @Override
+        OrientedPoint2d getLocation();
+
+        /** {@inheritDoc} */
+        @Override
+        default Polygon2d getContour()
+        {
+            throw new UnsupportedOperationException(
+                    "A GtuGeneratorPosition does not have geometry. Geometry should be defined in animation.");
+        }
     }
 
 }

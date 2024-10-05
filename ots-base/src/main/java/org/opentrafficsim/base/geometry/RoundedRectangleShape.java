@@ -9,27 +9,21 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 
 /**
- * Bounds defined by a rounded rectangle.
+ * Shape defined by a rounded rectangle.
  * <p>
  * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class BoundingBoxRounded implements OtsBounds2d
+public class RoundedRectangleShape implements OtsShape
 {
-
-    /** Number of line segments in polygon representation for the curves if they are 4 full quarter circles. */
-    private final static int POLYGON_STEPS = 128;
 
     /** Half length along y dimension. */
     private final double dx;
 
     /** Half length along y dimension. */
     private final double dy;
-
-    /** Polygon representation. */
-    private Polygon2d polygon;
 
     /** Rounding radius. */
     private final double r;
@@ -39,6 +33,12 @@ public class BoundingBoxRounded implements OtsBounds2d
 
     /** Max y coordinate, can be lower than dy due to large r. */
     private final double maxY;
+    
+    /** Number of line segments in polygon representation. */
+    private final int polygonSegments;
+    
+    /** Polygon representation. */
+    private Polygon2d polygon;
 
     /**
      * Constructor.
@@ -46,7 +46,19 @@ public class BoundingBoxRounded implements OtsBounds2d
      * @param dy complete length along y dimension.
      * @param r radius of rounding, must be positive.
      */
-    public BoundingBoxRounded(final double dx, final double dy, final double r)
+    public RoundedRectangleShape(final double dx, final double dy, final double r)
+    {
+        this(dx, dy, r, DEFAULT_POLYGON_SEGMENTS);
+    }
+    
+    /**
+     * Constructor.
+     * @param dx complete length along x dimension.
+     * @param dy complete length along y dimension.
+     * @param r radius of rounding, must be positive.
+     * @param polygonSegments number of segments in polygon representation.
+     */
+    public RoundedRectangleShape(final double dx, final double dy, final double r, final int polygonSegments)
     {
         /*-
          * Equation derived from r^2 = (r-dx)^2 + (r-dy^2)  [note: dx and dy here as half of input values, i.e. this.dx/this.dy]
@@ -71,6 +83,7 @@ public class BoundingBoxRounded implements OtsBounds2d
         this.r = r;
         this.maxX = this.dx - signedDistance(new Point2d(this.dx, 0.0));
         this.maxY = this.dy - signedDistance(new Point2d(0.0, this.dy));
+        this.polygonSegments = polygonSegments;
     }
 
     /** {@inheritDoc} */
@@ -108,13 +121,6 @@ public class BoundingBoxRounded implements OtsBounds2d
         return signedDistance(point) < 0.0;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public boolean covers(final Point2d point) throws NullPointerException
-    {
-        return signedDistance(point) <= 0.0;
-    }
-
     /**
      * {@inheritDoc}
      * @see <a href="https://iquilezles.org/articles/distfunctions/">Signed distance functions by Inigo Quilez</a>
@@ -134,7 +140,7 @@ public class BoundingBoxRounded implements OtsBounds2d
         if (this.polygon == null)
         {
             // calculate for top right quadrant only, others are negative or reversed copies
-            int n = POLYGON_STEPS / 4;
+            int n = this.polygonSegments / 4;
             List<Point2d> pq = new ArrayList<>();
             for (int i = 0; i <= n; i++)
             {

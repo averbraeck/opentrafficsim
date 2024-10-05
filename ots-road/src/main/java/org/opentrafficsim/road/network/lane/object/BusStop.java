@@ -59,7 +59,7 @@ public class BusStop extends AbstractLaneBasedObject
     public BusStop(final String id, final Lane lane, final Length longitudinalPosition, final String name,
             final OtsSimulatorInterface simulator, final GtuType busType) throws NetworkException
     {
-        super(id, lane, longitudinalPosition, LaneBasedObject.makeGeometry(lane, longitudinalPosition), Length.ZERO);
+        super(id, lane, longitudinalPosition, LaneBasedObject.makeLine(lane, longitudinalPosition), Length.ZERO);
         this.name = name;
         this.busType = busType;
         init();

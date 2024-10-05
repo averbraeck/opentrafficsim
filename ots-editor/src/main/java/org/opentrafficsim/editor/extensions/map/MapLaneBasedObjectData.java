@@ -5,14 +5,13 @@ import java.util.Locale;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.reference.ReferenceType;
-import org.opentrafficsim.base.geometry.BoundingBox;
-import org.opentrafficsim.base.geometry.ClickableBounds;
-import org.opentrafficsim.base.geometry.OtsBounds2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
@@ -56,7 +55,10 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
     private OrientedPoint2d location;
 
     /** Bounds. */
-    private OtsBounds2d bounds = new BoundingBox(1.0, 0.25);
+    private Bounds2d bounds = new Bounds2d(1.0, 0.25);
+    
+    /** Contour. */
+    private Polygon2d contour;
 
     /** Node of link. */
     private XsdTreeNode lastLinkNode;
@@ -151,9 +153,16 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getBounds()
+    public Bounds2d getBounds()
     {
         return this.bounds;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public Polygon2d getContour()
+    {
+        return this.contour;
     }
 
     /** {@inheritDoc} */
@@ -272,6 +281,7 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
         this.bounds = calculateBounds();
         Ray2d ray = laneData.getCenterLine().getLocationExtended(this.positionFromStart.si);
         this.location = new OrientedPoint2d(ray.x, ray.y, ray.phi);
+        this.contour = OtsLocatable.asPolygon(this);
         setValid();
     }
 
@@ -279,10 +289,10 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
      * Calculates the bounds. Can be overridden for objects with non-line shapes.
      * @return bounds of the object.
      */
-    protected OtsBounds2d calculateBounds()
+    protected Bounds2d calculateBounds()
     {
         double w45 = 0.45 * getLaneWidth().si;
-        return ClickableBounds.get(new Bounds2d(0.0, 0.0, -w45, w45));
+        return new Bounds2d(0.0, 0.0, -w45, w45);
     }
 
 }

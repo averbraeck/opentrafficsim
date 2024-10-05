@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.network.lane.object.detector;
 
-import java.rmi.RemoteException;
-
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
@@ -67,17 +65,17 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
      * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the detector.
      * @param simulator the simulator (needed to generate the animation).
-     * @param geometry the geometry of the object, which provides its location and bounds as well
+     * @param line the line of the object, which provides its location and bounds as well
      * @param elevation elevation of the detector
      * @param detectorType detector type.
      * @throws NetworkException when the position on the lane is out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public LaneDetector(final String id, final Lane lane, final Length longitudinalPosition,
-            final RelativePosition.Type positionType, final OtsSimulatorInterface simulator, final PolyLine2d geometry,
+            final RelativePosition.Type positionType, final OtsSimulatorInterface simulator, final PolyLine2d line,
             final Length elevation, final DetectorType detectorType) throws NetworkException
     {
-        super(id, lane, longitudinalPosition, geometry, elevation);
+        super(id, lane, longitudinalPosition, line, elevation);
         Throw.whenNull(simulator, "simulator is null");
         Throw.whenNull(positionType, "positionType is null");
         Throw.whenNull(id, "id is null");
@@ -100,15 +98,15 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
      * @param positionType RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the detector.
      * @param simulator the simulator (needed to generate the animation).
-     * @param geometry the geometry of the object, which provides its location and bounds as well
+     * @param line the contour of the object, which provides its location and bounds as well
      * @param detectorType detector type.
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public LaneDetector(final String id, final Lane lane, final Length longitudinalPosition,
-            final RelativePosition.Type positionType, final OtsSimulatorInterface simulator, final PolyLine2d geometry,
+            final RelativePosition.Type positionType, final OtsSimulatorInterface simulator, final PolyLine2d line,
             final DetectorType detectorType) throws NetworkException
     {
-        this(id, lane, longitudinalPosition, positionType, simulator, geometry, LaneDetector.DEFAULT_DETECTOR_ELEVATION,
+        this(id, lane, longitudinalPosition, positionType, simulator, line, LaneDetector.DEFAULT_DETECTOR_ELEVATION,
                 detectorType);
     }
 
@@ -129,8 +127,8 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
             final RelativePosition.Type positionType, final OtsSimulatorInterface simulator, final DetectorType detectorType)
             throws NetworkException
     {
-        this(id, lane, longitudinalPosition, positionType, simulator,
-                LaneBasedObject.makeGeometry(lane, longitudinalPosition, 0.9), detectorType);
+        this(id, lane, longitudinalPosition, positionType, simulator, LaneBasedObject.makeLine(lane, longitudinalPosition, 0.9),
+                detectorType);
     }
 
     /** {@inheritDoc} */

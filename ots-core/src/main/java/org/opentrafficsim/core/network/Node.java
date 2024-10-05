@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djutils.base.Identifiable;
+import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
@@ -15,10 +16,8 @@ import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableHashSet;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.base.HierarchicallyTyped;
-import org.opentrafficsim.base.geometry.BoundingCircle;
-import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
-import org.opentrafficsim.core.SpatialObject;
+import org.opentrafficsim.base.geometry.SpatialObject;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.gtu.GtuType;
 
@@ -142,7 +141,7 @@ public class Node
 
     /** {@inheritDoc} */
     @Override
-    public Polygon2d getShape()
+    public Polygon2d getContour()
     {
         return this.shape;
     }
@@ -403,9 +402,9 @@ public class Node
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public OtsBounds2d getBounds()
+    public Bounds2d getBounds()
     {
-        return new BoundingCircle(1.0);
+        return new Bounds2d(-1.0, 1.0, -1.0, 1.0);
     }
 
     /** {@inheritDoc} */

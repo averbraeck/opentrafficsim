@@ -71,7 +71,7 @@ public class TrafficLight extends AbstractLaneBasedObject
     public TrafficLight(final String id, final Lane lane, final Length longitudinalPosition,
             final OtsSimulatorInterface simulator, final Length height) throws NetworkException
     {
-        super(id, lane, longitudinalPosition, LaneBasedObject.makeGeometry(lane, longitudinalPosition), height);
+        super(id, lane, longitudinalPosition, LaneBasedObject.makeLine(lane, longitudinalPosition), height);
 
         Throw.whenNull(simulator, "Simulator may not be null");
         this.simulator = simulator;

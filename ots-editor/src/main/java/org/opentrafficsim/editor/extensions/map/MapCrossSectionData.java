@@ -1,12 +1,12 @@
 package org.opentrafficsim.editor.extensions.map;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.OrientedPoint2d;
-import org.opentrafficsim.base.geometry.BoundingPolygon;
-import org.opentrafficsim.base.geometry.OtsBounds2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.road.network.lane.SliceInfo;
@@ -28,11 +28,14 @@ public class MapCrossSectionData implements CrossSectionElementData
     /** Location. */
     private final OrientedPoint2d location;
 
+    /** Contour. */
+    private final Polygon2d contour;
+
     /** Center line. */
     protected final PolyLine2d centerLine;
 
     /** Bounds. */
-    private final OtsBounds2d bounds;
+    private final Bounds2d bounds;
 
     /** Slice info. */
     private SliceInfo sliceInfo;
@@ -51,15 +54,9 @@ public class MapCrossSectionData implements CrossSectionElementData
         Ray2d ray = centerLine.getLocationFractionExtended(0.5);
         this.location = new OrientedPoint2d(ray.x, ray.y, ray.phi);
         this.centerLine = centerLine;
-        this.bounds = BoundingPolygon.geometryToBounds(this.location, contour);
+        this.contour = contour;
+        this.bounds = OtsLocatable.asBounds(this);
         this.sliceInfo = sliceInfo;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public OtsBounds2d getBounds()
-    {
-        return this.bounds;
     }
 
     /** {@inheritDoc} */
@@ -67,6 +64,20 @@ public class MapCrossSectionData implements CrossSectionElementData
     public OrientedPoint2d getLocation()
     {
         return this.location;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Bounds2d getBounds()
+    {
+        return this.bounds;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Polygon2d getContour()
+    {
+        return this.contour;
     }
 
     /** {@inheritDoc} */

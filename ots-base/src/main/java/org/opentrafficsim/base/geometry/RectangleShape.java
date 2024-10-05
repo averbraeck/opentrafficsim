@@ -4,14 +4,14 @@ import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 
 /**
- * Bounds defined by a rectangle.
+ * Shape defined by a rectangle.
  * <p>
  * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class BoundingBox implements OtsBounds2d
+public class RectangleShape implements OtsShape
 {
 
     /** Half length along y dimension. */
@@ -28,7 +28,7 @@ public class BoundingBox implements OtsBounds2d
      * @param dx complete length along x dimension.
      * @param dy complete length along y dimension.
      */
-    public BoundingBox(final double dx, final double dy)
+    public RectangleShape(final double dx, final double dy)
     {
         this.dx = Math.abs(dx) / 2.0;
         this.dy = Math.abs(dy) / 2.0;
@@ -67,13 +67,6 @@ public class BoundingBox implements OtsBounds2d
     public boolean contains(final Point2d point) throws NullPointerException
     {
         return Math.abs(point.x) < this.dx && Math.abs(point.y) < this.dy;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean covers(final Point2d point) throws NullPointerException
-    {
-        return Math.abs(point.x) <= this.dx && Math.abs(point.y) <= this.dy;
     }
 
     /**

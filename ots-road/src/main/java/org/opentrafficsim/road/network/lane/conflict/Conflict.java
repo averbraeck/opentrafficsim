@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
@@ -41,6 +42,7 @@ import org.opentrafficsim.road.gtu.lane.perception.structure.LaneRecordInterface
 import org.opentrafficsim.road.gtu.lane.perception.structure.SimpleLaneRecord;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.AbstractLaneBasedObject;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
 /**
@@ -140,17 +142,18 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      * @param lane lane where this conflict starts
      * @param longitudinalPosition position of start of conflict on lane
      * @param length length of the conflict along the lane centerline
-     * @param geometry geometry of conflict
+     * @param contour contour of conflict
      * @param conflictType conflict type, i.e. crossing, merge or split
      * @param conflictRule conflict rule, i.e. determines priority, give way, stop or all-stop
      * @param permitted whether the conflict is permitted in traffic light control
      * @throws NetworkException when the position on the lane is out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    private Conflict(final Lane lane, final Length longitudinalPosition, final Length length, final Polygon2d geometry,
+    private Conflict(final Lane lane, final Length longitudinalPosition, final Length length, final Polygon2d contour,
             final ConflictType conflictType, final ConflictRule conflictRule, final boolean permitted) throws NetworkException
     {
-        super(UUID.randomUUID().toString(), lane, longitudinalPosition, geometry);
+        super(UUID.randomUUID().toString(), lane, longitudinalPosition, LaneBasedObject.makeLine(lane, longitudinalPosition),
+                contour);
         this.length = length;
         this.conflictType = conflictType;
         this.conflictRule = conflictRule;
@@ -363,13 +366,6 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
     /** {@inheritDoc} */
     @Override
-    public Polygon2d getGeometry()
-    {
-        return (Polygon2d) super.getGeometry();
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public Length getLength()
     {
         return this.length;
@@ -510,7 +506,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                 throws NetworkException, OtsGeometryException
         {
             // FIXME: the OtsLine2d object should be shared by all ConflictEnd objects (removing OtsGeometryException)
-            super(conflict.getId() + "End", lane, longitudinalPosition, new Polygon2d(new Point2d(0, 0), new Point2d(1, 0)));
+            super(conflict.getId() + "End", lane, longitudinalPosition, new PolyLine2d(new Point2d(0, 0), new Point2d(1, 0)));
             this.conflict = conflict;
         }
 

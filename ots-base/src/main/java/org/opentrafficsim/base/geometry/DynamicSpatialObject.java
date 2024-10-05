@@ -1,4 +1,4 @@
-package org.opentrafficsim.core;
+package org.opentrafficsim.base.geometry;
 
 import java.util.Iterator;
 
@@ -7,7 +7,6 @@ import org.djutils.draw.Transform2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.core.geometry.OtsGeometryException;
 
 /**
  * DynamicSpatialObject has two shapes: the shape that is registered in the Map is the shape that indicates where the object
@@ -26,22 +25,21 @@ import org.opentrafficsim.core.geometry.OtsGeometryException;
 public interface DynamicSpatialObject extends SpatialObject
 {
     /**
-     * Return the shape of a dynamic object at time 'time'. Note that the getShape() method without a time returns the Minkowski
-     * sum of all shapes of the spatial object for a validity time window, e.g., a contour that describes all locations of a GTU
-     * for the next time step, i.e., the contour of the GTU belonging to the next operational plan.
+     * Return the contour of a dynamic object at time 'time'. Note that the getContour() method without a time returns the
+     * Minkowski sum of all shapes of the spatial object for a validity time window, e.g., a contour that describes all
+     * locations of a GTU for the next time step, i.e., the contour of the GTU belonging to the next operational plan.
      * @param time the time for which we want the shape
      * @return the shape of the object at time 'time'
      */
-    Polygon2d getShape(Time time);
+    Polygon2d getContour(Time time);
 
     /**
      * Return the contour of the dynamic object at the right position and in the right direction.
      * @param shape the shape to translate and rotate for point p
      * @param p the location and direction of the reference point of the object
      * @return the contour of the dynamic object at the right position and in the right direction
-     * @throws OtsGeometryException on invalid geometry after transformation
      */
-    default Polygon2d transformShape(final Polygon2d shape, final OrientedPoint2d p) throws OtsGeometryException
+    default Polygon2d transformShape(final Polygon2d shape, final OrientedPoint2d p)
     {
         Transform2d transform = new Transform2d();
         transform.translate(p.x, p.y);

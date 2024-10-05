@@ -1,9 +1,9 @@
-package org.opentrafficsim.core;
+package org.opentrafficsim.base.geometry;
 
 import org.djutils.draw.line.Polygon2d;
 
 /**
- * SpatialObject indicates that an object has a shape that can be requested. A spatial object can therefore be stored in a
+ * SpatialObject indicates that an object has a contour that can be requested. A spatial object can therefore be stored in a
  * spatial tree such as an R-Tree.
  * <p>
  * Copyright (c) 2022-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -15,10 +15,11 @@ import org.djutils.draw.line.Polygon2d;
  */
 public interface SpatialObject
 {
+
     /**
-     * Return the shape of the object.
-     * @return the shape of the object
+     * Return the contour of the object.
+     * @return the contour of the object
      */
-    Polygon2d getShape();
+    Polygon2d getContour();
 
 }

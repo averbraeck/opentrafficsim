@@ -90,7 +90,7 @@ public class SinkDetector extends LaneDetector
             final DetectorType detectorType, final BiPredicate<SinkDetector, LaneBasedGtu> predicate) throws NetworkException
     {
         super(String.format(Locale.US, "Sink@%.3fm", position.si), lane, position, RelativePosition.FRONT, simulator,
-                LaneBasedObject.makeGeometry(lane, position, 1.0), detectorType);
+                LaneBasedObject.makeLine(lane, position, 1.0), detectorType);
         this.predicate = predicate;
     }
 

@@ -12,7 +12,6 @@ import java.util.function.Supplier;
 import javax.naming.NamingException;
 
 import org.djutils.base.Identifiable;
-import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.base.geometry.OtsRenderable;
 import org.opentrafficsim.draw.DrawLevel;
@@ -59,7 +58,7 @@ public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDet
     {
         super(detector, contextualized);
         this.detector = detector;
-        this.paths = PaintPolygons.getPaths(this.detector.getGeometry().getPointList());
+        this.paths = PaintPolygons.getPaths(this.detector.getContour().getPointList());
         this.text = new Text(detector, detector::getId, 0.0f, 0.5f + 0.2f, TextAlignment.CENTER, Color.BLACK, contextualized);
     }
 
@@ -141,12 +140,6 @@ public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDet
      */
     public interface TrafficLightDetectorData extends DetectorData, Identifiable
     {
-        /**
-         * Returns the geometry.
-         * @return geometry.
-         */
-        PolyLine2d getGeometry();
-
         /**
          * Returns whether the detector is occupied.
          * @return whether the detector is occupied.

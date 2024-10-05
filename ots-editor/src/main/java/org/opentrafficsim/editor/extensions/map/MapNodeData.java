@@ -3,13 +3,14 @@ package org.opentrafficsim.editor.extensions.map;
 import java.rmi.RemoteException;
 
 import org.djunits.value.vdouble.scalar.Direction;
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.reference.ReferenceType;
-import org.opentrafficsim.base.geometry.BoundingCircle;
-import org.opentrafficsim.base.geometry.OtsBounds2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
@@ -30,7 +31,7 @@ public class MapNodeData extends MapData implements NodeData, EventListener
     private static final long serialVersionUID = 20231003L;
 
     /** Bounds. */
-    private static final OtsBounds2d BOUNDS = new BoundingCircle(1.0);
+    private static final Bounds2d BOUNDS = new Bounds2d(2.0, 2.0);
 
     /** String attribute. */
     private String id = "";
@@ -43,6 +44,9 @@ public class MapNodeData extends MapData implements NodeData, EventListener
 
     /** Location. */
     private OrientedPoint2d location = new OrientedPoint2d(0.0, 0.0);
+    
+    /** Contour. */
+    private final Polygon2d contour;
 
     /**
      * Constructor.
@@ -68,13 +72,21 @@ public class MapNodeData extends MapData implements NodeData, EventListener
         {
             throw new RuntimeException(e);
         }
+        this.contour = OtsLocatable.asPolygon(this);
     }
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getBounds()
+    public Bounds2d getBounds()
     {
         return BOUNDS;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public Polygon2d getContour()
+    {
+        return this.contour;
     }
 
     /** {@inheritDoc} */

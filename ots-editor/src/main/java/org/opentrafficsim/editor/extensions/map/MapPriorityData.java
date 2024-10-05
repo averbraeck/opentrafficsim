@@ -1,6 +1,8 @@
 package org.opentrafficsim.editor.extensions.map;
 
+import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.draw.road.PriorityAnimation.PriorityData;
 
 /**
@@ -19,6 +21,9 @@ public class MapPriorityData implements PriorityData
 
     /** Location. */
     private final Point2d location;
+    
+    /** Contour. */
+    private final Polygon2d contour;
 
     /**
      * Constructor.
@@ -28,6 +33,7 @@ public class MapPriorityData implements PriorityData
     {
         this.location = linkData.getDesignLine().getLocationFractionExtended(0.5);
         this.linkData = linkData;
+        this.contour = OtsLocatable.asPolygon(this);
     }
 
     /** {@inheritDoc} */
@@ -35,6 +41,13 @@ public class MapPriorityData implements PriorityData
     public Point2d getLocation()
     {
         return this.location;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public Polygon2d getContour()
+    {
+        return this.contour;
     }
 
     /** {@inheritDoc} */

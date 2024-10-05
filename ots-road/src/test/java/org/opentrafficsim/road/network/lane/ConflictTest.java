@@ -176,8 +176,8 @@ public class ConflictTest implements EventListener
         assertEquals(conflictBStart, conflictB.getLongitudinalPosition(), "longitudinal position");
         assertEquals(new Length(conflictEnd.x - conflictStart.x, LengthUnit.SI), conflictA.getLength(), "length");
         assertEquals(conflictBLength, conflictB.getLength(), "length");
-        assertEquals(geometry1, conflictA.getGeometry(), "geometry");
-        assertEquals(geometry2, conflictB.getGeometry(), "geometry");
+        assertEquals(geometry1, conflictA.getContour(), "contour");
+        assertEquals(geometry2, conflictB.getContour(), "contour");
         assertTrue(conflictA.getConflictRule() instanceof DefaultConflictRule, "conflict rule");
         assertTrue(conflictB.getConflictRule() instanceof DefaultConflictRule, "conflict rule");
         assertFalse(conflictA.isPermitted(), "conflict A is not permitted");

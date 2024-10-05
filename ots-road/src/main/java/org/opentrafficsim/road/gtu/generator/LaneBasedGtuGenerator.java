@@ -18,16 +18,14 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.OrientedPoint2d;
-import org.djutils.draw.point.Point2d;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.TimeStampedObject;
-import org.opentrafficsim.base.geometry.BoundingBox;
-import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
@@ -529,16 +527,16 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
             {
                 /** {@inheritDoc} */
                 @Override
-                public Point2d getLocation()
+                public OrientedPoint2d getLocation()
                 {
                     return p;
                 }
 
                 /** {@inheritDoc} */
                 @Override
-                public OtsBounds2d getBounds()
+                public Bounds2d getBounds()
                 {
-                    return new BoundingBox(0.0, 0.0);
+                    return new Bounds2d(0.0, 0.0);
                 }
 
                 /** {@inheritDoc} */

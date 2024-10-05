@@ -17,10 +17,9 @@ import javax.naming.NamingException;
 
 import org.djutils.draw.Oriented;
 import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.base.geometry.BoundingCircle;
-import org.opentrafficsim.base.geometry.OtsBounds2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
@@ -217,9 +216,16 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
 
     /** {@inheritDoc} */
     @Override
-    public final OtsBounds2d getBounds()
+    public final Bounds2d getBounds()
     {
-        return new BoundingCircle(1.0);
+        return new Bounds2d(2.0, 2.0);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Polygon2d getContour()
+    {
+        return new Polygon2d(new double[] {-1.0, 1.0, 1.0, -1.0}, new double[] {-1.0, -1.0, 1.0, 1.0});
     }
 
     /**

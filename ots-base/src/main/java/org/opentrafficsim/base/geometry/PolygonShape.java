@@ -18,7 +18,7 @@ import org.djutils.draw.point.Point2d;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class BoundingPolygon implements OtsBounds2d
+public class PolygonShape implements OtsShape
 {
 
     /** Polygon. */
@@ -28,7 +28,7 @@ public class BoundingPolygon implements OtsBounds2d
      * Constructor.
      * @param polygon polygon.
      */
-    public BoundingPolygon(final Polygon2d polygon)
+    public PolygonShape(final Polygon2d polygon)
     {
         this.polygon = polygon;
     }
@@ -46,7 +46,7 @@ public class BoundingPolygon implements OtsBounds2d
      * @param geometry geometry..
      * @return bounded polygon.
      */
-    public static BoundingPolygon geometryToBounds(final OrientedPoint2d location, final PolyLine2d geometry)
+    public static PolygonShape geometryToBounds(final OrientedPoint2d location, final PolyLine2d geometry)
     {
         Transform2d transformation = OtsRenderable.toBoundsTransform(location);
         Iterator<Point2d> itSource = geometry.getPoints();
@@ -61,7 +61,7 @@ public class BoundingPolygon implements OtsBounds2d
             }
             prev = next;
         }
-        BoundingPolygon b = new BoundingPolygon(new Polygon2d(points));
+        PolygonShape b = new PolygonShape(new Polygon2d(points));
         return b;
     }
 

@@ -53,7 +53,7 @@ public class SpeedSign extends AbstractLaneBasedObject
             final Speed speed, final GtuType gtuType, final Duration startTimeOfDay, final Duration endTimeOfDay)
             throws NetworkException
     {
-        super(id, lane, longitudinalPosition, LaneBasedObject.makeGeometry(lane, longitudinalPosition));
+        super(id, lane, longitudinalPosition, LaneBasedObject.makeLine(lane, longitudinalPosition));
         this.speed = speed;
         this.gtuType = gtuType;
         this.startTimeOfDay = startTimeOfDay;

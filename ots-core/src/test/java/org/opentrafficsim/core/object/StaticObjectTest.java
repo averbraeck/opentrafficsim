@@ -82,7 +82,7 @@ public class StaticObjectTest implements EventListener
         network.addObject(so);
         assertEquals(id, so.getId(), "id");
         assertEquals(id, so.getFullId(), "full id");
-        assertEquals(geometry, so.getGeometry(), "geometry");
+        assertEquals(geometry, so.getContour(), "contour");
         assertEquals(height, so.getHeight(), "height");
         assertEquals(new OrientedPoint2d(geometry.getBounds().midPoint(), 0.0), so.getLocation(), "location");
         // djutils PolyLine2d returns absolute bounds, StaticObject returns centered around (0, 0)
@@ -94,12 +94,12 @@ public class StaticObjectTest implements EventListener
         this.lastEvent = null;
         StaticObject so2 = StaticObject.create(id, geometry, height);
         assertEquals(id, so2.getId(), "id");
-        assertEquals(geometry, so2.getGeometry(), "geometry");
+        assertEquals(geometry, so2.getContour(), "contour");
         assertEquals(height, so2.getHeight(), "height");
         assertNull(this.lastEvent, "init should not have fired an event because there are no listeners");
         so2 = StaticObject.create(id, geometry);
         assertEquals(id, so2.getId(), "id");
-        assertEquals(geometry, so2.getGeometry(), "geometry");
+        assertEquals(geometry, so2.getContour(), "contour");
         assertEquals(Length.ZERO, so2.getHeight(), "height");
     }
 

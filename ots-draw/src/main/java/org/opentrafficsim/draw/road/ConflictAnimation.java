@@ -7,14 +7,12 @@ import java.awt.Stroke;
 import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
 import java.rmi.RemoteException;
-import java.util.List;
 import java.util.Set;
 
 import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.draw.PaintPolygons;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 import org.opentrafficsim.draw.road.ConflictAnimation.ConflictData;
@@ -52,7 +50,7 @@ public class ConflictAnimation extends AbstractLineAnimation<ConflictData>
         super(source, contextualized, .9, new Length(0.5, LengthUnit.SI));
         // geometry of area (not the line) is absolute; pre-transform geometry to fit rotation of source
         this.paths = this.getSource().getContour() == null ? null
-                : PaintPolygons.getPaths(getSource().getLocation(), getSource().getContour());
+                : PaintPolygons.getPaths(getSource().getLocation(), getSource().getContour().getPointList());
     }
 
     /** {@inheritDoc} */
@@ -111,12 +109,6 @@ public class ConflictAnimation extends AbstractLineAnimation<ConflictData>
          * @return conflict color.
          */
         Color getColor();
-
-        /**
-         * Returns the contour.
-         * @return points.
-         */
-        List<Point2d> getContour();
 
         /**
          * Whether the conflict is a crossing.

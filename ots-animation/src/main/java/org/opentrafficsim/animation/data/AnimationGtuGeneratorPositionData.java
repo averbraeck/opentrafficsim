@@ -1,8 +1,8 @@
 package org.opentrafficsim.animation.data;
 
-import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.base.geometry.BoundingRectangle;
-import org.opentrafficsim.base.geometry.OtsBounds2d;
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.core.gtu.GtuGenerator.GtuGeneratorPosition;
 import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
 
@@ -31,17 +31,24 @@ public class AnimationGtuGeneratorPositionData implements GtuGeneratorPositionDa
 
     /** {@inheritDoc} */
     @Override
-    public Point2d getLocation()
+    public OrientedPoint2d getLocation()
     {
         return this.position.getLocation();
     }
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getBounds()
+    public Bounds2d getBounds()
     {
         // this correlates to how generators are drawn as three chevrons
-        return new BoundingRectangle(0.0, 4.75, -1.0, 1.0);
+        return new Bounds2d(0.0, 4.75, -1.0, 1.0);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Polygon2d getContour()
+    {
+        throw new UnsupportedOperationException("GtuGeneratorPosition does not have a contour.");
     }
 
     /** {@inheritDoc} */

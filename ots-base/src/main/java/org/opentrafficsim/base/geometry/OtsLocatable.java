@@ -1,5 +1,12 @@
 package org.opentrafficsim.base.geometry;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.djutils.draw.Transform2d;
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -12,7 +19,7 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public interface OtsLocatable extends Locatable
+public interface OtsLocatable extends Locatable, SpatialObject
 {
 
     /** {@inheritDoc} */
@@ -24,6 +31,75 @@ public interface OtsLocatable extends Locatable
      * @return bounds relative to the location.
      */
     @Override
-    OtsBounds2d getBounds();
+    Bounds2d getBounds();
+
+    /**
+     * Generates a polygon as contour based on bounds and location of the locatable.
+     * @param locatable locatable
+     * @return contour
+     */
+    static Polygon2d asPolygon(final OtsLocatable locatable)
+    {
+        Transform2d transformation = OtsRenderable.toBoundsTransform(locatable.getLocation());
+        Iterator<Point2d> itSource = locatable.getBounds().getPoints();
+        Point2d prev = null;
+        List<Point2d> points = new ArrayList<>();
+        while (itSource.hasNext())
+        {
+            Point2d next = transformation.transform(itSource.next());
+            if (!next.equals(prev))
+            {
+                points.add(next);
+            }
+            prev = next;
+        }
+        return new Polygon2d(points);
+    }
+
+    /**
+     * Generates bounds based on polygon and location of the locatable.
+     * @param locatable locatable
+     * @return bounds
+     */
+    static Bounds2d asBounds(final OtsLocatable locatable)
+    {
+        Transform2d transformation = OtsRenderable.toBoundsTransform(locatable.getLocation());
+        Iterator<Point2d> itSource = locatable.getContour().getPoints();
+        Point2d prev = null;
+        List<Point2d> points = new ArrayList<>();
+        while (itSource.hasNext())
+        {
+            Point2d next = transformation.transform(itSource.next());
+            if (!next.equals(prev))
+            {
+                points.add(next);
+            }
+            prev = next;
+        }
+        return new Polygon2d(points).getBounds();
+    }
+    
+    /**
+     * Returns the contour of the locatable translated and rotated such that it is defined relative to the location.
+     * @param locatable locatable
+     * @return contour relative to location
+     */
+    static Polygon2d relativeContour(final OtsLocatable locatable)
+    {
+        Transform2d transformation = OtsRenderable.toBoundsTransform(locatable.getLocation());
+        Iterator<Point2d> itSource = locatable.getContour().getPoints();
+        Point2d prev = null;
+        List<Point2d> points = new ArrayList<>();
+        while (itSource.hasNext())
+        {
+            Point2d next = transformation.transform(itSource.next());
+            if (!next.equals(prev))
+            {
+                points.add(next);
+            }
+            prev = next;
+        }
+        return new Polygon2d(points);
+    }
 
 }

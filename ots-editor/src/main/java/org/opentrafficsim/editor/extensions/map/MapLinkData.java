@@ -21,6 +21,7 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djutils.draw.DrawRuntimeException;
+import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.line.Ray2d;
@@ -35,9 +36,7 @@ import org.djutils.event.reference.ReferenceType;
 import org.djutils.exceptions.Try;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
-import org.opentrafficsim.base.geometry.BoundingPolygon;
-import org.opentrafficsim.base.geometry.ClickableBounds;
-import org.opentrafficsim.base.geometry.OtsBounds2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.ContinuousArc;
 import org.opentrafficsim.core.geometry.ContinuousBezierCubic;
@@ -127,10 +126,13 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     private PolyLine2d flattenedDesignLine = null;
 
     /** Bounds around the flattened design line. */
-    private BoundingPolygon bounds;
+    private Bounds2d bounds;
 
     /** Location. */
     private OrientedPoint2d location;
+
+    /** Contour. */
+    private Polygon2d contour;
 
     /** Node describing the road layout. */
     private XsdTreeNode roadLayoutNode;
@@ -244,9 +246,23 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
     /** {@inheritDoc} */
     @Override
-    public OtsBounds2d getBounds()
+    public OrientedPoint2d getLocation()
+    {
+        return this.location;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Bounds2d getBounds()
     {
         return this.bounds;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Polygon2d getContour()
+    {
+        return this.contour;
     }
 
     /** {@inheritDoc} */
@@ -254,13 +270,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     public String getId()
     {
         return this.id;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public OrientedPoint2d getLocation()
-    {
-        return this.location;
     }
 
     /** {@inheritDoc} */
@@ -517,19 +526,19 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         }
         setValue((v) -> this.directionStart = v, Adapters.get(Direction.class), this.nodeStart, "Direction");
         double dirStart = this.directionStart == null ? 0.0 : this.directionStart.si;
-        OrientedPoint2d from = new OrientedPoint2d(this.from, dirStart);
+        OrientedPoint2d fromPoint = new OrientedPoint2d(this.from, dirStart);
         setValue((v) -> this.directionEnd = v, Adapters.get(Direction.class), this.nodeEnd, "Direction");
         double dirEnd = this.directionEnd == null ? 0.0 : this.directionEnd.si;
-        OrientedPoint2d to = new OrientedPoint2d(this.to, dirEnd);
+        OrientedPoint2d toPoint = new OrientedPoint2d(this.to, dirEnd);
         if (this.offsetStart != null)
         {
-            from = OtsGeometryUtil.offsetPoint(from, this.offsetStart.si);
+            fromPoint = OtsGeometryUtil.offsetPoint(fromPoint, this.offsetStart.si);
         }
         if (this.offsetEnd != null)
         {
-            to = OtsGeometryUtil.offsetPoint(to, this.offsetEnd.si);
+            toPoint = OtsGeometryUtil.offsetPoint(toPoint, this.offsetEnd.si);
         }
-        this.designLine = this.shapeListener.getContiuousLine(from, to);
+        this.designLine = this.shapeListener.getContiuousLine(fromPoint, toPoint);
         if (this.designLine == null)
         {
             return;
@@ -537,8 +546,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         this.flattenedDesignLine = this.designLine.flatten(getFlattener());
         Ray2d ray = this.flattenedDesignLine.getLocationFractionExtended(0.5);
         this.location = new OrientedPoint2d(ray.x, ray.y, ray.phi);
-        this.bounds =
-                BoundingPolygon.geometryToBounds(this.location, ClickableBounds.get(this.flattenedDesignLine).asPolygon());
+        this.contour =
+                new Polygon2d(PolyLine2d.concatenate(this.flattenedDesignLine, this.flattenedDesignLine.reverse()).getPoints());
+        this.bounds = OtsLocatable.asBounds(this);
         if (this.priorityAnimation != null)
         {
             getMap().removeAnimation(this.priorityAnimation);

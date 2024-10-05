@@ -1,13 +1,12 @@
 package org.opentrafficsim.core.object;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.base.geometry.BoundingPolygon;
-import org.opentrafficsim.base.geometry.OtsBounds2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.network.NetworkException;
 
@@ -30,13 +29,13 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, D
     private final String id;
 
     /** The top-level 2D outline of the object. */
-    private final PolyLine2d geometry;
+    private final Polygon2d contour;
 
     /** Location. */
     private final OrientedPoint2d location;
 
     /** Bounds. */
-    private final OtsBounds2d bounds;
+    private final Bounds2d bounds;
 
     /** The height of the object. */
     private final Length height;
@@ -44,20 +43,20 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, D
     /**
      * @param id the id
      * @param location location.
-     * @param geometry the top-level 2D outline of the object
+     * @param contour the top-level 2D outline of the object
      * @param height the height of the object
      */
-    protected StaticObject(final String id, final OrientedPoint2d location, final PolyLine2d geometry, final Length height)
+    protected StaticObject(final String id, final OrientedPoint2d location, final Polygon2d contour, final Length height)
     {
         Throw.whenNull(id, "object id cannot be null");
-        Throw.whenNull(geometry, "geometry cannot be null");
+        Throw.whenNull(contour, "geometry cannot be null");
         Throw.whenNull(height, "height cannot be null");
 
         this.id = id;
-        this.geometry = geometry;
+        this.contour = contour;
         this.location = location;
 
-        this.bounds = BoundingPolygon.geometryToBounds(location, geometry);
+        this.bounds = OtsLocatable.asBounds(this);
         this.height = height;
     }
 
@@ -104,9 +103,9 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, D
 
     /** {@inheritDoc} */
     @Override
-    public PolyLine2d getGeometry()
+    public Polygon2d getContour()
     {
-        return this.geometry;
+        return this.contour;
     }
 
     /** {@inheritDoc} */
@@ -142,7 +141,7 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, D
     /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public OtsBounds2d getBounds()
+    public Bounds2d getBounds()
     {
         return this.bounds;
     }
@@ -152,7 +151,7 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, D
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "StaticObject [geometry=" + getGeometry() + ", height=" + this.height + "]";
+        return "StaticObject [contour=" + getContour() + ", height=" + this.height + "]";
     }
 
 }
