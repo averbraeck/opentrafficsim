@@ -11,6 +11,7 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.draw.ClickableLineLocatable;
 import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.road.LaneDetectorAnimation.LaneDetectorData;
@@ -52,7 +53,7 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends TextAni
     private LaneDetectorAnimation(final L laneDetector, final Contextualized contextualized, final Color color)
             throws NamingException, RemoteException
     {
-        super(laneDetector, contextualized, .9, new Length(0.5, LengthUnit.SI));
+        super(laneDetector, contextualized, new Length(0.5, LengthUnit.SI));
         this.color = color;
     }
 
@@ -70,8 +71,9 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends TextAni
     {
         LaneDetectorAnimation<LaneDetectorData, Text> animation =
                 new LaneDetectorAnimation<>(laneDetector, contextualized, color);
-        animation.text = new Text(laneDetector, laneDetector::getId, 0.0f, (float) animation.getHalfLength() + 0.2f,
-                TextAlignment.CENTER, Color.BLACK, contextualized);
+        float halfLength = (float) (laneDetector.getLine().getLength() / 2.0);
+        animation.text = new Text(laneDetector, laneDetector::getId, 0.0f, halfLength + 0.2f, TextAlignment.CENTER, Color.BLACK,
+                contextualized);
         return animation;
     }
 
@@ -89,7 +91,7 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends TextAni
     public LaneDetectorAnimation(final L laneDetector, final Contextualized contextualized, final Color color,
             final Function<LaneDetectorAnimation<L, T>, T> textSupplier) throws NamingException, RemoteException
     {
-        super(laneDetector, contextualized, .9, new Length(0.5, LengthUnit.SI));
+        super(laneDetector, contextualized, new Length(0.5, LengthUnit.SI));
         this.color = color;
         this.text = textSupplier.apply(this);
     }
@@ -176,7 +178,7 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends TextAni
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public interface LaneDetectorData extends LaneBasedObjectData, DetectorData
+    public interface LaneDetectorData extends LaneBasedObjectData, DetectorData, ClickableLineLocatable
     {
     }
 

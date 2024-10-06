@@ -45,10 +45,11 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLightDat
     public TrafficLightAnimation(final TrafficLightData trafficLight, final Contextualized contextualized)
             throws NamingException, RemoteException
     {
-        super(trafficLight, contextualized, 0.9, new Length(0.5, LengthUnit.SI));
+        super(trafficLight, contextualized, new Length(0.5, LengthUnit.SI));
 
-        this.text = new Text(trafficLight, trafficLight::getId, 0.0f, (float) getHalfLength() + 0.2f, TextAlignment.CENTER,
-                Color.BLACK, contextualized);
+        float halfLength = (float) (trafficLight.getLine().getLength() / 2.0);
+        this.text = new Text(trafficLight, trafficLight::getId, 0.0f, halfLength + 0.2f, TextAlignment.CENTER, Color.BLACK,
+                contextualized);
     }
 
     /**

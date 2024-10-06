@@ -11,7 +11,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.base.geometry.OtsRenderable;
-import org.opentrafficsim.draw.ClickableLocatable;
+import org.opentrafficsim.draw.ClickableLineLocatable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 
@@ -37,33 +37,20 @@ public abstract class AbstractLineAnimation<T extends LaneBasedObjectData> exten
     /** Rectangle to color. */
     private final Rectangle2D rectangle;
 
-    /** Half length, for placement of coupled text labels. */
-    private final double halfLength;
-
     /**
      * Construct the line animation.
      * @param source source
      * @param contextualized context provider
-     * @param length length of the line, as fraction of the lane width
      * @param width line width
      * @throws NamingException in case of registration failure of the animation
      * @throws RemoteException in case of remote registration failure of the animation
      */
-    public AbstractLineAnimation(final T source, final Contextualized contextualized, final double length, final Length width)
+    public AbstractLineAnimation(final T source, final Contextualized contextualized, final Length width)
             throws NamingException, RemoteException
     {
         super(source, contextualized);
-        this.halfLength = .5 * length * source.getLaneWidth().si;
-        this.rectangle = new Rectangle2D.Double(-.5 * width.si, -this.halfLength, width.si, 2 * this.halfLength);
-    }
-
-    /**
-     * Returns half the length.
-     * @return half the length
-     */
-    public final double getHalfLength()
-    {
-        return this.halfLength;
+        double halfLength = .5 * source.getLine().getLength();
+        this.rectangle = new Rectangle2D.Double(-.5 * width.si, -halfLength, width.si, 2 * halfLength);
     }
 
     /** {@inheritDoc} */
@@ -85,7 +72,7 @@ public abstract class AbstractLineAnimation<T extends LaneBasedObjectData> exten
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public interface LaneBasedObjectData extends ClickableLocatable, Identifiable
+    public interface LaneBasedObjectData extends ClickableLineLocatable, Identifiable
     {
         /**
          * Returns the width of the lane.

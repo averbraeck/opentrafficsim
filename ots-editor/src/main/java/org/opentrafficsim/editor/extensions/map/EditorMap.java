@@ -715,8 +715,9 @@ public class EditorMap extends JPanel implements EventListener
         }
         else if (node.getPathString().equals(XsdPaths.SINK))
         {
-            Function<LaneDetectorAnimation<SinkData, SinkText>, SinkText> textSupplier = (s) -> Try
-                    .assign(() -> new SinkText(s.getSource(), (float) s.getHalfLength() + 0.2f, this.contextualized), "");
+            Function<LaneDetectorAnimation<SinkData, SinkText>, SinkText> textSupplier =
+                    (s) -> Try.assign(() -> new SinkText(s.getSource(),
+                            (float) (s.getSource().getLine().getLength() / 2.0 + 0.2), this.contextualized), "");
             animation = Try.assign(() -> new LaneDetectorAnimation<SinkData, SinkText>((SinkData) data, this.contextualized,
                     Color.ORANGE, textSupplier), "");
         }

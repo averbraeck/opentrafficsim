@@ -3,6 +3,7 @@ package org.opentrafficsim.animation.data;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
 
@@ -20,6 +21,9 @@ public class AnimationLinkData implements LinkData
     /** Link. */
     private final Link link;
 
+    /** Shape (cached). */
+    private OtsShape shape;
+
     /**
      * Constructor.
      * @param link link.
@@ -34,6 +38,17 @@ public class AnimationLinkData implements LinkData
     public Polygon2d getContour()
     {
         return this.link.getContour();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public OtsShape getShape()
+    {
+        if (this.shape == null)
+        {
+            this.shape = LinkData.super.getShape();
+        }
+        return this.shape;
     }
 
     /** {@inheritDoc} */

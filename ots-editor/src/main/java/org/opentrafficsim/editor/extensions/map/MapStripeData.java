@@ -3,6 +3,7 @@ package org.opentrafficsim.editor.extensions.map;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.road.network.lane.SliceInfo;
@@ -51,6 +52,13 @@ public class MapStripeData extends MapCrossSectionData implements StripeData
     public PolyLine2d getCenterLine()
     {
         return this.centerLine;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public PolyLine2d getLine()
+    {
+        return OtsLocatable.transformLine(this.centerLine, getLocation());
     }
 
     /** {@inheritDoc} */

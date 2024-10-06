@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.djutils.draw.Transform2d;
 import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 
@@ -54,7 +55,7 @@ public interface OtsLocatable extends Locatable, SpatialObject
      */
     static Polygon2d boundsAsContour(final OtsLocatable locatable)
     {
-        return transform(locatable.getBounds().getPoints(), locatable.getLocation());
+        return new Polygon2d(transform(locatable.getBounds().getPoints(), locatable.getLocation()));
     }
 
     /**
@@ -85,7 +86,18 @@ public interface OtsLocatable extends Locatable, SpatialObject
      */
     static Polygon2d transformContour(final Polygon2d contour, final Point2d location)
     {
-        return transform(contour.getPoints(), location);
+        return new Polygon2d(transform(contour.getPoints(), location));
+    }
+
+    /**
+     * Transform the line by location, which may also be an {@code OrientedPoint} for rotation.
+     * @param line line
+     * @param location location, which may also be an {@code OrientedPoint} for rotation
+     * @return transformed line
+     */
+    static PolyLine2d transformLine(final PolyLine2d line, final Point2d location)
+    {
+        return new PolyLine2d(transform(line.getPoints(), location));
     }
 
     /**
@@ -94,7 +106,7 @@ public interface OtsLocatable extends Locatable, SpatialObject
      * @param location location
      * @return translated and possibly rotated contour
      */
-    private static Polygon2d transform(final Iterator<Point2d> itSource, final Point2d location)
+    private static List<Point2d> transform(final Iterator<Point2d> itSource, final Point2d location)
     {
         Transform2d transformation = OtsRenderable.toBoundsTransform(location);
         Point2d prev = null;
@@ -108,7 +120,7 @@ public interface OtsLocatable extends Locatable, SpatialObject
             }
             prev = next;
         }
-        return new Polygon2d(points);
+        return points;
     }
 
 }

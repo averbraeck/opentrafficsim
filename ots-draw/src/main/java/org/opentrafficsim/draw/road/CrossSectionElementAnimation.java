@@ -88,8 +88,8 @@ public class CrossSectionElementAnimation<L extends CrossSectionElementData> ext
     public interface CrossSectionElementData extends ClickableLocatable
     {
         /**
-         * Returns the center line.
-         * @return center line.
+         * Returns the center line in world coordinates.
+         * @return the center line in world coordinates
          */
         PolyLine2d getCenterLine();
 

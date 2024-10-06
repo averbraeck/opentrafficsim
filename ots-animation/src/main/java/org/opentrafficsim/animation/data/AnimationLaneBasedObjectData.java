@@ -1,8 +1,12 @@
 package org.opentrafficsim.animation.data;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
+import org.opentrafficsim.draw.ClickableLineLocatable;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
@@ -15,11 +19,15 @@ import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <T> lane based object type
  */
-public abstract class AnimationLaneBasedObjectData<T extends LaneBasedObject> implements LaneBasedObjectData
+public abstract class AnimationLaneBasedObjectData<T extends LaneBasedObject>
+        implements LaneBasedObjectData, ClickableLineLocatable
 {
 
     /** Lane based object. */
     private final T laneBasedObject;
+
+    /** Shape (cached). */
+    private OtsShape shape;
 
     /**
      * Constructor.
@@ -49,6 +57,24 @@ public abstract class AnimationLaneBasedObjectData<T extends LaneBasedObject> im
     public Polygon2d getContour()
     {
         return this.laneBasedObject.getContour();
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public OtsShape getShape()
+    {
+        if (this.shape == null)
+        {
+            this.shape = LaneBasedObjectData.super.getShape();
+        }
+        return this.shape;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public PolyLine2d getLine()
+    {
+        return OtsLocatable.transformLine(this.laneBasedObject.getLine(), getLocation());
     }
 
     /** {@inheritDoc} */

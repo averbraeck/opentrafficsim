@@ -10,6 +10,7 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.draw.ClickableLineLocatable;
 import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
@@ -46,8 +47,9 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStopData>
     public BusStopAnimation(final BusStopData laneDetector, final Contextualized contextualized)
             throws NamingException, RemoteException
     {
-        super(laneDetector, contextualized, .9, new Length(0.5, LengthUnit.SI));
-        this.text = new Text(laneDetector, laneDetector::getId, 0.0f, (float) getHalfLength() + 0.2f, TextAlignment.CENTER,
+        super(laneDetector, contextualized, new Length(0.5, LengthUnit.SI));
+        float halfLength = (float) (laneDetector.getLine().getLength() / 2.0);
+        this.text = new Text(laneDetector, laneDetector::getId, 0.0f, halfLength + 0.2f, TextAlignment.CENTER,
                 Color.BLACK, contextualized);
     }
 
@@ -133,7 +135,7 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStopData>
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public interface BusStopData extends LaneBasedObjectData
+    public interface BusStopData extends LaneBasedObjectData, ClickableLineLocatable
     {
     }
 

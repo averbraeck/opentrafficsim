@@ -5,6 +5,7 @@ import java.util.Locale;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.OrientedPoint2d;
@@ -55,10 +56,13 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
     private OrientedPoint2d location;
 
     /** Bounds. */
-    private Bounds2d bounds = new Bounds2d(2.0, 2.0);
-    
+    private Bounds2d bounds;
+
     /** Contour. */
     private Polygon2d contour;
+
+    /** Line on lane. */
+    private PolyLine2d line;
 
     /** Node of link. */
     private XsdTreeNode lastLinkNode;
@@ -157,12 +161,19 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
     {
         return this.bounds;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public Polygon2d getContour()
     {
         return this.contour;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public PolyLine2d getLine()
+    {
+        return this.line;
     }
 
     /** {@inheritDoc} */
@@ -278,21 +289,12 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
             return;
         }
         this.laneWidth = w;
-        this.bounds = calculateBounds();
+        double w45 = 0.45 * getLaneWidth().si;
+        this.bounds = new Bounds2d(0.0, 0.0, -w45, w45);
         Ray2d ray = laneData.getCenterLine().getLocationExtended(this.positionFromStart.si);
         this.location = new OrientedPoint2d(ray.x, ray.y, ray.phi);
         this.contour = OtsLocatable.boundsAsContour(this);
-        setValid();
-    }
-
-    /**
-     * Calculates the bounds. Can be overridden for objects with non-line shapes.
-     * @return bounds of the object.
-     */
-    protected Bounds2d calculateBounds()
-    {
-        double w45 = 0.45 * getLaneWidth().si;
-        return new Bounds2d(0.0, 0.0, -w45, w45);
+        this.line = new PolyLine2d(new double[] {0.0, 0.0}, new double[] {-w45, w45});
     }
 
 }

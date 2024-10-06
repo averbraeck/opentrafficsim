@@ -3,8 +3,13 @@ package org.opentrafficsim.animation.data;
 import java.awt.Color;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
+import org.opentrafficsim.draw.ClickableLocatable;
 import org.opentrafficsim.draw.road.ConflictAnimation.ConflictData;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 
@@ -21,6 +26,9 @@ public class AnimationConflictData implements ConflictData
 
     /** Conflict. */
     private final Conflict conflict;
+
+    /** Shape (cached). */
+    private OtsShape shape;
 
     /**
      * Constructor.
@@ -71,9 +79,34 @@ public class AnimationConflictData implements ConflictData
 
     /** {@inheritDoc} */
     @Override
+    public Bounds2d getBounds()
+    {
+        return ClickableLocatable.getBounds(this);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public Polygon2d getContour()
     {
         return this.conflict.getContour();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public OtsShape getShape()
+    {
+        if (this.shape == null)
+        {
+            this.shape = ConflictData.super.getShape();
+        }
+        return this.shape;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public PolyLine2d getLine()
+    {
+        return OtsLocatable.transformLine(this.conflict.getLine(), getLocation());
     }
 
     /** {@inheritDoc} */

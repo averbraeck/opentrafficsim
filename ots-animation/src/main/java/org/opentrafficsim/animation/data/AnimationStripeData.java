@@ -3,6 +3,7 @@ package org.opentrafficsim.animation.data;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
 import org.opentrafficsim.road.network.lane.Stripe;
 
@@ -31,6 +32,13 @@ public class AnimationStripeData extends AnimationCrossSectionElementData<Stripe
     public PolyLine2d getCenterLine()
     {
         return getElement().getCenterLine().getLine2d();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public PolyLine2d getLine()
+    {
+        return OtsLocatable.transformLine(getElement().getCenterLine().getLine2d(), getLocation());
     }
 
     /** {@inheritDoc} */

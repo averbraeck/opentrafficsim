@@ -23,6 +23,9 @@ public class MapGeneratorData extends MapLaneBasedObjectData implements GtuGener
     /** Type, 'Generator' or 'List generator'. */
     private final String type;
 
+    /** Bounds. */
+    private Bounds2d bounds = new Bounds2d(0.0, 4.75, -1.0, 1.0);
+
     /**
      * Constructor.
      * @param map map.
@@ -37,9 +40,9 @@ public class MapGeneratorData extends MapLaneBasedObjectData implements GtuGener
 
     /** {@inheritDoc} */
     @Override
-    protected Bounds2d calculateBounds()
+    public Bounds2d getBounds()
     {
-        return new Bounds2d(0.0, 4.75, -1.0, 1.0);
+        return this.bounds;
     }
 
     /** {@inheritDoc} */

@@ -6,7 +6,7 @@ import org.opentrafficsim.base.geometry.OtsShape;
 
 /**
  * This class returns bounds that respond to {@code contains(x, y)} by checking the actual shape, while also accounting for a
- * minimum clickable expanse.
+ * minimum clickable expanse. For line objects use {@code ClickableLineLocatable}.
  * <p>
  * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -18,16 +18,28 @@ public interface ClickableLocatable extends OtsLocatable
 
     /** Minimum expanse to click on object. */
     double EXPANSE = 2.0;
-    
+
     /** {@inheritDoc} */
     @Override
     default Bounds2d getBounds()
     {
+        return getBounds(this);
+    }
+
+    /**
+     * Returns bounds that comply to the actual shape.
+     * @param locatable locatable
+     * @return bounds that comply to the actual shape.
+     */
+    static Bounds2d getBounds(final ClickableLocatable locatable)
+    {
         /*
-         * TODO: expanse does not work on thin diagonal objects. For instance a center line at 45 degrees. It has a xExpand and
-         * yExpand beyond 2m, yet is not clickable as the OtsShape will not see points included.
+         * The reason this method is implemented as static, is such that sub-sub-classes can use this functionality, while an
+         * intermediate sub-class overrides this. In particular, ClickableLineLocatable returns bounds regarding a line.
+         * AnimationConflictData extends that via LaneBasedObjectData, but should be clickable over the entire region of the
+         * conflict as a ClickableLocatable.
          */
-        OtsShape shape = getShape();
+        OtsShape shape = locatable.getShape();
         double deltaX = shape.getMaxX() - shape.getMinX();
         double deltaY = shape.getMaxY() - shape.getMinY();
         boolean xExpand = deltaX < EXPANSE;
