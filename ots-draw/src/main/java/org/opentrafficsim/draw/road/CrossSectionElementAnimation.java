@@ -13,6 +13,7 @@ import javax.naming.NamingException;
 import org.djutils.draw.line.PolyLine2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsRenderable;
+import org.opentrafficsim.draw.ClickableLocatable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.PaintPolygons;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
@@ -84,7 +85,7 @@ public class CrossSectionElementAnimation<L extends CrossSectionElementData> ext
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public interface CrossSectionElementData extends OtsLocatable
+    public interface CrossSectionElementData extends ClickableLocatable
     {
         /**
          * Returns the center line.

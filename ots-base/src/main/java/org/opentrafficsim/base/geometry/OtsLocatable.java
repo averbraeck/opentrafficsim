@@ -33,6 +33,15 @@ public interface OtsLocatable extends Locatable, SpatialObject
     @Override
     Bounds2d getBounds();
 
+    /**
+     * Returns the shape relative to the location.
+     * @return the shape relative to the location.
+     */
+    default OtsShape getShape()
+    {
+        return new PolygonShape(relativeContour(this));
+    }
+
     /*
      * The following methods that take an OtsLocatable as input are defined not as default but as static, as these methods
      * should not be exposed as functions of an OtsLocatable.

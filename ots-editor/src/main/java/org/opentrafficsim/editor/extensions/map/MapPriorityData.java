@@ -1,5 +1,6 @@
 package org.opentrafficsim.editor.extensions.map;
 
+import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
@@ -21,7 +22,10 @@ public class MapPriorityData implements PriorityData
 
     /** Location. */
     private final Point2d location;
-    
+
+    /** Bounds. */
+    private final Bounds2d bounds = new Bounds2d(2.0, 2.0);
+
     /** Contour. */
     private final Polygon2d contour;
 
@@ -42,12 +46,19 @@ public class MapPriorityData implements PriorityData
     {
         return this.location;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public Polygon2d getContour()
     {
         return this.contour;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public Bounds2d getBounds()
+    {
+        return this.bounds;
     }
 
     /** {@inheritDoc} */

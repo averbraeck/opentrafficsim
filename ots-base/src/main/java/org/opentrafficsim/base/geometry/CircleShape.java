@@ -86,6 +86,13 @@ public class CircleShape implements OtsShape
 
     /** {@inheritDoc} */
     @Override
+    public boolean contains(final double x, final double y)
+    {
+        return contains(new Point2d(x, y));
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public double signedDistance(final Point2d point)
     {
         return CENTER.distance(point) - this.radius;

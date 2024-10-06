@@ -64,9 +64,9 @@ public class RectangleShape implements OtsShape
 
     /** {@inheritDoc} */
     @Override
-    public boolean contains(final Point2d point) throws NullPointerException
+    public boolean contains(final double x, final double y) throws NullPointerException
     {
-        return Math.abs(point.x) < this.dx && Math.abs(point.y) < this.dy;
+        return Math.abs(x) < this.dx && Math.abs(y) < this.dy;
     }
 
     /**

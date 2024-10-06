@@ -21,7 +21,6 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djutils.draw.DrawRuntimeException;
-import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.line.Ray2d;
@@ -36,7 +35,6 @@ import org.djutils.event.reference.ReferenceType;
 import org.djutils.exceptions.Try;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
-import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.ContinuousArc;
 import org.opentrafficsim.core.geometry.ContinuousBezierCubic;
@@ -46,7 +44,6 @@ import org.opentrafficsim.core.geometry.ContinuousPolyLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
 import org.opentrafficsim.core.geometry.Flattener;
 import org.opentrafficsim.core.geometry.OtsGeometryUtil;
-import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation;
@@ -125,9 +122,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
     /** Flattened design line. */
     private PolyLine2d flattenedDesignLine = null;
-
-    /** Bounds around the flattened design line. */
-    private Bounds2d bounds;
 
     /** Location. */
     private OrientedPoint2d location;
@@ -250,13 +244,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     public OrientedPoint2d getLocation()
     {
         return this.location;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Bounds2d getBounds()
-    {
-        return this.bounds;
     }
 
     /** {@inheritDoc} */
@@ -549,7 +536,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         this.location = new OrientedPoint2d(ray.x, ray.y, ray.phi);
         this.contour =
                 new Polygon2d(PolyLine2d.concatenate(this.flattenedDesignLine, this.flattenedDesignLine.reverse()).getPoints());
-        this.bounds = ClickableBounds.get(OtsLocatable.contourAsBounds(this));
         if (this.priorityAnimation != null)
         {
             getMap().removeAnimation(this.priorityAnimation);

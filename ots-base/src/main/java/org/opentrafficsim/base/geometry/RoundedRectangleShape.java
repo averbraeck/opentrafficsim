@@ -33,10 +33,10 @@ public class RoundedRectangleShape implements OtsShape
 
     /** Max y coordinate, can be lower than dy due to large r. */
     private final double maxY;
-    
+
     /** Number of line segments in polygon representation. */
     private final int polygonSegments;
-    
+
     /** Polygon representation. */
     private Polygon2d polygon;
 
@@ -50,7 +50,7 @@ public class RoundedRectangleShape implements OtsShape
     {
         this(dx, dy, r, DEFAULT_POLYGON_SEGMENTS);
     }
-    
+
     /**
      * Constructor.
      * @param dx complete length along x dimension.
@@ -119,6 +119,13 @@ public class RoundedRectangleShape implements OtsShape
     public boolean contains(final Point2d point) throws NullPointerException
     {
         return signedDistance(point) < 0.0;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean contains(final double x, final double y) throws NullPointerException
+    {
+        return contains(new Point2d(x, y));
     }
 
     /**

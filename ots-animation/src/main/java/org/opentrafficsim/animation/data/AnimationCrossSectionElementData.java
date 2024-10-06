@@ -1,10 +1,9 @@
 package org.opentrafficsim.animation.data;
 
-import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.draw.ClickableBounds;
+import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 
@@ -34,16 +33,16 @@ public class AnimationCrossSectionElementData<T extends CrossSectionElement> imp
 
     /** {@inheritDoc} */
     @Override
-    public Bounds2d getBounds()
-    {
-        return ClickableBounds.get(this.element.getBounds());
-    }
-    
-    /** {@inheritDoc} */
-    @Override
     public Polygon2d getContour()
     {
         return this.element.getContour();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public OtsShape getShape()
+    {
+        return this.element.getShape();
     }
 
     /** {@inheritDoc} */

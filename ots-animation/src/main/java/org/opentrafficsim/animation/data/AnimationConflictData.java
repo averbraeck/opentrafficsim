@@ -3,10 +3,8 @@ package org.opentrafficsim.animation.data;
 import java.awt.Color;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
-import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.road.ConflictAnimation.ConflictData;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 
@@ -45,13 +43,6 @@ public class AnimationConflictData implements ConflictData
     public OrientedPoint2d getLocation()
     {
         return this.conflict.getLocation();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Bounds2d getBounds()
-    {
-        return ClickableBounds.get(this.conflict.getBounds());
     }
 
     /** {@inheritDoc} */

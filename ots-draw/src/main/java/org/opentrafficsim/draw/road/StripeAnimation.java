@@ -13,12 +13,13 @@ import java.util.Set;
 import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsRenderable;
+import org.opentrafficsim.draw.ClickableLocatable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.PaintPolygons;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
@@ -212,7 +213,7 @@ public class StripeAnimation extends OtsRenderable<StripeData>
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public interface StripeData extends OtsLocatable
+    public interface StripeData extends ClickableLocatable
     {
         /** {@inheritDoc} */
         @Override
@@ -252,7 +253,7 @@ public class StripeAnimation extends OtsRenderable<StripeData>
          * </p>
          * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
          */
-        public enum Type
+        enum Type
         {
             /** Single solid line. */
             SOLID,

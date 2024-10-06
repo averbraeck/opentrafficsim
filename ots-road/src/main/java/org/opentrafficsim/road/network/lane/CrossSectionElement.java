@@ -12,6 +12,8 @@ import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
+import org.opentrafficsim.base.geometry.PolygonShape;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -56,6 +58,9 @@ public abstract class CrossSectionElement extends LocalEventProducer
     /** Bounding box. */
     private final Bounds2d bounds;
 
+    /** Shape. */
+    private final OtsShape shape;
+
     /**
      * Constructor.
      * @param link link.
@@ -79,7 +84,9 @@ public abstract class CrossSectionElement extends LocalEventProducer
         this.centerLine = centerLine;
         this.location = centerLine.getLocationFractionExtended(0.5);
         this.contour = contour;
-        this.bounds = OtsLocatable.contourAsBounds(this);
+        Polygon2d relativeContour = OtsLocatable.relativeContour(this);
+        this.shape = new PolygonShape(relativeContour);
+        this.bounds = relativeContour.getBounds();
 
         this.sliceInfo = new SliceInfo(crossSectionSlices, link.getLength());
 
@@ -216,6 +223,13 @@ public abstract class CrossSectionElement extends LocalEventProducer
     public final Polygon2d getContour()
     {
         return this.contour;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public final OtsShape getShape()
+    {
+        return this.shape;
     }
 
     /** {@inheritDoc} */

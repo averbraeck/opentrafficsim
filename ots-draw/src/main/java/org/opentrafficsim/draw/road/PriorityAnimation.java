@@ -14,9 +14,8 @@ import java.awt.image.ImageObserver;
 import java.rmi.RemoteException;
 import java.util.Map;
 
-import org.djutils.draw.bounds.Bounds2d;
-import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsRenderable;
+import org.opentrafficsim.draw.ClickableLocatable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.road.PriorityAnimation.PriorityData;
 
@@ -310,17 +309,8 @@ public class PriorityAnimation extends OtsRenderable<PriorityData>
      * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public interface PriorityData extends OtsLocatable
+    public interface PriorityData extends ClickableLocatable
     {
-        /** Standard bounds. */
-        Bounds2d BOUNDS = new Bounds2d(2.0, 2.0);
-
-        /** {@inheritDoc} */
-        @Override
-        default Bounds2d getBounds()
-        {
-            return BOUNDS;
-        }
 
         /** {@inheritDoc} */
         @Override

@@ -1,10 +1,8 @@
 package org.opentrafficsim.animation.data;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
-import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
@@ -46,13 +44,6 @@ public abstract class AnimationLaneBasedObjectData<T extends LaneBasedObject> im
         return this.laneBasedObject.getLocation();
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public Bounds2d getBounds()
-    {
-        return ClickableBounds.get(this.laneBasedObject.getBounds());
-    }
-    
     /** {@inheritDoc} */
     @Override
     public Polygon2d getContour()

@@ -89,12 +89,23 @@ public interface OtsShape
      * @param point the point
      * @return true if the point is within this OtsShape; false if the point is not within this OtsShape. Results may be
      *         ill-defined for points on the edges of this Polygon.
-     * @throws NullPointerException when point is null
      */
-    default boolean contains(final Point2d point) throws NullPointerException
+    default boolean contains(final Point2d point)
+    {
+        return contains(point.x, point.y);
+    }
+
+    /**
+     * Check if a point is contained in this OtsShape.
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @return true if the point is within this OtsShape; false if the point is not within this OtsShape. Results may be
+     *         ill-defined for points on the edges of this Polygon.
+     */
+    default boolean contains(final double x, final double y)
     {
         // do not use signedDistance(), it uses this function
-        return asPolygon().contains(point);
+        return asPolygon().contains(x, y);
     }
 
     /**

@@ -17,6 +17,8 @@ import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.HierarchicallyTyped;
 import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
+import org.opentrafficsim.base.geometry.PolygonShape;
 import org.opentrafficsim.base.geometry.SpatialObject;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -85,6 +87,9 @@ public class Link extends LocalEventProducer
 
     /** Bounds. */
     private final Bounds2d bounds;
+    
+    /** Shape. */
+    private final OtsShape shape;
 
     /** The GTUs on this Link. */
     private final Set<Gtu> gtus = new LinkedHashSet<>();
@@ -126,7 +131,9 @@ public class Link extends LocalEventProducer
         this.contour = new Polygon2d(
                 PolyLine2d.concatenate(this.designLine.getLine2d(), this.designLine.getLine2d().reverse()).getPoints());
         this.location = this.designLine.getLocationFractionExtended(0.5);
-        this.bounds = OtsLocatable.contourAsBounds(this);
+        Polygon2d relativeContour = OtsLocatable.relativeContour(this);
+        this.shape = new PolygonShape(relativeContour);
+        this.bounds = relativeContour.getBounds();
         this.network.addLink(this);
     }
 
@@ -244,6 +251,13 @@ public class Link extends LocalEventProducer
     public Polygon2d getContour()
     {
         return this.contour;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public OtsShape getShape()
+    {
+        return this.shape;
     }
 
     /**

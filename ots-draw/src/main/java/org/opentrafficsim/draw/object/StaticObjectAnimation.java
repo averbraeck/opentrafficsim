@@ -13,8 +13,8 @@ import java.util.Set;
 import javax.naming.NamingException;
 
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsRenderable;
+import org.opentrafficsim.draw.ClickableLocatable;
 import org.opentrafficsim.draw.PaintPolygons;
 import org.opentrafficsim.draw.object.StaticObjectAnimation.StaticObjectData;
 
@@ -144,7 +144,7 @@ public class StaticObjectAnimation extends OtsRenderable<StaticObjectData>
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public interface StaticObjectData extends OtsLocatable
+    public interface StaticObjectData extends ClickableLocatable
     {
         /**
          * Returns the geometry of the object.

@@ -1,11 +1,9 @@
 package org.opentrafficsim.animation.data;
 
-import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
 
 /**
@@ -29,13 +27,6 @@ public class AnimationLinkData implements LinkData
     public AnimationLinkData(final Link link)
     {
         this.link = link;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Bounds2d getBounds()
-    {
-        return ClickableBounds.get(this.link.getBounds());
     }
 
     /** {@inheritDoc} */

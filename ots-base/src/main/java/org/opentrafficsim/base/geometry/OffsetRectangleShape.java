@@ -86,9 +86,9 @@ public class OffsetRectangleShape implements OtsShape
 
     /** {@inheritDoc} */
     @Override
-    public boolean contains(final Point2d point) throws NullPointerException
+    public boolean contains(final double x, final double y)
     {
-        return this.minX < point.x & point.x < this.maxX & this.minY < point.y & point.y < this.maxY;
+        return this.minX < x & x < this.maxX & this.minY < y & y < this.maxY;
     }
 
     /** {@inheritDoc} */

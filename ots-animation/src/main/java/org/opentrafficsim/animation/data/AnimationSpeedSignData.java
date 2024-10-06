@@ -1,10 +1,8 @@
 package org.opentrafficsim.animation.data;
 
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
-import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.road.SpeedSignAnimation.SpeedSignData;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 
@@ -38,13 +36,6 @@ public class AnimationSpeedSignData implements SpeedSignData
         return this.speedSign.getLocation();
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public Bounds2d getBounds()
-    {
-        return ClickableBounds.get(this.speedSign.getBounds());
-    }
-    
     /** {@inheritDoc} */
     @Override
     public Polygon2d getContour()

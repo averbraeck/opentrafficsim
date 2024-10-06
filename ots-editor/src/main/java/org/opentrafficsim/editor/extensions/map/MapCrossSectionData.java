@@ -1,13 +1,10 @@
 package org.opentrafficsim.editor.extensions.map;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.OrientedPoint2d;
-import org.opentrafficsim.base.geometry.OtsLocatable;
-import org.opentrafficsim.draw.ClickableBounds;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.road.network.lane.SliceInfo;
@@ -35,9 +32,6 @@ public class MapCrossSectionData implements CrossSectionElementData
     /** Center line. */
     protected final PolyLine2d centerLine;
 
-    /** Bounds. */
-    private final Bounds2d bounds;
-
     /** Slice info. */
     private SliceInfo sliceInfo;
 
@@ -56,7 +50,6 @@ public class MapCrossSectionData implements CrossSectionElementData
         this.location = new OrientedPoint2d(ray.x, ray.y, ray.phi);
         this.centerLine = centerLine;
         this.contour = contour;
-        this.bounds = ClickableBounds.get(OtsLocatable.contourAsBounds(this));
         this.sliceInfo = sliceInfo;
     }
 
@@ -65,13 +58,6 @@ public class MapCrossSectionData implements CrossSectionElementData
     public OrientedPoint2d getLocation()
     {
         return this.location;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Bounds2d getBounds()
-    {
-        return ClickableBounds.get(this.bounds);
     }
 
     /** {@inheritDoc} */

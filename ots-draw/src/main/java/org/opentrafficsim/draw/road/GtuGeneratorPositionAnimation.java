@@ -8,8 +8,8 @@ import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
 
-import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsRenderable;
+import org.opentrafficsim.draw.ClickableLocatable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.TextAnimation;
@@ -125,7 +125,7 @@ public class GtuGeneratorPositionAnimation extends OtsRenderable<GtuGeneratorPos
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public interface GtuGeneratorPositionData extends OtsLocatable
+    public interface GtuGeneratorPositionData extends ClickableLocatable
     {
         /**
          * Returns the queue count.

@@ -30,15 +30,15 @@ import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.Immutable;
-import org.djutils.immutablecollections.ImmutableHashSet;
 import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
-import org.djutils.immutablecollections.ImmutableSet;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.HierarchicallyTyped;
 import org.opentrafficsim.base.geometry.DynamicSpatialObject;
+import org.opentrafficsim.base.geometry.OffsetRectangleShape;
 import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.animation.Drawable;
@@ -152,7 +152,10 @@ public class Gtu extends LocalEventProducer
     private GtuErrorHandler errorHandler = GtuErrorHandler.THROW;
 
     /** shape of the Gtu contour. */
-    private Polygon2d shape = null;
+    private Polygon2d contour;
+
+    /** Shape. */
+    private final OtsShape shape;
 
     /** Sensing positions. */
     private final Map<RelativePosition.Type, RelativePosition> relativePositions = new LinkedHashMap<>();
@@ -235,6 +238,7 @@ public class Gtu extends LocalEventProducer
         this.relativePositions.put(RelativePosition.CENTER,
                 new RelativePosition(Length.ZERO, Length.ZERO, Length.ZERO, RelativePosition.CENTER));
         this.bounds = new Bounds2d(front.minus(length).si, front.si, -width.si / 2.0, width.si / 2.0);
+        this.shape = new OffsetRectangleShape(front.minus(length).si, front.si, -width.si / 2.0, width.si / 2.0);
 
         // Contour positions. For now, a rectangle with the four corners.
         for (int i = -1; i <= 1; i += 2)
@@ -304,12 +308,6 @@ public class Gtu extends LocalEventProducer
     public final ImmutableMap<Type, RelativePosition> getRelativePositions()
     {
         return new ImmutableLinkedHashMap<>(this.relativePositions, Immutable.WRAP);
-    }
-
-    /** @return the contour points of the GTU. */
-    public final ImmutableSet<RelativePosition> getContourPoints()
-    {
-        return new ImmutableHashSet<>(this.contourPoints, Immutable.WRAP);
     }
 
     /** @return the maximum length of the GTU (parallel with driving direction). */
@@ -817,9 +815,9 @@ public class Gtu extends LocalEventProducer
     }
 
     /**
-     * Return the shape of a dynamic object at time 'time'. Note that the getShape() method without a time returns the Minkowski
-     * sum of all shapes of the spatial object for a validity time window, e.g., a contour that describes all locations of a GTU
-     * for the next time step, i.e., the contour of the GTU belonging to the next operational plan.
+     * Return the shape of a dynamic object at time 'time'. Note that the getContour() method without a time returns the
+     * Minkowski sum of all shapes of the spatial object for a validity time window, e.g., a contour that describes all
+     * locations of a GTU for the next time step, i.e., the contour of the GTU belonging to the next operational plan.
      * @param time the time for which we want the shape
      * @return the shape of the object at time 'time'
      */
@@ -828,14 +826,15 @@ public class Gtu extends LocalEventProducer
     {
         try
         {
-            if (this.shape == null)
+            if (this.contour == null)
             {
+                // TODO: this should account for the reference position
                 double w = getWidth().si;
                 double l = getLength().si;
-                this.shape = new Polygon2d(new Point2d(-0.5 * l, -0.5 * w), new Point2d(-0.5 * l, 0.5 * w),
+                this.contour = new Polygon2d(new Point2d(-0.5 * l, -0.5 * w), new Point2d(-0.5 * l, 0.5 * w),
                         new Point2d(0.5 * l, 0.5 * w), new Point2d(0.5 * l, -0.5 * w));
             }
-            Polygon2d s = OtsLocatable.transformContour(this.shape, this.operationalPlan.get(time).getLocation(time));
+            Polygon2d s = OtsLocatable.transformContour(this.contour, this.operationalPlan.get(time).getLocation(time));
             System.out.println("gtu " + getId() + ", shape(t)=" + s);
             return s;
         }
@@ -856,30 +855,37 @@ public class Gtu extends LocalEventProducer
     {
         try
         {
-            // TODO: the actual contour of the GTU has to be moved over the path
-            OtsLine2d path = this.operationalPlan.get().getPath();
-            // part of the Gtu length has to be added before the start and after the end of the path.
-            // we assume the reference point is within the contour of the Gtu.
-            double rear = Math.max(0.0, getReference().dx().si - getRear().dx().si);
-            double front = path.getLength().si + Math.max(0.0, getFront().dx().si - getReference().dx().si);
-            Point2d p0 = path.getLocationExtendedSI(-rear);
-            Point2d pn = path.getLocationExtendedSI(front);
-            List<Point2d> pList = new ArrayList<>(Arrays.asList(path.getPoints()));
-            pList.add(0, p0);
-            pList.add(pn);
-            OtsLine2d extendedPath = new OtsLine2d(pList);
-            List<Point2d> swath = new ArrayList<>();
-            swath.addAll(Arrays.asList(extendedPath.offsetLine(getWidth().si / 2.0).getPoints()));
-            swath.addAll(Arrays.asList(extendedPath.offsetLine(-getWidth().si / 2.0).reverse().getPoints()));
-            Polygon2d s = new Polygon2d(swath);
-            // System.out.println("gtu " + getId() + ", w=" + getWidth() + ", path="
-            // + this.operationalPlan.get().getPath().toString() + ", shape=" + s);
-            return s;
+             // TODO: the actual contour of the GTU has to be moved over the path
+             OtsLine2d path = this.operationalPlan.get().getPath();
+             // part of the Gtu length has to be added before the start and after the end of the path.
+             // we assume the reference point is within the contour of the Gtu.
+             double rear = Math.max(0.0, getReference().dx().si - getRear().dx().si);
+             double front = path.getLength().si + Math.max(0.0, getFront().dx().si - getReference().dx().si);
+             Point2d p0 = path.getLocationExtendedSI(-rear);
+             Point2d pn = path.getLocationExtendedSI(front);
+             List<Point2d> pList = new ArrayList<>(Arrays.asList(path.getPoints()));
+             pList.add(0, p0);
+             pList.add(pn);
+             OtsLine2d extendedPath = new OtsLine2d(pList);
+             List<Point2d> swath = new ArrayList<>();
+             swath.addAll(Arrays.asList(extendedPath.offsetLine(getWidth().si / 2.0).getPoints()));
+             swath.addAll(Arrays.asList(extendedPath.offsetLine(-getWidth().si / 2.0).reverse().getPoints()));
+             Polygon2d s = new Polygon2d(swath);
+             // System.out.println("gtu " + getId() + ", w=" + getWidth() + ", path="
+             // + this.operationalPlan.get().getPath().toString() + ", shape=" + s);
+             return s;
         }
         catch (Exception e)
         {
             throw new RuntimeException(e);
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public OtsShape getShape()
+    {
+        return this.shape;
     }
 
     /**

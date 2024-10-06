@@ -7,6 +7,8 @@ import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
+import org.opentrafficsim.base.geometry.PolygonShape;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.network.NetworkException;
 
@@ -36,6 +38,9 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, D
 
     /** Bounds. */
     private final Bounds2d bounds;
+    
+    /** Shape. */
+    private final OtsShape shape;
 
     /** The height of the object. */
     private final Length height;
@@ -56,7 +61,9 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, D
         this.contour = contour;
         this.location = location;
 
-        this.bounds = OtsLocatable.contourAsBounds(this);
+        Polygon2d relativeContour = OtsLocatable.relativeContour(this);
+        this.shape = new PolygonShape(relativeContour);
+        this.bounds = relativeContour.getBounds();
         this.height = height;
     }
 
@@ -106,6 +113,13 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, D
     public Polygon2d getContour()
     {
         return this.contour;
+    }
+    
+    /** {@inheritDoc} */
+    @Override
+    public OtsShape getShape()
+    {
+        return this.shape;
     }
 
     /** {@inheritDoc} */

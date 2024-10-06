@@ -17,6 +17,8 @@ import org.djutils.immutablecollections.ImmutableHashSet;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.base.HierarchicallyTyped;
 import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
+import org.opentrafficsim.base.geometry.PolygonShape;
 import org.opentrafficsim.base.geometry.SpatialObject;
 import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -49,6 +51,9 @@ public class Node
 
     /** The contour. */
     private final Polygon2d contour;
+
+    /** Shape. */
+    private final OtsShape shape;
 
     /** The links connected to the Node. */
     private final Set<Link> links = new LinkedHashSet<>();
@@ -108,8 +113,9 @@ public class Node
 
         double x = this.point.x;
         double y = this.point.y;
-        this.contour = new Polygon2d(new Point2d(x - 0.5, y - 0.5), new Point2d(x - 0.5, y + 0.5), new Point2d(x + 0.5, y + 0.5),
-                new Point2d(x + 0.5, y - 0.5));
+        this.contour = new Polygon2d(new Point2d(x - 0.5, y - 0.5), new Point2d(x - 0.5, y + 0.5),
+                new Point2d(x + 0.5, y + 0.5), new Point2d(x + 0.5, y - 0.5));
+        this.shape = new PolygonShape(OtsLocatable.relativeContour(this));
 
         this.network.addNode(this);
     }
@@ -144,6 +150,13 @@ public class Node
     public Polygon2d getContour()
     {
         return this.contour;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public OtsShape getShape()
+    {
+        return this.shape;
     }
 
     /**
