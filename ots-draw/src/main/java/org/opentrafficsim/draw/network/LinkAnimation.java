@@ -14,7 +14,7 @@ import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.geometry.OtsRenderable;
-import org.opentrafficsim.draw.ClickableLocatable;
+import org.opentrafficsim.draw.ClickableLineLocatable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.PaintLine;
 import org.opentrafficsim.draw.TextAlignment;
@@ -96,7 +96,7 @@ public class LinkAnimation extends OtsRenderable<LinkData>
     {
         if (this.dynamic)
         {
-            PolyLine2d designLine = getSource().getDesignLine();
+            PolyLine2d designLine = getSource().getCenterLine();
             if (!designLine.equals(this.designLine))
             {
                 setPath();
@@ -114,7 +114,7 @@ public class LinkAnimation extends OtsRenderable<LinkData>
      */
     private void setPath()
     {
-        this.designLine = getSource().getDesignLine();
+        this.designLine = getSource().getCenterLine();
         this.path = PaintLine.getPath(getSource().getLocation(), this.designLine);
         this.startPoint = getEndPoint(this.designLine.getFirst(), this.designLine.get(1));
         this.endPoint = getEndPoint(this.designLine.getLast(), this.designLine.get(this.designLine.size() - 2));
@@ -205,7 +205,7 @@ public class LinkAnimation extends OtsRenderable<LinkData>
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public interface LinkData extends ClickableLocatable, Identifiable
+    public interface LinkData extends ClickableLineLocatable, Identifiable
     {
         /** {@inheritDoc} */
         @Override
@@ -218,10 +218,10 @@ public class LinkAnimation extends OtsRenderable<LinkData>
         boolean isConnector();
 
         /**
-         * Returns the design line.
-         * @return design line.
+         * Returns the center line in world coordinates.
+         * @return the center line in world coordinates.
          */
-        PolyLine2d getDesignLine();
+        PolyLine2d getCenterLine();
 
         /** {@inheritDoc} */
         @Override

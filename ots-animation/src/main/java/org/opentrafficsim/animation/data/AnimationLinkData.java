@@ -3,6 +3,7 @@ package org.opentrafficsim.animation.data;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
@@ -67,9 +68,16 @@ public class AnimationLinkData implements LinkData
 
     /** {@inheritDoc} */
     @Override
-    public PolyLine2d getDesignLine()
+    public PolyLine2d getCenterLine()
     {
         return this.link.getDesignLine().getLine2d();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public PolyLine2d getLine()
+    {
+        return OtsLocatable.transformLine(getCenterLine(), getLocation());
     }
 
     /** {@inheritDoc} */
