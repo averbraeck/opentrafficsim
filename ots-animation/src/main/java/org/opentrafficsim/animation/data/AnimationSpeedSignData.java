@@ -40,7 +40,7 @@ public class AnimationSpeedSignData implements SpeedSignData
     @Override
     public Polygon2d getContour()
     {
-        throw new UnsupportedOperationException("A SpeedSign has no contour.");
+        return this.speedSign.getContour();
     }
 
     /** {@inheritDoc} */
