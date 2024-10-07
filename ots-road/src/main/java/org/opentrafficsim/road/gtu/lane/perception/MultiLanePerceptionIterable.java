@@ -8,10 +8,10 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 /**
  * Iterable class to search over multiple lanes.
@@ -26,7 +26,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
  * @param <H> headway type
  * @param <U> underlying headway type
  */
-public class MultiLanePerceptionIterable<P extends OtsLocatable, H extends Headway, U>
+public class MultiLanePerceptionIterable<P extends LaneBasedObject, H extends Headway, U>
         extends AbstractPerceptionReiterable<P, H, U>
 {
 

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
@@ -25,7 +24,7 @@ import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
  * @param <H> headway type
  * @param <L> lane based object type
  */
-public abstract class LaneBasedObjectIterable<P extends OtsLocatable, H extends Headway, L extends LaneBasedObject>
+public abstract class LaneBasedObjectIterable<P extends LaneBasedObject, H extends Headway, L extends LaneBasedObject>
         extends AbstractPerceptionIterable<P, H, L, Boolean>
 {
 

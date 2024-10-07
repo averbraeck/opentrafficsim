@@ -6,10 +6,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 /**
  * This class uses a single primary iterator which a subclass defines, and makes sure that all elements are only looked up and
@@ -27,7 +27,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
  * @param <H> headway type
  * @param <U> underlying object type
  */
-public abstract class AbstractPerceptionReiterable<P extends OtsLocatable, H extends Headway, U>
+public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H extends Headway, U>
         implements PerceptionCollectable<H, U>
 {
 

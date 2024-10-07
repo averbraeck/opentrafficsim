@@ -12,13 +12,13 @@ import java.util.TreeMap;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.structure.LaneRecordInterface;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 /**
  * Abstract iterable that figures out how to find the next nearest object, including splits.
@@ -34,7 +34,7 @@ import org.opentrafficsim.road.gtu.lane.perception.structure.LaneRecordInterface
  * @param <U> underlying object type
  * @param <C> counter type
  */
-public abstract class AbstractPerceptionIterable<P extends OtsLocatable, H extends Headway, U, C>
+public abstract class AbstractPerceptionIterable<P extends LaneBasedObject, H extends Headway, U, C>
         extends AbstractPerceptionReiterable<P, H, U>
 {
 
