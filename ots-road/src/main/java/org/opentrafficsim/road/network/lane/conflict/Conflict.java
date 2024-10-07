@@ -550,7 +550,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     {
         /** {@inheritDoc} */
         @Override
-        public HeadwayGtuReal createHeadwayGtu(final LaneBasedGtu perceivingGtu, final OtsLocatable reference,
+        public HeadwayGtuReal createHeadwayGtu(final LaneBasedGtu perceivingGtu, final LaneBasedObject reference,
                 final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream) throws GtuException
         {
             return new HeadwayGtuReal(perceivedGtu, distance, true);
@@ -610,7 +610,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
 
         /** {@inheritDoc} */
         @Override
-        public HeadwayGtu createHeadwayGtu(final LaneBasedGtu perceivingGtu, final OtsLocatable reference,
+        public HeadwayGtu createHeadwayGtu(final LaneBasedGtu perceivingGtu, final LaneBasedObject reference,
                 final LaneBasedGtu perceivedGtu, final Length dist, final boolean downstream)
                 throws GtuException, ParameterException
         {

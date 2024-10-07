@@ -14,6 +14,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuPerceived;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuReal;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuRealCopy;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 /**
  * Whether a GTU needs to be wrapped, or information should be copied for later and unaltered use.
@@ -90,7 +91,7 @@ public interface HeadwayGtuType
      * @throws GtuException when headway object cannot be created
      * @throws ParameterException on invalid parameter value or missing parameter
      */
-    default HeadwayGtu createHeadwayGtu(final LaneBasedGtu perceivingGtu, final OtsLocatable reference,
+    default HeadwayGtu createHeadwayGtu(final LaneBasedGtu perceivingGtu, final LaneBasedObject reference,
             final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream)
             throws GtuException, ParameterException
     {
@@ -102,19 +103,7 @@ public interface HeadwayGtuType
             }
             return createUpstreamGtu(perceivingGtu, perceivedGtu, distance);
         }
-        Length length;
-        if (perceivingGtu.equals(reference))
-        {
-            length = perceivingGtu.getLength();
-        }
-        else if (reference instanceof Conflict conflict)
-        {
-            length = conflict.getLength();
-        }
-        else
-        {
-            length = Length.ZERO;
-        }
+        Length length = reference.getLength();
         Throw.when(-distance.si > length.si + perceivedGtu.getLength().si, IllegalStateException.class,
                 "A GTU (%s) that is supposedly %s is actually %s.", perceivedGtu.getId(),
                 downstream ? "downstream" : "upstream", downstream ? "upstream" : "downstream");
@@ -214,7 +203,7 @@ public interface HeadwayGtuType
 
         /** {@inheritDoc} */
         @Override
-        public HeadwayGtu createHeadwayGtu(final LaneBasedGtu perceivingGtu, final OtsLocatable reference,
+        public HeadwayGtu createHeadwayGtu(final LaneBasedGtu perceivingGtu, final LaneBasedObject reference,
                 final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream)
                 throws GtuException, ParameterException
         {

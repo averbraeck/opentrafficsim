@@ -15,7 +15,7 @@ import javax.naming.NamingException;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.base.geometry.OtsRenderable;
-import org.opentrafficsim.draw.ClickableLocatable;
+import org.opentrafficsim.draw.ClickablePointLocatable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.TextAnimation;
@@ -143,11 +143,11 @@ public class NodeAnimation extends OtsRenderable<NodeData>
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public interface NodeData extends ClickableLocatable, Identifiable
+    public interface NodeData extends ClickablePointLocatable, Identifiable
     {
         /** {@inheritDoc} */
         @Override
-        public OrientedPoint2d getLocation();
+        OrientedPoint2d getLocation();
 
         /** {@inheritDoc} */
         @Override

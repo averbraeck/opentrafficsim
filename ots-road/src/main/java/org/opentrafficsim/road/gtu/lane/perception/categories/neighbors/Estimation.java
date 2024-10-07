@@ -4,13 +4,13 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 /**
  * Estimation of neighbor headway, speed and acceleration.
@@ -33,7 +33,7 @@ public interface Estimation
     {
         /** {@inheritDoc} */
         @Override
-        public NeighborTriplet estimate(final LaneBasedGtu perceivingGtu, final OtsLocatable reference,
+        public NeighborTriplet estimate(final LaneBasedGtu perceivingGtu, final LaneBasedObject reference,
                 final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream, final Time when)
                 throws ParameterException
         {
@@ -73,7 +73,7 @@ public interface Estimation
      * @return perceived headway, speed and acceleration
      * @throws ParameterException on invalid parameter value or if parameter is not available
      */
-    NeighborTriplet estimate(LaneBasedGtu perceivingGtu, OtsLocatable reference, LaneBasedGtu perceivedGtu, Length distance,
+    NeighborTriplet estimate(LaneBasedGtu perceivingGtu, LaneBasedObject reference, LaneBasedGtu perceivedGtu, Length distance,
             boolean downstream, Time when) throws ParameterException;
 
     /**
@@ -88,7 +88,7 @@ public interface Estimation
      * @param when moment of perception, reaction time included
      * @return delayed headway
      */
-    default Length getDelayedDistance(final LaneBasedGtu perceivingGtu, final OtsLocatable reference,
+    default Length getDelayedDistance(final LaneBasedGtu perceivingGtu, final LaneBasedObject reference,
             final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream, final Time when)
     {
         double delta = (perceivedGtu.getOdometer().si - perceivedGtu.getOdometer(when).si);
@@ -110,7 +110,7 @@ public interface Estimation
      * @param reference reference object, e.g. the perceiving GTU, or a Conflict
      * @return ego speed
      */
-    default Speed getEgoSpeed(final LaneBasedGtu perceivingGtu, final OtsLocatable reference)
+    default Speed getEgoSpeed(final LaneBasedGtu perceivingGtu, final LaneBasedObject reference)
     {
         if (!perceivingGtu.equals(reference))
         {
@@ -137,7 +137,7 @@ public interface Estimation
      * @param when moment of perception, reaction time included
      * @return delayed speed difference (other minus ego)
      */
-    default Speed getDelayedSpeedDifference(final LaneBasedGtu perceivingGtu, final OtsLocatable reference,
+    default Speed getDelayedSpeedDifference(final LaneBasedGtu perceivingGtu, final LaneBasedObject reference,
             final LaneBasedGtu perceivedGtu, final Time when)
     {
         if (perceivingGtu.equals(reference))
@@ -162,7 +162,7 @@ public interface Estimation
     {
         /** {@inheritDoc} */
         @Override
-        public NeighborTriplet estimate(final LaneBasedGtu perceivingGtu, final OtsLocatable reference,
+        public NeighborTriplet estimate(final LaneBasedGtu perceivingGtu, final LaneBasedObject reference,
                 final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream, final Time when)
                 throws ParameterException
         {
