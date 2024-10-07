@@ -4,6 +4,7 @@ import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.road.PriorityAnimation.PriorityData;
 
 /**
@@ -29,13 +30,16 @@ public class MapPriorityData implements PriorityData
     /** Contour. */
     private final Polygon2d contour;
 
+    /** Shape (cached). */
+    private OtsShape shape;
+
     /**
      * Constructor.
      * @param linkData link data.
      */
     public MapPriorityData(final MapLinkData linkData)
     {
-        this.location = linkData.getDesignLine().getLocationFractionExtended(0.5);
+        this.location = linkData.getCenterLine().getLocationFractionExtended(0.5);
         this.linkData = linkData;
         this.contour = OtsLocatable.boundsAsContour(this);
     }
@@ -53,7 +57,18 @@ public class MapPriorityData implements PriorityData
     {
         return this.contour;
     }
-    
+
+    /** {@inheritDoc} */
+    @Override
+    public OtsShape getShape()
+    {
+        if (this.shape == null)
+        {
+            this.shape = PriorityData.super.getShape();
+        }
+        return this.shape;
+    }
+
     /** {@inheritDoc} */
     @Override
     public Bounds2d getBounds()

@@ -13,6 +13,8 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.reference.ReferenceType;
 import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
+import org.opentrafficsim.base.geometry.RectangleShape;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
@@ -60,6 +62,9 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
 
     /** Contour. */
     private Polygon2d contour;
+
+    /** Shape (cached). */
+    private OtsShape shape;
 
     /** Line on lane. */
     private PolyLine2d line;
@@ -167,6 +172,13 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
     public Polygon2d getContour()
     {
         return this.contour;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public OtsShape getShape()
+    {
+        return this.shape;
     }
 
     /** {@inheritDoc} */
@@ -279,7 +291,7 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
             return;
         }
         this.positionFromStart =
-                ParseUtil.parseLengthBeginEnd(this.position, Length.instantiateSI(linkData.getDesignLine().getLength()));
+                ParseUtil.parseLengthBeginEnd(this.position, Length.instantiateSI(linkData.getCenterLine().getLength()));
 
         Length w = laneData.getWidth(this.positionFromStart);
         if (this.laneWidth != null && !this.laneWidth.equals(w))
@@ -290,11 +302,13 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
         }
         this.laneWidth = w;
         double w45 = 0.45 * getLaneWidth().si;
-        this.bounds = new Bounds2d(0.0, 0.0, -w45, w45);
         Ray2d ray = laneData.getCenterLine().getLocationExtended(this.positionFromStart.si);
         this.location = new OrientedPoint2d(ray.x, ray.y, ray.phi);
-        this.contour = OtsLocatable.boundsAsContour(this);
         this.line = new PolyLine2d(new double[] {0.0, 0.0}, new double[] {-w45, w45});
+        this.shape = new RectangleShape(0.0, 2.0 * w45);
+        this.bounds = LaneBasedObjectData.super.getBounds();
+        this.contour = OtsLocatable.boundsAsContour(this);
+        setValid();
     }
 
 }

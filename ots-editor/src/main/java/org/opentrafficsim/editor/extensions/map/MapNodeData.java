@@ -11,6 +11,7 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.reference.ReferenceType;
 import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
@@ -44,9 +45,12 @@ public class MapNodeData extends MapData implements NodeData, EventListener
 
     /** Location. */
     private OrientedPoint2d location = new OrientedPoint2d(0.0, 0.0);
-    
+
     /** Contour. */
     private final Polygon2d contour;
+
+    /** Shape (cached). */
+    private OtsShape shape;
 
     /**
      * Constructor.
@@ -81,12 +85,23 @@ public class MapNodeData extends MapData implements NodeData, EventListener
     {
         return BOUNDS;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public Polygon2d getContour()
     {
         return this.contour;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public OtsShape getShape()
+    {
+        if (this.shape == null)
+        {
+            this.shape = NodeData.super.getShape();
+        }
+        return this.shape;
     }
 
     /** {@inheritDoc} */

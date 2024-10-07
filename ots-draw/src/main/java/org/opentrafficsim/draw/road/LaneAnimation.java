@@ -15,6 +15,7 @@ import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsRenderable;
+import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.ClickableLineLocatable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.PaintLine;
@@ -101,6 +102,9 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         /** Location. */
         private final OrientedPoint2d location;
 
+        /** Shape (cached). */
+        private OtsShape shape;
+
         /** Lane id. */
         private final String fullId;
 
@@ -121,6 +125,17 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         public final OrientedPoint2d getLocation()
         {
             return this.location;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public OtsShape getShape()
+        {
+            if (this.shape == null)
+            {
+                this.shape = ClickableLineLocatable.super.getShape();
+            }
+            return this.shape;
         }
 
         /** {@inheritDoc} */

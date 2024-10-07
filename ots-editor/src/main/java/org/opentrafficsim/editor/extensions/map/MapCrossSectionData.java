@@ -5,6 +5,7 @@ import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.road.network.lane.SliceInfo;
@@ -31,6 +32,9 @@ public class MapCrossSectionData implements CrossSectionElementData
 
     /** Center line. */
     protected final PolyLine2d centerLine;
+
+    /** Shape (cached). */
+    private OtsShape shape;
 
     /** Slice info. */
     private SliceInfo sliceInfo;
@@ -65,6 +69,17 @@ public class MapCrossSectionData implements CrossSectionElementData
     public Polygon2d getContour()
     {
         return this.contour;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public OtsShape getShape()
+    {
+        if (this.shape == null)
+        {
+            this.shape = CrossSectionElementData.super.getShape();
+        }
+        return this.shape;
     }
 
     /** {@inheritDoc} */

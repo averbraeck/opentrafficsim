@@ -35,6 +35,8 @@ import org.djutils.event.reference.ReferenceType;
 import org.djutils.exceptions.Try;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.ContinuousArc;
 import org.opentrafficsim.core.geometry.ContinuousBezierCubic;
@@ -128,6 +130,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
     /** Contour. */
     private Polygon2d contour;
+
+    /** Shape (cached). */
+    private OtsShape shape;
 
     /** Node describing the road layout. */
     private XsdTreeNode roadLayoutNode;
@@ -255,6 +260,17 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
     /** {@inheritDoc} */
     @Override
+    public OtsShape getShape()
+    {
+        if (this.shape == null)
+        {
+            this.shape = LinkData.super.getShape();
+        }
+        return this.shape;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public String getId()
     {
         return this.id;
@@ -269,9 +285,16 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
     /** {@inheritDoc} */
     @Override
-    public PolyLine2d getDesignLine()
+    public PolyLine2d getCenterLine()
     {
         return this.flattenedDesignLine;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public PolyLine2d getLine()
+    {
+        return OtsLocatable.transformLine(this.flattenedDesignLine, this.location);
     }
 
     /** {@inheritDoc} */
