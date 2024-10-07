@@ -44,7 +44,10 @@ public interface LaneBasedObject extends LocatedObject
      * Returns the line that represent the location of this object on the lane.
      * @return the line that represent the location of this object on the lane.
      */
-    PolyLine2d getLine();
+    default PolyLine2d getLine()
+    {
+        return makeLine(getLane(), getLongitudinalPosition());
+    }
 
     /**
      * Make a geometry perpendicular to the center line of the lane with a length 90% of the width of the lane.

@@ -65,6 +65,7 @@ import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
@@ -94,8 +95,9 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class LaneBasedGtu extends Gtu
+public class LaneBasedGtu extends Gtu implements LaneBasedObject
 {
     /** */
     private static final long serialVersionUID = 20140822L;
@@ -1547,6 +1549,34 @@ public class LaneBasedGtu extends Gtu
     public final void setTurnIndicatorStatus(final TurnIndicatorStatus turnIndicatorStatus)
     {
         this.turnIndicatorStatus.set(turnIndicatorStatus);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Length getHeight()
+    {
+        return Length.ZERO;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getFullId()
+    {
+        return getId();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Lane getLane()
+    {
+        return Try.assign(() -> getReferencePosition().lane(), "no reference position");
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Length getLongitudinalPosition()
+    {
+        return Try.assign(() -> getReferencePosition().position(), "no reference position");
     }
 
     /**
