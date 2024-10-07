@@ -7,4 +7,7 @@
   <fileset name="all" enabled="true" check-config-name="DSOL checks" local="true">
     <file-match-pattern match-pattern=".java$" include-pattern="true"/>
   </fileset>
+  <filter name="FilesFromPackage" enabled="true">
+    <filter-data value="src/main/java/org/opentrafficsim/xml/generated"/>
+  </filter>
 </fileset-config>
