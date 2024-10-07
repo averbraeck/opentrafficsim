@@ -9,7 +9,6 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.base.geometry.PolygonShape;
-import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
@@ -22,7 +21,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class StaticObject extends LocalEventProducer implements LocatedObject, Drawable
+public class StaticObject extends LocalEventProducer implements LocatedObject
 {
     /** */
     private static final long serialVersionUID = 20160400L;
@@ -38,7 +37,7 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, D
 
     /** Bounds. */
     private final Bounds2d bounds;
-    
+
     /** Shape. */
     private final OtsShape shape;
 
@@ -114,7 +113,7 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, D
     {
         return this.contour;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public OtsShape getShape()

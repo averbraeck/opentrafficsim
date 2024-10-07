@@ -14,7 +14,6 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.base.geometry.PolygonShape;
-import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -30,8 +29,7 @@ import org.opentrafficsim.road.network.RoadNetwork;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public abstract class CrossSectionElement extends LocalEventProducer
-        implements OtsLocatable, Serializable, Identifiable, Drawable
+public abstract class CrossSectionElement extends LocalEventProducer implements OtsLocatable, Serializable, Identifiable
 {
     /** */
     private static final long serialVersionUID = 20150826L;

@@ -20,7 +20,6 @@ import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.base.geometry.PolygonShape;
 import org.opentrafficsim.base.geometry.SpatialObject;
-import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.FractionalLengthData;
 import org.opentrafficsim.core.geometry.OtsLine2d;
@@ -37,7 +36,7 @@ import org.opentrafficsim.core.gtu.Gtu;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
 public class Link extends LocalEventProducer
-        implements HierarchicallyTyped<LinkType, Link>, SpatialObject, OtsLocatable, Serializable, Identifiable, Drawable
+        implements HierarchicallyTyped<LinkType, Link>, SpatialObject, OtsLocatable, Serializable, Identifiable
 {
 
     /** */

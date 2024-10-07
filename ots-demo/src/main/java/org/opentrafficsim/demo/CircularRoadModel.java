@@ -2,10 +2,8 @@ package org.opentrafficsim.demo;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.DurationUnit;

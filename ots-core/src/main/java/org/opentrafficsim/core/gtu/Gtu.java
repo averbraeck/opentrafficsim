@@ -41,7 +41,6 @@ import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.animation.Drawable;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.RelativePosition.Type;
@@ -68,7 +67,7 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
 public class Gtu extends LocalEventProducer
-        implements HierarchicallyTyped<GtuType, Gtu>, DynamicSpatialObject, OtsLocatable, Serializable, Identifiable, Drawable
+        implements HierarchicallyTyped<GtuType, Gtu>, DynamicSpatialObject, OtsLocatable, Serializable, Identifiable
 {
     /** */
     private static final long serialVersionUID = 20140822L;
@@ -855,25 +854,25 @@ public class Gtu extends LocalEventProducer
     {
         try
         {
-             // TODO: the actual contour of the GTU has to be moved over the path
-             OtsLine2d path = this.operationalPlan.get().getPath();
-             // part of the Gtu length has to be added before the start and after the end of the path.
-             // we assume the reference point is within the contour of the Gtu.
-             double rear = Math.max(0.0, getReference().dx().si - getRear().dx().si);
-             double front = path.getLength().si + Math.max(0.0, getFront().dx().si - getReference().dx().si);
-             Point2d p0 = path.getLocationExtendedSI(-rear);
-             Point2d pn = path.getLocationExtendedSI(front);
-             List<Point2d> pList = new ArrayList<>(Arrays.asList(path.getPoints()));
-             pList.add(0, p0);
-             pList.add(pn);
-             OtsLine2d extendedPath = new OtsLine2d(pList);
-             List<Point2d> swath = new ArrayList<>();
-             swath.addAll(Arrays.asList(extendedPath.offsetLine(getWidth().si / 2.0).getPoints()));
-             swath.addAll(Arrays.asList(extendedPath.offsetLine(-getWidth().si / 2.0).reverse().getPoints()));
-             Polygon2d s = new Polygon2d(swath);
-             // System.out.println("gtu " + getId() + ", w=" + getWidth() + ", path="
-             // + this.operationalPlan.get().getPath().toString() + ", shape=" + s);
-             return s;
+            // TODO: the actual contour of the GTU has to be moved over the path
+            OtsLine2d path = this.operationalPlan.get().getPath();
+            // part of the Gtu length has to be added before the start and after the end of the path.
+            // we assume the reference point is within the contour of the Gtu.
+            double rear = Math.max(0.0, getReference().dx().si - getRear().dx().si);
+            double front = path.getLength().si + Math.max(0.0, getFront().dx().si - getReference().dx().si);
+            Point2d p0 = path.getLocationExtendedSI(-rear);
+            Point2d pn = path.getLocationExtendedSI(front);
+            List<Point2d> pList = new ArrayList<>(Arrays.asList(path.getPoints()));
+            pList.add(0, p0);
+            pList.add(pn);
+            OtsLine2d extendedPath = new OtsLine2d(pList);
+            List<Point2d> swath = new ArrayList<>();
+            swath.addAll(Arrays.asList(extendedPath.offsetLine(getWidth().si / 2.0).getPoints()));
+            swath.addAll(Arrays.asList(extendedPath.offsetLine(-getWidth().si / 2.0).reverse().getPoints()));
+            Polygon2d s = new Polygon2d(swath);
+            // System.out.println("gtu " + getId() + ", w=" + getWidth() + ", path="
+            // + this.operationalPlan.get().getPath().toString() + ", shape=" + s);
+            return s;
         }
         catch (Exception e)
         {
