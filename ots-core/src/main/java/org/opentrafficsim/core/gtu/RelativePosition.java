@@ -13,7 +13,7 @@ import org.djunits.value.vdouble.scalar.Length;
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$, initial version Dec 30, 2014 <br>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
- * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+ * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param dx positive x is in the normal direction of movement.
  * @param dy positive y is left compared to the normal direction of movement (seen from the top).
@@ -65,7 +65,7 @@ public record RelativePosition(Length dx, Length dy, Length dz, Type type) imple
      * <p>
      * $LastChangedDate$, @version $Revision$, by $Author$, initial version ec 31, 2014 <br>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      */
     public static class Type implements Serializable
     {

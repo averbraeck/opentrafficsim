@@ -19,7 +19,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
- * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+ * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param path the path it the GTU keeps driving in the same lane, and follows the route if possible in the same lane. The path
  *            stops when the lane or a continuation lane does not lead in the direction of the route provided by the strategical

@@ -69,7 +69,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
- * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+ * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
 public class OtsControlPanel extends JPanel implements ActionListener, PropertyChangeListener, WindowListener, EventListener
 {
@@ -1168,7 +1168,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
      * Extension of a DefaultFormatter that uses a regular expression. <br>
      * Derived from <a href="http://www.java2s.com/Tutorial/Java/0240__Swing/RegexFormatterwithaJFormattedTextField.htm">
      * http://www.java2s.com/Tutorial/Java/0240__Swing/RegexFormatterwithaJFormattedTextField.htm</a>
-     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      */
     static class RegexFormatter extends DefaultFormatter
     {

@@ -17,7 +17,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * <p>
  * $LastChangedDate$, @version $Revision$, by $Author$, initial version 20 Mar 2015 <br>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
- * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+ * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
 public class ProbabilisticRouteGenerator implements Generator<Route>, Serializable
 {

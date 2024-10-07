@@ -23,7 +23,7 @@ import java.util.zip.ZipFile;
  * Copyright (c) 2006 by stoughto! TODO replace this by something that is provably free code.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
- * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
+ * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
 public final class ClassList
 {
