@@ -49,7 +49,7 @@ public class AnimationCrossSectionElementData<T extends CrossSectionElement> imp
     @Override
     public PolyLine2d getCenterLine()
     {
-        return this.element.getCenterLine().getLine2d();
+        return this.element.getCenterLine();
     }
 
     /** {@inheritDoc} */

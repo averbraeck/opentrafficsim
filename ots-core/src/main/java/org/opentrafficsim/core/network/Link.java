@@ -86,7 +86,7 @@ public class Link extends LocalEventProducer
 
     /** Bounds. */
     private final Bounds2d bounds;
-    
+
     /** Shape. */
     private final OtsShape shape;
 
@@ -127,9 +127,8 @@ public class Link extends LocalEventProducer
         this.endNode.addLink(this);
         this.designLine = designLine;
         this.elevation = elevation;
-        this.contour = new Polygon2d(
-                PolyLine2d.concatenate(this.designLine.getLine2d(), this.designLine.getLine2d().reverse()).getPoints());
-        this.location = this.designLine.getLocationFractionExtended(0.5);
+        this.contour = new Polygon2d(PolyLine2d.concatenate(this.designLine, this.designLine.reverse()).getPoints());
+        this.location = this.designLine.getLocationPointFractionExtended(0.5);
         Polygon2d relativeContour = OtsLocatable.relativeContour(this);
         this.shape = new PolygonShape(relativeContour);
         this.bounds = relativeContour.getBounds();
@@ -251,7 +250,7 @@ public class Link extends LocalEventProducer
     {
         return this.contour;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public OtsShape getShape()
@@ -274,7 +273,7 @@ public class Link extends LocalEventProducer
      */
     public final Length getLength()
     {
-        return this.designLine.getLength();
+        return this.designLine.getTypedLength();
     }
 
     /** {@inheritDoc} */

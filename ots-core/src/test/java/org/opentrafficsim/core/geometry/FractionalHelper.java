@@ -166,7 +166,7 @@ public final class FractionalHelper
         StringBuilder str = new StringBuilder();
         str.append("line = [");
         String sep = "";
-        for (Point2d p : line.getPoints())
+        for (Point2d p : line.getPointList())
         {
             str.append(String.format(Locale.US, "%s %.8f, %.8f", sep, p.x, p.y));
             sep = ",";
@@ -175,7 +175,7 @@ public final class FractionalHelper
 
         str.append("helpers = [");
         sep = "";
-        for (Point2d p : helpers.getPoints())
+        for (Point2d p : helpers.getPointList())
         {
             str.append(String.format(Locale.US, "%s %.8f, %.8f", sep, p.x, p.y));
             sep = ",";

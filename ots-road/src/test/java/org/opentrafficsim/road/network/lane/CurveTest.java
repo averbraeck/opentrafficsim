@@ -74,8 +74,9 @@ public class CurveTest
         Lane[] straight2 = LaneFactory.makeMultiLane(network, "straight2", curveEnd, destination, null, laneCount, laneType,
                 speedLimit, simulator, DefaultsNl.VEHICLE);
         OtsLine2d curveLine = LaneFactory.makeBezier(origin, curveStart, curveEnd, destination);
-        Lane[] curve = LaneFactory.makeMultiLane(network, "bezier", curveStart, curveEnd, curveLine.getPoints(), laneCount,
-                laneType, speedLimit, simulator, DefaultsNl.VEHICLE);
+        Lane[] curve = LaneFactory.makeMultiLane(network, "bezier", curveStart, curveEnd,
+                curveLine.getPointList().toArray(new Point2d[curveLine.size()]), laneCount, laneType, speedLimit, simulator,
+                DefaultsNl.VEHICLE);
         Lane[][] laneSets = new Lane[][] {straight1, curve, straight2};
         Length initialPosition = new Length(5, LengthUnit.METER);
         Speed speed = new Speed(10, SpeedUnit.SI);

@@ -32,9 +32,9 @@ public record LanePosition(Lane lane, Length position) implements Serializable
     {
         // double fraction = this.position.si / this.lane.getParentLink().getLength().si;
         OtsLine2d centerLine = this.lane.getCenterLine();
-        double centerLineLength = centerLine.getLength().si;
+        double centerLineLength = centerLine.getLength();
         double fraction = this.position.si / centerLineLength;
-        return centerLine.getLocationFractionExtended(fraction);
+        return centerLine.getLocationPointFractionExtended(fraction);
     }
 
 }

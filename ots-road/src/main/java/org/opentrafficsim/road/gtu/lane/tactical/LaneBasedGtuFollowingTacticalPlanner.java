@@ -79,13 +79,13 @@ public class LaneBasedGtuFollowingTacticalPlanner extends AbstractLaneBasedTacti
         {
             // TODO I really don't like this -- if there is a lane drop at 20 m, the GTU should stop...
             accelerationStepGTU = ((GtuFollowingModelOld) getCarFollowingModel()).computeAccelerationStepWithNoLeader(
-                    laneBasedGTU, lanePathInfo.path().getLength(), simplePerception.getSpeedLimit());
+                    laneBasedGTU, lanePathInfo.path().getTypedLength(), simplePerception.getSpeedLimit());
         }
         else
         {
             accelerationStepGTU =
                     ((GtuFollowingModelOld) getCarFollowingModel()).computeAccelerationStep(laneBasedGTU, headwayGTU.getSpeed(),
-                            headwayGTU.getDistance(), lanePathInfo.path().getLength(), simplePerception.getSpeedLimit());
+                            headwayGTU.getDistance(), lanePathInfo.path().getTypedLength(), simplePerception.getSpeedLimit());
         }
 
         // look at the conditions for headway from an object in front
@@ -94,12 +94,12 @@ public class LaneBasedGtuFollowingTacticalPlanner extends AbstractLaneBasedTacti
         if (headwayObject.getDistance().ge(maxDistance))
         {
             accelerationStepObject = ((GtuFollowingModelOld) getCarFollowingModel()).computeAccelerationStepWithNoLeader(
-                    laneBasedGTU, lanePathInfo.path().getLength(), simplePerception.getSpeedLimit());
+                    laneBasedGTU, lanePathInfo.path().getTypedLength(), simplePerception.getSpeedLimit());
         }
         else
         {
             accelerationStepObject = ((GtuFollowingModelOld) getCarFollowingModel()).computeAccelerationStep(laneBasedGTU,
-                    headwayObject.getSpeed(), headwayObject.getDistance(), lanePathInfo.path().getLength(),
+                    headwayObject.getSpeed(), headwayObject.getDistance(), lanePathInfo.path().getTypedLength(),
                     simplePerception.getSpeedLimit());
         }
 

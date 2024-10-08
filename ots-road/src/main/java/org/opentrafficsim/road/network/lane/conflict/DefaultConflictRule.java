@@ -6,7 +6,6 @@ import java.util.Map;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -111,17 +110,8 @@ public class DefaultConflictRule implements ConflictRule
             Throw.when(priority1.isBusStop(), IllegalArgumentException.class,
                     "Both priorities are 'bus stop', which is not allowed. Use BusStopConflictRule for bus stops.");
             // Based on right- or left-hand traffic
-            OrientedPoint2d p1;
-            OrientedPoint2d p2;
-            try
-            {
-                p1 = lane1.getCenterLine().getLocation(longitudinalPosition1);
-                p2 = lane2.getCenterLine().getLocation(longitudinalPosition2);
-            }
-            catch (OtsGeometryException exception)
-            {
-                throw new RuntimeException("Conflict position is not on its lane.", exception);
-            }
+            OrientedPoint2d p1 = lane1.getCenterLine().getLocation(longitudinalPosition1);
+            OrientedPoint2d p2 = lane2.getCenterLine().getLocation(longitudinalPosition2);
             double diff = p2.getDirZ() - p1.getDirZ();
             while (diff > Math.PI)
             {

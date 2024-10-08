@@ -190,7 +190,7 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
             }
 
             // incorporate dead-end/split
-            Length dist = lanePathInfo.path().getLength().minus(getGtu().getFront().dx());
+            Length dist = lanePathInfo.path().getTypedLength().minus(getGtu().getFront().dx());
             a = Acceleration.min(a, ((GtuFollowingModelOld) getCarFollowingModel()).computeAcceleration(getGtu().getSpeed(),
                     getGtu().getMaximumSpeed(), Speed.ZERO, dist, speedLimit));
 

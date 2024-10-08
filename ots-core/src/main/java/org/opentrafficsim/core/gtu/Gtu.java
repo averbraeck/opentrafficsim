@@ -2,7 +2,6 @@ package org.opentrafficsim.core.gtu;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -859,16 +858,16 @@ public class Gtu extends LocalEventProducer
             // part of the Gtu length has to be added before the start and after the end of the path.
             // we assume the reference point is within the contour of the Gtu.
             double rear = Math.max(0.0, getReference().dx().si - getRear().dx().si);
-            double front = path.getLength().si + Math.max(0.0, getFront().dx().si - getReference().dx().si);
+            double front = path.getLength() + Math.max(0.0, getFront().dx().si - getReference().dx().si);
             Point2d p0 = path.getLocationExtendedSI(-rear);
             Point2d pn = path.getLocationExtendedSI(front);
-            List<Point2d> pList = new ArrayList<>(Arrays.asList(path.getPoints()));
+            List<Point2d> pList = path.getPointList();
             pList.add(0, p0);
             pList.add(pn);
             OtsLine2d extendedPath = new OtsLine2d(pList);
             List<Point2d> swath = new ArrayList<>();
-            swath.addAll(Arrays.asList(extendedPath.offsetLine(getWidth().si / 2.0).getPoints()));
-            swath.addAll(Arrays.asList(extendedPath.offsetLine(-getWidth().si / 2.0).reverse().getPoints()));
+            swath.addAll(extendedPath.offsetLine(getWidth().si / 2.0).getPointList());
+            swath.addAll(extendedPath.offsetLine(-getWidth().si / 2.0).reverse().getPointList());
             Polygon2d s = new Polygon2d(swath);
             // System.out.println("gtu " + getId() + ", w=" + getWidth() + ", path="
             // + this.operationalPlan.get().getPath().toString() + ", shape=" + s);

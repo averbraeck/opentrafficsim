@@ -13,7 +13,6 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableList;
-import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -102,7 +101,7 @@ public class OperationalPlan implements Serializable
         this.segmentStartDurations = new double[this.segments.size() + 1];
         this.segmentStartDistances = new double[this.segments.size() + 1];
 
-        Length pathLength = path.getLength();
+        Length pathLength = path.getTypedLength();
         Duration segmentsDuration = Duration.ZERO;
         Length segmentsLength = Length.ZERO;
         for (int i = 0; i < this.segments.size(); i++)
@@ -215,7 +214,7 @@ public class OperationalPlan implements Serializable
      */
     public OrientedPoint2d getEndLocation()
     {
-        return Try.assign(() -> this.path.getLocationFraction(Math.min(1.0, this.totalLength.si / this.path.getLength().si)),
+        return Try.assign(() -> this.path.getLocationPointFraction(Math.min(1.0, this.totalLength.si / this.path.getLength())),
                 "Unexpected exception for path extraction till 1.0.");
     }
 
@@ -276,8 +275,7 @@ public class OperationalPlan implements Serializable
         Throw.when(time.lt(this.startTime), OperationalPlanException.class, "Requested time is before start time.");
         Throw.when(time.gt(this.getEndTime()), OperationalPlanException.class, "Requested time is beyond end time.");
         double fraction = this.totalLength.eq0() ? 0.0 : getTraveledDistance(time).si / this.totalLength.si;
-        return Try.assign(() -> this.path.getLocationFraction(fraction, 0.01), OperationalPlanException.class,
-                "Unable to derive location for time.");
+        return this.path.getLocationPointFraction(fraction, 0.01);
     }
 
     /**
@@ -426,7 +424,7 @@ public class OperationalPlan implements Serializable
                 {
                     // point is on the line
                     traveledDistanceAlongPath += this.path.get(i).distance(p);
-                    if (traveledDistanceAlongPath > this.path.getLength().si)
+                    if (traveledDistanceAlongPath > this.path.getLength())
                     {
                         return Time.instantiateSI(Double.NaN);
                     }
@@ -438,7 +436,7 @@ public class OperationalPlan implements Serializable
                 }
             }
         }
-        catch (OtsGeometryException exception)
+        catch (IndexOutOfBoundsException exception)
         {
             throw new RuntimeException("Index out of bounds on projection of point to path of operational plan", exception);
         }

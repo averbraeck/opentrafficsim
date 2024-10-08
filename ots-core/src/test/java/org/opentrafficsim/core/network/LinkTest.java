@@ -113,7 +113,7 @@ public class LinkTest implements EventListener
         assertEquals(network, link.getNetwork(), "Network is correctly returned");
         assertEquals(linkType, link.getType(), "LinkType is correctly returned");
         Point2d location = link.getLocation();
-        OrientedPoint2d expectedLocation = designLine.getLocationFraction(0.5);
+        OrientedPoint2d expectedLocation = designLine.getLocationPointFraction(0.5);
         assertEquals(expectedLocation.distance(location), 0.0, 0.1,
                 "location is at halfway point of design line (because design line contains only two points)");
         // RotZ of location is bogus; makes no sense to test that

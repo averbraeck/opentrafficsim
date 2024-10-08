@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
-import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.Link;
@@ -106,53 +105,45 @@ public class SplitColorer implements GtuColorer
         }
 
         // split
-        try
+        double preAngle = preLink.getDesignLine().getLocationPointFraction(1.0).getDirZ();
+        double angleLeft = 0.0;
+        double angleRight = 0.0;
+        Link linkLeft = null;
+        Link linkRight = null;
+        for (Link nextLink : nextLinks)
         {
-            double preAngle = preLink.getDesignLine().getLocationFraction(1.0).getDirZ();
-            double angleLeft = 0.0;
-            double angleRight = 0.0;
-            Link linkLeft = null;
-            Link linkRight = null;
-            for (Link nextLink : nextLinks)
+            double angle = nextLink.getStartNode().equals(link.getStartNode())
+                    ? nextLink.getDesignLine().getLocationPointFraction(0.0).getDirZ()
+                    : nextLink.getDesignLine().getLocationPointFraction(1.0).getDirZ() + Math.PI;
+            angle -= preAngle; // difference with from
+            while (angle < -Math.PI)
             {
-                double angle = nextLink.getStartNode().equals(link.getStartNode())
-                        ? nextLink.getDesignLine().getLocationFraction(0.0).getDirZ()
-                        : nextLink.getDesignLine().getLocationFraction(1.0).getDirZ() + Math.PI;
-                angle -= preAngle; // difference with from
-                while (angle < -Math.PI)
-                {
-                    angle += Math.PI * 2;
-                }
-                while (angle > Math.PI)
-                {
-                    angle -= Math.PI * 2;
-                }
-                if (angle < angleRight)
-                {
-                    angleRight = angle;
-                    linkRight = nextLink;
-                }
-                else if (angle > angleLeft)
-                {
-                    angleLeft = angle;
-                    linkLeft = nextLink;
-                }
+                angle += Math.PI * 2;
             }
-            if (link.equals(linkRight))
+            while (angle > Math.PI)
             {
-                return RIGHT;
+                angle -= Math.PI * 2;
             }
-            else if (link.equals(linkLeft))
+            if (angle < angleRight)
             {
-                return LEFT;
+                angleRight = angle;
+                linkRight = nextLink;
             }
-            return OTHER;
+            else if (angle > angleLeft)
+            {
+                angleLeft = angle;
+                linkLeft = nextLink;
+            }
         }
-        catch (OtsGeometryException exception)
+        if (link.equals(linkRight))
         {
-            // should not happen as the fractions are 0.0 and 1.0
-            throw new RuntimeException("Angle could not be calculated.", exception);
+            return RIGHT;
         }
+        else if (link.equals(linkLeft))
+        {
+            return LEFT;
+        }
+        return OTHER;
     }
 
     /** {@inheritDoc} */

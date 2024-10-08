@@ -430,7 +430,7 @@ public final class LaneFactory
             final Length latPosAtStart, final Length latPosAtEnd, final Length width, final Speed speedLimit,
             final OtsSimulatorInterface simulator, final GtuType gtuType) throws NetworkException, OtsGeometryException
     {
-        ContinuousLine line = new ContinuousPolyLine(link.getDesignLine().getLine2d(), link.getStartNode().getLocation(),
+        ContinuousLine line = new ContinuousPolyLine(link.getDesignLine(), link.getStartNode().getLocation(),
                 link.getEndNode().getLocation());
         List<CrossSectionSlice> slices = new ArrayList<>();
         slices.add(new CrossSectionSlice(Length.ZERO, latPosAtStart, width));

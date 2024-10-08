@@ -35,7 +35,7 @@ public class AnimationLaneData extends AnimationCrossSectionElementData<Lane> im
     @Override
     public PolyLine2d getCenterLine()
     {
-        return getElement().getCenterLine().getLine2d();
+        return getElement().getCenterLine();
     }
 
     /** {@inheritDoc} */

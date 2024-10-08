@@ -169,7 +169,7 @@ public class LaneGeometryUtil
             final Map<GtuType, Speed> speedLimits)
     {
         ContinuousLine designLine = new ContinuousStraight(
-                Try.assign(() -> link.getDesignLine().getLocationFraction(0.0), "Link should have a valid design line."),
+                Try.assign(() -> link.getDesignLine().getLocationPointFraction(0.0), "Link should have a valid design line."),
                 link.getLength().si);
         List<CrossSectionSlice> slices = getSlices(designLine, startOffset, endOffset, startWidth, endWidth);
         return createStraightLane(link, id, slices, laneType, speedLimits);
@@ -188,7 +188,7 @@ public class LaneGeometryUtil
             final LaneType laneType, final Map<GtuType, Speed> speedLimits)
     {
         ContinuousLine designLine = new ContinuousStraight(
-                Try.assign(() -> link.getDesignLine().getLocationFraction(0.0), "Link should have a valid design line."),
+                Try.assign(() -> link.getDesignLine().getLocationPointFraction(0.0), "Link should have a valid design line."),
                 link.getLength().si);
         PolyLine2d centerLine = designLine.flattenOffset(getCenterOffsets(designLine, slices), null);
         PolyLine2d leftEdge = designLine.flattenOffset(getLeftEdgeOffsets(designLine, slices), null);
@@ -210,7 +210,7 @@ public class LaneGeometryUtil
             final Length width)
     {
         ContinuousLine designLine = new ContinuousStraight(
-                Try.assign(() -> link.getDesignLine().getLocationFraction(0.0), "Link should have a valid design line."),
+                Try.assign(() -> link.getDesignLine().getLocationPointFraction(0.0), "Link should have a valid design line."),
                 link.getLength().si);
         List<CrossSectionSlice> slices = getSlices(designLine, offset, width);
         PolyLine2d centerLine = designLine.flattenOffset(getCenterOffsets(designLine, slices), null);
@@ -235,7 +235,7 @@ public class LaneGeometryUtil
             final Length endOffset, final Length startWidth, final Length endWidth, final LaneType laneType)
     {
         ContinuousLine designLine = new ContinuousStraight(
-                Try.assign(() -> link.getDesignLine().getLocationFraction(0.0), "Link should have a valid design line."),
+                Try.assign(() -> link.getDesignLine().getLocationPointFraction(0.0), "Link should have a valid design line."),
                 link.getLength().si);
         List<CrossSectionSlice> slices = getSlices(designLine, startOffset, endOffset, startWidth, endWidth);
         PolyLine2d centerLine = designLine.flattenOffset(getCenterOffsets(designLine, slices), null);

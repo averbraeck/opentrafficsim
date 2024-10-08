@@ -48,9 +48,9 @@ public final class OtsGeometryUtil
      * @param separator prepended to each coordinate
      * @return description of the array of coordinates
      */
-    public static String printCoordinates(final String prefix, final Point2d[] coordinates, final String separator)
+    public static String printCoordinates(final String prefix, final List<Point2d> coordinates, final String separator)
     {
-        return printCoordinates(prefix + "(" + coordinates.length + " pts)", coordinates, 0, coordinates.length, separator);
+        return printCoordinates(prefix + "(" + coordinates.size() + " pts)", coordinates, 0, coordinates.size(), separator);
     }
 
     /**
@@ -62,7 +62,7 @@ public final class OtsGeometryUtil
      */
     public static String printCoordinates(final String prefix, final OtsLine2d line, final String separator)
     {
-        return printCoordinates(prefix + "(" + line.size() + " pts)", line.getPoints(), 0, line.size(), separator);
+        return printCoordinates(prefix + "(" + line.size() + " pts)", line.getPointList(), 0, line.size(), separator);
     }
 
     /**
@@ -74,8 +74,8 @@ public final class OtsGeometryUtil
      * @param separator prepended to each coordinate
      * @return description of the selected part of the array of coordinates
      */
-    public static String printCoordinates(final String prefix, final Point2d[] points, final int fromIndex, final int toIndex,
-            final String separator)
+    public static String printCoordinates(final String prefix, final List<Point2d> points, final int fromIndex,
+            final int toIndex, final String separator)
     {
         StringBuilder result = new StringBuilder();
         result.append(prefix);
@@ -83,7 +83,7 @@ public final class OtsGeometryUtil
         for (int i = fromIndex; i < toIndex; i++)
         {
             result.append(separator);
-            result.append(printCoordinate(operator, points[i]));
+            result.append(printCoordinate(operator, points.get(i)));
             operator = "L"; // LineTo Absolute
         }
         return result.toString();

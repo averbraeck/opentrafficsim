@@ -675,9 +675,9 @@ public final class ConflictBuilder
         OtsLine2d left = centerLine.offsetLine(widthGenerator.getWidth(lane, f1) / 2, widthGenerator.getWidth(lane, f2) / 2);
         OtsLine2d right =
                 centerLine.offsetLine(-widthGenerator.getWidth(lane, f1) / 2, -widthGenerator.getWidth(lane, f2) / 2).reverse();
-        Point2d[] points = new Point2d[left.size() + right.size()];
-        System.arraycopy(left.getPoints(), 0, points, 0, left.size());
-        System.arraycopy(right.getPoints(), 0, points, left.size(), right.size());
+        List<Point2d> points = new ArrayList<>(left.size() + right.size());
+        points.addAll(left.getPointList());
+        points.addAll(right.getPointList());
         return new Polygon2d(points);
     }
 
@@ -844,7 +844,7 @@ public final class ConflictBuilder
                         dx = p.x - start2.x;
                         dy = p.y - start2.y;
                         double length2 = cumul2 + Math.hypot(dx, dy);
-                        out.add(new Intersection(length1 / line1.getLength().si, length2 / line2.getLength().si, combo));
+                        out.add(new Intersection(length1 / line1.getLength(), length2 / line2.getLength(), combo));
                     }
 
                     double dx = end2.x - start2.x;

@@ -583,13 +583,13 @@ public class LaneTest implements UNITS
                 LaneGeometryUtil.createStraightLane(link, "lane", offsetAtStart, offsetAtEnd, width, width, laneType, speedMap);
         OtsLine2d laneCenterLine = lane.getCenterLine();
         // System.out.println("Center line is " + laneCenterLine);
-        Point2d[] points = laneCenterLine.getPoints();
+        List<Point2d> points = laneCenterLine.getPointList();
         double prev = offsetAtStart.si + from.y;
         double prevRatio = 0;
         double prevDirection = 0;
-        for (int i = 0; i < points.length; i++)
+        for (int i = 0; i < points.size(); i++)
         {
-            Point2d p = points[i];
+            Point2d p = points.get(i);
             double relativeLength = p.x - from.x;
             double ratio = relativeLength / (to.x - from.x);
             double actualOffset = p.y;
@@ -597,7 +597,7 @@ public class LaneTest implements UNITS
             {
                 assertEquals(offsetAtStart.si + from.y, actualOffset, 0.001, "first point must have offset at start");
             }
-            if (points.length - 1 == i)
+            if (points.size() - 1 == i)
             {
                 assertEquals(offsetAtEnd.si + from.y, actualOffset, 0.001, "last point must have offset at end");
             }
@@ -606,7 +606,7 @@ public class LaneTest implements UNITS
             assertTrue(delta >= 0, "delta must be nonnegative");
             if (i > 0)
             {
-                Point2d prevPoint = points[i - 1];
+                Point2d prevPoint = points.get(i - 1);
                 double direction = Math.atan2(p.y - prevPoint.y, p.x - prevPoint.x);
                 // System.out.println(String.format("p=%30s: ratio=%7.5f, direction=%10.7f", p, ratio, direction));
                 assertTrue(direction > 0, "Direction of lane center line is > 0");

@@ -408,7 +408,7 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             final Length startLanePosition) throws GtuException, NetworkException
     {
         LanePathInfo lpi = buildLanePathInfo(gtu, maxHeadway, startLane, startLanePosition);
-        if (lpi.path().getLength().lt(maxHeadway))
+        if (lpi.path().getTypedLength().lt(maxHeadway))
         {
             return false;
         }

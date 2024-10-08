@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.plan.operational;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -132,7 +130,7 @@ public final class LaneOperationalPlanBuilder
             Length prevPos = null;
             Length pos = ref.position();
             int n = 1;
-            while (path == null || path.getLength().si < distance.si + n * Lane.MARGIN.si)
+            while (path == null || path.getLength() < distance.si + n * Lane.MARGIN.si)
             {
                 n++;
                 prevFrom = from;
@@ -157,7 +155,7 @@ public final class LaneOperationalPlanBuilder
                         {
                             // just add some length so the GTU is happy to go to the sink
                             OrientedPoint2d end = path.getLocationExtendedSI(distance.si + n * Lane.MARGIN.si);
-                            List<Point2d> points = new ArrayList<>(Arrays.asList(path.getPoints()));
+                            List<Point2d> points = path.getPointList();
                             points.add(end);
                             return new OtsLine2d(points);
                         }

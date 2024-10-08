@@ -346,7 +346,7 @@ public class LaneChange implements Serializable
                 startPosition.y, FractionalFallback.ENDPOINT);
         int last = fromLanes.size() - 1;
         double frac = endFractionalPositionFrom;
-        OrientedPoint2d p = fromLanes.get(last).getCenterLine().getLocationFraction(frac);
+        OrientedPoint2d p = fromLanes.get(last).getCenterLine().getLocationPointFraction(frac);
         double endFractionalPositionTo =
                 toLanes.get(last).getCenterLine().projectFractional(null, null, p.x, p.y, FractionalFallback.ENDPOINT);
         startFractionalPositionTo = startFractionalPositionTo >= 0.0 ? startFractionalPositionTo : 0.0;
@@ -371,13 +371,13 @@ public class LaneChange implements Serializable
         this.fraction += timeStep.si / laneChangeDuration; // the total fraction this step increases
 
         // deal with lane change end
-        double requiredLength = planDistance.si - path.getLength().si;
+        double requiredLength = planDistance.si - path.getLength();
         if (requiredLength > 0.0 || this.fraction > 0.999)
         {
             try
             {
                 gtu.getSimulator().scheduleEventNow(BUILDER, "scheduleLaneChangeFinalization",
-                        new Object[] {gtu, Length.min(planDistance, path.getLength()), laneChangeDirection});
+                        new Object[] {gtu, Length.min(planDistance, path.getTypedLength()), laneChangeDirection});
             }
             catch (SimRuntimeException exception)
             {
@@ -393,7 +393,7 @@ public class LaneChange implements Serializable
                 {
                     OtsLine2d remainder = toLane.getCenterLine().extractFractional(endFractionalPositionTo, 1.0);
                     path = OtsLine2d.concatenate(0.001, path, remainder);
-                    requiredLength = planDistance.si - path.getLength().si;
+                    requiredLength = planDistance.si - path.getLength();
                 }
                 // add further lanes
                 while (toLane != null && requiredLength > 0.0)
@@ -403,15 +403,14 @@ public class LaneChange implements Serializable
                     {
                         OtsLine2d remainder = toLane.getCenterLine();
                         path = OtsLine2d.concatenate(Lane.MARGIN.si, path, remainder);
-                        requiredLength = planDistance.si - path.getLength().si + Lane.MARGIN.si;
+                        requiredLength = planDistance.si - path.getLength() + Lane.MARGIN.si;
                     }
                 }
                 // filter near-duplicate point which results in projection exceptions
                 if (this.fraction > 0.999) // this means point 'target' is essentially at the design line
                 {
-                    Point2d[] points = new Point2d[path.size() - 1];
-                    System.arraycopy(path.getPoints(), 0, points, 0, n - 1);
-                    System.arraycopy(path.getPoints(), n, points, n - 1, path.size() - n);
+                    List<Point2d> points = path.getPointList();
+                    points.remove(n);
                     path = new OtsLine2d(points);
                 }
             }
@@ -581,7 +580,7 @@ public class LaneChange implements Serializable
                     final LateralDirectionality laneChangeDirection, final OtsLine2d fromLine, final OtsLine2d toLine,
                     final Duration laneChangeDuration, final double lcFraction) throws OtsGeometryException
             {
-                OrientedPoint2d target = toLine.getLocationFraction(1.0);
+                OrientedPoint2d target = toLine.getLocationPointFraction(1.0);
                 return Bezier.cubic(64, startPosition, target, 0.5);
             }
         };
@@ -645,8 +644,8 @@ public class LaneChange implements Serializable
                     final LateralDirectionality laneChangeDirection, final OtsLine2d fromLine, final OtsLine2d toLine,
                     final Duration laneChangeDuration, final double lcFraction) throws OtsGeometryException
             {
-                OrientedPoint2d toTarget = toLine.getLocationFraction(1.0);
-                OrientedPoint2d fromTarget = fromLine.getLocationFraction(1.0);
+                OrientedPoint2d toTarget = toLine.getLocationPointFraction(1.0);
+                OrientedPoint2d fromTarget = fromLine.getLocationPointFraction(1.0);
                 double width = laneChangeDirection.isRight() ? fromTarget.distance(toTarget) : -fromTarget.distance(toTarget);
                 double dFraction = timeStep.si / laneChangeDuration.si;
                 return getPathRecursive(planDistance, meanSpeed, 1.0, width, from, startPosition, fromLine, toLine,
@@ -760,8 +759,8 @@ public class LaneChange implements Serializable
                     double longitudinalFraction = startLongitudinalFractionTotal + f * (1.0 - startLongitudinalFractionTotal);
                     double lateralFraction = lateralFraction(longitudinalFraction);
                     double lateralFractionInv = 1.0 - lateralFraction;
-                    OrientedPoint2d fromPoint = fromLine.getLocationFraction(f);
-                    OrientedPoint2d toPoint = toLine.getLocationFraction(f);
+                    OrientedPoint2d fromPoint = fromLine.getLocationPointFraction(f);
+                    OrientedPoint2d toPoint = toLine.getLocationPointFraction(f);
                     pointList.add(new Point2d(lateralFractionInv * fromPoint.x + lateralFraction * toPoint.x,
                             lateralFractionInv * fromPoint.y + lateralFraction * toPoint.y));
                 }

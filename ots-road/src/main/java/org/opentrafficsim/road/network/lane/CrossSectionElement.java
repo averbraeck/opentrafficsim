@@ -80,7 +80,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
         this.link = link;
         this.id = id;
         this.centerLine = centerLine;
-        this.location = centerLine.getLocationFractionExtended(0.5);
+        this.location = centerLine.getLocationPointFractionExtended(0.5);
         this.contour = contour;
         Polygon2d relativeContour = OtsLocatable.relativeContour(this);
         this.shape = new PolygonShape(relativeContour);
@@ -157,7 +157,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      */
     public final Length getLength()
     {
-        return this.centerLine.getLength();
+        return this.centerLine.getTypedLength();
     }
 
     /**

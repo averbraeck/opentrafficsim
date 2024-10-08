@@ -222,7 +222,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                     initialLocation.y + 1E-6 * Math.sin(initialLocation.getDirZ()));
             OtsLine2d path = new OtsLine2d(initialLocation, p2);
             setOperationalPlan(new OperationalPlan(this, path, now,
-                    Segments.off(initialSpeed, path.getLength().divide(initialSpeed), Acceleration.ZERO)));
+                    Segments.off(initialSpeed, path.getTypedLength().divide(initialSpeed), Acceleration.ZERO)));
         }
 
         enterLaneRecursive(longitudinalPosition.lane(), longitudinalPosition.position(), 0);
@@ -936,34 +936,30 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     {
         Throw.when(line.size() != 2, IllegalArgumentException.class, "Line to cross with path should have 2 points.");
         OtsLine2d path = getOperationalPlan().getPath();
-        Point2d[] points;
+        List<Point2d> points = new ArrayList<>(path.size() + 1);
+        points.addAll(path.getPointList());
         double adjust;
         if (relativePosition.dx().gt0())
         {
             // as the position is downstream of the reference, we need to attach some distance at the end
-            points = new Point2d[path.size() + 1];
-            System.arraycopy(path.getPoints(), 0, points, 0, path.size());
-            points[path.size()] = path.getLocationExtendedSI(path.getLength().si + relativePosition.dx().si);
+            points.add(path.getLocationExtendedSI(path.getLength() + relativePosition.dx().si));
             adjust = -relativePosition.dx().si;
         }
         else if (relativePosition.dx().lt0())
         {
-            points = new Point2d[path.size() + 1];
-            System.arraycopy(path.getPoints(), 0, points, 1, path.size());
-            points[0] = path.getLocationExtendedSI(relativePosition.dx().si);
+            points.add(0, path.getLocationExtendedSI(relativePosition.dx().si));
             adjust = 0.0;
         }
         else
         {
-            points = path.getPoints();
             adjust = 0.0;
         }
 
         // find intersection
         double cumul = 0.0;
-        for (int i = 0; i < points.length - 1; i++)
+        for (int i = 0; i < points.size() - 1; i++)
         {
-            Point2d intersect = Point2d.intersectionOfLineSegments(points[i], points[i + 1], line.get(0), line.get(1));
+            Point2d intersect = Point2d.intersectionOfLineSegments(points.get(i), points.get(i + 1), line.get(0), line.get(1));
 
             /*
              * SKL 31-07-2023: Using the djunits code rather than the older OTS point and line code, causes an intersection on a
@@ -973,13 +969,13 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
              */
             if (intersect == null)
             {
-                double projectionFraction = line.projectOrthogonalFractionalExtended(points[i]);
+                double projectionFraction = line.projectOrthogonalFractionalExtended(points.get(i));
                 if (0.0 <= projectionFraction && projectionFraction <= 1.0)
                 {
                     try
                     {
                         Point2d projection = line.getLocationFraction(projectionFraction);
-                        double distance = projection.distance(points[i]);
+                        double distance = projection.distance(points.get(i));
                         if (distance < 1e-6)
                         {
                             // CategoryLogger.always().error("GTU {} enters cross-section through forced intersection of
@@ -996,7 +992,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
 
             if (intersect != null)
             {
-                cumul += points[i].distance(intersect);
+                cumul += points.get(i).distance(intersect);
                 cumul += adjust; // , 0.0); // possible rear is already considered in first segment
                 // return time at distance
                 if (cumul < 0.0)
@@ -1015,9 +1011,9 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                 // ref will cross the line, but GTU will not travel enough for rear to cross
                 return null;
             }
-            else if (i < points.length - 2)
+            else if (i < points.size() - 2)
             {
-                cumul += points[i].distance(points[i + 1]);
+                cumul += points.get(i).distance(points.get(i + 1));
             }
         }
         // no intersect
@@ -1610,9 +1606,9 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         Throw.when(latIndex == -1 || longIndex == -1, GtuException.class, "GTU %s is not on %s", getId(), lane);
         Lane refCrossSectionLane = this.crossSections.get(longIndex).getLanes().get(latIndex);
         OrientedPoint2d loc = getLocation();
-        double f = refCrossSectionLane.getCenterLine().projectOrthogonal(loc.x, loc.y);
-        OrientedPoint2d p = Try.assign(() -> refCrossSectionLane.getCenterLine().getLocationFraction(f), GtuException.class,
-                "GTU %s is not orthogonal to the reference lane.", getId());
+        double f = refCrossSectionLane.getCenterLine().projectOrthogonalSnap(loc.x, loc.y);
+        OrientedPoint2d p = Try.assign(() -> refCrossSectionLane.getCenterLine().getLocationPointFraction(f),
+                GtuException.class, "GTU %s is not orthogonal to the reference lane.", getId());
         double d = p.distance(loc);
         if (this.crossSections.get(0).getLanes().size() > 1)
         {

@@ -70,7 +70,7 @@ public class AnimationLinkData implements LinkData
     @Override
     public PolyLine2d getCenterLine()
     {
-        return this.link.getDesignLine().getLine2d();
+        return this.link.getDesignLine();
     }
 
     /** {@inheritDoc} */

@@ -18,6 +18,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.DrawRuntimeException;
+import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
@@ -145,51 +146,10 @@ public class OtsLine2dTest
         {
             length += Math.sqrt(Math.pow(points[i].x - points[i - 1].x, 2) + Math.pow(points[i].y - points[i - 1].y, 2));
         }
-        assertEquals(length, line.getLength().si, 10 * Math.ulp(length), "length");
-        assertEquals(length, line.getLength().si, 10 * Math.ulp(length), "length");
-        assertEquals(length, line.getLength().si, 10 * Math.ulp(length), "length");
-        assertEquals(length, line.getLength().si, 10 * Math.ulp(length), "length");
-        // Construct a Path3D.Double that contains the horizontal moves.
-        int horizontalMoves = 0;
-        Path2D path = new Path2D.Double();
-        path.moveTo(points[0].x, points[0].y);
-        // System.out.print("path is "); printPath2D(path);
-        for (int i = 1; i < points.length; i++)
-        {
-            if (points[i].x != points[i - 1].x || points[i].y != points[i - 1].y)
-            {
-                path.lineTo(points[i].x, points[i].y); // Path2D is somehow corrupt if same point is added twice
-                // System.out.print("path is"); printPath2D(path);
-                horizontalMoves++;
-            }
-        }
-        try
-        {
-            line = new OtsLine2d(path);
-            if (0 == horizontalMoves)
-            {
-                fail("Construction of OtsLine2d from path with degenerate projection should have failed");
-            }
-            // This new OtsLine2d has z=0 for all points so veryfyPoints won't work
-            assertEquals(horizontalMoves + 1, line.size(), "number of points should match");
-            int indexInLine = 0;
-            for (int i = 0; i < points.length; i++)
-            {
-                if (i > 0 && (points[i].x != points[i - 1].x || points[i].y != points[i - 1].y))
-                {
-                    indexInLine++;
-                }
-                assertEquals(points[i].x, line.get(indexInLine).x, 0.001, "x in line");
-                assertEquals(points[i].y, line.get(indexInLine).y, 0.001, "y in line");
-            }
-        }
-        catch (OtsGeometryException e)
-        {
-            if (0 != horizontalMoves)
-            {
-                fail("Construction of OtsLine2d from path with non-degenerate projection should not have failed");
-            }
-        }
+        assertEquals(length, line.getLength(), 10 * Math.ulp(length), "length");
+        assertEquals(length, line.getLength(), 10 * Math.ulp(length), "length");
+        assertEquals(length, line.getLength(), 10 * Math.ulp(length), "length");
+        assertEquals(length, line.getLength(), 10 * Math.ulp(length), "length");
     }
 
     /**
@@ -249,7 +209,7 @@ public class OtsLine2dTest
             line.get(-1);
             fail("Should have thrown an exception");
         }
-        catch (OtsGeometryException oe)
+        catch (IndexOutOfBoundsException oe)
         {
             // Ignore expected exception
         }
@@ -258,7 +218,7 @@ public class OtsLine2dTest
             line.get(2);
             fail("Should have thrown an exception");
         }
-        catch (OtsGeometryException oe)
+        catch (IndexOutOfBoundsException oe)
         {
             // Ignore expected exception
         }
@@ -296,7 +256,7 @@ public class OtsLine2dTest
     private void checkGetLocation(final OtsLine2d line, final double fraction, final Point2d expectedPoint,
             final double expectedZRotation) throws OtsGeometryException
     {
-        double length = line.getLength().si;
+        double length = line.getLength();
         checkOrientedPoint2d(line.getLocationExtendedSI(fraction * length), expectedPoint, expectedZRotation);
         Length typedLength = new Length(fraction * length, LengthUnit.METER);
         checkOrientedPoint2d(line.getLocationExtended(typedLength), expectedPoint, expectedZRotation);
@@ -307,7 +267,7 @@ public class OtsLine2dTest
                 line.getLocationSI(fraction * length);
                 fail("getLocation should have thrown a OTSGeometryException");
             }
-            catch (OtsGeometryException ne)
+            catch (DrawRuntimeException ne)
             {
                 // Ignore expected exception
             }
@@ -316,16 +276,16 @@ public class OtsLine2dTest
                 line.getLocation(typedLength);
                 fail("getLocation should have thrown a OTSGeometryException");
             }
-            catch (OtsGeometryException ne)
+            catch (DrawRuntimeException ne)
             {
                 // Ignore expected exception
             }
             try
             {
-                line.getLocationFraction(fraction);
+                line.getLocationPointFraction(fraction);
                 fail("getLocation should have thrown a OTSGeometryException");
             }
-            catch (OtsGeometryException ne)
+            catch (DrawRuntimeException ne)
             {
                 // Ignore expected exception
             }
@@ -334,7 +294,7 @@ public class OtsLine2dTest
         {
             checkOrientedPoint2d(line.getLocationSI(fraction * length), expectedPoint, expectedZRotation);
             checkOrientedPoint2d(line.getLocation(typedLength), expectedPoint, expectedZRotation);
-            checkOrientedPoint2d(line.getLocationFraction(fraction), expectedPoint, expectedZRotation);
+            checkOrientedPoint2d(line.getLocationPointFraction(fraction), expectedPoint, expectedZRotation);
         }
 
     }
@@ -389,31 +349,31 @@ public class OtsLine2dTest
         Point2d[] tooShort = new Point2d[] {};
         try
         {
-            OtsLine2d.createAndCleanOtsLine2d(tooShort);
+            new OtsLine2d(tooShort);
             fail("Array with no points should have thrown an exception");
         }
-        catch (OtsGeometryException ne)
+        catch (DrawRuntimeException ne)
         {
             // Ignore expected exception
         }
         tooShort = new Point2d[] {new Point2d(1, 2)};
         try
         {
-            OtsLine2d.createAndCleanOtsLine2d(tooShort);
+            new OtsLine2d(tooShort);
             fail("Array with no points should have thrown an exception");
         }
-        catch (OtsGeometryException ne)
+        catch (DrawRuntimeException ne)
         {
             // Ignore expected exception
         }
         Point2d p0 = new Point2d(1, 2);
         Point2d p1 = new Point2d(4, 5);
         Point2d[] points = new Point2d[] {p0, p1};
-        OtsLine2d result = OtsLine2d.createAndCleanOtsLine2d(points);
+        OtsLine2d result = new OtsLine2d(points);
         assertTrue(p0.equals(result.get(0)), "first point is p0");
         assertTrue(p1.equals(result.get(1)), "second point is p1");
         Point2d p1Same = new Point2d(4, 5);
-        result = OtsLine2d.createAndCleanOtsLine2d(new Point2d[] {p0, p0, p0, p0, p1Same, p0, p1, p1, p1Same, p1, p1});
+        result = new OtsLine2d(new PolyLine2d(true, new Point2d[] {p0, p0, p0, p0, p1Same, p0, p1, p1, p1Same, p1, p1}));
         assertEquals(4, result.size(), "result should contain 4 points");
         assertTrue(p0.equals(result.get(0)), "first point is p0");
         assertTrue(p1.equals(result.get(1)), "second point is p1");
@@ -562,70 +522,6 @@ public class OtsLine2dTest
     }
 
     /**
-     * Test the noiseFilterRamerDouglasPeuker filter method.
-     * @throws OtsGeometryException if that happens uncaught, this test has failed
-     */
-    @Test
-    public final void noiseFilterRamerDouglasPeuckerTest() throws OtsGeometryException
-    {
-        Point2d start = new Point2d(1, 2);
-        int maxDirection = 20; // 20 means every step of 18 degrees is tested
-        double length = 100;
-        for (int direction = 0; direction < maxDirection; direction++)
-        {
-            double angle = Math.PI * 2 * direction / maxDirection;
-            double dx = length * Math.cos(angle);
-            double dy = length * Math.sin(angle);
-            Point2d end = new Point2d(start.x + dx, start.y + dy);
-            OtsLine2d straightLine = new OtsLine2d(start, end);
-            int intermediatePointCount = 5;
-            for (double tolerance : new double[] {0.1, 0.01, 0.001})
-            {
-                double error = tolerance * 0.9;
-                List<Point2d> pointsOnTestLine = new ArrayList<>();
-                pointsOnTestLine.add(start);
-                for (int intermediatePoint = 0; intermediatePoint < intermediatePointCount; intermediatePoint++)
-                {
-                    double iAngle = Math.PI * 2 * intermediatePoint / intermediatePointCount;
-                    double idx = error * Math.cos(iAngle);
-                    double idy = error * Math.sin(iAngle);
-                    OrientedPoint2d exactPoint =
-                            straightLine.getLocationFraction((intermediatePoint + 0.5) / intermediatePointCount);
-                    Point2d additionalPoint = new Point2d(exactPoint.x + idx, exactPoint.y + idy);
-                    pointsOnTestLine.add(additionalPoint);
-                }
-                pointsOnTestLine.add(end);
-                OtsLine2d testLine = new OtsLine2d(pointsOnTestLine);
-                OtsLine2d filteredLine = testLine.noiseFilterRamerDouglasPeucker(tolerance, false);
-                assertEquals(2, filteredLine.size(), "RamerDouglasPeuker filter should have removed all intermediate points");
-                // Now add a couple of points that should not be removed and will not cause the current start and end point
-                // to be removed
-                Point2d newStart = new Point2d(start.x + 10 * tolerance * dy / length, start.y - 10 * tolerance * dx / length);
-                pointsOnTestLine.add(0, newStart);
-                // This filter does not find optimal solutions in many cases. Only case where one serious (really far)
-                // "outlier" is added on only one end work most of the time.
-                testLine = new OtsLine2d(pointsOnTestLine);
-                filteredLine = testLine.noiseFilterRamerDouglasPeucker(tolerance, false);
-                // if (3 != filteredLine.size())
-                // {
-                // testLine.noiseFilterRamerDouglasPeuker(tolerance, useHorizontalDistance);
-                // }
-                assertEquals(3, filteredLine.size(), "RamerDouglasPeuker filter should have left three points");
-                pointsOnTestLine.remove(0);
-                Point2d newEnd = new Point2d(end.x + 10 * tolerance * dy / length, end.y - 10 * tolerance * dx / length);
-                pointsOnTestLine.add(newEnd);
-                testLine = new OtsLine2d(pointsOnTestLine);
-                filteredLine = testLine.noiseFilterRamerDouglasPeucker(tolerance, false);
-                // if (3 != filteredLine.size())
-                // {
-                // testLine.noiseFilterRamerDouglasPeuker(tolerance, useHorizontalDistance);
-                // }
-                assertEquals(3, filteredLine.size(), "RamerDouglasPeuker filter should have left three points");
-            }
-        }
-    }
-
-    /**
      * Test the reverse method.
      * @throws OtsGeometryException should not happen; this test has failed if it does happen
      */
@@ -742,7 +638,7 @@ public class OtsLine2dTest
         }
         try
         {
-            l.extract(0, l.getLength().si + 0.1);
+            l.extract(0, l.getLength() + 0.1);
             fail("end > length should have thrown an exception");
         }
         catch (DrawRuntimeException exception)
@@ -772,8 +668,8 @@ public class OtsLine2dTest
         {
             for (int j = i + 1; j < 10; j++)
             {
-                double start = i * l.getLength().si / 10;
-                double end = j * l.getLength().si / 10;
+                double start = i * l.getLength() / 10;
+                double end = j * l.getLength() / 10;
                 // System.err.println("i=" + i + ", j=" + j);
                 for (OtsLine2d extractedLine : new OtsLine2d[] {l.extract(start, end),
                         l.extract(new Length(start, LengthUnit.SI), new Length(end, LengthUnit.SI)),
@@ -802,8 +698,8 @@ public class OtsLine2dTest
                     {
                         continue; // results are not entirely predictable due to rounding errors
                     }
-                    double start = i * line.getLength().si / 110;
-                    double end = j * line.getLength().si / 110;
+                    double start = i * line.getLength() / 110;
+                    double end = j * line.getLength() / 110;
                     // System.err.println("first length is " + firstLength);
                     // System.err.println("second length is " + line.getLength().si);
                     // System.err.println("i=" + i + ", j=" + j);
@@ -866,7 +762,7 @@ public class OtsLine2dTest
             // System.out.println("step: " + step);
             // System.out.println("reference: " + line);
             // System.out.println("offset: " + offsetLine);
-            assertEquals(lineLengthHorizontal, offsetLine.getLength().si, 0.001,
+            assertEquals(lineLengthHorizontal, offsetLine.getLength(), 0.001,
                     "Length of offset line of straight segment should equal length of reference line");
         }
         Point2d via = new Point2d(2.5, 2.5);
@@ -1043,7 +939,7 @@ public class OtsLine2dTest
         }
         OtsLine2d line = new OtsLine2d(points);
         double end = points.get(points.size() - 1).x;
-        Method findMethod = line.getClass().getDeclaredMethod("find", double.class);
+        Method findMethod = line.getClass().getMethod("find", double.class);
         findMethod.setAccessible(true);
         for (int i = 0; i < end; i++)
         {
@@ -1139,7 +1035,7 @@ public class OtsLine2dTest
                 new Point2d[] {new Point2d(10, 30), new Point2d(20, 30), new Point2d(30, 40), new Point2d(30, 30)});
         System.out.println(line.toPlot());
         double boundary = 1 / (2 + Math.sqrt(2));
-        double length = line.getLength().si;
+        double length = line.getLength();
         for (int percentage = 0; percentage <= 100; percentage++)
         {
             double fraction = percentage / 100.0;

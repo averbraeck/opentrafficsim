@@ -2,7 +2,6 @@ package org.opentrafficsim.road.network.lane.object.detector;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,6 +9,7 @@ import java.util.UUID;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.OrientedPoint2d;
@@ -22,7 +22,6 @@ import org.djutils.exceptions.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -148,33 +147,33 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
             else
             {
                 List<Point2d> pathPoints = new ArrayList<>();
-                pathPoints.addAll(Arrays.asList(laneA.getCenterLine().extract(positionA, laneA.getLength()).getPoints()));
+                pathPoints.addAll(laneA.getCenterLine().extract(positionA, laneA.getLength()).getPointList());
                 for (Lane intermediateLane : intermediateLanes)
                 {
-                    pathPoints.addAll(Arrays.asList(intermediateLane.getCenterLine().getPoints()));
+                    pathPoints.addAll(intermediateLane.getCenterLine().getPointList());
                 }
-                pathPoints.addAll(Arrays.asList(laneB.getCenterLine().extract(Length.ZERO, positionB).getPoints()));
-                path = OtsLine2d.createAndCleanOtsLine2d(pathPoints);
+                pathPoints.addAll(laneB.getCenterLine().extract(Length.ZERO, positionB).getPointList());
+                path = new OtsLine2d(new PolyLine2d(true, pathPoints));
             }
             OtsLine2d left = path.offsetLine(0.5);
             OtsLine2d right = path.offsetLine(-0.5);
-            Ray2d ray = path.getLine2d().getLocationFraction(0.5);
+            Ray2d ray = path.getLocationFraction(0.5);
             double dx = ray.x;
             double dy = ray.y;
             this.location = new OrientedPoint2d(dx, dy);
             List<Point2d> geometryPoints = new ArrayList<>();
             geometryPoints.add(new Point2d(right.get(0).x - dx, right.get(0).y - dy));
-            for (Point2d p : left.getPoints())
+            for (Point2d p : left.getPointList())
             {
                 geometryPoints.add(new Point2d(p.x - dx, p.y - dy));
             }
-            for (Point2d p : right.reverse().getPoints())
+            for (Point2d p : right.reverse().getPointList())
             {
                 geometryPoints.add(new Point2d(p.x - dx, p.y - dy));
             }
             this.contour = new Polygon2d(geometryPoints);
         }
-        catch (OtsGeometryException exception)
+        catch (IndexOutOfBoundsException exception)
         {
             throw new NetworkException("Points A and B may be the same.", exception);
         }

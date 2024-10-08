@@ -5,7 +5,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.geometry.OtsLine2d.FractionalFallback;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -90,15 +89,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
     private double getRotZAtFraction(final Lane lane, final boolean start)
     {
         double f = start ? 0.0 : 1.0;
-        try
-        {
-            return lane.getCenterLine().getLocationFraction(f).getDirZ();
-        }
-        catch (OtsGeometryException exception)
-        {
-            // should not occur, we use 0.0 and 1.0
-            throw new RuntimeException("Unexpected exception while assessing if a GTU is between lanes.", exception);
-        }
+        return lane.getCenterLine().getLocationPointFraction(f).getDirZ();
     }
 
     /**
@@ -150,7 +141,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
                             double fGap = gap.projectFractional(null, null, point.x, point.y, FractionalFallback.NaN);
                             if (!Double.isNaN(fGap))
                             {
-                                f = (lane.getLength().si + fGap * gap.getLength().si) / lane.getLength().si;
+                                f = (lane.getLength().si + fGap * gap.getLength()) / lane.getLength().si;
                             }
                             else
                             {
@@ -168,7 +159,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
                             prevDir = nextDir;
                         }
                     }
-                    catch (OtsGeometryException exception)
+                    catch (IndexOutOfBoundsException exception)
                     {
                         // should not occur, we use get(0) and getLast()
                         throw new RuntimeException("Unexpected exception while assessing if a GTU is between lanes.",

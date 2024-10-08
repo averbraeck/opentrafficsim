@@ -8,7 +8,6 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -256,7 +255,7 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
                         headwayConflict.setConflictingTrafficLight(trafficLightDistance, conflict.isPermitted());
                     }
                 }
-                catch (GtuException | OtsGeometryException | ParameterException exception)
+                catch (GtuException | ParameterException exception)
                 {
                     throw new RuntimeException("Could not create headway objects.", exception);
                 }

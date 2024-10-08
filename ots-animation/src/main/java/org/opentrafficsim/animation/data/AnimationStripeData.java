@@ -31,14 +31,14 @@ public class AnimationStripeData extends AnimationCrossSectionElementData<Stripe
     @Override
     public PolyLine2d getCenterLine()
     {
-        return getElement().getCenterLine().getLine2d();
+        return getElement().getCenterLine();
     }
 
     /** {@inheritDoc} */
     @Override
     public PolyLine2d getLine()
     {
-        return OtsLocatable.transformLine(getElement().getCenterLine().getLine2d(), getLocation());
+        return OtsLocatable.transformLine(getElement().getCenterLine(), getLocation());
     }
 
     /** {@inheritDoc} */

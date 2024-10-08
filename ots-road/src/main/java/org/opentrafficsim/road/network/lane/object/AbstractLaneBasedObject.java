@@ -76,7 +76,7 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
         Throw.when((line instanceof Polygon2d), RuntimeException.class, "Nope");
         Throw.whenNull(lane, "lane is null");
         Throw.whenNull(longitudinalPosition, "longitudinal position is null");
-        Throw.when(longitudinalPosition.si < 0.0 || longitudinalPosition.si > lane.getCenterLine().getLength().si,
+        Throw.when(longitudinalPosition.si < 0.0 || longitudinalPosition.si > lane.getCenterLine().getLength(),
                 NetworkException.class, "Position of the object on the lane is out of bounds");
 
         this.lane = lane;
@@ -164,6 +164,7 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
      * Returns the line.
      * @return line.
      */
+    @Override
     public PolyLine2d getLine()
     {
         return this.line;
