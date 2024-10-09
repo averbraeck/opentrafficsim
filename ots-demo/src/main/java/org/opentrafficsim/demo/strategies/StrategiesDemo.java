@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -12,6 +13,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.naming.NamingException;
 import javax.swing.Box;
@@ -76,7 +78,12 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationConflicts;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationSpeedLimitTransition;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationTrafficLights;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveCourtesy;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveGetInLane;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSocioSpeed;
@@ -543,17 +550,25 @@ public class StrategiesDemo extends AbstractSimulationScript
         for (GtuType gtuType : new GtuType[] {DefaultsNl.CAR, DefaultsNl.TRUCK})
         {
             // incentives
-            Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
-            Set<VoluntaryIncentive> voluntaryIncentives = new LinkedHashSet<>();
-            Set<AccelerationIncentive> accelerationIncentives = new LinkedHashSet<>();
-            mandatoryIncentives.add(new IncentiveRoute());
-            voluntaryIncentives.add(new IncentiveSpeedWithCourtesy());
-            voluntaryIncentives.add(new IncentiveKeep());
-            voluntaryIncentives.add(new IncentiveSocioSpeed());
-            if (gtuType.equals(DefaultsNl.TRUCK))
+            Supplier<Set<MandatoryIncentive>> mandatorySupplier = () ->
             {
-                voluntaryIncentives.add(new IncentiveStayRight());
-            }
+                Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
+                mandatoryIncentives.add(new IncentiveRoute());
+                return mandatoryIncentives;
+            };
+            Supplier<Set<VoluntaryIncentive>> voluntarySupplier = () ->
+            {
+                Set<VoluntaryIncentive> voluntaryIncentives = new LinkedHashSet<>();
+                voluntaryIncentives.add(new IncentiveSpeedWithCourtesy());
+                voluntaryIncentives.add(new IncentiveKeep());
+                voluntaryIncentives.add(new IncentiveSocioSpeed());
+                if (gtuType.equals(DefaultsNl.TRUCK))
+                {
+                    voluntaryIncentives.add(new IncentiveStayRight());
+                }
+                return voluntaryIncentives;
+            };
+            Supplier<Set<AccelerationIncentive>> accelerationSupplier = () -> Collections.emptySet();
             // car-following factory
             CarFollowingModelFactory<?> cfFactory = // trucks don't change their desired speed
                     gtuType.equals(DefaultsNl.CAR) ? new SocioIDMFactory() : new IdmPlusFactory(this.stream);
@@ -562,8 +577,8 @@ public class StrategiesDemo extends AbstractSimulationScript
             // strategical and tactical factory
             LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory =
                     new LaneBasedStrategicalRoutePlannerFactory(new LmrsFactory(cfFactory, perceptionFactory,
-                            Synchronization.PASSIVE, Cooperation.PASSIVE, GapAcceptance.INFORMED, tlgt, mandatoryIncentives,
-                            voluntaryIncentives, accelerationIncentives), parameterFactory);
+                            Synchronization.PASSIVE, Cooperation.PASSIVE, GapAcceptance.INFORMED, tlgt, mandatorySupplier,
+                            voluntarySupplier, accelerationSupplier), parameterFactory);
             this.factories.put(gtuType, laneBasedStrategicalPlannerFactory);
         }
         for (int i = 0; i < lanes1.size(); i++)

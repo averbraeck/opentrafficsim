@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -572,68 +574,68 @@ public class ModelParser
         Tailgating tailgating = lmrs.getTailgating() != null ? lmrs.getTailgating().get(eval) : Tailgating.NONE;
 
         // Mandatory incentives
-        Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
+        Set<Supplier<MandatoryIncentive>> mandatoryIncentives = new LinkedHashSet<>();
         if (lmrs.getMandatoryIncentives().getRoute() != null)
         {
-            mandatoryIncentives.add(new IncentiveRoute());
+            mandatoryIncentives.add(() -> new IncentiveRoute());
         }
         if (lmrs.getMandatoryIncentives().getGetInLane() != null)
         {
-            mandatoryIncentives.add(new IncentiveGetInLane());
+            mandatoryIncentives.add(() -> new IncentiveGetInLane());
         }
         if (lmrs.getMandatoryIncentives().getBusStop() != null)
         {
-            mandatoryIncentives.add(new IncentiveBusStop());
+            mandatoryIncentives.add(() -> new IncentiveBusStop());
         }
         if (mandatoryIncentives.isEmpty())
         {
-            mandatoryIncentives.add(new IncentiveDummy());
+            mandatoryIncentives.add(() -> new IncentiveDummy());
         }
 
         // Voluntary incentives
-        Set<VoluntaryIncentive> voluntaryIncentives = new LinkedHashSet<>();
+        Set<Supplier<VoluntaryIncentive>> voluntaryIncentives = new LinkedHashSet<>();
         if (lmrs.getVoluntaryIncentives().getKeep() != null)
         {
-            voluntaryIncentives.add(new IncentiveKeep());
+            voluntaryIncentives.add(() -> new IncentiveKeep());
         }
         if (lmrs.getVoluntaryIncentives().getSpeedWithCourtesy() != null)
         {
-            voluntaryIncentives.add(new IncentiveSpeedWithCourtesy());
+            voluntaryIncentives.add(() -> new IncentiveSpeedWithCourtesy());
         }
         if (lmrs.getVoluntaryIncentives().getCourtesy() != null)
         {
-            voluntaryIncentives.add(new IncentiveCourtesy());
+            voluntaryIncentives.add(() -> new IncentiveCourtesy());
         }
         if (lmrs.getVoluntaryIncentives().getSocioSpeed() != null)
         {
-            voluntaryIncentives.add(new IncentiveSocioSpeed());
+            voluntaryIncentives.add(() -> new IncentiveSocioSpeed());
         }
         if (lmrs.getVoluntaryIncentives().getStayRight() != null)
         {
-            voluntaryIncentives.add(new IncentiveStayRight());
+            voluntaryIncentives.add(() -> new IncentiveStayRight());
         }
 
         // Acceleration incentives
-        Set<AccelerationIncentive> accelerationIncentives = new LinkedHashSet<>();
+        Set<Supplier<AccelerationIncentive>> accelerationIncentives = new LinkedHashSet<>();
         if (lmrs.getAccelerationIncentives().getBusStop() != null)
         {
-            accelerationIncentives.add(new AccelerationBusStop());
+            accelerationIncentives.add(() -> new AccelerationBusStop());
         }
         if (lmrs.getAccelerationIncentives().getConflicts() != null)
         {
-            accelerationIncentives.add(new AccelerationConflicts());
+            accelerationIncentives.add(() -> new AccelerationConflicts());
         }
         if (lmrs.getAccelerationIncentives().getSpeedLimitTransitions() != null)
         {
-            accelerationIncentives.add(new AccelerationSpeedLimitTransition());
+            accelerationIncentives.add(() -> new AccelerationSpeedLimitTransition());
         }
         if (lmrs.getAccelerationIncentives().getTrafficLights() != null)
         {
-            accelerationIncentives.add(new AccelerationTrafficLights());
+            accelerationIncentives.add(() -> new AccelerationTrafficLights());
         }
         if (lmrs.getAccelerationIncentives().getNoRightOvertake() != null)
         {
-            accelerationIncentives.add(new AccelerationNoRightOvertake());
+            accelerationIncentives.add(() -> new AccelerationNoRightOvertake());
         }
 
         // Perception
@@ -644,8 +646,14 @@ public class ModelParser
                 parseCarFollowingModel(lmrs.getCarFollowingModel(), streamInformation, eval);
 
         // Lmrs factory
+        Supplier<Set<MandatoryIncentive>> mandatorySupplier =
+                () -> mandatoryIncentives.stream().map((mis) -> mis.get()).collect(Collectors.toSet());
+        Supplier<Set<VoluntaryIncentive>> voluntarySupplier =
+                () -> voluntaryIncentives.stream().map((vis) -> vis.get()).collect(Collectors.toSet());
+        Supplier<Set<AccelerationIncentive>> accelerationSupplier =
+                () -> accelerationIncentives.stream().map((ais) -> ais.get()).collect(Collectors.toSet());
         return new LmrsFactory(carFollowingModelFactory, perceptionFactory, synchronization, cooperation, gapAcceptance,
-                tailgating, mandatoryIncentives, voluntaryIncentives, accelerationIncentives);
+                tailgating, mandatorySupplier, voluntarySupplier, accelerationSupplier);
     }
 
     /**

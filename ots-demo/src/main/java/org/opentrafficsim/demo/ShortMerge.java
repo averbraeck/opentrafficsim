@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.naming.NamingException;
 
@@ -74,6 +75,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationSpeedLimitTran
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationTrafficLights;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveCourtesy;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveGetInLane;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSocioSpeed;
@@ -317,27 +319,43 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             ParameterSet params = new ParameterSet();
             params.setDefaultParameter(AbstractIdm.DELTA);
 
-            Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
-            Set<VoluntaryIncentive> voluntaryIncentives = new LinkedHashSet<>();
-            Set<AccelerationIncentive> accelerationIncentives = new LinkedHashSet<>();
-            mandatoryIncentives.add(new IncentiveRoute());
-            if (ADDITIONAL_INCENTIVES)
+            Supplier<Set<MandatoryIncentive>> mandatorySupplier = () ->
             {
-                // mandatoryIncentives.add(new IncentiveGetInLane());
-            }
-            voluntaryIncentives.add(new IncentiveSpeedWithCourtesy());
-            voluntaryIncentives.add(new IncentiveKeep());
-            if (ADDITIONAL_INCENTIVES)
+                Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
+                mandatoryIncentives.add(new IncentiveRoute());
+                if (ADDITIONAL_INCENTIVES)
+                {
+                    if ("".equals("We skip this for now"))
+                    {
+                        mandatoryIncentives.add(new IncentiveGetInLane());
+                    }
+                }
+                return mandatoryIncentives;
+            };
+            Supplier<Set<VoluntaryIncentive>> voluntarySupplier = () ->
             {
-                voluntaryIncentives.add(new IncentiveCourtesy());
-                voluntaryIncentives.add(new IncentiveSocioSpeed());
-            }
-            accelerationIncentives.add(new AccelerationSpeedLimitTransition());
-            accelerationIncentives.add(new AccelerationTrafficLights());
-            accelerationIncentives.add(new AccelerationConflicts());
+                Set<VoluntaryIncentive> voluntaryIncentives = new LinkedHashSet<>();
+                voluntaryIncentives.add(new IncentiveSpeedWithCourtesy());
+                voluntaryIncentives.add(new IncentiveKeep());
+                if (ADDITIONAL_INCENTIVES)
+                {
+                    voluntaryIncentives.add(new IncentiveCourtesy());
+                    voluntaryIncentives.add(new IncentiveSocioSpeed());
+                }
+                return voluntaryIncentives;
+            };
+            Supplier<Set<AccelerationIncentive>> accelerationSupplier = () ->
+            {
+                Set<AccelerationIncentive> accelerationIncentives = new LinkedHashSet<>();
+                accelerationIncentives.add(new AccelerationSpeedLimitTransition());
+                accelerationIncentives.add(new AccelerationTrafficLights());
+                accelerationIncentives.add(new AccelerationConflicts());
+                return accelerationIncentives;
+            };
+
             LaneBasedTacticalPlannerFactory<Lmrs> tacticalFactory = new LmrsFactory(idmPlusFactory,
                     new DefaultLmrsPerceptionFactory(), SYNCHRONIZATION, COOPERATION, GapAcceptance.INFORMED, Tailgating.NONE,
-                    mandatoryIncentives, voluntaryIncentives, accelerationIncentives);
+                    mandatorySupplier, voluntarySupplier, accelerationSupplier);
 
             GtuType car = DefaultsNl.CAR;
             GtuType truck = DefaultsNl.TRUCK;

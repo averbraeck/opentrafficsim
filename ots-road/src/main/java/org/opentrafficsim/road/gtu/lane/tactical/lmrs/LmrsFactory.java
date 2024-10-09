@@ -1,8 +1,8 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import java.io.Serializable;
-import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
@@ -54,13 +54,13 @@ public class LmrsFactory extends AbstractLaneBasedTacticalPlannerFactory<Lmrs> i
     private final Tailgating tailgating;
 
     /** Mandatory incentives. */
-    private final Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
+    private final Supplier<Set<MandatoryIncentive>> mandatoryIncentives;
 
     /** Mandatory incentives. */
-    private final Set<VoluntaryIncentive> voluntaryIncentives = new LinkedHashSet<>();
+    private final Supplier<Set<VoluntaryIncentive>> voluntaryIncentives;
 
     /** Mandatory incentives. */
-    private final Set<AccelerationIncentive> accelerationIncentives = new LinkedHashSet<>();
+    private final Supplier<Set<AccelerationIncentive>> accelerationIncentives;
 
     /**
      * Constructor using default incentives and passive synchronization.
@@ -75,6 +75,9 @@ public class LmrsFactory extends AbstractLaneBasedTacticalPlannerFactory<Lmrs> i
         this.cooperation = Cooperation.PASSIVE;
         this.gapAcceptance = GapAcceptance.INFORMED;
         this.tailgating = Tailgating.NONE;
+        this.mandatoryIncentives = null;
+        this.voluntaryIncentives = null;
+        this.accelerationIncentives = null;
     }
 
     /**
@@ -91,17 +94,19 @@ public class LmrsFactory extends AbstractLaneBasedTacticalPlannerFactory<Lmrs> i
      */
     public LmrsFactory(final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory,
             final PerceptionFactory perceptionFactory, final Synchronization synchronization, final Cooperation cooperation,
-            final GapAcceptance gapAcceptance, final Tailgating tailgating, final Set<MandatoryIncentive> mandatoryIncentives,
-            final Set<VoluntaryIncentive> voluntaryIncentives, final Set<AccelerationIncentive> accelerationIncentives)
+            final GapAcceptance gapAcceptance, final Tailgating tailgating,
+            final Supplier<Set<MandatoryIncentive>> mandatoryIncentives,
+            final Supplier<Set<VoluntaryIncentive>> voluntaryIncentives,
+            final Supplier<Set<AccelerationIncentive>> accelerationIncentives)
     {
         super(carFollowingModelFactory, perceptionFactory);
         this.synchronization = synchronization;
         this.cooperation = cooperation;
         this.gapAcceptance = gapAcceptance;
         this.tailgating = tailgating;
-        this.mandatoryIncentives.addAll(mandatoryIncentives);
-        this.voluntaryIncentives.addAll(voluntaryIncentives);
-        this.accelerationIncentives.addAll(accelerationIncentives);
+        this.mandatoryIncentives = mandatoryIncentives;
+        this.voluntaryIncentives = voluntaryIncentives;
+        this.accelerationIncentives = accelerationIncentives;
     }
 
     // TODO: use factory instead of constructors
@@ -129,15 +134,15 @@ public class LmrsFactory extends AbstractLaneBasedTacticalPlannerFactory<Lmrs> i
     {
         Lmrs lmrs = new Lmrs(nextCarFollowingModel(gtu), gtu, getPerceptionFactory().generatePerception(gtu),
                 this.synchronization, this.cooperation, this.gapAcceptance, this.tailgating);
-        if (this.mandatoryIncentives.isEmpty())
+        if (this.mandatoryIncentives == null)
         {
             lmrs.setDefaultIncentives();
         }
         else
         {
-            this.mandatoryIncentives.forEach(incentive -> lmrs.addMandatoryIncentive(incentive));
-            this.voluntaryIncentives.forEach(incentive -> lmrs.addVoluntaryIncentive(incentive));
-            this.accelerationIncentives.forEach(incentive -> lmrs.addAccelerationIncentive(incentive));
+            this.mandatoryIncentives.get().forEach(incentive -> lmrs.addMandatoryIncentive(incentive));
+            this.voluntaryIncentives.get().forEach(incentive -> lmrs.addVoluntaryIncentive(incentive));
+            this.accelerationIncentives.get().forEach(incentive -> lmrs.addAccelerationIncentive(incentive));
         }
         return lmrs;
     }
