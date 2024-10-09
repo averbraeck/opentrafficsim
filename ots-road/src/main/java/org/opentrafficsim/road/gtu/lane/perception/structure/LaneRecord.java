@@ -39,7 +39,7 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
     private final Set<LaneRecord> prev = new LinkedHashSet<>();
 
     /** Set of lateral records. */
-    private final Set<LaneRecord> lateral = new LinkedHashSet<>();
+    private final Set<LaneRecord> lat = new LinkedHashSet<>();
 
     /**
      * Constructor.
@@ -96,15 +96,6 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
 
     /** {@inheritDoc} */
     @Override
-    public Length getLength()
-    {
-        return this.lane.getLength();
-    }
-
-    /**
-     * Returns the merge distance, i.e. the distance after which this road merges with the road the GTU is at.
-     * @return merge distance.
-     */
     public Length getMergeDistance()
     {
         return this.mergeDistance;
@@ -148,16 +139,14 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
      */
     public void addLateral(final LaneRecord lateral)
     {
-        this.lateral.add(lateral);
+        this.lat.add(lateral);
     }
 
-    /**
-     * Get lateral lanes.
-     * @return lateral lanes.
-     */
+    /** {@inheritDoc} */
+    @Override
     public Set<LaneRecord> lateral()
     {
-        return this.lateral;
+        return this.lat;
     }
 
     /**

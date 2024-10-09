@@ -117,7 +117,6 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
      * Adds an iterator entry to the internal linked list.
      * @param next next object
      */
-    @SuppressWarnings("synthetic-access")
     final void addNext(final PrimaryIteratorEntry next)
     {
         SecondaryIteratorEntry entry = new SecondaryIteratorEntry(next.object, next.distance);

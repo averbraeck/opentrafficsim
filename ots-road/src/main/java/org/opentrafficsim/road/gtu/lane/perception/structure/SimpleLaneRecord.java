@@ -8,10 +8,10 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
- * A light-weight wrapper for LaneRecord search tools (PerceptionIterator). This is suitable for situations where parts of the
- * network not in the LaneStructure need to be perceived, such as conflicting lanes at intersection conflicts. Searches can only
- * be simple upstream or downstream searches, without lateral movement and without regard of a route. This class should not be
- * used whenever the LaneStructure can be used, as this class builds up a new tree each time step.
+ * A light-weight wrapper for NavigatingIterable. This is suitable for situations where parts of the network not in the
+ * LaneStructure need to be perceived, such as conflicting lanes at intersection conflicts. Searches can only be simple upstream
+ * or downstream searches, without lateral movement and without regard of a route. This class should not be used whenever the
+ * LaneStructure can be used.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -42,7 +42,7 @@ public class SimpleLaneRecord implements LaneRecordInterface<SimpleLaneRecord>
      * Constructor.
      * @param lane lane
      * @param startDistance distance to start
-     * @param gtuType GTU type
+     * @param gtuType GTU type, use {@code null} to find all lanes, including shoulders
      */
     public SimpleLaneRecord(final Lane lane, final Length startDistance, final GtuType gtuType)
     {
@@ -89,13 +89,6 @@ public class SimpleLaneRecord implements LaneRecordInterface<SimpleLaneRecord>
     public Length getStartDistance()
     {
         return this.startDistance;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Length getLength()
-    {
-        return this.lane.getLength();
     }
 
     /** {@inheritDoc} */

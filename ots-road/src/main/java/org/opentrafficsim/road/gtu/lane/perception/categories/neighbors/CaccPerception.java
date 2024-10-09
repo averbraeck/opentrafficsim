@@ -14,7 +14,7 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
-import org.opentrafficsim.road.gtu.lane.perception.structure.LaneStructure.Entry;
+import org.opentrafficsim.road.gtu.lane.perception.structure.NavigatingIterable.Entry;
 
 /**
  * CACC perception.

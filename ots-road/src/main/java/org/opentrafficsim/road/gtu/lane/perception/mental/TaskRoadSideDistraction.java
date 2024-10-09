@@ -12,6 +12,7 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.lane.perception.structure.NavigatingIterable.Entry;
 import org.opentrafficsim.road.network.lane.object.Distraction;
 
 /**
@@ -45,8 +46,8 @@ public class TaskRoadSideDistraction extends AbstractTask
 
         for (RelativeLane lane : perception.getLaneStructure().getRootCrossSection())
         {
-            for (org.opentrafficsim.road.gtu.lane.perception.structure.LaneStructure.Entry<Distraction> distraction : perception
-                    .getLaneStructure().getDownstreamObjects(lane, Distraction.class, RelativePosition.DRIVER, false))
+            for (Entry<Distraction> distraction : perception.getLaneStructure().getDownstreamObjects(lane, Distraction.class,
+                    RelativePosition.DRIVER, false))
             {
                 this.odos.put(distraction.object(), odo + distraction.distance().si);
             }

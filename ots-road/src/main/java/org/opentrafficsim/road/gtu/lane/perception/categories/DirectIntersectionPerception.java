@@ -26,6 +26,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayStopLine;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLightReal;
+import org.opentrafficsim.road.gtu.lane.perception.structure.NavigatingIterable.Entry;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
@@ -104,9 +105,8 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
      */
     private PerceptionCollectable<HeadwayTrafficLight, TrafficLight> computeTrafficLights(final RelativeLane lane)
     {
-        Iterable<org.opentrafficsim.road.gtu.lane.perception.structure.LaneStructure.Entry<TrafficLight>> iterable =
-                Try.assign(() -> getPerception().getLaneStructure().getDownstreamObjects(lane, TrafficLight.class,
-                        RelativePosition.FRONT, true), "");
+        Iterable<Entry<TrafficLight>> iterable = Try.assign(() -> getPerception().getLaneStructure().getDownstreamObjects(lane,
+                TrafficLight.class, RelativePosition.FRONT, true), "");
         Route route = Try.assign(() -> getPerception().getGtu().getStrategicalPlanner().getRoute(), "");
         return new AbstractPerceptionReiterable<>(Try.assign(() -> getGtu(), "GtuException"))
         {
@@ -114,8 +114,7 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
             @Override
             protected Iterator<PrimaryIteratorEntry> primaryIterator()
             {
-                Iterator<org.opentrafficsim.road.gtu.lane.perception.structure.LaneStructure.Entry<TrafficLight>> iterator =
-                        iterable.iterator();
+                Iterator<Entry<TrafficLight>> iterator = iterable.iterator();
                 return new Iterator<>()
                 {
                     /** {@inheritDoc} */
@@ -130,8 +129,7 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
                     public AbstractPerceptionReiterable<LaneBasedGtu, HeadwayTrafficLight,
                             TrafficLight>.PrimaryIteratorEntry next()
                     {
-                        org.opentrafficsim.road.gtu.lane.perception.structure.LaneStructure.Entry<TrafficLight> entry =
-                                iterator.next();
+                        Entry<TrafficLight> entry = iterator.next();
                         return new PrimaryIteratorEntry(entry.object(), entry.distance());
                     }
                 };
@@ -155,17 +153,15 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
      */
     private PerceptionCollectable<HeadwayConflict, Conflict> computeConflicts(final RelativeLane lane)
     {
-        Iterable<org.opentrafficsim.road.gtu.lane.perception.structure.LaneStructure.Entry<Conflict>> iterable =
-                Try.assign(() -> getPerception().getLaneStructure().getDownstreamObjects(lane, Conflict.class,
-                        RelativePosition.FRONT, true), "");
+        Iterable<Entry<Conflict>> iterable = Try.assign(() -> getPerception().getLaneStructure().getDownstreamObjects(lane,
+                Conflict.class, RelativePosition.FRONT, true), "");
         return new AbstractPerceptionReiterable<>(Try.assign(() -> getGtu(), "GtuException"))
         {
             /** {@inheritDoc} */
             @Override
             protected Iterator<PrimaryIteratorEntry> primaryIterator()
             {
-                Iterator<org.opentrafficsim.road.gtu.lane.perception.structure.LaneStructure.Entry<Conflict>> iterator =
-                        iterable.iterator();
+                Iterator<Entry<Conflict>> iterator = iterable.iterator();
                 return new Iterator<>()
                 {
                     /** {@inheritDoc} */
@@ -179,8 +175,7 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
                     @Override
                     public AbstractPerceptionReiterable<LaneBasedGtu, HeadwayConflict, Conflict>.PrimaryIteratorEntry next()
                     {
-                        org.opentrafficsim.road.gtu.lane.perception.structure.LaneStructure.Entry<Conflict> entry =
-                                iterator.next();
+                        Entry<Conflict> entry = iterator.next();
                         return new PrimaryIteratorEntry(entry.object(), entry.distance());
                     }
                 };
@@ -276,13 +271,11 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
             RelativeLane lane = new RelativeLane(lat, 1);
             if (getPerception().getLaneStructure().exists(lane))
             {
-                Iterator<org.opentrafficsim.road.gtu.lane.perception.structure.LaneStructure.Entry<Conflict>> conflicts =
-                        getPerception().getLaneStructure().getUpstreamObjects(lane, Conflict.class, RelativePosition.FRONT)
-                                .iterator();
+                Iterator<Entry<Conflict>> conflicts = getPerception().getLaneStructure()
+                        .getUpstreamObjects(lane, Conflict.class, RelativePosition.FRONT).iterator();
                 if (conflicts.hasNext())
                 {
-                    org.opentrafficsim.road.gtu.lane.perception.structure.LaneStructure.Entry<Conflict> entry =
-                            conflicts.next();
+                    Entry<Conflict> entry = conflicts.next();
                     return entry.distance().si < entry.object().getLength().si + getGtu().getLength().si;
                 }
             }

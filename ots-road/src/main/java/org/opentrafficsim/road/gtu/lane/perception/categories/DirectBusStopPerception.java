@@ -20,7 +20,7 @@ import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayBusStop;
 import org.opentrafficsim.road.gtu.lane.perception.structure.LaneRecord;
-import org.opentrafficsim.road.gtu.lane.perception.structure.LaneStructure.Entry;
+import org.opentrafficsim.road.gtu.lane.perception.structure.NavigatingIterable.Entry;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.object.BusStop;
 
@@ -71,7 +71,8 @@ public class DirectBusStopPerception extends AbstractPerceptionCategory<LaneBase
                     new MultiLanePerceptionIterable<>(getGtu());
             for (RelativeLane lane : getPerception().getLaneStructure().getRootCrossSection())
             {
-                Iterable<Entry<BusStop>> busStops = getPerception().getLaneStructure().getDownstreamObjects(lane, BusStop.class,
+                Iterable<
+                        Entry<BusStop>> busStops = getPerception().getLaneStructure().getDownstreamObjects(lane, BusStop.class,
                         RelativePosition.FRONT, true);
 
                 LaneRecord record = getPerception().getLaneStructure().getRootRecord(lane);

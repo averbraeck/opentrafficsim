@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.perception.structure;
 
+import java.util.Collections;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -13,7 +14,7 @@ import org.opentrafficsim.road.network.lane.Lane;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
- * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>\
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <R> lane record type
  */
 public interface LaneRecordInterface<R extends LaneRecordInterface<R>>
@@ -32,6 +33,15 @@ public interface LaneRecordInterface<R extends LaneRecordInterface<R>>
     Set<? extends R> getPrev();
 
     /**
+     * Get lateral lanes.
+     * @return lateral lanes.
+     */
+    default Set<? extends R> lateral()
+    {
+        return Collections.emptySet();
+    }
+
+    /**
      * Returns the distance from a reference to the start of this lane, negative for upstream distance.
      * @return the distance from a reference to the start of this lane, negative for upstream distance
      */
@@ -41,11 +51,14 @@ public interface LaneRecordInterface<R extends LaneRecordInterface<R>>
      * Returns the length of the lane.
      * @return length of the lane.
      */
-    Length getLength();
+    default Length getLength()
+    {
+        return getLane().getLength();
+    }
 
     /**
      * Returns the lane.
-     * @return
+     * @return lane
      */
     Lane getLane();
 
@@ -67,6 +80,16 @@ public interface LaneRecordInterface<R extends LaneRecordInterface<R>>
     default boolean isDownstreamBranch()
     {
         return true;
+    }
+
+    /**
+     * Returns the merge distance, i.e. the ego-distance after which this road merges with the road of this record. Returns zero
+     * if this is not the other road upstream of a merge.
+     * @return merge distance.
+     */
+    default Length getMergeDistance()
+    {
+        return Length.ZERO;
     }
 
 }
