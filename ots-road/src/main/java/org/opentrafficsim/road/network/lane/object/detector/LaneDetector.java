@@ -127,7 +127,7 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
             final RelativePosition.Type positionType, final OtsSimulatorInterface simulator, final DetectorType detectorType)
             throws NetworkException
     {
-        this(id, lane, longitudinalPosition, positionType, simulator, LaneBasedObject.makeLine(lane, longitudinalPosition, 0.9),
+        this(id, lane, longitudinalPosition, positionType, simulator, LaneBasedObject.makeLine(lane, longitudinalPosition, 1.0),
                 detectorType);
     }
 
