@@ -59,14 +59,6 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
 
     /**
      * Combination of an accumulator and a finalizer.
-     * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      * @param <C> collection result type
      * @param <U> underlying object type
      * @param <I> intermediate result type
@@ -94,14 +86,6 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
 
     /**
      * Accumulates an object one at a time in to an accumulating intermediate result.
-     * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      * @param <U> underlying object type
      * @param <I> intermediate result type
      */
@@ -119,14 +103,6 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
 
     /**
      * Wrapper of intermediate result with info for the iterator algorithm.
-     * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>]
      * @param <I> intermediate result type
      */
     class Intermediate<I>
@@ -204,50 +180,12 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
 
     /**
      * Wrapper for object and its distance.
-     * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * @param object underlying object
+     * @param distance distance to object
      * @param <U> underlying object type
      */
-    class UnderlyingDistance<U> implements Comparable<UnderlyingDistance<U>>
+    record UnderlyingDistance<U>(U object, Length distance) implements Comparable<UnderlyingDistance<U>>
     {
-        /** Object. */
-        private final U object;
-
-        /** Distance. */
-        private final Length distance;
-
-        /**
-         * @param object object
-         * @param distance distance
-         */
-        public UnderlyingDistance(final U object, final Length distance)
-        {
-            this.object = object;
-            this.distance = distance;
-        }
-
-        /**
-         * @return object.
-         */
-        public U getObject()
-        {
-            return this.object;
-        }
-
-        /**
-         * @return distance.
-         */
-        public Length getDistance()
-        {
-            return this.distance;
-        }
-
         /** {@inheritDoc} */
         @Override
         public int compareTo(final UnderlyingDistance<U> o)

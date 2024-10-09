@@ -89,7 +89,7 @@ public class PerceptionCollectableFiltered<H extends Headway, U> implements Perc
         while (iterator.hasNext())
         {
             UnderlyingDistance<U> u = iterator.next();
-            i = accumulator.accumulate(i, u.getObject(), u.getDistance());
+            i = accumulator.accumulate(i, u.object(), u.distance());
             if (i.isStop())
             {
                 break;

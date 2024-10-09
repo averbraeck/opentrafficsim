@@ -48,9 +48,9 @@ public class CollisionDetector extends AbstractLaneBasedMoveChecker
                 return;
             }
             UnderlyingDistance<LaneBasedGtu> leader = gtus.next();
-            if (leader.getDistance().lt0())
+            if (leader.distance().lt0())
             {
-                throw new CollisionException("GTU " + gtu.getId() + " collided with GTU " + leader.getObject().getId());
+                throw new CollisionException("GTU " + gtu.getId() + " collided with GTU " + leader.object().getId());
             }
         }
         catch (OperationalPlanException exception)
