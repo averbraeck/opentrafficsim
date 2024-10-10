@@ -16,9 +16,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
@@ -67,119 +69,27 @@ public class LoopDetector extends LaneDetector
     public static final EventType LOOP_DETECTOR_AGGREGATE = new EventType("LOOPDETECTOR.AGGREGATE", MetaData.NO_META_DATA);
 
     /** Mean speed measurement. */
-    public static final LoopDetectorMeasurement<Double, Speed> MEAN_SPEED = new LoopDetectorMeasurement<Double, Speed>()
-    {
-        @Override
-        public Double identity()
-        {
-            return 0.0;
-        }
-
-        @Override
-        public Double accumulateEntry(final Double cumulative, final LaneBasedGtu gtu, final LoopDetector loopDetector)
-        {
-            return cumulative + gtu.getSpeed().si;
-        }
-
-        @Override
-        public Double accumulateExit(final Double cumulative, final LaneBasedGtu gtu, final LoopDetector loopDetector)
-        {
-            return cumulative;
-        }
-
-        @Override
-        public boolean isPeriodic()
-        {
-            return true;
-        }
-
-        @Override
-        public Speed aggregate(final Double cumulative, final int gtuCount, final Duration aggregation)
-        {
-            return new Speed(3.6 * cumulative / gtuCount, SpeedUnit.KM_PER_HOUR);
-        }
-
-        @Override
-        public String getName()
-        {
-            return "v";
-        }
-
-        @Override
-        public String toString()
-        {
-            return getName();
-        }
-
-        @Override
-        public String getDescription()
-        {
-            return "mean speed";
-        }
-
-        @Override
-        public String getUnit()
-        {
-            return "km/h";
-        }
-
-        @Override
-        public Class<Speed> getValueType()
-        {
-            return Speed.class;
-        }
-    };
-
-    /** Harmonic mean speed measurement. */
-    public static final LoopDetectorMeasurement<Double, Speed> HARMONIC_MEAN_SPEED =
-            new LoopDetectorMeasurement<Double, Speed>()
+    public static final LoopDetectorMeasurement<Double, Speed> MEAN_SPEED =
+            new LoopDetectorMeasurement<Double, Speed>("v", "mean speed", () -> 0.0, Speed.class, true)
             {
                 @Override
-                public Double identity()
+                protected Double accumulateEntry(final Double cumulative, final LaneBasedGtu gtu,
+                        final LoopDetector loopDetector)
                 {
-                    return 0.0;
+                    return cumulative + gtu.getSpeed().si;
                 }
 
                 @Override
-                public Double accumulateEntry(final Double cumulative, final LaneBasedGtu gtu, final LoopDetector loopDetector)
-                {
-                    return cumulative + (1.0 / gtu.getSpeed().si);
-                }
-
-                @Override
-                public Double accumulateExit(final Double cumulative, final LaneBasedGtu gtu, final LoopDetector loopDetector)
+                protected Double accumulateExit(final Double cumulative, final LaneBasedGtu gtu,
+                        final LoopDetector loopDetector)
                 {
                     return cumulative;
                 }
 
                 @Override
-                public boolean isPeriodic()
+                protected Speed aggregate(final Double cumulative, final int gtuCount, final Duration aggregation)
                 {
-                    return true;
-                }
-
-                @Override
-                public Speed aggregate(final Double cumulative, final int gtuCount, final Duration aggregation)
-                {
-                    return new Speed(3.6 * gtuCount / cumulative, SpeedUnit.KM_PER_HOUR);
-                }
-
-                @Override
-                public String getName()
-                {
-                    return "vHarm";
-                }
-
-                @Override
-                public String toString()
-                {
-                    return getName();
-                }
-
-                @Override
-                public String getDescription()
-                {
-                    return "harmonic mean speed";
+                    return new Speed(3.6 * cumulative / gtuCount, SpeedUnit.KM_PER_HOUR);
                 }
 
                 @Override
@@ -187,16 +97,42 @@ public class LoopDetector extends LaneDetector
                 {
                     return "km/h";
                 }
+            };
+
+    /** Harmonic mean speed measurement. */
+    public static final LoopDetectorMeasurement<Double, Speed> HARMONIC_MEAN_SPEED =
+            new LoopDetectorMeasurement<Double, Speed>("vHarm", "harmonic mean speed", () -> 0.0, Speed.class, true)
+            {
+                @Override
+                protected Double accumulateEntry(final Double cumulative, final LaneBasedGtu gtu,
+                        final LoopDetector loopDetector)
+                {
+                    return cumulative + (1.0 / gtu.getSpeed().si);
+                }
 
                 @Override
-                public Class<Speed> getValueType()
+                protected Double accumulateExit(final Double cumulative, final LaneBasedGtu gtu,
+                        final LoopDetector loopDetector)
                 {
-                    return Speed.class;
+                    return cumulative;
+                }
+
+                @Override
+                protected Speed aggregate(final Double cumulative, final int gtuCount, final Duration aggregation)
+                {
+                    return new Speed(3.6 * gtuCount / cumulative, SpeedUnit.KM_PER_HOUR);
+                }
+
+                @Override
+                public String getUnit()
+                {
+                    return "km/h";
                 }
             };
 
     /** Occupancy measurement. */
-    public static final LoopDetectorMeasurement<Double, Double> OCCUPANCY = new LoopDetectorMeasurement<Double, Double>()
+    public static final LoopDetectorMeasurement<Double, Double> OCCUPANCY = new LoopDetectorMeasurement<Double, Double>(
+            "occupancy", "occupancy as fraction of time", () -> 0.0, Double.class, true)
     {
         /** Time the last GTU triggered the upstream detector. */
         private double lastEntry = Double.NaN;
@@ -205,13 +141,7 @@ public class LoopDetector extends LaneDetector
         private String lastId;
 
         @Override
-        public Double identity()
-        {
-            return 0.0;
-        }
-
-        @Override
-        public Double accumulateEntry(final Double cumulative, final LaneBasedGtu gtu, final LoopDetector loopDetector)
+        protected Double accumulateEntry(final Double cumulative, final LaneBasedGtu gtu, final LoopDetector loopDetector)
         {
             this.lastEntry = gtu.getSimulator().getSimulatorTime().si;
             this.lastId = gtu.getId();
@@ -219,7 +149,7 @@ public class LoopDetector extends LaneDetector
         }
 
         @Override
-        public Double accumulateExit(final Double cumulative, final LaneBasedGtu gtu, final LoopDetector loopDetector)
+        protected Double accumulateExit(final Double cumulative, final LaneBasedGtu gtu, final LoopDetector loopDetector)
         {
             if (!gtu.getId().equals(this.lastId))
             {
@@ -231,54 +161,19 @@ public class LoopDetector extends LaneDetector
         }
 
         @Override
-        public boolean isPeriodic()
-        {
-            return true;
-        }
-
-        @Override
-        public Double aggregate(final Double cumulative, final int gtuCount, final Duration aggregation)
+        protected Double aggregate(final Double cumulative, final int gtuCount, final Duration aggregation)
         {
             return cumulative / aggregation.si;
-        }
-
-        @Override
-        public String getName()
-        {
-            return "occupancy";
-        }
-
-        @Override
-        public String toString()
-        {
-            return getName();
-        }
-
-        @Override
-        public String getDescription()
-        {
-            return "occupancy as fraction of time";
-        }
-
-        @Override
-        public Class<Double> getValueType()
-        {
-            return Double.class;
         }
     };
 
     /** Passages measurement. */
     public static final LoopDetectorMeasurement<List<Duration>, List<Duration>> PASSAGES =
-            new LoopDetectorMeasurement<List<Duration>, List<Duration>>()
+            new LoopDetectorMeasurement<List<Duration>, List<Duration>>("passage times", "list of vehicle passage time",
+                    ArrayList::new, Duration.class, false)
             {
                 @Override
-                public List<Duration> identity()
-                {
-                    return new ArrayList<>();
-                }
-
-                @Override
-                public List<Duration> accumulateEntry(final List<Duration> cumulative, final LaneBasedGtu gtu,
+                protected List<Duration> accumulateEntry(final List<Duration> cumulative, final LaneBasedGtu gtu,
                         final LoopDetector loopDetector)
                 {
                     cumulative.add(gtu.getSimulator().getSimulatorTime());
@@ -286,52 +181,23 @@ public class LoopDetector extends LaneDetector
                 }
 
                 @Override
-                public List<Duration> accumulateExit(final List<Duration> cumulative, final LaneBasedGtu gtu,
+                protected List<Duration> accumulateExit(final List<Duration> cumulative, final LaneBasedGtu gtu,
                         final LoopDetector loopDetector)
                 {
                     return cumulative;
                 }
 
                 @Override
-                public boolean isPeriodic()
-                {
-                    return false;
-                }
-
-                @Override
-                public List<Duration> aggregate(final List<Duration> cumulative, final int gtuCount, final Duration aggregation)
+                protected List<Duration> aggregate(final List<Duration> cumulative, final int gtuCount,
+                        final Duration aggregation)
                 {
                     return cumulative;
-                }
-
-                @Override
-                public String getName()
-                {
-                    return "passage times";
-                }
-
-                @Override
-                public String toString()
-                {
-                    return getName();
-                }
-
-                @Override
-                public String getDescription()
-                {
-                    return "list of vehicle passage time";
                 }
 
                 @Override
                 public String getUnit()
                 {
                     return "s";
-                }
-
-                @Override
-                public Class<Duration> getValueType()
-                {
-                    return Duration.class;
                 }
             };
 
@@ -479,7 +345,6 @@ public class LoopDetector extends LaneDetector
         for (GtuTypeData dat : forData(gtu))
         {
             dat.gtuCountCurrentPeriod++;
-            dat.overallGtuCount++;
             for (LoopDetectorMeasurement<?, ?> measurement : this.measurements)
             {
                 accumulate(measurement, gtu, dat, true);
@@ -520,11 +385,12 @@ public class LoopDetector extends LaneDetector
     {
         for (GtuTypeData dat : this.data.values())
         {
-            Frequency frequency = Frequency.instantiateSI(dat.gtuCountCurrentPeriod / this.currentAggregation.si);
+            Frequency frequency =
+                    new Frequency(3600.0 * dat.gtuCountCurrentPeriod / this.currentAggregation.si, FrequencyUnit.PER_HOUR);
             dat.flow.add(frequency);
             for (LoopDetectorMeasurement<?, ?> measurement : this.periodicMeasurements)
             {
-                aggregate(measurement, dat.gtuCountCurrentPeriod, this.currentAggregation, dat);
+                aggregate(measurement, this.currentAggregation, dat);
                 dat.currentCumulativeDataMap.put(measurement, measurement.identity());
             }
             dat.gtuCountCurrentPeriod = 0;
@@ -582,23 +448,20 @@ public class LoopDetector extends LaneDetector
     /**
      * Aggregates a periodic measurement.
      * @param measurement measurement to aggregate
-     * @param gtuCount number of GTUs
      * @param agg aggregation period
      * @param dat GTU type data
      * @param <C> accumulated type
      * @param <A> aggregated type
      */
     @SuppressWarnings("unchecked")
-    private <C, A> void aggregate(final LoopDetectorMeasurement<C, A> measurement, final int gtuCount, final Duration agg,
-            final GtuTypeData dat)
+    private <C, A> void aggregate(final LoopDetectorMeasurement<C, A> measurement, final Duration agg, final GtuTypeData dat)
     {
-        ((List<A>) dat.periodicDataMap.get(measurement)).add(getAggregateValue(measurement, gtuCount, agg, dat));
+        ((List<A>) dat.periodicDataMap.get(measurement)).add(getAggregateValue(measurement, agg, dat));
     }
 
     /**
      * Returns the aggregated value of the measurement.
      * @param measurement measurement to aggregate
-     * @param gtuCount number of GTUs
      * @param agg aggregation period
      * @param dat GTU type data
      * @return aggregated value of the measurement
@@ -606,10 +469,10 @@ public class LoopDetector extends LaneDetector
      * @param <A> aggregated type
      */
     @SuppressWarnings("unchecked")
-    private <C, A> A getAggregateValue(final LoopDetectorMeasurement<C, A> measurement, final int gtuCount, final Duration agg,
+    private <C, A> A getAggregateValue(final LoopDetectorMeasurement<C, A> measurement, final Duration agg,
             final GtuTypeData dat)
     {
-        return measurement.aggregate((C) dat.currentCumulativeDataMap.get(measurement), gtuCount, agg);
+        return measurement.aggregate((C) dat.currentCumulativeDataMap.get(measurement), dat.gtuCountCurrentPeriod, agg);
     }
 
     /**
@@ -624,11 +487,73 @@ public class LoopDetector extends LaneDetector
         {
             if (!measurement.isPeriodic())
             {
-                map.put(measurement, getAggregateValue(measurement, dat.overallGtuCount,
-                        this.getSimulator().getSimulatorAbsTime().minus(Time.ZERO), dat));
+                map.put(measurement,
+                        getAggregateValue(measurement, getSimulator().getSimulatorAbsTime().minus(Time.ZERO), dat));
             }
         }
         return map;
+    }
+
+    /**
+     * Return aggregated data for the measurement for all GTU types.
+     * @param <T> measurement value type, use {@code null} to obtain flow data which is measured by default
+     * @param measurement measurement
+     * @return aggregated data for the measurement for all GTU types
+     * @throws IllegalArgumentException when the measurement is not periodic
+     */
+    public <T> List<T> getPeriodicData(final LoopDetectorMeasurement<?, T> measurement)
+    {
+        return getPeriodicData(measurement, null);
+    }
+
+    /**
+     * Return aggregated data for the measurement and GTU type.
+     * @param <T> measurement value type, use {@code null} to obtain flow data which is measured by default
+     * @param measurement measurement
+     * @param gtuType GTU type
+     * @return aggregated data for the measurement and GTU type
+     * @throws IllegalArgumentException when there is no data for the GTU type, or the measurement is not periodic
+     */
+    @SuppressWarnings("unchecked")
+    public <T> List<T> getPeriodicData(final LoopDetectorMeasurement<?, T> measurement, final GtuType gtuType)
+    {
+        Throw.when(!this.data.containsKey(gtuType), IllegalArgumentException.class, "No data for %s.", gtuType);
+        if (measurement == null)
+        {
+            return new ArrayList<>((List<T>) this.data.get(gtuType).flow);
+        }
+        Throw.when(!measurement.isPeriodic(), IllegalArgumentException.class, "Measurement %s is not periodic.",
+                measurement.getName());
+        return new ArrayList<>((List<T>) this.data.get(gtuType).periodicDataMap.get(measurement));
+    }
+
+    /**
+     * Return non-periodic data for the measurement for all GTU types.
+     * @param <T> measurement value type
+     * @param measurement measurement
+     * @return non-periodic data for the measurement for all GTU types
+     * @throws IllegalArgumentException when the measurement is not non-periodic
+     */
+    public <T> T getNonPeriodicData(final LoopDetectorMeasurement<?, T> measurement)
+    {
+        return getNonPeriodicData(measurement, null);
+    }
+
+    /**
+     * Return non-periodic data for the measurement and GTU type.
+     * @param <T> measurement value type
+     * @param measurement measurement
+     * @param gtuType GTU type
+     * @return non-periodic data for the measurement and GTU type
+     * @throws IllegalArgumentException when there is no data for the GTU type, or the measurement is not non-periodic
+     */
+    public <T> T getNonPeriodicData(final LoopDetectorMeasurement<?, T> measurement, final GtuType gtuType)
+    {
+        Throw.when(!this.data.containsKey(gtuType), IllegalArgumentException.class, "No data for %s.", gtuType);
+        Throw.when(measurement.isPeriodic(), IllegalArgumentException.class, "Measurement %s is not non-periodic.",
+                measurement.getName());
+        return (T) getAggregateValue(measurement, getSimulator().getSimulatorAbsTime().minus(Time.ZERO),
+                this.data.get(gtuType));
     }
 
     /**
@@ -988,13 +913,49 @@ public class LoopDetector extends LaneDetector
      * @param <C> accumulated type
      * @param <A> aggregated type
      */
-    public interface LoopDetectorMeasurement<C, A>
+    public abstract static class LoopDetectorMeasurement<C, A>
     {
+        /** Name. */
+        private final String name;
+
+        /** Description. */
+        private final String description;
+
+        /** Identity supplier. */
+        private final Supplier<C> identity;
+
+        /** Value type. */
+        private final Class<?> valueType;
+
+        /** Periodic. */
+        private final boolean periodic;
+
+        /**
+         * Constructor.
+         * @param name name
+         * @param description description
+         * @param identity identity supplier
+         * @param valueType value type, either same as {@code A}, or e.g. {@code T} when {@code A} is {@code List<T>}
+         * @param periodic periodic measurement (or non-periodic)
+         */
+        public LoopDetectorMeasurement(final String name, final String description, final Supplier<C> identity,
+                final Class<?> valueType, final boolean periodic)
+        {
+            this.name = name;
+            this.description = description;
+            this.identity = identity;
+            this.valueType = valueType;
+            this.periodic = periodic;
+        }
+
         /**
          * Returns the initial value before accumulation.
          * @return initial value before accumulation
          */
-        C identity();
+        public C identity()
+        {
+            return this.identity.get();
+        }
 
         /**
          * Returns an accumulated value for when the front reaches the detector. GTU's may trigger an exit without having
@@ -1004,7 +965,7 @@ public class LoopDetector extends LaneDetector
          * @param loopDetector loop detector
          * @return accumulated value
          */
-        C accumulateEntry(C cumulative, LaneBasedGtu gtu, LoopDetector loopDetector);
+        protected abstract C accumulateEntry(C cumulative, LaneBasedGtu gtu, LoopDetector loopDetector);
 
         /**
          * Returns an accumulated value for when the rear leaves the detector. GTU's may trigger an exit without having
@@ -1014,13 +975,16 @@ public class LoopDetector extends LaneDetector
          * @param loopDetector loop detector
          * @return accumulated value
          */
-        C accumulateExit(C cumulative, LaneBasedGtu gtu, LoopDetector loopDetector);
+        protected abstract C accumulateExit(C cumulative, LaneBasedGtu gtu, LoopDetector loopDetector);
 
         /**
          * Returns whether the measurement aggregates every aggregation period (or only over the entire simulation).
          * @return whether the measurement aggregates every aggregation period (or only over the entire simulation)
          */
-        boolean isPeriodic();
+        public boolean isPeriodic()
+        {
+            return this.periodic;
+        }
 
         /**
          * Returns an aggregated value.
@@ -1029,25 +993,31 @@ public class LoopDetector extends LaneDetector
          * @param aggregation aggregation period
          * @return aggregated value
          */
-        A aggregate(C cumulative, int gtuCount, Duration aggregation);
+        protected abstract A aggregate(C cumulative, int gtuCount, Duration aggregation);
 
         /**
          * Returns the value name.
          * @return value name
          */
-        String getName();
+        public String getName()
+        {
+            return this.name;
+        }
 
         /**
          * Measurement description.
          * @return measurement description.
          */
-        String getDescription();
+        public String getDescription()
+        {
+            return this.description;
+        }
 
         /**
          * Returns the unit string, default is {@code null}.
          * @return unit string.
          */
-        default String getUnit()
+        public String getUnit()
         {
             return null;
         }
@@ -1056,7 +1026,17 @@ public class LoopDetector extends LaneDetector
          * Returns the data type.
          * @return data type.
          */
-        Class<?> getValueType();
+        public Class<?> getValueType()
+        {
+            return this.valueType;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public String toString()
+        {
+            return getName();
+        }
     }
 
     /**
@@ -1072,9 +1052,6 @@ public class LoopDetector extends LaneDetector
 
         /** Count in current period. */
         private int gtuCountCurrentPeriod = 0;
-
-        /** Count overall. */
-        private int overallGtuCount = 0;
 
         /** Current cumulative measurements. */
         private final Map<LoopDetectorMeasurement<?, ?>, Object> currentCumulativeDataMap = new LinkedHashMap<>();
@@ -1098,9 +1075,8 @@ public class LoopDetector extends LaneDetector
     /**
      * Measurement of platoon sizes based on time between previous GTU exit and GTU entry.
      */
-    public static class PlatoonSizes implements LoopDetectorMeasurement<PlatoonMeasurement, List<Integer>>
+    public static class PlatoonSizes extends LoopDetectorMeasurement<PlatoonMeasurement, List<Integer>>
     {
-
         /** Maximum time between two vehicles that are considered to be in the same platoon. */
         private final Duration threshold;
 
@@ -1110,19 +1086,13 @@ public class LoopDetector extends LaneDetector
          */
         public PlatoonSizes(final Duration threshold)
         {
+            super("platoon sizes", "", () -> new PlatoonMeasurement(), Integer.class, false);
             this.threshold = threshold;
         }
 
         /** {@inheritDoc} */
         @Override
-        public PlatoonMeasurement identity()
-        {
-            return new PlatoonMeasurement();
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public PlatoonMeasurement accumulateEntry(final PlatoonMeasurement cumulative, final LaneBasedGtu gtu,
+        protected PlatoonMeasurement accumulateEntry(final PlatoonMeasurement cumulative, final LaneBasedGtu gtu,
                 final LoopDetector loopDetector)
         {
             Time now = gtu.getSimulator().getSimulatorAbsTime();
@@ -1145,7 +1115,7 @@ public class LoopDetector extends LaneDetector
 
         /** {@inheritDoc} */
         @Override
-        public PlatoonMeasurement accumulateExit(final PlatoonMeasurement cumulative, final LaneBasedGtu gtu,
+        protected PlatoonMeasurement accumulateExit(final PlatoonMeasurement cumulative, final LaneBasedGtu gtu,
                 final LoopDetector loopDetector)
         {
             int index = cumulative.enteredGTUs.indexOf(gtu);
@@ -1161,14 +1131,7 @@ public class LoopDetector extends LaneDetector
 
         /** {@inheritDoc} */
         @Override
-        public boolean isPeriodic()
-        {
-            return false;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public List<Integer> aggregate(final PlatoonMeasurement cumulative, final int count, final Duration aggregation)
+        protected List<Integer> aggregate(final PlatoonMeasurement cumulative, final int count, final Duration aggregation)
         {
             if (cumulative.gtuCount > 0)
             {
@@ -1180,32 +1143,10 @@ public class LoopDetector extends LaneDetector
 
         /** {@inheritDoc} */
         @Override
-        public String getName()
-        {
-            return "platoon sizes";
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public String toString()
-        {
-            return getName();
-        }
-
-        /** {@inheritDoc} */
-        @Override
         public String getDescription()
         {
             return "list of platoon sizes (threshold: " + this.threshold + ")";
         }
-
-        /** {@inheritDoc} */
-        @Override
-        public Class<Integer> getValueType()
-        {
-            return Integer.class;
-        }
-
     }
 
     /**
