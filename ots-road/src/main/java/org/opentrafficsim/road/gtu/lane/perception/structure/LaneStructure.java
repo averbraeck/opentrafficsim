@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.perception.structure;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -19,6 +20,7 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.structure.NavigatingIterable.Entry;
@@ -163,7 +165,8 @@ public class LaneStructure
     /**
      * Returns an iterator over GTUs perceived on a relative lane, ordered close to far. This can be GTUs on different roads,
      * e.g. from the main line on the right-most lane, the right-hand relative lane can give objects upstream of two on-ramps
-     * that are very close by, or even the shoulder.
+     * that are very close by, or even the shoulder. When from a lane on the route, a downstream lane is not on the route, GTUs
+     * on the downstream lane are not included. A split conflict should deal with possible GTUs there.
      * @param relativeLane lane.
      * @param egoPosition position of ego GTU relative to which objects are found.
      * @param otherPosition position of other GTU that must be downstream of egoPosition.
@@ -178,8 +181,27 @@ public class LaneStructure
         update();
         Length dx = LaneStructure.this.egoGtu.getRelativePositions().get(egoPosition).dx();
         Length dxDistance = LaneStructure.this.egoGtu.getRelativePositions().get(egoDistancePosition).dx();
+        Route route = LaneStructure.this.egoGtu.getStrategicalPlanner().getRoute();
         return new NavigatingIterable<>(LaneBasedGtu.class, this.downstream,
-                start((record) -> startDownstream(record, egoPosition), relativeLane), (record) -> record.getNext(), (record) ->
+                start((record) -> startDownstream(record, egoPosition), relativeLane), (record) ->
+                {
+                    // this navigator ignores downstream lanes that are not on the route, if the current record is on the route
+                    Set<LaneRecord> next = new LinkedHashSet<>(record.getNext());
+                    if (route != null && record.getLane().getLink().getEndNode().getLinks().size() > 2
+                            && route.containsLink(record.getLane().getLink()))
+                    {
+                        Iterator<LaneRecord> it = next.iterator();
+                        while (it.hasNext())
+                        {
+                            LaneRecord down = it.next();
+                            if (!route.containsLink(down.getLane().getLink()))
+                            {
+                                it.remove();
+                            }
+                        }
+                    }
+                    return next;
+                }, (record) ->
                 {
                     // this lister finds the relevant sublist of GTUs
                     List<LaneBasedGtu> gtus = record.getLane().getGtuList().toList();

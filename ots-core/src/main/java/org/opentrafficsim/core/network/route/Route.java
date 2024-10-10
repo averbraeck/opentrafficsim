@@ -246,7 +246,7 @@ public class Route implements Serializable, Identifiable
     {
         int index1 = getNodes().indexOf(link.getStartNode());
         int index2 = getNodes().indexOf(link.getEndNode());
-        return index1 >= 0 && index2 >= 0 && Math.abs(index2 - index1) == 1;
+        return index1 >= 0 && index2 >= 0 && (index2 - index1) == 1;
     }
 
     /** {@inheritDoc} */
