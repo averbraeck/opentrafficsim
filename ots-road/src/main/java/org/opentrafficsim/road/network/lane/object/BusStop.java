@@ -8,7 +8,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableHashSet;
 import org.djutils.immutablecollections.ImmutableSet;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -52,12 +51,11 @@ public class BusStop extends AbstractLaneBasedObject
      * @param lane lane
      * @param longitudinalPosition position
      * @param name name of stop
-     * @param simulator the simulator to schedule on
      * @param busType bus type.
      * @throws NetworkException when the position on the lane is out of bounds
      */
     public BusStop(final String id, final Lane lane, final Length longitudinalPosition, final String name,
-            final OtsSimulatorInterface simulator, final GtuType busType) throws NetworkException
+            final GtuType busType) throws NetworkException
     {
         super(id, lane, longitudinalPosition, LaneBasedObject.makeLine(lane, longitudinalPosition), Length.ZERO);
         this.name = name;

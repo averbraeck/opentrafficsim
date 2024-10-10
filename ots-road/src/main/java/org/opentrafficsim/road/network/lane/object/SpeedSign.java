@@ -3,7 +3,6 @@ package org.opentrafficsim.road.network.lane.object;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -41,7 +40,6 @@ public class SpeedSign extends AbstractLaneBasedObject
      * @param id the id of the new SpeedSign
      * @param lane Lane on/over which the SpeedSign is positioned
      * @param longitudinalPosition the longitudinal position along the lane of the new SpeedSign
-     * @param simulator the simulator
      * @param speed the speed limit shown by the new SpeedSign
      * @param gtuType GTU type that should obey the speed sign
      * @param startTimeOfDay start time-of-day
@@ -49,9 +47,8 @@ public class SpeedSign extends AbstractLaneBasedObject
      * @throws NetworkException when the position on the lane is out of bounds
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public SpeedSign(final String id, final Lane lane, final Length longitudinalPosition, final OtsSimulatorInterface simulator,
-            final Speed speed, final GtuType gtuType, final Duration startTimeOfDay, final Duration endTimeOfDay)
-            throws NetworkException
+    public SpeedSign(final String id, final Lane lane, final Length longitudinalPosition, final Speed speed,
+            final GtuType gtuType, final Duration startTimeOfDay, final Duration endTimeOfDay) throws NetworkException
     {
         super(id, lane, longitudinalPosition, LaneBasedObject.makeLine(lane, longitudinalPosition));
         this.speed = speed;

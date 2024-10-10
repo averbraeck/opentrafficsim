@@ -266,8 +266,8 @@ public final class XmlParser implements Serializable
         Map<String, Flattener> flatteners = new LinkedHashMap<>();
         NetworkParser.parseLinks(otsNetwork, definitions, network, nodeDirections, otsNetwork.getSimulator(), designLines,
                 flatteners, eval);
-        NetworkParser.applyRoadLayout(otsNetwork, definitions, network, otsNetwork.getSimulator(), roadLayoutMap,
-                linkTypeSpeedLimitMap, designLines, flatteners, eval);
+        NetworkParser.applyRoadLayout(otsNetwork, definitions, network, roadLayoutMap, linkTypeSpeedLimitMap, designLines,
+                flatteners, eval);
         NetworkParser.buildConflicts(otsNetwork, network, eval);
 
         // routes, generators and sinks
@@ -282,7 +282,7 @@ public final class XmlParser implements Serializable
             List<LaneBasedGtuGenerator> generators = DemandParser.parseGenerators(otsNetwork, definitions, demand, gtuTemplates,
                     routeMixMap, shortestRouteMixMap, streamInformation, eval);
             System.out.println("Created " + generators.size() + " generators based on explicit generator definitions");
-            DemandParser.parseSinks(otsNetwork, demand, otsNetwork.getSimulator(), definitions, eval);
+            DemandParser.parseSinks(otsNetwork, demand, definitions, eval);
         }
 
         // models and parameters

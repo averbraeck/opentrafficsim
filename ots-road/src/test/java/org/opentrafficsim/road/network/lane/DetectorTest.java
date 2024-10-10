@@ -75,8 +75,8 @@ public class DetectorTest implements UNITS
         for (Lane lane : lanesA)
         {
             Length longitudinalPosition = new Length(999.9999, METER);
-            TriggerDetector sensor = new TriggerDetector(lane, longitudinalPosition, RelativePosition.REFERENCE,
-                    "Trigger@" + lane.toString(), simulator);
+            TriggerDetector sensor =
+                    new TriggerDetector(lane, longitudinalPosition, RelativePosition.REFERENCE, "Trigger@" + lane.toString());
         }
 
         Length positionA = new Length(100, METER);
@@ -156,13 +156,12 @@ class TriggerDetector extends LaneDetector
      * @param longitudinalPosition position of the sensor on the lane
      * @param positionType trigger position of the GTU
      * @param name name of the sensor
-     * @param simulator the simulator
      * @throws NetworkException in case position is out of bounds
      */
     TriggerDetector(final Lane lane, final Length longitudinalPosition, final RelativePosition.Type positionType,
-            final String name, final OtsSimulatorInterface simulator) throws NetworkException
+            final String name) throws NetworkException
     {
-        super(name, lane, longitudinalPosition, positionType, simulator, DefaultsRoadNl.ROAD_USERS);
+        super(name, lane, longitudinalPosition, positionType, DefaultsRoadNl.ROAD_USERS);
     }
 
     /** {@inheritDoc} */

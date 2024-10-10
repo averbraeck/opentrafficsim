@@ -503,7 +503,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
             // Overtaking left and right allowed on the sinkLane
             Lane sinkLane = new Lane(endLink, lane.getId() + "." + "sinkLane", new OtsLine2d(centerLine), contour,
                     crossSections, laneType, Map.of(DefaultsNl.VEHICLE, this.speedLimit));
-            new SinkDetector(sinkLane, new Length(10.0, METER), this.simulator, DefaultsRoadNl.ROAD_USERS);
+            new SinkDetector(sinkLane, new Length(10.0, METER), DefaultsRoadNl.ROAD_USERS);
         }
         return lanes;
     }

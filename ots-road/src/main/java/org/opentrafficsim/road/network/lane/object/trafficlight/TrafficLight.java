@@ -7,10 +7,8 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventType;
-import org.djutils.exceptions.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
@@ -40,9 +38,6 @@ public class TrafficLight extends AbstractLaneBasedObject
     /** The color of the traffic light. */
     private final Historical<TrafficLightColor> trafficLightColor;
 
-    /** The simulator to schedule events on. */
-    private final OtsSimulatorInterface simulator;
-
     /** Node that we can turn to through red. */
     private Set<Node> turnOnRed = null;
 
@@ -64,19 +59,15 @@ public class TrafficLight extends AbstractLaneBasedObject
      * @param id traffic light id
      * @param lane lane where the traffic light is located
      * @param longitudinalPosition position of the traffic light on the lane, in the design direction
-     * @param simulator the simulator for animation and timed events
      * @param height the elevation of the traffic light
      * @throws NetworkException on failure to place the object
      */
-    public TrafficLight(final String id, final Lane lane, final Length longitudinalPosition,
-            final OtsSimulatorInterface simulator, final Length height) throws NetworkException
+    public TrafficLight(final String id, final Lane lane, final Length longitudinalPosition, final Length height)
+            throws NetworkException
     {
         super(id, lane, longitudinalPosition, LaneBasedObject.makeLine(lane, longitudinalPosition), height);
-
-        Throw.whenNull(simulator, "Simulator may not be null");
-        this.simulator = simulator;
         this.trafficLightColor =
-                new HistoricalValue<>(simulator.getReplication().getHistoryManager(simulator), TrafficLightColor.RED);
+                new HistoricalValue<>(getSimulator().getReplication().getHistoryManager(getSimulator()), TrafficLightColor.RED);
         init();
     }
 
@@ -85,13 +76,11 @@ public class TrafficLight extends AbstractLaneBasedObject
      * @param id traffic light id
      * @param lane lane where the traffic light is located
      * @param longitudinalPosition position of the traffic light on the lane, in the design direction
-     * @param simulator the simulator for animation and timed events
      * @throws NetworkException on failure to place the object
      */
-    public TrafficLight(final String id, final Lane lane, final Length longitudinalPosition,
-            final OtsSimulatorInterface simulator) throws NetworkException
+    public TrafficLight(final String id, final Lane lane, final Length longitudinalPosition) throws NetworkException
     {
-        this(id, lane, longitudinalPosition, simulator, DEFAULT_TRAFFICLIGHT_ELEVATION);
+        this(id, lane, longitudinalPosition, DEFAULT_TRAFFICLIGHT_ELEVATION);
     }
 
     /**
@@ -121,7 +110,7 @@ public class TrafficLight extends AbstractLaneBasedObject
     {
         this.trafficLightColor.set(trafficLightColor);
         fireTimedEvent(TRAFFICLIGHT_CHANGE_EVENT, new Object[] {getId(), this, trafficLightColor},
-                this.simulator.getSimulatorTime());
+                getSimulator().getSimulatorTime());
     }
 
     /**

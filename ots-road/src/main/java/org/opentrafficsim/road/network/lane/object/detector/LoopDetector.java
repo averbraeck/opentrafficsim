@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.lane.object.detector;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -9,9 +10,12 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -29,12 +33,13 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LanePosition;
 
 /**
  * Detector, measuring a dynamic set of measurements typical for single- or dual-loop detectors. A subsidiary detector is placed
@@ -339,79 +344,64 @@ public class LoopDetector extends LaneDetector
     /** First aggregation. */
     private final Time firstAggregation;
 
-    /** Flow per aggregation period. */
-    private final List<Frequency> flow = new ArrayList<>();
-
-    /** Measurements per aggregation period. */
-    private final Map<LoopDetectorMeasurement<?, ?>, List<?>> periodicDataMap = new LinkedHashMap<>();
-
     /** Detector length. */
     private final Length length;
 
     /** Period number. */
     private int period = 1;
 
-    /** Count in current period. */
-    private int gtuCountCurrentPeriod = 0;
+    /** All measurements. */
+    private final LoopDetectorMeasurement<?, ?>[] measurements;
 
-    /** Count overall. */
-    private int overallGtuCount = 0;
+    /** Measurements that are periodic. */
+    private final Set<LoopDetectorMeasurement<?, ?>> periodicMeasurements;
 
-    /** Current cumulative measurements. */
-    private final Map<LoopDetectorMeasurement<?, ?>, Object> currentCumulativeDataMap = new LinkedHashMap<>();
+    /** Data per GTU type. */
+    private final Map<GtuType, GtuTypeData> data = new LinkedHashMap<>();
 
     /**
      * Constructor for regular Dutch dual-loop detectors measuring flow and mean speed aggregated over 60s.
      * @param id detector id
      * @param lane lane
      * @param longitudinalPosition position
-     * @param simulator simulator
      * @param detectorType detector type.
      * @throws NetworkException on network exception
      */
-    public LoopDetector(final String id, final Lane lane, final Length longitudinalPosition, final DetectorType detectorType,
-            final OtsSimulatorInterface simulator) throws NetworkException
+    public LoopDetector(final String id, final Lane lane, final Length longitudinalPosition, final DetectorType detectorType)
+            throws NetworkException
     {
         // Note: length not important for flow and mean speed
-        this(id, lane, longitudinalPosition, Length.ZERO, detectorType, simulator, Time.instantiateSI(60.0),
+        this(id, new LanePosition(lane, longitudinalPosition), Length.ZERO, detectorType, Time.instantiateSI(60.0),
                 Duration.instantiateSI(60.0), MEAN_SPEED);
     }
 
     /**
      * Constructor.
      * @param id detector id
-     * @param lane lane
-     * @param longitudinalPosition position
+     * @param position lane position
      * @param length length
-     * @param simulator simulator
      * @param firstAggregation time of first aggregation
      * @param aggregation aggregation period
      * @param measurements measurements to obtain
      * @param detectorType detector type.
      * @throws NetworkException on network exception
      */
-    public LoopDetector(final String id, final Lane lane, final Length longitudinalPosition, final Length length,
-            final DetectorType detectorType, final OtsSimulatorInterface simulator, final Time firstAggregation,
-            final Duration aggregation, final LoopDetectorMeasurement<?, ?>... measurements) throws NetworkException
+    public LoopDetector(final String id, final LanePosition position, final Length length, final DetectorType detectorType,
+            final Time firstAggregation, final Duration aggregation, final LoopDetectorMeasurement<?, ?>... measurements)
+            throws NetworkException
     {
-        super(id, lane, longitudinalPosition, RelativePosition.FRONT, simulator, detectorType);
+        super(id, position.lane(), position.position(), RelativePosition.FRONT, detectorType);
         Throw.when(aggregation.si <= 0.0, IllegalArgumentException.class, "Aggregation time should be positive.");
         this.length = length;
         this.currentAggregation = Duration.instantiateSI(firstAggregation.si);
         this.aggregation = aggregation;
         this.firstAggregation = firstAggregation;
-        Try.execute(() -> simulator.scheduleEventAbsTime(firstAggregation, this, "aggregate", null), "");
-        for (LoopDetectorMeasurement<?, ?> measurement : measurements)
-        {
-            this.currentCumulativeDataMap.put(measurement, measurement.identity());
-            if (measurement.isPeriodic())
-            {
-                this.periodicDataMap.put(measurement, new ArrayList<>());
-            }
-        }
+        Try.execute(() -> getSimulator().scheduleEventAbsTime(firstAggregation, this, "aggregate", null), "");
+        this.measurements = measurements;
+        this.periodicMeasurements = Arrays.stream(measurements).filter((m) -> m.isPeriodic()).collect(Collectors.toSet());
+        this.data.put(null, new GtuTypeData());
 
         // rear detector
-        /** Abstract detector. */
         class RearDetector extends LaneDetector
         {
             /** */
@@ -422,32 +412,57 @@ public class LoopDetector extends LaneDetector
              * @param idRear id
              * @param laneRear lane
              * @param longitudinalPositionRear position
-             * @param simulatorRear simulator
              * @param detectorType detector type.
              * @throws NetworkException on network exception
              */
-            @SuppressWarnings("synthetic-access")
             RearDetector(final String idRear, final Lane laneRear, final Length longitudinalPositionRear,
-                    final OtsSimulatorInterface simulatorRear, final DetectorType detectorType) throws NetworkException
+                    final DetectorType detectorType) throws NetworkException
             {
-                super(idRear, laneRear, longitudinalPositionRear, RelativePosition.REAR, simulatorRear, detectorType);
+                super(idRear, laneRear, longitudinalPositionRear, RelativePosition.REAR, detectorType);
             }
 
             /** {@inheritDoc} */
-            @SuppressWarnings("synthetic-access")
             @Override
             protected void triggerResponse(final LaneBasedGtu gtu)
             {
-                for (LoopDetectorMeasurement<?, ?> measurement : LoopDetector.this.currentCumulativeDataMap.keySet())
+                for (GtuTypeData dat : forData(gtu))
                 {
-                    accumulate(measurement, gtu, false);
+                    for (LoopDetectorMeasurement<?, ?> measurement : LoopDetector.this.measurements)
+                    {
+                        accumulate(measurement, gtu, dat, false);
+                    }
                 }
             }
         }
-        Length position = longitudinalPosition.plus(length);
-        Throw.when(position.gt(lane.getLength()), IllegalStateException.class,
-                "A Detector can not be placed at a lane boundary");
-        new RearDetector(id + "_rear", lane, position, simulator, detectorType);
+        Length pos = position.position().plus(length);
+        new RearDetector(id + "_rear", position.lane(), pos, detectorType);
+    }
+
+    /**
+     * Store data specific to GTU type.
+     * @param gtuTypes GTU type
+     */
+    public void specificDataFor(final GtuType... gtuTypes)
+    {
+        for (GtuType gtuType : gtuTypes)
+        {
+            this.data.put(gtuType, new GtuTypeData());
+        }
+    }
+
+    /**
+     * Returns an iterable over valid data objects to collect the GTU. This is for all GTU types, and possibly also for the
+     * specific GTU type.
+     * @param gtu GTU
+     * @return iterable over valid data objects to collect the GTU
+     */
+    private Iterable<GtuTypeData> forData(final LaneBasedGtu gtu)
+    {
+        if (this.data.containsKey(gtu.getType()))
+        {
+            return Set.of(this.data.get(null), this.data.get(gtu.getType()));
+        }
+        return Set.of(this.data.get(null));
     }
 
     /** {@inheritDoc} */
@@ -461,11 +476,14 @@ public class LoopDetector extends LaneDetector
     @Override
     protected void triggerResponse(final LaneBasedGtu gtu)
     {
-        this.gtuCountCurrentPeriod++;
-        this.overallGtuCount++;
-        for (LoopDetectorMeasurement<?, ?> measurement : this.currentCumulativeDataMap.keySet())
+        for (GtuTypeData dat : forData(gtu))
         {
-            accumulate(measurement, gtu, true);
+            dat.gtuCountCurrentPeriod++;
+            dat.overallGtuCount++;
+            for (LoopDetectorMeasurement<?, ?> measurement : this.measurements)
+            {
+                accumulate(measurement, gtu, dat, true);
+            }
         }
         this.fireTimedEvent(LOOP_DETECTOR_TRIGGERED, new Object[] {gtu.getId()}, getSimulator().getSimulatorTime());
     }
@@ -473,52 +491,58 @@ public class LoopDetector extends LaneDetector
     /**
      * Accumulates a measurement.
      * @param measurement measurement to accumulate
-     * @param gtu gtu
+     * @param gtu GTU
+     * @param dat relevant GTU type data
      * @param front triggered by front entering (or rear leaving when false)
      * @param <C> accumulated type
      */
     @SuppressWarnings("unchecked")
-    <C> void accumulate(final LoopDetectorMeasurement<C, ?> measurement, final LaneBasedGtu gtu, final boolean front)
+    <C> void accumulate(final LoopDetectorMeasurement<C, ?> measurement, final LaneBasedGtu gtu, final GtuTypeData dat,
+            final boolean front)
     {
         if (front)
         {
-            this.currentCumulativeDataMap.put(measurement,
-                    measurement.accumulateEntry((C) this.currentCumulativeDataMap.get(measurement), gtu, this));
+            dat.currentCumulativeDataMap.put(measurement,
+                    measurement.accumulateEntry((C) dat.currentCumulativeDataMap.get(measurement), gtu, this));
         }
         else
         {
-            this.currentCumulativeDataMap.put(measurement,
-                    measurement.accumulateExit((C) this.currentCumulativeDataMap.get(measurement), gtu, this));
+            dat.currentCumulativeDataMap.put(measurement,
+                    measurement.accumulateExit((C) dat.currentCumulativeDataMap.get(measurement), gtu, this));
         }
     }
 
     /**
      * Aggregation.
      */
+    @SuppressWarnings("unused") // called by event
     private void aggregate()
     {
-        Frequency frequency = Frequency.instantiateSI(this.gtuCountCurrentPeriod / this.currentAggregation.si);
-        this.flow.add(frequency);
-        for (LoopDetectorMeasurement<?, ?> measurement : this.periodicDataMap.keySet())
+        for (GtuTypeData dat : this.data.values())
         {
-            aggregate(measurement, this.gtuCountCurrentPeriod, this.currentAggregation);
-            this.currentCumulativeDataMap.put(measurement, measurement.identity());
-        }
-        this.gtuCountCurrentPeriod = 0;
-        this.currentAggregation = this.aggregation; // after first possibly irregular period, all periods regular
-        if (!getListenerReferences(LOOP_DETECTOR_AGGREGATE).isEmpty())
-        {
-            Object[] data = new Object[this.periodicDataMap.size() + 1];
-            data[0] = frequency;
-            int i = 1;
-            for (LoopDetectorMeasurement<?, ?> measurement : this.periodicDataMap.keySet())
+            Frequency frequency = Frequency.instantiateSI(dat.gtuCountCurrentPeriod / this.currentAggregation.si);
+            dat.flow.add(frequency);
+            for (LoopDetectorMeasurement<?, ?> measurement : this.periodicMeasurements)
             {
-                List<?> list = this.periodicDataMap.get(measurement);
-                data[i] = list.get(list.size() - 1);
-                i++;
+                aggregate(measurement, dat.gtuCountCurrentPeriod, this.currentAggregation, dat);
+                dat.currentCumulativeDataMap.put(measurement, measurement.identity());
             }
-            this.fireTimedEvent(LOOP_DETECTOR_AGGREGATE, data, getSimulator().getSimulatorTime());
+            dat.gtuCountCurrentPeriod = 0;
+            if (!getListenerReferences(LOOP_DETECTOR_AGGREGATE).isEmpty())
+            {
+                Object[] dataArray = new Object[dat.periodicDataMap.size() + 1];
+                dataArray[0] = frequency;
+                int i = 1;
+                for (LoopDetectorMeasurement<?, ?> measurement : dat.periodicDataMap.keySet())
+                {
+                    List<?> list = dat.periodicDataMap.get(measurement);
+                    dataArray[i] = list.get(list.size() - 1);
+                    i++;
+                }
+                this.fireTimedEvent(LOOP_DETECTOR_AGGREGATE, dataArray, getSimulator().getSimulatorTime());
+            }
         }
+        this.currentAggregation = this.aggregation; // after first possibly irregular period, all periods regular
         Time time = Time.instantiateSI(this.firstAggregation.si + this.aggregation.si * this.period++);
         Try.execute(() -> getSimulator().scheduleEventAbsTime(time, this, "aggregate", null), "");
     }
@@ -529,7 +553,7 @@ public class LoopDetector extends LaneDetector
      */
     public boolean hasLastValue()
     {
-        return !this.flow.isEmpty();
+        return !this.data.get(null).flow.isEmpty();
     }
 
     /**
@@ -538,7 +562,8 @@ public class LoopDetector extends LaneDetector
      */
     public Frequency getLastFlow()
     {
-        return this.flow.get(this.flow.size() - 1);
+        List<Frequency> flow = this.data.get(null).flow;
+        return flow.get(flow.size() - 1);
     }
 
     /**
@@ -550,7 +575,7 @@ public class LoopDetector extends LaneDetector
     public <A> A getLastValue(final LoopDetectorMeasurement<?, A> detectorMeasurement)
     {
         @SuppressWarnings("unchecked")
-        List<A> list = (List<A>) this.periodicDataMap.get(detectorMeasurement);
+        List<A> list = (List<A>) this.data.get(null).periodicDataMap.get(detectorMeasurement);
         return list.get(list.size() - 1);
     }
 
@@ -559,13 +584,15 @@ public class LoopDetector extends LaneDetector
      * @param measurement measurement to aggregate
      * @param gtuCount number of GTUs
      * @param agg aggregation period
+     * @param dat GTU type data
      * @param <C> accumulated type
      * @param <A> aggregated type
      */
     @SuppressWarnings("unchecked")
-    private <C, A> void aggregate(final LoopDetectorMeasurement<C, A> measurement, final int gtuCount, final Duration agg)
+    private <C, A> void aggregate(final LoopDetectorMeasurement<C, A> measurement, final int gtuCount, final Duration agg,
+            final GtuTypeData dat)
     {
-        ((List<A>) this.periodicDataMap.get(measurement)).add(getAggregateValue(measurement, gtuCount, agg));
+        ((List<A>) dat.periodicDataMap.get(measurement)).add(getAggregateValue(measurement, gtuCount, agg, dat));
     }
 
     /**
@@ -573,29 +600,32 @@ public class LoopDetector extends LaneDetector
      * @param measurement measurement to aggregate
      * @param gtuCount number of GTUs
      * @param agg aggregation period
+     * @param dat GTU type data
      * @return aggregated value of the measurement
      * @param <C> accumulated type
      * @param <A> aggregated type
      */
     @SuppressWarnings("unchecked")
-    private <C, A> A getAggregateValue(final LoopDetectorMeasurement<C, A> measurement, final int gtuCount, final Duration agg)
+    private <C, A> A getAggregateValue(final LoopDetectorMeasurement<C, A> measurement, final int gtuCount, final Duration agg,
+            final GtuTypeData dat)
     {
-        return measurement.aggregate((C) this.currentCumulativeDataMap.get(measurement), gtuCount, agg);
+        return measurement.aggregate((C) dat.currentCumulativeDataMap.get(measurement), gtuCount, agg);
     }
 
     /**
      * Returns a map of non-periodic measurements, mapping measurement type and the data.
+     * @param dat GTU type data
      * @return map of non-periodic measurements
      */
-    private Map<LoopDetectorMeasurement<?, ?>, Object> getNonPeriodicMeasurements()
+    private Map<LoopDetectorMeasurement<?, ?>, Object> getNonPeriodicMeasurements(final GtuTypeData dat)
     {
         Map<LoopDetectorMeasurement<?, ?>, Object> map = new LinkedHashMap<>();
-        for (LoopDetectorMeasurement<?, ?> measurement : this.currentCumulativeDataMap.keySet())
+        for (LoopDetectorMeasurement<?, ?> measurement : dat.currentCumulativeDataMap.keySet())
         {
             if (!measurement.isPeriodic())
             {
-                map.put(measurement, getAggregateValue(measurement, this.overallGtuCount,
-                        this.getSimulator().getSimulatorAbsTime().minus(Time.ZERO)));
+                map.put(measurement, getAggregateValue(measurement, dat.overallGtuCount,
+                        this.getSimulator().getSimulatorAbsTime().minus(Time.ZERO), dat));
             }
         }
         return map;
@@ -663,14 +693,21 @@ public class LoopDetector extends LaneDetector
     /**
      * Returns a Table with all periodic data, such as flow and speed per minute.
      * @param network network from which all detectors are found.
+     * @param gtuTypes GTU types to include. When left empty, data for all is exported without GTU type column. To include data
+     *            for all GTU types among data for specific GTU types, include {@code null} value.
      * @return with all periodic data, such as flow and speed per minute.
      */
-    public static Table asTablePeriodicData(final RoadNetwork network)
+    public static Table asTablePeriodicData(final RoadNetwork network, final GtuType... gtuTypes)
     {
         Set<LoopDetector> detectors = getLoopDetectors(network);
         Set<LoopDetectorMeasurement<?, ?>> measurements = getMeasurements(detectors, true);
         Collection<Column<?>> columns = new LinkedHashSet<>();
         columns.add(new Column<>("id", "detector id", String.class, null));
+        boolean includeGtuTypeColumn = gtuTypes.length > 0;
+        if (includeGtuTypeColumn)
+        {
+            columns.add(new Column<>("GTU type", "GTU type", String.class, null));
+        }
         columns.add(new Column<>("t", "time (start of aggregation period)", Duration.class, "s"));
         columns.add(new Column<>("q", "flow", Frequency.class, "/h"));
         for (LoopDetectorMeasurement<?, ?> measurement : measurements)
@@ -686,16 +723,22 @@ public class LoopDetector extends LaneDetector
             public Iterator<Row> iterator()
             {
                 Iterator<LoopDetector> iterator = detectors.iterator();
+                Predicate<Entry<GtuType, GtuTypeData>> gtuTypeEntryFilter =
+                        (entry) -> !includeGtuTypeColumn && entry.getKey() == null
+                                || Arrays.stream(gtuTypes).anyMatch((g) -> Objects.equals(g, entry.getKey()));
                 return new Iterator<>()
                 {
+                    /** GTU type data iterator. */
+                    private Iterator<Entry<GtuType, GtuTypeData>> dataIterator = Collections.emptyIterator();
+
                     /** Index iterator. */
                     private Iterator<Integer> indexIterator = Collections.emptyIterator();
 
                     /** Current loop detector. */
                     private LoopDetector loopDetector;
 
-                    /** Map of measurement data per measurement, updated for each detector. */
-                    private Map<LoopDetectorMeasurement<?, ?>, List<?>> map;
+                    /** Current GTU type data. */
+                    private Entry<GtuType, GtuTypeData> dat;
 
                     /** {@inheritDoc} */
                     @Override
@@ -703,14 +746,18 @@ public class LoopDetector extends LaneDetector
                     {
                         while (!this.indexIterator.hasNext())
                         {
-                            if (!iterator.hasNext())
+                            while (!this.dataIterator.hasNext())
                             {
-                                return false;
+                                if (!iterator.hasNext())
+                                {
+                                    return false;
+                                }
+                                this.loopDetector = iterator.next();
+                                this.dataIterator =
+                                        this.loopDetector.data.entrySet().stream().filter(gtuTypeEntryFilter).iterator();
                             }
-                            this.loopDetector = iterator.next();
-                            this.loopDetector.aggregate();
-                            this.indexIterator = IntStream.range(0, this.loopDetector.flow.size()).iterator();
-                            this.map = this.loopDetector.periodicDataMap;
+                            this.dat = this.dataIterator.next();
+                            this.indexIterator = IntStream.range(0, this.loopDetector.data.get(null).flow.size()).iterator();
                         }
                         return true;
                     }
@@ -723,16 +770,21 @@ public class LoopDetector extends LaneDetector
                         Object[] data = new Object[columns.size()];
                         int index = this.indexIterator.next();
 
-                        double t = this.loopDetector.firstAggregation.si + (index - 1) * this.loopDetector.aggregation.si;
-                        data[0] = this.loopDetector.getId();
-                        data[1] = Duration.instantiateSI(t < 0.0 ? 0.0 : t);
-                        data[2] = this.loopDetector.flow.get(index);
-                        int dataIndex = 3;
+                        double t = index == 0 ? 0.0
+                                : this.loopDetector.firstAggregation.si + (index - 1) * this.loopDetector.aggregation.si;
+                        int dataIndex = 0;
+                        data[dataIndex++] = this.loopDetector.getId();
+                        if (includeGtuTypeColumn)
+                        {
+                            data[dataIndex++] = this.dat.getKey() == null ? "" : this.dat.getKey().getId();
+                        }
+                        data[dataIndex++] = Duration.instantiateSI(t < 0.0 ? 0.0 : t);
+                        data[dataIndex++] = this.dat.getValue().flow.get(index);
                         for (LoopDetectorMeasurement<?, ?> measurement : measurements)
                         {
-                            if (this.map.containsKey(measurement))
+                            if (this.dat.getValue().periodicDataMap.containsKey(measurement))
                             {
-                                data[dataIndex++] = this.map.get(measurement).get(index);
+                                data[dataIndex++] = this.dat.getValue().periodicDataMap.get(measurement).get(index);
                             }
                             else
                             {
@@ -766,14 +818,21 @@ public class LoopDetector extends LaneDetector
     /**
      * Returns a Table with all non-periodic data, such as vehicle passage times or platoon counts.
      * @param network network from which all detectors are found.
+     * @param gtuTypes GTU types to include. When left empty, data for all is exported without GTU type column. To include data
+     *            for all GTU types among data for specific GTU types, include {@code null} value.
      * @return with all non-periodic data, such as vehicle passage times or platoon counts.
      */
-    public static Table asTableNonPeriodicData(final RoadNetwork network)
+    public static Table asTableNonPeriodicData(final RoadNetwork network, final GtuType... gtuTypes)
     {
         Set<LoopDetector> detectors = getLoopDetectors(network);
         Set<LoopDetectorMeasurement<?, ?>> measurements = getMeasurements(detectors, false);
         Collection<Column<?>> columns = new LinkedHashSet<>();
         columns.add(new Column<>("id", "detector id", String.class, null));
+        boolean includeGtuTypeColumn = gtuTypes.length > 0;
+        if (includeGtuTypeColumn)
+        {
+            columns.add(new Column<>("GTU type", "GTU type", String.class, null));
+        }
         columns.add(new Column<>("measurement", "measurement type", String.class, null));
         columns.add(new Column<>("data", "data in any form", String.class, null));
 
@@ -784,13 +843,22 @@ public class LoopDetector extends LaneDetector
             public Iterator<Row> iterator()
             {
                 Iterator<LoopDetector> iterator = detectors.iterator();
+                Predicate<Entry<GtuType, GtuTypeData>> gtuTypeEntryFilter =
+                        (entry) -> !includeGtuTypeColumn && entry.getKey() == null
+                                || Arrays.stream(gtuTypes).anyMatch((g) -> Objects.equals(g, entry.getKey()));
                 return new Iterator<>()
                 {
-                    /** Index iterator. */
+                    /** GTU type data iterator. */
+                    private Iterator<Entry<GtuType, GtuTypeData>> dataIterator = Collections.emptyIterator();
+
+                    /** Measurement iterator. */
                     private Iterator<LoopDetectorMeasurement<?, ?>> measurementIterator = Collections.emptyIterator();
 
                     /** Current loop detector. */
                     private LoopDetector loopDetector;
+
+                    /** Current GTU type data. */
+                    private Entry<GtuType, GtuTypeData> dat;
 
                     /** Map of measurement data per measurement, updated for each detector. */
                     private Map<LoopDetectorMeasurement<?, ?>, Object> map;
@@ -808,21 +876,23 @@ public class LoopDetector extends LaneDetector
                         }
                         while (!this.measurementIterator.hasNext())
                         {
-                            if (!iterator.hasNext())
+                            while (!this.dataIterator.hasNext())
                             {
-                                return false;
+                                if (!iterator.hasNext())
+                                {
+                                    return false;
+                                }
+                                this.loopDetector = iterator.next();
+                                this.dataIterator =
+                                        this.loopDetector.data.entrySet().stream().filter(gtuTypeEntryFilter).iterator();
                             }
-                            this.loopDetector = iterator.next();
-                            this.measurementIterator = measurements.iterator();
-                            this.map = this.loopDetector.getNonPeriodicMeasurements();
+                            this.dat = this.dataIterator.next();
+                            this.map = this.loopDetector.getNonPeriodicMeasurements(this.dat.getValue());
+                            Set<LoopDetectorMeasurement<?, ?>> set = new LinkedHashSet<>(measurements);
+                            set.retainAll(this.map.keySet()); // only those that are available in this detector
+                            this.measurementIterator = set.iterator();
                         }
-                        // skip if data is not available for this detector
                         this.measurement = this.measurementIterator.next();
-                        if (!this.map.containsKey(this.measurement))
-                        {
-                            this.measurement = null;
-                            return hasNext();
-                        }
                         return true;
                     }
 
@@ -832,10 +902,14 @@ public class LoopDetector extends LaneDetector
                     {
                         Throw.when(!hasNext(), NoSuchElementException.class, "Non-periodic data unavailable.");
                         Object[] data = new Object[columns.size()];
-
-                        data[0] = this.loopDetector.getId();
-                        data[1] = this.measurement.getName();
-                        data[2] = this.map.get(this.measurement).toString();
+                        int dataIndex = 0;
+                        data[dataIndex++] = this.loopDetector.getId();
+                        if (includeGtuTypeColumn)
+                        {
+                            data[dataIndex++] = this.dat.getKey() == null ? "" : this.dat.getKey().getId();
+                        }
+                        data[dataIndex++] = this.measurement.getName();
+                        data[dataIndex++] = this.map.get(this.measurement).toString();
                         this.measurement = null;
                         return new Row(table(), data);
                     }
@@ -880,16 +954,25 @@ public class LoopDetector extends LaneDetector
     }
 
     /**
-     * Returns all measurement type that are found accross a set of loop detectors.
+     * Returns all measurement type that are found across a set of loop detectors.
      * @param detectors set of loop detectors.
      * @param periodic gather the periodic measurements {@code true}, or the non-periodic measurements {@code false}.
      * @return set of periodic or non-periodic measurements from the detectors.
      */
     private static Set<LoopDetectorMeasurement<?, ?>> getMeasurements(final Set<LoopDetector> detectors, final boolean periodic)
     {
-        return detectors.stream().flatMap((det) -> det.currentCumulativeDataMap.keySet().stream())
-                .filter((measurement) -> measurement.isPeriodic() == periodic)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+        Set<LoopDetectorMeasurement<?, ?>> set = new LinkedHashSet<>();
+        for (LoopDetector detector : detectors)
+        {
+            for (LoopDetectorMeasurement<?, ?> measurement : detector.measurements)
+            {
+                if (measurement.isPeriodic() == periodic)
+                {
+                    set.add(measurement);
+                }
+            }
+        }
+        return set;
     }
 
     /**
@@ -977,15 +1060,43 @@ public class LoopDetector extends LaneDetector
     }
 
     /**
+     * Data holder per GTU type.
+     */
+    private class GtuTypeData
+    {
+        /** Flow per aggregation period. */
+        private final List<Frequency> flow = new ArrayList<>();
+
+        /** Measurements per aggregation period. */
+        private final Map<LoopDetectorMeasurement<?, ?>, List<?>> periodicDataMap = new LinkedHashMap<>();
+
+        /** Count in current period. */
+        private int gtuCountCurrentPeriod = 0;
+
+        /** Count overall. */
+        private int overallGtuCount = 0;
+
+        /** Current cumulative measurements. */
+        private final Map<LoopDetectorMeasurement<?, ?>, Object> currentCumulativeDataMap = new LinkedHashMap<>();
+
+        /**
+         * Constructor.
+         */
+        GtuTypeData()
+        {
+            for (LoopDetectorMeasurement<?, ?> measurement : LoopDetector.this.measurements)
+            {
+                this.currentCumulativeDataMap.put(measurement, measurement.identity());
+                if (measurement.isPeriodic())
+                {
+                    this.periodicDataMap.put(measurement, new ArrayList<>());
+                }
+            }
+        }
+    }
+
+    /**
      * Measurement of platoon sizes based on time between previous GTU exit and GTU entry.
-     * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public static class PlatoonSizes implements LoopDetectorMeasurement<PlatoonMeasurement, List<Integer>>
     {
@@ -1010,7 +1121,6 @@ public class LoopDetector extends LaneDetector
         }
 
         /** {@inheritDoc} */
-        @SuppressWarnings("synthetic-access")
         @Override
         public PlatoonMeasurement accumulateEntry(final PlatoonMeasurement cumulative, final LaneBasedGtu gtu,
                 final LoopDetector loopDetector)
@@ -1034,7 +1144,6 @@ public class LoopDetector extends LaneDetector
         }
 
         /** {@inheritDoc} */
-        @SuppressWarnings("synthetic-access")
         @Override
         public PlatoonMeasurement accumulateExit(final PlatoonMeasurement cumulative, final LaneBasedGtu gtu,
                 final LoopDetector loopDetector)
@@ -1058,7 +1167,6 @@ public class LoopDetector extends LaneDetector
         }
 
         /** {@inheritDoc} */
-        @SuppressWarnings("synthetic-access")
         @Override
         public List<Integer> aggregate(final PlatoonMeasurement cumulative, final int count, final Duration aggregation)
         {
@@ -1102,14 +1210,6 @@ public class LoopDetector extends LaneDetector
 
     /**
      * Cumulative information for platoon size measurement.
-     * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     static class PlatoonMeasurement
     {

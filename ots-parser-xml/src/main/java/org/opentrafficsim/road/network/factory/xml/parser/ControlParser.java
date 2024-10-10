@@ -204,7 +204,7 @@ public final class ControlParser
                             ParseUtil.parseLengthBeginEnd(singleLaneDetector.getExitPosition().get(eval), lane.getLength());
                     DetectorType detectorType = definitions.get(DetectorType.class, detector.getType().get(eval));
                     new TrafficLightDetector(detector.getId(), lane, entryPosition, lane, exitPosition, null,
-                            RelativePosition.FRONT, RelativePosition.REAR, simulator, detectorType);
+                            RelativePosition.FRONT, RelativePosition.REAR, detectorType);
                 }
                 else
                 {
@@ -228,7 +228,7 @@ public final class ControlParser
                     }
                     DetectorType detectorType = definitions.get(DetectorType.class, detector.getType().get(eval));
                     new TrafficLightDetector(detector.getId(), entryLane, entryPosition, exitLane, exitPosition,
-                            intermediateLanes, RelativePosition.FRONT, RelativePosition.REAR, simulator, detectorType);
+                            intermediateLanes, RelativePosition.FRONT, RelativePosition.REAR, detectorType);
                 }
             }
             // TODO get the TrafCOD program, etc.

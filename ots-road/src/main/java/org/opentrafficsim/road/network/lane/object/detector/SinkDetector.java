@@ -5,7 +5,6 @@ import java.util.function.BiPredicate;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
@@ -67,29 +66,26 @@ public class SinkDetector extends LaneDetector
      * Constructor. All GTUs matching the {@code DetectorType} will be removed.
      * @param lane the lane that triggers the deletion of the GTU.
      * @param position the position of the detector
-     * @param simulator the simulator to enable animation.
      * @param detectorType detector type.
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
-    public SinkDetector(final Lane lane, final Length position, final OtsSimulatorInterface simulator,
-            final DetectorType detectorType) throws NetworkException
+    public SinkDetector(final Lane lane, final Length position, final DetectorType detectorType) throws NetworkException
     {
-        this(lane, position, simulator, detectorType, (sink, gtu) -> true);
+        this(lane, position, detectorType, (sink, gtu) -> true);
     }
 
     /**
      * Constructor.
      * @param lane the lane that triggers the deletion of the GTU.
      * @param position the position of the detector
-     * @param simulator the simulator to enable animation.
      * @param detectorType detector type.
      * @param predicate predicate for what GTUs will be destroyed.
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
-    public SinkDetector(final Lane lane, final Length position, final OtsSimulatorInterface simulator,
-            final DetectorType detectorType, final BiPredicate<SinkDetector, LaneBasedGtu> predicate) throws NetworkException
+    public SinkDetector(final Lane lane, final Length position, final DetectorType detectorType,
+            final BiPredicate<SinkDetector, LaneBasedGtu> predicate) throws NetworkException
     {
-        super(String.format(Locale.US, "Sink@%.3fm", position.si), lane, position, RelativePosition.FRONT, simulator,
+        super(String.format(Locale.US, "Sink@%.3fm", position.si), lane, position, RelativePosition.FRONT,
                 LaneBasedObject.makeLine(lane, position, 1.0), detectorType);
         this.predicate = predicate;
     }

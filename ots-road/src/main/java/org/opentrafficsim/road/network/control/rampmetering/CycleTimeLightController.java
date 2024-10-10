@@ -69,7 +69,7 @@ public class CycleTimeLightController implements RampMeteringLightController
         this.trafficLights = trafficLights;
         for (TrafficLight trafficLight : trafficLights)
         {
-            Try.execute(() -> new RampMeteringDetector(trafficLight, simulator, detectorType),
+            Try.execute(() -> new RampMeteringDetector(trafficLight, detectorType),
                     "Unexpected exception while creating a detector with a ramp metering traffic light.");
             this.greenStarts.put(trafficLight, Time.instantiateSI(Double.NEGATIVE_INFINITY));
         }
@@ -154,15 +154,13 @@ public class CycleTimeLightController implements RampMeteringLightController
 
         /**
          * @param trafficLight traffic light
-         * @param simulator simulator
          * @param detectorType detector type.
          * @throws NetworkException when the position on the lane is out of bounds
          */
-        RampMeteringDetector(final TrafficLight trafficLight, final OtsSimulatorInterface simulator,
-                final DetectorType detectorType) throws NetworkException
+        RampMeteringDetector(final TrafficLight trafficLight, final DetectorType detectorType) throws NetworkException
         {
             super(trafficLight.getId() + "_sensor", trafficLight.getLane(), trafficLight.getLongitudinalPosition(),
-                    RelativePosition.FRONT, simulator, detectorType);
+                    RelativePosition.FRONT, detectorType);
             this.trafficLight = trafficLight;
         }
 

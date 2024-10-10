@@ -108,21 +108,20 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
      * @param intermediateLanes list of intermediate lanes
      * @param entryPosition the position on the GTUs that trigger the entry events
      * @param exitPosition the position on the GTUs that trigger the exit events
-     * @param simulator the simulator
      * @param detectorType detector type.
      * @throws NetworkException when the network is inconsistent.
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public TrafficLightDetector(final String id, final Lane laneA, final Length positionA, final Lane laneB,
             final Length positionB, final List<Lane> intermediateLanes, final Type entryPosition, final Type exitPosition,
-            final OtsSimulatorInterface simulator, final DetectorType detectorType) throws NetworkException
+            final DetectorType detectorType) throws NetworkException
     {
         Throw.whenNull(id, "id may not be null");
         this.id = id;
         this.uniqueId = UUID.randomUUID().toString() + "_" + id;
         this.type = detectorType;
-        this.entryA = new StartEndDetector(id + ".entryA", laneA, positionA, entryPosition, simulator, detectorType);
-        this.exitB = new StartEndDetector(id + ".exitB", laneB, positionB, exitPosition, simulator, detectorType);
+        this.entryA = new StartEndDetector(id + ".entryA", laneA, positionA, entryPosition, detectorType);
+        this.exitB = new StartEndDetector(id + ".exitB", laneB, positionB, exitPosition, detectorType);
         // Set up detection of GTUs that enter or leave the detector laterally or appear due to a generator or disappear due to
         // a sink
         this.lanes.add(laneA);
@@ -482,14 +481,13 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
          * @param lane the lane of the new StartEndDetector
          * @param longitudinalPosition the longitudinal position of the new StartEndDetector
          * @param positionType the position on the GTUs that triggers the new StartEndDetector
-         * @param simulator the simulator engine
          * @param detectorType detector type.
          * @throws NetworkException when the network is inconsistent
          */
         public StartEndDetector(final String id, final Lane lane, final Length longitudinalPosition, final Type positionType,
-                final OtsSimulatorInterface simulator, final DetectorType detectorType) throws NetworkException
+                final DetectorType detectorType) throws NetworkException
         {
-            super(id, lane, longitudinalPosition, positionType, simulator, detectorType);
+            super(id, lane, longitudinalPosition, positionType, detectorType);
         }
 
         /** {@inheritDoc} */

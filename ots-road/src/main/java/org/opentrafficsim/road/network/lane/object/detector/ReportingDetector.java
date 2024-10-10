@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.network.lane.object.detector;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -29,15 +28,13 @@ public class ReportingDetector extends LaneDetector
      * @param triggerPosition RelativePosition.TYPE; the relative position type (e.g., FRONT, BACK) of the vehicle that triggers
      *            the detector
      * @param id the id of the new ReportingDetector
-     * @param simulator the simulator to enable animation
      * @param detectorType detector type.
      * @throws NetworkException when the position on the lane is out of bounds w.r.t. the center line of the lane
      */
     public ReportingDetector(final String id, final Lane lane, final Length position,
-            final RelativePosition.Type triggerPosition, final OtsSimulatorInterface simulator, final DetectorType detectorType)
-            throws NetworkException
+            final RelativePosition.Type triggerPosition, final DetectorType detectorType) throws NetworkException
     {
-        super(id, lane, position, triggerPosition, simulator, detectorType);
+        super(id, lane, position, triggerPosition, detectorType);
     }
 
     /** {@inheritDoc} */

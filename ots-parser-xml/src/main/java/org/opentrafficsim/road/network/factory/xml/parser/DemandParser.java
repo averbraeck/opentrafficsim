@@ -631,13 +631,12 @@ public final class DemandParser
      * Parse the Sinks.
      * @param otsNetwork the network to insert the parsed objects in
      * @param demand the Network tag
-     * @param simulator the simulator
      * @param definitions type definitions.
      * @param eval expression evaluator.
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
      */
-    public static void parseSinks(final RoadNetwork otsNetwork, final Demand demand, final OtsSimulatorInterface simulator,
-            final Definitions definitions, final Eval eval) throws NetworkException
+    public static void parseSinks(final RoadNetwork otsNetwork, final Demand demand, final Definitions definitions,
+            final Eval eval) throws NetworkException
     {
         for (Sink sinkTag : demand.getSink())
         {
@@ -647,11 +646,11 @@ public final class DemandParser
             DetectorType detectorType = definitions.get(DetectorType.class, sinkTag.getType().get(eval));
             if (sinkTag.getDestination().get(eval))
             {
-                new SinkDetector(lane, position, simulator, detectorType, SinkDetector.DESTINATION);
+                new SinkDetector(lane, position, detectorType, SinkDetector.DESTINATION);
             }
             else
             {
-                new SinkDetector(lane, position, simulator, detectorType);
+                new SinkDetector(lane, position, detectorType);
             }
         }
     }

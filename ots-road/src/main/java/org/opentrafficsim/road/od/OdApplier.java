@@ -49,6 +49,7 @@ import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
 import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
+import org.pmw.tinylog.Logger;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -137,7 +138,7 @@ public final class OdApplier
         // TODO sinks? white extension links?
         for (Node destination : od.getDestinations())
         {
-            createSensorsAtDestination(destination, simulator, detectorType);
+            createSensorsAtDestination(destination, detectorType);
         }
 
         // TODO clean up stream acquiring code after task OTS-315 has been completed
@@ -490,21 +491,19 @@ public final class OdApplier
     /**
      * Create destination sensors at all lanes connected to a destination node. This method considers connectors too.
      * @param destination destination node
-     * @param simulator simulator
      * @param detectorType detector type.
      */
-    private static void createSensorsAtDestination(final Node destination, final OtsSimulatorInterface simulator,
-            final DetectorType detectorType)
+    private static void createSensorsAtDestination(final Node destination, final DetectorType detectorType)
     {
         for (Link link : destination.getLinks())
         {
             if (link.isConnector() && !link.getStartNode().equals(destination))
             {
-                createSensorsAtDestinationNode(link.getStartNode(), simulator, detectorType);
+                createSensorsAtDestinationNode(link.getStartNode(), detectorType);
             }
             else
             {
-                createSensorsAtDestinationNode(destination, simulator, detectorType);
+                createSensorsAtDestinationNode(destination, detectorType);
             }
         }
     }
@@ -512,11 +511,9 @@ public final class OdApplier
     /**
      * Create sensors at all lanes connected to this node. This method does not handle connectors.
      * @param destination the destination node
-     * @param simulator simulator
      * @param detectorType detector type.
      */
-    private static void createSensorsAtDestinationNode(final Node destination, final OtsSimulatorInterface simulator,
-            final DetectorType detectorType)
+    private static void createSensorsAtDestinationNode(final Node destination, final DetectorType detectorType)
     {
         for (Link link : destination.getLinks())
         {
@@ -537,13 +534,13 @@ public final class OdApplier
                         }
                         if (!destinationDetectorExists)
                         {
-                            new SinkDetector(lane, lane.getLength(), simulator, detectorType, SinkDetector.DESTINATION);
+                            new SinkDetector(lane, lane.getLength(), detectorType, SinkDetector.DESTINATION);
                         }
                     }
                     catch (NetworkException exception)
                     {
                         // can not happen, we use Length.ZERO and lane.getLength()
-                        simulator.getLogger().always().error(exception);
+                        destination.getNetwork().getSimulator().getLogger().always().error(exception);
                         throw new RuntimeException(exception);
                     }
                 }

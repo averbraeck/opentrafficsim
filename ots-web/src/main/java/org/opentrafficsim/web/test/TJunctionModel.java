@@ -1,9 +1,6 @@
 package org.opentrafficsim.web.test;
 
 import java.net.URL;
-import java.rmi.RemoteException;
-
-import javax.naming.NamingException;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
@@ -12,8 +9,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -66,7 +61,7 @@ public class TJunctionModel extends AbstractOtsModel
 
             // add trafficlight after
             Lane lane = ((CrossSectionLink) this.network.getLink("ECE")).getLanes().get(0);
-            TrafficLight trafficLight = new TrafficLight("light", lane, new Length(50.0, LengthUnit.SI), this.simulator);
+            TrafficLight trafficLight = new TrafficLight("light", lane, new Length(50.0, LengthUnit.SI));
             trafficLight.setTrafficLightColor(TrafficLightColor.RED);
             changePhase(trafficLight);
 

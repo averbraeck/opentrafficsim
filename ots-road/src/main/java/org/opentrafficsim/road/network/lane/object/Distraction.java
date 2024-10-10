@@ -2,7 +2,6 @@ package org.opentrafficsim.road.network.lane.object;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -29,12 +28,11 @@ public class Distraction extends AbstractLaneBasedObject
      * @param id id
      * @param lane lane
      * @param longitudinalPosition longitudinal position
-     * @param simulator simulator
      * @param profile distraction profile
      * @throws NetworkException on network exception
      */
-    public Distraction(final String id, final Lane lane, final Length longitudinalPosition,
-            final OtsSimulatorInterface simulator, final DistractionProfile profile) throws NetworkException
+    public Distraction(final String id, final Lane lane, final Length longitudinalPosition, final DistractionProfile profile)
+            throws NetworkException
     {
         super(id, lane, longitudinalPosition, LaneBasedObject.makeLine(lane, longitudinalPosition), Length.ZERO);
         this.profile = profile;

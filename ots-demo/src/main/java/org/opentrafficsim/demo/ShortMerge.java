@@ -445,7 +445,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             makeGenerator(getLane(linkF, "FORWARD1"), speedF, "gen4", idGenerator, gtuType1LaneF, headwaysF, colorer,
                     roomChecker, bcFactory, tacticalFactory, SIMTIME, streams.get("gtuClass"));
 
-            new SpeedSign("sign1", getLane(linkA, "FORWARD1"), Length.instantiateSI(10), this.getSimulator(),
+            new SpeedSign("sign1", getLane(linkA, "FORWARD1"), Length.instantiateSI(10),
                     new Speed(130.0, SpeedUnit.KM_PER_HOUR), DefaultsNl.VEHICLE, Duration.ZERO,
                     new Duration(24, DurationUnit.HOUR));
 

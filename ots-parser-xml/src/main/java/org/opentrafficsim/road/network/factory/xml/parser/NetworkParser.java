@@ -333,7 +333,6 @@ public final class NetworkParser
      * @param otsNetwork the network to insert the parsed objects in
      * @param definitions parsed definitions.
      * @param network the Network tag
-     * @param simulator the simulator
      * @param roadLayoutMap the map of the tags of the predefined RoadLayout tags in Definitions
      * @param linkTypeSpeedLimitMap map of speed limits per link type
      * @param designLines design lines per link id.
@@ -346,9 +345,8 @@ public final class NetworkParser
      * @throws GtuException when construction of the Strategical Planner failed
      */
     static void applyRoadLayout(final RoadNetwork otsNetwork, final Definitions definitions, final Network network,
-            final OtsSimulatorInterface simulator, final Map<String, RoadLayout> roadLayoutMap,
-            final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap, final Map<String, ContinuousLine> designLines,
-            final Map<String, Flattener> flatteners, final Eval eval)
+            final Map<String, RoadLayout> roadLayoutMap, final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap,
+            final Map<String, ContinuousLine> designLines, final Map<String, Flattener> flatteners, final Eval eval)
             throws NetworkException, OtsGeometryException, XmlParserException, SimRuntimeException, GtuException
     {
         for (Link xmlLink : network.getLink())
@@ -471,7 +469,7 @@ public final class NetworkParser
                         laneId);
                 Lane lane = lanes.get(laneId);
                 Length position = ParseUtil.parseLengthBeginEnd(trafficLight.getPosition().get(eval), lane.getLength());
-                TrafficLight obj = new TrafficLight(trafficLight.getId(), lane, position, simulator);
+                TrafficLight obj = new TrafficLight(trafficLight.getId(), lane, position);
                 for (StringType nodeId : trafficLight.getTurnOnRed())
                 {
                     obj.addTurnOnRed(otsNetwork.getNode(nodeId.get(eval)));

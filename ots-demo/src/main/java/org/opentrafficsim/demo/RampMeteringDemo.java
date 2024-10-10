@@ -110,6 +110,7 @@ import org.opentrafficsim.road.network.control.rampmetering.RampMeteringSwitch;
 import org.opentrafficsim.road.network.control.rampmetering.RwsSwitch;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
+import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.Type;
@@ -301,14 +302,14 @@ public class RampMeteringDemo extends AbstractSimulationScript
         Duration agg = Duration.instantiateSI(60.0);
         // TODO: detector length affects occupancy, which length to use?
         Length detectorLength = Length.ZERO;
-        LoopDetector det1 = new LoopDetector("1", lanesAB.get(0), Length.instantiateSI(2900), detectorLength,
-                DefaultsRoadNl.LOOP_DETECTOR, sim, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
-        LoopDetector det2 = new LoopDetector("2", lanesAB.get(1), Length.instantiateSI(2900), detectorLength,
-                DefaultsRoadNl.LOOP_DETECTOR, sim, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
-        LoopDetector det3 = new LoopDetector("3", lanesCD.get(0), Length.instantiateSI(100), detectorLength,
-                DefaultsRoadNl.LOOP_DETECTOR, sim, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
-        LoopDetector det4 = new LoopDetector("4", lanesCD.get(1), Length.instantiateSI(100), detectorLength,
-                DefaultsRoadNl.LOOP_DETECTOR, sim, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+        LoopDetector det1 = new LoopDetector("1", new LanePosition(lanesAB.get(0), Length.instantiateSI(2900)), detectorLength,
+                DefaultsRoadNl.LOOP_DETECTOR, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+        LoopDetector det2 = new LoopDetector("2", new LanePosition(lanesAB.get(1), Length.instantiateSI(2900)), detectorLength,
+                DefaultsRoadNl.LOOP_DETECTOR, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+        LoopDetector det3 = new LoopDetector("3", new LanePosition(lanesCD.get(0), Length.instantiateSI(100)), detectorLength,
+                DefaultsRoadNl.LOOP_DETECTOR, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+        LoopDetector det4 = new LoopDetector("4", new LanePosition(lanesCD.get(1), Length.instantiateSI(100)), detectorLength,
+                DefaultsRoadNl.LOOP_DETECTOR, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
         List<LoopDetector> detectors12 = new ArrayList<>();
         detectors12.add(det1);
         detectors12.add(det2);
@@ -318,7 +319,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
         if (this.rampMetering)
         {
             // traffic light
-            TrafficLight light = new TrafficLight("light", lanesEF.get(0), lanesEF.get(0).getLength(), sim);
+            TrafficLight light = new TrafficLight("light", lanesEF.get(0), lanesEF.get(0).getLength());
             List<TrafficLight> lightList = new ArrayList<>();
             lightList.add(light);
             // ramp metering

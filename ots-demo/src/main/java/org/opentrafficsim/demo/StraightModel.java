@@ -141,7 +141,7 @@ public class StraightModel extends AbstractOtsModel implements UNITS
             Lane sinkLane = LaneGeometryUtil.createStraightLane(endLink, "sinkLane", this.lane.getLateralCenterPosition(1.0),
                     this.lane.getLateralCenterPosition(1.0), this.lane.getWidth(1.0), this.lane.getWidth(1.0), laneType,
                     Map.of(DefaultsNl.VEHICLE, this.speedLimit));
-            new SinkDetector(sinkLane, new Length(10.0, METER), this.simulator, DefaultsRoadNl.ROAD_USERS);
+            new SinkDetector(sinkLane, new Length(10.0, METER), DefaultsRoadNl.ROAD_USERS);
             this.path.add(sinkLane);
 
             this.carProbability = (double) getInputParameter("generic.carProbability");
@@ -182,8 +182,8 @@ public class StraightModel extends AbstractOtsModel implements UNITS
                     roomChecker, idGenerator);
             // End generation
 
-            this.block = new TrafficLight(this.lane.getId() + "_TL", this.lane,
-                    new Length(new Length(4000.0, LengthUnit.METER)), this.simulator);
+            this.block =
+                    new TrafficLight(this.lane.getId() + "_TL", this.lane, new Length(new Length(4000.0, LengthUnit.METER)));
             this.block.setTrafficLightColor(TrafficLightColor.GREEN);
             // Create a block at t = 5 minutes
             this.simulator.scheduleEventAbsTime(new Time(300, TimeUnit.BASE_SECOND), this, "createBlock", null);

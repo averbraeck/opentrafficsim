@@ -4,9 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -109,7 +107,7 @@ public class TrafficLightDetectorTest implements EventListener
         // put a sink at halfway point of last lane
         Lane lastLane = result[lengths.length - 1];
         Length sinkPosition = new Length(lengths[lengths.length - 1] > 0 ? lastLane.getLength().si - 10 : 10, LengthUnit.METER);
-        new SinkDetector(lastLane, sinkPosition, simulator, DefaultsRoadNl.ROAD_USERS);
+        new SinkDetector(lastLane, sinkPosition, DefaultsRoadNl.ROAD_USERS);
         return result;
     }
 
@@ -187,7 +185,7 @@ public class TrafficLightDetectorTest implements EventListener
                     }
                 }
                 TrafficLightDetector tls = new TrafficLightDetector(sensorId, pA.lane(), pA.position(), pB.lane(),
-                        pB.position(), intermediateLanes, entryPosition, exitPosition, simulator, DefaultsRoadNl.TRAFFIC_LIGHT);
+                        pB.position(), intermediateLanes, entryPosition, exitPosition, DefaultsRoadNl.TRAFFIC_LIGHT);
                 assertEquals(sensorId, tls.getId(), "Id should match the provided id");
                 assertEquals(simulator, tls.getSimulator(), "Simulator should match");
                 assertEquals(entryPosition, tls.getPositionTypeEntry(), "Entry position");
