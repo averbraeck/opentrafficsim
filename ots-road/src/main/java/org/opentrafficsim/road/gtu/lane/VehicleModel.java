@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Mass;
+import org.djunits.value.vdouble.scalar.Speed;
 
 /**
  * Interface for vehicle models.
@@ -76,6 +77,23 @@ public interface VehicleModel
     default double getMomentOfInertiaAboutZ()
     {
         return 0;
+    }
+
+    /**
+     * Returns whether the braking lights are on. The default implementation returns {@code true} if the deceleration is larger
+     * than a speed-dependent threshold given by:<br>
+     * <br>
+     * c0 * g(v) + c1 + c3*v^2<br>
+     * <br>
+     * where c0 = 0.2, c1 = 0.15 and c3 = 0.00025 (with c2 = 0 implicit) are empirically derived averages, and g(v) is 0 below
+     * 25 km/h or 1 otherwise, representing that the engine is disengaged at low speeds.
+     * @param speed speed
+     * @param acceleration acceleration
+     * @return whether the braking lights are on
+     */
+    default boolean isBrakingLightsOn(final Speed speed, final Acceleration acceleration)
+    {
+        return acceleration.si < (speed.si < 6.944 ? 0.0 : -0.2) - 0.15 - 0.00025 * speed.si * speed.si;
     }
 
     /**

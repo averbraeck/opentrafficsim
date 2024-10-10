@@ -1671,13 +1671,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     }
 
     /**
-     * The default implementation returns {@code true} if the deceleration is larger than a speed-dependent threshold given
-     * by:<br>
-     * <br>
-     * c0 * g(v) + c1 + c3*v^2<br>
-     * <br>
-     * where c0 = 0.2, c1 = 0.15 and c3 = 0.00025 (with c2 = 0 implicit) are empirically derived averages, and g(v) is 0 below
-     * 25 km/h or 1 otherwise, representing that the engine is disengaged at low speeds.
+     * Returns whether the braking lights are on.
      * @return whether the braking lights are on
      */
     public boolean isBrakingLightsOn()
@@ -1686,21 +1680,13 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     }
 
     /**
-     * The default implementation returns {@code true} if the deceleration is larger than a speed-dependent threshold given
-     * by:<br>
-     * <br>
-     * c0 * g(v) + c1 + c3*v^2<br>
-     * <br>
-     * where c0 = 0.2, c1 = 0.15 and c3 = 0.00025 (with c2 = 0 implicit) are empirically derived averages, and g(v) is 0 below
-     * 25 km/h or 1 otherwise, representing that the engine is disengaged at low speeds.
+     * Returns whether the braking lights are on.
      * @param when time
      * @return whether the braking lights are on
      */
     public boolean isBrakingLightsOn(final Time when)
     {
-        double v = getSpeed(when).si;
-        double a = getAcceleration(when).si;
-        return a < (v < 6.944 ? 0.0 : -0.2) - 0.15 - 0.00025 * v * v;
+        return getVehicleModel().isBrakingLightsOn(getSpeed(when), getAcceleration(when));
     }
 
     /**
@@ -1755,7 +1741,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
      * acceleration, TurnIndicatorStatus turnIndicatorStatus, Length odometer, Link id of referenceLane, Lane id of
      * referenceLane, Length positionOnReferenceLane]
      */
-    public static EventType LANEBASED_MOVE_EVENT = new EventType("LANEBASEDGTU.MOVE", new MetaData("Lane based GTU moved",
+    public static final EventType LANEBASED_MOVE_EVENT = new EventType("LANEBASEDGTU.MOVE", new MetaData("Lane based GTU moved",
             "Lane based GTU moved",
             new ObjectDescriptor[] {new ObjectDescriptor("GTU id", "GTU id", String.class),
                     new ObjectDescriptor("Position", "Position", PositionVector.class),
@@ -1773,7 +1759,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
      * Payload: [String gtuId, PositionVector finalPosition, Direction finalDirection, Length finalOdometer, Link referenceLink,
      * Lane referenceLane, Length positionOnReferenceLane]
      */
-    public static EventType LANEBASED_DESTROY_EVENT = new EventType("LANEBASEDGTU.DESTROY", new MetaData(
+    public static final EventType LANEBASED_DESTROY_EVENT = new EventType("LANEBASEDGTU.DESTROY", new MetaData(
             "Lane based GTU destroyed", "Lane based GTU destroyed",
             new ObjectDescriptor[] {new ObjectDescriptor("GTU id", "GTU id", String.class),
                     new ObjectDescriptor("Position", "Position", PositionVector.class),
@@ -1789,7 +1775,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
      * if driving backward). <br>
      * Payload: [String gtuId, String link id, String lane id]
      */
-    public static EventType LANE_ENTER_EVENT = new EventType("LANE.ENTER",
+    public static final EventType LANE_ENTER_EVENT = new EventType("LANE.ENTER",
             new MetaData("Lane based GTU entered lane", "Front of lane based GTU entered lane",
                     new ObjectDescriptor[] {new ObjectDescriptor("GTU id", "GTU id", String.class),
                             new ObjectDescriptor("Link id", "Link id", String.class),
@@ -1800,7 +1786,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
      * driving backward). <br>
      * Payload: [String gtuId, String link id, String lane id]
      */
-    public static EventType LANE_EXIT_EVENT = new EventType("LANE.EXIT",
+    public static final EventType LANE_EXIT_EVENT = new EventType("LANE.EXIT",
             new MetaData("Lane based GTU exited lane", "Rear of lane based GTU exited lane",
                     new ObjectDescriptor[] {new ObjectDescriptor("GTU id", "GTU id", String.class),
                             new ObjectDescriptor("Link id", "Link id", String.class),
@@ -1810,7 +1796,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
      * The event type for pub/sub indicating that the GTU change lane. <br>
      * Payload: [String gtuId, LateralDirectionality direction, String fromLaneId, Length position]
      */
-    public static EventType LANE_CHANGE_EVENT = new EventType("LANE.CHANGE",
+    public static final EventType LANE_CHANGE_EVENT = new EventType("LANE.CHANGE",
             new MetaData("Lane based GTU changes lane", "Lane based GTU changes lane",
                     new ObjectDescriptor[] {new ObjectDescriptor("GTU id", "GTU id", String.class),
                             new ObjectDescriptor("Lateral direction of lane change", "Lateral direction of lane change",
