@@ -36,7 +36,7 @@ public class GtuDumper
             PrintWriter pw = new PrintWriter(new File(fileName));
             for (Gtu gtu : this.network.getGTUs())
             {
-                OrientedPoint2d dp = gtu.getOperationalPlan().getLocation(now);
+                OrientedPoint2d dp = gtu.getLocation();
                 pw.format("%s position %.3f,%.3f dir=%5.1f speed %s\n", gtu.toString(), dp.x, dp.y,
                         Math.toDegrees(dp.getDirZ()), gtu.getSpeed());
             }

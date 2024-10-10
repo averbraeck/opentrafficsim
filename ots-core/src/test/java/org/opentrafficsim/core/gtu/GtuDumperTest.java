@@ -17,9 +17,13 @@ import javax.naming.NamingException;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.base.AngleUtil;
+import org.djutils.draw.point.OrientedPoint2d;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.Mockito;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -76,8 +80,7 @@ public class GtuDumperTest implements OtsModelInterface
         this.simulator = new OtsSimulator("Simulator for testing GTUDumper class");
         this.network = new Network("Network for testing GTUDumper class", this.simulator);
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this);
-        // TODO this.simulator.scheduleEventAbsTime(new Time(40, TimeUnit.BASE_SECOND), this, "createGtuDeprecated", new
-        // Object[] {});
+        this.simulator.scheduleEventAbsTime(new Time(40.0, TimeUnit.BASE_SECOND), this, "createGtu", new Object[] {});
         this.simulator.start();
         while (this.simulator.isStartingOrRunning())
         {
@@ -105,16 +108,18 @@ public class GtuDumperTest implements OtsModelInterface
     /**
      * Create one GTU with a really simple path of movement.
      */
-    public void createGtuDeprecated()
+    public void createGtu()
     {
-        /*
-         * Gtu gtu = new Gtu() {
-         * @Override public DirectedPoint getLocation() { // This GTU travels a circle around 100, 20, elevation 10, radius 20,
-         * angular velocity 0.1 radial / second double timeSI = GtuDumperTest.this.simulator.getSimulatorTime().si; double angle
-         * = timeSI / 10; return new DirectedPoint(100 + 20 * Math.cos(angle), 20 + 20 * Math.sin(angle), 10, 0, 0, angle +
-         * Math.PI / 2); } };
-         */
-        Gtu gtu = null;
+        Gtu gtu = Mockito.mock(Gtu.class);
+        Mockito.when(gtu.getLocation()).thenAnswer((invocationOnMock) ->
+        {
+            // This GTU travels a circle around 100, 20, elevation 0, radius 20, angular velocity 0.1 radial / second
+            double timeSI = GtuDumperTest.this.simulator.getSimulatorTime().si;
+            double angle = AngleUtil.normalizeAroundPi(timeSI / 10.0);
+            return new OrientedPoint2d(100.0 + 20.0 * Math.cos(angle), 20.0 + 20.0 * Math.sin(angle), angle);
+        });
+        Mockito.when(gtu.getSpeed()).thenReturn(Speed.instantiateSI(2.0));
+        Mockito.when(gtu.toString()).thenReturn("test GTU");
         this.network.addGTU(gtu);
     }
 
