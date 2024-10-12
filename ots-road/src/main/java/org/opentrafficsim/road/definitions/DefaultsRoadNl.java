@@ -3,6 +3,8 @@ package org.opentrafficsim.road.definitions;
 import java.util.Locale;
 
 import org.opentrafficsim.core.definitions.DefaultsNl;
+import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
+import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
 
@@ -81,6 +83,18 @@ public class DefaultsRoadNl extends DefaultsRoad
         MOPED_PATH.addCompatibleGtuType(DefaultsNl.BICYCLE);
         BICYCLE_PATH.addIncompatibleGtuType(DefaultsNl.MOPED);
         FOOTPATH.addCompatibleGtuType(DefaultsNl.PEDESTRIAN);
+    }
+
+    /***************************************************************************************/
+    /************************************** LANE BIAS **************************************/
+    /***************************************************************************************/
+
+    public static final LaneBiases LANE_BIAS_CAR_TRUCK = new LaneBiases();
+
+    static
+    {
+        LANE_BIAS_CAR_TRUCK.addBias(DefaultsNl.CAR, LaneBias.WEAK_LEFT);
+        LANE_BIAS_CAR_TRUCK.addBias(DefaultsNl.TRUCK, LaneBias.TRUCK_RIGHT);
     }
 
     /***************************************************************************************/
