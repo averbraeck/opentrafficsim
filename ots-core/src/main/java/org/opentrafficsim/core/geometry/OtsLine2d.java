@@ -38,7 +38,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
     /** The cumulative length of the line at point 'i'. */
     private double[] lengthIndexedLine = null;
 
-    /** The cached length; will be calculated at time of construction. */
+    /** The cached typed length; will be calculated at time of construction. */
     private Length length;
 
     // Fractional projection
@@ -96,12 +96,11 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
     /**
      * Construct a new OtsLine2d from a List&lt;OtsPoint3d&gt;.
      * @param pointList the list of points to construct this OtsLine2d from.
-     * @throws OtsGeometryException when the provided points do not constitute a valid line (too few points or identical
-     *             adjacent points)
      */
-    public OtsLine2d(final List<Point2d> pointList) throws OtsGeometryException
+    public OtsLine2d(final List<Point2d> pointList)
     {
-        this(pointList.toArray(new Point2d[pointList.size()]));
+        super(pointList);
+        init();
     }
 
     /**
@@ -149,7 +148,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
     @Override
     public final OtsLine2d offsetLine(final double offsetAtStart, final double offsetAtEnd)
     {
-        return new OtsLine2d(super.offsetLine(offsetAtStart, offsetAtEnd));
+        return new OtsLine2d(super.offsetLine(offsetAtStart, offsetAtEnd).getPointList());
     }
 
     /**
