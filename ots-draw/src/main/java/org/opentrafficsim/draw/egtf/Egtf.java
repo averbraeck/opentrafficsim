@@ -537,7 +537,7 @@ public class Egtf
      * @param quantities quantities to calculate filtered data of
      * @return filtered data, {@code null} when interrupted
      */
-    @SuppressWarnings({"synthetic-access", "methodlength"})
+    @SuppressWarnings("methodlength")
     public Filter filterSI(final double[] location, final double[] time, final Quantity<?, ?>... quantities)
     {
         Objects.requireNonNull(location, "Location may not be null.");
@@ -1063,7 +1063,7 @@ public class Egtf
     /**
      * Small class to build up a weighted mean under the congestion and free flow assumption.
      */
-    private class DualWeightedMean
+    private final class DualWeightedMean
     {
         /** Cumulative congestion numerator of weighted mean fraction, i.e. weighted sum. */
         private double numeratorCong;
@@ -1148,7 +1148,7 @@ public class Egtf
     /**
      * Small class to build up a weighted mean.
      */
-    private class WeightedMean
+    private final class WeightedMean
     {
         /** Cumulative numerator of weighted mean fraction, i.e. weighted sum. */
         private double numerator;
