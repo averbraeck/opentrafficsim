@@ -30,6 +30,8 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
+import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
+import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -264,6 +266,7 @@ public class LaneChange implements Serializable
         fromLanes.add(fromLane);
         toLanes.add(fromLane.getAdjacentLane(this.laneChangeDirectionality, gtu.getType()));
         double endPosFrom = from.position().si + fromDist;
+        boolean sink = false;
         while (endPosFrom + gtu.getFront().dx().si > fromLane.getLength().si)
         {
             Lane nextFromLane;
@@ -291,11 +294,24 @@ public class LaneChange implements Serializable
             }
             if (nextFromLane == null)
             {
+                for (LaneDetector detector : fromLane.getDetectors(fromLane.getLength(), fromLane.getLength(), gtu.getType()))
+                {
+                    if (detector instanceof SinkDetector)
+                    {
+                        sink = true;
+                    }
+                }
+            }
+            if (nextFromLane == null)
+            {
                 // there are no lanes to move on, restrict lane change length/duration (given fixed mean speed)
-                double endFromPosLimit = fromLane.getLength().si - gtu.getFront().dx().si;
-                double f = 1.0 - (endPosFrom - endFromPosLimit) / fromDist;
-                laneChangeDuration *= f;
-                endPosFrom = endFromPosLimit;
+                if (!sink)
+                {
+                    double endFromPosLimit = fromLane.getLength().si - gtu.getFront().dx().si;
+                    double f = 1.0 - (endPosFrom - endFromPosLimit) / fromDist;
+                    laneChangeDuration *= f;
+                    endPosFrom = endFromPosLimit;
+                }
                 break;
             }
             endPosFrom -= fromLane.getLength().si;
@@ -303,10 +319,13 @@ public class LaneChange implements Serializable
             if (nextToLane == null)
             {
                 // there are no lanes to change to, restrict lane change length/duration (given fixed mean speed)
-                double endFromPosLimit = fromLane.getLength().si - gtu.getFront().dx().si;
-                double f = 1.0 - (endPosFrom - endFromPosLimit) / fromDist;
-                laneChangeDuration *= f;
-                endPosFrom = endFromPosLimit;
+                if (!sink)
+                {
+                    double endFromPosLimit = fromLane.getLength().si - gtu.getFront().dx().si;
+                    double f = 1.0 - (endPosFrom - endFromPosLimit) / fromDist;
+                    laneChangeDuration *= f;
+                    endPosFrom = endFromPosLimit;
+                }
                 break;
             }
             fromLane = nextFromLane;
@@ -323,6 +342,7 @@ public class LaneChange implements Serializable
         }
         // finally, get location at the final lane available
         double endFractionalPositionFrom = fromLane.fractionAtCoveredDistance(Length.instantiateSI(endPosFrom));
+        endFractionalPositionFrom = Math.min(endFractionalPositionFrom, 1.0);
 
         LanePosition fromAdjusted = from;
         while (fromAdjusted.position().gt(fromAdjusted.lane().getLength()))
@@ -398,12 +418,21 @@ public class LaneChange implements Serializable
                 // add further lanes
                 while (toLane != null && requiredLength > 0.0)
                 {
+                    Lane prevToLane = toLane;
                     toLane = gtu.getNextLaneForRoute(toLane);
                     if (toLane != null) // let's hope we will move on to a sink
                     {
                         OtsLine2d remainder = toLane.getCenterLine();
                         path = OtsLine2d.concatenate(Lane.MARGIN.si, path, remainder);
                         requiredLength = planDistance.si - path.getLength() + Lane.MARGIN.si;
+                    }
+                    else if (sink)
+                    {
+                        // just add some line distance
+                        Point2d extra = prevToLane.getCenterLine().getLocationExtendedSI(prevToLane.getLength().si + 100);
+                        List<Point2d> points = path.getPointList();
+                        points.add(extra);
+                        path = new OtsLine2d(points);
                     }
                 }
                 // filter near-duplicate point which results in projection exceptions
