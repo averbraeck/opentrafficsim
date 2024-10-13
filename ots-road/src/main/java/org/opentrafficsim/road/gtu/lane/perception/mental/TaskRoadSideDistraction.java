@@ -47,7 +47,7 @@ public class TaskRoadSideDistraction extends AbstractTask
         for (RelativeLane lane : perception.getLaneStructure().getRootCrossSection())
         {
             for (Entry<Distraction> distraction : perception.getLaneStructure().getDownstreamObjects(lane, Distraction.class,
-                    RelativePosition.DRIVER, false))
+                    RelativePosition.FRONT, false))
             {
                 this.odos.put(distraction.object(), odo + distraction.distance().si);
             }

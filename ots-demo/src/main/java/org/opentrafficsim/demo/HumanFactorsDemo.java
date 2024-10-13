@@ -85,6 +85,7 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.BehavioralAdapt
 import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
 import org.opentrafficsim.road.gtu.lane.perception.mental.TaskCarFollowing;
 import org.opentrafficsim.road.gtu.lane.perception.mental.TaskManager;
+import org.opentrafficsim.road.gtu.lane.perception.mental.TaskRoadSideDistraction;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdmFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
@@ -112,6 +113,8 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
+import org.opentrafficsim.road.network.lane.object.Distraction;
+import org.opentrafficsim.road.network.lane.object.Distraction.TrapezoidProfile;
 import org.opentrafficsim.road.od.Categorization;
 import org.opentrafficsim.road.od.Category;
 import org.opentrafficsim.road.od.Interpolation;
@@ -131,7 +134,7 @@ import nl.tudelft.simulation.language.DsolException;
  * This demo exists to show how the human factor models can be used in code. In particular see the
  * {@code HumanFactorsModel.constructModel()} method. The included human factors are 1) social interactions regarding lane
  * changes, tailgating and changes in speed, and 2) Anticipation Reliance in a mental task load framework of imperfect
- * perception.
+ * perception. The scenario includes a distraction halfway on the network.
  * <p>
  * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -314,6 +317,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
                     Set<Task> tasks = new LinkedHashSet<>();
                     tasks.add(new TaskCarFollowing());
                     tasks.add(new LaneChangeTask());
+                    tasks.add(new TaskRoadSideDistraction()); // Level of distraction is defined in Distraction network object
                     // Behavioral adaptations (AdaptationSituationalAwareness only sets situational awareness and reaction time)
                     Set<BehavioralAdaptation> behavioralAdapatations = new LinkedHashSet<>();
                     behavioralAdapatations.add(new AdaptationSituationalAwareness());
@@ -399,8 +403,8 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
 
             slice = new CrossSectionSlice(Length.instantiateSI(0.0), Length.instantiateSI(1.75), Length.instantiateSI(3.5));
             offset = centerLine.offsetLine(slice.getOffset().si);
-            new Lane(link, "LEFT", offset, getContour(offset, slice.getWidth().si), List.of(slice), DefaultsRoadNl.HIGHWAY,
-                    speedLimit);
+            Lane left = new Lane(link, "LEFT", offset, getContour(offset, slice.getWidth().si), List.of(slice),
+                    DefaultsRoadNl.HIGHWAY, speedLimit);
 
             slice = new CrossSectionSlice(Length.instantiateSI(0.0), Length.instantiateSI(0.0), Length.instantiateSI(0.2));
             offset = centerLine.offsetLine(slice.getOffset().si);
@@ -408,12 +412,18 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
 
             slice = new CrossSectionSlice(Length.instantiateSI(0.0), Length.instantiateSI(-1.75), Length.instantiateSI(3.5));
             offset = centerLine.offsetLine(slice.getOffset().si);
-            new Lane(link, "RIGHT", offset, getContour(offset, slice.getWidth().si), List.of(slice), DefaultsRoadNl.HIGHWAY,
-                    speedLimit);
+            Lane right = new Lane(link, "RIGHT", offset, getContour(offset, slice.getWidth().si), List.of(slice),
+                    DefaultsRoadNl.HIGHWAY, speedLimit);
 
             slice = new CrossSectionSlice(Length.instantiateSI(0.0), Length.instantiateSI(-3.5), Length.instantiateSI(0.2));
             offset = centerLine.offsetLine(slice.getOffset().si);
             new Stripe(Stripe.Type.SOLID, link, offset, getContour(offset, slice.getWidth().si), List.of(slice));
+
+            // Add distraction halfway on the network, 0.3 on left lane, 0.2 on right lane, with distance profile
+            new Distraction("distractionLeft", left, Length.instantiateSI(1500.0), new TrapezoidProfile(0.3,
+                    Length.instantiateSI(-100.0), Length.instantiateSI(50.0), Length.instantiateSI(150.0)));
+            new Distraction("distractionRight", right, Length.instantiateSI(1500.0), new TrapezoidProfile(0.2,
+                    Length.instantiateSI(-100.0), Length.instantiateSI(50.0), Length.instantiateSI(150.0)));
         }
 
         /**
@@ -445,7 +455,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             destinations.add(nodeB);
             OdMatrix od = new OdMatrix("OD", origins, destinations, categorization,
                     new TimeVector(new double[] {0.0, 1800.0, 3600.0}), Interpolation.LINEAR);
-            FrequencyVector demand = new FrequencyVector(new double[] {2000.0, 3000.0, 1000.0}, FrequencyUnit.PER_HOUR);
+            FrequencyVector demand = new FrequencyVector(new double[] {2000.0, 4000.0, 1000.0}, FrequencyUnit.PER_HOUR);
             double truckFraction = 0.1;
             od.putDemandVector(nodeA, nodeB, new Category(categorization, DefaultsNl.CAR), demand, 1.0 - truckFraction);
             od.putDemandVector(nodeA, nodeB, new Category(categorization, DefaultsNl.TRUCK), demand, truckFraction);
