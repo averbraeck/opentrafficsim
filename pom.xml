@@ -86,7 +86,7 @@
     <maven-jaxb2.version>0.15.3</maven-jaxb2.version>
     <maven-replacer.version>1.5.3</maven-replacer.version>
     <maven-jaxb2-basics.version>1.11.1</maven-jaxb2-basics.version>
-    <jetty.version>9.4.56.v20240826</jetty.version>
+    <jetty.version>11.0.24</jetty.version>
   </properties>
 
 

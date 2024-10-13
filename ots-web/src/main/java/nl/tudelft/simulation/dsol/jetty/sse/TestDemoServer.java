@@ -7,10 +7,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
@@ -39,6 +35,9 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.web.test.CircularRoadModel;
 import org.opentrafficsim.web.test.TJunctionModel;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterBoolean;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDistContinuousSelection;
@@ -137,7 +136,7 @@ public class TestDemoServer
 
         /** {@inheritDoc} */
         @Override
-        public Resource getResource(final String path)
+        public Resource getResource(final String path) throws IOException
         {
             System.out.println(path);
             return super.getResource(path);
