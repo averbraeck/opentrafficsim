@@ -62,7 +62,7 @@ public class TaskLaneChanging extends TaskHeadwayBased
         {
             lane = RelativeLane.RIGHT;
         }
-        if (neighbors.isGtuAlongside(lane.getLateralDirectionality()))
+        if (perception.getLaneStructure().exists(lane) && neighbors.isGtuAlongside(lane.getLateralDirectionality()))
         {
             return Duration.ZERO;
         }

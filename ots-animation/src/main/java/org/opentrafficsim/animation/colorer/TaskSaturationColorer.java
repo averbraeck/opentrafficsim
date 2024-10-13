@@ -69,9 +69,9 @@ public class TaskSaturationColorer implements GtuColorer
         double mid = tsCrit + range;
         if (ts < mid)
         {
-            return ColorInterpolator.interpolateColor(SUBCRIT, MID, (ts - tsCrit) / range);
+            return ColorInterpolator.interpolateColor(SUBCRIT, MID, Math.max(0.0, Math.min(1.0, (ts - tsCrit) / range)));
         }
-        return ColorInterpolator.interpolateColor(MAX, MID, (tsMax - ts) / range);
+        return ColorInterpolator.interpolateColor(MAX, MID, Math.max(0.0, Math.min(1.0, (tsMax - ts) / range)));
     }
 
     /** {@inheritDoc} */

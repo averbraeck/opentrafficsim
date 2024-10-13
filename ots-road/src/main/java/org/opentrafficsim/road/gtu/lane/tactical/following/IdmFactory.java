@@ -21,7 +21,7 @@ public class IdmFactory extends AbstractIdmFactory<Idm>
      */
     public IdmFactory(final StreamInterface randomStream)
     {
-        super(new Idm(), randomStream);
+        super(() -> new Idm(), randomStream);
     }
 
     /** {@inheritDoc} */

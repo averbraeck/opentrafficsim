@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
+import java.util.function.Supplier;
+
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.Parameters;
@@ -23,17 +25,17 @@ public class AbstractIdmFactory<T extends AbstractIdm> implements CarFollowingMo
 {
 
     /** Single instance as it is state-less. */
-    private final T idm;
+    private final Supplier<T> idm;
 
     /** Distribution for fSpeed parameter. */
     private final DistContinuous fSpeed;
 
     /**
-     * Sets the idm model, which should be state-less.
-     * @param idm idm model, which should be state-less
+     * Sets the idm model.
+     * @param idm idm model supplier
      * @param randomStream random number stream
      */
-    public AbstractIdmFactory(final T idm, final StreamInterface randomStream)
+    public AbstractIdmFactory(final Supplier<T> idm, final StreamInterface randomStream)
     {
         this.idm = idm;
         this.fSpeed = new DistNormal(randomStream, 123.7 / 120.0, 0.1);
@@ -43,7 +45,7 @@ public class AbstractIdmFactory<T extends AbstractIdm> implements CarFollowingMo
     @Override
     public final T generateCarFollowingModel()
     {
-        return this.idm;
+        return this.idm.get();
     }
 
     /** {@inheritDoc} */
