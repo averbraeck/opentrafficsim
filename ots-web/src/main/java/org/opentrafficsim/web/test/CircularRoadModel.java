@@ -1,24 +1,27 @@
 package org.opentrafficsim.web.test;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 import org.djunits.unit.DirectionUnit;
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.draw.point.Point2d;
+import org.djutils.traceverifier.TraceVerifier;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -39,6 +42,7 @@ import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterBoolean;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDouble;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDoubleScalar;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterException;
@@ -130,6 +134,8 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
             genericMap.add(new InputParameterDouble("densityVariability", "Density variability",
                     "Variability of the denisty: variability * (headway - 20) meters", 0.0, 0.0, 1.0, true, true, "%.00f",
                     3.0));
+            genericMap.add(new InputParameterBoolean("gradualLaneChange", "Gradual lane change",
+                    "Gradual lane change when true; instantaneous lane change when false", true, 4.0));
         }
         catch (InputParameterException exception)
         {
@@ -146,13 +152,41 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
         return this.paths.get(index);
     }
 
+    /**
+     * Sample the state of the simulation.
+     * @param tv sampler or verifier of the state
+     */
+    public void sample(final TraceVerifier tv)
+    {
+        try
+        {
+            StringBuilder state = new StringBuilder();
+            for (Gtu gtu : this.network.getGTUs())
+            {
+                LaneBasedGtu lbg = (LaneBasedGtu) gtu;
+                state.append(String.format("%s: %130.130s ", lbg.getId(), lbg.getLocation().toString()));
+            }
+
+            tv.sample(this.simulator.getSimulatorTime().toString(), state.toString());
+            this.simulator.scheduleEventRel(new Duration(1, DurationUnit.SECOND), this, "sample", new Object[] {tv});
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
     /** {@inheritDoc} */
     @Override
     public void constructModel() throws SimRuntimeException
     {
-        System.out.println("MODEL CONSTRUCTED");
         try
         {
+            // TraceVerifier tv = new TraceVerifier("C:/Temp/circularRoadTrace.txt");
+            // this.simulator.scheduleEventRel(new Duration(1, DurationUnit.SECOND), this, this, "sample", new Object[] { tv });
+            // TraceVerifier tv = new TraceVerifier("C:/Temp/circularRoadTraceEndState.txt");
+            // this.simulator.scheduleEventRel(new Duration(3599.99, DurationUnit.SECOND), this, this, "sample",
+            // new Object[] { tv });
             final int laneCount = 2;
             for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
             {
@@ -176,12 +210,12 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
             LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
             Node start = new Node(this.network, "Start", new Point2d(radius, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
             Node halfway =
-                    new Node(this.network, "Halfway", new Point2d(-radius, 0), new Direction(-90, DirectionUnit.EAST_DEGREE));
+                    new Node(this.network, "Halfway", new Point2d(-radius, 0), new Direction(270, DirectionUnit.EAST_DEGREE));
 
             Point2d[] coordsHalf1 = new Point2d[127];
             for (int i = 0; i < coordsHalf1.length; i++)
             {
-                double angle = Math.PI * (1 + i) / (1 + coordsHalf1.length);
+                double angle = Math.PI * i / (coordsHalf1.length - 1);
                 coordsHalf1[i] = new Point2d(radius * Math.cos(angle), radius * Math.sin(angle));
             }
             Lane[] lanes1 = LaneFactory.makeMultiLane(this.network, "FirstHalf", start, halfway, coordsHalf1, laneCount,
@@ -189,7 +223,7 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
             Point2d[] coordsHalf2 = new Point2d[127];
             for (int i = 0; i < coordsHalf2.length; i++)
             {
-                double angle = Math.PI + Math.PI * (1 + i) / (1 + coordsHalf2.length);
+                double angle = Math.PI + Math.PI * i / (coordsHalf2.length - 1);
                 coordsHalf2[i] = new Point2d(radius * Math.cos(angle), radius * Math.sin(angle));
             }
             Lane[] lanes2 = LaneFactory.makeMultiLane(this.network, "SecondHalf", halfway, start, coordsHalf2, laneCount,
@@ -234,9 +268,10 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
      * @throws NetworkException on network inconsistency
      * @throws GtuException when something goes wrong during construction of the car
      * @throws OtsGeometryException when the initial position is outside the center line of the lane
+     * @throws InputParameterException when generic.gradualLaneChange is not set
      */
     protected final void generateGTU(final Length initialPosition, final Lane lane, final GtuType gtuType)
-            throws GtuException, NetworkException, SimRuntimeException, OtsGeometryException
+            throws GtuException, NetworkException, SimRuntimeException, OtsGeometryException, InputParameterException
     {
         // GTU itself
         boolean generateTruck = this.stream.nextDouble() > this.carProbability;
@@ -245,6 +280,7 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
                 new Speed(200, KM_PER_HOUR), vehicleLength.times(0.5), this.network);
         gtu.setParameters(generateTruck ? this.parametersTruck : this.parametersCar);
         gtu.setNoLaneChangeDistance(Length.ZERO);
+        gtu.setInstantaneousLaneChange(!((boolean) getInputParameter("generic.gradualLaneChange")));
         gtu.setMaximumAcceleration(Acceleration.instantiateSI(3.0));
         gtu.setMaximumDeceleration(Acceleration.instantiateSI(-8.0));
 
