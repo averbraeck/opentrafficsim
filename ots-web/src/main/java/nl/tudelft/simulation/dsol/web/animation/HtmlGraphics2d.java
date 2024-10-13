@@ -621,7 +621,10 @@ public class HtmlGraphics2d extends Graphics2D
     @Override
     public void setRenderingHint(final Key hintKey, final Object hintValue)
     {
-        this.renderingHints.put(hintKey, hintValue);
+        if (hintValue != null)
+        {
+            this.renderingHints.put(hintKey, hintValue);
+        }
         CategoryLogger.filter(Cat.WEB).trace("HTMLGraphics2D.setRenderingHint()");
     }
 
