@@ -36,7 +36,7 @@ import org.opentrafficsim.core.gtu.Gtu;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
 public class Link extends LocalEventProducer
-        implements HierarchicallyTyped<LinkType, Link>, SpatialObject, OtsLocatable, Serializable, Identifiable
+        implements HierarchicallyTyped<LinkType, Link>, OtsLocatable, Serializable, Identifiable
 {
 
     /** */

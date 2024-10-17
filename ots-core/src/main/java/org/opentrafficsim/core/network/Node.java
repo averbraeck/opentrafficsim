@@ -34,7 +34,7 @@ import org.opentrafficsim.core.gtu.GtuType;
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
 public class Node
-        implements HierarchicallyTyped<NodeType, Node>, SpatialObject, OtsLocatable, Serializable, Identifiable
+        implements HierarchicallyTyped<NodeType, Node>, OtsLocatable, Serializable, Identifiable
 {
     /** */
     private static final long serialVersionUID = 20150722L;
