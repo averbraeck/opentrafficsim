@@ -119,50 +119,36 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
         {
             return out;
         }
-        for (LaneRecord root : getLaneStructure().getCrossSectionRecords(lane))
+        LaneRecord record = getLaneStructure().getRootRecord(lane);
+        Lane l = record.getLane();
+        if (laneLaw.equals(LaneAccessLaw.LEGAL) && l instanceof Shoulder)
         {
-            LaneRecord record = root;
-            while (record != null && !record.isOnRoute(route))
+            if (lane.isCurrent())
             {
-                Throw.when(record.getNext().size() > 1, IllegalStateException.class,
-                        "Requesting lane change info on relative lane that is found upstream of a merge, "
-                                + "but the record of which splits downstream.");
-                record = record.getNext().isEmpty() ? null : record.getNext().iterator().next();
-            }
-            if (record == null)
-            {
-                continue; // this lane was added in a lateral move, use the lane from which this move was used
-            }
-            Lane l = record.getLane();
-            if (laneLaw.equals(LaneAccessLaw.LEGAL) && l instanceof Shoulder)
-            {
-                if (lane.isCurrent())
+                for (LateralDirectionality lat : new LateralDirectionality[] {LateralDirectionality.LEFT,
+                        LateralDirectionality.RIGHT})
                 {
-                    for (LateralDirectionality lat : new LateralDirectionality[] {LateralDirectionality.LEFT,
-                            LateralDirectionality.RIGHT})
+                    if (!record.getLane().accessibleAdjacentLanesPhysical(lat, getGtu().getType()).isEmpty())
                     {
-                        if (!record.getLane().accessibleAdjacentLanesPhysical(lat, getGtu().getType()).isEmpty())
-                        {
-                            out.add(new LaneChangeInfo(1, Length.ZERO, true, lat));
-                        }
+                        out.add(new LaneChangeInfo(1, Length.ZERO, true, lat));
                     }
                 }
             }
-            else
+        }
+        else
+        {
+            Length range =
+                    Try.assign(() -> getGtu().getParameters().getParameter(PERCEPTION), "Parameter PERCEPTION not available.");
+            ImmutableSortedSet<LaneChangeInfo> set =
+                    getGtu().getNetwork().getLaneChangeInfo(l, route, getGtu().getType(), range, laneLaw);
+            if (set != null)
             {
-                Length range = Try.assign(() -> getGtu().getParameters().getParameter(PERCEPTION),
-                        "Parameter PERCEPTION not available.");
-                ImmutableSortedSet<LaneChangeInfo> set =
-                        getGtu().getNetwork().getLaneChangeInfo(l, route, getGtu().getType(), range, laneLaw);
-                if (set != null)
+                Length front = getGtu().getRelativePositions().get(RelativePosition.FRONT).dx();
+                for (LaneChangeInfo laneChangeInfo : set)
                 {
-                    Length front = getGtu().getRelativePositions().get(RelativePosition.FRONT).dx();
-                    for (LaneChangeInfo laneChangeInfo : set)
-                    {
-                        Length dist = laneChangeInfo.remainingDistance().plus(record.getStartDistance()).minus(front);
-                        out.add(new LaneChangeInfo(laneChangeInfo.numberOfLaneChanges(), dist, laneChangeInfo.deadEnd(),
-                                laneChangeInfo.lateralDirectionality()));
-                    }
+                    Length dist = laneChangeInfo.remainingDistance().plus(record.getStartDistance()).minus(front);
+                    out.add(new LaneChangeInfo(laneChangeInfo.numberOfLaneChanges(), dist, laneChangeInfo.deadEnd(),
+                            laneChangeInfo.lateralDirectionality()));
                 }
             }
         }
