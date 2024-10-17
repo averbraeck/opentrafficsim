@@ -471,6 +471,7 @@ public class LaneStructure
         }
 
         this.crossSection.clear();
+        this.rootCrossSection.clear();
         Set<Lane> visited = new LinkedHashSet<>();
         Deque<LaneRecord> downQueue = new LinkedList<>();
         Deque<LaneRecord> upQueue = new LinkedList<>();
