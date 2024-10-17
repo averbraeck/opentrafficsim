@@ -83,7 +83,7 @@ package core {
         note as N1
             ContinousLine implementations are used to 
             generate OtsLine2d (e.g. for Link) and contours.
-            Hence it makes sense ContinousLine is on core.
+            Hence it makes sense ContinousLine is in core.
         end note
     
         class OtsLine2d
