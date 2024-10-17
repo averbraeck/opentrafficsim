@@ -1,9 +1,9 @@
 @startuml
 
-note right of DefaultAnimationFactory
-	 Not all relations 
-	shown are formal
-	  UML relations.
+note as N1
+     Not all relations 
+    shown are formal
+      UML relations.
 end note
 
 interface Network {
@@ -13,12 +13,12 @@ interface Network {
 	+ addNonLocatedObject(NonLocatedObject object)
 }
 
-abstract class Renderable2d {}
-Renderable2d o-- Locatable: draws >
+abstract class OtsRenderable {}
+OtsRenderable o-- OtsLocatable: draws >
 
-interface Locatable {}
+interface OtsLocatable {}
 
-interface LocatedObject extends Locatable {}
+interface LocatedObject extends OtsLocatable {}
 LocatedObject --o Network 
 
 interface Detector extends LocatedObject {}
@@ -39,7 +39,7 @@ interface GtuGenerator extends NonLocatedObject {
     + Set<GtuGeneratorPosition> getPositions()
 }
 
-interface GtuGeneratorPosition extends Locatable {}
+interface GtuGeneratorPosition extends OtsLocatable {}
 GtuGeneratorPosition --* GtuGenerator: < has
 
 class LaneBasedGtuGenerator implements GtuGenerator {}
@@ -48,11 +48,11 @@ class DefaultAnimationFactory
 DefaultAnimationFactory -- Network: listens to >
 DefaultAnimationFactory -- StartEndDetector: ignores >
 
-class TrafficLightDetectorAnimation extends Renderable2d
+class TrafficLightDetectorAnimation extends OtsRenderable
 TrafficLightDetectorAnimation --o DefaultAnimationFactory
 TrafficLightDetectorAnimation o-- TrafficLightDetector
 
-class GtuGeneratorPositionAnimation extends Renderable2d
+class GtuGeneratorPositionAnimation extends OtsRenderable
 GtuGeneratorPositionAnimation --o DefaultAnimationFactory
 GtuGeneratorPositionAnimation o-- GtuGeneratorPosition
 
