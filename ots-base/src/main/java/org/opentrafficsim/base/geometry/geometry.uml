@@ -1,0 +1,140 @@
+@startuml
+
+note as N1
+     Not all relations 
+    shown are formal
+      UML relations.
+end note
+
+package base.geometry {
+    note as N1
+        OtsRenderable.toBoundsTransform(...)
+        to OtsLocatable. Also rename method.
+    end note
+    
+    note as N2
+        OtsLocatable is used for simulation objects
+        and drawing. Hence it makes sense that
+        OtsLocatable and its OtsShape are in core.
+    end note
+    
+    note as N3
+        OtsShape has 
+        min/max for X and 
+        Y and could extend
+        a future version of
+        Bounds2d stripped
+        of complicated
+        methods. Then
+        OtsLocatable can
+        drop one method.
+        This first needs to
+        change in DSOL. 
+    end note
+
+    interface SpatialObject {
+        + Polygon2d getContour()
+    }
+
+    interface DynamicSpatialObject extends SpatialObject {
+        + Polygon2d getContour(Time time)
+    }
+
+    interface OtsLocatable extends SpatialObject {
+        + Point2d getLocation()
+        + Bounds2d getBounds()
+        + OtsShape getShape()
+    }
+    OtsShape --* OtsLocatable: < has
+    
+    interface OtsShape {
+        + boolean contains(Point2d point)
+        + double signedDistance(Point2d point)
+    }
+
+    class CircleShape implements OtsShape
+    class OffsetRectangleShape implements OtsShape
+    class PolygonShape implements OtsShape
+    class RectangleShape implements OtsShape
+    class RoundedRectangleShape implements OtsShape
+
+    class OtsRenderable
+    note left of OtsRenderable: Move to draw.
+    OtsRenderable o-- OtsLocatable: draws >
+}
+
+package core {
+    class Link implements base.geometry.OtsLocatable {
+        - OtsLine2d designLine
+    }
+
+    'class Node implements base.geometry.OtsLocatable
+
+    'class Gtu implements base.geometry.OtsLocatable, base.geometry.DynamicSpatialObject
+
+    'interface LocatedObject extends base.geometry.OtsLocatable {
+    '    + Length getHeight()
+    '    + String getFullId()
+    '}
+
+    'class StaticObject implements LocatedObject
+    
+    package geometry {
+        note as N1
+            ContinousLine implementations are used to 
+            generate OtsLine2d (e.g. for Link) and contours.
+            Hence it makes sense ContinousLine is on core.
+        end note
+    
+        class OtsLine2d
+        
+        interface FlattableLine
+        
+        interface Flattener {
+            + PolyLine2d flatten(FlattableLine line)
+        }
+        
+        interface ContinuousLine {
+            + PolyLine2d flatten(Flattener flattener)
+            + PolyLine2d flattenOffset(FractionalLengthData offsets, Flattener flattener)
+        }
+        
+        class ContinuousArc implements ContinuousLine
+        class ContinuousBezierCubic implements ContinuousLine
+        class ContinuousClothoid implements ContinuousLine
+        class ContinuousPolyLine implements ContinuousLine
+        class ContinuousStraight implements ContinuousLine
+    }
+}
+core --> base
+
+package draw {
+    interface ClickableLocatable extends base.geometry.OtsLocatable
+
+    interface ClickablePointLocatable extends draw.ClickableLocatable
+
+    class NodeAnimation extends base.geometry.OtsRenderable implements draw.ClickablePointLocatable
+}
+draw --> base
+
+package road {
+    class CrossSectionElement implements base.geometry.OtsLocatable {
+        - OtsLine2d centerLine
+    }
+
+    'class Lane extends road.CrossSectionElement
+
+    'interface LaneBasedObject extends core.LocatedObject {
+    '    + Lane getLane()
+    '    + Length getLongitudinalPosition()
+    '    + Length getLength()
+    '    + PolyLine2d getLine()
+    '}
+
+    'class LaneBasedGtu extends core.Gtu implements road.LaneBasedObject
+
+    'interface Detector extends core.LocatedObject
+}
+road --> core
+
+@enduml
