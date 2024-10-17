@@ -15,13 +15,15 @@ package org.opentrafficsim.core.geometry;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @see <a href="https://www.ams.org/journals/mcom/1985-44-170/S0025-5718-1985-0777277-6/S0025-5718-1985-0777277-6.pdf">Cody
  *      (1968)</a>
+ * @param c C value of Fresnel integral
+ * @param s S value of Fresnel integral
  */
-public class Fresnel
+public record Fresnel(double c, double s)
 {
 
     // {@formatter:off}
     /** Numerator coefficients to calculate C(t) in region 1. */
-    private static double[] CN1 = new double[] {
+    private static final double[] CN1 = new double[] {
             9.999999999999999421E-01,
             -1.994608988261842706E-01, 
             1.761939525434914045E-02,
@@ -30,7 +32,7 @@ public class Fresnel
     };
 
     /** Denominator coefficients to calculate C(t) in region 1. */
-    private static double[] CD1 = new double[] {
+    private static final double[] CD1 = new double[] {
             1.000000000000000000E+00,
             4.727921120104532689E-02,
             1.099572150256418851E-03,
@@ -39,7 +41,7 @@ public class Fresnel
     };
 
     /** Numerator coefficients to calculate C(t) in region 2. */
-    private static double[] CN2 = new double[] {
+    private static final double[] CN2 = new double[] {
             1.00000000000111043640E+00,
             -2.07073360335323894245E-01,
             1.91870279431746926505E-02,
@@ -49,7 +51,7 @@ public class Fresnel
     };
 
     /** Denominator coefficients to calculate C(t) in region 3. */
-    private static double[] CD2 = new double[] {
+    private static final double[] CD2 = new double[] {
             1.00000000000000000000E+00,
             3.96667496952323433510E-02,
             7.88905245052359907842E-04,
@@ -59,7 +61,7 @@ public class Fresnel
     };
 
     /** Numerator coefficients to calculate S(t) in region 1. */
-    private static double[] SN1 = new double[] {
+    private static final double[] SN1 = new double[] {
             5.2359877559829887021E-01,
             -7.0748991514452302596E-02,
             3.8778212346368287939E-03,
@@ -68,7 +70,7 @@ public class Fresnel
     };
 
     /** Denominator coefficients to calculate S(t) in region 1. */
-    private static double[] SD1 = new double[] {
+    private static final double[] SD1 = new double[] {
             1.0000000000000000000E+00,
             4.1122315114238422205E-02,
             8.1709194215213447204E-04,
@@ -77,7 +79,7 @@ public class Fresnel
     };
 
     /** Numerator coefficients to calculate S(t) in region 2. */
-    private static double[] SN2 = new double[] {
+    private static final double[] SN2 = new double[] {
             5.23598775598344165913E-01,
             -7.37766914010191323867E-02,
             4.30730526504366510217E-03,
@@ -87,7 +89,7 @@ public class Fresnel
     };
 
     /** Denominator coefficients to calculate S(t) in region 2. */
-    private static double[] SD2 = new double[] {
+    private static final double[] SD2 = new double[] {
             1.00000000000000000000E+00,
             3.53398342167472162540E-02,
             6.18224620195473216538E-04,
@@ -97,7 +99,7 @@ public class Fresnel
     };
 
     /** Numerator coefficients to calculate f(t) in region 3. */
-    private static double[] FN3 = new double[] {
+    private static final double[] FN3 = new double[] {
             3.1830975293580985290E-01,
             1.2226000551672961219E+01,
             1.2924886131901657025E+02,
@@ -107,7 +109,7 @@ public class Fresnel
     };
 
     /** Denominator coefficients to calculate f(t) in region 3. */
-    private static double[] FD3 = new double[] {
+    private static final double[] FD3 = new double[] {
             1.0000000000000000000E+00,
             3.8713003365583442831E+01,
             4.1674359830705629745E+02,
@@ -117,7 +119,7 @@ public class Fresnel
     };
 
     /** Numerator coefficients to calculate f(t) in region 4. */
-    private static double[] FN4 = new double[] {
+    private static final double[] FN4 = new double[] {
             3.183098818220169217E-01,
             1.958839410219691002E+01,
             3.398371349269842400E+02,
@@ -127,7 +129,7 @@ public class Fresnel
     };
 
     /** Denominator coefficients to calculate f(t) in region 4. */
-    private static double[] FD4 = new double[] {
+    private static final double[] FD4 = new double[] {
             1.000000000000000000E+00,
             6.184271381728873709E+01,
             1.085350675006501251E+03,
@@ -137,7 +139,7 @@ public class Fresnel
     };
 
     /** Numerator coefficients to calculate f(t) in region 5. */
-    private static double[] FN5 = new double[] {
+    private static final double[] FN5 = new double[] {
             -9.675460329952532343E-02,
             -2.431275407194161683E+01,
             -1.947621998306889176E+03,
@@ -148,7 +150,7 @@ public class Fresnel
     };
 
     /** Denominator coefficients to calculate f(t) in region 5. */
-    private static double[] FD5 = new double[] {
+    private static final double[] FD5 = new double[] {
             1.000000000000000000E+00,
             2.548289012949732752E+02,
             2.099761536857815105E+04,
@@ -159,7 +161,7 @@ public class Fresnel
     };
 
     /** Numerator coefficients to calculate g(t) in region 3. */
-    private static double[] GN3 = new double[] {
+    private static final double[] GN3 = new double[] {
             1.013206188102747985E-01,
             4.445338275505123778E+00,
             5.311228134809894481E+01,
@@ -169,7 +171,7 @@ public class Fresnel
     };
 
     /** Denominator coefficients to calculate g(t) in region 3. */
-    private static double[] GD3 = new double[] {
+    private static final double[] GD3 = new double[] {
             1.000000000000000000E+00,
             4.539250196736893605E+01,
             5.835905757164290666E+02,
@@ -179,7 +181,7 @@ public class Fresnel
     };
 
     /** Numerator coefficients to calculate g(t) in region 4. */
-    private static double[] GN4 = new double[] {
+    private static final double[] GN4 = new double[] {
             1.01321161761804586E-01,
             7.11205001789782823E+00,
             1.40959617911315524E+02,
@@ -189,7 +191,7 @@ public class Fresnel
     };
 
     /** Denominator coefficients to calculate g(t) in region 4. */
-    private static double[] GD4 = new double[] {
+    private static final double[] GD4 = new double[] {
             1.00000000000000000E+00,
             7.17128596939302198E+01,
             1.49051922797329229E+03,
@@ -199,7 +201,7 @@ public class Fresnel
     };
 
     /** Numerator coefficients to calculate g(t) in region 5. */
-    private static double[] GN5 = new double[] {
+    private static final double[] GN5 = new double[] {
             -1.53989733819769316E-01,
             -4.31710157823357568E+01,
             -3.87754141746378493E+03,
@@ -210,7 +212,7 @@ public class Fresnel
     };
     
     /** Denominator coefficients to calculate g(t) in region 5. */
-    private static double[] GD5 = new double[] {
+    private static final double[] GD5 = new double[] {
             1.00000000000000000E+00,
             2.86733194975899483E+02,
             2.69183180396242536E+04,
@@ -220,12 +222,6 @@ public class Fresnel
             1.40622441123580005E+08
     };
     // {@formatter:on}
-
-    /** Utility class. */
-    private Fresnel()
-    {
-        // do not instantiate
-    }
 
     /**
      * Approximate the Fresnel integral. The method used is based on Cody (1968). This method applies rational approximation to
@@ -240,7 +236,7 @@ public class Fresnel
      * @see <a href="https://www.ams.org/journals/mcom/1968-22-102/S0025-5718-68-99871-2/S0025-5718-68-99871-2.pdf">Cody
      *      (1968)</a>
      */
-    public static double[] fresnel(final double x)
+    public static Fresnel integral(final double x)
     {
         final double t = Math.abs(x);
         double cc, ss;
@@ -296,7 +292,7 @@ public class Fresnel
             ss = -ss;
         }
 
-        return new double[] {cc, ss};
+        return new Fresnel(cc, ss);
     }
 
     /**

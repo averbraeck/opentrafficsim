@@ -12,7 +12,7 @@ import org.djutils.exceptions.Throw;
  * t)<sup>3</sup>P<sub>0</sub> + 3t(1 - t)<sup>2</sup> P<sub>1</sub> + 3t<sup>2</sup> (1 - t) P<sub>2</sub> + t<sup>3</sup>
  * P<sub>3</sub> where P<sub>0</sub> and P<sub>3</sub> are the end points, and P<sub>1</sub> and P<sub>2</sub> the control
  * points. <br>
- * For a smooth movement, one of the standard implementations if the cubic(...) function offered is the case where P<sub>1</sub>
+ * For a smooth movement, one of the standard implementations of the cubic(...) function offered is the case where P<sub>1</sub>
  * is positioned halfway between P<sub>0</sub> and P<sub>3</sub> starting from P<sub>0</sub> in the direction of P<sub>3</sub>,
  * and P<sub>2</sub> is positioned halfway between P<sub>3</sub> and P<sub>0</sub> starting from P<sub>3</sub> in the direction
  * of P<sub>0</sub>.<br>

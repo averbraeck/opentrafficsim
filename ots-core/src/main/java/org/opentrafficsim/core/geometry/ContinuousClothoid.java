@@ -2,6 +2,7 @@ package org.opentrafficsim.core.geometry;
 
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
+import org.djutils.base.AngleUtil;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
@@ -57,7 +58,7 @@ public class ContinuousClothoid implements ContinuousLine
     private final double length;
 
     /**
-     * A-value; for scaling the Fresnal integral. The regular clothoid A-parameter is obtained by dividing by
+     * A-value; for scaling the Fresnel integral. The regular clothoid A-parameter is obtained by dividing by
      * {@code Math.sqrt(Math.PI)}.
      */
     private final double a;
@@ -114,7 +115,7 @@ public class ContinuousClothoid implements ContinuousLine
      * <br>
      * This procedure guarantees that the resulting line has the minimal angle rotation that is required to connect the points.
      * If the points approximate a straight line or circle, with a tolerance of up 1/10th of a degree, those respective lines
-     * are created. The numerical approximation of the underlying Fresnal integral is different from the paper. See
+     * are created. The numerical approximation of the underlying Fresnel integral is different from the paper. See
      * {@code Clothoid.fresnal()}.
      * @param startPoint start point.
      * @param endPoint end point.
@@ -133,8 +134,8 @@ public class ContinuousClothoid implements ContinuousLine
         double d2 = Math.hypot(dx, dy); // length of straight line from start to end
         double d = Math.atan2(dy, dx); // angle of line through start and end points
 
-        double phi1 = normalizeAngle(d - startPoint.dirZ);
-        double phi2 = normalizeAngle(endPoint.dirZ - d);
+        double phi1 = AngleUtil.normalizeAroundZero(d - startPoint.dirZ);
+        double phi2 = AngleUtil.normalizeAroundZero(endPoint.dirZ - d);
         double phi1Abs = Math.abs(phi1);
         double phi2Abs = Math.abs(phi2);
 
@@ -219,8 +220,8 @@ public class ContinuousClothoid implements ContinuousLine
         }
 
         // h(phi1, phi2) guarantees for negative values along with 0 < phi1 < phi2 < pi, that a C-shaped clothoid exists.
-        double[] cs = Fresnel.fresnel(alphaToT(phi1 + phi2));
-        double h = cs[1] * Math.cos(phi1) - cs[0] * Math.sin(phi1);
+        Fresnel cs = Fresnel.integral(alphaToT(phi1 + phi2));
+        double h = cs.s() * Math.cos(phi1) - cs.c() * Math.sin(phi1);
         boolean cShape = 0 < phi1 && phi1 < phi2 && phi2 < Math.PI && h < 0; // otherwise, S-shape
         double theta = getTheta(phi1, phi2, cShape);
         double aSign = cShape ? -1.0 : 1.0;
@@ -228,9 +229,9 @@ public class ContinuousClothoid implements ContinuousLine
 
         double v1 = theta + phi1 + phi2;
         double v2 = theta + phi1;
-        double[] cs0 = Fresnel.fresnel(alphaToT(theta));
-        double[] cs1 = Fresnel.fresnel(alphaToT(v1));
-        this.a = d2 / ((cs1[1] + aSign * cs0[1]) * Math.sin(v2) + (cs1[0] + aSign * cs0[0]) * Math.cos(v2));
+        Fresnel cs0 = Fresnel.integral(alphaToT(theta));
+        Fresnel cs1 = Fresnel.integral(alphaToT(v1));
+        this.a = d2 / ((cs1.s() + aSign * cs0.s()) * Math.sin(v2) + (cs1.c() + aSign * cs0.c()) * Math.cos(v2));
 
         dx /= d2; // normalized
         dy /= d2;
@@ -280,7 +281,7 @@ public class ContinuousClothoid implements ContinuousLine
         this.alphaMin = Math.abs(l1) * startCurvature / 2.0;
         this.alphaMax = Math.abs(l2) * endCurvature / 2.0;
 
-        double ang = normalizeAngle(startPoint.dirZ) - Math.abs(this.alphaMin);
+        double ang = AngleUtil.normalizeAroundZero(startPoint.dirZ) - Math.abs(this.alphaMin);
         this.t0 = new double[] {Math.cos(ang), Math.sin(ang)};
         this.n0 = new double[] {this.t0[1], -this.t0[0]};
         Direction endDirection = Direction.instantiateSI(ang + Math.abs(this.alphaMax));
@@ -334,25 +335,6 @@ public class ContinuousClothoid implements ContinuousLine
         Throw.when(length <= 0.0, IllegalArgumentException.class, "Length must be above 0.");
         double a = Math.sqrt(length / Math.abs(endCurvature - startCurvature));
         return new ContinuousClothoid(startPoint, a, startCurvature, endCurvature);
-    }
-
-    /**
-     * Normalizes the angle to be in the range [-pi pi].
-     * @param angle angle.
-     * @return angle in the range [-pi pi].
-     */
-    private static double normalizeAngle(final double angle)
-    {
-        double out = angle;
-        while (out > Math.PI)
-        {
-            out -= 2 * Math.PI;
-        }
-        while (out < -Math.PI)
-        {
-            out += 2 * Math.PI;
-        }
-        return out;
     }
 
     /**
@@ -430,9 +412,9 @@ public class ContinuousClothoid implements ContinuousLine
     private static double fTheta(final double theta, final double phi1, final double phi2, final double sign)
     {
         double thetaPhi1 = theta + phi1;
-        double[] cs0 = Fresnel.fresnel(alphaToT(theta));
-        double[] cs1 = Fresnel.fresnel(alphaToT(thetaPhi1 + phi2));
-        return (cs1[1] + sign * cs0[1]) * Math.cos(thetaPhi1) - (cs1[0] + sign * cs0[0]) * Math.sin(thetaPhi1);
+        Fresnel cs0 = Fresnel.integral(alphaToT(theta));
+        Fresnel cs1 = Fresnel.integral(alphaToT(thetaPhi1 + phi2));
+        return (cs1.s() + sign * cs0.s()) * Math.cos(thetaPhi1) - (cs1.c() + sign * cs0.c()) * Math.sin(thetaPhi1);
     }
 
     /** {@inheritDoc} */
@@ -502,18 +484,18 @@ public class ContinuousClothoid implements ContinuousLine
         OrientedPoint2d p2 = this.opposite ? this.startPoint : this.endPoint;
 
         // Create first point to figure out the required overall shift
-        double[] csMin = Fresnel.fresnel(alphaToT(this.alphaMin));
-        double xMin = this.a * (csMin[0] * this.t0[0] - csMin[1] * this.n0[0]);
-        double yMin = this.a * (csMin[0] * this.t0[1] - csMin[1] * this.n0[1]);
+        Fresnel csMin = Fresnel.integral(alphaToT(this.alphaMin));
+        double xMin = this.a * (csMin.c() * this.t0[0] - csMin.s() * this.n0[0]);
+        double yMin = this.a * (csMin.c() * this.t0[1] - csMin.s() * this.n0[1]);
         this.shiftX = p1.x - xMin;
         this.shiftY = p1.y - yMin;
 
         // Due to numerical precision, we linearly scale over alpha such that the final point is exactly on p2
         if (p2 != null)
         {
-            double[] csMax = Fresnel.fresnel(alphaToT(this.alphaMax));
-            double xMax = this.a * (csMax[0] * this.t0[0] - csMax[1] * this.n0[0]);
-            double yMax = this.a * (csMax[0] * this.t0[1] - csMax[1] * this.n0[1]);
+            Fresnel csMax = Fresnel.integral(alphaToT(this.alphaMax));
+            double xMax = this.a * (csMax.c() * this.t0[0] - csMax.s() * this.n0[0]);
+            double yMax = this.a * (csMax.c() * this.t0[1] - csMax.s() * this.n0[1]);
             this.dShiftX = p2.x - (xMax + this.shiftX);
             this.dShiftY = p2.y - (yMax + this.shiftY);
         }
@@ -536,9 +518,9 @@ public class ContinuousClothoid implements ContinuousLine
     {
         double f = this.opposite ? 1.0 - fraction : fraction;
         double alpha = this.alphaMin + f * (this.alphaMax - this.alphaMin);
-        double[] cs = Fresnel.fresnel(alphaToT(alpha));
-        double x = this.shiftX + this.a * (cs[0] * this.t0[0] - cs[1] * this.n0[0]) + f * this.dShiftX;
-        double y = this.shiftY + this.a * (cs[0] * this.t0[1] - cs[1] * this.n0[1]) + f * this.dShiftY;
+        Fresnel cs = Fresnel.integral(alphaToT(alpha));
+        double x = this.shiftX + this.a * (cs.c() * this.t0[0] - cs.s() * this.n0[0]) + f * this.dShiftX;
+        double y = this.shiftY + this.a * (cs.c() * this.t0[1] - cs.s() * this.n0[1]) + f * this.dShiftY;
         double d = getDirection(alpha) + Math.PI / 2;
         return new Point2d(x + Math.cos(d) * offset, y + Math.sin(d) * offset);
     }
@@ -557,7 +539,7 @@ public class ContinuousClothoid implements ContinuousLine
         {
             rot += Math.PI;
         }
-        return normalizeAngle(rot);
+        return AngleUtil.normalizeAroundZero(rot);
     }
 
     /** {@inheritDoc} */
@@ -621,8 +603,9 @@ public class ContinuousClothoid implements ContinuousLine
             @Override
             public double getDirection(final double fraction)
             {
+                double derivativeOffset = offsets.getDerivative(fraction) / ContinuousClothoid.this.length;
                 return ContinuousClothoid.this.getDirection(ContinuousClothoid.this.alphaMin
-                        + fraction * (ContinuousClothoid.this.alphaMax - ContinuousClothoid.this.alphaMin));
+                        + fraction * (ContinuousClothoid.this.alphaMax - ContinuousClothoid.this.alphaMin)) + derivativeOffset;
             }
         });
     }
