@@ -30,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
@@ -37,7 +38,6 @@ import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -254,8 +254,7 @@ public class OdApplierTest
         // Stepwise interpolation with constant headways tests
         OdMatrix od = getOD(new double[] {100, 200, 300, 400, 500, 600}, new double[] {1000, 2000, 0, 0, 2000, 0},
                 Interpolation.STEPWISE, nodeA, nodeB, lane1, lane2);
-        Map<String, GeneratorObjects> generatorObjects =
-                OdApplier.applyOd(this.network, od, odOptions, DefaultsRoadNl.ROAD_USERS);
+        Map<String, GeneratorObjects> generatorObjects = OdApplier.applyOd(this.network, od, odOptions, DefaultsNl.ROAD_USERS);
         assertEquals(generatorObjects.size(), 2, "Incorrect number of generator created or returned.");
         for (String id : generatorObjects.keySet())
         {
@@ -291,7 +290,7 @@ public class OdApplierTest
         this.time = Time.ZERO;
         od = getOD(new double[] {100, 200, 300, 400, 500, 600}, new double[] {1000, 2000, 0, 0, 2000, 0}, Interpolation.LINEAR,
                 nodeA, nodeB, lane1, lane2);
-        generatorObjects = OdApplier.applyOd(this.network, od, odOptions, DefaultsRoadNl.ROAD_USERS);
+        generatorObjects = OdApplier.applyOd(this.network, od, odOptions, DefaultsNl.ROAD_USERS);
         assertEquals(generatorObjects.size(), 2, "Incorrect number of generator created or returned.");
         for (String id : generatorObjects.keySet())
         {
@@ -334,7 +333,7 @@ public class OdApplierTest
                     odOptions = new OdOptions().set(OdOptions.HEADWAY_DIST, headwayRandomization);
                     od = getOD(new double[] {1200, 2400, 3600, 4800, 6000, 7200}, new double[] {1000, 2000, 0, 0, 2000, 0},
                             interpolation, nodeA, nodeB, lane1, lane2);
-                    generatorObjects = OdApplier.applyOd(this.network, od, odOptions, DefaultsRoadNl.ROAD_USERS);
+                    generatorObjects = OdApplier.applyOd(this.network, od, odOptions, DefaultsNl.ROAD_USERS);
                     assertEquals(generatorObjects.size(), 2, "Incorrect number of generators created or returned.");
                     for (String id : generatorObjects.keySet())
                     {
@@ -516,8 +515,7 @@ public class OdApplierTest
         odOptions.set(OdOptions.GTU_TYPE, factory.create());
         OdMatrix od = getOD(new double[] {0, 100, 200}, new double[] {1000, 1500, 0}, Interpolation.LINEAR, nodeA, nodeB, lane1,
                 lane2);
-        Map<String, GeneratorObjects> generatorObjects =
-                OdApplier.applyOd(this.network, od, odOptions, DefaultsRoadNl.ROAD_USERS);
+        Map<String, GeneratorObjects> generatorObjects = OdApplier.applyOd(this.network, od, odOptions, DefaultsNl.ROAD_USERS);
         int nTot = 1000;
         int nCar = nTot / 2;
         int nTruck = nTot / 2;

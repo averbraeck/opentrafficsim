@@ -4,8 +4,8 @@ import java.io.OutputStream;
 import java.io.Writer;
 
 import org.djutils.event.EventProducer;
+import org.opentrafficsim.core.object.Detector;
 import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.lane.object.detector.Detector;
 
 import com.thoughtworks.xstream.XStream;
 

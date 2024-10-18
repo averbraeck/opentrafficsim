@@ -8,6 +8,7 @@ import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
 import org.junit.jupiter.api.Test;
+import org.opentrafficsim.base.geometry.OtsGeometryException;
 
 /**
  * Tests for ContinuousStraight.

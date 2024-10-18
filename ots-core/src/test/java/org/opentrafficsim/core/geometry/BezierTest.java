@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
+import org.opentrafficsim.base.geometry.OtsGeometryException;
 
 /**
  * Test the B&eacute;zier class.

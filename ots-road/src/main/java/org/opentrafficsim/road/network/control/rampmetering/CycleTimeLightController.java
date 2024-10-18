@@ -11,9 +11,9 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.object.DetectorType;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
-import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 

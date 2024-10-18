@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.Test;
+import org.opentrafficsim.base.geometry.OtsGeometryException;
 
 /** Test the OTSGeometryException class. */
 public class OtsGeometryExceptionTest

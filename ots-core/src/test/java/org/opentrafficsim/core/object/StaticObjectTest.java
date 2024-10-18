@@ -15,7 +15,7 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.core.geometry.OtsGeometryException;
+import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.core.mock.MockSimulator;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;

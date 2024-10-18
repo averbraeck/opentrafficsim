@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.network.lane.object.detector;
+package org.opentrafficsim.core.object;
 
 import org.opentrafficsim.core.compatibility.GtuCompatibleInfraType;
 

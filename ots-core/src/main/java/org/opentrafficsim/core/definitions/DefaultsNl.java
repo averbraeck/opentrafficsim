@@ -12,10 +12,11 @@ import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
+import org.opentrafficsim.core.gtu.GtuTemplate;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.GtuType.Marker;
-import org.opentrafficsim.core.gtu.GtuTemplate;
 import org.opentrafficsim.core.network.LinkType;
+import org.opentrafficsim.core.object.DetectorType;
 import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
@@ -224,6 +225,29 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
         PROVINCIAL.addIncompatibleGtuType(BICYCLE);
         WATERWAY.addCompatibleGtuType(WATERWAY_USER);
         RAILWAY.addCompatibleGtuType(RAILWAY_USER);
+    }
+
+    /***************************************************************************************/
+    /************************************** DETECTOR ***************************************/
+    /***************************************************************************************/
+
+    /** Makes a Detector compatible with all road users, e.g. for SinkDetector, DestinationDetector. */
+    public static final DetectorType ROAD_USERS = new DetectorType("NL.ROAD_USERS");
+
+    /** Makes a Detector compatible with all vehicles, e.g. for loop detectors. */
+    public static final DetectorType VEHICLES = new DetectorType("NL.VEHICLES");
+
+    /** Loop detector type. */
+    public static final DetectorType LOOP_DETECTOR = new DetectorType("NL.LOOP_DETECTOR", VEHICLES);
+
+    /** Traffic light detector type. */
+    public static final DetectorType TRAFFIC_LIGHT = new DetectorType("NL.TRAFFIC_LIGHT", LOOP_DETECTOR);
+
+    static
+    {
+        ROAD_USERS.addCompatibleGtuType(DefaultsNl.ROAD_USER);
+        VEHICLES.addCompatibleGtuType(DefaultsNl.VEHICLE);
+        TRAFFIC_LIGHT.addCompatibleGtuType(DefaultsNl.BICYCLE);
     }
 
 }

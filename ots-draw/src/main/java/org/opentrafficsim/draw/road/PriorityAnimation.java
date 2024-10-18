@@ -14,9 +14,9 @@ import java.awt.image.ImageObserver;
 import java.rmi.RemoteException;
 import java.util.Map;
 
-import org.opentrafficsim.base.geometry.OtsRenderable;
 import org.opentrafficsim.draw.ClickableLocatable;
 import org.opentrafficsim.draw.DrawLevel;
+import org.opentrafficsim.draw.OtsRenderable;
 import org.opentrafficsim.draw.road.PriorityAnimation.PriorityData;
 
 import nl.tudelft.simulation.naming.context.Contextualized;

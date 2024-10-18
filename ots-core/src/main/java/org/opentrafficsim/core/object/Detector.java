@@ -1,7 +1,6 @@
-package org.opentrafficsim.road.network.lane.object.detector;
+package org.opentrafficsim.core.object;
 
 import org.opentrafficsim.base.HierarchicallyTyped;
-import org.opentrafficsim.core.object.LocatedObject;
 
 /**
  * Interface for detectors. This can be a lane-based object, classes using lane-based helper objects, or objects that detect in

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine2d.FractionalFallback;
 
 /**

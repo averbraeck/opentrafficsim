@@ -9,6 +9,7 @@ import java.util.List;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.base.geometry.OtsGeometryException;
 
 /**
  * Measure the performance of the Polygon2d intersection method.

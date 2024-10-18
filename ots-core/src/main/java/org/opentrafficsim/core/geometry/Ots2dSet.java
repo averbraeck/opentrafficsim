@@ -12,6 +12,7 @@ import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.geometry.OtsGeometryException;
 
 /**
  * Set of Polygon2d objects and provides methods for fast selection of those objects that intersect a Polygon2d. <br>

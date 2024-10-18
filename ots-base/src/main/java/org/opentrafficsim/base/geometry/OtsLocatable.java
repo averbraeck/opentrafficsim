@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.djutils.draw.Oriented;
 import org.djutils.draw.Transform2d;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
@@ -108,7 +109,7 @@ public interface OtsLocatable extends Locatable, SpatialObject
      */
     private static List<Point2d> transform(final Iterator<Point2d> itSource, final Point2d location)
     {
-        Transform2d transformation = OtsRenderable.toBoundsTransform(location);
+        Transform2d transformation = toBoundsTransform(location);
         Point2d prev = null;
         List<Point2d> points = new ArrayList<>();
         while (itSource.hasNext())
@@ -121,6 +122,23 @@ public interface OtsLocatable extends Locatable, SpatialObject
             prev = next;
         }
         return points;
+    }
+    
+    /**
+     * Returns a transformation by which absolute coordinates can be translated and rotated to the frame of the possibly
+     * oriented location around which bounds are defined.
+     * @param location location (can be an {@code Oriented}).
+     * @return transformation.
+     */
+    static Transform2d toBoundsTransform(final Point2d location)
+    {
+        Transform2d transformation = new Transform2d();
+        if (location instanceof Oriented<?>)
+        {
+            transformation.rotation(-((Oriented<?>) location).getDirZ());
+        }
+        transformation.translate(-location.getX(), -location.getY());
+        return transformation;
     }
 
 }

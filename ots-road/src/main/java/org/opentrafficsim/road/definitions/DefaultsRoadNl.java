@@ -3,10 +3,10 @@ package org.opentrafficsim.road.definitions;
 import java.util.Locale;
 
 import org.opentrafficsim.core.definitions.DefaultsNl;
+import org.opentrafficsim.core.object.DetectorType;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.object.detector.DetectorType;
 
 /**
  * Road defaults for locale nl_NL.
@@ -97,26 +97,4 @@ public class DefaultsRoadNl extends DefaultsRoad
         LANE_BIAS_CAR_TRUCK.addBias(DefaultsNl.TRUCK, LaneBias.TRUCK_RIGHT);
     }
 
-    /***************************************************************************************/
-    /************************************** DETECTOR ***************************************/
-    /***************************************************************************************/
-
-    /** Makes a Detector compatible with all road users, e.g. for SinkDetector, DestinationDetector. */
-    public static final DetectorType ROAD_USERS = new DetectorType("NL.ROAD_USERS");
-
-    /** Makes a Detector compatible with all vehicles, e.g. for loop detectors. */
-    public static final DetectorType VEHICLES = new DetectorType("NL.VEHICLES");
-
-    /** Loop detector type. */
-    public static final DetectorType LOOP_DETECTOR = new DetectorType("NL.LOOP_DETECTOR", VEHICLES);
-
-    /** Traffic light detector type. */
-    public static final DetectorType TRAFFIC_LIGHT = new DetectorType("NL.TRAFFIC_LIGHT", LOOP_DETECTOR);
-
-    static
-    {
-        ROAD_USERS.addCompatibleGtuType(DefaultsNl.ROAD_USER);
-        VEHICLES.addCompatibleGtuType(DefaultsNl.VEHICLE);
-        TRAFFIC_LIGHT.addCompatibleGtuType(DefaultsNl.BICYCLE);
-    }
 }

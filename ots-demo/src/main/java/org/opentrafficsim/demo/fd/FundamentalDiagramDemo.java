@@ -305,7 +305,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         // Sinks
         for (Lane lane : lanesBC)
         {
-            new SinkDetector(lane, lane.getLength(), DefaultsRoadNl.ROAD_USERS);
+            new SinkDetector(lane, lane.getLength(), DefaultsNl.ROAD_USERS);
         }
 
         return network;

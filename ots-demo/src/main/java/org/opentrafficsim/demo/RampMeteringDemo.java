@@ -303,13 +303,13 @@ public class RampMeteringDemo extends AbstractSimulationScript
         // TODO: detector length affects occupancy, which length to use?
         Length detectorLength = Length.ZERO;
         LoopDetector det1 = new LoopDetector("1", new LanePosition(lanesAB.get(0), Length.instantiateSI(2900)), detectorLength,
-                DefaultsRoadNl.LOOP_DETECTOR, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+                DefaultsNl.LOOP_DETECTOR, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
         LoopDetector det2 = new LoopDetector("2", new LanePosition(lanesAB.get(1), Length.instantiateSI(2900)), detectorLength,
-                DefaultsRoadNl.LOOP_DETECTOR, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+                DefaultsNl.LOOP_DETECTOR, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
         LoopDetector det3 = new LoopDetector("3", new LanePosition(lanesCD.get(0), Length.instantiateSI(100)), detectorLength,
-                DefaultsRoadNl.LOOP_DETECTOR, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+                DefaultsNl.LOOP_DETECTOR, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
         LoopDetector det4 = new LoopDetector("4", new LanePosition(lanesCD.get(1), Length.instantiateSI(100)), detectorLength,
-                DefaultsRoadNl.LOOP_DETECTOR, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
+                DefaultsNl.LOOP_DETECTOR, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
         List<LoopDetector> detectors12 = new ArrayList<>();
         detectors12.add(det1);
         detectors12.add(det2);
@@ -325,7 +325,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
             // ramp metering
             RampMeteringSwitch rampSwitch = new RwsSwitch(detectors12);
             RampMeteringLightController rampLightController =
-                    new CycleTimeLightController(sim, lightList, DefaultsRoadNl.LOOP_DETECTOR);
+                    new CycleTimeLightController(sim, lightList, DefaultsNl.LOOP_DETECTOR);
             new RampMetering(sim, rampSwitch, rampLightController);
         }
 
@@ -357,7 +357,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
         odOptions.set(OdOptions.INSTANT_LC, true);
         odOptions.set(OdOptions.LANE_BIAS, new LaneBiases().addBias(car, LaneBias.WEAK_LEFT));
         odOptions.set(OdOptions.NO_LC_DIST, Length.instantiateSI(300));
-        OdApplier.applyOd(network, od, odOptions, DefaultsRoadNl.ROAD_USERS);
+        OdApplier.applyOd(network, od, odOptions, DefaultsNl.ROAD_USERS);
 
         return network;
     }

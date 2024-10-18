@@ -12,9 +12,9 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.base.geometry.OtsRenderable;
 import org.opentrafficsim.draw.ClickableLocatable;
 import org.opentrafficsim.draw.DrawLevel;
+import org.opentrafficsim.draw.OtsRenderable;
 import org.opentrafficsim.draw.road.SpeedSignAnimation.SpeedSignData;
 
 import nl.tudelft.simulation.naming.context.Contextualized;

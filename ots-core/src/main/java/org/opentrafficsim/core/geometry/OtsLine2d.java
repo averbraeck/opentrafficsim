@@ -16,6 +16,7 @@ import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.geometry.OtsGeometryException;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 

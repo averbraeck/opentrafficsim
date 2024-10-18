@@ -3,6 +3,7 @@ package org.opentrafficsim.road.network.lane.object.detector;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.object.DetectorType;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.Lane;
 

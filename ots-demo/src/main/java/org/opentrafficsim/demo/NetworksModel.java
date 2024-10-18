@@ -27,6 +27,7 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.EventType;
+import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.Distribution;
@@ -38,7 +39,6 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.ContinuousLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
 import org.opentrafficsim.core.geometry.FractionalLengthData;
-import org.opentrafficsim.core.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -503,7 +503,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
             // Overtaking left and right allowed on the sinkLane
             Lane sinkLane = new Lane(endLink, lane.getId() + "." + "sinkLane", new OtsLine2d(centerLine), contour,
                     crossSections, laneType, Map.of(DefaultsNl.VEHICLE, this.speedLimit));
-            new SinkDetector(sinkLane, new Length(10.0, METER), DefaultsRoadNl.ROAD_USERS);
+            new SinkDetector(sinkLane, new Length(10.0, METER), DefaultsNl.ROAD_USERS);
         }
         return lanes;
     }

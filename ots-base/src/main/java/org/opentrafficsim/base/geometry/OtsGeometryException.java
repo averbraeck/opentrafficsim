@@ -1,12 +1,14 @@
-package org.opentrafficsim.core.geometry;
+package org.opentrafficsim.base.geometry;
 
 /**
+ * Exception when geometry is incorrectly specified or an operation is requested that is not possible.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class OtsGeometryException extends Exception
 {
@@ -14,13 +16,14 @@ public class OtsGeometryException extends Exception
     private static final long serialVersionUID = 20150722L;
 
     /**
-     * construct empty OTSGeometryException.
+     * Empty constructor.
      */
     public OtsGeometryException()
     {
     }
 
     /**
+     * Constructor with message.
      * @param message message to display for this exception.
      */
     public OtsGeometryException(final String message)
@@ -29,6 +32,7 @@ public class OtsGeometryException extends Exception
     }
 
     /**
+     * Constructor with cause.
      * @param cause the exception that triggered this exception.
      */
     public OtsGeometryException(final Throwable cause)
@@ -37,6 +41,7 @@ public class OtsGeometryException extends Exception
     }
 
     /**
+     * Constructor with message and cause.
      * @param message message to display for this exception.
      * @param cause the exception that triggered this exception.
      */
@@ -46,6 +51,7 @@ public class OtsGeometryException extends Exception
     }
 
     /**
+     * Complete constructor.
      * @param message message to display for this exception.
      * @param cause the exception that triggered this exception.
      * @param enableSuppression whether or not suppression is enabled or disabled

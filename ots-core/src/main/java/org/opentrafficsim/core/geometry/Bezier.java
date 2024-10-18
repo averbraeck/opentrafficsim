@@ -5,6 +5,7 @@ import java.awt.geom.Line2D;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.geometry.OtsGeometryException;
 
 /**
  * Generation of B&eacute;zier curves. <br>

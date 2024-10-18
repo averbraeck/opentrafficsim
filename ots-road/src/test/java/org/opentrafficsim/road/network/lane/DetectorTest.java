@@ -161,7 +161,7 @@ class TriggerDetector extends LaneDetector
     TriggerDetector(final Lane lane, final Length longitudinalPosition, final RelativePosition.Type positionType,
             final String name) throws NetworkException
     {
-        super(name, lane, longitudinalPosition, positionType, DefaultsRoadNl.ROAD_USERS);
+        super(name, lane, longitudinalPosition, positionType, DefaultsNl.ROAD_USERS);
     }
 
     /** {@inheritDoc} */

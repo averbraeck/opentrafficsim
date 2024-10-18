@@ -8,8 +8,8 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.ImageObserver;
 
 import org.djunits.unit.SpeedUnit;
-import org.opentrafficsim.base.geometry.OtsRenderable;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.opentrafficsim.draw.OtsRenderable;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 
 // Note: there is also a SpeedSignAnimation in ots-draw. This class simply exists to notify required changes in the manual code.
