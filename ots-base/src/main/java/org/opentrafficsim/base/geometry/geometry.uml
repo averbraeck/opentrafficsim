@@ -8,30 +8,11 @@ end note
 
 package base.geometry {
     note as N1
-        OtsRenderable.toBoundsTransform(...)
-        to OtsLocatable. Also rename method.
-    end note
-    
-    note as N2
         OtsLocatable is used for simulation objects
         and drawing. Hence it makes sense that
-        OtsLocatable and its OtsShape are in core.
+        OtsLocatable and its OtsShape are in base.
     end note
     
-    note as N3
-        OtsShape has 
-        min/max for X and 
-        Y and could extend
-        a future version of
-        Bounds2d stripped
-        of complicated
-        methods. Then
-        OtsLocatable can
-        drop one method.
-        This first needs to
-        change in DSOL. 
-    end note
-
     interface SpatialObject {
         + Polygon2d getContour()
     }
@@ -51,22 +32,28 @@ package base.geometry {
         + boolean contains(Point2d point)
         + double signedDistance(Point2d point)
     }
+    
+    note left of OtsShape
+        OtsShape has min/max for X and Y 
+        and could extend a future version of
+        Bounds2d stripped of complicated
+        methods. Then OtsLocatable can
+        drop one method. This first needs
+        to change in DSOL.
+    end note
 
     class CircleShape implements OtsShape
     class OffsetRectangleShape implements OtsShape
     class PolygonShape implements OtsShape
     class RectangleShape implements OtsShape
     class RoundedRectangleShape implements OtsShape
-
-    class OtsRenderable
-    note left of OtsRenderable: Move to draw.
-    OtsRenderable o-- OtsLocatable: draws >
 }
 
 package core {
     class Link implements base.geometry.OtsLocatable {
         - OtsLine2d designLine
     }
+    core.geometry.OtsLine2d --* Link::designLine
 
     'class Node implements base.geometry.OtsLocatable
 
@@ -83,16 +70,20 @@ package core {
         note as N1
             ContinousLine implementations are used to 
             generate OtsLine2d (e.g. for Link) and contours.
-            Hence it makes sense ContinousLine is in core.
+            Hence it makes sense ContinuousLine is in core.
         end note
     
-        class OtsLine2d
+        class OtsLine2d {
+            + OtsLine2d(PolyLine2d line)
+        }
         
         interface FlattableLine
+        FlattableLine -> Flattener::flatten
         
         interface Flattener {
             + PolyLine2d flatten(FlattableLine line)
         }
+        Flattener::flatten -> OtsLine2d::OtsLine2d
         
         interface ContinuousLine {
             + PolyLine2d flatten(Flattener flattener)
@@ -100,10 +91,15 @@ package core {
         }
         
         class ContinuousArc implements ContinuousLine
+        ContinuousArc -> FlattableLine
         class ContinuousBezierCubic implements ContinuousLine
+        ContinuousBezierCubic -> FlattableLine
         class ContinuousClothoid implements ContinuousLine
+        ContinuousClothoid -> FlattableLine
         class ContinuousPolyLine implements ContinuousLine
+        ContinuousPolyLine -> FlattableLine
         class ContinuousStraight implements ContinuousLine
+        ContinuousStraight -> FlattableLine
     }
 }
 core --> base
@@ -113,7 +109,10 @@ package draw {
 
     interface ClickablePointLocatable extends draw.ClickableLocatable
 
-    class NodeAnimation extends base.geometry.OtsRenderable implements draw.ClickablePointLocatable
+    class NodeAnimation extends OtsRenderable implements draw.ClickablePointLocatable
+    
+    class OtsRenderable
+    OtsRenderable o-- base.geometry.OtsLocatable: draws >
 }
 draw --> base
 
@@ -121,6 +120,7 @@ package road {
     class CrossSectionElement implements base.geometry.OtsLocatable {
         - OtsLine2d centerLine
     }
+    core.geometry.OtsLine2d --* CrossSectionElement::centerLine
 
     'class Lane extends road.CrossSectionElement
 
