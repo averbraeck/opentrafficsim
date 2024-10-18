@@ -17,7 +17,6 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.EventType;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsLine2d;
@@ -65,10 +64,9 @@ public class NetworkTest implements EventListener
     /**
      * Test Network class.
      * @throws NetworkException if that happens; this test has failed
-     * @throws OtsGeometryException if that happens; this test has failed
      */
     @Test
-    public final void testNetwork() throws NetworkException, OtsGeometryException
+    public final void testNetwork() throws NetworkException
     {
         String networkId = "testNetwork";
         OtsSimulatorInterface simulator = MockSimulator.createMock();
@@ -399,10 +397,9 @@ public class NetworkTest implements EventListener
     /**
      * Test the route map stuff.
      * @throws NetworkException if that happens uncaught; this test has failed
-     * @throws OtsGeometryException if that happens uncaught; this test has failed
      */
     @Test
-    public final void testRouteMap() throws NetworkException, OtsGeometryException
+    public final void testRouteMap() throws NetworkException
     {
         Network network = new Network("Route map test network", MockSimulator.createMock());
         Node node1 = new Node(network, "node1", new Point2d(10, 20));
@@ -493,10 +490,9 @@ public class NetworkTest implements EventListener
     /**
      * Test the shortest path functionality.
      * @throws NetworkException if that happens uncaught; this test has failed
-     * @throws OtsGeometryException if that happens uncaught; this test has failed
      */
     @Test
-    public final void testShortestPathBiDirectional() throws NetworkException, OtsGeometryException
+    public final void testShortestPathBiDirectional() throws NetworkException
     {
         Network network = new Network("shortest path test network", MockSimulator.createMock());
         List<Node> nodes = createRingNodesAndLinks(network);
@@ -528,10 +524,9 @@ public class NetworkTest implements EventListener
     /**
      * Test the shortest path functionality.
      * @throws NetworkException if that happens uncaught; this test has failed
-     * @throws OtsGeometryException if that happens uncaught; this test has failed
      */
     @Test
-    public final void testShortestPathClockWise() throws NetworkException, OtsGeometryException
+    public final void testShortestPathClockWise() throws NetworkException
     {
         Network network = new Network("shortest path test network", MockSimulator.createMock());
         List<Node> nodes = createRingNodesAndLinks(network);
@@ -564,11 +559,10 @@ public class NetworkTest implements EventListener
 
     /**
      * Test the shortest path method that takes a list of intermediate nodes.
-     * @throws OtsGeometryException if that happens uncaught; this test has failed
      * @throws NetworkException if that happens uncaught; this test has failed
      */
     @Test
-    public final void testShortestPathWithIntermediateNodes() throws NetworkException, OtsGeometryException
+    public final void testShortestPathWithIntermediateNodes() throws NetworkException
     {
         Network network = new Network("shortest path test network", MockSimulator.createMock());
         List<Node> nodes = createRingNodesAndLinks(network, 5);
@@ -652,9 +646,8 @@ public class NetworkTest implements EventListener
      * @param network the network that will contain the nodes
      * @return the constructed nodes (in clockwise order)
      * @throws NetworkException if that happens uncaught; this test has failed
-     * @throws OtsGeometryException if that happens uncaught; this test has failed
      */
-    private List<Node> createRingNodesAndLinks(final Network network) throws NetworkException, OtsGeometryException
+    private List<Node> createRingNodesAndLinks(final Network network) throws NetworkException
     {
         return createRingNodesAndLinks(network, 10);
     }
@@ -665,10 +658,8 @@ public class NetworkTest implements EventListener
      * @param maxNode number of nodes on the ring
      * @return the constructed nodes (in clockwise order)
      * @throws NetworkException if that happens uncaught; this test has failed
-     * @throws OtsGeometryException if that happens uncaught; this test has failed
      */
-    private List<Node> createRingNodesAndLinks(final Network network, final int maxNode)
-            throws NetworkException, OtsGeometryException
+    private List<Node> createRingNodesAndLinks(final Network network, final int maxNode) throws NetworkException
     {
         LinkType linkType = new LinkType("linkType", null);
         linkType.addCompatibleGtuType(DefaultsNl.ROAD_USER);
@@ -695,11 +686,10 @@ public class NetworkTest implements EventListener
 
     /**
      * Tests whether the A* algorithm delivers the same shortest path as Dijkstra.
-     * @throws OtsGeometryException on error
      * @throws NetworkException on error
      */
     @Test
-    public void testAStar() throws NetworkException, OtsGeometryException
+    public void testAStar() throws NetworkException
     {
         boolean showTime = false; // not part of formal test, set to true for benchmarking
         long totalTimeDijkstra = 0;
@@ -745,10 +735,9 @@ public class NetworkTest implements EventListener
      * @param sigmaLim limits the random location between -sigmaLim and sigmaLim around its regular grid point.
      * @return origin (at index 0) and destination (at index 1) to use.
      * @throws NetworkException
-     * @throws OtsGeometryException
      */
     private Node[] randomTestNetwork(final Network network, final int gridSize, final double sigma, final double sigmaLim)
-            throws NetworkException, OtsGeometryException
+            throws NetworkException
     {
         double originLocation = (gridSize - 1.0) * 0.5;
         double destinationLocation = (gridSize - 1.0) * 0.75;

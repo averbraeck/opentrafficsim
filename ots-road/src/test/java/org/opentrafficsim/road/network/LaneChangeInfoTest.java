@@ -18,7 +18,6 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.immutablecollections.ImmutableSortedSet;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
@@ -53,12 +52,11 @@ public class LaneChangeInfoTest
     /**
      * Test to see whether lane change info is correctly delivered by the network.
      * @throws NetworkException on exception
-     * @throws OtsGeometryException on exception
      * @throws SimRuntimeException on exception
      * @throws NamingException on exception
      */
     @Test
-    public final void laneChangeInfoTest() throws NetworkException, OtsGeometryException, SimRuntimeException, NamingException
+    public final void laneChangeInfoTest() throws NetworkException, SimRuntimeException, NamingException
     {
 
         // Preparations

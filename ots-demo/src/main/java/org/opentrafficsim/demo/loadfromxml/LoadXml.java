@@ -20,7 +20,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
@@ -184,9 +183,8 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
                 new XmlParser(this.network).setStream(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)))
                         .build();
             }
-            catch (NetworkException | OtsGeometryException | JAXBException | URISyntaxException | XmlParserException
-                    | SAXException | ParserConfigurationException | GtuException | IOException
-                    | TrafficControlException exception)
+            catch (NetworkException | JAXBException | URISyntaxException | XmlParserException | SAXException
+                    | ParserConfigurationException | GtuException | IOException | TrafficControlException exception)
             {
                 exception.printStackTrace();
                 // Abusing the SimRuntimeException to propagate the message to the main method (the problem could actually be a

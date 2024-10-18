@@ -31,7 +31,6 @@ import org.djutils.logger.CategoryLogger;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.multikeymap.MultiKeyMap;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.geometry.OtsLine2d.FractionalFallback;
@@ -199,11 +198,10 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GtuException when initial values are not correct
-     * @throws OtsGeometryException when the initial path is wrong
      */
     @SuppressWarnings("checkstyle:designforextension")
     public void init(final LaneBasedStrategicalPlanner strategicalPlanner, final LanePosition longitudinalPosition,
-            final Speed initialSpeed) throws NetworkException, SimRuntimeException, GtuException, OtsGeometryException
+            final Speed initialSpeed) throws NetworkException, SimRuntimeException, GtuException
     {
         Throw.when(null == longitudinalPosition, GtuException.class, "InitialLongitudinalPositions is null");
 
@@ -268,10 +266,9 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
      * @throws NetworkException when the GTU cannot be placed on the given lane
      * @throws SimRuntimeException when the move method cannot be scheduled
      * @throws GtuException when initial values are not correct
-     * @throws OtsGeometryException when the initial path is wrong
      */
     public void reinit(final LanePosition initialLongitudinalPosition)
-            throws NetworkException, SimRuntimeException, GtuException, OtsGeometryException
+            throws NetworkException, SimRuntimeException, GtuException
     {
         init(getStrategicalPlanner(), initialLongitudinalPosition, Speed.ZERO);
     }

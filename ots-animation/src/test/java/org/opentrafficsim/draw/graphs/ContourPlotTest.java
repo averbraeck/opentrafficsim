@@ -758,12 +758,11 @@ public class ContourPlotTest implements UNITS
      * @throws NetworkException when the GTU cannot be placed on the given lane.
      * @throws SimRuntimeException when the move method cannot be scheduled.
      * @throws GtuException when construction of the GTU fails (probably due to an invalid parameter)
-     * @throws OtsGeometryException when the initial path is wrong
      */
     private static LaneBasedGtu makeReferenceCar(final String id, final GtuType gtuType, final Lane lane,
             final Length initialPosition, final Speed initialSpeed, final OtsSimulatorInterface simulator,
             final GtuFollowingModelOld gtuFollowingModel, final LaneChangeModel laneChangeModel, final RoadNetwork network)
-            throws NamingException, NetworkException, SimRuntimeException, GtuException, OtsGeometryException
+            throws NamingException, NetworkException, SimRuntimeException, GtuException
     {
         // TODO: simulator argument can be remove, but this method is currently only used in code that is commented out
         Length length = new Length(5.0, METER);

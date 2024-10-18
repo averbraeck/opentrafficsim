@@ -15,7 +15,6 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.core.mock.MockSimulator;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
@@ -38,11 +37,10 @@ public class StaticObjectTest implements EventListener
 
     /**
      * Test the StaticObject class.
-     * @throws OtsGeometryException if that happens, this test has failed
      * @throws NetworkException if that happens, this test has failed
      */
     @Test
-    public void staticObjectTest() throws OtsGeometryException, NetworkException
+    public void staticObjectTest() throws NetworkException
     {
         String id = "id of static object";
         Polygon2d geometry =

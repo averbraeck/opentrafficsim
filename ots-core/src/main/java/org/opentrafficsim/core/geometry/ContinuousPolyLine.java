@@ -7,7 +7,6 @@ import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
-import org.djutils.exceptions.Try;
 
 /**
  * Continuous definition of a PolyLine. Naive approaches are applied for offsets, since polylines have no exact information for
@@ -91,14 +90,14 @@ public class ContinuousPolyLine implements ContinuousLine
     @Override
     public double getStartRadius()
     {
-        return Try.assign(() -> new OtsLine2d(this.line).getProjectedRadius(0.0).si, "0.0 should be in range.");
+        return new OtsLine2d(this.line).getProjectedRadius(0.0).si;
     }
 
     /** {@inheritDoc} */
     @Override
     public double getEndRadius()
     {
-        return Try.assign(() -> new OtsLine2d(this.line).getProjectedRadius(1.0).si, "0.0 should be in range.");
+        return new OtsLine2d(this.line).getProjectedRadius(1.0).si;
     }
 
     /**
@@ -130,9 +129,8 @@ public class ContinuousPolyLine implements ContinuousLine
     public PolyLine2d offset(final FractionalLengthData offsets)
     {
         Throw.whenNull(offsets, "Offsets may not be null.");
-        PolyLine2d offsetLine = Try.assign(
-                () -> OtsGeometryUtil.offsetLine(this.line, offsets.getFractionalLengthsAsArray(), offsets.getValuesAsArray()),
-                "Unexpected exception while creating offset line.");
+        PolyLine2d offsetLine =
+                OtsGeometryUtil.offsetLine(this.line, offsets.getFractionalLengthsAsArray(), offsets.getValuesAsArray());
         Point2d start = OtsGeometryUtil.offsetPoint(this.startPoint, offsets.get(0.0));
         Point2d end = OtsGeometryUtil.offsetPoint(this.endPoint, offsets.get(1.0));
         List<Point2d> points = offsetLine.getPointList();

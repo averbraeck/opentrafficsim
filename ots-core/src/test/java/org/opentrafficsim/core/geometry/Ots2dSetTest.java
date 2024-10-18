@@ -12,7 +12,6 @@ import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 
 /**
  * Test the Ots2dSet class.
@@ -28,10 +27,9 @@ public class Ots2dSetTest
 {
     /**
      * Test some simple things.
-     * @throws OtsGeometryException when something goes wrong; if it does; this test has failed
      */
     @Test
-    public final void testBasics() throws OtsGeometryException
+    public final void testBasics()
     {
         try
         {
@@ -46,9 +44,9 @@ public class Ots2dSetTest
         try
         {
             new Ots2dSet(rectangle, 0);
-            fail("minimum cell size <= 0 should have thrown an OTSGeometryException");
+            fail("minimum cell size <= 0 should have thrown an IllegalArgumentException");
         }
-        catch (OtsGeometryException e)
+        catch (IllegalArgumentException e)
         {
             // Ignore expected exception
         }

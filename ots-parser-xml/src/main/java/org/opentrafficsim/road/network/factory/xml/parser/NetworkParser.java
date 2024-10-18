@@ -20,7 +20,6 @@ import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
@@ -182,12 +181,11 @@ public final class NetworkParser
      * @param flatteners flattener per link id.
      * @param eval expression evaluator.
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
-     * @throws OtsGeometryException when the design line is invalid
      */
     static void parseLinks(final RoadNetwork otsNetwork, final Definitions definitions, final Network network,
             final Map<String, Direction> nodeDirections, final OtsSimulatorInterface simulator,
             final Map<String, ContinuousLine> designLines, final Map<String, Flattener> flatteners, final Eval eval)
-            throws NetworkException, OtsGeometryException
+            throws NetworkException
     {
         for (org.opentrafficsim.xml.generated.Connector xmlConnector : network.getConnector())
         {
@@ -339,7 +337,6 @@ public final class NetworkParser
      * @param flatteners flattener per link id.
      * @param eval expression evaluator.
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
-     * @throws OtsGeometryException when the design line is invalid
      * @throws XmlParserException when the stripe type cannot be recognized
      * @throws SimRuntimeException in case of simulation problems building the car generator
      * @throws GtuException when construction of the Strategical Planner failed
@@ -347,7 +344,7 @@ public final class NetworkParser
     static void applyRoadLayout(final RoadNetwork otsNetwork, final Definitions definitions, final Network network,
             final Map<String, RoadLayout> roadLayoutMap, final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap,
             final Map<String, ContinuousLine> designLines, final Map<String, Flattener> flatteners, final Eval eval)
-            throws NetworkException, OtsGeometryException, XmlParserException, SimRuntimeException, GtuException
+            throws NetworkException, XmlParserException, SimRuntimeException, GtuException
     {
         for (Link xmlLink : network.getLink())
         {
@@ -492,14 +489,12 @@ public final class NetworkParser
      * @param stripeTag the CseStripe tag in the XML file
      * @param cseList the list of CrossSectionElements to which the stripes should be added
      * @param eval expression evaluator.
-     * @throws OtsGeometryException when creation of the center line or contour geometry fails
      * @throws NetworkException when id of the stripe not unique
      * @throws XmlParserException when the stripe type cannot be recognized
      */
     private static void makeStripe(final CrossSectionLink csl, final ContinuousLine designLine, final Flattener flattener,
             final Length startOffset, final Length endOffset, final CseStripe stripeTag,
-            final List<CrossSectionElement> cseList, final Eval eval)
-            throws OtsGeometryException, NetworkException, XmlParserException
+            final List<CrossSectionElement> cseList, final Eval eval) throws NetworkException, XmlParserException
     {
         Type type = stripeTag.getType().get(eval);
         Length width = stripeTag.getDrawingWidth() != null ? stripeTag.getDrawingWidth().get(eval) : type.defaultWidth();
@@ -518,11 +513,9 @@ public final class NetworkParser
      * @param otsNetwork the network to insert the parsed objects in
      * @param network the Network tag
      * @param eval expression evaluator.
-     * @throws OtsGeometryException if building conflicts fails
      * @throws XmlParserException if Conflicts tag contains no valid element
      */
-    static void buildConflicts(final RoadNetwork otsNetwork, final Network network, final Eval eval)
-            throws OtsGeometryException, XmlParserException
+    static void buildConflicts(final RoadNetwork otsNetwork, final Network network, final Eval eval) throws XmlParserException
     {
         if (network.getConflicts() != null && network.getConflicts().getNone() == null)
         {

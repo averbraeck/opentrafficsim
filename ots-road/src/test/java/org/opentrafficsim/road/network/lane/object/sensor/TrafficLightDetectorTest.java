@@ -78,7 +78,7 @@ public class TrafficLightDetectorTest implements EventListener
      * @throws SimRuntimeException ...
      */
     private static Lane[] buildNetwork(final double[] lengths, final OtsSimulatorInterface simulator)
-            throws NetworkException, NamingException, OtsGeometryException, SimRuntimeException
+            throws NetworkException, NamingException, SimRuntimeException
     {
         RoadNetwork network = new RoadNetwork("network", simulator);
         Node prevNode = null;
@@ -140,14 +140,12 @@ public class TrafficLightDetectorTest implements EventListener
     /**
      * Test the TrafficLightSensor.
      * @throws SimRuntimeException if that happens (uncaught) this test has failed
-     * @throws OtsGeometryException if that happens (uncaught) this test has failed
      * @throws NamingException if that happens (uncaught) this test has failed
      * @throws NetworkException if that happens (uncaught) this test has failed
      * @throws GtuException if that happens (uncaught) this test has failed
      */
     // XXX @Test
-    public final void trafficLightSensorTest()
-            throws NetworkException, NamingException, OtsGeometryException, SimRuntimeException, GtuException
+    public final void trafficLightSensorTest() throws NetworkException, NamingException, SimRuntimeException, GtuException
     {
         double[][] lengthLists = {{101.1, -1, 1, -1, 1, -900}, {1000}, {-1000}, {101.1, 900}, {101.1, 1, 1, 1, 1, 900},};
         for (double[] lengthList : lengthLists)

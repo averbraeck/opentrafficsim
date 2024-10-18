@@ -14,7 +14,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -259,28 +258,14 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         // operational plan
         if (initiatedLaneChange.isNone())
         {
-            try
-            {
-                return LaneOperationalPlanBuilder.buildAccelerationPlan(getGtu(), startTime, getGtu().getSpeed(), acceleration,
-                        params.getParameter(ToledoLaneChangeParameters.DT), false);
-            }
-            catch (OtsGeometryException exception)
-            {
-                throw new OperationalPlanException(exception);
-            }
+            return LaneOperationalPlanBuilder.buildAccelerationPlan(getGtu(), startTime, getGtu().getSpeed(), acceleration,
+                    params.getParameter(ToledoLaneChangeParameters.DT), false);
         }
 
-        try
-        {
-            OperationalPlan plan = LaneOperationalPlanBuilder.buildAccelerationLaneChangePlan(getGtu(), initiatedLaneChange,
-                    getGtu().getLocation(), startTime, getGtu().getSpeed(), acceleration,
-                    params.getParameter(ToledoLaneChangeParameters.DT), this.laneChange);
-            return plan;
-        }
-        catch (OtsGeometryException exception)
-        {
-            throw new OperationalPlanException(exception);
-        }
+        OperationalPlan plan = LaneOperationalPlanBuilder.buildAccelerationLaneChangePlan(getGtu(), initiatedLaneChange,
+                getGtu().getLocation(), startTime, getGtu().getSpeed(), acceleration,
+                params.getParameter(ToledoLaneChangeParameters.DT), this.laneChange);
+        return plan;
     }
 
     /**

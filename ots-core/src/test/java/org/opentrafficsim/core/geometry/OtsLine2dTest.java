@@ -22,7 +22,6 @@ import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine2d.FractionalFallback;
 import org.opentrafficsim.core.network.NetworkException;
 
@@ -37,11 +36,10 @@ public class OtsLine2dTest
 {
     /**
      * Test the constructors of OtsLine2d.
-     * @throws OtsGeometryException on failure
      * @throws NetworkException on failure
      */
     @Test
-    public final void constructorsTest() throws OtsGeometryException, NetworkException
+    public final void constructorsTest() throws NetworkException
     {
         double[] values = {-999, 0, 99, 9999}; // Keep this list short; execution time grows with 9th power of length
         Point2d[] points = new Point2d[0]; // Empty array
@@ -127,10 +125,9 @@ public class OtsLine2dTest
     /**
      * Test all the constructors of Point2d.
      * @param points array of Point2d to test with
-     * @throws OtsGeometryException should not happen; this test has failed if it does happen
      * @throws NetworkException should not happen; this test has failed if it does happen
      */
-    private void runConstructors(final Point2d[] points) throws OtsGeometryException, NetworkException
+    private void runConstructors(final Point2d[] points) throws NetworkException
     {
         verifyPoints(new OtsLine2d(points), points);
         List<Point2d> list = new ArrayList<>();
@@ -185,9 +182,8 @@ public class OtsLine2dTest
      * Verify that a OtsLine2d contains the same points as an array of Point2d.
      * @param line the OTS line
      * @param points the OTSPoint array
-     * @throws OtsGeometryException should not happen; this test has failed if it does happen
      */
-    private void verifyPoints(final OtsLine2d line, final Point2d[] points) throws OtsGeometryException
+    private void verifyPoints(final OtsLine2d line, final Point2d[] points)
     {
         assertEquals(line.size(), points.length, "Line should have same number of points as point array");
         for (int i = 0; i < points.length; i++)
@@ -199,10 +195,9 @@ public class OtsLine2dTest
 
     /**
      * Test that exception is thrown when it should be.
-     * @throws OtsGeometryException should not happen; this test has failed if it does happen
      */
     @Test
-    public final void exceptionTest() throws OtsGeometryException
+    public final void exceptionTest()
     {
         OtsLine2d line = new OtsLine2d(new Point2d[] {new Point2d(1, 2), new Point2d(4, 5)});
         try
@@ -227,10 +222,9 @@ public class OtsLine2dTest
 
     /**
      * Test the getLocationExtended method and friends.
-     * @throws OtsGeometryException should not happen; this test has failed if it does happen
      */
     @Test
-    public final void locationExtendedTest() throws OtsGeometryException
+    public final void locationExtendedTest()
     {
         Point2d p0 = new Point2d(10, 20);
         Point2d p1 = new Point2d(40, 50);
@@ -252,10 +246,9 @@ public class OtsLine2dTest
      * @param fraction relative position to check
      * @param expectedPoint expected location of the result
      * @param expectedZRotation expected Z rotation of the result
-     * @throws OtsGeometryException on failure
      */
     private void checkGetLocation(final OtsLine2d line, final double fraction, final Point2d expectedPoint,
-            final double expectedZRotation) throws OtsGeometryException
+            final double expectedZRotation)
     {
         double length = line.getLength();
         checkOrientedPoint2d(line.getLocationExtendedSI(fraction * length), expectedPoint, expectedZRotation);
@@ -318,10 +311,9 @@ public class OtsLine2dTest
 
     /**
      * Test getLocation method.
-     * @throws OtsGeometryException on failure
      */
     @Test
-    public final void locationTest() throws OtsGeometryException
+    public final void locationTest()
     {
         Point2d p0 = new Point2d(10, 20);
         Point2d p1 = new Point2d(40, 50);
@@ -342,10 +334,9 @@ public class OtsLine2dTest
 
     /**
      * Test the createAndCleanOtsLine2d method.
-     * @throws OtsGeometryException should never happen
      */
     @Test
-    public final void cleanTest() throws OtsGeometryException
+    public final void cleanTest()
     {
         Point2d[] tooShort = new Point2d[] {};
         try
@@ -384,10 +375,9 @@ public class OtsLine2dTest
 
     /**
      * Test the equals method.
-     * @throws OtsGeometryException should not happen; this test has failed if it does happen
      */
     @Test
-    public final void equalsTest() throws OtsGeometryException
+    public final void equalsTest()
     {
         Point2d p0 = new Point2d(1.1, 2.2);
         Point2d p1 = new Point2d(2.1, 2.2);
@@ -416,10 +406,9 @@ public class OtsLine2dTest
 
     /**
      * Test the concatenate method.
-     * @throws OtsGeometryException should not happen; this test has failed if it does happen
      */
     @Test
-    public final void concatenateTest() throws OtsGeometryException
+    public final void concatenateTest()
     {
         Point2d p0 = new Point2d(1.1, 2.2);
         Point2d p1 = new Point2d(2.1, 2.2);
@@ -524,10 +513,9 @@ public class OtsLine2dTest
 
     /**
      * Test the reverse method.
-     * @throws OtsGeometryException should not happen; this test has failed if it does happen
      */
     @Test
-    public final void reverseTest() throws OtsGeometryException
+    public final void reverseTest()
     {
         Point2d p0 = new Point2d(1.1, 2.2);
         Point2d p1 = new Point2d(2.1, 2.2);
@@ -556,11 +544,10 @@ public class OtsLine2dTest
 
     /**
      * Test the extract and extractFraction methods.
-     * @throws OtsGeometryException should not happen; this test has failed if it does happen
      */
     @SuppressWarnings("checkstyle:methodlength")
     @Test
-    public final void extractTest() throws OtsGeometryException
+    public final void extractTest()
     {
         Point2d p0 = new Point2d(1, 2);
         Point2d p1 = new Point2d(2, 3);
@@ -743,10 +730,9 @@ public class OtsLine2dTest
 
     /**
      * Test the offsetLine method. Only tests a few easy cases.
-     * @throws OtsGeometryException should not happen (if it does; this test has failed)
      */
     @Test
-    public final void offsetLineTest() throws OtsGeometryException
+    public final void offsetLineTest()
     {
         Point2d from = new Point2d(1, 2);
         Point2d to = new Point2d(4, 3);
@@ -784,10 +770,9 @@ public class OtsLine2dTest
 
     /**
      * Tests the fractional projection method.
-     * @throws OtsGeometryException should not happen (if it does, this test has failed)
      */
     @Test
-    public final void testFractionalProjection() throws OtsGeometryException
+    public final void testFractionalProjection()
     {
         Direction zeroDir = Direction.ZERO;
         // test correct projection with parallel helper lines on line /\/\
@@ -921,7 +906,6 @@ public class OtsLine2dTest
 
     /**
      * Test the find method.
-     * @throws OtsGeometryException if that happens uncaught; this test has failed
      * @throws SecurityException if that happens uncaught; this test has failed
      * @throws NoSuchMethodException if that happens uncaught; this test has failed
      * @throws InvocationTargetException if that happens uncaught; this test has failed
@@ -929,7 +913,7 @@ public class OtsLine2dTest
      * @throws IllegalAccessException if that happens uncaught; this test has failed
      */
     @Test
-    public final void testFind() throws OtsGeometryException, NoSuchMethodException, SecurityException, IllegalAccessException,
+    public final void testFind() throws NoSuchMethodException, SecurityException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException
     {
         // Construct a line with exponentially increasing distances
@@ -954,10 +938,9 @@ public class OtsLine2dTest
 
     /**
      * Test the truncate method.
-     * @throws OtsGeometryException if that happens uncaught; this test has failed
      */
     @Test
-    public final void testTruncate() throws OtsGeometryException
+    public final void testTruncate()
     {
         Point2d from = new Point2d(10, 20);
         Point2d to = new Point2d(70, 80);
@@ -1008,10 +991,9 @@ public class OtsLine2dTest
 
     /**
      * Test the getRadius method.
-     * @throws OtsGeometryException when that happens uncaught; this test has failed
      */
     @Test
-    public void testRadius() throws OtsGeometryException
+    public void testRadius()
     {
         // Single segment line is always straight
         OtsLine2d line = new OtsLine2d(new Point2d[] {new Point2d(10, 20), new Point2d(20, 30)});

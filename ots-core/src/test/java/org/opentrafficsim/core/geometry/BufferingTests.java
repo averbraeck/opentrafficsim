@@ -15,10 +15,9 @@ public class BufferingTests
 
     /**
      * Test the offsetLine method that takes relative fraction and offsets arrays.
-     * @throws OtsGeometryException if that happens uncaught; this test has failed
      */
     @Test
-    public void fractionalOffsetLineTest() throws OtsGeometryException
+    public void fractionalOffsetLineTest()
     {
         System.out.println("Hier komt ie");
         OtsLine2d referenceLine = new OtsLine2d(

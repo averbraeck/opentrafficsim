@@ -27,7 +27,6 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.EventType;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.Distribution;
@@ -349,8 +348,8 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
                 }
             }
         }
-        catch (SimRuntimeException | NetworkException | OtsGeometryException | InputParameterException | GtuException
-                | ParameterException | NamingException | ProbabilityException exception)
+        catch (SimRuntimeException | NetworkException | InputParameterException | GtuException | ParameterException
+                | NamingException | ProbabilityException exception)
         {
             exception.printStackTrace();
         }
@@ -473,9 +472,8 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
      * @param laneType the LaneType for cars
      * @return the lanes
      * @throws NetworkException on network inconsistency
-     * @throws OtsGeometryException on problem making the path for a link
      */
-    private Lane[] setupSink(final Lane[] lanes, final LaneType laneType) throws NetworkException, OtsGeometryException
+    private Lane[] setupSink(final Lane[] lanes, final LaneType laneType) throws NetworkException
     {
         CrossSectionLink link = lanes[0].getLink();
         Node to = (Node) link.getEndNode();

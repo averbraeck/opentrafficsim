@@ -12,7 +12,6 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsLine2d;
@@ -35,10 +34,9 @@ public class NodeTest
     /**
      * Test the basics of the Node class.
      * @throws NetworkException if that happens uncaught; this test has failed
-     * @throws OtsGeometryException if that happens unchaught; this test has failed
      */
     @Test
-    public final void testNode() throws NetworkException, OtsGeometryException
+    public final void testNode() throws NetworkException
     {
         Network network = new Network("Node test network", MockSimulator.createMock());
         Point2d point1 = new Point2d(20, 40);
@@ -118,10 +116,9 @@ public class NodeTest
     /**
      * Test the addConnection method and related functions.
      * @throws NetworkException if that happens uncaught; this test has failed
-     * @throws OtsGeometryException if that happens uncaught; this test has failed
      */
     @Test
-    public final void connectionTest() throws NetworkException, OtsGeometryException
+    public final void connectionTest() throws NetworkException
     {
         OtsSimulatorInterface simulator = MockSimulator.createMock();
         Network network = new Network("connection test network", simulator);
@@ -262,10 +259,9 @@ public class NodeTest
     /**
      * Test the addConnection method with a Set and related functions.
      * @throws NetworkException if that happens uncaught; this test has failed
-     * @throws OtsGeometryException if that happens uncaught; this test has failed
      */
     @Test
-    public final void connectionSetTest() throws NetworkException, OtsGeometryException
+    public final void connectionSetTest() throws NetworkException
     {
         OtsSimulatorInterface simulator = MockSimulator.createMock();
         Network network = new Network("connectionSets test network", simulator);

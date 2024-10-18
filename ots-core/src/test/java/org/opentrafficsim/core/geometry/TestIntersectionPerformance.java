@@ -9,7 +9,6 @@ import java.util.List;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 
 /**
  * Measure the performance of the Polygon2d intersection method.
@@ -38,10 +37,8 @@ public final class TestIntersectionPerformance
      * @param cX x-coordinate of the center of the constructed Polygon2d
      * @param cY y-coordinate of the center of the constructed Polygon2d
      * @return Polygon2d
-     * @throws OtsGeometryException when the number of vertices is less than two, or the radius is 0;
      */
     static Polygon2d makeNGon(final int numVertices, final double r, final double cX, final double cY)
-            throws OtsGeometryException
     {
         Point2d[] points = new Point2d[numVertices];
         for (int i = 0; i < numVertices; i++)
@@ -61,10 +58,9 @@ public final class TestIntersectionPerformance
      * @param verbose if true; print details of each run
      * @param variant variant of the collision tester to use
      * @return collected statistics of this test
-     * @throws OtsGeometryException when the number of vertices iss less than two
      */
     public static Results baseTest(final int numShapes, final int numVertices, final double desiredHitFraction,
-            final int numRuns, final boolean verbose, final int variant) throws OtsGeometryException
+            final int numRuns, final boolean verbose, final int variant)
     {
         Results results = new Results(numShapes, numVertices);
         if (verbose)
@@ -131,10 +127,9 @@ public final class TestIntersectionPerformance
     /**
      * Measure the performance.
      * @param args command line arguments (not used)
-     * @throws OtsGeometryException ...
      * @throws IOException ...
      */
-    public static void main(final String[] args) throws OtsGeometryException, IOException
+    public static void main(final String[] args) throws IOException
     {
         System.out.println("Type return to start ...");
         System.in.read();

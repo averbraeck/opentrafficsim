@@ -22,7 +22,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.draw.Transform2d;
 import org.djutils.draw.bounds.Bounds;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
@@ -31,7 +30,6 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
@@ -553,10 +551,9 @@ public class LaneTest implements UNITS
      * @throws NetworkException when that happens uncaught; this test has failed
      * @throws NamingException when that happens uncaught; this test has failed
      * @throws SimRuntimeException when that happens uncaught; this test has failed
-     * @throws OtsGeometryException when that happens uncaught; this test has failed
      */
     @Test
-    public final void lateralOffsetTest() throws NetworkException, SimRuntimeException, NamingException, OtsGeometryException
+    public final void lateralOffsetTest() throws NetworkException, SimRuntimeException, NamingException
     {
         Point2d from = new Point2d(10, 10);
         Point2d to = new Point2d(1010, 10);

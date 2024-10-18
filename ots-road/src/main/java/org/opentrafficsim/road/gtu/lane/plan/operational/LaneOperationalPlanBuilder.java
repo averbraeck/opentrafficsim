@@ -14,7 +14,6 @@ import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.logger.CategoryLogger;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -73,12 +72,10 @@ public final class LaneOperationalPlanBuilder
      * @param deviative whether the plan is deviative
      * @return the operational plan to accomplish the given end speed
      * @throws OperationalPlanException when the construction of the operational path fails
-     * @throws OtsGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
-     *             first lane
      */
     public static LaneBasedOperationalPlan buildAccelerationPlan(final LaneBasedGtu gtu, final Time startTime,
             final Speed startSpeed, final Acceleration acceleration, final Duration timeStep, final boolean deviative)
-            throws OperationalPlanException, OtsGeometryException
+            throws OperationalPlanException
     {
         Segments segments = Segments.off(startSpeed, timeStep, acceleration);
         Length distance = Length.ZERO;
@@ -105,9 +102,8 @@ public final class LaneOperationalPlanBuilder
      * @param gtu gtu
      * @param distance minimum distance
      * @return path along lane center lines
-     * @throws OtsGeometryException when any of the OtsLine2d operations fails
      */
-    public static OtsLine2d createPathAlongCenterLine(final LaneBasedGtu gtu, final Length distance) throws OtsGeometryException
+    public static OtsLine2d createPathAlongCenterLine(final LaneBasedGtu gtu, final Length distance)
     {
         OtsLine2d path = null;
         try
@@ -210,14 +206,12 @@ public final class LaneOperationalPlanBuilder
      * @param laneChange lane change status
      * @return the operational plan to accomplish the given end speed
      * @throws OperationalPlanException when the construction of the operational path fails
-     * @throws OtsGeometryException in case the lanes are not connected or firstLanePositiion is larger than the length of the
-     *             first lane
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static LaneBasedOperationalPlan buildAccelerationLaneChangePlan(final LaneBasedGtu gtu,
             final LateralDirectionality laneChangeDirectionality, final OrientedPoint2d startPosition, final Time startTime,
             final Speed startSpeed, final Acceleration acceleration, final Duration timeStep, final LaneChange laneChange)
-            throws OperationalPlanException, OtsGeometryException
+            throws OperationalPlanException
     {
 
         // on first call during lane change, use laneChangeDirectionality as laneChange.getDirection() is NONE
@@ -293,37 +287,23 @@ public final class LaneOperationalPlanBuilder
             {
                 gtu.changeLaneInstantaneously(simplePlan.getLaneChangeDirection());
             }
-            try
-            {
-                return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, startTime, gtu.getSpeed(), acc,
-                        simplePlan.getDuration(), false);
-            }
-            catch (OtsGeometryException exception)
-            {
-                throw new OperationalPlanException(exception);
-            }
+            return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, startTime, gtu.getSpeed(), acc,
+                    simplePlan.getDuration(), false);
         }
 
         // gradual lane change
-        try
+        if (!simplePlan.isLaneChange() && !laneChange.isChangingLane())
         {
-            if (!simplePlan.isLaneChange() && !laneChange.isChangingLane())
-            {
-                return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, startTime, gtu.getSpeed(), acc,
-                        simplePlan.getDuration(), true);
-            }
-            if (gtu.getSpeed().si == 0.0 && acc.si <= 0.0)
-            {
-                return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, startTime, gtu.getSpeed(), acc,
-                        simplePlan.getDuration(), false);
-            }
-            return LaneOperationalPlanBuilder.buildAccelerationLaneChangePlan(gtu, simplePlan.getLaneChangeDirection(),
-                    gtu.getLocation(), startTime, gtu.getSpeed(), acc, simplePlan.getDuration(), laneChange);
+            return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, startTime, gtu.getSpeed(), acc,
+                    simplePlan.getDuration(), true);
         }
-        catch (OtsGeometryException exception)
+        if (gtu.getSpeed().si == 0.0 && acc.si <= 0.0)
         {
-            throw new OperationalPlanException(exception);
+            return LaneOperationalPlanBuilder.buildAccelerationPlan(gtu, startTime, gtu.getSpeed(), acc,
+                    simplePlan.getDuration(), false);
         }
+        return LaneOperationalPlanBuilder.buildAccelerationLaneChangePlan(gtu, simplePlan.getLaneChangeDirection(),
+                gtu.getLocation(), startTime, gtu.getSpeed(), acc, simplePlan.getDuration(), laneChange);
     }
 
     /**

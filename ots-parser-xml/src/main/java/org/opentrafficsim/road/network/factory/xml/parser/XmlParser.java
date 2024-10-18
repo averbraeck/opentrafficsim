@@ -26,7 +26,6 @@ import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
 import org.djutils.io.URLResource;
 import org.djutils.logger.CategoryLogger;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.base.logger.Cat;
 import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.core.definitions.Definitions;
@@ -169,7 +168,6 @@ public final class XmlParser implements Serializable
      * @throws JAXBException when the parsing fails
      * @throws URISyntaxException when the filename is not valid
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
-     * @throws OtsGeometryException when the design line of a link is invalid
      * @throws XmlParserException when the stripe type cannot be recognized
      * @throws ParserConfigurationException on error with parser configuration
      * @throws SAXException on error creating SAX parser
@@ -179,9 +177,9 @@ public final class XmlParser implements Serializable
      * @throws IOException when construction of a traffic controller fails
      * @throws MalformedURLException when construction of a traffic controller fails
      */
-    public ExperimentRunControl<Duration> build() throws SimRuntimeException, MalformedURLException, JAXBException,
-            URISyntaxException, NetworkException, OtsGeometryException, XmlParserException, SAXException,
-            ParserConfigurationException, GtuException, IOException, TrafficControlException
+    public ExperimentRunControl<Duration> build()
+            throws SimRuntimeException, MalformedURLException, JAXBException, URISyntaxException, NetworkException,
+            XmlParserException, SAXException, ParserConfigurationException, GtuException, IOException, TrafficControlException
     {
         Throw.when(this.stream == null, IllegalStateException.class,
                 "Invoke one of setFile(), setUrl(), or setStream() before parsing.");
@@ -224,7 +222,6 @@ public final class XmlParser implements Serializable
      * @throws JAXBException when the parsing fails
      * @throws URISyntaxException when the filename is not valid
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
-     * @throws OtsGeometryException when the design line of a link is invalid
      * @throws XmlParserException when the stripe type cannot be recognized
      * @throws ParserConfigurationException on error with parser configuration
      * @throws SAXException on error creating SAX parser
@@ -235,9 +232,9 @@ public final class XmlParser implements Serializable
      * @throws MalformedURLException when construction of a traffic controller fails
      */
     private static ExperimentRunControl<Duration> build(final Ots ots, final RoadNetwork otsNetwork, final String scenario,
-            final boolean buildConflicts) throws JAXBException, URISyntaxException, NetworkException, OtsGeometryException,
-            XmlParserException, SAXException, ParserConfigurationException, SimRuntimeException, GtuException,
-            MalformedURLException, IOException, TrafficControlException
+            final boolean buildConflicts) throws JAXBException, URISyntaxException, NetworkException, XmlParserException,
+            SAXException, ParserConfigurationException, SimRuntimeException, GtuException, MalformedURLException, IOException,
+            TrafficControlException
     {
         CategoryLogger.setLogCategories(Cat.PARSER);
         CategoryLogger.setAllLogLevel(Level.TRACE);

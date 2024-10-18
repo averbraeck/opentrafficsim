@@ -16,7 +16,6 @@ import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 
@@ -159,9 +158,8 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      * @param relativeFractions positional fractions for which the offsets have to be generated
      * @param offsets offsets at the relative positions (positive value is Left, negative value is Right)
      * @return the Geometry of the line at linearly changing offset of the reference line
-     * @throws OtsGeometryException when this method fails to create the offset line
      */
-    public final OtsLine2d offsetLine(final double[] relativeFractions, final double[] offsets) throws OtsGeometryException
+    public final OtsLine2d offsetLine(final double[] relativeFractions, final double[] offsets)
     {
         return new OtsLine2d(OtsGeometryUtil.offsetLine(this, relativeFractions, offsets));
     }
@@ -728,12 +726,12 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      * shortest edge. This method ignores Z components.
      * @param fraction fraction along the line, between 0.0 and 1.0 (both inclusive)
      * @return radius; the local radius; or si field set to Double.NaN if line is totally straight
-     * @throws OtsGeometryException fraction out of bounds
+     * @throws IllegalArgumentException fraction out of bounds
      */
-    public synchronized Length getProjectedRadius(final double fraction) throws OtsGeometryException
+    public synchronized Length getProjectedRadius(final double fraction) throws IllegalArgumentException
     {
-        Throw.when(fraction < 0.0 || fraction > 1.0, OtsGeometryException.class, "Fraction %f is out of bounds [0.0 ... 1.0]",
-                fraction);
+        Throw.when(fraction < 0.0 || fraction > 1.0, IllegalArgumentException.class,
+                "Fraction %f is out of bounds [0.0 ... 1.0]", fraction);
         if (this.vertexRadii == null)
         {
             this.vertexRadii = new Length[size() - 1];
@@ -770,12 +768,12 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      * edge. This function ignores Z components.
      * @param index index of the vertex in range [1 ... size() - 2]
      * @return radius at the vertex
-     * @throws OtsGeometryException if the index is out of bounds
+     * @throws IndexOutOfBoundsException if the index is out of bounds
      */
-    public synchronized Length getProjectedVertexRadius(final int index) throws OtsGeometryException
+    public synchronized Length getProjectedVertexRadius(final int index) throws IndexOutOfBoundsException
     {
-        Throw.when(index < 1 || index > size() - 2, OtsGeometryException.class, "Index %d is out of bounds [1 ... size() - 2].",
-                index);
+        Throw.when(index < 1 || index > size() - 2, IndexOutOfBoundsException.class,
+                "Index %d is out of bounds [1 ... size() - 2].", index);
         determineFractionalHelpers(null, null);
         double length1 = this.lengthIndexedLine[index] - this.lengthIndexedLine[index - 1];
         double length2 = this.lengthIndexedLine[index + 1] - this.lengthIndexedLine[index];
@@ -817,11 +815,11 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      * Returns the length fraction at the vertex.
      * @param index index of vertex [0 ... size() - 1]
      * @return length fraction at the vertex
-     * @throws OtsGeometryException if the index is out of bounds
+     * @throws IndexOutOfBoundsException if the index is out of bounds
      */
-    public double getVertexFraction(final int index) throws OtsGeometryException
+    public double getVertexFraction(final int index) throws IndexOutOfBoundsException
     {
-        Throw.when(index < 0 || index > size() - 1, OtsGeometryException.class, "Index %d is out of bounds [0 %d].", index,
+        Throw.when(index < 0 || index > size() - 1, IndexOutOfBoundsException.class, "Index %d is out of bounds [0 %d].", index,
                 size() - 1);
         return this.lengthIndexedLine[index] / this.length.si;
     }

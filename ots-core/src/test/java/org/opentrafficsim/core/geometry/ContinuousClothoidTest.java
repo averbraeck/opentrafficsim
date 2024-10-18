@@ -9,7 +9,6 @@ import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.Flattener.NumSegments;
 
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -47,10 +46,9 @@ public class ContinuousClothoidTest
 
     /**
      * Tests whether clothoid between two directed points are correct.
-     * @throws OtsGeometryException if segment number is not available on the line
      */
     @Test
-    public void testPoints() throws OtsGeometryException
+    public void testPoints()
     {
         StreamInterface r = new MersenneTwister(3L);
         for (int i = 0; i < RUNS; i++)
@@ -100,10 +98,9 @@ public class ContinuousClothoidTest
 
     /**
      * Test clothoids created with curvatures and a length.
-     * @throws OtsGeometryException if segment number is not available on the line
      */
     @Test
-    public void testLength() throws OtsGeometryException
+    public void testLength()
     {
         StreamInterface r = new MersenneTwister(3L);
         for (int i = 0; i < RUNS; i++)
@@ -124,10 +121,9 @@ public class ContinuousClothoidTest
 
     /**
      * Test clothoids created with curvatures and an A-value.
-     * @throws OtsGeometryException if segment number is not available on the line
      */
     @Test
-    public void testA() throws OtsGeometryException
+    public void testA()
     {
         StreamInterface r = new MersenneTwister(3L);
         for (int i = 0; i < RUNS; i++)
@@ -155,10 +151,9 @@ public class ContinuousClothoidTest
      * @param startCurvature start curvature, may be {@code null} if no theoretical value available.
      * @param endCurvature end curvature, may be {@code null} if no theoretical value available.
      * @param a Length A-value, may be {@code null} if no theoretical value available.
-     * @throws OtsGeometryException if segment number is not available on the line
      */
     private void VerifyLine(final OrientedPoint2d start, final ContinuousClothoid clothoid, final PolyLine2d line,
-            final LinearDensity startCurvature, final LinearDensity endCurvature, final Length a) throws OtsGeometryException
+            final LinearDensity startCurvature, final LinearDensity endCurvature, final Length a)
     {
         assertEquals(0.0, Math.hypot(start.x - line.get(0).x, start.y - line.get(0).y), DISTANCE_TOLERANCE,
                 "Start location deviates");
@@ -225,9 +220,8 @@ public class ContinuousClothoidTest
      * @param line line.
      * @param segment segment number.
      * @return angle of the line segment.
-     * @throws OtsGeometryException if segment number is not available on the line
      */
-    private static double getAngle(final PolyLine2d line, final int segment) throws OtsGeometryException
+    private static double getAngle(final PolyLine2d line, final int segment)
     {
         return Math.atan2(line.get(segment + 1).y - line.get(segment).y, line.get(segment + 1).x - line.get(segment).x);
     }

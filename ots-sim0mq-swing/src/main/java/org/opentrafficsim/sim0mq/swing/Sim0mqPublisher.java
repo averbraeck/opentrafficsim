@@ -32,7 +32,6 @@ import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.serialization.SerializationException;
 import org.opentrafficsim.animation.DefaultAnimationFactory;
 import org.opentrafficsim.animation.gtu.colorer.DefaultSwitchableGtuColorer;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -531,7 +530,7 @@ class Sim0mqOtsModel extends AbstractOtsModel
                     new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)), new LaneCombinationList(),
                     new LaneCombinationList());
         }
-        catch (NetworkException | OtsGeometryException | JAXBException | URISyntaxException | XmlParserException | SAXException
+        catch (NetworkException | JAXBException | URISyntaxException | XmlParserException | SAXException
                 | ParserConfigurationException | GtuException | IOException | TrafficControlException exception)
         {
             exception.printStackTrace();

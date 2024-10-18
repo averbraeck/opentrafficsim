@@ -16,7 +16,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.draw.point.Point2d;
 import org.djutils.traceverifier.TraceVerifier;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
@@ -267,11 +266,10 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
      * @throws SimRuntimeException cannot happen
      * @throws NetworkException on network inconsistency
      * @throws GtuException when something goes wrong during construction of the car
-     * @throws OtsGeometryException when the initial position is outside the center line of the lane
      * @throws InputParameterException when generic.gradualLaneChange is not set
      */
     protected final void generateGTU(final Length initialPosition, final Lane lane, final GtuType gtuType)
-            throws GtuException, NetworkException, SimRuntimeException, OtsGeometryException, InputParameterException
+            throws GtuException, NetworkException, SimRuntimeException, InputParameterException
     {
         // GTU itself
         boolean generateTruck = this.stream.nextDouble() > this.carProbability;

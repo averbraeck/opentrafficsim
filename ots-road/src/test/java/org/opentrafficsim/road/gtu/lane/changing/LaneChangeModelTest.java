@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -20,7 +19,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.definitions.DefaultsNl;
@@ -90,12 +88,11 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
      * @param width the width of the new Link
      * @param simulator the simulator
      * @return Link
-     * @throws OtsGeometryException when coordinates cannot be calculated
      * @throws NetworkException if link already exists in the network, if name of the link is not unique, or if the start node
      *             or the end node of the link are not registered in the network
      */
     private static CrossSectionLink makeLink(final RoadNetwork network, final String name, final Node from, final Node to,
-            final Length width, final OtsSimulatorInterface simulator) throws OtsGeometryException, NetworkException
+            final Length width, final OtsSimulatorInterface simulator) throws NetworkException
     {
         // TODO create a LinkAnimation if the simulator is compatible with that.
         // FIXME The current LinkAnimation is too bad to use...
@@ -117,10 +114,9 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
      * @return Lane
      * @throws NamingException on ???
      * @throws NetworkException on ??
-     * @throws OtsGeometryException when center line or contour of a link or lane cannot be generated
      */
     private static Lane makeLane(final CrossSectionLink link, final String id, final LaneType laneType, final Length latPos,
-            final Length width) throws NamingException, NetworkException, OtsGeometryException
+            final Length width) throws NamingException, NetworkException
     {
         // XXX Decide what type of overtaking conditions we want in this test
         Lane result = LaneGeometryUtil.createStraightLane(link, id, latPos, latPos, width, width, laneType,

@@ -38,7 +38,7 @@ The autorun parameter triggers animation when false. These, and other, parameter
 
 ```java
     protected RoadNetwork setupSimulation(final OtsSimulatorInterface sim)
-            throws NullPointerException, DrawRuntimeException, NetworkException, OtsGeometryException
+            throws NullPointerException, DrawRuntimeException, NetworkException
     {
         RoadNetwork network = new RoadNetwork("Simple network", sim);
         Point2d pointA = new Point2d(0, 0);

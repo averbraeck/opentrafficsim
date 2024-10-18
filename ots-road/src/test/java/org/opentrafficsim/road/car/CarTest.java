@@ -2,9 +2,7 @@ package org.opentrafficsim.road.car;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 import javax.naming.NamingException;
 
@@ -19,7 +17,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
@@ -65,12 +62,10 @@ public class CarTest implements UNITS
      * @throws SimRuntimeException on ???
      * @throws NamingException on ???
      * @throws GtuException on ???
-     * @throws OtsGeometryException when center line or contour of a link or lane cannot be generated
      */
     @SuppressWarnings("static-method")
     @Test
-    public final void carTest()
-            throws NetworkException, SimRuntimeException, NamingException, GtuException, OtsGeometryException
+    public final void carTest() throws NetworkException, SimRuntimeException, NamingException, GtuException
     {
         Time initialTime = new Time(0, TimeUnit.BASE_SECOND);
         OtsSimulatorInterface simulator = makeSimulator();
@@ -126,12 +121,11 @@ public class CarTest implements UNITS
      * @throws NetworkException when the GTU cannot be placed on the given lane.
      * @throws SimRuntimeException when the move method cannot be scheduled.
      * @throws GtuException when construction of the GTU fails (probably due to an invalid parameter)
-     * @throws OtsGeometryException when the initial path is wrong
      */
     public static LaneBasedGtu makeReferenceCar(final String id, final GtuType gtuType, final Lane lane,
             final Length initialPosition, final Speed initialSpeed, final GtuFollowingModelOld gtuFollowingModel,
             final LaneChangeModel laneChangeModel, final RoadNetwork network)
-            throws NamingException, NetworkException, SimRuntimeException, GtuException, OtsGeometryException
+            throws NamingException, NetworkException, SimRuntimeException, GtuException
     {
         Length length = new Length(5.0, METER);
         Length width = new Length(2.0, METER);
@@ -152,10 +146,9 @@ public class CarTest implements UNITS
      * @param simulator simulator
      * @return a lane of 1000 m long.
      * @throws NetworkException on network error
-     * @throws OtsGeometryException when center line or contour of a link or lane cannot be generated
      */
     public static Lane makeLane(final RoadNetwork network, final LaneType laneType, final OtsSimulatorInterface simulator)
-            throws NetworkException, OtsGeometryException
+            throws NetworkException
     {
         Node n1 = new Node(network, "n1", new Point2d(0, 0), Direction.ZERO);
         Node n2 = new Node(network, "n2", new Point2d(100000.0, 0.0), Direction.ZERO);

@@ -68,10 +68,9 @@ public class ContinuousArcTest
 
     /**
      * Test flattened arc.
-     * @throws OtsGeometryException if test is ill defined.
      */
     @Test
-    public void flattenArcTest() throws OtsGeometryException
+    public void flattenArcTest()
     {
         double u = Math.sin(Math.PI / 4.0);
 
@@ -155,10 +154,9 @@ public class ContinuousArcTest
 
     /**
      * Test offset arc.
-     * @throws OtsGeometryException if test is ill defined.
      */
     @Test
-    public void offsetArcTest() throws OtsGeometryException
+    public void offsetArcTest()
     {
         // half standard unit circle
         OrientedPoint2d start = new OrientedPoint2d(1.0, 0.0, Math.PI / 2.0);
@@ -237,9 +235,8 @@ public class ContinuousArcTest
 
     /**
      * Test arc defined by length.
-     * @throws OtsGeometryException if test is ill defined.
      */
-    public void lengthTest() throws OtsGeometryException
+    public void lengthTest()
     {
         for (boolean left : new boolean[] {true, false})
         {

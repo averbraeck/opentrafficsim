@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Locale;
 
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine2d.FractionalFallback;
 
 /**
@@ -23,14 +22,13 @@ public final class FractionalHelper
     /**
      * Test/development code for the fractional helper stuff.
      * @param args the command line arguments (not used)
-     * @throws OtsGeometryException in case of error
      * @throws SecurityException ...
      * @throws NoSuchFieldException ...
      * @throws IllegalAccessException ...
      * @throws IllegalArgumentException ...
      */
-    public static void main(final String[] args) throws OtsGeometryException, IllegalArgumentException, IllegalAccessException,
-            NoSuchFieldException, SecurityException
+    public static void main(final String[] args)
+            throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException
     {
         /*-
         OtsLine2d line = new OtsLine2d(new Point2d(-263.811, -86.551, 1.180), new Point2d(-262.945, -84.450, 1.180),

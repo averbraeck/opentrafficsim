@@ -220,11 +220,9 @@ public class LaneChange implements Serializable
      * @param planDistance absolute distance that will be covered during the time step
      * @param laneChangeDirection lane change direction
      * @return path
-     * @throws OtsGeometryException on path or shape error
      */
     public final OtsLine2d getPath(final Duration timeStep, final LaneBasedGtu gtu, final LanePosition from,
             final OrientedPoint2d startPosition, final Length planDistance, final LateralDirectionality laneChangeDirection)
-            throws OtsGeometryException
     {
         // initiate lane change
         boolean favoured = false;
@@ -458,10 +456,8 @@ public class LaneChange implements Serializable
      * @param startFractionalPosition current fractional GTU position on first lane
      * @param endFractionalPosition target fractional GTU position on last lane
      * @return line from the lane center lines
-     * @throws OtsGeometryException on fraction outside of range
      */
     private OtsLine2d getLine(final List<Lane> lanes, final double startFractionalPosition, final double endFractionalPosition)
-            throws OtsGeometryException
     {
         OtsLine2d line = null;
         for (Lane lane : lanes)
@@ -607,7 +603,7 @@ public class LaneChange implements Serializable
             public OtsLine2d getPath(final Duration timeStep, final Length planDistance, final Speed meanSpeed,
                     final LanePosition from, final OrientedPoint2d startPosition,
                     final LateralDirectionality laneChangeDirection, final OtsLine2d fromLine, final OtsLine2d toLine,
-                    final Duration laneChangeDuration, final double lcFraction) throws OtsGeometryException
+                    final Duration laneChangeDuration, final double lcFraction)
             {
                 OrientedPoint2d target = toLine.getLocationPointFraction(1.0);
                 return Bezier.cubic(64, startPosition, target, 0.5);
@@ -671,7 +667,7 @@ public class LaneChange implements Serializable
             public OtsLine2d getPath(final Duration timeStep, final Length planDistance, final Speed meanSpeed,
                     final LanePosition from, final OrientedPoint2d startPosition,
                     final LateralDirectionality laneChangeDirection, final OtsLine2d fromLine, final OtsLine2d toLine,
-                    final Duration laneChangeDuration, final double lcFraction) throws OtsGeometryException
+                    final Duration laneChangeDuration, final double lcFraction)
             {
                 OrientedPoint2d toTarget = toLine.getLocationPointFraction(1.0);
                 OrientedPoint2d fromTarget = fromLine.getLocationPointFraction(1.0);
@@ -696,12 +692,10 @@ public class LaneChange implements Serializable
              * @param lcFraction lane change fraction at beginning of the plan
              * @param dFraction additional lane change fraction to be made during the plan
              * @return OtsLine2d a (partial) path for a lane change
-             * @throws OtsGeometryException on wrong fractional position
              */
             private OtsLine2d getPathRecursive(final Length planDistance, final Speed meanSpeed, final double buffer,
                     final double width, final LanePosition from, final OrientedPoint2d startPosition, final OtsLine2d fromLine,
                     final OtsLine2d toLine, final Duration laneChangeDuration, final double lcFraction, final double dFraction)
-                    throws OtsGeometryException
             {
                 // factor on path length to not overshoot a fraction of 1.0 in lane change progress, i.e. <1 if lane change will
                 // be finished in the coming time step
@@ -760,7 +754,7 @@ public class LaneChange implements Serializable
             public OtsLine2d getPath(final Duration timeStep, final Length planDistance, final Speed meanSpeed,
                     final LanePosition from, final OrientedPoint2d startPosition,
                     final LateralDirectionality laneChangeDirection, final OtsLine2d fromLine, final OtsLine2d toLine,
-                    final Duration laneChangeDuration, final double lcFraction) throws OtsGeometryException
+                    final Duration laneChangeDuration, final double lcFraction)
             {
 
                 double dx = fromLine.get(0).x - startPosition.x;
@@ -846,10 +840,9 @@ public class LaneChange implements Serializable
          * @param laneChangeDuration current considered duration of the entire lane change
          * @param lcFraction fraction of lane change done so far
          * @return OtsLine2d a (partial) path for a lane change
-         * @throws OtsGeometryException on wrong fractional position
          */
         OtsLine2d getPath(Duration timeStep, Length planDistance, Speed meanSpeed, LanePosition from,
                 OrientedPoint2d startPosition, LateralDirectionality laneChangeDirection, OtsLine2d fromLine, OtsLine2d toLine,
-                Duration laneChangeDuration, double lcFraction) throws OtsGeometryException;
+                Duration laneChangeDuration, double lcFraction);
     }
 }

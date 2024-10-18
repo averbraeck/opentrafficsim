@@ -25,7 +25,6 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -61,10 +60,9 @@ public class ConflictTest implements EventListener
     /**
      * Test the Conflict class.
      * @throws NetworkException on error
-     * @throws OtsGeometryException on error
      */
     @Test
-    public void testConstructor() throws NetworkException, OtsGeometryException
+    public void testConstructor() throws NetworkException
     {
         OtsSimulatorInterface simulator = MockDevsSimulator.createMock();
         OtsReplication replication = Mockito.mock(OtsReplication.class);

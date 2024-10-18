@@ -17,7 +17,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.definitions.DefaultsNl;
@@ -59,11 +58,10 @@ public class GtuTest
      * @throws SimRuntimeException should not happen uncaught; if it does the test has failed
      * @throws NamingException should not happen uncaught; if it does the test has failed
      * @throws RemoteException should not happen uncaught; if it does the test has failed
-     * @throws OtsGeometryException should not happen uncaught; if it does the test has failed
      */
     @Test
     public final void testAbstractGtu()
-            throws GtuException, SimRuntimeException, NetworkException, NamingException, RemoteException, OtsGeometryException
+            throws GtuException, SimRuntimeException, NetworkException, NamingException, RemoteException
     {
         TestGtu firstGTU = null;
         TestGtu lastGTU = null;

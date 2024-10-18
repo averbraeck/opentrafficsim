@@ -6,7 +6,6 @@ import org.djunits.unit.FrequencyUnit;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.mock.MockSimulator;
@@ -26,10 +25,9 @@ public class CapacityLinkTest
     /**
      * Test the constructor and all getters.
      * @throws NetworkException this test has failed if this exception occurs uncaught
-     * @throws OtsGeometryException this test has failed if this exception occurs uncaught
      */
     @Test
-    public final void constructorTest() throws NetworkException, OtsGeometryException
+    public final void constructorTest() throws NetworkException
     {
         Point2d fromPoint = new Point2d(100, 200);
         Point2d toPoint = new Point2d(1000, 2000);

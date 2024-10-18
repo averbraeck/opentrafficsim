@@ -53,14 +53,14 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
      * indicating that the set has not been modified.)
      * @param boundingBox the region
      * @param minimumCellSize resolution of the underlying quad tree
-     * @throws OtsGeometryException when the bounding box covers no surface
+     * @throws IllegalArgumentException when the bounding box covers no surface or the minimum cell size is not above zero
      */
-    public Ots2dSet(final Bounds2d boundingBox, final double minimumCellSize) throws OtsGeometryException
+    public Ots2dSet(final Bounds2d boundingBox, final double minimumCellSize) throws IllegalArgumentException
     {
         Throw.when(null == boundingBox, NullPointerException.class, "The boundingBox may not be null");
-        Throw.when(boundingBox.getDeltaX() <= 0 || boundingBox.getDeltaY() <= 0, OtsGeometryException.class,
+        Throw.when(boundingBox.getDeltaX() <= 0 || boundingBox.getDeltaY() <= 0, IllegalArgumentException.class,
                 "The boundingBox must have nonzero surface (got %s", boundingBox);
-        Throw.when(minimumCellSize <= 0, OtsGeometryException.class, "The minimumCellSize must be > 0 (got %f)",
+        Throw.when(minimumCellSize <= 0, IllegalArgumentException.class, "The minimumCellSize must be > 0 (got %f)",
                 minimumCellSize);
         this.quadTree = new QuadTreeNode(boundingBox);
         this.minimumCellSize = minimumCellSize;

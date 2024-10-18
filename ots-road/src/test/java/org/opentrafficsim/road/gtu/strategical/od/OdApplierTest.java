@@ -147,11 +147,10 @@ public class OdApplierTest
 
     /**
      * Constructor.
-     * @throws OtsGeometryException on exception
      * @throws NetworkException on exception
      * @throws NamingException on ...
      */
-    public OdApplierTest() throws NetworkException, OtsGeometryException, NamingException
+    public OdApplierTest() throws NetworkException, NamingException
     {
         this.replication =
                 new OtsReplication("replication for ODApplierTest", Time.ZERO, Duration.ZERO, Duration.instantiateSI(10.0));
@@ -167,9 +166,8 @@ public class OdApplierTest
 
     /**
      * @throws NetworkException on network exception
-     * @throws OtsGeometryException on geometry exception
      */
-    private void makeNetwork() throws NetworkException, OtsGeometryException
+    private void makeNetwork() throws NetworkException
     {
         this.network = new RoadNetwork("ODApplierExample", this.simulator);
         Point2d pointA = new Point2d(0, 0);

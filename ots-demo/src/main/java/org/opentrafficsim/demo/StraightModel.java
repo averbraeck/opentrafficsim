@@ -18,7 +18,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.core.definitions.DefaultsNl;
@@ -190,7 +189,7 @@ public class StraightModel extends AbstractOtsModel implements UNITS
             // Remove the block at t = 7 minutes
             this.simulator.scheduleEventAbsTime(new Time(420, TimeUnit.BASE_SECOND), this, "removeBlock", null);
         }
-        catch (SimRuntimeException | NetworkException | OtsGeometryException | InputParameterException | ParameterException
+        catch (SimRuntimeException | NetworkException | InputParameterException | ParameterException
                 | ProbabilityException exception)
         {
             exception.printStackTrace();

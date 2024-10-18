@@ -4,7 +4,6 @@ import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
-import org.djutils.exceptions.Try;
 
 /**
  * Continuous definition of a straight.
@@ -97,9 +96,7 @@ public class ContinuousStraight implements ContinuousLine
     public PolyLine2d offset(final FractionalLengthData offsets)
     {
         Throw.whenNull(offsets, "Offsets may not be null.");
-        return Try.assign(
-                () -> OtsGeometryUtil.offsetLine(flatten(), offsets.getFractionalLengthsAsArray(), offsets.getValuesAsArray()),
-                "Unexpected exception while creating straigh OtsLine2d.");
+        return OtsGeometryUtil.offsetLine(flatten(), offsets.getFractionalLengthsAsArray(), offsets.getValuesAsArray());
     }
 
     /**

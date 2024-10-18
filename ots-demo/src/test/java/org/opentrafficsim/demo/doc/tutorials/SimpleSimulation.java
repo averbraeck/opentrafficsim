@@ -51,7 +51,7 @@ public class SimpleSimulation extends AbstractSimulationScript
     // @docs/08-tutorials/simulation-setup.md#how-to-set-up-a-simulation
     @Override
     protected RoadNetwork setupSimulation(final OtsSimulatorInterface sim)
-            throws NullPointerException, DrawRuntimeException, NetworkException, OtsGeometryException
+            throws NullPointerException, DrawRuntimeException, NetworkException
     {
         RoadNetwork network = new RoadNetwork("Simple network", sim);
         Point2d pointA = new Point2d(0, 0);

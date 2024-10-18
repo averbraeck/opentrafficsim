@@ -47,7 +47,6 @@ import org.opentrafficsim.animation.colorer.SocialPressureColorer;
 import org.opentrafficsim.animation.gtu.colorer.AccelerationGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.SpeedGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.SwitchableGtuColorer;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -78,12 +77,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationConflicts;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationSpeedLimitTransition;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationTrafficLights;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveCourtesy;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveGetInLane;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSocioSpeed;
@@ -440,7 +434,7 @@ public class StrategiesDemo extends AbstractSimulationScript
                 {
                     createGtu(lane, pos, this.nextGtuType, initialSpeed, getNetwork());
                 }
-                catch (NamingException | GtuException | NetworkException | SimRuntimeException | OtsGeometryException exception)
+                catch (NamingException | GtuException | NetworkException | SimRuntimeException exception)
                 {
                     throw new RuntimeException(exception);
                 }
@@ -576,9 +570,10 @@ public class StrategiesDemo extends AbstractSimulationScript
             Tailgating tlgt = Tailgating.PRESSURE;
             // strategical and tactical factory
             LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory =
-                    new LaneBasedStrategicalRoutePlannerFactory(new LmrsFactory(cfFactory, perceptionFactory,
-                            Synchronization.PASSIVE, Cooperation.PASSIVE, GapAcceptance.INFORMED, tlgt, mandatorySupplier,
-                            voluntarySupplier, accelerationSupplier), parameterFactory);
+                    new LaneBasedStrategicalRoutePlannerFactory(
+                            new LmrsFactory(cfFactory, perceptionFactory, Synchronization.PASSIVE, Cooperation.PASSIVE,
+                                    GapAcceptance.INFORMED, tlgt, mandatorySupplier, voluntarySupplier, accelerationSupplier),
+                            parameterFactory);
             this.factories.put(gtuType, laneBasedStrategicalPlannerFactory);
         }
         for (int i = 0; i < lanes1.size(); i++)
@@ -631,11 +626,9 @@ public class StrategiesDemo extends AbstractSimulationScript
      * @throws GtuException on exception
      * @throws NetworkException on exception
      * @throws SimRuntimeException on exception
-     * @throws OtsGeometryException on exception
      */
     public void createGtu(final Lane lane, final Length pos, final GtuType gtuType, final Speed initialSpeed,
-            final RoadNetwork net)
-            throws NamingException, GtuException, NetworkException, SimRuntimeException, OtsGeometryException
+            final RoadNetwork net) throws NamingException, GtuException, NetworkException, SimRuntimeException
     {
         GtuCharacteristics gtuCharacteristics = Try.assign(() -> GtuType.defaultCharacteristics(gtuType, net, this.stream),
                 "Exception while applying default GTU characteristics.");

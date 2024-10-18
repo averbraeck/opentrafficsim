@@ -7,7 +7,6 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.mock.MockSimulator;
@@ -25,10 +24,9 @@ public class LinkPositionTest
     /**
      * Test the LinkPosition class.
      * @throws NetworkException if that happens uncaught; this test has failed
-     * @throws OtsGeometryException if that happens uncaught; this test has failed
      */
     @Test
-    public void linkPositionTest() throws NetworkException, OtsGeometryException
+    public void linkPositionTest() throws NetworkException
     {
         Network network = new Network("test network for LinkPosition test", MockSimulator.createMock());
         Node nodeA = new Node(network, "A", new Point2d(10, 10));

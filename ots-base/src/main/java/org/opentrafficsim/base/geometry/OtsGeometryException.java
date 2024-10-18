@@ -10,7 +10,7 @@ package org.opentrafficsim.base.geometry;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class OtsGeometryException extends Exception
+public class OtsGeometryException extends RuntimeException
 {
     /** */
     private static final long serialVersionUID = 20150722L;

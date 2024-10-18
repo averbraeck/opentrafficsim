@@ -23,10 +23,9 @@ public class BezierTest
 
     /**
      * Test the various methods in the Bezier class.
-     * @throws OtsGeometryException when this happens uncaught this test has failed
      */
     @Test
-    public final void bezierTest() throws OtsGeometryException
+    public final void bezierTest()
     {
         Point2d from = new Point2d(10, 0);
         Point2d control1 = new Point2d(20, 0);

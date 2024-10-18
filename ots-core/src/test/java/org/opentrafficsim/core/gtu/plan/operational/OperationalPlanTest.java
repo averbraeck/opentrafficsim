@@ -16,7 +16,6 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 
 /**
@@ -32,11 +31,10 @@ public class OperationalPlanTest
 {
     /**
      * Test OperationalPlan.
-     * @throws OtsGeometryException Should not happen - test fails if it does
      * @throws OperationalPlanException Should not happen - test fails if it does
      */
     @Test
-    public final void testOperationalPlan() throws OperationalPlanException, OtsGeometryException
+    public final void testOperationalPlan() throws OperationalPlanException
     {
         OrientedPoint2d waitPoint = new OrientedPoint2d(12, 13, 17);
         Time startTime = new Time(100, TimeUnit.DEFAULT);
@@ -180,10 +178,9 @@ public class OperationalPlanTest
     /**
      * Test the constant speed plan builder.
      * @throws OperationalPlanException when that happens uncaught; this test has failed
-     * @throws OtsGeometryException when that happens uncaught; this test has failed
      */
     @Test
-    public void constantSpeedPlanBuilderTest() throws OperationalPlanException, OtsGeometryException
+    public void constantSpeedPlanBuilderTest() throws OperationalPlanException
     {
         OtsLine2d path = new OtsLine2d(new Point2d(0, 0), new Point2d(1000, 0));
         Time startTime = Time.valueOf("100 s");
@@ -213,10 +210,9 @@ public class OperationalPlanTest
      * Test the builder for constant acceleration plans (misnomered gradual acceleration) and the builder for maximum
      * acceleration plans.
      * @throws OperationalPlanException when that happens uncaught; this test has failed
-     * @throws OtsGeometryException when that happens uncaught; this test has failed
      */
     @Test
-    public void constantAccelerationPlanBuilderTest() throws OtsGeometryException, OperationalPlanException
+    public void constantAccelerationPlanBuilderTest() throws OperationalPlanException
     {
         OtsLine2d path = new OtsLine2d(new Point2d(0, 0), new Point2d(1000, 0));
         Time startTime = Time.valueOf("100 s");
@@ -260,10 +256,9 @@ public class OperationalPlanTest
     /**
      * Test the stop plan builder.
      * @throws OperationalPlanException when that happens uncaught; this test has failed
-     * @throws OtsGeometryException when that happens uncaught; this test has failed
      */
     @Test
-    public void stopPlanBuilderTest() throws OtsGeometryException, OperationalPlanException
+    public void stopPlanBuilderTest() throws OperationalPlanException
     {
         OrientedPoint2d loc = new OrientedPoint2d(0, 0, 0);
         Time startTime = Time.valueOf("100 s");

@@ -14,7 +14,6 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.EventType;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.Gtu;
@@ -48,10 +47,9 @@ public class LinkTest implements EventListener
     /**
      * Test the OTSLink class.
      * @throws NetworkException should not happen uncaught in this test
-     * @throws OtsGeometryException should not happen uncaught in this test
      */
     @Test
-    public final void testOTSLink() throws NetworkException, OtsGeometryException
+    public final void testOTSLink() throws NetworkException
     {
         Network network = new Network("OTSLinkTestNetwork", MockSimulator.createMock());
         Node startNode = new Node(network, "start", new Point2d(10, 20));

@@ -26,7 +26,6 @@ import org.djutils.exceptions.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.TimeStampedObject;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.distributions.ProbabilityException;
@@ -274,14 +273,13 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
      * @param position position
      * @throws SimRuntimeException should never happen
      * @throws GtuException when something wrong in the definition of the GTU
-     * @throws OtsGeometryException when something is wrong in the definition of the GTU
      * @throws NetworkException when something is wrong with the initial location of the GTU
      * @throws NamingException ???
      * @throws ProbabilityException pe
      */
     @SuppressWarnings("unused")
-    private void tryToPlaceGTU(final GeneratorLanePosition position) throws SimRuntimeException, GtuException, NamingException,
-            NetworkException, OtsGeometryException, ProbabilityException
+    private void tryToPlaceGTU(final GeneratorLanePosition position)
+            throws SimRuntimeException, GtuException, NamingException, NetworkException, ProbabilityException
     {
         TimeStampedObject<LaneBasedGtuCharacteristics> timedCharacteristics;
         Queue<TimeStampedObject<LaneBasedGtuCharacteristics>> queue =
@@ -392,10 +390,9 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
      * @throws GtuException on exception
      * @throws NetworkException on exception
      * @throws SimRuntimeException on exception
-     * @throws OtsGeometryException on exception
      */
     public final void placeGtu(final LaneBasedGtuCharacteristics characteristics, final LanePosition position,
-            final Speed speed) throws NamingException, GtuException, NetworkException, SimRuntimeException, OtsGeometryException
+            final Speed speed) throws NamingException, GtuException, NetworkException, SimRuntimeException
     {
         String gtuId = this.idsInCharacteristicsOrder ? this.unplacedIds.remove(characteristics) : this.idGenerator.get();
         LaneBasedGtu gtu = new LaneBasedGtu(gtuId, characteristics.getGtuType(), characteristics.getLength(),

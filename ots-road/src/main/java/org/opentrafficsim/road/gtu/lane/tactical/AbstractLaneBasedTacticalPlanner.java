@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.base.parameters.ParameterTypeClass;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
@@ -182,15 +181,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
             }
 
             // determine direction for the path
-            try
-            {
-                path = concatenateNull(path, lane.getCenterLine());
-                // path = OtsLine2d.concatenate(Lane.MARGIN.si, path, lane.getCenterLine());
-            }
-            catch (OtsGeometryException exception)
-            {
-                throw new GtuException(exception);
-            }
+            path = concatenateNull(path, lane.getCenterLine());
+            // path = OtsLine2d.concatenate(Lane.MARGIN.si, path, lane.getCenterLine());
 
             laneListForward.add(lastLane);
             distanceToEndOfLane = distanceToEndOfLane.plus(lastLane.getLength());
@@ -204,9 +196,8 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
      * @param path path, may be {@code null}
      * @param centerLine center line of lane to add
      * @return concatenated line
-     * @throws OtsGeometryException when lines are degenerate or too distant
      */
-    public static OtsLine2d concatenateNull(final OtsLine2d path, final OtsLine2d centerLine) throws OtsGeometryException
+    public static OtsLine2d concatenateNull(final OtsLine2d path, final OtsLine2d centerLine)
     {
         if (path == null)
         {

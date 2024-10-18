@@ -26,10 +26,9 @@ public class ContinuousStraightTest
 
     /**
      * Test straight.
-     * @throws OtsGeometryException if test is ill defined.
      */
     @Test
-    public void straightTest() throws OtsGeometryException
+    public void straightTest()
     {
         OrientedPoint2d startPoint = new OrientedPoint2d(0.0, 0.0, 0.0);
         Try.testFail(() -> new ContinuousStraight(startPoint, -100.0), "Negative length should not be allowed.",

@@ -14,7 +14,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.OtsLine2d;
@@ -48,15 +47,13 @@ public class CurveTest
 
     /**
      * Let GTUs drive through a curve and check (de-)registration times at each node.
-     * @throws OtsGeometryException on error
      * @throws NamingException on error
      * @throws SimRuntimeException on error
      * @throws NetworkException on error
      * @throws GtuException on error
      */
     @Test
-    public final void curveTest()
-            throws OtsGeometryException, SimRuntimeException, NamingException, NetworkException, GtuException
+    public final void curveTest() throws SimRuntimeException, NamingException, NetworkException, GtuException
     {
         final int laneCount = 1;
         OtsSimulatorInterface simulator = CarTest.makeSimulator();

@@ -1,17 +1,6 @@
 package org.opentrafficsim.core.geometry;
 
-import java.io.Serializable;
-import java.util.Locale;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 
 /**
  * <p>
@@ -33,9 +22,8 @@ public final class Test
 
     /**
      * Kink near end of design line.
-     * @throws OtsGeometryException on error
      */
-    public static void test1() throws OtsGeometryException
+    public static void test1()
     {
         System.out.println("Dcirc,sm-2,0a2,0,360r");
         System.out.println("M5.0,2.5dcirc");
@@ -56,9 +44,8 @@ public final class Test
 
     /**
      * Kink halfway (far from any endpoint).
-     * @throws OtsGeometryException on error
      */
-    public static void test2() throws OtsGeometryException
+    public static void test2()
     {
         OtsLine2d otsLine = new OtsLine2d(new Point2d(0, 0), new Point2d(10, 5), new Point2d(20, 0));
         System.out.println(OtsGeometryUtil.printCoordinates("#reference line: \nc1,0,0\n#", otsLine, "\n    "));
@@ -70,9 +57,8 @@ public final class Test
 
     /**
      * Kink plus decreasing width.
-     * @throws OtsGeometryException on error
      */
-    public static void test3() throws OtsGeometryException
+    public static void test3()
     {
         OtsLine2d referenceLine = new OtsLine2d(new Point2d(0, 0), new Point2d(200, 100), new Point2d(1000, 0));
         System.out.println(OtsGeometryUtil.printCoordinates("#reference line: \nc1,0,0\n#", referenceLine, "\n    "));
@@ -93,9 +79,8 @@ public final class Test
 
     /**
      * Two kinks, (too) close together.
-     * @throws OtsGeometryException on error
      */
-    public static void test4() throws OtsGeometryException
+    public static void test4()
     {
         OtsLine2d reference = new OtsLine2d(new Point2d(0, 0), new Point2d(20, 10), new Point2d(21, 10), new Point2d(22, 9.5),
                 new Point2d(30, 0));
@@ -106,9 +91,8 @@ public final class Test
 
     /**
      * Two-segment design line with minimal change of direction.
-     * @throws OtsGeometryException on error
      */
-    public static void test5() throws OtsGeometryException
+    public static void test5()
     {
         Point2d[] designLinePoints = new Point2d[8];
         double radius = 10;
@@ -140,9 +124,8 @@ public final class Test
 
     /**
      * Straight design line with some <i>noise</i> (sufficiently far from the end points).
-     * @throws OtsGeometryException on error
      */
-    public static void test6() throws OtsGeometryException
+    public static void test6()
     {
         System.out.println("O0,-10");
         OtsLine2d reference = new OtsLine2d(new Point2d(10, 10), new Point2d(9.999, 8), new Point2d(9.996, 7.99),
@@ -157,9 +140,8 @@ public final class Test
 
     /**
      * Straight design line with more <i>noise</i> (sufficiently far from the end points).
-     * @throws OtsGeometryException on error
      */
-    public static void test7() throws OtsGeometryException
+    public static void test7()
     {
         System.out.println("O0,-10");
         OtsLine2d reference = new OtsLine2d(new Point2d(10, 10), new Point2d(9.999, 8), new Point2d(9.996, 7.99),
@@ -176,9 +158,8 @@ public final class Test
 
     /**
      * Straight design line with more <i>noise</i> (close to the end points).
-     * @throws OtsGeometryException on error
      */
-    public static void test8() throws OtsGeometryException
+    public static void test8()
     {
         // System.out.println("O0,-10");
         // OtsLine2d reference =

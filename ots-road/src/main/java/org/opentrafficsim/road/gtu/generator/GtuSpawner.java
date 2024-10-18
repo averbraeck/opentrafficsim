@@ -3,7 +3,6 @@ package org.opentrafficsim.road.gtu.generator;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GtuErrorHandler;
@@ -108,11 +107,10 @@ public class GtuSpawner
      * @param speed speed.
      * @param position position.
      * @throws GtuException when initial GTU values are not correct
-     * @throws OtsGeometryException when the initial path is wrong
      * @throws NetworkException when the GTU cannot be placed on the given lane
      */
     public void spawnGtu(final String id, final LaneBasedGtuCharacteristics templateGtuType, final RoadNetwork network,
-            final Speed speed, final LanePosition position) throws GtuException, OtsGeometryException, NetworkException
+            final Speed speed, final LanePosition position) throws GtuException, NetworkException
     {
 
         if (this.useDefaultGtuTemplate)
