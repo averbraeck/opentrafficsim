@@ -93,4 +93,11 @@ public class RectangleShape implements OtsShape
         return this.polygon;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "RectangleShape [dx=" + this.dx + ", dy=" + this.dy + "]";
+    }
+
 }

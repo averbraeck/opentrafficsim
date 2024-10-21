@@ -123,7 +123,7 @@ public class OffsetRectangleShape implements OtsShape
     @Override
     public String toString()
     {
-        return "BoundingRectangle [minX=" + this.minX + ", maxX=" + this.maxX + ", minY=" + this.minY + ", maxY=" + this.maxY
+        return "OffsetRectangleShape [minX=" + this.minX + ", maxX=" + this.maxX + ", minY=" + this.minY + ", maxY=" + this.maxY
                 + "]";
     }
 

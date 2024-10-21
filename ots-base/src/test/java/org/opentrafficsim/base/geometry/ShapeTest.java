@@ -1,0 +1,247 @@
+package org.opentrafficsim.base.geometry;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.point.Point2d;
+import org.junit.jupiter.api.Test;
+
+/**
+ * Tests OtsShape implementations.
+ * <p>
+ * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ */
+public class ShapeTest
+{
+
+    /**
+     * Tests CircleShape, and equal RoundedRectangleShape.
+     */
+    @Test
+    public void testCircle()
+    {
+        for (double r : new double[] {1.0, 2.0, 4.0})
+        {
+            testSingleCircle(r, new CircleShape(r));
+            testSingleCircle(r, new RoundedRectangleShape(r * 2.0, r * 2.0, r));
+        }
+        try
+        {
+            new CircleShape(0.0);
+            fail("CircleShape with 0.0 radius should throw IllegalArgumentException.");
+        }
+        catch (IllegalArgumentException ex)
+        {
+            //
+        }
+    }
+
+    /**
+     * Test single circle.
+     * @param r radius
+     * @param circle shape
+     */
+    private void testSingleCircle(final double r, final OtsShape circle)
+    {
+        double p = r * .5;
+        circle.toString();
+
+        // signed distance
+        assertEquals(p - r, circle.signedDistance(new Point2d(p, 0.0)), 0.001);
+        assertEquals(p - r, circle.signedDistance(new Point2d(0.0, p)), 0.001);
+        assertEquals(p - r, circle.signedDistance(new Point2d(-p, 0.0)), 0.001);
+        assertEquals(p - r, circle.signedDistance(new Point2d(0.0, -p)), 0.001);
+        assertEquals(Math.sqrt(2.0 * p * p) - r, circle.signedDistance(new Point2d(p, p)), 0.001);
+        assertEquals(Math.sqrt(2.0 * p * p) - r, circle.signedDistance(new Point2d(-p, p)), 0.001);
+        assertEquals(Math.sqrt(2.0 * p * p) - r, circle.signedDistance(new Point2d(p, -p)), 0.001);
+        assertEquals(Math.sqrt(2.0 * p * p) - r, circle.signedDistance(new Point2d(-p, -p)), 0.001);
+        assertEquals(p, circle.signedDistance(new Point2d(r + p, 0.0)), 0.001);
+        assertEquals(p, circle.signedDistance(new Point2d(0.0, r + p)), 0.001);
+        assertEquals(p, circle.signedDistance(new Point2d(-r - p, 0.0)), 0.001);
+        assertEquals(p, circle.signedDistance(new Point2d(0.0, -r - p)), 0.001);
+        assertEquals(Math.sqrt(2.0 * (r + p) * (r + p)) - r, circle.signedDistance(new Point2d(r + p, r + p)), 0.001);
+        assertEquals(Math.sqrt(2.0 * (r + p) * (r + p)) - r, circle.signedDistance(new Point2d(-r - p, r + p)), 0.001);
+        assertEquals(Math.sqrt(2.0 * (r + p) * (r + p)) - r, circle.signedDistance(new Point2d(r + p, -r - p)), 0.001);
+        assertEquals(Math.sqrt(2.0 * (r + p) * (r + p)) - r, circle.signedDistance(new Point2d(-r - p, -r - p)), 0.001);
+
+        // points in and out
+        assertTrue(circle.contains(p, 0.0));
+        assertTrue(circle.contains(0.0, p));
+        assertTrue(circle.contains(-p, 0.0));
+        assertTrue(circle.contains(0.0, -p));
+        assertFalse(circle.contains(r + p, 0.0));
+        assertFalse(circle.contains(0.0, r + p));
+        assertFalse(circle.contains(-r - p, 0.0));
+        assertFalse(circle.contains(0.0, -r - p));
+
+        // points in and out but based on polygon
+        // SKL 2024.10.21, 0.01 is added to avoid bug https://github.com/averbraeck/djutils/issues/15 (fix not yet
+        // published)
+        assertTrue(circle.asPolygon().contains(new Point2d(p + 0.01, 0.01)));
+        assertTrue(circle.asPolygon().contains(new Point2d(0.01, p + 0.01)));
+        assertTrue(circle.asPolygon().contains(new Point2d(-p + 0.01, 0.01)));
+        assertTrue(circle.asPolygon().contains(new Point2d(0.01, -p + 0.01)));
+        assertFalse(circle.asPolygon().contains(new Point2d(r + p + 0.01, 0.01)));
+        assertFalse(circle.asPolygon().contains(new Point2d(0.01, r + p + 0.01)));
+        assertFalse(circle.asPolygon().contains(new Point2d(-r - p + 0.01, 0.01)));
+        assertFalse(circle.asPolygon().contains(new Point2d(0.01, -r - p + 0.01)));
+
+        // bounds
+        assertEquals(2.0 * r, circle.getDeltaX(), 0.001);
+        assertEquals(2.0 * r, circle.getDeltaY(), 0.001);
+        assertEquals(-r, circle.getMinX(), 0.001);
+        assertEquals(r, circle.getMaxX(), 0.001);
+        assertEquals(-r, circle.getMinY(), 0.001);
+        assertEquals(r, circle.getMaxY(), 0.001);
+        assertEquals(0.0, circle.midPoint().x, 0.001);
+        assertEquals(0.0, circle.midPoint().y, 0.001);
+    }
+
+    /**
+     * Tests RectangleShape, and equal RoundedRectangleShape.
+     */
+    @Test
+    public void testRectangle()
+    {
+        for (double r1 : new double[] {1.0, 2.0, 4.0})
+        {
+            double r2 = r1 * 2.0;
+            testSingleRectangle(r1, r2, 0.0, 0.0, new RectangleShape(r1 * 2.0, r2 * 2.0));
+            testSingleRectangle(r1, r2, 0.0, 0.0, new RoundedRectangleShape(r1 * 2.0, r2 * 2.0, 0.0));
+            testSingleRectangle(r1, r2, 1.0, 1.0, new OffsetRectangleShape(-r1 + 1.0, r1 + 1.0, -r2 + 1.0, r2 + 1.0));
+        }
+        try
+        {
+            new RoundedRectangleShape(1.0, 2.0, 3.0);
+            fail("RoundedRectangleShape with large radius to 'eat up' dx and dy should throw IllegalArgumentException.");
+        }
+        catch (IllegalArgumentException ex)
+        {
+            //
+        }
+        try
+        {
+            new RoundedRectangleShape(1.0, 2.0, -1.0);
+            fail("RoundedRectangleShape with negative radius should throw IllegalArgumentException.");
+        }
+        catch (IllegalArgumentException ex)
+        {
+            //
+        }
+        new RoundedRectangleShape(1.0, 2.0, 1.5).asPolygon(); // non-complete quarter circle corners due to relative large r
+    }
+
+    /**
+     * Tests shape as rectangle.
+     * @param r1 horizontal extent
+     * @param r2 vertical extent
+     * @param dx x shift for OffsetRectangleShape
+     * @param dy y shift for OffsetRectangleShape
+     * @param rectangle shape
+     */
+    private void testSingleRectangle(final double r1, final double r2, final double dx, final double dy,
+            final OtsShape rectangle)
+    {
+        double p = r1 * .5;
+        rectangle.toString();
+
+        // signed distance
+        assertEquals(p - r1, rectangle.signedDistance(new Point2d(p + dx, 0.0 + dy)), 0.001);
+        assertEquals(-r1, rectangle.signedDistance(new Point2d(0.0 + dx, p + dy)), 0.001);
+        assertEquals(p - r1, rectangle.signedDistance(new Point2d(-p + dx, 0.0 + dy)), 0.001);
+        assertEquals(-r1, rectangle.signedDistance(new Point2d(0.0 + dx, -p + dy)), 0.001);
+        assertEquals(Math.max(p - r2, p - r1), rectangle.signedDistance(new Point2d(p + dx, p + dy)), 0.001);
+        assertEquals(Math.max(p - r2, p - r1), rectangle.signedDistance(new Point2d(-p + dx, p + dy)), 0.001);
+        assertEquals(Math.max(p - r2, p - r1), rectangle.signedDistance(new Point2d(p + dx, -p + dy)), 0.001);
+        assertEquals(Math.max(p - r2, p - r1), rectangle.signedDistance(new Point2d(-p + dx, -p + dy)), 0.001);
+        assertEquals(p, rectangle.signedDistance(new Point2d(r1 + p + dx, 0.0 + dy)), 0.001);
+        assertEquals(p, rectangle.signedDistance(new Point2d(0.0 + dx, r2 + p + dy)), 0.001);
+        assertEquals(p, rectangle.signedDistance(new Point2d(-r1 - p + dx, 0.0 + dy)), 0.001);
+        assertEquals(p, rectangle.signedDistance(new Point2d(0.0 + dx, -r2 - p + dy)), 0.001);
+        assertEquals(Math.hypot(p, p), rectangle.signedDistance(new Point2d(r1 + p + dx, r2 + p + dy)), 0.001);
+        assertEquals(Math.hypot(p, p), rectangle.signedDistance(new Point2d(-r1 - p + dx, r2 + p + dy)), 0.001);
+        assertEquals(Math.hypot(p, p), rectangle.signedDistance(new Point2d(r1 + p + dx, -r2 - p + dy)), 0.001);
+        assertEquals(Math.hypot(p, p), rectangle.signedDistance(new Point2d(-r1 - p + dx, -r2 - p + dy)), 0.001);
+
+        // points in and out
+        assertTrue(rectangle.contains(new Point2d(p + dx, 0.0 + dy)));
+        assertTrue(rectangle.contains(new Point2d(0.0 + dx, p + dy)));
+        assertTrue(rectangle.contains(new Point2d(-p + dx, 0.0 + dy)));
+        assertTrue(rectangle.contains(new Point2d(0.0 + dx, -p + dy)));
+        assertFalse(rectangle.contains(new Point2d(r1 + dx + p, 0.0 + dy)));
+        assertFalse(rectangle.contains(new Point2d(0.0 + dx, r2 + p + dy)));
+        assertFalse(rectangle.contains(new Point2d(-r1 + dx - p, 0.0 + dy)));
+        assertFalse(rectangle.contains(new Point2d(0.0 + dx, -r2 - p + dy)));
+
+        // points in and out but based on polygon
+        assertTrue(rectangle.asPolygon().contains(new Point2d(p + dx, 0.0 + dy)));
+        assertTrue(rectangle.asPolygon().contains(new Point2d(0.0 + dx, p + dy)));
+        assertTrue(rectangle.asPolygon().contains(new Point2d(-p + dx, 0.0 + dy)));
+        assertTrue(rectangle.asPolygon().contains(new Point2d(0.0 + dx, -p + dy)));
+        assertFalse(rectangle.asPolygon().contains(new Point2d(r1 + p + dx, 0.0 + dy)));
+        assertFalse(rectangle.asPolygon().contains(new Point2d(0.0 + dx, r2 + p + dy)));
+        assertFalse(rectangle.asPolygon().contains(new Point2d(-r1 - p + dx, 0.0 + dy)));
+        assertFalse(rectangle.asPolygon().contains(new Point2d(0.0 + dx, -r2 - p + dy)));
+
+        // bounds
+        assertEquals(2.0 * r1, rectangle.getDeltaX(), 0.001);
+        assertEquals(2.0 * r2, rectangle.getDeltaY(), 0.001);
+        assertEquals(-r1 + dx, rectangle.getMinX(), 0.001);
+        assertEquals(r1 + dx, rectangle.getMaxX(), 0.001);
+        assertEquals(-r2 + dy, rectangle.getMinY(), 0.001);
+        assertEquals(r2 + dy, rectangle.getMaxY(), 0.001);
+        assertEquals(dx, rectangle.midPoint().x, 0.001);
+        assertEquals(dy, rectangle.midPoint().y, 0.001);
+    }
+
+    /**
+     * Test polygon.
+     */
+    @Test
+    public void testPolygon()
+    {
+        for (double r : new double[] {1.0, 2.0, 4.0})
+        {
+            double r2 = r * 0.25;
+            double p = r * 0.5;
+
+            PolygonShape polygon = new PolygonShape(new Polygon2d(new double[] {r, r2, 0.0, -r2, -r, -r2, 0.0, r2},
+                    new double[] {0.0, r2, r, r2, 0.0, -r2, -r, -r2}));
+            polygon.toString();
+
+            // signed distance
+            assertEquals(-Math.hypot(r2, r2), polygon.signedDistance(new Point2d(0.0, 0.0 + 0.00001)), 0.001);
+            assertEquals(p, polygon.signedDistance(new Point2d(r + p, 0.0)), 0.001);
+            assertEquals(p, polygon.signedDistance(new Point2d(0.0, r + p)), 0.001);
+            assertEquals(p, polygon.signedDistance(new Point2d(-r - p, 0.0)), 0.001);
+            assertEquals(p, polygon.signedDistance(new Point2d(0.0, -r - p)), 0.001);
+
+            // points in and out
+            assertTrue(polygon.contains(new Point2d(p, 0.0 + 0.01)));
+            assertTrue(polygon.contains(new Point2d(0.0, p + 0.01)));
+            assertTrue(polygon.contains(new Point2d(-p, 0.0 + 0.01)));
+            assertTrue(polygon.contains(new Point2d(0.0, -p + 0.01)));
+            assertFalse(polygon.contains(new Point2d(r + p, 0.0 + 0.01)));
+            assertFalse(polygon.contains(new Point2d(0.0, r + p + 0.01)));
+            assertFalse(polygon.contains(new Point2d(-r - p, 0.0 + 0.01)));
+            assertFalse(polygon.contains(new Point2d(0.0, -r - p + 0.01)));
+
+            // bounds
+            assertEquals(2.0 * r, polygon.getDeltaX(), 0.001);
+            assertEquals(2.0 * r, polygon.getDeltaY(), 0.001);
+            assertEquals(-r, polygon.getMinX(), 0.001);
+            assertEquals(r, polygon.getMaxX(), 0.001);
+            assertEquals(-r, polygon.getMinY(), 0.001);
+            assertEquals(r, polygon.getMaxY(), 0.001);
+            assertEquals(0.0, polygon.midPoint().x, 0.001);
+            assertEquals(0.0, polygon.midPoint().y, 0.001);
+        }
+    }
+
+}

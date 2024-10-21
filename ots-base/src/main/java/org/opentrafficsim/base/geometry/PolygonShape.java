@@ -32,4 +32,11 @@ public class PolygonShape implements OtsShape
         return this.polygon;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "PolygonShape [polygon=" + this.polygon + "]";
+    }
+    
 }

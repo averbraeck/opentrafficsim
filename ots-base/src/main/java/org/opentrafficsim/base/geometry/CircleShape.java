@@ -132,12 +132,19 @@ public class CircleShape implements OtsShape
                         double ang = this.step == CircleShape.this.polygonSegments ? 0.0
                                 : (2.0 * Math.PI * this.step) / CircleShape.this.polygonSegments;
                         this.step++;
-                        return new Point2d(Math.sin(ang) * CircleShape.this.radius, Math.sin(ang) * CircleShape.this.radius);
+                        return new Point2d(Math.cos(ang) * CircleShape.this.radius, Math.sin(ang) * CircleShape.this.radius);
                     }
                 });
             }
         }
         return this.polygon;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "CircleShape [radius=" + this.radius + "]";
     }
 
 }

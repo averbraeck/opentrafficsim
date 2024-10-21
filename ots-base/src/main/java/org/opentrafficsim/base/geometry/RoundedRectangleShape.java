@@ -45,6 +45,7 @@ public class RoundedRectangleShape implements OtsShape
      * @param dx complete length along x dimension.
      * @param dy complete length along y dimension.
      * @param r radius of rounding, must be positive.
+     * @throws IllegalArgumentException when r is negative, or so large no net shape remains
      */
     public RoundedRectangleShape(final double dx, final double dy, final double r)
     {
@@ -57,6 +58,7 @@ public class RoundedRectangleShape implements OtsShape
      * @param dy complete length along y dimension.
      * @param r radius of rounding, must be positive.
      * @param polygonSegments number of segments in polygon representation.
+     * @throws IllegalArgumentException when r is negative, or so large no net shape remains
      */
     public RoundedRectangleShape(final double dx, final double dy, final double r, final int polygonSegments)
     {
@@ -169,6 +171,13 @@ public class RoundedRectangleShape implements OtsShape
             this.polygon = new Polygon2d(true, points);
         }
         return this.polygon;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString()
+    {
+        return "RoundedRectangleShape [dx=" + this.dx + ", dy=" + this.dy + ", r=" + this.r + "]";
     }
 
 }
