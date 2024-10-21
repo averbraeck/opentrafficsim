@@ -7,11 +7,11 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.Test;
 
-/** Test the OtrGeometryException class. */
+/** Test the OtsGeometryException class. */
 public class OtsGeometryExceptionTest
 {
 
-    /** Test the OTSGeometryException class. */
+    /** Test the OtsGeometryException class. */
     @Test
     public void testException()
     {
