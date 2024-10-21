@@ -13,8 +13,8 @@ package org.opentrafficsim.core.geometry;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @see <a href="https://www.ams.org/journals/mcom/1985-44-170/S0025-5718-1985-0777277-6/S0025-5718-1985-0777277-6.pdf">Cody
- *      (1968)</a>
+ * @see <a href="https://www.ams.org/journals/mcom/1968-22-102/S0025-5718-68-99871-2/S0025-5718-68-99871-2.pdf">Cody (1968)</a>
+ *      (note: tables with values not included in pdf)
  * @param c C value of Fresnel integral
  * @param s S value of Fresnel integral
  */
