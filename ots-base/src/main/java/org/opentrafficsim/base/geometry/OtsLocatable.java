@@ -56,7 +56,13 @@ public interface OtsLocatable extends Locatable, SpatialObject
      */
     static Polygon2d boundsAsContour(final OtsLocatable locatable)
     {
-        return new Polygon2d(transform(locatable.getBounds().getPoints(), locatable.getLocation()));
+        List<Point2d> points = new ArrayList<>();
+        Bounds2d bounds = locatable.getBounds();
+        points.add(new Point2d(bounds.getMaxX(), bounds.getMaxY()));
+        points.add(new Point2d(bounds.getMinX(), bounds.getMaxY()));
+        points.add(new Point2d(bounds.getMinX(), bounds.getMinY()));
+        points.add(new Point2d(bounds.getMaxX(), bounds.getMinY()));
+        return new Polygon2d(transform(toContourTransform(locatable.getLocation()), points.iterator()));
     }
 
     /**
@@ -80,14 +86,14 @@ public interface OtsLocatable extends Locatable, SpatialObject
     }
 
     /**
-     * Transform the contour by location, which may also be an {@code OrientedPoint} for rotation.
+     * Transform the contour from the location to relative coordinates, which may also be an {@code OrientedPoint} for rotation.
      * @param contour contour
      * @param location location, which may also be an {@code OrientedPoint} for rotation
      * @return transformed contour
      */
     static Polygon2d transformContour(final Polygon2d contour, final Point2d location)
     {
-        return new Polygon2d(transform(contour.getPoints(), location));
+        return new Polygon2d(transform(toBoundsTransform(location), contour.getPoints()));
     }
 
     /**
@@ -98,18 +104,17 @@ public interface OtsLocatable extends Locatable, SpatialObject
      */
     static PolyLine2d transformLine(final PolyLine2d line, final Point2d location)
     {
-        return new PolyLine2d(transform(line.getPoints(), location));
+        return new PolyLine2d(transform(toBoundsTransform(location), line.getPoints()));
     }
 
     /**
      * Translates and possibly rotates points by location.
+     * @param transformation transformation
      * @param itSource points
-     * @param location location
      * @return translated and possibly rotated contour
      */
-    private static List<Point2d> transform(final Iterator<Point2d> itSource, final Point2d location)
+    private static List<Point2d> transform(final Transform2d transformation, final Iterator<Point2d> itSource)
     {
-        Transform2d transformation = toBoundsTransform(location);
         Point2d prev = null;
         List<Point2d> points = new ArrayList<>();
         while (itSource.hasNext())
@@ -123,7 +128,7 @@ public interface OtsLocatable extends Locatable, SpatialObject
         }
         return points;
     }
-    
+
     /**
      * Returns a transformation by which absolute coordinates can be translated and rotated to the frame of the possibly
      * oriented location around which bounds are defined.
@@ -138,6 +143,23 @@ public interface OtsLocatable extends Locatable, SpatialObject
             transformation.rotation(-((Oriented<?>) location).getDirZ());
         }
         transformation.translate(-location.getX(), -location.getY());
+        return transformation;
+    }
+
+    /**
+     * Returns a transformation by which relative coordinates can be translated and rotated to the frame of the possibly
+     * oriented location around which bounds are defined.
+     * @param location location (can be an {@code Oriented}).
+     * @return transformation.
+     */
+    static Transform2d toContourTransform(final Point2d location)
+    {
+        Transform2d transformation = new Transform2d();
+        transformation.translate(location.getX(), location.getY());
+        if (location instanceof Oriented<?>)
+        {
+            transformation.rotation(((Oriented<?>) location).getDirZ());
+        }
         return transformation;
     }
 
