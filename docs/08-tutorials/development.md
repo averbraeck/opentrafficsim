@@ -59,7 +59,7 @@ These tools allow navigation between classes over a few dimensions. This is usua
 
 There are several ways in which you can get information on the execution time and memory usage of your code. The first is that your IDE (Integrated Development Environment) might have tools to run code with profiling. Netbeans has built-in profiling tools. For Eclipse a plug-in may be an option.
 
-However, with any JDK version (java version 6 update 7 or higher) comes Java VisualVM, which is an executable named jvisualvm located under the bin folder of the JDK. It has very powerful profiling tools which allow you to pinpoint where most memory usage or CPU time is within the program. Information on how to use Java VisualVM can be found online.
+<a href="https://www.graalvm.org/">GraalVM</a> may be used to profile code across the entire library on method level. It does require installation.
 
 If you only require CPU time of up to a few methods, or any part of a method, OTS provides a utility called `Profile` (from DJUTILS). The tool essentially takes care of gathering and presenting execution time information obtained through `System.nanoTime()`. Note that this is the only way to profile parts of methods. The simplest way to time a part of the code is to precede and follow that part with a line invoking the tool. Both these lines have to be in the same method.
 
