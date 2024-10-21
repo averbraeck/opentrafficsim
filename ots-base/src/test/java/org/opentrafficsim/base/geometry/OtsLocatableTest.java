@@ -22,7 +22,8 @@ import org.junit.jupiter.api.Test;
 public class OtsLocatableTest
 {
 
-    private final static Polygon2d CONTOUR =
+    /** Contour. */
+    private static final Polygon2d CONTOUR =
             new Polygon2d(new double[] {9.0, 9.0, 11.0, 11.0}, new double[] {22.0, 18.0, 18.0, 22.0});
 
     /**
@@ -82,10 +83,15 @@ public class OtsLocatableTest
             return new Bounds2d(4.0, 2.0);
         }
     }
-    
+
+    /**
+     * Check points are equal.
+     * @param points1 points 1
+     * @param points2 points 2
+     */
     private static void pointsEqual(final List<Point2d> points1, final List<Point2d> points2)
     {
-        for (int i = 0; i< points1.size(); i++)
+        for (int i = 0; i < points1.size(); i++)
         {
             assertEquals(points2.get(i).x, points1.get(i).x, 0.001);
             assertEquals(points2.get(i).y, points1.get(i).y, 0.001);

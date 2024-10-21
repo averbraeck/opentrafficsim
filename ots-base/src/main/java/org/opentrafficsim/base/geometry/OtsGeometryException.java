@@ -1,5 +1,7 @@
 package org.opentrafficsim.base.geometry;
 
+import org.opentrafficsim.base.OtsRuntimeException;
+
 /**
  * Exception when geometry is incorrectly specified or an operation is requested that is not possible.
  * <p>
@@ -10,8 +12,9 @@ package org.opentrafficsim.base.geometry;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class OtsGeometryException extends RuntimeException
+public class OtsGeometryException extends OtsRuntimeException
 {
+
     /** */
     private static final long serialVersionUID = 20150722L;
 
@@ -50,16 +53,4 @@ public class OtsGeometryException extends RuntimeException
         super(message, cause);
     }
 
-    /**
-     * Complete constructor.
-     * @param message message to display for this exception.
-     * @param cause the exception that triggered this exception.
-     * @param enableSuppression whether or not suppression is enabled or disabled
-     * @param writableStackTrace whether or not the stack trace should be writable
-     */
-    public OtsGeometryException(final String message, final Throwable cause, final boolean enableSuppression,
-            final boolean writableStackTrace)
-    {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }

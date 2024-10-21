@@ -269,7 +269,6 @@ public class ParametersTest implements ConstraintInterface
         /** */
         private static final long serialVersionUID = 20160400L;
 
-        @SuppressWarnings("synthetic-access")
         @Override
         public void check(final Speed v, final Parameters paramsa) throws ParameterException
         {
@@ -284,7 +283,6 @@ public class ParametersTest implements ConstraintInterface
         /** */
         private static final long serialVersionUID = 20160400L;
 
-        @SuppressWarnings("synthetic-access")
         @Override
         public void check(final Speed v, final Parameters paramsa) throws ParameterException
         {
@@ -297,7 +295,6 @@ public class ParametersTest implements ConstraintInterface
      * Tests the set/reset mechanism.
      * @throws ParameterException Should not be thrown, is for untested methods (in this test) that throw the exception.
      */
-    @SuppressWarnings("cast")
     @Test
     public final void setResetTest() throws ParameterException
     {
@@ -543,9 +540,9 @@ public class ParametersTest implements ConstraintInterface
         checkDefaultValuesPerClass(ParameterTypeFrequency.class,     Frequency.instantiateSI(3));
         checkDefaultValuesPerClass(ParameterTypeDuration.class,      Duration.instantiateSI(3));
         checkDefaultValuesPerClass(ParameterTypeLinearDensity.class, LinearDensity.instantiateSI(3));
-        checkDefaultValuesPerClass(ParameterTypeBoolean.class,       new Boolean(false));
-        checkDefaultValuesPerClass(ParameterTypeDouble.class,        new Double(3));
-        checkDefaultValuesPerClass(ParameterTypeInteger.class,       new Integer(3));
+        checkDefaultValuesPerClass(ParameterTypeBoolean.class,       Boolean.valueOf(false));
+        checkDefaultValuesPerClass(ParameterTypeDouble.class,        Double.valueOf(3));
+        checkDefaultValuesPerClass(ParameterTypeInteger.class,       Integer.valueOf(3));
         // @formatter:on
     }
 

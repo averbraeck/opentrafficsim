@@ -11,7 +11,7 @@ package org.opentrafficsim.base.parameters.constraint;
  * public class myModel implements ConstraintInterface
  * {
  * 
- *     public static final ParameterTypeLength X = new ParameterTypeLength(&quot;x&quot;, &quot;My x parameter.&quot;, POSITIVE);
+ *     public static final ParameterTypeLength X = new ParameterTypeLength(&quot;x&quot;, &quot;My parameter.&quot;, POSITIVE);
  * 
  *     // ... model that uses parameter of type X.
  * 
