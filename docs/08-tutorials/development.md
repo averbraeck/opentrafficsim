@@ -146,9 +146,9 @@ In some cases it can be a hassle to setup interdependent objects just to test a 
 
 ## How to make a property historical
 
-For delayed perception of information from the simulation environment, the simulation environment needs to be able to provide past information. Information is stored in properties of java classes. By converting a property in to an historical version, this can be achieved. In many cases this is little work. Below three separated cases are discussed. Which one is valid depends on the type of the attribute.
+For delayed perception of information from the simulation environment, the simulation environment needs to be able to provide past information. Information is stored in properties of java classes. By converting a property in to a historical version, this can be achieved. In many cases this is little work. Below three separated cases are discussed. Which one is valid depends on the type of the attribute.
 
-_Is the property immutable (e.g. `Length`, `double`, `String`) or a (indirect) pointer to an object with its own  historical properties?_<br/>
+_Is the property immutable (e.g. `Length`, `double`, `String`) or a (indirect) pointer to an object with its own historical properties?_<br/>
 In these cases the property can simply be changed to type `Historical<E>`, with `E` being the original type, and using implementation `HistoricalValue<E>`. Any code referring to the property directly now needs to use `get()` and `set()` on the property. For external code nothing changes, as this should use a setter and getter method that are themselves changed. To make a historical value available to external code, a getter method with `Time` input should be added, which calls `get(Time)` on the property.
 
 _Is the property of a type from the Collections Framework (e.g. `Set`, `List`, `Map`)?_<br/>
