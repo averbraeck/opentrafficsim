@@ -22,7 +22,16 @@ import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 
-// Collection of various small code examples in the documentation.
+/**
+ * This class contains code snippets that are used in the documentation. Whenever errors arise in this code, they need to be
+ * fixed -and- the code in the documentation needs to be updated.
+ * <p>
+ * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ */
+@SuppressWarnings({"unused", "javadoc", "null"})
 public class Documentation
 {
 
@@ -39,14 +48,15 @@ public class Documentation
         markov.addState(truck, caccTruck, 0.64);
     }
 
-    private void Neigbors(final LanePerception perception) throws OperationalPlanException
+    private void neigbors(final LanePerception perception) throws OperationalPlanException
     {
         // @docs/05-perception/categorial.md
         NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
     }
 
-    public static abstract class Hist<T, E extends EventValue<T>> extends AbstractHistorical<T, E>
+    public abstract static class Hist<T, E extends EventValue<T>> extends AbstractHistorical<T, E>
     {
+        /** */
         // @docs/05-perception/historical.md
         private Historical<Length> odometer;
 
