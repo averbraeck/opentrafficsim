@@ -12,6 +12,16 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.draw.OtsRenderable;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 
+/**
+ * This class contains code snippets that are used in the documentation. Whenever errors arise in this code, they need to be
+ * fixed -and- the code in the documentation needs to be updated.
+ * <p>
+ * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ */
+@SuppressWarnings("all")
 // Note: there is also a SpeedSignAnimation in ots-draw. This class simply exists to notify required changes in the manual code.
 
 // @docs/08-tutorials/visualization.md#how-to-add-an-animation
