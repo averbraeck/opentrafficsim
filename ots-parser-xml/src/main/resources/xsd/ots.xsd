@@ -193,7 +193,7 @@
       <xsd:field xpath="@Id" />
     </xsd:key>
 
-    <!-- Demand.OdOptons.Id key -->
+    <!-- Demand.OdOptions.Id key -->
     <xsd:key name="odOptionsKey">
       <xsd:selector xpath="ots:Demand/ots:OdOptions|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
@@ -241,6 +241,12 @@
       <xsd:selector xpath="ots:Demand/ots:GtuTemplateMix|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
+    
+    <!-- Demand.InjectionGenerator.Arrivals.Arrival.Id unique -->
+    <xsd:unique name="arrivalGtuIdUnique">
+      <xsd:selector xpath="ots:Demand/ots:InjectionGenerator/ots:Arrivals/ots:Arrival" />
+      <xsd:field xpath="@Id" />
+    </xsd:unique>
 
     <!-- ========================================== CONTROL KEYS ========================================== -->
 
@@ -510,46 +516,76 @@
       <xsd:field xpath="ots:ShortestRouteMix" />
     </xsd:keyref>
 
-    <!-- Demand.ListGenerator.Link = Link.Id -->
-    <xsd:keyref name="listGeneratorLinkIdRef" refer="ots:linkKey">
-      <xsd:selector xpath="ots:Demand/ots:ListGenerator" />
+    <!-- Demand.InjectionGenerator.Position.Link = Link.Id -->
+    <xsd:keyref name="injectionGeneratorLinkIdRef" refer="ots:linkKey">
+      <xsd:selector xpath="ots:Demand/ots:InjectionGenerator/ots:Position" />
       <xsd:field xpath="@Link" />
     </xsd:keyref>
 
-    <!-- Demand.ListGenerator.GtuTemplate = GtuTemplate.Id -->
-    <xsd:keyref name="listGeneratorGtuTemplateIdRef" refer="ots:gtuTemplateKey">
-      <xsd:selector xpath="ots:Demand/ots:ListGenerator" />
-      <xsd:field xpath="ots:GtuTemplate" />
+    <!-- Demand.InjectionGenerator.GtuCharacteristics.GtuTemplate = GtuTemplate.Id -->
+    <xsd:keyref name="injectionGeneratorGtuTemplateIdRef" refer="ots:gtuTemplateKey">
+      <xsd:selector xpath="ots:Demand/ots:InjectionGenerator/ots:GtuCharacteristics/ots:GtuTemplate" />
+      <xsd:field xpath="." />
     </xsd:keyref>
 
-    <!-- Demand.ListGenerator.GtuTemplateMix = GtuTemplateMix.Id -->
-    <xsd:keyref name="listGeneratorGtuTemplateMixIdRef" refer="ots:gtuTemplateMixKey">
-      <xsd:selector xpath="ots:Demand/ots:ListGenerator" />
-      <xsd:field xpath="ots:GtuTemplateMix" />
+    <!-- Demand.InjectionGenerator.GtuCharacteristics.GtuTemplateMix = GtuTemplateMix.Id -->
+    <xsd:keyref name="injectionGeneratorGtuTemplateMixIdRef" refer="ots:gtuTemplateMixKey">
+      <xsd:selector xpath="ots:Demand/ots:InjectionGenerator/ots:GtuCharacteristics/ots:GtuTemplateMix" />
+      <xsd:field xpath="." />
     </xsd:keyref>
 
-    <!-- Demand.ListGenerator.Route = Route.Id -->
-    <xsd:keyref name="listGeneratorRouteIdRef" refer="ots:routeKey">
-      <xsd:selector xpath="ots:Demand/ots:ListGenerator" />
-      <xsd:field xpath="ots:Route" />
+    <!-- Demand.InjectionGenerator.GtuCharacteristics.Route = Route.Id -->
+    <xsd:keyref name="injectionGeneratorRouteIdRef" refer="ots:routeKey">
+      <xsd:selector xpath="ots:Demand/ots:InjectionGenerator/ots:GtuCharacteristics/ots:Route" />
+      <xsd:field xpath="." />
     </xsd:keyref>
 
-    <!-- Demand.ListGenerator.RouteMix = RouteMix.Id -->
-    <xsd:keyref name="listGeneratorRouteMixIdRef" refer="ots:routeMixKey">
-      <xsd:selector xpath="ots:Demand/ots:ListGenerator" />
-      <xsd:field xpath="ots:RouteMix" />
+    <!-- Demand.InjectionGenerator.GtuCharacteristics.RouteMix = RouteMix.Id -->
+    <xsd:keyref name="injectionGeneratorRouteMixIdRef" refer="ots:routeMixKey">
+      <xsd:selector xpath="ots:Demand/ots:InjectionGenerator/ots:GtuCharacteristics/ots:RouteMix" />
+      <xsd:field xpath="." />
     </xsd:keyref>
 
-    <!-- Demand.ListGenerator.ShortestRoute = ShortestRoute.Id -->
-    <xsd:keyref name="listGeneratorShortestRouteouteIdRef" refer="ots:shortestRouteKey">
-      <xsd:selector xpath="ots:Demand/ots:ListGenerator" />
-      <xsd:field xpath="ots:ShortestRoute" />
+    <!-- Demand.InjectionGenerator.GtuCharacteristics.ShortestRoute = ShortestRoute.Id -->
+    <xsd:keyref name="injectionGeneratorShortestRouteouteIdRef" refer="ots:shortestRouteKey">
+      <xsd:selector xpath="ots:Demand/ots:InjectionGenerator/ots:GtuCharacteristics/ots:ShortestRoute" />
+      <xsd:field xpath="." />
     </xsd:keyref>
 
-    <!-- Demand.ListGenerator.ShortestRouteMix = ShortestRouteMix.Id -->
-    <xsd:keyref name="listGeneratorShortestRouteMixIdRef" refer="ots:shortestRouteMixKey">
-      <xsd:selector xpath="ots:Demand/ots:ListGenerator" />
-      <xsd:field xpath="ots:ShortestRouteMix" />
+    <!-- Demand.InjectionGenerator.GtuCharacteristics.ShortestRouteMix = ShortestRouteMix.Id -->
+    <xsd:keyref name="injectionGeneratorShortestRouteMixIdRef" refer="ots:shortestRouteMixKey">
+      <xsd:selector xpath="ots:Demand/ots:InjectionGenerator/ots:GtuCharacteristics/ots:ShortestRouteMix" />
+      <xsd:field xpath="." />
+    </xsd:keyref>
+    
+    <!-- Demand.InjectionGenerator.Arrivals.Arrival.GtuType = GtuType.Id -->
+    <xsd:keyref name="arrivalGtuTypeIdRef" refer="ots:gtuTypeKey">
+      <xsd:selector xpath="ots:Demand/ots:InjectionGenerator/ots:Arrivals/ots:Arrival" />
+      <xsd:field xpath="@GtuType" />
+    </xsd:keyref>
+    
+    <!-- Demand.InjectionGenerator.Arrivals.Arrival.Link = Link.Id -->
+    <xsd:keyref name="arrivalLinkIdRef" refer="ots:linkKey">
+      <xsd:selector xpath="ots:Demand/ots:InjectionGenerator/ots:Arrivals/ots:Arrival" />
+      <xsd:field xpath="@Link" />
+    </xsd:keyref>
+    
+    <!-- Demand.InjectionGenerator.Arrivals.Arrival.Route = Route.Id -->
+    <xsd:keyref name="arrivalRouteIdRef" refer="ots:routeKey">
+      <xsd:selector xpath="ots:Demand/ots:InjectionGenerator/ots:Arrivals/ots:Arrival" />
+      <xsd:field xpath="@Route" />
+    </xsd:keyref>
+    
+    <!-- Demand.InjectionGenerator.Arrivals.Arrival.Origin = Node.Id -->
+    <xsd:keyref name="arrivalOriginIdRef" refer="ots:nodeKey">
+      <xsd:selector xpath="ots:Demand/ots:InjectionGenerator/ots:Arrivals/ots:Arrival" />
+      <xsd:field xpath="@Origin" />
+    </xsd:keyref>
+    
+    <!-- Demand.InjectionGenerator.Arrivals.Arrival.Destination = Node.Id -->
+    <xsd:keyref name="arrivalDestinationIdRef" refer="ots:nodeKey">
+      <xsd:selector xpath="ots:Demand/ots:InjectionGenerator/ots:Arrivals/ots:Arrival" />
+      <xsd:field xpath="@Destination" />
     </xsd:keyref>
 
     <!-- Demand.Od.Cell.Origin = {Node|Centroid}.Id -->

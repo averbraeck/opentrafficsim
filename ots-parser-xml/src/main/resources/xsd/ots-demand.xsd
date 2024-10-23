@@ -36,7 +36,7 @@
       <xsd:attribute name="GlobalFactor" type="ots:PositiveFactor" use="optional" default="1.0" />
       <xsd:attribute name="Options" type="ots:string" use="optional" />
     </xsd:complexType>
-    
+
     <!-- Od.Cell.{Origin|Destination|Category} unique -->
     <xsd:unique name="odCellKey">
       <xsd:selector xpath="ots:Cell" />
@@ -44,7 +44,7 @@
       <xsd:field xpath="@Destination" />
       <xsd:field xpath="@Category" /> <!-- optional field, so this can't be a xsd:key -->
     </xsd:unique>
-    
+
   </xsd:element>
 
   <xsd:element name="OdOptions">
@@ -271,6 +271,104 @@
     </xsd:complexType>
   </xsd:element>
 
+  <xsd:element name="InjectionGenerator">
+    <xsd:complexType>
+      <xsd:sequence>
+
+        <xsd:element name="Position" minOccurs="0">
+          <xsd:annotation>
+            <xsd:documentation source="description">Provide a Position if there is no Link, Lane or Position (on lane)
+              data.
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+            <xsd:attribute name="Link" type="ots:string" use="required" />
+            <xsd:attribute name="Lane" type="ots:string" use="required" />
+            <xsd:attribute name="Position" type="ots:LengthBeginEndType" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+
+        <xsd:element name="GtuCharacteristics" minOccurs="0">
+          <xsd:annotation>
+            <xsd:documentation source="description">Provide Gtu Characteristics if there is no data on GTU size, speed,
+              acceleration and route.
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:choice>
+                <xsd:element name="GtuTemplate" type="ots:string" />
+                <xsd:element name="GtuTemplateMix" type="ots:string" />
+              </xsd:choice>
+              <xsd:choice>
+                <xsd:element name="Route" type="ots:string" />
+                <xsd:element name="RouteMix" type="ots:string" />
+                <xsd:element name="ShortestRoute" type="ots:string" />
+                <xsd:element name="ShortestRouteMix" type="ots:string" />
+              </xsd:choice>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+
+        <xsd:choice>
+          <xsd:annotation>
+            <xsd:documentation source="description">Test.
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:element name="RoomChecker" type="ots:RoomCheckerType">
+            <xsd:annotation>
+              <xsd:documentation source="description">Provide a Room Checker if there is no speed in the data.
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="TimeToCollision" type="ots:PositiveDurationType">
+            <xsd:annotation>
+              <xsd:documentation source="description">Provide a Time To Collision if there is speed in the data.
+              </xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:choice>
+
+        <xsd:element name="RandomStream" type="ots:RandomStreamSource" minOccurs="0" />
+
+        <xsd:element name="Arrivals">
+          <xsd:annotation>
+            <xsd:documentation source="description">Provide link to arrivals file (csv with csv.header) or specify Arrivals.
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="Arrival" minOccurs="0" maxOccurs="unbounded">
+                <xsd:complexType>
+                  <xsd:simpleContent>
+                    <xsd:extension base="ots:PositiveDurationType"> <!-- this is the arrival time -->
+                      <xsd:attribute name="Id" type="ots:string" />
+                      <xsd:attribute name="Speed" type="ots:SpeedType" />
+                      <xsd:attribute name="Link" type="ots:string" />
+                      <xsd:attribute name="Lane" type="ots:string" />
+                      <xsd:attribute name="Position" type="ots:string" />
+                      <xsd:attribute name="Length" type="ots:LengthType" />
+                      <xsd:attribute name="Width" type="ots:LengthType" />
+                      <xsd:attribute name="Front" type="ots:LengthType" />
+                      <xsd:attribute name="MaxSpeed" type="ots:SpeedType" />
+                      <xsd:attribute name="MaxAcceleration" type="ots:PositiveAccelerationType" />
+                      <xsd:attribute name="MaxDeceleration" type="ots:PositiveAccelerationType" />
+                      <xsd:attribute name="Route" type="ots:string" />
+                      <xsd:attribute name="Origin" type="ots:string" />
+                      <xsd:attribute name="Destination" type="ots:string" />
+                    </xsd:extension>
+                  </xsd:simpleContent>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="Uri" type="ots:anyURI" use="optional" />
+          </xsd:complexType>
+        </xsd:element>
+
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
   <xsd:element name="Sink">
     <xsd:complexType>
       <xsd:attribute name="Type" type="ots:string" use="required" />
@@ -287,29 +385,6 @@
     </xsd:complexType>
   </xsd:element>
 
-  <xsd:element name="ListGenerator">
-    <xsd:complexType>
-      <xsd:sequence>
-        <xsd:choice>
-          <xsd:element name="GtuTemplate" type="ots:string" />
-          <xsd:element name="GtuTemplateMix" type="ots:string" />
-        </xsd:choice>
-        <xsd:choice>
-          <xsd:element name="Route" type="ots:string" />
-          <xsd:element name="RouteMix" type="ots:string" />
-          <xsd:element name="ShortestRoute" type="ots:string" />
-          <xsd:element name="ShortestRouteMix" type="ots:string" />
-        </xsd:choice>
-        <xsd:element name="RoomChecker" type="ots:RoomCheckerType" minOccurs="0" maxOccurs="1" />
-      </xsd:sequence>
-      <xsd:attribute name="Link" type="ots:string" use="required" />
-      <xsd:attribute name="Lane" type="ots:string" use="required" />
-      <xsd:attribute name="Position" type="ots:LengthBeginEndType" use="required" />
-      <xsd:attribute name="Uri" type="ots:anyURI" use="required" />
-      <!-- TODO: Add inline list. -->
-    </xsd:complexType>
-  </xsd:element>
-
   <xsd:element name="Demand">
     <xsd:complexType>
       <xsd:sequence>
@@ -322,7 +397,7 @@
         <xsd:element ref="ots:GtuTemplateMix" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element name="ModelIdReferral" type="ots:ModelIdReferralType" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:Generator" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element ref="ots:ListGenerator" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="ots:InjectionGenerator" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:Sink" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
     </xsd:complexType>

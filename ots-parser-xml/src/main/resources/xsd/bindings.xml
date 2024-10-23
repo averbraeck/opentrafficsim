@@ -69,6 +69,8 @@
       adapter="org.opentrafficsim.xml.bindings.PositiveTimeAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.AccelerationType" xmlType="ots:AccelerationType"
       adapter="org.opentrafficsim.xml.bindings.AccelerationAdapter" />
+    <xjc:javaType name="org.opentrafficsim.xml.bindings.types.PositiveAccelerationType"
+      xmlType="ots:PositiveAccelerationType" adapter="org.opentrafficsim.xml.bindings.AccelerationAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.AngleType" xmlType="ots:AngleType"
       adapter="org.opentrafficsim.xml.bindings.AngleAdapter" />
     <xjc:javaType name="org.opentrafficsim.xml.bindings.types.DirectionType" xmlType="ots:DirectionType"

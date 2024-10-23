@@ -36,6 +36,7 @@ import org.opentrafficsim.core.geometry.ContinuousLine;
 import org.opentrafficsim.core.geometry.Flattener;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
@@ -276,9 +277,15 @@ public final class XmlParser implements Serializable
             Map<String, List<FrequencyAndObject<Route>>> routeMixMap = DemandParser.parseRouteMix(otsNetwork, demand, eval);
             Map<String, List<FrequencyAndObject<Route>>> shortestRouteMixMap =
                     DemandParser.parseShortestRouteMix(otsNetwork, demand, eval);
+
+            IdGenerator idGenerator = new IdGenerator("");
             List<LaneBasedGtuGenerator> generators = DemandParser.parseGenerators(otsNetwork, definitions, demand, gtuTemplates,
-                    routeMixMap, shortestRouteMixMap, streamInformation, eval);
+                    routeMixMap, shortestRouteMixMap, streamInformation, idGenerator, eval);
             System.out.println("Created " + generators.size() + " generators based on explicit generator definitions");
+            generators = DemandParser.parseInjectionGenerators(otsNetwork, definitions, demand, gtuTemplates, routeMixMap,
+                    shortestRouteMixMap, streamInformation, idGenerator, eval);
+            System.out
+                    .println("Created " + generators.size() + " generators based on explicit injection generator definitions");
             DemandParser.parseSinks(otsNetwork, demand, definitions, eval);
         }
 
