@@ -7,10 +7,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 import java.awt.image.ImageObserver;
-import java.rmi.RemoteException;
 import java.util.function.Supplier;
-
-import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
@@ -70,10 +67,8 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
      * Construct the DefaultCarAnimation for a LaneBasedIndividualCar.
      * @param gtu the Car to draw
      * @param contextualized context provider
-     * @throws NamingException in case of registration failure of the animation
-     * @throws RemoteException on communication failure
      */
-    public DefaultCarAnimation(final GtuData gtu, final Contextualized contextualized) throws NamingException, RemoteException
+    public DefaultCarAnimation(final GtuData gtu, final Contextualized contextualized)
     {
         super(gtu, contextualized);
         this.hashCode = gtu.hashCode();
@@ -233,12 +228,9 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
          * @param textAlignment where to place the text
          * @param color the color of the text
          * @param contextualized context provider
-         * @throws NamingException when animation context cannot be created or retrieved
-         * @throws RemoteException - when remote context cannot be found
          */
         public Text(final GtuData source, final Supplier<String> text, final float dx, final float dy,
                 final TextAlignment textAlignment, final Color color, final Contextualized contextualized)
-                throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textAlignment, color, 1.0f, 12.0f, 50f, contextualized, TextAnimation.RENDERWHEN1);
         }
@@ -252,13 +244,11 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
          * @param color the color of the text
          * @param contextualized context provider
          * @param background TextAnimation.ContrastToBackground; connection to retrieve the current background color
-         * @throws NamingException when animation context cannot be created or retrieved
-         * @throws RemoteException - when remote context cannot be found
          */
         @SuppressWarnings("parameternumber")
         public Text(final GtuData source, final Supplier<String> text, final float dx, final float dy,
                 final TextAlignment textAlignment, final Color color, final Contextualized contextualized,
-                final TextAnimation.ContrastToBackground background) throws RemoteException, NamingException
+                final TextAnimation.ContrastToBackground background)
         {
             super(source, text, dx, dy, textAlignment, color, 1.0f, 12.0f, 50f, contextualized, background, RENDERWHEN1);
         }

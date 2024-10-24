@@ -9,7 +9,6 @@ import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
@@ -46,7 +45,7 @@ public class AccelerationNoRightOvertake implements AccelerationIncentive
     public void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
             final LaneBasedGtu gtu, final LanePerception perception, final CarFollowingModel carFollowingModel,
             final Speed speed, final Parameters params, final SpeedLimitInfo speedLimitInfo)
-            throws OperationalPlanException, ParameterException, GtuException
+            throws ParameterException, GtuException
     {
         // TODO ignore incentive if we need to change lane for the route
         if (lane.isCurrent() && perception.getLaneStructure().exists(RelativeLane.LEFT))

@@ -20,7 +20,6 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.LinkPosition;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.draw.graphs.ContourDataSource;
 import org.opentrafficsim.draw.graphs.ContourPlotAcceleration;
 import org.opentrafficsim.draw.graphs.ContourPlotDensity;
@@ -68,10 +67,8 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
      * @param title the title of the Frame
      * @param panel the tabbed panel to display
      * @param model the model
-     * @throws OtsDrawingException on animation error
      */
     public CircularRoadSwing(final String title, final OtsAnimationPanel panel, final CircularRoadModel model)
-            throws OtsDrawingException
     {
         super(model, panel);
 
@@ -284,7 +281,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
                 }
             }
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DsolException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | DsolException exception)
         {
             exception.printStackTrace();
         }

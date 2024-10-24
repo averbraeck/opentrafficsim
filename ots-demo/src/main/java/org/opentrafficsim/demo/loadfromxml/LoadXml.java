@@ -23,11 +23,9 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
-import org.opentrafficsim.core.dsol.OtsSimulationException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
@@ -60,9 +58,8 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
     /**
      * @param model the model
      * @param animationPanel the animation panel
-     * @throws OtsDrawingException on drawing error
      */
-    public LoadXml(final OtsModelInterface model, final OtsAnimationPanel animationPanel) throws OtsDrawingException
+    public LoadXml(final OtsModelInterface model, final OtsAnimationPanel animationPanel)
     {
         super(model, animationPanel);
     }
@@ -72,13 +69,12 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
      * @param args the command line arguments; optional name of file to load
      * @throws IOException when the file could not be read
      * @throws InputParameterException should never happen
-     * @throws OtsSimulationException when an error occurs during simulation
      * @throws NamingException when a name collision is detected
      * @throws SimRuntimeException should never happen
      * @throws DsolException when simulator does not implement AnimatorInterface
      */
-    public static void main(final String[] args) throws IOException, SimRuntimeException, NamingException,
-            OtsSimulationException, InputParameterException, DsolException
+    public static void main(final String[] args)
+            throws IOException, SimRuntimeException, NamingException, InputParameterException, DsolException
     {
         String fileName;
         String xml;
@@ -140,7 +136,7 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
             // TODO: permabilityType (CAR above) can probably not be null, but we will move stripe type to stripe later
             // (now StripeAnimation.TYPE is figured out from permebability)
         }
-        catch (SimRuntimeException | OtsDrawingException sre)
+        catch (SimRuntimeException sre)
         {
             JOptionPane.showMessageDialog(null, sre.getMessage(), "Exception occured", JOptionPane.ERROR_MESSAGE);
             System.exit(1);

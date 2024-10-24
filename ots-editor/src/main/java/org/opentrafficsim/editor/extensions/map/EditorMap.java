@@ -703,7 +703,7 @@ public class EditorMap extends JPanel implements EventListener
         Renderable2d<?> animation;
         if (node.getPathString().equals(XsdPaths.NODE))
         {
-            animation = Try.assign(() -> new NodeAnimation((MapNodeData) data, this.contextualized), "");
+            animation = new NodeAnimation((MapNodeData) data, this.contextualized);
         }
         else if (node.getPathString().equals(XsdPaths.LINK))
         {
@@ -723,8 +723,7 @@ public class EditorMap extends JPanel implements EventListener
         }
         else if (node.getPathString().equals(XsdPaths.GENERATOR) || node.getPathString().equals(XsdPaths.LIST_GENERATOR))
         {
-            animation = Try
-                    .assign(() -> new GtuGeneratorPositionAnimation((GtuGeneratorPositionData) data, this.contextualized), "");
+            animation = new GtuGeneratorPositionAnimation((GtuGeneratorPositionData) data, this.contextualized);
         }
         else
         {

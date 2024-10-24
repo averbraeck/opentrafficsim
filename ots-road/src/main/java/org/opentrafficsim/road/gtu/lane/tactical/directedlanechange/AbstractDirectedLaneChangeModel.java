@@ -57,7 +57,7 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
             final LateralDirectionality direction, final Collection<Headway> sameLaneGTUs,
             final Collection<Headway> otherLaneGTUs, final Length maxDistance, final Speed speedLimit,
             final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold, final Duration laneChangeTime)
-            throws GtuException, ParameterException, OperationalPlanException
+            throws GtuException, ParameterException
     {
         Lane lane = gtu.getReferencePosition().lane();
         Length longitudinalPosition = gtu.getReferencePosition().position();

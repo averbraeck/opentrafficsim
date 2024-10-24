@@ -4,10 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
-import java.rmi.RemoteException;
 import java.util.function.Supplier;
-
-import javax.naming.NamingException;
 
 import org.djutils.base.Identifiable;
 import org.djutils.draw.line.PolyLine2d;
@@ -65,11 +62,8 @@ public class LinkAnimation extends OtsRenderable<LinkData>
      * @param link link data.
      * @param contextualized context provider.
      * @param width width
-     * @throws NamingException for problems with registering in context
-     * @throws RemoteException on communication failure
      */
     public LinkAnimation(final LinkData link, final Contextualized contextualized, final float width)
-            throws NamingException, RemoteException
     {
         super(link, contextualized);
         this.width = width;
@@ -178,12 +172,10 @@ public class LinkAnimation extends OtsRenderable<LinkData>
          * @param color the color of the text
          * @param contextualized context provider.
          * @param scaleDependentRendering enables rendering in a scale dependent fashion
-         * @throws NamingException when animation context cannot be created or retrieved
-         * @throws RemoteException - when remote context cannot be found
          */
         public Text(final LinkData source, final Supplier<String> text, final float dx, final float dy,
                 final TextAlignment textPlacement, final Color color, final Contextualized contextualized,
-                final ScaleDependentRendering scaleDependentRendering) throws RemoteException, NamingException
+                final ScaleDependentRendering scaleDependentRendering)
         {
             super(source, text, dx, dy, textPlacement, color, 2.0f, 12.0f, 50f, contextualized, null, scaleDependentRendering);
         }

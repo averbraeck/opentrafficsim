@@ -1,5 +1,7 @@
 package org.opentrafficsim.trafficcontrol;
 
+import org.opentrafficsim.base.OtsException;
+
 /**
  * Exceptions thrown by traffic control programs.
  * <p>
@@ -10,7 +12,7 @@ package org.opentrafficsim.trafficcontrol;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class TrafficControlException extends Exception
+public class TrafficControlException extends OtsException
 {
 
     /** */
@@ -46,18 +48,6 @@ public class TrafficControlException extends Exception
     public TrafficControlException(final String message, final Throwable cause)
     {
         super(message, cause);
-    }
-
-    /**
-     * @param message description of the problem
-     * @param cause the cause of this Exception
-     * @param enableSuppression whether or not suppression is enabled or disabled
-     * @param writableStackTrace whether or not the stack trace should be writable
-     */
-    public TrafficControlException(final String message, final Throwable cause, final boolean enableSuppression,
-            final boolean writableStackTrace)
-    {
-        super(message, cause, enableSuppression, writableStackTrace);
     }
 
 }

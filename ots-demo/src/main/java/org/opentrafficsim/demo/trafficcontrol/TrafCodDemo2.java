@@ -27,7 +27,6 @@ import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.object.NonLocatedObject;
 import org.opentrafficsim.demo.trafficcontrol.TrafCodDemo2.TrafCodModel;
-import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
@@ -58,9 +57,8 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
      * @param title the title of the Frame
      * @param panel the tabbed panel to display
      * @param model the model
-     * @throws OtsDrawingException on animation error
      */
-    public TrafCodDemo2(final String title, final OtsAnimationPanel panel, final TrafCodModel model) throws OtsDrawingException
+    public TrafCodDemo2(final String title, final OtsAnimationPanel panel, final TrafCodModel model)
     {
         super(model, panel);
     }
@@ -112,7 +110,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DsolException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | DsolException exception)
         {
             exception.printStackTrace();
         }

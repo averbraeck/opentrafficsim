@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane;
 
+import org.opentrafficsim.base.OtsRuntimeException;
+
 /**
  * Throw when a collision is detected.
  * <p>
@@ -10,7 +12,7 @@ package org.opentrafficsim.road.gtu.lane;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class CollisionException extends RuntimeException
+public class CollisionException extends OtsRuntimeException
 {
 
     /** */
@@ -48,15 +50,4 @@ public class CollisionException extends RuntimeException
         super(message, cause);
     }
 
-    /**
-     * @param message description of the problem
-     * @param cause the cause of this Exception
-     * @param enableSuppression whether or not suppression is enabled or disabled
-     * @param writableStackTrace whether or not the stack trace should be writable
-     */
-    public CollisionException(final String message, final Throwable cause, final boolean enableSuppression,
-            final boolean writableStackTrace)
-    {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }

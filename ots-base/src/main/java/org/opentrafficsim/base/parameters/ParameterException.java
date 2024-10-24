@@ -1,5 +1,7 @@
 package org.opentrafficsim.base.parameters;
 
+import org.opentrafficsim.base.OtsException;
+
 /**
  * Throwable for exceptions regarding parameters.
  * <p>
@@ -9,7 +11,7 @@ package org.opentrafficsim.base.parameters;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ParameterException extends Exception
+public class ParameterException extends OtsException
 {
 
     /** Serialization id. */
@@ -50,16 +52,4 @@ public class ParameterException extends Exception
         super(message, cause);
     }
 
-    /**
-     * Constructor with message and cause.
-     * @param message Message.
-     * @param cause Cause.
-     * @param enableSuppression Whether to enable suppression.
-     * @param writableStackTrace Whether or not the stack trace should be writable.
-     */
-    public ParameterException(final String message, final Throwable cause, final boolean enableSuppression,
-            final boolean writableStackTrace)
-    {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }

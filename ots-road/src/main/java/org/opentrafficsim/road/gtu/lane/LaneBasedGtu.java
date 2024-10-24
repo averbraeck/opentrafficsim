@@ -490,7 +490,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     protected synchronized boolean move(final OrientedPoint2d fromLocation)
-            throws SimRuntimeException, GtuException, OperationalPlanException, NetworkException, ParameterException
+            throws SimRuntimeException, GtuException, NetworkException, ParameterException
     {
         if (this.isDestroyed())
         {
@@ -599,10 +599,9 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
      * Checks whether the GTU will enter a next cross-section during the (remainder of) the tactical plan. Only one event will
      * be scheduled. Possible additional events are scheduled upon entering the cross-section.
      * @throws GtuException exception
-     * @throws OperationalPlanException exception
      * @throws SimRuntimeException exception
      */
-    protected void scheduleEnterEvent() throws GtuException, OperationalPlanException, SimRuntimeException
+    protected void scheduleEnterEvent() throws GtuException, SimRuntimeException
     {
         CrossSection lastCrossSection = this.crossSections.get(this.crossSections.size() - 1);
         // heuristic to prevent geometric calculation if the next section is quite far away anyway
@@ -637,10 +636,9 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     /**
      * Appends a new cross-section at the downstream end. Possibly schedules a next enter event.
      * @throws GtuException exception
-     * @throws OperationalPlanException exception
      * @throws SimRuntimeException exception
      */
-    protected synchronized void enterCrossSection() throws GtuException, OperationalPlanException, SimRuntimeException
+    protected synchronized void enterCrossSection() throws GtuException, SimRuntimeException
     {
         CrossSection lastCrossSection = this.crossSections.get(this.crossSections.size() - 1);
         Lane lcsLane = lastCrossSection.getLanes().get(this.referenceLaneIndex);
@@ -708,10 +706,9 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
      * checks whether such an event is scheduled, and performs it. This method then re-attempts to enter the cross-section. So
      * the calling method should return after calling this.
      * @throws GtuException exception
-     * @throws OperationalPlanException exception
      * @throws SimRuntimeException exception
      */
-    private void forceLaneChangeFinalization() throws GtuException, OperationalPlanException, SimRuntimeException
+    private void forceLaneChangeFinalization() throws GtuException, SimRuntimeException
     {
         if (this.finalizeLaneChangeEvent != null)
         {
@@ -728,10 +725,9 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
      * Checks whether the GTU will leave a cross-section during the (remainder of) the tactical plan. Only one event will be
      * scheduled. Possible additional events are scheduled upon leaving the cross-section.
      * @throws GtuException exception
-     * @throws OperationalPlanException exception
      * @throws SimRuntimeException exception
      */
-    protected void scheduleLeaveEvent() throws GtuException, OperationalPlanException, SimRuntimeException
+    protected void scheduleLeaveEvent() throws GtuException, SimRuntimeException
     {
         if (this.crossSections.isEmpty())
         {
@@ -789,10 +785,9 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
      * Removes registration between the GTU and the lanes in the most upstream cross-section. Possibly schedules a next leave
      * event.
      * @throws GtuException exception
-     * @throws OperationalPlanException exception
      * @throws SimRuntimeException exception
      */
-    protected synchronized void leaveCrossSection() throws GtuException, OperationalPlanException, SimRuntimeException
+    protected synchronized void leaveCrossSection() throws GtuException, SimRuntimeException
     {
 
         List<Lane> lanes = this.crossSections.get(0).getLanes();
@@ -813,10 +808,9 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
      * Schedules all trigger events during the current operational plan on the lane.
      * @param lane lane
      * @throws GtuException exception
-     * @throws OperationalPlanException exception
      * @throws SimRuntimeException exception
      */
-    protected void scheduleTriggers(final Lane lane) throws GtuException, OperationalPlanException, SimRuntimeException
+    protected void scheduleTriggers(final Lane lane) throws GtuException, SimRuntimeException
     {
         Length remain = remainingEventDistance();
         double min = position(lane, getRear()).si;

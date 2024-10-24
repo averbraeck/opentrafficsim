@@ -35,7 +35,6 @@ import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.object.LocatedObject;
 import org.opentrafficsim.core.object.NonLocatedObject;
-import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData;
 import org.opentrafficsim.draw.network.LinkAnimation;
@@ -117,10 +116,8 @@ public class DefaultAnimationFactory implements EventListener
      * @param network the network
      * @param gtuColorer GTU colorer
      * @param animateNetwork whether to animate the current network objects
-     * @throws OtsDrawingException on drawing error
      */
     protected DefaultAnimationFactory(final Network network, final GtuColorer gtuColorer, final boolean animateNetwork)
-            throws OtsDrawingException
     {
         this.network = network;
         this.simulator = network.getSimulator();
@@ -135,68 +132,61 @@ public class DefaultAnimationFactory implements EventListener
         network.addListener(this, Network.NONLOCATED_OBJECT_REMOVE_EVENT);
 
         // model the current infrastructure
-        try
+        if (animateNetwork)
         {
-            if (animateNetwork)
+            for (Node node : network.getNodeMap().values())
             {
-                for (Node node : network.getNodeMap().values())
+                new NodeAnimation(new AnimationNodeData(node), this.simulator);
+            }
+            for (Link link : network.getLinkMap().values())
+            {
+                new LinkAnimation(new AnimationLinkData(link), this.simulator, 0.5f);
+                if (link instanceof CrossSectionLink cLink)
                 {
-                    new NodeAnimation(new AnimationNodeData(node), this.simulator);
-                }
-                for (Link link : network.getLinkMap().values())
-                {
-                    new LinkAnimation(new AnimationLinkData(link), this.simulator, 0.5f);
-                    if (link instanceof CrossSectionLink cLink)
+                    for (CrossSectionElement element : cLink.getCrossSectionElementList())
                     {
-                        for (CrossSectionElement element : cLink.getCrossSectionElementList())
+                        if (element instanceof Shoulder shoulder)
                         {
-                            if (element instanceof Shoulder shoulder)
-                            {
-                                new CrossSectionElementAnimation<>(new AnimationShoulderData(shoulder), this.simulator,
-                                        Color.DARK_GRAY);
-                            }
-                            else if (element instanceof Lane lane)
-                            {
-                                new LaneAnimation(new AnimationLaneData(lane), this.simulator, Color.GRAY.brighter());
-                            }
-                            else if (element instanceof Stripe stripe)
-                            {
-                                new StripeAnimation(new AnimationStripeData(stripe), this.simulator);
-                            }
-                            else
-                            {
-                                new CrossSectionElementAnimation<>(new AnimationCrossSectionElementData<>(element),
-                                        this.simulator, Color.DARK_GRAY);
-                            }
+                            new CrossSectionElementAnimation<>(new AnimationShoulderData(shoulder), this.simulator,
+                                    Color.DARK_GRAY);
                         }
-                        if (!cLink.getPriority().isNone())
+                        else if (element instanceof Lane lane)
                         {
-                            new PriorityAnimation(new AnimationPriorityData(cLink), this.simulator);
+                            new LaneAnimation(new AnimationLaneData(lane), this.simulator, Color.GRAY.brighter());
                         }
+                        else if (element instanceof Stripe stripe)
+                        {
+                            new StripeAnimation(new AnimationStripeData(stripe), this.simulator);
+                        }
+                        else
+                        {
+                            new CrossSectionElementAnimation<>(new AnimationCrossSectionElementData<>(element), this.simulator,
+                                    Color.DARK_GRAY);
+                        }
+                    }
+                    if (!cLink.getPriority().isNone())
+                    {
+                        new PriorityAnimation(new AnimationPriorityData(cLink), this.simulator);
                     }
                 }
             }
-
-            for (Gtu gtu : network.getGTUs())
-            {
-                GtuData gtuData = new AnimationGtuData(this.gtuColorer, (LaneBasedGtu) gtu);
-                Renderable2d<GtuData> gtuAnimation = new DefaultCarAnimation(gtuData, this.simulator);
-                this.animatedGTUs.put((LaneBasedGtu) gtu, gtuAnimation);
-            }
-
-            for (LocatedObject object : network.getObjectMap().values())
-            {
-                animateLocatedObject(object);
-            }
-
-            for (NonLocatedObject object : network.getNonLocatedObjectMap().values())
-            {
-                animateNonLocatedObject(object);
-            }
         }
-        catch (RemoteException | NamingException exception)
+
+        for (Gtu gtu : network.getGTUs())
         {
-            throw new OtsDrawingException("Exception while creating network animation.", exception);
+            GtuData gtuData = new AnimationGtuData(this.gtuColorer, (LaneBasedGtu) gtu);
+            Renderable2d<GtuData> gtuAnimation = new DefaultCarAnimation(gtuData, this.simulator);
+            this.animatedGTUs.put((LaneBasedGtu) gtu, gtuAnimation);
+        }
+
+        for (LocatedObject object : network.getObjectMap().values())
+        {
+            animateLocatedObject(object);
+        }
+
+        for (NonLocatedObject object : network.getNonLocatedObjectMap().values())
+        {
+            animateNonLocatedObject(object);
         }
 
     }
@@ -208,10 +198,9 @@ public class DefaultAnimationFactory implements EventListener
      * @param contextualized context provider
      * @param gtuColorer GTU colorer
      * @return the DefaultAnimationFactory
-     * @throws OtsDrawingException on drawing error
      */
     public static DefaultAnimationFactory animateNetwork(final Network network, final Contextualized contextualized,
-            final GtuColorer gtuColorer) throws OtsDrawingException
+            final GtuColorer gtuColorer)
     {
         return new DefaultAnimationFactory(network, gtuColorer, true);
     }
@@ -222,10 +211,8 @@ public class DefaultAnimationFactory implements EventListener
      * @param network the network
      * @param gtuColorer GTU colorer
      * @return the DefaultAnimationFactory
-     * @throws OtsDrawingException on drawing error
      */
     public static DefaultAnimationFactory animateXmlNetwork(final Network network, final GtuColorer gtuColorer)
-            throws OtsDrawingException
     {
         return new DefaultAnimationFactory(network, gtuColorer, false);
     }
@@ -288,16 +275,9 @@ public class DefaultAnimationFactory implements EventListener
      */
     protected void animateGTU(final LaneBasedGtu gtu)
     {
-        try
-        {
-            GtuData gtuData = new AnimationGtuData(this.gtuColorer, gtu);
-            Renderable2d<GtuData> gtuAnimation = new DefaultCarAnimation(gtuData, this.simulator);
-            this.animatedGTUs.put(gtu, gtuAnimation);
-        }
-        catch (RemoteException | NamingException exception)
-        {
-            gtu.getSimulator().getLogger().always().error(exception, "Exception while drawing GTU.");
-        }
+        GtuData gtuData = new AnimationGtuData(this.gtuColorer, gtu);
+        Renderable2d<GtuData> gtuAnimation = new DefaultCarAnimation(gtuData, this.simulator);
+        this.animatedGTUs.put(gtu, gtuAnimation);
     }
 
     /**
@@ -376,22 +356,15 @@ public class DefaultAnimationFactory implements EventListener
      */
     protected void animateNonLocatedObject(final NonLocatedObject object)
     {
-        try
+        if (object instanceof LaneBasedGtuGenerator)
         {
-            if (object instanceof LaneBasedGtuGenerator)
+            LaneBasedGtuGenerator generator = (LaneBasedGtuGenerator) object;
+            for (GtuGeneratorPosition position : generator.getPositions())
             {
-                LaneBasedGtuGenerator generator = (LaneBasedGtuGenerator) object;
-                for (GtuGeneratorPosition position : generator.getPositions())
-                {
-                    Renderable2d<GtuGeneratorPositionData> objectAnimation =
-                            new GtuGeneratorPositionAnimation(new AnimationGtuGeneratorPositionData(position), this.simulator);
-                    this.animatedLocatedObjects.put(position, objectAnimation);
-                }
+                Renderable2d<GtuGeneratorPositionData> objectAnimation =
+                        new GtuGeneratorPositionAnimation(new AnimationGtuGeneratorPositionData(position), this.simulator);
+                this.animatedLocatedObjects.put(position, objectAnimation);
             }
-        }
-        catch (RemoteException | NamingException exception)
-        {
-            CategoryLogger.always().error(exception, "Exception while drawing Object of class NonLocatedObject.");
         }
     }
 

@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.gtu.plan.operational;
 
+import org.opentrafficsim.core.gtu.GtuException;
+
 /**
  * Exception for the operational plan, e.g. when a request is given outside the plan's validity.
  * <p>
@@ -9,7 +11,7 @@ package org.opentrafficsim.core.gtu.plan.operational;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class OperationalPlanException extends Exception
+public class OperationalPlanException extends GtuException
 {
     /** */
     private static final long serialVersionUID = 20151223L;
@@ -46,15 +48,4 @@ public class OperationalPlanException extends Exception
         super(message, cause);
     }
 
-    /**
-     * @param message exception message
-     * @param cause exception that triggered this exception
-     * @param enableSuppression whether or not suppression is enabled or disabled
-     * @param writableStackTrace whether or not the stack trace should be writable
-     */
-    public OperationalPlanException(final String message, final Throwable cause, final boolean enableSuppression,
-            final boolean writableStackTrace)
-    {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }

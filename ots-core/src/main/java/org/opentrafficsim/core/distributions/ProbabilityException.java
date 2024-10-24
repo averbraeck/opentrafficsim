@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.distributions;
 
+import org.opentrafficsim.base.OtsException;
+
 /**
  * Exception thrown when provided probabilities or frequencies are invalid. Negative probabilities or frequencies are invalid. A
  * set of probabilities or frequencies that adds up to 0 causes this exception when the draw method is called.
@@ -9,7 +11,7 @@ package org.opentrafficsim.core.distributions;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class ProbabilityException extends Exception
+public class ProbabilityException extends OtsException
 {
     /** */
     private static final long serialVersionUID = 20160301L;
@@ -46,15 +48,4 @@ public class ProbabilityException extends Exception
         super(message, cause);
     }
 
-    /**
-     * @param message description of the problem
-     * @param cause the cause of this ValueRuntimeException
-     * @param enableSuppression whether or not suppression is enabled or disabled
-     * @param writableStackTrace whether or not the stack trace should be writable
-     */
-    public ProbabilityException(final String message, final Throwable cause, final boolean enableSuppression,
-            final boolean writableStackTrace)
-    {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }

@@ -605,7 +605,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
         /** {@inheritDoc} */
         @Override
         public OperationalPlan generateOperationalPlan(final Time startTime, final OrientedPoint2d locationAtStartTime)
-                throws OperationalPlanException, GtuException, NetworkException, ParameterException
+                throws GtuException, NetworkException, ParameterException
         {
             // get some general input
             Speed speed = getPerception().getPerceptionCategory(EgoPerception.class).getSpeed();

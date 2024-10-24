@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.gtu;
 
+import org.opentrafficsim.base.OtsException;
+
 /**
  * Exception thrown when GTU encounters a problem.
  * <p>
@@ -9,7 +11,7 @@ package org.opentrafficsim.core.gtu;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class GtuException extends Exception
+public class GtuException extends OtsException
 {
 
     /** */
@@ -47,15 +49,4 @@ public class GtuException extends Exception
         super(message, cause);
     }
 
-    /**
-     * @param message description of the problem
-     * @param cause the cause of this Exception
-     * @param enableSuppression whether or not suppression is enabled or disabled
-     * @param writableStackTrace whether or not the stack trace should be writable
-     */
-    public GtuException(final String message, final Throwable cause, final boolean enableSuppression,
-            final boolean writableStackTrace)
-    {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }

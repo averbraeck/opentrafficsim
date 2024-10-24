@@ -2,7 +2,6 @@ package org.opentrafficsim.swing.gui;
 
 import org.opentrafficsim.animation.DefaultAnimationFactory;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
-import org.opentrafficsim.draw.OtsDrawingException;
 
 /**
  * Extension of a swing application with standard preparation.
@@ -27,9 +26,8 @@ public class OtsSimulationApplication<T extends OtsModelInterface> extends OtsSw
     /**
      * @param model model
      * @param panel animation panel
-     * @throws OtsDrawingException on animation error
      */
-    public OtsSimulationApplication(final T model, final OtsAnimationPanel panel) throws OtsDrawingException
+    public OtsSimulationApplication(final T model, final OtsAnimationPanel panel)
     {
         super(model, panel);
         this.animationPanel = panel;
@@ -41,9 +39,8 @@ public class OtsSimulationApplication<T extends OtsModelInterface> extends OtsSw
 
     /**
      * Creates the animation objects. This method is overridable. The default uses {@code DefaultAnimationFactory}.
-     * @throws OtsDrawingException on animation error
      */
-    private void animateNetwork() throws OtsDrawingException
+    private void animateNetwork()
     {
         DefaultAnimationFactory.animateNetwork(getModel().getNetwork(), getModel().getNetwork().getSimulator(),
                 getAnimationPanel().getGtuColorer());

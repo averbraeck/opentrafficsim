@@ -20,7 +20,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
 import org.djutils.serialization.SerializationException;
-import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.sim0mq.publisher.SubscriptionHandler;
 import org.sim0mq.Sim0MQException;
 import org.sim0mq.message.Sim0MQMessage;
@@ -97,15 +96,14 @@ public class Sim0MQPublisherTest
      * @throws NamingException if that happens uncaught; this test has failed
      * @throws SimRuntimeException if that happens uncaught; this test has failed
      * @throws DsolException if that happens uncaught; this test has failed
-     * @throws OtsDrawingException if that happens uncaught; this test has failed
      * @throws SerializationException if that happens uncaught; this test has failed
      * @throws Sim0MQException if that happens uncaught; this test has failed
      * @throws InterruptedException if that happens uncaught; this test has failed
      * @throws URISyntaxException if network.xml file not found
      */
     // FIXME: The test has null pointer exceptions... @Test
-    public void testSim0MQPublisher() throws IOException, SimRuntimeException, NamingException, DsolException,
-            OtsDrawingException, Sim0MQException, SerializationException, InterruptedException, URISyntaxException
+    public void testSim0MQPublisher() throws IOException, SimRuntimeException, NamingException, DsolException, Sim0MQException,
+            SerializationException, InterruptedException, URISyntaxException
     {
         ZContext zContext = new ZContext(5); // 5 IO threads - how many is reasonable? It actually works with 1 IO thread.
         networkXML = new String(Files.readAllBytes(Paths.get(URLResource.getResource("/resources/network.xml").toURI())));

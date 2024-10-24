@@ -5,12 +5,9 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
@@ -45,10 +42,8 @@ public class StripeAnimation extends OtsRenderable<StripeData>
     /**
      * @param source stripe data
      * @param contextualized context provider
-     * @throws NamingException ne
-     * @throws RemoteException on communication failure
      */
-    public StripeAnimation(final StripeData source, final Contextualized contextualized) throws NamingException, RemoteException
+    public StripeAnimation(final StripeData source, final Contextualized contextualized)
     {
         super(source, contextualized);
         List<Point2d> list = makePoints(source);
@@ -123,9 +118,8 @@ public class StripeAnimation extends OtsRenderable<StripeData>
      * Generate the points needed to draw the stripe pattern.
      * @param stripe the stripe
      * @return array of Coordinate
-     * @throws NamingException when <cite>type</cite> is not supported
      */
-    private List<Point2d> makePoints(final StripeData stripe) throws NamingException
+    private List<Point2d> makePoints(final StripeData stripe)
     {
         double width = stripe.getWidth().si;
         switch (stripe.getType())
@@ -178,7 +172,7 @@ public class StripeAnimation extends OtsRenderable<StripeData>
                 return result;
 
             default:
-                throw new NamingException("Unsupported stripe type: " + stripe.getType());
+                throw new UnsupportedOperationException("Unsupported stripe type: " + stripe.getType());
         }
 
     }

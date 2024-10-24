@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory.xml;
 
+import org.opentrafficsim.base.OtsRuntimeException;
+
 /**
  * Exception when XML elements, and their attributes, are in a circular dependency relation.
  * <p>
@@ -10,7 +12,7 @@ package org.opentrafficsim.road.network.factory.xml;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class CircularDependencyException extends RuntimeException
+public class CircularDependencyException extends OtsRuntimeException
 {
 
     /** */

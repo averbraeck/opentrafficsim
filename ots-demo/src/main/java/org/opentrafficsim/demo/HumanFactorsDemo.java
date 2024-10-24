@@ -56,7 +56,6 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
 import org.opentrafficsim.demo.HumanFactorsDemo.HumanFactorsModel;
-import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.generator.characteristics.DefaultLaneBasedGtuCharacteristicsGeneratorOd;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGeneratorOd;
@@ -157,9 +156,8 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
      * Constructor.
      * @param model model
      * @param panel panel
-     * @throws OtsDrawingException on animation error
      */
-    private HumanFactorsDemo(final HumanFactorsModel model, final OtsAnimationPanel panel) throws OtsDrawingException
+    private HumanFactorsDemo(final HumanFactorsModel model, final OtsAnimationPanel panel)
     {
         super(model, panel);
     }
@@ -185,7 +183,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             new HumanFactorsDemo(junctionModel, animationPanel);
             animationPanel.enableSimulationControlButtons();
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DsolException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | DsolException exception)
         {
             exception.printStackTrace();
         }

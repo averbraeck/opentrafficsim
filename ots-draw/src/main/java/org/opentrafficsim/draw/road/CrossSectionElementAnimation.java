@@ -5,10 +5,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
-import java.rmi.RemoteException;
 import java.util.Set;
-
-import javax.naming.NamingException;
 
 import org.djutils.draw.line.PolyLine2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
@@ -45,11 +42,8 @@ public class CrossSectionElementAnimation<L extends CrossSectionElementData> ext
      * @param source cross section element
      * @param contextualized context provider
      * @param color the color to draw the shoulder with
-     * @throws NamingException ne
-     * @throws RemoteException on communication failure
      */
     public CrossSectionElementAnimation(final L source, final Contextualized contextualized, final Color color)
-            throws NamingException, RemoteException
     {
         super(source, contextualized);
         this.color = color;

@@ -24,7 +24,6 @@ import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
-import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
@@ -294,14 +293,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
      */
     protected void animateNetwork(final Network net)
     {
-        try
-        {
-            DefaultAnimationFactory.animateNetwork(net, net.getSimulator(), getGtuColorer());
-        }
-        catch (OtsDrawingException exception)
-        {
-            throw new RuntimeException("Exception while creating network animation.", exception);
-        }
+        DefaultAnimationFactory.animateNetwork(net, net.getSimulator(), getGtuColorer());
     }
 
     /**

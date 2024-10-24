@@ -365,14 +365,13 @@ public class Gtu extends LocalEventProducer
      * @param fromLocation the last known location (initial location, or end location of the previous operational plan)
      * @return whether an exception occurred
      * @throws SimRuntimeException when scheduling of the next move fails
-     * @throws OperationalPlanException when there is a problem creating a good path for the GTU
      * @throws GtuException when there is a problem with the state of the GTU when planning a path
      * @throws NetworkException in case of a problem with the network, e.g., a dead end where it is not expected
      * @throws ParameterException in there is a parameter problem
      */
     @SuppressWarnings("checkstyle:designforextension")
     protected boolean move(final OrientedPoint2d fromLocation)
-            throws SimRuntimeException, OperationalPlanException, GtuException, NetworkException, ParameterException
+            throws SimRuntimeException, GtuException, NetworkException, ParameterException
     {
         try
         {
@@ -460,16 +459,13 @@ public class Gtu extends LocalEventProducer
     /**
      * Interrupt the move and ask for a new plan. This method can be overridden to carry out the bookkeeping needed when the
      * current plan gets interrupted.
-     * @throws OperationalPlanException when there was a problem retrieving the location from the running plan
      * @throws SimRuntimeException when scheduling of the next move fails
-     * @throws OperationalPlanException when there is a problem creating a good path for the GTU
      * @throws GtuException when there is a problem with the state of the GTU when planning a path
      * @throws NetworkException in case of a problem with the network, e.g., unreachability of a certain point
      * @throws ParameterException when there is a problem with a parameter
      */
     @SuppressWarnings("checkstyle:designforextension")
-    protected void interruptMove()
-            throws SimRuntimeException, OperationalPlanException, GtuException, NetworkException, ParameterException
+    protected void interruptMove() throws SimRuntimeException, GtuException, NetworkException, ParameterException
     {
         this.simulator.cancelEvent(this.nextMoveEvent);
         move(this.operationalPlan.get().getLocation(this.simulator.getSimulatorAbsTime()));

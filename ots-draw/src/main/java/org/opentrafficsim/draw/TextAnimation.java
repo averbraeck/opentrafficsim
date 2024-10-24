@@ -13,8 +13,6 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.function.Supplier;
 
-import javax.naming.NamingException;
-
 import org.djutils.draw.Oriented;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
@@ -102,14 +100,12 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
      * @param contextualized context provider.
      * @param background allows querying the background color and adaptation of the actual color of the text to ensure contrast
      * @param scaleDependentRendering suppress rendering when font scale is too small
-     * @throws NamingException when animation context cannot be created or retrieved
-     * @throws RemoteException when remote context cannot be found
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public TextAnimation(final L source, final Supplier<String> text, final float dx, final float dy,
             final TextAlignment textAlignment, final Color color, final float fontSize, final float minFontSize,
             final float maxFontSize, final Contextualized contextualized, final ContrastToBackground background,
-            final ScaleDependentRendering scaleDependentRendering) throws RemoteException, NamingException
+            final ScaleDependentRendering scaleDependentRendering)
     {
         this.source = source;
         this.text = text;
@@ -145,14 +141,11 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
      * @param maxFontSize maximum font size resulting from scaling
      * @param contextualized context provider
      * @param scaleDependentRendering render text only when bigger than minimum scale
-     * @throws NamingException when animation context cannot be created or retrieved
-     * @throws RemoteException when remote context cannot be found
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public TextAnimation(final L source, final Supplier<String> text, final float dx, final float dy,
             final TextAlignment textAlignment, final Color color, final float fontSize, final float minFontSize,
             final float maxFontSize, final Contextualized contextualized, final ScaleDependentRendering scaleDependentRendering)
-            throws RemoteException, NamingException
     {
         this(source, text, dx, dy, textAlignment, color, fontSize, minFontSize, maxFontSize, contextualized, null,
                 scaleDependentRendering);
@@ -167,12 +160,10 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
      * @param color the color of the text
      * @param contextualized context provider
      * @param scaleDependentRendering render text only when bigger than minimum scale
-     * @throws NamingException when animation context cannot be created or retrieved
-     * @throws RemoteException when remote context cannot be found
      */
     public TextAnimation(final L source, final Supplier<String> text, final float dx, final float dy,
             final TextAlignment textAlignment, final Color color, final Contextualized contextualized,
-            final ScaleDependentRendering scaleDependentRendering) throws RemoteException, NamingException
+            final ScaleDependentRendering scaleDependentRendering)
     {
         this(source, text, dx, dy, textAlignment, color, 2.0f, 12.0f, 50f, contextualized, scaleDependentRendering);
     }
@@ -528,11 +519,8 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
          * Construct a new AnimationImpl.
          * @param source the source
          * @param contextualized context provider.
-         * @throws NamingException when animation context cannot be created or retrieved
-         * @throws RemoteException when remote context cannot be found
          */
         AnimationImpl(final TextAnimation<?, ?> source, final Contextualized contextualized)
-                throws NamingException, RemoteException
         {
             super(source, contextualized);
         }

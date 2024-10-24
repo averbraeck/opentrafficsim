@@ -4,9 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
-import java.rmi.RemoteException;
-
-import javax.naming.NamingException;
 
 import org.opentrafficsim.draw.ClickableLocatable;
 import org.opentrafficsim.draw.DrawLevel;
@@ -65,11 +62,8 @@ public class GtuGeneratorPositionAnimation extends OtsRenderable<GtuGeneratorPos
      * Constructor.
      * @param source source.
      * @param contextProvider simulator.
-     * @throws NamingException when animation context cannot be created or retrieved
-     * @throws RemoteException when remote context cannot be found
      */
     public GtuGeneratorPositionAnimation(final GtuGeneratorPositionData source, final Contextualized contextProvider)
-            throws RemoteException, NamingException
     {
         super(source, contextProvider);
         new Queue(source, contextProvider);
@@ -105,11 +99,8 @@ public class GtuGeneratorPositionAnimation extends OtsRenderable<GtuGeneratorPos
          * Constructor.
          * @param source source.
          * @param contextualized context provider
-         * @throws NamingException when animation context cannot be created or retrieved
-         * @throws RemoteException when remote context cannot be found
          */
         public Queue(final GtuGeneratorPositionData source, final Contextualized contextualized)
-                throws RemoteException, NamingException
         {
             super(source, () -> Integer.toString(source.getQueueCount()), 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, 3.0f,
                     12.0f, 50f, contextualized, null, TextAnimation.RENDERWHEN10);

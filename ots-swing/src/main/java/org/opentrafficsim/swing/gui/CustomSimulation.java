@@ -6,7 +6,6 @@ import java.rmi.RemoteException;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.road.network.RoadNetwork;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -29,10 +28,8 @@ public class CustomSimulation extends OtsSimulationApplication<CustomSimulation.
      * @param title the title of the Frame
      * @param panel the tabbed panel to display
      * @param model the model
-     * @throws OtsDrawingException on animation error
      */
     public CustomSimulation(final String title, final OtsAnimationPanel panel, final CustomModel model)
-            throws OtsDrawingException
     {
         super(model, panel);
     }
@@ -53,7 +50,7 @@ public class CustomSimulation extends OtsSimulationApplication<CustomSimulation.
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();
         }
-        catch (SimRuntimeException | RemoteException | OtsDrawingException | DsolException exception)
+        catch (SimRuntimeException | RemoteException | DsolException exception)
         {
             exception.printStackTrace();
         }

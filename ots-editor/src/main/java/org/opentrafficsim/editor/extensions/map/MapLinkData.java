@@ -13,7 +13,6 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import javax.naming.NamingException;
 import javax.swing.SwingUtilities;
 
 import org.djunits.value.vdouble.scalar.Angle;
@@ -608,79 +607,69 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             {
                 XsdTreeNode node = entry.getKey();
                 CseData cseData = entry.getValue();
-                try
+                List<CrossSectionSlice> slices;
+                Type type = null;
+                Length width = null;
+                if (node.getNodeName().equals("Stripe"))
                 {
-                    List<CrossSectionSlice> slices;
-                    Type type = null;
-                    Length width = null;
-                    if (node.getNodeName().equals("Stripe"))
-                    {
-                        type = Adapters.get(Stripe.Type.class).unmarshal(node.getAttributeValue("Type")).get(getEval());
-                        width = node.getChild(1).isActive() // child 1 is DrawingWidth
-                                ? Adapters.get(Length.class).unmarshal(node.getChild(1).getValue()).get(getEval())
-                                : type.defaultWidth();
-                        slices = LaneGeometryUtil.getSlices(this.designLine, cseData.centerOffsetStart, cseData.centerOffsetEnd,
-                                width, width);
-                    }
-                    else
-                    {
-                        slices = LaneGeometryUtil.getSlices(this.designLine, cseData.centerOffsetStart, cseData.centerOffsetEnd,
-                                cseData.widthStart, cseData.widthEnd);
-                    }
-                    SliceInfo sliceInfo = new SliceInfo(slices, Length.instantiateSI(this.designLine.getLength()));
-
-                    Flattener flattener = getFlattener();
-                    PolyLine2d centerLine = this.designLine
-                            .flattenOffset(LaneGeometryUtil.getCenterOffsets(this.designLine, slices), flattener);
-                    PolyLine2d leftEdge = this.designLine
-                            .flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(this.designLine, slices), flattener);
-                    PolyLine2d rightEdge = this.designLine
-                            .flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(this.designLine, slices), flattener);
-                    Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
-
-                    if (node.getNodeName().equals("Stripe"))
-                    {
-                        StripeAnimation stripe =
-                                new StripeAnimation(
-                                        new MapStripeData(StripeData.Type.valueOf(type.name()), width,
-                                                slices.get(0).getOffset(), getNode(), centerLine, contour, sliceInfo),
-                                        getMap().getContextualized());
-                        this.crossSectionElements.add(stripe);
-                    }
-                    else
-                    {
-                        if (node.getNodeName().equals("Lane"))
-                        {
-                            MapLaneData laneData = new MapLaneData(node.getId(), getNode(), centerLine, contour, sliceInfo);
-                            LaneAnimation lane =
-                                    new LaneAnimation(laneData, getMap().getContextualized(), Color.GRAY.brighter());
-                            this.crossSectionElements.add(lane);
-                            this.laneData.put(node.getId(), laneData);
-                        }
-                        else if (node.getNodeName().equals("Shoulder"))
-                        {
-                            CrossSectionElementAnimation<?> shoulder = new CrossSectionElementAnimation<>(
-                                    new MapShoulderData(slices.get(0).getOffset(), getNode(), centerLine, contour, sliceInfo),
-                                    getMap().getContextualized(), Color.DARK_GRAY);
-                            this.crossSectionElements.add(shoulder);
-                        }
-                        else if (node.getNodeName().equals("NoTrafficLane"))
-                        {
-                            CrossSectionElementAnimation<?> noTrafficLane = new CrossSectionElementAnimation<>(
-                                    new MapCrossSectionData(getNode(), centerLine, contour, sliceInfo),
-                                    getMap().getContextualized(), Color.DARK_GRAY);
-                            this.crossSectionElements.add(noTrafficLane);
-                        }
-                        else
-                        {
-                            throw new RuntimeException(
-                                    "Element " + node.getNodeName() + " is not a supported cross-section element.");
-                        }
-                    }
+                    type = Adapters.get(Stripe.Type.class).unmarshal(node.getAttributeValue("Type")).get(getEval());
+                    width = node.getChild(1).isActive() // child 1 is DrawingWidth
+                            ? Adapters.get(Length.class).unmarshal(node.getChild(1).getValue()).get(getEval())
+                            : type.defaultWidth();
+                    slices = LaneGeometryUtil.getSlices(this.designLine, cseData.centerOffsetStart, cseData.centerOffsetEnd,
+                            width, width);
                 }
-                catch (RemoteException | NamingException exception)
+                else
                 {
-                    throw new RuntimeException("Exception while building layout.");
+                    slices = LaneGeometryUtil.getSlices(this.designLine, cseData.centerOffsetStart, cseData.centerOffsetEnd,
+                            cseData.widthStart, cseData.widthEnd);
+                }
+                SliceInfo sliceInfo = new SliceInfo(slices, Length.instantiateSI(this.designLine.getLength()));
+
+                Flattener flattener = getFlattener();
+                PolyLine2d centerLine =
+                        this.designLine.flattenOffset(LaneGeometryUtil.getCenterOffsets(this.designLine, slices), flattener);
+                PolyLine2d leftEdge =
+                        this.designLine.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(this.designLine, slices), flattener);
+                PolyLine2d rightEdge =
+                        this.designLine.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(this.designLine, slices), flattener);
+                Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
+
+                if (node.getNodeName().equals("Stripe"))
+                {
+                    StripeAnimation stripe = new StripeAnimation(new MapStripeData(StripeData.Type.valueOf(type.name()), width,
+                            slices.get(0).getOffset(), getNode(), centerLine, contour, sliceInfo),
+                            getMap().getContextualized());
+                    this.crossSectionElements.add(stripe);
+                }
+                else
+                {
+                    if (node.getNodeName().equals("Lane"))
+                    {
+                        MapLaneData laneData = new MapLaneData(node.getId(), getNode(), centerLine, contour, sliceInfo);
+                        LaneAnimation lane = new LaneAnimation(laneData, getMap().getContextualized(), Color.GRAY.brighter());
+                        this.crossSectionElements.add(lane);
+                        this.laneData.put(node.getId(), laneData);
+                    }
+                    else if (node.getNodeName().equals("Shoulder"))
+                    {
+                        CrossSectionElementAnimation<?> shoulder = new CrossSectionElementAnimation<>(
+                                new MapShoulderData(slices.get(0).getOffset(), getNode(), centerLine, contour, sliceInfo),
+                                getMap().getContextualized(), Color.DARK_GRAY);
+                        this.crossSectionElements.add(shoulder);
+                    }
+                    else if (node.getNodeName().equals("NoTrafficLane"))
+                    {
+                        CrossSectionElementAnimation<?> noTrafficLane = new CrossSectionElementAnimation<>(
+                                new MapCrossSectionData(getNode(), centerLine, contour, sliceInfo),
+                                getMap().getContextualized(), Color.DARK_GRAY);
+                        this.crossSectionElements.add(noTrafficLane);
+                    }
+                    else
+                    {
+                        throw new RuntimeException(
+                                "Element " + node.getNodeName() + " is not a supported cross-section element.");
+                    }
                 }
             }
         }

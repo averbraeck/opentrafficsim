@@ -8,7 +8,6 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.gtu.plan.operational.Segments;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -52,7 +51,7 @@ public class LaneBasedGtuFollowingTacticalPlanner extends AbstractLaneBasedTacti
     /** {@inheritDoc} */
     @Override
     public final OperationalPlan generateOperationalPlan(final Time startTime, final OrientedPoint2d locationAtStartTime)
-            throws OperationalPlanException, NetworkException, GtuException, ParameterException
+            throws NetworkException, GtuException, ParameterException
     {
         // ask Perception for the local situation
         LaneBasedGtu laneBasedGTU = getGtu();

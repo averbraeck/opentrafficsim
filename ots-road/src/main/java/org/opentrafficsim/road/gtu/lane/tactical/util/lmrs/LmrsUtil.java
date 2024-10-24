@@ -101,8 +101,7 @@ public final class LmrsUtil implements LmrsParameters
     public static SimpleOperationalPlan determinePlan(final LaneBasedGtu gtu, final Time startTime,
             final CarFollowingModel carFollowingModel, final LaneChange laneChange, final LmrsData lmrsData,
             final LanePerception perception, final Iterable<MandatoryIncentive> mandatoryIncentives,
-            final Iterable<VoluntaryIncentive> voluntaryIncentives)
-            throws GtuException, NetworkException, ParameterException, OperationalPlanException
+            final Iterable<VoluntaryIncentive> voluntaryIncentives) throws GtuException, NetworkException, ParameterException
     {
         // obtain objects to get info
         InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
@@ -367,12 +366,11 @@ public final class LmrsUtil implements LmrsParameters
      * @return lane change desire for gtu
      * @throws ParameterException if a parameter is not defined
      * @throws GtuException if there is no mandatory incentive, the model requires at least one
-     * @throws OperationalPlanException perception exception
      */
     public static Desire getLaneChangeDesire(final Parameters parameters, final LanePerception perception,
             final CarFollowingModel carFollowingModel, final Iterable<MandatoryIncentive> mandatoryIncentives,
             final Iterable<VoluntaryIncentive> voluntaryIncentives, final Map<Class<? extends Incentive>, Desire> desireMap)
-            throws ParameterException, GtuException, OperationalPlanException
+            throws ParameterException, GtuException
     {
 
         double dSync = parameters.getParameter(DSYNC);

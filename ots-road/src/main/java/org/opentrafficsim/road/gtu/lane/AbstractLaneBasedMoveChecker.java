@@ -4,7 +4,7 @@ import java.rmi.RemoteException;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
-import org.opentrafficsim.core.gtu.MoveCheckerException;
+import org.opentrafficsim.base.OtsRuntimeException;
 import org.opentrafficsim.core.network.Network;
 
 /**
@@ -49,7 +49,7 @@ public abstract class AbstractLaneBasedMoveChecker implements EventListener
             }
             catch (Exception ex)
             {
-                throw new MoveCheckerException(ex);
+                throw new OtsRuntimeException(ex);
             }
         }
         else if (event.getType().equals(Network.GTU_ADD_EVENT))

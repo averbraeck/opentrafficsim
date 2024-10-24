@@ -1,5 +1,7 @@
 package org.opentrafficsim.kpi.sampling;
 
+import org.opentrafficsim.base.OtsException;
+
 /**
  * Exception thrown when sampling encounters an error.
  * <p>
@@ -11,7 +13,7 @@ package org.opentrafficsim.kpi.sampling;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 
-public class SamplingException extends Exception
+public class SamplingException extends OtsException
 {
 
     /** */
@@ -50,19 +52,6 @@ public class SamplingException extends Exception
     public SamplingException(final String message, final Throwable cause)
     {
         super(message, cause);
-    }
-
-    /**
-     * Constructor.
-     * @param message description of the problem
-     * @param cause the cause of this Exception
-     * @param enableSuppression whether or not suppression is enabled or disabled
-     * @param writableStackTrace whether or not the stack trace should be writable
-     */
-    public SamplingException(final String message, final Throwable cause, final boolean enableSuppression,
-            final boolean writableStackTrace)
-    {
-        super(message, cause, enableSuppression, writableStackTrace);
     }
 
 }

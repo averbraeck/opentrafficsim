@@ -11,7 +11,6 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.editor.OtsRunner.OtsRunnerModel;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
@@ -39,9 +38,8 @@ public class OtsRunner extends OtsSimulationApplication<OtsRunnerModel>
      * Run a simulation.
      * @param panel the tabbed panel to display
      * @param model the model
-     * @throws OtsDrawingException on animation error
      */
-    public OtsRunner(final OtsAnimationPanel panel, final OtsRunnerModel model) throws OtsDrawingException
+    public OtsRunner(final OtsAnimationPanel panel, final OtsRunnerModel model)
     {
         super(model, panel);
     }
@@ -64,7 +62,7 @@ public class OtsRunner extends OtsSimulationApplication<OtsRunnerModel>
             app.setExitOnClose(false);
             animationPanel.enableSimulationControlButtons();
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DsolException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | DsolException exception)
         {
             exception.printStackTrace();
         }

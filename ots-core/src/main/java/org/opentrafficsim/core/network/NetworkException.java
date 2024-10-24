@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.network;
 
+import org.opentrafficsim.base.OtsException;
+
 /**
  * Exception thrown when network topology is inconsistent.
  * <p>
@@ -10,7 +12,7 @@ package org.opentrafficsim.core.network;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class NetworkException extends Exception
+public class NetworkException extends OtsException
 {
 
     /** */
@@ -48,15 +50,4 @@ public class NetworkException extends Exception
         super(message, cause);
     }
 
-    /**
-     * @param message description of the problem
-     * @param cause the cause of this ValueRuntimeException
-     * @param enableSuppression whether or not suppression is enabled or disabled
-     * @param writableStackTrace whether or not the stack trace should be writable
-     */
-    public NetworkException(final String message, final Throwable cause, final boolean enableSuppression,
-            final boolean writableStackTrace)
-    {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }

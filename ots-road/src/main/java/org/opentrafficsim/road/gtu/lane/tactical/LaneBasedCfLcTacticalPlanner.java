@@ -24,7 +24,6 @@ import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.gtu.plan.operational.Segments;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
@@ -104,7 +103,7 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
     /** {@inheritDoc} */
     @Override
     public final OperationalPlan generateOperationalPlan(final Time startTime, final OrientedPoint2d locationAtStartTime)
-            throws OperationalPlanException, NetworkException, GtuException, ParameterException
+            throws NetworkException, GtuException, ParameterException
     {
         try
         {
@@ -219,10 +218,9 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
      * @throws NetworkException on network inconsistency
      * @throws ValueRuntimeException cannot happen
      * @throws GtuException when the position of the GTU cannot be correctly determined
-     * @throws OperationalPlanException if DefaultAlexander perception category is not present
      */
     private AccelerationVector laneIncentives(final LaneBasedGtu gtu, final AccelerationVector defaultLaneIncentives)
-            throws NetworkException, ValueRuntimeException, GtuException, OperationalPlanException
+            throws NetworkException, ValueRuntimeException, GtuException
     {
         Length leftSuitability = suitability(gtu, LateralDirectionality.LEFT);
         Length currentSuitability = suitability(gtu, null);
@@ -258,10 +256,9 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
      * @throws NetworkException on network inconsistency
      * @throws ValueRuntimeException cannot happen
      * @throws GtuException when the positions of the GTU cannot be determined
-     * @throws OperationalPlanException if DefaultAlexander perception category is not present
      */
     private AccelerationVector checkLaneDrops(final LaneBasedGtu gtu, final AccelerationVector defaultLaneIncentives)
-            throws NetworkException, ValueRuntimeException, GtuException, OperationalPlanException
+            throws NetworkException, ValueRuntimeException, GtuException
     {
         // FIXME: these comparisons to -10 is ridiculous.
         Length leftSuitability = Double.isNaN(defaultLaneIncentives.get(0).si) || defaultLaneIncentives.get(0).si < -10
@@ -309,10 +306,8 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
      *         beyond the TIMEHORIZON
      * @throws NetworkException on network inconsistency
      * @throws GtuException when the positions of the GTU cannot be determined
-     * @throws OperationalPlanException if DefaultAlexander perception category is not present
      */
-    private Length laneDrop(final LaneBasedGtu gtu, final LateralDirectionality direction)
-            throws NetworkException, GtuException, OperationalPlanException
+    private Length laneDrop(final LaneBasedGtu gtu, final LateralDirectionality direction) throws NetworkException, GtuException
     {
         LanePosition dlp = gtu.getReferencePosition();
         Lane lane = dlp.lane();
@@ -362,10 +357,9 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
      * @return DoubleScalar.Rel&lt;LengthUnit&gt;; the suitability of the lane for reaching the (next) destination
      * @throws NetworkException on network inconsistency
      * @throws GtuException when position cannot be determined
-     * @throws OperationalPlanException if DefaultAlexander perception category is not present
      */
     private Length suitability(final LaneBasedGtu gtu, final LateralDirectionality direction)
-            throws NetworkException, GtuException, OperationalPlanException
+            throws NetworkException, GtuException
     {
         LanePosition dlp = gtu.getReferencePosition();
         Lane lane = dlp.lane();

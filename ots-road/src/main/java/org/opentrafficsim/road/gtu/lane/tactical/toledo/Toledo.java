@@ -93,7 +93,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
     /** {@inheritDoc} */
     @Override
     public final OperationalPlan generateOperationalPlan(final Time startTime, final OrientedPoint2d locationAtStartTime)
-            throws OperationalPlanException, GtuException, NetworkException, ParameterException
+            throws GtuException, NetworkException, ParameterException
     {
 
         // obtain objects to get info

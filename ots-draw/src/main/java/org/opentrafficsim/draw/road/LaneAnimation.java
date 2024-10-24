@@ -4,10 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
-import java.rmi.RemoteException;
 import java.util.function.Supplier;
-
-import javax.naming.NamingException;
 
 import org.djutils.base.Identifiable;
 import org.djutils.draw.line.PolyLine2d;
@@ -54,11 +51,8 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
      * @param lane the lane
      * @param contextualized context provider
      * @param color Color of the lane.
-     * @throws NamingException in case of registration failure of the animation
-     * @throws RemoteException on communication failure
      */
     public LaneAnimation(final LaneData lane, final Contextualized contextualized, final Color color)
-            throws NamingException, RemoteException
     {
         super(lane, contextualized, color);
         this.color = color;
@@ -195,11 +189,8 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
          * Construct a new CenterLineAnimation.
          * @param centerLine the center line of a lane
          * @param contextualized context provider
-         * @throws NamingException when the name of this object is not unique
-         * @throws RemoteException when communication with a remote process fails
          */
         public CenterLineAnimation(final CenterLine centerLine, final Contextualized contextualized)
-                throws NamingException, RemoteException
         {
             super(centerLine, contextualized);
             this.path = PaintLine.getPath(getSource().getLocation(), getSource().getCenterLine());
@@ -240,12 +231,9 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
          * @param textPlacement where to place the text
          * @param color the color of the text
          * @param contextualized context provider
-         * @throws NamingException when animation context cannot be created or retrieved
-         * @throws RemoteException - when remote context cannot be found
          */
         public Text(final LaneData source, final Supplier<String> text, final float dx, final float dy,
                 final TextAlignment textPlacement, final Color color, final Contextualized contextualized)
-                throws RemoteException, NamingException
         {
             super(source, text, dx, dy, textPlacement, color, contextualized, TextAnimation.RENDERWHEN10);
         }

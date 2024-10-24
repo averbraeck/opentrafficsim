@@ -7,10 +7,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
-import java.rmi.RemoteException;
 import java.util.function.Supplier;
-
-import javax.naming.NamingException;
 
 import org.djutils.base.Identifiable;
 import org.djutils.draw.point.OrientedPoint2d;
@@ -43,10 +40,8 @@ public class NodeAnimation extends OtsRenderable<NodeData>
     /**
      * @param node node data.
      * @param contextualized context provider
-     * @throws NamingException when animation context cannot be found.
-     * @throws RemoteException on communication failure
      */
-    public NodeAnimation(final NodeData node, final Contextualized contextualized) throws NamingException, RemoteException
+    public NodeAnimation(final NodeData node, final Contextualized contextualized)
     {
         super(node, contextualized);
         this.text = new Text(node, node::getId, 0.0f, 3.0f, TextAlignment.CENTER, Color.BLACK, contextualized,
@@ -113,13 +108,11 @@ public class NodeAnimation extends OtsRenderable<NodeData>
          * @param color the color of the text
          * @param contextualized context provider
          * @param scaleDependentRendering size limiter for text animation
-         * @throws NamingException when animation context cannot be created or retrieved
-         * @throws RemoteException - when remote context cannot be found
          */
         @SuppressWarnings("checkstyle:parameternumber")
         public Text(final NodeData source, final Supplier<String> text, final float dx, final float dy,
                 final TextAlignment textPlacement, final Color color, final Contextualized contextualized,
-                final ScaleDependentRendering scaleDependentRendering) throws RemoteException, NamingException
+                final ScaleDependentRendering scaleDependentRendering)
         {
             super(source, text, dx, dy, textPlacement, color, 2.0f, 12.0f, 50f, contextualized, scaleDependentRendering);
             setFlip(false);

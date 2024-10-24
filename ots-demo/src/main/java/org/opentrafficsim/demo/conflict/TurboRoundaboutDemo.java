@@ -14,7 +14,6 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.demo.conflict.TurboRoundaboutDemo.TurboRoundaboutModel;
-import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
@@ -42,10 +41,8 @@ public class TurboRoundaboutDemo extends OtsSimulationApplication<TurboRoundabou
      * @param title the title of the Frame
      * @param panel the tabbed panel to display
      * @param model the model
-     * @throws OtsDrawingException on animation error
      */
     public TurboRoundaboutDemo(final String title, final OtsAnimationPanel panel, final TurboRoundaboutModel model)
-            throws OtsDrawingException
     {
         super(model, panel);
     }
@@ -77,7 +74,7 @@ public class TurboRoundaboutDemo extends OtsSimulationApplication<TurboRoundabou
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DsolException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | DsolException exception)
         {
             exception.printStackTrace();
         }

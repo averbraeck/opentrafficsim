@@ -37,19 +37,6 @@ public class TrafficControlExceptionTest
         e = new TrafficControlException(message, cause);
         assertEquals(message, e.getMessage(), "message should be " + message);
         assertEquals(causeMessage, e.getCause().getMessage(), "cause message should be" + causeMessage);
-        e = new TrafficControlException(message, cause, false, false);
-        assertEquals(message, e.getMessage(), "message should be " + message);
-        assertEquals(causeMessage, e.getCause().getMessage(), "cause message should be" + causeMessage);
-        // TODO check that the values of enableSuppresion and writableStackTrace are correctly reflected in e
-        e = new TrafficControlException(message, cause, false, true);
-        assertEquals(message, e.getMessage(), "message should be " + message);
-        assertEquals(causeMessage, e.getCause().getMessage(), "cause message should be" + causeMessage);
-        e = new TrafficControlException(message, cause, true, false);
-        assertEquals(message, e.getMessage(), "message should be " + message);
-        assertEquals(causeMessage, e.getCause().getMessage(), "cause message should be" + causeMessage);
-        e = new TrafficControlException(message, cause, true, true);
-        assertEquals(message, e.getMessage(), "message should be " + message);
-        assertEquals(causeMessage, e.getCause().getMessage(), "cause message should be" + causeMessage);
     }
 
 }

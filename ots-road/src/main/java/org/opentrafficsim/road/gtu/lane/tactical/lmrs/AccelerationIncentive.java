@@ -7,7 +7,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -42,13 +41,12 @@ public interface AccelerationIncentive
      * @param speed current speed
      * @param params parameters
      * @param speedLimitInfo speed limit info
-     * @throws OperationalPlanException in case of an error
      * @throws ParameterException on missing parameter
      * @throws GtuException when there is a problem with the state of the GTU when planning a path
      */
     void accelerate(SimpleOperationalPlan simplePlan, RelativeLane lane, Length mergeDistance, LaneBasedGtu gtu,
             LanePerception perception, CarFollowingModel carFollowingModel, Speed speed, Parameters params,
-            SpeedLimitInfo speedLimitInfo) throws OperationalPlanException, ParameterException, GtuException;
+            SpeedLimitInfo speedLimitInfo) throws ParameterException, GtuException;
 
     /**
      * Returns an iterable with only those lane-based objects that are on the route, accounting for longitudinal direction of

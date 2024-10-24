@@ -12,7 +12,6 @@ import org.opentrafficsim.animation.GraphLaneUtil;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.draw.OtsDrawingException;
 import org.opentrafficsim.draw.graphs.ContourDataSource;
 import org.opentrafficsim.draw.graphs.ContourPlotAcceleration;
 import org.opentrafficsim.draw.graphs.ContourPlotDensity;
@@ -53,10 +52,8 @@ public class StraightSwing extends OtsSimulationApplication<StraightModel> imple
      * @param title the title of the Frame
      * @param panel the tabbed panel to display
      * @param model the model
-     * @throws OtsDrawingException on animation error
      */
     public StraightSwing(final String title, final OtsAnimationPanel panel, final StraightModel model)
-            throws OtsDrawingException
     {
         super(model, panel);
     }
@@ -104,7 +101,7 @@ public class StraightSwing extends OtsSimulationApplication<StraightModel> imple
                 }
             }
         }
-        catch (SimRuntimeException | NamingException | RemoteException | OtsDrawingException | DsolException exception)
+        catch (SimRuntimeException | NamingException | RemoteException | DsolException exception)
         {
             exception.printStackTrace();
         }

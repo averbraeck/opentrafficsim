@@ -8,7 +8,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -44,13 +43,12 @@ public interface DirectedLaneChangeModel
      * @return the result of the lane change and GTU following model
      * @throws GtuException when the position of the GTU on the lane(s) cannot be determined
      * @throws ParameterException in case of a parameter problem.
-     * @throws OperationalPlanException if DefaultAlexander perception category is not present
      */
     @SuppressWarnings("checkstyle:parameternumber")
     DirectedLaneMovementStep computeLaneChangeAndAcceleration(LaneBasedGtu gtu, LateralDirectionality direction,
             Collection<Headway> sameLaneTraffic, Collection<Headway> otherLaneTraffic, Length maxDistance, Speed speedLimit,
             Acceleration otherLaneRouteIncentive, Acceleration laneChangeThreshold, Duration laneChangeTime)
-            throws GtuException, ParameterException, OperationalPlanException;
+            throws GtuException, ParameterException;
 
     /** @return the perception. */
     LanePerception getPerception();

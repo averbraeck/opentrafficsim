@@ -7,7 +7,6 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.FilteredIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -46,7 +45,7 @@ public class AccelerationConflicts implements AccelerationIncentive, Blockable
     public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
             final LaneBasedGtu gtu, final LanePerception perception, final CarFollowingModel carFollowingModel,
             final Speed speed, final Parameters params, final SpeedLimitInfo speedLimitInfo)
-            throws OperationalPlanException, ParameterException, GtuException
+            throws ParameterException, GtuException
     {
         EgoPerception<?, ?> ego = perception.getPerceptionCategory(EgoPerception.class);
         Acceleration acceleration = ego.getAcceleration();

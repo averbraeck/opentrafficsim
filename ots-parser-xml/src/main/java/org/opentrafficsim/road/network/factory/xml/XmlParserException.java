@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.network.factory.xml;
 
+import org.opentrafficsim.base.OtsException;
+
 /**
  * Exception during parsing.
  * <p>
@@ -10,7 +12,7 @@ package org.opentrafficsim.road.network.factory.xml;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class XmlParserException extends Exception
+public class XmlParserException extends OtsException
 {
 
     /** */

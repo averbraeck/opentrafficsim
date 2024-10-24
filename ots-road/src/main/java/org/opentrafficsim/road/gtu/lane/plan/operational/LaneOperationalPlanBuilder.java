@@ -273,11 +273,10 @@ public final class LaneOperationalPlanBuilder
      * @throws ParameterException if parameter is not defined
      * @throws GtuException gtu exception
      * @throws NetworkException network exception
-     * @throws OperationalPlanException operational plan exeption
      */
     public static LaneBasedOperationalPlan buildPlanFromSimplePlan(final LaneBasedGtu gtu, final Time startTime,
             final SimpleOperationalPlan simplePlan, final LaneChange laneChange)
-            throws ParameterException, GtuException, NetworkException, OperationalPlanException
+            throws ParameterException, GtuException, NetworkException
     {
         Acceleration acc = gtu.getVehicleModel().boundAcceleration(simplePlan.getAcceleration(), gtu);
 

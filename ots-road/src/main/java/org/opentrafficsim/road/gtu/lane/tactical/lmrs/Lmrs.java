@@ -11,7 +11,6 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -83,7 +82,7 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements DesireBas
     /** {@inheritDoc} */
     @Override
     public final OperationalPlan generateOperationalPlan(final Time startTime, final OrientedPoint2d locationAtStartTime)
-            throws OperationalPlanException, GtuException, NetworkException, ParameterException
+            throws GtuException, NetworkException, ParameterException
     {
         // obtain objects to get info
         SpeedLimitProspect slp = getPerception().getPerceptionCategory(InfrastructurePerception.class)
