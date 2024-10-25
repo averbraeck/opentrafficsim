@@ -65,7 +65,6 @@ public class ParameterTypeSpeed extends ParameterTypeNumeric<Speed> implements S
         super(id, description, Speed.class, defaultValue, constraint);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

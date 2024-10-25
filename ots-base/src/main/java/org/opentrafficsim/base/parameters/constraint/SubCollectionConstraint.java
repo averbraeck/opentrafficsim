@@ -34,7 +34,6 @@ public class SubCollectionConstraint<T> implements Constraint<Collection<T>>
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public boolean accept(final Collection<T> value)
     {
         return this.objects.containsAll(value);
@@ -42,7 +41,6 @@ public class SubCollectionConstraint<T> implements Constraint<Collection<T>>
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public String failMessage()
     {
         return "Value of parameter '%s' contains value(s) not in the collection of acceptable values.";
@@ -67,7 +65,6 @@ public class SubCollectionConstraint<T> implements Constraint<Collection<T>>
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
         return "SubCollectionConstraint [objects=" + this.objects + "]";

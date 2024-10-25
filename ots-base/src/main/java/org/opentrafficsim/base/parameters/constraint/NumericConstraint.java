@@ -20,7 +20,6 @@ public enum NumericConstraint implements Constraint<Number>
     /** Checks for &gt;0. */
     POSITIVE("Value of parameter '%s' must be above zero.")
     {
-        /** {@inheritDoc} */
         @Override
         public boolean accept(final Number value)
         {
@@ -31,7 +30,6 @@ public enum NumericConstraint implements Constraint<Number>
     /** Checks for &lt;0. */
     NEGATIVE("Value of parameter '%s' must be below zero.")
     {
-        /** {@inheritDoc} */
         @Override
         public boolean accept(final Number value)
         {
@@ -42,7 +40,6 @@ public enum NumericConstraint implements Constraint<Number>
     /** Checks for &ge;0. */
     POSITIVEZERO("Value of parameter '%s' may not be below zero.")
     {
-        /** {@inheritDoc} */
         @Override
         public boolean accept(final Number value)
         {
@@ -53,7 +50,6 @@ public enum NumericConstraint implements Constraint<Number>
     /** Checks for &le;0. */
     NEGATIVEZERO("Value of parameter '%s' may not be above zero.")
     {
-        /** {@inheritDoc} */
         @Override
         public boolean accept(final Number value)
         {
@@ -64,7 +60,6 @@ public enum NumericConstraint implements Constraint<Number>
     /** Checks for &ne;0. */
     NONZERO("Value of parameter '%s' may not be zero.")
     {
-        /** {@inheritDoc} */
         @Override
         public boolean accept(final Number value)
         {
@@ -75,7 +70,6 @@ public enum NumericConstraint implements Constraint<Number>
     /** Checks for &ge;1. */
     ATLEASTONE("Value of parameter '%s' may not be below one.")
     {
-        /** {@inheritDoc} */
         @Override
         public boolean accept(final Number value)
         {
@@ -109,10 +103,6 @@ public enum NumericConstraint implements Constraint<Number>
         this.failMessage = failMessage;
     }
 
-    /**
-     * Returns a message for value failure, pointing to a parameter using '%s'.
-     * @return Message for value failure, pointing to a parameter using '%s'.
-     */
     @Override
     public String failMessage()
     {

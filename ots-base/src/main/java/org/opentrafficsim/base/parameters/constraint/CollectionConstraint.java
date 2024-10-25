@@ -24,6 +24,7 @@ public class CollectionConstraint<T> implements Constraint<T>
     protected final Collection<T> objects;
 
     /**
+     * Constructor.
      * @param objects acceptable objects
      */
     public CollectionConstraint(final Collection<T> objects)
@@ -34,7 +35,6 @@ public class CollectionConstraint<T> implements Constraint<T>
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public boolean accept(final T value)
     {
         return this.objects.contains(value);
@@ -42,7 +42,6 @@ public class CollectionConstraint<T> implements Constraint<T>
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public String failMessage()
     {
         return "Value of parameter '%s' is not in the collection of acceptable values.";
@@ -67,7 +66,6 @@ public class CollectionConstraint<T> implements Constraint<T>
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
         return "CollectionConstraint [objects=" + this.objects + "]";

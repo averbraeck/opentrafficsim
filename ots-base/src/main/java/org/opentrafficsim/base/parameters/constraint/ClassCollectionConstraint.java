@@ -18,6 +18,7 @@ public final class ClassCollectionConstraint<T> extends SubCollectionConstraint<
 {
 
     /**
+     * Constructor.
      * @param classes acceptable classes
      */
     private ClassCollectionConstraint(final Collection<Class<? extends T>> classes)
@@ -44,7 +45,6 @@ public final class ClassCollectionConstraint<T> extends SubCollectionConstraint<
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
         return "ClassCollectionConstraint [classes=" + this.objects + "]";

@@ -66,7 +66,6 @@ public class ParameterTypeAcceleration extends ParameterTypeNumeric<Acceleration
         super(id, description, Acceleration.class, defaultValue, constraint);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

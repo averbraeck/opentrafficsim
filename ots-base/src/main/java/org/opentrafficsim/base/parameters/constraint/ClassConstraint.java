@@ -45,7 +45,6 @@ public final class ClassConstraint<T> extends CollectionConstraint<Class<? exten
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
         return "ClassConstraint [classes=" + super.objects + "]";

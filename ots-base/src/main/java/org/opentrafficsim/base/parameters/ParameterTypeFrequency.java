@@ -65,7 +65,6 @@ public class ParameterTypeFrequency extends ParameterTypeNumeric<Frequency> impl
         super(id, description, Frequency.class, defaultValue, constraint);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

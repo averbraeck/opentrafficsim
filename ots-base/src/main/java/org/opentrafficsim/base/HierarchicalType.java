@@ -63,7 +63,6 @@ public abstract class HierarchicalType<T extends HierarchicalType<T, I>, I exten
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getId()
     {

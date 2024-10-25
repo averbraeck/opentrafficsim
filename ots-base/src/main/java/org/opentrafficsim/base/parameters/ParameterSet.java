@@ -67,7 +67,6 @@ public class ParameterSet implements Parameters, Serializable
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final <T> void setParameter(final ParameterType<T> parameterType, final T value) throws ParameterException
     {
@@ -76,7 +75,6 @@ public class ParameterSet implements Parameters, Serializable
         saveSetParameter(parameterType, value, false);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final <T> void setParameterResettable(final ParameterType<T> parameterType, final T value) throws ParameterException
     {
@@ -120,7 +118,6 @@ public class ParameterSet implements Parameters, Serializable
         this.parameters.put(parameterType, value);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void resetParameter(final ParameterType<?> parameterType) throws ParameterException
     {
@@ -152,10 +149,8 @@ public class ParameterSet implements Parameters, Serializable
         }
     }
 
-    /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public <T> T getParameter(final ParameterType<T> parameterType) throws ParameterException
+    public final <T> T getParameter(final ParameterType<T> parameterType) throws ParameterException
     {
         @SuppressWarnings("unchecked")
         // set methods guarantee matching of parameter type and value
@@ -165,7 +160,6 @@ public class ParameterSet implements Parameters, Serializable
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("unchecked")
     public final <T> T getParameterOrNull(final ParameterType<T> parameterType)
@@ -174,7 +168,6 @@ public class ParameterSet implements Parameters, Serializable
         return (T) this.parameters.get(parameterType);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean contains(final ParameterType<?> parameterType)
     {
@@ -265,7 +258,6 @@ public class ParameterSet implements Parameters, Serializable
         return this;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void setAllIn(final Parameters params)
     {
@@ -302,7 +294,6 @@ public class ParameterSet implements Parameters, Serializable
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
@@ -341,7 +332,6 @@ public class ParameterSet implements Parameters, Serializable
             super(Double.NaN, DimensionlessUnit.SI);
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

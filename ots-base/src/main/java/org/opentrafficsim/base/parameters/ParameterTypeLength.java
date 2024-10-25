@@ -65,7 +65,6 @@ public class ParameterTypeLength extends ParameterTypeNumeric<Length> implements
         super(id, description, Length.class, defaultValue, constraint);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

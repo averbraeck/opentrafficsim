@@ -224,7 +224,6 @@ public class ParameterType<T> implements Serializable, Identifiable, Type<Parame
         return parameters.getParameter(this).toString();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final int hashCode()
     {
@@ -237,7 +236,6 @@ public class ParameterType<T> implements Serializable, Identifiable, Type<Parame
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean equals(final Object obj)
     {
@@ -290,7 +288,6 @@ public class ParameterType<T> implements Serializable, Identifiable, Type<Parame
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("checkstyle:designforextension")
     @Override
     public String toString()
     {

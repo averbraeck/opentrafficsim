@@ -74,7 +74,6 @@ public abstract class ParameterTypeNumeric<T extends Number> extends ParameterTy
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public String printValue(final Parameters parameters) throws ParameterException
     {
         return parameters.getParameter(this).toString();
@@ -82,7 +81,6 @@ public abstract class ParameterTypeNumeric<T extends Number> extends ParameterTy
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
         return "ParameterTypeNumeric [id=" + getId() + ", description=" + getDescription() + "]";

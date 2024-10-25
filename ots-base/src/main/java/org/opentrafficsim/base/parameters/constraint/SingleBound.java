@@ -183,6 +183,7 @@ public class SingleBound<T extends Number> implements Constraint<T>
     }
 
     /**
+     * Returns the bound.
      * @return bound.
      */
     public Bound getBound()
@@ -237,7 +238,6 @@ public class SingleBound<T extends Number> implements Constraint<T>
          */
         abstract boolean accept(Number value);
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -269,7 +269,6 @@ public class SingleBound<T extends Number> implements Constraint<T>
             super(bound, "%s <= value");
         }
 
-        /** {@inheritDoc} */
         @Override
         protected boolean accept(final Number value)
         {
@@ -302,7 +301,6 @@ public class SingleBound<T extends Number> implements Constraint<T>
             super(bound, "%s < value");
         }
 
-        /** {@inheritDoc} */
         @Override
         protected boolean accept(final Number value)
         {
@@ -335,7 +333,6 @@ public class SingleBound<T extends Number> implements Constraint<T>
             super(bound, "value <= %s");
         }
 
-        /** {@inheritDoc} */
         @Override
         protected boolean accept(final Number value)
         {
@@ -368,7 +365,6 @@ public class SingleBound<T extends Number> implements Constraint<T>
             super(bound, "value < %s");
         }
 
-        /** {@inheritDoc} */
         @Override
         protected boolean accept(final Number value)
         {

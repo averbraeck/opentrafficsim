@@ -60,7 +60,6 @@ public class ParameterTypeString extends ParameterType<String>
         super(id, description, String.class, defaultValue, constraint);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String printValue(final Parameters parameters) throws ParameterException
     {
@@ -68,7 +67,6 @@ public class ParameterTypeString extends ParameterType<String>
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("checkstyle:designforextension")
     @Override
     public String toString()
     {

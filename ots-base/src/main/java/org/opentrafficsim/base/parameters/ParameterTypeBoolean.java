@@ -45,7 +45,6 @@ public class ParameterTypeBoolean extends ParameterType<Boolean> implements Seri
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("checkstyle:designforextension")
     @Override
     public String toString()
     {

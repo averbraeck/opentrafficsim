@@ -78,7 +78,6 @@ public class ParameterTypeDouble extends ParameterTypeNumeric<Double> implements
         super(id, description, Double.class, defaultValue, constraint);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String printValue(final Parameters parameters) throws ParameterException
     {
@@ -86,7 +85,6 @@ public class ParameterTypeDouble extends ParameterTypeNumeric<Double> implements
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("checkstyle:designforextension")
     @Override
     public String toString()
     {

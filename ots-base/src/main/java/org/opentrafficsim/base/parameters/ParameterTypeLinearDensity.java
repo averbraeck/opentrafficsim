@@ -66,7 +66,6 @@ public class ParameterTypeLinearDensity extends ParameterTypeNumeric<LinearDensi
         super(id, description, LinearDensity.class, defaultValue, constraint);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

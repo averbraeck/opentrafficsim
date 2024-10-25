@@ -69,7 +69,7 @@ public class ParameterTypeClass<T> extends ParameterType<Class<? extends T>>
     {
         super(id, description, getTypedClass(valueClass), defaultValue, constraint);
     }
-    
+
     /**
      * @param object the object to provide the class for
      * @param <T> the type
@@ -83,7 +83,6 @@ public class ParameterTypeClass<T> extends ParameterType<Class<? extends T>>
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public String printValue(final Parameters parameters) throws ParameterException
     {
         return parameters.getParameter(this).getSimpleName();
@@ -91,7 +90,6 @@ public class ParameterTypeClass<T> extends ParameterType<Class<? extends T>>
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
         return "ParameterTypeClass [" + getConstraint().toString() + "]";

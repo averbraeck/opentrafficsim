@@ -87,7 +87,6 @@ public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implemen
         super(id, description, Integer.class, defaultValue, constraint);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String printValue(final Parameters parameters) throws ParameterException
     {
@@ -106,7 +105,6 @@ public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implemen
     }
 
     /** {@inheritDoc} */
-    @SuppressWarnings("checkstyle:designforextension")
     @Override
     public String toString()
     {

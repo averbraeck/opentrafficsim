@@ -115,14 +115,12 @@ public class CircleShape implements OtsShape
                     /** Step. */
                     private int step = 0;
 
-                    /** {@inheritDoc} */
                     @Override
                     public boolean hasNext()
                     {
                         return this.step <= CircleShape.this.polygonSegments;
                     }
 
-                    /** {@inheritDoc} */
                     @Override
                     public Point2d next()
                     {

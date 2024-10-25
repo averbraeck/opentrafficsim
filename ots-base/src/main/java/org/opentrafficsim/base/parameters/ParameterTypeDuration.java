@@ -65,7 +65,6 @@ public class ParameterTypeDuration extends ParameterTypeNumeric<Duration> implem
         super(id, description, Duration.class, defaultValue, constraint);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

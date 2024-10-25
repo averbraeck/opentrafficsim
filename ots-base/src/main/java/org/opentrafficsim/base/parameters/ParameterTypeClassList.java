@@ -89,7 +89,6 @@ public class ParameterTypeClassList<T> extends ParameterType<List<Class<? extend
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public String printValue(final Parameters parameters) throws ParameterException
     {
         String delimiter = "";
@@ -106,7 +105,6 @@ public class ParameterTypeClassList<T> extends ParameterType<List<Class<? extend
 
     /** {@inheritDoc} */
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
         return "ParameterTypeClassList []";
