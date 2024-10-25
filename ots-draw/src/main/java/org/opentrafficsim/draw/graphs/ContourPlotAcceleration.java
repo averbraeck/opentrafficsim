@@ -34,7 +34,6 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
     private static final Quantity<Acceleration, AccelerationMatrix> QUANTITY =
             new Quantity<>("acceleration", new Converter<AccelerationMatrix>()
             {
-                /** {@inheritDoc} */
                 @Override
                 public AccelerationMatrix convert(final double[][] filteredData)
                 {
@@ -55,14 +54,12 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
     private static final ContourDataType<Acceleration, ArithmeticMean<Double, Double>> CONTOUR_DATA_TYPE =
             new ContourDataType<Acceleration, ArithmeticMean<Double, Double>>()
             {
-                /** {@inheritDoc} */
                 @Override
                 public ArithmeticMean<Double, Double> identity()
                 {
                     return new ArithmeticMean<>();
                 }
 
-                /** {@inheritDoc} */
                 @Override
                 public ArithmeticMean<Double, Double> processSeries(final ArithmeticMean<Double, Double> intermediate,
                         final List<TrajectoryGroup<?>> trajectories, final List<Length> xFrom, final List<Length> xTo,
@@ -88,14 +85,12 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
                     return intermediate;
                 }
 
-                /** {@inheritDoc} */
                 @Override
                 public Acceleration finalize(final ArithmeticMean<Double, Double> intermediate)
                 {
                     return Acceleration.instantiateSI(intermediate.getMean());
                 }
 
-                /** {@inheritDoc} */
                 @SuppressWarnings("synthetic-access")
                 @Override
                 public Quantity<Acceleration, ?> getQuantity()
@@ -128,35 +123,30 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
         return new BoundsPaintScale(boundaries, colorValues);
     }
 
-    /** {@inheritDoc} */
     @Override
     public GraphType getGraphType()
     {
         return GraphType.ACCELERATION_CONTOUR;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected double scale(final double si)
     {
         return si;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected double getValue(final int item, final double cellLength, final double cellSpan)
     {
         return getDataPool().get(item, CONTOUR_DATA_TYPE);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected ContourDataType<Acceleration, ArithmeticMean<Double, Double>> getContourDataType()
     {
         return CONTOUR_DATA_TYPE;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

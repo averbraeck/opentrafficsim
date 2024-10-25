@@ -30,7 +30,6 @@ public abstract class ExtendedDataNumber<G extends GtuData> extends ExtendedData
         super(id, description, Float.class);
     }
 
-    /** {@inheritDoc} */
     @Override
     public float[] setValue(final float[] storage, final int index, final Float value)
     {
@@ -48,14 +47,12 @@ public abstract class ExtendedDataNumber<G extends GtuData> extends ExtendedData
         return out;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Float getOutputValue(final float[] output, final int index) throws SamplingException
     {
         return output[index];
     }
 
-    /** {@inheritDoc} */
     @Override
     public Float getStorageValue(final float[] storage, final int index) throws SamplingException
     {
@@ -63,21 +60,18 @@ public abstract class ExtendedDataNumber<G extends GtuData> extends ExtendedData
         return storage[index];
     }
 
-    /** {@inheritDoc} */
     @Override
     public float[] initializeStorage()
     {
         return new float[10];
     }
 
-    /** {@inheritDoc} */
     @Override
     public float[] convert(final float[] storage, final int size)
     {
         return Arrays.copyOf(storage, size);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Float parseValue(final String string)
     {

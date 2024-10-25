@@ -167,7 +167,6 @@ public class Speed3d implements Serializable
         return new Speed(Scalar3d.cartesianToRadius(getX().si, getY().si, getZ().si), SpeedUnit.SI);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

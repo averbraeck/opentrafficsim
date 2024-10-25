@@ -90,7 +90,6 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         getPerception().addPerceptionCategory(new DirectNeighborsPerception(getPerception(), HeadwayGtuType.WRAP));
     }
 
-    /** {@inheritDoc} */
     @Override
     public final OperationalPlan generateOperationalPlan(final Time startTime, final OrientedPoint2d locationAtStartTime)
             throws GtuException, NetworkException, ParameterException
@@ -856,7 +855,6 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             return this.speed;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -915,7 +913,6 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             return this.acceptable;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -924,7 +921,6 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

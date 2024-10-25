@@ -54,7 +54,6 @@ public class HistoryManagerDevs extends HistoryManager implements EventListener
         Try.execute(() -> this.simulator.addListener(this, Replication.END_REPLICATION_EVENT), "Unable to add listener.");
     }
 
-    /** {@inheritDoc} */
     @Override
     public Time now()
     {
@@ -80,7 +79,6 @@ public class HistoryManagerDevs extends HistoryManager implements EventListener
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {
@@ -90,7 +88,6 @@ public class HistoryManagerDevs extends HistoryManager implements EventListener
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

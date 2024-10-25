@@ -43,35 +43,30 @@ public class ContourPlotFlow extends AbstractContourPlot<Frequency>
         return new BoundsPaintScale(boundaries, colorValues);
     }
 
-    /** {@inheritDoc} */
     @Override
     public GraphType getGraphType()
     {
         return GraphType.FLOW_CONTOUR;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected double scale(final double si)
     {
         return FrequencyUnit.PER_HOUR.getScale().fromStandardUnit(si);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected double getValue(final int item, final double cellLength, final double cellSpan)
     {
         return getDataPool().getTotalDistance(item) / (cellLength * cellSpan);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected ContourDataType<Frequency, ?> getContourDataType()
     {
         return null; // flow is present by default
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

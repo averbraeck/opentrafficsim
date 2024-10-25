@@ -33,7 +33,6 @@ public class MeanDensity extends AbstractIndicator<LinearDensity>
         this.travelTime = travelTime;
     }
 
-    /** {@inheritDoc} */
     @Override
     // @docs/07-output/indicators.md
     protected <G extends GtuData> LinearDensity calculate(final Query<G, ?> query, final Time startTime, final Time endTime,
@@ -48,7 +47,6 @@ public class MeanDensity extends AbstractIndicator<LinearDensity>
         return new LinearDensity(ttt / area, LinearDensityUnit.SI);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

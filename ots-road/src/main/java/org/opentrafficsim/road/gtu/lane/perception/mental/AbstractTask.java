@@ -31,42 +31,36 @@ public abstract class AbstractTask implements Task
         this.id = id;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getId()
     {
         return this.id;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void setTaskDemand(final double taskDemand)
     {
         this.taskDemand = taskDemand;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final double getTaskDemand()
     {
         return this.taskDemand;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void setAnticipationReliance(final double anticipationReliance)
     {
         this.anticipationReliance = anticipationReliance;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final double getAnticipationReliance()
     {
         return this.anticipationReliance;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

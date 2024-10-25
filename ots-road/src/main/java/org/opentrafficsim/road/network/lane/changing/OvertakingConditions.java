@@ -50,7 +50,6 @@ public interface OvertakingConditions
      */
     class LeftOnly implements OvertakingConditions
     {
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -70,7 +69,6 @@ public interface OvertakingConditions
      */
     class RightOnly implements OvertakingConditions
     {
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -88,7 +86,6 @@ public interface OvertakingConditions
      */
     class None implements OvertakingConditions
     {
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -106,7 +103,6 @@ public interface OvertakingConditions
      */
     class LeftAndRight implements OvertakingConditions
     {
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -124,7 +120,6 @@ public interface OvertakingConditions
      */
     class SameLaneLeft implements OvertakingConditions
     {
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -142,7 +137,6 @@ public interface OvertakingConditions
      */
     class SameLaneRight implements OvertakingConditions
     {
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -160,7 +154,6 @@ public interface OvertakingConditions
      */
     class SameLaneBoth implements OvertakingConditions
     {
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -192,7 +185,6 @@ public interface OvertakingConditions
             this.rightOvertakingSpeedMax = rightOvertakingSpeedMax;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -213,7 +205,6 @@ public interface OvertakingConditions
         /** */
         private static final long serialVersionUID = 20150913L;
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -245,7 +236,6 @@ public interface OvertakingConditions
             this.leftOvertakingSpeedMax = leftOvertakingSpeedMax;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -266,7 +256,6 @@ public interface OvertakingConditions
         /** */
         private static final long serialVersionUID = 20150913L;
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -312,7 +301,6 @@ public interface OvertakingConditions
             this.overtakenGtuTypes = overtakenGTUTYpes;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -358,7 +346,6 @@ public interface OvertakingConditions
             this.overtakenGtuTypes = overtakenGTUs;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -411,7 +398,6 @@ public interface OvertakingConditions
             this.rightOvertakingSpeedMax = rightOvertakingSpeedMax;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -458,7 +444,6 @@ public interface OvertakingConditions
             this.overtakenGtuTypes = overtakenGTUs;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -511,7 +496,6 @@ public interface OvertakingConditions
             this.leftOvertakingSpeedMax = leftOvertakingSpeedMax;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -558,7 +542,6 @@ public interface OvertakingConditions
             this.overtakenGtuTypes = overtakenGTUs;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {

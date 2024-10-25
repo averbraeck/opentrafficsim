@@ -151,7 +151,6 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             /** */
             private static final long serialVersionUID = 20181022L;
 
-            /** {@inheritDoc} */
             @SuppressWarnings("synthetic-access")
             @Override
             public boolean isSeriesVisible(final int series)
@@ -197,7 +196,6 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         return new JFreeChart(getCaption(), JFreeChart.DEFAULT_TITLE_FONT, plot, showLegend);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void increaseTime(final Time time)
     {
@@ -207,7 +205,6 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public int getSeriesCount()
     {
@@ -218,14 +215,12 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         return this.getSource().getNumberOfSeries() + (hasLineFD() ? 1 : 0);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Comparable<String> getSeriesKey(final int series)
     {
         return this.seriesLabels.get(series);
     }
 
-    /** {@inheritDoc} */
     @SuppressWarnings("rawtypes")
     @Override
     public int indexOf(final Comparable seriesKey)
@@ -234,14 +229,12 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         return index < 0 ? 0 : index;
     }
 
-    /** {@inheritDoc} */
     @Override
     public DomainOrder getDomainOrder()
     {
         return DomainOrder.NONE;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int getItemCount(final int series)
     {
@@ -252,14 +245,12 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         return this.getSource().getItemCount(series);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Number getX(final int series, final int item)
     {
         return getXValue(series, item);
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getXValue(final int series, final int item)
     {
@@ -270,14 +261,12 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         return this.getDomainQuantity().getValue(this.getSource(), series, item);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Number getY(final int series, final int item)
     {
         return getYValue(series, item);
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getYValue(final int series, final int item)
     {
@@ -288,14 +277,12 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         return this.getRangeQuantity().getValue(this.getSource(), series, item);
     }
 
-    /** {@inheritDoc} */
     @Override
     public GraphType getGraphType()
     {
         return GraphType.FUNDAMENTAL_DIAGRAM;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getStatusLabel(final double domainValue, final double rangeValue)
     {
@@ -321,28 +308,24 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         /** Density. */
         DENSITY
         {
-            /** {@inheritDoc} */
             @Override
             public String label()
             {
                 return "Density [veh/km] \u2192";
             }
 
-            /** {@inheritDoc} */
             @Override
             public String format(final double value)
             {
                 return String.format("%.0f veh/km", value);
             }
 
-            /** {@inheritDoc} */
             @Override
             public double getValue(final FdSource src, final int series, final int item)
             {
                 return 1000 * src.getDensity(series, item);
             }
 
-            /** {@inheritDoc} */
             @Override
             public double computeOther(final Quantity pairing, final double thisValue, final double pairedValue)
             {
@@ -354,28 +337,24 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         /** Flow. */
         FLOW
         {
-            /** {@inheritDoc} */
             @Override
             public String label()
             {
                 return "Flow [veh/h] \u2192";
             }
 
-            /** {@inheritDoc} */
             @Override
             public String format(final double value)
             {
                 return String.format("%.0f veh/h", value);
             }
 
-            /** {@inheritDoc} */
             @Override
             public double getValue(final FdSource src, final int series, final int item)
             {
                 return 3600 * src.getFlow(series, item);
             }
 
-            /** {@inheritDoc} */
             @Override
             public double computeOther(final Quantity pairing, final double thisValue, final double pairedValue)
             {
@@ -387,28 +366,24 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         /** Speed. */
         SPEED
         {
-            /** {@inheritDoc} */
             @Override
             public String label()
             {
                 return "Speed [km/h] \u2192";
             }
 
-            /** {@inheritDoc} */
             @Override
             public String format(final double value)
             {
                 return String.format("%.1f km/h", value);
             }
 
-            /** {@inheritDoc} */
             @Override
             public double getValue(final FdSource src, final int series, final int item)
             {
                 return 3.6 * src.getSpeed(series, item);
             }
 
-            /** {@inheritDoc} */
             @Override
             public double computeOther(final Quantity pairing, final double thisValue, final double pairedValue)
             {
@@ -607,21 +582,18 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         /** Fundamental diagrams. */
         private Set<FundamentalDiagram> fundamentalDiagrams = new LinkedHashSet<>();
 
-        /** {@inheritDoc} */
         @Override
         public void addFundamentalDiagram(final FundamentalDiagram fundamentalDiagram)
         {
             this.fundamentalDiagrams.add(fundamentalDiagram);
         }
 
-        /** {@inheritDoc} */
         @Override
         public void clearFundamentalDiagrams()
         {
             this.fundamentalDiagrams.clear();
         }
 
-        /** {@inheritDoc} */
         @Override
         public ImmutableSet<FundamentalDiagram> getDiagrams()
         {
@@ -699,7 +671,6 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             this.harmonic = harmonic;
         }
 
-        /** {@inheritDoc} */
         @Override
         protected void getMeasurements(final Trajectory<?> trajectory, final Time startTime, final Time endTime,
                 final Length length, final int series, final double[] measurements)
@@ -718,21 +689,18 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         protected double getVehicleCount(final double first, final double second)
         {
             return first; // is divided by aggregation period by caller
         }
 
-        /** {@inheritDoc} */
         @Override
         protected double getSpeed(final double first, final double second)
         {
             return this.harmonic ? first / second : second / first;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -762,7 +730,6 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             super(sampler, path, aggregateLanes, aggregationPeriod);
         }
 
-        /** {@inheritDoc} */
         @Override
         protected void getMeasurements(final Trajectory<?> trajectory, final Time startTime, final Time endTime,
                 final Length length, final int sereies, final double[] measurements)
@@ -772,21 +739,18 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             measurements[1] = stv.getTime().si; // second = total traveled time
         }
 
-        /** {@inheritDoc} */
         @Override
         protected double getVehicleCount(final double first, final double second)
         {
             return first / getSpace().getTotalLength().si; // is divided by aggregation period by caller
         }
 
-        /** {@inheritDoc} */
         @Override
         protected double getSpeed(final double first, final double second)
         {
             return first / second;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -885,14 +849,12 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             return this.space;
         }
 
-        /** {@inheritDoc} */
         @Override
         public Duration getUpdateInterval()
         {
             return this.updateInterval;
         }
 
-        /** {@inheritDoc} */
         @Override
         public void setUpdateInterval(final Duration interval, final Time time)
         {
@@ -903,14 +865,12 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public Duration getAggregationPeriod()
         {
             return this.aggregationPeriod;
         }
 
-        /** {@inheritDoc} */
         @Override
         public void setAggregationPeriod(final Duration period)
         {
@@ -920,7 +880,6 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public void recalculate(final Time time)
         {
@@ -966,14 +925,12 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             }, "Fundamental diagram recalculation").start();
         }
 
-        /** {@inheritDoc} */
         @Override
         public Duration getDelay()
         {
             return Duration.instantiateSI(1.0);
         }
 
-        /** {@inheritDoc} */
         @Override
         public synchronized void increaseTime(final Time time)
         {
@@ -1083,7 +1040,6 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             this.periodNumber = nextPeriod;
         }
 
-        /** {@inheritDoc} */
         @Override
         public int getNumberOfSeries()
         {
@@ -1093,14 +1049,12 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             return this.nSeries;
         }
 
-        /** {@inheritDoc} */
         @Override
         public void setAggregateName(final String aggregateName)
         {
             this.aggregateName = aggregateName;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String getName(final int series)
         {
@@ -1111,14 +1065,12 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             return this.space.getName(series);
         }
 
-        /** {@inheritDoc} */
         @Override
         public int getItemCount(final int series)
         {
             return this.periodNumber + 1;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final double getFlow(final int series, final int item)
         {
@@ -1130,14 +1082,12 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
                     / this.aggregationPeriod.si;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final double getDensity(final int series, final int item)
         {
             return getFlow(series, item) / getSpeed(series, item);
         }
 
-        /** {@inheritDoc} */
         @Override
         public final double getSpeed(final int series, final int item)
         {
@@ -1148,7 +1098,6 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             return getSpeed(this.firstMeasurement[series][item], this.secondMeasurement[series][item]);
         }
 
-        /** {@inheritDoc} */
         @Override
         public final boolean isAggregate()
         {
@@ -1243,14 +1192,12 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             return new int[] {source, sourceSeries};
         }
 
-        /** {@inheritDoc} */
         @Override
         public Duration getUpdateInterval()
         {
             return this.sources[0].getUpdateInterval();
         }
 
-        /** {@inheritDoc} */
         @Override
         public void setUpdateInterval(final Duration interval, final Time time)
         {
@@ -1260,14 +1207,12 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public Duration getAggregationPeriod()
         {
             return this.sources[0].getAggregationPeriod();
         }
 
-        /** {@inheritDoc} */
         @Override
         public void setAggregationPeriod(final Duration period)
         {
@@ -1277,7 +1222,6 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public void recalculate(final Time time)
         {
@@ -1287,14 +1231,12 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public Duration getDelay()
         {
             return this.sources[0].getDelay();
         }
 
-        /** {@inheritDoc} */
         @Override
         public void increaseTime(final Time time)
         {
@@ -1304,7 +1246,6 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public int getNumberOfSeries()
         {
@@ -1316,7 +1257,6 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             return numberOfSeries;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String getName(final int series)
         {
@@ -1325,7 +1265,6 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
                     + (this.sources[ss[0]].isAggregate() ? "" : ": " + this.sources[ss[0]].getName(ss[1]));
         }
 
-        /** {@inheritDoc} */
         @Override
         public int getItemCount(final int series)
         {
@@ -1333,7 +1272,6 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             return this.sources[ss[0]].getItemCount(ss[1]);
         }
 
-        /** {@inheritDoc} */
         @Override
         public double getFlow(final int series, final int item)
         {
@@ -1341,7 +1279,6 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             return this.sources[ss[0]].getFlow(ss[1], item);
         }
 
-        /** {@inheritDoc} */
         @Override
         public double getDensity(final int series, final int item)
         {
@@ -1349,7 +1286,6 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             return this.sources[ss[0]].getDensity(ss[1], item);
         }
 
-        /** {@inheritDoc} */
         @Override
         public double getSpeed(final int series, final int item)
         {
@@ -1357,14 +1293,12 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             return this.sources[ss[0]].getSpeed(ss[1], item);
         }
 
-        /** {@inheritDoc} */
         @Override
         public boolean isAggregate()
         {
             return false;
         }
 
-        /** {@inheritDoc} */
         @Override
         public void setAggregateName(final String aggregateName)
         {
@@ -1392,7 +1326,6 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         String getName();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

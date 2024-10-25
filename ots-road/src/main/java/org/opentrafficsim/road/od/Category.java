@@ -114,7 +114,6 @@ public class Category implements Serializable
                 "Categorization contains no object assignable to given class, even though the categorization entails the class.");
     }
 
-    /** {@inheritDoc} */
     @Override
     public final int hashCode()
     {
@@ -125,7 +124,6 @@ public class Category implements Serializable
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean equals(final Object obj)
     {
@@ -167,7 +165,6 @@ public class Category implements Serializable
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

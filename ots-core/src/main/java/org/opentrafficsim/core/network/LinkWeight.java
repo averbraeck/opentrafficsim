@@ -18,14 +18,12 @@ public interface LinkWeight
     /** Default link weight using link length. */
     LinkWeight LENGTH = new LinkWeight()
     {
-        /** {@inheritDoc} */
         @Override
         public double getWeight(final Link link)
         {
             return link.getLength().si;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -42,7 +40,6 @@ public interface LinkWeight
          */
         static final double PROHIBITIVE_CONNECTOR_LENGTH = 1000000;
 
-        /** {@inheritDoc} */
         @Override
         public double getWeight(final Link link)
         {
@@ -53,7 +50,6 @@ public interface LinkWeight
             return link.getLength().si;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -64,21 +60,18 @@ public interface LinkWeight
     /** Link weight with very high penalty for Connectors. */
     LinkWeight ASTAR_LENGTH_NO_CONNECTORS = new LinkWeight()
     {
-        /** {@inheritDoc} */
         @Override
         public double getWeight(final Link link)
         {
             return LENGTH_NO_CONNECTORS.getWeight(link);
         }
 
-        /** {@inheritDoc} */
         @Override
         public AStarAdmissibleHeuristic<Node> getAStarHeuristic()
         {
             return EUCLIDEAN_DISTANCE;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -91,7 +84,6 @@ public interface LinkWeight
      */
     AStarAdmissibleHeuristic<Node> EUCLIDEAN_DISTANCE = new AStarAdmissibleHeuristic<>()
     {
-        /** {@inheritDoc} */
         @Override
         public double getCostEstimate(final Node sourceVertex, final Node targetVertex)
         {

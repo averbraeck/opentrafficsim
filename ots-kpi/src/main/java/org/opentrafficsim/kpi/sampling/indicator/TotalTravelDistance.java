@@ -22,7 +22,6 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 public class TotalTravelDistance extends AbstractIndicator<Length>
 {
 
-    /** {@inheritDoc} */
     @Override
     protected <G extends GtuData> Length calculate(final Query<G, ?> query, final Time startTime, final Time endTime,
             final List<TrajectoryGroup<G>> trajectoryGroups)
@@ -39,7 +38,6 @@ public class TotalTravelDistance extends AbstractIndicator<Length>
     }
 
     @SuppressWarnings("checkstyle:designforextension")
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

@@ -23,7 +23,6 @@ public class AnimationLaneDetectorData extends AnimationLaneBasedObjectData<Lane
         super(laneDetector);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

@@ -176,7 +176,6 @@ public class TrajectoryAcceptList
         return out;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

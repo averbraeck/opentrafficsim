@@ -103,7 +103,6 @@ public class PersistentStatistic<U extends Unit<U>, T extends DoubleScalarRel<U,
         return this.persistent.getN();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

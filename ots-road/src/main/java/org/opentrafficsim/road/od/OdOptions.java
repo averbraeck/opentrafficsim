@@ -209,7 +209,6 @@ public class OdOptions
             return this.defaultValue;
         }
 
-        /** {@inheritDoc} */
         @Override
         public int hashCode()
         {
@@ -219,7 +218,6 @@ public class OdOptions
             return result;
         }
 
-        /** {@inheritDoc} */
         @Override
         public boolean equals(final Object obj)
         {
@@ -250,7 +248,6 @@ public class OdOptions
             return true;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

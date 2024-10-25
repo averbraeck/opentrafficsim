@@ -30,14 +30,12 @@ public class ContinuousDistSpeed extends ContinuousDistDoubleScalar.Rel<Speed, S
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public Speed draw()
     {
         return new Speed(getDistribution().draw(), (SpeedUnit) getDisplayUnit());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

@@ -175,7 +175,6 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void constructModel() throws SimRuntimeException
     {
@@ -299,7 +298,6 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
         gtu.init(strategicalPlanner, new LanePosition(lane, initialPosition), initialSpeed);
     }
 
-    /** {@inheritDoc} */
     @Override
     public RoadNetwork getNetwork()
     {

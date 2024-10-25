@@ -79,7 +79,6 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements DesireBas
         this.lmrsData = new LmrsData(synchronization, cooperation, gapAcceptance, tailgating);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final OperationalPlan generateOperationalPlan(final Time startTime, final OrientedPoint2d locationAtStartTime)
             throws GtuException, NetworkException, ParameterException
@@ -148,21 +147,18 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements DesireBas
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Desire getLatestDesire(final Class<? extends Incentive> incentiveClass)
     {
         return this.lmrsData.getLatestDesire(incentiveClass);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Synchronizable.State getSynchronizationState()
     {
         return this.lmrsData.getSynchronizationState();
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isBlocking()
     {
@@ -176,7 +172,6 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements DesireBas
         return false;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

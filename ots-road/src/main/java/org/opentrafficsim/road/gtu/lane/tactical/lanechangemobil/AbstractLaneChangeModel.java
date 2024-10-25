@@ -47,7 +47,6 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
     /** Attempt to overcome rounding errors. */
     private static Acceleration extraThreshold = new Acceleration(0.000001, AccelerationUnit.SI);
 
-    /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:parameternumber")
     @Override
     public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGtu gtu,

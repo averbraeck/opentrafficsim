@@ -279,7 +279,6 @@ public class MarkovCorrelation<S, I extends Number>
         return this.root.drawState(previousState, stream);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {
@@ -528,7 +527,6 @@ public class MarkovCorrelation<S, I extends Number>
             return intensity;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -603,14 +601,12 @@ public class MarkovCorrelation<S, I extends Number>
             this.intensity = null;
         }
 
-        /** {@inheritDoc} */
         @Override
         double getIntensity()
         {
             return this.intensity == null ? 0.0 : this.intensity.doubleValue();
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

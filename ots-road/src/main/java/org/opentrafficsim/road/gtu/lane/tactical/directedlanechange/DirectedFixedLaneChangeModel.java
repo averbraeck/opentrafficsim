@@ -24,7 +24,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
  */
 public class DirectedFixedLaneChangeModel implements DirectedLaneChangeModel
 {
-    /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:parameternumber")
     @Override
     public final DirectedLaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGtu gtu,
@@ -49,14 +48,12 @@ public class DirectedFixedLaneChangeModel implements DirectedLaneChangeModel
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getName()
     {
         return "Fixed lane change model";
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getLongName()
     {
@@ -64,14 +61,12 @@ public class DirectedFixedLaneChangeModel implements DirectedLaneChangeModel
                 + "traffic. It is used mostly for testing.";
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
         return "DirectedFixedLaneChangeModel [name=" + getName() + "]";
     }
 
-    /** {@inheritDoc} */
     @Override
     public final LanePerception getPerception()
     {

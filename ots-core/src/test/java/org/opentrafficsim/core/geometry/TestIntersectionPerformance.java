@@ -367,7 +367,6 @@ public final class TestIntersectionPerformance
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {

@@ -199,7 +199,6 @@ public class StrategiesDemo extends AbstractSimulationScript
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void setupDemo(final OtsAnimationPanel animation, final RoadNetwork network)
     {
@@ -469,7 +468,6 @@ public class StrategiesDemo extends AbstractSimulationScript
             StrategiesDemo.this.queue.add(0.0);
         }
 
-        /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
         public void notify(final Event event) throws RemoteException
@@ -496,7 +494,6 @@ public class StrategiesDemo extends AbstractSimulationScript
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     protected RoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
     {
@@ -656,7 +653,6 @@ public class StrategiesDemo extends AbstractSimulationScript
     /** IDM factory with socio speed. */
     class SocioIDMFactory implements CarFollowingModelFactory<IdmPlus>
     {
-        /** {@inheritDoc} */
         @Override
         public Parameters getParameters() throws ParameterException
         {
@@ -665,7 +661,6 @@ public class StrategiesDemo extends AbstractSimulationScript
             return parameters;
         }
 
-        /** {@inheritDoc} */
         @Override
         public IdmPlus generateCarFollowingModel()
         {
@@ -676,7 +671,6 @@ public class StrategiesDemo extends AbstractSimulationScript
     /** Perception factory. */
     class LmrsStrategiesPerceptionFactory implements PerceptionFactory
     {
-        /** {@inheritDoc} */
         @Override
         public LanePerception generatePerception(final LaneBasedGtu gtu)
         {
@@ -688,7 +682,6 @@ public class StrategiesDemo extends AbstractSimulationScript
             return perception;
         }
 
-        /** {@inheritDoc} */
         @Override
         public Parameters getParameters() throws ParameterException
         {

@@ -53,7 +53,6 @@ public abstract class AbstractLineAnimation<T extends LaneBasedObjectData> exten
         this.rectangle = new Rectangle2D.Double(-.5 * width.si, -halfLength, width.si, 2 * halfLength);
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public void paint(final Graphics2D graphics, final ImageObserver observer)
@@ -80,11 +79,9 @@ public abstract class AbstractLineAnimation<T extends LaneBasedObjectData> exten
          */
         Length getLaneWidth();
 
-        /** {@inheritDoc} */
         @Override
         OrientedPoint2d getLocation();
 
-        /** {@inheritDoc} */
         @Override
         default double getZ() throws RemoteException
         {

@@ -43,14 +43,12 @@ public class HistoricalPriorityQueue<E> extends AbstractHistoricalQueue<E, Prior
         super(historyManager, new PriorityQueue<>(c));
     }
 
-    /** {@inheritDoc} */
     @Override
     public PriorityQueue<E> get()
     {
         return getCollection();
     }
 
-    /** {@inheritDoc} */
     @Override
     public PriorityQueue<E> get(final Time time)
     {
@@ -61,7 +59,6 @@ public class HistoricalPriorityQueue<E> extends AbstractHistoricalQueue<E, Prior
         return fill(time, new PriorityQueue<E>());
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

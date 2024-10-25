@@ -177,7 +177,6 @@ public class StripeAnimation extends OtsRenderable<StripeData>
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
@@ -190,7 +189,6 @@ public class StripeAnimation extends OtsRenderable<StripeData>
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
@@ -208,7 +206,6 @@ public class StripeAnimation extends OtsRenderable<StripeData>
      */
     public interface StripeData extends ClickableLineLocatable
     {
-        /** {@inheritDoc} */
         @Override
         OrientedPoint2d getLocation();
 
@@ -230,7 +227,6 @@ public class StripeAnimation extends OtsRenderable<StripeData>
          */
         Length getWidth();
 
-        /** {@inheritDoc} */
         @Override
         default double getZ()
         {

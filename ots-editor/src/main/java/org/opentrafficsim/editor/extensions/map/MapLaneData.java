@@ -35,21 +35,18 @@ public class MapLaneData extends MapCrossSectionData implements LaneData
         this.id = id;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getId()
     {
         return this.id;
     }
 
-    /** {@inheritDoc} */
     @Override
     public PolyLine2d getCenterLine()
     {
         return this.centerLine;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

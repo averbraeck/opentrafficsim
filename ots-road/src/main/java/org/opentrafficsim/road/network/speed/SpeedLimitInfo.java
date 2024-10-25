@@ -80,7 +80,6 @@ public class SpeedLimitInfo implements Serializable
         return (T) this.speedInfoMap.get(speedLimitType);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final int hashCode()
     {
@@ -90,7 +89,6 @@ public class SpeedLimitInfo implements Serializable
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean equals(final Object obj)
     {
@@ -114,7 +112,6 @@ public class SpeedLimitInfo implements Serializable
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

@@ -34,7 +34,6 @@ public class SynchronizedRedBlackTree<T extends Number & Comparable<T>> implemen
     {
     }
 
-    /** {@inheritDoc} */
     @Override
     public SimEventInterface<T> removeFirst()
     {
@@ -67,7 +66,6 @@ public class SynchronizedRedBlackTree<T extends Number & Comparable<T>> implemen
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public int size()
     {
@@ -77,7 +75,6 @@ public class SynchronizedRedBlackTree<T extends Number & Comparable<T>> implemen
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isEmpty()
     {
@@ -87,7 +84,6 @@ public class SynchronizedRedBlackTree<T extends Number & Comparable<T>> implemen
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean contains(final SimEventInterface<T> o)
     {
@@ -97,7 +93,6 @@ public class SynchronizedRedBlackTree<T extends Number & Comparable<T>> implemen
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public Iterator<SimEventInterface<T>> iterator()
     {
@@ -107,7 +102,6 @@ public class SynchronizedRedBlackTree<T extends Number & Comparable<T>> implemen
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void add(final SimEventInterface<T> e)
     {
@@ -117,7 +111,6 @@ public class SynchronizedRedBlackTree<T extends Number & Comparable<T>> implemen
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean remove(final SimEventInterface<T> o)
     {
@@ -127,14 +120,12 @@ public class SynchronizedRedBlackTree<T extends Number & Comparable<T>> implemen
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void clear()
     {
         this.tree.clear();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

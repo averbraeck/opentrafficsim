@@ -31,7 +31,6 @@ public interface LmrsParameters
                 /** */
                 private static final long serialVersionUID = 20160413L;
 
-                /** {@inheritDoc} */
                 @Override
                 public void check(final Double value, final Parameters params) throws ParameterException
                 {
@@ -54,7 +53,6 @@ public interface LmrsParameters
         /** */
         private static final long serialVersionUID = 20160413L;
 
-        /** {@inheritDoc} */
         @Override
         public void check(final Double value, final Parameters params) throws ParameterException
         {
@@ -74,7 +72,6 @@ public interface LmrsParameters
         /** */
         private static final long serialVersionUID = 20160413L;
 
-        /** {@inheritDoc} */
         @Override
         public void check(final Double value, final Parameters params) throws ParameterException
         {

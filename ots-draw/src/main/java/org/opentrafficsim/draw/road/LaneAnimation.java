@@ -69,7 +69,6 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         return this.text;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void destroy(final Contextualized contextProvider)
     {
@@ -78,7 +77,6 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         this.centerLineAnimation.destroy(contextProvider);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
@@ -114,14 +112,12 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
             this.fullId = fullId;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final OrientedPoint2d getLocation()
         {
             return this.location;
         }
 
-        /** {@inheritDoc} */
         @Override
         public OtsShape getShape()
         {
@@ -132,7 +128,6 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
             return this.shape;
         }
 
-        /** {@inheritDoc} */
         @Override
         public Polygon2d getContour()
         {
@@ -148,21 +143,18 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
             return this.centerLine;
         }
 
-        /** {@inheritDoc} */
         @Override
         public PolyLine2d getLine()
         {
             return OtsLocatable.transformLine(this.centerLine, getLocation());
         }
 
-        /** {@inheritDoc} */
         @Override
         public double getZ()
         {
             return DrawLevel.CENTER_LINE.getZ();
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -196,7 +188,6 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
             this.path = PaintLine.getPath(getSource().getLocation(), getSource().getCenterLine());
         }
 
-        /** {@inheritDoc} */
         @Override
         public final void paint(final Graphics2D graphics, final ImageObserver observer)
         {
@@ -238,7 +229,6 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
             super(source, text, dx, dy, textPlacement, color, contextualized, TextAnimation.RENDERWHEN10);
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -258,7 +248,6 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
      */
     public interface LaneData extends CrossSectionElementData, Identifiable
     {
-        /** {@inheritDoc} */
         @Override
         default double getZ()
         {

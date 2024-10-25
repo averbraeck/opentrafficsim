@@ -90,7 +90,6 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
         return this.path;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected final Length getEndLocation()
     {

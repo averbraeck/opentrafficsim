@@ -122,7 +122,6 @@ public class LengthBeginEndType extends ExpressionType<LengthBeginEnd>
             return this.fraction;
         }
 
-        /** {@inheritDoc} */
         @Override
         public int hashCode()
         {
@@ -137,7 +136,6 @@ public class LengthBeginEndType extends ExpressionType<LengthBeginEnd>
             return result;
         }
 
-        /** {@inheritDoc} */
         @Override
         public boolean equals(final Object obj)
         {
@@ -164,7 +162,6 @@ public class LengthBeginEndType extends ExpressionType<LengthBeginEnd>
             return true;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

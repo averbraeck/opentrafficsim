@@ -60,14 +60,12 @@ public class Shoulder extends Lane
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getZ()
     {
         return -0.00005;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Speed getSpeedLimit(final GtuType gtuType) throws NetworkException
     {

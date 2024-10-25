@@ -41,7 +41,6 @@ public final class InputParameterHelper implements ParameterFactory
         this.rootMap = rootMap;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setValues(final Parameters parameters, final GtuType gtuType) throws ParameterException
     {

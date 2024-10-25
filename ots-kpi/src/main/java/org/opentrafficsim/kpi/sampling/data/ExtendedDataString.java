@@ -26,7 +26,6 @@ public abstract class ExtendedDataString<G extends GtuData> extends ExtendedData
         super(id, description, String.class);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String parseValue(final String string)
     {

@@ -94,7 +94,6 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
         return this.startDistance.plus(this.lane.getLength());
     }
 
-    /** {@inheritDoc} */
     @Override
     public Length getMergeDistance()
     {
@@ -110,7 +109,6 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
         this.next.add(downstream);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Set<LaneRecord> getNext()
     {
@@ -126,7 +124,6 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
         this.prev.add(upstream);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Set<LaneRecord> getPrev()
     {
@@ -142,7 +139,6 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
         this.lat.add(lateral);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Set<LaneRecord> lateral()
     {
@@ -168,14 +164,12 @@ public class LaneRecord implements LaneRecordInterface<LaneRecord>
         return from != -1 && to != -1 && to - from == 1;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isDownstreamBranch()
     {
         return this.mergeDistance.eq0() || this.getEndDistance().gt0();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

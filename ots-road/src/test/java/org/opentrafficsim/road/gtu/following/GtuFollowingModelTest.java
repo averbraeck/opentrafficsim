@@ -350,14 +350,12 @@ public class GtuFollowingModelTest implements UNITS
             this.network = network;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final void constructModel() throws SimRuntimeException
         {
             //
         }
 
-        /** {@inheritDoc} */
         @Override
         public final RoadNetwork getNetwork()
         {

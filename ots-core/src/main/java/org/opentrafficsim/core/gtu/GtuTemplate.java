@@ -126,7 +126,6 @@ public class GtuTemplate implements Serializable, Generator<GtuCharacteristics>
         return this.gtuType;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

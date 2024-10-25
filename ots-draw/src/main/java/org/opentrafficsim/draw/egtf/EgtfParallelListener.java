@@ -81,7 +81,6 @@ public class EgtfParallelListener implements EgtfListener
         return this.filter;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notifyProgress(final EgtfEvent event)
     {
@@ -109,7 +108,6 @@ public class EgtfParallelListener implements EgtfListener
         this.interrupted = true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

@@ -90,14 +90,12 @@ public class CustomSimulation extends OtsSimulationApplication<CustomSimulation.
             this.network = network;
         }
 
-        /** {@inheritDoc} */
         @Override
         public void constructModel() throws SimRuntimeException
         {
             // custom through external code
         }
 
-        /** {@inheritDoc} */
         @Override
         public RoadNetwork getNetwork()
         {

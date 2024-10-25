@@ -65,7 +65,6 @@ public class StaticObjectAnimation extends OtsRenderable<StaticObjectData>
         this.paths = PaintPolygons.getPaths(getSource().getLocation(), getSource().getGeometry());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
@@ -128,7 +127,6 @@ public class StaticObjectAnimation extends OtsRenderable<StaticObjectData>
         this.fill = fill;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

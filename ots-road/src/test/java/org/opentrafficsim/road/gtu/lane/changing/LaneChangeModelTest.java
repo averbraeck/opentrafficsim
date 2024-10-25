@@ -287,14 +287,12 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
     // TODO prove that the most restrictive car in the other lane determines what happens
     // TODO test merge into overtaking lane
 
-    /** {@inheritDoc} */
     @Override
     public void constructModel() throws SimRuntimeException
     {
         // DO NOTHING
     }
 
-    /** {@inheritDoc} */
     @Override
     public final RoadNetwork getNetwork()
     {

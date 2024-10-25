@@ -62,7 +62,6 @@ public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDet
         this.text = new Text(detector, detector::getId, 0.0f, 0.5f + 0.2f, TextAlignment.CENTER, Color.BLACK, contextualized);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
@@ -72,7 +71,6 @@ public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDet
         resetRendering(graphics);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void destroy(final Contextualized contextProvider)
     {
@@ -80,7 +78,6 @@ public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDet
         this.text.destroy(contextProvider);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
@@ -121,7 +118,6 @@ public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDet
             super(source, text, dx, dy, textPlacement, color, contextualized, TextAnimation.RENDERWHEN10);
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -146,11 +142,9 @@ public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDet
          */
         boolean getOccupancy();
 
-        /** {@inheritDoc} */
         @Override
         OrientedPoint2d getLocation();
 
-        /** {@inheritDoc} */
         @Override
         default double getZ()
         {

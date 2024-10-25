@@ -42,91 +42,78 @@ public class AnimationGtuData implements GtuData
         this.gtu = gtu;
     }
 
-    /** {@inheritDoc} */
     @Override
     public OrientedPoint2d getLocation()
     {
         return this.gtu.getLocation();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Polygon2d getContour()
     {
         return this.gtu.getContour();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Bounds2d getBounds()
     {
         return this.gtu.getBounds();
     }
 
-    /** {@inheritDoc} */
     @Override
     public OtsShape getShape()
     {
         return this.gtu.getShape();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getId()
     {
         return this.gtu.getId();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Color getColor()
     {
         return this.gtuColorer.getColor(this.gtu);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Length getLength()
     {
         return this.gtu.getLength();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Length getWidth()
     {
         return this.gtu.getWidth();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Length getFront()
     {
         return this.gtu.getFront().dx();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Length getRear()
     {
         return this.gtu.getRear().dx();
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean leftIndicatorOn()
     {
         return this.gtu.getTurnIndicatorStatus().isLeftOrBoth();
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean rightIndicatorOn()
     {
         return this.gtu.getTurnIndicatorStatus().isRightOrBoth();
     }
 
-    /** {@inheritDoc} */
     @Override
     public RectangularShape getMarker()
     {
@@ -141,7 +128,6 @@ public class AnimationGtuData implements GtuData
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isBrakingLightsOn()
     {
@@ -157,7 +143,6 @@ public class AnimationGtuData implements GtuData
         return this.gtu;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

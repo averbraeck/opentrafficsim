@@ -32,14 +32,12 @@ public class MapTrafficLightData extends MapLaneBasedObjectData implements Traff
         setLinkNode(getNode().getParent());
     }
 
-    /** {@inheritDoc} */
     @Override
     public Color getColor()
     {
         return Color.RED;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

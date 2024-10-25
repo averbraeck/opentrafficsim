@@ -51,7 +51,6 @@ public class SimpleLaneRecord implements LaneRecordInterface<SimpleLaneRecord>
         this.gtuType = gtuType;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Set<SimpleLaneRecord> getNext()
     {
@@ -68,7 +67,6 @@ public class SimpleLaneRecord implements LaneRecordInterface<SimpleLaneRecord>
         return this.next;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Set<SimpleLaneRecord> getPrev()
     {
@@ -84,14 +82,12 @@ public class SimpleLaneRecord implements LaneRecordInterface<SimpleLaneRecord>
         return this.prev;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Length getStartDistance()
     {
         return this.startDistance;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Lane getLane()
     {

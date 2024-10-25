@@ -288,7 +288,6 @@ public class LoopDetector extends LaneDetector
                 super(idRear, laneRear, longitudinalPositionRear, RelativePosition.REAR, detectorType);
             }
 
-            /** {@inheritDoc} */
             @Override
             protected void triggerResponse(final LaneBasedGtu gtu)
             {
@@ -332,14 +331,12 @@ public class LoopDetector extends LaneDetector
         return Set.of(this.data.get(null));
     }
 
-    /** {@inheritDoc} */
     @Override
     public Length getLength()
     {
         return this.length;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void triggerResponse(final LaneBasedGtu gtu)
     {
@@ -573,21 +570,18 @@ public class LoopDetector extends LaneDetector
 
         return new Table("detectors", "list of all loop-detectors", columns)
         {
-            /** {@inheritDoc} */
             @Override
             public Iterator<Row> iterator()
             {
                 Iterator<LoopDetector> iterator = detectors.iterator();
                 return new Iterator<>()
                 {
-                    /** {@inheritDoc} */
                     @Override
                     public boolean hasNext()
                     {
                         return iterator.hasNext();
                     }
 
-                    /** {@inheritDoc} */
                     @Override
                     public Row next()
                     {
@@ -607,7 +601,6 @@ public class LoopDetector extends LaneDetector
                 return this;
             }
 
-            /** {@inheritDoc} */
             @Override
             public boolean isEmpty()
             {
@@ -644,7 +637,6 @@ public class LoopDetector extends LaneDetector
 
         return new Table("periodic", "periodic measurements", columns)
         {
-            /** {@inheritDoc} */
             @Override
             public Iterator<Row> iterator()
             {
@@ -666,7 +658,6 @@ public class LoopDetector extends LaneDetector
                     /** Current GTU type data. */
                     private Entry<GtuType, GtuTypeData> dat;
 
-                    /** {@inheritDoc} */
                     @Override
                     public boolean hasNext()
                     {
@@ -688,7 +679,6 @@ public class LoopDetector extends LaneDetector
                         return true;
                     }
 
-                    /** {@inheritDoc} */
                     @Override
                     public Row next()
                     {
@@ -732,7 +722,6 @@ public class LoopDetector extends LaneDetector
                 return this;
             }
 
-            /** {@inheritDoc} */
             @Override
             public boolean isEmpty()
             {
@@ -764,7 +753,6 @@ public class LoopDetector extends LaneDetector
 
         return new Table("non-periodic", "non-periodic measurements", columns)
         {
-            /** {@inheritDoc} */
             @Override
             public Iterator<Row> iterator()
             {
@@ -792,7 +780,6 @@ public class LoopDetector extends LaneDetector
                     /** Current measurement. */
                     private LoopDetectorMeasurement<?, ?> measurement;
 
-                    /** {@inheritDoc} */
                     @Override
                     public boolean hasNext()
                     {
@@ -822,7 +809,6 @@ public class LoopDetector extends LaneDetector
                         return true;
                     }
 
-                    /** {@inheritDoc} */
                     @Override
                     public Row next()
                     {
@@ -851,7 +837,6 @@ public class LoopDetector extends LaneDetector
                 return this;
             }
 
-            /** {@inheritDoc} */
             @Override
             public boolean isEmpty()
             {
@@ -1032,7 +1017,6 @@ public class LoopDetector extends LaneDetector
             return this.valueType;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -1091,7 +1075,6 @@ public class LoopDetector extends LaneDetector
             this.threshold = threshold;
         }
 
-        /** {@inheritDoc} */
         @Override
         protected PlatoonMeasurement accumulateEntry(final PlatoonMeasurement cumulative, final LaneBasedGtu gtu,
                 final LoopDetector loopDetector)
@@ -1114,7 +1097,6 @@ public class LoopDetector extends LaneDetector
             return cumulative;
         }
 
-        /** {@inheritDoc} */
         @Override
         protected PlatoonMeasurement accumulateExit(final PlatoonMeasurement cumulative, final LaneBasedGtu gtu,
                 final LoopDetector loopDetector)
@@ -1130,7 +1112,6 @@ public class LoopDetector extends LaneDetector
             return cumulative;
         }
 
-        /** {@inheritDoc} */
         @Override
         protected List<Integer> aggregate(final PlatoonMeasurement cumulative, final int count, final Duration aggregation)
         {
@@ -1142,7 +1123,6 @@ public class LoopDetector extends LaneDetector
             return cumulative.platoons;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String getDescription()
         {

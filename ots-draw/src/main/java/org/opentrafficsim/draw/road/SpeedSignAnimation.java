@@ -54,7 +54,6 @@ public class SpeedSignAnimation extends OtsRenderable<SpeedSignData>
         setRotate(false);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D g, final ImageObserver arg1)
     {
@@ -81,7 +80,6 @@ public class SpeedSignAnimation extends OtsRenderable<SpeedSignData>
         resetRendering(g);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
@@ -105,7 +103,6 @@ public class SpeedSignAnimation extends OtsRenderable<SpeedSignData>
          */
         Speed getSpeed();
 
-        /** {@inheritDoc} */
         @Override
         default double getZ()
         {

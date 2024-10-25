@@ -49,7 +49,6 @@ public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
         this.initialEnd = initialEnd;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void setChart(final JFreeChart chart)
     {
@@ -63,7 +62,6 @@ public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
         // axis listeners to enable/disable auto zoom
         xyPlot.getDomainAxis().addChangeListener(new AxisChangeListener()
         {
-            /** {@inheritDoc} */
             @SuppressWarnings("synthetic-access")
             @Override
             public void axisChanged(final AxisChangeEvent event)
@@ -77,7 +75,6 @@ public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
         });
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void update()
     {

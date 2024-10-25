@@ -38,28 +38,24 @@ public class MapGeneratorData extends MapLaneBasedObjectData implements GtuGener
         this.type = node.getNodeName().equals("Generator") ? "Generator " : "List generator ";
     }
 
-    /** {@inheritDoc} */
     @Override
     public Bounds2d getBounds()
     {
         return this.bounds;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int getQueueCount()
     {
         return 0;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getZ()
     {
         return DrawLevel.OBJECT.getZ();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

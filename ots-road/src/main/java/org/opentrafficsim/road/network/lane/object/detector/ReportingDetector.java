@@ -38,14 +38,12 @@ public class ReportingDetector extends LaneDetector
         super(id, lane, position, triggerPosition, detectorType);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void triggerResponse(final LaneBasedGtu gtu)
     {
         System.out.println(this + " triggered by " + getPositionType().getName() + " of " + gtu);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

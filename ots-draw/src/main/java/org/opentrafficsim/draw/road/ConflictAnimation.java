@@ -53,7 +53,6 @@ public class ConflictAnimation extends AbstractLineAnimation<ConflictData>
                 : PaintPolygons.getPaths(getSource().getLocation(), getSource().getContour().getPointList());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
@@ -86,7 +85,6 @@ public class ConflictAnimation extends AbstractLineAnimation<ConflictData>
         graphics.setStroke(oldStroke);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

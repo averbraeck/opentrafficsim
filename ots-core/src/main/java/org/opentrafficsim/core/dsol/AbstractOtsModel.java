@@ -77,7 +77,6 @@ public abstract class AbstractOtsModel extends AbstractDsolModel<Duration, OtsSi
         return streamInformation;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getShortName()
     {
@@ -92,7 +91,6 @@ public abstract class AbstractOtsModel extends AbstractDsolModel<Duration, OtsSi
         this.shortName = shortName;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getDescription()
     {

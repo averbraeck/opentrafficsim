@@ -133,7 +133,6 @@ public class BusStop extends AbstractLaneBasedObject
         return this.conflicts;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final int hashCode()
     {
@@ -143,7 +142,6 @@ public class BusStop extends AbstractLaneBasedObject
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean equals(final Object obj)
     {
@@ -167,7 +165,6 @@ public class BusStop extends AbstractLaneBasedObject
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

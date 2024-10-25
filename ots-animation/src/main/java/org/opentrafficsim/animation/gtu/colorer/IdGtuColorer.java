@@ -34,21 +34,18 @@ public class IdGtuColorer implements GtuColorer
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Color getColor(final Gtu gtu)
     {
         return LEGEND.get(Math.abs(gtu.getId().hashCode() % LEGEND.size())).getColor();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final List<LegendEntry> getLegend()
     {
         return LEGEND;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

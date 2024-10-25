@@ -43,14 +43,12 @@ public class HistoricalHashMap<K, V> extends AbstractHistoricalMap<K, V, LinkedH
         super(historyManager, new LinkedHashMap<>(m));
     }
 
-    /** {@inheritDoc} */
     @Override
     public LinkedHashMap<K, V> get()
     {
         return getMap();
     }
 
-    /** {@inheritDoc} */
     @Override
     public LinkedHashMap<K, V> get(final Time time)
     {
@@ -61,7 +59,6 @@ public class HistoricalHashMap<K, V> extends AbstractHistoricalMap<K, V, LinkedH
         return fill(time, new LinkedHashMap<>());
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

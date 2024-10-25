@@ -40,7 +40,6 @@ public class XsdTreeKeyListener extends KeyAdapter
         this.treeTable = treeTable;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void keyPressed(final KeyEvent e)
     {

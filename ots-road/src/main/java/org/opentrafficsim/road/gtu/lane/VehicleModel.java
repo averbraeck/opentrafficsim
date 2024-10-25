@@ -26,7 +26,6 @@ public interface VehicleModel
             return acceleration;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -45,7 +44,6 @@ public interface VehicleModel
                     : gtu.getMaximumDeceleration();
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -125,21 +123,18 @@ public interface VehicleModel
             this.momentOfInertiaAboutZ = momentOfInertiaAboutZ;
         }
 
-        /** {@inheritDoc} */
         @Override
         public Acceleration boundAcceleration(final Acceleration acceleration, final LaneBasedGtu gtu)
         {
             return MINMAX.boundAcceleration(acceleration, gtu);
         }
 
-        /** {@inheritDoc} */
         @Override
         public Mass getMass()
         {
             return this.mass;
         }
 
-        /** {@inheritDoc} */
         @Override
         public double getMomentOfInertiaAboutZ()
         {

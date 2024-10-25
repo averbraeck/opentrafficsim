@@ -163,7 +163,6 @@ public class ToledoPerception extends AbstractPerceptionCategory<LaneBasedGtu, L
         return this.infrastructureCategory.getCrossSection();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

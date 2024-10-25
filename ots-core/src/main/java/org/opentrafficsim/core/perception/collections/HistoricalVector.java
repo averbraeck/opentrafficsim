@@ -46,14 +46,12 @@ public class HistoricalVector<E> extends AbstractHistoricalList<E, Vector<E>>
         super(historyManager, new Vector<>(c));
     }
 
-    /** {@inheritDoc} */
     @Override
     public Vector<E> get()
     {
         return getCollection();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Vector<E> get(final Time time)
     {
@@ -64,7 +62,6 @@ public class HistoricalVector<E> extends AbstractHistoricalList<E, Vector<E>>
         return fill(time, new Vector<>());
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

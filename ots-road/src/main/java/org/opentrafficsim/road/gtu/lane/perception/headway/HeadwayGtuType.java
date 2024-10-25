@@ -128,35 +128,30 @@ public class HeadwayGtuType extends AbstractHeadwayGtu
         this.gtuTypeAssumptions = gtuTypeAssumptions;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final CarFollowingModel getCarFollowingModel()
     {
         return this.gtuTypeAssumptions.getCarFollowingModel(getGtuType());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Parameters getParameters()
     {
         return this.gtuTypeAssumptions.getParameters(getGtuType());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final SpeedLimitInfo getSpeedLimitInfo()
     {
         return null; // TODO create SpeedLimitInfo on the basis of this.gtuTypeAssumptions.getLaneTypeMaxSpeed(...)
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Route getRoute()
     {
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final AbstractHeadwayGtu moved(final Length headway, final Speed speed, final Acceleration acceleration)
     {
@@ -172,7 +167,6 @@ public class HeadwayGtuType extends AbstractHeadwayGtu
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

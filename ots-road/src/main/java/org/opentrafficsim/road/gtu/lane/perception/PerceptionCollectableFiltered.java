@@ -51,7 +51,6 @@ public class PerceptionCollectableFiltered<H extends Headway, U> implements Perc
         this.predicate = predicate;
     }
 
-    /** {@inheritDoc} */
     @Override
     public H first()
     {
@@ -65,21 +64,18 @@ public class PerceptionCollectableFiltered<H extends Headway, U> implements Perc
         return this.first.h;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isEmpty()
     {
         return this.first != null || prepareNext();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Iterator<H> iterator()
     {
         return new FilterIterator<>((entry) -> entry.h);
     }
 
-    /** {@inheritDoc} */
     @Override
     public <C, I> C collect(final Supplier<I> identity, final PerceptionAccumulator<? super U, I> accumulator,
             final Function<I, C> finalizer)
@@ -98,14 +94,12 @@ public class PerceptionCollectableFiltered<H extends Headway, U> implements Perc
         return finalizer.apply(i.getObject());
     }
 
-    /** {@inheritDoc} */
     @Override
     public Iterator<U> underlying()
     {
         return new FilterIterator<>((entry) -> entry.u);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Iterator<UnderlyingDistance<U>> underlyingWithDistance()
     {
@@ -207,7 +201,6 @@ public class PerceptionCollectableFiltered<H extends Headway, U> implements Perc
             this.converter = converter;
         }
 
-        /** {@inheritDoc} */
         @Override
         public boolean hasNext()
         {
@@ -230,7 +223,6 @@ public class PerceptionCollectableFiltered<H extends Headway, U> implements Perc
             return this.next != null;
         }
 
-        /** {@inheritDoc} */
         @Override
         public R next()
         {

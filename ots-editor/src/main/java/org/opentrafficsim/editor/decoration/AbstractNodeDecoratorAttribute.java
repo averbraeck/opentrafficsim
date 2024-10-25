@@ -44,7 +44,6 @@ public abstract class AbstractNodeDecoratorAttribute extends AbstractNodeDecorat
         this.attributes = Arrays.asList(attributes);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {
@@ -60,7 +59,6 @@ public abstract class AbstractNodeDecoratorAttribute extends AbstractNodeDecorat
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notifyCreated(final XsdTreeNode node)
     {

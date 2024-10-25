@@ -28,14 +28,12 @@ public class ExpKernelShape implements KernelShape
         this.tau = tau;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double weight(final double c, final double dx, final double dt)
     {
         return Math.exp(-Math.abs(dx) / this.sigma - Math.abs(dt - dx / c) / this.tau);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

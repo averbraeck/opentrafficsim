@@ -311,7 +311,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter()
         {
-            /** {@inheritDoc} */
             @Override
             public void windowClosing(final WindowEvent e)
             {
@@ -965,7 +964,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         }
         this.autosave = new TimerTask()
         {
-            /** {@inheritDoc} */
             @Override
             public void run()
             {
@@ -1010,7 +1008,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         DefaultCellEditor editor = (DefaultCellEditor) this.treeTable.getDefaultEditor(String.class);
         ((JTextField) editor.getComponent()).addKeyListener(new KeyAdapter()
         {
-            /** {@inheritDoc} */
             @Override
             public void keyReleased(final KeyEvent e)
             {
@@ -1035,14 +1032,12 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         // this listener starts a new undo event when the editor gets focus on the JTreeTable
         ((JTextField) editor.getComponent()).addFocusListener(new FocusListener()
         {
-            /** {@inheritDoc} */
             @Override
             public void focusGained(final FocusEvent e)
             {
                 startUndoActionOnTreeTable();
             }
 
-            /** {@inheritDoc} */
             @Override
             public void focusLost(final FocusEvent e)
             {
@@ -1053,14 +1048,12 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         // this listener may cause new undo actions when cells are navigated using the keyboard
         editor.addCellEditorListener(new CellEditorListener()
         {
-            /** {@inheritDoc} */
             @Override
             public void editingStopped(final ChangeEvent e)
             {
                 startUndoActionOnTreeTable();
             }
 
-            /** {@inheritDoc} */
             @Override
             public void editingCanceled(final ChangeEvent e)
             {
@@ -1078,14 +1071,12 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         // this listener will make sure no choice popup is presented by a left-click on expand/collapse, even for a choice node
         this.treeTable.getTree().addTreeWillExpandListener(new TreeWillExpandListener()
         {
-            /** {@inheritDoc} */
             @Override
             public void treeWillExpand(final TreeExpansionEvent event) throws ExpandVetoException
             {
                 OtsEditor.this.mayPresentChoice = false;
             }
 
-            /** {@inheritDoc} */
             @Override
             public void treeWillCollapse(final TreeExpansionEvent event) throws ExpandVetoException
             {
@@ -1097,7 +1088,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         // it also shows the tooltip in tree nodes
         this.treeTable.addMouseMotionListener(new MouseMotionAdapter()
         {
-            /** {@inheritDoc} */
             @Override
             public void mouseMoved(final MouseEvent e)
             {
@@ -1166,13 +1156,11 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     {
         popup.addPopupMenuListener(new PopupMenuListener()
         {
-            /** {@inheritDoc} */
             @Override
             public void popupMenuWillBecomeVisible(final PopupMenuEvent e)
             {
             }
 
-            /** {@inheritDoc} */
             @Override
             public void popupMenuWillBecomeInvisible(final PopupMenuEvent e)
             {
@@ -1180,7 +1168,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                 OtsEditor.this.choiceNode = null;
             }
 
-            /** {@inheritDoc} */
             @Override
             public void popupMenuCanceled(final PopupMenuEvent e)
             {
@@ -1278,7 +1265,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         return this.mayPresentChoice;
     }
 
-    /** {@inheritDoc} */
     @Override
     public EventListenerMap getEventListenerMap() throws RemoteException
     {
@@ -1417,7 +1403,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             item.setVisible(index++ < MAX_DROPDOWN_ITEMS);
             item.addActionListener(new ActionListener()
             {
-                /** {@inheritDoc} */
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
@@ -1437,7 +1422,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         popup.addMouseWheelListener(new MouseWheelListener()
         {
 
-            /** {@inheritDoc} */
             @Override
             public void mouseWheelMoved(final MouseWheelEvent e)
             {
@@ -1456,7 +1440,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         // invoke later because JTreeTable removes the popup with editable cells and it may take previous editable field
         SwingUtilities.invokeLater(new Runnable()
         {
-            /** {@inheritDoc} */
             @Override
             public void run()
             {
@@ -1470,14 +1453,12 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                 placePopup(popup, rectangle, table);
                 field.addKeyListener(new KeyAdapter()
                 {
-                    /** {@inheritDoc} */
                     @Override
                     public void keyTyped(final KeyEvent e)
                     {
                         // invoke later to include this current typed key in the result
                         SwingUtilities.invokeLater(new Runnable()
                         {
-                            /** {@inheritDoc} */
                             @Override
                             public void run()
                             {
@@ -1492,7 +1473,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                                     JMenuItem item = new JMenuItem(currentValue);
                                     item.addActionListener(new ActionListener()
                                     {
-                                        /** {@inheritDoc} */
                                         @Override
                                         public void actionPerformed(final ActionEvent e)
                                         {
@@ -1516,7 +1496,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                 });
                 field.addActionListener(new ActionListener()
                 {
-                    /** {@inheritDoc} */
                     @Override
                     public void actionPerformed(final ActionEvent e)
                     {
@@ -1586,7 +1565,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         FileDialog fileDialog = new FileDialog(this, "Open XML", FileDialog.LOAD);
         fileDialog.setFilenameFilter(new FilenameFilter()
         {
-            /** {@inheritDoc} */
             @Override
             public boolean accept(final File dir, final String name)
             {
@@ -1815,35 +1793,30 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             /** */
             private static final long serialVersionUID = 20240314L;
 
-            /** {@inheritDoc} */
             @Override
             public int getRowCount()
             {
                 return OtsEditor.this.properties.size() / 2;
             }
 
-            /** {@inheritDoc} */
             @Override
             public int getColumnCount()
             {
                 return 2;
             }
 
-            /** {@inheritDoc} */
             @Override
             public Object getValueAt(final int rowIndex, final int columnIndex)
             {
                 return OtsEditor.this.properties.get(rowIndex * 2 + columnIndex);
             }
 
-            /** {@inheritDoc} */
             @Override
             public boolean isCellEditable(final int rowIndex, final int columnIndex)
             {
                 return columnIndex == 1;
             }
 
-            /** {@inheritDoc} */
             @Override
             public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex)
             {
@@ -1858,7 +1831,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             /** */
             private static final long serialVersionUID = 20240314L;
 
-            /** {@inheritDoc} */
             @Override
             public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected,
                     final boolean hasFocus, final int row, final int column)
@@ -2010,7 +1982,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         return this.nodeActions;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean addListener(final EventListener listener, final EventType eventType)
     {
@@ -2059,7 +2030,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         this.evalWrapper.removeListener(listener);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setAppearance(final Appearance appearance)
     {

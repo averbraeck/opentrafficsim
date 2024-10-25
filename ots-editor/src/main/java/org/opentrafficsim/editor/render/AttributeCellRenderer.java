@@ -71,7 +71,6 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
         this.checkBox.setBorder(EMPTY_BORDER);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected,
             final boolean hasFocus, final int row, final int column)

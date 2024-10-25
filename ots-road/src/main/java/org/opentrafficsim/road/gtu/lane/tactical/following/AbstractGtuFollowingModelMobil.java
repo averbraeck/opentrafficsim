@@ -40,7 +40,6 @@ public abstract class AbstractGtuFollowingModelMobil implements GtuFollowingMode
     public static final DualAccelerationStep TOODANGEROUS =
             new DualAccelerationStep(PROHIBITIVEACCELERATIONSTEP, PROHIBITIVEACCELERATIONSTEP);
 
-    /** {@inheritDoc} */
     @Override
     public final DualAccelerationStep computeDualAccelerationStep(final LaneBasedGtu referenceGTU,
             final Collection<Headway> otherGTUs, final Length maxDistance, final Speed speedLimit) throws GtuException
@@ -48,7 +47,6 @@ public abstract class AbstractGtuFollowingModelMobil implements GtuFollowingMode
         return computeDualAccelerationStep(referenceGTU, otherGTUs, maxDistance, speedLimit, getStepSize());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final DualAccelerationStep computeDualAccelerationStep(final LaneBasedGtu referenceGTU,
             final Collection<Headway> otherHeadways, final Length maxDistance, final Speed speedLimit, final Duration stepSize)
@@ -119,7 +117,6 @@ public abstract class AbstractGtuFollowingModelMobil implements GtuFollowingMode
         return new DualAccelerationStep(referenceGTUAccelerationStep, followerAccelerationStep);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final AccelerationStep computeAccelerationStep(final LaneBasedGtu gtu, final Speed leaderSpeed, final Length headway,
             final Length maxDistance, final Speed speedLimit) throws GtuException
@@ -127,7 +124,6 @@ public abstract class AbstractGtuFollowingModelMobil implements GtuFollowingMode
         return computeAccelerationStep(gtu, leaderSpeed, headway, maxDistance, speedLimit, getStepSize());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final AccelerationStep computeAccelerationStep(final LaneBasedGtu gtu, final Speed leaderSpeed, final Length headway,
             final Length maxDistance, final Speed speedLimit, final Duration stepSize) throws GtuException
@@ -152,7 +148,6 @@ public abstract class AbstractGtuFollowingModelMobil implements GtuFollowingMode
         return new AccelerationStep(newAcceleration, nextEvaluationTime, stepSize);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final AccelerationStep computeAccelerationStep(final Speed followerSpeed, final Speed leaderSpeed,
             final Length headway, final Speed speedLimit, final Time currentTime)
@@ -160,7 +155,6 @@ public abstract class AbstractGtuFollowingModelMobil implements GtuFollowingMode
         return computeAccelerationStep(followerSpeed, leaderSpeed, headway, speedLimit, currentTime, getStepSize());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final AccelerationStep computeAccelerationStep(final Speed followerSpeed, final Speed leaderSpeed,
             final Length headway, final Speed speedLimit, final Time currentTime, final Duration stepSize)
@@ -172,7 +166,6 @@ public abstract class AbstractGtuFollowingModelMobil implements GtuFollowingMode
         return new AccelerationStep(newAcceleration, nextEvaluationTime, stepSize);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final AccelerationStep computeAccelerationStepWithNoLeader(final LaneBasedGtu gtu, final Length maxDistance,
             final Speed speedLimit) throws GtuException
@@ -180,7 +173,6 @@ public abstract class AbstractGtuFollowingModelMobil implements GtuFollowingMode
         return computeAccelerationStepWithNoLeader(gtu, maxDistance, speedLimit, getStepSize());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final AccelerationStep computeAccelerationStepWithNoLeader(final LaneBasedGtu gtu, final Length maxDistance,
             final Speed speedLimit, final Duration stepSize) throws GtuException
@@ -194,7 +186,6 @@ public abstract class AbstractGtuFollowingModelMobil implements GtuFollowingMode
          */
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Length minimumHeadway(final Speed followerSpeed, final Speed leaderSpeed, final Length precision,
             final Length maxDistance, final Speed speedLimit, final Speed followerMaximumSpeed)

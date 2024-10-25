@@ -60,14 +60,12 @@ public class RoadLayoutListener extends ChangeListener<Map<XsdTreeNode, CseData>
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void destroyData()
     {
         getData().clear();
     }
 
-    /** {@inheritDoc} */
     @Override
     protected boolean canBeIgnored(final XsdTreeNode node)
     {
@@ -103,7 +101,6 @@ public class RoadLayoutListener extends ChangeListener<Map<XsdTreeNode, CseData>
             /** Cached end offset. */
             private Length offsetEnd;
 
-            /** {@inheritDoc} */
             @Override
             public boolean hasNext()
             {
@@ -235,7 +232,6 @@ public class RoadLayoutListener extends ChangeListener<Map<XsdTreeNode, CseData>
                 return true;
             }
 
-            /** {@inheritDoc} */
             @Override
             public OffsetElement next()
             {

@@ -32,14 +32,12 @@ public class SubCollectionConstraint<T> implements Constraint<Collection<T>>
         this.objects = objects;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean accept(final Collection<T> value)
     {
         return this.objects.containsAll(value);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String failMessage()
     {
@@ -63,7 +61,6 @@ public class SubCollectionConstraint<T> implements Constraint<Collection<T>>
         return new SubCollectionConstraint<>(collection);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

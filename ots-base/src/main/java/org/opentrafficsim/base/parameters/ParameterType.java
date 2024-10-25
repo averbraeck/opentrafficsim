@@ -287,7 +287,6 @@ public class ParameterType<T> implements Serializable, Identifiable, Type<Parame
         return this.constraint;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

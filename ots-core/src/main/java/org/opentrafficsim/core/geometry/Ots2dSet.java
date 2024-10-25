@@ -66,49 +66,42 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
         this.minimumCellSize = minimumCellSize;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final int size()
     {
         return this.allShapes.size();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean isEmpty()
     {
         return this.allShapes.isEmpty();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean contains(final Object o)
     {
         return this.allShapes.contains(o);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Iterator<Polygon2d> iterator()
     {
         return new QuadTreeIterator();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Object[] toArray()
     {
         return this.allShapes.toArray();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final <T> T[] toArray(final T[] a)
     {
         return this.allShapes.toArray(a);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean add(final Polygon2d e)
     {
@@ -127,7 +120,6 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
         return this.allShapes.add(e);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean remove(final Object o)
     {
@@ -142,7 +134,6 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean containsAll(final Collection<?> c)
     {
@@ -156,7 +147,6 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean addAll(final Collection<? extends Polygon2d> c)
     {
@@ -171,7 +161,6 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean retainAll(final Collection<?> c)
     {
@@ -188,7 +177,6 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean removeAll(final Collection<?> c)
     {
@@ -205,7 +193,6 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void clear()
     {
@@ -234,7 +221,6 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
                 + this.minimumCellSize + ", quadTree=" + this.quadTree.toString(recursionDepth) + "]";
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
@@ -286,14 +272,12 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
         /** Remember the last returned result so we can remove it when requested. */
         private Polygon2d lastResult = null;
 
-        /** {@inheritDoc} */
         @Override
         public final boolean hasNext()
         {
             return this.theIterator.hasNext();
         }
 
-        /** {@inheritDoc} */
         @Override
         public final Polygon2d next()
         {
@@ -301,7 +285,6 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
             return this.lastResult;
         }
 
-        /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
         public final void remove()
@@ -314,7 +297,6 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -622,7 +604,6 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
                     + printLeaf(recursionDepth, 2) + ", RT: " + printLeaf(recursionDepth, 3) + "]";
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {

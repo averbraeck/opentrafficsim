@@ -79,7 +79,6 @@ public class SpeedSign extends AbstractLaneBasedObject
         return this.speed;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
@@ -92,7 +91,6 @@ public class SpeedSign extends AbstractLaneBasedObject
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj)
     {
@@ -156,7 +154,6 @@ public class SpeedSign extends AbstractLaneBasedObject
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

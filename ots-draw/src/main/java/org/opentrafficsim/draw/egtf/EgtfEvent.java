@@ -47,7 +47,6 @@ public class EgtfEvent extends EventObject
         ((Egtf) getSource()).interrupt();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

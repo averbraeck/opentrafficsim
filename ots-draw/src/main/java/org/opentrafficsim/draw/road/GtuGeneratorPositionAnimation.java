@@ -69,7 +69,6 @@ public class GtuGeneratorPositionAnimation extends OtsRenderable<GtuGeneratorPos
         new Queue(source, contextProvider);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void paint(final Graphics2D graphics, final ImageObserver observer)
     {
@@ -124,7 +123,6 @@ public class GtuGeneratorPositionAnimation extends OtsRenderable<GtuGeneratorPos
          */
         int getQueueCount();
 
-        /** {@inheritDoc} */
         @Override
         default double getZ()
         {

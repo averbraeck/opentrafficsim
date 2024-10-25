@@ -69,7 +69,6 @@ public class XsdAllValidator implements Function<XsdTreeNode, String>, EventList
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public String apply(final XsdTreeNode node)
     {
@@ -104,7 +103,6 @@ public class XsdAllValidator implements Function<XsdTreeNode, String>, EventList
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {

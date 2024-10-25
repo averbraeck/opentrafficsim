@@ -35,7 +35,6 @@ public abstract class AbstractHistoricalQueue<E, Q extends Queue<E>> extends Abs
 
     // Altering PriorityQueue methods
 
-    /** {@inheritDoc} */
     @Override
     public boolean offer(final E e)
     {
@@ -47,7 +46,6 @@ public abstract class AbstractHistoricalQueue<E, Q extends Queue<E>> extends Abs
         return added;
     }
 
-    /** {@inheritDoc} */
     @Override
     public E remove()
     {
@@ -56,7 +54,6 @@ public abstract class AbstractHistoricalQueue<E, Q extends Queue<E>> extends Abs
         return e;
     }
 
-    /** {@inheritDoc} */
     @Override
     public E poll()
     {
@@ -69,14 +66,12 @@ public abstract class AbstractHistoricalQueue<E, Q extends Queue<E>> extends Abs
 
     // Non-altering PriorityQueue methods
 
-    /** {@inheritDoc} */
     @Override
     public E peek()
     {
         return this.getCollection().peek();
     }
 
-    /** {@inheritDoc} */
     @Override
     public E element()
     {

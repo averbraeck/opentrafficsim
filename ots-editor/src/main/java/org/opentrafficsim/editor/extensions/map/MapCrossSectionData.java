@@ -57,21 +57,18 @@ public class MapCrossSectionData implements CrossSectionElementData
         this.sliceInfo = sliceInfo;
     }
 
-    /** {@inheritDoc} */
     @Override
     public OrientedPoint2d getLocation()
     {
         return this.location;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Polygon2d getContour()
     {
         return this.contour;
     }
 
-    /** {@inheritDoc} */
     @Override
     public OtsShape getShape()
     {
@@ -82,7 +79,6 @@ public class MapCrossSectionData implements CrossSectionElementData
         return this.shape;
     }
 
-    /** {@inheritDoc} */
     @Override
     public PolyLine2d getCenterLine()
     {
@@ -109,7 +105,6 @@ public class MapCrossSectionData implements CrossSectionElementData
         return this.sliceInfo.getWidth(position.si / this.centerLine.getLength());
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

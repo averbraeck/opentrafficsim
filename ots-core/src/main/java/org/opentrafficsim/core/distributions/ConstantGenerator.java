@@ -26,7 +26,6 @@ public class ConstantGenerator<O> implements Generator<O>
         this.value = value;
     }
 
-    /** {@inheritDoc} */
     @Override
     public O draw()
     {
@@ -42,7 +41,6 @@ public class ConstantGenerator<O> implements Generator<O>
         return this.value;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

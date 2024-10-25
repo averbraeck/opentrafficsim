@@ -49,7 +49,6 @@ public class AnticipationSpeed implements PerceptionCollector<SpeedSet, LaneBase
         this.lane = lane;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Supplier<SpeedSet> getIdentity()
     {
@@ -68,7 +67,6 @@ public class AnticipationSpeed implements PerceptionCollector<SpeedSet, LaneBase
         };
     }
 
-    /** {@inheritDoc} */
     @Override
     public PerceptionAccumulator<LaneBasedGtu, SpeedSet> getAccumulator()
     {
@@ -129,13 +127,11 @@ public class AnticipationSpeed implements PerceptionCollector<SpeedSet, LaneBase
         return (1 - f) * v + f * this.desiredSpeed;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Function<SpeedSet, SpeedSet> getFinalizer()
     {
         return new Function<SpeedSet, SpeedSet>()
         {
-            /** {@inheritDoc} */
             @Override
             public SpeedSet apply(final SpeedSet intermediate)
             {

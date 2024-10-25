@@ -1099,7 +1099,6 @@ public final class ConflictUtil
             return this.stopPhases.containsKey(stopLine.getId()) && this.stopPhases.get(stopLine.getId()).equals(StopPhase.RUN);
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -1135,7 +1134,6 @@ public final class ConflictUtil
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public boolean isBlocking()
         {

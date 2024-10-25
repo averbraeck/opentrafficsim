@@ -99,7 +99,6 @@ public class TurboRoundaboutDemo extends OtsSimulationApplication<TurboRoundabou
             super(simulator);
         }
 
-        /** {@inheritDoc} */
         @Override
         public void constructModel() throws SimRuntimeException
         {
@@ -115,7 +114,6 @@ public class TurboRoundaboutDemo extends OtsSimulationApplication<TurboRoundabou
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public RoadNetwork getNetwork()
         {

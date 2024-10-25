@@ -32,7 +32,6 @@ public class TypedFilter implements Filter
         this.filter = filter;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double[] getLocation()
     {
@@ -48,7 +47,6 @@ public class TypedFilter implements Filter
         return new LengthVector(getLocation(), LengthUnit.SI);
     }
 
-    /** {@inheritDoc} */
     @Override
     public double[] getTime()
     {
@@ -64,21 +62,18 @@ public class TypedFilter implements Filter
         return new DurationVector(getTime(), DurationUnit.SI);
     }
 
-    /** {@inheritDoc} */
     @Override
     public double[][] getSI(final Quantity<?, ?> quantity)
     {
         return this.filter.getSI(quantity);
     }
 
-    /** {@inheritDoc} */
     @Override
     public <K> K get(final Quantity<?, K> quantity)
     {
         return this.filter.get(quantity);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

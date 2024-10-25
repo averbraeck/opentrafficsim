@@ -49,7 +49,6 @@ public class CrossSectionElementTransceiver extends AbstractTransceiver
         this.network = network;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Object[] get(final Object[] address, final ReturnWrapper returnWrapper)
             throws RemoteException, Sim0MQException, SerializationException
@@ -85,7 +84,6 @@ public class CrossSectionElementTransceiver extends AbstractTransceiver
                 cse.getWidth(1.0), cse.getOffsetAtEnd()};
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

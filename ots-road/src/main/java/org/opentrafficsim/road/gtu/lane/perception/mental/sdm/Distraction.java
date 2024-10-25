@@ -135,7 +135,6 @@ public class Distraction
         return this.taskSupplier.getTask(gtu);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

@@ -43,14 +43,12 @@ public class HistoricalArrayList<E> extends AbstractHistoricalList<E, ArrayList<
         super(historyManager, new ArrayList<>(c));
     }
 
-    /** {@inheritDoc} */
     @Override
     public ArrayList<E> get()
     {
         return getCollection();
     }
 
-    /** {@inheritDoc} */
     @Override
     public ArrayList<E> get(final Time time)
     {
@@ -61,7 +59,6 @@ public class HistoricalArrayList<E> extends AbstractHistoricalList<E, ArrayList<
         return fill(time, new ArrayList<>());
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

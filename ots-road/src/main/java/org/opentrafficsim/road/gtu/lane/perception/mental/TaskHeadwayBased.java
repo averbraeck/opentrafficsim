@@ -34,7 +34,6 @@ public abstract class TaskHeadwayBased extends AbstractTask
     /** Current speed. */
     private Speed speed;
 
-    /** {@inheritDoc} */
     @Override
     public double calculateTaskDemand(final LanePerception perception, final LaneBasedGtu gtu, final Parameters parameters)
             throws ParameterException

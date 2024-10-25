@@ -40,7 +40,6 @@ public class LinkDataRoad implements LinkData<LaneDataRoad>
         return this.link;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final List<LaneDataRoad> getLaneDatas()
     {
@@ -52,21 +51,18 @@ public class LinkDataRoad implements LinkData<LaneDataRoad>
         return lanes;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Length getLength()
     {
         return this.link.getLength();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getId()
     {
         return this.link.getId();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final int hashCode()
     {
@@ -76,7 +72,6 @@ public class LinkDataRoad implements LinkData<LaneDataRoad>
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean equals(final Object obj)
     {
@@ -107,7 +102,6 @@ public class LinkDataRoad implements LinkData<LaneDataRoad>
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

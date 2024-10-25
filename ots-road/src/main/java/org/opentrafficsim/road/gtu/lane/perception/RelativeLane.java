@@ -160,7 +160,6 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
         return new RelativeLane(this.rank + relativeLane.rank);
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
@@ -170,7 +169,6 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj)
     {
@@ -194,7 +192,6 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
@@ -206,7 +203,6 @@ public class RelativeLane implements Comparable<RelativeLane>, Serializable
                 .append("]").toString();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final int compareTo(final RelativeLane rel)
     {

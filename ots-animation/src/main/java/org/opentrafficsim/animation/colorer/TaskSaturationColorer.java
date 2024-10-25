@@ -46,7 +46,6 @@ public class TaskSaturationColorer implements GtuColorer
         LEGEND.add(new LegendEntry(NA, "N/A", "N/A"));
     }
 
-    /** {@inheritDoc} */
     @Override
     public Color getColor(final Gtu gtu)
     {
@@ -74,14 +73,12 @@ public class TaskSaturationColorer implements GtuColorer
         return ColorInterpolator.interpolateColor(MAX, MID, Math.max(0.0, Math.min(1.0, (tsMax - ts) / range)));
     }
 
-    /** {@inheritDoc} */
     @Override
     public List<LegendEntry> getLegend()
     {
         return LEGEND;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

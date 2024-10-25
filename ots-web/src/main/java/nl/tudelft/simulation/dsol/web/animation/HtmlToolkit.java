@@ -46,7 +46,6 @@ public class HtmlToolkit extends Toolkit
     {
     }
 
-    /** {@inheritDoc} */
     @Override
     public Dimension getScreenSize() throws HeadlessException
     {
@@ -54,7 +53,6 @@ public class HtmlToolkit extends Toolkit
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int getScreenResolution() throws HeadlessException
     {
@@ -62,7 +60,6 @@ public class HtmlToolkit extends Toolkit
         return 0;
     }
 
-    /** {@inheritDoc} */
     @Override
     public ColorModel getColorModel() throws HeadlessException
     {
@@ -70,7 +67,6 @@ public class HtmlToolkit extends Toolkit
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String[] getFontList()
     {
@@ -78,7 +74,6 @@ public class HtmlToolkit extends Toolkit
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public FontMetrics getFontMetrics(Font font)
     {
@@ -86,14 +81,12 @@ public class HtmlToolkit extends Toolkit
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void sync()
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLToolkit.sync()");
     }
 
-    /** {@inheritDoc} */
     @Override
     public Image getImage(String filename)
     {
@@ -101,7 +94,6 @@ public class HtmlToolkit extends Toolkit
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Image getImage(URL url)
     {
@@ -109,7 +101,6 @@ public class HtmlToolkit extends Toolkit
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Image createImage(String filename)
     {
@@ -117,7 +108,6 @@ public class HtmlToolkit extends Toolkit
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Image createImage(URL url)
     {
@@ -125,7 +115,6 @@ public class HtmlToolkit extends Toolkit
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean prepareImage(Image image, int width, int height, ImageObserver observer)
     {
@@ -133,7 +122,6 @@ public class HtmlToolkit extends Toolkit
         return false;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int checkImage(Image image, int width, int height, ImageObserver observer)
     {
@@ -141,7 +129,6 @@ public class HtmlToolkit extends Toolkit
         return 0;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Image createImage(ImageProducer producer)
     {
@@ -149,7 +136,6 @@ public class HtmlToolkit extends Toolkit
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Image createImage(byte[] imagedata, int imageoffset, int imagelength)
     {
@@ -157,7 +143,6 @@ public class HtmlToolkit extends Toolkit
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public PrintJob getPrintJob(Frame frame, String jobtitle, Properties props)
     {
@@ -165,14 +150,12 @@ public class HtmlToolkit extends Toolkit
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void beep()
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLToolkit.beep()");
     }
 
-    /** {@inheritDoc} */
     @Override
     public Clipboard getSystemClipboard() throws HeadlessException
     {
@@ -180,7 +163,6 @@ public class HtmlToolkit extends Toolkit
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected EventQueue getSystemEventQueueImpl()
     {
@@ -189,7 +171,6 @@ public class HtmlToolkit extends Toolkit
         return this.eventQueue;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isModalityTypeSupported(ModalityType modalityType)
     {
@@ -197,7 +178,6 @@ public class HtmlToolkit extends Toolkit
         return false;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isModalExclusionTypeSupported(ModalExclusionType modalExclusionType)
     {
@@ -205,7 +185,6 @@ public class HtmlToolkit extends Toolkit
         return false;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Map<TextAttribute, ?> mapInputMethodHighlight(InputMethodHighlight highlight) throws HeadlessException
     {

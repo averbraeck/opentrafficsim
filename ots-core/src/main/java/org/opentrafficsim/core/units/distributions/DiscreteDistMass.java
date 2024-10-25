@@ -30,14 +30,12 @@ public class DiscreteDistMass extends DiscreteDistDoubleScalar.Rel<Mass, MassUni
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public Mass draw()
     {
         return new Mass(getDistribution().draw(), (MassUnit) getUnit());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

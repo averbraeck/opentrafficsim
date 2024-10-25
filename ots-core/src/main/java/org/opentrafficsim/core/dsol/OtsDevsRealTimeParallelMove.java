@@ -72,14 +72,12 @@ public class OtsDevsRealTimeParallelMove extends DevsRealTimeAnimator<Duration>
         return this.moveThreads;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected final Duration simulatorTimeForWallClockMillis(final double factor)
     {
         return new Duration(factor, DurationUnit.MILLISECOND);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
@@ -87,7 +85,6 @@ public class OtsDevsRealTimeParallelMove extends DevsRealTimeAnimator<Duration>
     }
 
     // TODO: update the run() method of OTSDEVSRTParallelMove and adapt to the latest parent class version in DSOL 3.03.07
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public void run()

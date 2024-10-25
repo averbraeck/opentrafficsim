@@ -29,7 +29,6 @@ public class MapSinkData extends MapLaneBasedObjectData implements SinkData
         super(map, node, editor);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

@@ -161,13 +161,11 @@ public class PublisherTest implements OtsModelInterface
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setStreamInformation(final StreamInformation streamInformation)
     {
     }
 
-    /** {@inheritDoc} */
     @Override
     public StreamInformation getStreamInformation()
     {
@@ -216,14 +214,12 @@ public class PublisherTest implements OtsModelInterface
             this.xml = xml;
         }
 
-        /** {@inheritDoc} */
         @Override
         public void notify(final Event event) throws RemoteException
         {
             System.err.println("Received event " + event);
         }
 
-        /** {@inheritDoc} */
         @Override
         public void constructModel() throws SimRuntimeException
         {
@@ -243,21 +239,18 @@ public class PublisherTest implements OtsModelInterface
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public Network getNetwork()
         {
             return this.network;
         }
 
-        /** {@inheritDoc} */
         @Override
         public void setStreamInformation(final StreamInformation streamInformation)
         {
             //
         }
 
-        /** {@inheritDoc} */
         @Override
         public StreamInformation getStreamInformation()
         {

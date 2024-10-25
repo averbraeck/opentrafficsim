@@ -68,7 +68,6 @@ public class OtsRunner extends OtsSimulationApplication<OtsRunnerModel>
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void setAnimationToggles()
     {
@@ -105,7 +104,6 @@ public class OtsRunner extends OtsSimulationApplication<OtsRunnerModel>
             this.scenario = scenario;
         }
 
-        /** {@inheritDoc} */
         @Override
         public void constructModel() throws SimRuntimeException
         {
@@ -125,7 +123,6 @@ public class OtsRunner extends OtsSimulationApplication<OtsRunnerModel>
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public RoadNetwork getNetwork()
         {

@@ -60,7 +60,6 @@ public class ChoiceListener implements ActionListener
         this.attributesTable = attributesTable;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void actionPerformed(final ActionEvent e)
     {

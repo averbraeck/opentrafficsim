@@ -17,15 +17,12 @@ import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 public interface LaneBasedStrategicalPlanner extends StrategicalPlanner
 {
 
-    /** {@inheritDoc} */
     @Override
     LaneBasedGtu getGtu();
 
-    /** {@inheritDoc} */
     @Override
     LaneBasedTacticalPlanner getTacticalPlanner();
 
-    /** {@inheritDoc} */
     @Override
     LaneBasedTacticalPlanner getTacticalPlanner(Time time);
 

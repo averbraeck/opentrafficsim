@@ -55,7 +55,6 @@ public class XsdTreeSelectionListener implements TreeSelectionListener, EventLis
         this.attributesTable = attributesTable;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void valueChanged(final TreeSelectionEvent e)
     {
@@ -132,7 +131,6 @@ public class XsdTreeSelectionListener implements TreeSelectionListener, EventLis
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {

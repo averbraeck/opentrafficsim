@@ -13,7 +13,6 @@ import org.opentrafficsim.xml.bindings.types.DoubleType;
 public class DoubleAdapter extends ExpressionAdapter<Double, DoubleType>
 {
 
-    /** {@inheritDoc} */
     @Override
     public DoubleType unmarshal(final String field)
     {

@@ -152,7 +152,6 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
         {
         }
 
-        /** {@inheritDoc} */
         @Override
         public LaneBasedStrategicalPlanner create(final LaneBasedGtu gtu, final Route route, final Node origin,
                 final Node destination) throws GtuException
@@ -304,14 +303,12 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
         /** */
         private static final long serialVersionUID = 20141027L;
 
-        /** {@inheritDoc} */
         @Override
         public final void constructModel() throws SimRuntimeException
         {
             //
         }
 
-        /** {@inheritDoc} */
         @Override
         public final RoadNetwork getNetwork()
         {

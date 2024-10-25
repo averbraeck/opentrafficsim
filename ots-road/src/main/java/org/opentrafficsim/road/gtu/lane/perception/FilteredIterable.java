@@ -36,7 +36,6 @@ public class FilteredIterable<T extends Headway> implements Iterable<T>
         this.predicate = predicate;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Iterator<T> iterator()
     {
@@ -49,7 +48,6 @@ public class FilteredIterable<T extends Headway> implements Iterable<T>
             /** net */
             private T next;
 
-            /** {@inheritDoc} */
             @SuppressWarnings("synthetic-access")
             @Override
             public boolean hasNext()
@@ -69,7 +67,6 @@ public class FilteredIterable<T extends Headway> implements Iterable<T>
                 return this.next != null;
             }
 
-            /** {@inheritDoc} */
             @Override
             public T next()
             {

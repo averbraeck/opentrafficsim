@@ -16,7 +16,6 @@ import org.opentrafficsim.xml.bindings.types.TimeType;
 public class TimeAdapter extends ScalarAdapter<Time, TimeType>
 {
 
-    /** {@inheritDoc} */
     @Override
     public TimeType unmarshal(final String field)
     {

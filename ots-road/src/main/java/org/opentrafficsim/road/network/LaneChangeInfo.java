@@ -35,7 +35,6 @@ public record LaneChangeInfo(int numberOfLaneChanges, Length remainingDistance, 
         Throw.whenNull(lateralDirectionality, "lat may not be null");
     }
 
-    /** {@inheritDoc} */
     @Override
     public int compareTo(final LaneChangeInfo o)
     {

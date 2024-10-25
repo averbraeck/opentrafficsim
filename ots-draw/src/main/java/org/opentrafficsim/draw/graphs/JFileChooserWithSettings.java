@@ -55,7 +55,6 @@ public class JFileChooserWithSettings extends JFileChooser
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

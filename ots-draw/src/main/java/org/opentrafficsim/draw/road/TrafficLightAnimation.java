@@ -70,7 +70,6 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLightDat
         super.paint(graphics, observer);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void destroy(final Contextualized contextProvider)
     {
@@ -78,7 +77,6 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLightDat
         this.text.destroy(contextProvider);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
@@ -119,7 +117,6 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLightDat
             super(source, text, dx, dy, textPlacement, color, contextualized, TextAnimation.RENDERWHEN10);
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {

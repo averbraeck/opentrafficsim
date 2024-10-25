@@ -51,7 +51,6 @@ public class AccelerationChecker extends AbstractLaneBasedMoveChecker
         this.minSpeed = minSpeed;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void checkMove(final LaneBasedGtu gtu) throws Exception
     {

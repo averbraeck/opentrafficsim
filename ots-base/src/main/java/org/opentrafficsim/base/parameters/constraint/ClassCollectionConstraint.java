@@ -43,7 +43,6 @@ public final class ClassCollectionConstraint<T> extends SubCollectionConstraint<
         return new ClassCollectionConstraint<>(collection);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

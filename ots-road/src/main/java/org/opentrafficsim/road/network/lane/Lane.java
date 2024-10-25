@@ -1298,7 +1298,6 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         this.cachedSpeedLimits.clear();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final LaneType getType()
     {
@@ -1444,7 +1443,6 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         return fraction(distance);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
@@ -1455,7 +1453,6 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     /** Cache of the hashCode. */
     private Integer cachedHashCode = null;
 
-    /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override
     public int hashCode()
@@ -1470,7 +1467,6 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         return this.cachedHashCode;
     }
 
-    /** {@inheritDoc} */
     @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     @Override
     public boolean equals(final Object obj)

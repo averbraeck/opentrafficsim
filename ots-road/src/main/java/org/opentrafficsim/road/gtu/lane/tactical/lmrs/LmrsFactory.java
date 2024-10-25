@@ -111,7 +111,6 @@ public class LmrsFactory extends AbstractLaneBasedTacticalPlannerFactory<Lmrs> i
 
     // TODO: use factory instead of constructors
 
-    /** {@inheritDoc} */
     @Override
     public final Parameters getParameters() throws ParameterException
     {
@@ -128,7 +127,6 @@ public class LmrsFactory extends AbstractLaneBasedTacticalPlannerFactory<Lmrs> i
         return parameters;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Lmrs create(final LaneBasedGtu gtu) throws GtuException
     {
@@ -147,7 +145,6 @@ public class LmrsFactory extends AbstractLaneBasedTacticalPlannerFactory<Lmrs> i
         return lmrs;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

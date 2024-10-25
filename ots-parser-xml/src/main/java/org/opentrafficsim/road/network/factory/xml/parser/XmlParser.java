@@ -332,7 +332,6 @@ public final class XmlParser implements Serializable
      */
     private static class DefaultsResolver implements EntityResolver
     {
-        /** {@inheritDoc} */
         @Override
         public InputSource resolveEntity(final String publicId, final String systemId)
         {

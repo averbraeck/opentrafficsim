@@ -472,7 +472,6 @@ public class Persistent<U extends Unit<U>, T extends DoubleScalarRel<U, T>, W ex
             0.9999999999982816, 0.9999999999982816, 0.9999999999982816, 0.9999999999982816, 0.9999999999982816,
             0.9999999999982816, 1.0000000000000000};
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

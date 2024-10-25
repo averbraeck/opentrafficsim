@@ -243,7 +243,6 @@ public class RampMeteringDemo extends AbstractSimulationScript
         return out;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected RoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
     {
@@ -371,7 +370,6 @@ public class RampMeteringDemo extends AbstractSimulationScript
         return this.parameterFactory;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {
@@ -404,7 +402,6 @@ public class RampMeteringDemo extends AbstractSimulationScript
         this.gtusInSimulation.remove(id);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void onSimulationEnd()
     {
@@ -535,7 +532,6 @@ public class RampMeteringDemo extends AbstractSimulationScript
                     RampMeteringDemo.this.getParameterFactory());
         }
 
-        /** {@inheritDoc} */
         @Override
         public LaneBasedGtuCharacteristics draw(final Node origin, final Node destination, final Category category,
                 final StreamInterface randomStream) throws GtuException
@@ -602,7 +598,6 @@ public class RampMeteringDemo extends AbstractSimulationScript
             return perception;
         }
 
-        /** {@inheritDoc} */
         @Override
         public OperationalPlan generateOperationalPlan(final Time startTime, final OrientedPoint2d locationAtStartTime)
                 throws GtuException, NetworkException, ParameterException
@@ -741,7 +736,6 @@ public class RampMeteringDemo extends AbstractSimulationScript
             this.settings = settings;
         }
 
-        /** {@inheritDoc} */
         @Override
         public SimpleOperationalPlan operate(final SimpleOperationalPlan simplePlan, final Parameters parameters)
                 throws OperationalPlanException, ParameterException
@@ -830,14 +824,12 @@ public class RampMeteringDemo extends AbstractSimulationScript
             return true;
         }
 
-        /** {@inheritDoc} */
         @Override
         public LateralDirectionality initiatedLaneChange()
         {
             return this.direction;
         }
 
-        /** {@inheritDoc} */
         @Override
         public void initiateLaneChange(final LateralDirectionality dir)
         {

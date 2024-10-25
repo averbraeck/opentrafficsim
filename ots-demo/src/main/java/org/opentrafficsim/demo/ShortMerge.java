@@ -163,7 +163,6 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         super(model, panel);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void setAnimationToggles()
     {
@@ -173,7 +172,6 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         getAnimationPanel().getAnimationPanel().showClass(SpeedSign.class);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void addTabs()
     {
@@ -263,7 +261,6 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             this.network = network;
         }
 
-        /** {@inheritDoc} */
         @Override
         public void constructModel() throws SimRuntimeException
         {
@@ -281,7 +278,6 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public RoadNetwork getNetwork()
         {

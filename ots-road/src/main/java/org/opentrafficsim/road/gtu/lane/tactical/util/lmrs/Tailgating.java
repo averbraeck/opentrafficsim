@@ -38,14 +38,12 @@ public interface Tailgating
     /** No tailgating. */
     Tailgating NONE = new Tailgating()
     {
-        /** {@inheritDoc} */
         @Override
         public void tailgate(final LanePerception perception, final Parameters parameters)
         {
             //
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -56,7 +54,6 @@ public interface Tailgating
     /** No tailgating, but social pressure exists. */
     Tailgating RHO_ONLY = new Tailgating()
     {
-        /** {@inheritDoc} */
         @Override
         public void tailgate(final LanePerception perception, final Parameters parameters)
         {
@@ -83,7 +80,6 @@ public interface Tailgating
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -94,7 +90,6 @@ public interface Tailgating
     /** Tailgating based on speed pressure. */
     Tailgating PRESSURE = new Tailgating()
     {
-        /** {@inheritDoc} */
         @Override
         public void tailgate(final LanePerception perception, final Parameters parameters)
         {
@@ -129,7 +124,6 @@ public interface Tailgating
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

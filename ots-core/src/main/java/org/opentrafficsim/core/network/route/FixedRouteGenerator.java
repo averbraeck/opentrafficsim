@@ -28,7 +28,6 @@ public class FixedRouteGenerator extends ConstantGenerator<Route> implements Ser
         super(route);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

@@ -180,7 +180,6 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
         return (T) this;
     }
 
-    /** {@inheritDoc} */
     @Override
     public OrientedPoint2d getLocation()
     {
@@ -205,14 +204,12 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
         return this.location;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Bounds2d getBounds()
     {
         return new Bounds2d(2.0, 2.0);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Polygon2d getContour()
     {
@@ -356,7 +353,6 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
         this.dy = y;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getZ() throws RemoteException
     {
@@ -525,21 +521,18 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
             super(source, contextualized);
         }
 
-        /** {@inheritDoc} */
         @Override
         public final void paint(final Graphics2D graphics, final ImageObserver observer)
         {
             getSource().paint(graphics, observer);
         }
 
-        /** {@inheritDoc} */
         @Override
         public boolean contains(final Point2d pointWorldCoordinates, final Bounds2d extent)
         {
             return false;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -584,7 +577,6 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
     /** Always render the Text. */
     public static final ScaleDependentRendering RENDERALWAYS = new ScaleDependentRendering()
     {
-        /** {@inheritDoc} */
         @Override
         public boolean isRendered(final double scale)
         {
@@ -595,7 +587,6 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
     /** Don't render texts when smaller than 1. */
     public static final ScaleDependentRendering RENDERWHEN1 = new ScaleDependentRendering()
     {
-        /** {@inheritDoc} */
         @Override
         public boolean isRendered(final double scale)
         {
@@ -606,7 +597,6 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
     /** Don't render texts when smaller than 2. */
     public static final ScaleDependentRendering RENDERWHEN10 = new ScaleDependentRendering()
     {
-        /** {@inheritDoc} */
         @Override
         public boolean isRendered(final double scale)
         {
@@ -617,7 +607,6 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
     /** Don't render texts when smaller than 2. */
     public static final ScaleDependentRendering RENDERWHEN100 = new ScaleDependentRendering()
     {
-        /** {@inheritDoc} */
         @Override
         public boolean isRendered(final double scale)
         {

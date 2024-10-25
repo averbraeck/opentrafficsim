@@ -31,35 +31,30 @@ public class AnimationCrossSectionElementData<T extends CrossSectionElement> imp
         this.element = element;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Polygon2d getContour()
     {
         return this.element.getContour();
     }
 
-    /** {@inheritDoc} */
     @Override
     public OtsShape getShape()
     {
         return this.element.getShape();
     }
 
-    /** {@inheritDoc} */
     @Override
     public PolyLine2d getCenterLine()
     {
         return this.element.getCenterLine();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getLinkId()
     {
         return this.element.getId();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Point2d getLocation()
     {
@@ -75,7 +70,6 @@ public class AnimationCrossSectionElementData<T extends CrossSectionElement> imp
         return this.element;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

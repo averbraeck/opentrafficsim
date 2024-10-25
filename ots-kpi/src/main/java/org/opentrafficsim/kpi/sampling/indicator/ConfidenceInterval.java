@@ -48,7 +48,6 @@ public class ConfidenceInterval<T extends DoubleScalarRel<?, T>>
         return this.upperValue;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

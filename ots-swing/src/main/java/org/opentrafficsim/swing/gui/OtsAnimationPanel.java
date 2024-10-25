@@ -511,7 +511,6 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void actionPerformed(final ActionEvent actionEvent)
     {
@@ -706,7 +705,6 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
             this.panel = panel;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final void run()
         {
@@ -734,7 +732,6 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
             this.panel.closeHandlerRegistered = true;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -742,56 +739,48 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void windowOpened(final WindowEvent e)
     {
         // No action
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void windowClosing(final WindowEvent e)
     {
         // No action
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void windowClosed(final WindowEvent e)
     {
         this.windowExited = true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void windowIconified(final WindowEvent e)
     {
         // No action
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void windowDeiconified(final WindowEvent e)
     {
         // No action
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void windowActivated(final WindowEvent e)
     {
         // No action
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void windowDeactivated(final WindowEvent e)
     {
         // No action
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {
@@ -820,7 +809,6 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
      */
     protected class UpdateTimer extends Thread
     {
-        /** {@inheritDoc} */
         @Override
         public final void run()
         {
@@ -841,7 +829,6 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -894,7 +881,6 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
             }
             this.addMouseListener(new MouseAdapter()
             {
-                /** {@inheritDoc} */
                 @SuppressWarnings("synthetic-access")
                 @Override
                 public void mouseClicked(final MouseEvent e)
@@ -923,7 +909,6 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
             }
             this.addMouseWheelListener(new InputListener(this)
             {
-                /** {@inheritDoc} */
                 @Override
                 public void mouseWheelMoved(final MouseWheelEvent e)
                 {
@@ -1020,7 +1005,6 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
             return null;
         }
 
-        /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
         public void paintComponent(final Graphics g)
@@ -1057,7 +1041,6 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
             super.paintComponent(g);
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

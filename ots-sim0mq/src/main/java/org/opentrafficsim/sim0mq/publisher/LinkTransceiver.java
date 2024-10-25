@@ -55,7 +55,6 @@ public class LinkTransceiver extends AbstractTransceiver
         this.linkIdSource = linkIdSource;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Object[] get(final Object[] address, final ReturnWrapper returnWrapper)
             throws RemoteException, Sim0MQException, SerializationException
@@ -77,7 +76,6 @@ public class LinkTransceiver extends AbstractTransceiver
                 link instanceof CrossSectionLink ? ((CrossSectionLink) link).getCrossSectionElementList().size() : 0};
     }
 
-    /** {@inheritDoc} */
     @Override
     public TransceiverInterface getIdSource(final int addressLevel, final ReturnWrapper returnWrapper)
             throws Sim0MQException, SerializationException
@@ -90,14 +88,12 @@ public class LinkTransceiver extends AbstractTransceiver
         return this.linkIdSource;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean hasIdSource()
     {
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

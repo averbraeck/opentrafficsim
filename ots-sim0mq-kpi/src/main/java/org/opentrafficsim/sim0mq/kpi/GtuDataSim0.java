@@ -35,49 +35,42 @@ public class GtuDataSim0 implements GtuData
         this.route = route;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getId()
     {
         return this.id;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getOriginId()
     {
         return this.route.getStartNode();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getDestinationId()
     {
         return this.route.getEndNode();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getGtuTypeId()
     {
         return this.gtuType;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getRouteId()
     {
         return this.route.getId();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Speed getReferenceSpeed()
     {
         return null; // WS 30-09-2023 this project seems broken and I don't know what to return here; there is no network
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
@@ -87,7 +80,6 @@ public class GtuDataSim0 implements GtuData
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj)
     {
@@ -108,7 +100,6 @@ public class GtuDataSim0 implements GtuData
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

@@ -48,35 +48,30 @@ public class AttributesTableModel extends AbstractTableModel
         this.treeTable = treeTable;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int getRowCount()
     {
         return this.node == null ? 0 : this.node.attributeCount();
     }
 
-    /** {@inheritDoc} */
     @Override
     public int getColumnCount()
     {
         return COLUMN_NAMES.length;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getColumnName(final int columnIndex)
     {
         return COLUMN_NAMES[columnIndex];
     }
 
-    /** {@inheritDoc} */
     @Override
     public Class<?> getColumnClass(final int columnIndex)
     {
         return String.class;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isCellEditable(final int rowIndex, final int columnIndex)
     {
@@ -88,7 +83,6 @@ public class AttributesTableModel extends AbstractTableModel
         return columnIndex == 1 && !this.node.isInclude();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Object getValueAt(final int rowIndex, final int columnIndex)
     {
@@ -110,7 +104,6 @@ public class AttributesTableModel extends AbstractTableModel
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex)
     {

@@ -514,7 +514,6 @@ public class Diagram
             return this.streamCondition;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -585,7 +584,6 @@ public class Diagram
             return this.y;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

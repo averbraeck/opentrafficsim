@@ -18,7 +18,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 public class CfBaRoomChecker extends CfRoomChecker
 {
 
-    /** {@inheritDoc} */
     @Override
     protected double headwayFactor(final Speed desiredSpeed, final Length desiredHeadway, final Speed generationSpeed,
             final Length generationHeadway, final Length leaderLength)

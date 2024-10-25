@@ -39,7 +39,6 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
         this.desiredSpeedModel = desiredSpeedModel;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Length desiredHeadway(final Parameters parameters, final Speed speed) throws ParameterException
     {
@@ -48,7 +47,6 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
         return this.desiredHeadwayModel.desiredHeadway(parameters, speed);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo) throws ParameterException
     {
@@ -57,7 +55,6 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
         return this.desiredSpeedModel.desiredSpeed(parameters, speedInfo);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Acceleration followingAcceleration(final Parameters parameters, final Speed speed,
             final SpeedLimitInfo speedLimitInfo, final PerceptionIterable<? extends Headway> leaders) throws ParameterException
@@ -90,7 +87,6 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
     protected abstract Acceleration followingAcceleration(Parameters parameters, Speed speed, Speed desiredSpeed,
             Length desiredHeadway, PerceptionIterable<? extends Headway> leaders) throws ParameterException;
 
-    /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override
     public String toString()
@@ -98,7 +94,6 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
         return getLongName();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void init(final LaneBasedGtu gtu)
     {

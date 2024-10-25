@@ -80,7 +80,6 @@ public final class DataStream<T extends Number>
         return this.thetaFree;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
@@ -91,7 +90,6 @@ public final class DataStream<T extends Number>
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj)
     {
@@ -112,7 +110,6 @@ public final class DataStream<T extends Number>
                 && Objects.equals(this.quantity, other.quantity);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

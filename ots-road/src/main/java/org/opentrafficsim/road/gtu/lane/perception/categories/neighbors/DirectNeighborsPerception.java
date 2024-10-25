@@ -51,7 +51,6 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
         this.headwayGtuType = headwayGtuType;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final SortedSet<HeadwayGtu> getFirstLeaders(final LateralDirectionality lat)
             throws ParameterException, NullPointerException, IllegalArgumentException
@@ -83,7 +82,6 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final SortedSet<HeadwayGtu> getFirstFollowers(final LateralDirectionality lat)
             throws ParameterException, NullPointerException, IllegalArgumentException
@@ -115,7 +113,6 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean isGtuAlongside(final LateralDirectionality lat)
             throws ParameterException, NullPointerException, IllegalArgumentException
@@ -161,7 +158,6 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
         return false;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> getLeaders(final RelativeLane lane)
     {
@@ -180,21 +176,18 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
                 RelativePosition.FRONT, RelativePosition.FRONT, RelativePosition.FRONT, RelativePosition.REAR), "");
         return new AbstractPerceptionReiterable<>(Try.assign(() -> getGtu(), "GtuException"))
         {
-            /** {@inheritDoc} */
             @Override
             protected Iterator<PrimaryIteratorEntry> primaryIterator()
             {
                 Iterator<Entry<LaneBasedGtu>> iterator = iterable.iterator();
                 return new Iterator<>()
                 {
-                    /** {@inheritDoc} */
                     @Override
                     public boolean hasNext()
                     {
                         return iterator.hasNext();
                     }
 
-                    /** {@inheritDoc} */
                     @Override
                     public AbstractPerceptionReiterable<LaneBasedGtu, HeadwayGtu, LaneBasedGtu>.PrimaryIteratorEntry next()
                     {
@@ -204,7 +197,6 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
                 };
             }
 
-            /** {@inheritDoc} */
             @Override
             protected HeadwayGtu perceive(final LaneBasedGtu object, final Length distance)
                     throws GtuException, ParameterException
@@ -214,7 +206,6 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
         };
     }
 
-    /** {@inheritDoc} */
     @Override
     public final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> getFollowers(final RelativeLane lane)
     {
@@ -233,21 +224,18 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
                 RelativePosition.FRONT, RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT), "");
         return new AbstractPerceptionReiterable<>(Try.assign(() -> getGtu(), "GtuException"))
         {
-            /** {@inheritDoc} */
             @Override
             protected Iterator<PrimaryIteratorEntry> primaryIterator()
             {
                 Iterator<Entry<LaneBasedGtu>> iterator = iterable.iterator();
                 return new Iterator<>()
                 {
-                    /** {@inheritDoc} */
                     @Override
                     public boolean hasNext()
                     {
                         return iterator.hasNext();
                     }
 
-                    /** {@inheritDoc} */
                     @Override
                     public AbstractPerceptionReiterable<LaneBasedGtu, HeadwayGtu, LaneBasedGtu>.PrimaryIteratorEntry next()
                     {
@@ -257,7 +245,6 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
                 };
             }
 
-            /** {@inheritDoc} */
             @Override
             protected HeadwayGtu perceive(final LaneBasedGtu object, final Length distance)
                     throws GtuException, ParameterException
@@ -284,7 +271,6 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
                 IllegalArgumentException.class, "Lateral directionality may only point to an existing adjacent lane.");
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

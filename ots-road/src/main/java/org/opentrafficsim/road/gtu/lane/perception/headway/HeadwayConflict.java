@@ -426,7 +426,6 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

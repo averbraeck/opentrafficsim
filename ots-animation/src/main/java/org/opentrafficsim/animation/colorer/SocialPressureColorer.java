@@ -42,7 +42,6 @@ public class SocialPressureColorer implements GtuColorer
         LEGEND.add(new LegendEntry(NA, "N/A", "N/A"));
     }
 
-    /** {@inheritDoc} */
     @Override
     public Color getColor(final Gtu gtu)
     {
@@ -57,14 +56,12 @@ public class SocialPressureColorer implements GtuColorer
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public List<LegendEntry> getLegend()
     {
         return LEGEND;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

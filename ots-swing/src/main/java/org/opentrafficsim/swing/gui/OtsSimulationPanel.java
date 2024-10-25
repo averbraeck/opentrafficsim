@@ -158,7 +158,6 @@ public class OtsSimulationPanel extends JPanel
         getOtsControlPanel().setSimulationControlButtons(false);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
@@ -189,7 +188,6 @@ public class OtsSimulationPanel extends JPanel
             super(tabPlacement);
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

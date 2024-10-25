@@ -173,7 +173,6 @@ public class Acceleration3d implements Serializable
         return new Acceleration(Scalar3d.cartesianToRadius(getX().si, getY().si, getZ().si), AccelerationUnit.SI);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

@@ -255,7 +255,6 @@ public class TrafficLightDetectorTest implements EventListener
     /** Storage for logged events. */
     private List<Event> loggedEvents = new ArrayList<>();
 
-    /** {@inheritDoc} */
     @Override
     public final void notify(final Event event) throws RemoteException
     {
@@ -277,14 +276,12 @@ public class TrafficLightDetectorTest implements EventListener
             super(simulator);
         }
 
-        /** {@inheritDoc} */
         @Override
         public final void constructModel() throws SimRuntimeException
         {
             //
         }
 
-        /** {@inheritDoc} */
         @Override
         public final RoadNetwork getNetwork()
         {

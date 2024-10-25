@@ -25,14 +25,12 @@ public class LinkIdTransceiver extends AbstractIdTransceiver
         super(network, "Link id transceiver");
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {
         return "LinkIdTransceiver [super=" + super.toString() + "]";
     }
 
-    /** {@inheritDoc} */
     @Override
     ImmutableSet<Link> getSet()
     {

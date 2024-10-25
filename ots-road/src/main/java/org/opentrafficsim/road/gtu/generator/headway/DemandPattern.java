@@ -23,14 +23,12 @@ public record DemandPattern(FrequencyVector demandVector, TimeVector timeVector,
         implements Arrivals
 {
 
-    /** {@inheritDoc} */
     @Override
     public Frequency getFrequency(final Time time, final boolean sliceStart)
     {
         return this.interpolation.interpolateVector(time, this.demandVector, this.timeVector, sliceStart);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Time nextTimeSlice(final Time time)
     {

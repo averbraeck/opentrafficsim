@@ -29,14 +29,12 @@ public class AnimationGtuGeneratorPositionData implements GtuGeneratorPositionDa
         this.position = position;
     }
 
-    /** {@inheritDoc} */
     @Override
     public OrientedPoint2d getLocation()
     {
         return this.position.getLocation();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Bounds2d getBounds()
     {
@@ -44,14 +42,12 @@ public class AnimationGtuGeneratorPositionData implements GtuGeneratorPositionDa
         return new Bounds2d(0.0, 4.75, -1.0, 1.0);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Polygon2d getContour()
     {
         throw new UnsupportedOperationException("GtuGeneratorPosition does not have a contour.");
     }
 
-    /** {@inheritDoc} */
     @Override
     public int getQueueCount()
     {
@@ -67,7 +63,6 @@ public class AnimationGtuGeneratorPositionData implements GtuGeneratorPositionDa
         return this.position;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

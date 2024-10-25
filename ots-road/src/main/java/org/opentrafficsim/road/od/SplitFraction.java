@@ -197,7 +197,6 @@ public class SplitFraction
         return draw(gtuType);
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
@@ -208,7 +207,6 @@ public class SplitFraction
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj)
     {
@@ -250,7 +248,6 @@ public class SplitFraction
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

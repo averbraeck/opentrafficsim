@@ -30,14 +30,12 @@ public class DiscreteDistEnergy extends DiscreteDistDoubleScalar.Rel<Energy, Ene
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public Energy draw()
     {
         return new Energy(getDistribution().draw(), (EnergyUnit) getUnit());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

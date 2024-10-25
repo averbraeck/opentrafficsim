@@ -52,7 +52,6 @@ public class SplitColorer implements GtuColorer
         LEGEND.add(new LegendEntry(UNKNOWN, "Unknown", "Unknown"));
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Color getColor(final Gtu gtu)
     {
@@ -146,14 +145,12 @@ public class SplitColorer implements GtuColorer
         return OTHER;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final List<LegendEntry> getLegend()
     {
         return LEGEND;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

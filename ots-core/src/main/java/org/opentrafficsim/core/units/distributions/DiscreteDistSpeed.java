@@ -30,14 +30,12 @@ public class DiscreteDistSpeed extends DiscreteDistDoubleScalar.Rel<Speed, Speed
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public Speed draw()
     {
         return new Speed(getDistribution().draw(), (SpeedUnit) getUnit());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

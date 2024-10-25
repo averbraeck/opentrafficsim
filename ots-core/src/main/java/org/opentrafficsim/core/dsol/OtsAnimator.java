@@ -40,7 +40,6 @@ public class OtsAnimator extends DevsRealTimeAnimator<Duration> implements OtsAn
         super(simulatorId);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void initialize(final OtsModelInterface model, final OtsReplication replication) throws SimRuntimeException
     {
@@ -49,7 +48,6 @@ public class OtsAnimator extends DevsRealTimeAnimator<Duration> implements OtsAn
         super.initialize(model, replication);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
             final OtsModelInterface model) throws SimRuntimeException, NamingException
@@ -81,7 +79,6 @@ public class OtsAnimator extends DevsRealTimeAnimator<Duration> implements OtsAn
         super.initialize(model, newReplication);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
             final OtsModelInterface model, final int replicationnr) throws SimRuntimeException, NamingException
@@ -92,21 +89,18 @@ public class OtsAnimator extends DevsRealTimeAnimator<Duration> implements OtsAn
         super.initialize(model, newReplication);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected Duration simulatorTimeForWallClockMillis(final double wallMilliseconds)
     {
         return new Duration(wallMilliseconds, DurationUnit.MILLISECOND);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final OtsReplication getReplication()
     {
         return (OtsReplication) super.getReplication();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

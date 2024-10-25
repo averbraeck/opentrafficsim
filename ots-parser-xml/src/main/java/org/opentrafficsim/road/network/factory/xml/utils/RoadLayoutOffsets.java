@@ -141,14 +141,12 @@ public class RoadLayoutOffsets
         Iterator<Serializable> tags = roadLayoutTag.getStripeOrLaneOrShoulder().iterator();
         Iterator<OffsetElement> elements = new Iterator<>()
         {
-            /** {@inheritDoc} */
             @Override
             public boolean hasNext()
             {
                 return tags.hasNext();
             }
 
-            /** {@inheritDoc} */
             @Override
             public OffsetElement next()
             {
@@ -303,7 +301,6 @@ public class RoadLayoutOffsets
             this.centerOffsetEnd = offsetElement.centerOffsetEnd();
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

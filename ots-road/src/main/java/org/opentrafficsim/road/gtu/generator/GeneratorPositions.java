@@ -132,7 +132,6 @@ public interface GeneratorPositions
             // let's sort the lanes by lateral position
             Collections.sort(lanes, new Comparator<Lane>()
             {
-                /** {@inheritDoc} */
                 @Override
                 public int compare(final Lane lane1, final Lane lane2)
                 {
@@ -168,7 +167,6 @@ public interface GeneratorPositions
         GeneratorZonePosition position = new GeneratorZonePosition(linkPositions);
         return new GeneratorPositions()
         {
-            /** {@inheritDoc} */
             @Override
             public GeneratorLanePosition draw(final GtuType gtuType, final LaneBasedGtuCharacteristics characteristics,
                     final Map<CrossSectionLink, Map<Integer, Integer>> unplaced) throws GtuException
@@ -180,7 +178,6 @@ public interface GeneratorPositions
                 return linkPosition.draw(gtuType, unplaced.get(linkPosition.getLink()), desiredSpeed);
             }
 
-            /** {@inheritDoc} */
             @Override
             public Set<GeneratorLanePosition> getAllPositions()
             {
@@ -262,14 +259,12 @@ public interface GeneratorPositions
             return this.link;
         }
 
-        /** {@inheritDoc} */
         @Override
         public int hashCode()
         {
             return Objects.hash(this.laneNumber, this.link, this.position);
         }
 
-        /** {@inheritDoc} */
         @Override
         public boolean equals(final Object obj)
         {
@@ -290,7 +285,6 @@ public interface GeneratorPositions
                     && Objects.equals(this.position, other.position);
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -465,7 +459,6 @@ public interface GeneratorPositions
             return Draw.drawWeighted(map, this.stream);
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -582,7 +575,6 @@ public interface GeneratorPositions
             return Draw.drawWeighted(map, stream);
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -642,7 +634,6 @@ public interface GeneratorPositions
             return this.biases.getOrDefault(gtuType, LaneBias.NONE);
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -789,7 +780,6 @@ public interface GeneratorPositions
             return 1.0 / (Math.pow(d + 1.0, this.bias) * (numberOfUnplacedGTUs + 1.0));
         }
 
-        /** {@inheritDoc} */
         @Override
         public int hashCode()
         {
@@ -804,7 +794,6 @@ public interface GeneratorPositions
             return result;
         }
 
-        /** {@inheritDoc} */
         @Override
         public boolean equals(final Object obj)
         {
@@ -843,7 +832,6 @@ public interface GeneratorPositions
             return true;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -902,14 +890,12 @@ public interface GeneratorPositions
                 this.value = value;
             }
 
-            /** {@inheritDoc} */
             @Override
             public double getValue(final Speed desiredSpeed)
             {
                 return this.value;
             }
 
-            /** {@inheritDoc} */
             @Override
             public int hashCode()
             {
@@ -921,7 +907,6 @@ public interface GeneratorPositions
                 return result;
             }
 
-            /** {@inheritDoc} */
             @Override
             public boolean equals(final Object obj)
             {
@@ -980,7 +965,6 @@ public interface GeneratorPositions
                 this.rightSpeed = rightSpeed;
             }
 
-            /** {@inheritDoc} */
             @Override
             public double getValue(final Speed desiredSpeed)
             {
@@ -990,7 +974,6 @@ public interface GeneratorPositions
                 return value < 0.0 ? 0.0 : (value > 1.0 ? 1.0 : value);
             }
 
-            /** {@inheritDoc} */
             @Override
             public int hashCode()
             {
@@ -1001,7 +984,6 @@ public interface GeneratorPositions
                 return result;
             }
 
-            /** {@inheritDoc} */
             @Override
             public boolean equals(final Object obj)
             {

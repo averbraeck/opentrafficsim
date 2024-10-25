@@ -539,7 +539,6 @@ public class LaneChange implements Serializable
         return availableDistance.gt(requiredDistance);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {
@@ -563,14 +562,12 @@ public class LaneChange implements Serializable
         /** Sine-shaped interpolation between center lines. */
         LaneChangePath SINE_INTERP = new InterpolatedLaneChangePath()
         {
-            /** {@inheritDoc} */
             @Override
             double longitudinalFraction(final double lateralFraction)
             {
                 return 1.0 - Math.acos(2.0 * (lateralFraction - 0.5)) / Math.PI;
             }
 
-            /** {@inheritDoc} */
             @Override
             double lateralFraction(final double longitudinalFraction)
             {
@@ -598,7 +595,6 @@ public class LaneChange implements Serializable
         /** A simple Bezier curve directly to the lane change target position. */
         LaneChangePath BEZIER = new LaneChangePath()
         {
-            /** {@inheritDoc} */
             @Override
             public OtsLine2d getPath(final Duration timeStep, final Length planDistance, final Speed meanSpeed,
                     final LanePosition from, final OrientedPoint2d startPosition,
@@ -613,14 +609,12 @@ public class LaneChange implements Serializable
         /** The target point (including rotation) for the coming time step is based on a sine wave. */
         LaneChangePath SINE = new SequentialLaneChangePath()
         {
-            /** {@inheritDoc} */
             @Override
             protected double lateralFraction(final double lcFraction)
             {
                 return -1.0 / (2 * Math.PI) * Math.sin(2 * Math.PI * lcFraction) + lcFraction;
             }
 
-            /** {@inheritDoc} */
             @Override
             protected double angle(final double width, final double cumulLcLength, final double totalLcLength)
             {
@@ -632,14 +626,12 @@ public class LaneChange implements Serializable
         /** The target point (including rotation) for the coming time step is based on a 3rd-degree polynomial. */
         LaneChangePath POLY3 = new SequentialLaneChangePath()
         {
-            /** {@inheritDoc} */
             @Override
             protected double lateralFraction(final double lcFraction)
             {
                 return 3 * (lcFraction * lcFraction) - 2 * (lcFraction * lcFraction * lcFraction);
             }
 
-            /** {@inheritDoc} */
             @Override
             protected double angle(final double width, final double cumulLcLength, final double totalLcLength)
             {
@@ -662,7 +654,6 @@ public class LaneChange implements Serializable
          */
         abstract class SequentialLaneChangePath implements LaneChangePath
         {
-            /** {@inheritDoc} */
             @Override
             public OtsLine2d getPath(final Duration timeStep, final Length planDistance, final Speed meanSpeed,
                     final LanePosition from, final OrientedPoint2d startPosition,
@@ -749,7 +740,6 @@ public class LaneChange implements Serializable
         abstract class InterpolatedLaneChangePath implements LaneChangePath
         {
 
-            /** {@inheritDoc} */
             @Override
             public OtsLine2d getPath(final Duration timeStep, final Length planDistance, final Speed meanSpeed,
                     final LanePosition from, final OrientedPoint2d startPosition,

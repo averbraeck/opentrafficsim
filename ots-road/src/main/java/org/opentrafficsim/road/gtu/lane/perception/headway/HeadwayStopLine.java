@@ -31,7 +31,6 @@ public final class HeadwayStopLine extends AbstractHeadwayLaneBasedObject
         super(ObjectType.STOPLINE, id, distance, lane);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

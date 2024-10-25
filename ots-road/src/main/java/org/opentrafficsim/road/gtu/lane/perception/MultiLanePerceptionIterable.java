@@ -59,7 +59,6 @@ public class MultiLanePerceptionIterable<P extends LaneBasedObject, H extends He
         this.iterables.put(lane, iterable);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Iterator<PrimaryIteratorEntry> primaryIterator()
     {
@@ -89,7 +88,6 @@ public class MultiLanePerceptionIterable<P extends LaneBasedObject, H extends He
             //
         }
 
-        /** {@inheritDoc} */
         @Override
         public boolean hasNext()
         {
@@ -97,7 +95,6 @@ public class MultiLanePerceptionIterable<P extends LaneBasedObject, H extends He
             return !this.elements.isEmpty();
         }
 
-        /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
         public PrimaryIteratorEntry next()
@@ -154,7 +151,6 @@ public class MultiLanePerceptionIterable<P extends LaneBasedObject, H extends He
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public H perceive(final U object, final Length distance) throws GtuException, ParameterException
     {

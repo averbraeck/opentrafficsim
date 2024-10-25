@@ -159,7 +159,6 @@ public interface ContinuousDistFloatScalar
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -334,7 +333,6 @@ public interface ContinuousDistFloatScalar
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {

@@ -82,7 +82,6 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public LaneBasedGtuCharacteristics draw(final Node origin, final Node destination, final Category category,
             final StreamInterface randomStream) throws GtuException

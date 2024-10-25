@@ -116,7 +116,6 @@ public class Angle3d implements Serializable
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

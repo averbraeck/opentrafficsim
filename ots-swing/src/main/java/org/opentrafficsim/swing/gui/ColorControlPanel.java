@@ -83,7 +83,6 @@ public class ColorControlPanel extends JPanel implements ActionListener
         // The first item added automatically becomes the current one and triggers a call to actionPerformed.
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void actionPerformed(final ActionEvent e)
     {
@@ -125,7 +124,6 @@ public class ColorControlPanel extends JPanel implements ActionListener
                     super("     ");
                 }
 
-                /** {@inheritDoc} */
                 @Override
                 public String toString()
                 {
@@ -157,7 +155,6 @@ public class ColorControlPanel extends JPanel implements ActionListener
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

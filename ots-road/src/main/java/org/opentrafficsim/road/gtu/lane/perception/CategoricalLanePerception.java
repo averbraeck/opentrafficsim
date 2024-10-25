@@ -70,7 +70,6 @@ public class CategoricalLanePerception extends AbstractPerception<LaneBasedGtu> 
         this.mental = mental;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final LaneStructure getLaneStructure() throws ParameterException
     {
@@ -82,14 +81,12 @@ public class CategoricalLanePerception extends AbstractPerception<LaneBasedGtu> 
         return this.laneStructure;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Mental getMental()
     {
         return this.mental;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void perceive() throws GtuException, NetworkException, ParameterException
     {

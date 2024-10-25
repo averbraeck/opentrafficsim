@@ -41,7 +41,6 @@ public class LaneBasedGtuFollowingTacticalPlannerFactory
         this.carFollowingModel = carFollowingModel;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Parameters getParameters()
     {
@@ -57,14 +56,12 @@ public class LaneBasedGtuFollowingTacticalPlannerFactory
         return params;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final LaneBasedGtuFollowingTacticalPlanner create(final LaneBasedGtu gtu) throws GtuException
     {
         return new LaneBasedGtuFollowingTacticalPlanner(this.carFollowingModel, gtu);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

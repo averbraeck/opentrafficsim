@@ -45,21 +45,18 @@ public class IdmPlusMulti extends AbstractIdm
         super(desiredHeadwayModel, desiredSpeedModel);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getName()
     {
         return "IDM+multi";
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getLongName()
     {
         return "Intelligent Driver Model+ with multi-leader anticipation.";
     }
 
-    /** {@inheritDoc} */
     @Override
     protected final Acceleration combineInteractionTerm(final Acceleration aFree, final Parameters parameters,
             final Speed speed, final Speed desiredSpeed, final Length desiredHeadway,

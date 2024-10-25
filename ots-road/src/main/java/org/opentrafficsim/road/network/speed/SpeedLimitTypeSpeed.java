@@ -27,7 +27,6 @@ public class SpeedLimitTypeSpeed extends SpeedLimitType<Speed>
         super(id, Speed.class);
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

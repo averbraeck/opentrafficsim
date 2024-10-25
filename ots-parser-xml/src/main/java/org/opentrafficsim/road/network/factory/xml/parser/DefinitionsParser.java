@@ -72,7 +72,6 @@ public final class DefinitionsParser
         // Consumers specify specific checks and how tags or type instances should be stored in the maps
         BiConsumerThrows<org.opentrafficsim.xml.generated.LinkType, LinkType> linkTypeConsumer = new BiConsumerThrows<>()
         {
-            /** {@inheritDoc} */
             @Override
             public void accept(final org.opentrafficsim.xml.generated.LinkType linkTag, final LinkType linkType)
                     throws XmlParserException
@@ -89,7 +88,6 @@ public final class DefinitionsParser
         };
         BiConsumerThrows<org.opentrafficsim.xml.generated.GtuTemplate, Object> gtuTemplateConsumer = new BiConsumerThrows<>()
         {
-            /** {@inheritDoc} */
             @Override
             public void accept(final org.opentrafficsim.xml.generated.GtuTemplate templateTag, final Object dummy)
                     throws XmlParserException
@@ -101,7 +99,6 @@ public final class DefinitionsParser
         };
         BiConsumerThrows<org.opentrafficsim.xml.generated.RoadLayout, Object> roadLayoutConsumer = new BiConsumerThrows<>()
         {
-            /** {@inheritDoc} */
             @Override
             public void accept(final org.opentrafficsim.xml.generated.RoadLayout layoutTag, final Object dummy)
             {
@@ -110,7 +107,6 @@ public final class DefinitionsParser
         };
         BiConsumerThrows<org.opentrafficsim.xml.generated.LaneBias, Object> biasConsumer = new BiConsumerThrows<>()
         {
-            /** {@inheritDoc} */
             @Override
             public void accept(final org.opentrafficsim.xml.generated.LaneBias biasTag, final Object dummy)
                     throws XmlParserException

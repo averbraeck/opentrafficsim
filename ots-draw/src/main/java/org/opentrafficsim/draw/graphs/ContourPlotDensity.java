@@ -43,35 +43,30 @@ public class ContourPlotDensity extends AbstractContourPlot<LinearDensity>
         return new BoundsPaintScale(boundaries, colorValues);
     }
 
-    /** {@inheritDoc} */
     @Override
     public GraphType getGraphType()
     {
         return GraphType.DENSITY_CONTOUR;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected double scale(final double si)
     {
         return LinearDensityUnit.PER_KILOMETER.getScale().fromStandardUnit(si);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected double getValue(final int item, final double cellLength, final double cellSpan)
     {
         return getDataPool().getTotalTime(item) / (cellLength * cellSpan);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected ContourDataType<LinearDensity, ?> getContourDataType()
     {
         return null; // density is present by default
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

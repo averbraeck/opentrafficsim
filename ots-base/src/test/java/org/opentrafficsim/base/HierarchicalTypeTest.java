@@ -125,7 +125,6 @@ public class HierarchicalTypeTest
             super(id);
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

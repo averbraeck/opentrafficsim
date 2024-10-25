@@ -164,7 +164,6 @@ public class TrafficLight extends AbstractLaneBasedObject
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

@@ -17,7 +17,6 @@ import org.opentrafficsim.xml.bindings.types.DirectionType;
 public class DirectionAdapter extends ScalarAdapter<Direction, DirectionType>
 {
 
-    /** {@inheritDoc} */
     @Override
     public DirectionType unmarshal(final String field)
     {

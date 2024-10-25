@@ -36,13 +36,11 @@ public class TaskHeadwayCollector implements PerceptionCollector<Duration, LaneB
         this.speed = speed;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Supplier<Duration> getIdentity()
     {
         return new Supplier<Duration>()
         {
-            /** {@inheritDoc} */
             @Override
             public Duration get()
             {
@@ -51,13 +49,11 @@ public class TaskHeadwayCollector implements PerceptionCollector<Duration, LaneB
         };
     }
 
-    /** {@inheritDoc} */
     @Override
     public PerceptionAccumulator<LaneBasedGtu, Duration> getAccumulator()
     {
         return new PerceptionAccumulator<LaneBasedGtu, Duration>()
         {
-            /** {@inheritDoc} */
             @Override
             public Intermediate<Duration> accumulate(final Intermediate<Duration> intermediate, final LaneBasedGtu object,
                     final Length distance)
@@ -69,13 +65,11 @@ public class TaskHeadwayCollector implements PerceptionCollector<Duration, LaneB
         };
     }
 
-    /** {@inheritDoc} */
     @Override
     public Function<Duration, Duration> getFinalizer()
     {
         return new Function<Duration, Duration>()
         {
-            /** {@inheritDoc} */
             @Override
             public Duration apply(final Duration intermediate)
             {

@@ -74,7 +74,6 @@ public class LaneCombinationList
         return this.map.get(lane1).contains(lane2);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

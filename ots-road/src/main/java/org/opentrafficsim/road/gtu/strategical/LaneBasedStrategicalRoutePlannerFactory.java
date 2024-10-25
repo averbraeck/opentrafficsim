@@ -86,7 +86,6 @@ public class LaneBasedStrategicalRoutePlannerFactory
         this.routeGenerator = routeGenerator;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Speed peekDesiredSpeed(final GtuType gtuType, final Speed speedLimit, final Speed maxGtuSpeed)
             throws GtuException
@@ -94,7 +93,6 @@ public class LaneBasedStrategicalRoutePlannerFactory
         return this.tacticalPlannerFactory.peekDesiredSpeed(gtuType, speedLimit, maxGtuSpeed, peekParameters(gtuType));
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Length peekDesiredHeadway(final GtuType gtuType, final Speed speed) throws GtuException
     {
@@ -125,7 +123,6 @@ public class LaneBasedStrategicalRoutePlannerFactory
         return this.peekedParameters;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final LaneBasedStrategicalRoutePlanner create(final LaneBasedGtu gtu, final Route route, final Node origin,
             final Node destination) throws GtuException
@@ -149,7 +146,6 @@ public class LaneBasedStrategicalRoutePlannerFactory
         return parameters;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

@@ -37,7 +37,6 @@ public class DetectorType extends GtuCompatibleInfraType<DetectorType, Detector>
         super(id, parent);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

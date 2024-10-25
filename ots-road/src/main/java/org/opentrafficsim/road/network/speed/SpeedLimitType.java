@@ -61,7 +61,6 @@ public class SpeedLimitType<T> implements Serializable, Identifiable, Type<Speed
         return this.infoClass;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final int hashCode()
     {
@@ -72,7 +71,6 @@ public class SpeedLimitType<T> implements Serializable, Identifiable, Type<Speed
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean equals(final Object obj)
     {
@@ -100,7 +98,6 @@ public class SpeedLimitType<T> implements Serializable, Identifiable, Type<Speed
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

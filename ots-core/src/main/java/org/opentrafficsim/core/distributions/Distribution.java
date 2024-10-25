@@ -79,7 +79,6 @@ public class Distribution<O> implements Generator<O>, Serializable
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final O draw() throws ProbabilityException
     {
@@ -224,7 +223,6 @@ public class Distribution<O> implements Generator<O>, Serializable
         return this.generators.size();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final int hashCode()
     {
@@ -238,7 +236,6 @@ public class Distribution<O> implements Generator<O>, Serializable
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:needbraces")
     public final boolean equals(final Object obj)
@@ -269,7 +266,6 @@ public class Distribution<O> implements Generator<O>, Serializable
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
@@ -336,7 +332,6 @@ public class Distribution<O> implements Generator<O>, Serializable
             return this.object;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final int hashCode()
         {
@@ -349,7 +344,6 @@ public class Distribution<O> implements Generator<O>, Serializable
             return result;
         }
 
-        /** {@inheritDoc} */
         @Override
         @SuppressWarnings("checkstyle:needbraces")
         public final boolean equals(final Object obj)
@@ -373,7 +367,6 @@ public class Distribution<O> implements Generator<O>, Serializable
             return true;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {

@@ -30,7 +30,6 @@ public class GaussKernelShape implements KernelShape
         this.tau2 = 2.0 * tau * tau;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double weight(final double c, final double dx, final double dt)
     {
@@ -38,7 +37,6 @@ public class GaussKernelShape implements KernelShape
         return Math.exp(-(dx * dx) / this.sigma2 - dtt * dtt / this.tau2);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

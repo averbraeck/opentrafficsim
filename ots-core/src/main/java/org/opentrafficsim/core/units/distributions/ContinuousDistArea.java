@@ -30,14 +30,12 @@ public class ContinuousDistArea extends ContinuousDistDoubleScalar.Rel<Area, Are
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public Area draw()
     {
         return new Area(getDistribution().draw(), (AreaUnit) getDisplayUnit());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

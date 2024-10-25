@@ -86,7 +86,6 @@ public abstract class AbstractHistoricalCollection<E, C extends Collection<E>>
 
     // Altering Collection methods
 
-    /** {@inheritDoc} */
     @Override
     public boolean add(final E value)
     {
@@ -98,7 +97,6 @@ public abstract class AbstractHistoricalCollection<E, C extends Collection<E>>
         return added;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean addAll(final Collection<? extends E> c)
     {
@@ -110,14 +108,12 @@ public abstract class AbstractHistoricalCollection<E, C extends Collection<E>>
         return changed;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void clear()
     {
         new LinkedHashSet<>(this.current).forEach(this::remove);
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("unchecked")
     public boolean remove(final Object value)
@@ -130,7 +126,6 @@ public abstract class AbstractHistoricalCollection<E, C extends Collection<E>>
         return removed;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean removeAll(final Collection<?> c)
     {
@@ -142,7 +137,6 @@ public abstract class AbstractHistoricalCollection<E, C extends Collection<E>>
         return changed;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean retainAll(final Collection<?> c)
     {
@@ -160,49 +154,42 @@ public abstract class AbstractHistoricalCollection<E, C extends Collection<E>>
 
     // Non-altering Collection methods
 
-    /** {@inheritDoc} */
     @Override
     public int size()
     {
         return this.current.size();
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isEmpty()
     {
         return this.current.isEmpty();
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean contains(final Object o)
     {
         return this.current.contains(o);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Iterator<E> iterator()
     {
         return Collections.unmodifiableCollection(this.current).iterator();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Object[] toArray()
     {
         return this.current.toArray();
     }
 
-    /** {@inheritDoc} */
     @Override
     public <T> T[] toArray(final T[] a)
     {
         return this.current.toArray(a);
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean containsAll(final Collection<?> c)
     {
@@ -243,7 +230,6 @@ public abstract class AbstractHistoricalCollection<E, C extends Collection<E>>
          */
         public abstract void restore(C collection);
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -278,14 +264,12 @@ public abstract class AbstractHistoricalCollection<E, C extends Collection<E>>
             super(time, value);
         }
 
-        /** {@inheritDoc} */
         @Override
         public void restore(final C collection)
         {
             collection.remove(getValue()); // events are only created upon effective addition, so we can remove it
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -320,14 +304,12 @@ public abstract class AbstractHistoricalCollection<E, C extends Collection<E>>
             super(time, value);
         }
 
-        /** {@inheritDoc} */
         @Override
         public void restore(final C collection)
         {
             collection.add(getValue()); // events are only created upon effective removal, so we can add it
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

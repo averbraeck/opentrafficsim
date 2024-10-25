@@ -56,49 +56,42 @@ public class OffsetRectangleShape implements OtsShape
         this.midPoint = new Point2d(minX + this.dx, minY + this.dy);
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getMinX()
     {
         return this.minX;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getMaxX()
     {
         return this.maxX;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getMinY()
     {
         return this.minY;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getMaxY()
     {
         return this.maxY;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean contains(final double x, final double y)
     {
         return this.minX < x & x < this.maxX & this.minY < y & y < this.maxY;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Point2d midPoint()
     {
         return this.midPoint;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double signedDistance(final Point2d point)
     {
@@ -107,7 +100,6 @@ public class OffsetRectangleShape implements OtsShape
         return Math.hypot(Math.max(qx, 0.0), Math.max(qy, 0.0)) + Math.min(Math.max(qx, qy), 0.0);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Polygon2d asPolygon()
     {
@@ -119,7 +111,6 @@ public class OffsetRectangleShape implements OtsShape
         return this.polygon;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

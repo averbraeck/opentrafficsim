@@ -47,7 +47,6 @@ public class AttributesStringFunction extends AbstractStringFunction
         this.separator = separator;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Function<XsdTreeNode, String> getStringFunction()
     {

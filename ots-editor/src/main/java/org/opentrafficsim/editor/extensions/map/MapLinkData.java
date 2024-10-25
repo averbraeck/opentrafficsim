@@ -212,7 +212,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void destroy()
     {
@@ -243,21 +242,18 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public OrientedPoint2d getLocation()
     {
         return this.location;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Polygon2d getContour()
     {
         return this.contour;
     }
 
-    /** {@inheritDoc} */
     @Override
     public OtsShape getShape()
     {
@@ -268,35 +264,30 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         return this.shape;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getId()
     {
         return this.id;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isConnector()
     {
         return false;
     }
 
-    /** {@inheritDoc} */
     @Override
     public PolyLine2d getCenterLine()
     {
         return this.flattenedDesignLine;
     }
 
-    /** {@inheritDoc} */
     @Override
     public PolyLine2d getLine()
     {
         return OtsLocatable.transformLine(this.flattenedDesignLine, this.location);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {
@@ -676,14 +667,12 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         Try.execute(() -> this.fireEvent(LAYOUT_REBUILT, this), "Unable to fire LAYOUT event.");
     }
 
-    /** {@inheritDoc} */
     @Override
     public EventListenerMap getEventListenerMap() throws RemoteException
     {
         return this.eventListenerMap;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void evalChanged()
     {
@@ -784,7 +773,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         /** Polyline coordinates. */
         public SortedMap<XsdTreeNode, Point2d> coordinates = new TreeMap<>(new Comparator<>()
         {
-            /** {@inheritDoc} */
             @Override
             public int compare(final XsdTreeNode o1, final XsdTreeNode o2)
             {
@@ -793,7 +781,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             }
         });
 
-        /** {@inheritDoc} */
         @Override
         public void notify(final Event event) throws RemoteException
         {
@@ -1213,7 +1200,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

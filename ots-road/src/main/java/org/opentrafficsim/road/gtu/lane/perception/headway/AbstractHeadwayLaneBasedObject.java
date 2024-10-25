@@ -89,7 +89,6 @@ public abstract class AbstractHeadwayLaneBasedObject extends AbstractHeadwayCopy
         this.lane = lane;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Lane getLane()
     {

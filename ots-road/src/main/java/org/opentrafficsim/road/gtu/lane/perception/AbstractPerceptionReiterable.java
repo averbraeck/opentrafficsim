@@ -90,7 +90,6 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
      */
     protected abstract H perceive(U object, Length distance) throws GtuException, ParameterException;
 
-    /** {@inheritDoc} */
     @Override
     public final synchronized H first()
     {
@@ -132,21 +131,18 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean isEmpty()
     {
         return first() == null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Iterator<H> iterator()
     {
         return new PerceptionIterator();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final <C, I> C collect(final Supplier<I> identity, final PerceptionAccumulator<? super U, I> accumulator,
             final Function<I, C> finalizer)
@@ -170,7 +166,6 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
         return finalizer.apply(intermediate.getObject());
     }
 
-    /** {@inheritDoc} */
     @Override
     public Iterator<U> underlying()
     {
@@ -184,7 +179,6 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
             /** Next iterator entry. */
             private SecondaryIteratorEntry next = firstInContext;
 
-            /** {@inheritDoc} */
             @Override
             public boolean hasNext()
             {
@@ -192,7 +186,6 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
                 return this.next != null;
             }
 
-            /** {@inheritDoc} */
             @Override
             public U next()
             {
@@ -213,7 +206,6 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
         };
     }
 
-    /** {@inheritDoc} */
     @Override
     public Iterator<UnderlyingDistance<U>> underlyingWithDistance()
     {
@@ -227,7 +219,6 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
             /** Next iterator entry. */
             private SecondaryIteratorEntry next = firstInContext;
 
-            /** {@inheritDoc} */
             @Override
             public boolean hasNext()
             {
@@ -235,7 +226,6 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
                 return this.next != null;
             }
 
-            /** {@inheritDoc} */
             @Override
             public UnderlyingDistance<U> next()
             {
@@ -275,7 +265,6 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
             this.next = AbstractPerceptionReiterable.this.first;
         }
 
-        /** {@inheritDoc} */
         @Override
         public boolean hasNext()
         {
@@ -283,7 +272,6 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
             return this.next != null;
         }
 
-        /** {@inheritDoc} */
         @Override
         public H next()
         {
@@ -360,7 +348,6 @@ public abstract class AbstractPerceptionReiterable<P extends LaneBasedObject, H 
             this.distance = distance;
         }
 
-        /** {@inheritDoc} */
         @Override
         public int compareTo(final PrimaryIteratorEntry o)
         {

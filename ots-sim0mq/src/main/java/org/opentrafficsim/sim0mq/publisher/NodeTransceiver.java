@@ -51,7 +51,6 @@ public class NodeTransceiver extends AbstractTransceiver
         this.nodeIdSource = nodeIdSource;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Object[] get(final Object[] address, final ReturnWrapper returnWrapper)
             throws RemoteException, Sim0MQException, SerializationException
@@ -74,7 +73,6 @@ public class NodeTransceiver extends AbstractTransceiver
                 new Direction(nodeLocation.getDirZ(), DirectionUnit.EAST_DEGREE), node.getLinks().size()};
     }
 
-    /** {@inheritDoc} */
     @Override
     public TransceiverInterface getIdSource(final int addressLevel, final ReturnWrapper returnWrapper)
             throws Sim0MQException, SerializationException
@@ -87,14 +85,12 @@ public class NodeTransceiver extends AbstractTransceiver
         return this.nodeIdSource;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean hasIdSource()
     {
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

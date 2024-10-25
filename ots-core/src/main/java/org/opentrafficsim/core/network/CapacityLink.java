@@ -43,21 +43,18 @@ public class CapacityLink extends Link implements Capacity
         this.capacity = capacity;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Frequency getCapacity()
     {
         return this.capacity;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void setCapacity(final Frequency capacity)
     {
         this.capacity = capacity;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

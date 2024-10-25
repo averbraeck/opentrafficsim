@@ -44,7 +44,6 @@ public class HistoricalValue<T> extends AbstractHistorical<T, EventValue<T>> imp
         set(initialValue);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void set(final T value)
     {
@@ -58,14 +57,12 @@ public class HistoricalValue<T> extends AbstractHistorical<T, EventValue<T>> imp
         addEvent(new EventValue<>(this.lastTime, value));
     }
 
-    /** {@inheritDoc} */
     @Override
     public final T get()
     {
         return this.lastValue;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final T get(final Time time)
     {
@@ -78,7 +75,6 @@ public class HistoricalValue<T> extends AbstractHistorical<T, EventValue<T>> imp
         return event == null ? null : event.getValue();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

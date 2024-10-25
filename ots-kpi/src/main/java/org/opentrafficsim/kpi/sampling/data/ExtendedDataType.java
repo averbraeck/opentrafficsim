@@ -157,7 +157,6 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuData> extends DataT
         return value1;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

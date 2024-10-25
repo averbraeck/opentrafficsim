@@ -31,7 +31,6 @@ public class Centroid extends Node
         super(network, id, point);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void addLink(final Link link)
     {
@@ -39,14 +38,12 @@ public class Centroid extends Node
         super.addLink(link);
     }
 
-    /** {@inheritDoc} */
     @Override
     public NodeType getType()
     {
         return NodeType.CENTROID;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isCentroid()
     {

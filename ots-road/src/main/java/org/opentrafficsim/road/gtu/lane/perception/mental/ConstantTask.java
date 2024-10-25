@@ -29,7 +29,6 @@ public class ConstantTask extends AbstractTask
         setTaskDemand(taskDemand);
     }
 
-    /** {@inheritDoc} */
     @Override
     public double calculateTaskDemand(final LanePerception perception, final LaneBasedGtu gtu, final Parameters parameters)
             throws ParameterException, GtuException

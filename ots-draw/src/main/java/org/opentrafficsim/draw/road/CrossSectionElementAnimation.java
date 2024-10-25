@@ -50,7 +50,6 @@ public class CrossSectionElementAnimation<L extends CrossSectionElementData> ext
         this.paths = PaintPolygons.getPaths(OtsLocatable.relativeContour(source).getPointList());
     }
 
-    /** {@inheritDoc} */
     @Override
     public void paint(final Graphics2D graphics, final ImageObserver observer)
     {
@@ -63,7 +62,6 @@ public class CrossSectionElementAnimation<L extends CrossSectionElementData> ext
         resetRendering(graphics);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {
@@ -105,7 +103,6 @@ public class CrossSectionElementAnimation<L extends CrossSectionElementData> ext
      */
     public interface ShoulderData extends CrossSectionElementData
     {
-        /** {@inheritDoc} */
         @Override
         default double getZ()
         {

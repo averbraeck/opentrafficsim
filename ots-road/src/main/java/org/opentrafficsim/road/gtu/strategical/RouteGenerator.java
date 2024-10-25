@@ -88,7 +88,6 @@ public interface RouteGenerator
             this.linkWeight = linkWeight;
         }
 
-        /** {@inheritDoc} */
         @Override
         public Route getRoute(final Node origin, final Node destination, final GtuType gtuType)
         {
@@ -153,7 +152,6 @@ public interface RouteGenerator
                     origin, destination, viaNodes);
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

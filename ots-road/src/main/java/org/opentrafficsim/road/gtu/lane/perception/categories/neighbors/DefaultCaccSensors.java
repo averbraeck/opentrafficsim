@@ -30,7 +30,6 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuSimple;
 public class DefaultCaccSensors implements HeadwayGtuType
 {
 
-    /** {@inheritDoc} */
     @Override
     public HeadwayGtu createDownstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
             final Length distance) throws GtuException, ParameterException
@@ -81,7 +80,6 @@ public class DefaultCaccSensors implements HeadwayGtuType
                 status.toArray(new GtuStatus[status.size()]));
     }
 
-    /** {@inheritDoc} */
     @Override
     public HeadwayGtu createUpstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
             final Length distance) throws GtuException, ParameterException
@@ -89,7 +87,6 @@ public class DefaultCaccSensors implements HeadwayGtuType
         throw new UnsupportedOperationException("Default CACC sensors can only determine leaders.");
     }
 
-    /** {@inheritDoc} */
     @Override
     public HeadwayGtu createParallelGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
             final Length overlapFront, final Length overlap, final Length overlapRear) throws GtuException

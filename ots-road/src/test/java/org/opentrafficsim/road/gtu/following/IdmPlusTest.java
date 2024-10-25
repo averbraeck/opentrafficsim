@@ -353,14 +353,12 @@ class IDMPlusTestModel extends AbstractOtsModel
         super(simulator);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void constructModel() throws SimRuntimeException
     {
         // do nothing.
     }
 
-    /** {@inheritDoc} */
     @Override
     public RoadNetwork getNetwork()
     {

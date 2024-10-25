@@ -110,7 +110,6 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
         simulator.addListener(this, Replication.START_REPLICATION_EVENT);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void paintComponent(final HtmlGraphics2d g2)
     {
@@ -204,7 +203,6 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
         }
     }
 
-    /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
     public void notify(final Event event) throws RemoteException

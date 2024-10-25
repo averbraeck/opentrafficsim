@@ -35,7 +35,6 @@ public interface HistoricalCollection<E> extends Collection<E>
      */
     Collection<E> get(Time time);
 
-    /** {@inheritDoc} */
     @Override
     default boolean removeIf(Predicate<? super E> filter)
     {

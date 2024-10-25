@@ -61,7 +61,6 @@ public class KeyValidator extends XPathValidator implements EventListener
                 IllegalArgumentException.class, "The given node is not an xsd:key or xsd:unique node.");
     }
 
-    /** {@inheritDoc} */
     @Override
     public void addNode(final XsdTreeNode node)
     {
@@ -100,7 +99,6 @@ public class KeyValidator extends XPathValidator implements EventListener
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void removeNode(final XsdTreeNode node)
     {
@@ -110,7 +108,6 @@ public class KeyValidator extends XPathValidator implements EventListener
         node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String validate(final XsdTreeNode node)
     {
@@ -157,7 +154,6 @@ public class KeyValidator extends XPathValidator implements EventListener
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {

@@ -165,7 +165,6 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         this.root = new SimpleLaneRecord(lane, this.rootPosition.neg(), null);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void init() throws NetworkException
     {
@@ -340,7 +339,6 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                 "Unable to obtain position %s of GTU.", positionType);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {
@@ -380,7 +378,6 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         return this.conflictRule.determinePriority(this);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Length getLength()
     {
@@ -488,7 +485,6 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
         conf2.otherConflict = conf1;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {
@@ -520,7 +516,6 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             this.conflict = conflict;
         }
 
-        /** {@inheritDoc} */
         @Override
         public void init() throws NetworkException
         {
@@ -537,7 +532,6 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             return this.conflict;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -564,7 +558,6 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             this.wrappedType = wrappedType;
         }
 
-        /** {@inheritDoc} */
         @Override
         public HeadwayGtu createHeadwayGtu(final LaneBasedGtu perceivingGtu, final LaneBasedObject reference,
                 final LaneBasedGtu perceivedGtu, final Length dist, final boolean downstream)
@@ -595,7 +588,6 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public HeadwayGtu createDownstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length distance) throws GtuException, ParameterException
@@ -603,7 +595,6 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             throw new UnsupportedOperationException("OverlapHeadway is a pass-through type, no actual perception is allowed.");
         }
 
-        /** {@inheritDoc} */
         @Override
         public HeadwayGtu createUpstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length distance) throws GtuException, ParameterException
@@ -611,7 +602,6 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             throw new UnsupportedOperationException("OverlapHeadway is a pass-through type, no actual perception is allowed.");
         }
 
-        /** {@inheritDoc} */
         @Override
         public HeadwayGtu createParallelGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length overlapFront, final Length overlap, final Length overlapRear) throws GtuException
@@ -654,7 +644,6 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             this.base = base.iterator();
         }
 
-        /** {@inheritDoc} */
         @Override
         protected Iterator<PrimaryIteratorEntry> primaryIterator()
         {
@@ -666,7 +655,6 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                 /** Next entry. */
                 private PrimaryIteratorEntry next;
 
-                /** {@inheritDoc} */
                 @Override
                 public boolean hasNext()
                 {
@@ -695,7 +683,6 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                     return this.next != null;
                 }
 
-                /** {@inheritDoc} */
                 @Override
                 public PrimaryIteratorEntry next()
                 {
@@ -711,7 +698,6 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             return new ConflictGtuIterator();
         }
 
-        /** {@inheritDoc} */
         @Override
         protected HeadwayGtu perceive(final LaneBasedGtu object, final Length distance) throws GtuException, ParameterException
         {
@@ -740,7 +726,6 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             this.base = base.iterator();
         }
 
-        /** {@inheritDoc} */
         @Override
         public Iterator<Entry<LaneBasedGtu>> iterator()
         {
@@ -748,14 +733,12 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             {
                 private int index = 0;
 
-                /** {@inheritDoc} */
                 @Override
                 public Entry<LaneBasedGtu> next()
                 {
                     return Reiterable.this.soFar.get(this.index++);
                 }
 
-                /** {@inheritDoc} */
                 @Override
                 public boolean hasNext()
                 {

@@ -50,7 +50,6 @@ public class SwingContourPlot extends SwingSpaceTimePlot
         super(plot);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void addPopUpMenuItems(final JPopupMenu popupMenu)
     {
@@ -68,7 +67,6 @@ public class SwingContourPlot extends SwingSpaceTimePlot
         this.smoothCheckBox = new JCheckBoxMenuItem("Adaptive smoothing method", false);
         this.smoothCheckBox.addActionListener(new ActionListener()
         {
-            /** {@inheritDoc} */
             @Override
             public void actionPerformed(final ActionEvent e)
             {
@@ -80,7 +78,6 @@ public class SwingContourPlot extends SwingSpaceTimePlot
         this.interpolateCheckBox = new JCheckBoxMenuItem("Bilinear interpolation", true);
         this.interpolateCheckBox.addActionListener(new ActionListener()
         {
-            /** {@inheritDoc} */
             @Override
             public void actionPerformed(final ActionEvent e)
             {
@@ -120,7 +117,6 @@ public class SwingContourPlot extends SwingSpaceTimePlot
             item.setActionCommand(command);
             item.addActionListener(new ActionListener()
             {
-                /** {@inheritDoc} */
                 @Override
                 public void actionPerformed(final ActionEvent actionEvent)
                 {
@@ -146,7 +142,6 @@ public class SwingContourPlot extends SwingSpaceTimePlot
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public AbstractContourPlot<?> getPlot()
     {

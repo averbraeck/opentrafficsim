@@ -61,21 +61,18 @@ public class SwitchableGtuColorer implements GtuColorer, Serializable
         this.activeColorer = this.colorers.get(activeIndex);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Color getColor(final Gtu gtu)
     {
         return this.activeColorer.getColor(gtu);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final List<LegendEntry> getLegend()
     {
         return this.activeColorer.getLegend();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
@@ -155,7 +152,6 @@ public class SwitchableGtuColorer implements GtuColorer, Serializable
             return colorer;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

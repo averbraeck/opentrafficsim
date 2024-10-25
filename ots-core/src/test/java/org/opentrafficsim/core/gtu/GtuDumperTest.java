@@ -175,14 +175,12 @@ public class GtuDumperTest implements OtsModelInterface
         return "";
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setStreamInformation(final StreamInformation streamInformation)
     {
         //
     }
 
-    /** {@inheritDoc} */
     @Override
     public StreamInformation getStreamInformation()
     {

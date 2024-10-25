@@ -40,7 +40,6 @@ public class IncentiveGetInLane implements MandatoryIncentive
     /** Hierarchy parameter. */
     protected static final ParameterTypeDouble SOCIO = LmrsParameters.SOCIO;
 
-    /** {@inheritDoc} */
     @Override
     public Desire determineDesire(final Parameters parameters, final LanePerception perception,
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire)
@@ -109,7 +108,6 @@ public class IncentiveGetInLane implements MandatoryIncentive
         return new Desire(left * socio, right * socio);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

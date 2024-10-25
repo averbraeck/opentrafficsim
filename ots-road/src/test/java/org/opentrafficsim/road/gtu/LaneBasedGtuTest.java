@@ -538,14 +538,12 @@ public class LaneBasedGtuTest implements UNITS
         /** */
         private static final long serialVersionUID = 20141027L;
 
-        /** {@inheritDoc} */
         @Override
         public final void constructModel() throws SimRuntimeException
         {
             //
         }
 
-        /** {@inheritDoc} */
         @Override
         public final RoadNetwork getNetwork()
         {

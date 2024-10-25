@@ -42,7 +42,6 @@ public class ScenarioWrapper
         return this.scenarioNode;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

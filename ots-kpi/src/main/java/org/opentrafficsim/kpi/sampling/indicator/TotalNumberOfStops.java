@@ -23,7 +23,6 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 public class TotalNumberOfStops extends AbstractIndicator<Dimensionless>
 {
 
-    /** {@inheritDoc} */
     @Override
     protected <G extends GtuData> Dimensionless calculate(final Query<G, ?> query, final Time startTime, final Time endTime,
             final List<TrajectoryGroup<G>> trajectoryGroups)
@@ -46,7 +45,6 @@ public class TotalNumberOfStops extends AbstractIndicator<Dimensionless>
         return new Dimensionless(sum, DimensionlessUnit.SI);
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

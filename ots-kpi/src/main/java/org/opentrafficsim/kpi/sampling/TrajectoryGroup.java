@@ -187,7 +187,6 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
         return this.lane;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final int hashCode()
     {
@@ -201,7 +200,6 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean equals(final Object obj)
     {
@@ -276,7 +274,6 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
@@ -285,7 +282,6 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
                 + (this.trajectories == null ? "null" : this.trajectories.size()) + " trajectories]";
     }
 
-    /** {@inheritDoc} */
     @Override
     public Iterator<Trajectory<G>> iterator()
     {

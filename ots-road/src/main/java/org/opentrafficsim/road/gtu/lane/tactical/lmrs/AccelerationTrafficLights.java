@@ -28,7 +28,6 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 public class AccelerationTrafficLights implements AccelerationIncentive
 {
 
-    /** {@inheritDoc} */
     @Override
     public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
             final LaneBasedGtu gtu, final LanePerception perception, final CarFollowingModel carFollowingModel,
@@ -49,7 +48,6 @@ public class AccelerationTrafficLights implements AccelerationIncentive
                 TrafficLightUtil.respondToTrafficLights(params, it, carFollowingModel, speed, speedLimitInfo));
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

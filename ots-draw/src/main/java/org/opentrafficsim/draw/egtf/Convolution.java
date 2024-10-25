@@ -351,7 +351,6 @@ public final class Convolution
             this.im = im;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

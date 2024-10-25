@@ -34,7 +34,6 @@ public class EventSerializer<E extends Event> implements Serializer<Event>
         this.eventType = eventType;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int size(final Event event) throws SerializationException
     {
@@ -50,21 +49,18 @@ public class EventSerializer<E extends Event> implements Serializer<Event>
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int sizeWithPrefix(final Event event) throws SerializationException
     {
         return 1 + size(event);
     }
 
-    /** {@inheritDoc} */
     @Override
     public byte fieldType()
     {
         return 33;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void serialize(final Event object, final byte[] buffer, final Pointer pointer, final EndianUtil endianUtil)
             throws SerializationException
@@ -73,7 +69,6 @@ public class EventSerializer<E extends Event> implements Serializer<Event>
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public void serializeWithPrefix(final Event object, final byte[] buffer, final Pointer pointer, final EndianUtil endianUtil)
             throws SerializationException
@@ -82,7 +77,6 @@ public class EventSerializer<E extends Event> implements Serializer<Event>
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public Event deSerialize(final byte[] buffer, final Pointer pointer, final EndianUtil endianUtil)
             throws SerializationException
@@ -91,7 +85,6 @@ public class EventSerializer<E extends Event> implements Serializer<Event>
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String dataClassName()
     {
@@ -99,7 +92,6 @@ public class EventSerializer<E extends Event> implements Serializer<Event>
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final int getNumberOfDimensions()
     {

@@ -48,14 +48,12 @@ public class PrintParser
     {
         private int depth = 0;
 
-        /** {@inheritDoc} */
         @Override
         public void startDocument() throws SAXException
         {
             System.out.println("Start Document");
         }
 
-        /** {@inheritDoc} */
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException
         {
@@ -70,14 +68,12 @@ public class PrintParser
             System.out.println();
         }
 
-        /** {@inheritDoc} */
         @Override
         public void endDocument() throws SAXException
         {
             System.out.println("End Document");
         }
 
-        /** {@inheritDoc} */
         @Override
         public void endElement(String uri, String localName, String qName) throws SAXException
         {

@@ -38,21 +38,18 @@ public class Idm extends AbstractIdm
         super(desiredHeadwayModel, desiredSpeedModel);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getName()
     {
         return "IDM";
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getLongName()
     {
         return "Intelligent Driver Model";
     }
 
-    /** {@inheritDoc} */
     @Override
     protected final Acceleration combineInteractionTerm(final Acceleration aFree, final Parameters parameters,
             final Speed speed, final Speed desiredSpeed, final Length desiredHeadway,

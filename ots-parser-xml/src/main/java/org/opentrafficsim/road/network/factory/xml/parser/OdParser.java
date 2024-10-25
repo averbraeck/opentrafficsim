@@ -573,7 +573,6 @@ public final class OdParser
             LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner> factoryByGtuType =
                     new LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalPlanner>()
                     {
-                        /** {@inheritDoc} */
                         @Override
                         public LaneBasedStrategicalPlanner create(final LaneBasedGtu gtu, final Route route, final Node origin,
                                 final Node destination) throws GtuException
@@ -660,7 +659,6 @@ public final class OdParser
     {
         Collections.sort(levelTime, new Comparator<LevelTimeType>()
         {
-            /** {@inheritDoc} */
             @Override
             public int compare(final LevelTimeType o1, final LevelTimeType o2)
             {

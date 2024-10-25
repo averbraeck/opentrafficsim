@@ -509,7 +509,6 @@ public class SubscriptionHandler
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {
@@ -541,7 +540,6 @@ class Subscription implements EventListener
         this.returnWrapper = returnWrapper;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {

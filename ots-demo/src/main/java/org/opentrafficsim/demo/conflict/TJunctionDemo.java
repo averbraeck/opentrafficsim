@@ -99,7 +99,6 @@ public class TJunctionDemo extends OtsSimulationApplication<TJunctionModel>
             super(simulator);
         }
 
-        /** {@inheritDoc} */
         @Override
         public void constructModel() throws SimRuntimeException
         {
@@ -115,7 +114,6 @@ public class TJunctionDemo extends OtsSimulationApplication<TJunctionModel>
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public RoadNetwork getNetwork()
         {

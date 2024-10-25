@@ -30,28 +30,24 @@ public abstract class ExtendedDataSpeed<G extends GtuData> extends ExtendedDataF
         super(id, description, FloatSpeed.class);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected final FloatSpeed convertValue(final float value)
     {
         return FloatSpeed.instantiateSI(value);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected final FloatSpeedVector convert(final float[] storage) throws ValueRuntimeException
     {
         return new FloatSpeedVector(storage, SpeedUnit.SI);
     }
 
-    /** {@inheritDoc} */
     @Override
     public FloatSpeed interpolate(final FloatSpeed value0, final FloatSpeed value1, final double f)
     {
         return FloatSpeed.interpolate(value0, value1, (float) f);
     }
 
-    /** {@inheritDoc} */
     @Override
     public FloatSpeed parseValue(final String string)
     {

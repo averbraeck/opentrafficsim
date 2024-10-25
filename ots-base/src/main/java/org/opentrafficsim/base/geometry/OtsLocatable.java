@@ -24,7 +24,6 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
 public interface OtsLocatable extends Locatable, SpatialObject
 {
 
-    /** {@inheritDoc} */
     @Override
     Point2d getLocation();
 

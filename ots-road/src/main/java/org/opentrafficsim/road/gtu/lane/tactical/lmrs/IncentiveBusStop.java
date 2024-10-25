@@ -28,7 +28,6 @@ import org.opentrafficsim.road.network.lane.object.BusStop;
 public class IncentiveBusStop implements MandatoryIncentive
 {
 
-    /** {@inheritDoc} */
     @Override
     public Desire determineDesire(final Parameters parameters, final LanePerception perception,
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire)

@@ -75,7 +75,6 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
         this.text = new Text(gtu, gtu::getId, 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, contextualized,
                 new TextAnimation.ContrastToBackground()
                 {
-                    /** {@inheritDoc} */
                     @Override
                     public Color getBackgroundColor()
                     {
@@ -84,7 +83,6 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
                 }).setDynamic(true);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
@@ -178,7 +176,6 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
         resetRendering(graphics);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void destroy(final Contextualized contextProvider)
     {
@@ -186,14 +183,12 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
         this.text.destroy(contextProvider);
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
         return this.hashCode;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object object)
     {
@@ -253,7 +248,6 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
             super(source, text, dx, dy, textAlignment, color, 1.0f, 12.0f, 50f, contextualized, background, RENDERWHEN1);
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -332,11 +326,9 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
          */
         boolean isBrakingLightsOn();
 
-        /** {@inheritDoc} */
         @Override
         OrientedPoint2d getLocation();
 
-        /** {@inheritDoc} */
         @Override
         default double getZ()
         {

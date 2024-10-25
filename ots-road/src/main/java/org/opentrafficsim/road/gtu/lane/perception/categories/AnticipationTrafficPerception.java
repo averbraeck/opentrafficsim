@@ -70,7 +70,6 @@ public class AnticipationTrafficPerception extends AbstractPerceptionCategory<La
         super(perception);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Speed getSpeed(final RelativeLane lane) throws ParameterException
     {
@@ -155,7 +154,6 @@ public class AnticipationTrafficPerception extends AbstractPerceptionCategory<La
         this.antFromRight.put(lane.getLeft(), speedSet.getLeft().si);
     }
 
-    /** {@inheritDoc} */
     @Override
     public LinearDensity getDensity(final RelativeLane lane)
     {
@@ -174,7 +172,6 @@ public class AnticipationTrafficPerception extends AbstractPerceptionCategory<La
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

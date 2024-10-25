@@ -48,14 +48,12 @@ public class ScenarioParser
         }
         ScenariosWrapper scenariosWrapper = new ScenariosWrapper()
         {
-            /** {@inheritDoc} */
             @Override
             public Iterable<ParameterWrapper> getDefaultInputParameters()
             {
                 return getInputParameterIterator(scenarios.getDefaultInputParameters());
             }
 
-            /** {@inheritDoc} */
             @Override
             public Iterable<ParameterWrapper> getScenarioInputParameters()
             {
@@ -281,14 +279,12 @@ public class ScenarioParser
     public static record ParameterWrapper(String id, ExpressionType<?> value)
             implements Identifiable, Supplier<ExpressionType<?>>
     {
-        /** {@inheritDoc} */
         @Override
         public String getId()
         {
             return this.id();
         }
 
-        /** {@inheritDoc} */
         @Override
         public ExpressionType<?> get()
         {
@@ -334,7 +330,6 @@ public class ScenarioParser
             this.scenario = scenario;
         }
 
-        /** {@inheritDoc} */
         @Override
         public Object lookup(final String name)
         {

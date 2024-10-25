@@ -41,7 +41,6 @@ public abstract class AbstractStringFunction extends AbstractNodeDecorator
         this.predicate = predicate;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notifyCreated(final XsdTreeNode node)
     {

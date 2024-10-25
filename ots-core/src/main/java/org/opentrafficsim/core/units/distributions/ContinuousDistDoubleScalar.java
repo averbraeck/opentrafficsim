@@ -158,7 +158,6 @@ public interface ContinuousDistDoubleScalar
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -324,7 +323,6 @@ public interface ContinuousDistDoubleScalar
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

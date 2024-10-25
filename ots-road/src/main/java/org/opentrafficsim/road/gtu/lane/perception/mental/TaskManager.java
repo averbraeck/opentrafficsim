@@ -46,7 +46,6 @@ public interface TaskManager
      */
     class SummativeTaskManager implements TaskManager
     {
-        /** {@inheritDoc} */
         @Override
         public void manage(final Set<Task> tasks, final LanePerception perception, final LaneBasedGtu gtu,
                 final Parameters parameters) throws ParameterException, GtuException

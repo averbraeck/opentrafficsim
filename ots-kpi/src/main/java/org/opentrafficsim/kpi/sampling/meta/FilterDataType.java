@@ -62,7 +62,6 @@ public abstract class FilterDataType<T, G extends GtuData> extends DataType<T, G
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

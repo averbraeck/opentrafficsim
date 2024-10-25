@@ -151,7 +151,6 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
         this.events.add(event);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void cleanUpHistory(final Duration history)
     {
@@ -216,7 +215,6 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
             this.value = value;
         }
 
-        /** {@inheritDoc} */
         @Override
         public double getTime()
         {
@@ -232,7 +230,6 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
             return this.value;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

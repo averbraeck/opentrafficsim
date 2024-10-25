@@ -417,42 +417,36 @@ public class ContinuousClothoid implements ContinuousLine
         return (cs1.s() + sign * cs0.s()) * Math.cos(thetaPhi1) - (cs1.c() + sign * cs0.c()) * Math.sin(thetaPhi1);
     }
 
-    /** {@inheritDoc} */
     @Override
     public OrientedPoint2d getStartPoint()
     {
         return this.startPoint;
     }
 
-    /** {@inheritDoc} */
     @Override
     public OrientedPoint2d getEndPoint()
     {
         return this.endPoint;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getStartCurvature()
     {
         return this.startCurvature;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getEndCurvature()
     {
         return this.endCurvature;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getStartRadius()
     {
         return 1.0 / this.startCurvature;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getEndRadius()
     {
@@ -542,7 +536,6 @@ public class ContinuousClothoid implements ContinuousLine
         return AngleUtil.normalizeAroundZero(rot);
     }
 
-    /** {@inheritDoc} */
     @Override
     public PolyLine2d flatten(final Flattener flattener)
     {
@@ -558,14 +551,12 @@ public class ContinuousClothoid implements ContinuousLine
         assureShift();
         return flattener.flatten(new FlattableLine()
         {
-            /** {@inheritDoc} */
             @Override
             public Point2d get(final double fraction)
             {
                 return getPoint(fraction, 0.0);
             }
 
-            /** {@inheritDoc} */
             @Override
             public double getDirection(final double fraction)
             {
@@ -575,7 +566,6 @@ public class ContinuousClothoid implements ContinuousLine
         });
     }
 
-    /** {@inheritDoc} */
     @Override
     public PolyLine2d flattenOffset(final FractionalLengthData offsets, final Flattener flattener)
     {
@@ -592,14 +582,12 @@ public class ContinuousClothoid implements ContinuousLine
         assureShift();
         return flattener.flatten(new FlattableLine()
         {
-            /** {@inheritDoc} */
             @Override
             public Point2d get(final double fraction)
             {
                 return getPoint(fraction, offsets.get(fraction));
             }
 
-            /** {@inheritDoc} */
             @Override
             public double getDirection(final double fraction)
             {
@@ -610,7 +598,6 @@ public class ContinuousClothoid implements ContinuousLine
         });
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getLength()
     {
@@ -627,7 +614,6 @@ public class ContinuousClothoid implements ContinuousLine
         return this.straight == null ? (this.arc == null ? "Clothoid" : "Arc") : "Straight";
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

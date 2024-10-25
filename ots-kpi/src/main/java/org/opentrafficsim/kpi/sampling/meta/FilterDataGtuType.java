@@ -24,7 +24,6 @@ public class FilterDataGtuType extends FilterDataType<String, GtuData>
         super("gtuType", "GTU type id", String.class);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getValue(final GtuData gtu)
     {
@@ -32,7 +31,6 @@ public class FilterDataGtuType extends FilterDataType<String, GtuData>
         return gtu.getGtuTypeId();
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

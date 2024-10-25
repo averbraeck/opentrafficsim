@@ -45,7 +45,6 @@ public class GtuTransceiver extends AbstractEventTransceiver
         this.gtuIdSource = gtuIdSource;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final TransceiverInterface getIdSource(final int addressLevel, final ReturnWrapper returnWrapper)
             throws Sim0MQException, SerializationException
@@ -58,14 +57,12 @@ public class GtuTransceiver extends AbstractEventTransceiver
         return this.gtuIdSource;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean hasIdSource()
     {
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Object[] get(final Object[] address, final ReturnWrapper returnWrapper)
             throws RemoteException, Sim0MQException, SerializationException
@@ -89,7 +86,6 @@ public class GtuTransceiver extends AbstractEventTransceiver
                 new Direction(gtuPosition.getDirZ(), DirectionUnit.EAST_DEGREE), gtu.getSpeed(), gtu.getAcceleration()};
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

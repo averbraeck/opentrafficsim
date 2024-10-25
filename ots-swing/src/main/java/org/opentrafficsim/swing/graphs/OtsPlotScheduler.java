@@ -37,14 +37,12 @@ public class OtsPlotScheduler implements PlotScheduler
         this.simulator = simulator;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Time getTime()
     {
         return this.simulator.getSimulatorAbsTime();
     }
 
-    /** {@inheritDoc} */
     @Override
     public void cancelEvent(final AbstractPlot abstractPlot)
     {
@@ -55,7 +53,6 @@ public class OtsPlotScheduler implements PlotScheduler
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void scheduleUpdate(final Time time, final AbstractPlot abstractPlot)
     {

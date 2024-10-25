@@ -78,7 +78,6 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
         System.out.println(network.getLinkMap());
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void addTabs()
     {

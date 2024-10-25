@@ -54,21 +54,18 @@ public class HeadwayTrafficLightReal extends AbstractHeadwayLaneBasedObject impl
         return trafficLight.getId();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final TrafficLightColor getTrafficLightColor()
     {
         return this.trafficLight.getTrafficLightColor();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean canTurnOnRed()
     {
         return this.turnOnRed;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

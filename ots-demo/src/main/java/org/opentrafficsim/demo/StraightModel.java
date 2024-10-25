@@ -122,7 +122,6 @@ public class StraightModel extends AbstractOtsModel implements UNITS
         InputParameterHelper.makeInputParameterMapCarTruck(this.inputParameterMap, 1.0);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void constructModel() throws SimRuntimeException
     {
@@ -212,7 +211,6 @@ public class StraightModel extends AbstractOtsModel implements UNITS
         this.block.setTrafficLightColor(TrafficLightColor.GREEN);
     }
 
-    /** {@inheritDoc} */
     @Override
     public RoadNetwork getNetwork()
     {

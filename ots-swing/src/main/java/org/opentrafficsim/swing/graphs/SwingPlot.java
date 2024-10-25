@@ -84,7 +84,6 @@ public class SwingPlot extends JFrame
             /** */
             private static final long serialVersionUID = 20181006L;
 
-            /** {@inheritDoc} */
             @Override
             public void restoreAutoDomainBounds()
             {
@@ -95,7 +94,6 @@ public class SwingPlot extends JFrame
                 }
             }
 
-            /** {@inheritDoc} */
             @Override
             public void restoreAutoRangeBounds()
             {
@@ -188,7 +186,6 @@ public class SwingPlot extends JFrame
         // pointer handler
         final PointerHandler ph = new PointerHandler()
         {
-            /** {@inheritDoc} */
             @Override
             public void updateHint(final double domainValue, final double rangeValue)
             {
@@ -224,7 +221,6 @@ public class SwingPlot extends JFrame
                 window.add(SwingPlot.this.statusLabel, BorderLayout.SOUTH);
                 window.addWindowListener(new WindowAdapter()
                 {
-                    /** {@inheritDoc} */
                     @Override
                     public void windowClosing(@SuppressWarnings("hiding") final WindowEvent e)
                     {

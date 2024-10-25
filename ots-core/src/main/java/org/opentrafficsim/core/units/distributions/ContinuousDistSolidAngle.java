@@ -30,14 +30,12 @@ public class ContinuousDistSolidAngle extends ContinuousDistDoubleScalar.Rel<Sol
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public SolidAngle draw()
     {
         return new SolidAngle(getDistribution().draw(), (SolidAngleUnit) getDisplayUnit());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

@@ -85,7 +85,6 @@ public class Kernel
         return t + this.tMax;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

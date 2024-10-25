@@ -14,7 +14,6 @@ import org.opentrafficsim.xml.bindings.types.DoubleType;
 public class DoubleUnitIntervalAdapter extends ExpressionAdapter<Double, DoubleType>
 {
 
-    /** {@inheritDoc} */
     @Override
     public DoubleType unmarshal(final String field)
     {
@@ -28,7 +27,6 @@ public class DoubleUnitIntervalAdapter extends ExpressionAdapter<Double, DoubleT
         return new DoubleType(value);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String marshal(final DoubleType value)
     {

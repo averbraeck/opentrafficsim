@@ -84,7 +84,6 @@ public interface GtuColorer extends Colorer<Gtu>
             return this.description;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {

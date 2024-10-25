@@ -91,7 +91,6 @@ public class Quantity<T extends Number, K>
         return this.converter.convert(data);
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
@@ -101,7 +100,6 @@ public class Quantity<T extends Number, K>
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj)
     {
@@ -132,7 +130,6 @@ public class Quantity<T extends Number, K>
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {
@@ -155,7 +152,6 @@ public class Quantity<T extends Number, K>
             super(name, Converter.SI);
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

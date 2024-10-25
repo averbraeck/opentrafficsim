@@ -23,7 +23,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 public class IncentiveSpeed implements VoluntaryIncentive
 {
 
-    /** {@inheritDoc} */
     @Override
     public final Desire determineDesire(final Parameters parameters, final LanePerception perception,
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire, final Desire voluntaryDesire)
@@ -33,7 +32,6 @@ public class IncentiveSpeed implements VoluntaryIncentive
         return new Desire(0, 0);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

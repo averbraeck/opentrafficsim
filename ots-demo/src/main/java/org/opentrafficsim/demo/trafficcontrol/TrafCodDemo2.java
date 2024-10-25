@@ -179,7 +179,6 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
             this.xml = xml;
         }
 
-        /** {@inheritDoc} */
         @Override
         public void constructModel() throws SimRuntimeException
         {
@@ -195,14 +194,12 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public final RoadNetwork getNetwork()
         {
             return this.network;
         }
 
-        /** {@inheritDoc} */
         @Override
         public void notify(final Event event) throws RemoteException
         {
@@ -240,7 +237,6 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

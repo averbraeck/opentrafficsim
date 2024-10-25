@@ -99,7 +99,6 @@ public class DirectedLaneMovementStep implements Serializable
         return this.direction;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

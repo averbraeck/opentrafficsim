@@ -79,21 +79,18 @@ public class MapNodeData extends MapData implements NodeData, EventListener
         this.contour = OtsLocatable.boundsAsContour(this);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Bounds2d getBounds()
     {
         return BOUNDS;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Polygon2d getContour()
     {
         return this.contour;
     }
 
-    /** {@inheritDoc} */
     @Override
     public OtsShape getShape()
     {
@@ -104,14 +101,12 @@ public class MapNodeData extends MapData implements NodeData, EventListener
         return this.shape;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getId()
     {
         return this.id;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void destroy()
     {
@@ -119,14 +114,12 @@ public class MapNodeData extends MapData implements NodeData, EventListener
         getNode().removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
     }
 
-    /** {@inheritDoc} */
     @Override
     public OrientedPoint2d getLocation()
     {
         return this.location;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {
@@ -152,7 +145,6 @@ public class MapNodeData extends MapData implements NodeData, EventListener
         setLocation();
     }
 
-    /** {@inheritDoc} */
     @Override
     public void evalChanged()
     {
@@ -176,7 +168,6 @@ public class MapNodeData extends MapData implements NodeData, EventListener
         setValid();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

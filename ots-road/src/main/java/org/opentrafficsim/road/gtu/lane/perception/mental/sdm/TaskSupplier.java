@@ -47,7 +47,6 @@ public interface TaskSupplier
             this.taskDemand = taskDemand;
         }
 
-        /** {@inheritDoc} */
         @Override
         public Task getTask(final LaneBasedGtu gtu)
         {

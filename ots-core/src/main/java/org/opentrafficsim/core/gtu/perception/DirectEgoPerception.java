@@ -34,35 +34,30 @@ public class DirectEgoPerception<G extends Gtu, P extends Perception<G>> extends
         super(perception);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Acceleration getAcceleration()
     {
         return computeIfAbsent("acceleration", () -> getGtu().getAcceleration());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Speed getSpeed()
     {
         return computeIfAbsent("speed", () -> getGtu().getSpeed());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Length getLength()
     {
         return computeIfAbsent("length", () -> getGtu().getLength());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Length getWidth()
     {
         return computeIfAbsent("width", () -> getGtu().getWidth());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

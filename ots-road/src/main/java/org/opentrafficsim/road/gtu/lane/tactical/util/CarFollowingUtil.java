@@ -249,35 +249,30 @@ public final class CarFollowingUtil
             this.speed = speed;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String getId()
         {
             return null;
         }
 
-        /** {@inheritDoc} */
         @Override
         public Length getLength()
         {
             return null;
         }
 
-        /** {@inheritDoc} */
         @Override
         public Speed getSpeed()
         {
             return this.speed;
         }
 
-        /** {@inheritDoc} */
         @Override
         public ObjectType getObjectType()
         {
             return null;
         }
 
-        /** {@inheritDoc} */
         @Override
         public Acceleration getAcceleration()
         {

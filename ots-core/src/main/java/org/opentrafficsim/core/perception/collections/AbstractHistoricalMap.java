@@ -87,14 +87,12 @@ public abstract class AbstractHistoricalMap<K, V, M extends Map<K, V>> extends A
 
     // Altering Map methods
 
-    /** {@inheritDoc} */
     @Override
     public void clear()
     {
         new LinkedHashSet<>(this.current.keySet()).forEach(this::remove);
     }
 
-    /** {@inheritDoc} */
     @Override
     public V put(final K key, final V value)
     {
@@ -108,14 +106,12 @@ public abstract class AbstractHistoricalMap<K, V, M extends Map<K, V>> extends A
         return previousValue;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void putAll(final Map<? extends K, ? extends V> m)
     {
         m.forEach(this::put);
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("unchecked")
     public V remove(final Object key)
@@ -132,56 +128,48 @@ public abstract class AbstractHistoricalMap<K, V, M extends Map<K, V>> extends A
 
     // Non-altering Map methods
 
-    /** {@inheritDoc} */
     @Override
     public int size()
     {
         return this.current.size();
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isEmpty()
     {
         return this.current.isEmpty();
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean containsKey(final Object key)
     {
         return this.current.containsKey(key);
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean containsValue(final Object value)
     {
         return this.current.containsValue(value);
     }
 
-    /** {@inheritDoc} */
     @Override
     public V get(final Object key)
     {
         return this.current.get(key);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Set<K> keySet()
     {
         return Collections.unmodifiableSet(this.current.keySet());
     }
 
-    /** {@inheritDoc} */
     @Override
     public Collection<V> values()
     {
         return Collections.unmodifiableCollection(this.current.values());
     }
 
-    /** {@inheritDoc} */
     @Override
     public Set<Entry<K, V>> entrySet()
     {
@@ -244,7 +232,6 @@ public abstract class AbstractHistoricalMap<K, V, M extends Map<K, V>> extends A
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

@@ -119,35 +119,30 @@ public class HeadwayGtuSimple extends AbstractHeadwayGtu
         super(id, gtuType, overlapFront, overlap, overlapRear, true, length, width, desiredSpeed, gtuStatus);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final CarFollowingModel getCarFollowingModel()
     {
         throw new UnsupportedOperationException("HeadwayGtuSimple does not support the getCarFollowingModel() method.");
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Parameters getParameters()
     {
         throw new UnsupportedOperationException("HeadwayGtuSimple does not support the getParameters() method.");
     }
 
-    /** {@inheritDoc} */
     @Override
     public final SpeedLimitInfo getSpeedLimitInfo()
     {
         throw new UnsupportedOperationException("HeadwayGtuSimple does not support the getSpeedLimitInfo() method.");
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Route getRoute()
     {
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final AbstractHeadwayGtu moved(final Length headway, final Speed speed, final Acceleration acceleration)
     {
@@ -163,7 +158,6 @@ public class HeadwayGtuSimple extends AbstractHeadwayGtu
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

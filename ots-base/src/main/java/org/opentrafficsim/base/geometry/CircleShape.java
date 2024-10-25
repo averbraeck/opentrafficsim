@@ -49,56 +49,48 @@ public class CircleShape implements OtsShape
         this.polygonSegments = polygonSegments;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getMinX()
     {
         return -this.radius;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getMaxX()
     {
         return this.radius;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getMinY()
     {
         return -this.radius;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getMaxY()
     {
         return this.radius;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean contains(final Point2d point) throws NullPointerException
     {
         return CENTER.distance(point) < this.radius;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean contains(final double x, final double y)
     {
         return contains(new Point2d(x, y));
     }
 
-    /** {@inheritDoc} */
     @Override
     public double signedDistance(final Point2d point)
     {
         return CENTER.distance(point) - this.radius;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Polygon2d asPolygon()
     {
@@ -138,7 +130,6 @@ public class CircleShape implements OtsShape
         return this.polygon;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

@@ -13,7 +13,6 @@ import org.opentrafficsim.xml.bindings.types.IntegerType;
 public class IntegerAdapter extends ExpressionAdapter<Integer, IntegerType>
 {
 
-    /** {@inheritDoc} */
     @Override
     public IntegerType unmarshal(final String field)
     {

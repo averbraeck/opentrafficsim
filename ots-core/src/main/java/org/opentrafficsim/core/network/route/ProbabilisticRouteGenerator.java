@@ -40,14 +40,12 @@ public class ProbabilisticRouteGenerator implements Generator<Route>, Serializab
         this.distribution = new Distribution<Route>(generators, stream);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Route draw() throws ProbabilityException
     {
         return this.distribution.draw();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

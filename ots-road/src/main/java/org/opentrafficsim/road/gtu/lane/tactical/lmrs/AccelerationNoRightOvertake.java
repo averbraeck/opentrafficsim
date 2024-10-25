@@ -40,7 +40,6 @@ public class AccelerationNoRightOvertake implements AccelerationIncentive
     /** Maximum adjustment deceleration, e.g. when speed limit drops. */
     public static final ParameterTypeAcceleration B0 = ParameterTypes.B0;
 
-    /** {@inheritDoc} */
     @Override
     public void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
             final LaneBasedGtu gtu, final LanePerception perception, final CarFollowingModel carFollowingModel,

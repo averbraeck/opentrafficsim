@@ -49,7 +49,6 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
         new RoadLayoutElementValidator(editor, path, LayoutCoupling.LINK_ATTRIBUTE, "Lane");
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notifyCreated(final XsdTreeNode node)
     {
@@ -60,7 +59,6 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notifyRemoved(final XsdTreeNode node)
     {
@@ -70,7 +68,6 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {
@@ -103,7 +100,6 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public String validate(final XsdTreeNode node)
     {
@@ -144,7 +140,6 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public List<String> getOptions(final XsdTreeNode node, final Object field)
     {
@@ -169,7 +164,6 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public XsdTreeNode getCoupledKeyrefNode(final XsdTreeNode node)
     {

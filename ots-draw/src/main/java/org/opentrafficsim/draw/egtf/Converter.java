@@ -14,14 +14,12 @@ public interface Converter<K>
     /** Standard converter that returns the internal SI data directly. */
     Converter<double[][]> SI = new Converter<double[][]>()
     {
-        /** {@inheritDoc} */
         @Override
         public double[][] convert(final double[][] filteredData)
         {
             return filteredData;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

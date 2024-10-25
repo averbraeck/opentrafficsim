@@ -169,7 +169,6 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
             this.xml = xml;
         }
 
-        /** {@inheritDoc} */
         @Override
         public void constructModel() throws SimRuntimeException
         {
@@ -189,7 +188,6 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public RoadNetwork getNetwork()
         {

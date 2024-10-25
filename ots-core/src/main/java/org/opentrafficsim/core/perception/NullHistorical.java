@@ -29,28 +29,24 @@ public class NullHistorical<T> implements Historical<T>
         this.val = value;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void set(final T value)
     {
         this.val = value;
     }
 
-    /** {@inheritDoc} */
     @Override
     public T get()
     {
         return this.val;
     }
 
-    /** {@inheritDoc} */
     @Override
     public T get(final Time time)
     {
         return this.val;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

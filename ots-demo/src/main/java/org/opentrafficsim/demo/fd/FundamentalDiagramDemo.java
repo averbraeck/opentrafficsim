@@ -204,7 +204,6 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     protected RoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws Exception
     {
@@ -311,7 +310,6 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         return network;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void setupDemo(final OtsAnimationPanel animationPanel, final RoadNetwork net)
     {
@@ -652,7 +650,6 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             /** */
             private static final long serialVersionUID = 20200516L;
 
-            /** {@inheritDoc} */
             @Override
             protected void addPopUpMenuItems(final JPopupMenu popupMenu)
             {
@@ -801,7 +798,6 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             super(plot);
         }
 
-        /** {@inheritDoc} */
         @Override
         protected void addPopUpMenuItems(final JPopupMenu popupMenu)
         {
@@ -817,14 +813,12 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         /** Map of points for each quantity. */
         private Map<Quantity, double[]> map = new LinkedHashMap<>();
 
-        /** {@inheritDoc} */
         @Override
         public double[] getValues(final Quantity quantity)
         {
             return this.map.get(quantity);
         }
 
-        /** {@inheritDoc} */
         @Override
         public String getName()
         {

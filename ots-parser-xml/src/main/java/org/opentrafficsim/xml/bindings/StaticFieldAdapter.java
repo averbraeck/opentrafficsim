@@ -44,14 +44,12 @@ public abstract class StaticFieldAdapter<T, E extends ExpressionType<T>> extends
         this.expressionType = expressionType;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String marshal(final E value)
     {
         return marshal(value, (t) -> t instanceof Enum ? ((Enum<?>) t).name() : t.toString());
     }
 
-    /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
     public E unmarshal(final String value) throws IllegalArgumentException

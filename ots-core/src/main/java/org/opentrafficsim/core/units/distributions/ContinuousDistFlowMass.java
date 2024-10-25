@@ -30,14 +30,12 @@ public class ContinuousDistFlowMass extends ContinuousDistDoubleScalar.Rel<FlowM
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public FlowMass draw()
     {
         return new FlowMass(getDistribution().draw(), (FlowMassUnit) getDisplayUnit());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

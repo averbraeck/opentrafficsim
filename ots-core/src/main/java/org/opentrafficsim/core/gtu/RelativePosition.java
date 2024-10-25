@@ -95,14 +95,12 @@ public record RelativePosition(Length dx, Length dy, Length dz, Type type) imple
             return this.name;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
             return this.name;
         }
 
-        /** {@inheritDoc} */
         @Override
         @SuppressWarnings("checkstyle:designforextension")
         public int hashCode()
@@ -110,7 +108,6 @@ public record RelativePosition(Length dx, Length dy, Length dz, Type type) imple
             return this.hash;
         }
 
-        /** {@inheritDoc} */
         @Override
         @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
         public boolean equals(final Object obj)

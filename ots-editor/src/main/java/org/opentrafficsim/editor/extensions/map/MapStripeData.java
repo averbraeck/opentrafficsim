@@ -47,35 +47,30 @@ public class MapStripeData extends MapCrossSectionData implements StripeData
         this.startOffset = startOffset;
     }
 
-    /** {@inheritDoc} */
     @Override
     public PolyLine2d getCenterLine()
     {
         return this.centerLine;
     }
     
-    /** {@inheritDoc} */
     @Override
     public PolyLine2d getLine()
     {
         return OtsLocatable.transformLine(this.centerLine, getLocation());
     }
 
-    /** {@inheritDoc} */
     @Override
     public Type getType()
     {
         return this.type;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Length getWidth()
     {
         return this.width;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

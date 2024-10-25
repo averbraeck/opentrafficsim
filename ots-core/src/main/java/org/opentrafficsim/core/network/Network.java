@@ -89,7 +89,6 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
         this.simulator = simulator;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getId()
     {
@@ -924,7 +923,6 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
     /**************************************** GTUs *****************************************/
     /***************************************************************************************/
 
-    /** {@inheritDoc} */
     @Override
     public final void addGTU(final Gtu gtu)
     {
@@ -933,7 +931,6 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
         fireTimedEvent(Network.GTU_ADD_EVENT, gtu.getId(), getSimulator().getSimulatorTime());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void removeGTU(final Gtu gtu)
     {
@@ -941,21 +938,18 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
         this.gtuMap.remove(gtu.getId());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean containsGTU(final Gtu gtu)
     {
         return this.gtuMap.containsValue(gtu);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Gtu getGTU(final String gtuId)
     {
         return this.gtuMap.get(gtuId);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Set<Gtu> getGTUs()
     {
@@ -963,7 +957,6 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
         return new LinkedHashSet<>(this.gtuMap.values());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean containsGtuId(final String gtuId)
     {
@@ -1034,7 +1027,6 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

@@ -22,7 +22,6 @@ public class StripeTypeAdapter extends ExpressionAdapter<Type, StripeType>
     private final static Map<String, String> DICTIONARY =
             Map.of("|", "SOLID", ":", "DASHED", "||", "DOUBLE", "|:", "LEFT", ":|", "RIGHT");
 
-    /** {@inheritDoc} */
     @Override
     public StripeType unmarshal(final String field) throws IllegalArgumentException
     {

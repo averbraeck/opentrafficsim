@@ -164,7 +164,6 @@ class TriggerDetector extends LaneDetector
         super(name, lane, longitudinalPosition, positionType, DefaultsNl.ROAD_USERS);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void triggerResponse(final LaneBasedGtu gtu)
     {
@@ -194,14 +193,12 @@ class DummyModelForSensorTest extends AbstractOtsModel
         super(simulator);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void constructModel() throws SimRuntimeException
     {
         //
     }
 
-    /** {@inheritDoc} */
     @Override
     public final RoadNetwork getNetwork()
     {

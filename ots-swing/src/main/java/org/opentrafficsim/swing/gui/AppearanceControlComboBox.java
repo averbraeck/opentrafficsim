@@ -17,14 +17,12 @@ public class AppearanceControlComboBox<T> extends JComboBox<T> implements Appear
     /** */
     private static final long serialVersionUID = 20231016L;
 
-    /** {@inheritDoc} */
     @Override
     public boolean isFont()
     {
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

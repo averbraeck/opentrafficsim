@@ -37,7 +37,6 @@ public class LinkType extends GtuCompatibleInfraType<LinkType, Link>
         super(id, parent);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

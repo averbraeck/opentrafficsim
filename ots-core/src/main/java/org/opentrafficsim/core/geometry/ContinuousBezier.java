@@ -138,7 +138,6 @@ public class ContinuousBezier
         return numer / denom;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

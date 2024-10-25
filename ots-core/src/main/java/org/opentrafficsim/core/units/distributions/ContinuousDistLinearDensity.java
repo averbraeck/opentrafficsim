@@ -30,14 +30,12 @@ public class ContinuousDistLinearDensity extends ContinuousDistDoubleScalar.Rel<
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public LinearDensity draw()
     {
         return new LinearDensity(getDistribution().draw(), (LinearDensityUnit) getDisplayUnit());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

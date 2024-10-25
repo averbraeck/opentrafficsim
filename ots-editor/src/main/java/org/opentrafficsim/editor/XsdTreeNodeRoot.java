@@ -99,7 +99,6 @@ public class XsdTreeNodeRoot extends XsdTreeNode
         invalidateAll(this);
     }
 
-    /** {@inheritDoc} */
     @Override
     public XsdTreeNodeRoot getRoot()
     {
@@ -177,7 +176,6 @@ public class XsdTreeNodeRoot extends XsdTreeNode
             /** */
             private static final long serialVersionUID = 20230228L;
 
-            /** {@inheritDoc} */
             @Override
             public void notify(final Event event) throws RemoteException
             {

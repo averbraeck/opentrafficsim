@@ -43,14 +43,12 @@ public class HistoricalTreeSet<E> extends AbstractHistoricalNavigableSet<E, Tree
         super(historyManager, new TreeSet<>(c));
     }
 
-    /** {@inheritDoc} */
     @Override
     public TreeSet<E> get()
     {
         return getCollection();
     }
 
-    /** {@inheritDoc} */
     @Override
     public TreeSet<E> get(final Time time)
     {
@@ -61,7 +59,6 @@ public class HistoricalTreeSet<E> extends AbstractHistoricalNavigableSet<E, Tree
         return fill(time, new TreeSet<>());
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

@@ -63,7 +63,6 @@ public class DefaultConflictRule implements ConflictRule
     // NetworkException.class, "Conflict rule 'SPLIT' may only be used on conflicts of type SPLIT.");
     // }
 
-    /** {@inheritDoc} */
     @Override
     public ConflictPriority determinePriority(final Conflict conflict)
     {
@@ -154,7 +153,6 @@ public class DefaultConflictRule implements ConflictRule
         return conflictRules;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

@@ -19,7 +19,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
 public class IncentiveDummy implements MandatoryIncentive
 {
 
-    /** {@inheritDoc} */
     @Override
     public final Desire determineDesire(final Parameters parameters, final LanePerception perception,
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire)
@@ -28,7 +27,6 @@ public class IncentiveDummy implements MandatoryIncentive
         return new Desire(0, 0);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

@@ -110,7 +110,6 @@ public class FilterDataSet
         return new ImmutableIterator<>(this.filterDataMap.entrySet().iterator());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final int hashCode()
     {
@@ -120,7 +119,6 @@ public class FilterDataSet
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean equals(final Object obj)
     {
@@ -151,7 +149,6 @@ public class FilterDataSet
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

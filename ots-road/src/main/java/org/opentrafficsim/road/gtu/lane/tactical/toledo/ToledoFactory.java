@@ -22,7 +22,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory
 public class ToledoFactory implements LaneBasedTacticalPlannerFactory<Toledo>
 {
 
-    /** {@inheritDoc} */
     @Override
     public final Parameters getParameters()
     {
@@ -44,14 +43,12 @@ public class ToledoFactory implements LaneBasedTacticalPlannerFactory<Toledo>
         return parameters;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Toledo create(final LaneBasedGtu gtu) throws GtuException
     {
         return new Toledo(new ToledoCarFollowing(), gtu);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

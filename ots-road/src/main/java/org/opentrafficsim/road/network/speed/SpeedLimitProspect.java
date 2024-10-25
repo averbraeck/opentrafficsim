@@ -388,7 +388,6 @@ public class SpeedLimitProspect implements Serializable
         return out;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
@@ -486,7 +485,6 @@ public class SpeedLimitProspect implements Serializable
             this.distance = this.distance.minus(dist);
         }
 
-        /** {@inheritDoc} */
         @Override
         public final int hashCode()
         {
@@ -498,7 +496,6 @@ public class SpeedLimitProspect implements Serializable
             return result;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final boolean equals(final Object obj)
         {
@@ -537,7 +534,6 @@ public class SpeedLimitProspect implements Serializable
             return true;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final int compareTo(final SpeedLimitEntry<?> speedLimitEntry)
         {
@@ -574,7 +570,6 @@ public class SpeedLimitProspect implements Serializable
             return this.speedInfo.hashCode() < speedLimitEntry.speedInfo.hashCode() ? -1 : 1;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {

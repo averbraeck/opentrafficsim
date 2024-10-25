@@ -175,70 +175,60 @@ public class DrawTest
             this.result = result;
         }
 
-        /** {@inheritDoc} */
         @Override
         public boolean nextBoolean()
         {
             return this.result != 0d;
         }
 
-        /** {@inheritDoc} */
         @Override
         public double nextDouble()
         {
             return this.result;
         }
 
-        /** {@inheritDoc} */
         @Override
         public float nextFloat()
         {
             return (float) this.result;
         }
 
-        /** {@inheritDoc} */
         @Override
         public int nextInt()
         {
             return (int) this.result;
         }
 
-        /** {@inheritDoc} */
         @Override
         public int nextInt(final int i, final int j)
         {
             return (int) this.result; // May not be in compliance with the specification
         }
 
-        /** {@inheritDoc} */
         @Override
         public long nextLong()
         {
             return (long) this.result;
         }
 
-        /** {@inheritDoc} */
         @Override
         public long getSeed()
         {
             return (long) this.result;
         }
 
-        /** {@inheritDoc} */
         @Override
         public void setSeed(final long seed)
         {
             // Do nothing
         }
 
-        /** {@inheritDoc} */
         @Override
         public void reset()
         {
             // Do nothing
         }
 
-        /** {@inheritDoc} */
         @Override
         public byte[] saveState() throws StreamException
         {
@@ -246,14 +236,12 @@ public class DrawTest
             return null;
         }
 
-        /** {@inheritDoc} */
         @Override
         public void restoreState(final byte[] state) throws StreamException
         {
             // Do nothing
         }
 
-        /** {@inheritDoc} */
         @Override
         public long getOriginalSeed()
         {

@@ -32,7 +32,6 @@ public class FilterDataCrossSections extends FilterDataType<CrossSection, GtuDat
         super("crossSection", "Cross sections", CrossSection.class);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final CrossSection getValue(final GtuData gtu)
     {
@@ -84,7 +83,6 @@ public class FilterDataCrossSections extends FilterDataType<CrossSection, GtuDat
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

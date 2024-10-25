@@ -34,7 +34,6 @@ public class TJunctionModel extends AbstractOtsModel
         super(simulator);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void constructModel() throws SimRuntimeException
     {
@@ -50,7 +49,6 @@ public class TJunctionModel extends AbstractOtsModel
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public RoadNetwork getNetwork()
     {

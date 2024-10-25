@@ -31,28 +31,24 @@ public abstract class ExtendedDataLength<G extends GtuData>
         super(id, description, FloatLength.class);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected final FloatLength convertValue(final float value)
     {
         return FloatLength.instantiateSI(value);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected final FloatLengthVector convert(final float[] storage) throws ValueRuntimeException
     {
         return new FloatLengthVector(storage, LengthUnit.SI);
     }
 
-    /** {@inheritDoc} */
     @Override
     public FloatLength interpolate(final FloatLength value0, final FloatLength value1, final double f)
     {
         return FloatLength.interpolate(value0, value1, (float) f);
     }
 
-    /** {@inheritDoc} */
     @Override
     public FloatLength parseValue(final String string)
     {

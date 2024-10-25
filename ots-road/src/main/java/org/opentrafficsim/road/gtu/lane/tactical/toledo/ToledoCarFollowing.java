@@ -130,7 +130,6 @@ public class ToledoCarFollowing extends AbstractCarFollowingModel
         super(HEADWAY, DESIRED_SPEED);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected final Acceleration followingAcceleration(final Parameters parameters, final Speed speed, final Speed desiredSpeed,
             final Length desiredHeadway, final PerceptionIterable<? extends Headway> leaders) throws ParameterException
@@ -172,14 +171,12 @@ public class ToledoCarFollowing extends AbstractCarFollowingModel
         // {@formatter:on}
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getName()
     {
         return "ToledoCFM";
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getLongName()
     {

@@ -14,7 +14,6 @@ import org.opentrafficsim.xml.bindings.types.SpeedUnitType;
 public class SpeedUnitAdapter extends ExpressionAdapter<SpeedUnit, SpeedUnitType>
 {
 
-    /** {@inheritDoc} */
     @Override
     public SpeedUnitType unmarshal(final String field)
     {

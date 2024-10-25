@@ -31,14 +31,12 @@ public class ContinuousDistElectricalPotential
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public ElectricalPotential draw()
     {
         return new ElectricalPotential(getDistribution().draw(), (ElectricalPotentialUnit) getDisplayUnit());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

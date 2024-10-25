@@ -46,7 +46,6 @@ public class LaneGtuIdTransceiver extends AbstractTransceiver
         this.network = network;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Object[] get(final Object[] address, final ReturnWrapper returnWrapper)
             throws Sim0MQException, SerializationException
@@ -86,7 +85,6 @@ public class LaneGtuIdTransceiver extends AbstractTransceiver
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

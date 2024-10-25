@@ -50,7 +50,6 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecoratorRemove im
         this.children = Arrays.asList(children);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notifyCreated(final XsdTreeNode node)
     {
@@ -87,7 +86,6 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecoratorRemove im
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notifyRemoved(final XsdTreeNode node)
     {
@@ -101,7 +99,6 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecoratorRemove im
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public String apply(final XsdTreeNode node)
     {
@@ -136,7 +133,6 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecoratorRemove im
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {

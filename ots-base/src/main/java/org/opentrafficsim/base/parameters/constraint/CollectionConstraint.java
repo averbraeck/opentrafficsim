@@ -33,14 +33,12 @@ public class CollectionConstraint<T> implements Constraint<T>
         this.objects = objects;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean accept(final T value)
     {
         return this.objects.contains(value);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String failMessage()
     {
@@ -64,7 +62,6 @@ public class CollectionConstraint<T> implements Constraint<T>
         return new CollectionConstraint<>(collection);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

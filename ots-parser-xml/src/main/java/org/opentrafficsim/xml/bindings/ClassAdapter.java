@@ -16,7 +16,6 @@ import org.opentrafficsim.xml.bindings.types.ClassType;
 public class ClassAdapter extends ExpressionAdapter<Class, ClassType>
 {
 
-    /** {@inheritDoc} */
     @Override
     public ClassType unmarshal(final String field) throws IllegalArgumentException
     {
@@ -35,7 +34,6 @@ public class ClassAdapter extends ExpressionAdapter<Class, ClassType>
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public String marshal(final ClassType clazz) throws IllegalArgumentException
     {

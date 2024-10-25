@@ -26,14 +26,12 @@ public class NodeIdTransceiver extends AbstractIdTransceiver
         super(network, "Node id transceiver");
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {
         return "NodeIdTransceiver [network=" + ", super=" + super.toString() + "]";
     }
 
-    /** {@inheritDoc} */
     @Override
     ImmutableSet<Node> getSet()
     {

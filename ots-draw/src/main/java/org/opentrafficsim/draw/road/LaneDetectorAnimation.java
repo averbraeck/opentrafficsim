@@ -104,7 +104,6 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends TextAni
         return this.text;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
@@ -112,7 +111,6 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends TextAni
         super.paint(graphics, observer);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void destroy(final Contextualized contextProvider)
     {
@@ -120,7 +118,6 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends TextAni
         this.text.destroy(contextProvider);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
@@ -161,7 +158,6 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends TextAni
             super(source, text, dx, dy, textPlacement, color, contextualized, TextAnimation.RENDERWHEN10);
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {

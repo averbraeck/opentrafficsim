@@ -31,28 +31,24 @@ public abstract class ExtendedDataDuration<G extends GtuData>
         super(id, description, FloatDuration.class);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected final FloatDuration convertValue(final float value)
     {
         return FloatDuration.instantiateSI(value);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected final FloatDurationVector convert(final float[] storage) throws ValueRuntimeException
     {
         return new FloatDurationVector(storage, DurationUnit.SI);
     }
 
-    /** {@inheritDoc} */
     @Override
     public FloatDuration interpolate(final FloatDuration value0, final FloatDuration value1, final double f)
     {
         return FloatDuration.interpolate(value0, value1, (float) f);
     }
 
-    /** {@inheritDoc} */
     @Override
     public FloatDuration parseValue(final String string)
     {

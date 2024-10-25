@@ -63,7 +63,6 @@ public interface CarFollowingModel extends DesiredHeadwayModel, DesiredSpeedMode
      */
     String getLongName();
 
-    /** {@inheritDoc} */
     @Override
     default void init(final LaneBasedGtu gtu)
     {

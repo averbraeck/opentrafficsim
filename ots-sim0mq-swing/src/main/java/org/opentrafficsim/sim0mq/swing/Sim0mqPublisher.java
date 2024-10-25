@@ -518,7 +518,6 @@ class Sim0mqOtsModel extends AbstractOtsModel
         this.xml = xml;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void constructModel() throws SimRuntimeException
     {
@@ -540,7 +539,6 @@ class Sim0mqOtsModel extends AbstractOtsModel
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public Network getNetwork()
     {

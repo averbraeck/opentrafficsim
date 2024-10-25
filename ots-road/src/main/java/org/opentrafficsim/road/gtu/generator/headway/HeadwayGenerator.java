@@ -38,7 +38,6 @@ public class HeadwayGenerator implements Generator<Duration>
         this.stream = stream;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Duration draw() throws ProbabilityException, ParameterException
     {

@@ -74,7 +74,6 @@ public class TrafCodDisplay extends JPanel implements MouseMotionListener, Mouse
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void paintComponent(final Graphics g)
     {
@@ -95,14 +94,12 @@ public class TrafCodDisplay extends JPanel implements MouseMotionListener, Mouse
         this.trafCODObjects.add(trafCODObject);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void mouseDragged(final MouseEvent e)
     {
         mouseMoved(e); // Do the same as in the mouse move event
     }
 
-    /** {@inheritDoc} */
     @Override
     public void mouseMoved(final MouseEvent e)
     {
@@ -119,35 +116,30 @@ public class TrafCodDisplay extends JPanel implements MouseMotionListener, Mouse
         setToolTipText(toolTipText);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void mouseClicked(final MouseEvent e)
     {
         // Ignore
     }
 
-    /** {@inheritDoc} */
     @Override
     public void mousePressed(final MouseEvent e)
     {
         // Ignore
     }
 
-    /** {@inheritDoc} */
     @Override
     public void mouseReleased(final MouseEvent e)
     {
         // Ignore
     }
 
-    /** {@inheritDoc} */
     @Override
     public void mouseEntered(final MouseEvent e)
     {
         ToolTipManager.sharedInstance().setInitialDelay(0);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void mouseExited(final MouseEvent e)
     {
@@ -231,7 +223,6 @@ class DetectorImage implements TrafCODObject, EventListener
         display.addTrafCODObject(this);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void draw(final Graphics2D g2)
     {
@@ -241,7 +232,6 @@ class DetectorImage implements TrafCODObject, EventListener
         g2.drawRect(X_OFFSET + this.x - BOX_SIZE / 2, Y_OFFSET + this.y - BOX_SIZE / 2, BOX_SIZE, BOX_SIZE);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {
@@ -256,7 +246,6 @@ class DetectorImage implements TrafCODObject, EventListener
         this.display.repaint();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toolTipHit(final int testX, final int testY)
     {
@@ -317,7 +306,6 @@ class TrafficLightImage extends LocalEventProducer implements TrafCODObject
         display.addTrafCODObject(this);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toolTipHit(final int testX, final int testY)
     {
@@ -342,7 +330,6 @@ class TrafficLightImage extends LocalEventProducer implements TrafCODObject
     /** Diameter of a traffic light disk in pixels. */
     private static final int DISC_SIZE = 11;
 
-    /** {@inheritDoc} */
     @Override
     public void draw(final Graphics2D g2)
     {

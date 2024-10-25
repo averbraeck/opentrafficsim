@@ -59,7 +59,6 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
         return parameters;
     }
 
-    /** {@inheritDoc} */
     @Override
     public <T> void setParameter(final ParameterType<T> parameterType, final T value) throws ParameterException
     {
@@ -67,7 +66,6 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
         this.params.setParameter(parameterType, value);
     }
 
-    /** {@inheritDoc} */
     @Override
     public <T> void setParameterResettable(final ParameterType<T> parameterType, final T value) throws ParameterException
     {
@@ -75,7 +73,6 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
         this.params.setParameterResettable(parameterType, value);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void resetParameter(final ParameterType<?> parameterType) throws ParameterException
     {
@@ -83,28 +80,24 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
         this.params.resetParameter(parameterType);
     }
 
-    /** {@inheritDoc} */
     @Override
     public <T> T getParameter(final ParameterType<T> parameterType) throws ParameterException
     {
         return this.params.getParameter(parameterType);
     }
 
-    /** {@inheritDoc} */
     @Override
     public <T> T getParameterOrNull(final ParameterType<T> parameterType)
     {
         return this.params.getParameterOrNull(parameterType);
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean contains(final ParameterType<?> parameterType)
     {
         return this.params.contains(parameterType);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setAllIn(final Parameters parameters)
     {
@@ -158,7 +151,6 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
             return this.parameter;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -212,7 +204,6 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -221,7 +212,6 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

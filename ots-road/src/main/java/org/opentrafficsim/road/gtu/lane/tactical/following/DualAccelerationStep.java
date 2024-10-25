@@ -90,7 +90,6 @@ public class DualAccelerationStep implements Serializable
         return getFollowerAccelerationStep().getValidUntil();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

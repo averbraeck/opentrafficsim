@@ -57,7 +57,6 @@ public class XsdTreeMouseListener extends MouseAdapter
         this.attributesTable = attributesTable;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void mousePressed(final MouseEvent e)
     {
@@ -103,7 +102,6 @@ public class XsdTreeMouseListener extends MouseAdapter
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void mouseClicked(final MouseEvent e)
     {
@@ -198,7 +196,6 @@ public class XsdTreeMouseListener extends MouseAdapter
                 JMenuItem item = new JMenuItem(menuItem);
                 item.addActionListener(new ActionListener()
                 {
-                    /** {@inheritDoc} */
                     @Override
                     public void actionPerformed(final ActionEvent e)
                     {
@@ -215,7 +212,6 @@ public class XsdTreeMouseListener extends MouseAdapter
             JMenuItem item = new JMenuItem("Description...");
             item.addActionListener(new ActionListener()
             {
-                /** {@inheritDoc} */
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
@@ -269,7 +265,6 @@ public class XsdTreeMouseListener extends MouseAdapter
             JMenuItem add = new JMenuItem("Add");
             add.addActionListener(new ActionListener()
             {
-                /** {@inheritDoc} */
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
@@ -282,7 +277,6 @@ public class XsdTreeMouseListener extends MouseAdapter
             JMenuItem duplicate = new JMenuItem("Duplicate");
             duplicate.addActionListener(new ActionListener()
             {
-                /** {@inheritDoc} */
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
@@ -305,7 +299,6 @@ public class XsdTreeMouseListener extends MouseAdapter
             JMenuItem remove = new JMenuItem("Remove");
             remove.addActionListener(new ActionListener()
             {
-                /** {@inheritDoc} */
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
@@ -331,7 +324,6 @@ public class XsdTreeMouseListener extends MouseAdapter
             JMenuItem copy = new JMenuItem("Copy");
             copy.addActionListener(new ActionListener()
             {
-                /** {@inheritDoc} */
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
@@ -354,7 +346,6 @@ public class XsdTreeMouseListener extends MouseAdapter
             JMenuItem cut = new JMenuItem("Cut");
             cut.addActionListener(new ActionListener()
             {
-                /** {@inheritDoc} */
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
@@ -380,7 +371,6 @@ public class XsdTreeMouseListener extends MouseAdapter
                 JMenuItem cut = new JMenuItem("Insert");
                 cut.addActionListener(new ActionListener()
                 {
-                    /** {@inheritDoc} */
                     @Override
                     public void actionPerformed(final ActionEvent e)
                     {
@@ -403,7 +393,6 @@ public class XsdTreeMouseListener extends MouseAdapter
                 JMenuItem cut = new JMenuItem("Paste");
                 cut.addActionListener(new ActionListener()
                 {
-                    /** {@inheritDoc} */
                     @Override
                     public void actionPerformed(final ActionEvent e)
                     {
@@ -432,7 +421,6 @@ public class XsdTreeMouseListener extends MouseAdapter
             JMenuItem revolve = new JMenuItem("Revolve option");
             revolve.addActionListener(new ActionListener()
             {
-                /** {@inheritDoc} */
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
@@ -457,7 +445,6 @@ public class XsdTreeMouseListener extends MouseAdapter
             JMenuItem expand = new JMenuItem(expanded ? "Collapse" : "Expand");
             expand.addActionListener(new ActionListener()
             {
-                /** {@inheritDoc} */
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
@@ -483,7 +470,6 @@ public class XsdTreeMouseListener extends MouseAdapter
             JMenuItem moveUp = new JMenuItem("Move up");
             moveUp.addActionListener(new ActionListener()
             {
-                /** {@inheritDoc} */
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
@@ -505,7 +491,6 @@ public class XsdTreeMouseListener extends MouseAdapter
             JMenuItem moveDown = new JMenuItem("Move down");
             moveDown.addActionListener(new ActionListener()
             {
-                /** {@inheritDoc} */
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {

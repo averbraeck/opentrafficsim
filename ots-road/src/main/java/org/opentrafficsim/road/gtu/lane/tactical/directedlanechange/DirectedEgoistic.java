@@ -22,7 +22,6 @@ public class DirectedEgoistic extends AbstractDirectedLaneChangeModel
         super(perception);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Acceleration applyDriverPersonality(final DualAccelerationStep accelerations)
     {
@@ -30,21 +29,18 @@ public class DirectedEgoistic extends AbstractDirectedLaneChangeModel
         return accelerations.getLeaderAcceleration();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getName()
     {
         return "Egoistic";
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getLongName()
     {
         return "Egoistic lane change model (as described by Treiber).";
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

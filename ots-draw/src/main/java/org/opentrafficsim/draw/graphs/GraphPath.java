@@ -126,7 +126,6 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
         return this.sections.get(index);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Iterator<S> iterator()
     {
@@ -139,7 +138,6 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
             /** Source object iterator per section. */
             private Iterator<S> sourceIterator = this.sectionIterator.hasNext() ? this.sectionIterator.next().iterator() : null;
 
-            /** {@inheritDoc} */
             @Override
             public boolean hasNext()
             {
@@ -160,7 +158,6 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
                 return false;
             }
 
-            /** {@inheritDoc} */
             @Override
             public S next()
             {
@@ -170,7 +167,6 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
         };
     }
 
-    /** {@inheritDoc} */
     @Override
     public Iterator<S> iterator(final int series)
     {
@@ -191,7 +187,6 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
         return new ImmutableArrayList<>(this.sections, Immutable.WRAP);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {
@@ -244,7 +239,6 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
             return this.sections.get(series);
         }
 
-        /** {@inheritDoc} */
         @Override
         public Iterator<L> iterator()
         {

@@ -53,7 +53,6 @@ public class RouteEditor implements EventListener, Consumer<XsdTreeNode>
         return route;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {
@@ -71,7 +70,6 @@ public class RouteEditor implements EventListener, Consumer<XsdTreeNode>
                 node.addConsumer("Show in panel...", this);
                 node.addConsumer("Compute shortest...", new Consumer<XsdTreeNode>()
                 {
-                    /** {@inheritDoc} */
                     @Override
                     public void accept(final XsdTreeNode t)
                     {
@@ -82,7 +80,6 @@ public class RouteEditor implements EventListener, Consumer<XsdTreeNode>
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void accept(final XsdTreeNode t)
     {

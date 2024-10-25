@@ -43,35 +43,30 @@ public class ContourPlotSpeed extends AbstractContourPlot<Speed>
         return new BoundsPaintScale(boundaries, colorValues);
     }
 
-    /** {@inheritDoc} */
     @Override
     public GraphType getGraphType()
     {
         return GraphType.SPEED_CONTOUR;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected double scale(final double si)
     {
         return SpeedUnit.KM_PER_HOUR.getScale().fromStandardUnit(si);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected double getValue(final int item, final double cellLength, final double cellSpan)
     {
         return getDataPool().getSpeed(item);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected ContourDataType<Speed, ?> getContourDataType()
     {
         return null; // speed is present by default
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

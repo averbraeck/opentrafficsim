@@ -36,7 +36,6 @@ public class MapShoulderData extends MapCrossSectionData implements ShoulderData
         this.startOffset = startOffset;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

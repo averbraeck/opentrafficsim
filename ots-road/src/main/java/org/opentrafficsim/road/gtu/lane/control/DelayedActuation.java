@@ -23,7 +23,6 @@ public interface DelayedActuation
     /** No delayed actuation. */
     DelayedActuation NONE = new DelayedActuation()
     {
-        /** {@inheritDoc} */
         @Override
         public Acceleration delayActuation(final Acceleration desiredAcceleration, final LaneBasedGtu gtu)
         {
@@ -38,7 +37,6 @@ public interface DelayedActuation
     /** Tau delayed actuation. */
     DelayedActuation TAUDELAYED = new DelayedActuation()
     {
-        /** {@inheritDoc} */
         @Override
         public Acceleration delayActuation(final Acceleration desiredAcceleration, final LaneBasedGtu gtu)
         {

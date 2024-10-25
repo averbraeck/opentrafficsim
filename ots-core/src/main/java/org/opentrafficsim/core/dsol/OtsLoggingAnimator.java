@@ -41,7 +41,6 @@ public class OtsLoggingAnimator extends OtsAnimator
         super(simulatorId);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
             final OtsModelInterface model) throws SimRuntimeException, NamingException
@@ -74,7 +73,6 @@ public class OtsLoggingAnimator extends OtsAnimator
         super.initialize(model, newReplication);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
             final OtsModelInterface model, final int replicationnr) throws SimRuntimeException, NamingException
@@ -85,7 +83,6 @@ public class OtsLoggingAnimator extends OtsAnimator
         super.initialize(model, newReplication);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {
@@ -95,7 +92,6 @@ public class OtsLoggingAnimator extends OtsAnimator
     /** the current animation thread; null if none. */
     private AnimationThread animationThread = null;
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings({"checkstyle:designforextension", "checkstyle:methodlength"})
     public void run()

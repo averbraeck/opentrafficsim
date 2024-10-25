@@ -31,7 +31,6 @@ public class AttributesNotEqualValidator extends AbstractNodeDecoratorAttribute 
         super(editor, (n) -> n.isType(path), attribute1, attribute2);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String validate(final XsdTreeNode node)
     {
@@ -52,7 +51,6 @@ public class AttributesNotEqualValidator extends AbstractNodeDecoratorAttribute 
         return this.attributes.get(0) + " and " + this.attributes.get(1) + " may not be equal.";
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notifyCreated(final XsdTreeNode node)
     {
@@ -63,7 +61,6 @@ public class AttributesNotEqualValidator extends AbstractNodeDecoratorAttribute 
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notifyAttributeChanged(final XsdTreeNode node, final String attribute)
     {

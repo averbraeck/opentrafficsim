@@ -67,7 +67,6 @@ public class AccelerationStep implements Serializable
         return this.duration;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

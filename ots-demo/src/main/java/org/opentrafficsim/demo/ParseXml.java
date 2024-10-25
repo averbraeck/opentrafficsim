@@ -111,7 +111,6 @@ public class ParseXml
 
     static class DefaultsResolver implements EntityResolver
     {
-        /** {@inheritDoc} */
         @Override
         public InputSource resolveEntity(final String publicId, final String systemId)
         {

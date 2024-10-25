@@ -249,7 +249,6 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
                 }
                 Collections.sort(data, new Comparator<Row>()
                 {
-                    /** {@inheritDoc} */
                     @Override
                     public int compare(final Row o1, final Row o2)
                     {
@@ -356,7 +355,6 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
                 List<Lane> lanes = ((CrossSectionLink) link).getLanes();
                 Collections.sort(lanes, new Comparator<Lane>()
                 {
-                    /** {@inheritDoc} */
                     @Override
                     public int compare(final Lane o1, final Lane o2)
                     {
@@ -398,7 +396,6 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public String get()
     {
@@ -419,7 +416,6 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
         return this.columnNumbers.containsKey(columnId);
     }
 
-    /** {@inheritDoc} */
     @Override
     public synchronized Duration draw() throws ProbabilityException, ParameterException
     {
@@ -453,7 +449,6 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
                 /** Default characteristics, generated as needed. */
                 private GtuCharacteristics defaultCharacteristics;
 
-                /** {@inheritDoc} */
                 @Override
                 public LaneBasedGtuCharacteristics draw() throws ProbabilityException, ParameterException, GtuException
                 {
@@ -518,7 +513,6 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
         return this.characteristicsGenerator;
     }
 
-    /** {@inheritDoc} */
     @Override
     public GeneratorLanePosition draw(final GtuType gtuType, final LaneBasedGtuCharacteristics characteristics,
             final Map<CrossSectionLink, Map<Integer, Integer>> unplaced) throws GtuException
@@ -531,7 +525,6 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
         return this.lanePositions.get(link, lane, position);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Set<GeneratorLanePosition> getAllPositions()
     {

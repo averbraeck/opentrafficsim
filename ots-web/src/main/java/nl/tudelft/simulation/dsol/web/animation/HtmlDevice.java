@@ -29,7 +29,6 @@ public class HtmlDevice extends GraphicsDevice
         this.htmlGraphicsConfigurations = new GraphicsConfiguration[] {htmlGraphicsConfiguration};
     }
 
-    /** {@inheritDoc} */
     @Override
     public int getType()
     {
@@ -37,7 +36,6 @@ public class HtmlDevice extends GraphicsDevice
         return GraphicsDevice.TYPE_RASTER_SCREEN;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getIDstring()
     {
@@ -45,7 +43,6 @@ public class HtmlDevice extends GraphicsDevice
         return "HTMLDevice";
     }
 
-    /** {@inheritDoc} */
     @Override
     public GraphicsConfiguration[] getConfigurations()
     {
@@ -53,7 +50,6 @@ public class HtmlDevice extends GraphicsDevice
         return this.htmlGraphicsConfigurations;
     }
 
-    /** {@inheritDoc} */
     @Override
     public GraphicsConfiguration getDefaultConfiguration()
     {

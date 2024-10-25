@@ -261,14 +261,12 @@ public class FixedTimeController extends AbstractTrafficController
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {
         // nothing
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getFullId()
     {
@@ -299,7 +297,6 @@ public class FixedTimeController extends AbstractTrafficController
         return this.signalGroups;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {
@@ -534,7 +531,6 @@ public class FixedTimeController extends AbstractTrafficController
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public int hashCode()
         {
@@ -544,7 +540,6 @@ public class FixedTimeController extends AbstractTrafficController
             return result;
         }
 
-        /** {@inheritDoc} */
         @Override
         public boolean equals(final Object obj)
         {
@@ -640,7 +635,6 @@ public class FixedTimeController extends AbstractTrafficController
             return this.currentColor;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

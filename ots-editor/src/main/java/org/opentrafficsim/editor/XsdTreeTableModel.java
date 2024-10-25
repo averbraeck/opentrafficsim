@@ -56,28 +56,24 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
         this.treeTable = treeTable;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int getColumnCount()
     {
         return COLUMN_CLASSES.length;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getColumnName(final int column)
     {
         return COLUMN_NAMES[column];
     }
 
-    /** {@inheritDoc} */
     @Override
     public Class<?> getColumnClass(final int column)
     {
         return COLUMN_CLASSES[column];
     }
 
-    /** {@inheritDoc} */
     @Override
     public Object getValueAt(final Object node, final int column)
     {
@@ -119,21 +115,18 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
         return Integer.valueOf(minOccurs) + ".." + (maxOccurs == -1 ? "∞" : Integer.valueOf(maxOccurs));
     }
 
-    /** {@inheritDoc} */
     @Override
     public Object getChild(final Object parent, final int index)
     {
         return ((XsdTreeNode) parent).getChild(index);
     }
 
-    /** {@inheritDoc} */
     @Override
     public int getChildCount(final Object parent)
     {
         return ((XsdTreeNode) parent).getChildCount();
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isCellEditable(final Object node, final int column)
     {
@@ -149,7 +142,6 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
         return treeNode.isEditable() && column == 2 && !treeNode.isInclude();
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setValueAt(final Object aValue, final Object node, final int column)
     {

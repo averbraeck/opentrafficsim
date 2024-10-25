@@ -46,14 +46,12 @@ public class NodeDataDeprecated // implements NodeDataInterface
         return this.position;
     }
 
-    /** {@inheritDoc} */
     // @Override
     public String getId()
     {
         return this.nodeName;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
@@ -63,7 +61,6 @@ public class NodeDataDeprecated // implements NodeDataInterface
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj)
     {
@@ -84,7 +81,6 @@ public class NodeDataDeprecated // implements NodeDataInterface
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

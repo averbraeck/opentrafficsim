@@ -188,21 +188,18 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
         return new JFreeChart(getCaption(), JFreeChart.DEFAULT_TITLE_FONT, plot, showLegend);
     }
 
-    /** {@inheritDoc} */
     @Override
     public GraphType getGraphType()
     {
         return GraphType.TRAJECTORY;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getStatusLabel(final double domainValue, final double rangeValue)
     {
         return String.format("time %.0fs, distance %.0fm", domainValue, rangeValue);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void increaseTime(final Time time)
     {
@@ -212,7 +209,6 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public int getSeriesCount()
     {
@@ -227,14 +223,12 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
         return n;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Comparable<Integer> getSeriesKey(final int series)
     {
         return series;
     }
 
-    /** {@inheritDoc} */
     @SuppressWarnings("rawtypes")
     @Override
     public int indexOf(final Comparable seriesKey)
@@ -242,14 +236,12 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
         return 0;
     }
 
-    /** {@inheritDoc} */
     @Override
     public DomainOrder getDomainOrder()
     {
         return DomainOrder.ASCENDING;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int getItemCount(final int series)
     {
@@ -257,28 +249,24 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
         return trajectory == null ? 0 : trajectory.size();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Number getX(final int series, final int item)
     {
         return getXValue(series, item);
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getXValue(final int series, final int item)
     {
         return getTrajectory(series).getT(item);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Number getY(final int series, final int item)
     {
         return getYValue(series, item);
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getYValue(final int series, final int item)
     {
@@ -343,7 +331,6 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
             setDrawSeriesLineAsPath(true);
         }
 
-        /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
         public boolean isSeriesVisible(final int series)
@@ -352,7 +339,6 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
             return TrajectoryPlot.this.laneVisible.get(n[0]);
         }
 
-        /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
         public Stroke getSeriesStroke(final int series)
@@ -365,7 +351,6 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
             return TrajectoryPlot.this.strokes.get(n[0]).get(n[1]);
         }
 
-        /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
         public Paint getSeriesPaint(final int series)
@@ -419,7 +404,6 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
             entities.add(entity);
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -560,7 +544,6 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
             return this.trajectory.getGtuId();
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -569,7 +552,6 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

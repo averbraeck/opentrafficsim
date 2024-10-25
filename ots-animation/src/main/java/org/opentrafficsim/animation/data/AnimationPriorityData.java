@@ -37,70 +37,60 @@ public class AnimationPriorityData implements PriorityData
         this.contour = OtsLocatable.boundsAsContour(this);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Point2d getLocation()
     {
         return this.link.getDesignLine().getLocationFractionExtended(0.5);
     }
     
-    /** {@inheritDoc} */
     @Override
     public Polygon2d getContour()
     {
         return this.contour;
     }
     
-    /** {@inheritDoc} */
     @Override
     public Bounds2d getBounds()
     {
         return this.bounds;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isAllStop()
     {
         return this.link.getPriority().isAllStop();
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isBusStop()
     {
         return this.link.getPriority().isBusStop();
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isNone()
     {
         return this.link.getPriority().isNone();
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isPriority()
     {
         return this.link.getPriority().isPriority();
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isStop()
     {
         return this.link.getPriority().isStop();
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isYield()
     {
         return this.link.getPriority().isYield();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

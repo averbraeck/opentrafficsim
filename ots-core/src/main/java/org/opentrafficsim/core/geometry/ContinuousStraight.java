@@ -40,28 +40,24 @@ public class ContinuousStraight implements ContinuousLine
         this.length = length;
     }
 
-    /** {@inheritDoc} */
     @Override
     public OrientedPoint2d getStartPoint()
     {
         return this.startPoint;
     }
 
-    /** {@inheritDoc} */
     @Override
     public OrientedPoint2d getEndPoint()
     {
         return this.endPoint;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getStartCurvature()
     {
         return 0.0;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getEndCurvature()
     {
@@ -111,14 +107,12 @@ public class ContinuousStraight implements ContinuousLine
         return offset(offsets);
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getLength()
     {
         return this.length;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

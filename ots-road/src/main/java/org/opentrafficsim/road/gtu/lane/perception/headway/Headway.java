@@ -197,7 +197,6 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
      */
     boolean isParallel();
 
-    /** {@inheritDoc} */
     @Override
     default int compareTo(final Headway headway)
     {

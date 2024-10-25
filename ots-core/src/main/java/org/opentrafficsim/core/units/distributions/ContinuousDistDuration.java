@@ -30,14 +30,12 @@ public class ContinuousDistDuration extends ContinuousDistDoubleScalar.Rel<Durat
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public Duration draw()
     {
         return new Duration(getDistribution().draw(), (DurationUnit) getDisplayUnit());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

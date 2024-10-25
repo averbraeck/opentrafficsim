@@ -101,7 +101,6 @@ public class IdmPlusOld extends AbstractGtuFollowingModelMobil implements Serial
         return new Speed(Math.min(this.delta * speedLimit.getSI(), followerMaximumSpeed.getSI()), SpeedUnit.SI);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
             final Speed leaderSpeed, final Length headway, final Speed speedLimit)
@@ -109,7 +108,6 @@ public class IdmPlusOld extends AbstractGtuFollowingModelMobil implements Serial
         return computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed, headway, speedLimit, DEFAULT_STEP_SIZE);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
             final Speed leaderSpeed, final Length headway, final Speed speedLimit, final Duration stepSize)
@@ -153,28 +151,24 @@ public class IdmPlusOld extends AbstractGtuFollowingModelMobil implements Serial
         return newAcceleration;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Duration getStepSize()
     {
         return DEFAULT_STEP_SIZE;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Acceleration getMaximumSafeDeceleration()
     {
         return this.b;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getName()
     {
         return "IDM+";
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getLongName()
     {
@@ -182,21 +176,18 @@ public class IdmPlusOld extends AbstractGtuFollowingModelMobil implements Serial
                 this.a.getSI(), this.b.getSI(), this.s0.getSI(), this.tSafe.getSI(), this.delta);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void setA(final Acceleration a)
     {
         this.a = a;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void setT(final Duration t)
     {
         this.tSafe = t;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void setFspeed(final double fSpeed)
     {
@@ -205,21 +196,18 @@ public class IdmPlusOld extends AbstractGtuFollowingModelMobil implements Serial
 
     // The following is inherited from CarFollowingModel
 
-    /** {@inheritDoc} */
     @Override
     public final Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo) throws ParameterException
     {
         throw new UnsupportedOperationException("Old car-following model does not support desired speed.");
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Length desiredHeadway(final Parameters parameters, final Speed speed) throws ParameterException
     {
         throw new UnsupportedOperationException("Old car-following model does not support desired headway.");
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Acceleration followingAcceleration(final Parameters parameters, final Speed speed,
             final SpeedLimitInfo speedInfo, final PerceptionIterable<? extends Headway> leaders) throws ParameterException
@@ -241,7 +229,6 @@ public class IdmPlusOld extends AbstractGtuFollowingModelMobil implements Serial
                 speedInfo.getSpeedInfo(SpeedLimitTypes.FIXED_SIGN));
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

@@ -118,7 +118,6 @@ public abstract class Platoons<T>
             /** Random number stream. */
             private final StreamInterface strm = stream;
 
-            /** {@inheritDoc} */
             @Override
             protected void placeGtu(final PlatoonGtu<Category> platoonGtu) throws SimRuntimeException, NamingException,
                     GtuException, NetworkException, OtsGeometryException, ProbabilityException, ParameterException
@@ -147,7 +146,6 @@ public abstract class Platoons<T>
             /** Characteristics generator. */
             private final LaneBasedGtuCharacteristicsGenerator chrctrstcs = characteristics;
 
-            /** {@inheritDoc} */
             @Override
             protected void placeGtu(final PlatoonGtu<GtuType> platoonGtu) throws SimRuntimeException, NamingException,
                     GtuException, NetworkException, OtsGeometryException, ProbabilityException, ParameterException
@@ -400,7 +398,6 @@ public abstract class Platoons<T>
             this.category = category;
         }
 
-        /** {@inheritDoc} */
         @Override
         public int compareTo(final PlatoonGtu<K> o)
         {

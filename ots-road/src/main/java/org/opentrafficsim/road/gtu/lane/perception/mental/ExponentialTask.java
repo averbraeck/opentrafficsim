@@ -43,7 +43,6 @@ public class ExponentialTask extends AbstractTask
         this.start = simulator.getSimulatorTime().si;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double calculateTaskDemand(final LanePerception perception, final LaneBasedGtu gtu, final Parameters parameters)
             throws ParameterException, GtuException

@@ -182,7 +182,6 @@ public class Ccol extends LocalEventProducer implements ActuatedTrafficControlle
         this.simulator.scheduleEventRel(EVALUATION_INTERVAL, this, "step", null);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {
@@ -217,21 +216,18 @@ public class Ccol extends LocalEventProducer implements ActuatedTrafficControlle
         // Tracing etc. not implemented yet.
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getId()
     {
         return this.id;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getFullId()
     {
         return this.id;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void updateDetector(final String detectorId, final boolean detectingGTU)
     {
@@ -240,7 +236,6 @@ public class Ccol extends LocalEventProducer implements ActuatedTrafficControlle
         this.ccolWriter.print(message);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Container getDisplayContainer()
     {

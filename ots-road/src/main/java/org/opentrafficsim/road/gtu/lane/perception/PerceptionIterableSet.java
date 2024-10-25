@@ -52,21 +52,18 @@ public class PerceptionIterableSet<H extends Headway> implements PerceptionItera
         this.set = headways;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Iterator<H> iterator()
     {
         return this.set.iterator();
     }
 
-    /** {@inheritDoc} */
     @Override
     public H first()
     {
         return this.set.iterator().next();
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isEmpty()
     {

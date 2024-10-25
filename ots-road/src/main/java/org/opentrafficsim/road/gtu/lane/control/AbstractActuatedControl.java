@@ -62,7 +62,6 @@ public abstract class AbstractActuatedControl implements LongitudinalControl
         return this.delayedActuation.delayActuation(desiredAcceleration, gtu);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Acceleration getAcceleration(final LaneBasedGtu gtu, final Parameters settings)
     {

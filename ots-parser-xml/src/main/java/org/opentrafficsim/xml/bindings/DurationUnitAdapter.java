@@ -14,7 +14,6 @@ import org.opentrafficsim.xml.bindings.types.DurationUnitType;
 public class DurationUnitAdapter extends ExpressionAdapter<DurationUnit, DurationUnitType>
 {
 
-    /** {@inheritDoc} */
     @Override
     public DurationUnitType unmarshal(final String field)
     {

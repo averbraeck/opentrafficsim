@@ -103,7 +103,6 @@ public abstract class AbstractLaneBasedTacticalPlannerFactory<T extends LaneBase
         return this.carFollowingModelFactory.toString();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Speed peekDesiredSpeed(final GtuType gtuType, final Speed speedLimit, final Speed maxGtuSpeed,
             final Parameters parameters) throws GtuException
@@ -121,7 +120,6 @@ public abstract class AbstractLaneBasedTacticalPlannerFactory<T extends LaneBase
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Length peekDesiredHeadway(final GtuType gtuType, final Speed speed, final Parameters parameters)
             throws GtuException

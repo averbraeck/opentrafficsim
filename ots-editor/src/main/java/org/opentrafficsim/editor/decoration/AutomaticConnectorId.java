@@ -28,7 +28,6 @@ public class AutomaticConnectorId extends AutomaticLinkId
         editor.addAttributeCellEditorListener(this);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notifyAttributeChanged(final XsdTreeNode node, final String attribute)
     {

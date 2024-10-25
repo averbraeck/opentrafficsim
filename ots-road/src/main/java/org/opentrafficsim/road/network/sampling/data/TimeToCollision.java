@@ -37,7 +37,6 @@ public class TimeToCollision extends ExtendedDataDuration<GtuDataRoad>
         super("timeToCollision", "Time to collision");
     }
 
-    /** {@inheritDoc} */
     @Override
     public final FloatDuration getValue(final GtuDataRoad gtu)
     {
@@ -93,7 +92,6 @@ public class TimeToCollision extends ExtendedDataDuration<GtuDataRoad>
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

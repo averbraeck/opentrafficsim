@@ -206,42 +206,36 @@ public abstract class AbstractHeadwayCopy extends AbstractHeadway
         Throw.whenNull(length, "Length may not be null.");
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getId()
     {
         return this.id;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Length getLength()
     {
         return this.length;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Speed getSpeed()
     {
         return this.speed;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final ObjectType getObjectType()
     {
         return this.objectType;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Acceleration getAcceleration()
     {
         return this.acceleration;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
@@ -255,7 +249,6 @@ public abstract class AbstractHeadwayCopy extends AbstractHeadway
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj)
     {

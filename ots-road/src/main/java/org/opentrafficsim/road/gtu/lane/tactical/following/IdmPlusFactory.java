@@ -24,7 +24,6 @@ public class IdmPlusFactory extends AbstractIdmFactory<IdmPlus>
         super(() -> new IdmPlus(), randomStream);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

@@ -1736,7 +1736,6 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
         return this.structureNumber;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void updateDetector(final String detectorId, final boolean detectingGTU)
     {
@@ -1797,7 +1796,6 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {
@@ -1872,21 +1870,18 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
         fireTimedEvent(eventType, payload, getSimulator().getSimulatorTime());
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getFullId()
     {
         return getId();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Container getDisplayContainer()
     {
         return this.displayContainer;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {
@@ -2025,7 +2020,6 @@ class NameAndStream
         return this.numberOfChars;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {
@@ -2533,7 +2527,6 @@ class Variable implements EventListener
         return this.stream;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {
@@ -2652,7 +2645,6 @@ class Variable implements EventListener
         return result.toString();
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {

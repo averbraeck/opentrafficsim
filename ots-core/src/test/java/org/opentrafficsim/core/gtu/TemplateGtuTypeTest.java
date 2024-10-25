@@ -165,63 +165,54 @@ public class TemplateGtuTypeTest implements OtsModelInterface
     /** */
     private OtsSimulatorInterface simulator;
 
-    /** {@inheritDoc} */
     @Override
     public final void constructModel() throws SimRuntimeException
     {
         //
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Network getNetwork()
     {
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public InputParameterMap getInputParameterMap()
     {
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public List getOutputStatistics()
     {
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public OtsSimulatorInterface getSimulator()
     {
         return this.simulator;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getShortName()
     {
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getDescription()
     {
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setStreamInformation(final StreamInformation streamInformation)
     {
         //
     }
 
-    /** {@inheritDoc} */
     @Override
     public StreamInformation getStreamInformation()
     {

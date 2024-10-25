@@ -109,7 +109,6 @@ public class ReturnWrapperImpl implements ReturnWrapper
         // System.out.println("post send");
     }
 
-    /** {@inheritDoc} */
     @Override
     public void encodeReplyAndTransmit(final Boolean ackNack, final Object[] payload)
             throws Sim0MQException, SerializationException
@@ -132,7 +131,6 @@ public class ReturnWrapperImpl implements ReturnWrapper
         // System.out.println(SerialDataDumper.serialDataDumper(EndianUtil.BIG_ENDIAN, result));
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {
@@ -141,7 +139,6 @@ public class ReturnWrapperImpl implements ReturnWrapper
                 + this.replyCount + "]";
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
@@ -155,7 +152,6 @@ public class ReturnWrapperImpl implements ReturnWrapper
         return result; // replyCount is NOT used!
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:needbraces")
     public boolean equals(final Object obj)

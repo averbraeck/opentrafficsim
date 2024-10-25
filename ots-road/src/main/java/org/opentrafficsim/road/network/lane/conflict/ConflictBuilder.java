@@ -727,7 +727,6 @@ public final class ConflictBuilder
             return this.combo;
         }
 
-        /** {@inheritDoc} */
         @Override
         public int compareTo(final Intersection o)
         {
@@ -744,7 +743,6 @@ public final class ConflictBuilder
             return Integer.compare(this.combo, o.combo);
         }
 
-        /** {@inheritDoc} */
         @Override
         public int hashCode()
         {
@@ -759,7 +757,6 @@ public final class ConflictBuilder
             return result;
         }
 
-        /** {@inheritDoc} */
         @Override
         public boolean equals(final Object obj)
         {
@@ -844,7 +841,6 @@ public final class ConflictBuilder
             return out;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -904,14 +900,12 @@ public final class ConflictBuilder
             this.width = width.si;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final double getWidth(final Lane lane, final double fraction)
         {
             return this.width;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -946,14 +940,12 @@ public final class ConflictBuilder
             this.factor = factor;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final double getWidth(final Lane lane, final double fraction)
         {
             return lane.getWidth(fraction).si * this.factor;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -1283,7 +1275,6 @@ public final class ConflictBuilder
             this.cbr = cbr;
         }
 
-        /** {@inheritDoc} */
         @Override
         public void run()
         {
@@ -1361,7 +1352,6 @@ public final class ConflictBuilder
             this.cbr = cbr;
         }
 
-        /** {@inheritDoc} */
         @Override
         public void run()
         {

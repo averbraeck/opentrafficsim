@@ -58,7 +58,6 @@ public interface Flattener
             this.numSegments = numSegments;
         }
 
-        /** {@inheritDoc} */
         @Override
         public PolyLine2d flatten(final FlattableLine line)
         {
@@ -98,7 +97,6 @@ public interface Flattener
             this.maxDeviation = maxDeviation;
         }
 
-        /** {@inheritDoc} */
         @Override
         public PolyLine2d flatten(final FlattableLine line)
         {
@@ -185,7 +183,6 @@ public interface Flattener
             this.maxAngle = maxAngle;
         }
 
-        /** {@inheritDoc} */
         @Override
         public PolyLine2d flatten(final FlattableLine line)
         {
@@ -292,7 +289,6 @@ public interface Flattener
             this.maxAngle = maxAngle;
         }
 
-        /** {@inheritDoc} */
         @Override
         public PolyLine2d flatten(final FlattableLine line)
         {

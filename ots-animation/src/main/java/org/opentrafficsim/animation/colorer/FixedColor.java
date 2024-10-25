@@ -50,21 +50,18 @@ public class FixedColor implements GtuColorer, Serializable
         this(color, "Fixed color");
     }
 
-    /** {@inheritDoc} */
     @Override
     public Color getColor(final Gtu gtu)
     {
         return this.color;
     }
 
-    /** {@inheritDoc} */
     @Override
     public List<LegendEntry> getLegend()
     {
         return new ArrayList<>();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

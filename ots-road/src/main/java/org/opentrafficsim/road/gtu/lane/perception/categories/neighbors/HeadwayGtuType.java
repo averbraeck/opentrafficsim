@@ -201,7 +201,6 @@ public interface HeadwayGtuType
             this.anticipation = anticipation;
         }
 
-        /** {@inheritDoc} */
         @Override
         public HeadwayGtu createHeadwayGtu(final LaneBasedGtu perceivingGtu, final LaneBasedObject reference,
                 final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream)
@@ -227,7 +226,6 @@ public interface HeadwayGtuType
             return new HeadwayGtuPerceived(perceivedGtu, triplet.headway(), triplet.speed(), triplet.acceleration());
         }
 
-        /** {@inheritDoc} */
         @Override
         public HeadwayGtu createDownstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length distance) throws GtuException, ParameterException
@@ -235,7 +233,6 @@ public interface HeadwayGtuType
             return createHeadwayGtu(perceivingGtu, perceivingGtu, perceivedGtu, distance, true);
         }
 
-        /** {@inheritDoc} */
         @Override
         public HeadwayGtu createUpstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length distance) throws GtuException, ParameterException
@@ -243,7 +240,6 @@ public interface HeadwayGtuType
             return createHeadwayGtu(perceivingGtu, perceivingGtu, perceivedGtu, distance, false);
         }
 
-        /** {@inheritDoc} */
         @Override
         public HeadwayGtu createParallelGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
                 final Length overlapFront, final Length overlap, final Length overlapRear) throws GtuException

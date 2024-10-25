@@ -39,7 +39,6 @@ public class AccelerationBusStop implements AccelerationIncentive
     // TODO this process is much more complex: tail blocking other traffic? other bus in front? many people at bus stop?
     private static final Length STOP_DISTANCE = new Length(15.0, LengthUnit.SI);
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:parameternumber")
     public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
@@ -102,7 +101,6 @@ public class AccelerationBusStop implements AccelerationIncentive
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

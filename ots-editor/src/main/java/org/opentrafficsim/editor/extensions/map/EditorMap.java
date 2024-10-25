@@ -160,7 +160,6 @@ public class EditorMap extends JPanel implements EventListener
             /** */
             private static final long serialVersionUID = 20231016L;
 
-            /** {@inheritDoc} */
             @Override
             public void setExtent(final Bounds2d extent)
             {
@@ -173,7 +172,6 @@ public class EditorMap extends JPanel implements EventListener
                 super.setExtent(extent);
             }
 
-            /** {@inheritDoc} */
             @Override
             public synchronized void zoomAll()
             {
@@ -191,7 +189,6 @@ public class EditorMap extends JPanel implements EventListener
                 EditorMap.this.ignoreKeepScale = false;
             }
 
-            /** {@inheritDoc} */
             @Override
             public synchronized void home()
             {
@@ -205,7 +202,6 @@ public class EditorMap extends JPanel implements EventListener
         editor.addListener(this, OtsEditor.NEW_FILE);
         this.animationPanel.setRenderableScale(new RenderableScale()
         {
-            /** {@inheritDoc} */
             @Override
             public Bounds2d computeVisibleExtent(final Bounds2d extent, final Dimension screen)
             {
@@ -279,7 +275,6 @@ public class EditorMap extends JPanel implements EventListener
             /** */
             private static final long serialVersionUID = 20240227L;
 
-            /** {@inheritDoc} */
             @Override
             public void setSelected(final ButtonModel model, final boolean selected)
             {
@@ -457,7 +452,6 @@ public class EditorMap extends JPanel implements EventListener
         button.setToolTipText(toolTipText);
         button.addActionListener(new ActionListener()
         {
-            /** {@inheritDoc} */
             @Override
             public void actionPerformed(final ActionEvent e)
             {
@@ -511,7 +505,6 @@ public class EditorMap extends JPanel implements EventListener
         ContextInterface context = new JvmContext("ots-context");
         Contextualized contextualized = new Contextualized()
         {
-            /** {@inheritDoc} */
             @Override
             public ContextInterface getContext()
             {
@@ -521,7 +514,6 @@ public class EditorMap extends JPanel implements EventListener
         return new EditorMap(animator, contextualized, editor);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {

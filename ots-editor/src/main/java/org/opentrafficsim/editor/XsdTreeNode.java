@@ -2696,7 +2696,6 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         return false;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean addListener(final EventListener listener, final EventType eventType)
     {

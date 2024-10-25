@@ -68,7 +68,6 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
         System.out.println(network.getLinkMap());
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void addTabs()
     {
@@ -165,7 +164,6 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
             super(inputParameterMap);
         }
 
-        /** {@inheritDoc} */
         @SuppressWarnings({"rawtypes", "unchecked"})
         @Override
         public void addParameterField(final JPanel panel, final InputParameter<?, ?> parameter)
@@ -180,7 +178,6 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public void actionPerformed(final ActionEvent e)
         {
@@ -262,7 +259,6 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
             panel.add(box);
         }
 
-        /** {@inheritDoc} */
         @SuppressWarnings("unchecked")
         @Override
         public InputParameterSelectionMap<K, T> getParameter()

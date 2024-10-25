@@ -58,7 +58,6 @@ public class StraightSwing extends OtsSimulationApplication<StraightModel> imple
         super(model, panel);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void addTabs()
     {

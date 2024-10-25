@@ -168,7 +168,6 @@ public class TextProperties implements Serializable
         this.textAttributes.put(TextAttribute.STRIKETHROUGH, strikethrough ? TextAttribute.STRIKETHROUGH_ON : -1);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

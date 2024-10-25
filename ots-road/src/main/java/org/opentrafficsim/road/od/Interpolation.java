@@ -24,7 +24,6 @@ public enum Interpolation
     /** Stepwise interpolation of demand. */
     STEPWISE
     {
-        /** {@inheritDoc} */
         @Override
         Frequency interpolate(final Frequency frequency0, final Time time0, final Frequency frequency1, final Time time1,
                 final Time time)
@@ -32,7 +31,6 @@ public enum Interpolation
             return frequency0;
         }
 
-        /** {@inheritDoc} */
         @Override
         int integrate(final Frequency frequency0, final Time time0, final Frequency frequency1, final Time time1)
         {
@@ -40,7 +38,6 @@ public enum Interpolation
                     * (time1.getInUnit(TimeUnit.BASE_HOUR) - time0.getInUnit(TimeUnit.BASE_HOUR)));
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -51,7 +48,6 @@ public enum Interpolation
     /** Linear interpolation of demand. */
     LINEAR
     {
-        /** {@inheritDoc} */
         @Override
         Frequency interpolate(final Frequency frequency0, final Time time0, final Frequency frequency1, final Time time1,
                 final Time time)
@@ -59,7 +55,6 @@ public enum Interpolation
             return Frequency.interpolate(frequency0, frequency1, (time.si - time0.si) / (time1.si - time0.si));
         }
 
-        /** {@inheritDoc} */
         @Override
         int integrate(final Frequency frequency0, final Time time0, final Frequency frequency1, final Time time1)
         {
@@ -67,7 +62,6 @@ public enum Interpolation
                     * (time1.getInUnit(TimeUnit.BASE_HOUR) - time0.getInUnit(TimeUnit.BASE_HOUR)));
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

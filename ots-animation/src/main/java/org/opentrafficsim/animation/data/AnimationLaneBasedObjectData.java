@@ -38,28 +38,24 @@ public abstract class AnimationLaneBasedObjectData<T extends LaneBasedObject>
         this.laneBasedObject = laneBasedObject;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Length getLaneWidth()
     {
         return this.laneBasedObject.getLane().getWidth(this.laneBasedObject.getLongitudinalPosition());
     }
 
-    /** {@inheritDoc} */
     @Override
     public OrientedPoint2d getLocation()
     {
         return this.laneBasedObject.getLocation();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Polygon2d getContour()
     {
         return this.laneBasedObject.getContour();
     }
     
-    /** {@inheritDoc} */
     @Override
     public OtsShape getShape()
     {
@@ -70,14 +66,12 @@ public abstract class AnimationLaneBasedObjectData<T extends LaneBasedObject>
         return this.shape;
     }
 
-    /** {@inheritDoc} */
     @Override
     public PolyLine2d getLine()
     {
         return OtsLocatable.transformLine(this.laneBasedObject.getLine(), getLocation());
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getId()
     {

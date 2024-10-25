@@ -41,21 +41,18 @@ public abstract class AbstractTransceiver implements TransceiverInterface
         this.resultFields = resultFields;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getId()
     {
         return this.id;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final MetaData getAddressFields()
     {
         return this.addressFields;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final MetaData getResultFields()
     {
@@ -100,7 +97,6 @@ public abstract class AbstractTransceiver implements TransceiverInterface
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

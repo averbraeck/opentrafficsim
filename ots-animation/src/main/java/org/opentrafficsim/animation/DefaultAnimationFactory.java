@@ -217,7 +217,6 @@ public class DefaultAnimationFactory implements EventListener
         return new DefaultAnimationFactory(network, gtuColorer, false);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {

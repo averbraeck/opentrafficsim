@@ -83,14 +83,12 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
             {
                 this.eval = ScenarioParser.parseInputParameters(new ScenariosWrapper()
                 {
-                    /** {@inheritDoc} */
                     @Override
                     public Iterable<ParameterWrapper> getDefaultInputParameters()
                     {
                         return EvalWrapper.this.defaultParamaters;
                     }
 
-                    /** {@inheritDoc} */
                     @Override
                     public Iterable<ParameterWrapper> getScenarioInputParameters()
                     {
@@ -123,7 +121,6 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
         return this.eval;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notifyCreated(final XsdTreeNode node)
     {
@@ -149,7 +146,6 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notifyRemoved(final XsdTreeNode node)
     {
@@ -179,7 +175,6 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {

@@ -47,14 +47,12 @@ public class HistoricalLinkedList<E> extends AbstractHistoricalList<E, LinkedLis
         super(historyManager, new LinkedList<>(c));
     }
 
-    /** {@inheritDoc} */
     @Override
     public LinkedList<E> get()
     {
         return getCollection();
     }
 
-    /** {@inheritDoc} */
     @Override
     public LinkedList<E> get(final Time time)
     {
@@ -65,7 +63,6 @@ public class HistoricalLinkedList<E> extends AbstractHistoricalList<E, LinkedLis
         return fill(time, new LinkedList<>());
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {
@@ -76,14 +73,12 @@ public class HistoricalLinkedList<E> extends AbstractHistoricalList<E, LinkedLis
 
     // add tail
 
-    /** {@inheritDoc} */
     @Override
     public boolean offer(final E e)
     {
         return offerLast(e);
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean offerLast(final E e)
     {
@@ -95,7 +90,6 @@ public class HistoricalLinkedList<E> extends AbstractHistoricalList<E, LinkedLis
         return added;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void addLast(final E e)
     {
@@ -104,14 +98,12 @@ public class HistoricalLinkedList<E> extends AbstractHistoricalList<E, LinkedLis
 
     // remove head
 
-    /** {@inheritDoc} */
     @Override
     public E remove()
     {
         return removeFirst();
     }
 
-    /** {@inheritDoc} */
     @Override
     public E removeFirst()
     {
@@ -124,14 +116,12 @@ public class HistoricalLinkedList<E> extends AbstractHistoricalList<E, LinkedLis
         return element;
     }
 
-    /** {@inheritDoc} */
     @Override
     public E pop()
     {
         return removeFirst();
     }
 
-    /** {@inheritDoc} */
     @Override
     public E pollFirst()
     {
@@ -144,7 +134,6 @@ public class HistoricalLinkedList<E> extends AbstractHistoricalList<E, LinkedLis
         return element;
     }
 
-    /** {@inheritDoc} */
     @Override
     public E poll()
     {
@@ -153,21 +142,18 @@ public class HistoricalLinkedList<E> extends AbstractHistoricalList<E, LinkedLis
 
     // add head
 
-    /** {@inheritDoc} */
     @Override
     public void addFirst(final E e)
     {
         add(0, e);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void push(final E e)
     {
         addFirst(e);
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean offerFirst(final E e)
     {
@@ -181,7 +167,6 @@ public class HistoricalLinkedList<E> extends AbstractHistoricalList<E, LinkedLis
 
     // remove tail
 
-    /** {@inheritDoc} */
     @Override
     public E removeLast()
     {
@@ -192,7 +177,6 @@ public class HistoricalLinkedList<E> extends AbstractHistoricalList<E, LinkedLis
         return remove(size() - 1);
     }
 
-    /** {@inheritDoc} */
     @Override
     public E pollLast()
     {
@@ -205,7 +189,6 @@ public class HistoricalLinkedList<E> extends AbstractHistoricalList<E, LinkedLis
 
     // occurrence
 
-    /** {@inheritDoc} */
     @Override
     public boolean removeFirstOccurrence(final Object o)
     {
@@ -220,7 +203,6 @@ public class HistoricalLinkedList<E> extends AbstractHistoricalList<E, LinkedLis
         return false;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean removeLastOccurrence(final Object o)
     {
@@ -237,42 +219,36 @@ public class HistoricalLinkedList<E> extends AbstractHistoricalList<E, LinkedLis
 
     // Non-altering LinkedList methods
 
-    /** {@inheritDoc} */
     @Override
     public E element()
     {
         return getCollection().element();
     }
 
-    /** {@inheritDoc} */
     @Override
     public E peek()
     {
         return getCollection().peek();
     }
 
-    /** {@inheritDoc} */
     @Override
     public E getFirst()
     {
         return getCollection().getFirst();
     }
 
-    /** {@inheritDoc} */
     @Override
     public E getLast()
     {
         return getCollection().getLast();
     }
 
-    /** {@inheritDoc} */
     @Override
     public E peekFirst()
     {
         return getCollection().peekFirst();
     }
 
-    /** {@inheritDoc} */
     @Override
     public E peekLast()
     {

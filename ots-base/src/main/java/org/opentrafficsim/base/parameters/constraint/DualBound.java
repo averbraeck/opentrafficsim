@@ -211,14 +211,12 @@ public final class DualBound<T extends Number> extends SingleBound<T>
         this.upperBound = upperBound;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean accept(final T value)
     {
         return super.accept(value) && this.upperBound.accept(value);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

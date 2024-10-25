@@ -308,7 +308,6 @@ public class Publisher extends AbstractTransceiver
         this.subscriptionHandlerMap.put(subscriptionHandler.getId(), subscriptionHandler);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Object[] get(final Object[] address, final ReturnWrapper returnWrapper)
             throws Sim0MQException, SerializationException
@@ -369,7 +368,6 @@ public class Publisher extends AbstractTransceiver
         }
     };
 
-    /** {@inheritDoc} */
     @Override
     public TransceiverInterface getIdSource(final int addressLevel, final ReturnWrapper returnWrapper)
             throws Sim0MQException, SerializationException
@@ -382,7 +380,6 @@ public class Publisher extends AbstractTransceiver
         return this.idSource;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean hasIdSource()
     {

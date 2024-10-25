@@ -479,7 +479,6 @@ public interface ValueValidator extends Comparable<ValueValidator>
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     default int compareTo(final ValueValidator o)
     {

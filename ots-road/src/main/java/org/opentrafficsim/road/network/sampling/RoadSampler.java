@@ -129,14 +129,12 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
         this.samplingInterval = new Duration(1.0 / frequency.si, DurationUnit.SI);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Time now()
     {
         return this.simulator.getSimulatorAbsTime();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void scheduleStartRecording(final Time time, final LaneDataRoad lane)
     {
@@ -150,7 +148,6 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void scheduleStopRecording(final Time time, final LaneDataRoad lane)
     {
@@ -164,7 +161,6 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void initRecording(final LaneDataRoad lane)
     {
@@ -191,7 +187,6 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void finalizeRecording(final LaneDataRoad lane)
     {
@@ -200,7 +195,6 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
         roadLane.removeListener(this, Lane.GTU_REMOVE_EVENT);
     }
 
-    /** {@inheritDoc} */
     @Override
     // @docs/02-model-structure/djutils.md#event-producers-and-listeners (if-structure + add/removeListener(...))
     public final void notify(final Event event) throws RemoteException
@@ -378,7 +372,6 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final int hashCode()
     {
@@ -390,7 +383,6 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean equals(final Object obj)
     {
@@ -443,7 +435,6 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

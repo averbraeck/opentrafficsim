@@ -30,14 +30,12 @@ public class DiscreteDistArea extends DiscreteDistDoubleScalar.Rel<Area, AreaUni
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public Area draw()
     {
         return new Area(getDistribution().draw(), (AreaUnit) getUnit());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

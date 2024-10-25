@@ -31,7 +31,6 @@ public interface Estimation
     /** No estimation errors. */
     Estimation NONE = new Estimation()
     {
-        /** {@inheritDoc} */
         @Override
         public NeighborTriplet estimate(final LaneBasedGtu perceivingGtu, final LaneBasedObject reference,
                 final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream, final Time when)
@@ -43,7 +42,6 @@ public interface Estimation
                     perceivedGtu.getAcceleration(when));
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -54,7 +52,6 @@ public interface Estimation
     /** Underestimation based on situational awareness. */
     Estimation FACTOR_ESTIMATION = new FactorEstimation()
     {
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -160,7 +157,6 @@ public interface Estimation
      */
     abstract class FactorEstimation implements Estimation
     {
-        /** {@inheritDoc} */
         @Override
         public NeighborTriplet estimate(final LaneBasedGtu perceivingGtu, final LaneBasedObject reference,
                 final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream, final Time when)

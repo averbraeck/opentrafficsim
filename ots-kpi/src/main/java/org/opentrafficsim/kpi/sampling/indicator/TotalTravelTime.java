@@ -22,7 +22,6 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 public class TotalTravelTime extends AbstractIndicator<Duration>
 {
 
-    /** {@inheritDoc} */
     @Override
     protected <G extends GtuData> Duration calculate(final Query<G, ?> query, final Time startTime, final Time endTime,
             final List<TrajectoryGroup<G>> trajectoryGroups)
@@ -38,7 +37,6 @@ public class TotalTravelTime extends AbstractIndicator<Duration>
         return sum;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

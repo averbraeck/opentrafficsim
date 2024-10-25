@@ -99,7 +99,6 @@ public class LaneMovementStep implements Serializable
         return this.laneChange;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

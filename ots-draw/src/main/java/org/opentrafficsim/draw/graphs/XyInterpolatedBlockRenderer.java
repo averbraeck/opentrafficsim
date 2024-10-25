@@ -136,35 +136,30 @@ public class XyInterpolatedBlockRenderer extends XYBlockRenderer
             // use these values to derive an interpolated color raster
             p = new Paint()
             {
-                /** {@inheritDoc} */
                 @Override
                 public int getTransparency()
                 {
                     return TRANSLUCENT;
                 }
 
-                /** {@inheritDoc} */
                 @Override
                 public PaintContext createContext(final ColorModel cm, final Rectangle deviceBounds,
                         final Rectangle2D userBounds, final AffineTransform xform, final RenderingHints hints)
                 {
                     return new PaintContext()
                     {
-                        /** {@inheritDoc} */
                         @Override
                         public void dispose()
                         {
                             //
                         }
 
-                        /** {@inheritDoc} */
                         @Override
                         public ColorModel getColorModel()
                         {
                             return ColorModel.getRGBdefault();
                         }
 
-                        /** {@inheritDoc} */
                         @Override
                         public Raster getRaster(final int x, final int y, final int w, final int h)
                         {
@@ -308,7 +303,6 @@ public class XyInterpolatedBlockRenderer extends XYBlockRenderer
         return 0.5 * (adjacentCorner1 + adjacentCorner2);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

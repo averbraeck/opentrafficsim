@@ -52,7 +52,6 @@ public class RwsSwitch extends SingleCrossSectionSwitch
         this.flowThreshold = new Frequency(1500, FrequencyUnit.PER_HOUR).times(detectors.size());
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isEnabled()
     {
@@ -77,7 +76,6 @@ public class RwsSwitch extends SingleCrossSectionSwitch
         return false;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Duration getCycleTime()
     {

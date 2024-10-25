@@ -21,7 +21,6 @@ public interface Anticipation
     /** Assume no anticipation. */
     Anticipation NONE = new Anticipation()
     {
-        /** {@inheritDoc} */
         @Override
         public NeighborTriplet anticipate(final NeighborTriplet neighborTriplet, final Duration duration,
                 final Length traveledDistance, final boolean downstream)
@@ -29,7 +28,6 @@ public interface Anticipation
             return neighborTriplet;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -40,7 +38,6 @@ public interface Anticipation
     /** Assume constant speed. */
     Anticipation CONSTANT_SPEED = new Anticipation()
     {
-        /** {@inheritDoc} */
         @Override
         public NeighborTriplet anticipate(final NeighborTriplet neighborTriplet, final Duration duration,
                 final Length traveledDistanceReference, final boolean downstream)
@@ -52,7 +49,6 @@ public interface Anticipation
             return new NeighborTriplet(distance, neighborTriplet.speed(), neighborTriplet.acceleration());
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -63,7 +59,6 @@ public interface Anticipation
     /** Assume constant acceleration. */
     Anticipation CONSTANT_ACCELERATION = new Anticipation()
     {
-        /** {@inheritDoc} */
         @Override
         public NeighborTriplet anticipate(final NeighborTriplet neighborTriplet, final Duration duration,
                 final Length traveledDistanceReference, final boolean downstream)
@@ -89,7 +84,6 @@ public interface Anticipation
                     Speed.instantiateSI(neighborTriplet.speed().si + dv), neighborTriplet.acceleration());
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

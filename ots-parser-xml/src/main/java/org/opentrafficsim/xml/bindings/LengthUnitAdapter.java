@@ -14,7 +14,6 @@ import org.opentrafficsim.xml.bindings.types.LengthUnitType;
 public class LengthUnitAdapter extends ExpressionAdapter<LengthUnit, LengthUnitType>
 {
 
-    /** {@inheritDoc} */
     @Override
     public LengthUnitType unmarshal(final String field)
     {

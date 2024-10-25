@@ -36,7 +36,6 @@ public class TotalDelay extends AbstractIndicator<Duration>
         this.referenceSpeed = referenceSpeed;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected <G extends GtuData> Duration calculate(final Query<G, ?> query, final Time startTime, final Time endTime,
             final List<TrajectoryGroup<G>> trajectoryGroups)
@@ -55,7 +54,6 @@ public class TotalDelay extends AbstractIndicator<Duration>
         return sumTime.minus(sumDist.divide(this.referenceSpeed));
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

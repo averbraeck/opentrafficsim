@@ -56,7 +56,6 @@ public class DesiredSpeedColorer implements GtuColorer, Serializable
         this.legend.add(new LegendEntry(Color.WHITE, "unknown", "unknown"));
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Color getColor(final Gtu gtu)
     {
@@ -81,14 +80,12 @@ public class DesiredSpeedColorer implements GtuColorer, Serializable
         return Color.WHITE;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final List<LegendEntry> getLegend()
     {
         return Collections.unmodifiableList(this.legend);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

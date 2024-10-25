@@ -107,35 +107,30 @@ public class StaticObject extends LocalEventProducer implements LocatedObject
         return create(id, geometry, Length.ZERO);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Polygon2d getContour()
     {
         return this.contour;
     }
 
-    /** {@inheritDoc} */
     @Override
     public OtsShape getShape()
     {
         return this.shape;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Length getHeight()
     {
         return this.height;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getId()
     {
         return this.id;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String getFullId()
@@ -143,7 +138,6 @@ public class StaticObject extends LocalEventProducer implements LocatedObject
         return this.id;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public OrientedPoint2d getLocation()
@@ -151,7 +145,6 @@ public class StaticObject extends LocalEventProducer implements LocatedObject
         return this.location;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public Bounds2d getBounds()
@@ -159,7 +152,6 @@ public class StaticObject extends LocalEventProducer implements LocatedObject
         return this.bounds;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

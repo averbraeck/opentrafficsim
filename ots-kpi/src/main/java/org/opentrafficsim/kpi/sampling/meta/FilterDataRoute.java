@@ -24,7 +24,6 @@ public class FilterDataRoute extends FilterDataType<String, GtuData>
         super("route", "Route id", String.class);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getValue(final GtuData gtu)
     {
@@ -32,7 +31,6 @@ public class FilterDataRoute extends FilterDataType<String, GtuData>
         return gtu.getRouteId();
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

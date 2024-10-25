@@ -34,35 +34,30 @@ public class RectangleShape implements OtsShape
         this.dy = Math.abs(dy) / 2.0;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getMinX()
     {
         return -this.dx;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getMaxX()
     {
         return this.dx;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getMinY()
     {
         return -this.dy;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getMaxY()
     {
         return this.dy;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean contains(final double x, final double y) throws NullPointerException
     {
@@ -81,7 +76,6 @@ public class RectangleShape implements OtsShape
         return Math.hypot(Math.max(qx, 0.0), Math.max(qy, 0.0)) + Math.min(Math.max(qx, qy), 0.0);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Polygon2d asPolygon()
     {
@@ -93,7 +87,6 @@ public class RectangleShape implements OtsShape
         return this.polygon;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

@@ -112,7 +112,6 @@ public class Categorization implements Serializable, Identifiable
         return false;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final int hashCode()
     {
@@ -122,7 +121,6 @@ public class Categorization implements Serializable, Identifiable
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean equals(final Object obj)
     {
@@ -153,7 +151,6 @@ public class Categorization implements Serializable, Identifiable
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

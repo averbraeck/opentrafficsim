@@ -326,7 +326,6 @@ public class Gtu extends LocalEventProducer
         return this.maximumSpeed;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Bounds2d getBounds()
     {
@@ -498,7 +497,6 @@ public class Gtu extends LocalEventProducer
         return this.tags.get(tag);
     }
 
-    /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override
     public GtuType getType()
@@ -776,7 +774,6 @@ public class Gtu extends LocalEventProducer
     /** Cached location at that time. */
     private OrientedPoint2d cacheLocation = null;
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public OrientedPoint2d getLocation()
@@ -875,7 +872,6 @@ public class Gtu extends LocalEventProducer
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public OtsShape getShape()
     {
@@ -980,7 +976,6 @@ public class Gtu extends LocalEventProducer
         return this.nextMoveEvent;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("designforextension")
     public int hashCode()
@@ -992,7 +987,6 @@ public class Gtu extends LocalEventProducer
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings({"designforextension", "needbraces"})
     public boolean equals(final Object obj)

@@ -58,7 +58,6 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
         refer.addListeningKeyrefValidator(this);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void addNode(final XsdTreeNode node)
     {
@@ -85,7 +84,6 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void removeNode(final XsdTreeNode node)
     {
@@ -94,7 +92,6 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
         this.coupledKeyrefNodes.remove(node);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String validate(final XsdTreeNode node)
     {
@@ -163,7 +160,6 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public List<String> getOptions(final XsdTreeNode node, final Object field)
     {
@@ -224,7 +220,6 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public XsdTreeNode getCoupledKeyrefNode(final XsdTreeNode node)
     {

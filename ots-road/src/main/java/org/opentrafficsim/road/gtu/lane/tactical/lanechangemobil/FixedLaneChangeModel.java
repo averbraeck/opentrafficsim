@@ -44,7 +44,6 @@ public class FixedLaneChangeModel implements LaneChangeModel, Serializable
         this.laneChange = laneChange;
     }
 
-    /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:parameternumber")
     @Override
     public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGtu gtu,
@@ -75,14 +74,12 @@ public class FixedLaneChangeModel implements LaneChangeModel, Serializable
         throw new Error("Program Error - unhandled LateralDirectionality");
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getName()
     {
         return "Fixed lane change model";
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getLongName()
     {
@@ -90,7 +87,6 @@ public class FixedLaneChangeModel implements LaneChangeModel, Serializable
                 + "traffic. It is used mostly for testing.";
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

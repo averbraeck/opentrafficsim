@@ -30,14 +30,12 @@ public class ContinuousDistMass extends ContinuousDistDoubleScalar.Rel<Mass, Mas
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public Mass draw()
     {
         return new Mass(getDistribution().draw(), (MassUnit) getDisplayUnit());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

@@ -110,7 +110,6 @@ public class GhostText implements FocusListener, DocumentListener, PropertyChang
         this.foregroundColor = this.textComp.getForeground();
     }
 
-    /** {@inheritDoc} */
     @Override
     public void focusGained(final FocusEvent e)
     {
@@ -130,7 +129,6 @@ public class GhostText implements FocusListener, DocumentListener, PropertyChang
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public void focusLost(final FocusEvent e)
     {
@@ -149,28 +147,24 @@ public class GhostText implements FocusListener, DocumentListener, PropertyChang
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void propertyChange(final PropertyChangeEvent evt)
     {
         updateState();
     }
 
-    /** {@inheritDoc} */
     @Override
     public void changedUpdate(final DocumentEvent e)
     {
         updateState();
     }
 
-    /** {@inheritDoc} */
     @Override
     public void insertUpdate(final DocumentEvent e)
     {
         updateState();
     }
 
-    /** {@inheritDoc} */
     @Override
     public void removeUpdate(final DocumentEvent e)
     {

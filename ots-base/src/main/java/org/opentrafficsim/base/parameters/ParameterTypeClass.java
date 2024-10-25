@@ -81,14 +81,12 @@ public class ParameterTypeClass<T> extends ParameterType<Class<? extends T>>
         return (Class<T>) object.getClass();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String printValue(final Parameters parameters) throws ParameterException
     {
         return parameters.getParameter(this).getSimpleName();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

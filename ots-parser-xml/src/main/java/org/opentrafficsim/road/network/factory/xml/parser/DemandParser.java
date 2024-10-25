@@ -179,7 +179,6 @@ public final class DemandParser
                 AStarAdmissibleHeuristic<Node> aStarHeuristicTime = getTimeAStarHeuristic(maxSpeed);
                 linkWeight = new LinkWeight()
                 {
-                    /** {@inheritDoc} */
                     @Override
                     public double getWeight(final Link link)
                     {
@@ -192,7 +191,6 @@ public final class DemandParser
                         return link.getLength().si / speedLimit.si;
                     }
 
-                    /** {@inheritDoc} */
                     @Override
                     public AStarAdmissibleHeuristic<Node> getAStarHeuristic()
                     {
@@ -210,7 +208,6 @@ public final class DemandParser
                 linkWeight = new LinkWeight()
                 {
 
-                    /** {@inheritDoc} */
                     @Override
                     public double getWeight(final Link link)
                     {
@@ -223,13 +220,11 @@ public final class DemandParser
                         return link.getLength().si * perDistance.si + (link.getLength().si / speedLimit.si) * perTime.si;
                     }
 
-                    /** {@inheritDoc} */
                     @Override
                     public AStarAdmissibleHeuristic<Node> getAStarHeuristic()
                     {
                         return new AStarAdmissibleHeuristic<Node>()
                         {
-                            /** {@inheritDoc} */
                             @Override
                             public double getCostEstimate(final Node sourceVertex, final Node targetVertex)
                             {
@@ -313,7 +308,6 @@ public final class DemandParser
     {
         return new AStarAdmissibleHeuristic<Node>()
         {
-            /** {@inheritDoc} */
             @Override
             public double getCostEstimate(final Node sourceVertex, final Node targetVertex)
             {
@@ -884,14 +878,12 @@ public final class DemandParser
                     ParseDistribution.parseContinuousDist(streamMap, distribution, unit, eval);
             Generator<T> generator = new Generator<T>()
             {
-                /** {@inheritDoc} */
                 @Override
                 public T draw() throws ProbabilityException, ParameterException
                 {
                     return dist.draw();
                 }
 
-                /** {@inheritDoc} */
                 @Override
                 public String toString()
                 {

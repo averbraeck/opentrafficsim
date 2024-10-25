@@ -80,7 +80,6 @@ public class DesiredHeadwayColorer implements GtuColorer, Serializable
         this.tMax = tMax;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Color getColor(final Gtu gtu)
     {
@@ -118,14 +117,12 @@ public class DesiredHeadwayColorer implements GtuColorer, Serializable
         return ColorInterpolator.interpolateColor(MIDDLE, HIGH, (t - tMean) / (maxT - tMean));
     }
 
-    /** {@inheritDoc} */
     @Override
     public final List<LegendEntry> getLegend()
     {
         return this.legend;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

@@ -53,7 +53,6 @@ public class SwingFundamentalDiagram extends SwingPlot
         super(plot);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected ChartMouseListener getChartMouseListener()
     {
@@ -61,7 +60,6 @@ public class SwingFundamentalDiagram extends SwingPlot
                 : GraphUtil.getToggleSeriesByLegendListener(getPlot().getLegend(), getPlot().getLaneVisible());
         return new ChartMouseListener()
         {
-            /** {@inheritDoc} */
             @SuppressWarnings("unchecked")
             @Override
             public void chartMouseClicked(final ChartMouseEvent event)
@@ -112,7 +110,6 @@ public class SwingFundamentalDiagram extends SwingPlot
                 }
             }
 
-            /** {@inheritDoc} */
             @SuppressWarnings("unchecked")
             @Override
             public void chartMouseMoved(final ChartMouseEvent event)
@@ -196,7 +193,6 @@ public class SwingFundamentalDiagram extends SwingPlot
         };
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void addPopUpMenuItems(final JPopupMenu popupMenu)
     {
@@ -212,7 +208,6 @@ public class SwingFundamentalDiagram extends SwingPlot
             item.setSelected(f == 1);
             item.addActionListener(new ActionListener()
             {
-                /** {@inheritDoc} */
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {
@@ -259,7 +254,6 @@ public class SwingFundamentalDiagram extends SwingPlot
             item.addActionListener(new ActionListener()
             {
 
-                /** {@inheritDoc} */
                 @Override
                 public void actionPerformed(final ActionEvent e)
                 {

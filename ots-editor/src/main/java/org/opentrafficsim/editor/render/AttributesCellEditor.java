@@ -59,7 +59,6 @@ public class AttributesCellEditor extends DefaultCellEditor
         super(new AppearanceControlTextField());
         getComponent().addKeyListener(new KeyAdapter()
         {
-            /** {@inheritDoc} */
             @Override
             public void keyReleased(final KeyEvent e)
             {
@@ -78,7 +77,6 @@ public class AttributesCellEditor extends DefaultCellEditor
         this.editor = editor;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Object getCellEditorValue()
     {
@@ -90,7 +88,6 @@ public class AttributesCellEditor extends DefaultCellEditor
         return super.getCellEditorValue();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Component getTableCellEditorComponent(final JTable table, final Object value, final boolean isSelected,
             final int row, final int column)
@@ -126,7 +123,6 @@ public class AttributesCellEditor extends DefaultCellEditor
                 this.checkBox.removeActionListener(this.lastActionListener);
                 this.lastActionListener = new ActionListener()
                 {
-                    /** {@inheritDoc} */
                     @Override
                     public void actionPerformed(final ActionEvent e)
                     {

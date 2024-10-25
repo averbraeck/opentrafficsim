@@ -84,7 +84,6 @@ public class CrossSection implements Serializable
         return new ImmutableIterator<>(this.lanePositions.iterator());
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

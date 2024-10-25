@@ -58,7 +58,6 @@ public class ReactionTimeColorer implements GtuColorer
         this.legend.add(new LegendEntry(NA, "N/A", "N/A"));
     }
 
-    /** {@inheritDoc} */
     @Override
     public Color getColor(final Gtu drawable)
     {
@@ -79,14 +78,12 @@ public class ReactionTimeColorer implements GtuColorer
         return HIGH;
     }
 
-    /** {@inheritDoc} */
     @Override
     public List<LegendEntry> getLegend()
     {
         return this.legend;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

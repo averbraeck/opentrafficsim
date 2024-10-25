@@ -174,14 +174,12 @@ public class AppearanceApplication extends JFrame
                 super(string);
             }
 
-            /** {@inheritDoc} */
             @Override
             public boolean isFont()
             {
                 return true;
             }
 
-            /** {@inheritDoc} */
             @Override
             public String toString()
             {
@@ -211,14 +209,12 @@ public class AppearanceApplication extends JFrame
             /** */
             private static final long serialVersionUID = 20180206L;
 
-            /** {@inheritDoc} */
             @Override
             public boolean isFont()
             {
                 return true;
             }
 
-            /** {@inheritDoc} */
             @Override
             public String toString()
             {
@@ -387,7 +383,6 @@ public class AppearanceApplication extends JFrame
         JCheckBoxMenuItem check = new StayOpenCheckBoxMenuItem(appear.getName(), appear.equals(getAppearance()));
         check.addMouseListener(new MouseAdapter()
         {
-            /** {@inheritDoc} */
             @Override
             public void mouseClicked(final MouseEvent e)
             {
@@ -408,7 +403,6 @@ public class AppearanceApplication extends JFrame
         JCheckBoxMenuItem check = new StayOpenCheckBoxMenuItem(fontScaleName, this.fontScaleName.equals(fontScaleName));
         check.addMouseListener(new MouseAdapter()
         {
-            /** {@inheritDoc} */
             @Override
             public void mouseClicked(final MouseEvent e)
             {
@@ -462,7 +456,6 @@ public class AppearanceApplication extends JFrame
             this.menu = menu;
         }
 
-        /** {@inheritDoc} */
         @Override
         public void mouseEntered(final MouseEvent e)
         {
@@ -470,7 +463,6 @@ public class AppearanceApplication extends JFrame
                     new MenuElement[] {(MenuElement) this.menu.getParent(), this.menu, this.menu.getPopupMenu()});
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -499,7 +491,6 @@ public class AppearanceApplication extends JFrame
         {
             getModel().addChangeListener(new ChangeListener()
             {
-                /** {@inheritDoc} */
                 @Override
                 public void stateChanged(final ChangeEvent e)
                 {
@@ -530,7 +521,6 @@ public class AppearanceApplication extends JFrame
             super(text, selected);
         }
 
-        /** {@inheritDoc} */
         @Override
         public void doClick(final int pressTime)
         {
@@ -547,14 +537,12 @@ public class AppearanceApplication extends JFrame
                     .setSelectedPath(new MenuElement[] {(MenuElement) menu.getParent(), menu, menu.getPopupMenu()});
         }
 
-        /** {@inheritDoc} */
         @Override
         public boolean isFont()
         {
             return true;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

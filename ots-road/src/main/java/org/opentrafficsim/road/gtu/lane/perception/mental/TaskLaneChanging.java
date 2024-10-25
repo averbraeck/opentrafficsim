@@ -39,7 +39,6 @@ public class TaskLaneChanging extends TaskHeadwayBased
         this.lateralConsideration = lateralConsideration;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected Duration getHeadway(final LanePerception perception, final LaneBasedGtu gtu, final Parameters parameters)
             throws ParameterException

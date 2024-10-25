@@ -94,28 +94,24 @@ public class LaneBasedStrategicalRoutePlanner implements LaneBasedStrategicalPla
         this.routeGenerator = routeGenerator;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final LaneBasedGtu getGtu()
     {
         return this.gtu;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final LaneBasedTacticalPlanner getTacticalPlanner()
     {
         return this.fixedTacticalPlanner;
     }
 
-    /** {@inheritDoc} */
     @Override
     public LaneBasedTacticalPlanner getTacticalPlanner(final Time time)
     {
         return this.fixedTacticalPlanner; // fixed anyway
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Link nextLink(final Link previousLink, final GtuType gtuType) throws NetworkException
     {
@@ -237,7 +233,6 @@ public class LaneBasedStrategicalRoutePlanner implements LaneBasedStrategicalPla
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Route getRoute()
     {
@@ -287,21 +282,18 @@ public class LaneBasedStrategicalRoutePlanner implements LaneBasedStrategicalPla
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Node getOrigin()
     {
         return this.origin;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Node getDestination()
     {
         return this.destination;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

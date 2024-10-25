@@ -14,7 +14,6 @@ import org.opentrafficsim.xml.bindings.types.DoubleType;
 public class DoublePositiveInclusiveAdapter extends ExpressionAdapter<Double, DoubleType>
 {
 
-    /** {@inheritDoc} */
     @Override
     public DoubleType unmarshal(final String field)
     {
@@ -27,7 +26,6 @@ public class DoublePositiveInclusiveAdapter extends ExpressionAdapter<Double, Do
         return new DoubleType(value);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String marshal(final DoubleType value)
     {

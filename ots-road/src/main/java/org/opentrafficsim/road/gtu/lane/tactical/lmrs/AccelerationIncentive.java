@@ -61,7 +61,6 @@ public interface AccelerationIncentive
         Route route = gtu.getStrategicalPlanner().getRoute();
         return new FilteredIterable<>(iterable, new Predicate<T>()
         {
-            /** {@inheritDoc} */
             @Override
             public boolean test(final T t)
             {

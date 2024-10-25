@@ -31,14 +31,12 @@ public class DiscreteDistDirection extends DiscreteDistDoubleScalar.Abs<Directio
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public Direction draw()
     {
         return new Direction(getDistribution().draw(), (DirectionUnit) getUnit());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

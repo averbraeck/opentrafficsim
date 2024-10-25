@@ -41,7 +41,6 @@ public abstract class SingleCrossSectionSwitch implements RampMeteringSwitch
         this.detectors = detectors;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Duration getInterval()
     {

@@ -68,7 +68,6 @@ public class WienerProcess extends DistNormal
         this.simulator = simulator;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double draw()
     {

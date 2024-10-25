@@ -27,14 +27,12 @@ public class GtuIdTransceiver extends AbstractIdTransceiver
         super(network, "GTU id transceiver");
     }
 
-    /** {@inheritDoc} */
     @Override
     ImmutableSet<Gtu> getSet()
     {
         return new ImmutableLinkedHashSet<Gtu>(getNetwork().getGTUs(), Immutable.WRAP);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

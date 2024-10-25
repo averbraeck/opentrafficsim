@@ -128,7 +128,6 @@ public class Node
         return this.network;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getId()
     {
@@ -144,14 +143,12 @@ public class Node
         return this.point;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Polygon2d getContour()
     {
         return this.contour;
     }
 
-    /** {@inheritDoc} */
     @Override
     public OtsShape getShape()
     {
@@ -396,14 +393,12 @@ public class Node
         return false;
     }
 
-    /** {@inheritDoc} */
     @Override
     public NodeType getType()
     {
         return NodeType.NODE;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public OrientedPoint2d getLocation()
@@ -411,7 +406,6 @@ public class Node
         return this.point;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public Bounds2d getBounds()
@@ -419,7 +413,6 @@ public class Node
         return new Bounds2d(-1.0, 1.0, -1.0, 1.0);
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
@@ -427,7 +420,6 @@ public class Node
         return "Node [id=" + this.id + ", point=" + this.point + "]";
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public int hashCode()
@@ -438,7 +430,6 @@ public class Node
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     public boolean equals(final Object obj)

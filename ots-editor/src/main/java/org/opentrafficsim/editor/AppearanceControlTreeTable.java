@@ -28,7 +28,6 @@ public class AppearanceControlTreeTable extends JTreeTable implements Appearance
         super(treeTableModel);
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isFont()
     {

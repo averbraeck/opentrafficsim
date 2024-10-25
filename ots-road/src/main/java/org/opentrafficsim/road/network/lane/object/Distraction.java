@@ -115,7 +115,6 @@ public class Distraction extends AbstractLaneBasedObject
             this.dMax = dMax;
         }
 
-        /** {@inheritDoc} */
         @Override
         public Double getDistraction(final Length distance)
         {

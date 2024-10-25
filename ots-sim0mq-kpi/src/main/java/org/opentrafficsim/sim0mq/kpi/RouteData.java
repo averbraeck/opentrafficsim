@@ -64,7 +64,6 @@ public class RouteData
         return this.routeName;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
@@ -74,7 +73,6 @@ public class RouteData
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj)
     {
@@ -95,7 +93,6 @@ public class RouteData
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

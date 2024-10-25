@@ -127,7 +127,6 @@ public class GtuCharacteristics implements Serializable
         return this.front;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

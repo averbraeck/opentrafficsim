@@ -299,14 +299,12 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
         return filterData;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
         return Objects.hash(this.extendedDataTypes, this.filterDataTypes, this.spaceTimeRegions);
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj)
     {

@@ -30,14 +30,12 @@ public class DiscreteDistFrequency extends DiscreteDistDoubleScalar.Rel<Frequenc
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public Frequency draw()
     {
         return new Frequency(getDistribution().draw(), (FrequencyUnit) getUnit());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

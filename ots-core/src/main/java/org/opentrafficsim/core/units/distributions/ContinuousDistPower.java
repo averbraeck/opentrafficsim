@@ -30,14 +30,12 @@ public class ContinuousDistPower extends ContinuousDistDoubleScalar.Rel<Power, P
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public Power draw()
     {
         return new Power(getDistribution().draw(), (PowerUnit) getDisplayUnit());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

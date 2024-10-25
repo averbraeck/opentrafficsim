@@ -44,21 +44,18 @@ public class MapPriorityData implements PriorityData
         this.contour = OtsLocatable.boundsAsContour(this);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Point2d getLocation()
     {
         return this.location;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Polygon2d getContour()
     {
         return this.contour;
     }
 
-    /** {@inheritDoc} */
     @Override
     public OtsShape getShape()
     {
@@ -69,56 +66,48 @@ public class MapPriorityData implements PriorityData
         return this.shape;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Bounds2d getBounds()
     {
         return this.bounds;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isAllStop()
     {
         return "ALL_STOP".equals(this.linkData.getNode().getAttributeValue("Priority"));
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isBusStop()
     {
         return "BUS_STOP".equals(this.linkData.getNode().getAttributeValue("Priority"));
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isNone()
     {
         return "NONE".equals(this.linkData.getNode().getAttributeValue("Priority"));
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isPriority()
     {
         return "PRIORITY".equals(this.linkData.getNode().getAttributeValue("Priority"));
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isStop()
     {
         return "STOP".equals(this.linkData.getNode().getAttributeValue("Priority"));
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isYield()
     {
         return "YIELD".equals(this.linkData.getNode().getAttributeValue("Priority"));
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

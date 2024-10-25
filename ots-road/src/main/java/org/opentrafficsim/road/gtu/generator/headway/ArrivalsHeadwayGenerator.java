@@ -160,7 +160,6 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
         throw new RuntimeException("Exception while determining headway from Arrivals.");
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {
@@ -185,14 +184,12 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
         /** Constant headway. */
         HeadwayDistribution CONSTANT = new HeadwayDistribution()
         {
-            /** {@inheritDoc} */
             @Override
             public double draw(final StreamInterface randomStream)
             {
                 return 1.0;
             }
 
-            /** {@inheritDoc} */
             @Override
             public String getName()
             {
@@ -203,14 +200,12 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
         /** Exponential headway distribution. */
         HeadwayDistribution EXPONENTIAL = new HeadwayDistribution()
         {
-            /** {@inheritDoc} */
             @Override
             public double draw(final StreamInterface randomStream)
             {
                 return -Math.log(randomStream.nextDouble());
             }
 
-            /** {@inheritDoc} */
             @Override
             public String getName()
             {
@@ -221,14 +216,12 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
         /** Uniform headway distribution. */
         HeadwayDistribution UNIFORM = new HeadwayDistribution()
         {
-            /** {@inheritDoc} */
             @Override
             public double draw(final StreamInterface randomStream)
             {
                 return 2.0 * randomStream.nextDouble();
             }
 
-            /** {@inheritDoc} */
             @Override
             public String getName()
             {
@@ -239,7 +232,6 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
         /** Triangular headway distribution. */
         HeadwayDistribution TRIANGULAR = new HeadwayDistribution()
         {
-            /** {@inheritDoc} */
             @Override
             public double draw(final StreamInterface randomStream)
             {
@@ -251,7 +243,6 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
                 return 2.0 - Math.sqrt((1.0 - r) * 2.0);
             }
 
-            /** {@inheritDoc} */
             @Override
             public String getName()
             {
@@ -262,7 +253,6 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
         /** Triangular (left side, mean 2/3) and exponential (right side, mean 4/3) headway distribution. */
         HeadwayDistribution TRI_EXP = new HeadwayDistribution()
         {
-            /** {@inheritDoc} */
             @Override
             public double draw(final StreamInterface randomStream)
             {
@@ -275,7 +265,6 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
                 // note: 50% with mean 2/3 and 50% with mean 1 + 1/3 gives a mean of 1
             }
 
-            /** {@inheritDoc} */
             @Override
             public String getName()
             {
@@ -292,14 +281,12 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
             /** Sigma. */
             private final double sigma = Math.sqrt(Math.log(2.0));
 
-            /** {@inheritDoc} */
             @Override
             public double draw(final StreamInterface randomStream)
             {
                 return Math.exp(new DistNormal(randomStream, this.mu, this.sigma).draw());
             }
 
-            /** {@inheritDoc} */
             @Override
             public String getName()
             {

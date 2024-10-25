@@ -36,14 +36,12 @@ public class LaneDataSim0 implements LaneData<LaneDataSim0>
         this.linkData.addLaneData(this);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Length getLength()
     {
         return this.length;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final LinkDataSim0 getLinkData()
     {
@@ -58,7 +56,6 @@ public class LaneDataSim0 implements LaneData<LaneDataSim0>
         return this.laneName;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getId()
     {
@@ -73,7 +70,6 @@ public class LaneDataSim0 implements LaneData<LaneDataSim0>
         this.linkData = linkData;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
@@ -83,7 +79,6 @@ public class LaneDataSim0 implements LaneData<LaneDataSim0>
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj)
     {
@@ -104,7 +99,6 @@ public class LaneDataSim0 implements LaneData<LaneDataSim0>
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

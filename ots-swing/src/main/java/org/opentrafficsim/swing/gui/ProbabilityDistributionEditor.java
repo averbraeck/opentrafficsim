@@ -140,7 +140,6 @@ public class ProbabilityDistributionEditor extends JPanel
         this.slider.removePropertyChangeListener(key, pcl);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

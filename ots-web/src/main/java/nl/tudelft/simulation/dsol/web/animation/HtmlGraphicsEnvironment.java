@@ -43,7 +43,6 @@ public class HtmlGraphicsEnvironment extends GraphicsEnvironment
         this.graphicsConfiguration.setDevice(this.htmlDevice);
     }
 
-    /** {@inheritDoc} */
     @Override
     public GraphicsDevice[] getScreenDevices() throws HeadlessException
     {
@@ -51,7 +50,6 @@ public class HtmlGraphicsEnvironment extends GraphicsEnvironment
         return new GraphicsDevice[] {this.htmlDevice};
     }
 
-    /** {@inheritDoc} */
     @Override
     public GraphicsDevice getDefaultScreenDevice() throws HeadlessException
     {
@@ -59,7 +57,6 @@ public class HtmlGraphicsEnvironment extends GraphicsEnvironment
         return this.htmlDevice;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Graphics2D createGraphics(BufferedImage img)
     {
@@ -67,7 +64,6 @@ public class HtmlGraphicsEnvironment extends GraphicsEnvironment
         return this.graphics2D;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Font[] getAllFonts()
     {
@@ -75,7 +71,6 @@ public class HtmlGraphicsEnvironment extends GraphicsEnvironment
         return new Font[] {};
     }
 
-    /** {@inheritDoc} */
     @Override
     public String[] getAvailableFontFamilyNames()
     {
@@ -83,7 +78,6 @@ public class HtmlGraphicsEnvironment extends GraphicsEnvironment
         return new String[] {};
     }
 
-    /** {@inheritDoc} */
     @Override
     public String[] getAvailableFontFamilyNames(Locale l)
     {

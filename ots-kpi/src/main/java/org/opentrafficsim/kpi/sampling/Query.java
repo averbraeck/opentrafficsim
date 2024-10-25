@@ -427,7 +427,6 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
         return this.sampler;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
@@ -443,7 +442,6 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj)
     {
@@ -540,7 +538,6 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

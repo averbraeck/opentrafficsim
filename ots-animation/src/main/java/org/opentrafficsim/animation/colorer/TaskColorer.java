@@ -65,7 +65,6 @@ public class TaskColorer implements GtuColorer
         this.id = id;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Color getColor(final Gtu gtu)
     {
@@ -94,14 +93,12 @@ public class TaskColorer implements GtuColorer
         return NA;
     }
 
-    /** {@inheritDoc} */
     @Override
     public List<LegendEntry> getLegend()
     {
         return LEGEND;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

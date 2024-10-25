@@ -31,7 +31,6 @@ public class XiIncludeStringFunction extends AbstractStringFunction
         this.overwrite = false;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Function<XsdTreeNode, String> getStringFunction()
     {

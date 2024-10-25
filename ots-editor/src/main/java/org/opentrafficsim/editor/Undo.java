@@ -224,7 +224,6 @@ public class Undo implements EventListener
         this.redoItem.setText(canRedo() ? ("Redo " + this.queue.get(this.cursor + 1).type) : "Redo");
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {
@@ -462,21 +461,18 @@ public class Undo implements EventListener
             this.string = string;
         }
 
-        /** {@inheritDoc} */
         @Override
         public void undo()
         {
             this.undo.run();
         }
 
-        /** {@inheritDoc} */
         @Override
         public void redo()
         {
             this.redo.run();
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -583,7 +579,6 @@ public class Undo implements EventListener
         /** Action on node, by custom decoration. */
         ACTION;
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

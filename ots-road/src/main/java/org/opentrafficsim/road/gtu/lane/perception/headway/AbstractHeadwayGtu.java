@@ -189,7 +189,6 @@ public abstract class AbstractHeadwayGtu extends AbstractHeadwayCopy implements 
         return this.gtuType;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Speed getDesiredSpeed()
     {
@@ -297,14 +296,12 @@ public abstract class AbstractHeadwayGtu extends AbstractHeadwayCopy implements 
         return sli;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Length getWidth()
     {
         return this.width;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

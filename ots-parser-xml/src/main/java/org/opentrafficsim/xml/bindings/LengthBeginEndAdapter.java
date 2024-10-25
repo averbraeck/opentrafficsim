@@ -17,7 +17,6 @@ import org.opentrafficsim.xml.bindings.types.LengthBeginEndType.LengthBeginEnd;
 public class LengthBeginEndAdapter extends ExpressionAdapter<LengthBeginEnd, LengthBeginEndType>
 {
 
-    /** {@inheritDoc} */
     @Override
     public LengthBeginEndType unmarshal(final String field) throws IllegalArgumentException
     {
@@ -70,7 +69,6 @@ public class LengthBeginEndAdapter extends ExpressionAdapter<LengthBeginEnd, Len
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public String marshal(final LengthBeginEndType value)
     {

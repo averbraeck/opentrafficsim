@@ -56,7 +56,6 @@ public class IncentiveSocioSpeed implements VoluntaryIncentive
     /** Look-ahead distance. */
     protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 
-    /** {@inheritDoc} */
     @Override
     public final Desire determineDesire(final Parameters parameters, final LanePerception perception,
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire, final Desire voluntaryDesire)
@@ -125,7 +124,6 @@ public class IncentiveSocioSpeed implements VoluntaryIncentive
         return new Desire(dLeft, dRight);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

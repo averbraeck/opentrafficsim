@@ -606,7 +606,6 @@ public class ContourDataSource
                 // add listener to provide a filter status update and to possibly stop the filter when the plot is invalidated
                 this.egtf.addListener(new EgtfListener()
                 {
-                    /** {@inheritDoc} */
                     @Override
                     public void notifyProgress(final EgtfEvent event)
                     {
@@ -975,7 +974,6 @@ public class ContourDataSource
         /** Distance axis. */
         DISTANCE
         {
-            /** {@inheritDoc} */
             @Override
             protected Axis getAxis(final ContourDataSource dataPool)
             {
@@ -986,7 +984,6 @@ public class ContourDataSource
         /** Time axis. */
         TIME
         {
-            /** {@inheritDoc} */
             @Override
             protected Axis getAxis(final ContourDataSource dataPool)
             {
@@ -1161,7 +1158,6 @@ public class ContourDataSource
             return this.interpolate;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -1221,7 +1217,6 @@ public class ContourDataSource
         Quantity<Z, ?> getQuantity();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

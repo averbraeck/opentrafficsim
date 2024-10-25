@@ -22,28 +22,24 @@ public class WorldDirData extends ExtendedDataFloat<DirectionUnit, FloatDirectio
         super("WorldDir", "World direction", FloatDirection.class);
     }
 
-    /** {@inheritDoc} */
     @Override
     public FloatDirection getValue(final GtuDataRoad gtu)
     {
         return convertValue((float) gtu.getGtu().getLocation().dirZ);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected FloatDirection convertValue(final float value)
     {
         return FloatDirection.instantiateSI(value);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected FloatDirectionVector convert(final float[] storage) throws ValueRuntimeException
     {
         return new FloatDirectionVector(storage);
     }
 
-    /** {@inheritDoc} */
     @Override
     public FloatDirection parseValue(final String string)
     {

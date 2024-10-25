@@ -42,7 +42,6 @@ public abstract class AbstractLinearFreeControl extends AbstractActuatedControl
         super(delayedActuation);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Acceleration getDesiredAcceleration(final LaneBasedGtu gtu,
             final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders, final Parameters settings) throws ParameterException

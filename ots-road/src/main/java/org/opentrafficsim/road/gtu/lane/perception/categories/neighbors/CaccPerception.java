@@ -56,7 +56,6 @@ public class CaccPerception extends AbstractPerceptionCategory<LaneBasedGtu, Lan
         this.sensors = sensors;
     }
 
-    /** {@inheritDoc} */
     @Override
     public PerceptionCollectable<HeadwayGtu, LaneBasedGtu> getLeaders()
     {
@@ -75,7 +74,6 @@ public class CaccPerception extends AbstractPerceptionCategory<LaneBasedGtu, Lan
                     RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT, RelativePosition.REAR).iterator();
             return new AbstractPerceptionReiterable<LaneBasedGtu, HeadwayGtu, LaneBasedGtu>(getGtu())
             {
-                /** {@inheritDoc} */
                 @Override
                 protected Iterator<AbstractPerceptionReiterable<LaneBasedGtu, HeadwayGtu,
                         LaneBasedGtu>.PrimaryIteratorEntry> primaryIterator()
@@ -88,7 +86,6 @@ public class CaccPerception extends AbstractPerceptionCategory<LaneBasedGtu, Lan
                         /** To include the first vehicle always. */
                         private boolean first = true;
 
-                        /** {@inheritDoc} */
                         @Override
                         public boolean hasNext()
                         {
@@ -104,7 +101,6 @@ public class CaccPerception extends AbstractPerceptionCategory<LaneBasedGtu, Lan
                             return this.next != null;
                         }
 
-                        /** {@inheritDoc} */
                         @Override
                         public AbstractPerceptionReiterable<LaneBasedGtu, HeadwayGtu, LaneBasedGtu>.PrimaryIteratorEntry next()
                         {
@@ -114,7 +110,6 @@ public class CaccPerception extends AbstractPerceptionCategory<LaneBasedGtu, Lan
                     };
                 }
 
-                /** {@inheritDoc} */
                 @Override
                 protected HeadwayGtu perceive(final LaneBasedGtu object, final Length distance)
                         throws GtuException, ParameterException

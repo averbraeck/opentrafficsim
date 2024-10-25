@@ -32,7 +32,6 @@ public abstract class AbstractNodeDecorator implements EventListener
         editor.addListener(this, OtsEditor.NEW_FILE);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {

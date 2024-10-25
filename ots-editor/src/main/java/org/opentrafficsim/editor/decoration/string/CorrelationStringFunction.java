@@ -29,7 +29,6 @@ public class CorrelationStringFunction extends AbstractStringFunction
         super(editor, (node) -> node.getPathString().equals(XsdPaths.CORRELATION));
     }
 
-    /** {@inheritDoc} */
     @Override
     public Function<XsdTreeNode, String> getStringFunction()
     {

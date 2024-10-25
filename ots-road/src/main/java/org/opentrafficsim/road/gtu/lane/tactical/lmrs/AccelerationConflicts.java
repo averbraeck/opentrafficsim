@@ -40,7 +40,6 @@ public class AccelerationConflicts implements AccelerationIncentive, Blockable
     // @docs/06-behavior/tactical-planner/#modular-utilities
     private final ConflictPlans yieldPlans = new ConflictPlans();
 
-    /** {@inheritDoc} */
     @Override
     public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
             final LaneBasedGtu gtu, final LanePerception perception, final CarFollowingModel carFollowingModel,
@@ -75,14 +74,12 @@ public class AccelerationConflicts implements AccelerationIncentive, Blockable
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isBlocking()
     {
         return this.yieldPlans.isBlocking();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

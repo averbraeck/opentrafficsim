@@ -145,7 +145,6 @@ public class HeadwayObject extends AbstractHeadwayCopy
         super(ObjectType.OBJECT, id, overlapFront, overlap, overlapRear, length);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

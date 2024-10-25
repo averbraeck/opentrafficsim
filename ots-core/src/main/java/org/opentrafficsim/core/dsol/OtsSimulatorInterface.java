@@ -136,11 +136,9 @@ public interface OtsSimulatorInterface extends DevsSimulatorInterface<Duration>,
         runUpToAndIncluding(stopTime.minus(getStartTimeAbs()));
     }
 
-    /** {@inheritDoc} */
     @Override
     OtsReplication getReplication();
 
-    /** {@inheritDoc} */
     @Override
     default ContextInterface getContext()
     {

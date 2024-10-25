@@ -56,7 +56,6 @@ public class CoordinateTransformLonLatToXy implements CoordinateTransform, Seria
         this.lonToM = 111412.84 * Math.cos(lr) - 93.5 * Math.cos(3.0 * lr) - 0.118 * Math.cos(5.0 * lr); // 88.32;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final float[] floatTransform(final double lon, final double lat)
     {
@@ -90,7 +89,6 @@ public class CoordinateTransformLonLatToXy implements CoordinateTransform, Seria
         return new double[] {x, y};
     }
 
-    /** {@inheritDoc} */
     @Override
     public final double[] doubleTransform(final double lon, final double lat)
     {
@@ -100,7 +98,6 @@ public class CoordinateTransformLonLatToXy implements CoordinateTransform, Seria
         return new double[] {x, y};
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

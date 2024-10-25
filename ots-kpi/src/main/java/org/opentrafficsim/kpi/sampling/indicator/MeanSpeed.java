@@ -37,7 +37,6 @@ public class MeanSpeed extends AbstractIndicator<Speed>
         this.travelTime = travelTime;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected <G extends GtuData> Speed calculate(final Query<G, ?> query, final Time startTime, final Time endTime,
             final List<TrajectoryGroup<G>> trajectoryGroups)
@@ -46,7 +45,6 @@ public class MeanSpeed extends AbstractIndicator<Speed>
                 .divide(this.travelTime.getValue(query, startTime, endTime, trajectoryGroups));
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

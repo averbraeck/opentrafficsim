@@ -74,7 +74,6 @@ public class HeadwayBusStop extends AbstractHeadwayLaneBasedObject
         return this.conflictIds;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

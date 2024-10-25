@@ -52,7 +52,6 @@ public class IncentiveCourtesy implements VoluntaryIncentive
     /** Current right lane change desire. */
     protected static final ParameterTypeDouble DRIGHT = LmrsParameters.DRIGHT;
 
-    /** {@inheritDoc} */
     @Override
     public final Desire determineDesire(final Parameters parameters, final LanePerception perception,
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire, final Desire voluntaryDesire)
@@ -173,7 +172,6 @@ public class IncentiveCourtesy implements VoluntaryIncentive
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

@@ -30,7 +30,6 @@ public interface GapAcceptance
     /** Being informed of the model and parameters of other drivers (default LMRS). */
     GapAcceptance INFORMED = new GapAcceptance()
     {
-        /** {@inheritDoc} */
         @Override
         public boolean acceptGap(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final double desire, final Speed ownSpeed, final Acceleration ownAcceleration,
@@ -75,7 +74,6 @@ public interface GapAcceptance
             return aFollow.ge(threshold) && aSelf.ge(threshold) && ownAcceleration.ge(threshold);
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -86,7 +84,6 @@ public interface GapAcceptance
     /** Being informed of the model and parameters of other drivers, but applying own headway value. */
     GapAcceptance EGO_HEADWAY = new GapAcceptance()
     {
-        /** {@inheritDoc} */
         @Override
         public boolean acceptGap(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final double desire, final Speed ownSpeed, final Acceleration ownAcceleration,
@@ -122,7 +119,6 @@ public interface GapAcceptance
             return aFollow.ge(threshold) && aSelf.ge(threshold);
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

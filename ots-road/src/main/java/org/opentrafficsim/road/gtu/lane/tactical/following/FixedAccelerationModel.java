@@ -64,7 +64,6 @@ public class FixedAccelerationModel extends AbstractGtuFollowingModelMobil imple
         return this.acceleration;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
             final Speed leaderSpeed, final Length headway, final Speed speedLimit, final Duration stepSize)
@@ -72,7 +71,6 @@ public class FixedAccelerationModel extends AbstractGtuFollowingModelMobil imple
         return this.acceleration;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Acceleration computeAcceleration(final Speed followerSpeed, final Speed followerMaximumSpeed,
             final Speed leaderSpeed, final Length headway, final Speed speedLimit)
@@ -80,7 +78,6 @@ public class FixedAccelerationModel extends AbstractGtuFollowingModelMobil imple
         return this.acceleration;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Acceleration getMaximumSafeDeceleration()
     {
@@ -88,49 +85,42 @@ public class FixedAccelerationModel extends AbstractGtuFollowingModelMobil imple
         return new Acceleration(2, AccelerationUnit.METER_PER_SECOND_2);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Duration getStepSize()
     {
         return this.duration;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getName()
     {
         return "Fixed";
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getLongName()
     {
         return "Fixed GTU following model";
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
         return "FixedAccelerationModel " + this.duration + ", " + this.acceleration;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void setA(final Acceleration a)
     {
         //
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void setT(final Duration t)
     {
         //
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void setFspeed(final double fSpeed)
     {
@@ -139,21 +129,18 @@ public class FixedAccelerationModel extends AbstractGtuFollowingModelMobil imple
 
     // The following is inherited from CarFollowingModel
 
-    /** {@inheritDoc} */
     @Override
     public final Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo) throws ParameterException
     {
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Length desiredHeadway(final Parameters parameters, final Speed speed) throws ParameterException
     {
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Acceleration followingAcceleration(final Parameters parameters, final Speed speed,
             final SpeedLimitInfo speedInfo, final PerceptionIterable<? extends Headway> leaders) throws ParameterException

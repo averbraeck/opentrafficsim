@@ -100,7 +100,6 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
         getPerception().addPerceptionCategory(new DirectDefaultSimplePerception(getPerception()));
     }
 
-    /** {@inheritDoc} */
     @Override
     public final OperationalPlan generateOperationalPlan(final Time startTime, final OrientedPoint2d locationAtStartTime)
             throws NetworkException, GtuException, ParameterException
@@ -646,7 +645,6 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

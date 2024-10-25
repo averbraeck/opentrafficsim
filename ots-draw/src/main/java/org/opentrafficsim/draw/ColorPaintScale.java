@@ -17,7 +17,6 @@ import org.jfree.chart.renderer.PaintScale;
 public interface ColorPaintScale extends PaintScale
 {
 
-    /** {@inheritDoc} */
     @Override
     Color getPaint(double value);
 

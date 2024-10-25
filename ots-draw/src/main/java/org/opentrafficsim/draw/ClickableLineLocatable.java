@@ -16,7 +16,6 @@ import org.opentrafficsim.base.geometry.OtsShape;
 public interface ClickableLineLocatable extends ClickableLocatable
 {
 
-    /** {@inheritDoc} */
     @Override
     default Bounds2d getBounds()
     {
@@ -26,7 +25,6 @@ public interface ClickableLineLocatable extends ClickableLocatable
             /** */
             private static final long serialVersionUID = 20241006L;
 
-            /** {@inheritDoc} */
             @Override
             public boolean contains(final double x, final double y)
             {

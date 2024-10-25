@@ -30,7 +30,6 @@ public class SpeedLimit extends ExtendedDataSpeed<GtuDataRoad>
         super("speedLimit", "Speed limit");
     }
 
-    /** {@inheritDoc} */
     @Override
     public final FloatSpeed getValue(final GtuDataRoad gtu)
     {
@@ -46,7 +45,6 @@ public class SpeedLimit extends ExtendedDataSpeed<GtuDataRoad>
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

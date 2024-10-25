@@ -30,14 +30,12 @@ public class ContinuousDistElectricalCharge extends ContinuousDistDoubleScalar.R
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public ElectricalCharge draw()
     {
         return new ElectricalCharge(getDistribution().draw(), (ElectricalChargeUnit) getDisplayUnit());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

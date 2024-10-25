@@ -33,7 +33,6 @@ public class MeanIntensity extends AbstractIndicator<Frequency>
         this.travelDistance = travelDistance;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected <G extends GtuData> Frequency calculate(final Query<G, ?> query, final Time startTime, final Time endTime,
             final List<TrajectoryGroup<G>> trajectoryGroups)
@@ -47,7 +46,6 @@ public class MeanIntensity extends AbstractIndicator<Frequency>
         return new Frequency(ttd / area, FrequencyUnit.SI);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

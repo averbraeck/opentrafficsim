@@ -159,7 +159,6 @@ public interface DiscreteDistFloatScalar
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -328,7 +327,6 @@ public interface DiscreteDistFloatScalar
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {

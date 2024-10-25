@@ -47,7 +47,6 @@ public abstract class AbstractBoundedPlot extends AbstractPlot
         super(scheduler, caption, updateInterval, delay);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void setChart(final JFreeChart chart)
     {
@@ -62,7 +61,6 @@ public abstract class AbstractBoundedPlot extends AbstractPlot
             /** Whether to listen, this prevents a stack overflow. */
             private boolean listen = true;
 
-            /** {@inheritDoc} */
             @SuppressWarnings("synthetic-access")
             @Override
             public void axisChanged(final AxisChangeEvent event)
@@ -82,7 +80,6 @@ public abstract class AbstractBoundedPlot extends AbstractPlot
             /** Whether to listen, this prevents a stack overflow. */
             private boolean listen = true;
 
-            /** {@inheritDoc} */
             @SuppressWarnings("synthetic-access")
             @Override
             public void axisChanged(final AxisChangeEvent event)
@@ -166,7 +163,6 @@ public abstract class AbstractBoundedPlot extends AbstractPlot
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setAutoBoundDomain(final XYPlot plot)
     {
@@ -180,7 +176,6 @@ public abstract class AbstractBoundedPlot extends AbstractPlot
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setAutoBoundRange(final XYPlot plot)
     {

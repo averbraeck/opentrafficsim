@@ -46,7 +46,6 @@ public class IdGenerator implements Serializable, Supplier<String>
         return this.baseName + number;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

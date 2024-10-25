@@ -432,7 +432,6 @@ public abstract class XPathValidator implements ValueValidator
             return this.fullFieldPath;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

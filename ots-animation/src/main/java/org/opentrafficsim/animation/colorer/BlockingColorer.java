@@ -38,14 +38,12 @@ public class BlockingColorer implements GtuColorer
         LEGEND.add(new LegendEntry(Color.WHITE, "Blocking", "Blocking"));
     }
 
-    /** {@inheritDoc} */
     @Override
     public List<LegendEntry> getLegend()
     {
         return LEGEND;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Color getColor(final Gtu gtu)
     {
@@ -57,7 +55,6 @@ public class BlockingColorer implements GtuColorer
         return NOT_BLOCKING;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

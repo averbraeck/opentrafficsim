@@ -70,7 +70,6 @@ public class PeekStack<T> extends ArrayList<T>
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

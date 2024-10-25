@@ -537,7 +537,6 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
         /** Orthogonal projection. */
         ORTHOGONAL
         {
-            /** {@inheritDoc} */
             @Override
             double getFraction(final OtsLine2d line, final double x, final double y)
             {
@@ -548,7 +547,6 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
         /** Distance to nearest end point. */
         ENDPOINT
         {
-            /** {@inheritDoc} */
             @Override
             double getFraction(final OtsLine2d line, final double x, final double y)
             {
@@ -569,7 +567,6 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
         /** NaN value. */
         NaN
         {
-            /** {@inheritDoc} */
             @Override
             double getFraction(final OtsLine2d line, final double x, final double y)
             {
@@ -833,7 +830,6 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
         return getBounds().midPoint();
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public Point2d getLocation()

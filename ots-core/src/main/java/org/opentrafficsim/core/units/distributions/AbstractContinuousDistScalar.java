@@ -66,7 +66,6 @@ public abstract class AbstractContinuousDistScalar implements Serializable
         return this.displayUnit;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

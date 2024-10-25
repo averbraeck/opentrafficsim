@@ -49,7 +49,6 @@ public class AttributesListSelectionListener implements ListSelectionListener, E
         this.attributesTable = attributesTable;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void valueChanged(final ListSelectionEvent e)
     {
@@ -71,7 +70,6 @@ public class AttributesListSelectionListener implements ListSelectionListener, E
         this.listening = node;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {

@@ -49,7 +49,6 @@ public class ControlColorer implements GtuColorer, Serializable
         LEGEND.add(new LegendEntry(NA, "N/A", "N/A"));
     }
 
-    /** {@inheritDoc} */
     @Override
     public Color getColor(final Gtu gtu)
     {
@@ -75,14 +74,12 @@ public class ControlColorer implements GtuColorer, Serializable
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public List<LegendEntry> getLegend()
     {
         return LEGEND;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

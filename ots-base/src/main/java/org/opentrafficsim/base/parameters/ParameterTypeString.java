@@ -66,7 +66,6 @@ public class ParameterTypeString extends ParameterType<String>
         return parameters.getParameter(this);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

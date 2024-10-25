@@ -87,7 +87,6 @@ public class GtuDumper
         this.simulator.scheduleEventAbsTime(firstDumpTime, this, "dump", new Object[] {});
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

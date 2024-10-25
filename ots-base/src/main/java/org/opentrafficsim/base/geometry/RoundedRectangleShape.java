@@ -88,42 +88,36 @@ public class RoundedRectangleShape implements OtsShape
         this.polygonSegments = polygonSegments;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getMinX()
     {
         return -this.maxX;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getMaxX()
     {
         return this.maxX;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getMinY()
     {
         return -this.maxY;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getMaxY()
     {
         return this.maxY;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean contains(final Point2d point) throws NullPointerException
     {
         return signedDistance(point) < 0.0;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean contains(final double x, final double y) throws NullPointerException
     {
@@ -142,7 +136,6 @@ public class RoundedRectangleShape implements OtsShape
         return Math.hypot(Math.max(qx, 0.0), Math.max(qy, 0.0)) + Math.min(Math.max(qx, qy), 0.0) - this.r;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Polygon2d asPolygon()
     {
@@ -173,7 +166,6 @@ public class RoundedRectangleShape implements OtsShape
         return this.polygon;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

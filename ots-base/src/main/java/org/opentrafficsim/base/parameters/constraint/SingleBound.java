@@ -168,14 +168,12 @@ public class SingleBound<T extends Number> implements Constraint<T>
         this.failMessage = failMessage;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean accept(final T value)
     {
         return this.bound.accept(value);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String failMessage()
     {
@@ -373,7 +371,6 @@ public class SingleBound<T extends Number> implements Constraint<T>
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

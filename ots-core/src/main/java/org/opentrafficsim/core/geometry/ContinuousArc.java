@@ -67,14 +67,12 @@ public class ContinuousArc implements ContinuousLine
         this.center = new Point2d(startPoint.x - dy, startPoint.y + dx);
     }
 
-    /** {@inheritDoc} */
     @Override
     public OrientedPoint2d getStartPoint()
     {
         return this.startPoint;
     }
 
-    /** {@inheritDoc} */
     @Override
     public OrientedPoint2d getEndPoint()
     {
@@ -84,28 +82,24 @@ public class ContinuousArc implements ContinuousLine
         return new OrientedPoint2d(point.x, point.y, dirZ);
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getStartCurvature()
     {
         return 1.0 / this.radius;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getEndCurvature()
     {
         return getStartCurvature();
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getStartRadius()
     {
         return this.radius;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getEndRadius()
     {
@@ -146,21 +140,18 @@ public class ContinuousArc implements ContinuousLine
         return d;
     }
 
-    /** {@inheritDoc} */
     @Override
     public PolyLine2d flatten(final Flattener flattener)
     {
         Throw.whenNull(flattener, "Flattener may not be null.");
         return flattener.flatten(new FlattableLine()
         {
-            /** {@inheritDoc} */
             @Override
             public Point2d get(final double fraction)
             {
                 return getPoint(fraction, 0.0);
             }
 
-            /** {@inheritDoc} */
             @Override
             public double getDirection(final double fraction)
             {
@@ -169,7 +160,6 @@ public class ContinuousArc implements ContinuousLine
         });
     }
 
-    /** {@inheritDoc} */
     @Override
     public PolyLine2d flattenOffset(final FractionalLengthData offsets, final Flattener flattener)
     {
@@ -177,14 +167,12 @@ public class ContinuousArc implements ContinuousLine
         Throw.whenNull(flattener, "Flattener may not be null.");
         return flattener.flatten(new FlattableLine()
         {
-            /** {@inheritDoc} */
             @Override
             public Point2d get(final double fraction)
             {
                 return getPoint(fraction, offsets.get(fraction));
             }
 
-            /** {@inheritDoc} */
             @Override
             public double getDirection(final double fraction)
             {
@@ -215,14 +203,12 @@ public class ContinuousArc implements ContinuousLine
         });
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getLength()
     {
         return this.angle.si * this.radius;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

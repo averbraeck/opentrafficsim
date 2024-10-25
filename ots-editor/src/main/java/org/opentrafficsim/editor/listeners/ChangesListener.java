@@ -38,7 +38,6 @@ public class ChangesListener implements EventListener
     {
         private static final long serialVersionUID = 1L;
 
-        /** {@inheritDoc} */
         @Override
         public void notify(final Event event) throws RemoteException
         {
@@ -57,7 +56,6 @@ public class ChangesListener implements EventListener
         this.scenario = scenario;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {

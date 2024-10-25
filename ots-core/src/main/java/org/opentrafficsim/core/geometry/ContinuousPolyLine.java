@@ -58,42 +58,36 @@ public class ContinuousPolyLine implements ContinuousLine
         this.endPoint = endPoint;
     }
 
-    /** {@inheritDoc} */
     @Override
     public OrientedPoint2d getStartPoint()
     {
         return this.startPoint;
     }
 
-    /** {@inheritDoc} */
     @Override
     public OrientedPoint2d getEndPoint()
     {
         return this.endPoint;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getStartCurvature()
     {
         return 1.0 / getStartRadius();
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getEndCurvature()
     {
         return 1.0 / getEndRadius();
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getStartRadius()
     {
         return new OtsLine2d(this.line).getProjectedRadius(0.0).si;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getEndRadius()
     {
@@ -151,14 +145,12 @@ public class ContinuousPolyLine implements ContinuousLine
         return offset(offsets);
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getLength()
     {
         return this.line.getLength();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

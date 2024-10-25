@@ -34,7 +34,6 @@ public class SinkDetector extends LaneDetector
     /** Predicate to use to destroy all GTUs with routes ending in the end node of this link, possibly via a connector. */
     public static final BiPredicate<SinkDetector, LaneBasedGtu> DESTINATION = new BiPredicate<>()
     {
-        /** {@inheritDoc} */
         @Override
         public boolean test(final SinkDetector detector, final LaneBasedGtu gtu)
         {
@@ -91,7 +90,6 @@ public class SinkDetector extends LaneDetector
         this.predicate = predicate;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void triggerResponse(final LaneBasedGtu gtu)
     {
@@ -111,7 +109,6 @@ public class SinkDetector extends LaneDetector
         return isCompatible(gtu.getType()) && this.predicate.test(this, gtu);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

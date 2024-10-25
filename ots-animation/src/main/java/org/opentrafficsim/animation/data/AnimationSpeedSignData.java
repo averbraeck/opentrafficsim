@@ -29,21 +29,18 @@ public class AnimationSpeedSignData implements SpeedSignData
         this.speedSign = speedSign;
     }
 
-    /** {@inheritDoc} */
     @Override
     public OrientedPoint2d getLocation()
     {
         return this.speedSign.getLocation();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Polygon2d getContour()
     {
         return this.speedSign.getContour();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Speed getSpeed()
     {
@@ -59,7 +56,6 @@ public class AnimationSpeedSignData implements SpeedSignData
         return this.speedSign;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

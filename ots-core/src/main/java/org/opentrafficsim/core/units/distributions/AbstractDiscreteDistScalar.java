@@ -66,7 +66,6 @@ public abstract class AbstractDiscreteDistScalar implements Serializable
         return this.unit;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

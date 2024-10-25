@@ -119,56 +119,48 @@ public abstract class AbstractHeadway implements Headway
         this(null, overlapFront, overlap, overlapRear);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Length getDistance()
     {
         return this.distance;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Length getOverlapFront()
     {
         return this.overlapFront;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Length getOverlapRear()
     {
         return this.overlapRear;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Length getOverlap()
     {
         return this.overlap;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean isAhead()
     {
         return this.distance != null && this.distance.si > 0.0;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean isBehind()
     {
         return this.distance != null && this.distance.si < 0.0;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean isParallel()
     {
         return this.overlap != null;
     }
 
-    /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override
     public int hashCode()
@@ -182,7 +174,6 @@ public abstract class AbstractHeadway implements Headway
         return result;
     }
 
-    /** {@inheritDoc} */
     @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     @Override
     public boolean equals(final Object obj)
@@ -225,7 +216,6 @@ public abstract class AbstractHeadway implements Headway
         return true;
     }
 
-    /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override
     public String toString()

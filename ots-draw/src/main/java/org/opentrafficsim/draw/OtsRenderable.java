@@ -77,7 +77,6 @@ public abstract class OtsRenderable<L extends OtsLocatable> extends Renderable2d
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean contains(final Point2d pointWorldCoordinates, final Bounds2d extent)
     {

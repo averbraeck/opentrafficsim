@@ -303,14 +303,12 @@ public class GtuTest
             super(simulator);
         }
 
-        /** {@inheritDoc} */
         @Override
         public void constructModel() throws SimRuntimeException
         {
             // Not used
         }
 
-        /** {@inheritDoc} */
         @Override
         public final Network getNetwork()
         {

@@ -36,7 +36,6 @@ public abstract class AbstractHistoricalNavigableSet<E, S extends NavigableSet<E
         super(historyManager, set);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {
@@ -45,7 +44,6 @@ public abstract class AbstractHistoricalNavigableSet<E, S extends NavigableSet<E
 
     // Altering NavigableSet methods
 
-    /** {@inheritDoc} */
     @Override
     public E pollFirst()
     {
@@ -58,7 +56,6 @@ public abstract class AbstractHistoricalNavigableSet<E, S extends NavigableSet<E
         return element;
     }
 
-    /** {@inheritDoc} */
     @Override
     public E pollLast()
     {
@@ -73,49 +70,42 @@ public abstract class AbstractHistoricalNavigableSet<E, S extends NavigableSet<E
 
     // Non-altering NavigableSet methods
 
-    /** {@inheritDoc} */
     @Override
     public E lower(final E e)
     {
         return getCollection().lower(e);
     }
 
-    /** {@inheritDoc} */
     @Override
     public E floor(final E e)
     {
         return getCollection().floor(e);
     }
 
-    /** {@inheritDoc} */
     @Override
     public E ceiling(final E e)
     {
         return getCollection().ceiling(e);
     }
 
-    /** {@inheritDoc} */
     @Override
     public E higher(final E e)
     {
         return getCollection().higher(e);
     }
 
-    /** {@inheritDoc} */
     @Override
     public NavigableSet<E> descendingSet()
     {
         return Collections.unmodifiableNavigableSet(getCollection().descendingSet());
     }
 
-    /** {@inheritDoc} */
     @Override
     public Iterator<E> descendingIterator()
     {
         return Collections.unmodifiableNavigableSet(getCollection()).descendingIterator();
     }
 
-    /** {@inheritDoc} */
     @Override
     public NavigableSet<E> subSet(final E fromElement, final boolean fromInclusive, final E toElement,
             final boolean toInclusive)
@@ -123,14 +113,12 @@ public abstract class AbstractHistoricalNavigableSet<E, S extends NavigableSet<E
         return Collections.unmodifiableNavigableSet(getCollection().subSet(fromElement, fromInclusive, toElement, toInclusive));
     }
 
-    /** {@inheritDoc} */
     @Override
     public NavigableSet<E> headSet(final E toElement, final boolean inclusive)
     {
         return Collections.unmodifiableNavigableSet(getCollection().headSet(toElement, inclusive));
     }
 
-    /** {@inheritDoc} */
     @Override
     public NavigableSet<E> tailSet(final E fromElement, final boolean inclusive)
     {

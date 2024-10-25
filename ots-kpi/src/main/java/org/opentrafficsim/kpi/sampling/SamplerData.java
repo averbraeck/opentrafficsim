@@ -255,14 +255,12 @@ public class SamplerData<G extends GtuData> extends Table
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public Iterator<Row> iterator()
     {
         return new SamplerDataIterator();
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isEmpty()
     {
@@ -314,7 +312,6 @@ public class SamplerData<G extends GtuData> extends Table
         /** Iterator over indices in a trajectory. */
         private Iterator<Integer> indexIterator = Collections.emptyIterator();
 
-        /** {@inheritDoc} */
         @Override
         public boolean hasNext()
         {
@@ -338,7 +335,6 @@ public class SamplerData<G extends GtuData> extends Table
             return true;
         }
 
-        /** {@inheritDoc} */
         @Override
         public Row next()
         {

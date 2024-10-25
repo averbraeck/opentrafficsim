@@ -23,7 +23,6 @@ public class DirectedAltruistic extends AbstractDirectedLaneChangeModel
         super(perception);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Acceleration applyDriverPersonality(final DualAccelerationStep accelerationSteps)
     {
@@ -36,21 +35,18 @@ public class DirectedAltruistic extends AbstractDirectedLaneChangeModel
                 + accelerationSteps.getFollowerAcceleration().getInUnit(unit)) / 2, unit);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getName()
     {
         return "Altruistic";
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getLongName()
     {
         return "Altruistic lane change model (as described by Treiber).";
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

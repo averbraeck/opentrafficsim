@@ -44,7 +44,6 @@ public interface Synchronization extends LmrsParameters
     /** Synchronization that only includes stopping for a dead-end. */
     Synchronization DEADEND = new Synchronization()
     {
-        /** {@inheritDoc} */
         @Override
         public Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData,
@@ -90,7 +89,6 @@ public interface Synchronization extends LmrsParameters
             return a;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -101,7 +99,6 @@ public interface Synchronization extends LmrsParameters
     /** Synchronization where current leaders are taken. */
     Synchronization PASSIVE = new Synchronization()
     {
-        /** {@inheritDoc} */
         @Override
         public Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData,
@@ -166,7 +163,6 @@ public interface Synchronization extends LmrsParameters
             return a;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -182,7 +178,6 @@ public interface Synchronization extends LmrsParameters
      */
     Synchronization ALIGN_GAP = new Synchronization()
     {
-        /** {@inheritDoc} */
         @Override
         public Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData,
@@ -225,7 +220,6 @@ public interface Synchronization extends LmrsParameters
             return a;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -236,7 +230,6 @@ public interface Synchronization extends LmrsParameters
     /** Synchronization where current leaders are taken. Synchronization is disabled for d_sync&lt;d&lt;d_coop at low speeds. */
     Synchronization PASSIVE_MOVING = new Synchronization()
     {
-        /** {@inheritDoc} */
         @Override
         public Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData,
@@ -254,7 +247,6 @@ public interface Synchronization extends LmrsParameters
             return PASSIVE.synchronize(perception, params, sli, cfm, desire, lat, lmrsData, laneChange, initiatedLaneChange);
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -265,7 +257,6 @@ public interface Synchronization extends LmrsParameters
     /** Synchronization where a suitable leader is actively targeted, in relation to infrastructure. */
     Synchronization ACTIVE = new Synchronization()
     {
-        /** {@inheritDoc} */
         @Override
         public Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData,
@@ -457,7 +448,6 @@ public interface Synchronization extends LmrsParameters
             return a;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

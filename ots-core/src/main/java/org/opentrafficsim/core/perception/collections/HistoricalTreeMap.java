@@ -43,14 +43,12 @@ public class HistoricalTreeMap<K, V> extends AbstractHistoricalNavigableMap<K, V
         super(historyManager, new TreeMap<>(m));
     }
 
-    /** {@inheritDoc} */
     @Override
     public TreeMap<K, V> get()
     {
         return getMap();
     }
 
-    /** {@inheritDoc} */
     @Override
     public TreeMap<K, V> get(final Time time)
     {
@@ -61,7 +59,6 @@ public class HistoricalTreeMap<K, V> extends AbstractHistoricalNavigableMap<K, V
         return fill(time, new TreeMap<>());
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

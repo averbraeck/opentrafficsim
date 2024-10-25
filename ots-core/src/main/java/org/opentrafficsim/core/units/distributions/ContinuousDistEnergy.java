@@ -30,14 +30,12 @@ public class ContinuousDistEnergy extends ContinuousDistDoubleScalar.Rel<Energy,
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public Energy draw()
     {
         return new Energy(getDistribution().draw(), (EnergyUnit) getDisplayUnit());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

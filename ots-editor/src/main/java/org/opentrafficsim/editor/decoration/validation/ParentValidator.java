@@ -88,7 +88,6 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
         return this;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String validate(final XsdTreeNode node)
     {
@@ -144,7 +143,6 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notifyCreated(final XsdTreeNode node)
     {
@@ -155,7 +153,6 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notifyRemoved(final XsdTreeNode node)
     {

@@ -70,7 +70,6 @@ public class SwingTrajectoryPlot extends SwingSpaceTimePlot
                 : GraphUtil.getToggleSeriesByLegendListener(getPlot().getLegend(), getPlot().getLaneVisible());
         return new ChartMouseListener()
         {
-            /** {@inheritDoc} */
             @Override
             public void chartMouseClicked(final ChartMouseEvent event)
             {
@@ -120,7 +119,6 @@ public class SwingTrajectoryPlot extends SwingSpaceTimePlot
                 }
             }
 
-            /** {@inheritDoc} */
             @Override
             public void chartMouseMoved(final ChartMouseEvent event)
             {

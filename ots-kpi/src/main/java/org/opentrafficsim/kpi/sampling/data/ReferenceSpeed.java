@@ -27,14 +27,12 @@ public class ReferenceSpeed extends ExtendedDataSpeed<GtuData>
         super("referenceSpeed", "Reference speed (minimum of speed limit and maximum vehicle speed)");
     }
 
-    /** {@inheritDoc} */
     @Override
     public final FloatSpeed getValue(final GtuData gtu)
     {
         return FloatSpeed.instantiateSI((float) gtu.getReferenceSpeed().si);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

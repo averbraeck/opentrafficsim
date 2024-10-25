@@ -486,7 +486,6 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         this.finalizeLaneChangeEvent = event;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     protected synchronized boolean move(final OrientedPoint2d fromLocation)
@@ -1367,7 +1366,6 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         return this.vehicleModel;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public void destroy()
@@ -1426,14 +1424,12 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         super.destroy();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final LaneBasedStrategicalPlanner getStrategicalPlanner()
     {
         return (LaneBasedStrategicalPlanner) super.getStrategicalPlanner();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final LaneBasedStrategicalPlanner getStrategicalPlanner(final Time time)
     {
@@ -1538,28 +1534,24 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         this.turnIndicatorStatus.set(turnIndicatorStatus);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Length getHeight()
     {
         return Length.ZERO;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getFullId()
     {
         return getId();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Lane getLane()
     {
         return Try.assign(() -> getReferencePosition().lane(), "no reference position");
     }
 
-    /** {@inheritDoc} */
     @Override
     public Length getLongitudinalPosition()
     {
@@ -1629,14 +1621,12 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         return this.instantaneousLaneChange;
     }
 
-    /** {@inheritDoc} */
     @Override
     public LaneBasedTacticalPlanner getTacticalPlanner()
     {
         return getStrategicalPlanner().getTacticalPlanner();
     }
 
-    /** {@inheritDoc} */
     @Override
     public LaneBasedTacticalPlanner getTacticalPlanner(final Time time)
     {
@@ -1693,7 +1683,6 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         return front.minus(rear);
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

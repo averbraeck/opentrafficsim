@@ -52,7 +52,6 @@ public class DirectBusStopPerception extends AbstractPerceptionCategory<LaneBase
         super(perception);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final PerceptionCollectable<HeadwayBusStop, BusStop> getBusStops()
     {
@@ -82,7 +81,6 @@ public class DirectBusStopPerception extends AbstractPerceptionCategory<LaneBase
                 AbstractPerceptionReiterable<LaneBasedGtu, HeadwayBusStop, BusStop> it =
                         new AbstractPerceptionReiterable<LaneBasedGtu, HeadwayBusStop, BusStop>(getGtu())
                         {
-                            /** {@inheritDoc} */
                             @Override
                             protected Iterator<AbstractPerceptionReiterable<LaneBasedGtu, HeadwayBusStop,
                                     BusStop>.PrimaryIteratorEntry> primaryIterator()
@@ -90,14 +88,12 @@ public class DirectBusStopPerception extends AbstractPerceptionCategory<LaneBase
                                 Iterator<Entry<BusStop>> iterator = busStops.iterator();
                                 return new Iterator<>()
                                 {
-                                    /** {@inheritDoc} */
                                     @Override
                                     public boolean hasNext()
                                     {
                                         return iterator.hasNext();
                                     }
 
-                                    /** {@inheritDoc} */
                                     @Override
                                     public AbstractPerceptionReiterable<LaneBasedGtu, HeadwayBusStop,
                                             BusStop>.PrimaryIteratorEntry next()
@@ -108,7 +104,6 @@ public class DirectBusStopPerception extends AbstractPerceptionCategory<LaneBase
                                 };
                             }
 
-                            /** {@inheritDoc} */
                             @Override
                             protected HeadwayBusStop perceive(final BusStop object, final Length distance)
                                     throws GtuException, ParameterException
@@ -133,7 +128,6 @@ public class DirectBusStopPerception extends AbstractPerceptionCategory<LaneBase
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

@@ -42,7 +42,6 @@ public class LinkGtuIdTransceiver extends AbstractTransceiver
         this.network = network;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Object[] get(final Object[] address, final ReturnWrapper returnWrapper)
             throws Sim0MQException, SerializationException
@@ -69,7 +68,6 @@ public class LinkGtuIdTransceiver extends AbstractTransceiver
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

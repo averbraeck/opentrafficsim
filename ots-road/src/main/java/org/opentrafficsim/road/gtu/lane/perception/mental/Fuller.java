@@ -57,7 +57,6 @@ public class Fuller implements Mental
                 /** */
                 private static final long serialVersionUID = 20180403L;
 
-                /** {@inheritDoc} */
                 @Override
                 public void check(final Double value, final Parameters params) throws ParameterException
                 {
@@ -74,7 +73,6 @@ public class Fuller implements Mental
                 /** */
                 private static final long serialVersionUID = 20180403L;
 
-                /** {@inheritDoc} */
                 @Override
                 public void check(final Double value, final Parameters params) throws ParameterException
                 {
@@ -158,7 +156,6 @@ public class Fuller implements Mental
         return new ImmutableLinkedHashSet<>(this.tasks, Immutable.WRAP);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void apply(final LanePerception perception) throws ParameterException, GtuException
     {
@@ -210,7 +207,6 @@ public class Fuller implements Mental
         return this.taskDemands.getOrDefault(taskId, Double.NaN);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

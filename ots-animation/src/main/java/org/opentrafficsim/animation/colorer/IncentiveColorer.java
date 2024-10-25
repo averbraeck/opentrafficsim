@@ -34,7 +34,6 @@ public class IncentiveColorer extends DesireColorer
         this.incentiveClass = incentiveClass;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Color getColor(final Gtu gtu)
     {
@@ -50,7 +49,6 @@ public class IncentiveColorer extends DesireColorer
         return NA;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

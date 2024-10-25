@@ -34,7 +34,6 @@ public class GraphUpdater<T>
     {
         new Thread(new Runnable()
         {
-            /** {@inheritDoc} */
             @SuppressWarnings({"synthetic-access"})
             @Override
             public void run()
@@ -90,7 +89,6 @@ public class GraphUpdater<T>
         void update(T t);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

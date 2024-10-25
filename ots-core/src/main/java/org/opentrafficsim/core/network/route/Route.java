@@ -249,14 +249,12 @@ public class Route implements Serializable, Identifiable
         return index1 >= 0 && index2 >= 0 && (index2 - index1) == 1;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
         return Objects.hash(this.gtuType, this.id, this.nodes);
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj)
     {
@@ -277,7 +275,6 @@ public class Route implements Serializable, Identifiable
                 && Objects.equals(this.nodes, other.nodes);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

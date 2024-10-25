@@ -45,91 +45,78 @@ public class HeadwayDistance implements Headway
         this.distance = distance;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getId()
     {
         return "DISTANCE";
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Length getLength()
     {
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Speed getSpeed()
     {
         return Speed.ZERO;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Length getDistance()
     {
         return this.distance;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final ObjectType getObjectType()
     {
         return ObjectType.DISTANCEONLY;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Acceleration getAcceleration()
     {
         return Acceleration.ZERO;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Length getOverlapFront()
     {
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Length getOverlapRear()
     {
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Length getOverlap()
     {
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean isAhead()
     {
         return this.distance.ge0();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean isBehind()
     {
         return this.distance.lt0();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean isParallel()
     {
         return false;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

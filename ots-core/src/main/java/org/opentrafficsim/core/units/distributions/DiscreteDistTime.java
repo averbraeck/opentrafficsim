@@ -31,14 +31,12 @@ public class DiscreteDistTime extends DiscreteDistDoubleScalar.Abs<Time, TimeUni
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public Time draw()
     {
         return new Time(getDistribution().draw(), (TimeUnit) getUnit());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

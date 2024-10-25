@@ -43,7 +43,6 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
     /** Quantity for the EGTF. */
     private static final Quantity<Duration, DurationMatrix> QUANTITY = new Quantity<>("delay", new Converter<DurationMatrix>()
     {
-        /** {@inheritDoc} */
         @Override
         public DurationMatrix convert(final double[][] filteredData)
         {
@@ -62,14 +61,12 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
     /** Contour data type. */
     private static final ContourDataType<Duration, Duration> CONTOUR_DATA_TYPE = new ContourDataType<Duration, Duration>()
     {
-        /** {@inheritDoc} */
         @Override
         public Duration identity()
         {
             return Duration.ZERO;
         }
 
-        /** {@inheritDoc} */
         @Override
         public Duration processSeries(final Duration intermediate, final List<TrajectoryGroup<?>> trajectories,
                 final List<Length> xFrom, final List<Length> xTo, final Time tFrom, final Time tTo)
@@ -105,14 +102,12 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
             return Duration.instantiateSI(intermediate.si + sumActualTime - sumRefTime);
         }
 
-        /** {@inheritDoc} */
         @Override
         public Duration finalize(final Duration intermediate)
         {
             return intermediate;
         }
 
-        /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
         public Quantity<Duration, ?> getQuantity()
@@ -146,28 +141,24 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
         return new BoundsPaintScale(boundaries, colorValues);
     }
 
-    /** {@inheritDoc} */
     @Override
     public GraphType getGraphType()
     {
         return GraphType.DELAY_CONTOUR;
     }
 
-    /** {@inheritDoc} */
     @Override
     protected double scale(final double si)
     {
         return LinearDensityUnit.PER_KILOMETER.getScale().fromStandardUnit(si);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected double getValue(final int item, final double cellLength, final double cellSpan)
     {
         return getDataPool().get(item, CONTOUR_DATA_TYPE) / (cellLength * cellSpan);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected ContourDataType<Duration, Duration> getContourDataType()
     {

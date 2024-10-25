@@ -40,7 +40,6 @@ public class LaneType extends GtuCompatibleInfraType<LaneType, Lane>
         super(id, parent);
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

@@ -19,7 +19,6 @@ public interface ClickableLocatable extends OtsLocatable
     /** Minimum expanse to click on object. */
     double EXPANSE = 2.0;
 
-    /** {@inheritDoc} */
     @Override
     default Bounds2d getBounds()
     {
@@ -49,7 +48,6 @@ public interface ClickableLocatable extends OtsLocatable
             /** */
             private static final long serialVersionUID = 20241006L;
 
-            /** {@inheritDoc} */
             @Override
             public boolean contains(final double x, final double y)
             {

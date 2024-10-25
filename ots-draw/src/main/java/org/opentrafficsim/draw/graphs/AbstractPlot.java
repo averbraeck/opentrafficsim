@@ -151,14 +151,12 @@ public abstract class AbstractPlot implements Identifiable, Dataset
         return ChartUtils.encodeAsPNG(image);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final DatasetGroup getGroup()
     {
         return null; // not used
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void setGroup(final DatasetGroup group)
     {
@@ -230,21 +228,18 @@ public abstract class AbstractPlot implements Identifiable, Dataset
         return this.chart;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getId()
     {
         return this.id;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void addChangeListener(final DatasetChangeListener listener)
     {
         this.listeners.add(listener);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void removeChangeListener(final DatasetChangeListener listener)
     {

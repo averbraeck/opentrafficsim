@@ -31,7 +31,6 @@ import org.opentrafficsim.road.network.lane.LanePosition;
 public class CfRoomChecker implements RoomChecker
 {
 
-    /** {@inheritDoc} */
     @Override
     public Placement canPlace(final SortedSet<HeadwayGtu> leaders, final LaneBasedGtuCharacteristics characteristics,
             final Duration since, final LanePosition initialPosition) throws NetworkException, GtuException

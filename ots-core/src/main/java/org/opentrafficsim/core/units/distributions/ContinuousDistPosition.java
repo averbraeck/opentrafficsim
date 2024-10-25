@@ -31,14 +31,12 @@ public class ContinuousDistPosition extends ContinuousDistDoubleScalar.Abs<Posit
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public Position draw()
     {
         return new Position(getDistribution().draw(), (PositionUnit) getDisplayUnit());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

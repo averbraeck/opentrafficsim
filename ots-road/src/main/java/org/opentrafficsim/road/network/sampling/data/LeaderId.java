@@ -29,7 +29,6 @@ public class LeaderId extends ExtendedDataString<GtuDataRoad>
         super("leaderId", "Id of the leading GTU");
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getValue(final GtuDataRoad gtu)
     {

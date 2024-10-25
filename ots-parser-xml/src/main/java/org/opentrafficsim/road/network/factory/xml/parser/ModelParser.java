@@ -693,7 +693,6 @@ public class ModelParser
         DistContinuous fSpeed = new DistNormal(streamInformation.getStream("generation"), 123.7 / 120.0, 0.1);
         return new CarFollowingModelFactory<CarFollowingModel>()
         {
-            /** {@inheritDoc} */
             @Override
             public Parameters getParameters() throws ParameterException
             {
@@ -706,7 +705,6 @@ public class ModelParser
                 return parameters;
             }
 
-            /** {@inheritDoc} */
             @Override
             public CarFollowingModel generateCarFollowingModel()
             {
@@ -730,14 +728,12 @@ public class ModelParser
         {
             return new Factory<>()
             {
-                /** {@inheritDoc} */
                 @Override
                 public Parameters getParameters() throws ParameterException
                 {
                     return new ParameterSet(); // IDM factory takes care of parameters for default model
                 }
 
-                /** {@inheritDoc} */
                 @Override
                 public DesiredHeadwayModel get()
                 {
@@ -767,14 +763,12 @@ public class ModelParser
         {
             return new Factory<>()
             {
-                /** {@inheritDoc} */
                 @Override
                 public Parameters getParameters() throws ParameterException
                 {
                     return new ParameterSet(); // IDM factory takes care of parameters for default model
                 }
 
-                /** {@inheritDoc} */
                 @Override
                 public DesiredSpeedModel get()
                 {
@@ -790,7 +784,6 @@ public class ModelParser
             return new Factory<>()
             {
 
-                /** {@inheritDoc} */
                 @Override
                 public Parameters getParameters() throws ParameterException
                 {
@@ -800,7 +793,6 @@ public class ModelParser
                     return parameters;
                 }
 
-                /** {@inheritDoc} */
                 @Override
                 public DesiredSpeedModel get()
                 {
@@ -831,7 +823,6 @@ public class ModelParser
                         XmlParserException.class, "Class %s does not have a valid empty constructor.", clazz);
         return new Factory<>()
         {
-            /** {@inheritDoc} */
             @Override
             public Parameters getParameters() throws ParameterException
             {
@@ -840,7 +831,6 @@ public class ModelParser
                 return parameters;
             }
 
-            /** {@inheritDoc} */
             @Override
             public T get()
             {
@@ -1022,7 +1012,6 @@ public class ModelParser
         // Perception factory
         return new PerceptionFactory()
         {
-            /** {@inheritDoc} */
             @Override
             public Parameters getParameters() throws ParameterException
             {
@@ -1044,7 +1033,6 @@ public class ModelParser
                 return parameters;
             }
 
-            /** {@inheritDoc} */
             @Override
             public LanePerception generatePerception(final LaneBasedGtu gtu)
             {

@@ -39,7 +39,6 @@ public class HtmlGraphicsConfiguration extends GraphicsConfiguration
         CategoryLogger.filter(Cat.WEB).trace("HTMLGraphicsConfiguration.<init>");
     }
 
-    /** {@inheritDoc} */
     @Override
     public GraphicsDevice getDevice()
     {
@@ -58,7 +57,6 @@ public class HtmlGraphicsConfiguration extends GraphicsConfiguration
         this.htmlDevice = htmlDevice;
     }
 
-    /** {@inheritDoc} */
     @Override
     public ColorModel getColorModel()
     {
@@ -66,7 +64,6 @@ public class HtmlGraphicsConfiguration extends GraphicsConfiguration
         return ColorModel.getRGBdefault();
     }
 
-    /** {@inheritDoc} */
     @Override
     public ColorModel getColorModel(int transparency)
     {
@@ -74,7 +71,6 @@ public class HtmlGraphicsConfiguration extends GraphicsConfiguration
         return ColorModel.getRGBdefault();
     }
 
-    /** {@inheritDoc} */
     @Override
     public AffineTransform getDefaultTransform()
     {
@@ -82,7 +78,6 @@ public class HtmlGraphicsConfiguration extends GraphicsConfiguration
         return this.identityTransform;
     }
 
-    /** {@inheritDoc} */
     @Override
     public AffineTransform getNormalizingTransform()
     {
@@ -90,7 +85,6 @@ public class HtmlGraphicsConfiguration extends GraphicsConfiguration
         return this.identityTransform;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Rectangle getBounds()
     {

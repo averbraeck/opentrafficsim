@@ -53,7 +53,6 @@ public class MultiConstraint<T> implements Constraint<T>
         this.stringRepresentation = String.format("MultiConstraint [contains %d constraints]", this.constraints.size());
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean accept(final T value)
     {
@@ -68,7 +67,6 @@ public class MultiConstraint<T> implements Constraint<T>
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String failMessage()
     {
@@ -80,7 +78,6 @@ public class MultiConstraint<T> implements Constraint<T>
         return "A constraint failed, most likely: " + this.failedConstraintMessage;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

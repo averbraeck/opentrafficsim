@@ -50,7 +50,6 @@ public class NodeType extends HierarchicalType<NodeType, Node>
         super(id, parent);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

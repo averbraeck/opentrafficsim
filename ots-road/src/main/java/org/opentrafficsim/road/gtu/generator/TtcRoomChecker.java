@@ -45,7 +45,6 @@ public class TtcRoomChecker implements RoomChecker
         this.ttc = ttc;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Placement canPlace(final SortedSet<HeadwayGtu> leaders, final LaneBasedGtuCharacteristics characteristics,
             final Duration since, final LanePosition initialPosition) throws NetworkException, GtuException
@@ -75,7 +74,6 @@ public class TtcRoomChecker implements RoomChecker
         return this.ttc;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

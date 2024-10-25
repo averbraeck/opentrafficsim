@@ -160,7 +160,6 @@ public final class ParameterFactoryByTypeTest
     {
         Correlation<Double, Double> correlation = new Correlation<Double, Double>()
         {
-            /** {@inheritDoc} */
             @Override
             public Double correlate(final Double first, final Double then)
             {

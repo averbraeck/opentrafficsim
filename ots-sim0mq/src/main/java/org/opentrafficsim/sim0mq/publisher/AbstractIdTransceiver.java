@@ -45,7 +45,6 @@ public abstract class AbstractIdTransceiver extends AbstractTransceiver
      */
     abstract ImmutableSet<?> getSet();
 
-    /** {@inheritDoc} */
     @Override
     public final Object[] get(final Object[] address, final ReturnWrapper returnWrapper)
             throws Sim0MQException, SerializationException

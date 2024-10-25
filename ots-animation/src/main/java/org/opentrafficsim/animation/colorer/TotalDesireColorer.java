@@ -22,7 +22,6 @@ public class TotalDesireColorer extends DesireColorer
     /** */
     private static final long serialVersionUID = 20170414L;
 
-    /** {@inheritDoc} */
     @Override
     public final Color getColor(final Gtu gtu)
     {
@@ -36,7 +35,6 @@ public class TotalDesireColorer extends DesireColorer
         return getColor(dLeft, dRight);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

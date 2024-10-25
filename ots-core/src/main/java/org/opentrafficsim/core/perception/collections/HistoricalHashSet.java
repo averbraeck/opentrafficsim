@@ -43,14 +43,12 @@ public class HistoricalHashSet<E> extends AbstractHistoricalCollection<E, Linked
         super(historyManager, new LinkedHashSet<>(c));
     }
 
-    /** {@inheritDoc} */
     @Override
     public LinkedHashSet<E> get()
     {
         return getCollection();
     }
 
-    /** {@inheritDoc} */
     @Override
     public LinkedHashSet<E> get(final Time time)
     {
@@ -61,7 +59,6 @@ public class HistoricalHashSet<E> extends AbstractHistoricalCollection<E, Linked
         return fill(time, new LinkedHashSet<>());
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

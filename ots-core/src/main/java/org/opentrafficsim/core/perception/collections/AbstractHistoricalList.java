@@ -39,7 +39,6 @@ public abstract class AbstractHistoricalList<E, L extends List<E>> extends Abstr
 
     // Altering List methods
 
-    /** {@inheritDoc} */
     @Override
     public synchronized void add(final int index, final E value)
     {
@@ -47,7 +46,6 @@ public abstract class AbstractHistoricalList<E, L extends List<E>> extends Abstr
         getCollection().add(index, value);
     }
 
-    /** {@inheritDoc} */
     @Override
     public synchronized boolean add(final E value)
     {
@@ -55,7 +53,6 @@ public abstract class AbstractHistoricalList<E, L extends List<E>> extends Abstr
         return getCollection().add(value);
     }
 
-    /** {@inheritDoc} */
     @Override
     public synchronized E remove(final int index)
     {
@@ -63,7 +60,6 @@ public abstract class AbstractHistoricalList<E, L extends List<E>> extends Abstr
         return getCollection().remove(index);
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("unchecked")
     public synchronized boolean remove(final Object value)
@@ -78,7 +74,6 @@ public abstract class AbstractHistoricalList<E, L extends List<E>> extends Abstr
         return false;
     }
 
-    /** {@inheritDoc} */
     @Override
     public synchronized E set(final int index, final E value)
     {
@@ -91,7 +86,6 @@ public abstract class AbstractHistoricalList<E, L extends List<E>> extends Abstr
         return previousValue;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean addAll(final int index, final Collection<? extends E> c)
     {
@@ -106,42 +100,36 @@ public abstract class AbstractHistoricalList<E, L extends List<E>> extends Abstr
 
     // Non-altering List methods
 
-    /** {@inheritDoc} */
     @Override
     public E get(final int index)
     {
         return getCollection().get(index);
     }
 
-    /** {@inheritDoc} */
     @Override
     public int indexOf(final Object o)
     {
         return getCollection().indexOf(o);
     }
 
-    /** {@inheritDoc} */
     @Override
     public int lastIndexOf(final Object o)
     {
         return getCollection().lastIndexOf(o);
     }
 
-    /** {@inheritDoc} */
     @Override
     public ListIterator<E> listIterator()
     {
         return listIterator(0);
     }
 
-    /** {@inheritDoc} */
     @Override
     public ListIterator<E> listIterator(final int index)
     {
         return Collections.unmodifiableList(getCollection()).listIterator(index);
     }
 
-    /** {@inheritDoc} */
     @Override
     public List<E> subList(final int fromIndex, final int toIndex)
     {
@@ -219,14 +207,12 @@ public abstract class AbstractHistoricalList<E, L extends List<E>> extends Abstr
             super(time, value, index);
         }
 
-        /** {@inheritDoc} */
         @Override
         public void restore(final L list)
         {
             list.remove(getIndex());
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -262,14 +248,12 @@ public abstract class AbstractHistoricalList<E, L extends List<E>> extends Abstr
             super(time, value, index);
         }
 
-        /** {@inheritDoc} */
         @Override
         public void restore(final L list)
         {
             list.add(getIndex(), getValue());
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

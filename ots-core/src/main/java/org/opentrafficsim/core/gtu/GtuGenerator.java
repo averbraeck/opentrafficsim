@@ -46,11 +46,9 @@ public interface GtuGenerator extends NonLocatedObject
          */
         int getQueueCount();
 
-        /** {@inheritDoc} */
         @Override
         OrientedPoint2d getLocation();
 
-        /** {@inheritDoc} */
         @Override
         default Polygon2d getContour()
         {

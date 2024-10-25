@@ -25,7 +25,6 @@ public class AnimationTrafficLightData extends AnimationLaneBasedObjectData<Traf
         super(trafficLight);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Color getColor()
     {
@@ -51,7 +50,6 @@ public class AnimationTrafficLightData extends AnimationLaneBasedObjectData<Traf
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

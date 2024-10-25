@@ -38,7 +38,6 @@ public abstract class AbstractHistoricalNavigableMap<K, V, M extends NavigableMa
 
     // Altering NavigableMap methods
 
-    /** {@inheritDoc} */
     @Override
     public Entry<K, V> pollFirstEntry()
     {
@@ -51,7 +50,6 @@ public abstract class AbstractHistoricalNavigableMap<K, V, M extends NavigableMa
         return entry;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Entry<K, V> pollLastEntry()
     {
@@ -66,112 +64,96 @@ public abstract class AbstractHistoricalNavigableMap<K, V, M extends NavigableMa
 
     // Non-altering NavigableMap methods
 
-    /** {@inheritDoc} */
     @Override
     public Entry<K, V> lowerEntry(final K key)
     {
         return Collections.unmodifiableNavigableMap(getMap()).lowerEntry(key);
     }
 
-    /** {@inheritDoc} */
     @Override
     public K lowerKey(final K key)
     {
         return getMap().lowerKey(key);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Entry<K, V> floorEntry(final K key)
     {
         return Collections.unmodifiableNavigableMap(getMap()).floorEntry(key);
     }
 
-    /** {@inheritDoc} */
     @Override
     public K floorKey(final K key)
     {
         return getMap().floorKey(key);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Entry<K, V> ceilingEntry(final K key)
     {
         return Collections.unmodifiableNavigableMap(getMap()).ceilingEntry(key);
     }
 
-    /** {@inheritDoc} */
     @Override
     public K ceilingKey(final K key)
     {
         return getMap().ceilingKey(key);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Entry<K, V> higherEntry(final K key)
     {
         return Collections.unmodifiableNavigableMap(getMap()).higherEntry(key);
     }
 
-    /** {@inheritDoc} */
     @Override
     public K higherKey(final K key)
     {
         return getMap().higherKey(key);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Entry<K, V> firstEntry()
     {
         return Collections.unmodifiableNavigableMap(getMap()).firstEntry();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Entry<K, V> lastEntry()
     {
         return Collections.unmodifiableNavigableMap(getMap()).lastEntry();
     }
 
-    /** {@inheritDoc} */
     @Override
     public NavigableMap<K, V> descendingMap()
     {
         return Collections.unmodifiableNavigableMap(getMap().descendingMap());
     }
 
-    /** {@inheritDoc} */
     @Override
     public NavigableSet<K> navigableKeySet()
     {
         return Collections.unmodifiableNavigableSet(getMap().navigableKeySet());
     }
 
-    /** {@inheritDoc} */
     @Override
     public NavigableSet<K> descendingKeySet()
     {
         return Collections.unmodifiableNavigableSet(getMap().descendingKeySet());
     }
 
-    /** {@inheritDoc} */
     @Override
     public NavigableMap<K, V> subMap(final K fromKey, final boolean fromInclusive, final K toKey, final boolean toInclusive)
     {
         return Collections.unmodifiableNavigableMap(getMap().subMap(fromKey, fromInclusive, toKey, toInclusive));
     }
 
-    /** {@inheritDoc} */
     @Override
     public NavigableMap<K, V> headMap(final K toKey, final boolean inclusive)
     {
         return Collections.unmodifiableNavigableMap(getMap().headMap(toKey, inclusive));
     }
 
-    /** {@inheritDoc} */
     @Override
     public NavigableMap<K, V> tailMap(final K fromKey, final boolean inclusive)
     {

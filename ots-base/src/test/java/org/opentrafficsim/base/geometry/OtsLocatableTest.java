@@ -62,21 +62,18 @@ public class OtsLocatableTest
      */
     private final class TestLocatable implements OtsLocatable
     {
-        /** {@inheritDoc} */
         @Override
         public Polygon2d getContour()
         {
             return CONTOUR;
         }
 
-        /** {@inheritDoc} */
         @Override
         public OrientedPoint2d getLocation()
         {
             return new OrientedPoint2d(10.0, 20.0, 0.5 * Math.PI);
         }
 
-        /** {@inheritDoc} */
         @Override
         public Bounds2d getBounds()
         {

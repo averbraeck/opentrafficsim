@@ -31,7 +31,6 @@ public abstract class AbstractNodeDecoratorRemove extends AbstractNodeDecorator
         super(editor);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {

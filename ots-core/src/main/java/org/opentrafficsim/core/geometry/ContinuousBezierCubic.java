@@ -58,28 +58,24 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
         this.length = length();
     }
 
-    /** {@inheritDoc} */
     @Override
     public OrientedPoint2d getStartPoint()
     {
         return this.startPoint;
     }
 
-    /** {@inheritDoc} */
     @Override
     public OrientedPoint2d getEndPoint()
     {
         return this.endPoint;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getStartCurvature()
     {
         return curvature(0.0);
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getEndCurvature()
     {
@@ -275,21 +271,18 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public PolyLine2d flatten(final Flattener flattener)
     {
         Throw.whenNull(flattener, "Flattener may not be null.");
         return flattener.flatten(new FlattableLine()
         {
-            /** {@inheritDoc} */
             @Override
             public Point2d get(final double fraction)
             {
                 return at(fraction);
             }
 
-            /** {@inheritDoc} */
             @Override
             public double getDirection(final double fraction)
             {
@@ -299,7 +292,6 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
         });
     }
 
-    /** {@inheritDoc} */
     @Override
     public PolyLine2d flattenOffset(final FractionalLengthData offsets, final Flattener flattener)
     {
@@ -405,7 +397,6 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
         // Flatten with FlattableLine based on the offset segments created above
         return flattener.flatten(new FlattableLine()
         {
-            /** {@inheritDoc} */
             @Override
             public Point2d get(final double fraction)
             {
@@ -425,7 +416,6 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
                 return entry.getValue().at(t);
             }
 
-            /** {@inheritDoc} */
             @Override
             public double getDirection(final double fraction)
             {
@@ -548,14 +538,12 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
         return new ContinuousBezierCubic(newBezierPoints[0], newBezierPoints[1], newBezierPoints[2], newBezierPoints[3]);
     }
 
-    /** {@inheritDoc} */
     @Override
     public double getLength()
     {
         return this.length;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

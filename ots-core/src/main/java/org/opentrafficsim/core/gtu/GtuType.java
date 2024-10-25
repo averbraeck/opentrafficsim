@@ -143,7 +143,6 @@ public final class GtuType extends HierarchicalType<GtuType, Gtu>
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

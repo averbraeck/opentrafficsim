@@ -33,14 +33,12 @@ public class SwingSpaceTimePlot extends SwingPlot
         super(plot);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void addPopUpMenuItems(final JPopupMenu popupMenu)
     {
         JCheckBoxMenuItem fixedDomainCheckBox = new JCheckBoxMenuItem("Fixed time range", false);
         fixedDomainCheckBox.addActionListener(new ActionListener()
         {
-            /** {@inheritDoc} */
             @Override
             public void actionPerformed(final ActionEvent e)
             {
@@ -52,7 +50,6 @@ public class SwingSpaceTimePlot extends SwingPlot
         popupMenu.insert(new JPopupMenu.Separator(), 1);
     }
 
-    /** {@inheritDoc} */
     @Override
     public AbstractSpaceTimePlot getPlot()
     {

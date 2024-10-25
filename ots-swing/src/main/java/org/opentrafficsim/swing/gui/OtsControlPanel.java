@@ -147,28 +147,24 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             /** */
             private static final long serialVersionUID = 20180207L;
 
-            /** {@inheritDoc} */
             @Override
             public boolean isForeground()
             {
                 return true;
             }
 
-            /** {@inheritDoc} */
             @Override
             public boolean isBackground()
             {
                 return true;
             }
 
-            /** {@inheritDoc} */
             @Override
             public Integer getFontSize()
             {
                 return null;
             }
 
-            /** {@inheritDoc} */
             @Override
             public String toString()
             {
@@ -244,14 +240,12 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 super(loadIcon);
             }
 
-            /** {@inheritDoc} */
             @Override
             public boolean isFont()
             {
                 return true;
             }
 
-            /** {@inheritDoc} */
             @Override
             public String toString()
             {
@@ -354,7 +348,6 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             this.panel = panel;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final void run()
         {
@@ -383,7 +376,6 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             // frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -391,7 +383,6 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void actionPerformed(final ActionEvent actionEvent)
     {
@@ -651,7 +642,6 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         // System.out.println("OtsControlPanel.autoPauseSimulator finished");
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void propertyChange(final PropertyChangeEvent evt)
     {
@@ -695,14 +685,12 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         return this.simulator;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void windowOpened(final WindowEvent e)
     {
         // No action
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void windowClosing(final WindowEvent e)
     {
@@ -722,35 +710,30 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void windowClosed(final WindowEvent e)
     {
         cleanup();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void windowIconified(final WindowEvent e)
     {
         // No action
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void windowDeiconified(final WindowEvent e)
     {
         // No action
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void windowActivated(final WindowEvent e)
     {
         // No action
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void windowDeactivated(final WindowEvent e)
     {
@@ -938,7 +921,6 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             return stepToFactor(this.slider.getValue());
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -1030,7 +1012,6 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             {
             }
 
-            /** {@inheritDoc} */
             @Override
             public void run()
             {
@@ -1053,7 +1034,6 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 getSpeedLabel().repaint();
             }
 
-            /** {@inheritDoc} */
             @Override
             public final String toString()
             {
@@ -1081,21 +1061,18 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             return speed;
         }
 
-        /** {@inheritDoc} */
         @Override
         public boolean isForeground()
         {
             return true;
         }
 
-        /** {@inheritDoc} */
         @Override
         public Integer getFontSize()
         {
             return null;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -1149,14 +1126,12 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             this.setText(String.format("%04d:%02d:%06.3f", h, m, s));
         }
 
-        /** {@inheritDoc} */
         @Override
         public Integer getFontSize()
         {
             return null;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -1200,7 +1175,6 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             throw new ParseException("Pattern did not match", 0);
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -1208,7 +1182,6 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void notify(final Event event) throws RemoteException
     {
@@ -1225,7 +1198,6 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

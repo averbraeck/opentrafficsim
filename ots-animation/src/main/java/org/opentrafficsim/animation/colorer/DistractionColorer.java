@@ -56,7 +56,6 @@ public class DistractionColorer implements GtuColorer, Serializable
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public Color getColor(final Gtu gtu)
     {
@@ -78,14 +77,12 @@ public class DistractionColorer implements GtuColorer, Serializable
         return NONE;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final List<LegendEntry> getLegend()
     {
         return Collections.unmodifiableList(this.legend);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

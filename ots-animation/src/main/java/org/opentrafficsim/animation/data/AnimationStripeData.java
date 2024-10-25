@@ -27,42 +27,36 @@ public class AnimationStripeData extends AnimationCrossSectionElementData<Stripe
         super(stripe);
     }
 
-    /** {@inheritDoc} */
     @Override
     public PolyLine2d getCenterLine()
     {
         return getElement().getCenterLine();
     }
 
-    /** {@inheritDoc} */
     @Override
     public PolyLine2d getLine()
     {
         return OtsLocatable.transformLine(getElement().getCenterLine(), getLocation());
     }
 
-    /** {@inheritDoc} */
     @Override
     public Type getType()
     {
         return Type.valueOf(getElement().getType().name());
     }
 
-    /** {@inheritDoc} */
     @Override
     public OrientedPoint2d getLocation()
     {
         return getElement().getLocation();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Length getWidth()
     {
         return getElement().getWidth(0.5);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

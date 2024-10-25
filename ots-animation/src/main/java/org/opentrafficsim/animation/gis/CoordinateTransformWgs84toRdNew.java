@@ -39,7 +39,6 @@ public class CoordinateTransformWgs84toRdNew implements CoordinateTransform, Ser
         this.dy = dy;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final float[] floatTransform(final double x, final double y)
     {
@@ -47,7 +46,6 @@ public class CoordinateTransformWgs84toRdNew implements CoordinateTransform, Ser
         return new float[] {(float) d[0], (float) d[1]};
     }
 
-    /** {@inheritDoc} */
     @Override
     public final double[] doubleTransform(final double x, final double y)
     {
@@ -63,7 +61,6 @@ public class CoordinateTransformWgs84toRdNew implements CoordinateTransform, Ser
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

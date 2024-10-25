@@ -67,7 +67,6 @@ public class CrossSectionSlice implements Serializable
         return this.width;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

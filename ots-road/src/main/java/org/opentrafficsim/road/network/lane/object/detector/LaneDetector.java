@@ -122,7 +122,6 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
                 detectorType);
     }
 
-    /** {@inheritDoc} */
     @Override
     public DetectorType getType()
     {
@@ -166,7 +165,6 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
         return this.getType().isCompatible(gtuType);
     }
 
-    /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override
     public int hashCode()
@@ -181,7 +179,6 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
         return result;
     }
 
-    /** {@inheritDoc} */
     @SuppressWarnings({"checkstyle:needbraces", "checkstyle:designforextension"})
     @Override
     public boolean equals(final Object obj)
@@ -213,7 +210,6 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
         return true;
     }
 
-    /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override
     public int compareTo(final LaneDetector o)
@@ -237,7 +233,6 @@ public abstract class LaneDetector extends AbstractLaneBasedObject
         return 0;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

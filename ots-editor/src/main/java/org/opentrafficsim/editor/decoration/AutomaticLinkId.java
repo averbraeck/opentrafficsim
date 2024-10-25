@@ -51,7 +51,6 @@ public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements C
         editor.addAttributeCellEditorListener(this);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notifyAttributeChanged(final XsdTreeNode node, final String attribute)
     {
@@ -70,7 +69,6 @@ public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements C
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void editingStopped(final ChangeEvent e)
     {
@@ -82,7 +80,6 @@ public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements C
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void editingCanceled(final ChangeEvent e)
     {

@@ -67,7 +67,6 @@ public class OdMatrix implements Serializable, Identifiable
     /** Node comparator. */
     private static final Comparator<Node> COMPARATOR = new Comparator<Node>()
     {
-        /** {@inheritDoc} */
         @Override
         public int compare(final Node o1, final Node o2)
         {
@@ -112,7 +111,6 @@ public class OdMatrix implements Serializable, Identifiable
             {
                 map.put(destination, new TreeMap<>(new Comparator<Category>()
                 {
-                    /** {@inheritDoc} */
                     @Override
                     public int compare(final Category o1, final Category o2)
                     {
@@ -786,7 +784,6 @@ public class OdMatrix implements Serializable, Identifiable
     /****************************************** OTHER METHODS *********************************************/
     /******************************************************************************************************/
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
@@ -851,7 +848,6 @@ public class OdMatrix implements Serializable, Identifiable
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final int hashCode()
     {
@@ -867,7 +863,6 @@ public class OdMatrix implements Serializable, Identifiable
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean equals(final Object obj)
     {

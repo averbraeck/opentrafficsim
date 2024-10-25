@@ -23,7 +23,6 @@ public class FilterDataLength extends FilterDataType<Length, GtuDataRoad>
         super("length", "GTU length", Length.class);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Length getValue(final GtuDataRoad gtu)
     {

@@ -126,7 +126,6 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
         return lane.getCenterLine().getLocationExtended(longitudinalPosition);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected void init() throws NetworkException
     {
@@ -139,21 +138,18 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getFullId()
     {
         return getLane().getFullId() + "." + super.getId();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Lane getLane()
     {
         return this.lane;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Length getLongitudinalPosition()
     {
@@ -170,7 +166,6 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
         return this.line;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

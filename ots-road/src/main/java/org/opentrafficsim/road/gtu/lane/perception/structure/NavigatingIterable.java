@@ -75,7 +75,6 @@ public class NavigatingIterable<T, L extends LaneRecordInterface<L>> implements 
         this.distancer = distancer;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Iterator<Entry<T>> iterator()
     {
@@ -91,7 +90,6 @@ public class NavigatingIterable<T, L extends LaneRecordInterface<L>> implements 
             /** Next entry as found by {@code hasNext()}. */
             private Entry<T> next;
 
-            /** {@inheritDoc} */
             @Override
             public boolean hasNext()
             {
@@ -139,7 +137,6 @@ public class NavigatingIterable<T, L extends LaneRecordInterface<L>> implements 
                 return this.next != null;
             }
 
-            /** {@inheritDoc} */
             @Override
             public Entry<T> next()
             {
@@ -218,7 +215,6 @@ public class NavigatingIterable<T, L extends LaneRecordInterface<L>> implements 
             this.distancer = distancer;
         }
 
-        /** {@inheritDoc} */
         @Override
         public boolean hasNext()
         {
@@ -229,7 +225,6 @@ public class NavigatingIterable<T, L extends LaneRecordInterface<L>> implements 
             return this.index < this.list.size();
         }
 
-        /** {@inheritDoc} */
         @Override
         public Entry<T> next()
         {

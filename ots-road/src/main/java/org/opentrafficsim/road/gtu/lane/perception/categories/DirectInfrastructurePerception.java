@@ -61,28 +61,24 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
         super(perception);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final SortedSet<LaneChangeInfo> getLegalLaneChangeInfo(final RelativeLane lane)
     {
         return computeIfAbsent("legalLaneChangeInfo", () -> computeLaneChangeInfo(lane, LaneAccessLaw.LEGAL), lane);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final SortedSet<LaneChangeInfo> getPhysicalLaneChangeInfo(final RelativeLane lane)
     {
         return computeIfAbsent("physicalLaneChangeInfo", () -> computeLaneChangeInfo(lane, LaneAccessLaw.PHYSICAL), lane);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final SpeedLimitProspect getSpeedLimitProspect(final RelativeLane lane)
     {
         return computeIfAbsent("speedLimitProspect", () -> computeSpeedLimitProspect(lane), lane);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Length getLegalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat)
     {
@@ -90,7 +86,6 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
                 fromLane, lat);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Length getPhysicalLaneChangePossibility(final RelativeLane fromLane, final LateralDirectionality lat)
     {
@@ -98,7 +93,6 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
                 fromLane, lat);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final SortedSet<RelativeLane> getCrossSection()
     {
@@ -261,7 +255,6 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
         return Try.assign(() -> getPerception().getLaneStructure(), "Parameters for lane structure not available.");
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

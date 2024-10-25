@@ -38,7 +38,6 @@ public class LinearAcc extends AbstractLinearFreeControl
         super(delayedActuation);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Acceleration getFollowingAcceleration(final LaneBasedGtu gtu,
             final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders, final Parameters settings) throws ParameterException

@@ -38,7 +38,6 @@ public abstract class ExtendedDataFloat<U extends Unit<U>, T extends FloatScalar
         super(id, description, type);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final float[] setValue(final float[] storage, final int i, final T value)
     {
@@ -56,14 +55,12 @@ public abstract class ExtendedDataFloat<U extends Unit<U>, T extends FloatScalar
         return out;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final float[] initializeStorage()
     {
         return new float[10];
     }
 
-    /** {@inheritDoc} */
     @Override
     public final T getOutputValue(final O output, final int i) throws SamplingException
     {
@@ -77,7 +74,6 @@ public abstract class ExtendedDataFloat<U extends Unit<U>, T extends FloatScalar
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public T getStorageValue(final float[] storage, final int i) throws SamplingException
     {
@@ -92,7 +88,6 @@ public abstract class ExtendedDataFloat<U extends Unit<U>, T extends FloatScalar
      */
     protected abstract T convertValue(float value);
 
-    /** {@inheritDoc} */
     @Override
     public O convert(final float[] storage, final int size)
     {

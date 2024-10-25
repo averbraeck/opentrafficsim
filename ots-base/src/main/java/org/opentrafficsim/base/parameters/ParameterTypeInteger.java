@@ -104,7 +104,6 @@ public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implemen
         //
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

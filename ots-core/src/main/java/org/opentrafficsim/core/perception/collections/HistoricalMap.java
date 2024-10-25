@@ -36,7 +36,6 @@ public interface HistoricalMap<K, V> extends Map<K, V>
      */
     Map<K, V> get(Time time);
 
-    /** {@inheritDoc} */
     @Override
     default void replaceAll(final BiFunction<? super K, ? super V, ? extends V> function)
     {

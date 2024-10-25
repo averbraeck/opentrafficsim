@@ -34,14 +34,12 @@ public class AnimationLinkData implements LinkData
         this.link = link;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Polygon2d getContour()
     {
         return this.link.getContour();
     }
 
-    /** {@inheritDoc} */
     @Override
     public OtsShape getShape()
     {
@@ -52,35 +50,30 @@ public class AnimationLinkData implements LinkData
         return this.shape;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getId()
     {
         return this.link.getId();
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isConnector()
     {
         return this.link.isConnector();
     }
 
-    /** {@inheritDoc} */
     @Override
     public PolyLine2d getCenterLine()
     {
         return this.link.getDesignLine();
     }
 
-    /** {@inheritDoc} */
     @Override
     public PolyLine2d getLine()
     {
         return OtsLocatable.transformLine(getCenterLine(), getLocation());
     }
 
-    /** {@inheritDoc} */
     @Override
     public OrientedPoint2d getLocation()
     {
@@ -96,7 +89,6 @@ public class AnimationLinkData implements LinkData
         return this.link;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

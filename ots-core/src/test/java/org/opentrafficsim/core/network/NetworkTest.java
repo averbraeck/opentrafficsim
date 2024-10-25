@@ -359,7 +359,6 @@ public class NetworkTest implements EventListener
         assertEquals(220.0 + 1.0 + yMargin, extent.getMaxY(), 0.01, "extend top");
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void notify(final Event event) throws RemoteException
     {

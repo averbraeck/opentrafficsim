@@ -28,7 +28,6 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayG
 public class DefaultLmrsPerceptionFactory implements PerceptionFactory
 {
 
-    /** {@inheritDoc} */
     @Override
     public LanePerception generatePerception(final LaneBasedGtu gtu)
     {
@@ -41,7 +40,6 @@ public class DefaultLmrsPerceptionFactory implements PerceptionFactory
         return perception;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Parameters getParameters() throws ParameterException
     {

@@ -199,56 +199,48 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
         return this.dataPool;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final int getItemCount(final int series)
     {
         return this.dataPool.getBinCount(Dimension.DISTANCE) * this.dataPool.getBinCount(Dimension.TIME);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Number getX(final int series, final int item)
     {
         return getXValue(series, item);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final double getXValue(final int series, final int item)
     {
         return this.dataPool.getAxisValue(Dimension.TIME, item);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Number getY(final int series, final int item)
     {
         return getYValue(series, item);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final double getYValue(final int series, final int item)
     {
         return this.dataPool.getAxisValue(Dimension.DISTANCE, item);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Number getZ(final int series, final int item)
     {
         return getZValue(series, item);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Comparable<String> getSeriesKey(final int series)
     {
         return getCaption();
     }
 
-    /** {@inheritDoc} */
     @SuppressWarnings("rawtypes")
     @Override
     public final int indexOf(final Comparable seriesKey)
@@ -256,14 +248,12 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
         return 0;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final DomainOrder getDomainOrder()
     {
         return DomainOrder.ASCENDING;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final double getZValue(final int series, final int item)
     {
@@ -271,14 +261,12 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
         return getValue(item, this.dataPool.getGranularity(Dimension.DISTANCE), this.dataPool.getGranularity(Dimension.TIME));
     }
 
-    /** {@inheritDoc} */
     @Override
     public final int getSeriesCount()
     {
         return 1; // default
     }
 
-    /** {@inheritDoc} */
     @Override
     public int getRangeBinCount()
     {
@@ -306,7 +294,6 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
         return String.format("time %.0fs, distance %.0fm, " + this.valueFormat, domainValue, rangeValue, zValue);
     }
 
-    /** {@inheritDoc} */
     @Override
     protected final void increaseTime(final Time time)
     {

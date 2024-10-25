@@ -42,7 +42,6 @@ public class BusStopConflictRule implements ConflictRule
         this.busType = busType;
     }
 
-    /** {@inheritDoc} */
     @Override
     public ConflictPriority determinePriority(final Conflict conflict)
     {
@@ -109,7 +108,6 @@ public class BusStopConflictRule implements ConflictRule
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

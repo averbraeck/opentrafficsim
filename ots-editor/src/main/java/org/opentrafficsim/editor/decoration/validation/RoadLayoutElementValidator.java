@@ -87,7 +87,6 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         this.attribute = attribute;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notifyCreated(final XsdTreeNode node)
     {
@@ -119,7 +118,6 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notifyRemoved(final XsdTreeNode node)
     {
@@ -152,7 +150,6 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {
@@ -343,7 +340,6 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         node.invalidate();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String validate(final XsdTreeNode node)
     {
@@ -372,7 +368,6 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public List<String> getOptions(final XsdTreeNode node, final Object field)
     {
@@ -413,7 +408,6 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         return layout.getChild(0).getCoupledKeyrefNodeValue(); // sequence of which DefinedLayout is the first node
     }
 
-    /** {@inheritDoc} */
     @Override
     public XsdTreeNode getCoupledKeyrefNode(final XsdTreeNode node)
     {
@@ -493,7 +487,6 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
             this.nodes.remove(node);
         }
 
-        /** {@inheritDoc} */
         @Override
         public void notify(final Event event) throws RemoteException
         {

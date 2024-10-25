@@ -444,7 +444,6 @@ public class OperationalPlan implements Serializable
         return null;
     }
 
-    /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override
     public int hashCode()
@@ -457,7 +456,6 @@ public class OperationalPlan implements Serializable
         return result;
     }
 
-    /** {@inheritDoc} */
     @SuppressWarnings({"checkstyle:needbraces", "checkstyle:designforextension"})
     @Override
     public boolean equals(final Object obj)
@@ -493,7 +491,6 @@ public class OperationalPlan implements Serializable
         return true;
     }
 
-    /** {@inheritDoc} */
     @SuppressWarnings("checkstyle:designforextension")
     @Override
     public String toString()

@@ -52,7 +52,6 @@ public class SimulatorStateTransceiver extends AbstractTransceiver
         this.eventMultiplexer = new EventMultiplexer(simulator);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Object[] get(final Object[] address, final ReturnWrapper returnWrapper)
             throws RemoteException, Sim0MQException, SerializationException
@@ -130,7 +129,6 @@ class EventMultiplexer extends LocalEventProducer implements EventListener
         simulator.addListener(this, SimulatorInterface.STOP_EVENT);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {

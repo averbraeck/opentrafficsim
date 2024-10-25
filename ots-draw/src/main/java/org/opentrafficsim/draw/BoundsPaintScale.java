@@ -101,7 +101,6 @@ public class BoundsPaintScale implements ColorPaintScale, Serializable
         return out;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Color getPaint(final double value)
     {
@@ -144,21 +143,18 @@ public class BoundsPaintScale implements ColorPaintScale, Serializable
         return mix;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final double getLowerBound()
     {
         return this.bounds[0];
     }
 
-    /** {@inheritDoc} */
     @Override
     public final double getUpperBound()
     {
         return this.bounds[this.bounds.length - 1];
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

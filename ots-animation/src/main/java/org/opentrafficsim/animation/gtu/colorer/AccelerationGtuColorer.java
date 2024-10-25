@@ -65,7 +65,6 @@ public class AccelerationGtuColorer implements GtuColorer, Serializable
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Color getColor(final Gtu gtu)
     {
@@ -95,14 +94,12 @@ public class AccelerationGtuColorer implements GtuColorer, Serializable
                 ratio - floor);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final List<LegendEntry> getLegend()
     {
         return Collections.unmodifiableList(this.legend);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

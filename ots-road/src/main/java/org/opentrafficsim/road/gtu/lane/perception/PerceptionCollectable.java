@@ -186,7 +186,6 @@ public interface PerceptionCollectable<H extends Headway, U> extends PerceptionI
      */
     record UnderlyingDistance<U>(U object, Length distance) implements Comparable<UnderlyingDistance<U>>
     {
-        /** {@inheritDoc} */
         @Override
         public int compareTo(final UnderlyingDistance<U> o)
         {

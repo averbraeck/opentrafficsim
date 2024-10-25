@@ -72,14 +72,12 @@ public abstract class ParameterTypeNumeric<T extends Number> extends ParameterTy
         super(id, description, valueClass, defaultValue, constraint);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String printValue(final Parameters parameters) throws ParameterException
     {
         return parameters.getParameter(this).toString();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

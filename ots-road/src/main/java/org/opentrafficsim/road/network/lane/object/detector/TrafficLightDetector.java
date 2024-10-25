@@ -207,7 +207,6 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void notify(final Event event) throws RemoteException
     {
@@ -402,14 +401,12 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
         return this.entryA.getSimulator();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final OrientedPoint2d getLocation()
     {
         return this.location;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Bounds2d getBounds()
     {
@@ -425,35 +422,30 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
         return this.currentGTUs.size() > 0;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Polygon2d getContour()
     {
         return this.contour;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Length getHeight()
     {
         return Length.ZERO;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getFullId()
     {
         return this.uniqueId;
     }
 
-    /** {@inheritDoc} */
     @Override
     public DetectorType getType()
     {
         return this.type;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
@@ -492,14 +484,12 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
             super(id, lane, longitudinalPosition, positionType, detectorType);
         }
 
-        /** {@inheritDoc} */
         @Override
         protected final void triggerResponse(final LaneBasedGtu gtu)
         {
             TrafficLightDetector.this.signalDetection(this, gtu);
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {

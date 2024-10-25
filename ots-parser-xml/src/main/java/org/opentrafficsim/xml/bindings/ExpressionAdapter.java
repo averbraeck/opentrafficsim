@@ -23,7 +23,6 @@ import org.opentrafficsim.xml.bindings.types.ExpressionType;
 public abstract class ExpressionAdapter<T, E extends ExpressionType<T>> extends XmlAdapter<String, E>
 {
 
-    /** {@inheritDoc} */
     @Override
     public String marshal(final E value)
     {
@@ -46,7 +45,6 @@ public abstract class ExpressionAdapter<T, E extends ExpressionType<T>> extends 
         return stringFunction.apply(value.getValue());
     }
 
-    /** {@inheritDoc} */
     @Override
     public abstract E unmarshal(String v); // removes throws Exception
 

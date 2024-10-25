@@ -204,7 +204,6 @@ public class OtsWebModel implements EventListener
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {

@@ -24,13 +24,11 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationDensit
 public class AnticipationDensity implements PerceptionCollector<LinearDensity, Gtu, CountAndDistance>
 {
 
-    /** {@inheritDoc} */
     @Override
     public Supplier<CountAndDistance> getIdentity()
     {
         return new Supplier<CountAndDistance>()
         {
-            /** {@inheritDoc} */
             @Override
             public CountAndDistance get()
             {
@@ -39,13 +37,11 @@ public class AnticipationDensity implements PerceptionCollector<LinearDensity, G
         };
     }
 
-    /** {@inheritDoc} */
     @Override
     public PerceptionAccumulator<Gtu, CountAndDistance> getAccumulator()
     {
         return new PerceptionAccumulator<Gtu, CountAndDistance>()
         {
-            /** {@inheritDoc} */
             @Override
             public Intermediate<CountAndDistance> accumulate(final Intermediate<CountAndDistance> intermediate,
                     final Gtu object, final Length distance)
@@ -57,13 +53,11 @@ public class AnticipationDensity implements PerceptionCollector<LinearDensity, G
         };
     }
 
-    /** {@inheritDoc} */
     @Override
     public Function<CountAndDistance, LinearDensity> getFinalizer()
     {
         return new Function<CountAndDistance, LinearDensity>()
         {
-            /** {@inheritDoc} */
             @Override
             public LinearDensity apply(final CountAndDistance intermediate)
             {

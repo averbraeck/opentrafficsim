@@ -30,14 +30,12 @@ public class ContinuousDistElectricalCurrent extends ContinuousDistDoubleScalar.
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public ElectricalCurrent draw()
     {
         return new ElectricalCurrent(getDistribution().draw(), (ElectricalCurrentUnit) getDisplayUnit());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

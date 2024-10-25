@@ -17,21 +17,18 @@ public class AppearanceControlTextField extends JTextField implements Appearance
     /** */
     private static final long serialVersionUID = 20240227L;
 
-    /** {@inheritDoc} */
     @Override
     public boolean isForeground()
     {
         return false;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isBackground()
     {
         return false;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

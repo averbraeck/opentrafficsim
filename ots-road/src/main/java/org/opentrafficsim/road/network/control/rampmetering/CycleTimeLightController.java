@@ -75,7 +75,6 @@ public class CycleTimeLightController implements RampMeteringLightController
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void disable()
     {
@@ -164,7 +163,6 @@ public class CycleTimeLightController implements RampMeteringLightController
             this.trafficLight = trafficLight;
         }
 
-        /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
         protected void triggerResponse(final LaneBasedGtu gtu)

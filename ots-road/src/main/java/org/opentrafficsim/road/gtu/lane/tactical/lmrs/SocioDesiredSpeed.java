@@ -54,7 +54,6 @@ public class SocioDesiredSpeed implements DesiredSpeedModel, Initialisable
         this.baseModel = baseModel;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo) throws ParameterException
     {
@@ -81,7 +80,6 @@ public class SocioDesiredSpeed implements DesiredSpeedModel, Initialisable
         return desiredSpeed;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void init(final LaneBasedGtu laneBasedGtu)
     {

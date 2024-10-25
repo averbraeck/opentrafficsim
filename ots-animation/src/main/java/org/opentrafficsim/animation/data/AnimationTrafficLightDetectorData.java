@@ -29,35 +29,30 @@ public class AnimationTrafficLightDetectorData implements TrafficLightDetectorDa
         this.trafficLigthDetector = trafficLigthDetector;
     }
 
-    /** {@inheritDoc} */
     @Override
     public OrientedPoint2d getLocation()
     {
         return this.trafficLigthDetector.getLocation();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Bounds2d getBounds()
     {
         return this.trafficLigthDetector.getBounds();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Polygon2d getContour()
     {
         return this.trafficLigthDetector.getContour();
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean getOccupancy()
     {
         return this.trafficLigthDetector.getOccupancy();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getId()
     {
@@ -73,7 +68,6 @@ public class AnimationTrafficLightDetectorData implements TrafficLightDetectorDa
         return this.trafficLigthDetector;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

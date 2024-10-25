@@ -17,7 +17,6 @@ import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
 public class ArcDirectionAdapter extends ExpressionAdapter<ArcDirection, ArcDirectionType>
 {
 
-    /** {@inheritDoc} */
     @Override
     public ArcDirectionType unmarshal(final String field) throws IllegalArgumentException
     {
@@ -46,7 +45,6 @@ public class ArcDirectionAdapter extends ExpressionAdapter<ArcDirection, ArcDire
         throw new IllegalArgumentException("Error parsing ArcDirection (LeftRight) " + field);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String marshal(final ArcDirectionType value) throws IllegalArgumentException
     {

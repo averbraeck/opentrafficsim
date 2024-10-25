@@ -24,7 +24,6 @@ public class FilterDataDestination extends FilterDataType<String, GtuData>
         super("destination", "Destination node id", String.class);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getValue(final GtuData gtu)
     {
@@ -32,7 +31,6 @@ public class FilterDataDestination extends FilterDataType<String, GtuData>
         return gtu.getDestinationId();
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

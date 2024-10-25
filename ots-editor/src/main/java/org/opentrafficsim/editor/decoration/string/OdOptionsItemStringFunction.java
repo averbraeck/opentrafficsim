@@ -29,7 +29,6 @@ public class OdOptionsItemStringFunction extends AbstractStringFunction
         super(editor, (node) -> node.getPathString().equals(XsdPaths.OD_OPTIONS_ITEM));
     }
 
-    /** {@inheritDoc} */
     @Override
     public Function<XsdTreeNode, String> getStringFunction()
     {

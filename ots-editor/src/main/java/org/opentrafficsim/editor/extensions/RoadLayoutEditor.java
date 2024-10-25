@@ -58,7 +58,6 @@ public class RoadLayoutEditor implements EventListener, Consumer<XsdTreeNode>
         return roadLayout;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {
@@ -79,7 +78,6 @@ public class RoadLayoutEditor implements EventListener, Consumer<XsdTreeNode>
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void accept(final XsdTreeNode t)
     {

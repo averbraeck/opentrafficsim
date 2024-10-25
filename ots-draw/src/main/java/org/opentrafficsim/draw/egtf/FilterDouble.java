@@ -36,28 +36,24 @@ public class FilterDouble implements Filter
         this.map = map;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double[] getLocation()
     {
         return this.location;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double[] getTime()
     {
         return this.time;
     }
 
-    /** {@inheritDoc} */
     @Override
     public double[][] getSI(final Quantity<?, ?> quantity)
     {
         return this.map.get(quantity);
     }
 
-    /** {@inheritDoc} */
     @Override
     public <K> K get(final Quantity<?, K> quantity)
     {
@@ -68,7 +64,6 @@ public class FilterDouble implements Filter
         return quantity.convert(this.map.get(quantity));
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

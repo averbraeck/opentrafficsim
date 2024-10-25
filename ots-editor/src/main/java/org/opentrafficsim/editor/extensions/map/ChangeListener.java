@@ -119,7 +119,6 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
         node.removeListener(this, XsdTreeNode.VALUE_CHANGED);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {
@@ -205,7 +204,6 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
      */
     abstract T calculateData();
 
-    /** {@inheritDoc} */
     @Override
     public void evalChanged()
     {

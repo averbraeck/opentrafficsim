@@ -30,14 +30,12 @@ public class DiscreteDistElectricalCharge extends DiscreteDistDoubleScalar.Rel<E
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public ElectricalCharge draw()
     {
         return new ElectricalCharge(getDistribution().draw(), (ElectricalChargeUnit) getUnit());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

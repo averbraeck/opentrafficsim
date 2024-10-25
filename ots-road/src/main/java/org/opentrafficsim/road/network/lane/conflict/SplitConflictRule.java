@@ -13,7 +13,6 @@ package org.opentrafficsim.road.network.lane.conflict;
 public class SplitConflictRule implements ConflictRule
 {
 
-    /** {@inheritDoc} */
     @Override
     public final ConflictPriority determinePriority(final Conflict conflict)
     {

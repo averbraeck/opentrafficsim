@@ -61,7 +61,6 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStopData>
         return this.text;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
@@ -69,7 +68,6 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStopData>
         super.paint(graphics, observer);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void destroy(final Contextualized contextProvider)
     {
@@ -77,7 +75,6 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStopData>
         this.text.destroy(contextProvider);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
@@ -118,7 +115,6 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStopData>
             super(source, text, dx, dy, textPlacement, color, contextualized, TextAnimation.RENDERWHEN10);
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {

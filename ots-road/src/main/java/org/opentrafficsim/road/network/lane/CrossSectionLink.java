@@ -100,7 +100,6 @@ public class CrossSectionLink extends Link implements Serializable
         this.laneKeepingPolicy = laneKeepingPolicy;
     }
 
-    /** {@inheritDoc} */
     @Override
     public RoadNetwork getNetwork()
     {
@@ -281,7 +280,6 @@ public class CrossSectionLink extends Link implements Serializable
         return this.endLine;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

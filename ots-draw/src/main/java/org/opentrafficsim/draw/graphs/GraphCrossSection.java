@@ -79,7 +79,6 @@ public class GraphCrossSection<S> extends AbstractGraphSpace<S>
         return this.section.getSource(series);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Iterator<S> iterator(final int series)
     {
@@ -98,14 +97,12 @@ public class GraphCrossSection<S> extends AbstractGraphSpace<S>
         return this.positions.get(series);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Iterator<S> iterator()
     {
         return this.section.iterator();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

@@ -56,7 +56,6 @@ public abstract class DesireColorer implements GtuColorer, Serializable
         LEGEND.add(new LegendEntry(NA, "N/A", "N/A"));
     }
 
-    /** {@inheritDoc} */
     @Override
     public final List<LegendEntry> getLegend()
     {

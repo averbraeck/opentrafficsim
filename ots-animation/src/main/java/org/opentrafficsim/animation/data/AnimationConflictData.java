@@ -39,28 +39,24 @@ public class AnimationConflictData implements ConflictData
         this.conflict = conflict;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Length getLaneWidth()
     {
         return this.conflict.getLane().getWidth(this.conflict.getLongitudinalPosition());
     }
 
-    /** {@inheritDoc} */
     @Override
     public OrientedPoint2d getLocation()
     {
         return this.conflict.getLocation();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getId()
     {
         return this.conflict.getFullId();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Color getColor()
     {
@@ -77,21 +73,18 @@ public class AnimationConflictData implements ConflictData
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public Bounds2d getBounds()
     {
         return ClickableLocatable.getBounds(this);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Polygon2d getContour()
     {
         return this.conflict.getContour();
     }
 
-    /** {@inheritDoc} */
     @Override
     public OtsShape getShape()
     {
@@ -102,21 +95,18 @@ public class AnimationConflictData implements ConflictData
         return this.shape;
     }
 
-    /** {@inheritDoc} */
     @Override
     public PolyLine2d getLine()
     {
         return OtsLocatable.transformLine(this.conflict.getLine(), getLocation());
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isCrossing()
     {
         return this.conflict.getConflictType().isCrossing();
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isPermitted()
     {
@@ -132,7 +122,6 @@ public class AnimationConflictData implements ConflictData
         return this.conflict;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

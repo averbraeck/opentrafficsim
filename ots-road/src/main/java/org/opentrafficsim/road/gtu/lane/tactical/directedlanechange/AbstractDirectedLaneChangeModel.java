@@ -51,7 +51,6 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
         this.perception = perception;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final DirectedLaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGtu gtu,
             final LateralDirectionality direction, final Collection<Headway> sameLaneGTUs,
@@ -111,7 +110,6 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
      */
     public abstract Acceleration applyDriverPersonality(DualAccelerationStep accelerationStep);
 
-    /** {@inheritDoc} */
     @Override
     public final LanePerception getPerception()
     {

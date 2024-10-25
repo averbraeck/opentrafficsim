@@ -54,14 +54,12 @@ public class PriorityAnimation extends OtsRenderable<PriorityData>
         super(source, contextProvider);
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isRotate()
     {
         return false;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void paint(final Graphics2D graphics, final ImageObserver observer)
     {
@@ -312,7 +310,6 @@ public class PriorityAnimation extends OtsRenderable<PriorityData>
     public interface PriorityData extends ClickableLocatable
     {
 
-        /** {@inheritDoc} */
         @Override
         default double getZ() throws RemoteException
         {

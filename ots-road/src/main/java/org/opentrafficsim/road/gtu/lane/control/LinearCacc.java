@@ -35,7 +35,6 @@ public class LinearCacc extends LinearAcc
         super(delayedActuation);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Acceleration getFollowingAcceleration(final LaneBasedGtu gtu,
             final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders, final Parameters settings) throws ParameterException

@@ -43,7 +43,6 @@ public class ParameterFactoryByType implements ParameterFactory
     /** Map of correlations. */
     private Map<GtuType, Map<ParameterType<?>, Map<ParameterType<?>, Correlation<?, ?>>>> correlations = new LinkedHashMap<>();
 
-    /** {@inheritDoc} */
     @Override
     public void setValues(final Parameters parameters, final GtuType gtuType) throws ParameterException
     {
@@ -346,7 +345,6 @@ public class ParameterFactoryByType implements ParameterFactory
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {
@@ -413,21 +411,18 @@ public class ParameterFactoryByType implements ParameterFactory
             this.value = value;
         }
 
-        /** {@inheritDoc} */
         @Override
         public T getValue()
         {
             return this.value;
         }
 
-        /** {@inheritDoc} */
         @Override
         public ParameterType<T> getParameterType()
         {
             return this.parameterType;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -471,21 +466,18 @@ public class ParameterFactoryByType implements ParameterFactory
             this.distribution = distribution;
         }
 
-        /** {@inheritDoc} */
         @Override
         public T getValue()
         {
             return this.distribution.draw();
         }
 
-        /** {@inheritDoc} */
         @Override
         public ParameterType<T> getParameterType()
         {
             return this.parameterType;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -525,21 +517,18 @@ public class ParameterFactoryByType implements ParameterFactory
             this.distribution = distribution;
         }
 
-        /** {@inheritDoc} */
         @Override
         public Double getValue()
         {
             return this.distribution.draw();
         }
 
-        /** {@inheritDoc} */
         @Override
         public ParameterType<Double> getParameterType()
         {
             return this.parameterType;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -579,21 +568,18 @@ public class ParameterFactoryByType implements ParameterFactory
             this.distribution = distribution;
         }
 
-        /** {@inheritDoc} */
         @Override
         public Integer getValue()
         {
             return (int) this.distribution.draw();
         }
 
-        /** {@inheritDoc} */
         @Override
         public ParameterType<Integer> getParameterType()
         {
             return this.parameterType;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

@@ -58,7 +58,6 @@ public class LanePosition implements Serializable
         return this.position;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
@@ -69,7 +68,6 @@ public class LanePosition implements Serializable
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:needbraces")
     public boolean equals(final Object obj)
@@ -98,7 +96,6 @@ public class LanePosition implements Serializable
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

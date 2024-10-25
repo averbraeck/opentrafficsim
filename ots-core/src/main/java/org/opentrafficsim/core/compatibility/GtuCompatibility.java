@@ -101,7 +101,6 @@ public class GtuCompatibility<T extends HierarchicalType<T, ?> & Compatibility<G
         return this.cachedCompatibilityMap.get(gtuType);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Boolean isCompatibleOnInfraLevel(final GtuType gtuType)
     {
@@ -138,14 +137,12 @@ public class GtuCompatibility<T extends HierarchicalType<T, ?> & Compatibility<G
         return this;
     }
 
-    /** {@inheritDoc} */
     @Override
     public T getInfrastructure()
     {
         return this.infrastructure;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void clearCompatibilityCache()
     {
@@ -156,14 +153,12 @@ public class GtuCompatibility<T extends HierarchicalType<T, ?> & Compatibility<G
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
         return Objects.hash(this.infrastructure, this.levelCompatibilityMap);
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:needbraces")
     public boolean equals(final Object obj)
@@ -179,7 +174,6 @@ public class GtuCompatibility<T extends HierarchicalType<T, ?> & Compatibility<G
                 && Objects.equals(this.levelCompatibilityMap, other.levelCompatibilityMap);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

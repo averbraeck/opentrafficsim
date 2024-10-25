@@ -252,7 +252,6 @@ public class SimpleOperationalPlan implements Serializable
         return false;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

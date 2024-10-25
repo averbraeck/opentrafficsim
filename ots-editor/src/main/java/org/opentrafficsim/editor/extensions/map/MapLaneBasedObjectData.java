@@ -134,7 +134,6 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void destroy()
     {
@@ -146,49 +145,42 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public Length getLaneWidth()
     {
         return this.laneWidth;
     }
 
-    /** {@inheritDoc} */
     @Override
     public OrientedPoint2d getLocation()
     {
         return this.location;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Bounds2d getBounds()
     {
         return this.bounds;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Polygon2d getContour()
     {
         return this.contour;
     }
 
-    /** {@inheritDoc} */
     @Override
     public OtsShape getShape()
     {
         return this.shape;
     }
 
-    /** {@inheritDoc} */
     @Override
     public PolyLine2d getLine()
     {
         return this.line;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getId()
     {
@@ -219,7 +211,6 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
         return str.toString();
     }
 
-    /** {@inheritDoc} */
     @Override
     public void evalChanged()
     {
@@ -237,7 +228,6 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
         setLocation();
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {

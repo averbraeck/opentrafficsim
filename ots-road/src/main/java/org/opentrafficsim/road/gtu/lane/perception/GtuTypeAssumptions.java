@@ -131,7 +131,6 @@ public class GtuTypeAssumptions implements Serializable
         return maxSpeeds;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final int hashCode()
     {
@@ -143,7 +142,6 @@ public class GtuTypeAssumptions implements Serializable
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:needbraces")
     public final boolean equals(final Object obj)
@@ -179,7 +177,6 @@ public class GtuTypeAssumptions implements Serializable
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

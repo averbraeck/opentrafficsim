@@ -15,7 +15,6 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
 public class LengthAdapter extends ScalarAdapter<Length, LengthType>
 {
 
-    /** {@inheritDoc} */
     @Override
     public LengthType unmarshal(final String field)
     {

@@ -376,14 +376,12 @@ class DummyModel extends AbstractOtsModel
         super(simulator);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void constructModel() throws SimRuntimeException
     {
         //
     }
 
-    /** {@inheritDoc} */
     @Override
     public final RoadNetwork getNetwork()
     {

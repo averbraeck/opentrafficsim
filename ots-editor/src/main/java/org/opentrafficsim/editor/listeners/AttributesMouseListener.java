@@ -39,7 +39,6 @@ public class AttributesMouseListener extends MouseAdapter
         this.attributesTable = attributesTable;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void mouseClicked(final MouseEvent e)
     {
@@ -69,7 +68,6 @@ public class AttributesMouseListener extends MouseAdapter
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void mouseReleased(final MouseEvent e)
     {

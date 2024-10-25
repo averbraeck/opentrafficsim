@@ -21,14 +21,12 @@ import org.jfree.chart.plot.XYPlot;
 public abstract class PointerHandler implements MouseListener, MouseMotionListener
 {
 
-    /** {@inheritDoc} */
     @Override
     public void mouseDragged(final MouseEvent e)
     {
         // No action
     }
 
-    /** {@inheritDoc} */
     @Override
     public void mouseMoved(final MouseEvent mouseEvent)
     {
@@ -63,35 +61,30 @@ public abstract class PointerHandler implements MouseListener, MouseMotionListen
      */
     public abstract void updateHint(double domainValue, double rangeValue);
 
-    /** {@inheritDoc} */
     @Override
     public void mouseClicked(final MouseEvent e)
     {
         // No action
     }
 
-    /** {@inheritDoc} */
     @Override
     public void mousePressed(final MouseEvent e)
     {
         // No action
     }
 
-    /** {@inheritDoc} */
     @Override
     public void mouseReleased(final MouseEvent e)
     {
         // No action
     }
 
-    /** {@inheritDoc} */
     @Override
     public void mouseEntered(final MouseEvent e)
     {
         // No action
     }
 
-    /** {@inheritDoc} */
     @Override
     public void mouseExited(final MouseEvent mouseEvent)
     {

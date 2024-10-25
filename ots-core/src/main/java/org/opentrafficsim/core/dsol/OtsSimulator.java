@@ -36,7 +36,6 @@ public class OtsSimulator extends DevsSimulator<Duration> implements OtsSimulato
         super(simulatorId);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
             final OtsModelInterface model) throws SimRuntimeException, NamingException
@@ -44,7 +43,6 @@ public class OtsSimulator extends DevsSimulator<Duration> implements OtsSimulato
         initialize(startTime, warmupPeriod, runLength, model, ++this.lastReplication);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
             final OtsModelInterface model, final int replicationNr) throws SimRuntimeException, NamingException
@@ -54,21 +52,18 @@ public class OtsSimulator extends DevsSimulator<Duration> implements OtsSimulato
         super.initialize(model, newReplication);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void initialize(final OtsModelInterface model, final OtsReplication replication) throws SimRuntimeException
     {
         super.initialize(model, replication);
     }
 
-    /** {@inheritDoc} */
     @Override
     public OtsReplication getReplication()
     {
         return (OtsReplication) super.getReplication();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

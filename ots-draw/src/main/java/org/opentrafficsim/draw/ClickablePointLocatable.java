@@ -13,7 +13,6 @@ import org.djutils.draw.bounds.Bounds2d;
 public interface ClickablePointLocatable extends ClickableLocatable
 {
 
-    /** {@inheritDoc} */
     @Override
     default Bounds2d getBounds()
     {
@@ -22,7 +21,6 @@ public interface ClickablePointLocatable extends ClickableLocatable
             /** */
             private static final long serialVersionUID = 20241006L;
 
-            /** {@inheritDoc} */
             @Override
             public boolean contains(final double x, final double y)
             {

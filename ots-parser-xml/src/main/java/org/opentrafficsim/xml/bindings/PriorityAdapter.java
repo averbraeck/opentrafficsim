@@ -17,7 +17,6 @@ import org.opentrafficsim.xml.bindings.types.PriorityType;
 public class PriorityAdapter extends ExpressionAdapter<Priority, PriorityType>
 {
 
-    /** {@inheritDoc} */
     @Override
     public PriorityType unmarshal(final String value)
     {

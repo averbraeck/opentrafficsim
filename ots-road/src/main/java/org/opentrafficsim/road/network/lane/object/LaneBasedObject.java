@@ -37,7 +37,6 @@ public interface LaneBasedObject extends LocatedObject
         return Length.ZERO;
     }
 
-    /** {@inheritDoc} */
     @Override
     OrientedPoint2d getLocation();
 

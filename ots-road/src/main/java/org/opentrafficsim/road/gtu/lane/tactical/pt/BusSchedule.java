@@ -180,7 +180,6 @@ public class BusSchedule extends Route
         return this.line;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
@@ -246,7 +245,6 @@ public class BusSchedule extends Route
             return this.forceSchedule;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

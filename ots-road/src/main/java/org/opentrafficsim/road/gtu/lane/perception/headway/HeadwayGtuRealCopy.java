@@ -152,35 +152,30 @@ public class HeadwayGtuRealCopy extends AbstractHeadwayGtu
         this.route = gtu.getStrategicalPlanner().getRoute();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final CarFollowingModel getCarFollowingModel()
     {
         return this.carFollowingModel;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Parameters getParameters()
     {
         return this.parameters;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final SpeedLimitInfo getSpeedLimitInfo()
     {
         return this.speedLimitInfo;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Route getRoute()
     {
         return this.route;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final AbstractHeadwayGtu moved(final Length headway, final Speed speed, final Acceleration acceleration)
     {
@@ -197,7 +192,6 @@ public class HeadwayGtuRealCopy extends AbstractHeadwayGtu
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

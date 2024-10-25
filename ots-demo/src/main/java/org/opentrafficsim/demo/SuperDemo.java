@@ -200,7 +200,6 @@ public class SuperDemo extends JFrame
             return this.description;
         }
 
-        /** {@inheritDoc} */
         @Override
         public void actionPerformed(final ActionEvent e)
         {

@@ -87,7 +87,6 @@ public class ParameterTypeClassList<T> extends ParameterType<List<Class<? extend
         return (Class<List<Class<? extends T>>>) list.getClass();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String printValue(final Parameters parameters) throws ParameterException
     {
@@ -103,7 +102,6 @@ public class ParameterTypeClassList<T> extends ParameterType<List<Class<? extend
         return str.toString();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

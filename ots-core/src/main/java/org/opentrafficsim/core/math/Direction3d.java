@@ -117,7 +117,6 @@ public class Direction3d implements Serializable
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

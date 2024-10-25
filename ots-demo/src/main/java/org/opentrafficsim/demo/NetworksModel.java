@@ -186,7 +186,6 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
 
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:methodlength")
     public final void constructModel() throws SimRuntimeException
@@ -509,7 +508,6 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
     /** The set of GTUs that we want to sample regularly. */
     private Set<Gtu> knownGTUs = new LinkedHashSet<>();
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {
@@ -526,7 +524,6 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public RoadNetwork getNetwork()
     {

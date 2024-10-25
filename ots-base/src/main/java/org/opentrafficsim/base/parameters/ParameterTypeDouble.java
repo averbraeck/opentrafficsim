@@ -84,7 +84,6 @@ public class ParameterTypeDouble extends ParameterTypeNumeric<Double> implements
         return EngineeringFormatter.format(parameters.getParameter(this));
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

@@ -16,7 +16,6 @@ import org.opentrafficsim.xml.bindings.types.DoubleType;
 public class FractionAdapter extends ExpressionAdapter<Double, DoubleType>
 {
 
-    /** {@inheritDoc} */
     @Override
     public DoubleType unmarshal(final String field) throws IllegalArgumentException
     {
@@ -50,7 +49,6 @@ public class FractionAdapter extends ExpressionAdapter<Double, DoubleType>
         throw new IllegalArgumentException("Error parsing fraction " + field);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String marshal(final DoubleType fraction) throws IllegalArgumentException
     {

@@ -216,21 +216,18 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
         return this.centerLine;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Polygon2d getContour()
     {
         return this.contour;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final OtsShape getShape()
     {
         return this.shape;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getId()
     {
@@ -272,7 +269,6 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
         return getLateralBoundaryPosition(lateralDirection, longitudinalPosition.getSI() / getLength().getSI());
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public OrientedPoint2d getLocation()
@@ -280,7 +276,6 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
         return this.location;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public Bounds2d getBounds()
@@ -328,7 +323,6 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
         return getLink().getGrade(fractionalPosition);
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
@@ -337,7 +331,6 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
                 getOffsetAtEnd().getSI(), getBeginWidth().getSI(), getEndWidth().getSI());
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public int hashCode()
@@ -349,7 +342,6 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     public boolean equals(final Object obj)

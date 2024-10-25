@@ -177,7 +177,6 @@ public class LaneBasedOperationalPlan extends OperationalPlan
         return Length.instantiateSI(length);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

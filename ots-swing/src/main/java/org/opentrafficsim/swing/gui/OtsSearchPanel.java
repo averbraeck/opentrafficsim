@@ -124,7 +124,6 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
         actionPerformed(null);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void actionPerformed(final ActionEvent e)
     {
@@ -132,35 +131,30 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
                 this.trackObject.isSelected());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void focusGained(final FocusEvent e)
     {
         actionPerformed(null);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void focusLost(final FocusEvent e)
     {
         // Do nothing
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void insertUpdate(final DocumentEvent e)
     {
         actionPerformed(null);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void removeUpdate(final DocumentEvent e)
     {
         actionPerformed(null);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void changedUpdate(final DocumentEvent e)
     {

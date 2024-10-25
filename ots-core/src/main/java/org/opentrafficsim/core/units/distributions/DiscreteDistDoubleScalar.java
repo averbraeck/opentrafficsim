@@ -158,7 +158,6 @@ public interface DiscreteDistDoubleScalar
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -319,7 +318,6 @@ public interface DiscreteDistDoubleScalar
             }
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

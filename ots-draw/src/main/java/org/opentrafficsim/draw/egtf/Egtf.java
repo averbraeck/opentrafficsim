@@ -489,7 +489,6 @@ public class Egtf
         addListener(listener);
         new Thread(new Runnable()
         {
-            /** {@inheritDoc} */
             @Override
             public void run()
             {
@@ -519,7 +518,6 @@ public class Egtf
         addListener(listener);
         new Thread(new Runnable()
         {
-            /** {@inheritDoc} */
             @Override
             public void run()
             {
@@ -1135,7 +1133,6 @@ public class Egtf
             return this.denominatorFree;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -1176,7 +1173,6 @@ public class Egtf
             return this.numerator / this.denominator;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {
@@ -1185,7 +1181,6 @@ public class Egtf
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

@@ -43,7 +43,6 @@ public class AdaptationSituationalAwareness implements BehavioralAdaptation
                 /** */
                 private static final long serialVersionUID = 20180403L;
 
-                /** {@inheritDoc} */
                 @Override
                 public void check(final Double value, final Parameters params) throws ParameterException
                 {
@@ -60,7 +59,6 @@ public class AdaptationSituationalAwareness implements BehavioralAdaptation
                 /** */
                 private static final long serialVersionUID = 20180403L;
 
-                /** {@inheritDoc} */
                 @Override
                 public void check(final Double value, final Parameters params) throws ParameterException
                 {
@@ -74,7 +72,6 @@ public class AdaptationSituationalAwareness implements BehavioralAdaptation
     public static final ParameterTypeDuration TR_MAX =
             new ParameterTypeDuration("TRmax", "Maximum reaction time", Duration.instantiateSI(2.0), POSITIVE);
 
-    /** {@inheritDoc} */
     @Override
     public void adapt(final Parameters parameters, final double taskSaturation) throws ParameterException
     {

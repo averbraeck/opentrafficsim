@@ -130,7 +130,6 @@ public class LinkTest implements EventListener
         assertTrue(link.equals(otherLink), "link is equal to extremely similar link with same id but different network");
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void notify(final Event event) throws RemoteException
     {

@@ -213,14 +213,12 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             super(simulator);
         }
 
-        /** {@inheritDoc} */
         @Override
         public Network getNetwork()
         {
             return this.network;
         }
 
-        /** {@inheritDoc} */
         @Override
         public void constructModel() throws SimRuntimeException
         {
@@ -285,7 +283,6 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             // In case of imperfect perception we use the below, otherwise DefaultLmrsPerceptionFactory (see at bottom)
             PerceptionFactory perceptionFactory = perception ? new PerceptionFactory()
             {
-                /** {@inheritDoc} */
                 @Override
                 public Parameters getParameters() throws ParameterException
                 {
@@ -307,7 +304,6 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
                     return perceptionParams;
                 }
 
-                /** {@inheritDoc} */
                 @Override
                 public LanePerception generatePerception(final LaneBasedGtu gtu)
                 {
@@ -491,7 +487,6 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             this.primaryTaskId = primaryTaskId;
         }
 
-        /** {@inheritDoc} */
         @Override
         public void manage(final Set<Task> tasks, final LanePerception perception, final LaneBasedGtu gtu,
                 final Parameters parameters) throws ParameterException, GtuException
@@ -544,7 +539,6 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             super("car-following");
         }
 
-        /** {@inheritDoc} */
         @Override
         public double calculateTaskDemand(final LanePerception perception, final LaneBasedGtu gtu, final Parameters parameters)
                 throws ParameterException, GtuException
@@ -576,7 +570,6 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             super("lane-changing");
         }
 
-        /** {@inheritDoc} */
         @Override
         public double calculateTaskDemand(final LanePerception perception, final LaneBasedGtu gtu, final Parameters parameters)
                 throws ParameterException, GtuException

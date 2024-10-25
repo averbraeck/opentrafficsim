@@ -23,7 +23,6 @@ public class AnimationBusStopData extends AnimationLaneBasedObjectData<BusStop> 
         super(busStop);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

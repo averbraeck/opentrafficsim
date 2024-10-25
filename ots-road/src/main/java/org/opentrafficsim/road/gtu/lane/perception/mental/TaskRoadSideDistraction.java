@@ -37,7 +37,6 @@ public class TaskRoadSideDistraction extends AbstractTask
         super("road-side distraction");
     }
 
-    /** {@inheritDoc} */
     @Override
     public double calculateTaskDemand(final LanePerception perception, final LaneBasedGtu gtu, final Parameters parameters)
             throws ParameterException, GtuException

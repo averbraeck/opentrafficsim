@@ -20,21 +20,18 @@ public interface PlotScheduler
      */
     PlotScheduler OFFLINE = new PlotScheduler()
     {
-        /** {@inheritDoc} */
         @Override
         public Time getTime()
         {
             return Time.instantiateSI(Double.MAX_VALUE);
         }
 
-        /** {@inheritDoc} */
         @Override
         public void cancelEvent(final AbstractPlot abstractPlot)
         {
             // no action required
         }
 
-        /** {@inheritDoc} */
         @Override
         public void scheduleUpdate(final Time time, final AbstractPlot abstractPlot)
         {

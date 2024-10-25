@@ -115,7 +115,6 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
         super(perception);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void updateLanePathInfo() throws GtuException, NetworkException, ParameterException
     {
@@ -125,7 +124,6 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
                 timestamp);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void updateForwardHeadwayGtu() throws GtuException, NetworkException, ParameterException
     {
@@ -138,7 +136,6 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
         this.forwardHeadwayGtu = new TimeStampedObject<>(forwardHeadway(maximumForwardHeadway, true), timestamp);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void updateForwardHeadwayObject() throws GtuException, NetworkException, ParameterException
     {
@@ -151,7 +148,6 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
         this.forwardHeadwayObject = new TimeStampedObject<>(forwardHeadway(maximumForwardHeadway, false), timestamp);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void updateBackwardHeadway() throws GtuException, ParameterException, NetworkException
     {
@@ -160,7 +156,6 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
         this.backwardHeadway = new TimeStampedObject<>(backwardHeadway(maximumReverseHeadway), timestamp);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void updateAccessibleAdjacentLanesLeft() throws GtuException
     {
@@ -175,7 +170,6 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
         this.accessibleAdjacentLanesLeft = new TimeStampedObject<>(accessibleAdjacentLanesMap, timestamp);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void updateAccessibleAdjacentLanesRight() throws GtuException
     {
@@ -190,7 +184,6 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
         this.accessibleAdjacentLanesRight = new TimeStampedObject<>(accessibleAdjacentLanesMap, timestamp);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void updateNeighboringHeadwaysLeft() throws GtuException, ParameterException, NetworkException
     {
@@ -213,7 +206,6 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
                 timestamp);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void updateNeighboringHeadwaysRight() throws GtuException, ParameterException, NetworkException
     {
@@ -235,7 +227,6 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
                 timestamp, maximumForwardHeadway, maximumReverseHeadway), timestamp);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void updateNeighboringHeadways(final LateralDirectionality lateralDirection)
             throws GtuException, ParameterException, NetworkException
@@ -250,7 +241,6 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void updateParallelHeadwaysLeft() throws GtuException
     {
@@ -270,7 +260,6 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
         this.parallelHeadwaysLeft = new TimeStampedObject<>(parallelHeadwaySet, timestamp);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void updateParallelHeadwaysRight() throws GtuException
     {
@@ -290,7 +279,6 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
         this.parallelHeadwaysRight = new TimeStampedObject<>(parallelHeadwaySet, timestamp);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void updateParallelHeadways(final LateralDirectionality lateralDirection) throws GtuException
     {
@@ -304,7 +292,6 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void updateSpeedLimit() throws GtuException, NetworkException
     {
@@ -314,49 +301,42 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
         this.speedLimit = new TimeStampedObject<>(lane.getSpeedLimit(getGtu().getType()), timestamp);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final LanePathInfo getLanePathInfo()
     {
         return this.lanePathInfo.object();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Headway getForwardHeadwayGtu()
     {
         return this.forwardHeadwayGtu.object();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Headway getForwardHeadwayObject()
     {
         return this.forwardHeadwayObject.object();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Headway getBackwardHeadway()
     {
         return this.backwardHeadway.object();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Map<Lane, Set<Lane>> getAccessibleAdjacentLanesLeft()
     {
         return this.accessibleAdjacentLanesLeft.object();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Map<Lane, Set<Lane>> getAccessibleAdjacentLanesRight()
     {
         return this.accessibleAdjacentLanesRight.object();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Map<Lane, Set<Lane>> getAccessibleAdjacentLanes(final LateralDirectionality lateralDirection)
     {
@@ -364,21 +344,18 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
                 : this.accessibleAdjacentLanesRight.object();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Collection<Headway> getNeighboringHeadwaysLeft()
     {
         return this.neighboringHeadwaysLeft.object();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Collection<Headway> getNeighboringHeadwaysRight()
     {
         return this.neighboringHeadwaysRight.object();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Collection<Headway> getNeighboringHeadways(final LateralDirectionality lateralDirection)
     {
@@ -386,21 +363,18 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
                 : this.neighboringHeadwaysRight.object();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Collection<Headway> getParallelHeadwaysLeft()
     {
         return this.parallelHeadwaysLeft.object();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Collection<Headway> getParallelHeadwaysRight()
     {
         return this.parallelHeadwaysRight.object();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Collection<Headway> getParallelHeadways(final LateralDirectionality lateralDirection)
     {
@@ -408,7 +382,6 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
                 : this.parallelHeadwaysRight.object();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Speed getSpeedLimit()
     {
@@ -545,7 +518,6 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
         return this.lanePathInfo;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Lane bestAccessibleAdjacentLane(final Lane currentLane, final LateralDirectionality lateralDirection,
             final Length longitudinalPosition)
@@ -573,7 +545,6 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
         return bestLane;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

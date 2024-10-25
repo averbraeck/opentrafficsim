@@ -31,7 +31,6 @@ public class ChoiceNodeStringFunction extends AbstractNodeDecorator
         super(editor);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {
@@ -48,7 +47,6 @@ public class ChoiceNodeStringFunction extends AbstractNodeDecorator
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notifyCreated(final XsdTreeNode node)
     {
@@ -77,7 +75,6 @@ public class ChoiceNodeStringFunction extends AbstractNodeDecorator
         {
             node.setStringFunction(new Function<XsdTreeNode, String>()
             {
-                /** {@inheritDoc} */
                 @Override
                 public String apply(final XsdTreeNode node)
                 {

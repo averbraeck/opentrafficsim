@@ -38,14 +38,12 @@ public class GtuDataRoad implements GtuData
         return this.gtu;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getId()
     {
         return this.gtu.getId();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getOriginId()
     {
@@ -59,7 +57,6 @@ public class GtuDataRoad implements GtuData
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getDestinationId()
     {
@@ -73,21 +70,18 @@ public class GtuDataRoad implements GtuData
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getGtuTypeId()
     {
         return this.gtu.getType().getId();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getRouteId()
     {
         return this.gtu.getStrategicalPlanner().getRoute().getId();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Speed getReferenceSpeed()
     {
@@ -108,7 +102,6 @@ public class GtuDataRoad implements GtuData
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

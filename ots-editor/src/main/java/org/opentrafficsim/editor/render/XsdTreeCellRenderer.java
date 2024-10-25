@@ -68,7 +68,6 @@ public class XsdTreeCellRenderer extends DefaultTreeCellRenderer
         this.closedIcon = new ImageIcon(ImageIO.read(Resource.getResourceAsStream("/Eclipse_folder.png")));
     }
 
-    /** {@inheritDoc} */
     @Override
     public Component getTreeCellRendererComponent(final JTree tree, final Object value, final boolean selected,
             final boolean expanded, final boolean leaf, final int row, final boolean hasFocus)

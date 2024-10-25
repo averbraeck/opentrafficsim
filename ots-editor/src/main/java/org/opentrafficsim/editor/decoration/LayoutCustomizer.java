@@ -41,7 +41,6 @@ public class LayoutCustomizer implements EventListener, Consumer<XsdTreeNode>
         this.editor = editor;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {
@@ -67,7 +66,6 @@ public class LayoutCustomizer implements EventListener, Consumer<XsdTreeNode>
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void accept(final XsdTreeNode node)
     {

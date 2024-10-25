@@ -193,14 +193,12 @@ public final class DefaultDecorator
             super(editor);
         }
 
-        /** {@inheritDoc} */
         @Override
         public void notifyCreated(final XsdTreeNode node)
         {
             System.out.println("Created: " + node.getPathString());
         }
 
-        /** {@inheritDoc} */
         @Override
         public void notifyRemoved(final XsdTreeNode node)
         {

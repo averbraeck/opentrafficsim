@@ -70,7 +70,6 @@ public class Connector extends Link
         return this.demandWeight;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isConnector()
     {

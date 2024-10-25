@@ -38,42 +38,36 @@ public abstract class AbstractHistoricalSortedMap<K, V, M extends SortedMap<K, V
 
     // Non-altering SortedMap methods
 
-    /** {@inheritDoc} */
     @Override
     public Comparator<? super K> comparator()
     {
         return getMap().comparator();
     }
 
-    /** {@inheritDoc} */
     @Override
     public SortedMap<K, V> subMap(final K fromKey, final K toKey)
     {
         return Collections.unmodifiableSortedMap(getMap().subMap(fromKey, toKey));
     }
 
-    /** {@inheritDoc} */
     @Override
     public SortedMap<K, V> headMap(final K toKey)
     {
         return Collections.unmodifiableSortedMap(getMap().headMap(toKey));
     }
 
-    /** {@inheritDoc} */
     @Override
     public SortedMap<K, V> tailMap(final K fromKey)
     {
         return Collections.unmodifiableSortedMap(getMap().tailMap(fromKey));
     }
 
-    /** {@inheritDoc} */
     @Override
     public K firstKey()
     {
         return getMap().firstKey();
     }
 
-    /** {@inheritDoc} */
     @Override
     public K lastKey()
     {

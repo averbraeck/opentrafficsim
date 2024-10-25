@@ -93,7 +93,6 @@ public final class DataSource
         return (DataStream<T>) this.streams.get(quantity.getName());
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
@@ -103,7 +102,6 @@ public final class DataSource
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj)
     {
@@ -134,7 +132,6 @@ public final class DataSource
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

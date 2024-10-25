@@ -831,7 +831,6 @@ public final class Trajectory<G extends GtuData>
         return out;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
@@ -846,7 +845,6 @@ public final class Trajectory<G extends GtuData>
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj)
     {
@@ -888,7 +886,6 @@ public final class Trajectory<G extends GtuData>
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {
@@ -931,7 +928,6 @@ public final class Trajectory<G extends GtuData>
             this.fraction = fraction;
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -1050,7 +1046,6 @@ public final class Trajectory<G extends GtuData>
             return new Boundaries(newFrom, newFFrom, newTo, newFTo);
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -1108,7 +1103,6 @@ public final class Trajectory<G extends GtuData>
             return this.time;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

@@ -68,7 +68,6 @@ public class LaneBasedGtuTemplate extends GtuTemplate implements LaneBasedGtuCha
                 null, VehicleModel.MINMAX);
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

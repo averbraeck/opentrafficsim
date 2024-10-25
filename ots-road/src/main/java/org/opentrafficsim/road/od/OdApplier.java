@@ -415,7 +415,6 @@ public final class OdApplier
                     odOptions.get(OdOptions.GTU_TYPE, lane, o, linkType);
             LaneBasedGtuCharacteristicsGenerator characteristicsGenerator = new LaneBasedGtuCharacteristicsGenerator()
             {
-                /** {@inheritDoc} */
                 @Override
                 public LaneBasedGtuCharacteristics draw() throws ProbabilityException, ParameterException, GtuException
                 {
@@ -826,7 +825,6 @@ public final class OdApplier
             return null;
         }
 
-        /** {@inheritDoc} */
         @Override
         public Frequency getFrequency(final Time time, final boolean sliceStart)
         {
@@ -842,7 +840,6 @@ public final class OdApplier
             return f;
         }
 
-        /** {@inheritDoc} */
         @Override
         public Time nextTimeSlice(final Time time)
         {
@@ -859,7 +856,6 @@ public final class OdApplier
             return out;
         }
 
-        /** {@inheritDoc} */
         @Override
         public String toString()
         {

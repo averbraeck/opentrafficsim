@@ -49,14 +49,12 @@ public class LaneBasedCfLcTacticalPlannerFactory
         this.laneChangeModel = laneChangeModel;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final LaneBasedCfLcTacticalPlanner create(final LaneBasedGtu gtu) throws GtuException
     {
         return new LaneBasedCfLcTacticalPlanner(this.carFollowingModel, this.laneChangeModel, gtu);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final Parameters getParameters()
     {
@@ -72,7 +70,6 @@ public class LaneBasedCfLcTacticalPlannerFactory
         return params;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

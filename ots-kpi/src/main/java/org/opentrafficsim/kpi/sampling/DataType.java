@@ -79,7 +79,6 @@ public abstract class DataType<T, G extends GtuData> implements Identifiable
      */
     public abstract T getValue(G gtu);
 
-    /** {@inheritDoc} */
     @Override
     public final int hashCode()
     {
@@ -89,7 +88,6 @@ public abstract class DataType<T, G extends GtuData> implements Identifiable
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean equals(final Object obj)
     {

@@ -43,7 +43,6 @@ public abstract class AbstractPerception<G extends Gtu> implements Perception<G>
         this.gtu = gtu;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public G getGtu()
@@ -51,7 +50,6 @@ public abstract class AbstractPerception<G extends Gtu> implements Perception<G>
         return this.gtu;
     }
 
-    /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
     public final <T extends PerceptionCategory<?, ?>> void addPerceptionCategory(final T perceptionCategory)
@@ -61,7 +59,6 @@ public abstract class AbstractPerception<G extends Gtu> implements Perception<G>
         this.cachedCategories.clear();
     }
 
-    /** {@inheritDoc} */
     @Override
     public final <T extends PerceptionCategory<?, ?>> boolean contains(final Class<T> category)
     {
@@ -81,7 +78,6 @@ public abstract class AbstractPerception<G extends Gtu> implements Perception<G>
         return false;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final <T extends PerceptionCategory<?, ?>> T getPerceptionCategory(final Class<T> category)
             throws OperationalPlanException
@@ -94,7 +90,6 @@ public abstract class AbstractPerception<G extends Gtu> implements Perception<G>
         throw new OperationalPlanException("Perception category" + category + " is not present.");
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("unchecked")
     public final <T extends PerceptionCategory<?, ?>> T getPerceptionCategoryOrNull(final Class<T> category)
@@ -118,7 +113,6 @@ public abstract class AbstractPerception<G extends Gtu> implements Perception<G>
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void removePerceptionCategory(final PerceptionCategory<?, ?> perceptionCategory)
     {
@@ -135,7 +129,6 @@ public abstract class AbstractPerception<G extends Gtu> implements Perception<G>
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

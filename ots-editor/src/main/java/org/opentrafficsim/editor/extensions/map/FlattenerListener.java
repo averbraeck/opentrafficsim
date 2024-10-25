@@ -38,7 +38,6 @@ public class FlattenerListener extends ChangeListener<Flattener>
         super(flattenerNode, eval);
     }
 
-    /** {@inheritDoc} */
     @Override
     Flattener calculateData()
     {

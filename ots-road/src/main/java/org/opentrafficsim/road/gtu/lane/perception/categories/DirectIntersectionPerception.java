@@ -68,21 +68,18 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
         this.headwayGtuType = headwayGtuType;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final PerceptionCollectable<HeadwayTrafficLight, TrafficLight> getTrafficLights(final RelativeLane lane)
     {
         return computeIfAbsent("trafficLights", () -> computeTrafficLights(lane), lane);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final PerceptionCollectable<HeadwayConflict, Conflict> getConflicts(final RelativeLane lane)
     {
         return computeIfAbsent("conflicts", () -> computeConflicts(lane), lane);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean isAlongsideConflictLeft()
     {
@@ -90,7 +87,6 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
                 LateralDirectionality.LEFT);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final boolean isAlongsideConflictRight()
     {
@@ -110,21 +106,18 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
         Route route = Try.assign(() -> getPerception().getGtu().getStrategicalPlanner().getRoute(), "");
         return new AbstractPerceptionReiterable<>(Try.assign(() -> getGtu(), "GtuException"))
         {
-            /** {@inheritDoc} */
             @Override
             protected Iterator<PrimaryIteratorEntry> primaryIterator()
             {
                 Iterator<Entry<TrafficLight>> iterator = iterable.iterator();
                 return new Iterator<>()
                 {
-                    /** {@inheritDoc} */
                     @Override
                     public boolean hasNext()
                     {
                         return iterator.hasNext();
                     }
 
-                    /** {@inheritDoc} */
                     @Override
                     public AbstractPerceptionReiterable<LaneBasedGtu, HeadwayTrafficLight,
                             TrafficLight>.PrimaryIteratorEntry next()
@@ -135,7 +128,6 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
                 };
             }
 
-            /** {@inheritDoc} */
             @Override
             protected HeadwayTrafficLight perceive(final TrafficLight trafficLight, final Length distance)
                     throws GtuException, ParameterException
@@ -157,21 +149,18 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
                 Conflict.class, RelativePosition.FRONT, true), "");
         return new AbstractPerceptionReiterable<>(Try.assign(() -> getGtu(), "GtuException"))
         {
-            /** {@inheritDoc} */
             @Override
             protected Iterator<PrimaryIteratorEntry> primaryIterator()
             {
                 Iterator<Entry<Conflict>> iterator = iterable.iterator();
                 return new Iterator<>()
                 {
-                    /** {@inheritDoc} */
                     @Override
                     public boolean hasNext()
                     {
                         return iterator.hasNext();
                     }
 
-                    /** {@inheritDoc} */
                     @Override
                     public AbstractPerceptionReiterable<LaneBasedGtu, HeadwayConflict, Conflict>.PrimaryIteratorEntry next()
                     {
@@ -181,7 +170,6 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
                 };
             }
 
-            /** {@inheritDoc} */
             @Override
             protected HeadwayConflict perceive(final Conflict conflict, final Length distance)
                     throws GtuException, ParameterException
@@ -287,7 +275,6 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

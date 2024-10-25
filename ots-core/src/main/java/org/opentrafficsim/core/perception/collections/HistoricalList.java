@@ -37,7 +37,6 @@ public interface HistoricalList<E> extends HistoricalCollection<E>, List<E>
     @Override
     List<E> get(Time time);
 
-    /** {@inheritDoc} */
     @Override
     default void replaceAll(final UnaryOperator<E> operator)
     {
@@ -49,7 +48,6 @@ public interface HistoricalList<E> extends HistoricalCollection<E>, List<E>
         }
     }
 
-    /** {@inheritDoc} */
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     default void sort(final Comparator<? super E> c)

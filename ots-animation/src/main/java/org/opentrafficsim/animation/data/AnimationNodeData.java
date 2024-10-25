@@ -28,21 +28,18 @@ public class AnimationNodeData implements NodeData
         this.node = node;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Polygon2d getContour()
     {
         throw new UnsupportedOperationException("Nodes do not have a drawable contour.");
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getId()
     {
         return this.node.getId();
     }
 
-    /** {@inheritDoc} */
     @Override
     public OrientedPoint2d getLocation()
     {
@@ -58,7 +55,6 @@ public class AnimationNodeData implements NodeData
         return this.node;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

@@ -23,7 +23,6 @@ public class AnimationShoulderData extends AnimationCrossSectionElementData<Lane
         super(shoulder);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

@@ -38,42 +38,36 @@ public abstract class AbstractHistoricalSortedSet<E, S extends SortedSet<E>> ext
 
     // Non-altering SortedSet methods
 
-    /** {@inheritDoc} */
     @Override
     public Comparator<? super E> comparator()
     {
         return getCollection().comparator();
     }
 
-    /** {@inheritDoc} */
     @Override
     public SortedSet<E> subSet(final E fromElement, final E toElement)
     {
         return Collections.unmodifiableSortedSet(getCollection().subSet(fromElement, toElement));
     }
 
-    /** {@inheritDoc} */
     @Override
     public SortedSet<E> headSet(final E toElement)
     {
         return Collections.unmodifiableSortedSet(getCollection().headSet(toElement));
     }
 
-    /** {@inheritDoc} */
     @Override
     public SortedSet<E> tailSet(final E fromElement)
     {
         return Collections.unmodifiableSortedSet(getCollection().tailSet(fromElement));
     }
 
-    /** {@inheritDoc} */
     @Override
     public E first()
     {
         return getCollection().first();
     }
 
-    /** {@inheritDoc} */
     @Override
     public E last()
     {

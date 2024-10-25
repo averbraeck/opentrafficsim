@@ -26,7 +26,6 @@ public class SpeedLimitTypeSpeedLegal extends SpeedLimitTypeSpeed implements Leg
         super(id);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

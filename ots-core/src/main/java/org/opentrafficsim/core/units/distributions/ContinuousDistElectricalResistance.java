@@ -31,14 +31,12 @@ public class ContinuousDistElectricalResistance
 
     }
 
-    /** {@inheritDoc} */
     @Override
     public ElectricalResistance draw()
     {
         return new ElectricalResistance(getDistribution().draw(), (ElectricalResistanceUnit) getDisplayUnit());
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {

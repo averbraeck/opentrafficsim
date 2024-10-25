@@ -164,7 +164,6 @@ public final class GraphUtil
         }
         return new ChartMouseListener()
         {
-            /** {@inheritDoc} */
             @Override
             public void chartMouseClicked(final ChartMouseEvent event)
             {
@@ -179,7 +178,6 @@ public final class GraphUtil
                 }
             }
 
-            /** {@inheritDoc} */
             @Override
             public void chartMouseMoved(final ChartMouseEvent event)
             {

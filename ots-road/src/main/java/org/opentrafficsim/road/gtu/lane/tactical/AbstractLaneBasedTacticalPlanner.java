@@ -77,7 +77,6 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         this.lanePerception = lanePerception;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final LaneBasedGtu getGtu()
     {
@@ -464,7 +463,6 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         return linkList;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final CarFollowingModel getCarFollowingModel()
     {
@@ -480,7 +478,6 @@ public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacti
         this.carFollowingModel = carFollowingModel;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final LanePerception getPerception()
     {

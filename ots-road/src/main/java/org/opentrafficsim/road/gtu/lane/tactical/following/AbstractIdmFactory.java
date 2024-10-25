@@ -41,14 +41,12 @@ public class AbstractIdmFactory<T extends AbstractIdm> implements CarFollowingMo
         this.fSpeed = new DistNormal(randomStream, 123.7 / 120.0, 0.1);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final T generateCarFollowingModel()
     {
         return this.idm.get();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Parameters getParameters() throws ParameterException
     {

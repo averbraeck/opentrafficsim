@@ -203,7 +203,6 @@ public class Link extends LocalEventProducer
         return this.network;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String getId()
     {
@@ -228,7 +227,6 @@ public class Link extends LocalEventProducer
         return this.endNode;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final LinkType getType()
     {
@@ -244,14 +242,12 @@ public class Link extends LocalEventProducer
         return this.designLine;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Polygon2d getContour()
     {
         return this.contour;
     }
 
-    /** {@inheritDoc} */
     @Override
     public OtsShape getShape()
     {
@@ -276,7 +272,6 @@ public class Link extends LocalEventProducer
         return this.designLine.getTypedLength();
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public OrientedPoint2d getLocation()
@@ -284,7 +279,6 @@ public class Link extends LocalEventProducer
         return this.location;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public Bounds2d getBounds()
@@ -340,7 +334,6 @@ public class Link extends LocalEventProducer
         return this.elevation.getDerivative(fractionalPosition) / getLength().si;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
@@ -348,7 +341,6 @@ public class Link extends LocalEventProducer
         return this.id.toString();
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public int hashCode()
@@ -362,7 +354,6 @@ public class Link extends LocalEventProducer
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings({"checkstyle:designforextension", "checkstyle:needbraces"})
     public boolean equals(final Object obj)

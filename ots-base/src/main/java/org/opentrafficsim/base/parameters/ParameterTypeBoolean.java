@@ -37,14 +37,12 @@ public class ParameterTypeBoolean extends ParameterType<Boolean> implements Seri
         super(id, description, Boolean.class, defaultValue);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String printValue(final Parameters parameters) throws ParameterException
     {
         return Boolean.toString(parameters.getParameter(this));
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

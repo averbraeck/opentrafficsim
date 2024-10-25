@@ -178,7 +178,6 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
         return this.gtuColorer;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void check() throws Exception
     {
@@ -233,7 +232,6 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
                 /** */
                 private static final long serialVersionUID = 20190130L;
 
-                /** {@inheritDoc} */
                 @Override
                 protected void setAnimationToggles()
                 {
@@ -246,7 +244,6 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void notify(final Event event) throws RemoteException
     {
@@ -372,7 +369,6 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
             AbstractSimulationScript.this.simulator = simulator;
         }
 
-        /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
         public void constructModel() throws SimRuntimeException
@@ -397,7 +393,6 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
             }
         }
 
-        /** {@inheritDoc} */
         @SuppressWarnings("synthetic-access")
         @Override
         public RoadNetwork getNetwork()

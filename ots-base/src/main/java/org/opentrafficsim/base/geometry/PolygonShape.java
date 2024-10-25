@@ -25,14 +25,12 @@ public class PolygonShape implements OtsShape
         this.polygon = polygon;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Polygon2d asPolygon()
     {
         return this.polygon;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

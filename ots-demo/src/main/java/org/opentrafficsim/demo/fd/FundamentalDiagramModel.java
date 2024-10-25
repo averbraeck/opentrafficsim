@@ -34,14 +34,12 @@ public class FundamentalDiagramModel extends AbstractOtsModel
         super(simulator, "FD Demo", "Fundamental Diagram Demo");
     }
 
-    /** {@inheritDoc} */
     @Override
     public Network getNetwork()
     {
         return this.network;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void constructModel() throws SimRuntimeException
     {

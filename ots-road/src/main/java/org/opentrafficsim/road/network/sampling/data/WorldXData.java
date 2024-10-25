@@ -19,7 +19,6 @@ public class WorldXData extends ExtendedDataLength<GtuDataRoad>
         super("WorldX", "World x coordinate");
     }
 
-    /** {@inheritDoc} */
     @Override
     public FloatLength getValue(final GtuDataRoad gtu)
     {

@@ -33,7 +33,6 @@ public abstract class ExtendedDataList<T, G extends GtuData> extends ExtendedDat
         super(id, description, type);
     }
 
-    /** {@inheritDoc} */
     @Override
     public T getOutputValue(final List<T> output, final int i) throws SamplingException
     {
@@ -41,7 +40,6 @@ public abstract class ExtendedDataList<T, G extends GtuData> extends ExtendedDat
         return output.get(i);
     }
 
-    /** {@inheritDoc} */
     @Override
     public T getStorageValue(final List<T> output, final int i) throws SamplingException
     {
@@ -49,7 +47,6 @@ public abstract class ExtendedDataList<T, G extends GtuData> extends ExtendedDat
         return getOutputValue(output, i);
     }
 
-    /** {@inheritDoc} */
     @Override
     public List<T> setValue(final List<T> storage, final int index, final T value)
     {
@@ -64,14 +61,12 @@ public abstract class ExtendedDataList<T, G extends GtuData> extends ExtendedDat
         return storage;
     }
 
-    /** {@inheritDoc} */
     @Override
     public List<T> initializeStorage()
     {
         return new ArrayList<>();
     }
 
-    /** {@inheritDoc} */
     @Override
     public List<T> convert(final List<T> storage, final int size)
     {

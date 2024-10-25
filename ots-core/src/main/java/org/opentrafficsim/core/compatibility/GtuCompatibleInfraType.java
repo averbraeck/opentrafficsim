@@ -73,7 +73,6 @@ public abstract class GtuCompatibleInfraType<T extends GtuCompatibleInfraType<T,
         return this.gtuCompatibility.addIncompatibleGtuType(gtuType);
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isCompatible(final GtuType gtuType)
     {
@@ -81,7 +80,6 @@ public abstract class GtuCompatibleInfraType<T extends GtuCompatibleInfraType<T,
         return this.gtuCompatibility.isCompatible(gtuType);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Boolean isCompatibleOnInfraLevel(final GtuType gtuType)
     {
@@ -89,7 +87,6 @@ public abstract class GtuCompatibleInfraType<T extends GtuCompatibleInfraType<T,
         return this.gtuCompatibility.isCompatibleOnInfraLevel(gtuType);
     }
 
-    /** {@inheritDoc} */
     @SuppressWarnings("unchecked")
     @Override
     public T getInfrastructure()
@@ -97,7 +94,6 @@ public abstract class GtuCompatibleInfraType<T extends GtuCompatibleInfraType<T,
         return (T) this;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void clearCompatibilityCache()
     {

@@ -84,7 +84,6 @@ public class LinkAnimation extends OtsRenderable<LinkData>
         return this;
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
@@ -132,7 +131,6 @@ public class LinkAnimation extends OtsRenderable<LinkData>
         return PaintLine.getPath(getSource().getLocation(), line);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void destroy(final Contextualized contextProvider)
     {
@@ -140,7 +138,6 @@ public class LinkAnimation extends OtsRenderable<LinkData>
         this.text.destroy(contextProvider);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
@@ -180,7 +177,6 @@ public class LinkAnimation extends OtsRenderable<LinkData>
             super(source, text, dx, dy, textPlacement, color, 2.0f, 12.0f, 50f, contextualized, null, scaleDependentRendering);
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -199,7 +195,6 @@ public class LinkAnimation extends OtsRenderable<LinkData>
      */
     public interface LinkData extends ClickableLineLocatable, Identifiable
     {
-        /** {@inheritDoc} */
         @Override
         OrientedPoint2d getLocation();
 
@@ -215,7 +210,6 @@ public class LinkAnimation extends OtsRenderable<LinkData>
          */
         PolyLine2d getCenterLine();
 
-        /** {@inheritDoc} */
         @Override
         default double getZ()
         {

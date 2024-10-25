@@ -33,7 +33,6 @@ public class CollisionDetector extends AbstractLaneBasedMoveChecker
         super(network);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void checkMove(final LaneBasedGtu gtu) throws Exception
     {

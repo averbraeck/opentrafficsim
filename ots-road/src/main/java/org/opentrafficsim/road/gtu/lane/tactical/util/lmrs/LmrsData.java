@@ -167,7 +167,6 @@ public final class LmrsData implements DesireBased, Synchronizable
         return this.tailgating;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Desire getLatestDesire(final Class<? extends Incentive> incentiveClass)
     {
@@ -192,7 +191,6 @@ public final class LmrsData implements DesireBased, Synchronizable
         this.synchronizationState = synchronizationState;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Synchronizable.State getSynchronizationState()
     {
@@ -215,7 +213,6 @@ public final class LmrsData implements DesireBased, Synchronizable
         this.humanLongitudinalControl = humanLongitudinalControl;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

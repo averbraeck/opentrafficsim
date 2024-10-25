@@ -92,7 +92,6 @@ public class GtuTypeColorer implements GtuColorer, Serializable
         return colorer;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Color getColor(final Gtu gtu)
     {
@@ -110,7 +109,6 @@ public class GtuTypeColorer implements GtuColorer, Serializable
         return color;
     }
 
-    /** {@inheritDoc} */
     @Override
     public List<LegendEntry> getLegend()
     {
@@ -123,7 +121,6 @@ public class GtuTypeColorer implements GtuColorer, Serializable
         return legend;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

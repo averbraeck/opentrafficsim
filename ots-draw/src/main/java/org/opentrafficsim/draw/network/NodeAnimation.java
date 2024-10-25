@@ -48,7 +48,6 @@ public class NodeAnimation extends OtsRenderable<NodeData>
                 TextAnimation.RENDERWHEN10);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
@@ -68,7 +67,6 @@ public class NodeAnimation extends OtsRenderable<NodeData>
         resetRendering(graphics);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void destroy(final Contextualized contextProvider)
     {
@@ -76,7 +74,6 @@ public class NodeAnimation extends OtsRenderable<NodeData>
         this.text.destroy(contextProvider);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final String toString()
     {
@@ -119,7 +116,6 @@ public class NodeAnimation extends OtsRenderable<NodeData>
             setRotate(false);
         }
 
-        /** {@inheritDoc} */
         @Override
         public final String toString()
         {
@@ -138,11 +134,9 @@ public class NodeAnimation extends OtsRenderable<NodeData>
      */
     public interface NodeData extends ClickablePointLocatable, Identifiable
     {
-        /** {@inheritDoc} */
         @Override
         OrientedPoint2d getLocation();
 
-        /** {@inheritDoc} */
         @Override
         default double getZ()
         {

@@ -24,7 +24,6 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 public class MeanTripLength extends AbstractIndicator<Length>
 {
 
-    /** {@inheritDoc} */
     @Override
     // @docs/07-output/indicators.md
     protected <G extends GtuData> Length calculate(final Query<G, ?> query, final Time startTime, final Time endTime,
@@ -43,7 +42,6 @@ public class MeanTripLength extends AbstractIndicator<Length>
         return sum.divide(gtuIds.size());
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()

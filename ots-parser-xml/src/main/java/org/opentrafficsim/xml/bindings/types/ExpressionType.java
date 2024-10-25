@@ -165,14 +165,12 @@ public abstract class ExpressionType<T>
         return this.value;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
         return Objects.hash(this.expression, this.value);
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj)
     {

@@ -28,7 +28,6 @@ public class ReactionTime extends ExtendedDataDuration<GtuDataRoad>
         super("Tr", "Reaction time");
     }
 
-    /** {@inheritDoc} */
     @Override
     public FloatDuration getValue(final GtuDataRoad gtu)
     {
