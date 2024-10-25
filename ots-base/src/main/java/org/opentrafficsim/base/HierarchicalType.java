@@ -120,14 +120,12 @@ public abstract class HierarchicalType<T extends HierarchicalType<T, I>, I exten
         return otherType;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
         return Objects.hash(this.id, this.parent);
     }
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("checkstyle:needbraces")
     public boolean equals(final Object obj)
