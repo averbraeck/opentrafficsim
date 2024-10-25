@@ -81,8 +81,8 @@
           </regexFlags>
           <replacements>
             <replacement>
-              <token>^public class </token>
-              <value>@SuppressWarnings("all") public class </value>
+              <token>^public( abstract)? class </token>
+              <value>@SuppressWarnings("all") public$1 class </value>
             </replacement>
             <replacement>
               <token>^public enum </token>
