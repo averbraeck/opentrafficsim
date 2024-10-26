@@ -66,21 +66,40 @@ Other dependencies are:
     </li>
 </ul>
 
-## Commit check list
+## Commit checklist
 
 The following list defines some checks that code has to meet in order to be eligible for inclusion in OTS.
 
-1. _Checkstyle and code formatter_; Have you considered all checkstyle warnings (and solved or knowingly suppressed them), and have you formatted/indented the code (Ctrl+Shift+F in Eclipse) according to the default OTS formatting? (The default OTS formatting is installed when setting up eclipse according to the guide.)
+1. _Checkstyle and code formatter_; Have you considered all checkstyle warnings (and solved or knowingly suppressed them), and have you formatted/indented the code (Ctrl+Shift+F in Eclipse) according to the default OTS formatting? (The default OTS formatting is based on `dsol-checks.xml` in the main project under config.)
 2. _Compiler warnings and errors_; Committing code with compiler errors should be avoided at all times. Warnings should be payed attention to.
-3. _Override toString()_; For most classes, the `toString()` method should be overridden. For purposes of debugging and understanding, objects should be able to meaningfully report what they are. In some cases, a superclass may have a sufficient implementation.
-4. _Implement serializable_; All classes should implement serializable, accompanied by a `private static final long serialVersionUID = #L;`, where # is a long formatted as yyyymmdd, e.g. 20171024 for the 24th of October, 2017.
-5. _Override equals()?_; The equals method should be implemented for all classes that are probable to be used for equality checks. The default java implementation checks for pointer equivalence, which can in many cases give a wrong result, especially in distributed serialization/deserialization or multiple JVM settings. Note that usage as key in a `Map` means `equals()` will be used.
-6. _Then also override hashCode()_; Whenever an `equals()` method is defined, a `hashCode()` method should also be defined, consistently with attributes considered in `equals()`.
-7. _Implement Comparable<Class>?_; For classes that are likely to be ordered, the `Comparable<Class>` interface should be implemented.
-8. _Uncaught exceptions in @throws_; All uncaught exceptions that a method may throw, should be documented in the Javadoc under the `@throws` tag.
-9. _Pre- and post-conditions_; In OTS we apply a fail-fast principle. This means that methods should check whether input meets the requirements. For instance, a pointer may not be null, or a value should be positive. For such checks OTS provides several easy and short `Throw.when(…)` or `Throw.whenNull(…)` methods.
-10. The above rules also hold for inner-classes.
+3. _Override `toString()`_; For most classes, the `toString()` method should be overridden. For purposes of debugging and understanding, objects should be able to meaningfully report what they are. In some cases, a superclass may have a sufficient implementation.
+4. _Override `equals()`?_; The equals method should be implemented for all classes that are probable to be used for equality checks. The default java implementation checks for pointer equivalence, which can in many cases give a wrong result, especially in distributed serialization/deserialization or multiple JVM settings. Note that usage as key in a `Map` means `equals()` will be used.
+5. _Then also override `hashCode()`_; Whenever an `equals()` method is defined, a `hashCode()` method should also be defined, consistently with attributes considered in `equals()`.
+6. _Implement `Comparable&lt;Class&gt;`?_; For classes that are likely to be ordered, the `Comparable<Class>` interface should be implemented.
+7. _Uncaught exceptions in @throws_; All uncaught exceptions that a method may throw, should be documented in the Javadoc under the `@throws` tag.
+8. _Pre- and post-conditions_; Checking of input arguments should be done when it adds information relative to an exception occurring otherwise, and providing context from the contract of the method. Or when it prevents OTS from running without exception but incorrectly in terms of modeling. Input arguments should be checked where they matter, i.e. in the method where the problem occurs. Calling methods should not unnecessarily double check the arguments. For input checks OTS provides several easy and short `Throw.when(…)` or `Throw.whenNull(…)` methods. Exceptions that are thrown should be java library exceptions when appropriate, such as `IllegalArgumentException`.
+9. _Records_; Use `record` for final objects when possible. Also return e.g. a `record MyOutput(double x, double y)` rather than a `double[]` with length 2.
+10. _Long methods_; Prevent long methods (checkstyle gives a warning for methods longer than 150 lines). Refactor parts to helper methods with a clear name (in Eclipse, select relevant code block: refactor > extract method). In this way the algorithm a method performs also becomes more readable. If this is not possible without many input arguments, consider grouping input arguments in a small data class, possibly a `record`.
+11. _Unnecessary arguments_; Avoid unnecessary input arguments that can be obtained through other input arguments. For example `Simulator sim, Lane lane`, while the simulator can be obtained with `lane.getSimulator()`.
+12. _Inner classes_; The above rules also hold for inner-classes. The Javadoc for internal classes can skip the copyright and authors.
 
+When java library exceptions do not cover the exception well, OTS has a set of exceptions that can be thrown. These exceptions are:
+
+`OtsException`
+  - `XmlParserException`
+  - `SamplingException`
+  - `ParameterException`
+  - `NetworkException`
+  - `ProbabilityException`
+  - `TrafficControlException`
+  - `GtuException`
+    - `OperationalPlanException`
+    - `MissingComponentException`
+
+`OtsRuntimeException`
+  - `OtsGeometryException`
+  - `CircularDependencyException`
+  - `CollisionException`
 
 ## Java generics
 
