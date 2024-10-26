@@ -75,7 +75,7 @@ The following list defines some checks that code has to meet in order to be elig
 3. _Override `toString()`_; For most classes, the `toString()` method should be overridden. For purposes of debugging and understanding, objects should be able to meaningfully report what they are. In some cases, a superclass may have a sufficient implementation.
 4. _Override `equals()`?_; The equals method should be implemented for all classes that are probable to be used for equality checks. The default java implementation checks for pointer equivalence, which can in many cases give a wrong result, especially in distributed serialization/deserialization or multiple JVM settings. Note that usage as key in a `Map` means `equals()` will be used.
 5. _Then also override `hashCode()`_; Whenever an `equals()` method is defined, a `hashCode()` method should also be defined, consistently with attributes considered in `equals()`.
-6. _Implement `Comparable&lt;Class&gt;`?_; For classes that are likely to be ordered, the `Comparable<Class>` interface should be implemented.
+6. _Implement `Comparable<Class>`?_; For classes that are likely to be ordered, the `Comparable<Class>` interface should be implemented.
 7. _Uncaught exceptions in @throws_; All uncaught exceptions that a method may throw, should be documented in the Javadoc under the `@throws` tag.
 8. _Pre- and post-conditions_; Checking of input arguments should be done when it adds information relative to an exception occurring otherwise, and providing context from the contract of the method. Or when it prevents OTS from running without exception but incorrectly in terms of modeling. Input arguments should be checked where they matter, i.e. in the method where the problem occurs. Calling methods should not unnecessarily double check the arguments. For input checks OTS provides several easy and short `Throw.when(…)` or `Throw.whenNull(…)` methods. Exceptions that are thrown should be java library exceptions when appropriate, such as `IllegalArgumentException`.
 9. _Records_; Use `record` for final objects when possible. Also return e.g. a `record MyOutput(double x, double y)` rather than a `double[]` with length 2.
@@ -86,20 +86,26 @@ The following list defines some checks that code has to meet in order to be elig
 When java library exceptions do not cover the exception well, OTS has a set of exceptions that can be thrown. These exceptions are:
 
 `OtsException`
-  - `XmlParserException`
-  - `SamplingException`
-  - `ParameterException`
-  - `NetworkException`
-  - `ProbabilityException`
-  - `TrafficControlException`
-  - `GtuException`
-    - `OperationalPlanException`
-    - `MissingComponentException`
+<ul>
+  <li>`XmlParserException`</li>
+  <li>`SamplingException`</li>
+  <li>`ParameterException`</li>
+  <li>`NetworkException`</li>
+  <li>`ProbabilityException`</li>
+  <li>`TrafficControlException`</li>
+  <li>`GtuException`</li>
+  <ul>
+    <li>`OperationalPlanException`</li>
+    <li>`MissingComponentException`</li>
+  </ul>
+</ul>
 
 `OtsRuntimeException`
-  - `OtsGeometryException`
-  - `CircularDependencyException`
-  - `CollisionException`
+<ul>
+  <li>`OtsGeometryException`</li>
+  <li>`CircularDependencyException`</li>
+  <li>`CollisionException`</li>
+</ul>
 
 ## Java generics
 
