@@ -85,21 +85,27 @@ The following list defines some checks that code has to meet in order to be elig
 
 When java library exceptions do not cover the exception well, OTS has a set of exceptions that can be thrown. These exceptions are:
 
-`OtsException`
- - `XmlParserException`
- - `SamplingException`
- - `ParameterException`
- - `NetworkException`
- - `ProbabilityException`
- - `TrafficControlException`
- - `GtuException`
-   - `OperationalPlanException`
-   - `MissingComponentException`
+OtsException
+<ul>
+  <li>XmlParserException</li>
+  <li>SamplingException</li>
+  <li>ParameterException</li>
+  <li>NetworkException</li>
+  <li>ProbabilityException</li>
+  <li>TrafficControlException</li>
+  <li>GtuException</li>
+  <ul>
+    <li>OperationalPlanException</li>
+    <li>MissingComponentException</li>
+  </ul>
+</ul>
 
-`OtsRuntimeException`
- - `OtsGeometryException`
- - `CircularDependencyException`
- - `CollisionException`
+OtsRuntimeException
+<ul>
+  <li>OtsGeometryException</li>
+  <li>CircularDependencyException</li>
+  <li>CollisionException</li>
+</ul>
 
 ## Java generics
 
