@@ -81,7 +81,8 @@ The following list defines some checks that code has to meet in order to be elig
 9. _Records_; Use `record` for final objects when possible. Also return e.g. a `record MyOutput(double x, double y)` rather than a `double[]` with length 2.
 10. _Long methods_; Prevent long methods (checkstyle gives a warning for methods longer than 150 lines). Refactor parts to helper methods with a clear name (in Eclipse, select relevant code block: refactor > extract method). In this way the algorithm a method performs also becomes more readable. If this is not possible without many input arguments, consider grouping input arguments in a small data class, possibly a `record`.
 11. _Unnecessary arguments_; Avoid unnecessary input arguments that can be obtained through other input arguments. For example `Simulator sim, Lane lane`, while the simulator can be obtained with `lane.getSimulator()`.
-12. _Inner classes_; The above rules also hold for inner-classes. The Javadoc for internal classes can skip the copyright and authors.
+12. _Var_; For code readability and in case of long type definitions that are known from context, use `var`. For example `Stream<Entry<ParameterType<?>, Set<?>> paramValues = map.entrySet().stream();` can be written as `var paramValues = map.entrySet().stream();`.
+13. _Inner classes_; The above rules also hold for inner-classes. The Javadoc for internal classes can skip the copyright and authors.
 
 When java library exceptions do not cover the exception well, OTS has a set of exceptions that can be thrown. These exceptions are:
 
