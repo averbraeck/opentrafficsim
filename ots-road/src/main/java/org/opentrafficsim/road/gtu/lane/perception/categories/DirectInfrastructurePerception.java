@@ -4,7 +4,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableSortedSet;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -48,10 +47,10 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
     private static final long serialVersionUID = 20160811L;
 
     /** Range of lane change info perception. */
-    public static ParameterTypeLength PERCEPTION = ParameterTypes.PERCEPTION;
+    public static final ParameterTypeLength PERCEPTION = ParameterTypes.PERCEPTION;
 
     /** Range of lane change possibility perception. */
-    public static ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
+    public static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 
     /**
      * @param perception perception
@@ -133,11 +132,11 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
         {
             Length range =
                     Try.assign(() -> getGtu().getParameters().getParameter(PERCEPTION), "Parameter PERCEPTION not available.");
-            ImmutableSortedSet<LaneChangeInfo> set =
-                    getGtu().getNetwork().getLaneChangeInfo(l, route, getGtu().getType(), range, laneLaw);
+            Length front = getGtu().getRelativePositions().get(RelativePosition.FRONT).dx();
+            ImmutableSortedSet<LaneChangeInfo> set = getGtu().getNetwork().getLaneChangeInfo(l, route, getGtu().getType(),
+                    range.minus(record.getStartDistance()).plus(front), laneLaw);
             if (set != null)
             {
-                Length front = getGtu().getRelativePositions().get(RelativePosition.FRONT).dx();
                 for (LaneChangeInfo laneChangeInfo : set)
                 {
                     Length dist = laneChangeInfo.remainingDistance().plus(record.getStartDistance()).minus(front);
