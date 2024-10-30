@@ -67,6 +67,9 @@ public final class Trajectory<G extends GtuData>
     /** GTU id. */
     private final String gtuId;
 
+    /** GTU type id. */
+    private final String gtuTypeId;
+
     /** Meta data. */
     private final Map<FilterDataType<?, ? super G>, Object> filterData = new LinkedHashMap<>();
 
@@ -77,6 +80,7 @@ public final class Trajectory<G extends GtuData>
     private final LaneData<?> lane;
 
     /**
+     * Constructor.
      * @param gtu GTU of this trajectory, only the id is stored.
      * @param filterData filter data
      * @param extendedData types of extended data
@@ -85,24 +89,27 @@ public final class Trajectory<G extends GtuData>
     public Trajectory(final GtuData gtu, final Map<FilterDataType<?, ? super G>, Object> filterData,
             final Set<ExtendedDataType<?, ?, ?, ? super G>> extendedData, final LaneData<?> lane)
     {
-        this(gtu == null ? null : gtu.getId(), filterData, extendedData, lane);
+        this(gtu == null ? null : gtu.getId(), gtu == null ? null : gtu.getGtuTypeId(), filterData, extendedData, lane);
     }
 
     /**
      * Private constructor for creating subsets.
      * @param gtuId GTU id
+     * @param gtuTypeId GTU type id
      * @param filterData filter data
      * @param extendedData types of extended data
      * @param lane lane of travel
      */
-    private Trajectory(final String gtuId, final Map<FilterDataType<?, ? super G>, Object> filterData,
+    private Trajectory(final String gtuId, final String gtuTypeId, final Map<FilterDataType<?, ? super G>, Object> filterData,
             final Set<ExtendedDataType<?, ?, ?, ? super G>> extendedData, final LaneData<?> lane)
     {
-        Throw.whenNull(gtuId, "GTU may not be null.");
+        Throw.whenNull(gtuId, "GTU id may not be null.");
+        Throw.whenNull(gtuTypeId, "GTU type id may not be null.");
         Throw.whenNull(filterData, "Filter data may not be null.");
         Throw.whenNull(extendedData, "Extended data may not be null.");
         Throw.whenNull(lane, "Lane direction may not be null.");
         this.gtuId = gtuId;
+        this.gtuTypeId = gtuTypeId;
         this.filterData.putAll(filterData);
         for (ExtendedDataType<?, ?, ?, ? super G> dataType : extendedData)
         {
@@ -190,12 +197,21 @@ public final class Trajectory<G extends GtuData>
     }
 
     /**
-     * Returns the id.
+     * Returns the GTU id.
      * @return GTU id
      */
     public String getGtuId()
     {
         return this.gtuId;
+    }
+    
+    /**
+     * Returns the GTU type id.
+     * @return GTU type id
+     */
+    public String getGtuTypeId()
+    {
+        return this.gtuTypeId;
     }
 
     /**
@@ -506,8 +522,9 @@ public final class Trajectory<G extends GtuData>
     }
 
     /**
-     * Returns a space-time view of this trajectory. This is much more efficient than {@code subSet()} as no trajectory is
-     * copied. The limitation is that only distance and time (and mean speed) in the space-time view can be obtained.
+     * Returns a space-time view of this trajectory as contained within the defined space-time region. This is much more
+     * efficient than {@code subSet()} as no trajectory is copied. The limitation is that only distance and time (and mean
+     * speed) in the space-time view can be obtained.
      * @param startPosition start position
      * @param endPosition end position
      * @param startTime start time
@@ -566,7 +583,7 @@ public final class Trajectory<G extends GtuData>
                 "Start position should be smaller than end position in the direction of travel");
         if (this.size == 0)
         {
-            return new Trajectory<>(this.gtuId, this.filterData, this.extendedData.keySet(), this.lane);
+            return new Trajectory<>(this.gtuId, this.gtuTypeId, this.filterData, this.extendedData.keySet(), this.lane);
         }
         return subSet(spaceBoundaries(startPosition, endPosition));
     }
@@ -586,13 +603,13 @@ public final class Trajectory<G extends GtuData>
         Throw.when(startTime.gt(endTime), IllegalArgumentException.class, "Start time should be smaller than end time.");
         if (this.size == 0)
         {
-            return new Trajectory<>(this.gtuId, this.filterData, this.extendedData.keySet(), this.lane);
+            return new Trajectory<>(this.gtuId, this.gtuTypeId, this.filterData, this.extendedData.keySet(), this.lane);
         }
         return subSet(timeBoundaries(startTime, endTime));
     }
 
     /**
-     * Copies the trajectory but with a subset of the data.
+     * Copies the trajectory but with a subset of the data that is contained in the given space-time region.
      * @param startPosition start position
      * @param endPosition end position
      * @param startTime start time
@@ -613,7 +630,7 @@ public final class Trajectory<G extends GtuData>
         Throw.when(startTime.gt(endTime), IllegalArgumentException.class, "Start time should be smaller than end time.");
         if (this.size == 0)
         {
-            return new Trajectory<>(this.gtuId, this.filterData, this.extendedData.keySet(), this.lane);
+            return new Trajectory<>(this.gtuId, this.gtuTypeId, this.filterData, this.extendedData.keySet(), this.lane);
         }
         return subSet(spaceBoundaries(startPosition, endPosition).intersect(timeBoundaries(startTime, endTime)));
     }
@@ -762,7 +779,8 @@ public final class Trajectory<G extends GtuData>
     @SuppressWarnings("unchecked")
     private <T, S> Trajectory<G> subSet(final Boundaries bounds)
     {
-        Trajectory<G> out = new Trajectory<>(this.gtuId, this.filterData, this.extendedData.keySet(), this.lane);
+        Trajectory<G> out =
+                new Trajectory<>(this.gtuId, this.gtuTypeId, this.filterData, this.extendedData.keySet(), this.lane);
         if (bounds.from < bounds.to) // otherwise empty, no data in the subset
         {
             int nBefore = bounds.fFrom < 1.0 ? 1 : 0;

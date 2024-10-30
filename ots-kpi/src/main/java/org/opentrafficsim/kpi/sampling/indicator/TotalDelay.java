@@ -1,18 +1,19 @@
 package org.opentrafficsim.kpi.sampling.indicator;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.kpi.interfaces.GtuData;
+import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 
 /**
- * Sum of trajectory durations minus the sum of trajectory lengths divided by a reference speed.
+ * Sum of trajectory delays relative to a reference speed that can be specified per lane.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -21,44 +22,55 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-// TODO something better than a global reference speed defined at the indicator
 public class TotalDelay extends AbstractIndicator<Duration>
 {
 
     /** Reference speed for delay. */
-    private final Speed referenceSpeed;
+    private final BiFunction<LaneData<?>, String, Speed> referenceSpeedProvider;
 
     /**
+     * Constructor using fixed reference speed.
      * @param referenceSpeed reference speed for delay
      */
     public TotalDelay(final Speed referenceSpeed)
     {
-        this.referenceSpeed = referenceSpeed;
+        this((lane, gtuTypeId) -> referenceSpeed);
+    }
+
+    /**
+     * Constructor using reference speed provider.
+     * @param referenceSpeedProvider reference speed provider
+     */
+    public TotalDelay(final BiFunction<LaneData<?>, String, Speed> referenceSpeedProvider)
+    {
+        this.referenceSpeedProvider = referenceSpeedProvider;
     }
 
     @Override
     protected <G extends GtuData> Duration calculate(final Query<G, ?> query, final Time startTime, final Time endTime,
             final List<TrajectoryGroup<G>> trajectoryGroups)
     {
-        Duration sumTime = Duration.ZERO;
-        Length sumDist = Length.ZERO;
+        double delay = 0.0;
         for (TrajectoryGroup<?> trajectoryGroup : trajectoryGroups)
         {
-            // TODO: use data points and limit speed per interval
             for (Trajectory<?> trajectory : trajectoryGroup.getTrajectories())
             {
-                sumTime = sumTime.plus(trajectory.getTotalDuration());
-                sumDist = sumDist.plus(trajectory.getTotalLength());
+                Speed referenceSpeedOnLane =
+                        this.referenceSpeedProvider.apply(trajectoryGroup.getLane(), trajectory.getGtuTypeId());
+                double d = trajectory.getTotalDuration().si - trajectory.getTotalLength().si / referenceSpeedOnLane.si;
+                if (d > 0.0)
+                {
+                    delay += d;
+                }
             }
         }
-        return sumTime.minus(sumDist.divide(this.referenceSpeed));
+        return Duration.instantiateSI(delay);
     }
 
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "TotalDelay [referenceSpeed=" + this.referenceSpeed + "]";
+        return "TotalDelay [referenceSpeed=" + this.referenceSpeedProvider + "]";
     }
 
 }
