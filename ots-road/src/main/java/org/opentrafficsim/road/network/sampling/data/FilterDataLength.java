@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.network.sampling.data;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
+import org.opentrafficsim.kpi.sampling.filter.FilterDataType;
 import org.opentrafficsim.road.network.sampling.GtuDataRoad;
 
 /**

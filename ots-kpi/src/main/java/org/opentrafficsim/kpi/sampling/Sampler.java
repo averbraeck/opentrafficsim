@@ -14,7 +14,7 @@ import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
-import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
+import org.opentrafficsim.kpi.sampling.filter.FilterDataType;
 
 /**
  * Sampler is the highest level organizer for sampling.

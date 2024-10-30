@@ -1,4 +1,4 @@
-package org.opentrafficsim.kpi.sampling.meta;
+package org.opentrafficsim.kpi.sampling.filter;
 
 import java.util.Set;
 

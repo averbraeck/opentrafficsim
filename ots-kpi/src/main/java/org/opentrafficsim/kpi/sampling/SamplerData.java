@@ -37,7 +37,7 @@ import org.djutils.io.CompressedFileWriter;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
-import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
+import org.opentrafficsim.kpi.sampling.filter.FilterDataType;
 
 /**
  * SamplerData is a storage for trajectory data. Adding trajectory groups can only be done by subclasses. This is however not a

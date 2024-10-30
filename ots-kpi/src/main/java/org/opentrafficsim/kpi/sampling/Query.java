@@ -21,8 +21,8 @@ import org.djutils.immutablecollections.ImmutableIterator;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.interfaces.LinkData;
-import org.opentrafficsim.kpi.sampling.meta.FilterDataSet;
-import org.opentrafficsim.kpi.sampling.meta.FilterDataType;
+import org.opentrafficsim.kpi.sampling.filter.FilterDataSet;
+import org.opentrafficsim.kpi.sampling.filter.FilterDataType;
 
 /**
  * A query defines which subset of trajectory information should be included. This is in terms of space-time regions, and in
