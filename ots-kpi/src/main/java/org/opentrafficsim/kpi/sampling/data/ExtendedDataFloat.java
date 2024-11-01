@@ -6,9 +6,7 @@ import org.djunits.unit.Unit;
 import org.djunits.value.ValueRuntimeException;
 import org.djunits.value.vfloat.scalar.base.FloatScalar;
 import org.djunits.value.vfloat.vector.base.FloatVector;
-import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuData;
-import org.opentrafficsim.kpi.sampling.SamplingException;
 
 /**
  * Class to facilitate JUNITS types in extended data.
@@ -21,14 +19,14 @@ import org.opentrafficsim.kpi.sampling.SamplingException;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <U> unit
  * @param <T> type in vector
- * @param <O> vector type
- * @param <G> gtu data type
+ * @param <O> output vector type
+ * @param <G> GTU data type
  */
 public abstract class ExtendedDataFloat<U extends Unit<U>, T extends FloatScalar<U, T>, O extends FloatVector<U, T, O>,
         G extends GtuData> extends ExtendedDataType<T, O, float[], G>
 {
     /**
-     * Constructor setting the id.
+     * Constructor.
      * @param id id
      * @param description description
      * @param type type class
@@ -62,7 +60,7 @@ public abstract class ExtendedDataFloat<U extends Unit<U>, T extends FloatScalar
     }
 
     @Override
-    public final T getOutputValue(final O output, final int i) throws SamplingException
+    public final T getOutputValue(final O output, final int i)
     {
         try
         {
@@ -70,14 +68,13 @@ public abstract class ExtendedDataFloat<U extends Unit<U>, T extends FloatScalar
         }
         catch (ValueRuntimeException exception)
         {
-            throw new SamplingException("Index out of range.", exception);
+            throw new IndexOutOfBoundsException("Index " + i + " is out of range for array of size " + output.size() + ".");
         }
     }
 
     @Override
-    public T getStorageValue(final float[] storage, final int i) throws SamplingException
+    public T getStorageValue(final float[] storage, final int i)
     {
-        Throw.when(i < 0 || i >= storage.length, SamplingException.class, "Index %d out of range.", i);
         return convertValue(storage[i]);
     }
 
@@ -91,23 +88,15 @@ public abstract class ExtendedDataFloat<U extends Unit<U>, T extends FloatScalar
     @Override
     public O convert(final float[] storage, final int size)
     {
-        try
-        {
-            // cut array to size and delegate
-            return convert(Arrays.copyOf(storage, size));
-        }
-        catch (ValueRuntimeException exception)
-        {
-            throw new RuntimeException("Could not create typed vector from float array.", exception);
-        }
+        // cut array to size and delegate
+        return convert(Arrays.copyOf(storage, size));
     }
 
     /**
      * Convert float array to typed array.
      * @param storage float array storage
      * @return typed array
-     * @throws ValueRuntimeException when float array cannot be converted
      */
-    protected abstract O convert(float[] storage) throws ValueRuntimeException;
+    protected abstract O convert(float[] storage);
 
 }

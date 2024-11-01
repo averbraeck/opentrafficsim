@@ -42,7 +42,7 @@ public abstract class AbstractIndicator<T extends DoubleScalar<?, ?>>
      * @param query query
      * @param endTime start time of interval to calculate indicator over
      * @param trajectoryGroups group of trajectories to calculate the indicator for
-     * @param <G> gtu data type
+     * @param <G> GTU data type
      * @return value for given query
      */
     public final <G extends GtuData> T getValue(final Query<G, ?> query, final Time endTime,
@@ -57,7 +57,7 @@ public abstract class AbstractIndicator<T extends DoubleScalar<?, ?>>
      * @param startTime start time of interval to calculate indicator over
      * @param endTime start time of interval to calculate indicator over
      * @param trajectoryGroups group of trajectories to calculate the indicator for
-     * @param <G> gtu data type
+     * @param <G> GTU data type
      * @return value for given query
      */
     public final <G extends GtuData> T getValue(final Query<G, ?> query, final Time startTime, final Time endTime,
@@ -78,13 +78,13 @@ public abstract class AbstractIndicator<T extends DoubleScalar<?, ?>>
     }
 
     /**
-     * Calculate value for given trajectory group.
+     * Calculate value for given trajectory groups.
      * @param query query
      * @param startTime start time of interval to calculate indicator over
      * @param endTime start time of interval to calculate indicator over
-     * @param trajectoryGroups group of trajectories to calculate the indicator for
-     * @param <G> gtu data type
-     * @return value for given trajectory group
+     * @param trajectoryGroups groups of trajectories to calculate the indicator for
+     * @param <G> GTU data type
+     * @return value for given trajectory groups
      */
     protected abstract <G extends GtuData> T calculate(Query<G, ?> query, Time startTime, Time endTime,
             List<TrajectoryGroup<G>> trajectoryGroups);

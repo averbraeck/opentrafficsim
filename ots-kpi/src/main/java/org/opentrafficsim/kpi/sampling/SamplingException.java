@@ -12,7 +12,6 @@ import org.opentrafficsim.base.OtsException;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-
 public class SamplingException extends OtsException
 {
 
@@ -28,7 +27,7 @@ public class SamplingException extends OtsException
 
     /**
      * Constructor.
-     * @param message String
+     * @param message message
      */
     public SamplingException(final String message)
     {
@@ -37,7 +36,7 @@ public class SamplingException extends OtsException
 
     /**
      * Constructor.
-     * @param cause Throwable
+     * @param cause cause
      */
     public SamplingException(final Throwable cause)
     {
@@ -46,8 +45,8 @@ public class SamplingException extends OtsException
 
     /**
      * Constructor.
-     * @param message String
-     * @param cause Throwable
+     * @param message message
+     * @param cause cause
      */
     public SamplingException(final String message, final Throwable cause)
     {

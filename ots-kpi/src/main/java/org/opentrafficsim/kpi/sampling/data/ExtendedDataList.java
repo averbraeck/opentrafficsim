@@ -3,9 +3,7 @@ package org.opentrafficsim.kpi.sampling.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuData;
-import org.opentrafficsim.kpi.sampling.SamplingException;
 
 /**
  * Extended data type for anything that can be captured in a list. Typically, these are non-numeric objects.
@@ -17,13 +15,13 @@ import org.opentrafficsim.kpi.sampling.SamplingException;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <T> type of value
- * @param <G> gtu data type
+ * @param <G> GTU data type
  */
 public abstract class ExtendedDataList<T, G extends GtuData> extends ExtendedDataType<T, List<T>, List<T>, G>
 {
 
     /**
-     * Constructor setting the id.
+     * Constructor.
      * @param id id
      * @param description description
      * @param type type class
@@ -34,14 +32,13 @@ public abstract class ExtendedDataList<T, G extends GtuData> extends ExtendedDat
     }
 
     @Override
-    public T getOutputValue(final List<T> output, final int i) throws SamplingException
+    public T getOutputValue(final List<T> output, final int i)
     {
-        Throw.when(i < 0 || i >= output.size(), SamplingException.class, "Index %d out of range.", i);
         return output.get(i);
     }
 
     @Override
-    public T getStorageValue(final List<T> output, final int i) throws SamplingException
+    public T getStorageValue(final List<T> output, final int i)
     {
         // same format for lists
         return getOutputValue(output, i);

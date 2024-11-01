@@ -19,7 +19,7 @@ import org.opentrafficsim.kpi.interfaces.LaneData;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param <G> gtu data type
+ * @param <G> GTU data type
  */
 public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G>>
 {
@@ -33,7 +33,7 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
     /** End position of the section. */
     private final Length endPosition;
 
-    /** Direction for which the trajectories have been sampled. */
+    /** Lane for which the trajectories have been sampled. */
     private final LaneData<?> lane;
 
     /** Trajectories. */
@@ -50,6 +50,7 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
     }
 
     /**
+     * Constructor.
      * @param startTime start time of trajectory group
      * @param startPosition start position
      * @param endPosition end position
@@ -76,12 +77,12 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
      */
     public final synchronized void addTrajectory(final Trajectory<G> trajectory)
     {
-        // System.out.println("Adding trajectory " + trajectory + " to " + this.toString());
         this.trajectories.add(trajectory);
     }
 
     /**
-     * @return startTime.
+     * Returns the start time.
+     * @return start time
      */
     public final Time getStartTime()
     {
@@ -89,7 +90,8 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
     }
 
     /**
-     * @return length.
+     * Returns the length.
+     * @return length
      */
     public final Length getLength()
     {
@@ -98,7 +100,7 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
 
     /**
      * Whether this {@code TrajectoryGroup} holds the given trajectory. Note that this is false if the given trajectory is
-     * derived from a trajectory in this {@code TrajectoryGroup}.
+     * derived from a trajectory in this {@code TrajectoryGroup} (e.g. a subset of).
      * @param trajectory trajectory
      * @return whether this {@code TrajectoryGroup} holds the given trajectory.
      */

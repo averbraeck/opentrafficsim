@@ -29,6 +29,6 @@ public interface LinkData<L extends LaneData<L>> extends Identifiable
      * Returns the lanes of the link.
      * @return list of lanes of the link
      */
-    List<L> getLaneDatas();
+    List<L> getLanes();
 
 }

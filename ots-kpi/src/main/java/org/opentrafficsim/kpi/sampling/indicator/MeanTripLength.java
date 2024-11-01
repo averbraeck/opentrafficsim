@@ -43,10 +43,9 @@ public class MeanTripLength extends AbstractIndicator<Length>
     }
 
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "MeanTripLength []";
+        return "MeanTripLength";
     }
 
 }

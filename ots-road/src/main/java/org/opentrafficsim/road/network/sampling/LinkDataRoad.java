@@ -41,7 +41,7 @@ public class LinkDataRoad implements LinkData<LaneDataRoad>
     }
 
     @Override
-    public final List<LaneDataRoad> getLaneDatas()
+    public final List<LaneDataRoad> getLanes()
     {
         List<LaneDataRoad> lanes = new ArrayList<>();
         for (Lane lane : this.link.getLanes())

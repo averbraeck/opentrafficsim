@@ -57,7 +57,7 @@ public class LinkDataSim0 implements LinkData<LaneDataSim0>
     }
 
     @Override
-    public final List<LaneDataSim0> getLaneDatas()
+    public final List<LaneDataSim0> getLanes()
     {
         return this.laneDataList;
     }

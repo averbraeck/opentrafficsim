@@ -4,7 +4,7 @@ import org.djunits.value.vfloat.scalar.FloatSpeed;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 
 /**
- * Reference speed for trajectories.
+ * Reference speed for trajectories, as defined by the used GtuData.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -20,11 +20,11 @@ public class ReferenceSpeed extends ExtendedDataSpeed<GtuData>
     public static final ReferenceSpeed INSTANCE = new ReferenceSpeed();
 
     /**
-     * 
+     * Constructor.
      */
     public ReferenceSpeed()
     {
-        super("referenceSpeed", "Reference speed (minimum of speed limit and maximum vehicle speed)");
+        super("referenceSpeed", "Reference speed");
     }
 
     @Override

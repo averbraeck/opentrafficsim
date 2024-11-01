@@ -25,7 +25,7 @@ import org.opentrafficsim.kpi.sampling.filter.FilterDataType;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param <G> gtu data type
+ * @param <G> GTU data type
  * @param <L> lane data type
  */
 public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
@@ -45,9 +45,6 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
 
     /** End times of active samplings. */
     private final Map<L, Time> endTimes = new LinkedHashMap<>();
-
-    /** Space time regions. */
-    private Set<SpaceTimeRegion<L>> spaceTimeRegions = new LinkedHashSet<>();
 
     /**
      * Constructor.
@@ -113,7 +110,6 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
             scheduleStartRecording(spaceTimeRegion.startTime(), spaceTimeRegion.lane());
         }
         scheduleStopRecording(this.endTimes.get(spaceTimeRegion.lane()), spaceTimeRegion.lane());
-        this.spaceTimeRegions.add(spaceTimeRegion);
     }
 
     /**
@@ -134,7 +130,7 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
     /**
      * Schedules the stop of recording for a given lane, i.e. the implementation has to invoke {@code stopRecording} at the
      * specified time, with the given lane as input. In case multiple space time-regions are registered for the same lane, this
-     * method is invoked whenever the next space-time region that is added has a late end time than any before.
+     * method is invoked whenever the next space-time region that is added has a later end time than any before.
      * @param time time to stop recording
      * @param lane lane to stop recording
      */
@@ -190,7 +186,7 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
      * @param time current time
      * @param gtu gtu
      */
-    public final void processGtuAddEventWithMove(final L lane, final Length position, final Speed speed,
+    public final void addGtuWithSnapshot(final L lane, final Length position, final Speed speed,
             final Acceleration acceleration, final Time time, final G gtu)
     {
         Throw.whenNull(lane, "LaneData may not be null.");
@@ -200,8 +196,8 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
             // ignore event if beyond lane length (may happen during lane change)
             return;
         }
-        processGtuAddEvent(lane, gtu);
-        processGtuMoveEvent(lane, position, speed, acceleration, time, gtu);
+        addGtu(lane, gtu);
+        snapshot(lane, position, speed, acceleration, time, gtu);
     }
 
     /**
@@ -209,7 +205,7 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
      * @param lane lane the gtu is at
      * @param gtu gtu
      */
-    public final void processGtuAddEvent(final L lane, final G gtu)
+    public final void addGtu(final L lane, final G gtu)
     {
         Throw.whenNull(lane, "LaneData may not be null.");
         Throw.whenNull(gtu, "GtuData may not be null.");
@@ -220,7 +216,7 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
     }
 
     /**
-     * Adds a new snapshot of a GTU to its recording trajectory, if recorded. This method may be invoked on GTU that are not
+     * Adds a new snapshot of a GTU to its recording trajectory, if recorded. This method may be invoked on GTUs that are not
      * being recorded; the event will then be ignored.
      * @param lane lane the gtu is at
      * @param position position of the gtu on the lane
@@ -229,8 +225,8 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
      * @param time current time
      * @param gtu gtu
      */
-    public final void processGtuMoveEvent(final L lane, final Length position, final Speed speed,
-            final Acceleration acceleration, final Time time, final G gtu)
+    public final void snapshot(final L lane, final Length position, final Speed speed, final Acceleration acceleration,
+            final Time time, final G gtu)
     {
         Throw.whenNull(lane, "LaneData may not be null.");
         Throw.whenNull(position, "Position may not be null.");
@@ -259,11 +255,11 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
      * @param time current time
      * @param gtu gtu
      */
-    public final void processGtuRemoveEventWithMove(final L lane, final Length position, final Speed speed,
+    public final void removeGtuWithSnapshot(final L lane, final Length position, final Speed speed,
             final Acceleration acceleration, final Time time, final G gtu)
     {
-        processGtuMoveEvent(lane, position, speed, acceleration, time, gtu);
-        processGtuRemoveEvent(lane, gtu);
+        snapshot(lane, position, speed, acceleration, time, gtu);
+        removeGtu(lane, gtu);
     }
 
     /**
@@ -271,7 +267,7 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
      * @param lane lane the gtu is at
      * @param gtu gtu
      */
-    public final void processGtuRemoveEvent(final L lane, final G gtu)
+    public final void removeGtu(final L lane, final G gtu)
     {
         Throw.whenNull(lane, "LaneData may not be null.");
         Throw.whenNull(gtu, "GtuData may not be null.");
@@ -302,7 +298,7 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
     @Override
     public int hashCode()
     {
-        return Objects.hash(this.extendedDataTypes, this.filterDataTypes, this.spaceTimeRegions);
+        return Objects.hash(this.extendedDataTypes, this.filterDataTypes);
     }
 
     @Override
@@ -322,8 +318,7 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
         }
         Sampler<?, ?> other = (Sampler<?, ?>) obj;
         return Objects.equals(this.extendedDataTypes, other.extendedDataTypes)
-                && Objects.equals(this.filterDataTypes, other.filterDataTypes)
-                && Objects.equals(this.spaceTimeRegions, other.spaceTimeRegions);
+                && Objects.equals(this.filterDataTypes, other.filterDataTypes);
     }
 
 }

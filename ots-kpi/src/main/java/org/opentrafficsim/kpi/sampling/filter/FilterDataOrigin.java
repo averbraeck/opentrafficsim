@@ -32,10 +32,9 @@ public class FilterDataOrigin extends FilterDataType<String, GtuData>
     }
 
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "FilterDataOrigin: [id=" + getId() + "]";
+        return "FilterDataOrigin";
     }
 
 }

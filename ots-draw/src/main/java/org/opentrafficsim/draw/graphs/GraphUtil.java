@@ -13,7 +13,6 @@ import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.LegendItem;
 import org.jfree.chart.LegendItemCollection;
 import org.jfree.chart.entity.LegendItemEntity;
-import org.opentrafficsim.kpi.sampling.SamplingException;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 
 /**
@@ -47,15 +46,7 @@ public final class GraphUtil
      */
     public static boolean considerTrajectory(final Trajectory<?> trajectory, final Time startTime, final Time endTime)
     {
-        try
-        {
-            return trajectory.getT(0) < endTime.si && trajectory.getT(trajectory.size() - 1) > startTime.si;
-        }
-        catch (SamplingException exception)
-        {
-            throw new RuntimeException("Unexpected exception while checking whether the trajectory should be considered.",
-                    exception);
-        }
+        return trajectory.getT(0) < endTime.si && trajectory.getT(trajectory.size() - 1) > startTime.si;
     }
 
     /**
@@ -69,15 +60,7 @@ public final class GraphUtil
     public static boolean considerTrajectory(final Trajectory<?> trajectory, final Length startPosition,
             final Length endPosition)
     {
-        try
-        {
-            return trajectory.getX(0) < startPosition.si && trajectory.getX(trajectory.size() - 1) > endPosition.si;
-        }
-        catch (SamplingException exception)
-        {
-            throw new RuntimeException("Unexpected exception while checking whether the trajectory should be considered.",
-                    exception);
-        }
+        return trajectory.getX(0) < startPosition.si && trajectory.getX(trajectory.size() - 1) > endPosition.si;
     }
 
     /**

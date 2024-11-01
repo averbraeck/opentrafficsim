@@ -38,10 +38,9 @@ public class TotalTravelTime extends AbstractIndicator<Duration>
     }
 
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "TotalTravelTime []";
+        return "TotalTravelTime";
     }
 
 }

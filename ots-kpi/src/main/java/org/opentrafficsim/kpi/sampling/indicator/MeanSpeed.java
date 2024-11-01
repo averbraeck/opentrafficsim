@@ -28,6 +28,7 @@ public class MeanSpeed extends AbstractIndicator<Speed>
     private final TotalTravelTime travelTime;
 
     /**
+     * Constructor.
      * @param travelDistance travel distance indicator
      * @param travelTime travel time indicator
      */
@@ -46,7 +47,6 @@ public class MeanSpeed extends AbstractIndicator<Speed>
     }
 
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
         return "MeanSpeed [travelDistance=" + this.travelDistance + ", travelTime=" + this.travelTime + "]";

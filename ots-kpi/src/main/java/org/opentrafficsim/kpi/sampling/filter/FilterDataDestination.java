@@ -32,10 +32,9 @@ public class FilterDataDestination extends FilterDataType<String, GtuData>
     }
 
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "FilterDataDestination: [id=" + getId() + "]";
+        return "FilterDataDestination";
     }
 
 }

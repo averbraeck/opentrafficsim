@@ -14,6 +14,7 @@ import org.djunits.value.vdouble.scalar.base.DoubleScalarRel;
  * @param <U> the unit type
  * @param <T> type of the value
  */
+@Deprecated // non-scalar statistics not yet implemented
 public class PersistentStatistic<U extends Unit<U>, T extends DoubleScalarRel<U, T>>
 {
     /** Wrapped persistent. */

@@ -40,7 +40,6 @@ public class TrajectoryAcceptList
      * be not accepted for a query.
      * @param trajectory {@code Trajectory} trajectory
      * @param trajectoryGroup {@code TrajectoryGroup} trajectories
-     * @throws IllegalArgumentException if the {@code Trajectory} is not within the {@code TrajectoryGroup}
      * @throws IllegalArgumentException if the {@code Trajectory} belongs to a different GTU than an earlier provided
      *             {@code Trajectory}
      */
@@ -48,9 +47,6 @@ public class TrajectoryAcceptList
     {
         Throw.whenNull(trajectory, "Trajectory may not be null.");
         Throw.whenNull(trajectoryGroup, "Trajectory group may not be null.");
-        // This is quite a costly check
-        // Throw.when(!trajectoryGroup.contains(trajectory), IllegalArgumentException.class,
-        // "The trajectory should be contained within the trajectory group.");
         Throw.when(this.gtuId != null && !this.gtuId.equals(trajectory.getGtuId()), IllegalArgumentException.class,
                 "Trajectories of different GTU's may not be in a single trajectory accept list.");
         this.gtuId = trajectory.getGtuId();
@@ -72,7 +68,7 @@ public class TrajectoryAcceptList
      * Returns trajectory by index.
      * @param i number of {@code trajectory} to get
      * @return i'th {@code trajectory}
-     * @throws IndexOutOfBoundsException if the index is out of range (<code>index &lt; 0 || index &gt;= size()</code>)
+     * @throws IndexOutOfBoundsException if the index is out of range ({@code index &lt; 0 || index &gt;= size()})
      */
     public final Trajectory<?> getTrajectory(final int i)
     {
@@ -83,7 +79,7 @@ public class TrajectoryAcceptList
      * Returns a trajectory group by index.
      * @param i number of {@code TrajectoryGroup} to get
      * @return i'th {@code TrajectoryGroup}
-     * @throws IndexOutOfBoundsException if the index is out of range (<code>index &lt; 0 || index &gt;= size()</code>)
+     * @throws IndexOutOfBoundsException if the index is out of range ({@code index &lt; 0 || index &gt;= size()})
      */
     public final TrajectoryGroup<?> getTrajectoryGroup(final int i)
     {

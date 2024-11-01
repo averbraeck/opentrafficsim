@@ -13,7 +13,6 @@ import org.djunits.value.vfloat.scalar.base.FloatScalarRelWithAbs;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.sampling.DataType;
-import org.opentrafficsim.kpi.sampling.SamplingException;
 
 /**
  * Type class to define different types of data by which trajectories can be extended beyond the basic t, x, v, a. Extend this
@@ -30,13 +29,13 @@ import org.opentrafficsim.kpi.sampling.SamplingException;
  * @param <T> type of value
  * @param <O> output type
  * @param <S> storage type
- * @param <G> gtu data type
+ * @param <G> GTU data type
  */
 public abstract class ExtendedDataType<T, O, S, G extends GtuData> extends DataType<T, G>
 {
 
     /**
-     * Constructor setting the id.
+     * Constructor.
      * @param id id
      * @param description description
      * @param type type class
@@ -47,9 +46,9 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuData> extends DataT
     }
 
     /**
-     * Returns the current value of the gtu.
-     * @param gtu gtu
-     * @return current value of the gtu
+     * Returns the current value of the GTU.
+     * @param gtu GTU
+     * @return current value of the GTU
      */
     @Override
     public abstract T getValue(G gtu);
@@ -67,23 +66,21 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuData> extends DataT
      * Returns a specific output value. This is used to store extended data types as generic file, i.e. text file.
      * @param output output
      * @param index index of value to return
-     * @return the i'th output value
-     * @throws SamplingException when {@code i} is out of bounds.
+     * @return the i'th output value o
      */
-    public abstract T getOutputValue(O output, int index) throws SamplingException;
+    public abstract T getOutputValue(O output, int index);
 
     /**
      * Returns a specific storage value. This is used to bypass conversion to the output type when trajectories are cut.
      * @param storage storage
      * @param index index of value to return
      * @return the i'th output value
-     * @throws SamplingException when {@code i} is out of bounds.
      */
-    public abstract T getStorageValue(S storage, int index) throws SamplingException;
+    public abstract T getStorageValue(S storage, int index);
 
     /**
      * Returns an initial storage object.
-     * @return initial storage object.
+     * @return initial storage object
      */
     public abstract S initializeStorage();
 

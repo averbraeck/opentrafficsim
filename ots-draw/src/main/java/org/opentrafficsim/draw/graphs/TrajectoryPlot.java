@@ -32,7 +32,6 @@ import org.opentrafficsim.draw.Colors;
 import org.opentrafficsim.draw.graphs.GraphPath.Section;
 import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.SamplerData;
-import org.opentrafficsim.kpi.sampling.SamplingException;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 
@@ -467,49 +466,40 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
         public final int size()
         {
             // as trajectories grow, this calculation needs to be done on each request
-            try
+            /*
+             * Note on overlap:
+             * 
+             * Suppose a GTU crosses a lane boundary producing the following events, where distance e->| is the front, and
+             * |->l is the tail, relative to the reference point of the GTU.
+             * @formatter:off
+             * -------------------------------------------  o) regular move event
+             *  o     e   o         o |  l    o         o   e) lane enter event on next lane
+             * -------------------------------------------  l) lane leave event on previous lane
+             *  o         o         o   (l)                 measurements on previous lane
+             *       (e) (o)       (o)        o         o   measurements on next lane
+             * @formatter:on
+             * Trajectories of a particular GTU are not explicitly tied together. Not only would this involve quite some work,
+             * it is also impossible to distinguish a lane change near the start or end of a lane, from moving longitudinally on
+             * to the next lane. The basic idea to minimize overlap is to remove all positions on the previous lane beyond the
+             * lane length, and all negative positions on the next lane, i.e. all between ( ). This would however create a gap
+             * at the lane boundary '|'. Allowing one event beyond the lane length may still result in a gap, l->o in this case.
+             * Allowing one event before the lane would work in this case, but 'e' could also fall between an 'o' and '|'. At
+             * one trajectory it is thus not known whether the other trajectory continues from, or is continued from, the extra
+             * point. Hence we require an extra point before the lane and one beyond the lane to assure there is no gap. The
+             * resulting overlap can be as large as a move, but this is better than occasional gaps.
+             */
+            int f = 0;
+            while (f < this.trajectory.size() - 1 && this.trajectory.getX(f + 1) < 0.0)
             {
-                /*
-                 * Note on overlap:
-                 * 
-                 * Suppose a GTU crosses a lane boundary producing the following events, where distance e->| is the front, and
-                 * |->l is the tail, relative to the reference point of the GTU.
-                 * @formatter:off
-                 * -------------------------------------------  o) regular move event
-                 *  o     e   o         o |  l    o         o   e) lane enter event on next lane
-                 * -------------------------------------------  l) lane leave event on previous lane
-                 *  o         o         o   (l)                 measurements on previous lane
-                 *       (e) (o)       (o)        o         o   measurements on next lane
-                 * @formatter:on
-                 * Trajectories of a particular GTU are not explicitly tied together. Not only would this involve quite some
-                 * work, it is also impossible to distinguish a lane change near the start or end of a lane, from moving
-                 * longitudinally on to the next lane. The basic idea to minimize overlap is to remove all positions on the
-                 * previous lane beyond the lane length, and all negative positions on the next lane, i.e. all between ( ). This
-                 * would however create a gap at the lane boundary '|'. Allowing one event beyond the lane length may still
-                 * result in a gap, l->o in this case. Allowing one event before the lane would work in this case, but 'e' could
-                 * also fall between an 'o' and '|'. At one trajectory it is thus not known whether the other trajectory
-                 * continues from, or is continued from, the extra point. Hence we require an extra point before the lane and
-                 * one beyond the lane to assure there is no gap. The resulting overlap can be as large as a move, but this is
-                 * better than occasional gaps.
-                 */
-                int f = 0;
-                while (f < this.trajectory.size() - 1 && this.trajectory.getX(f + 1) < 0.0)
-                {
-                    f++;
-                }
-                this.first = f;
-                int s = this.trajectory.size() - 1;
-                while (s > 1 && this.trajectory.getX(s - 1) > this.laneLength.si)
-                {
-                    s--;
-                }
-                this.size = s - f + 1;
+                f++;
             }
-            catch (SamplingException exception)
+            this.first = f;
+            int s = this.trajectory.size() - 1;
+            while (s > 1 && this.trajectory.getX(s - 1) > this.laneLength.si)
             {
-                throw new RuntimeException("Unexpected exception while obtaining location value from trajectory for plotting.",
-                        exception);
+                s--;
             }
+            this.size = s - f + 1;
             return this.size;
         }
 

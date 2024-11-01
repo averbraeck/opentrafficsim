@@ -5,14 +5,16 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableIterator;
 import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.interfaces.LinkData;
+import org.opentrafficsim.kpi.sampling.CrossSection.LanePosition;
 
 /**
  * A cross sections contains locations on lanes that together make up a cross section. It is not required that this is on a
- * single road, i.e. the cross section may any section in space.
+ * single road, i.e. the cross section may be any section in space.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -21,7 +23,7 @@ import org.opentrafficsim.kpi.interfaces.LinkData;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class CrossSection implements Serializable
+public class CrossSection implements Serializable, Iterable<LanePosition>
 {
 
     /** */
@@ -41,16 +43,17 @@ public class CrossSection implements Serializable
     }
 
     /**
-     * Constructor with link and fraction.
+     * Constructor with link and fraction. Note that the fraction is used with the length of each lane. For curved links this
+     * fraction may not point to locations on the lane that are perfectly laterally adjacent. GTUs can thus possibly change lane
+     * at these gaps and be missed.
      * @param link link
      * @param fraction fraction on link
-     * @throws SamplingException if an input is null
      */
-    public CrossSection(final LinkData<?> link, final double fraction) throws SamplingException
+    public CrossSection(final LinkData<?> link, final double fraction)
     {
         Throw.whenNull(link, "Link lane positions may not be null.");
         this.lanePositions = new LinkedHashSet<>();
-        for (LaneData<?> lane : link.getLaneDatas())
+        for (LaneData<?> lane : link.getLanes())
         {
             LanePosition lanePosition = new LanePosition(lane, lane.getLength().times(fraction));
             this.lanePositions.add(lanePosition);
@@ -79,16 +82,34 @@ public class CrossSection implements Serializable
      * Returns an iterator over the lane positions.
      * @return iterator over lane positions
      */
-    public final Iterator<LanePosition> getIterator()
+    @Override
+    public final Iterator<LanePosition> iterator()
     {
         return new ImmutableIterator<>(this.lanePositions.iterator());
     }
 
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
         return "CrossSection [lanePositions=" + this.lanePositions + "]";
+    }
+
+    /**
+     * Position on a lane.
+     * @param lane lane
+     * @param position position
+     */
+    @SuppressWarnings("javadoc") // @param's present but warning still given, bug?
+    public record LanePosition(LaneData<?> lane, Length position)
+    {
+        /**
+         * Construct a new LanePosition.
+         */
+        public LanePosition
+        {
+            Throw.whenNull(lane, "lane is null");
+            Throw.whenNull(position, "position is null");
+        }
     }
 
 }

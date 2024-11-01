@@ -32,12 +32,17 @@ public class TotalNumberOfStops extends AbstractIndicator<Dimensionless>
         {
             for (Trajectory<?> trajectory : trajectoryGroup.getTrajectories())
             {
-                float[] v = trajectory.getV();
-                for (int i = 1; i < v.length; i++)
+                if (trajectory.size() > 1)
                 {
-                    if (v[i] == 0 && v[i - 1] > 0)
+                    float vPrev = trajectory.getV(0);
+                    for (int i = 1; i < trajectory.size(); i++)
                     {
-                        sum++;
+                        float v = trajectory.getV(i);
+                        if (v == 0 && vPrev > 0)
+                        {
+                            sum++;
+                        }
+                        vPrev = v;
                     }
                 }
             }
@@ -46,10 +51,9 @@ public class TotalNumberOfStops extends AbstractIndicator<Dimensionless>
     }
 
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return "TotalNumberOfStops []";
+        return "TotalNumberOfStops";
     }
 
 }

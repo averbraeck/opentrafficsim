@@ -28,9 +28,7 @@ import org.opentrafficsim.kpi.sampling.filter.FilterDataType;
 
 /**
  * Contains position, speed, acceleration and time data of a GTU, over some section. Position is relative to the start of the
- * lane in the direction of travel, also when trajectories have been truncated at a position x &gt; 0. Note that this regards
- * internal data and output. Input position always refers to the design line of the lane. This class internally flips input
- * positions and boundaries.
+ * lane in the direction of travel.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -38,7 +36,7 @@ import org.opentrafficsim.kpi.sampling.filter.FilterDataType;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param <G> gtu data type
+ * @param <G> GTU data type
  */
 public final class Trajectory<G extends GtuData>
 {
@@ -70,10 +68,10 @@ public final class Trajectory<G extends GtuData>
     /** GTU type id. */
     private final String gtuTypeId;
 
-    /** Meta data. */
+    /** Filter data. */
     private final Map<FilterDataType<?, ? super G>, Object> filterData = new LinkedHashMap<>();
 
-    /** Map of array data types and their values. */
+    /** Map of extended data types and their values (usually arrays). */
     private final Map<ExtendedDataType<?, ?, ?, ? super G>, Object> extendedData = new LinkedHashMap<>();
 
     /** Lane of travel. */
@@ -133,8 +131,7 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Adds values of position, speed, acceleration and time.
-     * @param position position is relative to the start of the lane in the direction of the design line, i.e. irrespective of
-     *            the travel direction, also when trajectories have been truncated at a position x &gt; 0
+     * @param position position is relative to the start of the lane in the direction of the design line
      * @param speed speed
      * @param acceleration acceleration
      * @param time time
@@ -204,7 +201,7 @@ public final class Trajectory<G extends GtuData>
     {
         return this.gtuId;
     }
-    
+
     /**
      * Returns the GTU type id.
      * @return GTU type id
@@ -284,9 +281,8 @@ public final class Trajectory<G extends GtuData>
      * Returns {@code x} value of a single sample.
      * @param index index
      * @return {@code x} value of a single sample
-     * @throws SamplingException if the index is out of bounds
      */
-    public float getX(final int index) throws SamplingException
+    public float getX(final int index)
     {
         checkSample(index);
         return this.x[index];
@@ -296,9 +292,8 @@ public final class Trajectory<G extends GtuData>
      * Returns {@code v} value of a single sample.
      * @param index index
      * @return {@code v} value of a single sample
-     * @throws SamplingException if the index is out of bounds
      */
-    public float getV(final int index) throws SamplingException
+    public float getV(final int index)
     {
         checkSample(index);
         return this.v[index];
@@ -308,9 +303,8 @@ public final class Trajectory<G extends GtuData>
      * Returns {@code a} value of a single sample.
      * @param index index
      * @return {@code a} value of a single sample
-     * @throws SamplingException if the index is out of bounds
      */
-    public float getA(final int index) throws SamplingException
+    public float getA(final int index)
     {
         checkSample(index);
         return this.a[index];
@@ -320,9 +314,8 @@ public final class Trajectory<G extends GtuData>
      * Returns {@code t} value of a single sample.
      * @param index index
      * @return {@code t} value of a single sample
-     * @throws SamplingException if the index is out of bounds
      */
-    public float getT(final int index) throws SamplingException
+    public float getT(final int index)
     {
         checkSample(index);
         return this.t[index];
@@ -335,11 +328,9 @@ public final class Trajectory<G extends GtuData>
      * @param <T> scalar type of extended data type
      * @param <S> storage type of extended data type
      * @return extended data type value of a single sample
-     * @throws SamplingException if the index is out of bounds
      */
     @SuppressWarnings("unchecked")
     public <T, S> T getExtendedData(final ExtendedDataType<T, ?, S, ?> extendedDataType, final int index)
-            throws SamplingException
     {
         checkSample(index);
         return extendedDataType.getStorageValue((S) this.extendedData.get(extendedDataType), index);
@@ -348,11 +339,10 @@ public final class Trajectory<G extends GtuData>
     /**
      * Throws an exception if the sample index is out of bounds.
      * @param index sample index
-     * @throws SamplingException if the sample index is out of bounds
      */
-    private void checkSample(final int index) throws SamplingException
+    private void checkSample(final int index)
     {
-        Throw.when(index < 0 || index >= this.size, SamplingException.class, "Index is out of bounds.");
+        Throw.when(index < 0 || index >= this.size, IndexOutOfBoundsException.class, "Index is out of bounds.");
     }
 
     /**
@@ -426,13 +416,10 @@ public final class Trajectory<G extends GtuData>
     /**
      * Returns the length of the data.
      * @return total length of this trajectory
-     * @throws IllegalStateException if trajectory is empty
      */
     public Length getTotalLength()
     {
-        // TODO do not allow empty trajectory
-        // Throw.when(this.size == 0, IllegalStateException.class, "Empty trajectory does not have a length.");
-        if (this.size == 0)
+        if (this.size < 2)
         {
             return Length.ZERO;
         }
@@ -442,13 +429,10 @@ public final class Trajectory<G extends GtuData>
     /**
      * Returns the total duration span.
      * @return total duration of this trajectory
-     * @throws IllegalStateException if trajectory is empty
      */
     public Duration getTotalDuration()
     {
-        // TODO do not allow empty trajectory
-        // Throw.when(this.size == 0, IllegalStateException.class, "Empty trajectory does not have a duration.");
-        if (this.size == 0)
+        if (this.size < 2)
         {
             return Duration.ZERO;
         }
@@ -519,6 +503,17 @@ public final class Trajectory<G extends GtuData>
     public Set<ExtendedDataType<?, ?, ?, ? super G>> getExtendedDataTypes()
     {
         return this.extendedData.keySet();
+    }
+
+    /**
+     * Returns a space-time view of this trajectory. This is much more efficient than {@code getX()} as no array is copied. The
+     * limitation is that only distance and time (and mean speed) in the space-time view can be obtained.
+     * @return space-time view of this trajectory
+     */
+    public SpaceTimeView getSpaceTimeView()
+    {
+        return new SpaceTimeView(Length.instantiateSI(this.x[this.size - 1] - this.x[0]),
+                Duration.instantiateSI(this.t[this.size - 1] - this.t[0]));
     }
 
     /**
@@ -815,33 +810,25 @@ public final class Trajectory<G extends GtuData>
                 ExtendedDataType<T, ?, S, G> edt = (ExtendedDataType<T, ?, S, G>) extendedDataType;
                 S fromList = (S) this.extendedData.get(extendedDataType);
                 S toList = edt.initializeStorage();
-                try
+                if (nBefore == 1)
                 {
-                    if (nBefore == 1)
-                    {
-                        toList = edt.setValue(toList, j,
-                                ((ExtendedDataType<T, ?, ?, G>) extendedDataType).interpolate(
-                                        edt.getStorageValue(fromList, bounds.from),
-                                        edt.getStorageValue(fromList, bounds.from + 1), bounds.fFrom));
-                        j++;
-                    }
-                    for (int i = bounds.from + 1; i <= bounds.to; i++)
-                    {
-                        toList = edt.setValue(toList, j, edt.getStorageValue(fromList, i));
-                        j++;
-                    }
-                    if (nAfter == 1)
-                    {
-                        toList = edt.setValue(toList, j,
-                                ((ExtendedDataType<T, ?, ?, G>) extendedDataType).interpolate(
-                                        edt.getStorageValue(fromList, bounds.to), edt.getStorageValue(fromList, bounds.to + 1),
-                                        bounds.fTo));
-                    }
+                    toList = edt.setValue(toList, j,
+                            ((ExtendedDataType<T, ?, ?, G>) extendedDataType).interpolate(
+                                    edt.getStorageValue(fromList, bounds.from), edt.getStorageValue(fromList, bounds.from + 1),
+                                    bounds.fFrom));
+                    j++;
                 }
-                catch (SamplingException se)
+                for (int i = bounds.from + 1; i <= bounds.to; i++)
                 {
-                    // should not happen as bounds are determined internally
-                    throw new RuntimeException("Error while obtaining subset of trajectory.", se);
+                    toList = edt.setValue(toList, j, edt.getStorageValue(fromList, i));
+                    j++;
+                }
+                if (nAfter == 1)
+                {
+                    toList = edt.setValue(toList, j,
+                            ((ExtendedDataType<T, ?, ?, G>) extendedDataType).interpolate(
+                                    edt.getStorageValue(fromList, bounds.to), edt.getStorageValue(fromList, bounds.to + 1),
+                                    bounds.fTo));
                 }
                 out.extendedData.put(extendedDataType, toList);
             }
@@ -1074,57 +1061,18 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Space-time view of a trajectory. This supplies distance and time (and mean speed) in a space-time box.
-     * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * @param distance distance
+     * @param time time
      */
-    public static final class SpaceTimeView
+    public record SpaceTimeView(Length distance, Duration time)
     {
-
-        /** Distance. */
-        private final Length distance;
-
-        /** Time. */
-        private final Duration time;
-
         /**
-         * Constructor.
-         * @param distance distance
-         * @param time time
+         * Returns the speed.
+         * @return speed
          */
-        private SpaceTimeView(final Length distance, final Duration time)
+        public Speed speed()
         {
-            this.distance = distance;
-            this.time = time;
-        }
-
-        /**
-         * Returns the distance.
-         * @return distance
-         */
-        public Length getDistance()
-        {
-            return this.distance;
-        }
-
-        /**
-         * Returns the time.
-         * @return time
-         */
-        public Duration getTime()
-        {
-            return this.time;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "SpaceTimeView [distance=" + this.distance + ", time=" + this.time + "]";
+            return this.distance.divide(this.time);
         }
     }
 

@@ -18,25 +18,25 @@ public interface GtuData extends Identifiable
 
     /**
      * Returns the origin id.
-     * @return origin id of the gtu
+     * @return origin id of the GTU
      */
     String getOriginId();
 
     /**
      * Returns the destination id.
-     * @return destination id of the gtu
+     * @return destination id of the GTU
      */
     String getDestinationId();
 
     /**
      * Returns the GTU type id.
-     * @return type id of the gtu
+     * @return type id of the GTU
      */
     String getGtuTypeId();
 
     /**
      * Returns the route id.
-     * @return route id of the gtu
+     * @return route id of the GTU
      */
     String getRouteId();
 

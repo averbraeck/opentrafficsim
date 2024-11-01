@@ -213,11 +213,10 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
             if (!this.activeGtus.contains(gtu.getId()) && this.getSamplerData().contains(laneData))
             {
                 // GTU add was skipped during add event due to an improper phase of initialization, do here instead
-                processGtuAddEvent(laneData, new GtuDataRoad(gtu));
+                addGtu(laneData, new GtuDataRoad(gtu));
                 this.activeGtus.add(gtu.getId());
             }
-            processGtuMoveEvent(laneData, (Length) payload[9], (Speed) payload[3], (Acceleration) payload[4], now(),
-                    new GtuDataRoad(gtu));
+            snapshot(laneData, (Length) payload[9], (Speed) payload[3], (Acceleration) payload[4], now(), new GtuDataRoad(gtu));
         }
         else if (event.getType().equals(Lane.GTU_ADD_EVENT))
         {
@@ -241,7 +240,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
                         "Could not determine position.");
                 Speed speed = gtu.getSpeed();
                 Acceleration acceleration = gtu.getAcceleration();
-                processGtuAddEventWithMove(laneData, position, speed, acceleration, now(), new GtuDataRoad(gtu));
+                addGtuWithSnapshot(laneData, position, speed, acceleration, now(), new GtuDataRoad(gtu));
             }
 
             if (isIntervalBased())
@@ -279,7 +278,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
             Speed speed = gtu.getSpeed();
             Acceleration acceleration = gtu.getAcceleration();
 
-            processGtuRemoveEventWithMove(laneData, position, speed, acceleration, now(), new GtuDataRoad(gtu));
+            removeGtuWithSnapshot(laneData, position, speed, acceleration, now(), new GtuDataRoad(gtu));
 
             if (isIntervalBased())
             {
@@ -352,13 +351,12 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
             if (this.activeGtus.contains(gtu.getId()))
             {
                 // already recording this GTU, just trigger a record through a move
-                processGtuMoveEvent(laneData, position, gtu.getSpeed(), gtu.getAcceleration(), now(), new GtuDataRoad(gtu));
+                snapshot(laneData, position, gtu.getSpeed(), gtu.getAcceleration(), now(), new GtuDataRoad(gtu));
             }
             else
             {
                 // first time encountering this GTU so add, which also triggers a record through a move
-                processGtuAddEventWithMove(laneData, position, gtu.getSpeed(), gtu.getAcceleration(), now(),
-                        new GtuDataRoad(gtu));
+                addGtuWithSnapshot(laneData, position, gtu.getSpeed(), gtu.getAcceleration(), now(), new GtuDataRoad(gtu));
                 this.activeGtus.add(gtu.getId());
             }
         }

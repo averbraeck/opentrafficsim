@@ -11,7 +11,7 @@ import org.opentrafficsim.kpi.interfaces.GtuData;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param <G> gtu data type
+ * @param <G> GTU data type
  */
 public abstract class ExtendedDataString<G extends GtuData> extends ExtendedDataList<String, G>
 {

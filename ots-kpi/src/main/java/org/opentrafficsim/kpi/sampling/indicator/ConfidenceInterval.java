@@ -13,6 +13,7 @@ import org.djunits.value.vdouble.scalar.base.DoubleScalarRel;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <T> type of the values
  */
+@Deprecated // non-scalar statistics not yet implemented
 public class ConfidenceInterval<T extends DoubleScalarRel<?, T>>
 {
 
@@ -23,16 +24,18 @@ public class ConfidenceInterval<T extends DoubleScalarRel<?, T>>
     private final T upperValue;
 
     /**
+     * Constructor.
      * @param lowerValue lower confidence value
      * @param upperValue upper confidence value
      */
-    ConfidenceInterval(final T lowerValue, final T upperValue)
+    public ConfidenceInterval(final T lowerValue, final T upperValue)
     {
         this.lowerValue = lowerValue;
         this.upperValue = upperValue;
     }
 
     /**
+     * Returns lower value.
      * @return lowerValue.
      */
     public T getLowerValue()
@@ -41,6 +44,7 @@ public class ConfidenceInterval<T extends DoubleScalarRel<?, T>>
     }
 
     /**
+     * Returns upper value.
      * @return upperValue.
      */
     public T getUpperValue()

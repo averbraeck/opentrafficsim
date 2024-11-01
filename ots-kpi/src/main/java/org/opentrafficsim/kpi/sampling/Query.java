@@ -10,7 +10,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
-import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
@@ -34,11 +33,12 @@ import org.opentrafficsim.kpi.sampling.filter.FilterDataType;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param <G> gtu data type
+ * @param <G> GTU data type
  * @param <L> lane data type
  */
 public final class Query<G extends GtuData, L extends LaneData<L>> implements Identifiable
 {
+
     /** unique id. */
     private final String id;
 
@@ -79,7 +79,7 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
      * @param id id
      * @param description description
      * @param filterDataSet filter data
-     * @param interval interval to gather statistics over
+     * @param interval interval to gather statistics over, used by external controller
      * @throws NullPointerException if sampling, description or filterDataSet is null
      */
     public Query(final Sampler<G, L> sampler, final String id, final String description, final FilterDataSet filterDataSet,
@@ -94,7 +94,7 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
      * @param id id
      * @param description description
      * @param filterDataSet filter data
-     * @param updateFrequency update frequency
+     * @param updateFrequency update frequency, used by external controller
      * @throws NullPointerException if sampling, description or filterDataSet is null
      */
     public Query(final Sampler<G, L> sampler, final String id, final String description, final FilterDataSet filterDataSet,
@@ -109,8 +109,8 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
      * @param id id
      * @param description description
      * @param filterDataSet filter data
-     * @param updateFrequency update frequency
-     * @param interval interval to gather statistics over
+     * @param updateFrequency update frequency, used by external controller
+     * @param interval interval to gather statistics over, used by external controller
      * @throws NullPointerException if sampling, description or filterDataSet is null
      */
     public Query(final Sampler<G, L> sampler, final String id, final String description, final FilterDataSet filterDataSet,
@@ -144,7 +144,7 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
      * @param sampler sampler
      * @param description description
      * @param filterDataSet filter data
-     * @param interval interval to gather statistics over
+     * @param interval interval to gather statistics over, used by external controller
      * @throws NullPointerException if sampling, description or filterDataSet is null
      */
     public Query(final Sampler<G, L> sampler, final String description, final FilterDataSet filterDataSet,
@@ -158,7 +158,7 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
      * @param sampler sampler
      * @param description description
      * @param filterDataSet filter data
-     * @param updateFrequency update frequency
+     * @param updateFrequency update frequency, used by external controller
      * @throws NullPointerException if sampling, description or filterDataSet is null
      */
     public Query(final Sampler<G, L> sampler, final String description, final FilterDataSet filterDataSet,
@@ -172,8 +172,8 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
      * @param sampler sampler
      * @param description description
      * @param filterDataSet filter data
-     * @param updateFrequency update frequency
-     * @param interval interval to gather statistics over
+     * @param updateFrequency update frequency, used by external controller
+     * @param interval interval to gather statistics over, used by external controller
      * @throws NullPointerException if sampling, description or filterDataSet is null
      */
     public Query(final Sampler<G, L> sampler, final String description, final FilterDataSet filterDataSet,
@@ -182,10 +182,6 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
         this(sampler, null, description, filterDataSet, updateFrequency, interval);
     }
 
-    /**
-     * Returns the unique id for the query.
-     * @return the unique id for the query
-     */
     @Override
     public String getId()
     {
@@ -256,10 +252,12 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
         Throw.when(endPosition.lt(startPosition), IllegalArgumentException.class,
                 "End position should be greater than start position.");
         Throw.when(endTime.lt(startTime), IllegalArgumentException.class, "End time should be greater than start time.");
-        for (L lane : link.getLaneDatas())
+        double fStart = startPosition.si / link.getLength().si;
+        double fEnd = endPosition.si / link.getLength().si;
+        for (L lane : link.getLanes())
         {
-            Length x0 = new Length(lane.getLength().si * startPosition.si / link.getLength().si, LengthUnit.SI);
-            Length x1 = new Length(lane.getLength().si * endPosition.si / link.getLength().si, LengthUnit.SI);
+            Length x0 = lane.getLength().times(fStart);
+            Length x1 = lane.getLength().times(fEnd);
             addSpaceTimeRegion(lane, x0, x1, startTime, endTime);
         }
     }
@@ -404,8 +402,8 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
 
     /**
      * Returns a copy of the trajectory accept list, with all assumed not accepted.
-     * @param trajectoryAcceptList trajectory accept list to copy.
-     * @return copy of the trajectory accept list, with all assumed not accepted.
+     * @param trajectoryAcceptList trajectory accept list to copy
+     * @return copy of the trajectory accept list, with all assumed not accepted
      */
     private TrajectoryAcceptList copyTrajectoryAcceptList(final TrajectoryAcceptList trajectoryAcceptList)
     {

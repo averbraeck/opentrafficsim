@@ -37,11 +37,10 @@ public class TotalTravelDistance extends AbstractIndicator<Length>
         return sum;
     }
 
-    @SuppressWarnings("checkstyle:designforextension")
     @Override
     public String toString()
     {
-        return "TotalTravelDistance []";
+        return "TotalTravelDistance";
     }
 
 }

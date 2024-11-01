@@ -1,13 +1,13 @@
 package org.opentrafficsim.kpi.sampling.filter;
 
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.sampling.CrossSection;
-import org.opentrafficsim.kpi.sampling.LanePosition;
+import org.opentrafficsim.kpi.sampling.CrossSection.LanePosition;
+import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.TrajectoryAcceptList;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 
@@ -20,8 +20,9 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ * @param <G> GTU data type
  */
-public class FilterDataCrossSections extends FilterDataType<CrossSection, GtuData>
+public abstract class FilterDataCrossSections<G extends GtuData> extends FilterDataType<CrossSection, G>
 {
 
     /**
@@ -30,12 +31,6 @@ public class FilterDataCrossSections extends FilterDataType<CrossSection, GtuDat
     public FilterDataCrossSections()
     {
         super("crossSection", "Cross sections", CrossSection.class);
-    }
-
-    @Override
-    public final CrossSection getValue(final GtuData gtu)
-    {
-        return null; // TODO
     }
 
     /**
@@ -47,27 +42,20 @@ public class FilterDataCrossSections extends FilterDataType<CrossSection, GtuDat
         Throw.whenNull(trajectoryAcceptList, "Trajectory accept list may not be null.");
         Throw.whenNull(querySet, "Qeury set may not be null.");
         Set<CrossSection> crossedCrossSections = new LinkedHashSet<>();
-        // Loop over trajectoryList/trajectoryGroupList combo
         for (int i = 0; i < trajectoryAcceptList.size(); i++)
         {
             TrajectoryGroup<?> trajectoryGroup = trajectoryAcceptList.getTrajectoryGroup(i);
-            // Loop over cross sections
-            Iterator<CrossSection> crossSectionIterator = querySet.iterator();
-            while (crossSectionIterator.hasNext())
+            for (CrossSection crossSection : querySet)
             {
-                CrossSection crossSection = crossSectionIterator.next();
-                // Loop over lanes in cross section
-                Iterator<LanePosition> lanePositionIterator = crossSection.getIterator();
-                while (lanePositionIterator.hasNext())
+                for (LanePosition lanePosition : crossSection)
                 {
-                    LanePosition lanePosition = lanePositionIterator.next();
-                    // If Trajectories is of same lane, check position
-                    if (trajectoryGroup.getLane().equals(lanePosition.getLaneData()))
+                    // If trajectoryGroup is of same lane, check position
+                    if (trajectoryGroup.getLane().equals(lanePosition.lane()))
                     {
-                        double position = lanePosition.getPosition().si;
-                        float[] x = trajectoryAcceptList.getTrajectory(i).getX();
-                        double xStart = x[0];
-                        double xEnd = x[x.length - 1];
+                        double position = lanePosition.position().si;
+                        Trajectory<?> trajectory = trajectoryAcceptList.getTrajectory(i);
+                        double xStart = trajectory.getX(0);
+                        double xEnd = trajectory.getX(trajectory.size() - 1);
                         if ((xStart < position && position < xEnd) || (xEnd < position && position < xStart))
                         {
                             // Trajectory was up- and downstream of the location, so the location was crossed
@@ -84,7 +72,6 @@ public class FilterDataCrossSections extends FilterDataType<CrossSection, GtuDat
     }
 
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
         return "FilterDataCrossSections: [id=" + getId() + "]";

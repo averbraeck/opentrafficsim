@@ -50,7 +50,7 @@ import org.opentrafficsim.kpi.sampling.filter.FilterDataType;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param <G> gtu data type
+ * @param <G> GTU data type
  */
 public class SamplerData<G extends GtuData> extends Table
 {
@@ -81,8 +81,8 @@ public class SamplerData<G extends GtuData> extends Table
 
     /**
      * Constructor.
-     * @param extendedDataTypes extended data types.
-     * @param filterDataTypes filter data types.
+     * @param extendedDataTypes extended data types
+     * @param filterDataTypes filter data types
      */
     public SamplerData(final Set<ExtendedDataType<?, ?, ?, ? super G>> extendedDataTypes,
             final Set<FilterDataType<?, ? super G>> filterDataTypes)
@@ -121,9 +121,9 @@ public class SamplerData<G extends GtuData> extends Table
 
     /**
      * Generates the columns based on base information and the extended and filter types.
-     * @param extendedDataTypes2 extended data types.
-     * @param filterDataTypes2 filter data types.
-     * @param <G2> type to bound extended and filter data types.
+     * @param extendedDataTypes2 extended data types
+     * @param filterDataTypes2 filter data types
+     * @param <G2> type to bound extended and filter data types, different from G as this is a static method
      * @return columns.
      */
     private static <G2> Collection<Column<?>> generateColumns(
@@ -192,12 +192,12 @@ public class SamplerData<G extends GtuData> extends Table
     }
 
     /**
-     * Returns the set of lane directions.
-     * @return lane directions
+     * Returns the set of lanes.
+     * @return lanes (safe copy)
      */
     public final Set<LaneData<?>> getLanes()
     {
-        return this.trajectories.keySet();
+        return new LinkedHashSet<>(this.trajectories.keySet());
     }
 
     /**
@@ -279,14 +279,6 @@ public class SamplerData<G extends GtuData> extends Table
 
     /**
      * Iterator over the sampler data. It iterates over lanes, trajectories on a lane, and indices within the trajectory.
-     * <p>
-     * Copyright (c) 2022-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private final class SamplerDataIterator implements Iterator<Row>
     {
@@ -343,44 +335,36 @@ public class SamplerData<G extends GtuData> extends Table
                     "Trajectory modified while iterating.");
 
             int trajectoryIndex = this.indexIterator.next();
-            try
+            // base data
+            Object[] data = getBaseData(trajectoryIndex);
+            int dataIndex = BASE_COLUMNS.size();
+
+            // extended data
+            for (int i = 0; i < SamplerData.this.extendedDataTypes.size(); i++)
             {
-                // base data
-                Object[] data = getBaseData(trajectoryIndex);
-                int dataIndex = BASE_COLUMNS.size();
-
-                // extended data
-                for (int i = 0; i < SamplerData.this.extendedDataTypes.size(); i++)
-                {
-                    ExtendedDataType<?, ?, ?, ?> extendedDataType = SamplerData.this.extendedDataTypes.get(i);
-                    data[dataIndex++] = this.currentTrajectory.contains(extendedDataType)
-                            ? this.currentTrajectory.getExtendedData(extendedDataType, trajectoryIndex) : null;
-                }
-
-                // filter data
-                for (int i = 0; i < SamplerData.this.filterDataTypes.size(); i++)
-                {
-                    FilterDataType<?, ?> filterDataType = SamplerData.this.filterDataTypes.get(i);
-                    // filter data is only stored on the first index, as this data is fixed over a trajectory
-                    data[dataIndex++] = trajectoryIndex == 0 && this.currentTrajectory.contains(filterDataType)
-                            ? this.currentTrajectory.getFilterData(filterDataType) : null;
-                }
-
-                return new Row(SamplerData.this, data);
+                ExtendedDataType<?, ?, ?, ?> extendedDataType = SamplerData.this.extendedDataTypes.get(i);
+                data[dataIndex++] = this.currentTrajectory.contains(extendedDataType)
+                        ? this.currentTrajectory.getExtendedData(extendedDataType, trajectoryIndex) : null;
             }
-            catch (SamplingException se)
+
+            // filter data
+            for (int i = 0; i < SamplerData.this.filterDataTypes.size(); i++)
             {
-                throw new RuntimeException("Sampling exception during iteration over sampler data.", se);
+                FilterDataType<?, ?> filterDataType = SamplerData.this.filterDataTypes.get(i);
+                // filter data is only stored on the first index, as this data is fixed over a trajectory
+                data[dataIndex++] = trajectoryIndex == 0 && this.currentTrajectory.contains(filterDataType)
+                        ? this.currentTrajectory.getFilterData(filterDataType) : null;
             }
+
+            return new Row(SamplerData.this, data);
         }
 
         /**
          * Returns an array with the base data. The array is of size to also contain the extended and filter data.
          * @param trajectoryIndex trajectory index in the current trajectory.
          * @return Object[] base data of size to also contain the extended and filter data.
-         * @throws SamplingException if data can not be obtained.
          */
-        private Object[] getBaseData(final int trajectoryIndex) throws SamplingException
+        private Object[] getBaseData(final int trajectoryIndex)
         {
             Object[] data = new Object[SamplerData.this.getNumberOfColumns()];
             int dataIndex = 0;
@@ -423,14 +407,6 @@ public class SamplerData<G extends GtuData> extends Table
 
     /**
      * Compression method.
-     * <p>
-     * Copyright (c) 2022-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public enum Compression
     {

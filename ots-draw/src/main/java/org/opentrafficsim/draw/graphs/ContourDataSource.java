@@ -733,8 +733,8 @@ public class ContourDataSource
                                             xStart.get(k), xEnd.get(k), tFrom, tTo);
                                     continue;
                                 }
-                                totalDistance += spaceTimeView.getDistance().si;
-                                totalTime += spaceTimeView.getTime().si;
+                                totalDistance += spaceTimeView.distance().si;
+                                totalTime += spaceTimeView.time().si;
                             }
                         }
                     }

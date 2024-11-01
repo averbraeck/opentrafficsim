@@ -10,6 +10,7 @@ package org.opentrafficsim.kpi.sampling.indicator;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
+@Deprecated // non-scalar statistics not yet implemented
 public enum IntervalSide
 {
     /** Two-side confidence interval. */

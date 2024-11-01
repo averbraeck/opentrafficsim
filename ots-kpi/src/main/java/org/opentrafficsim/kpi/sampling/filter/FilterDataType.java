@@ -17,13 +17,13 @@ import org.opentrafficsim.kpi.sampling.TrajectoryAcceptList;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <T> class of meta data
- * @param <G> gtu data type
+ * @param <G> GTU data type
  */
 public abstract class FilterDataType<T, G extends GtuData> extends DataType<T, G>
 {
 
     /**
-     * Constructor setting the id.
+     * Constructor.
      * @param id id
      * @param description description
      * @param type type class

@@ -1,7 +1,6 @@
 package org.opentrafficsim.kpi.sampling.data;
 
 import org.djunits.unit.SpeedUnit;
-import org.djunits.value.ValueRuntimeException;
 import org.djunits.value.vfloat.scalar.FloatSpeed;
 import org.djunits.value.vfloat.vector.FloatSpeedVector;
 import org.opentrafficsim.kpi.interfaces.GtuData;
@@ -15,7 +14,7 @@ import org.opentrafficsim.kpi.interfaces.GtuData;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param <G> gtu data type
+ * @param <G> GTU data type
  */
 public abstract class ExtendedDataSpeed<G extends GtuData> extends ExtendedDataFloat<SpeedUnit, FloatSpeed, FloatSpeedVector, G>
 {
@@ -37,7 +36,7 @@ public abstract class ExtendedDataSpeed<G extends GtuData> extends ExtendedDataF
     }
 
     @Override
-    protected final FloatSpeedVector convert(final float[] storage) throws ValueRuntimeException
+    protected final FloatSpeedVector convert(final float[] storage)
     {
         return new FloatSpeedVector(storage, SpeedUnit.SI);
     }

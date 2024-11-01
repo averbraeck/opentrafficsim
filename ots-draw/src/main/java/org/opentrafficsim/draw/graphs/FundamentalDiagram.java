@@ -30,7 +30,6 @@ import org.jfree.data.DomainOrder;
 import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.Sampler;
-import org.opentrafficsim.kpi.sampling.SamplingException;
 import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.Trajectory.SpaceTimeView;
@@ -735,8 +734,8 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
                 final Length length, final int sereies, final double[] measurements)
         {
             SpaceTimeView stv = trajectory.getSpaceTimeView(Length.ZERO, length, startTime, endTime);
-            measurements[0] = stv.getDistance().si; // first = total traveled distance
-            measurements[1] = stv.getTime().si; // second = total traveled time
+            measurements[0] = stv.distance().si; // first = total traveled distance
+            measurements[1] = stv.time().si; // second = total traveled time
         }
 
         @Override
@@ -987,29 +986,22 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
                     for (Trajectory<?> trajectory : trajectoryGroup.getTrajectories())
                     {
                         // we can skip all assigned trajectories, which are all up to and including 'last' and all in 'assigned'
-                        try
+                        if (i > last && !assigned.contains(i))
                         {
-                            if (i > last && !assigned.contains(i))
+                            // quickly filter
+                            if (GraphUtil.considerTrajectory(trajectory, startTime, time))
                             {
-                                // quickly filter
-                                if (GraphUtil.considerTrajectory(trajectory, startTime, time))
-                                {
-                                    double[] measurements = new double[2];
-                                    getMeasurements(trajectory, startTime, time, lane.getLength(), series, measurements);
-                                    first += measurements[0];
-                                    second += measurements[1];
-                                }
-                                if (trajectory.getT(trajectory.size() - 1) < startTime.si - getDelay().si)
-                                {
-                                    assigned.add(i);
-                                }
+                                double[] measurements = new double[2];
+                                getMeasurements(trajectory, startTime, time, lane.getLength(), series, measurements);
+                                first += measurements[0];
+                                second += measurements[1];
                             }
-                            i++;
+                            if (trajectory.getT(trajectory.size() - 1) < startTime.si - getDelay().si)
+                            {
+                                assigned.add(i);
+                            }
                         }
-                        catch (SamplingException exception)
-                        {
-                            throw new RuntimeException("Unexpected exception while counting trajectories.", exception);
-                        }
+                        i++;
                     }
                     if (!this.aggregateLanes)
                     {

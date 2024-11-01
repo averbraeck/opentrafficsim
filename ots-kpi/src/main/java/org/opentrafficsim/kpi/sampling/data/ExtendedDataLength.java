@@ -1,7 +1,6 @@
 package org.opentrafficsim.kpi.sampling.data;
 
 import org.djunits.unit.LengthUnit;
-import org.djunits.value.ValueRuntimeException;
 import org.djunits.value.vfloat.scalar.FloatLength;
 import org.djunits.value.vfloat.vector.FloatLengthVector;
 import org.opentrafficsim.kpi.interfaces.GtuData;
@@ -15,14 +14,14 @@ import org.opentrafficsim.kpi.interfaces.GtuData;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param <G> gtu data type
+ * @param <G> GTU data type
  */
 public abstract class ExtendedDataLength<G extends GtuData>
         extends ExtendedDataFloat<LengthUnit, FloatLength, FloatLengthVector, G>
 {
 
     /**
-     * Constructor setting the id.
+     * Constructor.
      * @param id id
      * @param description description
      */
@@ -38,7 +37,7 @@ public abstract class ExtendedDataLength<G extends GtuData>
     }
 
     @Override
-    protected final FloatLengthVector convert(final float[] storage) throws ValueRuntimeException
+    protected final FloatLengthVector convert(final float[] storage)
     {
         return new FloatLengthVector(storage, LengthUnit.SI);
     }

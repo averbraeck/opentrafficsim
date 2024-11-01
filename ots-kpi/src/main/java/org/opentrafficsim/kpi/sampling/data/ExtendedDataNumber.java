@@ -2,9 +2,7 @@ package org.opentrafficsim.kpi.sampling.data;
 
 import java.util.Arrays;
 
-import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuData;
-import org.opentrafficsim.kpi.sampling.SamplingException;
 
 /**
  * Class for unitless values.
@@ -15,7 +13,7 @@ import org.opentrafficsim.kpi.sampling.SamplingException;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param <G> gtu data type
+ * @param <G> GTU data type
  */
 public abstract class ExtendedDataNumber<G extends GtuData> extends ExtendedDataType<Float, float[], float[], G>
 {
@@ -48,15 +46,14 @@ public abstract class ExtendedDataNumber<G extends GtuData> extends ExtendedData
     }
 
     @Override
-    public Float getOutputValue(final float[] output, final int index) throws SamplingException
+    public Float getOutputValue(final float[] output, final int index)
     {
         return output[index];
     }
 
     @Override
-    public Float getStorageValue(final float[] storage, final int index) throws SamplingException
+    public Float getStorageValue(final float[] storage, final int index)
     {
-        Throw.when(index < 0 || index >= storage.length, SamplingException.class, "Index %d out of range.", index);
         return storage[index];
     }
 

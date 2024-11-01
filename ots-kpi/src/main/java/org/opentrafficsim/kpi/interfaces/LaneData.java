@@ -24,8 +24,8 @@ public interface LaneData<L extends LaneData<L>> extends Identifiable
     Length getLength();
 
     /**
-     * Returns the parent link of the lane.
-     * @return parent link of the lane
+     * Returns the link of the lane.
+     * @return link of the lane
      */
     LinkData<L> getLinkData();
 

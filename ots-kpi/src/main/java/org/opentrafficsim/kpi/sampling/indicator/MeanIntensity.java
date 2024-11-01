@@ -2,7 +2,6 @@ package org.opentrafficsim.kpi.sampling.indicator;
 
 import java.util.List;
 
-import org.djunits.unit.FrequencyUnit;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.kpi.interfaces.GtuData;
@@ -26,6 +25,7 @@ public class MeanIntensity extends AbstractIndicator<Frequency>
     private final TotalTravelDistance travelDistance;
 
     /**
+     * Constructor.
      * @param travelDistance travel distance indicator
      */
     public MeanIntensity(final TotalTravelDistance travelDistance)
@@ -43,7 +43,7 @@ public class MeanIntensity extends AbstractIndicator<Frequency>
         {
             area += trajectoryGroup.getLength().si * (endTime.si - startTime.si);
         }
-        return new Frequency(ttd / area, FrequencyUnit.SI);
+        return Frequency.instantiateSI(ttd / area);
     }
 
     @Override

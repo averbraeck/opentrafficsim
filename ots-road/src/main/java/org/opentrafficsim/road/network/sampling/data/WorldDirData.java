@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.network.sampling.data;
 
 import org.djunits.unit.DirectionUnit;
-import org.djunits.value.ValueRuntimeException;
 import org.djunits.value.vfloat.scalar.FloatDirection;
 import org.djunits.value.vfloat.vector.FloatDirectionVector;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataFloat;
@@ -35,7 +34,7 @@ public class WorldDirData extends ExtendedDataFloat<DirectionUnit, FloatDirectio
     }
 
     @Override
-    protected FloatDirectionVector convert(final float[] storage) throws ValueRuntimeException
+    protected FloatDirectionVector convert(final float[] storage)
     {
         return new FloatDirectionVector(storage);
     }

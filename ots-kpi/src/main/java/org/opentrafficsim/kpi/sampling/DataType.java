@@ -13,8 +13,8 @@ import org.opentrafficsim.kpi.interfaces.GtuData;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param <T> class of meta data
- * @param <G> gtu data type
+ * @param <T> type of value
+ * @param <G> GTU data type
  */
 public abstract class DataType<T, G extends GtuData> implements Identifiable
 {
@@ -44,10 +44,6 @@ public abstract class DataType<T, G extends GtuData> implements Identifiable
         this.type = type;
     }
 
-    /**
-     * Returns the id.
-     * @return id
-     */
     @Override
     public final String getId()
     {
@@ -56,7 +52,7 @@ public abstract class DataType<T, G extends GtuData> implements Identifiable
 
     /**
      * Returns the description.
-     * @return description.
+     * @return description
      */
     public String getDescription()
     {
@@ -64,8 +60,8 @@ public abstract class DataType<T, G extends GtuData> implements Identifiable
     }
 
     /**
-     * Returns the type.
-     * @return the type
+     * Returns the value type.
+     * @return the value type
      */
     public Class<T> getType()
     {
@@ -73,9 +69,9 @@ public abstract class DataType<T, G extends GtuData> implements Identifiable
     }
 
     /**
-     * Retrieves the value of the meta data of this type from a GTU.
+     * Retrieves the value of the data of this type from a GTU.
      * @param gtu gtu to retrieve the value from
-     * @return value of the meta data of this type from a GTU, may be {@code null} if not applicable.
+     * @return value of the data of this type from a GTU, may be {@code null} if not applicable.
      */
     public abstract T getValue(G gtu);
 

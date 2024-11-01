@@ -16,6 +16,7 @@ import org.djutils.exceptions.Throw;
  * @param <T> class of the value
  * @param <W> weight class
  */
+@Deprecated // non-scalar statistics not yet implemented
 public class Persistent<U extends Unit<U>, T extends DoubleScalarRel<U, T>, W extends Number>
 {
     /** Unit. */

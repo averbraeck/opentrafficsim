@@ -2,7 +2,6 @@ package org.opentrafficsim.kpi.sampling.indicator;
 
 import java.util.List;
 
-import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.kpi.interfaces.GtuData;
@@ -26,6 +25,7 @@ public class MeanTravelTimePerDistance extends AbstractIndicator<Duration>
     private final MeanSpeed meanSpeed;
 
     /**
+     * Constructor.
      * @param meanSpeed mean speed indicator
      */
     public MeanTravelTimePerDistance(final MeanSpeed meanSpeed)
@@ -37,11 +37,10 @@ public class MeanTravelTimePerDistance extends AbstractIndicator<Duration>
     protected <G extends GtuData> Duration calculate(final Query<G, ?> query, final Time startTime, final Time endTime,
             final List<TrajectoryGroup<G>> trajectoryGroups)
     {
-        return new Duration(1.0 / this.meanSpeed.getValue(query, startTime, endTime, trajectoryGroups).si, DurationUnit.SI);
+        return Duration.instantiateSI(1.0 / this.meanSpeed.getValue(query, startTime, endTime, trajectoryGroups).si);
     }
 
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
         return "MeanTravelTime [meanTravelTime=" + this.meanSpeed + " (per km)]";
