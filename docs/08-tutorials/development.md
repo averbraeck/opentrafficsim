@@ -130,16 +130,7 @@ In some cases it can be a hassle to setup interdependent objects just to test a 
 
 ```java
     OtsSimulatorInterface simulatorMock = Mockito.mock(OtsSimulatorInterface.class);
-    Answer<Time> answerTime = new Answer<Time>()
-    {
-        @SuppressWarnings("synthetic-access")
-        @Override
-        public Time answer(final InvocationOnMock invocation) throws Throwable
-        {
-            return JUnitTest.this.time;
-        }
-    };
-    Mockito.when(simulatorMock.getSimulatorTime()).then(answerTime);
+    Mockito.when(simulatorMock.getSimulatorTime()).then((invocation) -> this.time);
     Mockito.when(simulatorMock.getReplication()).thenReturn(this.replication);
 ```
 

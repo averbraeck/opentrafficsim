@@ -7,8 +7,6 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.profile.Profile;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -73,16 +71,7 @@ public class Development
         {
             // @docs/08-tutorials/development.md#how-to-create-a-junit-test
             OtsSimulatorInterface simulatorMock = Mockito.mock(OtsSimulatorInterface.class);
-            Answer<Time> answerTime = new Answer<Time>()
-            {
-                @SuppressWarnings("synthetic-access")
-                @Override
-                public Time answer(final InvocationOnMock invocation) throws Throwable
-                {
-                    return JUnitTest.this.time;
-                }
-            };
-            Mockito.when(simulatorMock.getSimulatorTime()).then(answerTime);
+            Mockito.when(simulatorMock.getSimulatorTime()).then((invocation) -> this.time);
             Mockito.when(simulatorMock.getReplication()).thenReturn(this.replication);
         }
     }
