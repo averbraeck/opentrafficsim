@@ -16,7 +16,7 @@ The following steps are undertaken to publish a new release.
 1. On the main Github page, click 'Releases', then 'Draft new release'.
 2. Provide the following information:
     - Create a new Tag under 'Choose a tag'. Increase the correct level in version number relative to the previous release. 
-    - Release title: _OTS v1.7.5_.
+    - Release title: _OTS vX.Y.Z_, where _vX.Y.Z_ should match the tag.
     - In the main text field, describe the release. It is common practice to enumerate all the included issues since the previous release.
 3. The click 'Publish release`.
 
