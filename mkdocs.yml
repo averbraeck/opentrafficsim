@@ -1,7 +1,7 @@
 site_name: OpenTrafficSim
 site_url: https://opentrafficsim.org
 site_favicon: images/favicon.png
-copyright: (c) 2014-2023 Delft University of Technology
+copyright: (c) 2014-2024 Delft University of Technology
 
 theme:
   name: material
@@ -32,7 +32,8 @@ nav:
     - Current developments: 01-technical/developments.md
     - Install ots for developers: 01-technical/installation-developers.md
     - Git branching and merging: 01-technical/branch-merge-developer.md
-    - Install ots for modelers: 01-technical/installation-modelers.md
+	- Publish ots: 01-technical/publish-ots.md
+	- Install ots for modelers: 01-technical/installation-modelers.md
     - '&rarr; OTS compile information': https://opentrafficsim.org/docs/latest
     - '&rarr; ots-base Javadoc APIs': https://opentrafficsim.org/docs/latest/ots-base/apidocs
     - '&rarr; ots-core Javadoc APIs': https://opentrafficsim.org/docs/latest/ots-core/apidocs
