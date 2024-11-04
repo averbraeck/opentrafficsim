@@ -8,7 +8,7 @@ OTS can only be published if all unit test are successful and no errors occur du
 1. Richt-click on the main 'ots' project > Run As > Maven test.
 2. Right-click on the main 'ots' project > Run As > Maven build..., then type 'javadoc:javadoc' under 'Goals:', and click 'Run'.
 
-The progress of these processes will be provided in the Console. Any errors that are reported here shouls be solved before a new release is published.
+The progress of these processes will be provided in the Console. Any errors that are reported here should be solved before a new release is published.
 
 ## Publishing a new release
 The following steps are undertaken to publish a new release.
@@ -26,4 +26,4 @@ After this a Github Action named _Maven Package to Central (v3)_, defined in `ma
 Should anything go wrong during the publication of a release, the underlying issue needs to be solved before re-attempting to publish a new release. Up to the point something went wrong, it is important to remove what was successfully created by the procedure.
 
 1. Remove release from Github.
-2. If a fix changed the repository, remove tag from Github. If instead the error was in the procedure itself (e.g. Maven requires a new URL), then the same tag cna be used in the updated procedure.
+2. If a fix changed the repository, remove tag from Github. If instead the error was in the procedure itself (e.g. Maven requires a new URL), then the same tag can be used in the updated procedure.
