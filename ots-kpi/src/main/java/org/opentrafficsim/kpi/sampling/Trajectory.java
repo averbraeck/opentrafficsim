@@ -10,7 +10,6 @@ import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
-import org.djunits.value.ValueRuntimeException;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -22,7 +21,6 @@ import org.djunits.value.vfloat.vector.FloatSpeedVector;
 import org.djunits.value.vfloat.vector.FloatTimeVector;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuData;
-import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
 import org.opentrafficsim.kpi.sampling.filter.FilterDataType;
 
@@ -74,20 +72,16 @@ public final class Trajectory<G extends GtuData>
     /** Map of extended data types and their values (usually arrays). */
     private final Map<ExtendedDataType<?, ?, ?, ? super G>, Object> extendedData = new LinkedHashMap<>();
 
-    /** Lane of travel. */
-    private final LaneData<?> lane;
-
     /**
      * Constructor.
      * @param gtu GTU of this trajectory, only the id is stored.
      * @param filterData filter data
      * @param extendedData types of extended data
-     * @param lane lane of travel
      */
     public Trajectory(final GtuData gtu, final Map<FilterDataType<?, ? super G>, Object> filterData,
-            final Set<ExtendedDataType<?, ?, ?, ? super G>> extendedData, final LaneData<?> lane)
+            final Set<ExtendedDataType<?, ?, ?, ? super G>> extendedData)
     {
-        this(gtu == null ? null : gtu.getId(), gtu == null ? null : gtu.getGtuTypeId(), filterData, extendedData, lane);
+        this(gtu == null ? null : gtu.getId(), gtu == null ? null : gtu.getGtuTypeId(), filterData, extendedData);
     }
 
     /**
@@ -96,16 +90,14 @@ public final class Trajectory<G extends GtuData>
      * @param gtuTypeId GTU type id
      * @param filterData filter data
      * @param extendedData types of extended data
-     * @param lane lane of travel
      */
     private Trajectory(final String gtuId, final String gtuTypeId, final Map<FilterDataType<?, ? super G>, Object> filterData,
-            final Set<ExtendedDataType<?, ?, ?, ? super G>> extendedData, final LaneData<?> lane)
+            final Set<ExtendedDataType<?, ?, ?, ? super G>> extendedData)
     {
         Throw.whenNull(gtuId, "GTU id may not be null.");
         Throw.whenNull(gtuTypeId, "GTU type id may not be null.");
         Throw.whenNull(filterData, "Filter data may not be null.");
         Throw.whenNull(extendedData, "Extended data may not be null.");
-        Throw.whenNull(lane, "Lane direction may not be null.");
         this.gtuId = gtuId;
         this.gtuTypeId = gtuTypeId;
         this.filterData.putAll(filterData);
@@ -113,7 +105,6 @@ public final class Trajectory<G extends GtuData>
         {
             this.extendedData.put(dataType, dataType.initializeStorage());
         }
-        this.lane = lane;
     }
 
     /**
@@ -130,7 +121,7 @@ public final class Trajectory<G extends GtuData>
     }
 
     /**
-     * Adds values of position, speed, acceleration and time.
+     * Adds values of position, speed, acceleration, time and extended data.
      * @param position position is relative to the start of the lane in the direction of the design line
      * @param speed speed
      * @param acceleration acceleration
@@ -145,7 +136,7 @@ public final class Trajectory<G extends GtuData>
         Throw.whenNull(time, "Time may not be null.");
         if (!this.extendedData.isEmpty())
         {
-            Throw.whenNull(gtu, "GTU may not be null.");
+            Throw.whenNull(gtu, "GTU may not be null when extended data is part of the trajectory.");
         }
         if (this.size == this.x.length)
         {
@@ -351,15 +342,7 @@ public final class Trajectory<G extends GtuData>
      */
     public FloatLengthVector getPosition()
     {
-        try
-        {
-            return new FloatLengthVector(getX(), LengthUnit.SI);
-        }
-        catch (ValueRuntimeException exception)
-        {
-            // should not happen, inputs are not null
-            throw new RuntimeException("Could not return trajectory data.", exception);
-        }
+        return new FloatLengthVector(getX(), LengthUnit.SI);
     }
 
     /**
@@ -368,15 +351,7 @@ public final class Trajectory<G extends GtuData>
      */
     public FloatSpeedVector getSpeed()
     {
-        try
-        {
-            return new FloatSpeedVector(getV(), SpeedUnit.SI);
-        }
-        catch (ValueRuntimeException exception)
-        {
-            // should not happen, inputs are not null
-            throw new RuntimeException("Could not return trajectory data.", exception);
-        }
+        return new FloatSpeedVector(getV(), SpeedUnit.SI);
     }
 
     /**
@@ -385,15 +360,7 @@ public final class Trajectory<G extends GtuData>
      */
     public FloatAccelerationVector getAcceleration()
     {
-        try
-        {
-            return new FloatAccelerationVector(getA(), AccelerationUnit.SI);
-        }
-        catch (ValueRuntimeException exception)
-        {
-            // should not happen, inputs are not null
-            throw new RuntimeException("Could not return trajectory data.", exception);
-        }
+        return new FloatAccelerationVector(getA(), AccelerationUnit.SI);
     }
 
     /**
@@ -402,15 +369,7 @@ public final class Trajectory<G extends GtuData>
      */
     public FloatTimeVector getTime()
     {
-        try
-        {
-            return new FloatTimeVector(getT(), TimeUnit.BASE_SECOND);
-        }
-        catch (ValueRuntimeException exception)
-        {
-            // should not happen, inputs are not null
-            throw new RuntimeException("Could not return trajectory data.", exception);
-        }
+        return new FloatTimeVector(getT(), TimeUnit.BASE_SECOND);
     }
 
     /**
@@ -512,6 +471,10 @@ public final class Trajectory<G extends GtuData>
      */
     public SpaceTimeView getSpaceTimeView()
     {
+        if (size() < 2)
+        {
+            return new SpaceTimeView(Length.ZERO, Duration.ZERO);
+        }
         return new SpaceTimeView(Length.instantiateSI(this.x[this.size - 1] - this.x[0]),
                 Duration.instantiateSI(this.t[this.size - 1] - this.t[0]));
     }
@@ -529,7 +492,7 @@ public final class Trajectory<G extends GtuData>
     public SpaceTimeView getSpaceTimeView(final Length startPosition, final Length endPosition, final Time startTime,
             final Time endTime)
     {
-        if (size() == 0)
+        if (size() < 2)
         {
             return new SpaceTimeView(Length.ZERO, Duration.ZERO);
         }
@@ -578,7 +541,7 @@ public final class Trajectory<G extends GtuData>
                 "Start position should be smaller than end position in the direction of travel");
         if (this.size == 0)
         {
-            return new Trajectory<>(this.gtuId, this.gtuTypeId, this.filterData, this.extendedData.keySet(), this.lane);
+            return new Trajectory<>(this.gtuId, this.gtuTypeId, this.filterData, this.extendedData.keySet());
         }
         return subSet(spaceBoundaries(startPosition, endPosition));
     }
@@ -598,7 +561,7 @@ public final class Trajectory<G extends GtuData>
         Throw.when(startTime.gt(endTime), IllegalArgumentException.class, "Start time should be smaller than end time.");
         if (this.size == 0)
         {
-            return new Trajectory<>(this.gtuId, this.gtuTypeId, this.filterData, this.extendedData.keySet(), this.lane);
+            return new Trajectory<>(this.gtuId, this.gtuTypeId, this.filterData, this.extendedData.keySet());
         }
         return subSet(timeBoundaries(startTime, endTime));
     }
@@ -625,7 +588,7 @@ public final class Trajectory<G extends GtuData>
         Throw.when(startTime.gt(endTime), IllegalArgumentException.class, "Start time should be smaller than end time.");
         if (this.size == 0)
         {
-            return new Trajectory<>(this.gtuId, this.gtuTypeId, this.filterData, this.extendedData.keySet(), this.lane);
+            return new Trajectory<>(this.gtuId, this.gtuTypeId, this.filterData, this.extendedData.keySet());
         }
         return subSet(spaceBoundaries(startPosition, endPosition).intersect(timeBoundaries(startTime, endTime)));
     }
@@ -774,9 +737,8 @@ public final class Trajectory<G extends GtuData>
     @SuppressWarnings("unchecked")
     private <T, S> Trajectory<G> subSet(final Boundaries bounds)
     {
-        Trajectory<G> out =
-                new Trajectory<>(this.gtuId, this.gtuTypeId, this.filterData, this.extendedData.keySet(), this.lane);
-        if (bounds.from < bounds.to) // otherwise empty, no data in the subset
+        Trajectory<G> out = new Trajectory<>(this.gtuId, this.gtuTypeId, this.filterData, this.extendedData.keySet());
+        if (bounds.from + bounds.fFrom < bounds.to + bounds.fTo) // otherwise empty, no data in the subset
         {
             int nBefore = bounds.fFrom < 1.0 ? 1 : 0;
             int nAfter = bounds.fTo > 0.0 ? 1 : 0;
@@ -841,7 +803,7 @@ public final class Trajectory<G extends GtuData>
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.gtuId == null) ? 0 : this.gtuId.hashCode());
+        result = prime * result + this.gtuId.hashCode();
         result = prime * result + this.size;
         if (this.size > 0)
         {
@@ -870,18 +832,11 @@ public final class Trajectory<G extends GtuData>
         {
             return false;
         }
-        if (this.gtuId == null)
-        {
-            if (other.gtuId != null)
-            {
-                return false;
-            }
-        }
-        else if (!this.gtuId.equals(other.gtuId))
+        if (!this.gtuId.equals(other.gtuId))
         {
             return false;
         }
-        if (this.size > 0)
+        if (this.size > 0 && other.size > 0)
         {
             if (this.t[0] != other.t[0])
             {
@@ -904,41 +859,11 @@ public final class Trajectory<G extends GtuData>
 
     /**
      * Spatial or temporal boundary as a fractional position in the array.
-     * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * @param index index
+     * @param fraction fraction
      */
-    public class Boundary
+    private record Boundary(int index, double fraction)
     {
-        /** Rounded-down index. */
-        @SuppressWarnings("checkstyle:visibilitymodifier")
-        public final int index;
-
-        /** Fraction. */
-        @SuppressWarnings("checkstyle:visibilitymodifier")
-        public final double fraction;
-
-        /**
-         * @param index rounded down index
-         * @param fraction fraction
-         */
-        Boundary(final int index, final double fraction)
-        {
-            this.index = index;
-            this.fraction = fraction;
-        }
-
-        @Override
-        public final String toString()
-        {
-            return "Boundary [index=" + this.index + ", fraction=" + this.fraction + "]";
-        }
-
         /**
          * Returns the value at the boundary in the array.
          * @param array float[] array
@@ -956,61 +881,23 @@ public final class Trajectory<G extends GtuData>
             }
             return (1 - this.fraction) * array[this.index] + this.fraction * array[this.index + 1];
         }
+
+        @Override
+        public String toString()
+        {
+            return "Boundary [index=" + this.index + ", fraction=" + this.fraction + "]";
+        }
     }
 
     /**
      * Spatial or temporal range as a fractional positions in the array.
-     * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * @param from from index
+     * @param fFrom from fraction
+     * @param to to index
+     * @param fTo to index
      */
-    private class Boundaries
+    private record Boundaries(int from, double fFrom, int to, double fTo)
     {
-        /** Rounded-down from-index. */
-        @SuppressWarnings("checkstyle:visibilitymodifier")
-        public final int from;
-
-        /** Fraction of to-index. */
-        @SuppressWarnings("checkstyle:visibilitymodifier")
-        public final double fFrom;
-
-        /** Rounded-down to-index. */
-        @SuppressWarnings("checkstyle:visibilitymodifier")
-        public final int to;
-
-        /** Fraction of to-index. */
-        @SuppressWarnings("checkstyle:visibilitymodifier")
-        public final double fTo;
-
-        /**
-         * @param from from index, rounded down
-         * @param fFrom from index, fraction
-         * @param to to index, rounded down
-         * @param fTo to index, fraction
-         */
-        Boundaries(final int from, final double fFrom, final int to, final double fTo)
-        {
-            Throw.when(from < 0 || from > Trajectory.this.size() - 1, IllegalArgumentException.class,
-                    "Argument from (%d) is out of bounds.", from);
-            Throw.when(fFrom < 0 || fFrom > 1, IllegalArgumentException.class, "Argument fFrom (%f) is out of bounds.", fFrom);
-            Throw.when(from == Trajectory.this.size() && fFrom > 0, IllegalArgumentException.class,
-                    "Arguments from (%d) and fFrom (%f) are out of bounds.", from, fFrom);
-            Throw.when(to < 0 || to >= Trajectory.this.size(), IllegalArgumentException.class,
-                    "Argument to (%d) is out of bounds.", to);
-            Throw.when(fTo < 0 || fTo > 1, IllegalArgumentException.class, "Argument fTo (%f) is out of bounds.", fTo);
-            Throw.when(to == Trajectory.this.size() && fTo > 0, IllegalArgumentException.class,
-                    "Arguments to (%d) and fTo (%f) are out of bounds.", to, fTo);
-            this.from = from;
-            this.fFrom = fFrom;
-            this.to = to;
-            this.fTo = fTo;
-        }
-
         /**
          * Returns the intersect of both boundaries.
          * @param boundaries boundaries
@@ -1052,11 +939,10 @@ public final class Trajectory<G extends GtuData>
         }
 
         @Override
-        public final String toString()
+        public String toString()
         {
             return "Boundaries [from=" + this.from + ", fFrom=" + this.fFrom + ", to=" + this.to + ", fTo=" + this.fTo + "]";
         }
-
     }
 
     /**

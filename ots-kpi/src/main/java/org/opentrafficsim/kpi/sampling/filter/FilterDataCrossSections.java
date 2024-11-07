@@ -20,9 +20,8 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
- * @param <G> GTU data type
  */
-public abstract class FilterDataCrossSections<G extends GtuData> extends FilterDataType<CrossSection, G>
+public class FilterDataCrossSections extends FilterDataType<CrossSection, GtuData>
 {
 
     /**
@@ -75,6 +74,12 @@ public abstract class FilterDataCrossSections<G extends GtuData> extends FilterD
     public String toString()
     {
         return "FilterDataCrossSections: [id=" + getId() + "]";
+    }
+
+    @Override
+    public CrossSection getValue(final GtuData gtu)
+    {
+        return null; // value is not used to check whether trajectory is accepted
     }
 
 }

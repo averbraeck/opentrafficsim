@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.djunits.unit.DurationUnit;
-import org.djunits.value.ValueRuntimeException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vfloat.vector.FloatSpeedVector;
@@ -62,27 +61,11 @@ public class TotalDelayReference extends AbstractIndicator<Duration>
                             REF_SPEED_TYPE.getId());
                     FloatSpeedVector refSpeed = trajectory.getExtendedData(REF_SPEED_TYPE);
                     float[] x = trajectory.getX();
-                    try
+                    for (int i = 1; i < refSpeed.size(); i++)
                     {
-                        for (int i = 1; i < refSpeed.size(); i++)
-                        {
-                            double refV;
-                            if (!Double.isNaN(refSpeed.get(i).si))
-                            {
-                                refV = refSpeed.get(i - 1).si;
-                            }
-                            else
-                            {
-                                refV = (refSpeed.get(i - 1).si + refSpeed.get(i).si) / 2.0;
-                            }
-                            double dx = x[i] - x[i - 1];
-                            sumRefTime = sumRefTime.plus(new Duration(dx / refV, DurationUnit.SI));
-                        }
-                    }
-                    catch (ValueRuntimeException exception)
-                    {
-                        // should not occur as we check the size of the vector
-                        throw new RuntimeException("Trying to obtain value outside of range.", exception);
+                        double refV = refSpeed.get(i - 1).si;
+                        double dx = x[i] - x[i - 1];
+                        sumRefTime = sumRefTime.plus(new Duration(dx / refV, DurationUnit.SI));
                     }
                     gtuTimes.put(trajectory.getGtuId(), sumTime.plus(trajectory.getTotalDuration()));
                     gtuRefTimes.put(trajectory.getGtuId(), sumRefTime);

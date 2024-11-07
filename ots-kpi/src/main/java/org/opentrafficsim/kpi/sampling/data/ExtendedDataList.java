@@ -67,7 +67,7 @@ public abstract class ExtendedDataList<T, G extends GtuData> extends ExtendedDat
     @Override
     public List<T> convert(final List<T> storage, final int size)
     {
-        return storage;
+        return storage.subList(0, size);
     }
 
 }

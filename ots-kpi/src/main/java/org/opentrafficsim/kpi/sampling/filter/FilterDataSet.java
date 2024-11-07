@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.djutils.exceptions.Throw;
@@ -80,6 +81,7 @@ public class FilterDataSet
     @SuppressWarnings("unchecked")
     public final <T> Set<T> get(final FilterDataType<T, ?> filterDataType)
     {
+        Throw.when(!contains(filterDataType), NoSuchElementException.class, "No data for FilterDataType %s", filterDataType);
         return (Set<T>) this.filterDataMap.get(filterDataType);
     }
 
@@ -115,7 +117,7 @@ public class FilterDataSet
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.filterDataMap == null) ? 0 : this.filterDataMap.hashCode());
+        result = prime * result + this.filterDataMap.hashCode();
         return result;
     }
 
@@ -135,14 +137,7 @@ public class FilterDataSet
             return false;
         }
         FilterDataSet other = (FilterDataSet) obj;
-        if (this.filterDataMap == null)
-        {
-            if (other.filterDataMap != null)
-            {
-                return false;
-            }
-        }
-        else if (!this.filterDataMap.equals(other.filterDataMap))
+        if (!this.filterDataMap.equals(other.filterDataMap))
         {
             return false;
         }

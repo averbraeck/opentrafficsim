@@ -60,7 +60,7 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
     {
         Throw.whenNull(startTime, "Start time may not be null.");
         // keep before position check; prevents "End position may not be null" due to missing direction in other constructor
-        Throw.whenNull(lane, "Lane direction time may not be null.");
+        Throw.whenNull(lane, "Lane time may not be null.");
         Throw.whenNull(startPosition, "Start position may not be null");
         Throw.whenNull(endPosition, "End position may not be null");
         Throw.when(startPosition.gt(endPosition), IllegalArgumentException.class,
@@ -140,7 +140,11 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
         TrajectoryGroup<G> out = new TrajectoryGroup<>(this.startTime, minLenght, maxLenght, this.lane);
         for (Trajectory<G> trajectory : this.trajectories)
         {
-            out.addTrajectory(trajectory.subSet(x0, x1));
+            Trajectory<G> sub = trajectory.subSet(x0, x1);
+            if (sub.size() > 0)
+            {
+                out.addTrajectory(sub);
+            }
         }
         return out;
     }
@@ -156,7 +160,11 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
         TrajectoryGroup<G> out = new TrajectoryGroup<>(this.startTime.lt(t0) ? t0 : this.startTime, this.lane);
         for (Trajectory<G> trajectory : this.trajectories)
         {
-            out.addTrajectory(trajectory.subSet(t0, t1));
+            Trajectory<G> sub = trajectory.subSet(t0, t1);
+            if (sub.size() > 0)
+            {
+                out.addTrajectory(sub);
+            }
         }
         return out;
     }
@@ -194,11 +202,11 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.lane == null) ? 0 : this.lane.hashCode());
-        result = prime * result + ((this.endPosition == null) ? 0 : this.endPosition.hashCode());
-        result = prime * result + ((this.startPosition == null) ? 0 : this.startPosition.hashCode());
-        result = prime * result + ((this.startTime == null) ? 0 : this.startTime.hashCode());
-        result = prime * result + ((this.trajectories == null) ? 0 : this.trajectories.hashCode());
+        result = prime * result + this.lane.hashCode();
+        result = prime * result + this.endPosition.hashCode();
+        result = prime * result + this.startPosition.hashCode();
+        result = prime * result + this.startTime.hashCode();
+        result = prime * result + this.trajectories.hashCode();
         return result;
     }
 
@@ -218,58 +226,23 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
             return false;
         }
         TrajectoryGroup<?> other = (TrajectoryGroup<?>) obj;
-        if (this.lane == null)
-        {
-            if (other.lane != null)
-            {
-                return false;
-            }
-        }
-        else if (!this.lane.equals(other.lane))
+        if (!this.lane.equals(other.lane))
         {
             return false;
         }
-        if (this.endPosition == null)
-        {
-            if (other.endPosition != null)
-            {
-                return false;
-            }
-        }
-        else if (!this.endPosition.equals(other.endPosition))
+        if (!this.endPosition.equals(other.endPosition))
         {
             return false;
         }
-        if (this.startPosition == null)
-        {
-            if (other.startPosition != null)
-            {
-                return false;
-            }
-        }
-        else if (!this.startPosition.equals(other.startPosition))
+        if (!this.startPosition.equals(other.startPosition))
         {
             return false;
         }
-        if (this.startTime == null)
-        {
-            if (other.startTime != null)
-            {
-                return false;
-            }
-        }
-        else if (!this.startTime.equals(other.startTime))
+        if (!this.startTime.equals(other.startTime))
         {
             return false;
         }
-        if (this.trajectories == null)
-        {
-            if (other.trajectories != null)
-            {
-                return false;
-            }
-        }
-        else if (!this.trajectories.equals(other.trajectories))
+        if (!this.trajectories.equals(other.trajectories))
         {
             return false;
         }
@@ -280,7 +253,7 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
     public final String toString()
     {
         return "TrajectoryGroup [startTime=" + this.startTime + ", minLength=" + this.startPosition + ", maxLength="
-                + this.endPosition + ", laneDirection=" + this.lane + ", collected "
+                + this.endPosition + ", lane=" + this.lane + ", collected "
                 + (this.trajectories == null ? "null" : this.trajectories.size()) + " trajectories]";
     }
 

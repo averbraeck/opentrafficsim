@@ -80,7 +80,7 @@ public abstract class DataType<T, G extends GtuData> implements Identifiable
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+        result = prime * result + this.id.hashCode();
         return result;
     }
 
@@ -100,14 +100,7 @@ public abstract class DataType<T, G extends GtuData> implements Identifiable
             return false;
         }
         DataType<?, ?> other = (DataType<?, ?>) obj;
-        if (this.id == null)
-        {
-            if (other.id != null)
-            {
-                return false;
-            }
-        }
-        else if (!this.id.equals(other.id))
+        if (!this.id.equals(other.id))
         {
             return false;
         }

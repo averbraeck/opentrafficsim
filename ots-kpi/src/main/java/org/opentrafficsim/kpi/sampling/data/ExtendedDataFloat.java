@@ -42,7 +42,7 @@ public abstract class ExtendedDataFloat<U extends Unit<U>, T extends FloatScalar
         float[] out;
         if (i == storage.length)
         {
-            int cap = (i - 1) + ((i - 1) >> 1);
+            int cap = Math.max(10, (i - 1) + ((i - 1) >> 1));
             out = Arrays.copyOf(storage, cap);
         }
         else
@@ -91,6 +91,13 @@ public abstract class ExtendedDataFloat<U extends Unit<U>, T extends FloatScalar
         // cut array to size and delegate
         return convert(Arrays.copyOf(storage, size));
     }
+
+    /**
+     * {@inheritDoc}
+     * @param string stored string representation without unit
+     */
+    @Override
+    public abstract T parseValue(String string);
 
     /**
      * Convert float array to typed array.

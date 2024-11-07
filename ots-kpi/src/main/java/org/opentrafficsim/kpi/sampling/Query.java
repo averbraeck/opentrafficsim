@@ -70,48 +70,18 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
      */
     public Query(final Sampler<G, L> sampler, final String id, final String description, final FilterDataSet filterDataSet)
     {
-        this(sampler, description, filterDataSet, null, null);
-    }
-
-    /**
-     * Constructor with time interval.
-     * @param sampler sampler
-     * @param id id
-     * @param description description
-     * @param filterDataSet filter data
-     * @param interval interval to gather statistics over, used by external controller
-     * @throws NullPointerException if sampling, description or filterDataSet is null
-     */
-    public Query(final Sampler<G, L> sampler, final String id, final String description, final FilterDataSet filterDataSet,
-            final Duration interval)
-    {
-        this(sampler, id, description, filterDataSet, null, interval);
-    }
-
-    /**
-     * Constructor with update frequency.
-     * @param sampler sampler
-     * @param id id
-     * @param description description
-     * @param filterDataSet filter data
-     * @param updateFrequency update frequency, used by external controller
-     * @throws NullPointerException if sampling, description or filterDataSet is null
-     */
-    public Query(final Sampler<G, L> sampler, final String id, final String description, final FilterDataSet filterDataSet,
-            final Frequency updateFrequency)
-    {
-        this(sampler, id, description, filterDataSet, updateFrequency, null);
+        this(sampler, id, description, filterDataSet, null, null);
     }
 
     /**
      * Constructor with time interval and update frequency.
      * @param sampler sampler
-     * @param id id
+     * @param id id, may be {@code null}
      * @param description description
      * @param filterDataSet filter data
-     * @param updateFrequency update frequency, used by external controller
-     * @param interval interval to gather statistics over, used by external controller
-     * @throws NullPointerException if sampling, description or filterDataSet is null
+     * @param updateFrequency update frequency, used by external controller, may be {@code null}
+     * @param interval interval to gather statistics over, used by external controller, may be {@code null}
+     * @throws NullPointerException if sampling, description or filterDataSet is {@code null}
      */
     public Query(final Sampler<G, L> sampler, final String id, final String description, final FilterDataSet filterDataSet,
             final Frequency updateFrequency, final Duration interval)
@@ -125,61 +95,6 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
         this.description = description;
         this.updateFrequency = updateFrequency;
         this.interval = interval;
-    }
-
-    /**
-     * Constructor without id.
-     * @param sampler sampler
-     * @param description description
-     * @param filterDataSet filter data
-     * @throws NullPointerException if sampling, description or filterDataSet is null
-     */
-    public Query(final Sampler<G, L> sampler, final String description, final FilterDataSet filterDataSet)
-    {
-        this(sampler, null, description, filterDataSet, null, null);
-    }
-
-    /**
-     * Constructor without id, with time interval.
-     * @param sampler sampler
-     * @param description description
-     * @param filterDataSet filter data
-     * @param interval interval to gather statistics over, used by external controller
-     * @throws NullPointerException if sampling, description or filterDataSet is null
-     */
-    public Query(final Sampler<G, L> sampler, final String description, final FilterDataSet filterDataSet,
-            final Duration interval)
-    {
-        this(sampler, null, description, filterDataSet, null, interval);
-    }
-
-    /**
-     * Constructor without id, with time update frequency.
-     * @param sampler sampler
-     * @param description description
-     * @param filterDataSet filter data
-     * @param updateFrequency update frequency, used by external controller
-     * @throws NullPointerException if sampling, description or filterDataSet is null
-     */
-    public Query(final Sampler<G, L> sampler, final String description, final FilterDataSet filterDataSet,
-            final Frequency updateFrequency)
-    {
-        this(sampler, null, description, filterDataSet, updateFrequency, null);
-    }
-
-    /**
-     * Constructor without id, with time interval and update frequency.
-     * @param sampler sampler
-     * @param description description
-     * @param filterDataSet filter data
-     * @param updateFrequency update frequency, used by external controller
-     * @param interval interval to gather statistics over, used by external controller
-     * @throws NullPointerException if sampling, description or filterDataSet is null
-     */
-    public Query(final Sampler<G, L> sampler, final String description, final FilterDataSet filterDataSet,
-            final Frequency updateFrequency, final Duration interval)
-    {
-        this(sampler, null, description, filterDataSet, updateFrequency, interval);
     }
 
     @Override
@@ -390,7 +305,7 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
             for (Trajectory<G> trajectory : full.getTrajectories())
             {
                 String gtuId = trajectory.getGtuId();
-                if (trajectoryAcceptLists.get(gtuId).isAccepted(trajectory))
+                if (trajectory.size() > 0 && trajectoryAcceptLists.get(gtuId).isAccepted(trajectory))
                 {
                     filtered.addTrajectory(trajectory);
                 }
@@ -430,12 +345,12 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.description == null) ? 0 : this.description.hashCode());
+        result = prime * result + this.description.hashCode();
         result = prime * result + ((this.interval == null) ? 0 : this.interval.hashCode());
-        result = prime * result + ((this.filterDataSet == null) ? 0 : this.filterDataSet.hashCode());
-        result = prime * result + ((this.sampler == null) ? 0 : this.sampler.hashCode());
-        result = prime * result + ((this.spaceTimeRegions == null) ? 0 : this.spaceTimeRegions.hashCode());
-        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+        result = prime * result + this.filterDataSet.hashCode();
+        result = prime * result + this.sampler.hashCode();
+        result = prime * result + this.spaceTimeRegions.hashCode();
+        result = prime * result + this.id.hashCode();
         result = prime * result + ((this.updateFrequency == null) ? 0 : this.updateFrequency.hashCode());
         return result;
     }
@@ -456,14 +371,7 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
             return false;
         }
         Query<?, ?> other = (Query<?, ?>) obj;
-        if (this.description == null)
-        {
-            if (other.description != null)
-            {
-                return false;
-            }
-        }
-        else if (!this.description.equals(other.description))
+        if (!this.description.equals(other.description))
         {
             return false;
         }
@@ -478,47 +386,19 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
         {
             return false;
         }
-        if (this.filterDataSet == null)
-        {
-            if (other.filterDataSet != null)
-            {
-                return false;
-            }
-        }
-        else if (!this.filterDataSet.equals(other.filterDataSet))
+        if (!this.filterDataSet.equals(other.filterDataSet))
         {
             return false;
         }
-        if (this.sampler == null)
-        {
-            if (other.sampler != null)
-            {
-                return false;
-            }
-        }
-        else if (!this.sampler.equals(other.sampler))
+        if (!this.sampler.equals(other.sampler))
         {
             return false;
         }
-        if (this.spaceTimeRegions == null)
-        {
-            if (other.spaceTimeRegions != null)
-            {
-                return false;
-            }
-        }
-        else if (!this.spaceTimeRegions.equals(other.spaceTimeRegions))
+        if (!this.spaceTimeRegions.equals(other.spaceTimeRegions))
         {
             return false;
         }
-        if (this.id == null)
-        {
-            if (other.id != null)
-            {
-                return false;
-            }
-        }
-        else if (!this.id.equals(other.id))
+        if (!this.id.equals(other.id))
         {
             return false;
         }

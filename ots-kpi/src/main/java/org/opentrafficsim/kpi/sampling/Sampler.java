@@ -43,8 +43,8 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
     /** Registration of current trajectories of each GTU per lane. */
     private final Map<String, Map<L, Trajectory<G>>> trajectoryPerGtu = new LinkedHashMap<>();
 
-    /** End times of active samplings. */
-    private final Map<L, Time> endTimes = new LinkedHashMap<>();
+    /** Number of space time regions that currently need data (i.e. overlap counter). */
+    private final Map<L, Integer> currentlyRecording = new LinkedHashMap<>();
 
     /**
      * Constructor.
@@ -99,17 +99,8 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
         Throw.when(spaceTimeRegion.startTime().lt(firstPossibleDataTime), IllegalStateException.class,
                 "Space time region with start time %s is defined while data is available from %s onwards.",
                 spaceTimeRegion.startTime(), firstPossibleDataTime);
-        if (this.samplerData.contains(spaceTimeRegion.lane()))
-        {
-            this.endTimes.put(spaceTimeRegion.lane(),
-                    Time.max(this.endTimes.get(spaceTimeRegion.lane()), spaceTimeRegion.endTime()));
-        }
-        else
-        {
-            this.endTimes.put(spaceTimeRegion.lane(), spaceTimeRegion.endTime());
-            scheduleStartRecording(spaceTimeRegion.startTime(), spaceTimeRegion.lane());
-        }
-        scheduleStopRecording(this.endTimes.get(spaceTimeRegion.lane()), spaceTimeRegion.lane());
+        scheduleStartRecording(spaceTimeRegion.startTime(), spaceTimeRegion.lane());
+        scheduleStopRecording(spaceTimeRegion.endTime(), spaceTimeRegion.lane());
     }
 
     /**
@@ -143,11 +134,16 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
     public final void startRecording(final L lane)
     {
         Throw.whenNull(lane, "LaneData may not be null.");
-        if (this.samplerData.contains(lane))
+        if (this.currentlyRecording.containsKey(lane))
         {
+            this.currentlyRecording.compute(lane, (l, i) -> i + 1);
             return;
         }
-        this.samplerData.putTrajectoryGroup(lane, new TrajectoryGroup<>(now(), lane));
+        this.currentlyRecording.put(lane, 0);
+        if (!this.samplerData.contains(lane))
+        {
+            this.samplerData.putTrajectoryGroup(lane, new TrajectoryGroup<>(now(), lane));
+        }
         initRecording(lane);
     }
 
@@ -164,10 +160,16 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
     public final void stopRecording(final L lane)
     {
         Throw.whenNull(lane, "LaneData may not be null.");
-        if (!this.samplerData.contains(lane) || this.endTimes.get(lane).gt(now()))
+        if (!this.currentlyRecording.containsKey(lane))
         {
+            return; // wrong invocation; ignore
+        }
+        if (this.currentlyRecording.get(lane) > 0)
+        {
+            this.currentlyRecording.compute(lane, (l, i) -> i - 1);
             return;
         }
+        this.currentlyRecording.remove(lane);
         finalizeRecording(lane);
     }
 
@@ -210,7 +212,7 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
         Throw.whenNull(lane, "LaneData may not be null.");
         Throw.whenNull(gtu, "GtuData may not be null.");
         String gtuId = gtu.getId();
-        Trajectory<G> trajectory = new Trajectory<G>(gtu, makeFilterData(gtu), this.extendedDataTypes, lane);
+        Trajectory<G> trajectory = new Trajectory<G>(gtu, makeFilterData(gtu), this.extendedDataTypes);
         this.trajectoryPerGtu.computeIfAbsent(gtuId, (key) -> new LinkedHashMap<>()).put(lane, trajectory);
         this.samplerData.getTrajectoryGroup(lane).addTrajectory(trajectory);
     }

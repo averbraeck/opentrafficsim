@@ -39,7 +39,7 @@ public abstract class AbstractIndicator<T extends DoubleScalar<?, ?>>
     /**
      * Get value for given query over time interval, returning earlier calculated value if possible. This method uses
      * {@code Time.ZERO} as start time.
-     * @param query query
+     * @param query query, only used to check whether earlier calculated value can be returned
      * @param endTime start time of interval to calculate indicator over
      * @param trajectoryGroups group of trajectories to calculate the indicator for
      * @param <G> GTU data type
@@ -53,7 +53,7 @@ public abstract class AbstractIndicator<T extends DoubleScalar<?, ?>>
 
     /**
      * Get value for given query over time interval, returning earlier calculated value if possible.
-     * @param query query
+     * @param query query, only used to check whether earlier calculated value can be returned
      * @param startTime start time of interval to calculate indicator over
      * @param endTime start time of interval to calculate indicator over
      * @param trajectoryGroups group of trajectories to calculate the indicator for
