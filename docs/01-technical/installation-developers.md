@@ -38,33 +38,9 @@ For **Debian / Ubuntu** versions of Linux, use the command `sudo apt install ope
 For **CentOS / RedHat** versions of Linux, use the command `sudo yum install java-17-openjdk-devel` or `sudo dnf install java-17-openjdk-devel` to install OpenJDK version 17. If you want to know which java installations are available on CentOS / RedHat, type: `yum search jdk` or `dnf search jdk`, and choose the one you want to install.
 
 
-## 3. Prepare instrumentation for unit tests (only when you use Java 21 or higher)
+## 3. Clone the git for opentrafficsim into Eclipse
 
-The unit tests for opentrafficsim use [mockito](https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html) to mock classes for the tests. In Java 21 and higher, the mockito agent has to be explicitly announced as an instrumentation agent on the command line of the JVM that executes the unit tests using the `-javaagent` argument. Therefore, we have to indicate in the Eclipse preferences that our java execution needs to use this VM argument. Note that Maven takes care of attaching the agent in the automatic deployment and installation of versions; when running unit tests manually from Eclipse, however, we have to tell Eclipse to do the same.
-
-The `-javaagent`  VM setting should **only** be used for a JRE/JDK version 21 or higher. The setting that can be used is:
-
-```
--javaagent:"${env_var:HOME}"/.m2/repository/org/mockito/mockito-core/5.14.2/mockito-core-5.14.2.jar
-```
-
-The `"${env_var:HOME}"` takes care of linking to the home directory of the user. The quotes handle possible spaces in the path. If you do not have a `HOME` environment variable, encode the path to your `.m2/repository` folder using the complete path yourself.
-
-The setting can be applied in Eclipse through: `Window - Preferences - Java - Installed JREs`. In the Installed JREs, choose every compiler that is Java 21 or higher one-by-one, and press 'Edit':
-
-![](../images/01-technical/javaagent-001.png)
-
-Here, add the above VM argument:
-
-![](../images/01-technical/javaagent-002.png)
-
-Press `Finish` and `Apply and Close` to save the result. Now, all runs with JDK-21 in this project will attach the mockito agent when executing unit tests and coverage tests on any of the projects or classes in the entire project. 
-
-
-
-## 4. Clone the git for opentrafficsim into Eclipse
-
-### 4.1. Start Eclipse and make a workspace
+### 3.1. Start Eclipse and make a workspace
 
 When you start Eclipse, indicate the workspace location. In this case the workspace is stored in E:\java\opentrafficsim\workspace (Windows). But it can also be in c:\users\[username]\eclipse\opentrafficsim (Widows), or fir instance in ~[username]/eclipse/opentrafficsim (on Linux). Note that the name of the folder is free to choose. It can be "opentrafficsim", "opentrafficsim/workspace", "ots" or whatever you prefer.
 
@@ -85,7 +61,7 @@ The "perspective" we see is shown with a square icon at the top right. For the e
 Of course it is possible that the Eclipse distribution that you chose already shows the Java perspective, In that case, leave it as-is. If you want, you can remove the "enterprise edition" perspective, but you can also leave it. 
 
 
-### 4.2. Clone the opentrafficsim git from github into your project
+### 3.2. Clone the opentrafficsim git from github into your project
 
 Choose 'File - Import - Git - Projects from Git' from the menu bar:
 
@@ -138,7 +114,7 @@ If all has been cleared, you can see and edit all files, and push changes to git
 ![](../images/01-technical/install-developer-015.png)
 
 
-### 4.3. Preparing git to commit, push and pull changes
+### 3.3. Preparing git to commit, push and pull changes
 
 A simple git staging screen can be opened to help committing changes to the local git, and pushing changes to github. To do this, open the "Git staging" view with "Window - Show View - Other - Git - Git Staging":
 
@@ -163,6 +139,31 @@ Go to the "Action Set Availability" tab and choose "Git":
 The icons for, e.g., "Push", "Fetch", "Pull", "Commit" and "Merge" will now be visible in the top menu bar in the Java view:
 
 <center>![](../images/01-technical/install-developer-021.png)</center>
+
+
+
+## 4. Prepare instrumentation for unit tests (only when you use Java 21 or higher)
+
+The unit tests for opentrafficsim use [mockito](https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html) to mock classes for the tests. In Java 21 and higher, the mockito agent has to be explicitly announced as an instrumentation agent on the command line of the JVM that executes the unit tests using the `-javaagent` argument. Therefore, we have to indicate in the Eclipse preferences that our java execution needs to use this VM argument. Note that Maven takes care of attaching the agent in the automatic deployment and installation of versions; when running unit tests manually from Eclipse, however, we have to tell Eclipse to do the same.
+
+The `-javaagent`  VM setting should **only** be used for a JRE/JDK version 21 or higher. The setting that can be used is:
+
+```
+-javaagent:"${env_var:HOME}"/.m2/repository/org/mockito/mockito-core/5.14.2/mockito-core-5.14.2.jar
+```
+
+The `"${env_var:HOME}"` takes care of linking to the home directory of the user. The quotes handle possible spaces in the path. If you do not have a `HOME` environment variable, encode the path to your `.m2/repository` folder using the complete path yourself.
+
+The setting can be applied in Eclipse through: `Window - Preferences - Java - Installed JREs`. In the Installed JREs, choose every compiler that is Java 21 or higher one-by-one, and press 'Edit':
+
+![](../images/01-technical/javaagent-001.png)
+
+Here, add the above VM argument:
+
+![](../images/01-technical/javaagent-002.png)
+
+Press `Finish` and `Apply and Close` to save the result. Now, all runs with JDK-21 in this project will attach the mockito agent when executing unit tests and coverage tests on any of the projects or classes in the entire project. 
+
 
 
 ## 5. Using git
