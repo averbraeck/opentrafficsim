@@ -59,7 +59,7 @@
     <treetable.version>0.0.2</treetable.version>
 
     <junit.version>5.11.2</junit.version>
-    <mockito.version>5.14.1</mockito.version>
+    <mockito.version>5.14.2</mockito.version>
 
     <maven.compiler.version>3.13.0</maven.compiler.version>
     <maven.site.version>4.0.0-M16</maven.site.version>
@@ -550,7 +550,7 @@
         <configuration>
           <runOrder>alphabetical</runOrder>
           <!-- Sets the VM argument line used when unit tests are run. -->
-          <argLine>${surefireArgLine}</argLine>
+          <argLine>${surefireArgLine} -javaagent:"${settings.localRepository}"/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar</argLine>
           <!-- Skips unit tests if the value of skip.unit.tests property is true -->
           <skipTests>${skip.unit.tests}</skipTests>
           <!-- Excludes integration tests when unit tests are run. -->
