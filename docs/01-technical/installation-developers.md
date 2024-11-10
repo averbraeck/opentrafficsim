@@ -29,18 +29,42 @@ Of course it is possible to use another development environment such as Netbeans
 
 ## 2. Installing Java (optional -- you can use the Eclipse version)
 
-For **Windows**, install OpenJDK version 17 (an LTS = Long Term Support version). Download the zip for Java 17 at [https://jdk.java.net/archive/](https://jdk.java.net/archive/) for your operating system. You can install a later version of Java, but the current version of DSOL has been developed and tested with Java version 17. The best way to install Java is to unpack the Java zip in a folder without spaces in the folder name, e.g., C:\app\jdk17. Make sure to add Java to the current 'Path' (on Windows-10 go to Windows Settings - System - About and click 'Advanced Systems Settings' on the right. Click 'Environment Variables' in the 'Systems Properties' screen. Edit the 'Path' entry and add `C:\app\jdk17\bin` as an entry (adapt for your chosen location). You can move the entry to before 'C:\Windows\system32' to override a Java client in Windows. Add or modify an entry `JAVA_HOME` and set the value to `C:\app\jdk17` (adapt for your chosen location). You can test whether Java works by opening a Command prompt (CMD) and typing `java -version`. If Java responds with with version 17, the installation has succeeded.
+For **Windows**, install OpenJDK version 17 (an LTS = Long Term Support version). Download the zip for Java 17 at [https://jdk.java.net/archive/](https://jdk.java.net/archive/) for your operating system. You can install a later version of Java, but the current version of OTS has been developed and tested with Java version 17. The best way to install Java is to unpack the Java zip in a folder without spaces in the folder name, e.g., C:\app\jdk17. Make sure to add Java to the current 'Path' (on Windows-10 go to Windows Settings - System - About and click 'Advanced Systems Settings' on the right. Click 'Environment Variables' in the 'Systems Properties' screen. Edit the 'Path' entry and add `C:\app\jdk17\bin` as an entry (adapt for your chosen location). You can move the entry to before 'C:\Windows\system32' to override a Java client in Windows. Add or modify an entry `JAVA_HOME` and set the value to `C:\app\jdk17` (adapt for your chosen location). You can test whether Java works by opening a Command prompt (CMD) and typing `java -version`. If Java responds with with version 17, the installation has succeeded.
 
 For **MacOS**, install OpenJDK version 17, e.g., using the following instruction: [https://stackoverflow.com/questions/69875335/macos-how-to-install-java-17](https://stackoverflow.com/questions/69875335/macos-how-to-install-java-17).
 
-For **Debian / Ubuntu** versions of Linux, use the command `sudo apt install openjdk-17-jdk` to install OpenJDK version 11. 
+For **Debian / Ubuntu** versions of Linux, use the command `sudo apt install openjdk-17-jdk` to install OpenJDK version 17. 
 
 For **CentOS / RedHat** versions of Linux, use the command `sudo yum install java-17-openjdk-devel` or `sudo dnf install java-17-openjdk-devel` to install OpenJDK version 17. If you want to know which java installations are available on CentOS / RedHat, type: `yum search jdk` or `dnf search jdk`, and choose the one you want to install.
 
 
-## 3. Clone the git for opentrafficsim into Eclipse
+## 3. Prepare instrumentation for unit tests (only when you use Java 21 or higher)
 
-### 3.1. Start Eclipse and make a workspace
+The unit tests for opentrafficsim use [mockito](https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html) to mock classes for the tests. In Java 21 and higher, the mockito agent has to be explicitly announced as an instrumentation agent on the command line of the JVM that executes the unit tests using the `-javaagent` argument. Therefore, we have to indicate in the Eclipse preferences that our java execution needs to use this VM argument. Note that Maven takes care of attaching the agent in the automatic deployment and installation of versions; when running unit tests manually from Eclipse, however, we have to tell Eclipse to do the same.
+
+The `-javaagent`  VM setting should **only** be used for a JRE/JDK version 21 or higher. The setting that can be used is:
+
+```
+-javaagent:"${env_var:HOME}"/.m2/repository/org/mockito/mockito-core/5.14.2/mockito-core-5.14.2.jar
+```
+
+The `"${env_var:HOME}"` takes care of linking to the home directory of the user. The quotes handle possible spaces in the path. If you do not have a `HOME` environment variable, encode the path to your `.m2/repository` folder using the complete path yourself.
+
+The setting can be applied in Eclipse through: `Window - Preferences - Java - Installed JREs`. In the Installed JREs, choose every compiler that is Java 21 or higher one-by-one, and press 'Edit':
+
+![](../images/01-technical/javaagent-001.png)
+
+Here, add the above VM argument:
+
+![](../images/01-technical/javaagent-002.png)
+
+Press `Finish` and `Apply and Close` to save the result. Now, all runs with JDK-21 in this project will attach the mockito agent when executing unit tests and coverage tests on any of the projects or classes in the entire project. 
+
+
+
+## 4. Clone the git for opentrafficsim into Eclipse
+
+### 4.1. Start Eclipse and make a workspace
 
 When you start Eclipse, indicate the workspace location. In this case the workspace is stored in E:\java\opentrafficsim\workspace (Windows). But it can also be in c:\users\[username]\eclipse\opentrafficsim (Widows), or fir instance in ~[username]/eclipse/opentrafficsim (on Linux). Note that the name of the folder is free to choose. It can be "opentrafficsim", "opentrafficsim/workspace", "ots" or whatever you prefer.
 
@@ -61,7 +85,7 @@ The "perspective" we see is shown with a square icon at the top right. For the e
 Of course it is possible that the Eclipse distribution that you chose already shows the Java perspective, In that case, leave it as-is. If you want, you can remove the "enterprise edition" perspective, but you can also leave it. 
 
 
-### 3.2. Clone the opentrafficsim git from github into your project
+### 4.2. Clone the opentrafficsim git from github into your project
 
 Choose 'File - Import - Git - Projects from Git' from the menu bar:
 
@@ -114,7 +138,7 @@ If all has been cleared, you can see and edit all files, and push changes to git
 ![](../images/01-technical/install-developer-015.png)
 
 
-### 3.3. Preparing git to commit, push and pull changes
+### 4.3. Preparing git to commit, push and pull changes
 
 A simple git staging screen can be opened to help committing changes to the local git, and pushing changes to github. To do this, open the "Git staging" view with "Window - Show View - Other - Git - Git Staging":
 
@@ -141,7 +165,7 @@ The icons for, e.g., "Push", "Fetch", "Pull", "Commit" and "Merge" will now be v
 <center>![](../images/01-technical/install-developer-021.png)</center>
 
 
-## 4. Using git
+## 5. Using git
 
 This is not a git manual. Git has many options, e.g., to develop code in branches that can shield the sometimes messy development for the "master" branch, and the merge the development branch in the end with the master branch (or abandon the development branch). There are many tutorials available how to use git.
 
@@ -166,7 +190,7 @@ After you pushed to github, you get a confirmation screen about the committed ch
 In case there have been others who made changes in the meantime, you get an error message, and you cannot push the head until you fetched the changes from others, and resolved potential conflicts. For conflict resolution and merging, see more extensive git documentation online.
 
 
-## 5. Github Personal Access Token is needed to push to github
+## 6. Github Personal Access Token is needed to push to github
 
 Github does not allow to push updates from a remote computer using the standard github password. Instead, a so-called 'Personal Access Token' is needed that enables a push to github. Other developer features can be allowed / disallowed with a personal access token as well. Read more about this in [https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) and about fine-grained access tokens (new) in [https://github.blog/2022-10-18-introducing-fine-grained-personal-access-tokens-for-github/](https://github.blog/2022-10-18-introducing-fine-grained-personal-access-tokens-for-github/). 
 
@@ -192,7 +216,4 @@ repo     Full control of private repositories
 - For the rest, there is no need to tick any other options since we don't use these options *from Eclipse*. 
 - Press '**Generate token**', and use this token **as the password** in Eclipse to access the Git. You use this with your GitHub login name as the usename. So the token *replaces* your GitHub password.
 - Store the token in a vault or secure place, since you will need it for other projects where you want to push code to one of your github projects.
-
-
-
 
