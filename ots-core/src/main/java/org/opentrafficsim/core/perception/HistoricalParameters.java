@@ -18,7 +18,7 @@ import org.opentrafficsim.core.perception.HistoricalParameters.ParameterValueSet
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, ParameterEvent> implements Parameters
+public class HistoricalParameters extends AbstractHistorical<ParameterValueSet<?>, ParameterEvent> implements Parameters
 {
 
     /** Current parameter set. */
@@ -104,73 +104,26 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
         this.params.setAllIn(parameters);
     }
 
+    @Override
+    public String toString()
+    {
+        return "HistoricalParameters [params=" + this.params + "]";
+    }
+
     /**
      * Value for a parameter event, which contains a parameter type and (the previous) value.
-     * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * @param <T> type of parameter
+     * @param parameter parameter
+     * @param value parameter value
      */
-    public static class ParameterValueSet
+    record ParameterValueSet<T>(ParameterType<T> parameter, T value)
     {
-
-        /** Parameter type. */
-        private final ParameterType<?> parameter;
-
-        /** Previous parameter value. */
-        private final Object value;
-
-        /**
-         * @param parameter parameter
-         * @param value parameter value
-         * @param <T> parameter value type
-         */
-        public <T> ParameterValueSet(final ParameterType<T> parameter, final T value)
-        {
-            this.value = value;
-            this.parameter = parameter;
-        }
-
-        /**
-         * @return value.
-         */
-        public Object getValue()
-        {
-            return this.value;
-        }
-
-        /**
-         * @return parameter.
-         */
-        public ParameterType<?> getParameter()
-        {
-            return this.parameter;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "ParameterValueSet [parameter=" + this.parameter + ", value=" + this.value + "]";
-        }
-
     }
 
     /**
      * Parameter event, which will restore the previous value.
-     * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public static class ParameterEvent extends AbstractHistorical.EventValue<ParameterValueSet> // import is removed
+    public static class ParameterEvent extends AbstractHistorical.EventValue<ParameterValueSet<?>> // import is removed
     {
 
         /**
@@ -182,7 +135,7 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
          */
         public <T> ParameterEvent(final double time, final ParameterType<T> parameterType, final Parameters parameters)
         {
-            super(time, new ParameterValueSet(parameterType, parameters.getParameterOrNull(parameterType)));
+            super(time, new ParameterValueSet<T>(parameterType, parameters.getParameterOrNull(parameterType)));
         }
 
         /**
@@ -195,7 +148,7 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
         {
             try
             {
-                parameters.setParameter((ParameterType<T>) getValue().getParameter(), (T) getValue().getValue());
+                parameters.setParameter((ParameterType<T>) getValue().parameter(), (T) getValue().value());
             }
             catch (ParameterException exception)
             {
@@ -207,15 +160,9 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet, 
         @Override
         public String toString()
         {
-            return "ParameterEvent []";
+            return "ParameterEvent [time=" + getTime() + ", value=" + getValue() + "]";
         }
 
-    }
-
-    @Override
-    public String toString()
-    {
-        return "HistoricalParameters [params=" + this.params + "]";
     }
 
 }

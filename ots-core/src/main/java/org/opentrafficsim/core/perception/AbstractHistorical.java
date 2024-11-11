@@ -51,6 +51,13 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
     /** List of events to determine the value at a previous time. */
     private final List<E> events = new ArrayList<>();
 
+    /*
+     * Implementation note: the getEvents() method has to make a List copy of the events. This is about as efficient, if not
+     * more efficient, as using a NavigableMap from which to obtain a subset of events. This is due to the fact that multiple
+     * events can happen at the same time. Therefore the key that is sorted would need to be a record containing time and a
+     * sequence number. This overhead diminishes any gain.
+     */
+
     /**
      * Constructor.
      * @param historyManager history manager
