@@ -41,7 +41,6 @@ public class LaneType extends GtuCompatibleInfraType<LaneType, Lane>
     }
 
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
         return "LaneType [id=" + this.getId() + ", compatibilitySet=" + getGtuCompatibility() + "]";

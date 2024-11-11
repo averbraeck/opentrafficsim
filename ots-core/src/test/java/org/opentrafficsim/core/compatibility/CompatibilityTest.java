@@ -22,8 +22,8 @@ public class CompatibilityTest
     {
         InfraType root = new InfraType("root");
         InfraType sub1 = new InfraType("sub1", root);
-        InfraType sub2 = new InfraType("sub1", sub1);
-        GtuCompatibility<InfraType> gc = new GtuCompatibility<>(root);
+        new InfraType("sub1", sub1);
+        new GtuCompatibility<>(root);
     }
 
     /** Infra belonging to InfraType. */
@@ -40,6 +40,9 @@ public class CompatibilityTest
     /** InfraType as a hierarchical type. */
     static class InfraType extends GtuCompatibleInfraType<InfraType, Infra>
     {
+        /** */
+        private static final long serialVersionUID = 20241108L;
+
         /**
          * Instantiate an infrastructure type.
          * @param id the id
