@@ -87,7 +87,7 @@ public class LengthBeginEndType extends ExpressionType<LengthBeginEnd>
         }
 
         /**
-         * Returns whether this is from the begin
+         * Returns whether this is from the begin.
          * @return begin
          */
         public final boolean isBegin()
@@ -137,6 +137,7 @@ public class LengthBeginEndType extends ExpressionType<LengthBeginEnd>
         }
 
         @Override
+        @SuppressWarnings("needbraces")
         public boolean equals(final Object obj)
         {
             if (this == obj)

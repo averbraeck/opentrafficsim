@@ -40,7 +40,7 @@ public class GraphicsTypeType extends ExpressionType<GraphicsType>
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public static enum GraphicsType
+    public enum GraphicsType
     {
         /** Portable network graphics. */
         PNG,

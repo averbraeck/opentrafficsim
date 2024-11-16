@@ -40,7 +40,7 @@ public class EncodingType extends ExpressionType<Encoding>
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public static enum Encoding
+    public enum Encoding
     {
         /** Base 64. */
         BASE64
