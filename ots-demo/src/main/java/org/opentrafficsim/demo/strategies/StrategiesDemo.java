@@ -100,7 +100,7 @@ import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
-import org.opentrafficsim.road.network.lane.Stripe.Type;
+import org.opentrafficsim.road.network.lane.Stripe.StripeType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel.DemoPanelPosition;
@@ -517,12 +517,12 @@ public class StrategiesDemo extends AbstractSimulationScript
                 new ContinuousArc(new OrientedPoint2d(radius, 0.0, Math.PI / 2), radius, true, Angle.instantiateSI(Math.PI));
         List<Lane> lanes1 = new LaneFactory(network, nodeB, nodeA, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPRIGHT,
                 DefaultsNl.VEHICLE, half1).leftToRight(0.0, Length.instantiateSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit)
-                        .addLanes(Type.DASHED).getLanes();
+                        .addLanes(StripeType.DASHED).getLanes();
         ContinuousArc half2 =
                 new ContinuousArc(new OrientedPoint2d(-radius, 0.0, -Math.PI / 2), radius, true, Angle.instantiateSI(Math.PI));
         List<Lane> lanes2 = new LaneFactory(network, nodeA, nodeB, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPRIGHT,
                 DefaultsNl.VEHICLE, half2).leftToRight(0.0, Length.instantiateSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit)
-                        .addLanes(Type.DASHED).getLanes();
+                        .addLanes(StripeType.DASHED).getLanes();
 
         // Strategical factories
         PerceptionFactory perceptionFactory = new LmrsStrategiesPerceptionFactory();

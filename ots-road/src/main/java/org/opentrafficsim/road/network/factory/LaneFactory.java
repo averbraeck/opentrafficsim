@@ -38,7 +38,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Stripe;
-import org.opentrafficsim.road.network.lane.Stripe.Type;
+import org.opentrafficsim.road.network.lane.Stripe.StripeType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 /**
@@ -176,13 +176,13 @@ public final class LaneFactory
         this.laneWidth0 = laneWidth.neg();
         this.laneType0 = laneType;
         this.speedLimit0 = speedLimit;
-        Length width = getWidth(Type.SOLID);
+        Length width = StripeType.SOLID.width();
         List<CrossSectionSlice> slices = LaneGeometryUtil.getSlices(this.line, this.offset.plus(this.offsetStart), width);
         PolyLine2d centerLine = this.line.flattenOffset(LaneGeometryUtil.getCenterOffsets(this.line, slices), SEGMENTS);
         PolyLine2d leftEdge = this.line.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(this.line, slices), SEGMENTS);
         PolyLine2d rightEdge = this.line.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(this.line, slices), SEGMENTS);
         Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
-        this.firstStripe = Try.assign(() -> new Stripe(Type.SOLID, this.link, new OtsLine2d(centerLine), contour, slices),
+        this.firstStripe = Try.assign(() -> new Stripe(StripeType.SOLID, this.link, new OtsLine2d(centerLine), contour, slices),
                 "Unexpected exception while building link.");
         return this;
     }
@@ -202,13 +202,13 @@ public final class LaneFactory
         this.laneWidth0 = laneWidth;
         this.laneType0 = laneType;
         this.speedLimit0 = speedLimit;
-        Length width = getWidth(Type.SOLID);
+        Length width = StripeType.SOLID.width();
         List<CrossSectionSlice> slices = LaneGeometryUtil.getSlices(this.line, this.offset.plus(this.offsetStart), width);
         PolyLine2d centerLine = this.line.flattenOffset(LaneGeometryUtil.getCenterOffsets(this.line, slices), SEGMENTS);
         PolyLine2d leftEdge = this.line.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(this.line, slices), SEGMENTS);
         PolyLine2d rightEdge = this.line.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(this.line, slices), SEGMENTS);
         Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
-        this.firstStripe = Try.assign(() -> new Stripe(Type.SOLID, this.link, new OtsLine2d(centerLine), contour, slices),
+        this.firstStripe = Try.assign(() -> new Stripe(StripeType.SOLID, this.link, new OtsLine2d(centerLine), contour, slices),
                 "Unexpected exception while building link.");
         return this;
     }
@@ -243,7 +243,7 @@ public final class LaneFactory
      * @param types type per lane pair, for N lanes N-1 should be provided
      * @return this LaneFactory this lane factory for method chaining
      */
-    public LaneFactory addLanes(final Type... types)
+    public LaneFactory addLanes(final StripeType... types)
     {
         return addLanes(new ArrayList<>(), types);
     }
@@ -258,12 +258,12 @@ public final class LaneFactory
      * @param types type per lane pair, for N lanes N-1 should be provided
      * @return this LaneFactory this lane factory for method chaining
      */
-    public LaneFactory addLanes(final List<? super Stripe> stripeList, final Type... types)
+    public LaneFactory addLanes(final List<? super Stripe> stripeList, final StripeType... types)
     {
         stripeList.add(this.firstStripe);
-        List<Type> typeList = new ArrayList<>(Arrays.asList(types));
-        typeList.add(Type.SOLID);
-        for (Type type : typeList)
+        List<StripeType> typeList = new ArrayList<>(Arrays.asList(types));
+        typeList.add(StripeType.SOLID);
+        for (StripeType type : typeList)
         {
             Length startOffset = this.offset.plus(this.laneWidth0.times(0.5)).plus(this.offsetStart);
             Length endOffset = this.offset.plus(this.laneWidth0.times(0.5)).plus(this.offsetEnd);
@@ -281,7 +281,7 @@ public final class LaneFactory
                     "Unexpected exception while building link."));
             this.offset = this.offset.plus(this.laneWidth0);
 
-            Length width = getWidth(type);
+            Length width = type.width();
             startOffset = this.offset.plus(this.offsetStart);
             endOffset = this.offset.plus(this.offsetEnd);
             List<CrossSectionSlice> slices2 = LaneGeometryUtil.getSlices(this.line, startOffset, endOffset, width, width);
@@ -293,29 +293,6 @@ public final class LaneFactory
                     "Unexpected exception while building link."));
         }
         return this;
-    }
-
-    /**
-     * Return width to use for different stripe types.
-     * @param type stripe type.
-     * @return width.
-     */
-    private Length getWidth(final Type type)
-    {
-        switch (type)
-        {
-            case DASHED:
-            case SOLID:
-                return Length.instantiateSI(0.2);
-            case LEFT:
-            case RIGHT:
-            case DOUBLE:
-                return Length.instantiateSI(0.6);
-            case BLOCK:
-                return Length.instantiateSI(0.45);
-            default:
-                return Length.instantiateSI(0.2);
-        }
     }
 
     /**

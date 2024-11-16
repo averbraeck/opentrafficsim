@@ -22,7 +22,7 @@ import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.Stripe.Type;
+import org.opentrafficsim.road.network.lane.Stripe.StripeType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.swing.script.AbstractSimulationScript;
 
@@ -77,9 +77,9 @@ public class SimpleSimulation extends AbstractSimulationScript
                 Map.of(car, new Speed(120, SpeedUnit.KM_PER_HOUR)));
         LaneGeometryUtil.createStraightLane(link, "Right", Length.instantiateSI(-1.75), Length.instantiateSI(3.5), freewayLane,
                 Map.of(car, new Speed(120, SpeedUnit.KM_PER_HOUR)));
-        LaneGeometryUtil.createStraightStripe(Type.SOLID, link, Length.instantiateSI(3.5), Length.instantiateSI(0.2));
-        LaneGeometryUtil.createStraightStripe(Type.DASHED, link, Length.instantiateSI(0.0), Length.instantiateSI(0.2));
-        LaneGeometryUtil.createStraightStripe(Type.SOLID, link, Length.instantiateSI(-3.5), Length.instantiateSI(0.2));
+        LaneGeometryUtil.createStraightStripe(StripeType.SOLID, link, Length.instantiateSI(3.5), Length.instantiateSI(0.2));
+        LaneGeometryUtil.createStraightStripe(StripeType.DASHED, link, Length.instantiateSI(0.0), Length.instantiateSI(0.2));
+        LaneGeometryUtil.createStraightStripe(StripeType.SOLID, link, Length.instantiateSI(-3.5), Length.instantiateSI(0.2));
         return network;
     }
 

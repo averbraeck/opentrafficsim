@@ -1,6 +1,9 @@
 package org.opentrafficsim.animation.data;
 
+import java.util.List;
+
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.vector.LengthVector;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
@@ -40,9 +43,15 @@ public class AnimationStripeData extends AnimationCrossSectionElementData<Stripe
     }
 
     @Override
-    public Type getType()
+    public List<LengthVector> getDashes()
     {
-        return Type.valueOf(getElement().getType().name());
+        return getElement().getDashes();
+    }
+
+    @Override
+    public Length getDashOffset()
+    {
+        return getElement().getDashOffset();
     }
 
     @Override
@@ -52,9 +61,9 @@ public class AnimationStripeData extends AnimationCrossSectionElementData<Stripe
     }
 
     @Override
-    public Length getWidth()
+    public Length getWidth(final Length location)
     {
-        return getElement().getWidth(0.5);
+        return getElement().getWidth(location);
     }
 
     @Override

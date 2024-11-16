@@ -1448,8 +1448,10 @@
           <xsd:enumeration value="DASHED" />
           <xsd:enumeration value=":" />
           <xsd:enumeration value="BLOCK" />
-          <xsd:enumeration value="DOUBLE" />
+          <xsd:enumeration value="DOUBLE_SOLID" />
           <xsd:enumeration value="||" />
+          <xsd:enumeration value="DOUBLE_DASHED" />
+          <xsd:enumeration value="::" />
           <xsd:enumeration value="LEFT" />
           <xsd:enumeration value="|:" />
           <xsd:enumeration value="RIGHT" />

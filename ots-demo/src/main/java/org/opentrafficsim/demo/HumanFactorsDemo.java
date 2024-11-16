@@ -393,7 +393,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             CrossSectionSlice slice =
                     new CrossSectionSlice(Length.instantiateSI(0.0), Length.instantiateSI(3.5), Length.instantiateSI(0.2));
             OtsLine2d offset = centerLine.offsetLine(slice.getOffset().si);
-            new Stripe(Stripe.Type.SOLID, link, offset, getContour(offset, slice.getWidth().si), List.of(slice));
+            new Stripe(Stripe.StripeType.SOLID, link, offset, getContour(offset, slice.getWidth().si), List.of(slice));
 
             slice = new CrossSectionSlice(Length.instantiateSI(0.0), Length.instantiateSI(1.75), Length.instantiateSI(3.5));
             offset = centerLine.offsetLine(slice.getOffset().si);
@@ -402,7 +402,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
 
             slice = new CrossSectionSlice(Length.instantiateSI(0.0), Length.instantiateSI(0.0), Length.instantiateSI(0.2));
             offset = centerLine.offsetLine(slice.getOffset().si);
-            new Stripe(Stripe.Type.DASHED, link, offset, getContour(offset, slice.getWidth().si), List.of(slice));
+            new Stripe(Stripe.StripeType.DASHED, link, offset, getContour(offset, slice.getWidth().si), List.of(slice));
 
             slice = new CrossSectionSlice(Length.instantiateSI(0.0), Length.instantiateSI(-1.75), Length.instantiateSI(3.5));
             offset = centerLine.offsetLine(slice.getOffset().si);
@@ -411,7 +411,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
 
             slice = new CrossSectionSlice(Length.instantiateSI(0.0), Length.instantiateSI(-3.5), Length.instantiateSI(0.2));
             offset = centerLine.offsetLine(slice.getOffset().si);
-            new Stripe(Stripe.Type.SOLID, link, offset, getContour(offset, slice.getWidth().si), List.of(slice));
+            new Stripe(Stripe.StripeType.SOLID, link, offset, getContour(offset, slice.getWidth().si), List.of(slice));
 
             // Add distraction halfway on the network, 0.3 on left lane, 0.2 on right lane, with distance profile
             new Distraction("distractionLeft", left, Length.instantiateSI(1500.0), new TrapezoidProfile(0.3,

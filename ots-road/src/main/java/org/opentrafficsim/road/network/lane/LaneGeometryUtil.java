@@ -16,7 +16,7 @@ import org.opentrafficsim.core.geometry.ContinuousStraight;
 import org.opentrafficsim.core.geometry.FractionalLengthData;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.road.network.lane.Stripe.Type;
+import org.opentrafficsim.road.network.lane.Stripe.StripeType;
 
 /**
  * This class is an extension (conceptually, not an actual java extension) of {@code OtsGeometryUtil}. This utility has access
@@ -206,7 +206,7 @@ public class LaneGeometryUtil
      * @param width end width.
      * @return lane.
      */
-    public static Stripe createStraightStripe(final Type type, final CrossSectionLink link, final Length offset,
+    public static Stripe createStraightStripe(final StripeType type, final CrossSectionLink link, final Length offset,
             final Length width)
     {
         ContinuousLine designLine = new ContinuousStraight(

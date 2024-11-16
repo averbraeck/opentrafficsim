@@ -1,22 +1,27 @@
 package org.opentrafficsim.road.network.lane;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
-import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.vector.LengthVector;
+import org.djutils.base.Identifiable;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.Type;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 
 /**
+ * Stripe road marking.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -31,16 +36,25 @@ public class Stripe extends CrossSectionElement
     private static final long serialVersionUID = 20141025L;
 
     /** Type of the stripe, defining default permeability. */
-    private final Type type;
+    private final StripeType type;
 
-    /** Type to overrule the normal type, e.g. rush-hour lanes without changing the appearance of the stripe. */
-    private Type overruleType;
+    /** Left permeability. */
+    private boolean left;
+
+    /** Right permeability. */
+    private boolean right;
 
     /** Lateral permeability per GTU type and direction. */
     private final Map<GtuType, Set<LateralDirectionality>> permeabilityMap = new LinkedHashMap<>();
 
+    /** Dashes of the stripe. The first length is a gap, than a dash, etc. {@code null} means no dashes. */
+    private List<LengthVector> dashes;
+
+    /** Longitudinal offset of dashes. */
+    private Length dashOffset = Length.ZERO;
+
     /**
-     * Constructor specifying geometry.
+     * Constructor specifying geometry. Permeability is set according to the stripe type default.
      * @param type stripe type defining appearance and default permeability.
      * @param link link.
      * @param centerLine center line.
@@ -48,54 +62,47 @@ public class Stripe extends CrossSectionElement
      * @param crossSectionSlices cross-section slices.
      * @throws NetworkException when no cross-section slice is defined.
      */
-    public Stripe(final Type type, final CrossSectionLink link, final OtsLine2d centerLine, final Polygon2d contour,
+    public Stripe(final StripeType type, final CrossSectionLink link, final OtsLine2d centerLine, final Polygon2d contour,
             final List<CrossSectionSlice> crossSectionSlices) throws NetworkException
     {
         super(link, UUID.randomUUID().toString(), centerLine, contour, crossSectionSlices);
         Throw.whenNull(type, "Type may not be null.");
         this.type = type;
+        this.left = type.left();
+        this.right = type.right();
+        this.dashes = type.dashes();
     }
 
     /**
      * Returns the stripe type.
      * @return stripe type.
      */
-    public Type getType()
+    public StripeType getType()
     {
         return this.type;
     }
 
     /**
-     * Sets an overruling stripe type. This can be used for e.g. rush-hour lanes, without changing the appearance of the stripe.
-     * Note that custom set permeabilities (addPermeability()) remain active.
-     * @param overruleType overruling stripe type.
+     * Set left permeability, overruling the stripe type default.
+     * @param permeability permeability
      */
-    public void setOverruleType(final Type overruleType)
+    public void setLeftPermeability(final boolean permeability)
     {
-        this.overruleType = overruleType;
+        this.left = permeability;
     }
 
     /**
-     * Clears the overrule type, after which the normal type will hold.
+     * Set right permeability, overruling the stripe type default.
+     * @param permeability permeability
      */
-    public void clearOverruleType()
+    public void setRightPermeability(final boolean permeability)
     {
-        this.overruleType = null;
+        this.right = permeability;
     }
 
     /**
-     * Returns the currently active stripe type.
-     * @return the currently active stripe type.
-     */
-    private Type activeType()
-    {
-        return this.overruleType == null ? this.type : this.overruleType;
-    }
-
-    /**
-     * Add lateral permeability for a GTU type in the direction of the design line of the overarching CrossSectionLink. Add NONE
-     * to prevent lane changes relative to the stripe type. Add LEFT or RIGHT, or both in two calls, to enable lane changes
-     * relative to the stripe type.
+     * Add lateral permeability for a GTU type. This overrules permeability based on the stripe type, and those set regardless
+     * of GTU type. Add NONE to prevent lane changes. Add LEFT or RIGHT, or both in two calls, to enable lane changes.
      * @param gtuType GTU type to add permeability for.
      * @param lateralDirection direction to add compared to the direction of the design line.
      */
@@ -126,97 +133,114 @@ public class Stripe extends CrossSectionElement
                 return set.contains(lateralDirection);
             }
         }
-        return lateralDirection.isLeft() ? activeType().left() : activeType().right;
+        return lateralDirection.isLeft() ? this.left : this.right;
     }
 
     /**
-     * Defines the visible type of the stripe, and the standard permeability that pertains to it.
-     * <p>
-     * Copyright (c) 2022-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * Set dashes of the stripe, overruling the default dashes of the stripe type. Each vector in the list defines a line, e.g.
+     * for a double line. The first length is a gap, than a dash, etc. {@code null} means no dashes for the line.
+     * @param dashes dashes, use {@code null} for no dashes.
      */
-    public enum Type
+    public void setDashes(final List<LengthVector> dashes)
     {
+        Throw.whenNull(dashes, "dashes");
+        this.dashes = dashes;
+    }
+
+    /**
+     * Return the dashes. The first length is a gap, than a dash, etc. {@code null} means no dashes.
+     * @return dashes
+     */
+    public List<LengthVector> getDashes()
+    {
+        return this.dashes;
+    }
+
+    /**
+     * Set the dash offset.
+     * @param dashOffset dash offset
+     */
+    public void setDashOffset(final Length dashOffset)
+    {
+        this.dashOffset = dashOffset;
+    }
+
+    /**
+     * Get the dash offset.
+     * @return dash offset
+     */
+    public Length getDashOffset()
+    {
+        return this.dashOffset;
+    }
+
+    /**
+     * Stripe type defines the default permeability, width and dashes.
+     * @param id id
+     * @param left left lane change allowed by default
+     * @param right right lane change allowed by default
+     * @param width default width
+     * @param dashes list of default dashes, use {@code null} in the list for a solid line
+     */
+    public record StripeType(String id, boolean left, boolean right, Length width, List<LengthVector> dashes)
+            implements Type<StripeType>, Identifiable
+    {
+        // NOTE: Do NOT use List.of(...) with null values, the class then cannot be loaded due to a NullPointerException during
+        // loading of the class, as List.of(...) creates an immutable list that does not allow null values.
+
         /** Single solid line. */
-        SOLID(false, false),
+        public static final StripeType SOLID =
+                new StripeType("SOLID", false, false, Length.instantiateSI(0.2), Arrays.asList((LengthVector) null));
 
         /** Line |¦ allow to go to left, but not to right. */
-        LEFT(true, false, new Length(60.0, LengthUnit.CENTIMETER)),
+        public static final StripeType LEFT = new StripeType("LEFT", true, false, Length.instantiateSI(0.6),
+                Arrays.asList(null, new LengthVector(new double[] {9, 3})));
 
         /** Line ¦| allow to go to right, but not to left. */
-        RIGHT(false, true, new Length(60.0, LengthUnit.CENTIMETER)),
+        public static final StripeType RIGHT = new StripeType("RIGHT", false, true, Length.instantiateSI(0.6),
+                Arrays.asList(new LengthVector(new double[] {9, 3}), null));
 
         /** Dashes ¦ allow to cross in both directions. */
-        DASHED(true, true),
+        public static final StripeType DASHED = new StripeType("DASHED", true, true, Length.instantiateSI(0.2),
+                List.of(new LengthVector(new double[] {9, 3})));
 
         /** Double solid line ||, don't cross. */
-        DOUBLE(false, false, new Length(60.0, LengthUnit.CENTIMETER)),
+        public static final StripeType DOUBLE_SOLID =
+                new StripeType("DOUBLE_SOLID", false, false, Length.instantiateSI(0.6), Arrays.asList(null, null));
+
+        /** Double dashed line ¦¦, don't cross. */
+        public static final StripeType DOUBLE_DASH =
+                new StripeType("DOUBLE_DASH", true, true, Length.instantiateSI(0.6),
+                        List.of(new LengthVector(new double[] {9, 3}), new LengthVector(new double[] {9, 3})));
 
         /** Block : allow to cross in both directions. */
-        BLOCK(true, true, new Length(40.0, LengthUnit.CENTIMETER));
+        public static final StripeType BLOCK = new StripeType("BLOCK", true, true, Length.instantiateSI(0.4),
+                List.of(new LengthVector(new double[] {3, 1})));
 
-        /** Left permeable. */
-        private final boolean left;
-
-        /** Right permeable. */
-        private final boolean right;
-
-        /** Default width. */
-        private final Length defaultWidth;
-
-        /**
-         * Constructor setting permeability.
-         * @param left left permeability.
-         * @param right right permeability.
-         */
-        Type(final boolean left, final boolean right)
+        @Override
+        public String getId()
         {
-            this(left, right, new Length(20.0, LengthUnit.CENTIMETER));
+            return this.id;
         }
 
-        /**
-         * Constructor setting permeability.
-         * @param left left permeability.
-         * @param right right permeability.
-         * @param defaultWidth default width.
-         */
-        Type(final boolean left, final boolean right, final Length defaultWidth)
+        @Override
+        public int hashCode()
         {
-            this.left = left;
-            this.right = right;
-            this.defaultWidth = defaultWidth;
+            return Objects.hash(this.id);
         }
 
-        /**
-         * Returns the left permeability.
-         * @return left permeability.
-         */
-        public boolean left()
+        @Override
+        @SuppressWarnings("needbraces")
+        public boolean equals(final Object obj)
         {
-            return this.left;
-        }
-
-        /**
-         * Returns the right permeability.
-         * @return right permeability.
-         */
-        public boolean right()
-        {
-            return this.right;
-        }
-
-        /**
-         * Returns the default width.
-         * @return default width.
-         */
-        public Length defaultWidth()
-        {
-            return this.defaultWidth;
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            StripeType other = (StripeType) obj;
+            return Objects.equals(this.id, other.id);
         }
     }
 

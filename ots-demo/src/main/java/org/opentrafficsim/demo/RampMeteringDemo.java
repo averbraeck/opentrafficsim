@@ -113,7 +113,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Stripe;
-import org.opentrafficsim.road.network.lane.Stripe.Type;
+import org.opentrafficsim.road.network.lane.Stripe.StripeType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.object.detector.LoopDetector;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -283,13 +283,14 @@ public class RampMeteringDemo extends AbstractSimulationScript
         Speed speedLimit = new Speed(120, SpeedUnit.KM_PER_HOUR);
         Speed rampSpeedLimit = new Speed(70, SpeedUnit.KM_PER_HOUR);
         List<Lane> lanesAB = new LaneFactory(network, nodeA, nodeB, freeway, sim, policy, DefaultsNl.VEHICLE)
-                .leftToRight(1.0, laneWidth, freewayLane, speedLimit).addLanes(Type.DASHED).getLanes();
+                .leftToRight(1.0, laneWidth, freewayLane, speedLimit).addLanes(StripeType.DASHED).getLanes();
         List<Stripe> stripes = new ArrayList<>();
         List<Lane> lanesBC = new LaneFactory(network, nodeB, nodeC, freeway, sim, policy, DefaultsNl.VEHICLE)
-                .leftToRight(1.0, laneWidth, freewayLane, speedLimit).addLanes(stripes, Type.DASHED, Type.BLOCK).getLanes();
+                .leftToRight(1.0, laneWidth, freewayLane, speedLimit).addLanes(stripes, StripeType.DASHED, StripeType.BLOCK)
+                .getLanes();
         stripes.get(2).addPermeability(car, LateralDirectionality.LEFT); // prevent right lane changes over block stripe
         List<Lane> lanesCD = new LaneFactory(network, nodeC, nodeD, freeway, sim, policy, DefaultsNl.VEHICLE)
-                .leftToRight(1.0, laneWidth, freewayLane, speedLimit).addLanes(Type.DASHED).getLanes();
+                .leftToRight(1.0, laneWidth, freewayLane, speedLimit).addLanes(StripeType.DASHED).getLanes();
         List<Lane> lanesEF = new LaneFactory(network, nodeE, nodeF, freeway, sim, policy, DefaultsNl.VEHICLE)
                 .setOffsetEnd(laneWidth.times(1.5).neg()).leftToRight(0.5, laneWidth, freewayLane, rampSpeedLimit).addLanes()
                 .getLanes();

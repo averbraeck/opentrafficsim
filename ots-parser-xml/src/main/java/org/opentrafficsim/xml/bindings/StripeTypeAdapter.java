@@ -1,9 +1,9 @@
 package org.opentrafficsim.xml.bindings;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 
 import org.djutils.logger.CategoryLogger;
-import org.opentrafficsim.road.network.lane.Stripe.Type;
 import org.opentrafficsim.xml.bindings.types.StripeType;
 
 /**
@@ -15,12 +15,12 @@ import org.opentrafficsim.xml.bindings.types.StripeType;
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class StripeTypeAdapter extends ExpressionAdapter<Type, StripeType>
+public class StripeTypeAdapter extends ExpressionAdapter<org.opentrafficsim.road.network.lane.Stripe.StripeType, StripeType>
 {
 
     /** Dictionary. */
-    private final static Map<String, String> DICTIONARY =
-            Map.of("|", "SOLID", ":", "DASHED", "||", "DOUBLE", "|:", "LEFT", ":|", "RIGHT");
+    private static final Map<String, String> DICTIONARY =
+            Map.of("|", "SOLID", ":", "DASHED", "||", "DOUBLE_SOLID", "::", "DOUBLE_DASHED", "|:", "LEFT", ":|", "RIGHT");
 
     @Override
     public StripeType unmarshal(final String field) throws IllegalArgumentException
@@ -33,7 +33,10 @@ public class StripeTypeAdapter extends ExpressionAdapter<Type, StripeType>
         {
             String clean = field.replaceAll("\\s", "");
             clean = DICTIONARY.getOrDefault(clean, clean);
-            return new StripeType(Type.valueOf(clean));
+            Field f = org.opentrafficsim.road.network.lane.Stripe.StripeType.class.getField(clean);
+            org.opentrafficsim.road.network.lane.Stripe.StripeType st =
+                    (org.opentrafficsim.road.network.lane.Stripe.StripeType) f.get(null);
+            return new StripeType(st);
         }
         catch (Exception exception)
         {

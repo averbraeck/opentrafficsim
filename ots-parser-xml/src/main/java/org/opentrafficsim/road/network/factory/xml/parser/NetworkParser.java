@@ -58,7 +58,7 @@ import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
-import org.opentrafficsim.road.network.lane.Stripe.Type;
+import org.opentrafficsim.road.network.lane.Stripe.StripeType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder.FixedWidthGenerator;
@@ -496,8 +496,8 @@ public final class NetworkParser
             final Length startOffset, final Length endOffset, final CseStripe stripeTag,
             final List<CrossSectionElement> cseList, final Eval eval) throws NetworkException, XmlParserException
     {
-        Type type = stripeTag.getType().get(eval);
-        Length width = stripeTag.getDrawingWidth() != null ? stripeTag.getDrawingWidth().get(eval) : type.defaultWidth();
+        StripeType type = stripeTag.getType().get(eval);
+        Length width = stripeTag.getDrawingWidth() != null ? stripeTag.getDrawingWidth().get(eval) : type.width();
         List<CrossSectionSlice> slices = LaneGeometryUtil.getSlices(designLine, startOffset, endOffset, width, width);
 
         PolyLine2d centerLine = designLine.flattenOffset(LaneGeometryUtil.getCenterOffsets(designLine, slices), flattener);

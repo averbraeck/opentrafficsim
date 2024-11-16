@@ -8,7 +8,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.road.network.lane.Stripe;
+import org.opentrafficsim.road.network.lane.Stripe.StripeType;
 import org.opentrafficsim.xml.bindings.AngleAdapter;
 import org.opentrafficsim.xml.bindings.ArcDirectionAdapter;
 import org.opentrafficsim.xml.bindings.BooleanAdapter;
@@ -54,7 +54,7 @@ public final class Adapters
         ADAPTERS.put(LinearDensity.class, new LinearDensityAdapter());
         ADAPTERS.put(Point2d.class, new Point2dAdapter());
         ADAPTERS.put(String.class, new StringAdapter());
-        ADAPTERS.put(Stripe.Type.class, new StripeTypeAdapter());
+        ADAPTERS.put(StripeType.class, new StripeTypeAdapter());
     }
 
     /**
