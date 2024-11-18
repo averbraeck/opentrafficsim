@@ -18,7 +18,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.draw.line.Polygon2d;
 import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
@@ -28,8 +27,6 @@ import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.HierarchicallyTyped;
-import org.opentrafficsim.base.geometry.SpatialObject;
-import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -189,20 +186,17 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Constructor specifying geometry.
-     * @param link link.
-     * @param id the id of this lane within the link; should be unique within the link.
-     * @param centerLine center line.
-     * @param contour contour shape.
-     * @param crossSectionSlices cross-section slices.
-     * @param laneType lane type.
-     * @param speedLimitMap the speed limit on this lane, specified per GTU Type.
-     * @throws NetworkException when no cross-section slice is defined.
+     * @param link link
+     * @param id the id of this lane within the link; should be unique within the link
+     * @param geometry geometry
+     * @param laneType lane type
+     * @param speedLimitMap the speed limit on this lane, specified per GTU Type
+     * @throws NetworkException when no cross-section slice is defined
      */
-    public Lane(final CrossSectionLink link, final String id, final OtsLine2d centerLine, final Polygon2d contour,
-            final List<CrossSectionSlice> crossSectionSlices, final LaneType laneType, final Map<GtuType, Speed> speedLimitMap)
-            throws NetworkException
+    public Lane(final CrossSectionLink link, final String id, final CrossSectionGeometry geometry, final LaneType laneType,
+            final Map<GtuType, Speed> speedLimitMap) throws NetworkException
     {
-        super(link, id, centerLine, contour, crossSectionSlices);
+        super(link, id, geometry);
         this.laneType = laneType;
         this.speedLimitMap.putAll(speedLimitMap);
         this.gtuList = new HistoricalArrayList<>(getManager(link));

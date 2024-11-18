@@ -179,27 +179,9 @@ public class LaneTest implements UNITS
         OtsLine2d centerLine = new OtsLine2d(new Point2d(0.0, 0.0), new Point2d(100.0, 0.0));
         Polygon2d contour = new Polygon2d(new Point2d(0.0, -1.75), new Point2d(100.0, -1.75), new Point2d(100.0, 1.75),
                 new Point2d(0.0, -1.75));
-        try
-        {
-            new Lane(link, "lanex", centerLine, contour, null, laneType, speedMap);
-            fail("null pointer for CrossSectionSlices should have thrown a NullPointerException");
-        }
-        catch (NullPointerException npe)
-        {
-            // Ignore expected exception
-        }
         List<CrossSectionSlice> crossSectionSlices = new ArrayList<>();
-        try
-        {
-            new Lane(link, "lanex", centerLine, contour, crossSectionSlices, laneType, speedMap);
-            fail("empty CrossSectionSlices should have thrown a NetworkException");
-        }
-        catch (NetworkException ne)
-        {
-            // Ignore expected exception
-        }
         crossSectionSlices.add(new CrossSectionSlice(Length.ZERO, startLateralPos, startWidth));
-        lane = new Lane(link, "lanex", centerLine, contour, crossSectionSlices, laneType, speedMap);
+        lane = new Lane(link, "lanex", new CrossSectionGeometry(centerLine, contour, crossSectionSlices), laneType, speedMap);
         sensorTest(lane);
     }
 

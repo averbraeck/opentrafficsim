@@ -8,6 +8,7 @@ import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.road.network.lane.CrossSectionGeometry;
 import org.opentrafficsim.road.network.lane.SliceInfo;
 
 /**
@@ -27,34 +28,28 @@ public class MapCrossSectionData implements CrossSectionElementData
     /** Location. */
     private final OrientedPoint2d location;
 
-    /** Contour. */
-    private final Polygon2d contour;
+    /** Geometry. */
+    private final CrossSectionGeometry geometry;
 
-    /** Center line. */
-    protected final PolyLine2d centerLine;
+    /** Slice info. */
+    private final SliceInfo sliceInfo;
 
     /** Shape (cached). */
     private OtsShape shape;
 
-    /** Slice info. */
-    private SliceInfo sliceInfo;
-
     /**
      * Constructor.
-     * @param linkNode node representing the element.
-     * @param centerLine center line.
-     * @param contour contour.
-     * @param sliceInfo slice info.
+     * @param linkNode node representing the element
+     * @param geometry geometry
+     * @param linkLength link length
      */
-    public MapCrossSectionData(final XsdTreeNode linkNode, final PolyLine2d centerLine, final Polygon2d contour,
-            final SliceInfo sliceInfo)
+    public MapCrossSectionData(final XsdTreeNode linkNode, final CrossSectionGeometry geometry, final Length linkLength)
     {
         this.linkNode = linkNode;
-        Ray2d ray = centerLine.getLocationFractionExtended(0.5);
+        Ray2d ray = geometry.centerLine().getLocationFractionExtended(0.5);
         this.location = new OrientedPoint2d(ray.x, ray.y, ray.phi);
-        this.centerLine = centerLine;
-        this.contour = contour;
-        this.sliceInfo = sliceInfo;
+        this.geometry = geometry;
+        this.sliceInfo = new SliceInfo(geometry.slices(), linkLength);
     }
 
     @Override
@@ -66,7 +61,7 @@ public class MapCrossSectionData implements CrossSectionElementData
     @Override
     public Polygon2d getContour()
     {
-        return this.contour;
+        return this.geometry.contour();
     }
 
     @Override
@@ -82,7 +77,7 @@ public class MapCrossSectionData implements CrossSectionElementData
     @Override
     public PolyLine2d getCenterLine()
     {
-        return this.centerLine;
+        return this.geometry.centerLine();
     }
 
     /**
@@ -102,7 +97,7 @@ public class MapCrossSectionData implements CrossSectionElementData
      */
     public Length getWidth(final Length position)
     {
-        return this.sliceInfo.getWidth(position.si / this.centerLine.getLength());
+        return this.sliceInfo.getWidth(position.si / this.geometry.centerLine().getLength());
     }
 
     @Override

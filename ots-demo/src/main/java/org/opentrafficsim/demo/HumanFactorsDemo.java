@@ -106,6 +106,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.RoadNetwork;
+import org.opentrafficsim.road.network.lane.CrossSectionGeometry;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.CrossSectionSlice;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -393,25 +394,30 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             CrossSectionSlice slice =
                     new CrossSectionSlice(Length.instantiateSI(0.0), Length.instantiateSI(3.5), Length.instantiateSI(0.2));
             OtsLine2d offset = centerLine.offsetLine(slice.getOffset().si);
-            new Stripe(Stripe.StripeType.SOLID, link, offset, getContour(offset, slice.getWidth().si), List.of(slice));
+            new Stripe(Stripe.StripeType.SOLID, link,
+                    new CrossSectionGeometry(offset, getContour(offset, slice.getWidth().si), List.of(slice)));
 
             slice = new CrossSectionSlice(Length.instantiateSI(0.0), Length.instantiateSI(1.75), Length.instantiateSI(3.5));
             offset = centerLine.offsetLine(slice.getOffset().si);
-            Lane left = new Lane(link, "LEFT", offset, getContour(offset, slice.getWidth().si), List.of(slice),
+            Lane left = new Lane(link, "LEFT",
+                    new CrossSectionGeometry(offset, getContour(offset, slice.getWidth().si), List.of(slice)),
                     DefaultsRoadNl.HIGHWAY, speedLimit);
 
             slice = new CrossSectionSlice(Length.instantiateSI(0.0), Length.instantiateSI(0.0), Length.instantiateSI(0.2));
             offset = centerLine.offsetLine(slice.getOffset().si);
-            new Stripe(Stripe.StripeType.DASHED, link, offset, getContour(offset, slice.getWidth().si), List.of(slice));
+            new Stripe(Stripe.StripeType.DASHED, link,
+                    new CrossSectionGeometry(offset, getContour(offset, slice.getWidth().si), List.of(slice)));
 
             slice = new CrossSectionSlice(Length.instantiateSI(0.0), Length.instantiateSI(-1.75), Length.instantiateSI(3.5));
             offset = centerLine.offsetLine(slice.getOffset().si);
-            Lane right = new Lane(link, "RIGHT", offset, getContour(offset, slice.getWidth().si), List.of(slice),
+            Lane right = new Lane(link, "RIGHT",
+                    new CrossSectionGeometry(offset, getContour(offset, slice.getWidth().si), List.of(slice)),
                     DefaultsRoadNl.HIGHWAY, speedLimit);
 
             slice = new CrossSectionSlice(Length.instantiateSI(0.0), Length.instantiateSI(-3.5), Length.instantiateSI(0.2));
             offset = centerLine.offsetLine(slice.getOffset().si);
-            new Stripe(Stripe.StripeType.SOLID, link, offset, getContour(offset, slice.getWidth().si), List.of(slice));
+            new Stripe(Stripe.StripeType.SOLID, link,
+                    new CrossSectionGeometry(offset, getContour(offset, slice.getWidth().si), List.of(slice)));
 
             // Add distraction halfway on the network, 0.3 on left lane, 0.2 on right lane, with distance profile
             new Distraction("distractionLeft", left, Length.instantiateSI(1500.0), new TrapezoidProfile(0.3,

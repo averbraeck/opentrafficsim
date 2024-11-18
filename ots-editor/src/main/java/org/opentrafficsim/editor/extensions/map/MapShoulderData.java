@@ -1,11 +1,9 @@
 package org.opentrafficsim.editor.extensions.map;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.line.Polygon2d;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.ShoulderData;
 import org.opentrafficsim.editor.XsdTreeNode;
-import org.opentrafficsim.road.network.lane.SliceInfo;
+import org.opentrafficsim.road.network.lane.CrossSectionGeometry;
 
 /**
  * Shoulder data for in the editor. Implements {@code ShoulderData} additionally to extending {@code EditorCrossSectionData}.
@@ -25,14 +23,13 @@ public class MapShoulderData extends MapCrossSectionData implements ShoulderData
      * Constructor.
      * @param startOffset start offset.
      * @param linkNode node representing the element.
-     * @param centerLine center line.
-     * @param contour contour.
-     * @param sliceInfo slice info.
+     * @param geometry geometry
+     * @param linkLength link length
      */
-    public MapShoulderData(final Length startOffset, final XsdTreeNode linkNode, final PolyLine2d centerLine,
-            final Polygon2d contour, final SliceInfo sliceInfo)
+    public MapShoulderData(final Length startOffset, final XsdTreeNode linkNode, final CrossSectionGeometry geometry,
+            final Length linkLength)
     {
-        super(linkNode, centerLine, contour, sliceInfo);
+        super(linkNode, geometry, linkLength);
         this.startOffset = startOffset;
     }
 

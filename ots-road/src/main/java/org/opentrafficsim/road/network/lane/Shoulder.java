@@ -1,12 +1,9 @@
 package org.opentrafficsim.road.network.lane;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djutils.draw.line.Polygon2d;
-import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -29,18 +26,16 @@ public class Shoulder extends Lane
 
     /**
      * Constructor specifying geometry.
-     * @param link link.
-     * @param id the id of this lane within the link; should be unique within the link.
-     * @param centerLine center line.
-     * @param contour contour shape.
-     * @param crossSectionSlices cross-section slices.
-     * @param laneType lane type.
-     * @throws NetworkException when no cross-section slice is defined.
+     * @param link link
+     * @param id the id of this lane within the link; should be unique within the link
+     * @param geometry geometry
+     * @param laneType lane type
+     * @throws NetworkException when no cross-section slice is defined
      */
-    public Shoulder(final CrossSectionLink link, final String id, final OtsLine2d centerLine, final Polygon2d contour,
-            final List<CrossSectionSlice> crossSectionSlices, final LaneType laneType) throws NetworkException
+    public Shoulder(final CrossSectionLink link, final String id, final CrossSectionGeometry geometry, final LaneType laneType)
+            throws NetworkException
     {
-        super(link, id, centerLine, contour, crossSectionSlices, laneType, new LinkedHashMap<>());
+        super(link, id, geometry, laneType, new LinkedHashMap<>());
     }
 
     /**

@@ -10,8 +10,6 @@ import javax.naming.NamingException;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
@@ -32,6 +30,7 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.network.RoadNetwork;
+import org.opentrafficsim.road.network.lane.CrossSectionGeometry;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.CrossSectionSlice;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -178,12 +177,9 @@ public final class LaneFactory
         this.speedLimit0 = speedLimit;
         Length width = StripeType.SOLID.width();
         List<CrossSectionSlice> slices = LaneGeometryUtil.getSlices(this.line, this.offset.plus(this.offsetStart), width);
-        PolyLine2d centerLine = this.line.flattenOffset(LaneGeometryUtil.getCenterOffsets(this.line, slices), SEGMENTS);
-        PolyLine2d leftEdge = this.line.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(this.line, slices), SEGMENTS);
-        PolyLine2d rightEdge = this.line.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(this.line, slices), SEGMENTS);
-        Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
-        this.firstStripe = Try.assign(() -> new Stripe(StripeType.SOLID, this.link, new OtsLine2d(centerLine), contour, slices),
-                "Unexpected exception while building link.");
+        this.firstStripe =
+                Try.assign(() -> new Stripe(StripeType.SOLID, this.link, CrossSectionGeometry.of(this.line, SEGMENTS, slices)),
+                        "Unexpected exception while building link.");
         return this;
     }
 
@@ -204,12 +200,9 @@ public final class LaneFactory
         this.speedLimit0 = speedLimit;
         Length width = StripeType.SOLID.width();
         List<CrossSectionSlice> slices = LaneGeometryUtil.getSlices(this.line, this.offset.plus(this.offsetStart), width);
-        PolyLine2d centerLine = this.line.flattenOffset(LaneGeometryUtil.getCenterOffsets(this.line, slices), SEGMENTS);
-        PolyLine2d leftEdge = this.line.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(this.line, slices), SEGMENTS);
-        PolyLine2d rightEdge = this.line.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(this.line, slices), SEGMENTS);
-        Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
-        this.firstStripe = Try.assign(() -> new Stripe(StripeType.SOLID, this.link, new OtsLine2d(centerLine), contour, slices),
-                "Unexpected exception while building link.");
+        this.firstStripe =
+                Try.assign(() -> new Stripe(StripeType.SOLID, this.link, CrossSectionGeometry.of(this.line, SEGMENTS, slices)),
+                        "Unexpected exception while building link.");
         return this;
     }
 
@@ -270,26 +263,16 @@ public final class LaneFactory
 
             List<CrossSectionSlice> slices =
                     LaneGeometryUtil.getSlices(this.line, startOffset, endOffset, this.laneWidth0.abs(), this.laneWidth0.abs());
-            PolyLine2d centerLine = this.line.flattenOffset(LaneGeometryUtil.getCenterOffsets(this.line, slices), SEGMENTS);
-            PolyLine2d leftEdge = this.line.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(this.line, slices), SEGMENTS);
-            PolyLine2d rightEdge = this.line.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(this.line, slices), SEGMENTS);
-            Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
-
-            this.lanes.add(Try.assign(
-                    () -> new Lane(this.link, "Lane " + (this.lanes.size() + 1), new OtsLine2d(centerLine), contour, slices,
-                            this.laneType0, Map.of(this.gtuType, this.speedLimit0)),
-                    "Unexpected exception while building link."));
+            this.lanes.add(Try.assign(() -> new Lane(this.link, "Lane " + (this.lanes.size() + 1),
+                    CrossSectionGeometry.of(this.line, SEGMENTS, slices), this.laneType0,
+                    Map.of(this.gtuType, this.speedLimit0)), "Unexpected exception while building link."));
             this.offset = this.offset.plus(this.laneWidth0);
 
             Length width = type.width();
             startOffset = this.offset.plus(this.offsetStart);
             endOffset = this.offset.plus(this.offsetEnd);
             List<CrossSectionSlice> slices2 = LaneGeometryUtil.getSlices(this.line, startOffset, endOffset, width, width);
-            PolyLine2d centerLine2 = this.line.flattenOffset(LaneGeometryUtil.getCenterOffsets(this.line, slices2), SEGMENTS);
-            leftEdge = this.line.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(this.line, slices2), SEGMENTS);
-            rightEdge = this.line.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(this.line, slices2), SEGMENTS);
-            Polygon2d contour2 = LaneGeometryUtil.getContour(leftEdge, rightEdge);
-            stripeList.add(Try.assign(() -> new Stripe(type, this.link, new OtsLine2d(centerLine2), contour2, slices2),
+            stripeList.add(Try.assign(() -> new Stripe(type, this.link, CrossSectionGeometry.of(this.line, SEGMENTS, slices2)),
                     "Unexpected exception while building link."));
         }
         return this;
@@ -407,16 +390,7 @@ public final class LaneFactory
         List<CrossSectionSlice> slices = new ArrayList<>();
         slices.add(new CrossSectionSlice(Length.ZERO, latPosAtStart, width));
         slices.add(new CrossSectionSlice(link.getLength(), latPosAtEnd, width));
-        PolyLine2d center = line.flattenOffset(LaneGeometryUtil.getCenterOffsets(line, slices), SEGMENTS);
-        PolyLine2d left = line.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(line, slices), SEGMENTS);
-        PolyLine2d right = line.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(line, slices), SEGMENTS);
-
-        List<Point2d> points = new ArrayList<>();
-        left.getPoints().forEachRemaining(points::add);
-        right.reverse().getPoints().forEachRemaining(points::add);
-        Polygon2d contour = new Polygon2d(points);
-
-        return new Lane(link, id, new OtsLine2d(center), contour, slices, laneType, Map.of(gtuType, speedLimit));
+        return new Lane(link, id, CrossSectionGeometry.of(line, SEGMENTS, slices), laneType, Map.of(gtuType, speedLimit));
     }
 
     /**
@@ -564,12 +538,8 @@ public final class LaneFactory
             Length latPosAtStart = new Length(-laneIndex * width.getSI(), LengthUnit.SI);
             Length latPosAtEnd = new Length(-laneIndex * width.getSI(), LengthUnit.SI);
             List<CrossSectionSlice> slices = LaneGeometryUtil.getSlices(designLine, latPosAtStart, latPosAtEnd, width, width);
-            PolyLine2d centerLine = designLine.flattenOffset(LaneGeometryUtil.getCenterOffsets(designLine, slices), SEGMENTS);
-            PolyLine2d leftEdge = designLine.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(designLine, slices), SEGMENTS);
-            PolyLine2d rightEdge = designLine.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(designLine, slices), SEGMENTS);
-            Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
-            result[laneIndex] = new Lane(link, "lane." + laneIndex, new OtsLine2d(centerLine), contour, slices, laneType,
-                    Map.of(gtuType, speedLimit));
+            result[laneIndex] = new Lane(link, "lane." + laneIndex, CrossSectionGeometry.of(designLine, SEGMENTS, slices),
+                    laneType, Map.of(gtuType, speedLimit));
         }
         return result;
     }

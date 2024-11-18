@@ -14,7 +14,6 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.geometry.ContinuousLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
 import org.opentrafficsim.core.geometry.FractionalLengthData;
-import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.network.lane.Stripe.StripeType;
 
@@ -29,7 +28,7 @@ import org.opentrafficsim.road.network.lane.Stripe.StripeType;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class LaneGeometryUtil
+public final class LaneGeometryUtil
 {
 
     /**
@@ -190,11 +189,7 @@ public class LaneGeometryUtil
         ContinuousLine designLine = new ContinuousStraight(
                 Try.assign(() -> link.getDesignLine().getLocationPointFraction(0.0), "Link should have a valid design line."),
                 link.getLength().si);
-        PolyLine2d centerLine = designLine.flattenOffset(getCenterOffsets(designLine, slices), null);
-        PolyLine2d leftEdge = designLine.flattenOffset(getLeftEdgeOffsets(designLine, slices), null);
-        PolyLine2d rightEdge = designLine.flattenOffset(getRightEdgeOffsets(designLine, slices), null);
-        Polygon2d contour = getContour(leftEdge, rightEdge);
-        return Try.assign(() -> new Lane(link, id, new OtsLine2d(centerLine), contour, slices, laneType, speedLimits),
+        return Try.assign(() -> new Lane(link, id, CrossSectionGeometry.of(designLine, null, slices), laneType, speedLimits),
                 "Network exception.");
     }
 
@@ -213,11 +208,8 @@ public class LaneGeometryUtil
                 Try.assign(() -> link.getDesignLine().getLocationPointFraction(0.0), "Link should have a valid design line."),
                 link.getLength().si);
         List<CrossSectionSlice> slices = getSlices(designLine, offset, width);
-        PolyLine2d centerLine = designLine.flattenOffset(getCenterOffsets(designLine, slices), null);
-        PolyLine2d leftEdge = designLine.flattenOffset(getLeftEdgeOffsets(designLine, slices), null);
-        PolyLine2d rightEdge = designLine.flattenOffset(getRightEdgeOffsets(designLine, slices), null);
-        Polygon2d contour = getContour(leftEdge, rightEdge);
-        return Try.assign(() -> new Stripe(type, link, new OtsLine2d(centerLine), contour, slices), "Network exception.");
+        return Try.assign(() -> new Stripe(type, link, CrossSectionGeometry.of(designLine, null, slices)),
+                "Network exception.");
     }
 
     /**
@@ -238,11 +230,7 @@ public class LaneGeometryUtil
                 Try.assign(() -> link.getDesignLine().getLocationPointFraction(0.0), "Link should have a valid design line."),
                 link.getLength().si);
         List<CrossSectionSlice> slices = getSlices(designLine, startOffset, endOffset, startWidth, endWidth);
-        PolyLine2d centerLine = designLine.flattenOffset(getCenterOffsets(designLine, slices), null);
-        PolyLine2d leftEdge = designLine.flattenOffset(getLeftEdgeOffsets(designLine, slices), null);
-        PolyLine2d rightEdge = designLine.flattenOffset(getRightEdgeOffsets(designLine, slices), null);
-        Polygon2d contour = getContour(leftEdge, rightEdge);
-        return Try.assign(() -> new Shoulder(link, id, new OtsLine2d(centerLine), contour, slices, laneType),
+        return Try.assign(() -> new Shoulder(link, id, CrossSectionGeometry.of(designLine, null, slices), laneType),
                 "Network exception.");
     }
 }

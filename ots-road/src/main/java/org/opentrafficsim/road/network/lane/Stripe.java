@@ -12,10 +12,8 @@ import java.util.UUID;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.vector.LengthVector;
 import org.djutils.base.Identifiable;
-import org.djutils.draw.line.Polygon2d;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.Type;
-import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
@@ -56,16 +54,14 @@ public class Stripe extends CrossSectionElement
     /**
      * Constructor specifying geometry. Permeability is set according to the stripe type default.
      * @param type stripe type defining appearance and default permeability.
-     * @param link link.
-     * @param centerLine center line.
-     * @param contour contour shape.
-     * @param crossSectionSlices cross-section slices.
+     * @param link link
+     * @param geometry geometry
      * @throws NetworkException when no cross-section slice is defined.
      */
-    public Stripe(final StripeType type, final CrossSectionLink link, final OtsLine2d centerLine, final Polygon2d contour,
-            final List<CrossSectionSlice> crossSectionSlices) throws NetworkException
+    public Stripe(final StripeType type, final CrossSectionLink link, final CrossSectionGeometry geometry)
+            throws NetworkException
     {
-        super(link, UUID.randomUUID().toString(), centerLine, contour, crossSectionSlices);
+        super(link, UUID.randomUUID().toString(), geometry);
         Throw.whenNull(type, "Type may not be null.");
         this.type = type;
         this.left = type.left();
@@ -201,21 +197,20 @@ public class Stripe extends CrossSectionElement
                 Arrays.asList(new LengthVector(new double[] {9, 3}), null));
 
         /** Dashes ¦ allow to cross in both directions. */
-        public static final StripeType DASHED = new StripeType("DASHED", true, true, Length.instantiateSI(0.2),
-                List.of(new LengthVector(new double[] {9, 3})));
+        public static final StripeType DASHED =
+                new StripeType("DASHED", true, true, Length.instantiateSI(0.2), List.of(new LengthVector(new double[] {9, 3})));
 
         /** Double solid line ||, don't cross. */
         public static final StripeType DOUBLE_SOLID =
                 new StripeType("DOUBLE_SOLID", false, false, Length.instantiateSI(0.6), Arrays.asList(null, null));
 
         /** Double dashed line ¦¦, don't cross. */
-        public static final StripeType DOUBLE_DASH =
-                new StripeType("DOUBLE_DASH", true, true, Length.instantiateSI(0.6),
-                        List.of(new LengthVector(new double[] {9, 3}), new LengthVector(new double[] {9, 3})));
+        public static final StripeType DOUBLE_DASH = new StripeType("DOUBLE_DASH", true, true, Length.instantiateSI(0.6),
+                List.of(new LengthVector(new double[] {9, 3}), new LengthVector(new double[] {9, 3})));
 
         /** Block : allow to cross in both directions. */
-        public static final StripeType BLOCK = new StripeType("BLOCK", true, true, Length.instantiateSI(0.4),
-                List.of(new LengthVector(new double[] {3, 1})));
+        public static final StripeType BLOCK =
+                new StripeType("BLOCK", true, true, Length.instantiateSI(0.4), List.of(new LengthVector(new double[] {3, 1})));
 
         @Override
         public String getId()

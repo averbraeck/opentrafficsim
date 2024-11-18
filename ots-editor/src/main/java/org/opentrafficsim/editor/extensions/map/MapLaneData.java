@@ -1,10 +1,9 @@
 package org.opentrafficsim.editor.extensions.map;
 
-import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.line.Polygon2d;
+import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.draw.road.LaneAnimation.LaneData;
 import org.opentrafficsim.editor.XsdTreeNode;
-import org.opentrafficsim.road.network.lane.SliceInfo;
+import org.opentrafficsim.road.network.lane.CrossSectionGeometry;
 
 /**
  * Lane data for in the editor.
@@ -22,16 +21,15 @@ public class MapLaneData extends MapCrossSectionData implements LaneData
 
     /**
      * Constructor.
-     * @param id id.
-     * @param linkNode node representing the element.
-     * @param centerLine center line.
-     * @param contour contour.
-     * @param sliceInfo slice info.
+     * @param id id
+     * @param linkNode node representing the element
+     * @param geometry geometry
+     * @param linkLength link length
      */
-    public MapLaneData(final String id, final XsdTreeNode linkNode, final PolyLine2d centerLine, final Polygon2d contour,
-            final SliceInfo sliceInfo)
+    public MapLaneData(final String id, final XsdTreeNode linkNode, final CrossSectionGeometry geometry,
+            final Length linkLength)
     {
-        super(linkNode, centerLine, contour, sliceInfo);
+        super(linkNode, geometry, linkLength);
         this.id = id;
     }
 
@@ -39,12 +37,6 @@ public class MapLaneData extends MapCrossSectionData implements LaneData
     public String getId()
     {
         return this.id;
-    }
-
-    @Override
-    public PolyLine2d getCenterLine()
-    {
-        return this.centerLine;
     }
 
     @Override

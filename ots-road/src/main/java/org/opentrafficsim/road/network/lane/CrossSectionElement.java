@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.network.lane;
 
 import java.io.Serializable;
-import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
@@ -61,32 +60,27 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
 
     /**
      * Constructor.
-     * @param link link.
-     * @param id id.
-     * @param centerLine center line.
-     * @param contour contour shape.
-     * @param crossSectionSlices cross-section slices.
+     * @param link link
+     * @param id id
+     * @param geometry geometry
      * @throws NetworkException when no cross-section slice is defined.
      */
-    public CrossSectionElement(final CrossSectionLink link, final String id, final OtsLine2d centerLine,
-            final Polygon2d contour, final List<CrossSectionSlice> crossSectionSlices) throws NetworkException
+    public CrossSectionElement(final CrossSectionLink link, final String id, final CrossSectionGeometry geometry)
+            throws NetworkException
     {
         Throw.whenNull(link, "Link may not be null.");
         Throw.whenNull(id, "Id may not be null.");
-        Throw.whenNull(centerLine, "Center line may not be null.");
-        Throw.whenNull(contour, "Contour may not be null.");
-        Throw.whenNull(crossSectionSlices, "Cross section slices may not be null.");
-        Throw.when(crossSectionSlices.isEmpty(), NetworkException.class, "Need at least 1 cross section slice.");
+        Throw.whenNull(geometry, "Geometry may not be null.");
         this.link = link;
         this.id = id;
-        this.centerLine = centerLine;
-        this.location = centerLine.getLocationPointFractionExtended(0.5);
-        this.contour = contour;
+        this.centerLine = geometry.centerLine();
+        this.location = geometry.centerLine().getLocationPointFractionExtended(0.5);
+        this.contour = geometry.contour();
         Polygon2d relativeContour = OtsLocatable.relativeContour(this);
         this.shape = new PolygonShape(relativeContour);
         this.bounds = relativeContour.getBounds();
 
-        this.sliceInfo = new SliceInfo(crossSectionSlices, link.getLength());
+        this.sliceInfo = new SliceInfo(geometry.slices(), link.getLength());
 
         link.addCrossSectionElement(this);
 

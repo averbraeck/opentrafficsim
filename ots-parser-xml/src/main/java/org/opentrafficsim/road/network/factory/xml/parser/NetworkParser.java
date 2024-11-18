@@ -15,7 +15,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.eval.Eval;
@@ -50,6 +49,7 @@ import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
 import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets;
 import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets.CseData;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
+import org.opentrafficsim.road.network.lane.CrossSectionGeometry;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
 import org.opentrafficsim.road.network.lane.CrossSectionSlice;
@@ -411,13 +411,7 @@ public final class NetworkParser
 
                 List<CrossSectionSlice> slices = LaneGeometryUtil.getSlices(designLine, cseData.centerOffsetStart,
                         cseData.centerOffsetEnd, cseData.widthStart, cseData.widthEnd);
-                PolyLine2d centerLine =
-                        designLine.flattenOffset(LaneGeometryUtil.getCenterOffsets(designLine, slices), flattener);
-                PolyLine2d leftEdge =
-                        designLine.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(designLine, slices), flattener);
-                PolyLine2d rightEdge =
-                        designLine.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(designLine, slices), flattener);
-                Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
+                CrossSectionGeometry geometry = CrossSectionGeometry.of(designLine, flattener, slices);
 
                 // Lane
                 if (cseTag instanceof CseLane)
@@ -437,8 +431,7 @@ public final class NetworkParser
                         GtuType gtuType = definitions.get(GtuType.class, speedLimitTag.getGtuType().get(eval));
                         speedLimitMap.put(gtuType, speedLimitTag.getLegalSpeedLimit().get(eval));
                     }
-                    Lane lane =
-                            new Lane(csl, laneTag.getId(), new OtsLine2d(centerLine), contour, slices, laneType, speedLimitMap);
+                    Lane lane = new Lane(csl, laneTag.getId(), geometry, laneType, speedLimitMap);
                     cseList.add(lane);
                     lanes.put(lane.getId(), lane);
                 }
@@ -452,7 +445,7 @@ public final class NetworkParser
                     LaneType laneType = shoulderTag.getLaneType() == null ? SHOULDER
                             : definitions.get(LaneType.class, shoulderTag.getLaneType().get(eval));
                     String id = shoulderTag.getId() != null ? shoulderTag.getId() : UUID.randomUUID().toString();
-                    CrossSectionElement shoulder = new Shoulder(csl, id, new OtsLine2d(centerLine), contour, slices, laneType);
+                    CrossSectionElement shoulder = new Shoulder(csl, id, geometry, laneType);
                     cseList.add(shoulder);
                 }
             }
@@ -499,13 +492,7 @@ public final class NetworkParser
         StripeType type = stripeTag.getType().get(eval);
         Length width = stripeTag.getDrawingWidth() != null ? stripeTag.getDrawingWidth().get(eval) : type.width();
         List<CrossSectionSlice> slices = LaneGeometryUtil.getSlices(designLine, startOffset, endOffset, width, width);
-
-        PolyLine2d centerLine = designLine.flattenOffset(LaneGeometryUtil.getCenterOffsets(designLine, slices), flattener);
-        PolyLine2d leftEdge = designLine.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(designLine, slices), flattener);
-        PolyLine2d rightEdge = designLine.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(designLine, slices), flattener);
-        Polygon2d contour = LaneGeometryUtil.getContour(leftEdge, rightEdge);
-
-        cseList.add(new Stripe(type, csl, new OtsLine2d(centerLine), contour, slices));
+        cseList.add(new Stripe(type, csl, CrossSectionGeometry.of(designLine, flattener, slices)));
     }
 
     /**
