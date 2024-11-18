@@ -34,6 +34,8 @@ import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.opentrafficsim.core.geometry.ContinuousLine.PiecewiseLinearLength;
+import org.opentrafficsim.core.geometry.FractionalLengthData;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -179,9 +181,11 @@ public class LaneTest implements UNITS
         OtsLine2d centerLine = new OtsLine2d(new Point2d(0.0, 0.0), new Point2d(100.0, 0.0));
         Polygon2d contour = new Polygon2d(new Point2d(0.0, -1.75), new Point2d(100.0, -1.75), new Point2d(100.0, 1.75),
                 new Point2d(0.0, -1.75));
-        List<CrossSectionSlice> crossSectionSlices = new ArrayList<>();
-        crossSectionSlices.add(new CrossSectionSlice(Length.ZERO, startLateralPos, startWidth));
-        lane = new Lane(link, "lanex", new CrossSectionGeometry(centerLine, contour, crossSectionSlices), laneType, speedMap);
+        Length length = Length.instantiateSI(centerLine.getLength());
+        PiecewiseLinearLength offsetFunc = new PiecewiseLinearLength(FractionalLengthData.of(0.0, startLateralPos.si), length);
+        PiecewiseLinearLength widthFunc = new PiecewiseLinearLength(FractionalLengthData.of(0.0, startWidth.si), length);
+        lane = new Lane(link, "lanex", new CrossSectionGeometry(centerLine, contour, offsetFunc, widthFunc), laneType,
+                speedMap);
         sensorTest(lane);
     }
 

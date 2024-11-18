@@ -1,13 +1,18 @@
 package org.opentrafficsim.road.network.lane;
 
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Function;
 
+import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.core.geometry.ContinuousLine;
+import org.opentrafficsim.core.geometry.ContinuousLine.OffsetFunctionLength;
+import org.opentrafficsim.core.geometry.ContinuousLine.PiecewiseLinearLength;
 import org.opentrafficsim.core.geometry.Flattener;
+import org.opentrafficsim.core.geometry.FractionalLengthData;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 
 /**
@@ -20,40 +25,62 @@ import org.opentrafficsim.core.geometry.OtsLine2d;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param centerLine center line
  * @param contour contour
- * @param slices slices for offset and width
+ * @param offset offset
+ * @param width width
  */
-@SuppressWarnings("javadoc") 
-public record CrossSectionGeometry(OtsLine2d centerLine, Polygon2d contour, List<CrossSectionSlice> slices)
+@SuppressWarnings("javadoc")
+public record CrossSectionGeometry(OtsLine2d centerLine, Polygon2d contour, Function<Length, Length> offset,
+        Function<Length, Length> width)
 {
 
     /**
      * Constructor.
      * @throws NullPointerException when centerLine, contour or slices is {@code null}
-     * @throws OtsGeometryException when slices is empty
      */
     public CrossSectionGeometry
+
     {
         Throw.whenNull(centerLine, "Center line may not be null.");
         Throw.whenNull(contour, "Contour may not be null.");
-        Throw.whenNull(slices, "Cross section slices may not be null.");
-        Throw.when(slices.isEmpty(), OtsGeometryException.class, "Need at least 1 cross section slice.");
+        Throw.whenNull(offset, "Offset may not be null.");
+        Throw.whenNull(width, "Width may not be null.");
     }
-    
+
     /**
      * Create geometry based on design line, flattener, offset and width information.
      * @param designLine design line relative to which offsets are defined
      * @param flattener flattener to flatten center line and contour
-     * @param offsetWidth offset and width information
+     * @param offset offset information
+     * @param width offset information
      * @return geometry for cross-section element
      */
     public static CrossSectionGeometry of(final ContinuousLine designLine, final Flattener flattener,
-            final List<CrossSectionSlice> offsetWidth)
+            final PiecewiseLinearLength offset, final PiecewiseLinearLength width)
     {
-        PolyLine2d line = designLine.flattenOffset(LaneGeometryUtil.getCenterOffsets(designLine, offsetWidth), flattener);
-        PolyLine2d left = designLine.flattenOffset(LaneGeometryUtil.getLeftEdgeOffsets(designLine, offsetWidth), flattener);
-        PolyLine2d right = designLine.flattenOffset(LaneGeometryUtil.getRightEdgeOffsets(designLine, offsetWidth), flattener);
+        Length length = Length.instantiateSI(designLine.getLength());
+        
+        OffsetFunctionLength centerOffset = new OffsetFunctionLength(offset, length);
+        PolyLine2d line = designLine.flattenOffset(centerOffset, flattener);
+
+        Map<Double, Double> leftMap = new LinkedHashMap<>();
+        Map<Double, Double> rightMap = new LinkedHashMap<>();
+        for (double f : offset.getKnots())
+        {
+            leftMap.put(f, offset.get(f) + .5 * width.get(f));
+            rightMap.put(f, offset.get(f) - .5 * width.get(f));
+        }
+        
+        OffsetFunctionLength leftOffset =
+                new OffsetFunctionLength(new PiecewiseLinearLength(new FractionalLengthData(leftMap), length), length);
+        PolyLine2d left = designLine.flattenOffset(leftOffset, flattener);
+
+        OffsetFunctionLength rightOffset =
+                new OffsetFunctionLength(new PiecewiseLinearLength(new FractionalLengthData(rightMap), length), length);
+        PolyLine2d right = designLine.flattenOffset(rightOffset, flattener);
+        
         Polygon2d cont = LaneGeometryUtil.getContour(left, right);
-        return new CrossSectionGeometry(new OtsLine2d(line), cont, offsetWidth);
+        
+        return new CrossSectionGeometry(new OtsLine2d(line), cont, offset, width);
     }
 
 }

@@ -2,9 +2,12 @@ package org.opentrafficsim.core.geometry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
+import org.opentrafficsim.core.geometry.ContinuousLine.OffsetFunctionLength;
+import org.opentrafficsim.core.geometry.ContinuousLine.PiecewiseLinearLength;
 import org.opentrafficsim.core.geometry.Flattener.NumSegments;
 
 /**
@@ -33,6 +36,7 @@ public class ContinuousBezierTest
          */
         ContinuousBezierCubic bezier = new ContinuousBezierCubic(new Point2d(0.0, 0.0), new Point2d(50.0, 0.0),
                 new Point2d(150.0, 100.0), new Point2d(145.0, 50.0));
+        Length length = Length.instantiateSI(bezier.getLength());
 
         isApproximal(bezier.getStartPoint(), 0.0, 0.0);
         isApproximal(bezier.getEndPoint(), 145.0, 50.0);
@@ -49,7 +53,8 @@ public class ContinuousBezierTest
         assertEquals(line.getLength(), 171.2213439251704017, MARGIN, "Length of flattened Bezier is not correct");
 
         FractionalLengthData offsets = FractionalLengthData.of(0.0, 2.0, 0.33, 3.0, 1.0, 10.0);
-        line = bezier.flattenOffset(offsets, numSegments32);
+        OffsetFunctionLength f = new OffsetFunctionLength(new PiecewiseLinearLength(offsets, length), length);
+        line = bezier.flattenOffset(f, numSegments32);
         /*
          * The Bezier flattening procedure used to divide the number of line segments over the Bezier segments, rounded up for
          * each. This procedure changed to simply stepping in t, where it is known where each Bezier semgent starts, and what
@@ -63,7 +68,8 @@ public class ContinuousBezierTest
         assertEquals(33, line.size(), "Number of segments of offset Bezier is not correct"); // was 36
 
         offsets = FractionalLengthData.of(0.0, -1.0, 0.33, -1.5, 1.0, -5.0);
-        line = bezier.flattenOffset(offsets, numSegments32);
+        f = new OffsetFunctionLength(new PiecewiseLinearLength(offsets, length), length);
+        line = bezier.flattenOffset(f, numSegments32);
         assertEquals(line.getLength(), 161.8, lengthMargin, "Length of offset Bezier is not correct");
         assertEquals(33, line.size(), "Number of segments of offset Bezier is not correct"); // was 36
     }

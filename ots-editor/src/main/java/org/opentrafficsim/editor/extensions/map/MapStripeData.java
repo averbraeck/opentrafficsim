@@ -39,19 +39,18 @@ public class MapStripeData extends MapCrossSectionData implements StripeData
      * @param type stripe type
      * @param width width
      * @param dashOffset dash offset
-     * @param startOffset start offset
      * @param linkNode node representing the element
      * @param geometry geometry
      * @param linkLength link length
      */
-    public MapStripeData(final StripeType type, final Length width, final Length dashOffset, final Length startOffset,
-            final XsdTreeNode linkNode, final CrossSectionGeometry geometry, final Length linkLength)
+    public MapStripeData(final StripeType type, final Length width, final Length dashOffset, final XsdTreeNode linkNode,
+            final CrossSectionGeometry geometry, final Length linkLength)
     {
         super(linkNode, geometry, linkLength);
         this.type = type;
         this.width = width;
         this.dashOffset = dashOffset;
-        this.startOffset = startOffset;
+        this.startOffset = geometry.offset().apply(Length.ZERO);
     }
 
     @Override

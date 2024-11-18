@@ -567,17 +567,17 @@ public class ContinuousClothoid implements ContinuousLine
     }
 
     @Override
-    public PolyLine2d flattenOffset(final FractionalLengthData offsets, final Flattener flattener)
+    public PolyLine2d flattenOffset(final OffsetFunction offset, final Flattener flattener)
     {
-        Throw.whenNull(offsets, "Offsets may not be null.");
+        Throw.whenNull(offset, "Offsets may not be null.");
         Throw.whenNull(flattener, "Flattener may not be null.");
         if (this.straight != null)
         {
-            return this.straight.flattenOffset(offsets, flattener);
+            return this.straight.flattenOffset(offset, flattener);
         }
         if (this.arc != null)
         {
-            return this.arc.flattenOffset(offsets, flattener);
+            return this.arc.flattenOffset(offset, flattener);
         }
         assureShift();
         return flattener.flatten(new FlattableLine()
@@ -585,15 +585,16 @@ public class ContinuousClothoid implements ContinuousLine
             @Override
             public Point2d get(final double fraction)
             {
-                return getPoint(fraction, offsets.get(fraction));
+                return getPoint(fraction, offset.apply(fraction));
             }
 
             @Override
             public double getDirection(final double fraction)
             {
-                double derivativeOffset = offsets.getDerivative(fraction) / ContinuousClothoid.this.length;
+                double derivativeOffset = offset.getDerivative(fraction) / ContinuousClothoid.this.length;
                 return ContinuousClothoid.this.getDirection(ContinuousClothoid.this.alphaMin
-                        + fraction * (ContinuousClothoid.this.alphaMax - ContinuousClothoid.this.alphaMin)) + derivativeOffset;
+                        + fraction * (ContinuousClothoid.this.alphaMax - ContinuousClothoid.this.alphaMin))
+                        + Math.atan(derivativeOffset);
             }
         });
     }

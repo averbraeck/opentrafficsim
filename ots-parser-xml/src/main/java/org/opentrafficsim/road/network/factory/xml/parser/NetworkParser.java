@@ -26,6 +26,7 @@ import org.opentrafficsim.core.geometry.ContinuousArc;
 import org.opentrafficsim.core.geometry.ContinuousBezierCubic;
 import org.opentrafficsim.core.geometry.ContinuousClothoid;
 import org.opentrafficsim.core.geometry.ContinuousLine;
+import org.opentrafficsim.core.geometry.ContinuousLine.PiecewiseLinearLength;
 import org.opentrafficsim.core.geometry.ContinuousPolyLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
 import org.opentrafficsim.core.geometry.Flattener;
@@ -33,6 +34,7 @@ import org.opentrafficsim.core.geometry.Flattener.MaxAngle;
 import org.opentrafficsim.core.geometry.Flattener.MaxDeviation;
 import org.opentrafficsim.core.geometry.Flattener.MaxDeviationAndAngle;
 import org.opentrafficsim.core.geometry.Flattener.NumSegments;
+import org.opentrafficsim.core.geometry.FractionalLengthData;
 import org.opentrafficsim.core.geometry.OtsGeometryUtil;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -52,9 +54,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionGeometry;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
-import org.opentrafficsim.road.network.lane.CrossSectionSlice;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
@@ -409,9 +409,12 @@ public final class NetworkParser
             {
                 CseData cseData = cseDataList.get(cseTagMap.get(cseTag));
 
-                List<CrossSectionSlice> slices = LaneGeometryUtil.getSlices(designLine, cseData.centerOffsetStart,
-                        cseData.centerOffsetEnd, cseData.widthStart, cseData.widthEnd);
-                CrossSectionGeometry geometry = CrossSectionGeometry.of(designLine, flattener, slices);
+                Length length = Length.instantiateSI(designLine.getLength());
+                PiecewiseLinearLength offset = new PiecewiseLinearLength(
+                        FractionalLengthData.of(0.0, cseData.centerOffsetStart.si, 1.0, cseData.centerOffsetEnd.si), length);
+                PiecewiseLinearLength width = new PiecewiseLinearLength(
+                        FractionalLengthData.of(0.0, cseData.widthStart.si, 1.0, cseData.widthEnd.si), length);
+                CrossSectionGeometry geometry = CrossSectionGeometry.of(designLine, flattener, offset, width);
 
                 // Lane
                 if (cseTag instanceof CseLane)
@@ -491,8 +494,12 @@ public final class NetworkParser
     {
         StripeType type = stripeTag.getType().get(eval);
         Length width = stripeTag.getDrawingWidth() != null ? stripeTag.getDrawingWidth().get(eval) : type.width();
-        List<CrossSectionSlice> slices = LaneGeometryUtil.getSlices(designLine, startOffset, endOffset, width, width);
-        cseList.add(new Stripe(type, csl, CrossSectionGeometry.of(designLine, flattener, slices)));
+        Length length = Length.instantiateSI(designLine.getLength());
+        PiecewiseLinearLength offsetFunc =
+                new PiecewiseLinearLength(FractionalLengthData.of(0.0, startOffset.si, 1.0, endOffset.si), length);
+        PiecewiseLinearLength widthFunc =
+                new PiecewiseLinearLength(FractionalLengthData.of(0.0, width.si, 1.0, width.si), length);
+        cseList.add(new Stripe(type, csl, CrossSectionGeometry.of(designLine, flattener, offsetFunc, widthFunc)));
     }
 
     /**

@@ -9,7 +9,6 @@ import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.road.network.lane.CrossSectionGeometry;
-import org.opentrafficsim.road.network.lane.SliceInfo;
 
 /**
  * Cross section element data for in the editor.
@@ -31,9 +30,6 @@ public class MapCrossSectionData implements CrossSectionElementData
     /** Geometry. */
     private final CrossSectionGeometry geometry;
 
-    /** Slice info. */
-    private final SliceInfo sliceInfo;
-
     /** Shape (cached). */
     private OtsShape shape;
 
@@ -49,7 +45,6 @@ public class MapCrossSectionData implements CrossSectionElementData
         Ray2d ray = geometry.centerLine().getLocationFractionExtended(0.5);
         this.location = new OrientedPoint2d(ray.x, ray.y, ray.phi);
         this.geometry = geometry;
-        this.sliceInfo = new SliceInfo(geometry.slices(), linkLength);
     }
 
     @Override
@@ -97,7 +92,7 @@ public class MapCrossSectionData implements CrossSectionElementData
      */
     public Length getWidth(final Length position)
     {
-        return this.sliceInfo.getWidth(position.si / this.geometry.centerLine().getLength());
+        return this.geometry.width().apply(position);
     }
 
     @Override

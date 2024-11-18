@@ -115,9 +115,9 @@ public class ContinuousArc implements ContinuousLine
     private Point2d getPoint(final double fraction, final double offset)
     {
         double len = this.radius - this.sign * offset;
-        double angle = this.startPoint.dirZ + this.sign * (this.angle.si * fraction);
-        double dx = this.sign * Math.cos(angle) * len;
-        double dy = this.sign * Math.sin(angle) * len;
+        double ang = this.startPoint.dirZ + this.sign * (this.angle.si * fraction);
+        double dx = this.sign * Math.cos(ang) * len;
+        double dy = this.sign * Math.sin(ang) * len;
         return new Point2d(this.center.x + dy, this.center.y - dx);
     }
 
@@ -161,16 +161,16 @@ public class ContinuousArc implements ContinuousLine
     }
 
     @Override
-    public PolyLine2d flattenOffset(final FractionalLengthData offsets, final Flattener flattener)
+    public PolyLine2d flattenOffset(final OffsetFunction offset, final Flattener flattener)
     {
-        Throw.whenNull(offsets, "Offsets may not be null.");
+        Throw.whenNull(offset, "Offset may not be null.");
         Throw.whenNull(flattener, "Flattener may not be null.");
         return flattener.flatten(new FlattableLine()
         {
             @Override
             public Point2d get(final double fraction)
             {
-                return getPoint(fraction, offsets.get(fraction));
+                return getPoint(fraction, offset.apply(fraction));
             }
 
             @Override
@@ -194,8 +194,8 @@ public class ContinuousArc implements ContinuousLine
                         + ContinuousArc.this.sign * (ContinuousArc.this.angle.si * fraction - Math.PI / 2));
                 double sinPhi = Math.sin(phi);
                 double cosPhi = Math.cos(phi);
-                double sPhi = ContinuousArc.this.sign * offsets.get(fraction);
-                double sPhiD = offsets.getDerivative(fraction) / ContinuousArc.this.angle.si;
+                double sPhi = ContinuousArc.this.sign * offset.apply(fraction);
+                double sPhiD = offset.getDerivative(fraction) / ContinuousArc.this.angle.si;
                 double dx = -sinPhi * (ContinuousArc.this.radius - sPhi) - cosPhi * sPhiD;
                 double dy = cosPhi * (ContinuousArc.this.radius - sPhi) - sinPhi * sPhiD;
                 return Math.atan2(ContinuousArc.this.sign * dy, ContinuousArc.this.sign * dx);

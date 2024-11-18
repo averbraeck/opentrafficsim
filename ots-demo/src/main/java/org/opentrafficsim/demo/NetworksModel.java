@@ -34,7 +34,9 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.ContinuousLine;
+import org.opentrafficsim.core.geometry.ContinuousLine.PiecewiseLinearLength;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
+import org.opentrafficsim.core.geometry.FractionalLengthData;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -62,9 +64,7 @@ import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionGeometry;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.CrossSectionSlice;
 import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
@@ -483,16 +483,17 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
         OrientedPoint2d startPoint = new OrientedPoint2d(to.getPoint().x, to.getPoint().y, dir);
         ContinuousLine designLine = new ContinuousStraight(startPoint, endLinkLength);
         CrossSectionLink endLink = LaneFactory.makeLink(this.network, link.getId() + "endLink", to, end, null, this.simulator);
+
+        Length length = Length.instantiateSI(designLine.getLength());
         for (Lane lane : lanes)
         {
-            double offset = lane.getLateralCenterPosition(1.0).si;
-            double width = lane.getWidth(1.0).si;
-            List<CrossSectionSlice> crossSections =
-                    LaneGeometryUtil.getSlices(designLine, Length.instantiateSI(offset), Length.instantiateSI(width));
-
+            PiecewiseLinearLength offset =
+                    new PiecewiseLinearLength(FractionalLengthData.of(0.0, lane.getLateralCenterPosition(1.0).si), length);
+            PiecewiseLinearLength width =
+                    new PiecewiseLinearLength(FractionalLengthData.of(0.0, lane.getWidth(1.0).si), length);
             // Overtaking left and right allowed on the sinkLane
             Lane sinkLane =
-                    new Lane(endLink, lane.getId() + "." + "sinkLane", CrossSectionGeometry.of(designLine, null, crossSections),
+                    new Lane(endLink, lane.getId() + "." + "sinkLane", CrossSectionGeometry.of(designLine, null, offset, width),
                             laneType, Map.of(DefaultsNl.VEHICLE, this.speedLimit));
             new SinkDetector(sinkLane, new Length(10.0, METER), DefaultsNl.ROAD_USERS);
         }

@@ -293,9 +293,9 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
     }
 
     @Override
-    public PolyLine2d flattenOffset(final FractionalLengthData offsets, final Flattener flattener)
+    public PolyLine2d flattenOffset(final OffsetFunction offset, final Flattener flattener)
     {
-        Throw.whenNull(offsets, "Offsets may not be null.");
+        Throw.whenNull(offset, "Offsets may not be null.");
         Throw.whenNull(flattener, "Flattener may not be null.");
 
         // Detect straight line
@@ -321,12 +321,17 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
             getRoots().forEach((t) -> splits0.put(t, 1));
             getInflections().forEach((t) -> splits0.put(t, 2));
         }
-        getOffsetT(offsets.getFractionalLengths().toSet()).forEach((t) -> splits0.put(t, 3));
+        NavigableSet<Double> knots = new TreeSet<>();
+        for (double f : offset.getKnots())
+        {
+            knots.add(f);
+        }
+        getOffsetT(knots).forEach((t) -> splits0.put(t, 3));
         NavigableMap<Double, Integer> splits = splits0.subMap(1e-6, false, 1.0 - 1e-6, false);
 
         // Initialize loop variables
         // copy of offset fractions, so we can remove each we use; exclude 0.0 value to find split points -on- Bezier
-        NavigableSet<Double> fCrossSectionRemain = offsets.getFractionalLengths().toSet().tailSet(0.0, false);
+        NavigableSet<Double> fCrossSectionRemain = knots.tailSet(0.0, false);
         double lengthTotal = length();
         ContinuousBezierCubic currentBezier = this;
         double lengthSoFar = 0.0;
@@ -339,7 +344,7 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
         double tStart = 0.0;
         if (splits.isEmpty())
         {
-            segments.put(tStart, currentBezier.offset(offsets, lengthSoFar, lengthTotal, sig, first, true));
+            segments.put(tStart, currentBezier.offset(offset, lengthSoFar, lengthTotal, sig, first, true));
         }
         while (typeIterator.hasNext())
         {
@@ -371,7 +376,7 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
 
             // Split Bezier, and add offset of first part
             ContinuousBezierCubic[] parts = currentBezier.split(t);
-            segments.put(tStart, parts[0].offset(offsets, lengthSoFar, lengthTotal, sig, first, false));
+            segments.put(tStart, parts[0].offset(offset, lengthSoFar, lengthTotal, sig, first, false));
 
             // Update loop variables
             first = false;
@@ -385,7 +390,7 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
             // Append last segment, or loop again with remainder
             if (!typeIterator.hasNext())
             {
-                segments.put(tStart, parts[1].offset(offsets, lengthSoFar, lengthTotal, sig, first, true));
+                segments.put(tStart, parts[1].offset(offset, lengthSoFar, lengthTotal, sig, first, true));
             }
             else
             {
@@ -441,7 +446,7 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
 
     /**
      * Creates the offset Bezier of a Bezier segment. These segments are part of the offset procedure.
-     * @param offsets offsets as defined for entire Bezier.
+     * @param offset offsets as defined for entire Bezier.
      * @param lengthSoFar total length of previous segments.
      * @param lengthTotal total length of full Bezier.
      * @param sig sign of offset and offset slope
@@ -449,11 +454,11 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
      * @param last {@code true} for the last Bezier segment.
      * @return offset Bezier.
      */
-    private ContinuousBezierCubic offset(final FractionalLengthData offsets, final double lengthSoFar, final double lengthTotal,
+    private ContinuousBezierCubic offset(final OffsetFunction offset, final double lengthSoFar, final double lengthTotal,
             final double sig, final boolean first, final boolean last)
     {
-        double offsetStart = sig * offsets.get(lengthSoFar / lengthTotal);
-        double offsetEnd = sig * offsets.get((lengthSoFar + getLength()) / lengthTotal);
+        double offsetStart = sig * offset.apply(lengthSoFar / lengthTotal);
+        double offsetEnd = sig * offset.apply((lengthSoFar + getLength()) / lengthTotal);
 
         Point2d p1 = new Point2d(this.points[0].x - (this.points[1].y - this.points[0].y),
                 this.points[0].y + (this.points[1].x - this.points[0].x));

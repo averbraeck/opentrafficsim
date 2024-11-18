@@ -117,16 +117,22 @@ public class ContinuousPolyLine implements ContinuousLine
     /**
      * Returns an offset line. This is a regular offset line, with start and end points moved to be perpendicular to end point
      * directions.
-     * @param offsets offset data.
+     * @param offset offset data.
      * @return flattened line.
      */
-    public PolyLine2d offset(final FractionalLengthData offsets)
+    public PolyLine2d offset(final OffsetFunction offset)
     {
-        Throw.whenNull(offsets, "Offsets may not be null.");
+        Throw.whenNull(offset, "Offsets may not be null.");
+        double[] knots = offset.getKnots();
+        double[] knotOffset = new double[knots.length];
+        for (int i = 0; i < knots.length; i++)
+        {
+            knotOffset[i] = offset.apply(knots[i]);
+        }
         PolyLine2d offsetLine =
-                OtsGeometryUtil.offsetLine(this.line, offsets.getFractionalLengthsAsArray(), offsets.getValuesAsArray());
-        Point2d start = OtsGeometryUtil.offsetPoint(this.startPoint, offsets.get(0.0));
-        Point2d end = OtsGeometryUtil.offsetPoint(this.endPoint, offsets.get(1.0));
+                OtsGeometryUtil.offsetLine(this.line, knots, knotOffset);
+        Point2d start = OtsGeometryUtil.offsetPoint(this.startPoint, offset.apply(0.0));
+        Point2d end = OtsGeometryUtil.offsetPoint(this.endPoint, offset.apply(1.0));
         List<Point2d> points = offsetLine.getPointList();
         points.set(0, start);
         points.set(points.size() - 1, end);
@@ -135,14 +141,14 @@ public class ContinuousPolyLine implements ContinuousLine
 
     /**
      * Returns the regular offset. Flattener is ignored.
-     * @param offsets offset data.
+     * @param offset offset data.
      * @param flattener flattener (ignored).
      * @return flattened line.
      */
     @Override
-    public PolyLine2d flattenOffset(final FractionalLengthData offsets, final Flattener flattener)
+    public PolyLine2d flattenOffset(final OffsetFunction offset, final Flattener flattener)
     {
-        return offset(offsets);
+        return offset(offset);
     }
 
     @Override

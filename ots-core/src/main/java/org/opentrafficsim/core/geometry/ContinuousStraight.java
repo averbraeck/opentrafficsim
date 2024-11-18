@@ -86,13 +86,19 @@ public class ContinuousStraight implements ContinuousLine
 
     /**
      * Offset polyline based on variable offset. A straight uses no segments, other than for varying offset.
-     * @param offsets offsets, should contain keys 0.0 and 1.0.
-     * @return offset polyline.
+     * @param offset offset, should contain keys 0.0 and 1.0.
+     * @return offset polyline
      */
-    public PolyLine2d offset(final FractionalLengthData offsets)
+    public PolyLine2d offset(final OffsetFunction offset)
     {
-        Throw.whenNull(offsets, "Offsets may not be null.");
-        return OtsGeometryUtil.offsetLine(flatten(), offsets.getFractionalLengthsAsArray(), offsets.getValuesAsArray());
+        Throw.whenNull(offset, "Offsets may not be null.");
+        double[] knots = offset.getKnots();
+        double[] knotOffset = new double[knots.length];
+        for (int i = 0; i < knots.length; i++)
+        {
+            knotOffset[i] = offset.apply(knots[i]);
+        }
+        return OtsGeometryUtil.offsetLine(flatten(), knots, knotOffset);
     }
 
     /**
@@ -102,7 +108,7 @@ public class ContinuousStraight implements ContinuousLine
      * @return flattened line.
      */
     @Override
-    public PolyLine2d flattenOffset(final FractionalLengthData offsets, final Flattener flattener)
+    public PolyLine2d flattenOffset(final OffsetFunction offsets, final Flattener flattener)
     {
         return offset(offsets);
     }

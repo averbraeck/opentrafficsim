@@ -41,9 +41,11 @@ import org.opentrafficsim.core.geometry.ContinuousArc;
 import org.opentrafficsim.core.geometry.ContinuousBezierCubic;
 import org.opentrafficsim.core.geometry.ContinuousClothoid;
 import org.opentrafficsim.core.geometry.ContinuousLine;
+import org.opentrafficsim.core.geometry.ContinuousLine.PiecewiseLinearLength;
 import org.opentrafficsim.core.geometry.ContinuousPolyLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
 import org.opentrafficsim.core.geometry.Flattener;
+import org.opentrafficsim.core.geometry.FractionalLengthData;
 import org.opentrafficsim.core.geometry.OtsGeometryUtil;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation;
@@ -56,8 +58,6 @@ import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.extensions.Adapters;
 import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets.CseData;
 import org.opentrafficsim.road.network.lane.CrossSectionGeometry;
-import org.opentrafficsim.road.network.lane.CrossSectionSlice;
-import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.Stripe.StripeType;
 import org.opentrafficsim.xml.bindings.ExpressionAdapter;
 import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
@@ -596,30 +596,34 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             {
                 XsdTreeNode node = entry.getKey();
                 CseData cseData = entry.getValue();
-                List<CrossSectionSlice> slices;
                 StripeType type = null;
                 Length width = null;
+
+                Length length = Length.instantiateSI(this.designLine.getLength());
+                PiecewiseLinearLength offsetFunc = new PiecewiseLinearLength(
+                        FractionalLengthData.of(0.0, cseData.centerOffsetStart.si, 1.0, cseData.centerOffsetEnd.si), length);
+                PiecewiseLinearLength widthFunc;
                 if (node.getNodeName().equals("Stripe"))
                 {
                     type = Adapters.get(StripeType.class).unmarshal(node.getAttributeValue("Type")).get(getEval());
                     width = node.getChild(1).isActive() // child 1 is DrawingWidth
                             ? Adapters.get(Length.class).unmarshal(node.getChild(1).getValue()).get(getEval()) : type.width();
-                    slices = LaneGeometryUtil.getSlices(this.designLine, cseData.centerOffsetStart, cseData.centerOffsetEnd,
-                            width, width);
+                    widthFunc = new PiecewiseLinearLength(FractionalLengthData.of(0.0, width.si, 1.0, width.si), length);
                 }
                 else
                 {
-                    slices = LaneGeometryUtil.getSlices(this.designLine, cseData.centerOffsetStart, cseData.centerOffsetEnd,
-                            cseData.widthStart, cseData.widthEnd);
+                    widthFunc = new PiecewiseLinearLength(
+                            FractionalLengthData.of(0.0, cseData.widthStart.si, 1.0, cseData.widthEnd.si), length);
                 }
 
                 Flattener flattener = getFlattener();
-                CrossSectionGeometry geometry = CrossSectionGeometry.of(this.designLine, flattener, slices);
+                CrossSectionGeometry geometry = CrossSectionGeometry.of(this.designLine, flattener, offsetFunc, widthFunc);
                 Length linkLength = Length.instantiateSI(this.flattenedDesignLine.getLength());
                 if (node.getNodeName().equals("Stripe"))
                 {
-                    StripeAnimation stripe = new StripeAnimation(new MapStripeData(type, width, Length.ZERO,
-                            slices.get(0).getOffset(), getNode(), geometry, linkLength), getMap().getContextualized());
+                    StripeAnimation stripe =
+                            new StripeAnimation(new MapStripeData(type, width, Length.ZERO, getNode(), geometry, linkLength),
+                                    getMap().getContextualized());
                     this.crossSectionElements.add(stripe);
                 }
                 else if (node.getNodeName().equals("Lane"))
@@ -631,9 +635,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 }
                 else if (node.getNodeName().equals("Shoulder"))
                 {
-                    CrossSectionElementAnimation<?> shoulder = new CrossSectionElementAnimation<>(
-                            new MapShoulderData(slices.get(0).getOffset(), getNode(), geometry, linkLength),
-                            getMap().getContextualized(), Color.DARK_GRAY);
+                    CrossSectionElementAnimation<?> shoulder =
+                            new CrossSectionElementAnimation<>(new MapShoulderData(getNode(), geometry, linkLength),
+                                    getMap().getContextualized(), Color.DARK_GRAY);
                     this.crossSectionElements.add(shoulder);
                 }
                 else if (node.getNodeName().equals("NoTrafficLane"))

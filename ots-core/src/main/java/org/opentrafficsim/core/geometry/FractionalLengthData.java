@@ -167,7 +167,7 @@ public class FractionalLengthData
      * Returns the data including entries at 0.0 and 1.0.
      * @return data with fill range.
      */
-    private final NavigableMap<Double, Double> fullRange()
+    private NavigableMap<Double, Double> fullRange()
     {
         NavigableMap<Double, Double> full = new TreeMap<>(this.data);
         full.put(0.0, full.firstEntry().getValue());

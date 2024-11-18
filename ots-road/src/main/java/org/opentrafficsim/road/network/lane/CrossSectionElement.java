@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.lane;
 
 import java.io.Serializable;
+import java.util.function.Function;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
@@ -40,14 +41,17 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected final CrossSectionLink link;
 
-    /** The offsets and widths at positions along the line, relative to the design line of the parent link. */
-    private final SliceInfo sliceInfo;
-
     /** The center line of the element. Calculated once at the creation. */
     private final OtsLine2d centerLine;
 
     /** The contour of the element. Calculated once at the creation. */
     private final Polygon2d contour;
+
+    /** Offset. */
+    private final Function<Length, Length> offset;
+
+    /** Width. */
+    private final Function<Length, Length> width;
 
     /** Location, center of contour. */
     private final OrientedPoint2d location;
@@ -79,8 +83,8 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
         Polygon2d relativeContour = OtsLocatable.relativeContour(this);
         this.shape = new PolygonShape(relativeContour);
         this.bounds = relativeContour.getBounds();
-
-        this.sliceInfo = new SliceInfo(geometry.slices(), link.getLength());
+        this.offset = geometry.offset();
+        this.width = geometry.width();
 
         link.addCrossSectionElement(this);
 
@@ -112,7 +116,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      */
     public final Length getLateralCenterPosition(final double fractionalPosition)
     {
-        return this.sliceInfo.getLateralCenterPosition(fractionalPosition);
+        return getLateralCenterPosition(getLength().times(fractionalPosition));
     }
 
     /**
@@ -122,7 +126,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      */
     public final Length getLateralCenterPosition(final Length longitudinalPosition)
     {
-        return getLateralCenterPosition(longitudinalPosition.getSI() / getLength().getSI());
+        return this.offset.apply(longitudinalPosition);
     }
 
     /**
@@ -132,7 +136,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      */
     public final Length getWidth(final Length longitudinalPosition)
     {
-        return getWidth(longitudinalPosition.getSI() / getLength().getSI());
+        return this.width.apply(longitudinalPosition);
     }
 
     /**
@@ -142,7 +146,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      */
     public final Length getWidth(final double fractionalPosition)
     {
-        return this.sliceInfo.getWidth(fractionalPosition);
+        return getWidth(getLength().times(fractionalPosition));
     }
 
     /**
@@ -160,7 +164,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      */
     public final Length getOffsetAtBegin()
     {
-        return this.sliceInfo.getOffsetAtBegin();
+        return this.offset.apply(Length.ZERO);
     }
 
     /**
@@ -169,7 +173,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      */
     public final Length getOffsetAtEnd()
     {
-        return this.sliceInfo.getOffsetAtEnd();
+        return this.offset.apply(getLength());
     }
 
     /**
@@ -178,7 +182,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      */
     public final Length getBeginWidth()
     {
-        return this.sliceInfo.getBeginWidth();
+        return this.width.apply(Length.ZERO);
     }
 
     /**
@@ -187,7 +191,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      */
     public final Length getEndWidth()
     {
-        return this.sliceInfo.getEndWidth();
+        return this.width.apply(getLength());
     }
 
     /**
@@ -243,11 +247,23 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      * @param lateralDirection LEFT, or RIGHT
      * @param fractionalLongitudinalPosition ranges from 0.0 (begin of parentLink) to 1.0 (end of parentLink)
      * @return Length
+     * @throws IllegalArgumentException when lateral direction is {@code null} or NONE.
      */
     public final Length getLateralBoundaryPosition(final LateralDirectionality lateralDirection,
             final double fractionalLongitudinalPosition)
     {
-        return this.sliceInfo.getLateralBoundaryPosition(lateralDirection, fractionalLongitudinalPosition);
+        Length offsetAt = getLateralCenterPosition(fractionalLongitudinalPosition);
+        Length halfWidth = getWidth(fractionalLongitudinalPosition).times(0.5);
+
+        switch (lateralDirection)
+        {
+            case LEFT:
+                return offsetAt.minus(halfWidth);
+            case RIGHT:
+                return offsetAt.plus(halfWidth);
+            default:
+                throw new IllegalArgumentException("Bad value for LateralDirectionality " + lateralDirection);
+        }
     }
 
     /**

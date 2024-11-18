@@ -19,9 +19,11 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.ContinuousBezierCubic;
 import org.opentrafficsim.core.geometry.ContinuousLine;
+import org.opentrafficsim.core.geometry.ContinuousLine.PiecewiseLinearLength;
 import org.opentrafficsim.core.geometry.ContinuousPolyLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
 import org.opentrafficsim.core.geometry.Flattener.NumSegments;
+import org.opentrafficsim.core.geometry.FractionalLengthData;
 import org.opentrafficsim.core.geometry.OtsGeometryUtil;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -32,7 +34,6 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionGeometry;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.CrossSectionSlice;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.LaneType;
@@ -176,10 +177,16 @@ public final class LaneFactory
         this.laneType0 = laneType;
         this.speedLimit0 = speedLimit;
         Length width = StripeType.SOLID.width();
-        List<CrossSectionSlice> slices = LaneGeometryUtil.getSlices(this.line, this.offset.plus(this.offsetStart), width);
-        this.firstStripe =
-                Try.assign(() -> new Stripe(StripeType.SOLID, this.link, CrossSectionGeometry.of(this.line, SEGMENTS, slices)),
-                        "Unexpected exception while building link.");
+        Length length = Length.instantiateSI(this.line.getLength());
+        Length offsetStripe = this.offset.plus(this.offsetStart);
+        PiecewiseLinearLength offsetFunc =
+                new PiecewiseLinearLength(new FractionalLengthData(Map.of(0.0, offsetStripe.si, 1.0, offsetStripe.si)), length);
+        PiecewiseLinearLength widthFunc =
+                new PiecewiseLinearLength(new FractionalLengthData(Map.of(0.0, width.si, 1.0, width.si)), length);
+        this.firstStripe = Try.assign(
+                () -> new Stripe(StripeType.SOLID, this.link,
+                        CrossSectionGeometry.of(this.line, SEGMENTS, offsetFunc, widthFunc)),
+                "Unexpected exception while building link.");
         return this;
     }
 
@@ -199,10 +206,16 @@ public final class LaneFactory
         this.laneType0 = laneType;
         this.speedLimit0 = speedLimit;
         Length width = StripeType.SOLID.width();
-        List<CrossSectionSlice> slices = LaneGeometryUtil.getSlices(this.line, this.offset.plus(this.offsetStart), width);
-        this.firstStripe =
-                Try.assign(() -> new Stripe(StripeType.SOLID, this.link, CrossSectionGeometry.of(this.line, SEGMENTS, slices)),
-                        "Unexpected exception while building link.");
+        Length length = Length.instantiateSI(this.line.getLength());
+        Length offsetStripe = this.offset.plus(this.offsetStart);
+        PiecewiseLinearLength offsetFunc =
+                new PiecewiseLinearLength(new FractionalLengthData(Map.of(0.0, offsetStripe.si, 1.0, offsetStripe.si)), length);
+        PiecewiseLinearLength widthFunc =
+                new PiecewiseLinearLength(new FractionalLengthData(Map.of(0.0, width.si, 1.0, width.si)), length);
+        this.firstStripe = Try.assign(
+                () -> new Stripe(StripeType.SOLID, this.link,
+                        CrossSectionGeometry.of(this.line, SEGMENTS, offsetFunc, widthFunc)),
+                "Unexpected exception while building link.");
         return this;
     }
 
@@ -261,18 +274,26 @@ public final class LaneFactory
             Length startOffset = this.offset.plus(this.laneWidth0.times(0.5)).plus(this.offsetStart);
             Length endOffset = this.offset.plus(this.laneWidth0.times(0.5)).plus(this.offsetEnd);
 
-            List<CrossSectionSlice> slices =
-                    LaneGeometryUtil.getSlices(this.line, startOffset, endOffset, this.laneWidth0.abs(), this.laneWidth0.abs());
+            Length length = Length.instantiateSI(this.line.getLength());
+            PiecewiseLinearLength offsetFunc =
+                    new PiecewiseLinearLength(new FractionalLengthData(Map.of(0.0, startOffset.si, 1.0, endOffset.si)), length);
+            PiecewiseLinearLength widthFunc = new PiecewiseLinearLength(
+                    new FractionalLengthData(Map.of(0.0, this.laneWidth0.abs().si, 1.0, this.laneWidth0.abs().si)), length);
+
             this.lanes.add(Try.assign(() -> new Lane(this.link, "Lane " + (this.lanes.size() + 1),
-                    CrossSectionGeometry.of(this.line, SEGMENTS, slices), this.laneType0,
+                    CrossSectionGeometry.of(this.line, SEGMENTS, offsetFunc, widthFunc), this.laneType0,
                     Map.of(this.gtuType, this.speedLimit0)), "Unexpected exception while building link."));
             this.offset = this.offset.plus(this.laneWidth0);
 
             Length width = type.width();
             startOffset = this.offset.plus(this.offsetStart);
             endOffset = this.offset.plus(this.offsetEnd);
-            List<CrossSectionSlice> slices2 = LaneGeometryUtil.getSlices(this.line, startOffset, endOffset, width, width);
-            stripeList.add(Try.assign(() -> new Stripe(type, this.link, CrossSectionGeometry.of(this.line, SEGMENTS, slices2)),
+            PiecewiseLinearLength offsetFunc2 =
+                    new PiecewiseLinearLength(new FractionalLengthData(Map.of(0.0, startOffset.si, 1.0, endOffset.si)), length);
+            PiecewiseLinearLength widthFunc2 =
+                    new PiecewiseLinearLength(new FractionalLengthData(Map.of(0.0, width.si, 1.0, width.si)), length);
+            stripeList.add(Try.assign(
+                    () -> new Stripe(type, this.link, CrossSectionGeometry.of(this.line, SEGMENTS, offsetFunc2, widthFunc2)),
                     "Unexpected exception while building link."));
         }
         return this;
@@ -387,10 +408,13 @@ public final class LaneFactory
     {
         ContinuousLine line = new ContinuousPolyLine(link.getDesignLine(), link.getStartNode().getLocation(),
                 link.getEndNode().getLocation());
-        List<CrossSectionSlice> slices = new ArrayList<>();
-        slices.add(new CrossSectionSlice(Length.ZERO, latPosAtStart, width));
-        slices.add(new CrossSectionSlice(link.getLength(), latPosAtEnd, width));
-        return new Lane(link, id, CrossSectionGeometry.of(line, SEGMENTS, slices), laneType, Map.of(gtuType, speedLimit));
+        Length length = Length.instantiateSI(line.getLength());
+        PiecewiseLinearLength offsetFunc =
+                new PiecewiseLinearLength(new FractionalLengthData(Map.of(0.0, latPosAtStart.si, 1.0, latPosAtEnd.si)), length);
+        PiecewiseLinearLength widthFunc =
+                new PiecewiseLinearLength(new FractionalLengthData(Map.of(0.0, width.si, 1.0, width.si)), length);
+        return new Lane(link, id, CrossSectionGeometry.of(line, SEGMENTS, offsetFunc, widthFunc), laneType,
+                Map.of(gtuType, speedLimit));
     }
 
     /**
@@ -530,6 +554,7 @@ public final class LaneFactory
                 designLine.flatten(SEGMENTS).getPointList().toArray(new Point2d[65]), simulator);
         Lane[] result = new Lane[laneCount];
 
+        Length length = Length.instantiateSI(designLine.getLength());
         for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
         {
             // Be ware! LEFT is lateral positive, RIGHT is lateral negative.
@@ -537,9 +562,14 @@ public final class LaneFactory
             // Length latPosAtEnd = new Length((-0.5 - laneIndex - laneOffsetAtEnd) * width.getSI(), LengthUnit.SI);
             Length latPosAtStart = new Length(-laneIndex * width.getSI(), LengthUnit.SI);
             Length latPosAtEnd = new Length(-laneIndex * width.getSI(), LengthUnit.SI);
-            List<CrossSectionSlice> slices = LaneGeometryUtil.getSlices(designLine, latPosAtStart, latPosAtEnd, width, width);
-            result[laneIndex] = new Lane(link, "lane." + laneIndex, CrossSectionGeometry.of(designLine, SEGMENTS, slices),
-                    laneType, Map.of(gtuType, speedLimit));
+
+            PiecewiseLinearLength offsetFunc = new PiecewiseLinearLength(
+                    new FractionalLengthData(Map.of(0.0, latPosAtStart.si, 1.0, latPosAtEnd.si)), length);
+            PiecewiseLinearLength widthFunc =
+                    new PiecewiseLinearLength(new FractionalLengthData(Map.of(0.0, width.si, 1.0, width.si)), length);
+            result[laneIndex] =
+                    new Lane(link, "lane." + laneIndex, CrossSectionGeometry.of(designLine, SEGMENTS, offsetFunc, widthFunc),
+                            laneType, Map.of(gtuType, speedLimit));
         }
         return result;
     }
