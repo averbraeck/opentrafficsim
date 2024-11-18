@@ -293,7 +293,7 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
     }
 
     @Override
-    public PolyLine2d flattenOffset(final OffsetFunction offset, final Flattener flattener)
+    public PolyLine2d flattenOffset(final ContinuousDoubleFunction offset, final Flattener flattener)
     {
         Throw.whenNull(offset, "Offsets may not be null.");
         Throw.whenNull(flattener, "Flattener may not be null.");
@@ -454,7 +454,7 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
      * @param last {@code true} for the last Bezier segment.
      * @return offset Bezier.
      */
-    private ContinuousBezierCubic offset(final OffsetFunction offset, final double lengthSoFar, final double lengthTotal,
+    private ContinuousBezierCubic offset(final ContinuousDoubleFunction offset, final double lengthSoFar, final double lengthTotal,
             final double sig, final boolean first, final boolean last)
     {
         double offsetStart = sig * offset.apply(lengthSoFar / lengthTotal);

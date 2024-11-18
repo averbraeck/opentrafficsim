@@ -97,7 +97,7 @@ public interface ContinuousLine
      * @param flattener flattener
      * @return flattened line
      */
-    PolyLine2d flattenOffset(OffsetFunction offset, Flattener flattener);
+    PolyLine2d flattenOffset(ContinuousDoubleFunction offset, Flattener flattener);
 
     /**
      * Return the length of the line.
@@ -108,7 +108,7 @@ public interface ContinuousLine
     /**
      * Temporary function implementation with {@code getDerivative()} and {@code getKnots()} method.
      */
-    interface OffsetFunction extends Function<Double, Double>
+    interface ContinuousDoubleFunction extends Function<Double, Double>
     {
         /**
          * Returns the derivative of the data with respect to fractional length.
@@ -127,7 +127,7 @@ public interface ContinuousLine
     /**
      * Temporary implementation of {@code OffsetFunction} that provides offset data based on {@code PiecewiseLinearLength}.
      */
-    class OffsetFunctionLength implements OffsetFunction
+    class OffsetFunctionLength implements ContinuousDoubleFunction
     {
         /** Length function for offsets. */
         private final PiecewiseLinearLength lengthFunction;
@@ -192,7 +192,7 @@ public interface ContinuousLine
         @Override
         public Length apply(final Length t)
         {
-            return Length.instantiateSI(this.linearData.get(t.si / this.length.si));
+            return Length.instantiateSI(this.linearData.apply(t.si / this.length.si));
         }
         
         /**
@@ -202,7 +202,7 @@ public interface ContinuousLine
          */
         public double get(final double fractionalLength)
         {
-            return this.linearData.get(fractionalLength);
+            return this.linearData.apply(fractionalLength);
         }
 
         /**
@@ -221,7 +221,7 @@ public interface ContinuousLine
          */
         public double[] getKnots()
         {
-            return this.linearData.getFractionalLengthsAsArray();
+            return this.linearData.getKnots();
         }
     }
 }

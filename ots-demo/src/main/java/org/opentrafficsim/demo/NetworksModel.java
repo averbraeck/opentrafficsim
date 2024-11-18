@@ -34,7 +34,7 @@ import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.ContinuousLine;
-import org.opentrafficsim.core.geometry.ContinuousLine.PiecewiseLinearLength;
+import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
 import org.opentrafficsim.core.geometry.FractionalLengthData;
 import org.opentrafficsim.core.gtu.Gtu;
@@ -484,13 +484,10 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
         ContinuousLine designLine = new ContinuousStraight(startPoint, endLinkLength);
         CrossSectionLink endLink = LaneFactory.makeLink(this.network, link.getId() + "endLink", to, end, null, this.simulator);
 
-        Length length = Length.instantiateSI(designLine.getLength());
         for (Lane lane : lanes)
         {
-            PiecewiseLinearLength offset =
-                    new PiecewiseLinearLength(FractionalLengthData.of(0.0, lane.getLateralCenterPosition(1.0).si), length);
-            PiecewiseLinearLength width =
-                    new PiecewiseLinearLength(FractionalLengthData.of(0.0, lane.getWidth(1.0).si), length);
+            ContinuousDoubleFunction offset = FractionalLengthData.of(0.0, lane.getLateralCenterPosition(1.0).si);
+            ContinuousDoubleFunction width = FractionalLengthData.of(0.0, lane.getWidth(1.0).si);
             // Overtaking left and right allowed on the sinkLane
             Lane sinkLane =
                     new Lane(endLink, lane.getId() + "." + "sinkLane", CrossSectionGeometry.of(designLine, null, offset, width),

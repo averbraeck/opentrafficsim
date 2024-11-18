@@ -10,6 +10,7 @@ import org.djutils.immutablecollections.ImmutableLinkedHashSet;
 import org.djutils.immutablecollections.ImmutableNavigableSet;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.djutils.immutablecollections.ImmutableTreeSet;
+import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
 
 /**
  * Container for fractional length data.
@@ -19,7 +20,7 @@ import org.djutils.immutablecollections.ImmutableTreeSet;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class FractionalLengthData
+public class FractionalLengthData implements ContinuousDoubleFunction
 {
 
     /** Underlying data. */
@@ -67,7 +68,8 @@ public class FractionalLengthData
      * @param fractionalLength fractional length, may be outside range [0 ... 1].
      * @return interpolated or extended value.
      */
-    public double get(final double fractionalLength)
+    @Override
+    public Double apply(final Double fractionalLength)
     {
         Double exact = this.data.get(fractionalLength);
         if (exact != null)
@@ -93,6 +95,7 @@ public class FractionalLengthData
      * @param fractionalLength fractional length, may be outside range [0 ... 1].
      * @return derivative of the data with respect to fractional length.
      */
+    @Override
     public double getDerivative(final double fractionalLength)
     {
         Entry<Double, Double> ceiling, floor;
@@ -135,7 +138,8 @@ public class FractionalLengthData
      * Returns fractional lengths in array form, including 0.0 and 1.0.
      * @return fractional lengths.
      */
-    public double[] getFractionalLengthsAsArray()
+    @Override
+    public double[] getKnots()
     {
         NavigableMap<Double, Double> full = fullRange();
         double[] fractionalLengths = new double[full.size()];

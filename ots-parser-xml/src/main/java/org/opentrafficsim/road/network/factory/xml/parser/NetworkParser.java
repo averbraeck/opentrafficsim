@@ -26,7 +26,7 @@ import org.opentrafficsim.core.geometry.ContinuousArc;
 import org.opentrafficsim.core.geometry.ContinuousBezierCubic;
 import org.opentrafficsim.core.geometry.ContinuousClothoid;
 import org.opentrafficsim.core.geometry.ContinuousLine;
-import org.opentrafficsim.core.geometry.ContinuousLine.PiecewiseLinearLength;
+import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
 import org.opentrafficsim.core.geometry.ContinuousPolyLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
 import org.opentrafficsim.core.geometry.Flattener;
@@ -409,11 +409,9 @@ public final class NetworkParser
             {
                 CseData cseData = cseDataList.get(cseTagMap.get(cseTag));
 
-                Length length = Length.instantiateSI(designLine.getLength());
-                PiecewiseLinearLength offset = new PiecewiseLinearLength(
-                        FractionalLengthData.of(0.0, cseData.centerOffsetStart.si, 1.0, cseData.centerOffsetEnd.si), length);
-                PiecewiseLinearLength width = new PiecewiseLinearLength(
-                        FractionalLengthData.of(0.0, cseData.widthStart.si, 1.0, cseData.widthEnd.si), length);
+                ContinuousDoubleFunction offset =
+                        FractionalLengthData.of(0.0, cseData.centerOffsetStart.si, 1.0, cseData.centerOffsetEnd.si);
+                ContinuousDoubleFunction width = FractionalLengthData.of(0.0, cseData.widthStart.si, 1.0, cseData.widthEnd.si);
                 CrossSectionGeometry geometry = CrossSectionGeometry.of(designLine, flattener, offset, width);
 
                 // Lane
@@ -494,11 +492,8 @@ public final class NetworkParser
     {
         StripeType type = stripeTag.getType().get(eval);
         Length width = stripeTag.getDrawingWidth() != null ? stripeTag.getDrawingWidth().get(eval) : type.width();
-        Length length = Length.instantiateSI(designLine.getLength());
-        PiecewiseLinearLength offsetFunc =
-                new PiecewiseLinearLength(FractionalLengthData.of(0.0, startOffset.si, 1.0, endOffset.si), length);
-        PiecewiseLinearLength widthFunc =
-                new PiecewiseLinearLength(FractionalLengthData.of(0.0, width.si, 1.0, width.si), length);
+        ContinuousDoubleFunction offsetFunc = FractionalLengthData.of(0.0, startOffset.si, 1.0, endOffset.si);
+        ContinuousDoubleFunction widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
         cseList.add(new Stripe(type, csl, CrossSectionGeometry.of(designLine, flattener, offsetFunc, widthFunc)));
     }
 

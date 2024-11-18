@@ -567,7 +567,7 @@ public class ContinuousClothoid implements ContinuousLine
     }
 
     @Override
-    public PolyLine2d flattenOffset(final OffsetFunction offset, final Flattener flattener)
+    public PolyLine2d flattenOffset(final ContinuousDoubleFunction offset, final Flattener flattener)
     {
         Throw.whenNull(offset, "Offsets may not be null.");
         Throw.whenNull(flattener, "Flattener may not be null.");

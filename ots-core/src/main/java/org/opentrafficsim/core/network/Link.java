@@ -19,9 +19,8 @@ import org.opentrafficsim.base.HierarchicallyTyped;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.base.geometry.PolygonShape;
-import org.opentrafficsim.base.geometry.SpatialObject;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.FractionalLengthData;
+import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.Gtu;
 
@@ -79,7 +78,7 @@ public class Link extends LocalEventProducer
     private final OtsLine2d designLine;
 
     /** Elevation data. */
-    private final FractionalLengthData elevation;
+    private final ContinuousDoubleFunction elevation;
 
     /** the shape. */
     private final Polygon2d contour;
@@ -109,7 +108,7 @@ public class Link extends LocalEventProducer
      *             or the end node of the link are not registered in the network.
      */
     public Link(final Network network, final String id, final Node startNode, final Node endNode, final LinkType linkType,
-            final OtsLine2d designLine, final FractionalLengthData elevation) throws NetworkException
+            final OtsLine2d designLine, final ContinuousDoubleFunction elevation) throws NetworkException
     {
         Throw.whenNull(network, "network cannot be null");
         Throw.whenNull(id, "id cannot be null");
@@ -307,7 +306,7 @@ public class Link extends LocalEventProducer
         {
             return Length.ZERO;
         }
-        return Length.instantiateSI(this.elevation.get(fractionalPosition));
+        return Length.instantiateSI(this.elevation.apply(fractionalPosition));
     }
 
     /**

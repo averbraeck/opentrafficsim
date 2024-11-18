@@ -11,7 +11,7 @@ import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.core.geometry.ContinuousLine.OffsetFunction;
+import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
 import org.opentrafficsim.core.geometry.ContinuousLine.OffsetFunctionLength;
 import org.opentrafficsim.core.geometry.ContinuousLine.PiecewiseLinearLength;
 import org.opentrafficsim.core.geometry.Flattener.MaxAngle;
@@ -168,7 +168,7 @@ public class ContinuousArcTest
 
         // right-hand increasing offset
         FractionalLengthData offsets = FractionalLengthData.of(0.0, 0.0, 1.0, -1.0);
-        OffsetFunction f = new OffsetFunctionLength(new PiecewiseLinearLength(offsets, length), length);
+        ContinuousDoubleFunction f = new OffsetFunctionLength(new PiecewiseLinearLength(offsets, length), length);
         NumSegments numSegments4 = new NumSegments(4);
         PolyLine2d line = arc.flattenOffset(f, numSegments4);
         isApproximal(line.get(0), 1.0, 0.0);
@@ -215,7 +215,7 @@ public class ContinuousArcTest
 
             // 10 degrees
             FractionalLengthData offsets = FractionalLengthData.of(0.0, -0.5);
-            OffsetFunction f = new OffsetFunctionLength(new PiecewiseLinearLength(offsets, length), length);
+            ContinuousDoubleFunction f = new OffsetFunctionLength(new PiecewiseLinearLength(offsets, length), length);
             PolyLine2d line = arc.flattenOffset(f, new MaxAngle(new Angle(10.0, AngleUnit.DEGREE).si));
             assertEquals(numSegExpect(10.0, Math.PI), line.size(), "Number of segments incorrect");
 

@@ -50,7 +50,7 @@ public class MapStripeData extends MapCrossSectionData implements StripeData
         this.type = type;
         this.width = width;
         this.dashOffset = dashOffset;
-        this.startOffset = geometry.offset().apply(Length.ZERO);
+        this.startOffset = Length.instantiateSI(geometry.offset().apply(0.0));
     }
 
     @Override

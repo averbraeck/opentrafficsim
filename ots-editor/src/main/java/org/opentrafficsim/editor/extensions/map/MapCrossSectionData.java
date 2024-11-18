@@ -92,7 +92,7 @@ public class MapCrossSectionData implements CrossSectionElementData
      */
     public Length getWidth(final Length position)
     {
-        return this.geometry.width().apply(position);
+        return Length.instantiateSI(this.geometry.width().apply(position.si / getCenterLine().getLength()));
     }
 
     @Override

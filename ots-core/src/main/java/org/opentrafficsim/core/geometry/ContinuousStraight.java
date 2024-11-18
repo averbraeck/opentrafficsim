@@ -89,7 +89,7 @@ public class ContinuousStraight implements ContinuousLine
      * @param offset offset, should contain keys 0.0 and 1.0.
      * @return offset polyline
      */
-    public PolyLine2d offset(final OffsetFunction offset)
+    public PolyLine2d offset(final ContinuousDoubleFunction offset)
     {
         Throw.whenNull(offset, "Offsets may not be null.");
         double[] knots = offset.getKnots();
@@ -108,7 +108,7 @@ public class ContinuousStraight implements ContinuousLine
      * @return flattened line.
      */
     @Override
-    public PolyLine2d flattenOffset(final OffsetFunction offsets, final Flattener flattener)
+    public PolyLine2d flattenOffset(final ContinuousDoubleFunction offsets, final Flattener flattener)
     {
         return offset(offsets);
     }

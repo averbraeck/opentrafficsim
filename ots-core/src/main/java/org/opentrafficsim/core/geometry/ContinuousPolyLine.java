@@ -120,7 +120,7 @@ public class ContinuousPolyLine implements ContinuousLine
      * @param offset offset data.
      * @return flattened line.
      */
-    public PolyLine2d offset(final OffsetFunction offset)
+    public PolyLine2d offset(final ContinuousDoubleFunction offset)
     {
         Throw.whenNull(offset, "Offsets may not be null.");
         double[] knots = offset.getKnots();
@@ -146,7 +146,7 @@ public class ContinuousPolyLine implements ContinuousLine
      * @return flattened line.
      */
     @Override
-    public PolyLine2d flattenOffset(final OffsetFunction offset, final Flattener flattener)
+    public PolyLine2d flattenOffset(final ContinuousDoubleFunction offset, final Flattener flattener)
     {
         return offset(offset);
     }

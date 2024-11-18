@@ -2,11 +2,10 @@ package org.opentrafficsim.road.network.lane;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.core.geometry.ContinuousLine.PiecewiseLinearLength;
+import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
 import org.opentrafficsim.core.geometry.FractionalLengthData;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 
@@ -36,7 +35,7 @@ public class CrossSectionGeometryTest
         OtsLine2d centerLine = new OtsLine2d(new Point2d(0.0, 0.0), new Point2d(100.0, 0.0));
         Polygon2d contour = new Polygon2d(new Point2d(0.0, -1.75), new Point2d(100.0, -1.75), new Point2d(100.0, 1.75),
                 new Point2d(0.0, -1.75));
-        PiecewiseLinearLength func = new PiecewiseLinearLength(FractionalLengthData.of(0.0, 0.0), Length.ONE);
+        ContinuousDoubleFunction func = FractionalLengthData.of(0.0, 0.0);
         try
         {
             new CrossSectionGeometry(centerLine, contour, null, func);

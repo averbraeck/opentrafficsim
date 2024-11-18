@@ -9,7 +9,7 @@ import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.core.geometry.ContinuousLine.OffsetFunction;
+import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
 import org.opentrafficsim.core.geometry.ContinuousLine.OffsetFunctionLength;
 import org.opentrafficsim.core.geometry.ContinuousLine.PiecewiseLinearLength;
 
@@ -49,7 +49,7 @@ public class ContinuousStraightTest
         assertEquals(0.0, straight.getEndCurvature(), MARGIN, "End curvature is incorrect.");
 
         FractionalLengthData offsets = FractionalLengthData.of(0.0, -1.0, 0.5, -1.0, 1.0, -2.0);
-        OffsetFunction f = new OffsetFunctionLength(new PiecewiseLinearLength(offsets, length), length);
+        ContinuousDoubleFunction f = new OffsetFunctionLength(new PiecewiseLinearLength(offsets, length), length);
         PolyLine2d line = straight.offset(f);
         isApproximal(line.get(0), 0.0, -1.0);
         isApproximal(line.get(1), 50.0, -1.0);

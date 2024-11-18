@@ -390,37 +390,39 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             CrossSectionLink link = new CrossSectionLink(this.network, "AB", nodeA, nodeB, DefaultsNl.HIGHWAY, centerLine,
                     FractionalLengthData.of(0.0, 0.0), LaneKeepingPolicy.KEEPRIGHT);
 
-            Length offset1 = Length.instantiateSI(3.5);
-            Length width1 = Length.instantiateSI(0.2);
-            OtsLine2d offsetLine1 = centerLine.offsetLine(offset1.si);
-            new Stripe(Stripe.StripeType.SOLID, link,
-                    new CrossSectionGeometry(offsetLine1, getContour(offsetLine1, width1.si), (p) -> offset1, (p) -> width1));
+            double offset1 = 3.5;
+            double width1 = 0.2;
+            OtsLine2d offsetLine1 = centerLine.offsetLine(offset1);
+            new Stripe(Stripe.StripeType.SOLID, link, new CrossSectionGeometry(offsetLine1, getContour(offsetLine1, width1),
+                    FractionalLengthData.of(0.0, offset1), FractionalLengthData.of(0.0, width1)));
 
-            Length offset2 = Length.instantiateSI(1.75);
-            Length width2 = Length.instantiateSI(3.5);
-            OtsLine2d offsetLine2 = centerLine.offsetLine(offset2.si);
+            double offset2 = 1.75;
+            double width2 = 3.5;
+            OtsLine2d offsetLine2 = centerLine.offsetLine(offset2);
             Lane left = new Lane(link, "LEFT",
-                    new CrossSectionGeometry(offsetLine2, getContour(offsetLine2, width2.si), (p) -> offset2, (p) -> width2),
+                    new CrossSectionGeometry(offsetLine2, getContour(offsetLine2, width2),
+                            FractionalLengthData.of(0.0, offset2), FractionalLengthData.of(0.0, width2)),
                     DefaultsRoadNl.HIGHWAY, speedLimit);
 
-            Length offset3 = Length.instantiateSI(0.0);
-            Length width3 = Length.instantiateSI(0.2);
-            OtsLine2d offsetLine3 = centerLine.offsetLine(offset3.si);
-            new Stripe(Stripe.StripeType.DASHED, link,
-                    new CrossSectionGeometry(offsetLine3, getContour(offsetLine3, width3.si), (p) -> offset3, (p) -> width3));
+            double offset3 = 0.0;
+            double width3 = 0.2;
+            OtsLine2d offsetLine3 = centerLine.offsetLine(offset3);
+            new Stripe(Stripe.StripeType.DASHED, link, new CrossSectionGeometry(offsetLine3, getContour(offsetLine3, width3),
+                    FractionalLengthData.of(0.0, offset3), FractionalLengthData.of(0.0, width3)));
 
-            Length offset4 = Length.instantiateSI(-1.75);
-            Length width4 = Length.instantiateSI(3.5);
-            OtsLine2d offsetLine4 = centerLine.offsetLine(offset4.si);
+            double offset4 = -1.75;
+            double width4 = 3.5;
+            OtsLine2d offsetLine4 = centerLine.offsetLine(offset4);
             Lane right = new Lane(link, "RIGHT",
-                    new CrossSectionGeometry(offsetLine4, getContour(offsetLine4, width4.si), (p) -> offset4, (p) -> width4),
+                    new CrossSectionGeometry(offsetLine4, getContour(offsetLine4, width4),
+                            FractionalLengthData.of(0.0, offset4), FractionalLengthData.of(0.0, width4)),
                     DefaultsRoadNl.HIGHWAY, speedLimit);
 
-            Length offset5 = Length.instantiateSI(-3.5);
-            Length width5 = Length.instantiateSI(0.2);
-            OtsLine2d offsetLine5 = centerLine.offsetLine(offset5.si);
-            new Stripe(Stripe.StripeType.SOLID, link,
-                    new CrossSectionGeometry(offsetLine5, getContour(offsetLine5, width5.si), (p) -> offset5, (p) -> width5));
+            double offset5 = -3.5;
+            double width5 = 0.2;
+            OtsLine2d offsetLine5 = centerLine.offsetLine(offset5);
+            new Stripe(Stripe.StripeType.SOLID, link, new CrossSectionGeometry(offsetLine5, getContour(offsetLine5, width5),
+                    FractionalLengthData.of(0.0, offset5), FractionalLengthData.of(0.0, width5)));
 
             // Add distraction halfway on the network, 0.3 on left lane, 0.2 on right lane, with distance profile
             new Distraction("distractionLeft", left, Length.instantiateSI(1500.0), new TrapezoidProfile(0.3,

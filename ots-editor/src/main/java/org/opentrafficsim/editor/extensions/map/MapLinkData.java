@@ -41,7 +41,7 @@ import org.opentrafficsim.core.geometry.ContinuousArc;
 import org.opentrafficsim.core.geometry.ContinuousBezierCubic;
 import org.opentrafficsim.core.geometry.ContinuousClothoid;
 import org.opentrafficsim.core.geometry.ContinuousLine;
-import org.opentrafficsim.core.geometry.ContinuousLine.PiecewiseLinearLength;
+import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
 import org.opentrafficsim.core.geometry.ContinuousPolyLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
 import org.opentrafficsim.core.geometry.Flattener;
@@ -599,21 +599,19 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 StripeType type = null;
                 Length width = null;
 
-                Length length = Length.instantiateSI(this.designLine.getLength());
-                PiecewiseLinearLength offsetFunc = new PiecewiseLinearLength(
-                        FractionalLengthData.of(0.0, cseData.centerOffsetStart.si, 1.0, cseData.centerOffsetEnd.si), length);
-                PiecewiseLinearLength widthFunc;
+                ContinuousDoubleFunction offsetFunc =
+                        FractionalLengthData.of(0.0, cseData.centerOffsetStart.si, 1.0, cseData.centerOffsetEnd.si);
+                ContinuousDoubleFunction widthFunc;
                 if (node.getNodeName().equals("Stripe"))
                 {
                     type = Adapters.get(StripeType.class).unmarshal(node.getAttributeValue("Type")).get(getEval());
                     width = node.getChild(1).isActive() // child 1 is DrawingWidth
                             ? Adapters.get(Length.class).unmarshal(node.getChild(1).getValue()).get(getEval()) : type.width();
-                    widthFunc = new PiecewiseLinearLength(FractionalLengthData.of(0.0, width.si, 1.0, width.si), length);
+                    widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
                 }
                 else
                 {
-                    widthFunc = new PiecewiseLinearLength(
-                            FractionalLengthData.of(0.0, cseData.widthStart.si, 1.0, cseData.widthEnd.si), length);
+                    widthFunc = FractionalLengthData.of(0.0, cseData.widthStart.si, 1.0, cseData.widthEnd.si);
                 }
 
                 Flattener flattener = getFlattener();
