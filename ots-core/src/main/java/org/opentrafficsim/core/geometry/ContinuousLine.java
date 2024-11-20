@@ -3,10 +3,8 @@ package org.opentrafficsim.core.geometry;
 import java.util.function.Function;
 
 import org.djunits.value.vdouble.scalar.Direction;
-import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
-import org.djutils.exceptions.Throw;
 
 /**
  * A continuous line defines a line in an exact manner, from which numerical polylines can be derived. The continuous definition
@@ -116,112 +114,11 @@ public interface ContinuousLine
          * @return derivative of the data with respect to fractional length
          */
         double getDerivative(double fractionalLength);
-        
+
         /**
          * Returns knots in the function.
          * @return knots in the function
          */
         double[] getKnots();
-    }
-    
-    /**
-     * Temporary implementation of {@code OffsetFunction} that provides offset data based on {@code PiecewiseLinearLength}.
-     */
-    class OffsetFunctionLength implements ContinuousDoubleFunction
-    {
-        /** Length function for offsets. */
-        private final PiecewiseLinearLength lengthFunction;
-
-        /** Length to normalize. */
-        private final Length length;
-
-        /**
-         * Constructor.
-         * @param lengthFunction length function for offsets
-         * @param length length to normalize
-         */
-        public OffsetFunctionLength(final Function<Length, Length> lengthFunction, final Length length)
-        {
-            Throw.when(!(lengthFunction instanceof PiecewiseLinearLength), IllegalArgumentException.class,
-                    "Length function must be of type PiecewiseLinearLength.");
-            this.lengthFunction = (PiecewiseLinearLength) lengthFunction;
-            this.length = length;
-        }
-
-        @Override
-        public Double apply(final Double t)
-        {
-            return this.lengthFunction.apply(this.length.times(t)).si;
-        }
-
-        @Override
-        public double getDerivative(final double fractionalLength)
-        {
-            return this.lengthFunction.getDerivative(fractionalLength);
-        }
-
-        @Override
-        public double[] getKnots()
-        {
-            return this.lengthFunction.getKnots();
-        }
-    }
-
-    /**
-     * Temporary implementation of {@code Function<Length, Length>} to be used for offset and width data. 
-     */
-    class PiecewiseLinearLength implements Function<Length, Length>
-    {
-        /** Fractional length data. */
-        private final FractionalLengthData linearData;
-
-        /** Length to normalize. */
-        private final Length length;
-
-        /**
-         * Constructor.
-         * @param linearData fractional length data
-         * @param length length to normalize
-         */
-        public PiecewiseLinearLength(final FractionalLengthData linearData, final Length length)
-        {
-            this.linearData = linearData;
-            this.length = length;
-        }
-
-        @Override
-        public Length apply(final Length t)
-        {
-            return Length.instantiateSI(this.linearData.apply(t.si / this.length.si));
-        }
-        
-        /**
-         * Returns the value at fraction.
-         * @param fractionalLength fractional length
-         * @return value at fraction
-         */
-        public double get(final double fractionalLength)
-        {
-            return this.linearData.apply(fractionalLength);
-        }
-
-        /**
-         * Returns the derivative.
-         * @param fractionalLength fractional length
-         * @return derivative
-         */
-        public double getDerivative(final double fractionalLength)
-        {
-            return this.linearData.getDerivative(fractionalLength);
-        }
-        
-        /**
-         * Return knots.
-         * @return knots
-         */
-        public double[] getKnots()
-        {
-            return this.linearData.getKnots();
-        }
     }
 }

@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.network;
 
 import org.djunits.value.vdouble.scalar.Frequency;
-import org.opentrafficsim.core.geometry.FractionalLengthData;
+import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
 import org.opentrafficsim.core.geometry.OtsLine2d;
 
 /**
@@ -36,7 +36,7 @@ public class CapacityLink extends Link implements Capacity
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public CapacityLink(final Network network, final String id, final Node startNode, final Node endNode,
-            final LinkType linkType, final OtsLine2d designLine, final FractionalLengthData elevation, final Frequency capacity)
+            final LinkType linkType, final OtsLine2d designLine, final ContinuousDoubleFunction elevation, final Frequency capacity)
             throws NetworkException
     {
         super(network, id, startNode, endNode, linkType, designLine, elevation);

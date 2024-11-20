@@ -5,15 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.djunits.unit.AngleUnit;
 import org.djunits.value.vdouble.scalar.Angle;
-import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
-import org.opentrafficsim.core.geometry.ContinuousLine.OffsetFunctionLength;
-import org.opentrafficsim.core.geometry.ContinuousLine.PiecewiseLinearLength;
 import org.opentrafficsim.core.geometry.Flattener.MaxAngle;
 import org.opentrafficsim.core.geometry.Flattener.MaxDeviation;
 import org.opentrafficsim.core.geometry.Flattener.NumSegments;
@@ -164,37 +160,32 @@ public class ContinuousArcTest
         // half standard unit circle
         OrientedPoint2d start = new OrientedPoint2d(1.0, 0.0, Math.PI / 2.0);
         ContinuousArc arc = new ContinuousArc(start, 1.0, true, Angle.instantiateSI(Math.PI));
-        Length length = Length.instantiateSI(arc.getLength());
 
         // right-hand increasing offset
         FractionalLengthData offsets = FractionalLengthData.of(0.0, 0.0, 1.0, -1.0);
-        ContinuousDoubleFunction f = new OffsetFunctionLength(new PiecewiseLinearLength(offsets, length), length);
         NumSegments numSegments4 = new NumSegments(4);
-        PolyLine2d line = arc.flattenOffset(f, numSegments4);
+        PolyLine2d line = arc.flattenOffset(offsets, numSegments4);
         isApproximal(line.get(0), 1.0, 0.0);
         isApproximal(line.get(2), 0.0, 1.5);
         isApproximal(line.get(4), -2.0, 0.0);
 
         // left-hand increasing offset
         offsets = FractionalLengthData.of(0.0, 0.0, 1.0, 1.0);
-        f = new OffsetFunctionLength(new PiecewiseLinearLength(offsets, length), length);
-        line = arc.flattenOffset(f, numSegments4);
+        line = arc.flattenOffset(offsets, numSegments4);
         isApproximal(line.get(0), 1.0, 0.0);
         isApproximal(line.get(2), 0.0, 0.5);
         isApproximal(line.get(4), 0.0, 0.0);
 
         // constant right-hand offset
         offsets = FractionalLengthData.of(0.0, -0.5);
-        f = new OffsetFunctionLength(new PiecewiseLinearLength(offsets, length), length);
-        line = arc.flattenOffset(f, numSegments4);
+        line = arc.flattenOffset(offsets, numSegments4);
         isApproximal(line.get(0), 1.5, 0.0);
         isApproximal(line.get(2), 0.0, 1.5);
         isApproximal(line.get(4), -1.5, 0.0);
 
         // constant left-hand offset
         offsets = FractionalLengthData.of(0.0, 0.5);
-        f = new OffsetFunctionLength(new PiecewiseLinearLength(offsets, length), length);
-        line = arc.flattenOffset(f, numSegments4);
+        line = arc.flattenOffset(offsets, numSegments4);
         isApproximal(line.get(0), 0.5, 0.0);
         isApproximal(line.get(2), 0.0, 0.5);
         isApproximal(line.get(4), -0.5, 0.0);
@@ -211,36 +202,31 @@ public class ContinuousArcTest
             // half standard unit circle
             OrientedPoint2d start = new OrientedPoint2d(1.0, 0.0, Math.PI / 2.0);
             ContinuousArc arc = new ContinuousArc(start, 1.0, left, Angle.instantiateSI(Math.PI));
-            Length length = Length.instantiateSI(arc.getLength());
 
             // 10 degrees
             FractionalLengthData offsets = FractionalLengthData.of(0.0, -0.5);
-            ContinuousDoubleFunction f = new OffsetFunctionLength(new PiecewiseLinearLength(offsets, length), length);
-            PolyLine2d line = arc.flattenOffset(f, new MaxAngle(new Angle(10.0, AngleUnit.DEGREE).si));
+            PolyLine2d line = arc.flattenOffset(offsets, new MaxAngle(new Angle(10.0, AngleUnit.DEGREE).si));
             assertEquals(numSegExpect(10.0, Math.PI), line.size(), "Number of segments incorrect");
 
             // 1 degree
             MaxAngle maxAngle1 = new MaxAngle(new Angle(1.0, AngleUnit.DEGREE).si);
-            line = arc.flattenOffset(f, maxAngle1);
+            line = arc.flattenOffset(offsets, maxAngle1);
             System.out.println(line.toExcel());
             assertEquals(numSegExpect(1.0, Math.PI), line.size(), "Number of segments incorrect");
 
             // variable radius
             offsets = FractionalLengthData.of(0.0, -0.5, 1.0, 0.25);
-            f = new OffsetFunctionLength(new PiecewiseLinearLength(offsets, length), length);
-            PolyLine2d line1 = arc.flattenOffset(f, maxAngle1);
+            PolyLine2d line1 = arc.flattenOffset(offsets, maxAngle1);
             offsets = FractionalLengthData.of(0.0, 0.25, 1.0, -0.5);
-            f = new OffsetFunctionLength(new PiecewiseLinearLength(offsets, length), length);
-            PolyLine2d line2 = arc.flattenOffset(f, maxAngle1);
+            PolyLine2d line2 = arc.flattenOffset(offsets, maxAngle1);
             assertEquals(line1.size(), line2.size(),
                     "Mirrored half circles result in the same number of segments, whereever it is on the arc");
 
             // different spatial errors
             offsets = FractionalLengthData.of(0.0, -0.5);
-            f = new OffsetFunctionLength(new PiecewiseLinearLength(offsets, length), length);
-            line1 = arc.flattenOffset(f, new MaxDeviation(0.1));
-            line2 = arc.flattenOffset(f, new MaxDeviation(0.01));
-            PolyLine2d line3 = arc.flattenOffset(f, new MaxDeviation(0.001));
+            line1 = arc.flattenOffset(offsets, new MaxDeviation(0.1));
+            line2 = arc.flattenOffset(offsets, new MaxDeviation(0.01));
+            PolyLine2d line3 = arc.flattenOffset(offsets, new MaxDeviation(0.001));
             assertTrue(line1.size() < line2.size() && line2.size() < line3.size(),
                     "Reduced spatial error should result in more segments");
         }

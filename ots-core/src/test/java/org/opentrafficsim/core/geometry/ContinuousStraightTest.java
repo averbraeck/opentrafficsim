@@ -3,15 +3,11 @@ package org.opentrafficsim.core.geometry;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
-import org.opentrafficsim.core.geometry.ContinuousLine.OffsetFunctionLength;
-import org.opentrafficsim.core.geometry.ContinuousLine.PiecewiseLinearLength;
 
 /**
  * Tests for ContinuousStraight.
@@ -37,7 +33,6 @@ public class ContinuousStraightTest
         Try.testFail(() -> new ContinuousStraight(startPoint, -100.0), "Negative length should not be allowed.",
                 IllegalArgumentException.class);
         ContinuousStraight straight = new ContinuousStraight(startPoint, 100.0);
-        Length length = Length.instantiateSI(straight.getLength());
 
         isApproximal(straight.getStartPoint(), 0.0, 0.0);
         isApproximal(straight.getEndPoint(), 100.0, 0.0);
@@ -49,15 +44,13 @@ public class ContinuousStraightTest
         assertEquals(0.0, straight.getEndCurvature(), MARGIN, "End curvature is incorrect.");
 
         FractionalLengthData offsets = FractionalLengthData.of(0.0, -1.0, 0.5, -1.0, 1.0, -2.0);
-        ContinuousDoubleFunction f = new OffsetFunctionLength(new PiecewiseLinearLength(offsets, length), length);
-        PolyLine2d line = straight.offset(f);
+        PolyLine2d line = straight.offset(offsets);
         isApproximal(line.get(0), 0.0, -1.0);
         isApproximal(line.get(1), 50.0, -1.0);
         isApproximal(line.get(2), 100.0, -2.0);
 
         offsets = FractionalLengthData.of(0.0, 1.0, 0.5, 1.0, 1.0, 2.0);
-        f = new OffsetFunctionLength(new PiecewiseLinearLength(offsets, length), length);
-        line = straight.offset(f);
+        line = straight.offset(offsets);
         isApproximal(line.get(0), 0.0, 1.0);
         isApproximal(line.get(1), 50.0, 1.0);
         isApproximal(line.get(2), 100.0, 2.0);

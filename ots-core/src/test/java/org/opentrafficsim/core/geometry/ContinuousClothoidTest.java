@@ -9,8 +9,7 @@ import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.core.geometry.ContinuousLine.OffsetFunctionLength;
-import org.opentrafficsim.core.geometry.ContinuousLine.PiecewiseLinearLength;
+import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
 import org.opentrafficsim.core.geometry.Flattener.NumSegments;
 
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -202,12 +201,10 @@ public class ContinuousClothoidTest
                 // point B pointing up/down away from A
                 OrientedPoint2d b = new OrientedPoint2d(xB, 0.0, yA < 0.0 ? Math.PI / 2 : -Math.PI / 2);
                 ContinuousClothoid clothoid = new ContinuousClothoid(a, b);
-                Length length = Length.instantiateSI(clothoid.getLength());
                 // offset -2.0 or 2.0
                 for (double offset = -2.0; offset < 3.0; offset += 4.0)
                 {
-                    OffsetFunctionLength f = new OffsetFunctionLength(
-                            new PiecewiseLinearLength(new FractionalLengthData(0.0, offset, 1.0, offset), length), length);
+                    ContinuousDoubleFunction f = FractionalLengthData.of(0.0, offset, 1.0, offset);
                     PolyLine2d line = clothoid.flattenOffset(f, flattener);
                     Point2d start = line.get(0);
                     Point2d end = line.get(line.size() - 1);

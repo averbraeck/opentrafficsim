@@ -310,9 +310,9 @@ public class Link extends LocalEventProducer
     }
 
     /**
-     * Returns the grade at the given position, given as delta_h / delta_f, where f is fractional position.
-     * @param position position.
-     * @return grade at the given position.
+     * Returns the grade at the given position, given as delta_h / delta_x, as value without unit.
+     * @param position position
+     * @return grade at the given position
      */
     public double getGrade(final Length position)
     {
@@ -320,9 +320,9 @@ public class Link extends LocalEventProducer
     }
 
     /**
-     * Returns the grade at the given fractional position, given as delta_h / delta_f, where f is fractional position.
-     * @param fractionalPosition fractional position.
-     * @return grade at the given fractional position.
+     * Returns the grade at the given fractional position, given as delta_h / delta_x, as value without unit.
+     * @param fractionalPosition fractional position
+     * @return grade at the given fractional position
      */
     public double getGrade(final double fractionalPosition)
     {
