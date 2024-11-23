@@ -2191,7 +2191,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             String annotation = DocumentReader.getAnnotation(relevantNode, "xsd:appinfo", "name");
             if (annotation != null)
             {
-                stringBuilder.append(annotation).append("...");
+                stringBuilder.append(annotation);
             }
             else
             {
