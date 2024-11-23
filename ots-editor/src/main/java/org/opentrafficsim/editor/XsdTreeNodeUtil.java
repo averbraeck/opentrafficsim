@@ -402,4 +402,64 @@ public final class XsdTreeNodeUtil
         return (value1Empty && value2Empty) || (value1 != null && value1.equals(value2));
     }
 
+    /**
+     * Class that holds two indices related to loading XML nodes in to a structure of {@code XsdTreeNode}. Both pertain to the
+     * index in a list of child nodes.
+     */
+    protected static final class LoadingIndices
+    {
+        /** Index of XML node. */
+        private int xmlNode;
+
+        /** Index of XsdTreeNode. */
+        private int xsdTreeNode;
+
+        /**
+         * Constructor.
+         * @param xmlNode index of XML node
+         * @param xsdTreeNode index of XsdTreeNode
+         */
+        public LoadingIndices(final int xmlNode, final int xsdTreeNode)
+        {
+            this.xmlNode = xmlNode;
+            this.xsdTreeNode = xsdTreeNode;
+        }
+
+        /**
+         * Get XML node index.
+         * @return XML node index
+         */
+        public int getXmlNode()
+        {
+            return this.xmlNode;
+        }
+
+        /**
+         * Set XML node index.
+         * @param xmlNode XML node index
+         */
+        public void setXmlNode(final int xmlNode)
+        {
+            this.xmlNode = xmlNode;
+        }
+
+        /**
+         * Get XsdTreeNode index.
+         * @return XsdTreeNode index
+         */
+        public int getXsdTreeNode()
+        {
+            return this.xsdTreeNode;
+        }
+
+        /**
+         * Set XsdTreeNode index.
+         * @param xsdTreeNode XsdTreeNode index
+         */
+        public void setXsdTreeNode(final int xsdTreeNode)
+        {
+            this.xsdTreeNode = xsdTreeNode;
+        }
+    }
+
 }

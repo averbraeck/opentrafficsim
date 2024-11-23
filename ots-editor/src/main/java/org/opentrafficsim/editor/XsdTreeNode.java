@@ -33,6 +33,7 @@ import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.opentrafficsim.editor.XsdTreeNodeUtil.LoadingIndices;
 import org.opentrafficsim.editor.decoration.validation.CoupledValidator;
 import org.opentrafficsim.editor.decoration.validation.KeyValidator;
 import org.opentrafficsim.editor.decoration.validation.ValueValidator;
@@ -2409,10 +2410,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         assureChildren();
         if (nodeXml.getChildNodes() != null)
         {
-            List<Integer> indices = new ArrayList<>();
-            indices.add(0);
-            indices.add(0);
-            loadChildren(indices, nodeXml.getChildNodes(), false);
+            loadChildren(new LoadingIndices(0, 0), nodeXml.getChildNodes(), false);
             // while (indices.get(0) < nodeXml.getChildNodes().getLength())
             // {
             // System.err.println(
@@ -2489,7 +2487,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * @param childrenXml list of XML child nodes as specified within one parent XML tag.
      * @param loadingSubSequence whether this call is loading children as a sub-sequence.
      */
-    protected void loadChildren(final List<Integer> indices, final NodeList childrenXml, final boolean loadingSubSequence)
+    protected void loadChildren(final LoadingIndices indices, final NodeList childrenXml, final boolean loadingSubSequence)
     {
         List<XsdTreeNode> loadedChildren = new ArrayList<>();
         int passes = 0;
@@ -2509,14 +2507,14 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             }
         }
 
-        int indexXml = indices.get(0);
-        int childIndex = indices.get(1);
-        while (indexXml < childrenXml.getLength())
+        int xmlNodeIndex = indices.getXmlNode();
+        int xsdTreeNodeIndex = indices.getXsdTreeNode();
+        while (xmlNodeIndex < childrenXml.getLength())
         {
-            Node childNodeXml = childrenXml.item(indexXml);
+            Node childNodeXml = childrenXml.item(xmlNodeIndex);
             if (childNodeXml.getNodeName().equals("#text"))
             {
-                indexXml++;
+                xmlNodeIndex++;
                 continue;
             }
 
@@ -2526,32 +2524,32 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             {
                 String fallback = childNodeXml.getChildNodes().item(1).getAttributes().getNamedItem("href").getNodeValue();
                 setAttributeValue(1, fallback);
-                indexXml++;
+                xmlNodeIndex++;
                 continue;
             }
 
             // find relevant node: previous node, or skip to next until we find the relevant node
-            if (childIndex > 0 && this.children.get(childIndex - 1).isRelevantNode(nameXml))
+            if (xsdTreeNodeIndex > 0 && this.children.get(xsdTreeNodeIndex - 1).isRelevantNode(nameXml))
             {
-                if (childIndex >= this.children.size() || !this.children.get(childIndex).isRelevantNode(nameXml))
+                if (xsdTreeNodeIndex >= this.children.size() || !this.children.get(xsdTreeNodeIndex).isRelevantNode(nameXml))
                 {
-                    this.children.get(childIndex - 1).add();
+                    this.children.get(xsdTreeNodeIndex - 1).add();
                 }
             }
             else
             {
-                while (childIndex < this.children.size() && (!this.children.get(childIndex).isRelevantNode(nameXml)
-                        || loadedChildren.contains(this.children.get(childIndex))))
+                while (xsdTreeNodeIndex < this.children.size() && (!this.children.get(xsdTreeNodeIndex).isRelevantNode(nameXml)
+                        || loadedChildren.contains(this.children.get(xsdTreeNodeIndex))))
                 {
-                    childIndex++;
+                    xsdTreeNodeIndex++;
                 }
-                if (childIndex >= this.children.size())
+                if (xsdTreeNodeIndex >= this.children.size())
                 {
                     if (loadedDuringPass == 0)
                     {
                         System.err.println("Failing to load " + nameXml + ", it is not a valid node.");
-                        indexXml++;
-                        childIndex = 0; // start next pass
+                        xmlNodeIndex++;
+                        xsdTreeNodeIndex = 0; // start next pass
                         continue;
                     }
                     else
@@ -2563,28 +2561,26 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                             {
                                 System.err.println("Failing to load " + nameXml + ", maximum number of passes reached.");
                             }
-                            indices.set(0, indexXml);
+                            indices.setXmlNode(xmlNodeIndex);
                             return;
                         }
                     }
-                    childIndex = 0; // start next pass
+                    xsdTreeNodeIndex = 0; // start next pass
                     loadedDuringPass = 0;
                     continue;
                 }
             }
 
             // load information in relevant node, can be a choice, can be a sequence in a choice
-            XsdTreeNode relevantChild = this.children.get(childIndex);
+            XsdTreeNode relevantChild = this.children.get(xsdTreeNodeIndex);
             if (relevantChild.choice == null)
             {
                 if (relevantChild.getNodeName().equals("xsd:sequence"))
                 {
-                    List<Integer> sequenceIndices = new ArrayList<>();
-                    sequenceIndices.add(indexXml);
-                    sequenceIndices.add(0);
+                    LoadingIndices sequenceIndices = new LoadingIndices(xmlNodeIndex, 0);
                     relevantChild.loadChildren(sequenceIndices, childrenXml, true);
                     loadedChildren.add(relevantChild);
-                    indexXml = sequenceIndices.get(0) - 1;
+                    xmlNodeIndex = sequenceIndices.getXmlNode() - 1;
                 }
                 else
                 {
@@ -2604,12 +2600,10 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                             if (child.isRelevantNode(nameXml))
                             {
                                 relevantChild.choice.setOption(option);
-                                List<Integer> optionIndices = new ArrayList<>();
-                                optionIndices.add(indexXml);
-                                optionIndices.add(0);
+                                LoadingIndices optionIndices = new LoadingIndices(xmlNodeIndex, 0);
                                 option.loadChildren(optionIndices, childrenXml, true);
                                 loadedChildren.add(option);
-                                indexXml = optionIndices.get(0) - 1;
+                                xmlNodeIndex = optionIndices.getXmlNode() - 1;
                                 optionSet = true;
                                 break;
                             }
@@ -2635,11 +2629,11 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 }
             }
             loadedDuringPass++;
-            childIndex++;
-            indices.set(1, childIndex);
-            indexXml++;
+            xsdTreeNodeIndex++;
+            indices.setXsdTreeNode(xsdTreeNodeIndex);
+            xmlNodeIndex++;
         }
-        indices.set(0, indexXml);
+        indices.setXmlNode(xmlNodeIndex);
     }
 
     /**
