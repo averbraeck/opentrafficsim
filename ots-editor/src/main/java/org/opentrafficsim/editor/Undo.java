@@ -176,6 +176,10 @@ public class Undo implements EventListener
         this.ignoreChanges = true;
 
         Action action = this.queue.get(this.cursor);
+        if (action.type.equals(ActionType.ACTIVATE))
+        {
+            this.editor.collapse(action.node);
+        }
         Iterator<SubAction> iterator = action.subActions.descendingIterator();
         while (iterator.hasNext())
         {

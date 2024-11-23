@@ -74,6 +74,7 @@ public class NodeActions
         {
             editor.stopCellEditing();
         }
+        this.editor.collapse(node);
         this.editor.getUndo().startAction(ActionType.REMOVE, node, null);
         XsdTreeNode parent = node.getParent();
         int index = parent.getChildren().indexOf(node);

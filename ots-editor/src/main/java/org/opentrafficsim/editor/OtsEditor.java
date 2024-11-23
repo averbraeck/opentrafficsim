@@ -542,6 +542,19 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     }
 
     /**
+     * Collapses the given node, if expanded.
+     * @param node node
+     */
+    public void collapse(final XsdTreeNode node)
+    {
+        TreePath path = this.treeTable.getTree().getSelectionPath();
+        if (this.treeTable.getTree().isExpanded(path))
+        {
+            this.getNodeActions().expand(node, path, true);
+        }
+    }
+    
+    /**
      * Shows and selects the given node in the tree.
      * @param node node.
      * @param attribute attribute name, may be {@code null} to just show the node.
