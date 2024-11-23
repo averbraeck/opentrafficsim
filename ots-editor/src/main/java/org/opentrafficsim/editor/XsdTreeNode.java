@@ -362,21 +362,6 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             }
             this.maxOccurs *= childCount;
         }
-        for (int index = this.hiddenNodes.size() - 1; index >= 0; index--)
-        {
-            Node hiddenNode = this.hiddenNodes.get(index);
-            if (hiddenNode.getNodeName().equals("xsd:sequence") || hiddenNode.getNodeName().equals("xsd:choice")
-                    || hiddenNode.getNodeName().equals("xsd:all"))
-            {
-                this.minOccurs *= XsdTreeNodeUtil.getOccurs(hiddenNode, "minOccurs");
-                int max = XsdTreeNodeUtil.getOccurs(hiddenNode, "maxOccurs");
-                this.maxOccurs = this.maxOccurs < 0 || max < 0 ? -1 : this.maxOccurs * max;
-            }
-            else
-            {
-                break; // as soon as we bump up another type of node, no more sequences and choices can appear until parent type
-            }
-        }
     }
 
     /**
@@ -713,7 +698,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 new ImmutableArrayList<>(Collections.emptyList()), this.schema);
         for (Entry<Node, ImmutableList<Node>> entry : relevantNodes.entrySet())
         {
-            XsdTreeNodeUtil.addChildren(entry.getKey(), this, this.children, entry.getValue(), this.schema, true, -1);
+            XsdTreeNodeUtil.addChildren(entry.getKey(), this, this.children, entry.getValue(), this.schema, false, -1);
         }
         for (int index = 0; index < this.children.size(); index++)
         {
@@ -2319,8 +2304,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             return;
         }
 
-        // sequences that are a choice option do not add a level in the xml, forward directly under parent
-        if (this.xsdNode.getNodeName().equals("xsd:sequence") && this.choice != null)
+        // sequences do not add a level in the xml, forward directly under parent
+        if (this.xsdNode.getNodeName().equals("xsd:sequence"))
         {
             for (int index = 0; index < this.getChildCount(); index++)
             {
@@ -2478,9 +2463,11 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * <li>We move to the next child node until we find a node that is relevant for the XML child node. This should only skip
      * inactive nodes for which XML specifies no information.</li>
      * </ol>
-     * Next, the information from XML is loaded in to the relevant child node. This can happen in three ways:
+     * Next, the information from XML is loaded in to the relevant child node. This can happen in four ways:
      * <ol>
-     * <li>The relevant node is not a choice, information is loaded in to it with {@code loadXmlNodes}.</li>
+     * <li>The relevant node is not a choice or sequence, information is loaded in to it with {@code loadXmlNodes}.</li>
+     * <li>The relevant node is a sequence. The relevant child in the sequence is found, and all XML child nodes that can be
+     * loaded in to it, are by calling {@code loadChildren}.</li>
      * <li>The relevant node is a choice, where the relevant option is not a sequence. The option will be set in the choice.
      * Information is loaded in to the selected option with {@code loadXmlNodes}.</li>
      * <li>The relevant node is a choice, where the relevant option is a sequence. The option (sequence node) will be set in the
@@ -2590,8 +2577,20 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             XsdTreeNode relevantChild = this.children.get(childIndex);
             if (relevantChild.choice == null)
             {
-                relevantChild.loadXmlNodes(childNodeXml);
-                loadedChildren.add(relevantChild);
+                if (relevantChild.getNodeName().equals("xsd:sequence"))
+                {
+                    List<Integer> sequenceIndices = new ArrayList<>();
+                    sequenceIndices.add(indexXml);
+                    sequenceIndices.add(0);
+                    relevantChild.loadChildren(sequenceIndices, childrenXml, true);
+                    loadedChildren.add(relevantChild);
+                    indexXml = sequenceIndices.get(0) - 1;
+                }
+                else
+                {
+                    relevantChild.loadXmlNodes(childNodeXml);
+                    loadedChildren.add(relevantChild);
+                }
             }
             else
             {
@@ -2648,11 +2647,12 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * of the following:
      * <ol>
      * <li>The name of this node is equal to the tag, and thus directly contains the tag information.</li>
+     * <li>This node is a sequence that has a child element that is considered relevant (in a recursive manner).</li>
      * <li>This node is a choice, and an option of this choice is considered relevant (in a recursive manner).</li>
      * <li>This node is a choice, and one of its options is a sequence that has a child element that is considered relevant (in
      * a recursive manner).</li>
      * </ol>
-     * Given the recursive nature of 2 and 3, in the end some node has a name equal to the tag from XML.
+     * Given the recursive nature of 2, 3 and 4, in the end some node has a name equal to the tag from XML.
      * @param nameXml tag name from XML.
      * @return whether this node is relevant to contain the information of the given tag name from XML.
      */
@@ -2664,6 +2664,19 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         }
         if (this.choice == null)
         {
+            if (getNodeName().equals("xsd:sequence"))
+            {
+                this.active = true;
+                assureChildren();
+                for (XsdTreeNode child : this.children)
+                {
+                    boolean relevant = child.isRelevantNode(nameXml);
+                    if (relevant)
+                    {
+                        return relevant;
+                    }
+                }
+            }
             return false;
         }
         if (this.choice.selected.equals(this))
