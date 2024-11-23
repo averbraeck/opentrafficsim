@@ -545,9 +545,9 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         {
             option.minOccurs = this.minOccurs;
             option.maxOccurs = this.maxOccurs;
-            if (this.minOccurs > 0)
+            if (this.minOccurs == 0)
             {
-                option.setActive();
+                option.active = false;
             }
             option.choice = this;
         }
@@ -2198,25 +2198,21 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 // no name for sequence specified, build one from child elements (per type to prevent repetition).
                 Set<String> coveredTypes = new LinkedHashSet<>();
                 String separator = "";
+                boolean preActive = this.active;
+                this.active = true;
                 assureChildren();
-                if (!this.active)
+                for (XsdTreeNode child : this.children)
                 {
-                    stringBuilder.append("(inactive)");
-                }
-                else
-                {
-                    for (XsdTreeNode child : this.children)
+                    if (!coveredTypes.contains(child.getPathString()) || child.xsdNode.getNodeName().equals("xsd:sequence")
+                            || child.xsdNode.getNodeName().equals("xsd:choice")
+                            || child.xsdNode.getNodeName().equals("xsd:all"))
                     {
-                        if (!coveredTypes.contains(child.getPathString()) || child.xsdNode.getNodeName().equals("xsd:sequence")
-                                || child.xsdNode.getNodeName().equals("xsd:choice")
-                                || child.xsdNode.getNodeName().equals("xsd:all"))
-                        {
-                            stringBuilder.append(separator).append(child.getShortString());
-                            separator = " | ";
-                            coveredTypes.add(child.getPathString());
-                        }
+                        stringBuilder.append(separator).append(child.getShortString());
+                        separator = " | ";
+                        coveredTypes.add(child.getPathString());
                     }
                 }
+                this.active = preActive;
             }
             if (stringBuilder.length() > MAX_OPTIONNAME_LENGTH)
             {
