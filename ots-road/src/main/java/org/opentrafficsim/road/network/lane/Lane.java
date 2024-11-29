@@ -191,10 +191,9 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param geometry geometry
      * @param laneType lane type
      * @param speedLimitMap the speed limit on this lane, specified per GTU Type
-     * @throws NetworkException when no cross-section slice is defined
      */
     public Lane(final CrossSectionLink link, final String id, final CrossSectionGeometry geometry, final LaneType laneType,
-            final Map<GtuType, Speed> speedLimitMap) throws NetworkException
+            final Map<GtuType, Speed> speedLimitMap)
     {
         super(link, id, geometry);
         this.laneType = laneType;

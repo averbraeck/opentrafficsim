@@ -1,5 +1,6 @@
 package org.opentrafficsim.xml.bindings.types;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -20,11 +21,12 @@ import org.djutils.exceptions.Throw;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <T> wrapped/returned value type
  */
-public abstract class ExpressionType<T>
+@SuppressWarnings("serial")
+public abstract class ExpressionType<T> implements Serializable
 {
 
     /** Function to forward expression output as is. */
-    private static final Function<Object, ?> AS_IS = (o) -> o;
+    private static final transient SerializableFunction<?, ?> AS_IS = (o) -> o;
 
     /** The value, when given. */
     private final T value;
@@ -33,7 +35,7 @@ public abstract class ExpressionType<T>
     private final String expression;
 
     /** Function to convert output from expression to the right type. */
-    private final Function<Object, T> toType;
+    private final SerializableFunction<Object, T> toType;
 
     /**
      * Constructor with value.
@@ -45,7 +47,7 @@ public abstract class ExpressionType<T>
         // value may be null
         this.value = value;
         this.expression = null;
-        this.toType = (Function<Object, T>) AS_IS;
+        this.toType = (SerializableFunction<Object, T>) AS_IS;
     }
 
     /**
@@ -53,7 +55,7 @@ public abstract class ExpressionType<T>
      * @param value value.
      * @param toType function to convert output from expression to the right type.
      */
-    public ExpressionType(final T value, final Function<Object, T> toType)
+    public ExpressionType(final T value, final SerializableFunction<Object, T> toType)
     {
         // value may be null
         this.value = value;
@@ -73,7 +75,7 @@ public abstract class ExpressionType<T>
                 "Expression should not have { }.");
         this.value = null;
         this.expression = expression;
-        this.toType = (Function<Object, T>) AS_IS;
+        this.toType = (SerializableFunction<Object, T>) AS_IS;
     }
 
     /**
@@ -81,7 +83,7 @@ public abstract class ExpressionType<T>
      * @param expression expression, without { }.
      * @param toType function to convert output from expression to the right type.
      */
-    public ExpressionType(final String expression, final Function<Object, T> toType)
+    public ExpressionType(final String expression, final SerializableFunction<Object, T> toType)
     {
         Throw.whenNull(expression, "Expression may not be null. Consider using constructor with value.");
         Throw.when(expression.contains("{") || expression.contains("}"), IllegalArgumentException.class,
@@ -188,6 +190,15 @@ public abstract class ExpressionType<T>
         }
         ExpressionType<?> other = (ExpressionType<?>) obj;
         return Objects.equals(this.expression, other.expression) && Objects.equals(this.value, other.value);
+    }
+
+    /**
+     * Serializable version of a {@code Function}.
+     * @param <O> the type of the input to the function
+     * @param <T> the type of the result of the function
+     */
+    public interface SerializableFunction<O, T> extends Function<O, T>, Serializable
+    {
     }
 
 }

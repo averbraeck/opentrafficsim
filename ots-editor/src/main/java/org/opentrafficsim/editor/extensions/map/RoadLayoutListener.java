@@ -126,17 +126,18 @@ public class RoadLayoutListener extends ChangeListener<Map<XsdTreeNode, CseData>
                     {
                         this.widthStart = Length.ZERO;
                         this.widthEnd = Length.ZERO;
-                        if (!node.getChild(0).getNodeName().equals("xsd:sequence"))
+                        int n = node.getChildCount();
+                        if (!node.getChild(n - 1).getNodeName().equals("xsd:sequence"))
                         {
                             // CenterOffset
-                            this.offsetStart = getLength(node.getChild(0));
+                            this.offsetStart = getLength(node.getChild(n - 1));
                             this.offsetEnd = this.offsetStart;
                         }
-                        else if (node.getChild(0).isActive())
+                        else if (node.getChild(n - 1).isActive())
                         {
                             // CenterOffsetStart and CenterOffsetEnd
-                            this.offsetStart = getLength(node.getChild(0).getChild(0));
-                            this.offsetEnd = getLength(node.getChild(0).getChild(1));
+                            this.offsetStart = getLength(node.getChild(n - 1).getChild(0));
+                            this.offsetEnd = getLength(node.getChild(n - 1).getChild(1));
                         }
                         else
                         {

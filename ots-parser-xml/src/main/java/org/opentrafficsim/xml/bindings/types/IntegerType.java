@@ -1,7 +1,5 @@
 package org.opentrafficsim.xml.bindings.types;
 
-import java.util.function.Function;
-
 /**
  * Expression type with Integer value.
  * <p>
@@ -10,11 +8,12 @@ import java.util.function.Function;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
+@SuppressWarnings("serial")
 public class IntegerType extends ExpressionType<Integer>
 {
 
     /** Function to convert output from expression to the right type. */
-    private static final Function<Object, Integer> TO_TYPE = (o) -> ((Number) o).intValue();
+    private static final SerializableFunction<Object, Integer> TO_TYPE = (o) -> ((Number) o).intValue();
 
     /**
      * Constructor with value.

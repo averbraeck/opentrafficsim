@@ -2,7 +2,7 @@ package org.opentrafficsim.core.network;
 
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.core.geometry.OtsLine2d;
+import org.opentrafficsim.base.geometry.OtsLine2d;
 
 /**
  * Special link type that represents a connector.

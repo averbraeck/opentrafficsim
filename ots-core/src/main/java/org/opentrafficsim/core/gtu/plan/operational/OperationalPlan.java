@@ -13,7 +13,7 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableList;
-import org.opentrafficsim.core.geometry.OtsLine2d;
+import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.RelativePosition;
 

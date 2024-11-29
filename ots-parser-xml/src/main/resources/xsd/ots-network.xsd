@@ -125,6 +125,15 @@
                 <xsd:attribute name="Lane" type="ots:string" use="required" />
               </xsd:complexType>
             </xsd:element>
+            <xsd:element name="StripeOverride" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:complexContent>
+                  <xsd:extension base="ots:StripeData">
+                    <xsd:attribute name="Stripe" type="ots:string" use="required" />
+                  </xsd:extension>
+                </xsd:complexContent>
+              </xsd:complexType>
+            </xsd:element>
           </xsd:sequence>
         </xsd:choice>
 
@@ -153,7 +162,7 @@
     </xsd:key>
     
   </xsd:element>
-
+  
   <xsd:element name="Network">
     <xsd:complexType>
       <xsd:sequence>

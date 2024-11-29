@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.geometry;
+package org.opentrafficsim.base.geometry;
 
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;

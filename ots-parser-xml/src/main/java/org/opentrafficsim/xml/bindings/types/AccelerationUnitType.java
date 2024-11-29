@@ -10,6 +10,7 @@ import org.djunits.unit.AccelerationUnit;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
+@SuppressWarnings("serial")
 public class AccelerationUnitType extends ExpressionType<AccelerationUnit>
 {
 

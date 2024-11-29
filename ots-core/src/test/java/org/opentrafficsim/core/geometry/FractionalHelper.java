@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Locale;
 
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.core.geometry.OtsLine2d.FractionalFallback;
+import org.opentrafficsim.base.geometry.OtsLine2d;
+import org.opentrafficsim.base.geometry.OtsLine2d.FractionalFallback;
 
 /**
  * Test/development code for the fractional helper stuff.

@@ -7,6 +7,8 @@ import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.geometry.OtsGeometryUtil;
+import org.opentrafficsim.base.geometry.OtsLine2d;
 
 /**
  * Continuous definition of a PolyLine. Naive approaches are applied for offsets, since polylines have no exact information for

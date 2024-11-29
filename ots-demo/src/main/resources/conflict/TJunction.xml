@@ -69,7 +69,7 @@
           <ots:CenterOffset>0.0m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Type="DASHED">
+        <ots:Stripe Id="1" Type="DASHED">
           <ots:CenterOffset>2.75m</ots:CenterOffset>
         </ots:Stripe>
         <ots:Lane Id="TURNLANE" LaneType="URBAN">
@@ -90,7 +90,7 @@
           <ots:CenterOffset>0.0m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Type="DASHED">
+        <ots:Stripe Id="1" Type="DASHED">
           <ots:CenterOffset>1.75m</ots:CenterOffset>
         </ots:Stripe>
         <ots:Lane Id="TURNLANE" LaneType="URBAN">

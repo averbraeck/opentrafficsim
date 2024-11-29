@@ -1,7 +1,5 @@
 package org.opentrafficsim.xml.bindings.types;
 
-import java.util.function.Function;
-
 import org.djunits.value.vdouble.scalar.Duration;
 
 /**
@@ -12,11 +10,13 @@ import org.djunits.value.vdouble.scalar.Duration;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
+@SuppressWarnings("serial")
 public class DurationType extends ExpressionType<Duration>
 {
 
     /** Function to convert output from expression to the right type. */
-    private static final Function<Object, Duration> TO_TYPE = (o) -> Duration.instantiateSI(((Number) o).doubleValue());
+    private static final SerializableFunction<Object, Duration> TO_TYPE =
+            (o) -> Duration.instantiateSI(((Number) o).doubleValue());
 
     /**
      * Constructor with value.

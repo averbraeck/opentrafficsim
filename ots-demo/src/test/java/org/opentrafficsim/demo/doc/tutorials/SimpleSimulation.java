@@ -9,10 +9,10 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.cli.CliUtil;
 import org.djutils.draw.DrawRuntimeException;
 import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -77,9 +77,9 @@ public class SimpleSimulation extends AbstractSimulationScript
                 Map.of(car, new Speed(120, SpeedUnit.KM_PER_HOUR)));
         LaneGeometryUtil.createStraightLane(link, "Right", Length.instantiateSI(-1.75), Length.instantiateSI(3.5), freewayLane,
                 Map.of(car, new Speed(120, SpeedUnit.KM_PER_HOUR)));
-        LaneGeometryUtil.createStraightStripe(StripeType.SOLID, link, Length.instantiateSI(3.5), Length.instantiateSI(0.2));
-        LaneGeometryUtil.createStraightStripe(StripeType.DASHED, link, Length.instantiateSI(0.0), Length.instantiateSI(0.2));
-        LaneGeometryUtil.createStraightStripe(StripeType.SOLID, link, Length.instantiateSI(-3.5), Length.instantiateSI(0.2));
+        LaneGeometryUtil.createStraightStripe(StripeType.SOLID, "1", link, Length.instantiateSI(3.5), Length.instantiateSI(0.2));
+        LaneGeometryUtil.createStraightStripe(StripeType.DASHED, "2", link, Length.instantiateSI(0.0), Length.instantiateSI(0.2));
+        LaneGeometryUtil.createStraightStripe(StripeType.SOLID, "3", link, Length.instantiateSI(-3.5), Length.instantiateSI(0.2));
         return network;
     }
 

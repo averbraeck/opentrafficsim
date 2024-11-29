@@ -19,6 +19,7 @@ import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
+import org.djunits.value.vdouble.vector.LengthVector;
 import org.djutils.draw.DrawRuntimeException;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
@@ -34,6 +35,9 @@ import org.djutils.event.reference.ReferenceType;
 import org.djutils.exceptions.Try;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.opentrafficsim.base.StripeElement;
+import org.opentrafficsim.base.StripeElement.StripeLateralSync;
+import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.core.geometry.Bezier;
@@ -46,7 +50,6 @@ import org.opentrafficsim.core.geometry.ContinuousPolyLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
 import org.opentrafficsim.core.geometry.Flattener;
 import org.opentrafficsim.core.geometry.FractionalLengthData;
-import org.opentrafficsim.core.geometry.OtsGeometryUtil;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation;
@@ -58,6 +61,7 @@ import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.extensions.Adapters;
 import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets.CseData;
 import org.opentrafficsim.road.network.lane.CrossSectionGeometry;
+import org.opentrafficsim.road.network.lane.Stripe.StripePhaseSync;
 import org.opentrafficsim.road.network.lane.Stripe.StripeType;
 import org.opentrafficsim.xml.bindings.ExpressionAdapter;
 import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
@@ -301,6 +305,10 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 {
                     this.roadLayoutListener.destroy();
                 }
+                else if (this.roadLayoutNode != null)
+                {
+                    getMap().getRoadLayoutListener(this.roadLayoutNode).removeListener(this, ChangeListener.CHANGE_EVENT);
+                }
                 if (this.definedRoadLayoutNode != null)
                 {
                     this.definedRoadLayoutNode.removeListener(this, XsdTreeNode.VALUE_CHANGED);
@@ -309,7 +317,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 {
                     this.roadLayoutNode = selected;
                     this.definedRoadLayoutNode = null;
-                    this.roadLayoutListener = new RoadLayoutListener(selected, () -> getEval());
+                    this.roadLayoutListener = new RoadLayoutListener(selected, this::getEval);
                     this.roadLayoutListener.addListener(this, ChangeListener.CHANGE_EVENT, ReferenceType.WEAK);
                 }
                 else
@@ -317,6 +325,11 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     this.definedRoadLayoutNode = selected.getChild(0);
                     this.definedRoadLayoutNode.addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
                     this.roadLayoutNode = this.definedRoadLayoutNode.getCoupledKeyrefNodeValue();
+                    if (this.roadLayoutNode != null)
+                    {
+                        getMap().getRoadLayoutListener(this.roadLayoutNode).addListener(this, ChangeListener.CHANGE_EVENT,
+                                ReferenceType.WEAK);
+                    }
                     this.roadLayoutListener = null;
                 }
             }
@@ -335,7 +348,16 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         else if (event.getType().equals(XsdTreeNode.VALUE_CHANGED))
         {
             // defined road layout value changed
+            if (this.roadLayoutNode != null)
+            {
+                getMap().getRoadLayoutListener(this.roadLayoutNode).removeListener(this, ChangeListener.CHANGE_EVENT);
+            }
             this.roadLayoutNode = this.definedRoadLayoutNode.getCoupledKeyrefNodeValue();
+            if (this.roadLayoutNode != null)
+            {
+                getMap().getRoadLayoutListener(this.roadLayoutNode).addListener(this, ChangeListener.CHANGE_EVENT,
+                        ReferenceType.WEAK);
+            }
             buildLayout();
             return;
         }
@@ -592,21 +614,109 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         {
             java.util.Map<XsdTreeNode, CseData> cseDataMap = this.roadLayoutListener != null ? this.roadLayoutListener.getData()
                     : getMap().getRoadLayoutListener(this.roadLayoutNode).getData();
+            MiddleOffset middleOffset = new MiddleOffset();
+            double offsetMin0 = Double.POSITIVE_INFINITY;
+            double offsetMax0 = Double.NEGATIVE_INFINITY;
+            double offsetMin1 = Double.POSITIVE_INFINITY;
+            double offsetMax1 = Double.NEGATIVE_INFINITY;
             for (Entry<XsdTreeNode, CseData> entry : cseDataMap.entrySet())
             {
                 XsdTreeNode node = entry.getKey();
                 CseData cseData = entry.getValue();
-                StripeType type = null;
-                Length width = null;
-
+                // TODO add/remove from StripeSynchronization with this phaseSync
+                StripePhaseSync phaseSync = StripePhaseSync.NONE;
+                Length dashOffset = Length.ZERO;
+                StripeLateralSync lateralSync = StripeLateralSync.NONE;
+                List<StripeElement> elements = new ArrayList<>();
                 ContinuousDoubleFunction offsetFunc =
                         FractionalLengthData.of(0.0, cseData.centerOffsetStart.si, 1.0, cseData.centerOffsetEnd.si);
                 ContinuousDoubleFunction widthFunc;
                 if (node.getNodeName().equals("Stripe"))
                 {
-                    type = Adapters.get(StripeType.class).unmarshal(node.getAttributeValue("Type")).get(getEval());
-                    width = node.getChild(1).isActive() // child 1 is DrawingWidth
-                            ? Adapters.get(Length.class).unmarshal(node.getChild(1).getValue()).get(getEval()) : type.width();
+                    // TODO listen to lane and line overrides
+                    if (node.getChild(1).isActive())
+                    {
+                        String phaseSyncName = node.getChild(1).getNodeName();
+                        switch (phaseSyncName)
+                        {
+                            case "DashSyncUpstream":
+                            {
+                                phaseSync = StripePhaseSync.UPSTREAM;
+                                break;
+                            }
+                            case "DashSyncDownstream":
+                            {
+                                phaseSync = StripePhaseSync.DOWNSTREAM;
+                                break;
+                            }
+                            case "DashOffset":
+                            {
+                                phaseSync = StripePhaseSync.NONE;
+                                dashOffset = Adapters.get(Length.class).unmarshal(node.getChild(1).getAttributeValue("Offset"))
+                                        .get(getEval());
+                                break;
+                            }
+                            default:
+                            {
+                                System.out.println("Dash synchronization " + phaseSyncName + " is unknown.");
+                            }
+                        }
+                    }
+                    if (node.getChild(2).isActive())
+                    {
+                        String latSyncName = node.getChild(2).getValue();
+                        lateralSync = latSyncName == null ? StripeLateralSync.NONE
+                                : Adapters.get(StripeLateralSync.class).unmarshal(latSyncName).get(getEval());
+                    }
+                    StripeType type = Adapters.get(StripeType.class).unmarshal(node.getAttributeValue("Type")).get(getEval());
+                    Length width;
+                    if (node.getChild(0).isActive())
+                    {
+                        width = Length.ZERO;
+                        for (XsdTreeNode element : node.getChild(0).getChildren())
+                        {
+                            Length w = Adapters.get(Length.class).unmarshal(element.getAttributeValue("Width")).get(getEval());
+                            width = width.plus(w);
+                            if (element.getNodeName().equals("Line"))
+                            {
+                                String colorName = element.getAttributeValue("Color");
+                                if (colorName == null)
+                                {
+                                    colorName = element.getDefaultAttributeValue(element.getAttributeIndexByName("Color"));
+                                }
+                                Color color = Adapters.get(Color.class).unmarshal(colorName).get(getEval());
+                                if (element.getChild(0).getNodeName().equals("Continuous"))
+                                {
+                                    elements.add(StripeElement.continuous(w, color));
+                                }
+                                else
+                                {
+                                    List<Double> gapsAndDashes = new ArrayList<>();
+                                    for (XsdTreeNode gapDash : element.getChild(0).getChildren())
+                                    {
+                                        if (gapDash.getChild(0).isValid() && gapDash.getChild(1).isValid())
+                                        {
+                                            gapsAndDashes.add(Adapters.get(Length.class)
+                                                    .unmarshal(gapDash.getChild(0).getValue()).get(getEval()).si);
+                                            gapsAndDashes.add(Adapters.get(Length.class)
+                                                    .unmarshal(gapDash.getChild(1).getValue()).get(getEval()).si);
+                                        }
+                                    }
+                                    elements.add(StripeElement.dashed(w, color,
+                                            new LengthVector(gapsAndDashes.stream().mapToDouble(v -> v).toArray())));
+                                }
+                            }
+                            else
+                            {
+                                elements.add(StripeElement.gap(w));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        width = type.width();
+                        elements.addAll(type.elements());
+                    }
                     widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
                 }
                 else
@@ -616,33 +726,33 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
                 Flattener flattener = getFlattener();
                 CrossSectionGeometry geometry = CrossSectionGeometry.of(this.designLine, flattener, offsetFunc, widthFunc);
-                Length linkLength = Length.instantiateSI(this.flattenedDesignLine.getLength());
                 if (node.getNodeName().equals("Stripe"))
                 {
-                    StripeAnimation stripe =
-                            new StripeAnimation(new MapStripeData(type, width, Length.ZERO, getNode(), geometry, linkLength),
-                                    getMap().getContextualized());
+                    offsetMin0 = Math.min(offsetMin0, geometry.offset().apply(0.0));
+                    offsetMax0 = Math.max(offsetMax0, geometry.offset().apply(0.0));
+                    offsetMin1 = Math.min(offsetMin1, geometry.offset().apply(1.0));
+                    offsetMax1 = Math.max(offsetMax1, geometry.offset().apply(1.0));
+                    StripeAnimation stripe = new StripeAnimation(new MapStripeData(dashOffset, getNode(), geometry, elements,
+                            lateralSync, this.flattenedDesignLine, middleOffset), getMap().getContextualized());
                     this.crossSectionElements.add(stripe);
                 }
                 else if (node.getNodeName().equals("Lane"))
                 {
-                    MapLaneData laneData = new MapLaneData(node.getId(), getNode(), geometry, linkLength);
+                    MapLaneData laneData = new MapLaneData(node.getId(), getNode(), geometry);
                     LaneAnimation lane = new LaneAnimation(laneData, getMap().getContextualized(), Color.GRAY.brighter());
                     this.crossSectionElements.add(lane);
                     this.laneData.put(node.getId(), laneData);
                 }
                 else if (node.getNodeName().equals("Shoulder"))
                 {
-                    CrossSectionElementAnimation<?> shoulder =
-                            new CrossSectionElementAnimation<>(new MapShoulderData(getNode(), geometry, linkLength),
-                                    getMap().getContextualized(), Color.DARK_GRAY);
+                    CrossSectionElementAnimation<?> shoulder = new CrossSectionElementAnimation<>(
+                            new MapShoulderData(getNode(), geometry), getMap().getContextualized(), Color.DARK_GRAY);
                     this.crossSectionElements.add(shoulder);
                 }
                 else if (node.getNodeName().equals("NoTrafficLane"))
                 {
-                    CrossSectionElementAnimation<?> noTrafficLane =
-                            new CrossSectionElementAnimation<>(new MapCrossSectionData(getNode(), geometry, linkLength),
-                                    getMap().getContextualized(), Color.DARK_GRAY);
+                    CrossSectionElementAnimation<?> noTrafficLane = new CrossSectionElementAnimation<>(
+                            new MapCrossSectionData(getNode(), geometry), getMap().getContextualized(), Color.DARK_GRAY);
                     this.crossSectionElements.add(noTrafficLane);
                 }
                 else
@@ -650,6 +760,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     throw new RuntimeException("Element " + node.getNodeName() + " is not a supported cross-section element.");
                 }
             }
+            middleOffset.setStartOffset(.5 * (offsetMin0 + offsetMax0));
+            middleOffset.setEndOffset(.5 * (offsetMin1 + offsetMax1));
         }
         Try.execute(() -> this.fireEvent(LAYOUT_REBUILT, this), "Unable to fire LAYOUT event.");
     }
@@ -717,6 +829,54 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     }
 
     /**
+     * Houses offsets to determine middle line of link as reference line to synchronize dashes.
+     */
+    public class MiddleOffset
+    {
+        /** Start offset. */
+        private double startOffset;
+
+        /** End offset. */
+        private double endOffset;
+
+        /**
+         * Get start offset.
+         * @return start offset
+         */
+        public double getStartOffset()
+        {
+            return this.startOffset;
+        }
+
+        /**
+         * Set start offset.
+         * @param startOffset start offset.
+         */
+        public void setStartOffset(final double startOffset)
+        {
+            this.startOffset = startOffset;
+        }
+
+        /**
+         * Get end offset.
+         * @return end offset
+         */
+        public double getEndOffset()
+        {
+            return this.endOffset;
+        }
+
+        /**
+         * Set end offset.
+         * @param endOffset end offset
+         */
+        public void setEndOffset(final double endOffset)
+        {
+            this.endOffset = endOffset;
+        }
+    }
+
+    /**
      * Listener to events that affect the shape. This class can also deliver the resulting line.
      * <p>
      * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
@@ -725,7 +885,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    private class ShapeListener implements EventListener
+    private final class ShapeListener implements EventListener
     {
         /** */
         private static final long serialVersionUID = 20231020L;

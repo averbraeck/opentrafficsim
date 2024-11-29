@@ -756,10 +756,6 @@ public class EditorMap extends JPanel implements EventListener
         {
             MapLinkData linkData = new MapLinkData(this, node, this.editor);
             data = linkData;
-            for (RoadLayoutListener roadLayoutListener : this.roadLayoutListeners.values())
-            {
-                roadLayoutListener.addListener(linkData, ChangeListener.CHANGE_EVENT, ReferenceType.WEAK);
-            }
             if (this.networkFlattenerListener != null)
             {
                 this.networkFlattenerListener.addListener(linkData, ChangeListener.CHANGE_EVENT, ReferenceType.WEAK);

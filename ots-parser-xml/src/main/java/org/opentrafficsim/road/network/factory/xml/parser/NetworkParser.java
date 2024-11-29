@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.network.factory.xml.parser;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -8,17 +9,23 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.xml.bind.JAXBElement;
+
 import org.djunits.unit.DirectionUnit;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.vector.LengthVector;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.StripeElement;
+import org.opentrafficsim.base.geometry.OtsGeometryUtil;
+import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
@@ -35,8 +42,6 @@ import org.opentrafficsim.core.geometry.Flattener.MaxDeviation;
 import org.opentrafficsim.core.geometry.Flattener.MaxDeviationAndAngle;
 import org.opentrafficsim.core.geometry.Flattener.NumSegments;
 import org.opentrafficsim.core.geometry.FractionalLengthData;
-import org.opentrafficsim.core.geometry.OtsGeometryUtil;
-import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Centroid;
@@ -50,6 +55,8 @@ import org.opentrafficsim.road.network.factory.xml.utils.Cloner;
 import org.opentrafficsim.road.network.factory.xml.utils.ParseUtil;
 import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets;
 import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets.CseData;
+import org.opentrafficsim.road.network.factory.xml.utils.StripeSynchronization;
+import org.opentrafficsim.road.network.factory.xml.utils.StripeSynchronization.SynchronizableStripe;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionGeometry;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -58,6 +65,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
+import org.opentrafficsim.road.network.lane.Stripe.StripePhaseSync;
 import org.opentrafficsim.road.network.lane.Stripe.StripeType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
@@ -66,6 +74,7 @@ import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder.RelativeWid
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder.WidthGenerator;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
+import org.opentrafficsim.xml.bindings.types.LengthType;
 import org.opentrafficsim.xml.bindings.types.StringType;
 import org.opentrafficsim.xml.generated.BasicRoadLayout;
 import org.opentrafficsim.xml.generated.CseLane;
@@ -74,9 +83,13 @@ import org.opentrafficsim.xml.generated.CseStripe;
 import org.opentrafficsim.xml.generated.FlattenerType;
 import org.opentrafficsim.xml.generated.Link;
 import org.opentrafficsim.xml.generated.Link.LaneOverride;
+import org.opentrafficsim.xml.generated.Link.StripeOverride;
 import org.opentrafficsim.xml.generated.Network;
 import org.opentrafficsim.xml.generated.RoadLayout;
 import org.opentrafficsim.xml.generated.SpeedLimit;
+import org.opentrafficsim.xml.generated.StripeData.Elements.Gap;
+import org.opentrafficsim.xml.generated.StripeLine;
+import org.opentrafficsim.xml.generated.StripeLine.Dashed;
 import org.opentrafficsim.xml.generated.TrafficLightType;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -341,11 +354,12 @@ public final class NetworkParser
      * @throws SimRuntimeException in case of simulation problems building the car generator
      * @throws GtuException when construction of the Strategical Planner failed
      */
-    static void applyRoadLayout(final RoadNetwork otsNetwork, final Definitions definitions, final Network network,
+    static void applyRoadLayouts(final RoadNetwork otsNetwork, final Definitions definitions, final Network network,
             final Map<String, RoadLayout> roadLayoutMap, final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap,
             final Map<String, ContinuousLine> designLines, final Map<String, Flattener> flatteners, final Eval eval)
             throws NetworkException, XmlParserException, SimRuntimeException, GtuException
     {
+        Map<Stripe, SynchronizableStripe<Stripe>> stripesSync = new LinkedHashMap<>();
         for (Link xmlLink : network.getLink())
         {
             CrossSectionLink csl = (CrossSectionLink) otsNetwork.getLink(xmlLink.getId());
@@ -363,7 +377,7 @@ public final class NetworkParser
                 Throw.when(roadLayoutTagBase == null, XmlParserException.class, "Link %s Could not find defined RoadLayout %s",
                         xmlLink.getId(), definedLayoutId);
                 // Process LaneOverrides
-                roadLayoutTag = Cloner.cloneRoadLayout(roadLayoutTagBase);
+                roadLayoutTag = Cloner.clone(roadLayoutTagBase);
                 for (LaneOverride laneOverride : xmlLink.getLaneOverride())
                 {
                     for (CseLane lane : ParseUtil.getObjectsOfType(roadLayoutTag.getStripeOrLaneOrShoulder(), CseLane.class))
@@ -374,6 +388,37 @@ public final class NetworkParser
                             {
                                 lane.getSpeedLimit().clear();
                                 lane.getSpeedLimit().addAll(laneOverride.getSpeedLimit());
+                            }
+                        }
+                    }
+                }
+                // Process StripeOverrides
+                for (StripeOverride stripeOverride : xmlLink.getStripeOverride())
+                {
+                    for (CseStripe stripe : ParseUtil.getObjectsOfType(roadLayoutTag.getStripeOrLaneOrShoulder(),
+                            CseStripe.class))
+                    {
+                        if (stripe.getId().equals(stripeOverride.getStripe().get(eval)))
+                        {
+                            if (stripeOverride.getElements() != null)
+                            {
+                                stripe.setElements(stripeOverride.getElements());
+                            }
+                            if (stripeOverride.getDashOffset() != null)
+                            {
+                                stripe.setDashOffset(stripeOverride.getDashOffset());
+                            }
+                            if (stripeOverride.getLateralSync() != null)
+                            {
+                                stripe.setLateralSync(stripeOverride.getLateralSync());
+                            }
+                            if (stripeOverride.getLeftChangeLane() != null)
+                            {
+                                stripe.setLeftChangeLane(stripeOverride.getLeftChangeLane());
+                            }
+                            if (stripeOverride.getRightChangeLane() != null)
+                            {
+                                stripe.setRightChangeLane(stripeOverride.getRightChangeLane());
                             }
                         }
                     }
@@ -400,7 +445,7 @@ public final class NetworkParser
             {
                 CseData cseData = cseDataList.get(cseTagMap.get(stripeTag));
                 makeStripe(csl, designLine, flattener, cseData.centerOffsetStart, cseData.centerOffsetEnd, stripeTag, cseList,
-                        eval);
+                        stripesSync, eval);
             }
 
             // Other CrossSectionElement
@@ -467,6 +512,7 @@ public final class NetworkParser
                 }
             }
         }
+        StripeSynchronization.synchronize(stripesSync);
     }
 
     /** Temporary fix for CseShoulder.getLaneType() always being null. */
@@ -482,19 +528,101 @@ public final class NetworkParser
      * @param endOffset the offset of the end node
      * @param stripeTag the CseStripe tag in the XML file
      * @param cseList the list of CrossSectionElements to which the stripes should be added
+     * @param stripesSync stripes
      * @param eval expression evaluator.
      * @throws NetworkException when id of the stripe not unique
      * @throws XmlParserException when the stripe type cannot be recognized
      */
     private static void makeStripe(final CrossSectionLink csl, final ContinuousLine designLine, final Flattener flattener,
             final Length startOffset, final Length endOffset, final CseStripe stripeTag,
-            final List<CrossSectionElement> cseList, final Eval eval) throws NetworkException, XmlParserException
+            final List<CrossSectionElement> cseList, final Map<Stripe, SynchronizableStripe<Stripe>> stripesSync,
+            final Eval eval) throws NetworkException, XmlParserException
     {
         StripeType type = stripeTag.getType().get(eval);
-        Length width = stripeTag.getDrawingWidth() != null ? stripeTag.getDrawingWidth().get(eval) : type.width();
+        Length width = Length.ZERO;
+        List<StripeElement> elements = new ArrayList<>();
+        if (stripeTag.getElements() != null)
+        {
+            for (Serializable serializable : stripeTag.getElements().getLineOrGap())
+            {
+                if (serializable instanceof StripeLine line)
+                {
+                    Length w = line.getWidth().get(eval);
+                    width = width.plus(w);
+                    if (line.getDashed() == null)
+                    {
+                        elements.add(StripeElement.continuous(w, line.getColor().get(eval)));
+                    }
+                    else
+                    {
+                        elements.add(StripeElement.dashed(w, line.getColor().get(eval), getDashes(line.getDashed(), eval)));
+                    }
+                }
+                else if (serializable instanceof Gap gap)
+                {
+                    Length w = gap.getWidth().get(eval);
+                    width = width.plus(w);
+                    elements.add(StripeElement.gap(w));
+                }
+            }
+        }
+        else
+        {
+            // based on type
+            width = type.width();
+            elements = type.elements();
+        }
         ContinuousDoubleFunction offsetFunc = FractionalLengthData.of(0.0, startOffset.si, 1.0, endOffset.si);
         ContinuousDoubleFunction widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
-        cseList.add(new Stripe(type, csl, CrossSectionGeometry.of(designLine, flattener, offsetFunc, widthFunc)));
+        Stripe stripe =
+                new Stripe(type, stripeTag.getId(), csl, CrossSectionGeometry.of(designLine, flattener, offsetFunc, widthFunc));
+        stripe.setElements(elements);
+        if (stripeTag.getDashOffset() != null)
+        {
+            stripe.setDashOffset(stripeTag.getDashOffset().getOffset().get(eval));
+            stripe.setPhaseSync(StripePhaseSync.NONE);
+        }
+        else if (stripeTag.getDashSyncUpstream() != null)
+        {
+            stripe.setPhaseSync(StripePhaseSync.UPSTREAM);
+        }
+        else if (stripeTag.getDashSyncDownstream() != null)
+        {
+            stripe.setPhaseSync(StripePhaseSync.DOWNSTREAM);
+        }
+        stripesSync.put(stripe, StripeSynchronization.of(stripe));
+
+        if (stripeTag.getLateralSync() != null)
+        {
+            stripe.setLateralSync(stripeTag.getLateralSync().get(eval));
+        }
+
+        if (stripeTag.getLeftChangeLane() != null)
+        {
+            stripe.setLeftPermeability(stripeTag.getLeftChangeLane().get(eval));
+        }
+        if (stripeTag.getRightChangeLane() != null)
+        {
+            stripe.setRightPermeability(stripeTag.getRightChangeLane().get(eval));
+        }
+
+        cseList.add(stripe);
+    }
+
+    /**
+     * Collects series of gaps and dashes in to a length vector.
+     * @param dashed dashed
+     * @param eval evaluator
+     * @return length vector of gaps and dashes
+     */
+    private static LengthVector getDashes(final Dashed dashed, final Eval eval)
+    {
+        List<Double> dashes = new ArrayList<>();
+        for (JAXBElement<LengthType> length : dashed.getGapAndDash())
+        {
+            dashes.add(length.getValue().get(eval).si);
+        }
+        return new LengthVector(dashes.stream().mapToDouble(v -> v).toArray());
     }
 
     /**

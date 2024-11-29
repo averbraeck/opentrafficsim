@@ -1,7 +1,5 @@
 package org.opentrafficsim.xml.bindings.types;
 
-import java.util.function.Function;
-
 /**
  * Expression type with Long value.
  * <p>
@@ -10,11 +8,12 @@ import java.util.function.Function;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
+@SuppressWarnings("serial")
 public class LongType extends ExpressionType<Long>
 {
 
     /** Function to convert output from expression to the right type. */
-    private static final Function<Object, Long> TO_TYPE = (o) -> ((Number) o).longValue();
+    private static final SerializableFunction<Object, Long> TO_TYPE = (o) -> ((Number) o).longValue();
 
     /**
      * Constructor with value.

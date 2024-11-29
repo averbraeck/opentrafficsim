@@ -6,8 +6,8 @@ import org.djunits.unit.FrequencyUnit;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
+import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.core.definitions.DefaultsNl;
-import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.mock.MockSimulator;
 
 /**

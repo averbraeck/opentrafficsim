@@ -10,6 +10,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Estimati
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
+@SuppressWarnings("serial")
 public class EstimationType extends ExpressionType<Estimation>
 {
 

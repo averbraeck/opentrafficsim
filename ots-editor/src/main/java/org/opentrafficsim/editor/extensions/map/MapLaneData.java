@@ -1,6 +1,5 @@
 package org.opentrafficsim.editor.extensions.map;
 
-import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.draw.road.LaneAnimation.LaneData;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.road.network.lane.CrossSectionGeometry;
@@ -24,12 +23,10 @@ public class MapLaneData extends MapCrossSectionData implements LaneData
      * @param id id
      * @param linkNode node representing the element
      * @param geometry geometry
-     * @param linkLength link length
      */
-    public MapLaneData(final String id, final XsdTreeNode linkNode, final CrossSectionGeometry geometry,
-            final Length linkLength)
+    public MapLaneData(final String id, final XsdTreeNode linkNode, final CrossSectionGeometry geometry)
     {
-        super(linkNode, geometry, linkLength);
+        super(linkNode, geometry);
         this.id = id;
     }
 

@@ -10,10 +10,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.vector.LengthVector;
 import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.base.StripeElement;
+import org.opentrafficsim.base.geometry.OtsLine2d;
+import org.opentrafficsim.base.geometry.OtsLine2d.FractionalFallback;
 import org.opentrafficsim.draw.ClickableLineLocatable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.OtsRenderable;
@@ -37,7 +40,7 @@ public class StripeAnimation extends OtsRenderable<StripeData>
     private static final long serialVersionUID = 20141017L;
 
     /** Drawable paths. */
-    private final Set<Path2D.Float> paths;
+    private final List<PaintData> paintDatas;
 
     /**
      * @param source stripe data
@@ -46,69 +49,62 @@ public class StripeAnimation extends OtsRenderable<StripeData>
     public StripeAnimation(final StripeData source, final Contextualized contextualized)
     {
         super(source, contextualized);
-        List<Point2d> list = makePoints(source);
-        if (!list.isEmpty())
-        {
-            this.paths = PaintPolygons.getPaths(getSource().getLocation(), list);
-        }
-        else
-        {
-            // no dash within length
-            this.paths = null;
-        }
+        this.paintDatas = makePaths(source);
     }
 
     /**
      * Generate the points needed to draw the stripe pattern.
      * @param stripe the stripe
-     * @return array of Coordinate
+     * @return list of paint data
      */
-    private List<Point2d> makePoints(final StripeData stripe)
+    private List<PaintData> makePaths(final StripeData stripe)
     {
         // TODO implement changing width along the length, when offset line with function for offset is supported
+        List<PaintData> paintData = new ArrayList<>();
         double width = stripe.getWidth(Length.ZERO).si;
         double offset = .5 * width;
-        double w = width / ((stripe.getDashes().size() - 1) * 2 + 1); // width per line
-        PolyLine2d centerLine = stripe.getCenterLine();
-        List<Point2d> result = new ArrayList<>();
-        for (int i = 0; i < stripe.getDashes().size(); i++)
+        OtsLine2d centerLine = new OtsLine2d(stripe.getCenterLine());
+        for (StripeElement element : stripe.getElements())
         {
-            if (i > 0)
+            double w = element.width().si;
+            List<Point2d> path = new ArrayList<>();
+            if (element.isContinuous())
             {
-                result.add(PaintPolygons.NEWPATH);
+                centerLine.offsetLine(offset).getPoints().forEachRemaining(path::add);
+                centerLine.offsetLine(offset - w).reverse().getPoints().forEachRemaining(path::add);
             }
-            if (stripe.getDashes() == null || stripe.getDashes().get(i) == null)
+            else if (!element.isGap())
             {
-                // continuous
-                
-                centerLine.offsetLine(offset).getPoints().forEachRemaining(result::add);
-                centerLine.offsetLine(offset - w).reverse().getPoints().forEachRemaining(result::add);
+                double[] dashes = element.dashes().getValuesSI();
+                path.addAll(makeDashes(centerLine.offsetLine(offset - .5 * w), stripe.getReferenceLine(), w,
+                        stripe.getDashOffset().si, dashes));
             }
-            else
+            offset -= w;
+            // can be empty for a gap element, or when no dash is within the length
+            if (!path.isEmpty())
             {
-                double[] dashes = stripe.getDashes().get(i).getValuesSI();
-                result.addAll(makeDashes(centerLine.offsetLine(offset + .5 * w), w, stripe.getDashOffset().si, dashes));
+                paintData.add(new PaintData(PaintPolygons.getPaths(getSource().getLocation(), path), element.color()));
             }
-            offset -= (2 * w);
         }
-        return result;
+        return paintData;
     }
 
     /**
      * Generate the drawing commands for a dash pattern.
-     * @param center the design line of the striped pattern
+     * @param centerLine the design line of the striped pattern
+     * @param referenceLine reference line to which dashes are applied
      * @param width width of the stripes in meters
      * @param startOffset shift the starting point in the pattern by this length in meters
-     * @param onOffLengths one or more lengths of the dashes and the gaps between those dashes. The first value in
-     *            <cite>onOffLengths</cite> is the length of a gap. If the number of values in <cite>onOffLengths</cite> is odd,
-     *            the pattern repeats inverted (gaps become dashes, dashes become gaps).
+     * @param dashes one or more lengths of the dashes and the gaps between those dashes. The first value in <cite>dashes</cite>
+     *            is the length of a gap. If the number of values in <cite>dashes</cite> is odd, the pattern repeats inverted
+     *            (gaps become dashes, dashes become gaps).
      * @return the coordinates of the dashes separated and terminated by a <cite>NEWPATH</cite> Coordinate
      */
-    private List<Point2d> makeDashes(final PolyLine2d center, final double width, final double startOffset,
-            final double[] onOffLengths)
+    private List<Point2d> makeDashes(final OtsLine2d centerLine, final PolyLine2d referenceLine, final double width,
+            final double startOffset, final double[] dashes)
     {
         double period = 0;
-        for (double length : onOffLengths)
+        for (double length : dashes)
         {
             if (length < 0)
             {
@@ -120,14 +116,15 @@ public class StripeAnimation extends OtsRenderable<StripeData>
         {
             throw new Error("Bad pattern - repeat period length is 0");
         }
-        double length = center.getLength();
-        double position = -startOffset + onOffLengths[0];
+        // TODO link length when that is chosen
+        double referenceLength = referenceLine.getLength();
+        double position = -startOffset + dashes[0];
         int phase = 1;
         ArrayList<Point2d> result = new ArrayList<>();
         boolean first = true;
-        while (position < length)
+        while (position < referenceLength)
         {
-            double nextBoundary = position + onOffLengths[phase++ % onOffLengths.length];
+            double nextBoundary = position + dashes[phase++ % dashes.length];
             if (nextBoundary > 0) // Skip this one; this entire dash lies within the startOffset
             {
                 if (!first)
@@ -140,17 +137,22 @@ public class StripeAnimation extends OtsRenderable<StripeData>
                     position = 0; // Draw a partial dash, starting at 0 (begin of the center line)
                 }
                 double endPosition = nextBoundary;
-                if (endPosition > length)
+                if (endPosition > referenceLength)
                 {
-                    endPosition = length; // Draw a partial dash, ending at length (end of the center line)
+                    endPosition = referenceLength; // Draw a partial dash, ending at length (end of the center line)
                 }
 
                 PolyLine2d dashCenter;
-                dashCenter = center.extract(position, endPosition);
+                // TODO apply factor on positions when link length is chosen
+                Ray2d p1 = referenceLine.getLocationFraction(position / referenceLength);
+                Ray2d p2 = referenceLine.getLocationFraction(endPosition / referenceLength);
+                double fraction1 = centerLine.projectFractional(null, null, p1.x, p1.y, FractionalFallback.ENDPOINT);
+                double fraction2 = centerLine.projectFractional(null, null, p2.x, p2.y, FractionalFallback.ENDPOINT);
+                dashCenter = centerLine.extractFractional(fraction1, fraction2);
                 dashCenter.offsetLine(width / 2).getPoints().forEachRemaining(result::add);
                 dashCenter.offsetLine(-width / 2).reverse().getPoints().forEachRemaining(result::add);
             }
-            position = nextBoundary + onOffLengths[phase++ % onOffLengths.length];
+            position = nextBoundary + dashes[phase++ % dashes.length];
         }
         return result;
     }
@@ -158,19 +160,22 @@ public class StripeAnimation extends OtsRenderable<StripeData>
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
-        if (this.paths != null)
+        if (this.paintDatas != null)
         {
-            setRendering(graphics);
-            graphics.setStroke(new BasicStroke(2.0f));
-            PaintPolygons.paintPaths(graphics, Color.WHITE, this.paths, true);
-            resetRendering(graphics);
+            for (PaintData paintData : this.paintDatas)
+            {
+                setRendering(graphics);
+                graphics.setStroke(new BasicStroke(2.0f));
+                PaintPolygons.paintPaths(graphics, paintData.color(), paintData.path(), true);
+                resetRendering(graphics);
+            }
         }
     }
 
     @Override
     public final String toString()
     {
-        return "StripeAnimation [source = " + getSource().toString() + ", paths=" + this.paths + "]";
+        return "StripeAnimation [source = " + getSource().toString() + ", paintDatas=" + this.paintDatas + "]";
     }
 
     /**
@@ -194,10 +199,16 @@ public class StripeAnimation extends OtsRenderable<StripeData>
         PolyLine2d getCenterLine();
 
         /**
-         * Return dashes for each line in the stripe. Use {@code null} for a continuous line.
-         * @return dashes
+         * Returns the line along which dashes are applied. At these fractions, parts of the centerline are taken.
+         * @return line along which dashes are applied
          */
-        List<LengthVector> getDashes();
+        PolyLine2d getReferenceLine();
+
+        /**
+         * Returns the stripe elements.
+         * @return stripe elements
+         */
+        List<StripeElement> getElements();
 
         /**
          * Return dash offset.
@@ -217,5 +228,14 @@ public class StripeAnimation extends OtsRenderable<StripeData>
         {
             return DrawLevel.MARKING.getZ();
         }
+    }
+
+    /**
+     * Paint data.
+     * @param path path
+     * @param color color
+     */
+    private record PaintData(Set<Path2D.Float> path, Color color)
+    {
     }
 }

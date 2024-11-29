@@ -56,7 +56,7 @@ public abstract class ExpressionAdapter<T, E extends ExpressionType<T>> extends 
      */
     protected static boolean isExpression(final String field) throws IllegalArgumentException
     {
-        if (field.startsWith("{"))
+        if (field != null && field.startsWith("{"))
         {
             Throw.when(!field.endsWith("}"), IllegalArgumentException.class,
                     "Field %s starts with { but does not end with }, i.e. it is not a valid expression.", field);

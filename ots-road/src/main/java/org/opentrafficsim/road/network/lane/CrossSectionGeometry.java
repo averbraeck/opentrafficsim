@@ -6,11 +6,11 @@ import java.util.Map;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.core.geometry.ContinuousLine;
 import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
 import org.opentrafficsim.core.geometry.Flattener;
 import org.opentrafficsim.core.geometry.FractionalLengthData;
-import org.opentrafficsim.core.geometry.OtsLine2d;
 
 /**
  * Cross-section element geometry. A static method {@code of(...)} is available to generate geometry based on a design line and

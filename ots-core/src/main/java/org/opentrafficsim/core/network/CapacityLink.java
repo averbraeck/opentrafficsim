@@ -1,8 +1,8 @@
 package org.opentrafficsim.core.network;
 
 import org.djunits.value.vdouble.scalar.Frequency;
+import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
-import org.opentrafficsim.core.geometry.OtsLine2d;
 
 /**
  * A link with a maximum capacity, expressed as the maximum number of GTUs per time unit that the link can handle.

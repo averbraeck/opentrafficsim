@@ -37,9 +37,8 @@ public class MapCrossSectionData implements CrossSectionElementData
      * Constructor.
      * @param linkNode node representing the element
      * @param geometry geometry
-     * @param linkLength link length
      */
-    public MapCrossSectionData(final XsdTreeNode linkNode, final CrossSectionGeometry geometry, final Length linkLength)
+    public MapCrossSectionData(final XsdTreeNode linkNode, final CrossSectionGeometry geometry)
     {
         this.linkNode = linkNode;
         Ray2d ray = geometry.centerLine().getLocationFractionExtended(0.5);

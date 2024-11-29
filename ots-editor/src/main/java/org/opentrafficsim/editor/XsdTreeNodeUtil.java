@@ -27,11 +27,11 @@ import org.w3c.dom.Node;
 public final class XsdTreeNodeUtil
 {
 
-    /** Pattern for regular expression to split string by upper case without disregarding the upper case itself. */
-    private static final Pattern UPPER_PATTERN = Pattern.compile("(?=\\p{Lu})");
+    /** Pattern to split string by upper case, with lower case adjacent, without disregarding the match itself. */
+    private static final Pattern UPPER_PATTERN = Pattern.compile("(?=\\p{Lu})(?<=\\p{Ll})|(?=\\p{Lu}\\p{Ll})");
 
     /** Validators for xsd:all nodes and their children. */
-    private final static Map<String, XsdAllValidator> XSD_ALL_VALIDATORS = new LinkedHashMap<>();
+    private static final Map<String, XsdAllValidator> XSD_ALL_VALIDATORS = new LinkedHashMap<>();
 
     /**
      * Private constructor.

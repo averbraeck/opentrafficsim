@@ -6,6 +6,7 @@ import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.geometry.OtsGeometryException;
+import org.opentrafficsim.base.geometry.OtsLine2d;
 
 /**
  * Generation of B&eacute;zier curves. <br>

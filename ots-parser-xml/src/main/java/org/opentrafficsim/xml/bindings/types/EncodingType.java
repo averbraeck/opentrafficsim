@@ -10,6 +10,7 @@ import org.opentrafficsim.xml.bindings.types.EncodingType.Encoding;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
+@SuppressWarnings("serial")
 public class EncodingType extends ExpressionType<Encoding>
 {
 

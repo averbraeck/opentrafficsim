@@ -10,6 +10,7 @@ import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.He
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
+@SuppressWarnings("serial")
 public class HeadwayDistributionType extends ExpressionType<HeadwayDistribution>
 {
 

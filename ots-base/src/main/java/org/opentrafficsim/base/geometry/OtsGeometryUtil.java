@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.geometry;
+package org.opentrafficsim.base.geometry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,6 @@ import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 
 /**
  * Utility class for OTS geometry.

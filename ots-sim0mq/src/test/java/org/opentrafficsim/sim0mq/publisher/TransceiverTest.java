@@ -37,10 +37,10 @@ import org.djutils.serialization.SerializationException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.opentrafficsim.base.geometry.OtsGeometryException;
+import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
@@ -331,7 +331,7 @@ public class TransceiverTest
         Lane lane = LaneGeometryUtil.createStraightLane(link, "lane", Length.ZERO, new Length(3, LengthUnit.METER), laneType,
                 Map.of(DefaultsNl.VEHICLE, new Speed(50, SpeedUnit.KM_PER_HOUR)));
         Length width = new Length(20, LengthUnit.DECIMETER);
-        Stripe stripe = LaneGeometryUtil.createStraightStripe(StripeType.DASHED, link, Length.ZERO, width);
+        Stripe stripe = LaneGeometryUtil.createStraightStripe(StripeType.DASHED, "1", link, Length.ZERO, width);
         String stripeId = stripe.getId();
 
         LinkGtuIdTransceiver linkgit = new LinkGtuIdTransceiver(network);

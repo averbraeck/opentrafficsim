@@ -10,13 +10,12 @@ import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.base.geometry.PolygonShape;
 import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
-import org.opentrafficsim.core.geometry.OtsLine2d;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.network.RoadNetwork;
 
 /**
@@ -67,10 +66,8 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      * @param link link
      * @param id id
      * @param geometry geometry
-     * @throws NetworkException when no cross-section slice is defined.
      */
     public CrossSectionElement(final CrossSectionLink link, final String id, final CrossSectionGeometry geometry)
-            throws NetworkException
     {
         Throw.whenNull(link, "Link may not be null.");
         Throw.whenNull(id, "Id may not be null.");

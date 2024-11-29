@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema targetNamespace="http://www.opentrafficsim.org/ots" 
-  xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+<xsd:schema targetNamespace="http://www.opentrafficsim.org/ots" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   xmlns:ots="http://www.opentrafficsim.org/ots" elementFormDefault="qualified">
-  
+
   <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="ref/xml.xsd" />
-  
+
   <!-- ========================================================================================= -->
   <!-- ==================================== DJUNITS UNIT TYPES ================================= -->
   <!-- ========================================================================================= -->
@@ -14,7 +13,8 @@
       <xsd:appinfo source="pattern">Provide a valid AbsoluteTemperatureUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(K|YK|ZK|EK|PK|TK|GK|MK|kK|hK|daK|�C|degC|C|dK|cK|mK|\\u03BCK|muK|nK|pK|fK|aK|zK|yK|�F|degF|F|�R|degR|R|�R�|degRe|Re|R�)"></xsd:pattern>
+      <xsd:pattern
+        value="(K|YK|ZK|EK|PK|TK|GK|MK|kK|hK|daK|�C|degC|C|dK|cK|mK|\\u03BCK|muK|nK|pK|fK|aK|zK|yK|�F|degF|F|�R|degR|R|�R�|degRe|Re|R�)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -23,7 +23,8 @@
       <xsd:appinfo source="pattern">Provide a valid AbsorbedDoseUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(Gy|YGy|ZGy|EGy|PGy|TGy|GGy|MGy|kGy|hGy|daGy|dGy|cGy|mGy|\\u03BCGy|muGy|nGy|pGy|fGy|aGy|zGy|yGy|rad|erg/g)"></xsd:pattern>
+      <xsd:pattern
+        value="(Gy|YGy|ZGy|EGy|PGy|TGy|GGy|MGy|kGy|hGy|daGy|dGy|cGy|mGy|\\u03BCGy|muGy|nGy|pGy|fGy|aGy|zGy|yGy|rad|erg/g)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -32,7 +33,8 @@
       <xsd:appinfo source="pattern">Provide a valid AccelerationUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(m/s2|m/sec\^2|km/h2|km/hr\^2|km/hour\^2|Gal|ft/s2|ft/sec\^2|in/s2|in/sec\^2|kt/s|kt/sec|mi/h/s|mi/hr/s|mi/hour/s|mi/h/sec|mi/hr/sec|mi/hour/sec|mi/h2|mi/hr\^2|mi/hour\^2|mi/s2|mi/sec\^2|g)"></xsd:pattern>
+      <xsd:pattern
+        value="(m/s2|m/sec\^2|km/h2|km/hr\^2|km/hour\^2|Gal|ft/s2|ft/sec\^2|in/s2|in/sec\^2|kt/s|kt/sec|mi/h/s|mi/hr/s|mi/hour/s|mi/h/sec|mi/hr/sec|mi/hour/sec|mi/h2|mi/hr\^2|mi/hour\^2|mi/s2|mi/sec\^2|g)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -41,7 +43,8 @@
       <xsd:appinfo source="pattern">Provide a valid AmountOfSubstanceUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(mol|Ymol|Zmol|Emol|Pmol|Tmol|Gmol|Mmol|kmol|hmol|damol|dmol|cmol|mmol|\\u03BCmol|mumol|nmol|pmol|fmol|amol|zmol|ymol)"></xsd:pattern>
+      <xsd:pattern
+        value="(mol|Ymol|Zmol|Emol|Pmol|Tmol|Gmol|Mmol|kmol|hmol|damol|dmol|cmol|mmol|\\u03BCmol|mumol|nmol|pmol|fmol|amol|zmol|ymol)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -59,7 +62,8 @@
       <xsd:appinfo source="pattern">Provide a valid AngularAccelerationUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(rad/s2|rad/sec2|\'/s2|\'/sec2|arcmin/sec2|&quot;/s2|&quot;/sec2|arcsec/sec2|�/s2|deg/s2|dg/s2|dg/sec2|deg/sec2|c\'/s2|c\'/sec2|c&quot;/s2|c&quot;/sec2|grad/s2)"></xsd:pattern>
+      <xsd:pattern
+        value="(rad/s2|rad/sec2|\'/s2|\'/sec2|arcmin/sec2|&quot;/s2|&quot;/sec2|arcsec/sec2|�/s2|deg/s2|dg/s2|dg/sec2|deg/sec2|c\'/s2|c\'/sec2|c&quot;/s2|c&quot;/sec2|grad/s2)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -68,7 +72,8 @@
       <xsd:appinfo source="pattern">Provide a valid AngularVelocityUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(rad/s|rad/sec|\'/s|\'/sec|arcmin/sec|&quot;/s|&quot;/sec|arcsec/sec|�/s|deg/s|dg/s|dg/sec|deg/sec|c\'/s|c\'/sec|c&quot;/s|c&quot;/sec|grad/s)"></xsd:pattern>
+      <xsd:pattern
+        value="(rad/s|rad/sec|\'/s|\'/sec|arcmin/sec|&quot;/s|&quot;/sec|arcsec/sec|�/s|deg/s|dg/s|dg/sec|deg/sec|c\'/s|c\'/sec|c&quot;/s|c&quot;/sec|grad/s)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -77,7 +82,8 @@
       <xsd:appinfo source="pattern">Provide a valid AreaUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(m\^2|Ym\^2|Zm\^2|Em\^2|Pm\^2|Tm\^2|Gm\^2|Mm\^2|km\^2|hm\^2|dam\^2|dm\^2|cm\^2|mm\^2|\\u03BCm\^2|mum\^2|nm\^2|pm\^2|fm\^2|am\^2|zm\^2|ym\^2|ha|a|ca|ac|NM\^2|ft\^2|in\^2|mi\^2|yd\^2)"></xsd:pattern>
+      <xsd:pattern
+        value="(m\^2|Ym\^2|Zm\^2|Em\^2|Pm\^2|Tm\^2|Gm\^2|Mm\^2|km\^2|hm\^2|dam\^2|dm\^2|cm\^2|mm\^2|\\u03BCm\^2|mum\^2|nm\^2|pm\^2|fm\^2|am\^2|zm\^2|ym\^2|ha|a|ca|ac|NM\^2|ft\^2|in\^2|mi\^2|yd\^2)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -86,7 +92,8 @@
       <xsd:appinfo source="pattern">Provide a valid CatalyticActivityUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(kat|Ykat|Zkat|Ekat|Pkat|Tkat|Gkat|Mkat|kkat|hkat|dakat|dkat|ckat|mkat|\\u03BCkat|mukat|nkat|pkat|fkat|akat|zkat|ykat)"></xsd:pattern>
+      <xsd:pattern
+        value="(kat|Ykat|Zkat|Ekat|Pkat|Tkat|Gkat|Mkat|kkat|hkat|dakat|dkat|ckat|mkat|\\u03BCkat|mukat|nkat|pkat|fkat|akat|zkat|ykat)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -113,7 +120,8 @@
       <xsd:appinfo source="pattern">Provide a valid DurationUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(s|sec|Ys|Ysec|Zs|Zsec|Es|Esec|Ps|Psec|Ts|Tsec|Gs|Gsec|Ms|Msec|ks|ksec|hs|hsec|das|dasec|ds|dsec|cs|csec|ms|msec|\\u03BCs|mus|\\u03BCsec|musec|ns|nsec|ps|psec|fs|fsec|as|asec|zs|zsec|ys|ysec|day|h|hr|hour|min|wk|week)"></xsd:pattern>
+      <xsd:pattern
+        value="(s|sec|Ys|Ysec|Zs|Zsec|Es|Esec|Ps|Psec|Ts|Tsec|Gs|Gsec|Ms|Msec|ks|ksec|hs|hsec|das|dasec|ds|dsec|cs|csec|ms|msec|\\u03BCs|mus|\\u03BCsec|musec|ns|nsec|ps|psec|fs|fsec|as|asec|zs|zsec|ys|ysec|day|h|hr|hour|min|wk|week)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -131,7 +139,8 @@
       <xsd:appinfo source="pattern">Provide a valid ElectricalChargeUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(C|YC|ZC|EC|PC|TC|GC|MC|kC|hC|daC|mAs|dC|cC|mC|\\u03BCC|muC|nC|pC|fC|aC|zC|yC|Ah|aAh|cAh|daAh|dAh|e|EAh|fAh|GAh|hAh|kAh|MAh|\\u03BCAh|muAh|mAh|nAh|PAh|pAh|TAh|yAh|YAh|zAh|ZAh|abC|emu|esu|F|Fr|statC)"></xsd:pattern>
+      <xsd:pattern
+        value="(C|YC|ZC|EC|PC|TC|GC|MC|kC|hC|daC|mAs|dC|cC|mC|\\u03BCC|muC|nC|pC|fC|aC|zC|yC|Ah|aAh|cAh|daAh|dAh|e|EAh|fAh|GAh|hAh|kAh|MAh|\\u03BCAh|muAh|mAh|nAh|PAh|pAh|TAh|yAh|YAh|zAh|ZAh|abC|emu|esu|F|Fr|statC)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -176,7 +185,8 @@
       <xsd:appinfo source="pattern">Provide a valid ElectricalResistanceUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(\\u03A9|ohm|Y\\u03A9|Yohm|Z\\u03A9|Zohm|E\\u03A9|Eohm|P\\u03A9|Pohm|T\\u03A9|Tohm|G\\u03A9|Gohm|M\\u03A9|Mohm|k\\u03A9|kohm|h\\u03A9|hohm|da\\u03A9|daohm|d\\u03A9|dohm|c\\u03A9|cohm|m\\u03A9|mohm|\\u03BC\\u03A9|muohm|mu\\u03A9|n\\u03A9|nohm|p\\u03A9|pohm|f\\u03A9|fohm|a\\u03A9|aohm|z\\u03A9|zohm|y\\u03A9|yohm|ab\\u03A9|abohm|st\\u03A9|stohm)"></xsd:pattern>
+      <xsd:pattern
+        value="(\\u03A9|ohm|Y\\u03A9|Yohm|Z\\u03A9|Zohm|E\\u03A9|Eohm|P\\u03A9|Pohm|T\\u03A9|Tohm|G\\u03A9|Gohm|M\\u03A9|Mohm|k\\u03A9|kohm|h\\u03A9|hohm|da\\u03A9|daohm|d\\u03A9|dohm|c\\u03A9|cohm|m\\u03A9|mohm|\\u03BC\\u03A9|muohm|mu\\u03A9|n\\u03A9|nohm|p\\u03A9|pohm|f\\u03A9|fohm|a\\u03A9|aohm|z\\u03A9|zohm|y\\u03A9|yohm|ab\\u03A9|abohm|st\\u03A9|stohm)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -185,7 +195,8 @@
       <xsd:appinfo source="pattern">Provide a valid EnergyUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(J|YJ|ZJ|EJ|PJ|TJ|GJ|MJ|kJ|hJ|daJ|dJ|cJ|mJ|\\u03BCJ|muJ|nJ|pJ|fJ|aJ|zJ|yJ|YWh|ZWh|EWh|PWh|TWh|GWh|MWh|kWh|hWh|daWh|Wh|dWh|cWh|mWh|\\u03BCWh|muWh|nWh|pWh|fWh|aWh|zWh|yWh|YeV|ZeV|EeV|PeV|TeV|GeV|MeV|keV|heV|daeV|eV|deV|ceV|meV|\\u03BCeV|mueV|neV|peV|feV|aeV|zeV|yeV|sn\.m|erg|BTU\(ISO\)|BTU\(IT\)|cal|cal\(IT\)|ft\.lbf|in\.lbf|kcal)"></xsd:pattern>
+      <xsd:pattern
+        value="(J|YJ|ZJ|EJ|PJ|TJ|GJ|MJ|kJ|hJ|daJ|dJ|cJ|mJ|\\u03BCJ|muJ|nJ|pJ|fJ|aJ|zJ|yJ|YWh|ZWh|EWh|PWh|TWh|GWh|MWh|kWh|hWh|daWh|Wh|dWh|cWh|mWh|\\u03BCWh|muWh|nWh|pWh|fWh|aWh|zWh|yWh|YeV|ZeV|EeV|PeV|TeV|GeV|MeV|keV|heV|daeV|eV|deV|ceV|meV|\\u03BCeV|mueV|neV|peV|feV|aeV|zeV|yeV|sn\.m|erg|BTU\(ISO\)|BTU\(IT\)|cal|cal\(IT\)|ft\.lbf|in\.lbf|kcal)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -194,7 +205,8 @@
       <xsd:appinfo source="pattern">Provide a valid EquivalentDoseUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(Sv|YSv|ZSv|ESv|PSv|TSv|GSv|MSv|kSv|hSv|daSv|dSv|cSv|mSv|\\u03BCSv|muSv|nSv|pSv|fSv|aSv|zSv|ySv|rem)"></xsd:pattern>
+      <xsd:pattern
+        value="(Sv|YSv|ZSv|ESv|PSv|TSv|GSv|MSv|kSv|hSv|daSv|dSv|cSv|mSv|\\u03BCSv|muSv|nSv|pSv|fSv|aSv|zSv|ySv|rem)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -212,7 +224,8 @@
       <xsd:appinfo source="pattern">Provide a valid FlowVolumeUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(m\^3/s|m\^3/sec|L/s|L/sec|m\^3/day|m\^3/h|m\^3/hr|m\^3/hour|m\^3/min|L/day|L/h|L/hr|L/hour|L/min|gal\(US\)/day|gal\(US\)/h|gal\(US\)/hr|gal\(US\)/hour|gal\(US\)/min|gal\(US\)/s|gal\(US\)/sec|ft\^3/min|ft\^3/s|ft\^3/sec|in\^3/min|in\^3/s|in\^3/sec)"></xsd:pattern>
+      <xsd:pattern
+        value="(m\^3/s|m\^3/sec|L/s|L/sec|m\^3/day|m\^3/h|m\^3/hr|m\^3/hour|m\^3/min|L/day|L/h|L/hr|L/hour|L/min|gal\(US\)/day|gal\(US\)/h|gal\(US\)/hr|gal\(US\)/hour|gal\(US\)/min|gal\(US\)/s|gal\(US\)/sec|ft\^3/min|ft\^3/s|ft\^3/sec|in\^3/min|in\^3/s|in\^3/sec)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -230,7 +243,8 @@
       <xsd:appinfo source="pattern">Provide a valid FrequencyUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(Hz|/ys|1/ys|/ysec|1/ysec|YHz|/zs|1/zs|/zsec|1/zsec|ZHz|/as|1/as|/asec|1/asec|EHz|/fs|1/fs|/fsec|1/fsec|PHz|/ps|1/ps|/psec|1/psec|THz|/ns|1/ns|/nsec|1/nsec|GHz|/\\u03BCs|/mus|1/mus|1/\\u03BCs|/musec|1/musec|/\\u03BCsec|1/\\u03BCsec|MHz|/ms|1/ms|/msec|1/msec|kHz|/cs|1/cs|/csec|1/csec|hHz|/ds|1/ds|/dsec|1/dsec|daHz|/s|1/s|/sec|1/sec|/das|1/das|/dasec|1/dasec|dHz|/hs|1/hs|/hsec|1/hsec|cHz|/ks|1/ks|/ksec|1/ksec|mHz|/Ms|1/Ms|/Msec|1/Msec|\\u03BCHz|muHz|/Gs|1/Gs|/Gsec|1/Gsec|nHz|/Ts|1/Ts|/Tsec|1/Tsec|pHz|/Ps|1/Ps|/Psec|1/Psec|fHz|/Es|1/Es|/Esec|1/Esec|aHz|/Zs|1/Zs|/Zsec|1/Zsec|zHz|/Ys|1/Ys|/Ysec|1/Ysec|yHz|/day|1/day|/h|1/h|/hr|1/hr|/hour|1/hour|/min|1/min|/wk|1/wk|/week|1/week|rpm)"></xsd:pattern>
+      <xsd:pattern
+        value="(Hz|/ys|1/ys|/ysec|1/ysec|YHz|/zs|1/zs|/zsec|1/zsec|ZHz|/as|1/as|/asec|1/asec|EHz|/fs|1/fs|/fsec|1/fsec|PHz|/ps|1/ps|/psec|1/psec|THz|/ns|1/ns|/nsec|1/nsec|GHz|/\\u03BCs|/mus|1/mus|1/\\u03BCs|/musec|1/musec|/\\u03BCsec|1/\\u03BCsec|MHz|/ms|1/ms|/msec|1/msec|kHz|/cs|1/cs|/csec|1/csec|hHz|/ds|1/ds|/dsec|1/dsec|daHz|/s|1/s|/sec|1/sec|/das|1/das|/dasec|1/dasec|dHz|/hs|1/hs|/hsec|1/hsec|cHz|/ks|1/ks|/ksec|1/ksec|mHz|/Ms|1/Ms|/Msec|1/Msec|\\u03BCHz|muHz|/Gs|1/Gs|/Gsec|1/Gsec|nHz|/Ts|1/Ts|/Tsec|1/Tsec|pHz|/Ps|1/Ps|/Psec|1/Psec|fHz|/Es|1/Es|/Esec|1/Esec|aHz|/Zs|1/Zs|/Zsec|1/Zsec|zHz|/Ys|1/Ys|/Ysec|1/Ysec|yHz|/day|1/day|/h|1/h|/hr|1/hr|/hour|1/hour|/min|1/min|/wk|1/wk|/week|1/week|rpm)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -239,7 +253,8 @@
       <xsd:appinfo source="pattern">Provide a valid IlluminanceUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(lx|Ylx|Zlx|Elx|Plx|Tlx|Glx|Mlx|ph|klx|hlx|dalx|dlx|clx|mlx|nx|mulx|\\u03BClx|nlx|plx|flx|alx|zlx|ylx)"></xsd:pattern>
+      <xsd:pattern
+        value="(lx|Ylx|Zlx|Elx|Plx|Tlx|Glx|Mlx|ph|klx|hlx|dalx|dlx|clx|mlx|nx|mulx|\\u03BClx|nlx|plx|flx|alx|zlx|ylx)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -248,7 +263,8 @@
       <xsd:appinfo source="pattern">Provide a valid LengthUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(m|Ym|Zm|Em|Pm|Tm|Gm|Mm|km|hm|dam|dm|cm|mm|\\u03BCm|mum|nm|pm|fm|am|zm|ym|\\u212B|A|AU|Pc|ft|in|ly|mi|NM|yd)"></xsd:pattern>
+      <xsd:pattern
+        value="(m|Ym|Zm|Em|Pm|Tm|Gm|Mm|km|hm|dam|dm|cm|mm|\\u03BCm|mum|nm|pm|fm|am|zm|ym|\\u212B|A|AU|Pc|ft|in|ly|mi|NM|yd)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -257,7 +273,8 @@
       <xsd:appinfo source="pattern">Provide a valid LinearDensityUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(/m|1/m|/ym|1/ym|/zm|1/zm|/am|1/am|/fm|1/fm|/pm|1/pm|/nm|1/nm|/\\u03BCm|/mum|1/\\u03BCm|1/mum|/mm|1/mm|/cm|1/cm|/dm|1/dm|/dam|1/dam|/hm|1/hm|/km|1/km|/Mm|1/Mm|/Gm|1/Gm|/Tm|1/Tm|/Pm|1/Pm|/Em|1/Em|/Zm|1/Zm|/Ym|1/Ym|/\\u212B|/A|1/\\u212B|1/A|/AU|1/AU|/NM|1/NM|/ft|1/ft|/in|1/in|/ly|1/ly|/mi|1/mi|/pc|1/pc|/yd|1/yd)"></xsd:pattern>
+      <xsd:pattern
+        value="(/m|1/m|/ym|1/ym|/zm|1/zm|/am|1/am|/fm|1/fm|/pm|1/pm|/nm|1/nm|/\\u03BCm|/mum|1/\\u03BCm|1/mum|/mm|1/mm|/cm|1/cm|/dm|1/dm|/dam|1/dam|/hm|1/hm|/km|1/km|/Mm|1/Mm|/Gm|1/Gm|/Tm|1/Tm|/Pm|1/Pm|/Em|1/Em|/Zm|1/Zm|/Ym|1/Ym|/\\u212B|/A|1/\\u212B|1/A|/AU|1/AU|/NM|1/NM|/ft|1/ft|/in|1/in|/ly|1/ly|/mi|1/mi|/pc|1/pc|/yd|1/yd)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -266,7 +283,8 @@
       <xsd:appinfo source="pattern">Provide a valid LuminousFluxUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(lm|Ylm|Zlm|Elm|Plm|Tlm|Glm|Mlm|klm|hlm|dalm|dlm|clm|mlm|\\u03BClm|mulm|nlm|plm|flm|alm|zlm|ylm)"></xsd:pattern>
+      <xsd:pattern
+        value="(lm|Ylm|Zlm|Elm|Plm|Tlm|Glm|Mlm|klm|hlm|dalm|dlm|clm|mlm|\\u03BClm|mulm|nlm|plm|flm|alm|zlm|ylm)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -275,7 +293,8 @@
       <xsd:appinfo source="pattern">Provide a valid LuminousIntensityUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(cd|Ycd|Zcd|Ecd|Pcd|Tcd|Gcd|Mcd|kcd|hcd|dacd|dcd|ccd|mcd|\\u03BCcd|mucd|ncd|pcd|fcd|acd|zcd|ycd)"></xsd:pattern>
+      <xsd:pattern
+        value="(cd|Ycd|Zcd|Ecd|Pcd|Tcd|Gcd|Mcd|kcd|hcd|dacd|dcd|ccd|mcd|\\u03BCcd|mucd|ncd|pcd|fcd|acd|zcd|ycd)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -293,7 +312,8 @@
       <xsd:appinfo source="pattern">Provide a valid MagneticFluxUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(Wb|YWb|ZWb|EWb|PWb|TWb|GWb|MWb|kWb|hWb|daWb|dWb|cWb|mWb|muWb|\\u03BCWb|nWb|pWb|fWb|aWb|zWb|yWb|Mx)"></xsd:pattern>
+      <xsd:pattern
+        value="(Wb|YWb|ZWb|EWb|PWb|TWb|GWb|MWb|kWb|hWb|daWb|dWb|cWb|mWb|muWb|\\u03BCWb|nWb|pWb|fWb|aWb|zWb|yWb|Mx)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -302,7 +322,8 @@
       <xsd:appinfo source="pattern">Provide a valid MassUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(kg|Yg|Zg|Eg|Pg|Tg|Gg|Mg|t|hg|dag|g|dg|cg|mg|\\u03BCg|mug|ng|pg|fg|ag|zg|yg|Da|t\(mts\)|YeV|ZeV|EeV|PeV|TeV|GeV|MeV|keV|heV|daeV|eV|meV|\\u03BCeV|mueV|long tn|oz|lb|sh tn)"></xsd:pattern>
+      <xsd:pattern
+        value="(kg|Yg|Zg|Eg|Pg|Tg|Gg|Mg|t|hg|dag|g|dg|cg|mg|\\u03BCg|mug|ng|pg|fg|ag|zg|yg|Da|t\(mts\)|YeV|ZeV|EeV|PeV|TeV|GeV|MeV|keV|heV|daeV|eV|meV|\\u03BCeV|mueV|long tn|oz|lb|sh tn)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -320,7 +341,8 @@
       <xsd:appinfo source="pattern">Provide a valid PositionUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(m|Ym|Zm|Em|Pm|Tm|Gm|Mm|km|hm|dam|dm|cm|mm|\\u03BCm|mum|nm|pm|fm|am|zm|ym|\\u212B|A|AU|Pc|ft|in|ly|mi|NM|yd)"></xsd:pattern>
+      <xsd:pattern
+        value="(m|Ym|Zm|Em|Pm|Tm|Gm|Mm|km|hm|dam|dm|cm|mm|\\u03BCm|mum|nm|pm|fm|am|zm|ym|\\u212B|A|AU|Pc|ft|in|ly|mi|NM|yd)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -329,7 +351,8 @@
       <xsd:appinfo source="pattern">Provide a valid PowerUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(W|YW|ZW|EW|PW|TW|GW|MW|kW|hW|daW|dW|cW|mW|\\u03BCW|muW|nW|pW|fW|aW|zW|yW|sn\.m/s|erg/s|ft\.lbf/h|ft\.lbf/min|ft\.lbf/s|hp\(M\))"></xsd:pattern>
+      <xsd:pattern
+        value="(W|YW|ZW|EW|PW|TW|GW|MW|kW|hW|daW|dW|cW|mW|\\u03BCW|muW|nW|pW|fW|aW|zW|yW|sn\.m/s|erg/s|ft\.lbf/h|ft\.lbf/min|ft\.lbf/s|hp\(M\))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -338,7 +361,8 @@
       <xsd:appinfo source="pattern">Provide a valid PressureUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(Pa|YPa|ZPa|EPa|PPa|TPa|GPa|MPa|kPa|hPa|daPa|dPa|cPa|mPa|\\u03BCPa|muPa|nPa|pPa|fPa|aPa|zPa|yPa|bar|pz|mbar|Ba|torr|atm|at|cmHg|ftHg|inHg|kgf/mm\^2|mmHg|lbf/ft\^2|lbf/in\^2)"></xsd:pattern>
+      <xsd:pattern
+        value="(Pa|YPa|ZPa|EPa|PPa|TPa|GPa|MPa|kPa|hPa|daPa|dPa|cPa|mPa|\\u03BCPa|muPa|nPa|pPa|fPa|aPa|zPa|yPa|bar|pz|mbar|Ba|torr|atm|at|cmHg|ftHg|inHg|kgf/mm\^2|mmHg|lbf/ft\^2|lbf/in\^2)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -365,7 +389,8 @@
       <xsd:appinfo source="pattern">Provide a valid SpeedUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(m/s|m/sec|km/s|km/sec|km/h|km/hr|km/hour|m/h|m/hr|m/hour|ft/h|ft/hr|ft/hour|ft/s|ft/sec|in/h|in/hr|in/hour|ft/min|in/min|in/s|in/sec|kt|mi/h|mi/hr|mi/hour|mi/min|mi/s|mi/sec)"></xsd:pattern>
+      <xsd:pattern
+        value="(m/s|m/sec|km/s|km/sec|km/h|km/hr|km/hour|m/h|m/hr|m/hour|ft/h|ft/hr|ft/hour|ft/s|ft/sec|in/h|in/hr|in/hour|ft/min|in/min|in/s|in/sec|kt|mi/h|mi/hr|mi/hour|mi/min|mi/s|mi/sec)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -374,7 +399,8 @@
       <xsd:appinfo source="pattern">Provide a valid TemperatureUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(K|YK|ZK|EK|PK|TK|GK|MK|kK|hK|daK|�C|degC|C|dK|cK|mK|\\u03BCK|muK|nK|pK|fK|aK|zK|yK|�F|degF|F|�R|degR|R|�R�|degRe|Re|R�)"></xsd:pattern>
+      <xsd:pattern
+        value="(K|YK|ZK|EK|PK|TK|GK|MK|kK|hK|daK|�C|degC|C|dK|cK|mK|\\u03BCK|muK|nK|pK|fK|aK|zK|yK|�F|degF|F|�R|degR|R|�R�|degRe|Re|R�)"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -383,7 +409,8 @@
       <xsd:appinfo source="pattern">Provide a valid TimeUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(s|sec|Ys|Ysec|Zs|Zsec|Es|Esec|Ps|Psec|Ts|Tsec|Gs|Gsec|Ms|Msec|ks|ksec|hs|hsec|das|dasec|ds|dsec|cs|csec|ms|msec|\\u03BCs|mus|\\u03BCsec|musec|ns|nsec|ps|psec|fs|fsec|as|asec|zs|zsec|ys|ysec|day|h|hr|hour|min|wk|week|s\(Y1\)|sec\(Y1\)|s\(Y1970\)|sec\(Y1970\)|s\(Y2000\)|sec\(Y2000\)|ms\(Y1970\)|msec\(Y1970\)|\\u03BCs\(Y1970\)|mus\(Y1970\)|\\u03BCsec\(Y1970\)|musec\(Y1970\)|day\(Y1970\)|h\(Y1970\)|hour\(Y1970\)|hr\(Y1970\)|min\(Y1970\)|wk\(Y1970\)|week\(Y1970\))"></xsd:pattern>
+      <xsd:pattern
+        value="(s|sec|Ys|Ysec|Zs|Zsec|Es|Esec|Ps|Psec|Ts|Tsec|Gs|Gsec|Ms|Msec|ks|ksec|hs|hsec|das|dasec|ds|dsec|cs|csec|ms|msec|\\u03BCs|mus|\\u03BCsec|musec|ns|nsec|ps|psec|fs|fsec|as|asec|zs|zsec|ys|ysec|day|h|hr|hour|min|wk|week|s\(Y1\)|sec\(Y1\)|s\(Y1970\)|sec\(Y1970\)|s\(Y2000\)|sec\(Y2000\)|ms\(Y1970\)|msec\(Y1970\)|\\u03BCs\(Y1970\)|mus\(Y1970\)|\\u03BCsec\(Y1970\)|musec\(Y1970\)|day\(Y1970\)|h\(Y1970\)|hour\(Y1970\)|hr\(Y1970\)|min\(Y1970\)|wk\(Y1970\)|week\(Y1970\))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -401,7 +428,8 @@
       <xsd:appinfo source="pattern">Provide a valid VolumeUnit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="(m\^3|Ym\^3|Zm\^3|Em\^3|Pm\^3|Tm\^3|Gm\^3|Mm\^3|km\^3|hm\^3|dam\^3|L|dm\^3|cm\^3|mm\^3|\\u03BCm\^3|mum\^3|nm\^3|pm\^3|fm\^3|am\^3|zm\^3|ym\^3|NM\^3|pc\^3|ft\^3|in\^3|ly\^3|mi\^3|yd\^3|fl\.oz\(US\)|fl\.oz\(imp\)|gal\(US\)|gal\(imp\)|pt\(US\)|pt\(imp\)|qt\(US\)|qt\(imp\))"></xsd:pattern>
+      <xsd:pattern
+        value="(m\^3|Ym\^3|Zm\^3|Em\^3|Pm\^3|Tm\^3|Gm\^3|Mm\^3|km\^3|hm\^3|dam\^3|L|dm\^3|cm\^3|mm\^3|\\u03BCm\^3|mum\^3|nm\^3|pm\^3|fm\^3|am\^3|zm\^3|ym\^3|NM\^3|pc\^3|ft\^3|in\^3|ly\^3|mi\^3|yd\^3|fl\.oz\(US\)|fl\.oz\(imp\)|gal\(US\)|gal\(imp\)|pt\(US\)|pt\(imp\)|qt\(US\)|qt\(imp\))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -414,7 +442,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid AbsoluteTemperature with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(K|YK|ZK|EK|PK|TK|GK|MK|kK|hK|daK|�C|degC|C|dK|cK|mK|\\u03BCK|muK|nK|pK|fK|aK|zK|yK|�F|degF|F|�R|degR|R|�R�|degRe|Re|R�))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(K|YK|ZK|EK|PK|TK|GK|MK|kK|hK|daK|�C|degC|C|dK|cK|mK|\\u03BCK|muK|nK|pK|fK|aK|zK|yK|�F|degF|F|�R|degR|R|�R�|degRe|Re|R�))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -423,7 +452,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid AbsorbedDose with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Gy|YGy|ZGy|EGy|PGy|TGy|GGy|MGy|kGy|hGy|daGy|dGy|cGy|mGy|\\u03BCGy|muGy|nGy|pGy|fGy|aGy|zGy|yGy|rad|erg/g))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Gy|YGy|ZGy|EGy|PGy|TGy|GGy|MGy|kGy|hGy|daGy|dGy|cGy|mGy|\\u03BCGy|muGy|nGy|pGy|fGy|aGy|zGy|yGy|rad|erg/g))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -432,7 +462,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid Acceleration with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m/s2|m/sec\^2|km/h2|km/hr\^2|km/hour\^2|Gal|ft/s2|ft/sec\^2|in/s2|in/sec\^2|kt/s|kt/sec|mi/h/s|mi/hr/s|mi/hour/s|mi/h/sec|mi/hr/sec|mi/hour/sec|mi/h2|mi/hr\^2|mi/hour\^2|mi/s2|mi/sec\^2|g))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m/s2|m/sec\^2|km/h2|km/hr\^2|km/hour\^2|Gal|ft/s2|ft/sec\^2|in/s2|in/sec\^2|kt/s|kt/sec|mi/h/s|mi/hr/s|mi/hour/s|mi/h/sec|mi/hr/sec|mi/hour/sec|mi/h2|mi/hr\^2|mi/hour\^2|mi/s2|mi/sec\^2|g))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -441,7 +472,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid AmountOfSubstance with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(mol|Ymol|Zmol|Emol|Pmol|Tmol|Gmol|Mmol|kmol|hmol|damol|dmol|cmol|mmol|\\u03BCmol|mumol|nmol|pmol|fmol|amol|zmol|ymol))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(mol|Ymol|Zmol|Emol|Pmol|Tmol|Gmol|Mmol|kmol|hmol|damol|dmol|cmol|mmol|\\u03BCmol|mumol|nmol|pmol|fmol|amol|zmol|ymol))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -450,7 +482,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid Angle with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad|\'|arcmin|&quot;|arcsec|�|deg|dg|c\'|c&quot;|grad|\%))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad|\'|arcmin|&quot;|arcsec|�|deg|dg|c\'|c&quot;|grad|\%))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -459,7 +492,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid AngularAcceleration with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad/s2|rad/sec2|\'/s2|\'/sec2|arcmin/sec2|&quot;/s2|&quot;/sec2|arcsec/sec2|�/s2|deg/s2|dg/s2|dg/sec2|deg/sec2|c\'/s2|c\'/sec2|c&quot;/s2|c&quot;/sec2|grad/s2))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad/s2|rad/sec2|\'/s2|\'/sec2|arcmin/sec2|&quot;/s2|&quot;/sec2|arcsec/sec2|�/s2|deg/s2|dg/s2|dg/sec2|deg/sec2|c\'/s2|c\'/sec2|c&quot;/s2|c&quot;/sec2|grad/s2))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -468,7 +502,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid AngularVelocity with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad/s|rad/sec|\'/s|\'/sec|arcmin/sec|&quot;/s|&quot;/sec|arcsec/sec|�/s|deg/s|dg/s|dg/sec|deg/sec|c\'/s|c\'/sec|c&quot;/s|c&quot;/sec|grad/s))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad/s|rad/sec|\'/s|\'/sec|arcmin/sec|&quot;/s|&quot;/sec|arcsec/sec|�/s|deg/s|dg/s|dg/sec|deg/sec|c\'/s|c\'/sec|c&quot;/s|c&quot;/sec|grad/s))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -477,7 +512,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid Area with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m\^2|Ym\^2|Zm\^2|Em\^2|Pm\^2|Tm\^2|Gm\^2|Mm\^2|km\^2|hm\^2|dam\^2|dm\^2|cm\^2|mm\^2|\\u03BCm\^2|mum\^2|nm\^2|pm\^2|fm\^2|am\^2|zm\^2|ym\^2|ha|a|ca|ac|NM\^2|ft\^2|in\^2|mi\^2|yd\^2))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m\^2|Ym\^2|Zm\^2|Em\^2|Pm\^2|Tm\^2|Gm\^2|Mm\^2|km\^2|hm\^2|dam\^2|dm\^2|cm\^2|mm\^2|\\u03BCm\^2|mum\^2|nm\^2|pm\^2|fm\^2|am\^2|zm\^2|ym\^2|ha|a|ca|ac|NM\^2|ft\^2|in\^2|mi\^2|yd\^2))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -486,7 +522,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid CatalyticActivity with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kat|Ykat|Zkat|Ekat|Pkat|Tkat|Gkat|Mkat|kkat|hkat|dakat|dkat|ckat|mkat|\\u03BCkat|mukat|nkat|pkat|fkat|akat|zkat|ykat))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kat|Ykat|Zkat|Ekat|Pkat|Tkat|Gkat|Mkat|kkat|hkat|dakat|dkat|ckat|mkat|\\u03BCkat|mukat|nkat|pkat|fkat|akat|zkat|ykat))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -504,7 +541,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid Direction with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad|rad\(E\)|rad\(N\)|rad\(East\)|rad\(North\)|�\(E\)|�\(N\)|�\(East\)|�\(North\)|deg|deg\(E\)|deg\(N\)|deg\(East\)|deg\(North\)))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad|rad\(E\)|rad\(N\)|rad\(East\)|rad\(North\)|�\(E\)|�\(N\)|�\(East\)|�\(North\)|deg|deg\(E\)|deg\(N\)|deg\(East\)|deg\(North\)))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -513,7 +551,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid Duration with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(s|sec|Ys|Ysec|Zs|Zsec|Es|Esec|Ps|Psec|Ts|Tsec|Gs|Gsec|Ms|Msec|ks|ksec|hs|hsec|das|dasec|ds|dsec|cs|csec|ms|msec|\\u03BCs|mus|\\u03BCsec|musec|ns|nsec|ps|psec|fs|fsec|as|asec|zs|zsec|ys|ysec|day|h|hr|hour|min|wk|week))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(s|sec|Ys|Ysec|Zs|Zsec|Es|Esec|Ps|Psec|Ts|Tsec|Gs|Gsec|Ms|Msec|ks|ksec|hs|hsec|das|dasec|ds|dsec|cs|csec|ms|msec|\\u03BCs|mus|\\u03BCsec|musec|ns|nsec|ps|psec|fs|fsec|as|asec|zs|zsec|ys|ysec|day|h|hr|hour|min|wk|week))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -522,7 +561,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid ElectricalCapacitance with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(F|YF|ZF|EF|PF|TF|GF|MF|kF|hF|daF|dF|cF|mF|uF|\\u03BCF|muF|nF|pF|fF|aF|zF|yF))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(F|YF|ZF|EF|PF|TF|GF|MF|kF|hF|daF|dF|cF|mF|uF|\\u03BCF|muF|nF|pF|fF|aF|zF|yF))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -531,7 +571,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid ElectricalCharge with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(C|YC|ZC|EC|PC|TC|GC|MC|kC|hC|daC|mAs|dC|cC|mC|\\u03BCC|muC|nC|pC|fC|aC|zC|yC|Ah|aAh|cAh|daAh|dAh|e|EAh|fAh|GAh|hAh|kAh|MAh|\\u03BCAh|muAh|mAh|nAh|PAh|pAh|TAh|yAh|YAh|zAh|ZAh|abC|emu|esu|F|Fr|statC))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(C|YC|ZC|EC|PC|TC|GC|MC|kC|hC|daC|mAs|dC|cC|mC|\\u03BCC|muC|nC|pC|fC|aC|zC|yC|Ah|aAh|cAh|daAh|dAh|e|EAh|fAh|GAh|hAh|kAh|MAh|\\u03BCAh|muAh|mAh|nAh|PAh|pAh|TAh|yAh|YAh|zAh|ZAh|abC|emu|esu|F|Fr|statC))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -540,7 +581,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid ElectricalConductance with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(S|YS|ZS|ES|PS|TS|GS|MS|kS|hS|daS|dS|cS|mS|muS|\\u03BCS|nS|pS|fS|aS|zS|yS))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(S|YS|ZS|ES|PS|TS|GS|MS|kS|hS|daS|dS|cS|mS|muS|\\u03BCS|nS|pS|fS|aS|zS|yS))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -549,7 +591,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid ElectricalCurrent with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(A|YA|ZA|EA|PA|TA|GA|MA|kA|hA|daA|dA|cA|mA|\\u03BCA|muA|nA|pA|fA|aA|zA|yA|abA|statA))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(A|YA|ZA|EA|PA|TA|GA|MA|kA|hA|daA|dA|cA|mA|\\u03BCA|muA|nA|pA|fA|aA|zA|yA|abA|statA))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -558,7 +601,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid ElectricalInductance with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(H|YH|ZH|EH|PH|TH|GH|MH|kH|hH|daH|dH|cH|mH|muH|\\u03BCH|nH|pH|fH|aH|zH|yH))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(H|YH|ZH|EH|PH|TH|GH|MH|kH|hH|daH|dH|cH|mH|muH|\\u03BCH|nH|pH|fH|aH|zH|yH))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -567,7 +611,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid ElectricalPotential with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(V|YV|ZV|EV|PV|TV|GV|MV|kV|hV|daV|dV|cV|mV|\\u03BCV|muV|nV|pV|fV|aV|zV|yV|abV|stV))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(V|YV|ZV|EV|PV|TV|GV|MV|kV|hV|daV|dV|cV|mV|\\u03BCV|muV|nV|pV|fV|aV|zV|yV|abV|stV))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -576,7 +621,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid ElectricalResistance with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(\\u03A9|ohm|Y\\u03A9|Yohm|Z\\u03A9|Zohm|E\\u03A9|Eohm|P\\u03A9|Pohm|T\\u03A9|Tohm|G\\u03A9|Gohm|M\\u03A9|Mohm|k\\u03A9|kohm|h\\u03A9|hohm|da\\u03A9|daohm|d\\u03A9|dohm|c\\u03A9|cohm|m\\u03A9|mohm|\\u03BC\\u03A9|muohm|mu\\u03A9|n\\u03A9|nohm|p\\u03A9|pohm|f\\u03A9|fohm|a\\u03A9|aohm|z\\u03A9|zohm|y\\u03A9|yohm|ab\\u03A9|abohm|st\\u03A9|stohm))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(\\u03A9|ohm|Y\\u03A9|Yohm|Z\\u03A9|Zohm|E\\u03A9|Eohm|P\\u03A9|Pohm|T\\u03A9|Tohm|G\\u03A9|Gohm|M\\u03A9|Mohm|k\\u03A9|kohm|h\\u03A9|hohm|da\\u03A9|daohm|d\\u03A9|dohm|c\\u03A9|cohm|m\\u03A9|mohm|\\u03BC\\u03A9|muohm|mu\\u03A9|n\\u03A9|nohm|p\\u03A9|pohm|f\\u03A9|fohm|a\\u03A9|aohm|z\\u03A9|zohm|y\\u03A9|yohm|ab\\u03A9|abohm|st\\u03A9|stohm))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -585,7 +631,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid Energy with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(J|YJ|ZJ|EJ|PJ|TJ|GJ|MJ|kJ|hJ|daJ|dJ|cJ|mJ|\\u03BCJ|muJ|nJ|pJ|fJ|aJ|zJ|yJ|YWh|ZWh|EWh|PWh|TWh|GWh|MWh|kWh|hWh|daWh|Wh|dWh|cWh|mWh|\\u03BCWh|muWh|nWh|pWh|fWh|aWh|zWh|yWh|YeV|ZeV|EeV|PeV|TeV|GeV|MeV|keV|heV|daeV|eV|deV|ceV|meV|\\u03BCeV|mueV|neV|peV|feV|aeV|zeV|yeV|sn\.m|erg|BTU\(ISO\)|BTU\(IT\)|cal|cal\(IT\)|ft\.lbf|in\.lbf|kcal))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(J|YJ|ZJ|EJ|PJ|TJ|GJ|MJ|kJ|hJ|daJ|dJ|cJ|mJ|\\u03BCJ|muJ|nJ|pJ|fJ|aJ|zJ|yJ|YWh|ZWh|EWh|PWh|TWh|GWh|MWh|kWh|hWh|daWh|Wh|dWh|cWh|mWh|\\u03BCWh|muWh|nWh|pWh|fWh|aWh|zWh|yWh|YeV|ZeV|EeV|PeV|TeV|GeV|MeV|keV|heV|daeV|eV|deV|ceV|meV|\\u03BCeV|mueV|neV|peV|feV|aeV|zeV|yeV|sn\.m|erg|BTU\(ISO\)|BTU\(IT\)|cal|cal\(IT\)|ft\.lbf|in\.lbf|kcal))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -594,7 +641,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid EquivalentDose with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Sv|YSv|ZSv|ESv|PSv|TSv|GSv|MSv|kSv|hSv|daSv|dSv|cSv|mSv|\\u03BCSv|muSv|nSv|pSv|fSv|aSv|zSv|ySv|rem))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Sv|YSv|ZSv|ESv|PSv|TSv|GSv|MSv|kSv|hSv|daSv|dSv|cSv|mSv|\\u03BCSv|muSv|nSv|pSv|fSv|aSv|zSv|ySv|rem))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -612,7 +660,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid FlowVolume with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m\^3/s|m\^3/sec|L/s|L/sec|m\^3/day|m\^3/h|m\^3/hr|m\^3/hour|m\^3/min|L/day|L/h|L/hr|L/hour|L/min|gal\(US\)/day|gal\(US\)/h|gal\(US\)/hr|gal\(US\)/hour|gal\(US\)/min|gal\(US\)/s|gal\(US\)/sec|ft\^3/min|ft\^3/s|ft\^3/sec|in\^3/min|in\^3/s|in\^3/sec))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m\^3/s|m\^3/sec|L/s|L/sec|m\^3/day|m\^3/h|m\^3/hr|m\^3/hour|m\^3/min|L/day|L/h|L/hr|L/hour|L/min|gal\(US\)/day|gal\(US\)/h|gal\(US\)/hr|gal\(US\)/hour|gal\(US\)/min|gal\(US\)/s|gal\(US\)/sec|ft\^3/min|ft\^3/s|ft\^3/sec|in\^3/min|in\^3/s|in\^3/sec))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -630,7 +679,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid Frequency with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Hz|/ys|1/ys|/ysec|1/ysec|YHz|/zs|1/zs|/zsec|1/zsec|ZHz|/as|1/as|/asec|1/asec|EHz|/fs|1/fs|/fsec|1/fsec|PHz|/ps|1/ps|/psec|1/psec|THz|/ns|1/ns|/nsec|1/nsec|GHz|/\\u03BCs|/mus|1/mus|1/\\u03BCs|/musec|1/musec|/\\u03BCsec|1/\\u03BCsec|MHz|/ms|1/ms|/msec|1/msec|kHz|/cs|1/cs|/csec|1/csec|hHz|/ds|1/ds|/dsec|1/dsec|daHz|/s|1/s|/sec|1/sec|/das|1/das|/dasec|1/dasec|dHz|/hs|1/hs|/hsec|1/hsec|cHz|/ks|1/ks|/ksec|1/ksec|mHz|/Ms|1/Ms|/Msec|1/Msec|\\u03BCHz|muHz|/Gs|1/Gs|/Gsec|1/Gsec|nHz|/Ts|1/Ts|/Tsec|1/Tsec|pHz|/Ps|1/Ps|/Psec|1/Psec|fHz|/Es|1/Es|/Esec|1/Esec|aHz|/Zs|1/Zs|/Zsec|1/Zsec|zHz|/Ys|1/Ys|/Ysec|1/Ysec|yHz|/day|1/day|/h|1/h|/hr|1/hr|/hour|1/hour|/min|1/min|/wk|1/wk|/week|1/week|rpm))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Hz|/ys|1/ys|/ysec|1/ysec|YHz|/zs|1/zs|/zsec|1/zsec|ZHz|/as|1/as|/asec|1/asec|EHz|/fs|1/fs|/fsec|1/fsec|PHz|/ps|1/ps|/psec|1/psec|THz|/ns|1/ns|/nsec|1/nsec|GHz|/\\u03BCs|/mus|1/mus|1/\\u03BCs|/musec|1/musec|/\\u03BCsec|1/\\u03BCsec|MHz|/ms|1/ms|/msec|1/msec|kHz|/cs|1/cs|/csec|1/csec|hHz|/ds|1/ds|/dsec|1/dsec|daHz|/s|1/s|/sec|1/sec|/das|1/das|/dasec|1/dasec|dHz|/hs|1/hs|/hsec|1/hsec|cHz|/ks|1/ks|/ksec|1/ksec|mHz|/Ms|1/Ms|/Msec|1/Msec|\\u03BCHz|muHz|/Gs|1/Gs|/Gsec|1/Gsec|nHz|/Ts|1/Ts|/Tsec|1/Tsec|pHz|/Ps|1/Ps|/Psec|1/Psec|fHz|/Es|1/Es|/Esec|1/Esec|aHz|/Zs|1/Zs|/Zsec|1/Zsec|zHz|/Ys|1/Ys|/Ysec|1/Ysec|yHz|/day|1/day|/h|1/h|/hr|1/hr|/hour|1/hour|/min|1/min|/wk|1/wk|/week|1/week|rpm))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -639,7 +689,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid Illuminance with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(lx|Ylx|Zlx|Elx|Plx|Tlx|Glx|Mlx|ph|klx|hlx|dalx|dlx|clx|mlx|nx|mulx|\\u03BClx|nlx|plx|flx|alx|zlx|ylx))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(lx|Ylx|Zlx|Elx|Plx|Tlx|Glx|Mlx|ph|klx|hlx|dalx|dlx|clx|mlx|nx|mulx|\\u03BClx|nlx|plx|flx|alx|zlx|ylx))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -648,7 +699,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid Length with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m|Ym|Zm|Em|Pm|Tm|Gm|Mm|km|hm|dam|dm|cm|mm|\\u03BCm|mum|nm|pm|fm|am|zm|ym|\\u212B|A|AU|Pc|ft|in|ly|mi|NM|yd))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m|Ym|Zm|Em|Pm|Tm|Gm|Mm|km|hm|dam|dm|cm|mm|\\u03BCm|mum|nm|pm|fm|am|zm|ym|\\u212B|A|AU|Pc|ft|in|ly|mi|NM|yd))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -657,7 +709,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid LinearDensity with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(/m|1/m|/ym|1/ym|/zm|1/zm|/am|1/am|/fm|1/fm|/pm|1/pm|/nm|1/nm|/\\u03BCm|/mum|1/\\u03BCm|1/mum|/mm|1/mm|/cm|1/cm|/dm|1/dm|/dam|1/dam|/hm|1/hm|/km|1/km|/Mm|1/Mm|/Gm|1/Gm|/Tm|1/Tm|/Pm|1/Pm|/Em|1/Em|/Zm|1/Zm|/Ym|1/Ym|/\\u212B|/A|1/\\u212B|1/A|/AU|1/AU|/NM|1/NM|/ft|1/ft|/in|1/in|/ly|1/ly|/mi|1/mi|/pc|1/pc|/yd|1/yd))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(/m|1/m|/ym|1/ym|/zm|1/zm|/am|1/am|/fm|1/fm|/pm|1/pm|/nm|1/nm|/\\u03BCm|/mum|1/\\u03BCm|1/mum|/mm|1/mm|/cm|1/cm|/dm|1/dm|/dam|1/dam|/hm|1/hm|/km|1/km|/Mm|1/Mm|/Gm|1/Gm|/Tm|1/Tm|/Pm|1/Pm|/Em|1/Em|/Zm|1/Zm|/Ym|1/Ym|/\\u212B|/A|1/\\u212B|1/A|/AU|1/AU|/NM|1/NM|/ft|1/ft|/in|1/in|/ly|1/ly|/mi|1/mi|/pc|1/pc|/yd|1/yd))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -666,7 +719,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid LuminousFlux with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(lm|Ylm|Zlm|Elm|Plm|Tlm|Glm|Mlm|klm|hlm|dalm|dlm|clm|mlm|\\u03BClm|mulm|nlm|plm|flm|alm|zlm|ylm))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(lm|Ylm|Zlm|Elm|Plm|Tlm|Glm|Mlm|klm|hlm|dalm|dlm|clm|mlm|\\u03BClm|mulm|nlm|plm|flm|alm|zlm|ylm))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -675,7 +729,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid LuminousIntensity with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(cd|Ycd|Zcd|Ecd|Pcd|Tcd|Gcd|Mcd|kcd|hcd|dacd|dcd|ccd|mcd|\\u03BCcd|mucd|ncd|pcd|fcd|acd|zcd|ycd))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(cd|Ycd|Zcd|Ecd|Pcd|Tcd|Gcd|Mcd|kcd|hcd|dacd|dcd|ccd|mcd|\\u03BCcd|mucd|ncd|pcd|fcd|acd|zcd|ycd))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -684,7 +739,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid MagneticFluxDensity with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(T|YT|ZT|ET|PT|TT|GT|MT|kT|hT|daT|dT|cT|mT|muT|\\u03BCT|nT|pT|fT|aT|zT|yT|G))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(T|YT|ZT|ET|PT|TT|GT|MT|kT|hT|daT|dT|cT|mT|muT|\\u03BCT|nT|pT|fT|aT|zT|yT|G))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -693,7 +749,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid MagneticFlux with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Wb|YWb|ZWb|EWb|PWb|TWb|GWb|MWb|kWb|hWb|daWb|dWb|cWb|mWb|muWb|\\u03BCWb|nWb|pWb|fWb|aWb|zWb|yWb|Mx))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Wb|YWb|ZWb|EWb|PWb|TWb|GWb|MWb|kWb|hWb|daWb|dWb|cWb|mWb|muWb|\\u03BCWb|nWb|pWb|fWb|aWb|zWb|yWb|Mx))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -702,7 +759,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid Mass with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kg|Yg|Zg|Eg|Pg|Tg|Gg|Mg|t|hg|dag|g|dg|cg|mg|\\u03BCg|mug|ng|pg|fg|ag|zg|yg|Da|t\(mts\)|YeV|ZeV|EeV|PeV|TeV|GeV|MeV|keV|heV|daeV|eV|meV|\\u03BCeV|mueV|long tn|oz|lb|sh tn))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kg|Yg|Zg|Eg|Pg|Tg|Gg|Mg|t|hg|dag|g|dg|cg|mg|\\u03BCg|mug|ng|pg|fg|ag|zg|yg|Da|t\(mts\)|YeV|ZeV|EeV|PeV|TeV|GeV|MeV|keV|heV|daeV|eV|meV|\\u03BCeV|mueV|long tn|oz|lb|sh tn))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -720,7 +778,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid Position with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m|Ym|Zm|Em|Pm|Tm|Gm|Mm|km|hm|dam|dm|cm|mm|\\u03BCm|mum|nm|pm|fm|am|zm|ym|\\u212B|A|AU|Pc|ft|in|ly|mi|NM|yd))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m|Ym|Zm|Em|Pm|Tm|Gm|Mm|km|hm|dam|dm|cm|mm|\\u03BCm|mum|nm|pm|fm|am|zm|ym|\\u212B|A|AU|Pc|ft|in|ly|mi|NM|yd))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -729,7 +788,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid Power with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(W|YW|ZW|EW|PW|TW|GW|MW|kW|hW|daW|dW|cW|mW|\\u03BCW|muW|nW|pW|fW|aW|zW|yW|sn\.m/s|erg/s|ft\.lbf/h|ft\.lbf/min|ft\.lbf/s|hp\(M\)))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(W|YW|ZW|EW|PW|TW|GW|MW|kW|hW|daW|dW|cW|mW|\\u03BCW|muW|nW|pW|fW|aW|zW|yW|sn\.m/s|erg/s|ft\.lbf/h|ft\.lbf/min|ft\.lbf/s|hp\(M\)))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -738,7 +798,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid Pressure with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Pa|YPa|ZPa|EPa|PPa|TPa|GPa|MPa|kPa|hPa|daPa|dPa|cPa|mPa|\\u03BCPa|muPa|nPa|pPa|fPa|aPa|zPa|yPa|bar|pz|mbar|Ba|torr|atm|at|cmHg|ftHg|inHg|kgf/mm\^2|mmHg|lbf/ft\^2|lbf/in\^2))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Pa|YPa|ZPa|EPa|PPa|TPa|GPa|MPa|kPa|hPa|daPa|dPa|cPa|mPa|\\u03BCPa|muPa|nPa|pPa|fPa|aPa|zPa|yPa|bar|pz|mbar|Ba|torr|atm|at|cmHg|ftHg|inHg|kgf/mm\^2|mmHg|lbf/ft\^2|lbf/in\^2))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -747,7 +808,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid Radioactivity with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Bq|YBq|ZBq|EBq|PBq|TBq|GBq|MBq|kBq|hBq|daBq|Rd|Ci|muCi|\\u03BCCi|mCi|nCi))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Bq|YBq|ZBq|EBq|PBq|TBq|GBq|MBq|kBq|hBq|daBq|Rd|Ci|muCi|\\u03BCCi|mCi|nCi))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -765,7 +827,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid Speed with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m/s|m/sec|km/s|km/sec|km/h|km/hr|km/hour|m/h|m/hr|m/hour|ft/h|ft/hr|ft/hour|ft/s|ft/sec|in/h|in/hr|in/hour|ft/min|in/min|in/s|in/sec|kt|mi/h|mi/hr|mi/hour|mi/min|mi/s|mi/sec))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m/s|m/sec|km/s|km/sec|km/h|km/hr|km/hour|m/h|m/hr|m/hour|ft/h|ft/hr|ft/hour|ft/s|ft/sec|in/h|in/hr|in/hour|ft/min|in/min|in/s|in/sec|kt|mi/h|mi/hr|mi/hour|mi/min|mi/s|mi/sec))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -774,7 +837,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid Temperature with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(K|YK|ZK|EK|PK|TK|GK|MK|kK|hK|daK|�C|degC|C|dK|cK|mK|\\u03BCK|muK|nK|pK|fK|aK|zK|yK|�F|degF|F|�R|degR|R|�R�|degRe|Re|R�))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(K|YK|ZK|EK|PK|TK|GK|MK|kK|hK|daK|�C|degC|C|dK|cK|mK|\\u03BCK|muK|nK|pK|fK|aK|zK|yK|�F|degF|F|�R|degR|R|�R�|degRe|Re|R�))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -783,7 +847,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid Time with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(s|sec|Ys|Ysec|Zs|Zsec|Es|Esec|Ps|Psec|Ts|Tsec|Gs|Gsec|Ms|Msec|ks|ksec|hs|hsec|das|dasec|ds|dsec|cs|csec|ms|msec|\\u03BCs|mus|\\u03BCsec|musec|ns|nsec|ps|psec|fs|fsec|as|asec|zs|zsec|ys|ysec|day|h|hr|hour|min|wk|week|s\(Y1\)|sec\(Y1\)|s\(Y1970\)|sec\(Y1970\)|s\(Y2000\)|sec\(Y2000\)|ms\(Y1970\)|msec\(Y1970\)|\\u03BCs\(Y1970\)|mus\(Y1970\)|\\u03BCsec\(Y1970\)|musec\(Y1970\)|day\(Y1970\)|h\(Y1970\)|hour\(Y1970\)|hr\(Y1970\)|min\(Y1970\)|wk\(Y1970\)|week\(Y1970\)))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(s|sec|Ys|Ysec|Zs|Zsec|Es|Esec|Ps|Psec|Ts|Tsec|Gs|Gsec|Ms|Msec|ks|ksec|hs|hsec|das|dasec|ds|dsec|cs|csec|ms|msec|\\u03BCs|mus|\\u03BCsec|musec|ns|nsec|ps|psec|fs|fsec|as|asec|zs|zsec|ys|ysec|day|h|hr|hour|min|wk|week|s\(Y1\)|sec\(Y1\)|s\(Y1970\)|sec\(Y1970\)|s\(Y2000\)|sec\(Y2000\)|ms\(Y1970\)|msec\(Y1970\)|\\u03BCs\(Y1970\)|mus\(Y1970\)|\\u03BCsec\(Y1970\)|musec\(Y1970\)|day\(Y1970\)|h\(Y1970\)|hour\(Y1970\)|hr\(Y1970\)|min\(Y1970\)|wk\(Y1970\)|week\(Y1970\)))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -801,7 +866,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid Volume with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m\^3|Ym\^3|Zm\^3|Em\^3|Pm\^3|Tm\^3|Gm\^3|Mm\^3|km\^3|hm\^3|dam\^3|L|dm\^3|cm\^3|mm\^3|\\u03BCm\^3|mum\^3|nm\^3|pm\^3|fm\^3|am\^3|zm\^3|ym\^3|NM\^3|pc\^3|ft\^3|in\^3|ly\^3|mi\^3|yd\^3|fl\.oz\(US\)|fl\.oz\(imp\)|gal\(US\)|gal\(imp\)|pt\(US\)|pt\(imp\)|qt\(US\)|qt\(imp\)))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([+-]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m\^3|Ym\^3|Zm\^3|Em\^3|Pm\^3|Tm\^3|Gm\^3|Mm\^3|km\^3|hm\^3|dam\^3|L|dm\^3|cm\^3|mm\^3|\\u03BCm\^3|mum\^3|nm\^3|pm\^3|fm\^3|am\^3|zm\^3|ym\^3|NM\^3|pc\^3|ft\^3|in\^3|ly\^3|mi\^3|yd\^3|fl\.oz\(US\)|fl\.oz\(imp\)|gal\(US\)|gal\(imp\)|pt\(US\)|pt\(imp\)|qt\(US\)|qt\(imp\)))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -814,7 +880,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveAbsoluteTemperature with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(K|YK|ZK|EK|PK|TK|GK|MK|kK|hK|daK|�C|degC|C|dK|cK|mK|\\u03BCK|muK|nK|pK|fK|aK|zK|yK|�F|degF|F|�R|degR|R|�R�|degRe|Re|R�))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(K|YK|ZK|EK|PK|TK|GK|MK|kK|hK|daK|�C|degC|C|dK|cK|mK|\\u03BCK|muK|nK|pK|fK|aK|zK|yK|�F|degF|F|�R|degR|R|�R�|degRe|Re|R�))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -823,7 +890,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveAbsorbedDose with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Gy|YGy|ZGy|EGy|PGy|TGy|GGy|MGy|kGy|hGy|daGy|dGy|cGy|mGy|\\u03BCGy|muGy|nGy|pGy|fGy|aGy|zGy|yGy|rad|erg/g))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Gy|YGy|ZGy|EGy|PGy|TGy|GGy|MGy|kGy|hGy|daGy|dGy|cGy|mGy|\\u03BCGy|muGy|nGy|pGy|fGy|aGy|zGy|yGy|rad|erg/g))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -832,7 +900,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveAcceleration with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m/s2|m/sec\^2|km/h2|km/hr\^2|km/hour\^2|Gal|ft/s2|ft/sec\^2|in/s2|in/sec\^2|kt/s|kt/sec|mi/h/s|mi/hr/s|mi/hour/s|mi/h/sec|mi/hr/sec|mi/hour/sec|mi/h2|mi/hr\^2|mi/hour\^2|mi/s2|mi/sec\^2|g))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m/s2|m/sec\^2|km/h2|km/hr\^2|km/hour\^2|Gal|ft/s2|ft/sec\^2|in/s2|in/sec\^2|kt/s|kt/sec|mi/h/s|mi/hr/s|mi/hour/s|mi/h/sec|mi/hr/sec|mi/hour/sec|mi/h2|mi/hr\^2|mi/hour\^2|mi/s2|mi/sec\^2|g))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -841,7 +910,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveAmountOfSubstance with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(mol|Ymol|Zmol|Emol|Pmol|Tmol|Gmol|Mmol|kmol|hmol|damol|dmol|cmol|mmol|\\u03BCmol|mumol|nmol|pmol|fmol|amol|zmol|ymol))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(mol|Ymol|Zmol|Emol|Pmol|Tmol|Gmol|Mmol|kmol|hmol|damol|dmol|cmol|mmol|\\u03BCmol|mumol|nmol|pmol|fmol|amol|zmol|ymol))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -850,7 +920,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveAngle with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad|\'|arcmin|&quot;|arcsec|�|deg|dg|c\'|c&quot;|grad|\%))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad|\'|arcmin|&quot;|arcsec|�|deg|dg|c\'|c&quot;|grad|\%))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -859,7 +930,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveAngularAcceleration with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad/s2|rad/sec2|\'/s2|\'/sec2|arcmin/sec2|&quot;/s2|&quot;/sec2|arcsec/sec2|�/s2|deg/s2|dg/s2|dg/sec2|deg/sec2|c\'/s2|c\'/sec2|c&quot;/s2|c&quot;/sec2|grad/s2))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad/s2|rad/sec2|\'/s2|\'/sec2|arcmin/sec2|&quot;/s2|&quot;/sec2|arcsec/sec2|�/s2|deg/s2|dg/s2|dg/sec2|deg/sec2|c\'/s2|c\'/sec2|c&quot;/s2|c&quot;/sec2|grad/s2))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -868,7 +940,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveAngularVelocity with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad/s|rad/sec|\'/s|\'/sec|arcmin/sec|&quot;/s|&quot;/sec|arcsec/sec|�/s|deg/s|dg/s|dg/sec|deg/sec|c\'/s|c\'/sec|c&quot;/s|c&quot;/sec|grad/s))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad/s|rad/sec|\'/s|\'/sec|arcmin/sec|&quot;/s|&quot;/sec|arcsec/sec|�/s|deg/s|dg/s|dg/sec|deg/sec|c\'/s|c\'/sec|c&quot;/s|c&quot;/sec|grad/s))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -877,7 +950,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveArea with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m\^2|Ym\^2|Zm\^2|Em\^2|Pm\^2|Tm\^2|Gm\^2|Mm\^2|km\^2|hm\^2|dam\^2|dm\^2|cm\^2|mm\^2|\\u03BCm\^2|mum\^2|nm\^2|pm\^2|fm\^2|am\^2|zm\^2|ym\^2|ha|a|ca|ac|NM\^2|ft\^2|in\^2|mi\^2|yd\^2))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m\^2|Ym\^2|Zm\^2|Em\^2|Pm\^2|Tm\^2|Gm\^2|Mm\^2|km\^2|hm\^2|dam\^2|dm\^2|cm\^2|mm\^2|\\u03BCm\^2|mum\^2|nm\^2|pm\^2|fm\^2|am\^2|zm\^2|ym\^2|ha|a|ca|ac|NM\^2|ft\^2|in\^2|mi\^2|yd\^2))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -886,7 +960,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveCatalyticActivity with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kat|Ykat|Zkat|Ekat|Pkat|Tkat|Gkat|Mkat|kkat|hkat|dakat|dkat|ckat|mkat|\\u03BCkat|mukat|nkat|pkat|fkat|akat|zkat|ykat))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kat|Ykat|Zkat|Ekat|Pkat|Tkat|Gkat|Mkat|kkat|hkat|dakat|dkat|ckat|mkat|\\u03BCkat|mukat|nkat|pkat|fkat|akat|zkat|ykat))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -904,7 +979,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveDirection with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad|rad\(E\)|rad\(N\)|rad\(East\)|rad\(North\)|�\(E\)|�\(N\)|�\(East\)|�\(North\)|deg|deg\(E\)|deg\(N\)|deg\(East\)|deg\(North\)))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(rad|rad\(E\)|rad\(N\)|rad\(East\)|rad\(North\)|�\(E\)|�\(N\)|�\(East\)|�\(North\)|deg|deg\(E\)|deg\(N\)|deg\(East\)|deg\(North\)))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -913,16 +989,19 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveDuration with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(s|sec|Ys|Ysec|Zs|Zsec|Es|Esec|Ps|Psec|Ts|Tsec|Gs|Gsec|Ms|Msec|ks|ksec|hs|hsec|das|dasec|ds|dsec|cs|csec|ms|msec|\\u03BCs|mus|\\u03BCsec|musec|ns|nsec|ps|psec|fs|fsec|as|asec|zs|zsec|ys|ysec|day|h|hr|hour|min|wk|week))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(s|sec|Ys|Ysec|Zs|Zsec|Es|Esec|Ps|Psec|Ts|Tsec|Gs|Gsec|Ms|Msec|ks|ksec|hs|hsec|das|dasec|ds|dsec|cs|csec|ms|msec|\\u03BCs|mus|\\u03BCsec|musec|ns|nsec|ps|psec|fs|fsec|as|asec|zs|zsec|ys|ysec|day|h|hr|hour|min|wk|week))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="PositiveElectricalCapacitanceType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveElectricalCapacitance with unit.</xsd:appinfo>
+      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveElectricalCapacitance with unit.
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(F|YF|ZF|EF|PF|TF|GF|MF|kF|hF|daF|dF|cF|mF|uF|\\u03BCF|muF|nF|pF|fF|aF|zF|yF))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(F|YF|ZF|EF|PF|TF|GF|MF|kF|hF|daF|dF|cF|mF|uF|\\u03BCF|muF|nF|pF|fF|aF|zF|yF))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -931,16 +1010,19 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveElectricalCharge with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(C|YC|ZC|EC|PC|TC|GC|MC|kC|hC|daC|mAs|dC|cC|mC|\\u03BCC|muC|nC|pC|fC|aC|zC|yC|Ah|aAh|cAh|daAh|dAh|e|EAh|fAh|GAh|hAh|kAh|MAh|\\u03BCAh|muAh|mAh|nAh|PAh|pAh|TAh|yAh|YAh|zAh|ZAh|abC|emu|esu|F|Fr|statC))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(C|YC|ZC|EC|PC|TC|GC|MC|kC|hC|daC|mAs|dC|cC|mC|\\u03BCC|muC|nC|pC|fC|aC|zC|yC|Ah|aAh|cAh|daAh|dAh|e|EAh|fAh|GAh|hAh|kAh|MAh|\\u03BCAh|muAh|mAh|nAh|PAh|pAh|TAh|yAh|YAh|zAh|ZAh|abC|emu|esu|F|Fr|statC))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="PositiveElectricalConductanceType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveElectricalConductance with unit.</xsd:appinfo>
+      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveElectricalConductance with unit.
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(S|YS|ZS|ES|PS|TS|GS|MS|kS|hS|daS|dS|cS|mS|muS|\\u03BCS|nS|pS|fS|aS|zS|yS))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(S|YS|ZS|ES|PS|TS|GS|MS|kS|hS|daS|dS|cS|mS|muS|\\u03BCS|nS|pS|fS|aS|zS|yS))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -949,16 +1031,19 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveElectricalCurrent with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(A|YA|ZA|EA|PA|TA|GA|MA|kA|hA|daA|dA|cA|mA|\\u03BCA|muA|nA|pA|fA|aA|zA|yA|abA|statA))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(A|YA|ZA|EA|PA|TA|GA|MA|kA|hA|daA|dA|cA|mA|\\u03BCA|muA|nA|pA|fA|aA|zA|yA|abA|statA))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="PositiveElectricalInductanceType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveElectricalInductance with unit.</xsd:appinfo>
+      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveElectricalInductance with unit.
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(H|YH|ZH|EH|PH|TH|GH|MH|kH|hH|daH|dH|cH|mH|muH|\\u03BCH|nH|pH|fH|aH|zH|yH))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(H|YH|ZH|EH|PH|TH|GH|MH|kH|hH|daH|dH|cH|mH|muH|\\u03BCH|nH|pH|fH|aH|zH|yH))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -967,16 +1052,19 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveElectricalPotential with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(V|YV|ZV|EV|PV|TV|GV|MV|kV|hV|daV|dV|cV|mV|\\u03BCV|muV|nV|pV|fV|aV|zV|yV|abV|stV))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(V|YV|ZV|EV|PV|TV|GV|MV|kV|hV|daV|dV|cV|mV|\\u03BCV|muV|nV|pV|fV|aV|zV|yV|abV|stV))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="PositiveElectricalResistanceType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveElectricalResistance with unit.</xsd:appinfo>
+      <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveElectricalResistance with unit.
+      </xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(\\u03A9|ohm|Y\\u03A9|Yohm|Z\\u03A9|Zohm|E\\u03A9|Eohm|P\\u03A9|Pohm|T\\u03A9|Tohm|G\\u03A9|Gohm|M\\u03A9|Mohm|k\\u03A9|kohm|h\\u03A9|hohm|da\\u03A9|daohm|d\\u03A9|dohm|c\\u03A9|cohm|m\\u03A9|mohm|\\u03BC\\u03A9|muohm|mu\\u03A9|n\\u03A9|nohm|p\\u03A9|pohm|f\\u03A9|fohm|a\\u03A9|aohm|z\\u03A9|zohm|y\\u03A9|yohm|ab\\u03A9|abohm|st\\u03A9|stohm))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(\\u03A9|ohm|Y\\u03A9|Yohm|Z\\u03A9|Zohm|E\\u03A9|Eohm|P\\u03A9|Pohm|T\\u03A9|Tohm|G\\u03A9|Gohm|M\\u03A9|Mohm|k\\u03A9|kohm|h\\u03A9|hohm|da\\u03A9|daohm|d\\u03A9|dohm|c\\u03A9|cohm|m\\u03A9|mohm|\\u03BC\\u03A9|muohm|mu\\u03A9|n\\u03A9|nohm|p\\u03A9|pohm|f\\u03A9|fohm|a\\u03A9|aohm|z\\u03A9|zohm|y\\u03A9|yohm|ab\\u03A9|abohm|st\\u03A9|stohm))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -985,7 +1073,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveEnergy with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(J|YJ|ZJ|EJ|PJ|TJ|GJ|MJ|kJ|hJ|daJ|dJ|cJ|mJ|\\u03BCJ|muJ|nJ|pJ|fJ|aJ|zJ|yJ|YWh|ZWh|EWh|PWh|TWh|GWh|MWh|kWh|hWh|daWh|Wh|dWh|cWh|mWh|\\u03BCWh|muWh|nWh|pWh|fWh|aWh|zWh|yWh|YeV|ZeV|EeV|PeV|TeV|GeV|MeV|keV|heV|daeV|eV|deV|ceV|meV|\\u03BCeV|mueV|neV|peV|feV|aeV|zeV|yeV|sn\.m|erg|BTU\(ISO\)|BTU\(IT\)|cal|cal\(IT\)|ft\.lbf|in\.lbf|kcal))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(J|YJ|ZJ|EJ|PJ|TJ|GJ|MJ|kJ|hJ|daJ|dJ|cJ|mJ|\\u03BCJ|muJ|nJ|pJ|fJ|aJ|zJ|yJ|YWh|ZWh|EWh|PWh|TWh|GWh|MWh|kWh|hWh|daWh|Wh|dWh|cWh|mWh|\\u03BCWh|muWh|nWh|pWh|fWh|aWh|zWh|yWh|YeV|ZeV|EeV|PeV|TeV|GeV|MeV|keV|heV|daeV|eV|deV|ceV|meV|\\u03BCeV|mueV|neV|peV|feV|aeV|zeV|yeV|sn\.m|erg|BTU\(ISO\)|BTU\(IT\)|cal|cal\(IT\)|ft\.lbf|in\.lbf|kcal))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -994,7 +1083,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveEquivalentDose with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Sv|YSv|ZSv|ESv|PSv|TSv|GSv|MSv|kSv|hSv|daSv|dSv|cSv|mSv|\\u03BCSv|muSv|nSv|pSv|fSv|aSv|zSv|ySv|rem))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Sv|YSv|ZSv|ESv|PSv|TSv|GSv|MSv|kSv|hSv|daSv|dSv|cSv|mSv|\\u03BCSv|muSv|nSv|pSv|fSv|aSv|zSv|ySv|rem))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1012,7 +1102,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveFlowVolume with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m\^3/s|m\^3/sec|L/s|L/sec|m\^3/day|m\^3/h|m\^3/hr|m\^3/hour|m\^3/min|L/day|L/h|L/hr|L/hour|L/min|gal\(US\)/day|gal\(US\)/h|gal\(US\)/hr|gal\(US\)/hour|gal\(US\)/min|gal\(US\)/s|gal\(US\)/sec|ft\^3/min|ft\^3/s|ft\^3/sec|in\^3/min|in\^3/s|in\^3/sec))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m\^3/s|m\^3/sec|L/s|L/sec|m\^3/day|m\^3/h|m\^3/hr|m\^3/hour|m\^3/min|L/day|L/h|L/hr|L/hour|L/min|gal\(US\)/day|gal\(US\)/h|gal\(US\)/hr|gal\(US\)/hour|gal\(US\)/min|gal\(US\)/s|gal\(US\)/sec|ft\^3/min|ft\^3/s|ft\^3/sec|in\^3/min|in\^3/s|in\^3/sec))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1030,7 +1121,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveFrequency with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Hz|/ys|1/ys|/ysec|1/ysec|YHz|/zs|1/zs|/zsec|1/zsec|ZHz|/as|1/as|/asec|1/asec|EHz|/fs|1/fs|/fsec|1/fsec|PHz|/ps|1/ps|/psec|1/psec|THz|/ns|1/ns|/nsec|1/nsec|GHz|/\\u03BCs|/mus|1/mus|1/\\u03BCs|/musec|1/musec|/\\u03BCsec|1/\\u03BCsec|MHz|/ms|1/ms|/msec|1/msec|kHz|/cs|1/cs|/csec|1/csec|hHz|/ds|1/ds|/dsec|1/dsec|daHz|/s|1/s|/sec|1/sec|/das|1/das|/dasec|1/dasec|dHz|/hs|1/hs|/hsec|1/hsec|cHz|/ks|1/ks|/ksec|1/ksec|mHz|/Ms|1/Ms|/Msec|1/Msec|\\u03BCHz|muHz|/Gs|1/Gs|/Gsec|1/Gsec|nHz|/Ts|1/Ts|/Tsec|1/Tsec|pHz|/Ps|1/Ps|/Psec|1/Psec|fHz|/Es|1/Es|/Esec|1/Esec|aHz|/Zs|1/Zs|/Zsec|1/Zsec|zHz|/Ys|1/Ys|/Ysec|1/Ysec|yHz|/day|1/day|/h|1/h|/hr|1/hr|/hour|1/hour|/min|1/min|/wk|1/wk|/week|1/week|rpm))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Hz|/ys|1/ys|/ysec|1/ysec|YHz|/zs|1/zs|/zsec|1/zsec|ZHz|/as|1/as|/asec|1/asec|EHz|/fs|1/fs|/fsec|1/fsec|PHz|/ps|1/ps|/psec|1/psec|THz|/ns|1/ns|/nsec|1/nsec|GHz|/\\u03BCs|/mus|1/mus|1/\\u03BCs|/musec|1/musec|/\\u03BCsec|1/\\u03BCsec|MHz|/ms|1/ms|/msec|1/msec|kHz|/cs|1/cs|/csec|1/csec|hHz|/ds|1/ds|/dsec|1/dsec|daHz|/s|1/s|/sec|1/sec|/das|1/das|/dasec|1/dasec|dHz|/hs|1/hs|/hsec|1/hsec|cHz|/ks|1/ks|/ksec|1/ksec|mHz|/Ms|1/Ms|/Msec|1/Msec|\\u03BCHz|muHz|/Gs|1/Gs|/Gsec|1/Gsec|nHz|/Ts|1/Ts|/Tsec|1/Tsec|pHz|/Ps|1/Ps|/Psec|1/Psec|fHz|/Es|1/Es|/Esec|1/Esec|aHz|/Zs|1/Zs|/Zsec|1/Zsec|zHz|/Ys|1/Ys|/Ysec|1/Ysec|yHz|/day|1/day|/h|1/h|/hr|1/hr|/hour|1/hour|/min|1/min|/wk|1/wk|/week|1/week|rpm))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1039,7 +1131,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveIlluminance with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(lx|Ylx|Zlx|Elx|Plx|Tlx|Glx|Mlx|ph|klx|hlx|dalx|dlx|clx|mlx|nx|mulx|\\u03BClx|nlx|plx|flx|alx|zlx|ylx))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(lx|Ylx|Zlx|Elx|Plx|Tlx|Glx|Mlx|ph|klx|hlx|dalx|dlx|clx|mlx|nx|mulx|\\u03BClx|nlx|plx|flx|alx|zlx|ylx))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1048,7 +1141,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveLength with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m|Ym|Zm|Em|Pm|Tm|Gm|Mm|km|hm|dam|dm|cm|mm|\\u03BCm|mum|nm|pm|fm|am|zm|ym|\\u212B|A|AU|Pc|ft|in|ly|mi|NM|yd))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m|Ym|Zm|Em|Pm|Tm|Gm|Mm|km|hm|dam|dm|cm|mm|\\u03BCm|mum|nm|pm|fm|am|zm|ym|\\u212B|A|AU|Pc|ft|in|ly|mi|NM|yd))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1057,7 +1151,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveLinearDensity with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(/m|1/m|/ym|1/ym|/zm|1/zm|/am|1/am|/fm|1/fm|/pm|1/pm|/nm|1/nm|/\\u03BCm|/mum|1/\\u03BCm|1/mum|/mm|1/mm|/cm|1/cm|/dm|1/dm|/dam|1/dam|/hm|1/hm|/km|1/km|/Mm|1/Mm|/Gm|1/Gm|/Tm|1/Tm|/Pm|1/Pm|/Em|1/Em|/Zm|1/Zm|/Ym|1/Ym|/\\u212B|/A|1/\\u212B|1/A|/AU|1/AU|/NM|1/NM|/ft|1/ft|/in|1/in|/ly|1/ly|/mi|1/mi|/pc|1/pc|/yd|1/yd))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(/m|1/m|/ym|1/ym|/zm|1/zm|/am|1/am|/fm|1/fm|/pm|1/pm|/nm|1/nm|/\\u03BCm|/mum|1/\\u03BCm|1/mum|/mm|1/mm|/cm|1/cm|/dm|1/dm|/dam|1/dam|/hm|1/hm|/km|1/km|/Mm|1/Mm|/Gm|1/Gm|/Tm|1/Tm|/Pm|1/Pm|/Em|1/Em|/Zm|1/Zm|/Ym|1/Ym|/\\u212B|/A|1/\\u212B|1/A|/AU|1/AU|/NM|1/NM|/ft|1/ft|/in|1/in|/ly|1/ly|/mi|1/mi|/pc|1/pc|/yd|1/yd))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1066,7 +1161,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveLuminousFlux with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(lm|Ylm|Zlm|Elm|Plm|Tlm|Glm|Mlm|klm|hlm|dalm|dlm|clm|mlm|\\u03BClm|mulm|nlm|plm|flm|alm|zlm|ylm))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(lm|Ylm|Zlm|Elm|Plm|Tlm|Glm|Mlm|klm|hlm|dalm|dlm|clm|mlm|\\u03BClm|mulm|nlm|plm|flm|alm|zlm|ylm))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1075,7 +1171,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveLuminousIntensity with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(cd|Ycd|Zcd|Ecd|Pcd|Tcd|Gcd|Mcd|kcd|hcd|dacd|dcd|ccd|mcd|\\u03BCcd|mucd|ncd|pcd|fcd|acd|zcd|ycd))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(cd|Ycd|Zcd|Ecd|Pcd|Tcd|Gcd|Mcd|kcd|hcd|dacd|dcd|ccd|mcd|\\u03BCcd|mucd|ncd|pcd|fcd|acd|zcd|ycd))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1084,7 +1181,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveMagneticFluxDensity with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(T|YT|ZT|ET|PT|TT|GT|MT|kT|hT|daT|dT|cT|mT|muT|\\u03BCT|nT|pT|fT|aT|zT|yT|G))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(T|YT|ZT|ET|PT|TT|GT|MT|kT|hT|daT|dT|cT|mT|muT|\\u03BCT|nT|pT|fT|aT|zT|yT|G))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1093,7 +1191,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveMagneticFlux with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Wb|YWb|ZWb|EWb|PWb|TWb|GWb|MWb|kWb|hWb|daWb|dWb|cWb|mWb|muWb|\\u03BCWb|nWb|pWb|fWb|aWb|zWb|yWb|Mx))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Wb|YWb|ZWb|EWb|PWb|TWb|GWb|MWb|kWb|hWb|daWb|dWb|cWb|mWb|muWb|\\u03BCWb|nWb|pWb|fWb|aWb|zWb|yWb|Mx))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1102,7 +1201,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveMass with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kg|Yg|Zg|Eg|Pg|Tg|Gg|Mg|t|hg|dag|g|dg|cg|mg|\\u03BCg|mug|ng|pg|fg|ag|zg|yg|Da|t\(mts\)|YeV|ZeV|EeV|PeV|TeV|GeV|MeV|keV|heV|daeV|eV|meV|\\u03BCeV|mueV|long tn|oz|lb|sh tn))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(kg|Yg|Zg|Eg|Pg|Tg|Gg|Mg|t|hg|dag|g|dg|cg|mg|\\u03BCg|mug|ng|pg|fg|ag|zg|yg|Da|t\(mts\)|YeV|ZeV|EeV|PeV|TeV|GeV|MeV|keV|heV|daeV|eV|meV|\\u03BCeV|mueV|long tn|oz|lb|sh tn))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1120,7 +1220,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositivePosition with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m|Ym|Zm|Em|Pm|Tm|Gm|Mm|km|hm|dam|dm|cm|mm|\\u03BCm|mum|nm|pm|fm|am|zm|ym|\\u212B|A|AU|Pc|ft|in|ly|mi|NM|yd))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m|Ym|Zm|Em|Pm|Tm|Gm|Mm|km|hm|dam|dm|cm|mm|\\u03BCm|mum|nm|pm|fm|am|zm|ym|\\u212B|A|AU|Pc|ft|in|ly|mi|NM|yd))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1129,7 +1230,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositivePower with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(W|YW|ZW|EW|PW|TW|GW|MW|kW|hW|daW|dW|cW|mW|\\u03BCW|muW|nW|pW|fW|aW|zW|yW|sn\.m/s|erg/s|ft\.lbf/h|ft\.lbf/min|ft\.lbf/s|hp\(M\)))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(W|YW|ZW|EW|PW|TW|GW|MW|kW|hW|daW|dW|cW|mW|\\u03BCW|muW|nW|pW|fW|aW|zW|yW|sn\.m/s|erg/s|ft\.lbf/h|ft\.lbf/min|ft\.lbf/s|hp\(M\)))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1138,7 +1240,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositivePressure with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Pa|YPa|ZPa|EPa|PPa|TPa|GPa|MPa|kPa|hPa|daPa|dPa|cPa|mPa|\\u03BCPa|muPa|nPa|pPa|fPa|aPa|zPa|yPa|bar|pz|mbar|Ba|torr|atm|at|cmHg|ftHg|inHg|kgf/mm\^2|mmHg|lbf/ft\^2|lbf/in\^2))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Pa|YPa|ZPa|EPa|PPa|TPa|GPa|MPa|kPa|hPa|daPa|dPa|cPa|mPa|\\u03BCPa|muPa|nPa|pPa|fPa|aPa|zPa|yPa|bar|pz|mbar|Ba|torr|atm|at|cmHg|ftHg|inHg|kgf/mm\^2|mmHg|lbf/ft\^2|lbf/in\^2))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1147,7 +1250,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveRadioactivity with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Bq|YBq|ZBq|EBq|PBq|TBq|GBq|MBq|kBq|hBq|daBq|Rd|Ci|muCi|\\u03BCCi|mCi|nCi))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(Bq|YBq|ZBq|EBq|PBq|TBq|GBq|MBq|kBq|hBq|daBq|Rd|Ci|muCi|\\u03BCCi|mCi|nCi))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1165,7 +1269,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveSpeed with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m/s|m/sec|km/s|km/sec|km/h|km/hr|km/hour|m/h|m/hr|m/hour|ft/h|ft/hr|ft/hour|ft/s|ft/sec|in/h|in/hr|in/hour|ft/min|in/min|in/s|in/sec|kt|mi/h|mi/hr|mi/hour|mi/min|mi/s|mi/sec))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m/s|m/sec|km/s|km/sec|km/h|km/hr|km/hour|m/h|m/hr|m/hour|ft/h|ft/hr|ft/hour|ft/s|ft/sec|in/h|in/hr|in/hour|ft/min|in/min|in/s|in/sec|kt|mi/h|mi/hr|mi/hour|mi/min|mi/s|mi/sec))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1174,7 +1279,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveTemperature with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(K|YK|ZK|EK|PK|TK|GK|MK|kK|hK|daK|�C|degC|C|dK|cK|mK|\\u03BCK|muK|nK|pK|fK|aK|zK|yK|�F|degF|F|�R|degR|R|�R�|degRe|Re|R�))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(K|YK|ZK|EK|PK|TK|GK|MK|kK|hK|daK|�C|degC|C|dK|cK|mK|\\u03BCK|muK|nK|pK|fK|aK|zK|yK|�F|degF|F|�R|degR|R|�R�|degRe|Re|R�))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1183,7 +1289,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveTime with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(s|sec|Ys|Ysec|Zs|Zsec|Es|Esec|Ps|Psec|Ts|Tsec|Gs|Gsec|Ms|Msec|ks|ksec|hs|hsec|das|dasec|ds|dsec|cs|csec|ms|msec|\\u03BCs|mus|\\u03BCsec|musec|ns|nsec|ps|psec|fs|fsec|as|asec|zs|zsec|ys|ysec|day|h|hr|hour|min|wk|week|s\(Y1\)|sec\(Y1\)|s\(Y1970\)|sec\(Y1970\)|s\(Y2000\)|sec\(Y2000\)|ms\(Y1970\)|msec\(Y1970\)|\\u03BCs\(Y1970\)|mus\(Y1970\)|\\u03BCsec\(Y1970\)|musec\(Y1970\)|day\(Y1970\)|h\(Y1970\)|hour\(Y1970\)|hr\(Y1970\)|min\(Y1970\)|wk\(Y1970\)|week\(Y1970\)))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(s|sec|Ys|Ysec|Zs|Zsec|Es|Esec|Ps|Psec|Ts|Tsec|Gs|Gsec|Ms|Msec|ks|ksec|hs|hsec|das|dasec|ds|dsec|cs|csec|ms|msec|\\u03BCs|mus|\\u03BCsec|musec|ns|nsec|ps|psec|fs|fsec|as|asec|zs|zsec|ys|ysec|day|h|hr|hour|min|wk|week|s\(Y1\)|sec\(Y1\)|s\(Y1970\)|sec\(Y1970\)|s\(Y2000\)|sec\(Y2000\)|ms\(Y1970\)|msec\(Y1970\)|\\u03BCs\(Y1970\)|mus\(Y1970\)|\\u03BCsec\(Y1970\)|musec\(Y1970\)|day\(Y1970\)|h\(Y1970\)|hour\(Y1970\)|hr\(Y1970\)|min\(Y1970\)|wk\(Y1970\)|week\(Y1970\)))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1201,7 +1308,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a valid PositiveVolume with unit.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m\^3|Ym\^3|Zm\^3|Em\^3|Pm\^3|Tm\^3|Gm\^3|Mm\^3|km\^3|hm\^3|dam\^3|L|dm\^3|cm\^3|mm\^3|\\u03BCm\^3|mum\^3|nm\^3|pm\^3|fm\^3|am\^3|zm\^3|ym\^3|NM\^3|pc\^3|ft\^3|in\^3|ly\^3|mi\^3|yd\^3|fl\.oz\(US\)|fl\.oz\(imp\)|gal\(US\)|gal\(imp\)|pt\(US\)|pt\(imp\)|qt\(US\)|qt\(imp\)))"></xsd:pattern>
+      <xsd:pattern
+        value="\{[^{}]+\}|([0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?\s*(m\^3|Ym\^3|Zm\^3|Em\^3|Pm\^3|Tm\^3|Gm\^3|Mm\^3|km\^3|hm\^3|dam\^3|L|dm\^3|cm\^3|mm\^3|\\u03BCm\^3|mum\^3|nm\^3|pm\^3|fm\^3|am\^3|zm\^3|ym\^3|NM\^3|pc\^3|ft\^3|in\^3|ly\^3|mi\^3|yd\^3|fl\.oz\(US\)|fl\.oz\(imp\)|gal\(US\)|gal\(imp\)|pt\(US\)|pt\(imp\)|qt\(US\)|qt\(imp\)))"></xsd:pattern>
     </xsd:restriction>
   </xsd:simpleType>
 
@@ -1218,7 +1326,7 @@
       <xsd:pattern value="\{[^{}]+\}" />
     </xsd:restriction>
   </xsd:simpleType>
-  
+
   <xsd:simpleType name="IdType">
     <xsd:annotation>
       <xsd:appinfo source="pattern">Provide a value without { }.</xsd:appinfo>
@@ -1227,20 +1335,20 @@
       <xsd:pattern value="[^{}]+" />
     </xsd:restriction>
   </xsd:simpleType>
-  
+
   <!-- Forces that when '{ }' is used, no '{' or '}' is used between them, otherwise no '{' at start and no '}' at end. -->
   <xsd:simpleType name="string">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\{[^{}]+\}|([^{](.*[^}])?)" />
     </xsd:restriction>
   </xsd:simpleType>
-  
+
   <xsd:simpleType name="MultiLineString">
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\{[^{}]+\}|([^{](([\s\S])*[^}])?)" />
     </xsd:restriction>
   </xsd:simpleType>
-  
+
   <xsd:simpleType name="space">
     <xsd:union memberTypes="ots:Expression">
       <xsd:simpleType>
@@ -1251,35 +1359,35 @@
       </xsd:simpleType>
     </xsd:union>
   </xsd:simpleType>
-  
+
   <xsd:simpleType name="boolean">
     <xsd:union memberTypes="ots:Expression xsd:boolean" />
   </xsd:simpleType>
-  
+
   <xsd:simpleType name="int">
     <xsd:union memberTypes="ots:Expression xsd:int" />
   </xsd:simpleType>
-  
+
   <xsd:simpleType name="integer">
     <xsd:union memberTypes="ots:Expression xsd:integer" />
   </xsd:simpleType>
-  
+
   <xsd:simpleType name="positiveInteger">
     <xsd:union memberTypes="ots:Expression xsd:positiveInteger" />
   </xsd:simpleType>
-  
+
   <xsd:simpleType name="long">
     <xsd:union memberTypes="ots:Expression xsd:long" />
   </xsd:simpleType>
-  
+
   <xsd:simpleType name="double">
     <xsd:union memberTypes="ots:Expression xsd:double" />
   </xsd:simpleType>
-  
+
   <xsd:simpleType name="float">
     <xsd:union memberTypes="ots:Expression xsd:float" />
   </xsd:simpleType>
-  
+
   <xsd:simpleType name="anyURI">
     <xsd:union memberTypes="ots:Expression xsd:anyURI" />
   </xsd:simpleType>
@@ -1345,7 +1453,8 @@
       <xsd:appinfo source="pattern">Provide an expression { }, or a value as BEGIN, END, END-10m, 25m, or 50%.</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|(BEGIN|END|END\-(\d+\.?\d*\s*(mm|cm|dm|m|dam|hm|km|mi|yd|ft))|(\
+      <xsd:pattern
+        value="\{[^{}]+\}|(BEGIN|END|END\-(\d+\.?\d*\s*(mm|cm|dm|m|dam|hm|km|mi|yd|ft))|(\
 ){0}(\d+\.?\d*\s*(mm|cm|dm|m|dam|hm|km|mi|yd|ft)|(\
 ){0}((\d(\.\d*)?)|(\d\d(\.\d*)?)|(100(\.0*)?))\s*\%))"></xsd:pattern>
     </xsd:restriction>
@@ -1353,7 +1462,8 @@
 
   <xsd:simpleType name="FractionType">
     <xsd:annotation>
-      <xsd:appinfo source="pattern">Provide an expression { }, or a value as decimal number [0 .. 1] or percentage [0% .. 100%].</xsd:appinfo>
+      <xsd:appinfo source="pattern">Provide an expression { }, or a value as decimal number [0 .. 1] or percentage [0% ..
+        100%].</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
       <xsd:pattern value="\{[^{}]+\}|((0?\.\d*|1\.0*|1|0)|((\d(\.\d*)?)|(\d\d(\.\d*)?)|(100(\.0*)?))\s*\%)"></xsd:pattern>
@@ -1394,12 +1504,12 @@
       </xsd:simpleType>
     </xsd:union>
   </xsd:simpleType>
-  
+
   <xsd:complexType name="LaneLinkType">
     <xsd:attribute name="Lane" type="ots:string" />
     <xsd:attribute name="Link" type="ots:string" />
   </xsd:complexType>
-  
+
   <xsd:simpleType name="LaneKeepingType">
     <xsd:union memberTypes="ots:Expression">
       <xsd:simpleType>
@@ -1439,6 +1549,80 @@
     </xsd:union>
   </xsd:simpleType>
 
+  <!-- Common between CseStripe in defined road layouts and StripeOverride in used defined road layouts in links. -->
+  <xsd:complexType name="StripeData">
+    <xsd:sequence>
+      <xsd:element name="Elements" minOccurs="0">
+        <xsd:complexType>
+          <xsd:choice maxOccurs="unbounded">
+            <xsd:element name="Line" type="ots:StripeLine" />
+            <!-- If Gap were a PositiveLengthType directly, elements are not serializable, and parsing becomes awful. -->
+            <xsd:element name="Gap">
+              <xsd:complexType>
+                <xsd:attribute name="Width" type="ots:PositiveLengthType" use="required" />
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:choice>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:choice minOccurs="0">
+        <xsd:element name="DashOffset">
+          <xsd:complexType>
+            <xsd:attribute name="Offset" type="ots:PositiveLengthType" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="DashSyncUpstream" type="ots:EmptyType" />
+        <xsd:element name="DashSyncDownstream" type="ots:EmptyType" />
+      </xsd:choice>
+      <xsd:element name="LateralSync" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation source="description">NONE: no synchronization, dash pattern applied to stripe line. LINK: dash
+            pattern applied to link line. SNAP: a number of gap/dash pairs inserted or removed to stay close to original length
+            while adhering to link phase at end-points.
+          </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:union memberTypes="ots:Expression">
+            <xsd:simpleType>
+              <xsd:restriction base="xsd:string">
+                <xsd:enumeration value="NONE" />
+                <xsd:enumeration value="LINK" />
+                <xsd:enumeration value="SNAP" />
+              </xsd:restriction>
+            </xsd:simpleType>
+          </xsd:union>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="LeftChangeLane" type="ots:boolean" />
+    <xsd:attribute name="RightChangeLane" type="ots:boolean" />
+  </xsd:complexType>
+
+  <xsd:complexType name="StripeLine">
+    <xsd:sequence>
+      <xsd:choice minOccurs="1">
+        <xsd:element name="Continuous" type="ots:EmptyType" />
+        <xsd:element name="Dashed">
+          <xsd:annotation>
+            <xsd:documentation source="description">Dashes per line. If the pattern involves multiple dash and gap lengths,
+              include additional gap/dash pairs.
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:sequence minOccurs="1" maxOccurs="unbounded">
+                <xsd:element name="Gap" type="ots:LengthType" />
+                <xsd:element name="Dash" type="ots:LengthType" />
+              </xsd:sequence>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:choice>
+    </xsd:sequence>
+    <xsd:attribute name="Width" type="ots:PositiveLengthType" use="required" />
+    <xsd:attribute name="Color" type="ots:ColorType" default="WHITE" />
+  </xsd:complexType>
+
   <xsd:simpleType name="StripeType">
     <xsd:union memberTypes="ots:Expression">
       <xsd:simpleType>
@@ -1477,7 +1661,8 @@
       <xsd:appinfo source="pattern">Expression { } or e.g. RED, #FF80AA, or RGB(255,0,80).</xsd:appinfo>
     </xsd:annotation>
     <xsd:restriction base="xsd:string">
-      <xsd:pattern value="\{[^{}]+\}|((\
+      <xsd:pattern
+        value="\{[^{}]+\}|((\
 {0})WHITE|LIGHT_GRAY|GRAY|DARK_GRAY|BLACK|RED|PINK|ORANGE|YELLOW|GREEN|MAGENTA|CYAN|BLUE(\
 {0})|\#[(0-9)|(A-F)]{6}(\
 {0})|RGB\(0*([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\s*\,\s*(\
@@ -1487,7 +1672,7 @@
   </xsd:simpleType>
 
   <xsd:complexType name="EmptyType" />
-  
+
   <xsd:complexType name="RandomStreamSource">
     <xsd:choice>
       <xsd:element name="Default" type="ots:EmptyType" />
@@ -1502,62 +1687,62 @@
 
   <xsd:complexType name="ConstantDistType">
     <xsd:sequence>
-	  <xsd:choice>
-	    <xsd:element name="Constant">
-	      <xsd:complexType>
-	        <xsd:attribute name="C" type="ots:double" use="required" />
-	      </xsd:complexType>
-	    </xsd:element>
-	    <xsd:element name="Exponential">
-	      <xsd:complexType>
-	        <xsd:attribute name="Lambda" type="ots:DoublePositive" use="required" />
-	      </xsd:complexType>
-	    </xsd:element>
-	    <xsd:element name="Triangular">
-	      <xsd:complexType>
-	        <xsd:attribute name="Min" type="ots:double" use="required" />
-	        <xsd:attribute name="Mode" type="ots:double" use="required" />
-	        <xsd:attribute name="Max" type="ots:double" use="required" />
-	      </xsd:complexType>
-	    </xsd:element>
-	    <xsd:element name="Normal">
-	      <xsd:complexType>
-	        <xsd:attribute name="Mu" type="ots:double" use="required" />
-	        <xsd:attribute name="Sigma" type="ots:DoublePositiveInclusive" use="required" />
-	      </xsd:complexType>
-	    </xsd:element>
-	    <xsd:element name="NormalTrunc">
-	      <xsd:complexType>
-	        <xsd:attribute name="Mu" type="ots:double" use="required" />
-	        <xsd:attribute name="Sigma" type="ots:DoublePositiveInclusive" use="required" />
-	        <xsd:attribute name="Min" type="ots:double" use="required" />
-	        <xsd:attribute name="Max" type="ots:double" use="required" />
-	      </xsd:complexType>
-	    </xsd:element>
-	    <xsd:element name="Beta">
-	      <xsd:complexType>
-	        <xsd:attribute name="Alpha1" type="ots:DoublePositive" use="required" />
-	        <xsd:attribute name="Alpha2" type="ots:DoublePositive" use="required" />
-	      </xsd:complexType>
-	    </xsd:element>
-	    <xsd:element name="Erlang">
-	      <xsd:complexType>
-	        <xsd:attribute name="Mean" type="ots:double" use="required" />
-	        <xsd:attribute name="K" type="ots:positiveInteger" use="required" />
-	      </xsd:complexType>
-	    </xsd:element>
-	    <xsd:element name="Gamma">
-	      <xsd:complexType>
-	        <xsd:attribute name="Alpha" type="ots:double" use="required" />
-	        <xsd:attribute name="Beta" type="ots:double" use="required" />
-	      </xsd:complexType>
-	    </xsd:element>
-	    <xsd:element name="LogNormal">
-	      <xsd:complexType>
-	        <xsd:attribute name="Mu" type="ots:double" use="required" />
-	        <xsd:attribute name="Sigma" type="ots:DoublePositive" use="required" />
-	      </xsd:complexType>
-	    </xsd:element>
+      <xsd:choice>
+        <xsd:element name="Constant">
+          <xsd:complexType>
+            <xsd:attribute name="C" type="ots:double" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="Exponential">
+          <xsd:complexType>
+            <xsd:attribute name="Lambda" type="ots:DoublePositive" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="Triangular">
+          <xsd:complexType>
+            <xsd:attribute name="Min" type="ots:double" use="required" />
+            <xsd:attribute name="Mode" type="ots:double" use="required" />
+            <xsd:attribute name="Max" type="ots:double" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="Normal">
+          <xsd:complexType>
+            <xsd:attribute name="Mu" type="ots:double" use="required" />
+            <xsd:attribute name="Sigma" type="ots:DoublePositiveInclusive" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="NormalTrunc">
+          <xsd:complexType>
+            <xsd:attribute name="Mu" type="ots:double" use="required" />
+            <xsd:attribute name="Sigma" type="ots:DoublePositiveInclusive" use="required" />
+            <xsd:attribute name="Min" type="ots:double" use="required" />
+            <xsd:attribute name="Max" type="ots:double" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="Beta">
+          <xsd:complexType>
+            <xsd:attribute name="Alpha1" type="ots:DoublePositive" use="required" />
+            <xsd:attribute name="Alpha2" type="ots:DoublePositive" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="Erlang">
+          <xsd:complexType>
+            <xsd:attribute name="Mean" type="ots:double" use="required" />
+            <xsd:attribute name="K" type="ots:positiveInteger" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="Gamma">
+          <xsd:complexType>
+            <xsd:attribute name="Alpha" type="ots:double" use="required" />
+            <xsd:attribute name="Beta" type="ots:double" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="LogNormal">
+          <xsd:complexType>
+            <xsd:attribute name="Mu" type="ots:double" use="required" />
+            <xsd:attribute name="Sigma" type="ots:DoublePositive" use="required" />
+          </xsd:complexType>
+        </xsd:element>
         <xsd:element name="LogNormalTrunc">
           <xsd:complexType>
             <xsd:attribute name="Mu" type="ots:double" use="required" />
@@ -1566,80 +1751,80 @@
             <xsd:attribute name="Max" type="ots:double" use="required" />
           </xsd:complexType>
         </xsd:element>
-	    <xsd:element name="Pearson5">
-	      <xsd:complexType>
-	        <xsd:attribute name="Alpha" type="ots:DoublePositive" use="required" />
-	        <xsd:attribute name="Beta" type="ots:DoublePositive" use="required" />
-	      </xsd:complexType>
-	    </xsd:element>
-	    <xsd:element name="Pearson6">
-	      <xsd:complexType>
-	        <xsd:attribute name="Alpha1" type="ots:DoublePositive" use="required" />
-	        <xsd:attribute name="Alpha2" type="ots:DoublePositive" use="required" />
-	        <xsd:attribute name="Beta" type="ots:DoublePositive" use="required" />
-	      </xsd:complexType>
-	    </xsd:element>
-	    <xsd:element name="Uniform">
-	      <xsd:complexType>
-	        <xsd:attribute name="Min" type="ots:double" use="required" />
-	        <xsd:attribute name="Max" type="ots:double" use="required" />
-	      </xsd:complexType>
-	    </xsd:element>
-	    <xsd:element name="Weibull">
-	      <xsd:complexType>
-	        <xsd:attribute name="Alpha" type="ots:DoublePositive" use="required" />
-	        <xsd:attribute name="Beta" type="ots:DoublePositive" use="required" />
-	      </xsd:complexType>
-	    </xsd:element>
+        <xsd:element name="Pearson5">
+          <xsd:complexType>
+            <xsd:attribute name="Alpha" type="ots:DoublePositive" use="required" />
+            <xsd:attribute name="Beta" type="ots:DoublePositive" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="Pearson6">
+          <xsd:complexType>
+            <xsd:attribute name="Alpha1" type="ots:DoublePositive" use="required" />
+            <xsd:attribute name="Alpha2" type="ots:DoublePositive" use="required" />
+            <xsd:attribute name="Beta" type="ots:DoublePositive" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="Uniform">
+          <xsd:complexType>
+            <xsd:attribute name="Min" type="ots:double" use="required" />
+            <xsd:attribute name="Max" type="ots:double" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="Weibull">
+          <xsd:complexType>
+            <xsd:attribute name="Alpha" type="ots:DoublePositive" use="required" />
+            <xsd:attribute name="Beta" type="ots:DoublePositive" use="required" />
+          </xsd:complexType>
+        </xsd:element>
       </xsd:choice>
-      <xsd:element name="RandomStream" type="ots:RandomStreamSource" minOccurs="0"/>
+      <xsd:element name="RandomStream" type="ots:RandomStreamSource" minOccurs="0" />
     </xsd:sequence>
   </xsd:complexType>
 
   <xsd:complexType name="DiscreteDistType">
     <xsd:sequence>
-	  <xsd:choice>
-	    <xsd:element name="Constant">
-	      <xsd:complexType>
-	        <xsd:attribute name="C" type="ots:long" use="required" />
-	      </xsd:complexType>
-	    </xsd:element>
-	    <xsd:element name="BernoulliI">
-	      <xsd:complexType>
-	        <xsd:attribute name="P" type="ots:FractionType" use="required" />
-	      </xsd:complexType>
-	    </xsd:element>
-	    <xsd:element name="Binomial">
-	      <xsd:complexType>
-	        <xsd:attribute name="N" type="ots:positiveInteger" use="required" />
-	        <xsd:attribute name="P" type="ots:FractionType" use="required" />
-	      </xsd:complexType>
-	    </xsd:element>
-	    <xsd:element name="Uniform">
-	      <xsd:complexType>
-	        <xsd:attribute name="Min" type="ots:int" use="required" />
-	        <xsd:attribute name="Max" type="ots:int" use="required" />
-	      </xsd:complexType>
-	    </xsd:element>
-	    <xsd:element name="Geometric">
-	      <xsd:complexType>
-	        <xsd:attribute name="P" type="ots:FractionType" use="required" />
-	      </xsd:complexType>
-	    </xsd:element>
-	    <xsd:element name="NegBinomial">
-	      <xsd:complexType>
-	        <xsd:attribute name="N" type="ots:positiveInteger" use="required" />
-	        <xsd:attribute name="P" type="ots:FractionType" use="required" />
-	      </xsd:complexType>
-	    </xsd:element>
-	    <xsd:element name="Poisson">
-	      <xsd:complexType>
-	        <xsd:attribute name="Lambda" type="ots:DoublePositive" use="required" />
-	      </xsd:complexType>
-	    </xsd:element>
-	  </xsd:choice>
-	  <xsd:element name="RandomStream" type="ots:RandomStreamSource" minOccurs="0"/>
-	</xsd:sequence>
+      <xsd:choice>
+        <xsd:element name="Constant">
+          <xsd:complexType>
+            <xsd:attribute name="C" type="ots:long" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="BernoulliI">
+          <xsd:complexType>
+            <xsd:attribute name="P" type="ots:FractionType" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="Binomial">
+          <xsd:complexType>
+            <xsd:attribute name="N" type="ots:positiveInteger" use="required" />
+            <xsd:attribute name="P" type="ots:FractionType" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="Uniform">
+          <xsd:complexType>
+            <xsd:attribute name="Min" type="ots:int" use="required" />
+            <xsd:attribute name="Max" type="ots:int" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="Geometric">
+          <xsd:complexType>
+            <xsd:attribute name="P" type="ots:FractionType" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="NegBinomial">
+          <xsd:complexType>
+            <xsd:attribute name="N" type="ots:positiveInteger" use="required" />
+            <xsd:attribute name="P" type="ots:FractionType" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="Poisson">
+          <xsd:complexType>
+            <xsd:attribute name="Lambda" type="ots:DoublePositive" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:choice>
+      <xsd:element name="RandomStream" type="ots:RandomStreamSource" minOccurs="0" />
+    </xsd:sequence>
   </xsd:complexType>
 
   <xsd:complexType name="LengthDistType">

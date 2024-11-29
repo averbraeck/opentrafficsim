@@ -113,20 +113,21 @@ public final class LaneGeometryUtil
     /**
      * Creates a simple straight lane. This method exists to create lanes for simple tests.
      * @param type stripe type.
+     * @param id id
      * @param link link.
      * @param offset end offset.
      * @param width end width.
      * @return lane.
      */
-    public static Stripe createStraightStripe(final StripeType type, final CrossSectionLink link, final Length offset,
-            final Length width)
+    public static Stripe createStraightStripe(final StripeType type, final String id, final CrossSectionLink link,
+            final Length offset, final Length width)
     {
         ContinuousLine designLine = new ContinuousStraight(
                 Try.assign(() -> link.getDesignLine().getLocationPointFraction(0.0), "Link should have a valid design line."),
                 link.getLength().si);
         ContinuousDoubleFunction offsetFunc = FractionalLengthData.of(0.0, offset.si, 1.0, offset.si);
         ContinuousDoubleFunction widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
-        return Try.assign(() -> new Stripe(type, link, CrossSectionGeometry.of(designLine, null, offsetFunc, widthFunc)),
+        return Try.assign(() -> new Stripe(type, id, link, CrossSectionGeometry.of(designLine, null, offsetFunc, widthFunc)),
                 "Network exception.");
     }
 

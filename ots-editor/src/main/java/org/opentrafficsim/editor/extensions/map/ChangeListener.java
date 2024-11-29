@@ -34,7 +34,7 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
     /** */
     private static final long serialVersionUID = 20231114L;
 
-    /** Event that any change happened to the road layout. */
+    /** Event that any change happened to the main node or anything under it. */
     public static final EventType CHANGE_EVENT = new EventType("CHANGEEVENT", new MetaData("Change event",
             "When any element under a node has changed", new ObjectDescriptor("Node", "Main node", XsdTreeNode.class)));
 

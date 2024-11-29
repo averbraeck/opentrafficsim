@@ -16,7 +16,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.core.geometry.OtsLine2d;
+import org.opentrafficsim.base.geometry.OtsLine2d;
 
 /**
  * Test the OperationalPlan and OperationalPlanBuilder classes.

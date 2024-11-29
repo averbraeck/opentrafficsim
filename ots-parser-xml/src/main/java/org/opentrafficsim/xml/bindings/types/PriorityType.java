@@ -10,6 +10,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
+@SuppressWarnings("serial")
 public class PriorityType extends ExpressionType<Priority>
 {
 

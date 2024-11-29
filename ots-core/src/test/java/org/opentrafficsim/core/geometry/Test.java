@@ -1,6 +1,8 @@
 package org.opentrafficsim.core.geometry;
 
 import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.base.geometry.OtsGeometryUtil;
+import org.opentrafficsim.base.geometry.OtsLine2d;
 
 /**
  * <p>

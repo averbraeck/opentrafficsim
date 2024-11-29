@@ -10,6 +10,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType.GraphicsType;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
+@SuppressWarnings("serial")
 public class GraphicsTypeType extends ExpressionType<GraphicsType>
 {
 

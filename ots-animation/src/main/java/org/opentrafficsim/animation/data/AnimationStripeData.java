@@ -3,11 +3,14 @@ package org.opentrafficsim.animation.data;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.vector.LengthVector;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
+import org.opentrafficsim.base.StripeElement;
+import org.opentrafficsim.base.StripeElement.StripeLateralSync;
+import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
+import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Stripe;
 
 /**
@@ -21,9 +24,12 @@ import org.opentrafficsim.road.network.lane.Stripe;
 public class AnimationStripeData extends AnimationCrossSectionElementData<Stripe> implements StripeData
 {
 
+    /** Link reference line. */
+    private PolyLine2d linkReferenceLine = null;
+
     /**
      * Constructor.
-     * @param stripe stripe.
+     * @param stripe stripe
      */
     public AnimationStripeData(final Stripe stripe)
     {
@@ -37,15 +43,50 @@ public class AnimationStripeData extends AnimationCrossSectionElementData<Stripe
     }
 
     @Override
+    public PolyLine2d getReferenceLine()
+    {
+        return getElement().getLateralSync().equals(StripeLateralSync.NONE) ? getElement().getCenterLine() : getLinkReferenceLine();
+    }
+
+    /**
+     * Return link reference line.
+     * @return link reference line
+     */
+    private PolyLine2d getLinkReferenceLine()
+    {
+        if (this.linkReferenceLine == null)
+        {
+            PolyLine2d linkLine = getElement().getLink().getDesignLine();
+            double offsetMin0 = Double.POSITIVE_INFINITY;
+            double offsetMax0 = Double.NEGATIVE_INFINITY;
+            double offsetMin1 = Double.POSITIVE_INFINITY;
+            double offsetMax1 = Double.NEGATIVE_INFINITY;
+            for (CrossSectionElement element : getElement().getLink().getCrossSectionElementList())
+            {
+                if (element instanceof Stripe)
+                {
+                    offsetMin0 = Math.min(offsetMin0, element.getOffsetAtBegin().si);
+                    offsetMax0 = Math.max(offsetMax0, element.getOffsetAtBegin().si);
+                    offsetMin1 = Math.min(offsetMin1, element.getOffsetAtEnd().si);
+                    offsetMax1 = Math.max(offsetMax1, element.getOffsetAtEnd().si);
+                }
+            }
+            double[] offsets = new double[] {.5 * (offsetMin0 + offsetMax0), .5 * (offsetMin1 + offsetMax1)};
+            this.linkReferenceLine = OtsGeometryUtil.offsetLine(linkLine, new double[] {0.0, 1.0}, offsets);
+        }
+        return this.linkReferenceLine;
+    }
+
+    @Override
     public PolyLine2d getLine()
     {
         return OtsLocatable.transformLine(getElement().getCenterLine(), getLocation());
     }
 
     @Override
-    public List<LengthVector> getDashes()
+    public List<StripeElement> getElements()
     {
-        return getElement().getDashes();
+        return getElement().getElements();
     }
 
     @Override

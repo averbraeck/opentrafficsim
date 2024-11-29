@@ -264,7 +264,7 @@ public final class XmlParser implements Serializable
         Map<String, Flattener> flatteners = new LinkedHashMap<>();
         NetworkParser.parseLinks(otsNetwork, definitions, network, nodeDirections, otsNetwork.getSimulator(), designLines,
                 flatteners, eval);
-        NetworkParser.applyRoadLayout(otsNetwork, definitions, network, roadLayoutMap, linkTypeSpeedLimitMap, designLines,
+        NetworkParser.applyRoadLayouts(otsNetwork, definitions, network, roadLayoutMap, linkTypeSpeedLimitMap, designLines,
                 flatteners, eval);
         NetworkParser.buildConflicts(otsNetwork, network, eval);
 

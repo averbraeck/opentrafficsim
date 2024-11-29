@@ -124,6 +124,18 @@
 
   <!-- The following bindings are on elements that appear once, and hence are not defined in a separate type. -->
   <!-- Simplifications, see: https://github.com/highsource/jaxb2-basics/wiki/JAXB2-Simplify-Plugin#as-element-properties -->
+
+  <jaxb:bindings schemaLocation="ots-types.xsd">
+    <jaxb:bindings node="//xsd:element[@name='LateralSync']">
+      <jaxb:property>
+        <jaxb:baseType>
+          <xjc:javaType name="org.opentrafficsim.xml.bindings.types.StripeLateralSyncType"
+            adapter="org.opentrafficsim.xml.bindings.StripeLateralSyncAdapter" />
+        </jaxb:baseType>
+      </jaxb:property>
+    </jaxb:bindings>
+  </jaxb:bindings>
+
   <jaxb:bindings schemaLocation="ots-network.xsd">
     <!-- Network.Node/Centroid/Link/Connector/include as separate lists -->
     <jaxb:bindings node="//xsd:element[@name='Network']/xsd:complexType/xsd:sequence/xsd:choice">

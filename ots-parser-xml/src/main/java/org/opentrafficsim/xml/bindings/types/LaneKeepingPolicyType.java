@@ -10,6 +10,7 @@ import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
+@SuppressWarnings("serial")
 public class LaneKeepingPolicyType extends ExpressionType<LaneKeepingPolicy>
 {
 

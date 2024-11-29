@@ -10,6 +10,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
+@SuppressWarnings("serial")
 public class TailgatingType extends ExpressionType<Tailgating>
 {
 

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.core.geometry.OtsLine2d;
+import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**

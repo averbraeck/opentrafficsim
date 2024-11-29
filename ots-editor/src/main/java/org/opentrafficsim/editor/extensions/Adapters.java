@@ -1,5 +1,6 @@
 package org.opentrafficsim.editor.extensions;
 
+import java.awt.Color;
 import java.util.LinkedHashMap;
 
 import org.djunits.value.vdouble.scalar.Angle;
@@ -8,14 +9,17 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.StripeElement.StripeLateralSync;
 import org.opentrafficsim.road.network.lane.Stripe.StripeType;
 import org.opentrafficsim.xml.bindings.AngleAdapter;
 import org.opentrafficsim.xml.bindings.ArcDirectionAdapter;
 import org.opentrafficsim.xml.bindings.BooleanAdapter;
+import org.opentrafficsim.xml.bindings.ColorAdapter;
 import org.opentrafficsim.xml.bindings.DirectionAdapter;
 import org.opentrafficsim.xml.bindings.DoubleAdapter;
 import org.opentrafficsim.xml.bindings.ExpressionAdapter;
 import org.opentrafficsim.xml.bindings.IntegerAdapter;
+import org.opentrafficsim.xml.bindings.StripeLateralSyncAdapter;
 import org.opentrafficsim.xml.bindings.LengthAdapter;
 import org.opentrafficsim.xml.bindings.LengthBeginEndAdapter;
 import org.opentrafficsim.xml.bindings.LinearDensityAdapter;
@@ -46,6 +50,7 @@ public final class Adapters
         ADAPTERS.put(Angle.class, new AngleAdapter());
         ADAPTERS.put(ArcDirection.class, new ArcDirectionAdapter());
         ADAPTERS.put(Boolean.class, new BooleanAdapter());
+        ADAPTERS.put(Color.class, new ColorAdapter());
         ADAPTERS.put(Direction.class, new DirectionAdapter());
         ADAPTERS.put(Double.class, new DoubleAdapter());
         ADAPTERS.put(Integer.class, new IntegerAdapter());
@@ -55,6 +60,7 @@ public final class Adapters
         ADAPTERS.put(Point2d.class, new Point2dAdapter());
         ADAPTERS.put(String.class, new StringAdapter());
         ADAPTERS.put(StripeType.class, new StripeTypeAdapter());
+        ADAPTERS.put(StripeLateralSync.class, new StripeLateralSyncAdapter());
     }
 
     /**

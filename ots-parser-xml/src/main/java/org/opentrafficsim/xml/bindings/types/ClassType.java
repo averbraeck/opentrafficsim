@@ -8,7 +8,7 @@ package org.opentrafficsim.xml.bindings.types;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({"rawtypes", "serial"})
 public class ClassType extends ExpressionType<Class>
 {
 

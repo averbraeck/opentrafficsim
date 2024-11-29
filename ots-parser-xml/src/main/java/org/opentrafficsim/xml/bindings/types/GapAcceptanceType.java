@@ -10,6 +10,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
+@SuppressWarnings("serial")
 public class GapAcceptanceType extends ExpressionType<GapAcceptance>
 {
 

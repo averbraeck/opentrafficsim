@@ -1,7 +1,5 @@
 package org.opentrafficsim.xml.bindings.types;
 
-import java.util.function.Function;
-
 import org.djunits.value.vdouble.scalar.Speed;
 
 /**
@@ -12,11 +10,12 @@ import org.djunits.value.vdouble.scalar.Speed;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
+@SuppressWarnings("serial")
 public class SpeedType extends ExpressionType<Speed>
 {
 
     /** Function to convert output from expression to the right type. */
-    private static final Function<Object, Speed> TO_TYPE = (o) -> Speed.instantiateSI(((Number) o).doubleValue());
+    private static final SerializableFunction<Object, Speed> TO_TYPE = (o) -> Speed.instantiateSI(((Number) o).doubleValue());
 
     /**
      * Constructor with value.

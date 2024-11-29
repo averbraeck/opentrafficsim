@@ -6,8 +6,8 @@ import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
+import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.core.geometry.FractionalLengthData;
-import org.opentrafficsim.core.geometry.OtsLine2d;
 
 /**
  * Test CrossSectionGeometry.

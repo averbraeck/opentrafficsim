@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.point.OrientedPoint2d;
-import org.opentrafficsim.core.geometry.OtsLine2d;
+import org.opentrafficsim.base.geometry.OtsLine2d;
 
 /**
  * Store one position and lane of a GTU.

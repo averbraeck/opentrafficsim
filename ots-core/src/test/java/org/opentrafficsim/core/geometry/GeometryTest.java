@@ -6,6 +6,7 @@ import java.util.Locale;
 
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
+import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 
 /**
  * Test the methods in the OTSGeometry class.

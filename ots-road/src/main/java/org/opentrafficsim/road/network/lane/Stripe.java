@@ -1,25 +1,30 @@
 package org.opentrafficsim.road.network.lane;
 
-import java.util.Arrays;
+import java.awt.Color;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.UUID;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.vector.LengthVector;
 import org.djutils.base.Identifiable;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.StripeElement;
+import org.opentrafficsim.base.StripeElement.StripeLateralSync;
 import org.opentrafficsim.base.Type;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.core.network.NetworkException;
 
 /**
- * Stripe road marking.
+ * Stripe road marking. This class only contains functional information. There is no information on how to draw the stripe, i.e.
+ * no color and no information on dashes. The stripe types has information on this, but this only serves as a default towards
+ * classes that do draw a stripe.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -45,28 +50,36 @@ public class Stripe extends CrossSectionElement
     /** Lateral permeability per GTU type and direction. */
     private final Map<GtuType, Set<LateralDirectionality>> permeabilityMap = new LinkedHashMap<>();
 
-    /** Dashes of the stripe. The first length is a gap, than a dash, etc. {@code null} means no dashes. */
-    private List<LengthVector> dashes;
+    /** Stripe elements. */
+    private List<StripeElement> elements;
 
     /** Longitudinal offset of dashes. */
     private Length dashOffset = Length.ZERO;
 
+    /** Lateral synchronization. */
+    private StripeLateralSync lateralSync = StripeLateralSync.SNAP;
+
+    /** Phase synchronization. */
+    private StripePhaseSync phaseSync = StripePhaseSync.NONE;
+
+    /** Period based on all stripe elements. */
+    private Double period;
+
     /**
      * Constructor specifying geometry. Permeability is set according to the stripe type default.
      * @param type stripe type defining appearance and default permeability.
+     * @param id id
      * @param link link
      * @param geometry geometry
-     * @throws NetworkException when no cross-section slice is defined.
      */
-    public Stripe(final StripeType type, final CrossSectionLink link, final CrossSectionGeometry geometry)
-            throws NetworkException
+    public Stripe(final StripeType type, final String id, final CrossSectionLink link, final CrossSectionGeometry geometry)
     {
-        super(link, UUID.randomUUID().toString(), geometry);
+        super(link, id, geometry);
         Throw.whenNull(type, "Type may not be null.");
         this.type = type;
         this.left = type.left();
         this.right = type.right();
-        this.dashes = type.dashes();
+        this.elements = type.elements;
     }
 
     /**
@@ -133,27 +146,26 @@ public class Stripe extends CrossSectionElement
     }
 
     /**
-     * Set dashes of the stripe, overruling the default dashes of the stripe type. Each vector in the list defines a line, e.g.
-     * for a double line. The first length is a gap, than a dash, etc. {@code null} means no dashes for the line.
-     * @param dashes dashes, use {@code null} for no dashes.
+     * Sets the elements.
+     * @param elements elements
      */
-    public void setDashes(final List<LengthVector> dashes)
+    public void setElements(final List<StripeElement> elements)
     {
-        Throw.whenNull(dashes, "dashes");
-        this.dashes = dashes;
+        this.period = null;
+        this.elements = elements;
     }
 
     /**
-     * Return the dashes. The first length is a gap, than a dash, etc. {@code null} means no dashes.
-     * @return dashes
+     * Returns the elements.
+     * @return elements
      */
-    public List<LengthVector> getDashes()
+    public List<StripeElement> getElements()
     {
-        return this.dashes;
+        return this.elements;
     }
 
     /**
-     * Set the dash offset.
+     * Sets the dash offset.
      * @param dashOffset dash offset
      */
     public void setDashOffset(final Length dashOffset)
@@ -162,7 +174,7 @@ public class Stripe extends CrossSectionElement
     }
 
     /**
-     * Get the dash offset.
+     * Returns the dash offset.
      * @return dash offset
      */
     public Length getDashOffset()
@@ -171,46 +183,181 @@ public class Stripe extends CrossSectionElement
     }
 
     /**
-     * Stripe type defines the default permeability, width and dashes.
+     * Sets the lateral synchronization.
+     * @param lateralSync lateral synchronization
+     */
+    public void setLateralSync(final StripeLateralSync lateralSync)
+    {
+        this.lateralSync = lateralSync;
+    }
+
+    /**
+     * Returns the lateral synchronization.
+     * @return lateral synchronization
+     */
+    public StripeLateralSync getLateralSync()
+    {
+        return this.lateralSync;
+    }
+
+    /**
+     * Sets the phase synchronization.
+     * @param phaseSync phase synchronization
+     */
+    public void setPhaseSync(final StripePhaseSync phaseSync)
+    {
+        this.phaseSync = phaseSync;
+    }
+
+    /**
+     * Returns the phase synchronization.
+     * @return phase synchronization
+     */
+    public StripePhaseSync getPhaseSync()
+    {
+        return this.phaseSync;
+    }
+
+    /**
+     * Returns the period of the common dash pattern.
+     * @return period of the common dash pattern
+     */
+    public double getPeriod()
+    {
+        if (this.period == null)
+        {
+            List<Double> lineLengths = new ArrayList<>();
+            for (StripeElement element : this.elements)
+            {
+                if (element.dashes() != null)
+                {
+                    double length = 0.0;
+                    for (Length gapDash : element.dashes())
+                    {
+                        length += gapDash.si;
+                    }
+                    lineLengths.add(length);
+                }
+            }
+            this.period = getPeriod(lineLengths);
+        }
+        return this.period;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Stripe [id=" + this.getFullId() + "]";
+    }
+
+    /**
+     * Returns the period after which the given line gap-dash patterns repeat as a whole. Lengths are rounded to a precision of
+     * 0.0001 to find the greatest common divisor.
+     * @param lineLengths gap-dash pattern lengths
+     * @return period
+     */
+    private static double getPeriod(final Collection<Double> lineLengths)
+    {
+        Set<Double> set = new LinkedHashSet<>(lineLengths);
+        if (lineLengths.isEmpty())
+        {
+            return -1.0;
+        }
+        else if (set.size() == 1)
+        {
+            return ((long) (lineLengths.iterator().next() * 10000)) / 10000.0;
+        }
+        long gcd = 1L;
+        for (double length : set)
+        {
+            gcd = BigInteger.valueOf(gcd).gcd(BigInteger.valueOf((long) (length * 10000))).longValue();
+        }
+        return gcd / 10000.0;
+    }
+
+    /**
+     * Method of stripe phase synchronization.
+     */
+    public enum StripePhaseSync
+    {
+        /** Do not synchronize. */
+        NONE(false),
+
+        /** Synchronize phase to upstream stripe. */
+        UPSTREAM(true),
+
+        /** Synchronize phase to downstream stripe. */
+        DOWNSTREAM(true);
+        
+        /** Whether synhronization should be applied. */
+        private final boolean sync;
+        
+        /**
+         * Constructor.
+         * @param sync whether synhronization should be applied
+         */
+        StripePhaseSync(final boolean sync)
+        {
+            this.sync = sync;
+        }
+        
+        /**
+         * Returns whether synhronization should be applied.
+         * @return whether synhronization should be applied
+         */
+        public boolean isSync()
+        {
+            return this.sync;
+        }
+    }
+
+    /**
+     * Stripe type defines the default permeability, width and elements.
      * @param id id
      * @param left left lane change allowed by default
      * @param right right lane change allowed by default
      * @param width default width
-     * @param dashes list of default dashes, use {@code null} in the list for a solid line
+     * @param elements list of default elements
      */
-    public record StripeType(String id, boolean left, boolean right, Length width, List<LengthVector> dashes)
+    public record StripeType(String id, boolean left, boolean right, Length width, List<StripeElement> elements)
             implements Type<StripeType>, Identifiable
     {
-        // NOTE: Do NOT use List.of(...) with null values, the class then cannot be loaded due to a NullPointerException during
-        // loading of the class, as List.of(...) creates an immutable list that does not allow null values.
+
+        /** Standard width. */
+        private static final Length WIDTH = Length.instantiateSI(0.2);
 
         /** Single solid line. */
         public static final StripeType SOLID =
-                new StripeType("SOLID", false, false, Length.instantiateSI(0.2), Arrays.asList((LengthVector) null));
+                new StripeType("SOLID", false, false, WIDTH, List.of(StripeElement.continuous(WIDTH, Color.WHITE)));
 
         /** Line |¦ allow to go to left, but not to right. */
-        public static final StripeType LEFT = new StripeType("LEFT", true, false, Length.instantiateSI(0.6),
-                Arrays.asList(null, new LengthVector(new double[] {9, 3})));
+        public static final StripeType LEFT = new StripeType("LEFT", true, false, WIDTH.times(3.0),
+                List.of(StripeElement.continuous(WIDTH, Color.WHITE), StripeElement.gap(WIDTH),
+                        StripeElement.dashed(WIDTH, Color.WHITE, new LengthVector(new double[] {9, 3}))));
 
         /** Line ¦| allow to go to right, but not to left. */
         public static final StripeType RIGHT = new StripeType("RIGHT", false, true, Length.instantiateSI(0.6),
-                Arrays.asList(new LengthVector(new double[] {9, 3}), null));
+                List.of(StripeElement.dashed(WIDTH, Color.WHITE, new LengthVector(new double[] {9, 3})),
+                        StripeElement.gap(WIDTH), StripeElement.continuous(WIDTH, Color.WHITE)));
 
         /** Dashes ¦ allow to cross in both directions. */
-        public static final StripeType DASHED =
-                new StripeType("DASHED", true, true, Length.instantiateSI(0.2), List.of(new LengthVector(new double[] {9, 3})));
+        public static final StripeType DASHED = new StripeType("DASHED", true, true, Length.instantiateSI(0.2),
+                List.of(StripeElement.dashed(WIDTH, Color.WHITE, new LengthVector(new double[] {9, 3}))));
 
         /** Double solid line ||, don't cross. */
-        public static final StripeType DOUBLE_SOLID =
-                new StripeType("DOUBLE_SOLID", false, false, Length.instantiateSI(0.6), Arrays.asList(null, null));
+        public static final StripeType DOUBLE_SOLID = new StripeType("DOUBLE_SOLID", false, false, Length.instantiateSI(0.6),
+                List.of(StripeElement.continuous(WIDTH, Color.WHITE), StripeElement.gap(WIDTH),
+                        StripeElement.continuous(WIDTH, Color.WHITE)));
 
-        /** Double dashed line ¦¦, don't cross. */
-        public static final StripeType DOUBLE_DASH = new StripeType("DOUBLE_DASH", true, true, Length.instantiateSI(0.6),
-                List.of(new LengthVector(new double[] {9, 3}), new LengthVector(new double[] {9, 3})));
+        /** Double dashed line ¦¦, cross. */
+        public static final StripeType DOUBLE_DASH = new StripeType("DOUBLE_DASHED", true, true, Length.instantiateSI(0.6),
+                List.of(StripeElement.dashed(WIDTH, Color.WHITE, new LengthVector(new double[] {9, 3})),
+                        StripeElement.gap(WIDTH),
+                        StripeElement.dashed(WIDTH, Color.WHITE, new LengthVector(new double[] {9, 3}))));
 
         /** Block : allow to cross in both directions. */
-        public static final StripeType BLOCK =
-                new StripeType("BLOCK", true, true, Length.instantiateSI(0.4), List.of(new LengthVector(new double[] {3, 1})));
+        public static final StripeType BLOCK = new StripeType("BLOCK", true, true, WIDTH.times(2.0),
+                List.of(StripeElement.dashed(WIDTH.times(2.0), Color.WHITE, new LengthVector(new double[] {3, 1}))));
 
         @Override
         public String getId()

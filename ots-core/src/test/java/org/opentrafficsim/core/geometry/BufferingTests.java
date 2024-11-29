@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.geometry.OtsGeometryException;
+import org.opentrafficsim.base.geometry.OtsLine2d;
 
 /**
  * Test the alternative offset line classes. <br>
