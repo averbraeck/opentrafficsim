@@ -1,120 +1,122 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ots:Ots xmlns:ots="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<ots:Ots xmlns:ots="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../../ots-xml/src/main/resources/xsd/ots.xsd">
   <ots:Definitions>
     <ots:GtuTypes>
-      <ots:GtuType Id="CAR"/>
+      <ots:GtuType Id="CAR" />
     </ots:GtuTypes>
     <ots:GtuTemplates>
       <ots:GtuTemplate GtuType="CAR" Id="CAR">
         <ots:LengthDist LengthUnit="m">
-          <ots:Uniform Max="6" Min="3.5"/>
+          <ots:Uniform Max="6" Min="3.5" />
         </ots:LengthDist>
         <ots:WidthDist LengthUnit="m">
-          <ots:Constant C="2"/>
+          <ots:Constant C="2" />
         </ots:WidthDist>
         <ots:MaxSpeedDist SpeedUnit="km/h">
-          <ots:Constant C="160"/>
+          <ots:Constant C="160" />
         </ots:MaxSpeedDist>
       </ots:GtuTemplate>
     </ots:GtuTemplates>
     <ots:LinkTypes>
       <ots:LinkType Id="FREEWAY">
-        <ots:Compatibility GtuType="CAR"/>
-        <ots:SpeedLimit GtuType="CAR" LegalSpeedLimit="100km/h"/>
+        <ots:Compatibility GtuType="CAR" />
+        <ots:SpeedLimit GtuType="CAR" LegalSpeedLimit="100km/h" />
       </ots:LinkType>
     </ots:LinkTypes>
     <ots:LaneTypes>
       <ots:LaneType Id="FREEWAY">
-        <ots:Compatibility GtuType="CAR"/>
+        <ots:Compatibility GtuType="CAR" />
       </ots:LaneType>
     </ots:LaneTypes>
     <ots:DetectorTypes>
       <ots:DetectorType Id="SINK">
-        <ots:Compatibility GtuType="CAR"/>
+        <ots:Compatibility GtuType="CAR" />
       </ots:DetectorType>
     </ots:DetectorTypes>
     <ots:RoadLayouts>
       <ots:RoadLayout Id="2" LinkType="FREEWAY">
-        <ots:Stripe Type="SOLID"/>
+        <ots:Stripe Id="1" Type="SOLID" />
         <ots:Lane Id="Lane1" LaneType="FREEWAY">
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Type="DASHED"/>
+        <ots:Stripe Id="2" Type="DASHED" />
         <ots:Lane Id="Lane2" LaneType="FREEWAY">
           <ots:LeftOffset>0m</ots:LeftOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Type="SOLID"/>
+        <ots:Stripe Id="3" Type="SOLID" />
       </ots:RoadLayout>
       <ots:RoadLayout Id="Taper" LinkType="FREEWAY">
-        <ots:Stripe Type="SOLID"/>
+        <ots:Stripe Id="1" Type="SOLID" />
         <ots:Lane Id="Lane1" LaneType="FREEWAY">
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Type="RIGHT"/>
+        <ots:Stripe Id="2" Type="RIGHT" />
         <ots:Lane Id="Lane2" LaneType="FREEWAY">
           <ots:WidthStart>3.5m</ots:WidthStart>
           <ots:WidthEnd>0m</ots:WidthEnd>
         </ots:Lane>
-        <ots:Stripe Type="LEFT"/>
+        <ots:Stripe Id="3" Type="LEFT" />
         <ots:Lane Id="Lane3" LaneType="FREEWAY">
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Type="DASHED"/>
+        <ots:Stripe Id="4" Type="DASHED" />
         <ots:Lane Id="Lane4" LaneType="FREEWAY">
           <ots:LeftOffset>0m</ots:LeftOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Type="SOLID"/>
+        <ots:Stripe Id="5" Type="SOLID" />
       </ots:RoadLayout>
       <ots:RoadLayout Id="3" LinkType="FREEWAY">
-        <ots:Stripe Type="SOLID"/>
+        <ots:Stripe Id="1" Type="SOLID" />
         <ots:Lane Id="Lane1" LaneType="FREEWAY">
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Type="DASHED"/>
+        <ots:Stripe Id="2" Type="DASHED" />
         <ots:Lane Id="Lane2" LaneType="FREEWAY">
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Type="DASHED"/>
+        <ots:Stripe Id="3" Type="DASHED" />
         <ots:Lane Id="Lane3" LaneType="FREEWAY">
           <ots:LeftOffset>0m</ots:LeftOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Type="SOLID"/>
+        <ots:Stripe Id="4" Type="SOLID" />
       </ots:RoadLayout>
     </ots:RoadLayouts>
   </ots:Definitions>
   <ots:Network>
-    <ots:Node Coordinate="(0,0)" Id="A"/>
-    <ots:Node Coordinate="(500,0)" Id="B"/>
-    <ots:Node Coordinate="(750,0)" Id="C"/>
-    <ots:Node Coordinate="(1250,0)" Id="D"/>
-    <ots:Node Coordinate="(0,-20)" Direction="0deg" Id="E"/>
+    <ots:Node Coordinate="(0,0)" Id="A" />
+    <ots:Node Coordinate="(500,0)" Id="B" />
+    <ots:Node Coordinate="(750,0)" Id="C" />
+    <ots:Node Coordinate="(1250,0)" Id="D" />
+    <ots:Node Coordinate="(0,-20)" Direction="0deg" Id="E" />
     <ots:Link Id="A-B" NodeEnd="B" NodeStart="A" Type="FREEWAY">
-      <ots:Straight/>
+      <ots:Straight />
       <ots:DefinedLayout>2</ots:DefinedLayout>
     </ots:Link>
     <ots:Link Id="E-B" NodeEnd="B" NodeStart="E" OffsetEnd="-7m" Type="FREEWAY">
-      <ots:Bezier/>
+      <ots:Bezier />
       <ots:DefinedLayout>2</ots:DefinedLayout>
     </ots:Link>
     <ots:Link Id="B-C" NodeEnd="C" NodeStart="B" Type="FREEWAY">
-      <ots:Straight/>
+      <ots:Straight />
       <ots:DefinedLayout>Taper</ots:DefinedLayout>
     </ots:Link>
     <ots:Link Id="C-D" NodeEnd="D" NodeStart="C" Type="FREEWAY">
-      <ots:Straight/>
+      <ots:Straight />
       <ots:DefinedLayout>3</ots:DefinedLayout>
     </ots:Link>
   </ots:Network>
   <ots:Demand>
     <ots:Od GlobalInterpolation="STEPWISE" Id="OD" SinkType="SINK">
       <ots:GlobalTime>
-        <ots:Time Value="0s"/>
-        <ots:Time Value="3600s"/>
+        <ots:Time Value="0s" />
+        <ots:Time Value="3600s" />
       </ots:GlobalTime>
-      <ots:Category GtuType="CAR" Id="CAR"/>
+      <ots:Category GtuType="CAR" Id="CAR" />
       <ots:Cell Category="CAR" Destination="D" Origin="A">
         <ots:Level>2000veh/h</ots:Level>
         <ots:Level>0veh/h</ots:Level>

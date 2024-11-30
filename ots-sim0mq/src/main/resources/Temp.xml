@@ -232,37 +232,37 @@
 
     <ots:RoadLayouts>
       <ots:RoadLayout Id="r1" LinkType="STREET">
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="Street">
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
-        <ots:Stripe Type="SOLID">
+        <ots:Stripe Id="1" Type="SOLID">
         </ots:Stripe>
         <ots:Lane Id="FORWARD3" LaneType="STREET">
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
-        <ots:Stripe Type="DASHED">
+        <ots:Stripe Id="2" Type="DASHED">
         </ots:Stripe>
         <ots:Lane Id="FORWARD2" LaneType="STREET">
           <ots:CenterOffset>-6.2m</ots:CenterOffset>
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
-        <ots:Stripe Type="DASHED">
+        <ots:Stripe Id="3" Type="DASHED">
         </ots:Stripe>
         <ots:Lane Id="FORWARD1" LaneType="STREET">
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
-        <ots:Stripe Type="SOLID">
+        <ots:Stripe Id="4" Type="SOLID">
         </ots:Stripe>
       </ots:RoadLayout>
 
       <ots:RoadLayout Id="r1g" LinkType="STREET">
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="Street">
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
-        <ots:Stripe Type="SOLID">
+        <ots:Stripe Id="1" Type="SOLID">
         </ots:Stripe>
         <ots:Lane Id="FORWARD3" LaneType="STREET">
           <ots:CenterOffsetStart>-6.2m</ots:CenterOffsetStart>
@@ -270,7 +270,7 @@
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
-        <ots:Stripe Type="DASHED">
+        <ots:Stripe Id="2" Type="DASHED">
           <ots:CenterOffset>-7.85m</ots:CenterOffset>
         </ots:Stripe>
         <ots:Lane Id="FORWARD2" LaneType="STREET">
@@ -278,7 +278,7 @@
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
-        <ots:Stripe Type="DASHED">
+        <ots:Stripe Id="3" Type="DASHED">
           <ots:CenterOffset>-4.55m</ots:CenterOffset>
         </ots:Stripe>
         <ots:Lane Id="FORWARD1" LaneType="STREET">
@@ -287,16 +287,16 @@
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
-        <ots:Stripe Type="SOLID">
+        <ots:Stripe Id="4" Type="SOLID">
         </ots:Stripe>
       </ots:RoadLayout>
 
       <ots:RoadLayout Id="r2r" LinkType="STREET">
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="Street">
           <ots:CenterOffset>-8.8m</ots:CenterOffset>
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
-        <ots:Stripe Type="SOLID">
+        <ots:Stripe Id="1" Type="SOLID">
           <ots:CenterOffset>-7.8m</ots:CenterOffset>
         </ots:Stripe>
         <ots:Lane Id="FORWARD" LaneType="STREET">
@@ -304,17 +304,17 @@
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
-        <ots:Stripe Type="SOLID">
+        <ots:Stripe Id="2" Type="SOLID">
           <ots:CenterOffset>-4.6m</ots:CenterOffset>
         </ots:Stripe>
       </ots:RoadLayout>
 
       <ots:RoadLayout Id="r2l" LinkType="STREET">
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="Street">
           <ots:CenterOffset>-8.8m</ots:CenterOffset>
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
-        <ots:Stripe Type="SOLID">
+        <ots:Stripe Id="1" Type="SOLID">
           <ots:CenterOffset>-7.8m</ots:CenterOffset>
         </ots:Stripe>
         <ots:Lane Id="FORWARD" LaneType="STREET">
@@ -322,14 +322,14 @@
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
-        <ots:Stripe Type="SOLID">
+        <ots:Stripe Id="2" Type="SOLID">
           <ots:CenterOffset>-4.6m</ots:CenterOffset>
         </ots:Stripe>
         <!-- <ots:NoTrafficLane> <ots:CenterOffset>0m</ots:CenterOffset> <ots:Width>2.5m</ots:Width> </ots:NoTrafficLane> -->
       </ots:RoadLayout>
 
       <ots:RoadLayout Id="r3" LinkType="STREET">
-        <ots:Stripe Type="SOLID">
+        <ots:Stripe Id="1" Type="SOLID">
           <ots:CenterOffset>-4.6m</ots:CenterOffset>
         </ots:Stripe>
         <ots:Lane Id="FORWARD" LaneType="STREET">
@@ -337,14 +337,14 @@
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
-        <ots:Stripe Type="SOLID">
+        <ots:Stripe Id="2" Type="SOLID">
           <ots:CenterOffset>-7.8m</ots:CenterOffset>
         </ots:Stripe>
       </ots:RoadLayout>
 
       <ots:RoadLayout Id="r4" LinkType="STREET">
         <!-- <ots:NoTrafficLane> <ots:CenterOffset>-2.3m</ots:CenterOffset> <ots:Width>4.6m</ots:Width> </ots:NoTrafficLane> -->
-        <ots:Stripe Type="SOLID">
+        <ots:Stripe Id="1" Type="SOLID">
           <ots:CenterOffset>-4.6m</ots:CenterOffset>
         </ots:Stripe>
         <ots:Lane Id="FORWARD" LaneType="STREET">
@@ -352,10 +352,10 @@
           <ots:Width>3.3m</ots:Width>
           <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50 km/h"></ots:SpeedLimit>
         </ots:Lane>
-        <ots:Stripe Type="SOLID">
+        <ots:Stripe Id="2" Type="SOLID">
           <ots:CenterOffset>-7.8m</ots:CenterOffset>
         </ots:Stripe>
-        <ots:Shoulder>
+        <ots:Shoulder LaneType="Street">
           <ots:CenterOffset>-8.8m</ots:CenterOffset>
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
