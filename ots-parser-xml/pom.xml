@@ -9,7 +9,7 @@
     <version>1.7.5</version>
   </parent>
 
-  <artifactId>ots-parser-xml</artifactId>
+  <artifactId>ots-xml</artifactId>
   <name>OTS Road parser for XML files</name>
   <description>OTS Road parser for XML files</description>
 
