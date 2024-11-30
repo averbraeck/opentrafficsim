@@ -486,10 +486,7 @@ public final class NetworkParser
                 else if (cseTag instanceof CseShoulder)
                 {
                     CseShoulder shoulderTag = (CseShoulder) cseTag;
-                    // FIXME: laneType is a mandatory field, but parsing or eclipse is not taking the new field
-                    // although specified in XML, the value is always null
-                    LaneType laneType = shoulderTag.getLaneType() == null ? SHOULDER
-                            : definitions.get(LaneType.class, shoulderTag.getLaneType().get(eval));
+                    LaneType laneType = SHOULDER;
                     String id = shoulderTag.getId() != null ? shoulderTag.getId() : UUID.randomUUID().toString();
                     CrossSectionElement shoulder = new Shoulder(csl, id, geometry, laneType);
                     cseList.add(shoulder);
