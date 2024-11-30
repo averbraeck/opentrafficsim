@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ots:Ots xmlns:ots="http://www.opentrafficsim.org/ots" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../ots-parser-xml/src/main/resources/xsd/ots.xsd"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../ots-xml/src/main/resources/xsd/ots.xsd"
 	xmlns:xi="http://www.w3.org/2001/XInclude">
 
 	<ots:Definitions>
 
 	  <xi:include href="../xsd/defaults/default_gtutypes.xml">
         <xi:fallback>
-          <xi:include href="../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_gtutypes.xml" />
+          <xi:include href="../../../../ots-xml/src/main/resources/xsd/defaults/default_gtutypes.xml" />
         </xi:fallback>
       </xi:include>
 	  <xi:include href="../xsd/defaults/default_linktypes.xml">
         <xi:fallback>
-          <xi:include href="../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_linktypes.xml" />
+          <xi:include href="../../../../ots-xml/src/main/resources/xsd/defaults/default_linktypes.xml" />
         </xi:fallback>
       </xi:include>
 	  <xi:include href="../xsd/defaults/default_lanetypes.xml">
         <xi:fallback>
-          <xi:include href="../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_lanetypes.xml" />
+          <xi:include href="../../../../ots-xml/src/main/resources/xsd/defaults/default_lanetypes.xml" />
         </xi:fallback>
       </xi:include>
       <xi:include href="../xsd/defaults/default_detectortypes.xml">
         <xi:fallback>
-          <xi:include href="../../../../ots-parser-xml/src/main/resources/xsd/defaults/default_detectortypes.xml" />
+          <xi:include href="../../../../ots-xml/src/main/resources/xsd/defaults/default_detectortypes.xml" />
         </xi:fallback>
       </xi:include>
 

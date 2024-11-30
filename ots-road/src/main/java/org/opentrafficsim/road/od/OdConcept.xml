@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <OD xmlns="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../../../../../../../ots-parser-xml/src/main/resources/ots-demand.xsd"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../../../../../../../ots-xml/src/main/resources/ots-demand.xsd"
   NAME="NAME" GlobalInterpolation="STEPWISE" GlobalFactor="1.0">
   <!-- NAME: any name for the OD [optional] -->
   <!-- GlobalInterpolation: either "STEPWISE" or "LINEAR" (default) [optional] -->

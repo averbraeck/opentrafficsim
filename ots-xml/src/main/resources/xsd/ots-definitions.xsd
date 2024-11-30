@@ -233,7 +233,7 @@
             <xsd:element name="CenterOffsetEnd" type="ots:LengthType" />
           </xsd:sequence>
         </xsd:choice>
-        <xsd:attribute name="Id" type="ots:IdType" use="required" />
+        <xsd:attribute name="Id" type="ots:IdType" use="optional" />
         <xsd:attribute name="Type" type="ots:StripeType" use="required" />
       </xsd:extension>
     </xsd:complexContent>
