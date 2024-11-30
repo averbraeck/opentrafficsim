@@ -16,7 +16,7 @@ Eclipse is an Integrated Development Environment (IDE), which is a tool that off
         <td colspan=4><b>ots-demo</b> | <b>ots-editor</b><br><i>demo's and user interface, this should be the starting point for getting to know OTS</i></td>
     </tr>
     <tr>
-        <td colspan=2 width=50%><b>ots-parser-xml</b><br><i>native xml import</i></td>
+        <td colspan=2 width=50%><b>ots-xml</b><br><i>native xml import</i></td>
         <td colspan=2><b>ots-swing</b><br><i>java based animation</i></td>
     </tr>
     <tr>
@@ -44,7 +44,7 @@ Other dependencies are:
 <ul>
     <li><b>ots-web</b> <i>web-based visualization</i>
         <ul>
-            <li><b>ots-parser-xml</b></li>
+            <li><b>ots-xml</b></li>
             <li><b>ots-animation</b></li>
         </ul>
     </li>
@@ -61,7 +61,7 @@ Other dependencies are:
     </li>
     <li><b>ots-sim0mq</b> <i>databus communication</i>
         <ul>
-            <li><b>ots-parser-xml</b></li>
+            <li><b>ots-xml</b></li>
         </ul>
     </li>
 </ul>
