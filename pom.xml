@@ -31,6 +31,7 @@
     <module>ots-sim0mq-kpi</module>
     <module>ots-sim0mq-swing</module>
     <module>ots-xml</module>
+    <module>ots-opendrive</module>
     <module>ots-demo</module>
     <module>ots-editor</module>
   </modules>
@@ -322,6 +323,12 @@
       <dependency>
         <groupId>org.opentrafficsim</groupId>
         <artifactId>ots-xml</artifactId>
+        <version>${ots.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.opentrafficsim</groupId>
+        <artifactId>ots-opendrive</artifactId>
         <version>${ots.version}</version>
       </dependency>
 
