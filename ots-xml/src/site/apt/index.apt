@@ -1,5 +1,5 @@
                    -----------------------
-                   OTS-PARSER-XML
+                   OTS-XML
                    -----------------------
                    September, 2022
                    -----------------------
@@ -22,14 +22,14 @@ OTS - Open Traffic Simulation
 
 ======
 
-	OTS-PARSER-XML is the Open Traffic Simulation module for parsing native XML networks for road-based transport.
+	OTS-XML is the Open Traffic Simulation module for parsing native XML networks for road-based transport.
 	
-	* OTS-PARSER-XML is built on top of the OTS-ROAD module that takes care of network structure, general movement of GTUs, 
+	* OTS-XML is built on top of the OTS-ROAD module that takes care of network structure, general movement of GTUs, 
 	  storage of routes, use of the DSOL simulator, etc..
 	
-	* OTS-PARSER-XML reads a basic network structure from native XML-files into OTS, which can be further edited and enhanced.
+	* OTS-XML reads a basic network structure from native XML-files into OTS, which can be further edited and enhanced.
 	
-	* The format of the OTS-PARSER-XML files is kept up-to-date with the developments of OTS, so test networks can be easily built.
+	* The format of the OTS-XML files is kept up-to-date with the developments of OTS, so test networks can be easily built.
 	
 	[]
 	
