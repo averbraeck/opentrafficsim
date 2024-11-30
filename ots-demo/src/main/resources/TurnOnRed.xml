@@ -50,15 +50,15 @@
         <ots:Shoulder LaneType="URBAN">
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
-        <ots:Stripe Type="SOLID"/>
+        <ots:Stripe Id="1" Type="SOLID"/>
         <ots:Lane Id="lane2" LaneType="URBAN">
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Type="DASHED"/>
+        <ots:Stripe Id="2" Type="DASHED"/>
         <ots:Lane Id="lane1" LaneType="URBAN">
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Type="SOLID"/>
+        <ots:Stripe Id="3" Type="SOLID"/>
         <ots:Shoulder LaneType="URBAN">
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
@@ -70,7 +70,7 @@
         <ots:Lane Id="lane2" LaneType="URBAN">
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Type="DASHED"/>
+        <ots:Stripe Id="1" Type="DASHED"/>
         <ots:Lane Id="lane1" LaneType="URBAN">
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
@@ -82,23 +82,23 @@
         <ots:Shoulder LaneType="URBAN">
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
-        <ots:Stripe Type="SOLID"/>
+        <ots:Stripe Id="1" Type="SOLID"/>
         <ots:Lane Id="lane4" LaneType="URBAN">
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Type="BLOCK"/>
+        <ots:Stripe Id="2" Type="BLOCK"/>
         <ots:Lane Id="lane3" LaneType="URBAN">
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Type="DASHED"/>
+        <ots:Stripe Id="3" Type="DASHED"/>
         <ots:Lane Id="lane2" LaneType="URBAN">
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Type="BLOCK"/>
+        <ots:Stripe Id="4" Type="BLOCK"/>
         <ots:Lane Id="lane1" LaneType="URBAN">
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Type="SOLID"/>
+        <ots:Stripe Id="5" Type="SOLID"/>
         <ots:Shoulder LaneType="URBAN">
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
