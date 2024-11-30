@@ -7,7 +7,6 @@ import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.base.StripeElement;
 import org.opentrafficsim.base.StripeElement.StripeLateralSync;
-import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
@@ -45,7 +44,8 @@ public class AnimationStripeData extends AnimationCrossSectionElementData<Stripe
     @Override
     public PolyLine2d getReferenceLine()
     {
-        return getElement().getLateralSync().equals(StripeLateralSync.NONE) ? getElement().getCenterLine() : getLinkReferenceLine();
+        return getElement().getLateralSync().equals(StripeLateralSync.NONE) ? getElement().getCenterLine()
+                : getLinkReferenceLine();
     }
 
     /**
@@ -71,8 +71,9 @@ public class AnimationStripeData extends AnimationCrossSectionElementData<Stripe
                     offsetMax1 = Math.max(offsetMax1, element.getOffsetAtEnd().si);
                 }
             }
-            double[] offsets = new double[] {.5 * (offsetMin0 + offsetMax0), .5 * (offsetMin1 + offsetMax1)};
-            this.linkReferenceLine = OtsGeometryUtil.offsetLine(linkLine, new double[] {0.0, 1.0}, offsets);
+            PolyLine2d start = linkLine.offsetLine(.5 * (offsetMin0 + offsetMax0));
+            PolyLine2d end = linkLine.offsetLine(.5 * (offsetMin1 + offsetMax1));
+            this.linkReferenceLine = start.transitionLine(end, (f) -> f);
         }
         return this.linkReferenceLine;
     }

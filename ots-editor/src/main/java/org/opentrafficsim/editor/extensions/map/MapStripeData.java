@@ -6,7 +6,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
 import org.opentrafficsim.base.StripeElement;
 import org.opentrafficsim.base.StripeElement.StripeLateralSync;
-import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
 import org.opentrafficsim.editor.XsdTreeNode;
@@ -103,8 +102,9 @@ public class MapStripeData extends MapCrossSectionData implements StripeData
     {
         if (this.linkReferenceLine == null)
         {
-            double[] offsets = new double[] {this.middleOffset.getStartOffset(), this.middleOffset.getEndOffset()};
-            this.linkReferenceLine = OtsGeometryUtil.offsetLine(this.linkLine, new double[] {0.0, 1.0}, offsets);
+            // TODO should account for start and end direction
+            this.linkReferenceLine =
+                    this.linkLine.offsetLine(this.middleOffset.getStartOffset(), this.middleOffset.getEndOffset());
             this.middleOffset = null;
         }
         return this.linkReferenceLine;

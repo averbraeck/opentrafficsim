@@ -20,11 +20,22 @@ import org.djutils.exceptions.Throw;
  * @param color color
  * @param dashes dashes
  */
-// TODO unit test
 public record StripeElement(Length width, Color color, LengthVector dashes) implements Serializable
 {
 
     /* This class is in ots-base, as it is used by both ots-road and ots-draw. */
+
+    /**
+     * Constructor checks.
+     * @param width width
+     * @param color color
+     * @param dashes dashes
+     */
+    public StripeElement
+    {
+        Throw.whenNull(width, "width");
+        Throw.when(color == null && dashes != null, IllegalArgumentException.class, "Dashes mean nothing when color is null.");
+    }
 
     /**
      * Creates a continuous stripe element.
@@ -34,7 +45,6 @@ public record StripeElement(Length width, Color color, LengthVector dashes) impl
      */
     public static StripeElement continuous(final Length width, final Color color)
     {
-        Throw.whenNull(width, "width");
         Throw.whenNull(width, "color");
         return new StripeElement(width, color, null);
     }
@@ -48,7 +58,6 @@ public record StripeElement(Length width, Color color, LengthVector dashes) impl
      */
     public static StripeElement dashed(final Length width, final Color color, final LengthVector dashes)
     {
-        Throw.whenNull(width, "width");
         Throw.whenNull(width, "color");
         Throw.whenNull(width, "dashes");
         return new StripeElement(width, color, dashes);
@@ -61,7 +70,6 @@ public record StripeElement(Length width, Color color, LengthVector dashes) impl
      */
     public static StripeElement gap(final Length width)
     {
-        Throw.whenNull(width, "width");
         return new StripeElement(width, null, null);
     }
 
@@ -80,7 +88,7 @@ public record StripeElement(Length width, Color color, LengthVector dashes) impl
      */
     public boolean isGap()
     {
-        return this.color == null && this.dashes == null;
+        return this.color == null;
     }
 
     /**
@@ -106,10 +114,10 @@ public record StripeElement(Length width, Color color, LengthVector dashes) impl
 
         /** Adheres to end-point phase of LINK, but may insert or remove gap/dash pairs to stay close to original length. */
         SNAP(true);
-        
+
         /** Whether the dashes are applied on the median line of the link. */
         private final boolean linkBased;
-        
+
         /**
          * Constructor.
          * @param linkBased whether the dashes are applied on the median line of the link
@@ -118,7 +126,7 @@ public record StripeElement(Length width, Color color, LengthVector dashes) impl
         {
             this.linkBased = linkBased;
         }
-        
+
         /**
          * Returns whether the dashes are applied on the median line of the link.
          * @return whether the dashes are applied on the median line of the link

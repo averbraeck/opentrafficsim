@@ -3,7 +3,6 @@ package org.opentrafficsim.base.geometry;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -35,11 +34,8 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
     /** */
     private static final long serialVersionUID = 20150722L;
 
-    /** The cumulative length of the line at point 'i'. */
-    private double[] lengthIndexedLine = null;
-
     /** The cached typed length; will be calculated at time of construction. */
-    private Length length;
+    private final Length length;
 
     // Fractional projection
 
@@ -70,7 +66,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
     public OtsLine2d(final Point2d... points)
     {
         super(points);
-        init();
+        this.length = Length.instantiateSI(lengthAtIndex(size() - 1));
     }
 
     /**
@@ -80,7 +76,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
     public OtsLine2d(final PolyLine2d line2d)
     {
         super(line2d.getPoints());
-        init();
+        this.length = Length.instantiateSI(lengthAtIndex(size() - 1));
     }
 
     /**
@@ -90,7 +86,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
     public OtsLine2d(final Iterator<Point2d> line2d)
     {
         super(line2d);
-        init();
+        this.length = Length.instantiateSI(lengthAtIndex(size() - 1));
     }
 
     /**
@@ -100,31 +96,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
     public OtsLine2d(final List<Point2d> pointList)
     {
         super(pointList);
-        init();
-    }
-
-    /**
-     * Initializes the line by obtaining the lengthIndexedLine and the line length.
-     */
-    private void init()
-    {
-        // TODO: check whether lengthIndexedLine in PolyLine2d should be protected
-        try
-        {
-            Field field = PolyLine2d.class.getDeclaredField("lengthIndexedLine");
-            field.setAccessible(true);
-            this.lengthIndexedLine = (double[]) field.get(this);
-        }
-        catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException ex)
-        {
-            this.lengthIndexedLine = new double[size()];
-            this.lengthIndexedLine[0] = 0.0;
-            for (int i = 1; i < size(); i++)
-            {
-                this.lengthIndexedLine[i] = this.lengthIndexedLine[i - 1] + get(i - 1).distance(get(i));
-            }
-        }
-        this.length = Length.instantiateSI(this.lengthIndexedLine[this.lengthIndexedLine.length - 1]);
+        this.length = Length.instantiateSI(lengthAtIndex(size() - 1));
     }
 
     /**
@@ -499,7 +471,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
                 double dFrac = Math.hypot(dx, dy);
                 // fraction to point on segment
                 minDistance = distance;
-                minSegmentFraction = dFrac / (this.lengthIndexedLine[i + 1] - this.lengthIndexedLine[i]);
+                minSegmentFraction = dFrac / (lengthAtIndex(i + 1) - lengthAtIndex(i));
                 minSegment = i;
             }
         }
@@ -516,8 +488,8 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
             return fallback.getFraction(this, x, y);
         }
 
-        double segLen = this.lengthIndexedLine[minSegment + 1] - this.lengthIndexedLine[minSegment];
-        return (this.lengthIndexedLine[minSegment] + segLen * minSegmentFraction) / this.length.si;
+        double segLen = lengthAtIndex(minSegment + 1) - lengthAtIndex(minSegment);
+        return (lengthAtIndex(minSegment) + segLen * minSegmentFraction) / this.length.si;
 
     }
 
@@ -772,8 +744,8 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
         Throw.when(index < 1 || index > size() - 2, IndexOutOfBoundsException.class,
                 "Index %d is out of bounds [1 ... size() - 2].", index);
         determineFractionalHelpers(null, null);
-        double length1 = this.lengthIndexedLine[index] - this.lengthIndexedLine[index - 1];
-        double length2 = this.lengthIndexedLine[index + 1] - this.lengthIndexedLine[index];
+        double length1 = lengthAtIndex(index) - lengthAtIndex(index - 1);
+        double length2 = lengthAtIndex(index + 1) - lengthAtIndex(index);
         int shortIndex = length1 < length2 ? index : index + 1;
         // center of shortest edge
         Point2d p1 =
@@ -818,7 +790,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
     {
         Throw.when(index < 0 || index > size() - 1, IndexOutOfBoundsException.class, "Index %d is out of bounds [0 %d].", index,
                 size() - 1);
-        return this.lengthIndexedLine[index] / this.length.si;
+        return lengthAtIndex(index) / this.length.si;
     }
 
     /**

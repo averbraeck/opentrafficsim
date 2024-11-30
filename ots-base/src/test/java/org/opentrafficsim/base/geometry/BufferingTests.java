@@ -1,14 +1,12 @@
-package org.opentrafficsim.core.geometry;
+package org.opentrafficsim.base.geometry;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
-import org.opentrafficsim.base.geometry.OtsLine2d;
 
 /**
- * Test the alternative offset line classes. <br>
+ * Test the alternative offset line classes.<br>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
 public class BufferingTests
@@ -20,7 +18,6 @@ public class BufferingTests
     @Test
     public void fractionalOffsetLineTest()
     {
-        System.out.println("Hier komt ie");
         OtsLine2d referenceLine = new OtsLine2d(
                 new Point2d[] {new Point2d(10, 20), new Point2d(20, 20), new Point2d(30, 30), new Point2d(30, 40)});
         double[] relativeFractions = new double[] {0.1, 0.2, 0.3, 0.4, 0.8};
@@ -65,8 +62,7 @@ public class BufferingTests
             // Ignore expected exception
         }
 
-        // OtsLine2d offsetLine = referenceLine.offsetLine(relativeFractions, offsets);
-        // System.out.println(offsetLine.toPlot());
+        referenceLine.offsetLine(relativeFractions, offsets);
     }
 
 }

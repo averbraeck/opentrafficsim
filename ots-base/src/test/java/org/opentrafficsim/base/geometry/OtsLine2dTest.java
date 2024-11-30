@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.geometry;
+package org.opentrafficsim.base.geometry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -22,9 +22,7 @@ import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.OrientedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.geometry.OtsLine2d.FractionalFallback;
-import org.opentrafficsim.core.network.NetworkException;
 
 /**
  * <p>
@@ -37,10 +35,9 @@ public class OtsLine2dTest
 {
     /**
      * Test the constructors of OtsLine2d.
-     * @throws NetworkException on failure
      */
     @Test
-    public final void constructorsTest() throws NetworkException
+    public final void constructorsTest()
     {
         double[] values = {-999, 0, 99, 9999}; // Keep this list short; execution time grows with 9th power of length
         Point2d[] points = new Point2d[0]; // Empty array
@@ -126,9 +123,8 @@ public class OtsLine2dTest
     /**
      * Test all the constructors of Point2d.
      * @param points array of Point2d to test with
-     * @throws NetworkException should not happen; this test has failed if it does happen
      */
-    private void runConstructors(final Point2d[] points) throws NetworkException
+    private void runConstructors(final Point2d[] points)
     {
         verifyPoints(new OtsLine2d(points), points);
         List<Point2d> list = new ArrayList<>();
@@ -302,7 +298,6 @@ public class OtsLine2dTest
      */
     private void checkOrientedPoint2d(final OrientedPoint2d dp, final Point2d expectedPoint, final double expectedZRotation)
     {
-        // TODO verify rotations around x and y
         if (null != expectedPoint)
         {
             assertEquals(0, expectedPoint.distance(dp), 0.1, "locationExtendedSI(0) returns approximately expected point");
@@ -377,6 +372,7 @@ public class OtsLine2dTest
     /**
      * Test the equals method.
      */
+    @SuppressWarnings("unlikely-arg-type")
     @Test
     public final void equalsTest()
     {
@@ -1019,12 +1015,12 @@ public class OtsLine2dTest
                 new Point2d[] {new Point2d(10, 30), new Point2d(20, 30), new Point2d(30, 40), new Point2d(30, 30)});
         System.out.println(line.toPlot());
         double boundary = 1 / (2 + Math.sqrt(2));
-        double length = line.getLength();
+        //double length = line.getLength();
         for (int percentage = 0; percentage <= 100; percentage++)
         {
             double fraction = percentage / 100.0;
             double radiusAtFraction = line.getProjectedRadius(fraction).si;
-            Point2d pointAtFraction = line.getLocationSI(fraction * length);
+            //Point2d pointAtFraction = line.getLocationSI(fraction * length);
             // System.out.println(
             // "At fraction " + fraction + " (point " + pointAtFraction + "), radius at fraction " + radiusAtFraction);
             if (fraction < boundary)

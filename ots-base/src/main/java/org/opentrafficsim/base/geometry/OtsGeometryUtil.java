@@ -20,7 +20,7 @@ import org.djutils.exceptions.Throw;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
- * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public final class OtsGeometryUtil
 {
@@ -39,54 +39,6 @@ public final class OtsGeometryUtil
     public static String printCoordinate(final String prefix, final Point2d point)
     {
         return String.format(Locale.US, "%s %8.3f,%8.3f   ", prefix, point.x, point.y);
-    }
-
-    /**
-     * Build a string description from an array of coordinates.
-     * @param prefix text to put before the coordinates
-     * @param coordinates the points to print
-     * @param separator prepended to each coordinate
-     * @return description of the array of coordinates
-     */
-    public static String printCoordinates(final String prefix, final List<Point2d> coordinates, final String separator)
-    {
-        return printCoordinates(prefix + "(" + coordinates.size() + " pts)", coordinates, 0, coordinates.size(), separator);
-    }
-
-    /**
-     * Build a string description from an OtsLine2d.
-     * @param prefix text to put before the coordinates
-     * @param line the line for which to print the points
-     * @param separator prepended to each coordinate
-     * @return description of the OtsLine2d
-     */
-    public static String printCoordinates(final String prefix, final OtsLine2d line, final String separator)
-    {
-        return printCoordinates(prefix + "(" + line.size() + " pts)", line.getPointList(), 0, line.size(), separator);
-    }
-
-    /**
-     * Built a string description from part of an array of coordinates.
-     * @param prefix text to put before the output
-     * @param points the coordinates to print
-     * @param fromIndex index of the first coordinate to print
-     * @param toIndex one higher than the index of the last coordinate to print
-     * @param separator prepended to each coordinate
-     * @return description of the selected part of the array of coordinates
-     */
-    public static String printCoordinates(final String prefix, final List<Point2d> points, final int fromIndex,
-            final int toIndex, final String separator)
-    {
-        StringBuilder result = new StringBuilder();
-        result.append(prefix);
-        String operator = "M"; // Move absolute
-        for (int i = fromIndex; i < toIndex; i++)
-        {
-            result.append(separator);
-            result.append(printCoordinate(operator, points.get(i)));
-            operator = "L"; // LineTo Absolute
-        }
-        return result.toString();
     }
 
     /**
@@ -138,8 +90,7 @@ public final class OtsGeometryUtil
      * @return the PolyLine2d of the line at multi-linearly changing offset of the reference line
      * @throws OtsGeometryException when this method fails to create the offset line
      */
-    // TODO: move this to PolyLine2d in djutils?
-    public static final PolyLine2d offsetLine(final PolyLine2d line, final double[] relativeFractions, final double[] offsets)
+    public static PolyLine2d offsetLine(final PolyLine2d line, final double[] relativeFractions, final double[] offsets)
             throws OtsGeometryException
     {
         Throw.whenNull(relativeFractions, "relativeFraction may not be null");
@@ -170,7 +121,6 @@ public final class OtsGeometryUtil
         List<Point2d> out = new ArrayList<>();
         Point2d prevCoordinate = null;
         final double tooClose = 0.05; // 5 cm
-        // TODO make tooClose a parameter of this method.
         for (int i = 0; i < offsetsList.size() - 1; i++)
         {
             Throw.when(fractionsList.get(i + 1) <= fractionsList.get(i), OtsGeometryException.class,
