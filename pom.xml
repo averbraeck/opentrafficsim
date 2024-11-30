@@ -30,7 +30,7 @@
     <module>ots-sim0mq</module>
     <module>ots-sim0mq-kpi</module>
     <module>ots-sim0mq-swing</module>
-    <module>ots-parser-xml</module>
+    <module>ots-xml</module>
     <module>ots-demo</module>
     <module>ots-editor</module>
   </modules>
@@ -321,7 +321,7 @@
 
       <dependency>
         <groupId>org.opentrafficsim</groupId>
-        <artifactId>ots-parser-xml</artifactId>
+        <artifactId>ots-xml</artifactId>
         <version>${ots.version}</version>
       </dependency>
 

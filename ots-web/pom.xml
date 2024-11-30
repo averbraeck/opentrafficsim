@@ -15,7 +15,7 @@
   
     <dependency>
       <groupId>org.opentrafficsim</groupId>
-      <artifactId>ots-parser-xml</artifactId>
+      <artifactId>ots-xml</artifactId>
     </dependency>
     
     <dependency>

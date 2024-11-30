@@ -1,0 +1,65 @@
+<ots:GtuTemplates xmlns:ots="http://www.opentrafficsim.org/ots"  
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions.xsd">
+
+  <ots:GtuTemplate Id="CAR" GtuType="NL.CAR" Default="true">
+    <ots:LengthDist LengthUnit="m">
+      <ots:Constant C="4.19" />
+    </ots:LengthDist>
+    <ots:WidthDist LengthUnit="m">
+      <ots:Constant C="1.7" />
+    </ots:WidthDist>
+    <ots:MaxSpeedDist SpeedUnit="km/h">
+      <ots:Constant C="180" />
+    </ots:MaxSpeedDist>
+  </ots:GtuTemplate>
+
+  <ots:GtuTemplate Id="TRUCK" GtuType="NL.TRUCK" Default="true">
+    <ots:LengthDist LengthUnit="m">
+      <ots:Constant C="12.0" />
+    </ots:LengthDist>
+    <ots:WidthDist LengthUnit="m">
+      <ots:Constant C="2.55" />
+    </ots:WidthDist>
+    <ots:MaxSpeedDist SpeedUnit="km/h">
+      <ots:Normal Mu="85.0" Sigma="2.5" />
+    </ots:MaxSpeedDist>
+  </ots:GtuTemplate>
+
+  <ots:GtuTemplate Id="BUS" GtuType="NL.BUS" Default="true">
+    <ots:LengthDist LengthUnit="m">
+      <ots:Constant C="12.0" />
+    </ots:LengthDist>
+    <ots:WidthDist LengthUnit="m">
+      <ots:Constant C="2.55" />
+    </ots:WidthDist>
+    <ots:MaxSpeedDist SpeedUnit="km/h">
+      <ots:Constant C="90" />
+    </ots:MaxSpeedDist>
+  </ots:GtuTemplate>
+
+  <ots:GtuTemplate Id="VAN" GtuType="NL.VAN" Default="true">
+    <ots:LengthDist LengthUnit="m">
+      <ots:Constant C="5.0" />
+    </ots:LengthDist>
+    <ots:WidthDist LengthUnit="m">
+      <ots:Constant C="2.4" />
+    </ots:WidthDist>
+    <ots:MaxSpeedDist SpeedUnit="km/h">
+      <ots:Constant C="180" />
+    </ots:MaxSpeedDist>
+  </ots:GtuTemplate>
+
+  <ots:GtuTemplate Id="EMERGENCY_VEHICLE" GtuType="NL.EMERGENCY_VEHICLE" Default="true">
+    <ots:LengthDist LengthUnit="m">
+      <ots:Constant C="5.0" />
+    </ots:LengthDist>
+    <ots:WidthDist LengthUnit="m">
+      <ots:Constant C="2.4" />
+    </ots:WidthDist>
+    <ots:MaxSpeedDist SpeedUnit="km/h">
+      <ots:Constant C="180" />
+    </ots:MaxSpeedDist>
+  </ots:GtuTemplate>
+
+</ots:GtuTemplates>
