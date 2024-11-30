@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<site xmlns="http://maven.apache.org/SITE/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SITE/2.0.0 https://maven.apache.org/xsd/site-2.0.0.xsd"
+  name="${project.artifactId} ${project.version}">
+
+  <publishDate position="left" format="dd-MM-yyyy HH:mm" />
+
+  <bannerLeft name="${project.name}" />
+  <bannerRight name="${project.artifactId} ${project.version}" />
+
+  <skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-fluido-skin</artifactId>
+    <version>2.0.0-M8</version>
+  </skin>
+  
+  <body>
+
+   <menu name="MODULES">
+      <item name="ots" href="index.html" />
+      <item name="ots-base" href="ots-base/index.html" />
+      <item name="ots-core" href="ots-core/index.html" />
+      <item name="ots-kpi" href="ots-kpi/index.html" />
+      <item name="ots-animation" href="ots-animation/index.html" />
+      <item name="ots-road" href="ots-road/index.html" />
+      <item name="ots-trafficcontrol" href="ots-trafficcontrol/index.html" />
+      <item name="ots-xml" href="ots-xml/index.html" />
+      <item name="ots-sim0mq" href="ots-sim0mq/index.html" />
+      <item name="ots-sim0mq-kpi" href="ots-sim0mq-kpi/index.html" />
+      <item name="ots-sim0mq-swing" href="ots-sim0mq-swing/index.html" />
+      <item name="ots-draw" href="ots-draw/index.html" />
+      <item name="ots-swing" href="ots-swing/index.html" />
+      <item name="ots-web" href="ots-web/index.html" />
+      <item name="ots-demo" href="ots-demo/index.html" />
+      <item name="ots-editor" href="ots-editor/index.html" />
+    </menu>
+     
+    <menu name="PROJECT INFO">
+      <item name="About" href="index.html" />
+      <item name="Project Summary" href="summary.html" />
+      <item name="Project Team" href="team.html" />
+      <item name="Project License" href="license.html" />
+      <item name="Versions + Changes" href="changes-report.html" />
+      <item name="OTS manual" href="manual/" target="_blank" />
+    </menu>
+
+    <menu name="RELATED" inherit="bottom">
+      <item name="DSOL manual" href="https://simulation.tudelft.nl/dsol/manual" target="_blank" />
+      <item name="DJUNITS manual" href="https://djunits.org/manual" target="_blank" />
+      <item name="DJUTILS manual" href="https://djutils.org/manual" target="_blank" />
+      <item name="Sim0MQ manual" href="https://sim0mq.org/manual" target="_blank" />
+      <item name="DITTLab" href="https://www.tudelft.nl/citg/dittlab" target="_blank" />
+      <item name="Simulation@TU Delft" href="https://simulation.tudelft.nl" target="_blank" />
+      <item name="About OTS" href="index.html" />
+    </menu>
+
+  </body>
+</site>
