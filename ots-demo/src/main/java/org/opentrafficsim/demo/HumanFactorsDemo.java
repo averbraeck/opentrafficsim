@@ -111,6 +111,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.Stripe;
+import org.opentrafficsim.road.network.lane.StripeData;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.object.Distraction;
 import org.opentrafficsim.road.network.lane.object.Distraction.TrapezoidProfile;
@@ -393,9 +394,10 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             double offset1 = 3.5;
             double width1 = 0.2;
             OtsLine2d offsetLine1 = centerLine.offsetLine(offset1);
-            new Stripe(Stripe.StripeType.SOLID, "1", link,
-                    new CrossSectionGeometry(offsetLine1, getContour(offsetLine1, width1),
-                            FractionalLengthData.of(0.0, offset1), FractionalLengthData.of(0.0, width1)));
+            StripeData stripeData = new StripeData(Stripe.StripeType.SOLID.elements(), Stripe.StripeType.SOLID.left(),
+                    Stripe.StripeType.SOLID.right());
+            new Stripe("1", stripeData, link, new CrossSectionGeometry(offsetLine1, getContour(offsetLine1, width1),
+                    FractionalLengthData.of(0.0, offset1), FractionalLengthData.of(0.0, width1)));
 
             double offset2 = 1.75;
             double width2 = 3.5;
@@ -408,9 +410,10 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             double offset3 = 0.0;
             double width3 = 0.2;
             OtsLine2d offsetLine3 = centerLine.offsetLine(offset3);
-            new Stripe(Stripe.StripeType.DASHED, "2", link,
-                    new CrossSectionGeometry(offsetLine3, getContour(offsetLine3, width3),
-                            FractionalLengthData.of(0.0, offset3), FractionalLengthData.of(0.0, width3)));
+            stripeData = new StripeData(Stripe.StripeType.DASHED.elements(), Stripe.StripeType.DASHED.left(),
+                    Stripe.StripeType.DASHED.right());
+            new Stripe("2", stripeData, link, new CrossSectionGeometry(offsetLine3, getContour(offsetLine3, width3),
+                    FractionalLengthData.of(0.0, offset3), FractionalLengthData.of(0.0, width3)));
 
             double offset4 = -1.75;
             double width4 = 3.5;
@@ -423,9 +426,10 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             double offset5 = -3.5;
             double width5 = 0.2;
             OtsLine2d offsetLine5 = centerLine.offsetLine(offset5);
-            new Stripe(Stripe.StripeType.SOLID, "3", link,
-                    new CrossSectionGeometry(offsetLine5, getContour(offsetLine5, width5),
-                            FractionalLengthData.of(0.0, offset5), FractionalLengthData.of(0.0, width5)));
+            stripeData = new StripeData(Stripe.StripeType.SOLID.elements(), Stripe.StripeType.SOLID.left(),
+                    Stripe.StripeType.SOLID.right());
+            new Stripe("3", stripeData, link, new CrossSectionGeometry(offsetLine5, getContour(offsetLine5, width5),
+                    FractionalLengthData.of(0.0, offset5), FractionalLengthData.of(0.0, width5)));
 
             // Add distraction halfway on the network, 0.3 on left lane, 0.2 on right lane, with distance profile
             new Distraction("distractionLeft", left, Length.instantiateSI(1500.0), new TrapezoidProfile(0.3,

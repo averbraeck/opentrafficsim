@@ -13,7 +13,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.Stripe;
-import org.opentrafficsim.road.network.lane.Stripe.StripePhaseSync;
+import org.opentrafficsim.road.network.lane.StripeData.StripePhaseSync;
 
 /**
  * Utility which allows synchronization of stripes.

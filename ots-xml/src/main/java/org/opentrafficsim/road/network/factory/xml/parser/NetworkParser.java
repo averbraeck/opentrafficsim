@@ -65,8 +65,9 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
-import org.opentrafficsim.road.network.lane.Stripe.StripePhaseSync;
 import org.opentrafficsim.road.network.lane.Stripe.StripeType;
+import org.opentrafficsim.road.network.lane.StripeData;
+import org.opentrafficsim.road.network.lane.StripeData.StripePhaseSync;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder;
 import org.opentrafficsim.road.network.lane.conflict.ConflictBuilder.FixedWidthGenerator;
@@ -571,9 +572,21 @@ public final class NetworkParser
         }
         ContinuousDoubleFunction offsetFunc = FractionalLengthData.of(0.0, startOffset.si, 1.0, endOffset.si);
         ContinuousDoubleFunction widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
-        Stripe stripe =
-                new Stripe(type, stripeTag.getId(), csl, CrossSectionGeometry.of(designLine, flattener, offsetFunc, widthFunc));
-        stripe.setElements(elements);
+
+        boolean leftLaneChange = false;
+        boolean rightLaneChange = false;
+        if (stripeTag.getLeftChangeLane() != null)
+        {
+            leftLaneChange = stripeTag.getLeftChangeLane().get(eval);
+        }
+        if (stripeTag.getRightChangeLane() != null)
+        {
+            rightLaneChange = stripeTag.getRightChangeLane().get(eval);
+        }
+        StripeData stripeData = new StripeData(elements, leftLaneChange, rightLaneChange);
+        Stripe stripe = new Stripe(stripeTag.getId(), stripeData, csl,
+                CrossSectionGeometry.of(designLine, flattener, offsetFunc, widthFunc));
+
         if (stripeTag.getDashOffset() != null)
         {
             stripe.setDashOffset(stripeTag.getDashOffset().getOffset().get(eval));
@@ -592,15 +605,6 @@ public final class NetworkParser
         if (stripeTag.getLateralSync() != null)
         {
             stripe.setLateralSync(stripeTag.getLateralSync().get(eval));
-        }
-
-        if (stripeTag.getLeftChangeLane() != null)
-        {
-            stripe.setLeftPermeability(stripeTag.getLeftChangeLane().get(eval));
-        }
-        if (stripeTag.getRightChangeLane() != null)
-        {
-            stripe.setRightPermeability(stripeTag.getRightChangeLane().get(eval));
         }
 
         cseList.add(stripe);

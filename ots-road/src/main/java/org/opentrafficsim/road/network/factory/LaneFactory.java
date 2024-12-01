@@ -41,6 +41,7 @@ import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.Stripe.StripeType;
+import org.opentrafficsim.road.network.lane.StripeData;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 /**
@@ -182,8 +183,9 @@ public final class LaneFactory
         Length offsetStripe = this.offset.plus(this.offsetStart);
         ContinuousDoubleFunction offsetFunc = FractionalLengthData.of(0.0, offsetStripe.si, 1.0, offsetStripe.si);
         ContinuousDoubleFunction widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
+        StripeData stripeData = new StripeData(StripeType.SOLID.elements(), StripeType.SOLID.left(), StripeType.SOLID.right());
         this.firstStripe = Try.assign(
-                () -> new Stripe(StripeType.SOLID, "1", this.link,
+                () -> new Stripe("1", stripeData, this.link,
                         CrossSectionGeometry.of(this.line, SEGMENTS, offsetFunc, widthFunc)),
                 "Unexpected exception while building link.");
         return this;
@@ -208,8 +210,9 @@ public final class LaneFactory
         Length offsetStripe = this.offset.plus(this.offsetStart);
         ContinuousDoubleFunction offsetFunc = FractionalLengthData.of(0.0, offsetStripe.si, 1.0, offsetStripe.si);
         ContinuousDoubleFunction widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
+        StripeData stripeData = new StripeData(StripeType.SOLID.elements(), StripeType.SOLID.left(), StripeType.SOLID.right());
         this.firstStripe = Try.assign(
-                () -> new Stripe(StripeType.SOLID, "1", this.link,
+                () -> new Stripe("1", stripeData, this.link,
                         CrossSectionGeometry.of(this.line, SEGMENTS, offsetFunc, widthFunc)),
                 "Unexpected exception while building link.");
         return this;
@@ -285,8 +288,9 @@ public final class LaneFactory
             endOffset = this.offset.plus(this.offsetEnd);
             ContinuousDoubleFunction offsetFunc2 = FractionalLengthData.of(0.0, startOffset.si, 1.0, endOffset.si);
             ContinuousDoubleFunction widthFunc2 = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
+            StripeData stripeData = new StripeData(type.elements(), type.left(), type.right());
             stripeList.add(Try.assign(
-                    () -> new Stripe(type, "" + idStream.nextInt(), this.link,
+                    () -> new Stripe("" + idStream.nextInt(), stripeData, this.link,
                             CrossSectionGeometry.of(this.line, SEGMENTS, offsetFunc2, widthFunc2)),
                     "Unexpected exception while building link."));
         }

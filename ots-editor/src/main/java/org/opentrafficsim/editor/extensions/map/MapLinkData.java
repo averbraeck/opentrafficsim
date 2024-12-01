@@ -61,8 +61,8 @@ import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.extensions.Adapters;
 import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets.CseData;
 import org.opentrafficsim.road.network.lane.CrossSectionGeometry;
-import org.opentrafficsim.road.network.lane.Stripe.StripePhaseSync;
 import org.opentrafficsim.road.network.lane.Stripe.StripeType;
+import org.opentrafficsim.road.network.lane.StripeData.StripePhaseSync;
 import org.opentrafficsim.xml.bindings.ExpressionAdapter;
 import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
 

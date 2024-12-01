@@ -127,7 +127,9 @@ public final class LaneGeometryUtil
                 link.getLength().si);
         ContinuousDoubleFunction offsetFunc = FractionalLengthData.of(0.0, offset.si, 1.0, offset.si);
         ContinuousDoubleFunction widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
-        return Try.assign(() -> new Stripe(type, id, link, CrossSectionGeometry.of(designLine, null, offsetFunc, widthFunc)),
+        StripeData stripeData = new StripeData(type.elements(), type.left(), type.right());
+        return Try.assign(
+                () -> new Stripe(id, stripeData, link, CrossSectionGeometry.of(designLine, null, offsetFunc, widthFunc)),
                 "Network exception.");
     }
 

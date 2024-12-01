@@ -1,15 +1,8 @@
 package org.opentrafficsim.road.network.lane;
 
 import java.awt.Color;
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.vector.LengthVector;
@@ -20,6 +13,7 @@ import org.opentrafficsim.base.StripeElement.StripeLateralSync;
 import org.opentrafficsim.base.Type;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.road.network.lane.StripeData.StripePhaseSync;
 
 /**
  * Stripe road marking. This class only contains functional information. There is no information on how to draw the stripe, i.e.
@@ -38,75 +32,24 @@ public class Stripe extends CrossSectionElement
     /** */
     private static final long serialVersionUID = 20141025L;
 
-    /** Type of the stripe, defining default permeability. */
-    private final StripeType type;
-
-    /** Left permeability. */
-    private boolean left;
-
-    /** Right permeability. */
-    private boolean right;
-
-    /** Lateral permeability per GTU type and direction. */
-    private final Map<GtuType, Set<LateralDirectionality>> permeabilityMap = new LinkedHashMap<>();
-
-    /** Stripe elements. */
-    private List<StripeElement> elements;
+    /** Stripe data. */
+    private final StripeData data;
 
     /** Longitudinal offset of dashes. */
     private Length dashOffset = Length.ZERO;
 
-    /** Lateral synchronization. */
-    private StripeLateralSync lateralSync = StripeLateralSync.SNAP;
-
-    /** Phase synchronization. */
-    private StripePhaseSync phaseSync = StripePhaseSync.NONE;
-
-    /** Period based on all stripe elements. */
-    private Double period;
-
     /**
      * Constructor specifying geometry. Permeability is set according to the stripe type default.
-     * @param type stripe type defining appearance and default permeability.
      * @param id id
+     * @param data stripe data, including permeability, stripe elements and dash synchronization
      * @param link link
      * @param geometry geometry
      */
-    public Stripe(final StripeType type, final String id, final CrossSectionLink link, final CrossSectionGeometry geometry)
+    public Stripe(final String id, final StripeData data, final CrossSectionLink link, final CrossSectionGeometry geometry)
     {
         super(link, id, geometry);
-        Throw.whenNull(type, "Type may not be null.");
-        this.type = type;
-        this.left = type.left();
-        this.right = type.right();
-        this.elements = type.elements;
-    }
-
-    /**
-     * Returns the stripe type.
-     * @return stripe type.
-     */
-    public StripeType getType()
-    {
-        return this.type;
-    }
-
-    /**
-     * Set left permeability, overruling the stripe type default.
-     * @param permeability permeability
-     */
-    public void setLeftPermeability(final boolean permeability)
-    {
-        this.left = permeability;
-    }
-
-    /**
-     * Set right permeability, overruling the stripe type default.
-     * @param permeability permeability
-     */
-    public void setRightPermeability(final boolean permeability)
-    {
-        this.right = permeability;
+        Throw.whenNull(data, "Type may not be null.");
+        this.data = data;
     }
 
     /**
@@ -117,11 +60,7 @@ public class Stripe extends CrossSectionElement
      */
     public void addPermeability(final GtuType gtuType, final LateralDirectionality lateralDirection)
     {
-        if (!this.permeabilityMap.containsKey(gtuType))
-        {
-            this.permeabilityMap.put(gtuType, new LinkedHashSet<LateralDirectionality>(2));
-        }
-        this.permeabilityMap.get(gtuType).add(lateralDirection);
+        this.data.addPermeability(gtuType, lateralDirection);
     }
 
     /**
@@ -132,27 +71,7 @@ public class Stripe extends CrossSectionElement
      */
     public final boolean isPermeable(final GtuType gtuType, final LateralDirectionality lateralDirection)
     {
-        Throw.when(lateralDirection.isNone(), RuntimeException.class,
-                "May not request NONE lateral direction for permeability.");
-        for (GtuType testGtuType = gtuType; null != testGtuType; testGtuType = testGtuType.getParent())
-        {
-            Set<LateralDirectionality> set = this.permeabilityMap.get(testGtuType);
-            if (null != set)
-            {
-                return set.contains(lateralDirection);
-            }
-        }
-        return lateralDirection.isLeft() ? this.left : this.right;
-    }
-
-    /**
-     * Sets the elements.
-     * @param elements elements
-     */
-    public void setElements(final List<StripeElement> elements)
-    {
-        this.period = null;
-        this.elements = elements;
+        return this.data.isPermeable(gtuType, lateralDirection);
     }
 
     /**
@@ -161,7 +80,7 @@ public class Stripe extends CrossSectionElement
      */
     public List<StripeElement> getElements()
     {
-        return this.elements;
+        return this.data.getElements();
     }
 
     /**
@@ -188,7 +107,7 @@ public class Stripe extends CrossSectionElement
      */
     public void setLateralSync(final StripeLateralSync lateralSync)
     {
-        this.lateralSync = lateralSync;
+        this.data.setLateralSync(lateralSync);
     }
 
     /**
@@ -197,7 +116,7 @@ public class Stripe extends CrossSectionElement
      */
     public StripeLateralSync getLateralSync()
     {
-        return this.lateralSync;
+        return this.data.getLateralSync();
     }
 
     /**
@@ -206,7 +125,7 @@ public class Stripe extends CrossSectionElement
      */
     public void setPhaseSync(final StripePhaseSync phaseSync)
     {
-        this.phaseSync = phaseSync;
+        this.data.setPhaseSync(phaseSync);
     }
 
     /**
@@ -215,7 +134,7 @@ public class Stripe extends CrossSectionElement
      */
     public StripePhaseSync getPhaseSync()
     {
-        return this.phaseSync;
+        return this.data.getPhaseSync();
     }
 
     /**
@@ -224,91 +143,13 @@ public class Stripe extends CrossSectionElement
      */
     public double getPeriod()
     {
-        if (this.period == null)
-        {
-            List<Double> lineLengths = new ArrayList<>();
-            for (StripeElement element : this.elements)
-            {
-                if (element.dashes() != null)
-                {
-                    double length = 0.0;
-                    for (Length gapDash : element.dashes())
-                    {
-                        length += gapDash.si;
-                    }
-                    lineLengths.add(length);
-                }
-            }
-            this.period = getPeriod(lineLengths);
-        }
-        return this.period;
+        return this.data.getPeriod();
     }
 
     @Override
     public String toString()
     {
         return "Stripe [id=" + this.getFullId() + "]";
-    }
-
-    /**
-     * Returns the period after which the given line gap-dash patterns repeat as a whole. Lengths are rounded to a precision of
-     * 0.0001 to find the greatest common divisor.
-     * @param lineLengths gap-dash pattern lengths
-     * @return period
-     */
-    private static double getPeriod(final Collection<Double> lineLengths)
-    {
-        Set<Double> set = new LinkedHashSet<>(lineLengths);
-        if (lineLengths.isEmpty())
-        {
-            return -1.0;
-        }
-        else if (set.size() == 1)
-        {
-            return ((long) (lineLengths.iterator().next() * 10000)) / 10000.0;
-        }
-        long gcd = 1L;
-        for (double length : set)
-        {
-            gcd = BigInteger.valueOf(gcd).gcd(BigInteger.valueOf((long) (length * 10000))).longValue();
-        }
-        return gcd / 10000.0;
-    }
-
-    /**
-     * Method of stripe phase synchronization.
-     */
-    public enum StripePhaseSync
-    {
-        /** Do not synchronize. */
-        NONE(false),
-
-        /** Synchronize phase to upstream stripe. */
-        UPSTREAM(true),
-
-        /** Synchronize phase to downstream stripe. */
-        DOWNSTREAM(true);
-        
-        /** Whether synhronization should be applied. */
-        private final boolean sync;
-        
-        /**
-         * Constructor.
-         * @param sync whether synhronization should be applied
-         */
-        StripePhaseSync(final boolean sync)
-        {
-            this.sync = sync;
-        }
-        
-        /**
-         * Returns whether synhronization should be applied.
-         * @return whether synhronization should be applied
-         */
-        public boolean isSync()
-        {
-            return this.sync;
-        }
     }
 
     /**
