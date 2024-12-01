@@ -394,9 +394,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             double offset1 = 3.5;
             double width1 = 0.2;
             OtsLine2d offsetLine1 = centerLine.offsetLine(offset1);
-            StripeData stripeData = new StripeData(Stripe.StripeType.SOLID.elements(), Stripe.StripeType.SOLID.left(),
-                    Stripe.StripeType.SOLID.right());
-            new Stripe("1", stripeData, link, new CrossSectionGeometry(offsetLine1, getContour(offsetLine1, width1),
+            new Stripe("1", DefaultsRoadNl.SOLID, link, new CrossSectionGeometry(offsetLine1, getContour(offsetLine1, width1),
                     FractionalLengthData.of(0.0, offset1), FractionalLengthData.of(0.0, width1)));
 
             double offset2 = 1.75;
@@ -410,9 +408,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             double offset3 = 0.0;
             double width3 = 0.2;
             OtsLine2d offsetLine3 = centerLine.offsetLine(offset3);
-            stripeData = new StripeData(Stripe.StripeType.DASHED.elements(), Stripe.StripeType.DASHED.left(),
-                    Stripe.StripeType.DASHED.right());
-            new Stripe("2", stripeData, link, new CrossSectionGeometry(offsetLine3, getContour(offsetLine3, width3),
+            new Stripe("2", DefaultsRoadNl.DASHED, link, new CrossSectionGeometry(offsetLine3, getContour(offsetLine3, width3),
                     FractionalLengthData.of(0.0, offset3), FractionalLengthData.of(0.0, width3)));
 
             double offset4 = -1.75;
@@ -426,9 +422,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             double offset5 = -3.5;
             double width5 = 0.2;
             OtsLine2d offsetLine5 = centerLine.offsetLine(offset5);
-            stripeData = new StripeData(Stripe.StripeType.SOLID.elements(), Stripe.StripeType.SOLID.left(),
-                    Stripe.StripeType.SOLID.right());
-            new Stripe("3", stripeData, link, new CrossSectionGeometry(offsetLine5, getContour(offsetLine5, width5),
+            new Stripe("3", DefaultsRoadNl.SOLID, link, new CrossSectionGeometry(offsetLine5, getContour(offsetLine5, width5),
                     FractionalLengthData.of(0.0, offset5), FractionalLengthData.of(0.0, width5)));
 
             // Add distraction halfway on the network, 0.3 on left lane, 0.2 on right lane, with distance profile

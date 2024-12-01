@@ -33,6 +33,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionGeometry;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
@@ -183,9 +184,8 @@ public final class LaneFactory
         Length offsetStripe = this.offset.plus(this.offsetStart);
         ContinuousDoubleFunction offsetFunc = FractionalLengthData.of(0.0, offsetStripe.si, 1.0, offsetStripe.si);
         ContinuousDoubleFunction widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
-        StripeData stripeData = new StripeData(StripeType.SOLID.elements(), StripeType.SOLID.left(), StripeType.SOLID.right());
         this.firstStripe = Try.assign(
-                () -> new Stripe("1", stripeData, this.link,
+                () -> new Stripe("1", DefaultsRoadNl.SOLID, this.link,
                         CrossSectionGeometry.of(this.line, SEGMENTS, offsetFunc, widthFunc)),
                 "Unexpected exception while building link.");
         return this;
@@ -210,9 +210,8 @@ public final class LaneFactory
         Length offsetStripe = this.offset.plus(this.offsetStart);
         ContinuousDoubleFunction offsetFunc = FractionalLengthData.of(0.0, offsetStripe.si, 1.0, offsetStripe.si);
         ContinuousDoubleFunction widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
-        StripeData stripeData = new StripeData(StripeType.SOLID.elements(), StripeType.SOLID.left(), StripeType.SOLID.right());
         this.firstStripe = Try.assign(
-                () -> new Stripe("1", stripeData, this.link,
+                () -> new Stripe("1", DefaultsRoadNl.SOLID, this.link,
                         CrossSectionGeometry.of(this.line, SEGMENTS, offsetFunc, widthFunc)),
                 "Unexpected exception while building link.");
         return this;
