@@ -8,6 +8,7 @@ import org.djutils.draw.point.OrientedPoint2d;
 import org.opentrafficsim.base.StripeElement;
 import org.opentrafficsim.base.StripeElement.StripeLateralSync;
 import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.draw.road.StripeAnimation.DirectionalPolyLine;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.Stripe;
@@ -26,6 +27,9 @@ public class AnimationStripeData extends AnimationCrossSectionElementData<Stripe
     /** Link reference line. */
     private PolyLine2d linkReferenceLine = null;
 
+    /** Center line. */
+    private DirectionalPolyLine directionalCenterLine = null;
+
     /**
      * Constructor.
      * @param stripe stripe
@@ -36,9 +40,14 @@ public class AnimationStripeData extends AnimationCrossSectionElementData<Stripe
     }
 
     @Override
-    public PolyLine2d getCenterLine()
+    public DirectionalPolyLine getCenterLine()
     {
-        return getElement().getCenterLine();
+        if (this.directionalCenterLine == null)
+        {
+            this.directionalCenterLine = new DirectionalPolyLine(getElement().getCenterLine(),
+                    getElement().getLink().getStartNode().getHeading(), getElement().getLink().getEndNode().getHeading());
+        }
+        return this.directionalCenterLine;
     }
 
     @Override
@@ -71,8 +80,10 @@ public class AnimationStripeData extends AnimationCrossSectionElementData<Stripe
                     offsetMax1 = Math.max(offsetMax1, element.getOffsetAtEnd().si);
                 }
             }
-            PolyLine2d start = linkLine.offsetLine(.5 * (offsetMin0 + offsetMax0));
-            PolyLine2d end = linkLine.offsetLine(.5 * (offsetMin1 + offsetMax1));
+            DirectionalPolyLine directionalLine = new DirectionalPolyLine(linkLine,
+                    getElement().getLink().getStartNode().getHeading(), getElement().getLink().getEndNode().getHeading());
+            PolyLine2d start = directionalLine.directionalOffsetLine(.5 * (offsetMin0 + offsetMax0));
+            PolyLine2d end = directionalLine.directionalOffsetLine(.5 * (offsetMin1 + offsetMax1));
             this.linkReferenceLine = start.transitionLine(end, (f) -> f);
         }
         return this.linkReferenceLine;

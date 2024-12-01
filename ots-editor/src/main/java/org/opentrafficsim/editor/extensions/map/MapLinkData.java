@@ -596,7 +596,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     }
 
     /**
-     * Builds all animation objects for stripes, lanes, shoulders, no-traffic lanes, and their center lines and id's.
+     * Builds all animation objects for stripes, lanes, shoulders, and their center lines and id's.
      */
     private void buildLayout()
     {
@@ -623,7 +623,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             {
                 XsdTreeNode node = entry.getKey();
                 CseData cseData = entry.getValue();
-                // TODO add/remove from StripeSynchronization with this phaseSync
+                // TODO add/remove from StripeSynchronization map input with this phaseSync
                 StripePhaseSync phaseSync = StripePhaseSync.NONE;
                 Length dashOffset = Length.ZERO;
                 StripeLateralSync lateralSync = StripeLateralSync.NONE;
@@ -732,8 +732,11 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     offsetMax0 = Math.max(offsetMax0, geometry.offset().apply(0.0));
                     offsetMin1 = Math.min(offsetMin1, geometry.offset().apply(1.0));
                     offsetMax1 = Math.max(offsetMax1, geometry.offset().apply(1.0));
-                    StripeAnimation stripe = new StripeAnimation(new MapStripeData(dashOffset, getNode(), geometry, elements,
-                            lateralSync, this.flattenedDesignLine, middleOffset), getMap().getContextualized());
+                    StripeAnimation stripe =
+                            new StripeAnimation(
+                                    new MapStripeData(dashOffset, getNode(), geometry, elements, lateralSync,
+                                            this.flattenedDesignLine, middleOffset, this.directionStart, this.directionEnd),
+                                    getMap().getContextualized());
                     this.crossSectionElements.add(stripe);
                 }
                 else if (node.getNodeName().equals("Lane"))

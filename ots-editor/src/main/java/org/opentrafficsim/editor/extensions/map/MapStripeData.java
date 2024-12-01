@@ -2,11 +2,13 @@ package org.opentrafficsim.editor.extensions.map;
 
 import java.util.List;
 
+import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
 import org.opentrafficsim.base.StripeElement;
 import org.opentrafficsim.base.StripeElement.StripeLateralSync;
 import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.draw.road.StripeAnimation.DirectionalPolyLine;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.extensions.map.MapLinkData.MiddleOffset;
@@ -45,7 +47,16 @@ public class MapStripeData extends MapCrossSectionData implements StripeData
     private PolyLine2d linkReferenceLine = null;
 
     /** Middle offsets to determine link reference line. */
-    private MiddleOffset middleOffset;
+    private final MiddleOffset middleOffset;
+
+    /** Start direction. */
+    private final Direction startDirection;
+
+    /** End direction. */
+    private final Direction endDirection;
+
+    /** Center line with direction. */
+    private DirectionalPolyLine centerLine;
 
     /**
      * Constructor.
@@ -56,10 +67,12 @@ public class MapStripeData extends MapCrossSectionData implements StripeData
      * @param lateralSync lateral synchronization
      * @param linkLine link line
      * @param middleOffset middle offsets to determine link reference line
+     * @param startDirection start direction
+     * @param endDirection end direction
      */
     public MapStripeData(final Length dashOffset, final XsdTreeNode linkNode, final CrossSectionGeometry geometry,
             final List<StripeElement> elements, final StripeLateralSync lateralSync, final PolyLine2d linkLine,
-            final MiddleOffset middleOffset)
+            final MiddleOffset middleOffset, final Direction startDirection, final Direction endDirection)
     {
         super(linkNode, geometry);
         Length w = Length.ZERO;
@@ -74,6 +87,8 @@ public class MapStripeData extends MapCrossSectionData implements StripeData
         this.lateralSync = lateralSync;
         this.linkLine = linkLine;
         this.middleOffset = middleOffset;
+        this.startDirection = startDirection;
+        this.endDirection = endDirection;
     }
 
     @Override
@@ -94,6 +109,16 @@ public class MapStripeData extends MapCrossSectionData implements StripeData
         return this.lateralSync.equals(StripeLateralSync.NONE) ? this.getCenterLine() : getLinkReferenceLine();
     }
 
+    @Override
+    public DirectionalPolyLine getCenterLine()
+    {
+        if (this.centerLine == null)
+        {
+            this.centerLine = new DirectionalPolyLine(super.getCenterLine(), this.startDirection, this.endDirection);
+        }
+        return this.centerLine;
+    }
+
     /**
      * Return link reference line.
      * @return link reference line
@@ -102,10 +127,8 @@ public class MapStripeData extends MapCrossSectionData implements StripeData
     {
         if (this.linkReferenceLine == null)
         {
-            // TODO should account for start and end direction
-            this.linkReferenceLine =
-                    this.linkLine.offsetLine(this.middleOffset.getStartOffset(), this.middleOffset.getEndOffset());
-            this.middleOffset = null;
+            this.linkReferenceLine = new DirectionalPolyLine(this.linkLine, this.startDirection, this.endDirection)
+                    .directionalOffsetLine(this.middleOffset.getStartOffset(), this.middleOffset.getEndOffset());
         }
         return this.linkReferenceLine;
     }

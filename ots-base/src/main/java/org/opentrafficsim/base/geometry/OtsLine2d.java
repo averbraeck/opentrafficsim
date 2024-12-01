@@ -193,7 +193,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      * @return the new OtsLine2d
      */
     @Override
-    public final OtsLine2d extractFractional(final double start, final double end)
+    public OtsLine2d extractFractional(final double start, final double end)
     {
         return extract(start * this.length.si, end * this.length.si);
     }
@@ -349,7 +349,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      * Returns the fractional projection of a point to a line. The projection works by taking slices in space per line segment
      * as shown below. A point is always projected to the nearest segment, but not necessarily to the closest point on that
      * segment. The slices in space are analogous to a Voronoi diagram, but for the line segments instead of points. If
-     * fractional projection fails, the orthogonal projection is returned.<br>
+     * fractional projection fails, a fallback projection is returned.<br>
      * <br>
      * The point 'A' is projected to point 'B' on the 3rd segment of line 'C-D'. The line from 'A' to 'B' extends towards point
      * 'E', which is the intersection of lines 'E-F' and 'E-G'. Line 'E-F' cuts the first bend of the 3rd segment (at point 'H')
