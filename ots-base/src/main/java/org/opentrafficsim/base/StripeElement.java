@@ -110,10 +110,7 @@ public record StripeElement(Length width, Color color, LengthVector dashes) impl
         NONE(false),
 
         /** Dashes applied to link middle line to determine fractions, which are then used on the stripe line. */
-        LINK(true),
-
-        /** Adheres to end-point phase of LINK, but may insert or remove gap/dash pairs to stay close to original length. */
-        SNAP(true);
+        LINK(true);
 
         /** Whether the dashes are applied on the median line of the link. */
         private final boolean linkBased;

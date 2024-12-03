@@ -40,7 +40,7 @@ public class StripeData
     private final Map<GtuType, Set<LateralDirectionality>> permeabilityMap = new LinkedHashMap<>();
 
     /** Lateral synchronization. */
-    private StripeLateralSync lateralSync = StripeLateralSync.SNAP;
+    private StripeLateralSync lateralSync = StripeLateralSync.LINK;
 
     /** Phase synchronization. */
     private StripePhaseSync phaseSync = StripePhaseSync.NONE;
