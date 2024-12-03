@@ -1,16 +1,13 @@
 package org.opentrafficsim.road.network.lane;
 
-import java.awt.Color;
 import java.util.List;
-import java.util.Objects;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.vector.LengthVector;
-import org.djutils.base.Identifiable;
+import org.djutils.draw.line.PolyLine2d;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.StripeElement;
 import org.opentrafficsim.base.StripeElement.StripeLateralSync;
-import org.opentrafficsim.base.Type;
+import org.opentrafficsim.base.geometry.DirectionalPolyLine;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.network.lane.StripeData.StripePhaseSync;
@@ -37,6 +34,9 @@ public class Stripe extends CrossSectionElement
 
     /** Longitudinal offset of dashes. */
     private Length dashOffset = Length.ZERO;
+
+    /** Link reference line. */
+    private PolyLine2d linkReferenceLine = null;
 
     /**
      * Constructor specifying geometry. Permeability is set according to the stripe type default.
@@ -145,6 +145,38 @@ public class Stripe extends CrossSectionElement
     public double getPeriod()
     {
         return this.data.getPeriod();
+    }
+
+    /**
+     * Return link reference line, which is the line halfway between the left-most and right-most stripes.
+     * @return link reference line
+     */
+    public PolyLine2d getLinkReferenceLine()
+    {
+        if (this.linkReferenceLine == null)
+        {
+            PolyLine2d linkLine = getLink().getDesignLine();
+            double offsetMin0 = Double.POSITIVE_INFINITY;
+            double offsetMax0 = Double.NEGATIVE_INFINITY;
+            double offsetMin1 = Double.POSITIVE_INFINITY;
+            double offsetMax1 = Double.NEGATIVE_INFINITY;
+            for (CrossSectionElement element : getLink().getCrossSectionElementList())
+            {
+                if (element instanceof Stripe)
+                {
+                    offsetMin0 = Math.min(offsetMin0, element.getOffsetAtBegin().si);
+                    offsetMax0 = Math.max(offsetMax0, element.getOffsetAtBegin().si);
+                    offsetMin1 = Math.min(offsetMin1, element.getOffsetAtEnd().si);
+                    offsetMax1 = Math.max(offsetMax1, element.getOffsetAtEnd().si);
+                }
+            }
+            DirectionalPolyLine directionalLine = new DirectionalPolyLine(linkLine, getLink().getStartNode().getHeading(),
+                    getLink().getEndNode().getHeading());
+            PolyLine2d start = directionalLine.directionalOffsetLine(.5 * (offsetMin0 + offsetMax0));
+            PolyLine2d end = directionalLine.directionalOffsetLine(.5 * (offsetMin1 + offsetMax1));
+            this.linkReferenceLine = start.transitionLine(end, (f) -> f);
+        }
+        return this.linkReferenceLine;
     }
 
     @Override

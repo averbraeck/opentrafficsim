@@ -89,8 +89,10 @@ public final class StripeSynchronization<T>
                 {
                     synchronize(down, stripesToDo);
                 }
+                // get common stripes first, as period might be changed by setting start phase due to snapping
+                Set<T> commonOffsetStripes = stripe.getCommonPhaseStripes();
                 stripe.setEndPhase(down.getStartPhase());
-                for (T commonOffsetStripe : stripe.getCommonPhaseStripes())
+                for (T commonOffsetStripe : commonOffsetStripes)
                 {
                     if (this.stripes.containsKey(commonOffsetStripe))
                     {
@@ -114,8 +116,10 @@ public final class StripeSynchronization<T>
                 {
                     synchronize(up, stripesToDo);
                 }
+                // get common stripes first, as period might be changed by setting start phase due to snapping
+                Set<T> commonOffsetStripes = stripe.getCommonPhaseStripes();
                 stripe.setStartPhase(up.getEndPhase());
-                for (T commonOffsetStripe : stripe.getCommonPhaseStripes())
+                for (T commonOffsetStripe : commonOffsetStripes)
                 {
                     if (this.stripes.containsKey(commonOffsetStripe))
                     {

@@ -28,7 +28,7 @@ public class StripeData
 {
 
     /** Stripe elements. */
-    private final List<StripeElement> elements;
+    private List<StripeElement> elements;
 
     /** Left permeability. */
     private final boolean left;
@@ -68,6 +68,16 @@ public class StripeData
     public List<StripeElement> getElements()
     {
         return this.elements;
+    }
+    
+    /**
+     * Sets the elements.
+     * @param elements elements
+     */
+    public void setElements(final List<StripeElement> elements)
+    {
+        this.elements = elements;
+        this.period = null;
     }
 
     /**
