@@ -31,6 +31,7 @@ import org.opentrafficsim.xml.generated.Compatibility;
 import org.opentrafficsim.xml.generated.GtuTemplate;
 import org.opentrafficsim.xml.generated.RoadLayout;
 import org.opentrafficsim.xml.generated.SpeedLimit;
+import org.opentrafficsim.xml.generated.StripeType;
 
 /**
  * DefinitionParser parses the XML nodes of the Definitions tag: org.opentrafficsim.xml.generated.GtuType, GtuTemplate,
@@ -58,6 +59,7 @@ public final class DefinitionsParser
      * @param gtuTemplates map of GTU templates for the OD and/or Generators
      * @param laneBiases map of lane biases for the OD parser
      * @param linkTypeSpeedLimitMap map with speed limit information per link type
+     * @param stripes stripes
      * @param eval expression evaluator.
      * @return the parsed definitions
      * @throws XmlParserException on parsing error
@@ -65,7 +67,7 @@ public final class DefinitionsParser
     public static Definitions parseDefinitions(final org.opentrafficsim.xml.generated.Definitions definitions,
             final Map<String, RoadLayout> roadLayoutMap, final Map<String, GtuTemplate> gtuTemplates,
             final Map<String, LaneBias> laneBiases, final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap,
-            final Eval eval) throws XmlParserException
+            final Map<String, StripeType> stripes, final Eval eval) throws XmlParserException
     {
         Definitions parsedDefinitions = new Definitions();
 
@@ -95,6 +97,14 @@ public final class DefinitionsParser
                 getDefinition(GtuType.class, parsedDefinitions, templateTag.getGtuType(), "GtuTemplate", templateTag.getId(),
                         "GtuType", eval);
                 gtuTemplates.put(templateTag.getId(), templateTag);
+            }
+        };
+        BiConsumerThrows<StripeType, Object> stripeConsumer = new BiConsumerThrows<>()
+        {
+            @Override
+            public void accept(final StripeType stripeTag, final Object dummy)
+            {
+                stripes.put(stripeTag.getId(), stripeTag);
             }
         };
         BiConsumerThrows<org.opentrafficsim.xml.generated.RoadLayout, Object> roadLayoutConsumer = new BiConsumerThrows<>()
@@ -128,6 +138,8 @@ public final class DefinitionsParser
 
         parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.GtuTemplates.class,
                 org.opentrafficsim.xml.generated.GtuTemplate.class, GtuType.class, gtuTemplateConsumer, eval);
+        parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.StripeTypes.class,
+                org.opentrafficsim.xml.generated.StripeType.class, GtuType.class, stripeConsumer, eval);
         parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.RoadLayouts.class,
                 org.opentrafficsim.xml.generated.RoadLayout.class, GtuType.class, roadLayoutConsumer, eval);
         parseDefinitionType(definitions, parsedDefinitions, org.opentrafficsim.xml.generated.LaneBiases.class,

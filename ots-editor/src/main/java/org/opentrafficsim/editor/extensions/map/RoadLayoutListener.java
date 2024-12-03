@@ -11,6 +11,7 @@ import java.util.function.Supplier;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.editor.ChildNodeFinder;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.extensions.Adapters;
 import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets;
@@ -122,104 +123,94 @@ public class RoadLayoutListener extends ChangeListener<Map<XsdTreeNode, CseData>
                 try
                 {
                     XsdTreeNode node = children.get(this.index);
+                    ChildNodeFinder finder = new ChildNodeFinder(children.get(this.index));
                     if (node.getNodeName().equals("Stripe"))
                     {
                         this.widthStart = Length.ZERO;
                         this.widthEnd = Length.ZERO;
-                        int n = node.getChildCount();
-                        if (!node.getChild(n - 1).getNodeName().equals("xsd:sequence"))
+                        if (finder.hasActiveChild("CenterOffset"))
                         {
-                            // CenterOffset
-                            this.offsetStart = getLength(node.getChild(n - 1));
+                            this.offsetStart = getLength(finder.get());
                             this.offsetEnd = this.offsetStart;
                         }
-                        else if (node.getChild(n - 1).isActive())
+                        else if (finder.hasActiveChild("CenterOffsetStart"))
                         {
-                            // CenterOffsetStart and CenterOffsetEnd
-                            this.offsetStart = getLength(node.getChild(n - 1).getChild(0));
-                            this.offsetEnd = getLength(node.getChild(n - 1).getChild(1));
+                            this.offsetStart = getLength(finder.get());
+                            this.offsetEnd = getLength(node.getFirstChild("CenterOffsetEnd"));
                         }
                         else
                         {
                             this.offsetStart = null;
                             this.offsetEnd = null;
                         }
-                        getLength(node.getChild(1)); // test drawing width availability, or catch otherwise
                     }
                     else
                     {
-                        if (!node.getChild(1).getNodeName().equals("xsd:sequence"))
+                        if (finder.hasActiveChild("Width"))
                         {
-                            // Width
-                            this.widthStart = getLength(node.getChild(1));
+                            this.widthStart = getLength(finder.get());
                             this.widthEnd = this.widthStart;
                         }
                         else
                         {
-                            // WidthStart and WidthEnd
-                            this.widthStart = getLength(node.getChild(1).getChild(0));
-                            this.widthEnd = getLength(node.getChild(1).getChild(1));
+                            this.widthStart = getLength(node.getFirstChild("WidthStart"));
+                            this.widthEnd = getLength(node.getFirstChild("WidthEnd"));
                         }
                         Length halfWidthStart = this.widthStart.times(0.5);
                         Length halfWidthEnd = this.widthEnd.times(0.5);
 
-                        if (node.getChild(0).getNodeName().equals("CenterOffset"))
+                        if (finder.hasActiveChild("CenterOffset"))
                         {
-                            this.offsetStart = getLength(node.getChild(0));
+                            this.offsetStart = getLength(finder.get());
                             this.offsetEnd = this.offsetStart;
                         }
-                        else if (node.getChild(0).getNodeName().equals("LeftOffset"))
+                        else if (finder.hasActiveChild("LeftOffset"))
                         {
-                            Length leftOffset = getLength(node.getChild(0));
+                            Length leftOffset = getLength(finder.get());
                             this.offsetStart = leftOffset.minus(halfWidthStart);
                             this.offsetEnd = leftOffset.minus(halfWidthEnd);
                         }
-                        else if (node.getChild(0).getNodeName().equals("RightOffset"))
+                        else if (finder.hasActiveChild("RightOffset"))
                         {
-                            Length rightOffset = getLength(node.getChild(0));
+                            Length rightOffset = getLength(finder.get());
                             this.offsetStart = rightOffset.plus(halfWidthStart);
                             this.offsetEnd = rightOffset.plus(halfWidthEnd);
                         }
-                        else if (node.getChild(0).isActive())
+                        else
                         {
-                            if (node.getChild(0).getChild(0).getNodeName().equals("CenterOffsetStart"))
+                            if (finder.hasActiveChild("CenterOffsetStart"))
                             {
-                                this.offsetStart = getLength(node.getChild(0).getChild(0));
+                                this.offsetStart = getLength(finder.get());
                             }
-                            else if (node.getChild(0).getChild(0).getNodeName().equals("LeftOffsetStart"))
+                            else if (finder.hasActiveChild("LeftOffsetStart"))
                             {
-                                this.offsetStart = getLength(node.getChild(0).getChild(0)).minus(halfWidthStart);
+                                this.offsetStart = getLength(finder.get()).minus(halfWidthStart);
                             }
-                            else if (node.getChild(0).getChild(0).getNodeName().equals("RightOffsetStart"))
+                            else if (finder.hasActiveChild("RightOffsetStart"))
                             {
-                                this.offsetStart = getLength(node.getChild(0).getChild(0)).plus(halfWidthStart);
+                                this.offsetStart = getLength(finder.get()).plus(halfWidthStart);
                             }
                             else
                             {
                                 this.offsetStart = null;
                             }
 
-                            if (node.getChild(0).getChild(1).getNodeName().equals("CenterOffsetEnd"))
+                            if (finder.hasActiveChild("CenterOffsetEnd"))
                             {
-                                this.offsetEnd = getLength(node.getChild(0).getChild(1));
+                                this.offsetEnd = getLength(finder.get());
                             }
-                            else if (node.getChild(0).getChild(1).getNodeName().equals("LeftOffsetEnd"))
+                            else if (finder.hasActiveChild("LeftOffsetEnd"))
                             {
-                                this.offsetEnd = getLength(node.getChild(0).getChild(1)).minus(halfWidthEnd);
+                                this.offsetEnd = getLength(finder.get()).minus(halfWidthEnd);
                             }
-                            else if (node.getChild(0).getChild(1).getNodeName().equals("RightOffsetEnd"))
+                            else if (finder.hasActiveChild("RightOffsetEnd"))
                             {
-                                this.offsetEnd = getLength(node.getChild(0).getChild(1)).plus(halfWidthEnd);
+                                this.offsetEnd = getLength(finder.get()).plus(halfWidthEnd);
                             }
                             else
                             {
                                 this.offsetEnd = null;
                             }
-                        }
-                        else
-                        {
-                            this.offsetStart = null;
-                            this.offsetEnd = null;
                         }
                     }
                 }
@@ -237,11 +228,8 @@ public class RoadLayoutListener extends ChangeListener<Map<XsdTreeNode, CseData>
             public OffsetElement next()
             {
                 Throw.when(!hasNext(), IllegalStateException.class, "Iterator does not have a next element.");
-                XsdTreeNode node = children.get(this.index);
-                OffsetElement offsetElement =
-                        new OffsetElement(this.widthStart, this.widthEnd, this.offsetStart, this.offsetEnd, node);
-                this.index++;
-                return offsetElement;
+                XsdTreeNode node = children.get(this.index++);
+                return new OffsetElement(this.widthStart, this.widthEnd, this.offsetStart, this.offsetEnd, node);
             }
         };
         if (iterator.hasNext())

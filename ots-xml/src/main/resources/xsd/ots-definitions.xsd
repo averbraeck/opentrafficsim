@@ -13,10 +13,17 @@
   <!-- =============================================== ELEMENTS ========================================= -->
   <!-- ================================================================================================== -->
 
-  <xsd:complexType name="HierarchicalType">
+  <xsd:complexType name="Type">
     <xsd:attribute name="Id" type="ots:IdType" use="required" />
-    <xsd:attribute name="Parent" type="ots:string" use="optional" />
     <xsd:attribute name="Default" type="xsd:boolean" use="optional" default="false" />
+  </xsd:complexType>
+
+  <xsd:complexType name="HierarchicalType">
+    <xsd:complexContent>
+      <xsd:extension base="ots:Type">
+        <xsd:attribute name="Parent" type="ots:string" use="optional" />
+      </xsd:extension>
+    </xsd:complexContent>
   </xsd:complexType>
 
   <xsd:complexType name="GtuCompatibleInfraType">
@@ -218,25 +225,143 @@
     <xsd:complexContent>
       <xsd:extension base="ots:CrossSectionElement">
         <xsd:attribute name="Id" type="ots:IdType" use="optional" />
-        <xsd:attribute name="LaneType" type="ots:string" use="required" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="CseStripe">
-    <xsd:complexContent>
-      <xsd:extension base="ots:StripeData">
-        <xsd:choice minOccurs="0">
-          <xsd:element name="CenterOffset" type="ots:LengthType" />
+  <xsd:complexType name="StripeElements">
+    <xsd:choice maxOccurs="unbounded">
+      <xsd:element name="Line">
+        <xsd:complexType>
           <xsd:sequence>
-            <xsd:element name="CenterOffsetStart" type="ots:LengthType" />
-            <xsd:element name="CenterOffsetEnd" type="ots:LengthType" />
+            <xsd:choice minOccurs="1">
+              <xsd:element name="Continuous" type="ots:EmptyType" />
+              <xsd:element name="Dashed">
+                <xsd:annotation>
+                  <xsd:documentation source="description">Dashes per line. If the pattern involves multiple dash and gap
+                    lengths, include additional gap/dash pairs.
+                  </xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                  <xsd:sequence>
+                    <xsd:sequence minOccurs="1" maxOccurs="unbounded">
+                      <xsd:element name="Gap" type="ots:LengthType" />
+                      <xsd:element name="Dash" type="ots:LengthType" />
+                    </xsd:sequence>
+                  </xsd:sequence>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:choice>
           </xsd:sequence>
-        </xsd:choice>
-        <xsd:attribute name="Id" type="ots:IdType" use="required" />
-        <xsd:attribute name="Type" type="ots:StripeType" use="required" />
-      </xsd:extension>
-    </xsd:complexContent>
+          <xsd:attribute name="Width" type="ots:PositiveLengthType" use="required" />
+          <xsd:attribute name="Color" type="ots:ColorType" default="WHITE" />
+        </xsd:complexType>
+      </xsd:element>
+      <!-- If Gap were a PositiveLengthType directly, elements are not serializable, and parsing becomes awful. -->
+      <xsd:element name="Gap">
+        <xsd:complexType>
+          <xsd:attribute name="Width" type="ots:PositiveLengthType" use="required" />
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:choice>
+  </xsd:complexType>
+
+  <xsd:complexType name="DashOffset">
+    <xsd:choice>
+      <xsd:element name="Fixed">
+        <xsd:complexType>
+          <xsd:attribute name="Offset" type="ots:PositiveLengthType" use="required" />
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="SyncUpstream" type="ots:EmptyType" />
+      <xsd:element name="SyncDownstream" type="ots:EmptyType" />
+    </xsd:choice>
+  </xsd:complexType>
+
+  <xsd:simpleType name="LateralSync">
+    <xsd:annotation>
+      <xsd:documentation source="description">NONE: no synchronization, dash pattern applied to stripe line. LINK: dash
+        pattern applied to link line. SNAP: a number of gap/dash pairs inserted or removed to stay close to original length
+        while adhering to link phase at end-points.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:union memberTypes="ots:Expression">
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="NONE" />
+          <xsd:enumeration value="LINK" />
+          <xsd:enumeration value="SNAP" />
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:union>
+  </xsd:simpleType>
+
+  <xsd:element name="StripeType">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="Elements" type="ots:StripeElements" />
+        <xsd:element name="DashOffset" type="ots:DashOffset" minOccurs="0" />
+        <xsd:element name="LateralSync" type="ots:LateralSync" minOccurs="0" />
+      </xsd:sequence>
+      <xsd:attribute name="LeftChangeLane" type="ots:boolean" use="required" />
+      <xsd:attribute name="RightChangeLane" type="ots:boolean" use="required" />
+      <xsd:attribute name="Id" type="ots:IdType" use="required" />
+      <xsd:attribute name="Default" type="xsd:boolean" default="false" />
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="StripeTypes">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="ots:StripeType" minOccurs="0" maxOccurs="unbounded" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:complexType name="StripeCompatibility">
+    <xsd:attribute name="GtuType" type="ots:string" use="required" />
+    <xsd:attribute name="Direction" use="optional" default="BOTH">
+      <xsd:simpleType>
+        <xsd:union memberTypes="ots:Expression">
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+              <xsd:enumeration value="BOTH" />
+              <xsd:enumeration value="LEFT" />
+              <xsd:enumeration value="RIGHT" />
+              <xsd:enumeration value="NONE" />
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:union>
+      </xsd:simpleType>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:complexType name="CseStripe">
+    <xsd:sequence>
+      <xsd:choice minOccurs="0">
+        <xsd:element name="CenterOffset" type="ots:LengthType" />
+        <xsd:sequence>
+          <xsd:element name="CenterOffsetStart" type="ots:LengthType" />
+          <xsd:element name="CenterOffsetEnd" type="ots:LengthType" />
+        </xsd:sequence>
+      </xsd:choice>
+      <xsd:choice>
+        <xsd:element name="DefinedStripe" type="ots:string" />
+        <xsd:element name="Custom">
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="Elements" type="ots:StripeElements" />
+              <xsd:element name="DashOffset" type="ots:DashOffset" minOccurs="0" />
+              <xsd:element name="LateralSync" type="ots:LateralSync" minOccurs="0" />
+              <xsd:element name="Compatibility" type="ots:StripeCompatibility" minOccurs="0" maxOccurs="unbounded" />
+            </xsd:sequence>
+            <xsd:attribute name="LeftChangeLane" type="ots:boolean" use="required" />
+            <xsd:attribute name="RightChangeLane" type="ots:boolean" use="required" />
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:choice>
+    </xsd:sequence>
+    <xsd:attribute name="Id" type="ots:IdType" />
   </xsd:complexType>
 
   <xsd:element name="RoadLayouts">
@@ -262,10 +387,8 @@
   <xsd:element name="RoadLayout">
     <xsd:annotation>
       <xsd:documentation source="description">
-        Road layout. Lanes to the right of the design line have negative
-        offset. Those
-        to the left have positive offset. When not specifying offsets, sequence
-        the lines from right (most negative) to left
+        Road layout. Lanes to the right of the design line have negative offset. Those
+        to the left have positive offset. When not specifying offsets, sequence the lines from right (most negative) to left
         (most positive).
       </xsd:documentation>
     </xsd:annotation>
@@ -331,10 +454,11 @@
         <xsd:element ref="ots:GtuTypes" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:GtuTemplates" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:LinkTypes" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="ots:StripeTypes" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:LaneTypes" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:LaneBiases" minOccurs="0" maxOccurs="unbounded" />
-        <xsd:element ref="ots:DetectorTypes" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:RoadLayouts" minOccurs="0" maxOccurs="unbounded" />
+        <xsd:element ref="ots:DetectorTypes" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element ref="ots:ParameterTypes" minOccurs="0" maxOccurs="unbounded" />
       </xsd:sequence>
     </xsd:complexType>

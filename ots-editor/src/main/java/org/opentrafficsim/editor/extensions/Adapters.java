@@ -10,7 +10,6 @@ import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.StripeElement.StripeLateralSync;
-import org.opentrafficsim.road.network.lane.Stripe.StripeType;
 import org.opentrafficsim.xml.bindings.AngleAdapter;
 import org.opentrafficsim.xml.bindings.ArcDirectionAdapter;
 import org.opentrafficsim.xml.bindings.BooleanAdapter;
@@ -19,13 +18,12 @@ import org.opentrafficsim.xml.bindings.DirectionAdapter;
 import org.opentrafficsim.xml.bindings.DoubleAdapter;
 import org.opentrafficsim.xml.bindings.ExpressionAdapter;
 import org.opentrafficsim.xml.bindings.IntegerAdapter;
-import org.opentrafficsim.xml.bindings.StripeLateralSyncAdapter;
 import org.opentrafficsim.xml.bindings.LengthAdapter;
 import org.opentrafficsim.xml.bindings.LengthBeginEndAdapter;
 import org.opentrafficsim.xml.bindings.LinearDensityAdapter;
 import org.opentrafficsim.xml.bindings.Point2dAdapter;
 import org.opentrafficsim.xml.bindings.StringAdapter;
-import org.opentrafficsim.xml.bindings.StripeTypeAdapter;
+import org.opentrafficsim.xml.bindings.StripeLateralSyncAdapter;
 import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
 import org.opentrafficsim.xml.bindings.types.ExpressionType;
 import org.opentrafficsim.xml.bindings.types.LengthBeginEndType.LengthBeginEnd;
@@ -43,7 +41,7 @@ public final class Adapters
 {
 
     /** Map of adapters per output type. */
-    private final static java.util.Map<Class<?>, ExpressionAdapter<?, ?>> ADAPTERS = new LinkedHashMap<>();
+    private static final java.util.Map<Class<?>, ExpressionAdapter<?, ?>> ADAPTERS = new LinkedHashMap<>();
 
     static
     {
@@ -59,8 +57,13 @@ public final class Adapters
         ADAPTERS.put(LinearDensity.class, new LinearDensityAdapter());
         ADAPTERS.put(Point2d.class, new Point2dAdapter());
         ADAPTERS.put(String.class, new StringAdapter());
-        ADAPTERS.put(StripeType.class, new StripeTypeAdapter());
         ADAPTERS.put(StripeLateralSync.class, new StripeLateralSyncAdapter());
+    }
+    
+    /** */
+    private Adapters()
+    {
+        
     }
 
     /**

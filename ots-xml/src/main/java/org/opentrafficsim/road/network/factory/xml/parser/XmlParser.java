@@ -54,6 +54,7 @@ import org.opentrafficsim.xml.generated.Network;
 import org.opentrafficsim.xml.generated.Ots;
 import org.opentrafficsim.xml.generated.RoadLayout;
 import org.opentrafficsim.xml.generated.ScenarioType;
+import org.opentrafficsim.xml.generated.StripeType;
 import org.pmw.tinylog.Level;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
@@ -249,12 +250,13 @@ public final class XmlParser implements Serializable
                 RunParser.parseRun(otsNetwork.getId(), ots.getRun(), streamInformation, otsNetwork.getSimulator(), eval);
 
         // definitions
+        Map<String, StripeType> stripes = new LinkedHashMap<>();
         Map<String, RoadLayout> roadLayoutMap = new LinkedHashMap<>();
         Map<String, GtuTemplate> gtuTemplates = new LinkedHashMap<>();
         Map<String, LaneBias> laneBiases = new LinkedHashMap<>();
         Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap = new LinkedHashMap<>();
         Definitions definitions = DefinitionsParser.parseDefinitions(ots.getDefinitions(), roadLayoutMap, gtuTemplates,
-                laneBiases, linkTypeSpeedLimitMap, eval);
+                laneBiases, linkTypeSpeedLimitMap, stripes, eval);
 
         // network
         Network network = ots.getNetwork();
@@ -265,7 +267,7 @@ public final class XmlParser implements Serializable
         NetworkParser.parseLinks(otsNetwork, definitions, network, nodeDirections, otsNetwork.getSimulator(), designLines,
                 flatteners, eval);
         NetworkParser.applyRoadLayouts(otsNetwork, definitions, network, roadLayoutMap, linkTypeSpeedLimitMap, designLines,
-                flatteners, eval);
+                flatteners, stripes, eval);
         NetworkParser.buildConflicts(otsNetwork, network, eval);
 
         // routes, generators and sinks

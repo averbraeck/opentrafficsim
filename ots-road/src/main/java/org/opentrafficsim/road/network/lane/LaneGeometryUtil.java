@@ -13,7 +13,6 @@ import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
 import org.opentrafficsim.core.geometry.FractionalLengthData;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.road.network.lane.Stripe.StripeType;
 
 /**
  * This class is an extension (conceptually, not an actual java extension) of {@code OtsGeometryUtil}. This utility has access
@@ -112,14 +111,14 @@ public final class LaneGeometryUtil
 
     /**
      * Creates a simple straight lane. This method exists to create lanes for simple tests.
-     * @param type stripe type.
+     * @param type stripe data.
      * @param id id
      * @param link link.
      * @param offset end offset.
      * @param width end width.
      * @return lane.
      */
-    public static Stripe createStraightStripe(final StripeType type, final String id, final CrossSectionLink link,
+    public static Stripe createStraightStripe(final StripeData type, final String id, final CrossSectionLink link,
             final Length offset, final Length width)
     {
         ContinuousLine designLine = new ContinuousStraight(
@@ -127,9 +126,7 @@ public final class LaneGeometryUtil
                 link.getLength().si);
         ContinuousDoubleFunction offsetFunc = FractionalLengthData.of(0.0, offset.si, 1.0, offset.si);
         ContinuousDoubleFunction widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
-        StripeData stripeData = new StripeData(type.elements(), type.left(), type.right());
-        return Try.assign(
-                () -> new Stripe(id, stripeData, link, CrossSectionGeometry.of(designLine, null, offsetFunc, widthFunc)),
+        return Try.assign(() -> new Stripe(id, type, link, CrossSectionGeometry.of(designLine, null, offsetFunc, widthFunc)),
                 "Network exception.");
     }
 

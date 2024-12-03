@@ -46,6 +46,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Centroid;
 import org.opentrafficsim.core.network.Connector;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
@@ -65,7 +66,6 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
-import org.opentrafficsim.road.network.lane.Stripe.StripeType;
 import org.opentrafficsim.road.network.lane.StripeData;
 import org.opentrafficsim.road.network.lane.StripeData.StripePhaseSync;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
@@ -81,6 +81,7 @@ import org.opentrafficsim.xml.generated.BasicRoadLayout;
 import org.opentrafficsim.xml.generated.CseLane;
 import org.opentrafficsim.xml.generated.CseShoulder;
 import org.opentrafficsim.xml.generated.CseStripe;
+import org.opentrafficsim.xml.generated.CseStripe.Custom;
 import org.opentrafficsim.xml.generated.FlattenerType;
 import org.opentrafficsim.xml.generated.Link;
 import org.opentrafficsim.xml.generated.Link.LaneOverride;
@@ -88,9 +89,11 @@ import org.opentrafficsim.xml.generated.Link.StripeOverride;
 import org.opentrafficsim.xml.generated.Network;
 import org.opentrafficsim.xml.generated.RoadLayout;
 import org.opentrafficsim.xml.generated.SpeedLimit;
-import org.opentrafficsim.xml.generated.StripeData.Elements.Gap;
-import org.opentrafficsim.xml.generated.StripeLine;
-import org.opentrafficsim.xml.generated.StripeLine.Dashed;
+import org.opentrafficsim.xml.generated.StripeCompatibility;
+import org.opentrafficsim.xml.generated.StripeElements.Gap;
+import org.opentrafficsim.xml.generated.StripeElements.Line;
+import org.opentrafficsim.xml.generated.StripeElements.Line.Dashed;
+import org.opentrafficsim.xml.generated.StripeType;
 import org.opentrafficsim.xml.generated.TrafficLightType;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -348,6 +351,7 @@ public final class NetworkParser
      * @param roadLayoutMap the map of the tags of the predefined RoadLayout tags in Definitions
      * @param linkTypeSpeedLimitMap map of speed limits per link type
      * @param designLines design lines per link id.
+     * @param stripes defined stripes
      * @param flatteners flattener per link id.
      * @param eval expression evaluator.
      * @throws NetworkException when the objects cannot be inserted into the network due to inconsistencies
@@ -357,7 +361,8 @@ public final class NetworkParser
      */
     static void applyRoadLayouts(final RoadNetwork otsNetwork, final Definitions definitions, final Network network,
             final Map<String, RoadLayout> roadLayoutMap, final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap,
-            final Map<String, ContinuousLine> designLines, final Map<String, Flattener> flatteners, final Eval eval)
+            final Map<String, ContinuousLine> designLines, final Map<String, Flattener> flatteners,
+            final Map<String, StripeType> stripes, final Eval eval)
             throws NetworkException, XmlParserException, SimRuntimeException, GtuException
     {
         Map<Stripe, SynchronizableStripe<Stripe>> stripesSync = new LinkedHashMap<>();
@@ -393,6 +398,7 @@ public final class NetworkParser
                         }
                     }
                 }
+                setAllStripesCustom(roadLayoutTag, stripes, eval);
                 // Process StripeOverrides
                 for (StripeOverride stripeOverride : xmlLink.getStripeOverride())
                 {
@@ -403,24 +409,25 @@ public final class NetworkParser
                         {
                             if (stripeOverride.getElements() != null)
                             {
-                                stripe.setElements(stripeOverride.getElements());
+                                stripe.getCustom().setElements(stripeOverride.getElements());
                             }
                             if (stripeOverride.getDashOffset() != null)
                             {
-                                stripe.setDashOffset(stripeOverride.getDashOffset());
+                                stripe.getCustom().setDashOffset(stripeOverride.getDashOffset());
                             }
                             if (stripeOverride.getLateralSync() != null)
                             {
-                                stripe.setLateralSync(stripeOverride.getLateralSync());
+                                stripe.getCustom().setLateralSync(stripeOverride.getLateralSync());
                             }
                             if (stripeOverride.getLeftChangeLane() != null)
                             {
-                                stripe.setLeftChangeLane(stripeOverride.getLeftChangeLane());
+                                stripe.getCustom().setLeftChangeLane(stripeOverride.getLeftChangeLane());
                             }
                             if (stripeOverride.getRightChangeLane() != null)
                             {
-                                stripe.setRightChangeLane(stripeOverride.getRightChangeLane());
+                                stripe.getCustom().setRightChangeLane(stripeOverride.getRightChangeLane());
                             }
+                            stripe.getCustom().getCompatibility().addAll(stripeOverride.getCompatibility());
                         }
                     }
                 }
@@ -432,6 +439,7 @@ public final class NetworkParser
                 {
                     throw new XmlParserException("Link " + xmlLink.getId() + " No RoadLayout defined");
                 }
+                setAllStripesCustom(roadLayoutTag, stripes, eval);
             }
 
             // calculate for each lane and stripe what the start and end offset is
@@ -446,7 +454,7 @@ public final class NetworkParser
             {
                 CseData cseData = cseDataList.get(cseTagMap.get(stripeTag));
                 makeStripe(csl, designLine, flattener, cseData.centerOffsetStart, cseData.centerOffsetEnd, stripeTag, cseList,
-                        stripesSync, eval);
+                        stripesSync, definitions, eval);
             }
 
             // Other CrossSectionElement
@@ -513,6 +521,32 @@ public final class NetworkParser
         StripeSynchronization.synchronize(stripesSync);
     }
 
+    /**
+     * Sets all defined stripes in the road layout as custom, based on the referred stripe type.
+     * @param roadLayoutTag road layout tag
+     * @param stripes defined stripes
+     * @param eval expression evaluator
+     */
+    private static void setAllStripesCustom(final BasicRoadLayout roadLayoutTag, final Map<String, StripeType> stripes,
+            final Eval eval)
+    {
+        for (CseStripe stripe : ParseUtil.getObjectsOfType(roadLayoutTag.getStripeOrLaneOrShoulder(), CseStripe.class))
+        {
+            if (stripe.getDefinedStripe() != null)
+            {
+                StripeType stripeType = stripes.get(stripe.getDefinedStripe().get(eval));
+                Custom custom = new Custom();
+                stripe.setCustom(custom);
+                stripe.setDefinedStripe(null);
+                custom.setElements(stripeType.getElements());
+                custom.setDashOffset(stripeType.getDashOffset());
+                custom.setLateralSync(stripeType.getLateralSync());
+                custom.setLeftChangeLane(stripeType.getLeftChangeLane());
+                custom.setRightChangeLane(stripeType.getRightChangeLane());
+            }
+        }
+    }
+
     /** Temporary fix for CseShoulder.getLaneType() always being null. */
     // FIXME
     private static final LaneType SHOULDER = new LaneType("Shoulder");
@@ -527,6 +561,7 @@ public final class NetworkParser
      * @param stripeTag the CseStripe tag in the XML file
      * @param cseList the list of CrossSectionElements to which the stripes should be added
      * @param stripesSync stripes
+     * @param definitions definitions
      * @param eval expression evaluator.
      * @throws NetworkException when id of the stripe not unique
      * @throws XmlParserException when the stripe type cannot be recognized
@@ -534,77 +569,89 @@ public final class NetworkParser
     private static void makeStripe(final CrossSectionLink csl, final ContinuousLine designLine, final Flattener flattener,
             final Length startOffset, final Length endOffset, final CseStripe stripeTag,
             final List<CrossSectionElement> cseList, final Map<Stripe, SynchronizableStripe<Stripe>> stripesSync,
-            final Eval eval) throws NetworkException, XmlParserException
+            final Definitions definitions, final Eval eval) throws NetworkException, XmlParserException
     {
-        StripeType type = stripeTag.getType().get(eval);
         Length width = Length.ZERO;
         List<StripeElement> elements = new ArrayList<>();
-        if (stripeTag.getElements() != null)
+        for (Serializable serializable : stripeTag.getCustom().getElements().getLineOrGap())
         {
-            for (Serializable serializable : stripeTag.getElements().getLineOrGap())
+            if (serializable instanceof Line line)
             {
-                if (serializable instanceof StripeLine line)
+                Length w = line.getWidth().get(eval);
+                width = width.plus(w);
+                if (line.getDashed() == null)
                 {
-                    Length w = line.getWidth().get(eval);
-                    width = width.plus(w);
-                    if (line.getDashed() == null)
-                    {
-                        elements.add(StripeElement.continuous(w, line.getColor().get(eval)));
-                    }
-                    else
-                    {
-                        elements.add(StripeElement.dashed(w, line.getColor().get(eval), getDashes(line.getDashed(), eval)));
-                    }
+                    elements.add(StripeElement.continuous(w, line.getColor().get(eval)));
                 }
-                else if (serializable instanceof Gap gap)
+                else
                 {
-                    Length w = gap.getWidth().get(eval);
-                    width = width.plus(w);
-                    elements.add(StripeElement.gap(w));
+                    elements.add(StripeElement.dashed(w, line.getColor().get(eval), getDashes(line.getDashed(), eval)));
                 }
             }
-        }
-        else
-        {
-            // based on type
-            width = type.width();
-            elements = type.elements();
+            else if (serializable instanceof Gap gap)
+            {
+                Length w = gap.getWidth().get(eval);
+                width = width.plus(w);
+                elements.add(StripeElement.gap(w));
+            }
         }
         ContinuousDoubleFunction offsetFunc = FractionalLengthData.of(0.0, startOffset.si, 1.0, endOffset.si);
         ContinuousDoubleFunction widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
 
         boolean leftLaneChange = false;
         boolean rightLaneChange = false;
-        if (stripeTag.getLeftChangeLane() != null)
+        if (stripeTag.getCustom().getLeftChangeLane() != null)
         {
-            leftLaneChange = stripeTag.getLeftChangeLane().get(eval);
+            leftLaneChange = stripeTag.getCustom().getLeftChangeLane().get(eval);
         }
-        if (stripeTag.getRightChangeLane() != null)
+        if (stripeTag.getCustom().getRightChangeLane() != null)
         {
-            rightLaneChange = stripeTag.getRightChangeLane().get(eval);
+            rightLaneChange = stripeTag.getCustom().getRightChangeLane().get(eval);
         }
         StripeData stripeData = new StripeData(elements, leftLaneChange, rightLaneChange);
         Stripe stripe = new Stripe(stripeTag.getId(), stripeData, csl,
                 CrossSectionGeometry.of(designLine, flattener, offsetFunc, widthFunc));
 
-        if (stripeTag.getDashOffset() != null)
+        if (stripeTag.getCustom().getDashOffset() != null)
         {
-            stripe.setDashOffset(stripeTag.getDashOffset().getOffset().get(eval));
-            stripe.setPhaseSync(StripePhaseSync.NONE);
+            if (stripeTag.getCustom().getDashOffset().getFixed() != null)
+            {
+                stripe.setDashOffset(stripeTag.getCustom().getDashOffset().getFixed().getOffset().get(eval));
+                stripe.setPhaseSync(StripePhaseSync.NONE);
+            }
+            else if (stripeTag.getCustom().getDashOffset().getSyncUpstream() != null)
+            {
+                stripe.setPhaseSync(StripePhaseSync.UPSTREAM);
+            }
+            else if (stripeTag.getCustom().getDashOffset().getSyncDownstream() != null)
+            {
+                stripe.setPhaseSync(StripePhaseSync.DOWNSTREAM);
+            }
         }
-        else if (stripeTag.getDashSyncUpstream() != null)
-        {
-            stripe.setPhaseSync(StripePhaseSync.UPSTREAM);
-        }
-        else if (stripeTag.getDashSyncDownstream() != null)
-        {
-            stripe.setPhaseSync(StripePhaseSync.DOWNSTREAM);
-        }
+
         stripesSync.put(stripe, StripeSynchronization.of(stripe));
 
-        if (stripeTag.getLateralSync() != null)
+        if (stripeTag.getCustom().getLateralSync() != null)
         {
-            stripe.setLateralSync(stripeTag.getLateralSync().get(eval));
+            stripe.setLateralSync(stripeTag.getCustom().getLateralSync().get(eval));
+        }
+
+        for (StripeCompatibility compatibility : stripeTag.getCustom().getCompatibility())
+        {
+            String dir = compatibility.getDirection().get(eval);
+            GtuType gtuType = definitions.get(GtuType.class, compatibility.getGtuType().get(eval));
+            if ("LEFT".equals(dir) || "BOTH".equals(dir))
+            {
+                stripe.addPermeability(gtuType, LateralDirectionality.LEFT);
+            }
+            if ("RIGHT".equals(dir) || "BOTH".equals(dir))
+            {
+                stripe.addPermeability(gtuType, LateralDirectionality.RIGHT);
+            }
+            else if ("NONE".equals(dir))
+            {
+                stripe.addPermeability(gtuType, LateralDirectionality.NONE);
+            }
         }
 
         cseList.add(stripe);

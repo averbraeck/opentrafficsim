@@ -587,6 +587,29 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         assureChildren();
         return this.children.get(index);
     }
+    
+    /**
+     * Returns whether this node has a child with given name.
+     * @param name child name
+     * @return whether this node has a child with given name
+     */
+    public boolean hasChild(final String name)
+    {
+        assureChildren();
+        for (XsdTreeNode child : this.children)
+        {
+            if (child.getNodeName().equals("xsd:sequence") || child.getNodeName().equals("xsd:choice")
+                    || child.getNodeName().equals("xsd:all"))
+            {
+                return child.hasChild(name);
+            }
+            if (child.getNodeName().equals(name))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Returns the first child with given name. The node may be within a series of xsd:sequence and xsd:choice/xsd:all

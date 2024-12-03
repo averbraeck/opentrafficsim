@@ -12,6 +12,7 @@ import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.StripeData;
+import org.opentrafficsim.road.network.lane.StripeData.StripePhaseSync;
 
 /**
  * Road defaults for locale nl_NL.
@@ -137,5 +138,14 @@ public class DefaultsRoadNl extends DefaultsRoad
     /** Block stripe. */
     public static final StripeData BLOCK = new StripeData(
             List.of(StripeElement.dashed(CM20.times(2.0), Color.WHITE, new LengthVector(new double[] {3.0, 1.0}))), true, true);
+    
+    static
+    {
+        LEFT.setPhaseSync(StripePhaseSync.UPSTREAM);
+        RIGHT.setPhaseSync(StripePhaseSync.UPSTREAM);
+        DASHED.setPhaseSync(StripePhaseSync.UPSTREAM);
+        DOUBLE_DASHED.setPhaseSync(StripePhaseSync.UPSTREAM);
+        BLOCK.setPhaseSync(StripePhaseSync.UPSTREAM);
+    }
 
 }

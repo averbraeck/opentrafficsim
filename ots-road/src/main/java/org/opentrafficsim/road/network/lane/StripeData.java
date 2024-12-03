@@ -71,10 +71,11 @@ public class StripeData
     }
 
     /**
-     * Add lateral permeability for a GTU type. This overrules permeability based on the stripe type, and those set regardless
-     * of GTU type. Add NONE to prevent lane changes. Add LEFT or RIGHT, or both in two calls, to enable lane changes.
-     * @param gtuType GTU type to add permeability for.
-     * @param lateralDirection direction to add compared to the direction of the design line.
+     * Add lateral permeability for a GTU type. This overrules overall stripe permeability. Add NONE to prevent lane changes.
+     * Add both LEFT and RIGHT in two calls, to enable lane changes. Add LEFT or RIGHT to enable one direction while prohibiting
+     * the other.
+     * @param gtuType GTU type to add permeability for
+     * @param lateralDirection direction to add compared to the direction of the design line
      */
     public void addPermeability(final GtuType gtuType, final LateralDirectionality lateralDirection)
     {

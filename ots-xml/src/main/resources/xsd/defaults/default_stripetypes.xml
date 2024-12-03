@@ -1,0 +1,104 @@
+<ots:StripeTypes xmlns:ots="http://www.opentrafficsim.org/ots"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions.xsd">
+
+  <ots:StripeType Id="NL.SOLID" RightChangeLane="false" LeftChangeLane="false" Default="true">
+    <ots:Elements>
+      <ots:Line Width="20cm">
+        <ots:Continuous />
+      </ots:Line>
+    </ots:Elements>
+  </ots:StripeType>
+  <ots:StripeType Id="NL.LEFT" RightChangeLane="false" LeftChangeLane="true" Default="true">
+    <ots:Elements>
+      <ots:Line Width="20cm">
+        <ots:Continuous />
+      </ots:Line>
+      <ots:Gap Width="20cm" />
+      <ots:Line Width="20cm">
+        <ots:Dashed>
+          <ots:Gap>9m</ots:Gap>
+          <ots:Dash>3m</ots:Dash>
+        </ots:Dashed>
+      </ots:Line>
+    </ots:Elements>
+    <ots:DashOffset>
+      <ots:SyncUpstream />
+    </ots:DashOffset>
+  </ots:StripeType>
+  <ots:StripeType Id="NL.RIGHT" RightChangeLane="true" LeftChangeLane="false" Default="true">
+    <ots:Elements>
+      <ots:Line Width="20cm">
+        <ots:Dashed>
+          <ots:Gap>9m</ots:Gap>
+          <ots:Dash>3m</ots:Dash>
+        </ots:Dashed>
+      </ots:Line>
+      <ots:Gap Width="20cm" />
+      <ots:Line Width="20cm">
+        <ots:Continuous />
+      </ots:Line>
+    </ots:Elements>
+    <ots:DashOffset>
+      <ots:SyncUpstream />
+    </ots:DashOffset>
+  </ots:StripeType>
+  <ots:StripeType Id="NL.DASHED" RightChangeLane="true" LeftChangeLane="true" Default="true">
+    <ots:Elements>
+      <ots:Line Width="20cm">
+        <ots:Dashed>
+          <ots:Gap>9m</ots:Gap>
+          <ots:Dash>3m</ots:Dash>
+        </ots:Dashed>
+      </ots:Line>
+    </ots:Elements>
+    <ots:DashOffset>
+      <ots:SyncUpstream />
+    </ots:DashOffset>
+  </ots:StripeType>
+  <ots:StripeType Id="NL.DOUBLE_SOLID" RightChangeLane="false" LeftChangeLane="false" Default="true">
+    <ots:Elements>
+      <ots:Line Width="20cm">
+        <ots:Continuous />
+      </ots:Line>
+      <ots:Gap Width="20cm" />
+      <ots:Line Width="20cm">
+        <ots:Continuous />
+      </ots:Line>
+    </ots:Elements>
+  </ots:StripeType>
+  <ots:StripeType Id="NL.DOUBLE_DASHED" RightChangeLane="true" LeftChangeLane="true" Default="true">
+    <ots:Elements>
+      <ots:Line Width="20cm">
+        <ots:Dashed>
+          <ots:Gap>9m</ots:Gap>
+          <ots:Dash>3m</ots:Dash>
+        </ots:Dashed>
+      </ots:Line>
+      <ots:Gap Width="20cm" />
+      <ots:Line Width="20cm">
+        <ots:Dashed>
+          <ots:Gap>9m</ots:Gap>
+          <ots:Dash>3m</ots:Dash>
+        </ots:Dashed>
+      </ots:Line>
+    </ots:Elements>
+    <ots:DashOffset>
+      <ots:SyncUpstream />
+    </ots:DashOffset>
+  </ots:StripeType>
+  <ots:StripeType Id="NL.BLOCK" RightChangeLane="true" LeftChangeLane="true" Default="true">
+    <ots:Elements>
+      <ots:Line Width="40cm">
+        <ots:Dashed>
+          <ots:Gap>3m</ots:Gap>
+          <ots:Dash>1m</ots:Dash>
+        </ots:Dashed>
+      </ots:Line>
+    </ots:Elements>
+    <ots:DashOffset>
+      <ots:SyncUpstream />
+    </ots:DashOffset>
+  </ots:StripeType>
+
+</ots:StripeTypes>

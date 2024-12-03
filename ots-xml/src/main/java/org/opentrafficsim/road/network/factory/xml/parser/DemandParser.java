@@ -67,6 +67,7 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
+import org.opentrafficsim.xml.bindings.types.ExpressionType;
 import org.opentrafficsim.xml.bindings.types.StringType;
 import org.opentrafficsim.xml.generated.ConstantDistType;
 import org.opentrafficsim.xml.generated.Demand;
@@ -763,35 +764,35 @@ public final class DemandParser
         else
         {
             // gather columns
-            Map<Column<?>, Function<Arrival, ?>> columnMap = new LinkedHashMap<>();
-            columnMap.put(new Column<>(Injections.TIME_COLUMN, Injections.TIME_COLUMN, Duration.class),
-                    a -> a.getValue().get(eval));
+            Map<Column<?>, Function<Arrival, ExpressionType<?>>> columnMap = new LinkedHashMap<>();
+            columnMap.put(new Column<>(Injections.TIME_COLUMN, Injections.TIME_COLUMN, Duration.class), a -> a.getValue());
             if (!generatorTag.getArrivals().getArrival().isEmpty())
             {
                 Arrival arrival = generatorTag.getArrivals().getArrival().get(0);
-                addColumn(arrival, columnMap, Injections.ID_COLUMN, String.class, a -> a.getId().get(eval));
-                addColumn(arrival, columnMap, Injections.SPEED_COLUMN, Speed.class, a -> a.getSpeed().get(eval));
-                addColumn(arrival, columnMap, Injections.LINK_COLUMN, String.class, a -> a.getLink().get(eval));
-                addColumn(arrival, columnMap, Injections.LANE_COLUMN, String.class, a -> a.getLane().get(eval));
-                addColumn(arrival, columnMap, Injections.POSITION_COLUMN, String.class, a -> a.getPosition().get(eval));
-                addColumn(arrival, columnMap, Injections.LENGTH_COLUMN, Length.class, a -> a.getLength().get(eval));
-                addColumn(arrival, columnMap, Injections.WIDTH_COLUMN, Length.class, a -> a.getWidth().get(eval));
-                addColumn(arrival, columnMap, Injections.FRONT_COLUMN, Length.class, a -> a.getFront().get(eval));
-                addColumn(arrival, columnMap, Injections.MAX_SPEED_COLUMN, Speed.class, a -> a.getMaxSpeed().get(eval));
+                addColumn(arrival, columnMap, Injections.ID_COLUMN, String.class, a -> a.getId());
+                addColumn(arrival, columnMap, Injections.GTU_TYPE_COLUMN, String.class, a -> a.getGtuType());
+                addColumn(arrival, columnMap, Injections.SPEED_COLUMN, Speed.class, a -> a.getSpeed());
+                addColumn(arrival, columnMap, Injections.LINK_COLUMN, String.class, a -> a.getLink());
+                addColumn(arrival, columnMap, Injections.LANE_COLUMN, String.class, a -> a.getLane());
+                addColumn(arrival, columnMap, Injections.POSITION_COLUMN, Length.class, a -> a.getPosition());
+                addColumn(arrival, columnMap, Injections.LENGTH_COLUMN, Length.class, a -> a.getLength());
+                addColumn(arrival, columnMap, Injections.WIDTH_COLUMN, Length.class, a -> a.getWidth());
+                addColumn(arrival, columnMap, Injections.FRONT_COLUMN, Length.class, a -> a.getFront());
+                addColumn(arrival, columnMap, Injections.MAX_SPEED_COLUMN, Speed.class, a -> a.getMaxSpeed());
                 addColumn(arrival, columnMap, Injections.MAX_ACCELERATION_COLUMN, Acceleration.class,
-                        a -> a.getMaxAcceleration().get(eval));
+                        a -> a.getMaxAcceleration());
                 addColumn(arrival, columnMap, Injections.MAX_DECELERATION_COLUMN, Acceleration.class,
-                        a -> a.getMaxDeceleration().get(eval));
-                addColumn(arrival, columnMap, Injections.ROUTE_COLUMN, String.class, a -> a.getRoute().get(eval));
-                addColumn(arrival, columnMap, Injections.ORIGIN_COLUMN, String.class, a -> a.getOrigin().get(eval));
-                addColumn(arrival, columnMap, Injections.DESTINATION_COLUMN, String.class, a -> a.getDestination().get(eval));
+                        a -> a.getMaxDeceleration());
+                addColumn(arrival, columnMap, Injections.ROUTE_COLUMN, String.class, a -> a.getRoute());
+                addColumn(arrival, columnMap, Injections.ORIGIN_COLUMN, String.class, a -> a.getOrigin());
+                addColumn(arrival, columnMap, Injections.DESTINATION_COLUMN, String.class, a -> a.getDestination());
             }
             ListTable tab = new ListTable("injections", "injections", columnMap.keySet());
             table = tab;
             for (Arrival arrival : generatorTag.getArrivals().getArrival())
             {
                 tab.addRow(columnMap.entrySet().stream()
-                        .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().apply(arrival))));
+                        .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().apply(arrival).get(eval))));
             }
         }
         return table;
@@ -800,18 +801,21 @@ public final class DemandParser
     /**
      * Add column to map, if it is given in the arrival.
      * @param <T> type of column
+     * @param <E> intermediate type to put {@code ExpressionType<T>} in generic columnMap
      * @param arrival example arrival to check whether data is given
      * @param columnMap column map
      * @param columnId id of the column
      * @param clazz class of the column type
      * @param supplier value supplier from an arrival
      */
-    private static <T> void addColumn(final Arrival arrival, final Map<Column<?>, Function<Arrival, ?>> columnMap,
-            final String columnId, final Class<T> clazz, final Function<Arrival, T> supplier)
+    @SuppressWarnings("unchecked")
+    private static <T, E extends ExpressionType<?>> void addColumn(final Arrival arrival,
+            final Map<Column<?>, Function<Arrival, E>> columnMap, final String columnId, final Class<T> clazz,
+            final Function<Arrival, ExpressionType<T>> supplier)
     {
         if (supplier.apply(arrival) != null)
         {
-            columnMap.put(new Column<>(columnId, columnId, clazz), supplier);
+            columnMap.put(new Column<>(columnId, columnId, clazz), (Function<Arrival, E>) supplier);
         }
     }
 

@@ -55,13 +55,13 @@ import org.opentrafficsim.draw.road.CrossSectionElementAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation;
 import org.opentrafficsim.draw.road.PriorityAnimation;
 import org.opentrafficsim.draw.road.StripeAnimation;
+import org.opentrafficsim.editor.ChildNodeFinder;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.extensions.Adapters;
 import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets.CseData;
 import org.opentrafficsim.road.network.lane.CrossSectionGeometry;
-import org.opentrafficsim.road.network.lane.Stripe.StripeType;
 import org.opentrafficsim.road.network.lane.StripeData.StripePhaseSync;
 import org.opentrafficsim.xml.bindings.ExpressionAdapter;
 import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
@@ -634,88 +634,94 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 if (node.getNodeName().equals("Stripe"))
                 {
                     // TODO listen to lane and line overrides
-                    if (node.getChild(1).isActive())
+                    XsdTreeNode stripe;
+                    ChildNodeFinder finder = new ChildNodeFinder(node);
+                    if (finder.hasActiveChild("DefinedStripe"))
                     {
-                        String phaseSyncName = node.getChild(1).getNodeName();
-                        switch (phaseSyncName)
+                        stripe = finder.get().getCoupledKeyrefNodeValue();
+                    }
+                    else if (finder.hasActiveChild("Custom"))
+                    {
+                        stripe = finder.get();
+                    }
+                    else
+                    {
+                        continue;
+                    }
+
+                    finder = new ChildNodeFinder(stripe);
+                    if (finder.hasActiveChild("DashOffset"))
+                    {
+                        XsdTreeNode dashOffsetNode = finder.get().getChild(0);
+                        switch (dashOffsetNode.getNodeName())
                         {
-                            case "DashSyncUpstream":
+                            case "SyncUpstream":
                             {
                                 phaseSync = StripePhaseSync.UPSTREAM;
                                 break;
                             }
-                            case "DashSyncDownstream":
+                            case "SyncDownstream":
                             {
                                 phaseSync = StripePhaseSync.DOWNSTREAM;
                                 break;
                             }
-                            case "DashOffset":
+                            case "Fixed":
                             {
                                 phaseSync = StripePhaseSync.NONE;
-                                dashOffset = Adapters.get(Length.class).unmarshal(node.getChild(1).getAttributeValue("Offset"))
+                                dashOffset = Adapters.get(Length.class).unmarshal(dashOffsetNode.getAttributeValue("Offset"))
                                         .get(getEval());
                                 break;
                             }
                             default:
                             {
-                                System.out.println("Dash synchronization " + phaseSyncName + " is unknown.");
+                                System.out.println("Dash synchronization " + dashOffsetNode.getNodeName() + " is unknown.");
                             }
                         }
                     }
-                    if (node.getChild(2).isActive())
+                    if (finder.hasActiveChild("LateralSync"))
                     {
-                        String latSyncName = node.getChild(2).getValue();
+                        String latSyncName = finder.get().getValue();
                         lateralSync = latSyncName == null ? StripeLateralSync.NONE
                                 : Adapters.get(StripeLateralSync.class).unmarshal(latSyncName).get(getEval());
                     }
-                    StripeType type = Adapters.get(StripeType.class).unmarshal(node.getAttributeValue("Type")).get(getEval());
-                    Length width;
-                    if (node.getChild(0).isActive())
+                    Length width = Length.ZERO;
+                    for (XsdTreeNode element : stripe.getFirstChild("Elements").getChildren())
                     {
-                        width = Length.ZERO;
-                        for (XsdTreeNode element : node.getChild(0).getChildren())
+                        Length w = Adapters.get(Length.class).unmarshal(element.getAttributeValue("Width")).get(getEval());
+                        width = width.plus(w);
+                        if (element.getNodeName().equals("Line"))
                         {
-                            Length w = Adapters.get(Length.class).unmarshal(element.getAttributeValue("Width")).get(getEval());
-                            width = width.plus(w);
-                            if (element.getNodeName().equals("Line"))
+                            String colorName = element.getAttributeValue("Color");
+                            if (colorName == null)
                             {
-                                String colorName = element.getAttributeValue("Color");
-                                if (colorName == null)
-                                {
-                                    colorName = element.getDefaultAttributeValue(element.getAttributeIndexByName("Color"));
-                                }
-                                Color color = Adapters.get(Color.class).unmarshal(colorName).get(getEval());
-                                if (element.getChild(0).getNodeName().equals("Continuous"))
-                                {
-                                    elements.add(StripeElement.continuous(w, color));
-                                }
-                                else
-                                {
-                                    List<Double> gapsAndDashes = new ArrayList<>();
-                                    for (XsdTreeNode gapDash : element.getChild(0).getChildren())
-                                    {
-                                        if (gapDash.getChild(0).isValid() && gapDash.getChild(1).isValid())
-                                        {
-                                            gapsAndDashes.add(Adapters.get(Length.class)
-                                                    .unmarshal(gapDash.getChild(0).getValue()).get(getEval()).si);
-                                            gapsAndDashes.add(Adapters.get(Length.class)
-                                                    .unmarshal(gapDash.getChild(1).getValue()).get(getEval()).si);
-                                        }
-                                    }
-                                    elements.add(StripeElement.dashed(w, color,
-                                            new LengthVector(gapsAndDashes.stream().mapToDouble(v -> v).toArray())));
-                                }
+                                colorName = element.getDefaultAttributeValue(element.getAttributeIndexByName("Color"));
+                            }
+                            Color color = Adapters.get(Color.class).unmarshal(colorName).get(getEval());
+                            if (element.getChild(0).getNodeName().equals("Continuous"))
+                            {
+                                elements.add(StripeElement.continuous(w, color));
                             }
                             else
                             {
-                                elements.add(StripeElement.gap(w));
+                                List<Double> gapsAndDashes = new ArrayList<>();
+                                for (XsdTreeNode gapDash : element.getChild(0).getChildren())
+                                {
+                                    if (gapDash.getChild(0).isValid() && gapDash.getChild(1).isValid())
+                                    {
+                                        gapsAndDashes.add(Adapters.get(Length.class)
+                                                .unmarshal(gapDash.getChild(0).getValue()).get(getEval()).si);
+                                        gapsAndDashes.add(Adapters.get(Length.class)
+                                                .unmarshal(gapDash.getChild(1).getValue()).get(getEval()).si);
+                                    }
+                                }
+                                elements.add(StripeElement.dashed(w, color,
+                                        new LengthVector(gapsAndDashes.stream().mapToDouble(v -> v).toArray())));
                             }
                         }
-                    }
-                    else
-                    {
-                        width = type.width();
-                        elements.addAll(type.elements());
+                        else
+                        {
+                            elements.add(StripeElement.gap(w));
+                        }
                     }
                     widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
                 }

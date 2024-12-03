@@ -1,319 +1,331 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<ots:Ots xmlns:ots="http://www.opentrafficsim.org/ots" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<ots:Ots xmlns:ots="http://www.opentrafficsim.org/ots" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.opentrafficsim.org/ots ../../../../ots-xml/src/main/resources/xsd/ots.xsd"
-	xmlns:xi="http://www.w3.org/2001/XInclude">
+  xmlns:xi="http://www.w3.org/2001/XInclude">
 
-	<ots:Definitions>
+  <ots:Definitions>
 
-	  <xi:include href="../xsd/defaults/default_gtutypes.xml">
-        <xi:fallback>
-          <xi:include href="../../../../ots-xml/src/main/resources/xsd/defaults/default_gtutypes.xml" />
-        </xi:fallback>
-      </xi:include>
-	  <xi:include href="../xsd/defaults/default_linktypes.xml">
-        <xi:fallback>
-          <xi:include href="../../../../ots-xml/src/main/resources/xsd/defaults/default_linktypes.xml" />
-        </xi:fallback>
-      </xi:include>
-	  <xi:include href="../xsd/defaults/default_lanetypes.xml">
-        <xi:fallback>
-          <xi:include href="../../../../ots-xml/src/main/resources/xsd/defaults/default_lanetypes.xml" />
-        </xi:fallback>
-      </xi:include>
-      <xi:include href="../xsd/defaults/default_detectortypes.xml">
-        <xi:fallback>
-          <xi:include href="../../../../ots-xml/src/main/resources/xsd/defaults/default_detectortypes.xml" />
-        </xi:fallback>
-      </xi:include>
+    <xi:include href="../xsd/defaults/default_gtutypes.xml">
+      <xi:fallback>
+        <xi:include href="../../../../ots-xml/src/main/resources/xsd/defaults/default_gtutypes.xml" />
+      </xi:fallback>
+    </xi:include>
+    <xi:include href="../xsd/defaults/default_linktypes.xml">
+      <xi:fallback>
+        <xi:include href="../../../../ots-xml/src/main/resources/xsd/defaults/default_linktypes.xml" />
+      </xi:fallback>
+    </xi:include>
+    <xi:include href="../xsd/defaults/default_stripetypes.xml">
+      <xi:fallback>
+        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_stripetypes.xml" />
+      </xi:fallback>
+    </xi:include>
+    <xi:include href="../xsd/defaults/default_lanetypes.xml">
+      <xi:fallback>
+        <xi:include href="../../../../ots-xml/src/main/resources/xsd/defaults/default_lanetypes.xml" />
+      </xi:fallback>
+    </xi:include>
+    <xi:include href="../xsd/defaults/default_detectortypes.xml">
+      <xi:fallback>
+        <xi:include href="../../../../ots-xml/src/main/resources/xsd/defaults/default_detectortypes.xml" />
+      </xi:fallback>
+    </xi:include>
 
-		<ots:GtuTemplates>
-			<ots:GtuTemplate Default="true" GtuType="NL.CAR" Id="CAR">
-				<ots:LengthDist LengthUnit="m">
-					<ots:Uniform Min="3.0" Max="4.0" />
-				</ots:LengthDist>
-				<ots:WidthDist LengthUnit="m">
-					<ots:Uniform Min="1.7" Max="2.0" />
-				</ots:WidthDist>
-				<ots:MaxSpeedDist SpeedUnit="km/h">
-					<ots:Constant C="120" />
-				</ots:MaxSpeedDist>
-			</ots:GtuTemplate>
-		</ots:GtuTemplates>
+    <ots:GtuTemplates>
+      <ots:GtuTemplate Default="true" GtuType="NL.CAR" Id="CAR">
+        <ots:LengthDist LengthUnit="m">
+          <ots:Uniform Min="3.0" Max="4.0" />
+        </ots:LengthDist>
+        <ots:WidthDist LengthUnit="m">
+          <ots:Uniform Min="1.7" Max="2.0" />
+        </ots:WidthDist>
+        <ots:MaxSpeedDist SpeedUnit="km/h">
+          <ots:Constant C="120" />
+        </ots:MaxSpeedDist>
+      </ots:GtuTemplate>
+    </ots:GtuTemplates>
 
-		<ots:LinkTypes>
-			<ots:LinkType Id="URBAN">
-				<ots:Compatibility GtuType="NL.VEHICLE" />
-				<ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50km/h" />
-			</ots:LinkType>
-		</ots:LinkTypes>
+    <ots:LinkTypes>
+      <ots:LinkType Id="URBAN">
+        <ots:Compatibility GtuType="NL.VEHICLE" />
+        <ots:SpeedLimit GtuType="NL.CAR" LegalSpeedLimit="50km/h" />
+      </ots:LinkType>
+    </ots:LinkTypes>
 
-		<ots:LaneTypes>
-			<ots:LaneType Id="URBAN">
-				<ots:Compatibility GtuType="NL.VEHICLE" />
-			</ots:LaneType>
-		</ots:LaneTypes>
+    <ots:LaneTypes>
+      <ots:LaneType Id="URBAN">
+        <ots:Compatibility GtuType="NL.VEHICLE" />
+      </ots:LaneType>
+    </ots:LaneTypes>
 
-		<ots:RoadLayouts>
-			<ots:RoadLayout Id="RIGHT" LinkType="URBAN">
-				<ots:Shoulder>
-					<ots:CenterOffset>-2.75m</ots:CenterOffset>
-					<ots:Width>2m</ots:Width>
-				</ots:Shoulder>
-				<ots:Lane Id="LANE" LaneType="URBAN">
-					<ots:CenterOffset>0.0m</ots:CenterOffset>
-					<ots:Width>3.5m</ots:Width>
-				</ots:Lane>
-				<ots:Shoulder>
-					<ots:CenterOffset>2.75m</ots:CenterOffset>
-					<ots:Width>2m</ots:Width>
-				</ots:Shoulder>
-			</ots:RoadLayout>
+    <ots:RoadLayouts>
+      <ots:RoadLayout Id="RIGHT" LinkType="URBAN">
+        <ots:Shoulder>
+          <ots:CenterOffset>-2.75m</ots:CenterOffset>
+          <ots:Width>2m</ots:Width>
+        </ots:Shoulder>
+        <ots:Lane Id="LANE" LaneType="URBAN">
+          <ots:CenterOffset>0.0m</ots:CenterOffset>
+          <ots:Width>3.5m</ots:Width>
+        </ots:Lane>
+        <ots:Shoulder>
+          <ots:CenterOffset>2.75m</ots:CenterOffset>
+          <ots:Width>2m</ots:Width>
+        </ots:Shoulder>
+      </ots:RoadLayout>
 
-			<ots:RoadLayout Id="RIGHT2" LinkType="URBAN">
-				<ots:Shoulder>
-					<ots:CenterOffset>-2.75m</ots:CenterOffset>
-					<ots:Width>2m</ots:Width>
-				</ots:Shoulder>
-				<ots:Lane Id="LANE" LaneType="URBAN">
-					<ots:CenterOffset>0.0m</ots:CenterOffset>
-					<ots:Width>3.5m</ots:Width>
-				</ots:Lane>
-				<ots:Stripe Type="DASHED">
-					<ots:CenterOffset>2.75m</ots:CenterOffset>
-				</ots:Stripe>
-				<ots:Lane Id="TURNLANE" LaneType="URBAN">
-					<ots:CenterOffset>3.5m</ots:CenterOffset>
-					<ots:Width>3.5m</ots:Width>
-				</ots:Lane>
-				<ots:Shoulder>
-					<ots:CenterOffset>6.25m</ots:CenterOffset>
-					<ots:Width>2m</ots:Width>
-				</ots:Shoulder>
-			</ots:RoadLayout>
+      <ots:RoadLayout Id="RIGHT2" LinkType="URBAN">
+        <ots:Shoulder>
+          <ots:CenterOffset>-2.75m</ots:CenterOffset>
+          <ots:Width>2m</ots:Width>
+        </ots:Shoulder>
+        <ots:Lane Id="LANE" LaneType="URBAN">
+          <ots:CenterOffset>0.0m</ots:CenterOffset>
+          <ots:Width>3.5m</ots:Width>
+        </ots:Lane>
+        <ots:Stripe Id="1">
+          <ots:CenterOffset>2.75m</ots:CenterOffset>
+          <ots:DefinedStripe>NL.DASHED</ots:DefinedStripe>
+        </ots:Stripe>
+        <ots:Lane Id="TURNLANE" LaneType="URBAN">
+          <ots:CenterOffset>3.5m</ots:CenterOffset>
+          <ots:Width>3.5m</ots:Width>
+        </ots:Lane>
+        <ots:Shoulder>
+          <ots:CenterOffset>6.25m</ots:CenterOffset>
+          <ots:Width>2m</ots:Width>
+        </ots:Shoulder>
+      </ots:RoadLayout>
 
-			<ots:RoadLayout Id="RIGHT2TAPER" LinkType="URBAN">
-				<ots:Shoulder>
-					<ots:CenterOffset>-2.75m</ots:CenterOffset>
-					<ots:Width>2m</ots:Width>
-				</ots:Shoulder>
-				<ots:Lane Id="LANE" LaneType="URBAN">
-					<ots:CenterOffset>0.0m</ots:CenterOffset>
-					<ots:Width>3.5m</ots:Width>
-				</ots:Lane>
-				<ots:Stripe Type="DASHED">
-					<ots:CenterOffset>2.25m</ots:CenterOffset>
-				</ots:Stripe>
-				<ots:Lane Id="TURNLANE" LaneType="URBAN">
-					<ots:CenterOffsetStart>0.0m</ots:CenterOffsetStart>
-					<ots:CenterOffsetEnd>3.5m</ots:CenterOffsetEnd>
-					<ots:Width>3.5m</ots:Width>
-				</ots:Lane>
-				<ots:Shoulder>
-					<ots:CenterOffsetStart>2.75m</ots:CenterOffsetStart>
-					<ots:CenterOffsetEnd>6.25m</ots:CenterOffsetEnd>
-					<ots:Width>2m</ots:Width>
-				</ots:Shoulder>
-			</ots:RoadLayout>
-		</ots:RoadLayouts>
-	</ots:Definitions>
+      <ots:RoadLayout Id="RIGHT2TAPER" LinkType="URBAN">
+        <ots:Shoulder>
+          <ots:CenterOffset>-2.75m</ots:CenterOffset>
+          <ots:Width>2m</ots:Width>
+        </ots:Shoulder>
+        <ots:Lane Id="LANE" LaneType="URBAN">
+          <ots:CenterOffset>0.0m</ots:CenterOffset>
+          <ots:Width>3.5m</ots:Width>
+        </ots:Lane>
+        <ots:Stripe Id="1">
+          <ots:CenterOffset>2.25m</ots:CenterOffset>
+          <ots:DefinedStripe>NL.DASHED</ots:DefinedStripe>
+        </ots:Stripe>
+        <ots:Lane Id="TURNLANE" LaneType="URBAN">
+          <ots:CenterOffsetStart>0.0m</ots:CenterOffsetStart>
+          <ots:CenterOffsetEnd>3.5m</ots:CenterOffsetEnd>
+          <ots:Width>3.5m</ots:Width>
+        </ots:Lane>
+        <ots:Shoulder>
+          <ots:CenterOffsetStart>2.75m</ots:CenterOffsetStart>
+          <ots:CenterOffsetEnd>6.25m</ots:CenterOffsetEnd>
+          <ots:Width>2m</ots:Width>
+        </ots:Shoulder>
+      </ots:RoadLayout>
+    </ots:RoadLayouts>
+  </ots:Definitions>
 
-	<ots:Network>
-		<ots:Node Id="BLE" Coordinate="(300,0)" Direction="0 deg(E)" />
-		<ots:Node Id="BLS" Coordinate="(0,-300)" Direction="270 deg(E)" />
-		<ots:Node Id="BLW" Coordinate="(-300,0)" Direction="0 deg(E)" />
-		<ots:Node Id="BLEC" Coordinate="(28.8,0)" Direction="0 deg(E)" />
-		<ots:Node Id="BLSC" Coordinate="(0,-18.8)" Direction="270 deg(E)" />
-		<ots:Node Id="BLWC" Coordinate="(-18.8,0)" Direction="0 deg(E)" />
+  <ots:Network>
+    <ots:Node Id="BLE" Coordinate="(300,0)" Direction="0 deg(E)" />
+    <ots:Node Id="BLS" Coordinate="(0,-300)" Direction="270 deg(E)" />
+    <ots:Node Id="BLW" Coordinate="(-300,0)" Direction="0 deg(E)" />
+    <ots:Node Id="BLEC" Coordinate="(28.8,0)" Direction="0 deg(E)" />
+    <ots:Node Id="BLSC" Coordinate="(0,-18.8)" Direction="270 deg(E)" />
+    <ots:Node Id="BLWC" Coordinate="(-18.8,0)" Direction="0 deg(E)" />
 
-		<ots:Node Id="TRE" Coordinate="(300,15)" Direction="180 deg(E)" />
-		<ots:Node Id="TRS" Coordinate="(15,-300)" Direction="90 deg(E)" />
-		<ots:Node Id="TRW" Coordinate="(-300,15)" Direction="180 deg(E)" />
-		<ots:Node Id="TREC" Coordinate="(18.8,15)" Direction="180 deg(E)" />
-		<ots:Node Id="TRE2" Coordinate="(20,15)" Direction="180 deg(E)" />
-		<ots:Node Id="TRE3" Coordinate="(100,15)" Direction="180 deg(E)" />
-		<ots:Node Id="TRSC" Coordinate="(15,-18.8)" Direction="90 deg(E)" />
-		<ots:Node Id="TRWC" Coordinate="(-18.8,15)" Direction="180 deg(E)" />
+    <ots:Node Id="TRE" Coordinate="(300,15)" Direction="180 deg(E)" />
+    <ots:Node Id="TRS" Coordinate="(15,-300)" Direction="90 deg(E)" />
+    <ots:Node Id="TRW" Coordinate="(-300,15)" Direction="180 deg(E)" />
+    <ots:Node Id="TREC" Coordinate="(18.8,15)" Direction="180 deg(E)" />
+    <ots:Node Id="TRE2" Coordinate="(20,15)" Direction="180 deg(E)" />
+    <ots:Node Id="TRE3" Coordinate="(100,15)" Direction="180 deg(E)" />
+    <ots:Node Id="TRSC" Coordinate="(15,-18.8)" Direction="90 deg(E)" />
+    <ots:Node Id="TRWC" Coordinate="(-18.8,15)" Direction="180 deg(E)" />
 
-		<ots:Link Id="WWC" NodeStart="BLW" NodeEnd="BLWC" Type="URBAN">
-			<ots:Straight />
-			<ots:DefinedLayout>RIGHT</ots:DefinedLayout>
-		</ots:Link>
+    <ots:Link Id="WWC" NodeStart="BLW" NodeEnd="BLWC" Type="URBAN">
+      <ots:Straight />
+      <ots:DefinedLayout>RIGHT</ots:DefinedLayout>
+    </ots:Link>
 
-		<ots:Link Id="WCEC" NodeStart="BLWC" NodeEnd="BLEC" Type="URBAN" Priority="PRIORITY">
-			<ots:Straight />
-			<ots:DefinedLayout>RIGHT</ots:DefinedLayout>
-		</ots:Link>
+    <ots:Link Id="WCEC" NodeStart="BLWC" NodeEnd="BLEC" Type="URBAN" Priority="PRIORITY">
+      <ots:Straight />
+      <ots:DefinedLayout>RIGHT</ots:DefinedLayout>
+    </ots:Link>
 
-		<ots:Link Id="ECE" NodeStart="BLEC" NodeEnd="BLE" Type="URBAN">
-			<ots:Straight />
-			<ots:DefinedLayout>RIGHT</ots:DefinedLayout>
-		</ots:Link>
+    <ots:Link Id="ECE" NodeStart="BLEC" NodeEnd="BLE" Type="URBAN">
+      <ots:Straight />
+      <ots:DefinedLayout>RIGHT</ots:DefinedLayout>
+    </ots:Link>
 
-		<ots:Link Id="SCS" NodeStart="BLSC" NodeEnd="BLS" Type="URBAN">
-			<ots:Straight />
-			<ots:DefinedLayout>RIGHT</ots:DefinedLayout>
-		</ots:Link>
+    <ots:Link Id="SCS" NodeStart="BLSC" NodeEnd="BLS" Type="URBAN">
+      <ots:Straight />
+      <ots:DefinedLayout>RIGHT</ots:DefinedLayout>
+    </ots:Link>
 
-		<ots:Link Id="WCSC" NodeStart="BLWC" NodeEnd="BLSC" Type="URBAN">
-			<ots:Bezier />
-			<ots:DefinedLayout>RIGHT</ots:DefinedLayout>
-		</ots:Link>
+    <ots:Link Id="WCSC" NodeStart="BLWC" NodeEnd="BLSC" Type="URBAN">
+      <ots:Bezier />
+      <ots:DefinedLayout>RIGHT</ots:DefinedLayout>
+    </ots:Link>
 
-		<ots:Link Id="EE3" NodeStart="TRE" NodeEnd="TRE3" Type="URBAN">
-			<ots:Straight />
-			<ots:DefinedLayout>RIGHT</ots:DefinedLayout>
-		</ots:Link>
+    <ots:Link Id="EE3" NodeStart="TRE" NodeEnd="TRE3" Type="URBAN">
+      <ots:Straight />
+      <ots:DefinedLayout>RIGHT</ots:DefinedLayout>
+    </ots:Link>
 
-		<ots:Link Id="E3E2" NodeStart="TRE3" NodeEnd="TRE2" Type="URBAN">
-			<ots:Straight />
-			<ots:DefinedLayout>RIGHT2TAPER</ots:DefinedLayout>
-		</ots:Link>
+    <ots:Link Id="E3E2" NodeStart="TRE3" NodeEnd="TRE2" Type="URBAN">
+      <ots:Straight />
+      <ots:DefinedLayout>RIGHT2TAPER</ots:DefinedLayout>
+    </ots:Link>
 
-		<ots:Link Id="E2EC" NodeStart="TRE2" NodeEnd="TREC" Type="URBAN">
-			<ots:Straight />
-			<ots:DefinedLayout>RIGHT2</ots:DefinedLayout>
-		</ots:Link>
+    <ots:Link Id="E2EC" NodeStart="TRE2" NodeEnd="TREC" Type="URBAN">
+      <ots:Straight />
+      <ots:DefinedLayout>RIGHT2</ots:DefinedLayout>
+    </ots:Link>
 
-		<ots:Link Id="ECWC" NodeStart="TREC" NodeEnd="TRWC" Type="URBAN">
-			<ots:Straight />
-			<ots:DefinedLayout>RIGHT</ots:DefinedLayout>
-		</ots:Link>
+    <ots:Link Id="ECWC" NodeStart="TREC" NodeEnd="TRWC" Type="URBAN">
+      <ots:Straight />
+      <ots:DefinedLayout>RIGHT</ots:DefinedLayout>
+    </ots:Link>
 
-		<ots:Link Id="WCW" NodeStart="TRWC" NodeEnd="TRW" Type="URBAN">
-			<ots:Straight />
-			<ots:DefinedLayout>RIGHT</ots:DefinedLayout>
-		</ots:Link>
+    <ots:Link Id="WCW" NodeStart="TRWC" NodeEnd="TRW" Type="URBAN">
+      <ots:Straight />
+      <ots:DefinedLayout>RIGHT</ots:DefinedLayout>
+    </ots:Link>
 
-		<ots:Link Id="SSC" NodeStart="TRS" NodeEnd="TRSC" Type="URBAN">
-			<ots:Straight />
-			<ots:DefinedLayout>RIGHT</ots:DefinedLayout>
-		</ots:Link>
+    <ots:Link Id="SSC" NodeStart="TRS" NodeEnd="TRSC" Type="URBAN">
+      <ots:Straight />
+      <ots:DefinedLayout>RIGHT</ots:DefinedLayout>
+    </ots:Link>
 
-		<ots:Link Id="SCEC" NodeStart="TRSC" NodeEnd="BLEC" Type="URBAN">
-			<ots:Bezier />
-			<ots:DefinedLayout>RIGHT</ots:DefinedLayout>
-		</ots:Link>
+    <ots:Link Id="SCEC" NodeStart="TRSC" NodeEnd="BLEC" Type="URBAN">
+      <ots:Bezier />
+      <ots:DefinedLayout>RIGHT</ots:DefinedLayout>
+    </ots:Link>
 
-		<ots:Link Id="SCWC" NodeStart="TRSC" NodeEnd="TRWC" Type="URBAN">
-			<ots:Bezier />
-			<ots:DefinedLayout>RIGHT</ots:DefinedLayout>
-		</ots:Link>
+    <ots:Link Id="SCWC" NodeStart="TRSC" NodeEnd="TRWC" Type="URBAN">
+      <ots:Bezier />
+      <ots:DefinedLayout>RIGHT</ots:DefinedLayout>
+    </ots:Link>
 
-		<ots:Link Id="ECSC" NodeStart="TREC" NodeEnd="BLSC" Type="URBAN" OffsetStart="3.5m" OffsetEnd="0m">
-			<ots:Bezier />
-			<ots:DefinedLayout>RIGHT</ots:DefinedLayout>
-		</ots:Link>
+    <ots:Link Id="ECSC" NodeStart="TREC" NodeEnd="BLSC" Type="URBAN" OffsetStart="3.5m" OffsetEnd="0m">
+      <ots:Bezier />
+      <ots:DefinedLayout>RIGHT</ots:DefinedLayout>
+    </ots:Link>
 
-	</ots:Network>
+  </ots:Network>
 
 
-	<ots:Demand>
+  <ots:Demand>
 
-		<ots:ShortestRoute Id="EW" GtuType="NL.CAR">
-            <ots:From>TRE</ots:From>
-            <ots:To>TRW</ots:To>
-            <ots:Cost>
-              <ots:Distance/>
-            </ots:Cost>
-		</ots:ShortestRoute>
+    <ots:ShortestRoute Id="EW" GtuType="NL.CAR">
+      <ots:From>TRE</ots:From>
+      <ots:To>TRW</ots:To>
+      <ots:Cost>
+        <ots:Distance />
+      </ots:Cost>
+    </ots:ShortestRoute>
 
-		<ots:ShortestRoute Id="WE" GtuType="NL.CAR">
-            <ots:From>BLW</ots:From>
-            <ots:To>BLE</ots:To>
-			<ots:Cost>
-              <ots:Distance/>
-            </ots:Cost>
-		</ots:ShortestRoute>
+    <ots:ShortestRoute Id="WE" GtuType="NL.CAR">
+      <ots:From>BLW</ots:From>
+      <ots:To>BLE</ots:To>
+      <ots:Cost>
+        <ots:Distance />
+      </ots:Cost>
+    </ots:ShortestRoute>
 
-		<ots:ShortestRoute Id="WS" GtuType="NL.CAR">
-            <ots:From>BLW</ots:From>
-            <ots:To>BLS</ots:To>
-			<ots:Cost>
-              <ots:Distance/>
-            </ots:Cost>
-		</ots:ShortestRoute>
+    <ots:ShortestRoute Id="WS" GtuType="NL.CAR">
+      <ots:From>BLW</ots:From>
+      <ots:To>BLS</ots:To>
+      <ots:Cost>
+        <ots:Distance />
+      </ots:Cost>
+    </ots:ShortestRoute>
 
-		<ots:ShortestRoute Id="SW" GtuType="NL.CAR">
-            <ots:From>TRS</ots:From>
-            <ots:To>TRW</ots:To>
-			<ots:Cost>
-              <ots:Distance/>
-            </ots:Cost>
-		</ots:ShortestRoute>
+    <ots:ShortestRoute Id="SW" GtuType="NL.CAR">
+      <ots:From>TRS</ots:From>
+      <ots:To>TRW</ots:To>
+      <ots:Cost>
+        <ots:Distance />
+      </ots:Cost>
+    </ots:ShortestRoute>
 
-		<ots:ShortestRoute Id="ES" GtuType="NL.CAR">
-            <ots:From>TRE</ots:From>
-            <ots:To>BLS</ots:To>
-			<ots:Cost>
-              <ots:Distance/>
-            </ots:Cost>
-		</ots:ShortestRoute>
+    <ots:ShortestRoute Id="ES" GtuType="NL.CAR">
+      <ots:From>TRE</ots:From>
+      <ots:To>BLS</ots:To>
+      <ots:Cost>
+        <ots:Distance />
+      </ots:Cost>
+    </ots:ShortestRoute>
 
-		<ots:ShortestRoute Id="SE" GtuType="NL.CAR">
-			<ots:From>TRS</ots:From>
-			<ots:To>BLE</ots:To>
-			<ots:Cost>
-              <ots:Distance/>
-            </ots:Cost>
-		</ots:ShortestRoute>
+    <ots:ShortestRoute Id="SE" GtuType="NL.CAR">
+      <ots:From>TRS</ots:From>
+      <ots:To>BLE</ots:To>
+      <ots:Cost>
+        <ots:Distance />
+      </ots:Cost>
+    </ots:ShortestRoute>
 
-		<ots:ShortestRouteMix Id="E" GtuType="NL.CAR">
-			<ots:ShortestRoute Weight="0.4" Id="EW" />
-			<ots:ShortestRoute Weight="0.6" Id="ES" />
-		</ots:ShortestRouteMix>
+    <ots:ShortestRouteMix Id="E" GtuType="NL.CAR">
+      <ots:ShortestRoute Weight="0.4" Id="EW" />
+      <ots:ShortestRoute Weight="0.6" Id="ES" />
+    </ots:ShortestRouteMix>
 
-		<ots:ShortestRouteMix Id="W" GtuType="NL.CAR">
-			<ots:ShortestRoute Weight="0.8" Id="WE" />
-			<ots:ShortestRoute Weight="0.2" Id="WS" />
-		</ots:ShortestRouteMix>
+    <ots:ShortestRouteMix Id="W" GtuType="NL.CAR">
+      <ots:ShortestRoute Weight="0.8" Id="WE" />
+      <ots:ShortestRoute Weight="0.2" Id="WS" />
+    </ots:ShortestRouteMix>
 
-		<ots:ShortestRouteMix Id="S" GtuType="NL.CAR">
-			<ots:ShortestRoute Weight="0.5" Id="SW" />
-			<ots:ShortestRoute Weight="0.5" Id="SE" />
-		</ots:ShortestRouteMix>
+    <ots:ShortestRouteMix Id="S" GtuType="NL.CAR">
+      <ots:ShortestRoute Weight="0.5" Id="SW" />
+      <ots:ShortestRoute Weight="0.5" Id="SE" />
+    </ots:ShortestRouteMix>
 
-		<ots:Generator Link="EE3" Lane="LANE" Position="10m">
-			<ots:GtuTemplate>CAR</ots:GtuTemplate>
-			<ots:ShortestRouteMix>E</ots:ShortestRouteMix>
-			<ots:Frequency>15/min</ots:Frequency>
-			<ots:RoomChecker><ots:Cf/></ots:RoomChecker>
-		</ots:Generator>
-		<ots:Generator Link="SSC" Lane="LANE" Position="10m">
-			<ots:GtuTemplate>CAR</ots:GtuTemplate>
-			<ots:ShortestRouteMix>S</ots:ShortestRouteMix>
-			<ots:Frequency>6/min</ots:Frequency>
-			<ots:RoomChecker><ots:Cf/></ots:RoomChecker>
-		</ots:Generator>
-		<ots:Generator Link="WWC" Lane="LANE" Position="10m">
-			<ots:GtuTemplate>CAR</ots:GtuTemplate>
-			<ots:ShortestRouteMix>W</ots:ShortestRouteMix>
-			<ots:Frequency>6/min</ots:Frequency>
-			<ots:RoomChecker><ots:Cf/></ots:RoomChecker>
-		</ots:Generator>
+    <ots:Generator Link="EE3" Lane="LANE" Position="10m">
+      <ots:GtuTemplate>CAR</ots:GtuTemplate>
+      <ots:ShortestRouteMix>E</ots:ShortestRouteMix>
+      <ots:Frequency>15/min</ots:Frequency>
+      <ots:RoomChecker>
+        <ots:Cf />
+      </ots:RoomChecker>
+    </ots:Generator>
+    <ots:Generator Link="SSC" Lane="LANE" Position="10m">
+      <ots:GtuTemplate>CAR</ots:GtuTemplate>
+      <ots:ShortestRouteMix>S</ots:ShortestRouteMix>
+      <ots:Frequency>6/min</ots:Frequency>
+      <ots:RoomChecker>
+        <ots:Cf />
+      </ots:RoomChecker>
+    </ots:Generator>
+    <ots:Generator Link="WWC" Lane="LANE" Position="10m">
+      <ots:GtuTemplate>CAR</ots:GtuTemplate>
+      <ots:ShortestRouteMix>W</ots:ShortestRouteMix>
+      <ots:Frequency>6/min</ots:Frequency>
+      <ots:RoomChecker>
+        <ots:Cf />
+      </ots:RoomChecker>
+    </ots:Generator>
 
-		<ots:Sink Type="NL.ROAD_USERS" Link="ECE" Position="END-20m" Lane="LANE" />
-		<ots:Sink Type="NL.ROAD_USERS" Link="SCS" Position="END-20m" Lane="LANE" />
-		<ots:Sink Type="NL.ROAD_USERS" Link="WCW" Position="END-20m" Lane="LANE" />
+    <ots:Sink Type="NL.ROAD_USERS" Link="ECE" Position="END-20m" Lane="LANE" />
+    <ots:Sink Type="NL.ROAD_USERS" Link="SCS" Position="END-20m" Lane="LANE" />
+    <ots:Sink Type="NL.ROAD_USERS" Link="WCW" Position="END-20m" Lane="LANE" />
 
-	</ots:Demand>
+  </ots:Demand>
 
-	<ots:Run>
-		<ots:RunLength>1h</ots:RunLength>
-		<ots:RandomStreams>
-			<ots:RandomStream Id="default">
-				<ots:Replication Id="1" Seed="1" />
-			</ots:RandomStream>
-			<ots:RandomStream Id="generation">
-				<ots:Replication Id="1" Seed="1" />
-			</ots:RandomStream>
-		</ots:RandomStreams>
-	</ots:Run>
+  <ots:Run>
+    <ots:RunLength>1h</ots:RunLength>
+    <ots:RandomStreams>
+      <ots:RandomStream Id="default">
+        <ots:Replication Id="1" Seed="1" />
+      </ots:RandomStream>
+      <ots:RandomStream Id="generation">
+        <ots:Replication Id="1" Seed="1" />
+      </ots:RandomStream>
+    </ots:RandomStreams>
+  </ots:Run>
 
-	<ots:Animation>
-		<ots:Defaults>
-			<ots:Shoulder Color="RGB(0,128,0)" />
-		</ots:Defaults>
-	</ots:Animation>
+  <ots:Animation>
+    <ots:Defaults>
+      <ots:Shoulder Color="RGB(0,128,0)" />
+    </ots:Defaults>
+  </ots:Animation>
 
 </ots:Ots>

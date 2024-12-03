@@ -53,10 +53,11 @@ public class Stripe extends CrossSectionElement
     }
 
     /**
-     * Add lateral permeability for a GTU type. This overrules permeability based on the stripe type, and those set regardless
-     * of GTU type. Add NONE to prevent lane changes. Add LEFT or RIGHT, or both in two calls, to enable lane changes.
-     * @param gtuType GTU type to add permeability for.
-     * @param lateralDirection direction to add compared to the direction of the design line.
+     * Add lateral permeability for a GTU type. This overrules overall stripe permeability. Add NONE to prevent lane changes.
+     * Add both LEFT and RIGHT in two calls, to enable lane changes. Add LEFT or RIGHT to enable one direction while prohibiting
+     * the other.
+     * @param gtuType GTU type to add permeability for
+     * @param lateralDirection direction to add compared to the direction of the design line
      */
     public void addPermeability(final GtuType gtuType, final LateralDirectionality lateralDirection)
     {
@@ -150,81 +151,6 @@ public class Stripe extends CrossSectionElement
     public String toString()
     {
         return "Stripe [id=" + this.getFullId() + "]";
-    }
-
-    /**
-     * Stripe type defines the default permeability, width and elements.
-     * @param id id
-     * @param left left lane change allowed by default
-     * @param right right lane change allowed by default
-     * @param width default width
-     * @param elements list of default elements
-     */
-    public record StripeType(String id, boolean left, boolean right, Length width, List<StripeElement> elements)
-            implements Type<StripeType>, Identifiable
-    {
-
-        /** Standard width. */
-        private static final Length WIDTH = Length.instantiateSI(0.2);
-
-        /** Single solid line. */
-        public static final StripeType SOLID =
-                new StripeType("SOLID", false, false, WIDTH, List.of(StripeElement.continuous(WIDTH, Color.WHITE)));
-
-        /** Line |¦ allow to go to left, but not to right. */
-        public static final StripeType LEFT = new StripeType("LEFT", true, false, WIDTH.times(3.0),
-                List.of(StripeElement.continuous(WIDTH, Color.WHITE), StripeElement.gap(WIDTH),
-                        StripeElement.dashed(WIDTH, Color.WHITE, new LengthVector(new double[] {9, 3}))));
-
-        /** Line ¦| allow to go to right, but not to left. */
-        public static final StripeType RIGHT = new StripeType("RIGHT", false, true, Length.instantiateSI(0.6),
-                List.of(StripeElement.dashed(WIDTH, Color.WHITE, new LengthVector(new double[] {9, 3})),
-                        StripeElement.gap(WIDTH), StripeElement.continuous(WIDTH, Color.WHITE)));
-
-        /** Dashes ¦ allow to cross in both directions. */
-        public static final StripeType DASHED = new StripeType("DASHED", true, true, Length.instantiateSI(0.2),
-                List.of(StripeElement.dashed(WIDTH, Color.WHITE, new LengthVector(new double[] {9, 3}))));
-
-        /** Double solid line ||, don't cross. */
-        public static final StripeType DOUBLE_SOLID = new StripeType("DOUBLE_SOLID", false, false, Length.instantiateSI(0.6),
-                List.of(StripeElement.continuous(WIDTH, Color.WHITE), StripeElement.gap(WIDTH),
-                        StripeElement.continuous(WIDTH, Color.WHITE)));
-
-        /** Double dashed line ¦¦, cross. */
-        public static final StripeType DOUBLE_DASH = new StripeType("DOUBLE_DASHED", true, true, Length.instantiateSI(0.6),
-                List.of(StripeElement.dashed(WIDTH, Color.WHITE, new LengthVector(new double[] {9, 3})),
-                        StripeElement.gap(WIDTH),
-                        StripeElement.dashed(WIDTH, Color.WHITE, new LengthVector(new double[] {9, 3}))));
-
-        /** Block : allow to cross in both directions. */
-        public static final StripeType BLOCK = new StripeType("BLOCK", true, true, WIDTH.times(2.0),
-                List.of(StripeElement.dashed(WIDTH.times(2.0), Color.WHITE, new LengthVector(new double[] {3, 1}))));
-
-        @Override
-        public String getId()
-        {
-            return this.id;
-        }
-
-        @Override
-        public int hashCode()
-        {
-            return Objects.hash(this.id);
-        }
-
-        @Override
-        @SuppressWarnings("needbraces")
-        public boolean equals(final Object obj)
-        {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            StripeType other = (StripeType) obj;
-            return Objects.equals(this.id, other.id);
-        }
     }
 
 }

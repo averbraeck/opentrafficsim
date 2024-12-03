@@ -11,6 +11,11 @@
         <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_linktypes.xml"/>
       </xi:fallback>
     </xi:include>
+    <xi:include href="../xsd/defaults/default_stripetypes.xml">
+      <xi:fallback>
+        <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_stripetypes.xml"/>
+      </xi:fallback>
+    </xi:include>
     <xi:include href="../xsd/defaults/default_lanetypes.xml">
       <xi:fallback>
         <xi:include href="../../../../../ots-xml/src/main/resources/xsd/defaults/default_lanetypes.xml"/>
@@ -47,7 +52,7 @@
     </ots:LaneTypes>
     <ots:RoadLayouts>
       <ots:RoadLayout Id="RIGHT" LinkType="URBAN">
-        <ots:Shoulder LaneType="URBAN">
+        <ots:Shoulder>
           <ots:CenterOffset>-2.75m</ots:CenterOffset>
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
@@ -55,13 +60,13 @@
           <ots:CenterOffset>0.0m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Shoulder LaneType="URBAN">
+        <ots:Shoulder>
           <ots:CenterOffset>2.75m</ots:CenterOffset>
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
       </ots:RoadLayout>
       <ots:RoadLayout Id="RIGHT2" LinkType="URBAN">
-        <ots:Shoulder LaneType="URBAN">
+        <ots:Shoulder>
           <ots:CenterOffset>-2.75m</ots:CenterOffset>
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
@@ -69,20 +74,21 @@
           <ots:CenterOffset>0.0m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Type="DASHED">
+        <ots:Stripe>
           <ots:CenterOffset>2.75m</ots:CenterOffset>
+          <ots:DefinedStripe>NL.DASHED</ots:DefinedStripe>
         </ots:Stripe>
         <ots:Lane Id="TURNLANE" LaneType="URBAN">
           <ots:CenterOffset>3.5m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Shoulder LaneType="URBAN">
+        <ots:Shoulder>
           <ots:CenterOffset>6.25m</ots:CenterOffset>
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
       </ots:RoadLayout>
       <ots:RoadLayout Id="RIGHT2TAPER" LinkType="URBAN">
-        <ots:Shoulder LaneType="URBAN">
+        <ots:Shoulder>
           <ots:CenterOffset>-2.75m</ots:CenterOffset>
           <ots:Width>2m</ots:Width>
         </ots:Shoulder>
@@ -90,15 +96,16 @@
           <ots:CenterOffset>0.0m</ots:CenterOffset>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Stripe Type="DASHED">
+        <ots:Stripe>
           <ots:CenterOffset>1.75m</ots:CenterOffset>
+          <ots:DefinedStripe>NL.DASHED</ots:DefinedStripe>
         </ots:Stripe>
         <ots:Lane Id="TURNLANE" LaneType="URBAN">
           <ots:CenterOffsetStart>0.0m</ots:CenterOffsetStart>
           <ots:CenterOffsetEnd>3.5m</ots:CenterOffsetEnd>
           <ots:Width>3.5m</ots:Width>
         </ots:Lane>
-        <ots:Shoulder LaneType="URBAN">
+        <ots:Shoulder>
           <ots:CenterOffsetStart>2.75m</ots:CenterOffsetStart>
           <ots:CenterOffsetEnd>6.25m</ots:CenterOffsetEnd>
           <ots:Width>2m</ots:Width>

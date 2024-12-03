@@ -45,7 +45,7 @@
       <xsd:field xpath="@Id" />
     </xsd:key>
 
-    <!-- :GtuTemplates.GtuTemplate.Id key -->
+    <!-- GtuTemplates.GtuTemplate.Id key -->
     <xsd:key name="gtuTemplateKey">
       <xsd:selector xpath=".//ots:GtuTemplates/ots:GtuTemplate|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
@@ -57,6 +57,12 @@
       <xsd:field xpath="@Id" />
     </xsd:key>
 
+    <!-- StripeTypes.StripeType.Id key -->
+    <xsd:key name="stripeTypeKey">
+      <xsd:selector xpath=".//ots:StripeTypes/ots:StripeType|.//ots:DefaultInputParameters/ots:String" />
+      <xsd:field xpath="@Id" />
+    </xsd:key>
+    
     <!-- LaneTypes.LaneType.Id key -->
     <xsd:key name="laneTypeKey">
       <xsd:selector xpath=".//ots:LaneTypes/ots:LaneType|.//ots:DefaultInputParameters/ots:String" />
@@ -241,7 +247,7 @@
       <xsd:selector xpath="ots:Demand/ots:GtuTemplateMix|.//ots:DefaultInputParameters/ots:String" />
       <xsd:field xpath="@Id" />
     </xsd:key>
-    
+
     <!-- Demand.InjectionGenerator.Arrivals.Arrival.Id unique -->
     <xsd:unique name="arrivalGtuIdUnique">
       <xsd:selector xpath="ots:Demand/ots:InjectionGenerator/ots:Arrivals/ots:Arrival" />
@@ -331,15 +337,15 @@
       <xsd:field xpath="@GtuType" />
     </xsd:keyref>
 
+    <!-- RoadLayout.Stripe.DefinedStripe = StripeType.Id -->
+    <xsd:keyref name="stripeStripeTypeRef" refer="ots:stripeTypeKey">
+      <xsd:selector xpath=".//ots:RoadLayout/ots:Stripe" />
+      <xsd:field xpath="ots:DefinedStripe" />
+    </xsd:keyref>
+
     <!-- RoadLayout.Lane.LaneType = LaneType.Id -->
     <xsd:keyref name="laneLaneTypeRef" refer="ots:laneTypeKey">
       <xsd:selector xpath=".//ots:RoadLayout/ots:Lane" />
-      <xsd:field xpath="@LaneType" />
-    </xsd:keyref>
-    
-    <!-- RoadLayout.Shoulder.LaneType = LaneType.Id -->
-    <xsd:keyref name="shoulderLaneTypeRef" refer="ots:laneTypeKey">
-      <xsd:selector xpath=".//ots:RoadLayout/ots:Shoulder" />
       <xsd:field xpath="@LaneType" />
     </xsd:keyref>
 
@@ -557,31 +563,31 @@
       <xsd:selector xpath="ots:Demand/ots:InjectionGenerator/ots:GtuCharacteristics/ots:ShortestRouteMix" />
       <xsd:field xpath="." />
     </xsd:keyref>
-    
+
     <!-- Demand.InjectionGenerator.Arrivals.Arrival.GtuType = GtuType.Id -->
     <xsd:keyref name="arrivalGtuTypeIdRef" refer="ots:gtuTypeKey">
       <xsd:selector xpath="ots:Demand/ots:InjectionGenerator/ots:Arrivals/ots:Arrival" />
       <xsd:field xpath="@GtuType" />
     </xsd:keyref>
-    
+
     <!-- Demand.InjectionGenerator.Arrivals.Arrival.Link = Link.Id -->
     <xsd:keyref name="arrivalLinkIdRef" refer="ots:linkKey">
       <xsd:selector xpath="ots:Demand/ots:InjectionGenerator/ots:Arrivals/ots:Arrival" />
       <xsd:field xpath="@Link" />
     </xsd:keyref>
-    
+
     <!-- Demand.InjectionGenerator.Arrivals.Arrival.Route = Route.Id -->
     <xsd:keyref name="arrivalRouteIdRef" refer="ots:routeKey">
       <xsd:selector xpath="ots:Demand/ots:InjectionGenerator/ots:Arrivals/ots:Arrival" />
       <xsd:field xpath="@Route" />
     </xsd:keyref>
-    
+
     <!-- Demand.InjectionGenerator.Arrivals.Arrival.Origin = Node.Id -->
     <xsd:keyref name="arrivalOriginIdRef" refer="ots:nodeKey">
       <xsd:selector xpath="ots:Demand/ots:InjectionGenerator/ots:Arrivals/ots:Arrival" />
       <xsd:field xpath="@Origin" />
     </xsd:keyref>
-    
+
     <!-- Demand.InjectionGenerator.Arrivals.Arrival.Destination = Node.Id -->
     <xsd:keyref name="arrivalDestinationIdRef" refer="ots:nodeKey">
       <xsd:selector xpath="ots:Demand/ots:InjectionGenerator/ots:Arrivals/ots:Arrival" />

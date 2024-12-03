@@ -597,7 +597,6 @@ public class Schema
             List<Node> elements = getSelectedElements(context, node);
             if (elements.isEmpty())
             {
-                elements = getSelectedElements(context, node);
                 System.out.println("Keyref " + keyref + " (" + getXpath(node) + ") not found among elements.");
             }
             else
@@ -610,20 +609,7 @@ public class Schema
                         boolean found = false;
                         for (String xpathField : xpathFieldString.split("\\|"))
                         {
-                            if (xpathField.startsWith("@"))
-                            {
-                                xpathField = xpathField.substring(1); // removes '@'
-                                if (hasElementAttribute(selected, xpathField))
-                                {
-                                    found = true;
-
-                                }
-                            }
-                            else if (selected.getNodeName().equals("xsd:simpleType") // value is assumed given in element
-                                    || selected.getNodeName().equals("xsd:element"))
-                            {
-                                found = true;
-                            }
+                            found = followXPath(selected, xpathField);
                         }
                         if (!found)
                         {
@@ -634,6 +620,63 @@ public class Schema
                 }
             }
         }
+    }
+
+    /**
+     * Follows to xpath recursively to find a referred element.
+     * @param selected current node from which xpath is relative
+     * @param xpath xpath
+     * @return whether the element was found
+     */
+    private boolean followXPath(final Node selected, final String xpath)
+    {
+        if (xpath.startsWith("@"))
+        {
+            String xpathField = xpath.substring(1); // removes '@'
+            return hasElementAttribute(selected, xpathField);
+        }
+        if (xpath.equals(".")
+                && (selected.getNodeName().equals("xsd:simpleType") || selected.getNodeName().equals("xsd:element")))
+        {
+            return true; // value is in element
+        }
+        int index = xpath.indexOf("/");
+        String name = index < 0 ? xpath : xpath.substring(0, index);
+        String remainder = index < 0 ? null : xpath.substring(index);
+        name = name.replace("ots:", "");
+        boolean found = false;
+        if (name.equals(DocumentReader.getAttribute(selected, "name")))
+        {
+            found = true;
+        }
+        else if (selected.getNodeName().equals("xsd:complexType") || selected.getNodeName().equals("xsd:sequence")
+                || selected.getNodeName().equals("xsd:choice") || selected.getNodeName().equals("xsd:all")
+                || selected.getNodeName().equals("xsd:element"))
+        {
+            for (int i = 0; i < selected.getChildNodes().getLength() && !found; i++)
+            {
+                Node child = selected.getChildNodes().item(i);
+                if (selected.getNodeName().equals("xsd:complexType") || selected.getNodeName().equals("xsd:sequence")
+                        || selected.getNodeName().equals("xsd:choice") || selected.getNodeName().equals("xsd:all")
+                        || selected.getNodeName().equals("xsd:element"))
+                {
+                    found = followXPath(child, name);
+                }
+            }
+        }
+        if (found && remainder != null)
+        {
+            for (int i = 0; i < selected.getChildNodes().getLength() && !found; i++)
+            {
+                Node child = selected.getChildNodes().item(i);
+                if (selected.getNodeName().equals("xsd:simpleType") || selected.getNodeName().equals("xsd:complexType")
+                        || selected.getNodeName().equals("xsd:element"))
+                {
+                    found = followXPath(child, remainder);
+                }
+            }
+        }
+        return found;
     }
 
     /**

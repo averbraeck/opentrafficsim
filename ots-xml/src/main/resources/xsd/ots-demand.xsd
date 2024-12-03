@@ -340,17 +340,21 @@
             <xsd:sequence>
               <xsd:element name="Arrival" minOccurs="0" maxOccurs="unbounded">
                 <xsd:complexType>
+                  <xsd:annotation>
+                    <xsd:documentation source="description">The value column is the arrival time.</xsd:documentation>
+                  </xsd:annotation>
                   <xsd:simpleContent>
                     <xsd:extension base="ots:PositiveDurationType"> <!-- this is the arrival time -->
                       <xsd:attribute name="Id" type="ots:string" />
-                      <xsd:attribute name="Speed" type="ots:SpeedType" />
+                      <xsd:attribute name="GtuType" type="ots:string" />
+                      <xsd:attribute name="Speed" type="ots:PositiveSpeedType" />
                       <xsd:attribute name="Link" type="ots:string" />
                       <xsd:attribute name="Lane" type="ots:string" />
-                      <xsd:attribute name="Position" type="ots:string" />
-                      <xsd:attribute name="Length" type="ots:LengthType" />
-                      <xsd:attribute name="Width" type="ots:LengthType" />
-                      <xsd:attribute name="Front" type="ots:LengthType" />
-                      <xsd:attribute name="MaxSpeed" type="ots:SpeedType" />
+                      <xsd:attribute name="Position" type="ots:PositiveLengthType" />
+                      <xsd:attribute name="Length" type="ots:PositiveLengthType" />
+                      <xsd:attribute name="Width" type="ots:PositiveLengthType" />
+                      <xsd:attribute name="Front" type="ots:PositiveLengthType" />
+                      <xsd:attribute name="MaxSpeed" type="ots:PositiveSpeedType" />
                       <xsd:attribute name="MaxAcceleration" type="ots:PositiveAccelerationType" />
                       <xsd:attribute name="MaxDeceleration" type="ots:PositiveAccelerationType" />
                       <xsd:attribute name="Route" type="ots:string" />
@@ -404,7 +408,7 @@
 
     <!-- Demand.Generator.{Link|Lane} key -->
     <xsd:key name="generatorLinkLaneKey">
-      <xsd:selector xpath="ots:Generator|ots:ListGenerator" />
+      <xsd:selector xpath="ots:Generator" />
       <xsd:field xpath="@Link" />
       <xsd:field xpath="@Lane" />
     </xsd:key>
