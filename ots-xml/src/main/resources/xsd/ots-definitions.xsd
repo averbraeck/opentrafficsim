@@ -301,10 +301,10 @@
       <xsd:sequence>
         <xsd:element name="Elements" type="ots:StripeElements" />
         <xsd:element name="DashOffset" type="ots:DashOffset" minOccurs="0" />
-        <xsd:element name="LateralSync" type="ots:LateralSync" minOccurs="0" />
       </xsd:sequence>
       <xsd:attribute name="LeftChangeLane" type="ots:boolean" use="required" />
       <xsd:attribute name="RightChangeLane" type="ots:boolean" use="required" />
+      <xsd:attribute name="LateralSync" type="ots:LateralSync" />
       <xsd:attribute name="Id" type="ots:IdType" use="required" />
       <xsd:attribute name="Default" type="xsd:boolean" default="false" />
     </xsd:complexType>
@@ -352,11 +352,11 @@
             <xsd:sequence>
               <xsd:element name="Elements" type="ots:StripeElements" />
               <xsd:element name="DashOffset" type="ots:DashOffset" minOccurs="0" />
-              <xsd:element name="LateralSync" type="ots:LateralSync" minOccurs="0" />
               <xsd:element name="Compatibility" type="ots:StripeCompatibility" minOccurs="0" maxOccurs="unbounded" />
             </xsd:sequence>
             <xsd:attribute name="LeftChangeLane" type="ots:boolean" use="required" />
             <xsd:attribute name="RightChangeLane" type="ots:boolean" use="required" />
+            <xsd:attribute name="LateralSync" type="ots:LateralSync" />
           </xsd:complexType>
         </xsd:element>
       </xsd:choice>
