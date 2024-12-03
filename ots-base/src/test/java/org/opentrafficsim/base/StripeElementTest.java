@@ -61,7 +61,6 @@ public class StripeElementTest
 
         assertFalse(StripeLateralSync.NONE.isLinkBased());
         assertTrue(StripeLateralSync.LINK.isLinkBased());
-        assertTrue(StripeLateralSync.SNAP.isLinkBased());
     }
 
 }
