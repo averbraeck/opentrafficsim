@@ -193,6 +193,20 @@ public class StripeData
         }
         return gcd / 10000.0;
     }
+    
+    /**
+     * Returns the width, which is the sum of stripe elements.
+     * @return width
+     */
+    public Length getWidth()
+    {
+        Length width = Length.ZERO;
+        for (StripeElement element : getElements())
+        {
+            width = width.plus(element.width());
+        }
+        return width;
+    }
 
     /**
      * Method of stripe phase synchronization.

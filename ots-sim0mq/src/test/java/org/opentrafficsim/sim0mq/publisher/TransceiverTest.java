@@ -55,7 +55,6 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Stripe;
-import org.opentrafficsim.road.network.lane.Stripe.StripeType;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 import org.sim0mq.Sim0MQException;
 
@@ -331,7 +330,7 @@ public class TransceiverTest
         Lane lane = LaneGeometryUtil.createStraightLane(link, "lane", Length.ZERO, new Length(3, LengthUnit.METER), laneType,
                 Map.of(DefaultsNl.VEHICLE, new Speed(50, SpeedUnit.KM_PER_HOUR)));
         Length width = new Length(20, LengthUnit.DECIMETER);
-        Stripe stripe = LaneGeometryUtil.createStraightStripe(StripeType.DASHED, "1", link, Length.ZERO, width);
+        Stripe stripe = LaneGeometryUtil.createStraightStripe(DefaultsRoadNl.DASHED, "1", link, Length.ZERO, width);
         String stripeId = stripe.getId();
 
         LinkGtuIdTransceiver linkgit = new LinkGtuIdTransceiver(network);

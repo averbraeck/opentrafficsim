@@ -41,7 +41,6 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
 import org.opentrafficsim.road.network.lane.LaneType;
 import org.opentrafficsim.road.network.lane.Stripe;
-import org.opentrafficsim.road.network.lane.Stripe.StripeType;
 import org.opentrafficsim.road.network.lane.StripeData;
 import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
@@ -180,7 +179,7 @@ public final class LaneFactory
         this.laneWidth0 = laneWidth.neg();
         this.laneType0 = laneType;
         this.speedLimit0 = speedLimit;
-        Length width = StripeType.SOLID.width();
+        Length width = DefaultsRoadNl.SOLID.getWidth();
         Length offsetStripe = this.offset.plus(this.offsetStart);
         ContinuousDoubleFunction offsetFunc = FractionalLengthData.of(0.0, offsetStripe.si, 1.0, offsetStripe.si);
         ContinuousDoubleFunction widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
@@ -206,7 +205,7 @@ public final class LaneFactory
         this.laneWidth0 = laneWidth;
         this.laneType0 = laneType;
         this.speedLimit0 = speedLimit;
-        Length width = StripeType.SOLID.width();
+        Length width = DefaultsRoadNl.SOLID.getWidth();
         Length offsetStripe = this.offset.plus(this.offsetStart);
         ContinuousDoubleFunction offsetFunc = FractionalLengthData.of(0.0, offsetStripe.si, 1.0, offsetStripe.si);
         ContinuousDoubleFunction widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
@@ -247,7 +246,7 @@ public final class LaneFactory
      * @param types type per lane pair, for N lanes N-1 should be provided
      * @return this LaneFactory this lane factory for method chaining
      */
-    public LaneFactory addLanes(final StripeType... types)
+    public LaneFactory addLanes(final StripeData... types)
     {
         return addLanes(new ArrayList<>(), types);
     }
@@ -262,13 +261,13 @@ public final class LaneFactory
      * @param types type per lane pair, for N lanes N-1 should be provided
      * @return this LaneFactory this lane factory for method chaining
      */
-    public LaneFactory addLanes(final List<? super Stripe> stripeList, final StripeType... types)
+    public LaneFactory addLanes(final List<? super Stripe> stripeList, final StripeData... types)
     {
         stripeList.add(this.firstStripe);
-        List<StripeType> typeList = new ArrayList<>(Arrays.asList(types));
-        typeList.add(StripeType.SOLID);
-        OfInt idStream = IntStream.rangeClosed(2, typeList.size()).iterator();
-        for (StripeType type : typeList)
+        List<StripeData> typeList = new ArrayList<>(Arrays.asList(types));
+        typeList.add(DefaultsRoadNl.SOLID);
+        OfInt idStream = IntStream.rangeClosed(2, typeList.size() + 1).iterator();
+        for (StripeData type : typeList)
         {
             Length startOffset = this.offset.plus(this.laneWidth0.times(0.5)).plus(this.offsetStart);
             Length endOffset = this.offset.plus(this.laneWidth0.times(0.5)).plus(this.offsetEnd);
@@ -282,14 +281,13 @@ public final class LaneFactory
                     Map.of(this.gtuType, this.speedLimit0)), "Unexpected exception while building link."));
             this.offset = this.offset.plus(this.laneWidth0);
 
-            Length width = type.width();
+            Length width = type.getWidth();
             startOffset = this.offset.plus(this.offsetStart);
             endOffset = this.offset.plus(this.offsetEnd);
             ContinuousDoubleFunction offsetFunc2 = FractionalLengthData.of(0.0, startOffset.si, 1.0, endOffset.si);
             ContinuousDoubleFunction widthFunc2 = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
-            StripeData stripeData = new StripeData(type.elements(), type.left(), type.right());
             stripeList.add(Try.assign(
-                    () -> new Stripe("" + idStream.nextInt(), stripeData, this.link,
+                    () -> new Stripe("" + idStream.nextInt(), type, this.link,
                             CrossSectionGeometry.of(this.line, SEGMENTS, offsetFunc2, widthFunc2)),
                     "Unexpected exception while building link."));
         }
