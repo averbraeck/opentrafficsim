@@ -180,8 +180,9 @@ public final class LaneFactory
         this.laneType0 = laneType;
         this.speedLimit0 = speedLimit;
         Length width = DefaultsRoadNl.SOLID.getWidth();
-        Length offsetStripe = this.offset.plus(this.offsetStart);
-        ContinuousDoubleFunction offsetFunc = FractionalLengthData.of(0.0, offsetStripe.si, 1.0, offsetStripe.si);
+        Length offsetStripeStart = this.offset.plus(this.offsetStart);
+        Length offsetStripeEnd = this.offset.plus(this.offsetEnd);
+        ContinuousDoubleFunction offsetFunc = FractionalLengthData.of(0.0, offsetStripeStart.si, 1.0, offsetStripeEnd.si);
         ContinuousDoubleFunction widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
         this.firstStripe = Try.assign(
                 () -> new Stripe("1", DefaultsRoadNl.SOLID, this.link,
@@ -206,8 +207,9 @@ public final class LaneFactory
         this.laneType0 = laneType;
         this.speedLimit0 = speedLimit;
         Length width = DefaultsRoadNl.SOLID.getWidth();
-        Length offsetStripe = this.offset.plus(this.offsetStart);
-        ContinuousDoubleFunction offsetFunc = FractionalLengthData.of(0.0, offsetStripe.si, 1.0, offsetStripe.si);
+        Length offsetStripeStart = this.offset.plus(this.offsetStart);
+        Length offsetStripeEnd = this.offset.plus(this.offsetEnd);
+        ContinuousDoubleFunction offsetFunc = FractionalLengthData.of(0.0, offsetStripeStart.si, 1.0, offsetStripeEnd.si);
         ContinuousDoubleFunction widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
         this.firstStripe = Try.assign(
                 () -> new Stripe("1", DefaultsRoadNl.SOLID, this.link,
