@@ -36,13 +36,60 @@
           </bindingIncludes>
           <generateDirectory>src/main/java</generateDirectory>
           <generatePackage>org.opentrafficsim.opendrive.generated</generatePackage>
-          <markGenerated>true</markGenerated>
+          <markGenerated>false</markGenerated>
+          <noFileHeader>true</noFileHeader>
           <cleanPackageDirectories>true</cleanPackageDirectories>
           <encoding>${project.build.sourceEncoding}</encoding>
+          <verbose>false</verbose>
           <extension>true</extension>
+          <args>
+            <arg>-Xsimplify</arg>
+            <arg>-Xcamelcase</arg>
+          </args>
+          <plugins>
+            <plugin>
+              <groupId>org.jvnet.jaxb</groupId>
+              <artifactId>jaxb-plugins</artifactId>
+              <version>4.0.8</version>
+            </plugin>
+          </plugins>
+        </configuration>
+      </plugin>
+    
+      <plugin>
+        <groupId>com.google.code.maven-replacer-plugin</groupId>
+        <artifactId>replacer</artifactId>
+        <version>${maven-replacer.version}</version>
+        <executions>
+          <execution>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>replace</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <includes>
+            <include>${project.basedir}/src/main/java/org/opentrafficsim/opendrive/generated/*.java</include>
+          </includes>
+          <regex>true</regex>
+          <regexFlags>
+            <regexFlag>MULTILINE</regexFlag>
+          </regexFlags>
+          <replacements>
+            <replacement>
+              <token>^public( abstract)? class </token>
+              <value>@SuppressWarnings("all") public$1 class </value>
+            </replacement>
+            <replacement>
+              <token>^public enum </token>
+              <value>@SuppressWarnings("all") public enum </value>
+            </replacement>
+          </replacements>
         </configuration>
       </plugin>
     </plugins>
+
   </build>
 
   <dependencies>
