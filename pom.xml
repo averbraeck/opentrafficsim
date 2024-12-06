@@ -85,9 +85,7 @@
     <nexus-staging.version>1.7.0</nexus-staging.version>
     <maven.gpg.version>3.2.5</maven.gpg.version>
     <jaxb-maven-plugin.version>4.0.8</jaxb-maven-plugin.version>
-    <maven-jaxb2.version>0.15.3</maven-jaxb2.version>
     <maven-replacer.version>1.5.3</maven-replacer.version>
-    <maven-jaxb2-basics.version>1.11.1</maven-jaxb2-basics.version>
     <jetty.version>11.0.24</jetty.version>
   </properties>
 
