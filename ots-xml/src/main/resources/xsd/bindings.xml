@@ -136,7 +136,7 @@
       <simplify:as-element-property />
     </jaxb:bindings>
     <jaxb:bindings
-      node="//xsd:element[@name='StripeOverride']/xsd:complexType/xsd:sequence/xsd:element[@name='LateralSync']">
+      node="//xsd:element[@name='StripeOverride']/xsd:complexType/xsd:attribute[@name='LateralSync']">
       <jaxb:property>
         <jaxb:baseType>
           <xjc:javaType name="org.opentrafficsim.xml.bindings.types.StripeLateralSyncType"
@@ -148,7 +148,7 @@
 
   <jaxb:bindings schemaLocation="ots-definitions.xsd">
     <jaxb:bindings
-      node="//xsd:element[@name='StripeType']/xsd:complexType/xsd:sequence/xsd:element[@name='LateralSync']">
+      node="//xsd:element[@name='StripeType']/xsd:complexType/xsd:attribute[@name='LateralSync']">
       <jaxb:property>
         <jaxb:baseType>
           <xjc:javaType name="org.opentrafficsim.xml.bindings.types.StripeLateralSyncType"
@@ -157,7 +157,7 @@
       </jaxb:property>
     </jaxb:bindings>
     <jaxb:bindings
-      node="//xsd:element[@name='Custom']/xsd:complexType/xsd:sequence/xsd:element[@name='LateralSync']">
+      node="//xsd:element[@name='Custom']/xsd:complexType/xsd:attribute[@name='LateralSync']">
       <jaxb:property>
         <jaxb:baseType>
           <xjc:javaType name="org.opentrafficsim.xml.bindings.types.StripeLateralSyncType"

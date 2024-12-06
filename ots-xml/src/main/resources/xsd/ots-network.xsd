@@ -143,7 +143,7 @@
             </xsd:element>
           </xsd:sequence>
         </xsd:choice>
-
+        
         <xsd:element name="TrafficLight" type="ots:TrafficLightType" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element name="TrafficLightSensor" type="ots:TrafficLightDetectorType" minOccurs="0"
           maxOccurs="unbounded" />
@@ -159,6 +159,7 @@
       <xsd:attribute name="LaneKeeping" type="ots:LaneKeepingType" use="optional" default="KEEPRIGHT" />
       <xsd:attribute name="Priority" type="ots:PriorityType" use="optional" />
       <xsd:attribute name="ConflictId" type="ots:string" use="optional" />
+      
     </xsd:complexType>
 
     <!-- Link.TrafficLight.{Id|Lane} key -->
@@ -166,6 +167,12 @@
       <xsd:selector xpath="ots:TrafficLight" />
       <xsd:field xpath="@Id" />
       <xsd:field xpath="@Lane" />
+    </xsd:key>
+    
+    <!-- Link.StripeOverride.Stripe key -->
+    <xsd:key name="linkStripeOverrideKey">
+    <xsd:selector xpath="ots:StripeOverride" />
+      <xsd:field xpath="@Stripe" />
     </xsd:key>
 
   </xsd:element>
