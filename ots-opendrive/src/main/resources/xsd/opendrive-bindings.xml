@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jaxb:bindings xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb" xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ots="http://www.opentrafficsim.org/ots" 
+  xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:version="3.0" jaxb:extensionBindingPrefixes="xjc">
+
+  <jaxb:bindings schemaLocation="opendrive_16_lane.xsd">
+  
+    <jaxb:bindings node="//xs:complexType[@name='t_road_lanes_laneSection_lcr_lane_roadMark']">
+      <jaxb:bindings node=".//xs:complexContent/xs:extension/xs:attribute[@name='type']">
+        <!-- resolve conflict name clash: t_road_lanes_laneSection_lcr_lane_roadMark.type -->
+        <jaxb:property name="roadMarkType">
+          <jaxb:baseType>
+            <!-- also a binding -->
+            <xjc:javaType name="org.opentrafficsim.road.network.lane.Stripe.Type"
+              adapter="org.opentrafficsim.opendrive.bindings.StripeTypeAdapter" />
+          </jaxb:baseType>
+        </jaxb:property>
+      </jaxb:bindings>
+    </jaxb:bindings>
+    
+    <jaxb:bindings node="//xs:complexType[@name='t_road_lanes_laneSection_lr_lane_speed']/xs:complexContent/xs:extension/xs:attribute[@name='unit']">
+      <jaxb:property>
+        <jaxb:baseType>
+          <xjc:javaType name="org.djunits.unit.SpeedUnit"
+            adapter="org.opentrafficsim.opendrive.bindings.SpeedUnitAdapter" />
+        </jaxb:baseType>
+      </jaxb:property>
+    </jaxb:bindings>
+    
+  </jaxb:bindings>
+  
+  <jaxb:bindings schemaLocation="opendrive_16_signal.xsd">
+    
+    <jaxb:bindings node="//xs:complexType[@name='t_road_signals_signal_reference']">
+      <!-- resolve conflict name clash: t_road_signals_signal_reference & t_road_signals_signalReference -->
+      <jaxb:class name="TRoadSignalsSignalReference2" />
+    </jaxb:bindings>
+    
+  </jaxb:bindings>
+  
+  <jaxb:bindings schemaLocation="opendrive_16_road.xsd">
+  
+    <jaxb:bindings node="//xs:complexType[@name='t_road']/xs:complexContent/xs:extension">
+      <jaxb:bindings node=".//xs:attribute[@name='length']">
+        <jaxb:property>
+          <jaxb:baseType>
+            <xjc:javaType name="org.djunits.value.vdouble.scalar.Length"
+              adapter="org.opentrafficsim.opendrive.bindings.LengthAdapter" />
+          </jaxb:baseType>
+        </jaxb:property>
+      </jaxb:bindings>
+      <jaxb:bindings node=".//xs:attribute[@name='rule']">
+        <jaxb:property>
+          <jaxb:baseType>
+            <xjc:javaType name="org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy"
+              adapter="org.opentrafficsim.opendrive.bindings.LaneKeepingPolicyAdapter" />
+          </jaxb:baseType>
+        </jaxb:property>
+      </jaxb:bindings>
+    </jaxb:bindings>
+    
+    <jaxb:bindings node="//xs:complexType[@name='t_road_planView_geometry']/xs:complexContent/xs:extension/xs:attribute[@name='length']">
+      <jaxb:property>
+        <jaxb:baseType>
+          <xjc:javaType name="org.djunits.value.vdouble.scalar.Length"
+            adapter="org.opentrafficsim.opendrive.bindings.LengthAdapter" />
+        </jaxb:baseType>
+      </jaxb:property>
+    </jaxb:bindings>
+    
+    <!-- This is a fix as the element type is defined as string, but should be e_road_link_elementType-->
+    <jaxb:bindings node="//xs:complexType[@name='t_road_link_predecessorSuccessor']/xs:complexContent/xs:extension/xs:attribute[@name='elementType']">
+      <jaxb:property>
+        <jaxb:baseType>
+          <xjc:javaType name="org.opentrafficsim.opendrive.generated.ERoadLinkElementType"
+            adapter="org.opentrafficsim.opendrive.bindings.RoadLinkTypeAdapter" />
+        </jaxb:baseType>
+      </jaxb:property>
+    </jaxb:bindings>
+    
+    <!-- This is a fix as the contact point is defined as string, but should be e_contactPoint -->
+    <jaxb:bindings node="//xs:complexType[@name='t_road_link_predecessorSuccessor']/xs:complexContent/xs:extension/xs:attribute[@name='contactPoint']">
+      <jaxb:property>
+        <jaxb:baseType>
+          <xjc:javaType name="org.opentrafficsim.opendrive.generated.EContactPoint"
+            adapter="org.opentrafficsim.opendrive.bindings.ContactPointAdapter" />
+        </jaxb:baseType>
+      </jaxb:property>
+    </jaxb:bindings>
+    
+  </jaxb:bindings>
+  
+  <jaxb:bindings schemaLocation="opendrive_16_junction.xsd">
+  
+    <!-- This is a fix as the contact point is defined as string, but should be e_contactPoint -->
+    <jaxb:bindings node="//xs:complexType[@name='t_junction_connection']/xs:complexContent/xs:extension/xs:attribute[@name='contactPoint']">
+      <jaxb:property>
+        <jaxb:baseType>
+          <xjc:javaType name="org.opentrafficsim.opendrive.generated.EContactPoint"
+            adapter="org.opentrafficsim.opendrive.bindings.ContactPointAdapter" />
+        </jaxb:baseType>
+      </jaxb:property>
+    </jaxb:bindings>
+    
+  </jaxb:bindings>
+
+</jaxb:bindings>
