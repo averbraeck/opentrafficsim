@@ -16,9 +16,9 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.jvnet.jaxb2.maven2</groupId>
-        <artifactId>maven-jaxb2-plugin</artifactId>
-        <version>${maven-jaxb2.version}</version>
+        <groupId>org.jvnet.jaxb</groupId>
+        <artifactId>jaxb-maven-plugin</artifactId>
+        <version>${jaxb-maven-plugin.version}</version>
         <executions>
           <execution>
             <goals>
@@ -28,37 +28,36 @@
         </executions>
         <configuration>
           <schemaDirectory>src/main/resources/xsd</schemaDirectory>
-          <generateDirectory>src/main/java</generateDirectory>
-          <generatePackage>org.opentrafficsim.xml.generated</generatePackage>
-          <markGenerated>true</markGenerated>
-          <cleanPackageDirectories>true</cleanPackageDirectories>
-          <!-- Next one appears to fix Peter's mojo problem -->
-          <scanDependenciesForBindings>false</scanDependenciesForBindings>
-          <strict>false</strict>
-          <specVersion>2.3</specVersion>
-          <verbose>true</verbose>
-          <extension>true</extension>
-          <!-- -Xsimplify & jaxb2-basics can simplify heterogeneous
-          elements with List<JAXBElement<?>> to a few List<Type> -->
-          <args>
-            <arg>-Xsimplify</arg>
-          </args>
-          <plugins>
-            <plugin>
-              <groupId>org.jvnet.jaxb2_commons</groupId>
-              <artifactId>jaxb2-basics</artifactId>
-              <version>${maven-jaxb2-basics.version}</version>
-            </plugin>
-          </plugins>
-          <bindingDirectory>src/main/resources/xsd</bindingDirectory>
+          <schemaIncludes>
+            <include>*.xsd</include>
+          </schemaIncludes>
           <bindingIncludes>
             <bindingInclude>bindings.xml</bindingInclude>
           </bindingIncludes>
-          <schemaIncludes>
-            <schemaInclude>*.xsd</schemaInclude>
-          </schemaIncludes>
+          <generateDirectory>src/main/java</generateDirectory>
+          <generatePackage>org.opentrafficsim.xml.generated</generatePackage>
+          <markGenerated>false</markGenerated>
+          <noFileHeader>true</noFileHeader>
+          <scanDependenciesForBindings>false</scanDependenciesForBindings>
+          <strict>false</strict>
+          <cleanPackageDirectories>true</cleanPackageDirectories>
+          <encoding>${project.build.sourceEncoding}</encoding>
+          <verbose>false</verbose>
+          <extension>true</extension>
+          <args>
+            <arg>-Xsimplify</arg>
+            <arg>-Xcamelcase</arg>
+          </args>
+          <plugins>
+            <plugin>
+              <groupId>org.jvnet.jaxb</groupId>
+              <artifactId>jaxb-plugins</artifactId>
+              <version>${jaxb-maven-plugin.version}</version>
+            </plugin>
+          </plugins>
         </configuration>
       </plugin>
+      
       <plugin>
         <groupId>com.google.code.maven-replacer-plugin</groupId>
         <artifactId>replacer</artifactId>
@@ -91,6 +90,7 @@
           </replacements>
         </configuration>
       </plugin>
+      
     </plugins>
   </build>
 
@@ -112,14 +112,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.glassfish.jaxb</groupId>
-      <artifactId>jaxb-runtime</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.annotation</groupId>
-      <artifactId>javax.annotation-api</artifactId>
-      <version>1.3.2</version>
+      <groupId>jakarta.xml.bind</groupId>
+      <artifactId>jakarta.xml.bind-api</artifactId>
+      <version>4.0.2</version>
     </dependency>
 
   </dependencies>
