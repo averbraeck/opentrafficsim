@@ -9,8 +9,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.xml.bind.JAXBElement;
-
 import org.djunits.unit.DirectionUnit;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
@@ -96,6 +94,7 @@ import org.opentrafficsim.xml.generated.StripeElements.Line.Dashed;
 import org.opentrafficsim.xml.generated.StripeType;
 import org.opentrafficsim.xml.generated.TrafficLightType;
 
+import jakarta.xml.bind.JAXBElement;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**

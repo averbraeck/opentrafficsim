@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
-import javax.xml.bind.DatatypeConverter;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -45,6 +44,7 @@ import org.opentrafficsim.xml.generated.ResponsiveControlType.Detector;
 import org.opentrafficsim.xml.generated.ResponsiveControlType.Detector.MultipleLane;
 import org.opentrafficsim.xml.generated.ResponsiveControlType.Detector.SingleLane;
 
+import jakarta.xml.bind.DatatypeConverter;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**

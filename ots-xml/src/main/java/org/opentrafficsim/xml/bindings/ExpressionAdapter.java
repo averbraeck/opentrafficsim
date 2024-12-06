@@ -2,10 +2,10 @@ package org.opentrafficsim.xml.bindings;
 
 import java.util.function.Function;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.xml.bindings.types.ExpressionType;
+
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  * Super class for adapters of expression types. This class performs default marshaling by using the expression, or

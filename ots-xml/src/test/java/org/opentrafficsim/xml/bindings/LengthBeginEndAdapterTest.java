@@ -2,13 +2,13 @@ package org.opentrafficsim.xml.bindings;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import javax.xml.bind.JAXBException;
-
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.xml.bindings.types.LengthBeginEndType;
 import org.opentrafficsim.xml.bindings.types.LengthBeginEndType.LengthBeginEnd;
+
+import jakarta.xml.bind.JAXBException;
 
 /**
  * LengthBeginEndAdapterTest for LengthBeginEnd.

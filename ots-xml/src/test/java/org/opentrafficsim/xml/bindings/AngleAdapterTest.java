@@ -4,12 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Locale;
 
-import javax.xml.bind.JAXBException;
-
 import org.djunits.unit.AngleUnit;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.xml.bindings.types.AngleType;
+
+import jakarta.xml.bind.JAXBException;
 
 /**
  * AngleAdapterTest.java.
