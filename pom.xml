@@ -55,8 +55,9 @@
     <jfreechart.version>1.5.5</jfreechart.version>
     <jgrapht.version>1.5.2</jgrapht.version>
     <xstream.version>1.4.20</xstream.version>
-    <jaxb.version>2.3.1</jaxb.version>
     <jakarta.annotation.version>3.0.0</jakarta.annotation.version>
+    <jaxb.version>4.0.5</jaxb.version>
+    <jakarta.xml.bind-api.version>4.0.2</jakarta.xml.bind-api.version>
     <treetable.version>0.0.2</treetable.version>
 
     <junit.version>5.11.2</junit.version>
@@ -350,9 +351,9 @@
       </dependency>
 
       <dependency>
-        <groupId>javax.xml.bind</groupId>
-        <artifactId>jaxb-api</artifactId>
-        <version>${jaxb.version}</version>
+        <groupId>jakarta.xml.bind</groupId>
+        <artifactId>jakarta.xml.bind-api</artifactId>
+        <version>${jakarta.xml.bind-api.version}</version>
       </dependency>
 
       <dependency>
