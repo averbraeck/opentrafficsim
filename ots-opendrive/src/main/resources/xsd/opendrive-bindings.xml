@@ -12,7 +12,7 @@
         <jaxb:property name="roadMarkType">
           <jaxb:baseType>
             <!-- also a binding -->
-            <xjc:javaType name="org.opentrafficsim.road.network.lane.Stripe.Type"
+            <xjc:javaType name="org.opentrafficsim.opendrive.bindings.Stripe.Type"
               adapter="org.opentrafficsim.opendrive.bindings.StripeTypeAdapter" />
           </jaxb:baseType>
         </jaxb:property>
@@ -53,7 +53,7 @@
       <jaxb:bindings node=".//xs:attribute[@name='rule']">
         <jaxb:property>
           <jaxb:baseType>
-            <xjc:javaType name="org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy"
+            <xjc:javaType name="org.opentrafficsim.opendrive.bindings.LaneKeepingPolicy"
               adapter="org.opentrafficsim.opendrive.bindings.LaneKeepingPolicyAdapter" />
           </jaxb:baseType>
         </jaxb:property>
