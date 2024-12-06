@@ -18,17 +18,17 @@ public class StripeTypeAdapter extends XmlAdapter<ERoadMarkType, Stripe.Type>
             case BOTTS_DOTS:
             case BROKEN:
             case BROKEN_BROKEN:
-                return Type.DASHED;
+                return Stripe.Type.DASHED;
             case BROKEN_SOLID:
-                return Type.RIGHT;
+                return Stripe.Type.RIGHT;
             case CURB:
             case EDGE:
             case SOLID:
-                return Type.SOLID;
+                return Stripe.Type.SOLID;
             case SOLID_BROKEN:
-                return Type.LEFT;
+                return Stripe.Type.LEFT;
             case SOLID_SOLID:
-                return Type.DOUBLE;
+                return Stripe.Type.DOUBLE;
             case CUSTOM:
             case GRASS:
             case NONE:
