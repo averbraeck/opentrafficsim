@@ -38,6 +38,7 @@
           <generatePackage>org.opentrafficsim.opendrive.generated</generatePackage>
           <markGenerated>false</markGenerated>
           <noFileHeader>true</noFileHeader>
+          <episode>false</episode>
           <cleanPackageDirectories>true</cleanPackageDirectories>
           <encoding>${project.build.sourceEncoding}</encoding>
           <verbose>false</verbose>

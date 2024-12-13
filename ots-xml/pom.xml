@@ -38,6 +38,7 @@
           <generatePackage>org.opentrafficsim.xml.generated</generatePackage>
           <markGenerated>false</markGenerated>
           <noFileHeader>true</noFileHeader>
+          <episode>false</episode>
           <scanDependenciesForBindings>false</scanDependenciesForBindings>
           <strict>false</strict>
           <cleanPackageDirectories>true</cleanPackageDirectories>
