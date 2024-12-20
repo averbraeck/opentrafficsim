@@ -231,7 +231,7 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
     /************************************** DETECTOR ***************************************/
     /***************************************************************************************/
 
-    /** Makes a Detector compatible with all road users, e.g. for SinkDetector, DestinationDetector. */
+    /** Makes a Detector compatible with all road users, e.g. for SinkDetector. */
     public static final DetectorType ROAD_USERS = new DetectorType("NL.ROAD_USERS");
 
     /** Makes a Detector compatible with all vehicles, e.g. for loop detectors. */
