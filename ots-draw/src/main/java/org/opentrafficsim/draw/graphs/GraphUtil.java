@@ -46,7 +46,8 @@ public final class GraphUtil
      */
     public static boolean considerTrajectory(final Trajectory<?> trajectory, final Time startTime, final Time endTime)
     {
-        return trajectory.getT(0) < endTime.si && trajectory.getT(trajectory.size() - 1) > startTime.si;
+        return trajectory.size() > 0 && trajectory.getT(0) < endTime.si
+                && trajectory.getT(trajectory.size() - 1) > startTime.si;
     }
 
     /**
@@ -60,7 +61,8 @@ public final class GraphUtil
     public static boolean considerTrajectory(final Trajectory<?> trajectory, final Length startPosition,
             final Length endPosition)
     {
-        return trajectory.getX(0) < startPosition.si && trajectory.getX(trajectory.size() - 1) > endPosition.si;
+        return trajectory.size() > 0 && trajectory.getX(0) < startPosition.si
+                && trajectory.getX(trajectory.size() - 1) > endPosition.si;
     }
 
     /**
