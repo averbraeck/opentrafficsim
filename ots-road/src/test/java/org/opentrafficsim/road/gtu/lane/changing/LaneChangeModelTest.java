@@ -31,6 +31,7 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -162,7 +163,8 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
         GtuType gtuType = DefaultsNl.CAR;
         LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
         int laneCount = 2;
-        this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), this);
+        this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), this,
+                HistoryManagerDevs.noHistory(this.simulator));
         Lane[] lanes = makeMultiLane(this.network, "Road with two lanes",
                 new Node(this.network, "From", new Point2d(0, 0), Direction.ZERO),
                 new Node(this.network, "To", new Point2d(200, 0), Direction.ZERO), laneType, laneCount, this.simulator);

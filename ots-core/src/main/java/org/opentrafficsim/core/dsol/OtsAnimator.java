@@ -8,6 +8,7 @@ import javax.naming.NamingException;
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.perception.HistoryManager;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.DevsRealTimeAnimator;
@@ -50,11 +51,12 @@ public class OtsAnimator extends DevsRealTimeAnimator<Duration> implements OtsAn
 
     @Override
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-            final OtsModelInterface model) throws SimRuntimeException, NamingException
+            final OtsModelInterface model, final HistoryManager historyManager) throws SimRuntimeException, NamingException
     {
         setErrorStrategy(ErrorStrategy.WARN_AND_PAUSE);
         setAnimationDelay(20); // 50 Hz animation update
-        OtsReplication newReplication = new OtsReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength);
+        OtsReplication newReplication =
+                new OtsReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength, historyManager);
         super.initialize(model, newReplication);
     }
 
@@ -65,27 +67,31 @@ public class OtsAnimator extends DevsRealTimeAnimator<Duration> implements OtsAn
      * @param runLength the duration of the simulation
      * @param model the simulation to execute
      * @param streams streams
+     * @param historyManager history manager
      * @throws SimRuntimeException when e.g., warmupPeriod is larger than runLength
      * @throws NamingException when the context for the replication cannot be created
      */
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-            final OtsModelInterface model, final Map<String, StreamInterface> streams)
+            final OtsModelInterface model, final Map<String, StreamInterface> streams, final HistoryManager historyManager)
             throws SimRuntimeException, NamingException
     {
         setErrorStrategy(ErrorStrategy.WARN_AND_PAUSE);
         setAnimationDelay(20); // 50 Hz animation update
-        OtsReplication newReplication = new OtsReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength);
+        OtsReplication newReplication =
+                new OtsReplication("rep" + ++this.lastReplication, startTime, warmupPeriod, runLength, historyManager);
         model.getStreams().putAll(streams);
         super.initialize(model, newReplication);
     }
 
     @Override
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-            final OtsModelInterface model, final int replicationnr) throws SimRuntimeException, NamingException
+            final OtsModelInterface model, final HistoryManager historyManager, final int replicationnr)
+            throws SimRuntimeException, NamingException
     {
         setErrorStrategy(ErrorStrategy.WARN_AND_PAUSE);
         setAnimationDelay(20); // 50 Hz animation update
-        OtsReplication newReplication = new OtsReplication("rep" + replicationnr, startTime, warmupPeriod, runLength);
+        OtsReplication newReplication =
+                new OtsReplication("rep" + replicationnr, startTime, warmupPeriod, runLength, historyManager);
         super.initialize(model, newReplication);
     }
 

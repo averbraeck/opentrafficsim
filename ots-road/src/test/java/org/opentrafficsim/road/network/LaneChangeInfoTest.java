@@ -28,6 +28,7 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -61,7 +62,8 @@ public class LaneChangeInfoTest
         // Preparations
         OtsModelInterface model = Mockito.mock(OtsModelInterface.class);
         OtsSimulatorInterface simulator = new OtsSimulator("Lane change info test");
-        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600), model);
+        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600), model,
+                HistoryManagerDevs.noHistory(simulator));
         RoadNetwork network = new RoadNetwork("Lane change info test network", simulator);
         GtuType car = DefaultsNl.CAR;
 

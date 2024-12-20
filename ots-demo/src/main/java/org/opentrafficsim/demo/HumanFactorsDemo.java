@@ -54,6 +54,7 @@ import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
 import org.opentrafficsim.demo.HumanFactorsDemo.HumanFactorsModel;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
@@ -172,7 +173,8 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
         {
             OtsAnimator simulator = new OtsAnimator("HFDemo");
             final HumanFactorsModel junctionModel = new HumanFactorsModel(simulator);
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), junctionModel);
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), junctionModel,
+                    new HistoryManagerDevs(simulator, Duration.instantiateSI(3.0), Duration.instantiateSI(10.0)));
             // Note some relevant colorers for social interactions and task saturation
             GtuColorer colorer = new SwitchableGtuColorer(0, new FixedColor(Color.BLUE, "Blue"),
                     new SpeedGtuColorer(new Speed(150.0, SpeedUnit.KM_PER_HOUR)),

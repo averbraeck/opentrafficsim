@@ -25,6 +25,7 @@ import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
@@ -128,7 +129,8 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
             Map<String, StreamInterface> map = new LinkedHashMap<>();
             // TODO: This seed is Aimsun specific.
             map.put("generation", new MersenneTwister(6L));
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), xmlModel, map);
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), xmlModel, map,
+                    new HistoryManagerDevs(simulator, Duration.instantiateSI(5.0), Duration.instantiateSI(10.0)));
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(xmlModel.getNetwork().getExtent(), new Dimension(800, 600),
                     simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
             animationPanel.enableSimulationControlButtons();
@@ -175,8 +177,9 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
             this.network = new RoadNetwork(getShortName(), getSimulator());
             try
             {
-                new XmlParser(this.network).setStream(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)))
-                        .build();
+                XmlParser xmlParser = new XmlParser(this.network)
+                        .setStream(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8)));
+                xmlParser.build();
             }
             catch (NetworkException | JAXBException | URISyntaxException | XmlParserException | SAXException
                     | ParserConfigurationException | GtuException | IOException | TrafficControlException exception)

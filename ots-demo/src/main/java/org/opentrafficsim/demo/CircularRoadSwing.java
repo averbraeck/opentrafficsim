@@ -20,6 +20,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.LinkPosition;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.draw.graphs.ContourDataSource;
 import org.opentrafficsim.draw.graphs.ContourPlotAcceleration;
 import org.opentrafficsim.draw.graphs.ContourPlotDensity;
@@ -105,7 +106,8 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
             final CircularRoadModel otsModel = new CircularRoadModel(simulator);
             System.out.println(otsModel.getInputParameterMap());
             TabbedParameterDialog.process(otsModel.getInputParameterMap());
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel);
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel,
+                    HistoryManagerDevs.noHistory(simulator));
             Thread getLocationThread = new Thread()
             {
                 @Override
@@ -256,7 +258,8 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
             // buttonClick.start(); // start the thread that will try to click on the start button
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
-                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel);
+                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel,
+                        HistoryManagerDevs.noHistory(simulator));
                 OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(),
                         new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
                 CircularRoadSwing app = new CircularRoadSwing("Circular Road", animationPanel, otsModel);

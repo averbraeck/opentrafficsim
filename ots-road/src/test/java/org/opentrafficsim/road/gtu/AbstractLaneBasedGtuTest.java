@@ -33,6 +33,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -77,7 +78,8 @@ public class AbstractLaneBasedGtuTest implements UNITS
         OtsSimulatorInterface simulator = new OtsSimulator("abstractLaneBasedGtuTest");
         RoadNetwork network = new RoadNetwork("lane base gtu test network", simulator);
         OtsModelInterface model = new DummyModel(simulator);
-        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), model);
+        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), model,
+                HistoryManagerDevs.noHistory(simulator));
         Node nodeAFrom = new Node(network, "AFrom", new Point2d(0, 0), Direction.ZERO);
         Node nodeATo = new Node(network, "ATo", new Point2d(1000, 0), Direction.ZERO);
         GtuType gtuType = DefaultsNl.CAR;

@@ -34,6 +34,7 @@ import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.Type;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -147,7 +148,7 @@ public class TrafficLightDetectorTest implements EventListener
     // XXX @Test
     public final void trafficLightSensorTest() throws NetworkException, NamingException, SimRuntimeException, GtuException
     {
-        double[][] lengthLists = {{101.1, -1, 1, -1, 1, -900}, {1000}, {-1000}, {101.1, 900}, {101.1, 1, 1, 1, 1, 900},};
+        double[][] lengthLists = {{101.1, -1, 1, -1, 1, -900}, {1000}, {-1000}, {101.1, 900}, {101.1, 1, 1, 1, 1, 900}};
         for (double[] lengthList : lengthLists)
         {
             for (int pos = 50; pos < 130; pos++)
@@ -155,7 +156,8 @@ public class TrafficLightDetectorTest implements EventListener
                 System.out.println("Number of lanes is " + lengthList.length + " pos is " + pos);
                 OtsSimulatorInterface simulator = new OtsSimulator("TrafficLightSensorTest");
                 Model model = new Model(simulator);
-                simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
+                simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model,
+                        HistoryManagerDevs.noHistory(simulator));
                 Lane[] lanes = buildNetwork(lengthList, simulator);
                 RoadNetwork network = (RoadNetwork) lanes[0].getLink().getNetwork();
                 Length a = new Length(100, LengthUnit.METER);

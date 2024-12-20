@@ -24,6 +24,7 @@ import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
@@ -87,6 +88,10 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
     @Option(names = {"-t", "--simulationTime"}, description = "Simulation time (including warm-up time)",
             defaultValue = "3600s")
     private Duration simulationTime;
+
+    /** Simulation time. */
+    @Option(names = {"-h", "--history"}, description = "Guaranteed history time", defaultValue = "0s")
+    private Duration historyTime;
 
     /** Autorun. */
     @Option(names = {"-a", "--autorun"}, description = "Autorun", negatable = true, defaultValue = "false")
@@ -199,7 +204,8 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
             // TODO: wait until simulation control buttons are enabled (indicating that the tabs have been added)
             this.simulator = new OtsSimulator(this.name);
             final ScriptModel scriptModel = new ScriptModel(this.simulator);
-            this.simulator.initialize(this.startTime, this.warmupTime, this.simulationTime, scriptModel);
+            this.simulator.initialize(this.startTime, this.warmupTime, this.simulationTime, scriptModel,
+                    new HistoryManagerDevs(this.simulator, this.historyTime, Duration.instantiateSI(10.0)));
             this.simulator.addListener(this, Replication.END_REPLICATION_EVENT);
             double tReport = 60.0;
             Time t = this.simulator.getSimulatorAbsTime();
@@ -221,7 +227,8 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
         {
             this.simulator = new OtsAnimator(this.name);
             final ScriptModel scriptModel = new ScriptModel(this.simulator);
-            this.simulator.initialize(this.startTime, this.warmupTime, this.simulationTime, scriptModel);
+            this.simulator.initialize(this.startTime, this.warmupTime, this.simulationTime, scriptModel,
+                    new HistoryManagerDevs(this.simulator, this.historyTime, Duration.instantiateSI(10.0)));
             OtsAnimationPanel animationPanel =
                     new OtsAnimationPanel(scriptModel.getNetwork().getExtent(), new Dimension(800, 600),
                             (OtsAnimator) this.simulator, scriptModel, getGtuColorer(), scriptModel.getNetwork());

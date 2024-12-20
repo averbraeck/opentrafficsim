@@ -23,8 +23,9 @@ import org.mockito.stubbing.Answer;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 import org.opentrafficsim.trafficcontrol.FixedTimeController;
@@ -137,7 +138,8 @@ public class TestFixedTimeController
 
         String ftcId = "FTCid";
         OtsSimulatorInterface simulator = new OtsSimulator("TestFixedTimeController");
-        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600), createModelMock());
+        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600), createModelMock(),
+                HistoryManagerDevs.noHistory(simulator));
         Map<String, TrafficLight> trafficLightMap = new LinkedHashMap<String, TrafficLight>();
         String networkId = "networkID";
         trafficLightMap.put(trafficLightId, createTrafficLightMock(trafficLightId, networkId, simulator));
@@ -289,7 +291,8 @@ public class TestFixedTimeController
 
         String ftcId = "FTCid";
         OtsSimulatorInterface simulator = new OtsSimulator("TestFixedTimeController");
-        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600), createModelMock());
+        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600), createModelMock(),
+                HistoryManagerDevs.noHistory(simulator));
         Map<String, TrafficLight> trafficLightMap = new LinkedHashMap<String, TrafficLight>();
         String networkId = "networkID";
         trafficLightMap.put(trafficLightId, createTrafficLightMock(trafficLightId, networkId, simulator));
@@ -351,7 +354,8 @@ public class TestFixedTimeController
                                 signalGroups.add(sg);
                                 String ftcId = "FTCid";
                                 OtsSimulatorInterface simulator = new OtsSimulator("TestFixedTimeController");
-                                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600), createModelMock());
+                                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600), createModelMock(),
+                                        HistoryManagerDevs.noHistory(simulator));
                                 Map<String, TrafficLight> trafficLightMap = new LinkedHashMap<String, TrafficLight>();
                                 String networkId = "networkID";
                                 trafficLightMap.put(trafficLightId,

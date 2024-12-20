@@ -50,8 +50,18 @@ public class HistoryManagerDevs extends HistoryManager implements EventListener
         this.simulator = simulator;
         this.history = history;
         this.cleanUpInterval = cleanUpInterval;
-        cleanUpHistory(); // start clean-up event chain
+        Try.execute(() -> this.simulator.addListener(this, Replication.START_REPLICATION_EVENT), "Unable to add listener.");
         Try.execute(() -> this.simulator.addListener(this, Replication.END_REPLICATION_EVENT), "Unable to add listener.");
+    }
+
+    /**
+     * Returns a history manager with no guaranteed history.
+     * @param simulator simulator
+     * @return history manager with no guaranteed history
+     */
+    public static HistoryManagerDevs noHistory(final OtsSimulatorInterface simulator)
+    {
+        return new HistoryManagerDevs(simulator, Duration.ZERO, Duration.instantiateSI(10.0));
     }
 
     @Override
@@ -82,7 +92,11 @@ public class HistoryManagerDevs extends HistoryManager implements EventListener
     @Override
     public void notify(final Event event) throws RemoteException
     {
-        if (event.getType().equals(Replication.END_REPLICATION_EVENT))
+        if (event.getType().equals(Replication.START_REPLICATION_EVENT))
+        {
+            cleanUpHistory(); // start clean-up event chain
+        }
+        else if (event.getType().equals(Replication.END_REPLICATION_EVENT))
         {
             endOfSimulation();
         }
@@ -91,7 +105,7 @@ public class HistoryManagerDevs extends HistoryManager implements EventListener
     @Override
     public String toString()
     {
-        return "HistoryManagerDEVS [history=" + this.history + ", cleanUpInterval=" + this.cleanUpInterval + "]";
+        return "HistoryManagerDevs [history=" + this.history + ", cleanUpInterval=" + this.cleanUpInterval + "]";
     }
 
 }

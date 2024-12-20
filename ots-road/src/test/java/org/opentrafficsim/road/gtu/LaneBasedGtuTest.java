@@ -32,6 +32,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -94,7 +95,8 @@ public class LaneBasedGtuTest implements UNITS
         RoadNetwork network = new RoadNetwork("leader follower parallel gtu test network", simulator);
 
         Model model = new Model(simulator);
-        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
+        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model,
+                HistoryManagerDevs.noHistory(simulator));
         GtuType carType = DefaultsNl.CAR;
         GtuType truckType = DefaultsNl.TRUCK;
         LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
@@ -367,7 +369,8 @@ public class LaneBasedGtuTest implements UNITS
             RoadNetwork network = new RoadNetwork("test", simulator);
             // Create a car with constant acceleration
             Model model = new Model(simulator);
-            simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
+            simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model,
+                    HistoryManagerDevs.noHistory(simulator));
             // Run the simulator clock to some non-zero value
             simulator.runUpTo(new Time(60, TimeUnit.BASE_SECOND));
             while (simulator.isStartingOrRunning())

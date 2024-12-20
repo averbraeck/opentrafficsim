@@ -26,6 +26,9 @@ public abstract class AbstractOtsModel extends AbstractDsolModel<Duration, OtsSi
     /** a description of the simulation (HTML formatted). */
     private String description;
 
+    // TODO add default, settable and gettable replication details, so XmlParser using models can set them, and model users can
+    // get them
+
     /**
      * Instantiate an abstract OtsModel. The name and description will be set as the class name.
      * @param simulator the simulator to use

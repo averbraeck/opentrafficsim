@@ -8,6 +8,7 @@ import org.opentrafficsim.animation.gtu.colorer.DefaultSwitchableGtuColorer;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 
 import nl.tudelft.simulation.dsol.jetty.sse.OtsWebServer;
 
@@ -47,7 +48,8 @@ public class TJunctionDemo extends OtsWebServer
         OtsAnimator simulator = new OtsAnimator("TJunctionDemo");
         simulator.setAnimation(false);
         TJunctionModel junctionModel = new TJunctionModel(simulator);
-        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), junctionModel);
+        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), junctionModel,
+                HistoryManagerDevs.noHistory(simulator));
         new TJunctionDemo("T-Junction demo", simulator, junctionModel);
     }
 }

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.opentrafficsim.org/ots"
-  xmlns:ots="http://www.opentrafficsim.org/ots" 
-  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  elementFormDefault="qualified">
+  xmlns:ots="http://www.opentrafficsim.org/ots" xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform" elementFormDefault="qualified">
 
   <!-- http://www.w3.org/2009/01/xml.xsd -->
   <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="ref/xml.xsd" />
@@ -39,6 +38,7 @@
         <xsd:element name="StartTime" type="ots:PositiveTimeType" minOccurs="0" default="0s" />
         <xsd:element name="WarmupPeriod" type="ots:PositiveDurationType" minOccurs="0" default="0s" />
         <xsd:element name="RunLength" type="ots:PositiveDurationType" minOccurs="1" default="1h" />
+        <xsd:element name="History" type="ots:PositiveDurationType" minOccurs="0" default="0s" />
         <xsd:element name="NumberReplications" type="ots:positiveInteger" minOccurs="0" default="1" />
         <xsd:element ref="ots:RandomStreams" minOccurs="0" maxOccurs="1" />
       </xsd:sequence>

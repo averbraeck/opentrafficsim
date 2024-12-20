@@ -38,6 +38,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.object.NonLocatedObject;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
@@ -238,7 +239,8 @@ public final class Sim0mqPublisher
             this.model = new Sim0mqOtsModel("Remotely controlled OTS model", this.network, xml);
             Map<String, StreamInterface> map = new LinkedHashMap<>();
             map.put("generation", new MersenneTwister(seed));
-            animator.initialize(Time.ZERO, warmupTime, simulationDuration, this.model, map);
+            animator.initialize(Time.ZERO, warmupTime, simulationDuration, this.model, map,
+                    HistoryManagerDevs.noHistory(animator));
             this.publisher = new Publisher(this.network);
             this.animationPanel = new OtsAnimationPanel(this.model.getNetwork().getExtent(), new Dimension(1100, 1000),
                     animator, this.model, OtsSwingApplication.DEFAULT_COLORER, this.model.getNetwork());

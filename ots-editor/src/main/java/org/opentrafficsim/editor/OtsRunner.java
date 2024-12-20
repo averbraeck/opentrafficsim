@@ -11,6 +11,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.editor.OtsRunner.OtsRunnerModel;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
@@ -55,7 +56,8 @@ public class OtsRunner extends OtsSimulationApplication<OtsRunnerModel>
         {
             OtsAnimator simulator = new OtsAnimator("EditorRun");
             final OtsRunnerModel runnerModel = new OtsRunnerModel(simulator, file, scenario);
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), runnerModel);
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), runnerModel,
+                    new HistoryManagerDevs(simulator, Duration.instantiateSI(5.0), Duration.instantiateSI(10.0)));
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(runnerModel.getNetwork().getExtent(),
                     new Dimension(800, 600), simulator, runnerModel, DEFAULT_COLORER, runnerModel.getNetwork());
             OtsRunner app = new OtsRunner(animationPanel, runnerModel);

@@ -43,6 +43,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.GeneratorLanePosition;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.Placement;
@@ -198,7 +199,8 @@ public class InjectionsTest
         // test GTU characteristics and generator positions
         // -- network
         OtsSimulatorInterface simulator = new OtsSimulator("net");
-        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ONE, Mockito.mock(OtsModelInterface.class));
+        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ONE, Mockito.mock(OtsModelInterface.class),
+                HistoryManagerDevs.noHistory(simulator));
         RoadNetwork network = new RoadNetwork("network", simulator);
         Node nodeA = new Node(network, "A", new Point2d(0.0, 0.0), Direction.ZERO);
         Node nodeB = new Node(network, "B", new Point2d(100.0, 0.0), Direction.ZERO);
@@ -299,7 +301,8 @@ public class InjectionsTest
     {
         // A small test network with two completely separated lanes on different links
         OtsSimulatorInterface simulator = new OtsSimulator("simulator");
-        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), Mockito.mock(OtsModelInterface.class));
+        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), Mockito.mock(OtsModelInterface.class),
+                HistoryManagerDevs.noHistory(simulator));
         RoadNetwork network = new RoadNetwork("network", simulator);
         Point2d pointA = new Point2d(0.0, 0.0);
         Point2d pointB = new Point2d(0.0, 1000.0);

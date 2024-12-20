@@ -29,6 +29,7 @@ import org.opentrafficsim.xml.bindings.types.TimeType;
  *         <element name="StartTime" type="{http://www.opentrafficsim.org/ots}PositiveTimeType" minOccurs="0"/>
  *         <element name="WarmupPeriod" type="{http://www.opentrafficsim.org/ots}PositiveDurationType" minOccurs="0"/>
  *         <element name="RunLength" type="{http://www.opentrafficsim.org/ots}PositiveDurationType"/>
+ *         <element name="History" type="{http://www.opentrafficsim.org/ots}PositiveDurationType" minOccurs="0"/>
  *         <element name="NumberReplications" type="{http://www.opentrafficsim.org/ots}positiveInteger" minOccurs="0"/>
  *         <element ref="{http://www.opentrafficsim.org/ots}RandomStreams" minOccurs="0"/>
  *       </sequence>
@@ -44,6 +45,7 @@ import org.opentrafficsim.xml.bindings.types.TimeType;
     "startTime",
     "warmupPeriod",
     "runLength",
+    "history",
     "numberReplications",
     "randomStreams"
 })
@@ -62,6 +64,9 @@ import org.opentrafficsim.xml.bindings.types.TimeType;
     @XmlElement(name = "RunLength", required = true, type = String.class, defaultValue = "1h")
     @XmlJavaTypeAdapter(PositiveDurationAdapter.class)
     protected DurationType runLength;
+    @XmlElement(name = "History", type = String.class, defaultValue = "0s")
+    @XmlJavaTypeAdapter(PositiveDurationAdapter.class)
+    protected DurationType history;
     @XmlElement(name = "NumberReplications", type = String.class, defaultValue = "1")
     @XmlJavaTypeAdapter(PositiveIntegerAdapter.class)
     protected IntegerType numberReplications;
@@ -138,6 +143,30 @@ import org.opentrafficsim.xml.bindings.types.TimeType;
      */
     public void setRunLength(DurationType value) {
         this.runLength = value;
+    }
+
+    /**
+     * Gets the value of the history property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public DurationType getHistory() {
+        return history;
+    }
+
+    /**
+     * Sets the value of the history property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setHistory(DurationType value) {
+        this.history = value;
     }
 
     /**

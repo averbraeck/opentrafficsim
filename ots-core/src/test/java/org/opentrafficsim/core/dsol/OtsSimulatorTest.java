@@ -12,6 +12,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.dsol.AbstractOtsModelTest.OtsModel;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -43,7 +44,7 @@ public class OtsSimulatorTest
         Duration warmupDuration = new Duration(20, DurationUnit.SECOND);
         Duration runLength = new Duration(500, DurationUnit.SECOND);
         OtsModel model = new OtsModel(simulator);
-        simulator.initialize(startTime, warmupDuration, runLength, model);
+        simulator.initialize(startTime, warmupDuration, runLength, model, HistoryManagerDevs.noHistory(simulator));
         assertEquals(startTime, simulator.getStartTimeAbs(), "startTime is returned");
         assertEquals(warmupDuration, simulator.getReplication().getWarmupPeriod(), "warmupDuration is returned");
         assertEquals(runLength, simulator.getReplication().getRunLength(), "runLength is returned");

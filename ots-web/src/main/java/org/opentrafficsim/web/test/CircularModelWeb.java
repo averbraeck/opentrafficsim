@@ -8,6 +8,7 @@ import org.opentrafficsim.animation.gtu.colorer.DefaultSwitchableGtuColorer;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 
 import nl.tudelft.simulation.dsol.jetty.sse.OtsWebServer;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialog;
@@ -47,7 +48,8 @@ public class CircularModelWeb extends OtsWebServer
         CircularRoadModel model = new CircularRoadModel(simulator);
         if (TabbedParameterDialog.process(model.getInputParameterMap()))
         {
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), model);
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), model,
+                    HistoryManagerDevs.noHistory(simulator));
             new CircularModelWeb("Circular Road", simulator, model);
         }
     }

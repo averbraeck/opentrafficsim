@@ -32,6 +32,7 @@ import org.opentrafficsim.animation.gtu.colorer.DefaultSwitchableGtuColorer;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.web.test.CircularRoadModel;
 import org.opentrafficsim.web.test.TJunctionModel;
 
@@ -186,7 +187,8 @@ public class TestDemoServer
                     OtsSimulatorInterface simulator = model.getSimulator();
                     try
                     {
-                        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), model);
+                        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), model,
+                                HistoryManagerDevs.noHistory(simulator));
                         OtsWebModel webModel = new OtsWebModel(model.getShortName(), simulator);
                         TestDemoServer.this.sessionWebModelMap.put(sessionId, webModel);
                         DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getNetwork().getSimulator(),

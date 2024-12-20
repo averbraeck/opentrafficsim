@@ -42,24 +42,24 @@ public class OtsReplicationTest
         Duration warmupPeriod = new Duration(200, DurationUnit.SECOND);
         Duration runLength = new Duration(500, DurationUnit.SECOND);
         OtsSimulatorInterface simulator = new OtsSimulator("Simulator for OTSReplicationTest");
+        int listenerCount = simulator.numberOfListeners(Replication.END_REPLICATION_EVENT);
         OtsModel model = new OtsModel(simulator);
-        OtsReplication replication = new OtsReplication(id, startTime, warmupPeriod, runLength);
+        Duration history = new Duration(123, DurationUnit.SECOND);
+        Duration cleanupInterval = new Duration(234, DurationUnit.SECOND);
+        HistoryManager ourHM = new HistoryManagerDevs(simulator, history, cleanupInterval);
+        OtsReplication replication =
+                new OtsReplication(id, startTime, warmupPeriod, runLength, ourHM);
         assertEquals(startTime, replication.getStartTimeAbs(), "startTime can be retrieved");
         assertEquals(warmupPeriod, replication.getWarmupPeriod(), "warmupPeriod can be retrieved");
         assertEquals(runLength, replication.getRunLength(), "runLength can be retrieved");
         simulator.initialize(model, replication);
-        int listenerCount = simulator.numberOfListeners(Replication.END_REPLICATION_EVENT);
         HistoryManagerDevs hm = (HistoryManagerDevs) replication.getHistoryManager(simulator);
         assertEquals(simulator.getSimulatorAbsTime(), hm.now(), "history manager knows time of simulator");
         assertEquals(listenerCount + 1, simulator.numberOfListeners(Replication.END_REPLICATION_EVENT),
                 "history manager has subscribed to our simulator");
-        Duration history = new Duration(123, DurationUnit.SECOND);
-        Duration cleanupInterval = new Duration(234, DurationUnit.SECOND);
-        HistoryManager ourHM = new HistoryManagerDevs(simulator, history, cleanupInterval);
-        replication.setHistoryManager(ourHM);
         hm = (HistoryManagerDevs) replication.getHistoryManager(simulator);
         assertEquals(ourHM, hm, "Our manually set history manager is returned");
-        assertTrue(replication.toString().startsWith("OTSReplication"), "toString method returns something descriptive");
+        assertTrue(replication.toString().startsWith("OtsReplication"), "toString method returns something descriptive");
     }
 
     /**

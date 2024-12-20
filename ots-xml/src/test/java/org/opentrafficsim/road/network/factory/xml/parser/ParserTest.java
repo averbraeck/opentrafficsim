@@ -14,6 +14,7 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.Link;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.network.RoadNetwork;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -40,7 +41,8 @@ public class ParserTest
     {
         OtsSimulator simulator = new OtsSimulator("Test");
         final TestModel testModel = new TestModel(simulator);
-        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), testModel);
+        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), testModel,
+                HistoryManagerDevs.noHistory(simulator));
 
         // test node
         RoadNetwork nw = testModel.getNetwork();

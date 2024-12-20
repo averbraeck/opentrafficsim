@@ -28,6 +28,7 @@ import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.StreamInformation;
@@ -79,7 +80,8 @@ public class GtuDumperTest implements OtsModelInterface
         // System.out.println("containerDir is " + this.containerDir);
         this.simulator = new OtsSimulator("Simulator for testing GTUDumper class");
         this.network = new Network("Network for testing GTUDumper class", this.simulator);
-        this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this);
+        this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this,
+                HistoryManagerDevs.noHistory(this.simulator));
         this.simulator.scheduleEventAbsTime(new Time(40.0, TimeUnit.BASE_SECOND), this, "createGtu", new Object[] {});
         this.simulator.start();
         while (this.simulator.isStartingOrRunning())
@@ -200,7 +202,8 @@ public class GtuDumperTest implements OtsModelInterface
         this.containerDir = containerPath.toFile();
         this.simulator = new OtsSimulator("Simulator for testing GTUDumper class");
         this.network = new Network("Network for testing GTUDumper class", this.simulator);
-        this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this);
+        this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this,
+                HistoryManagerDevs.noHistory(this.simulator));
         try
         {
             new GtuDumper(null, new Duration(300, DurationUnit.SECOND), this.network,

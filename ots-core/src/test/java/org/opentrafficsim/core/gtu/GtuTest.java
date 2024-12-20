@@ -30,6 +30,7 @@ import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.core.perception.PerceivableContext;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -68,7 +69,8 @@ public class GtuTest
         OtsSimulatorInterface simulator = new OtsSimulator("testAbstractGTU");
         Network perceivableContext = new Network("network", simulator);
         GtuModel model = new GtuModel(simulator);
-        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(9999, DurationUnit.SI), model);
+        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(9999, DurationUnit.SI), model,
+                HistoryManagerDevs.noHistory(simulator));
         StrategicalPlanner strategicalPlanner = new StrategicalPlanner()
         {
 

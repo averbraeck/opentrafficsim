@@ -42,6 +42,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.draw.graphs.GraphPath.Section;
 import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.SamplerData;
@@ -162,7 +163,8 @@ public class ContourPlotTest implements UNITS
         Mockito.when(this.mockedSimulator.getSimulatorAbsTime()).thenReturn(Time.ZERO);
         Mockito.when(this.mockedSimulator.getSimulatorTime()).thenReturn(Duration.ZERO);
         OtsModelInterface model = Mockito.mock(OtsModelInterface.class);
-        OtsReplication replication = new OtsReplication("test", Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0));
+        OtsReplication replication = new OtsReplication("test", Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0),
+                HistoryManagerDevs.noHistory(this.mockedSimulator));
         Mockito.when(this.mockedSimulator.getReplication()).thenReturn(replication);
         Mockito.when(this.mockedScheduler.getTime()).thenReturn(Time.ZERO);
     }
@@ -284,9 +286,9 @@ public class ContourPlotTest implements UNITS
      * @param cp the ContourPlot to test
      * @param path the path
      * @param expectedZValue the value that getZ and getZValue should return for a valid item when no car has passed
-     * @param expectedZValueWithTraffic the value that getZ and getZValue should return a valid item where a car has
-     *            traveled at constant speed of 50 km/h. Supply Double.NaN if the value varies but differs from the value
-     *            expected when no car has passed
+     * @param expectedZValueWithTraffic the value that getZ and getZValue should return a valid item where a car has traveled at
+     *            constant speed of 50 km/h. Supply Double.NaN if the value varies but differs from the value expected when no
+     *            car has passed
      * @throws Exception when something goes wrong (should not happen)
      */
     public static void standardContourTests(final OtsSimulatorInterface simulator, final AbstractContourPlot<?> cp,
@@ -748,8 +750,7 @@ public class ContourPlotTest implements UNITS
      * @param lane the lane on which the new Car is positioned
      * @param initialPosition the initial longitudinal position of the new Car
      * @param initialSpeed the initial speed
-     * @param simulator the simulator that controls the new Car (and supplies the initial value for
-     *            getLastEvalutionTime())
+     * @param simulator the simulator that controls the new Car (and supplies the initial value for getLastEvalutionTime())
      * @param gtuFollowingModel the GTU following model
      * @param laneChangeModel the lane change model
      * @param network the network

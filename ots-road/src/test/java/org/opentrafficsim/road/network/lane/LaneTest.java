@@ -41,6 +41,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
+import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.mock.MockDevsSimulator;
 import org.opentrafficsim.road.network.RoadNetwork;
@@ -70,7 +71,8 @@ public class LaneTest implements UNITS
         OtsSimulatorInterface simulator = new OtsSimulator("LaneTest");
         RoadNetwork network = new RoadNetwork("lane test network", simulator);
         Model model = new Model(simulator);
-        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
+        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model,
+                HistoryManagerDevs.noHistory(simulator));
         // First we need two Nodes
         Node nodeFrom = new Node(network, "A", new Point2d(0, 0), Direction.ZERO);
         Node nodeTo = new Node(network, "B", new Point2d(1000, 0), Direction.ZERO);
@@ -544,7 +546,8 @@ public class LaneTest implements UNITS
         Point2d to = new Point2d(1010, 10);
         OtsSimulatorInterface simulator = new OtsSimulator("LaneTest");
         Model model = new Model(simulator);
-        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
+        simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model,
+                HistoryManagerDevs.noHistory(simulator));
         RoadNetwork network = new RoadNetwork("contour test network", simulator);
         LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
         laneType.addCompatibleGtuType(DefaultsNl.VEHICLE);
@@ -626,7 +629,8 @@ public class LaneTest implements UNITS
                 {
                     OtsSimulatorInterface simulator = new OtsSimulator("LaneTest");
                     Model model = new Model(simulator);
-                    simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model);
+                    simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model,
+                            HistoryManagerDevs.noHistory(simulator));
                     RoadNetwork network = new RoadNetwork("contour test network", simulator);
                     LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
                     laneType.addCompatibleGtuType(DefaultsNl.VEHICLE);

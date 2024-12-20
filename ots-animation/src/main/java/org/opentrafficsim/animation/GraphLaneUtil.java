@@ -13,7 +13,6 @@ import java.util.Set;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
-import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkPosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -51,17 +50,31 @@ public final class GraphLaneUtil
      * Creates a path starting at the provided lane and moving downstream until a dead-end, split, or loop.
      * @param name path name
      * @param first first lane
-     * @return GraphPath&lt;LaneDataRoad&gt; path
+     * @return path
      * @throws NetworkException when the lane does not have any set speed limit
      */
     public static GraphPath<LaneDataRoad> createPath(final String name, final Lane first) throws NetworkException
+    {
+        return createPath(name, first, null);
+    }
+
+    /**
+     * Creates a path starting at the provided lane and moving downstream until a dead-end, split, or loop.
+     * @param name path name
+     * @param first first lane
+     * @param last last lane
+     * @return path
+     * @throws NetworkException when the lane does not have any set speed limit
+     */
+    public static GraphPath<LaneDataRoad> createPath(final String name, final Lane first, final Lane last)
+            throws NetworkException
     {
         Throw.whenNull(name, "Name may not be null.");
         Throw.whenNull(first, "First may not be null.");
         List<Section<LaneDataRoad>> sections = new ArrayList<>();
         Set<Lane> set = new LinkedHashSet<>();
         Lane lane = first;
-        while (lane != null && !set.contains(lane))
+        do
         {
             LaneDataRoad laneData = new LaneDataRoad(lane);
             List<LaneDataRoad> list = new ArrayList<>();
@@ -76,6 +89,7 @@ public final class GraphLaneUtil
                 lane = nextLaneSet.iterator().next();
             }
         }
+        while (lane != null && !set.contains(lane) && !lane.equals(last));
         return new GraphPath<>(name, sections);
     }
 
@@ -84,63 +98,74 @@ public final class GraphLaneUtil
      * lanes) and there's a unique link all lanes have downstream. The length and speed limit are taken from the first lane.
      * @param names lane names
      * @param first first lanes
-     * @return GraphPath&lt;LaneDataRoad&gt; path
+     * @return path
      * @throws NetworkException when a lane does not have any set speed limit
      */
     public static GraphPath<LaneDataRoad> createPath(final List<String> names, final List<Lane> first) throws NetworkException
+    {
+        return createPath(names, first, Collections.emptyList());
+    }
+
+    /**
+     * Creates a path starting at the provided lanes and moving downstream for as long as no lane finds a loop (on to any of the
+     * lanes) and there's a unique link all lanes have downstream. The length is taken from the first lane. The speed is the
+     * minimum of all lanes in each section.
+     * @param names lane names
+     * @param first first lanes
+     * @param last last lanes
+     * @return path
+     * @throws NetworkException when a lane does not have any set speed limit
+     */
+    public static GraphPath<LaneDataRoad> createPath(final List<String> names, final List<Lane> first, final List<Lane> last)
+            throws NetworkException
     {
         Throw.whenNull(names, "Names may not be null.");
         Throw.whenNull(first, "First may not be null.");
         Throw.when(names.size() != first.size(), IllegalArgumentException.class, "Size of 'names' and 'first' must be equal.");
         List<Section<LaneDataRoad>> sections = new ArrayList<>();
-        Set<Lane> set = new LinkedHashSet<>();
-        List<Lane> lanes = first;
-        while (lanes != null && Collections.disjoint(set, lanes))
+        Set<Lane> seenLanes = new LinkedHashSet<>();
+        List<Lane> currentLanes = first;
+        while (currentLanes != null && Collections.disjoint(seenLanes, currentLanes) && Collections.disjoint(seenLanes, last))
         {
-            List<LaneDataRoad> list = new ArrayList<>();
-            Speed speed = null;
-            for (Lane lane : lanes)
+            // create next section
+            List<LaneDataRoad> sectionLanes = new ArrayList<>();
+            Speed sectionSpeed = null;
+            for (Lane lane : currentLanes)
             {
                 if (lane == null)
                 {
-                    list.add(null);
-                    continue;
+                    sectionLanes.add(null);
                 }
-                speed = speed == null ? lane.getLowestSpeedLimit() : Speed.min(speed, lane.getLowestSpeedLimit());
-                list.add(new LaneDataRoad(lane));
-            }
-            Speed finalSpeed = speed;
-            Lane firstNextLane = null;
-            for (Lane lane : lanes)
-            {
-                if (lane != null)
+                else
                 {
-                    firstNextLane = lane;
-                    continue;
+                    sectionSpeed = sectionSpeed == null ? lane.getLowestSpeedLimit()
+                            : Speed.min(sectionSpeed, lane.getLowestSpeedLimit());
+                    sectionLanes.add(new LaneDataRoad(lane));
+                    seenLanes.add(lane);
                 }
             }
-            Length length = firstNextLane.getLength();
-            sections.add(new Section<>(length, finalSpeed, list));
-            set.addAll(lanes);
+            Lane firstCurrentLane = currentLanes.stream().filter((l) -> l != null).findFirst().get();
+            Length sectionLength = firstCurrentLane.getLength();
+            sections.add(new Section<>(sectionLength, sectionSpeed, sectionLanes));
+            
             // per link and then per lane, find the downstream lane
-            Map<Link, List<Lane>> linkMap = new LinkedHashMap<>();
-            Link link = firstNextLane.getLink();
-            ImmutableSet<Link> links = link.getEndNode().getLinks();
-            for (Link nextLink : links)
+            Map<Link, List<Lane>> nextLinks = new LinkedHashMap<>();
+            Link link = firstCurrentLane.getLink();
+            for (Link nextLink : link.getEndNode().getLinks())
             {
-                if (!link.equals(nextLink))
+                if (!link.equals(nextLink)) // only other links
                 {
                     List<Lane> nextLanes = new ArrayList<>();
-                    for (Lane nextLane : lanes)
+                    for (Lane currentLane : currentLanes)
                     {
-                        Set<Lane> nextLaneSet = nextLane.nextLanes(null);
+                        Set<Lane> nextLanesOfLane = currentLane.nextLanes(null);
                         int n = 0;
-                        for (Lane nl : nextLaneSet)
+                        for (Lane nextLane : nextLanesOfLane)
                         {
-                            if (nl.getLink().equals(nextLink))
+                            if (nextLane.getLink().equals(nextLink))
                             {
                                 n++;
-                                nextLanes.add(nl);
+                                nextLanes.add(nextLane);
                             }
                         }
                         if (n > 1)
@@ -154,16 +179,16 @@ public final class GraphLaneUtil
                             nextLanes.add(null);
                         }
                     }
-                    if (nextLanes.size() == lanes.size())
+                    if (nextLanes.size() == currentLanes.size())
                     {
-                        linkMap.put(nextLink, nextLanes);
+                        nextLinks.put(nextLink, nextLanes);
                     }
                 }
             }
             // in case there are multiple downstream links, remove all links for which some lanes had no downstream lane
-            if (linkMap.size() > 1)
+            if (nextLinks.size() > 1)
             {
-                Iterator<List<Lane>> it = linkMap.values().iterator();
+                Iterator<List<Lane>> it = nextLinks.values().iterator();
                 while (it.hasNext())
                 {
                     if (it.next().contains(null))
@@ -172,13 +197,13 @@ public final class GraphLaneUtil
                     }
                 }
             }
-            if (linkMap.size() == 1)
+            if (nextLinks.size() == 1)
             {
-                lanes = linkMap.values().iterator().next();
+                currentLanes = nextLinks.values().iterator().next();
             }
             else
             {
-                lanes = null;
+                currentLanes = null;
             }
         }
         return new GraphPath<>(names, sections);
@@ -188,7 +213,7 @@ public final class GraphLaneUtil
      * Creates a single-lane path.
      * @param name name
      * @param lane lane
-     * @return GraphPath&lt;LaneDataRoad&gt; path
+     * @return path
      * @throws NetworkException when a lane does not have any set speed limit
      */
     public static GraphPath<LaneDataRoad> createSingleLanePath(final String name, final Lane lane) throws NetworkException
@@ -205,7 +230,7 @@ public final class GraphLaneUtil
      * Creates a cross section at the provided lane and position.
      * @param name name
      * @param lanePosition lane position
-     * @return GraphCrossSection&lt;LaneDataRoad&gt; cross section
+     * @return cross section
      * @throws NetworkException when the lane does not have any set speed limit
      */
     public static GraphCrossSection<LaneDataRoad> createCrossSection(final String name, final LanePosition lanePosition)
@@ -227,7 +252,7 @@ public final class GraphLaneUtil
      * Creates a cross section at the provided link and position.
      * @param names lane names
      * @param linkPosition link position
-     * @return GraphCrossSection&lt;LaneDataRoad&gt; cross section
+     * @return cross section
      * @throws NetworkException when a lane does not have any set speed limit
      */
     public static GraphCrossSection<LaneDataRoad> createCrossSection(final List<String> names, final LinkPosition linkPosition)
@@ -264,8 +289,8 @@ public final class GraphLaneUtil
 
     /**
      * Creates a cross section.
-     * @param names List&lt;String&gt;;; names
-     * @param lanes List&lt;LaneDataRoad&gt;;; lanes
+     * @param names names
+     * @param lanes lanes
      * @param positions positions
      * @param speed speed
      * @return cross section

@@ -44,7 +44,6 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
-import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.generator.characteristics.DefaultLaneBasedGtuCharacteristicsGeneratorOd;
@@ -99,9 +98,6 @@ public class OdApplierTest
     /** Network. */
     private RoadNetwork network;
 
-    /** History manager. */
-    private HistoryManager historyManager;
-
     /** Lanes. */
     private final Map<String, Lane> lanes = new LinkedHashMap<>();
 
@@ -152,14 +148,12 @@ public class OdApplierTest
      */
     public OdApplierTest() throws NetworkException, NamingException
     {
-        this.replication =
-                new OtsReplication("replication for ODApplierTest", Time.ZERO, Duration.ZERO, Duration.instantiateSI(10.0));
         this.model = createModelMock();
-        System.out.println(this.model);
         this.simulator = createSimulatorMock();
-        System.out.println(this.simulator);
-        System.out.println(this.simulator.getModel());
-        this.historyManager = new HistoryManagerDevs(this.simulator, Duration.instantiateSI(10.0), Duration.instantiateSI(1.0));
+        HistoryManagerDevs historyManager = Mockito.mock(HistoryManagerDevs.class);
+        this.replication = new OtsReplication("replication for ODApplierTest", Time.ZERO, Duration.ZERO,
+                Duration.instantiateSI(10.0), historyManager);
+        Mockito.when(this.simulator.getReplication()).thenReturn(this.replication);
         this.time = Time.ZERO;
         makeNetwork();
     }

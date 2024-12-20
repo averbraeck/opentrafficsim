@@ -6,6 +6,7 @@ import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.perception.HistoryManager;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.simulators.DevsSimulator;
@@ -38,17 +39,19 @@ public class OtsSimulator extends DevsSimulator<Duration> implements OtsSimulato
 
     @Override
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-            final OtsModelInterface model) throws SimRuntimeException, NamingException
+            final OtsModelInterface model, final HistoryManager historyManager) throws SimRuntimeException, NamingException
     {
-        initialize(startTime, warmupPeriod, runLength, model, ++this.lastReplication);
+        initialize(startTime, warmupPeriod, runLength, model, historyManager, ++this.lastReplication);
     }
 
     @Override
     public void initialize(final Time startTime, final Duration warmupPeriod, final Duration runLength,
-            final OtsModelInterface model, final int replicationNr) throws SimRuntimeException, NamingException
+            final OtsModelInterface model, final HistoryManager historyManager, final int replicationNr)
+            throws SimRuntimeException, NamingException
     {
         setErrorStrategy(ErrorStrategy.WARN_AND_PAUSE);
-        OtsReplication newReplication = new OtsReplication("rep" + replicationNr, startTime, warmupPeriod, runLength);
+        OtsReplication newReplication =
+                new OtsReplication("rep" + replicationNr, startTime, warmupPeriod, runLength, historyManager);
         super.initialize(model, newReplication);
     }
 

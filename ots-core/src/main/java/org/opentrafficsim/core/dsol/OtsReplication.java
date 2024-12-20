@@ -4,8 +4,8 @@ import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.perception.HistoryManager;
-import org.opentrafficsim.core.perception.HistoryManagerDevs;
 
 import nl.tudelft.simulation.dsol.experiment.SingleReplication;
 
@@ -19,48 +19,37 @@ import nl.tudelft.simulation.dsol.experiment.SingleReplication;
 public class OtsReplication extends SingleReplication<Duration>
 {
     /** History manager. */
-    private HistoryManager historyManager;
+    private final HistoryManager historyManager;
 
     /** the (absolute) start time of the replication. */
     private final Time startTimeAbs;
 
     /**
-     * Create a new OTSReplication.
-     * @param id id of the new OTSReplication
-     * @param startTime the start time of the new OTSReplication
-     * @param warmupPeriod the warmup period of the new OTSReplication
-     * @param runLength the run length of the new OTSReplication
+     * Create a new OtsReplication.
+     * @param id id of the new OtsReplication
+     * @param startTime the start time of the new OtsReplication
+     * @param warmupPeriod the warmup period of the new OtsReplication
+     * @param runLength the run length of the new OtsReplication
+     * @param historyManager history manager
      * @throws NamingException when the context for the replication cannot be created
      */
-    public OtsReplication(final String id, final Time startTime, final Duration warmupPeriod, final Duration runLength)
-            throws NamingException
+    public OtsReplication(final String id, final Time startTime, final Duration warmupPeriod, final Duration runLength,
+            final HistoryManager historyManager) throws NamingException
     {
         super(id, Duration.ZERO, warmupPeriod, runLength);
+        Throw.whenNull(historyManager, "historyManager");
         this.startTimeAbs = startTime;
+        this.historyManager = historyManager;
     }
 
     /**
-     * Returns the history manager. If none was set, one is created coupled to the simulator using 0s of history and 10s
-     * clean-up time.
+     * Returns the history manager.
      * @param simulator simulator
      * @return history manager
      */
     public HistoryManager getHistoryManager(final OtsSimulatorInterface simulator)
     {
-        if (this.historyManager == null)
-        {
-            this.historyManager = new HistoryManagerDevs(simulator, Duration.ZERO, Duration.instantiateSI(10.0));
-        }
         return this.historyManager;
-    }
-
-    /**
-     * Set history manager.
-     * @param historyManager history manager to set
-     */
-    public void setHistoryManager(final HistoryManager historyManager)
-    {
-        this.historyManager = historyManager;
     }
 
     /**
@@ -78,6 +67,6 @@ public class OtsReplication extends SingleReplication<Duration>
     @Override
     public final String toString()
     {
-        return "OTSReplication []";
+        return "OtsReplication []";
     }
 }

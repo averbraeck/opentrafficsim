@@ -4,6 +4,7 @@ import javax.naming.NamingException;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.core.perception.HistoryManager;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
@@ -37,11 +38,12 @@ public interface OtsSimulatorInterface extends DevsSimulatorInterface<Duration>,
      * @param warmupPeriod the warm up period of the simulation (use new Duration(0, SECOND) if you don't know what this is)
      * @param runLength the duration of the simulation
      * @param model the simulation to execute
+     * @param historyManager history manager
      * @throws SimRuntimeException when e.g., warmupPeriod is larger than runLength
      * @throws NamingException when the context for the replication cannot be created
      */
-    void initialize(Time startTime, Duration warmupPeriod, Duration runLength, OtsModelInterface model)
-            throws SimRuntimeException, NamingException;
+    void initialize(Time startTime, Duration warmupPeriod, Duration runLength, OtsModelInterface model,
+            HistoryManager historyManager) throws SimRuntimeException, NamingException;
 
     /**
      * Initialize a simulation engine without animation and prescribed replication number; the easy way. PauseOnError is set to
@@ -50,12 +52,13 @@ public interface OtsSimulatorInterface extends DevsSimulatorInterface<Duration>,
      * @param warmupPeriod the warm up period of the simulation (use new Duration(0, SECOND) if you don't know what this is)
      * @param runLength the duration of the simulation
      * @param model the simulation to execute
+     * @param historyManager history manager
      * @param replicationNr the replication number
      * @throws SimRuntimeException when e.g., warmupPeriod is larger than runLength
      * @throws NamingException when context for the animation cannot be created
      */
-    void initialize(Time startTime, Duration warmupPeriod, Duration runLength, OtsModelInterface model, int replicationNr)
-            throws SimRuntimeException, NamingException;
+    void initialize(Time startTime, Duration warmupPeriod, Duration runLength, OtsModelInterface model,
+            HistoryManager historyManager, int replicationNr) throws SimRuntimeException, NamingException;
 
     /**
      * Construct and schedule a SimEvent using a Time to specify the execution time.
