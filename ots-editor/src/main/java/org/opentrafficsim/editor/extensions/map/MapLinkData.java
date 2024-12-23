@@ -3,11 +3,14 @@ package org.opentrafficsim.editor.extensions.map;
 import java.awt.Color;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
@@ -61,6 +64,7 @@ import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.extensions.Adapters;
 import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets.CseData;
+import org.opentrafficsim.road.network.factory.xml.utils.StripeSynchronization;
 import org.opentrafficsim.road.network.lane.CrossSectionGeometry;
 import org.opentrafficsim.road.network.lane.StripeData.StripePhaseSync;
 import org.opentrafficsim.xml.bindings.ExpressionAdapter;
@@ -152,6 +156,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
 
     /** Lane data. */
     private java.util.Map<String, MapLaneData> laneData = new LinkedHashMap<>();
+
+    /** Stripe data. */
+    private java.util.Map<String, MapStripeData> stripeData = new LinkedHashMap<>();
 
     /** Priority animation. */
     private PriorityAnimation priorityAnimation;
@@ -608,171 +615,244 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         {
             getMap().removeAnimation(renderable);
         }
+        for (Entry<String, MapStripeData> entry : this.stripeData.entrySet())
+        {
+            getMap().getSynchronizableStripes().remove(entry.getValue());
+        }
         this.crossSectionElements.clear();
         this.laneData.clear();
+        this.stripeData.clear();
         if (this.roadLayoutNode != null)
         {
             java.util.Map<XsdTreeNode, CseData> cseDataMap = this.roadLayoutListener != null ? this.roadLayoutListener.getData()
                     : getMap().getRoadLayoutListener(this.roadLayoutNode).getData();
             MiddleOffset middleOffset = new MiddleOffset();
-            double offsetMin0 = Double.POSITIVE_INFINITY;
-            double offsetMax0 = Double.NEGATIVE_INFINITY;
-            double offsetMin1 = Double.POSITIVE_INFINITY;
-            double offsetMax1 = Double.NEGATIVE_INFINITY;
+            Map<String, XsdTreeNode> laneOverrides = new LinkedHashMap<>();
+            Map<String, XsdTreeNode> stripeOverrides = new LinkedHashMap<>();
+            if (new ChildNodeFinder(getNode()).hasActiveChild("DefinedLayout"))
+            {
+                for (XsdTreeNode child : getNode().getChildren())
+                {
+                    if (child.getNodeName().equals("xsd:sequence"))
+                    {
+                        for (XsdTreeNode override : child.getChildren())
+                        {
+                            if (override.getNodeName().equals("LaneOverride") && override.isActive())
+                            {
+                                laneOverrides.put(override.getAttributeValue("Lane"), override);
+                            }
+                            else if (override.getNodeName().equals("StripeOverride") && override.isActive())
+                            {
+                                stripeOverrides.put(override.getAttributeValue("Stripe"), override);
+                            }
+                        }
+                    }
+                }
+            }
+
             for (Entry<XsdTreeNode, CseData> entry : cseDataMap.entrySet())
             {
                 XsdTreeNode node = entry.getKey();
                 CseData cseData = entry.getValue();
-                // TODO add/remove from StripeSynchronization map input with this phaseSync
-                StripePhaseSync phaseSync = StripePhaseSync.NONE;
-                Length dashOffset = Length.ZERO;
-                StripeLateralSync lateralSync = StripeLateralSync.NONE;
-                List<StripeElement> elements = new ArrayList<>();
                 ContinuousDoubleFunction offsetFunc =
                         FractionalLengthData.of(0.0, cseData.centerOffsetStart.si, 1.0, cseData.centerOffsetEnd.si);
-                ContinuousDoubleFunction widthFunc;
                 if (node.getNodeName().equals("Stripe"))
                 {
-                    // TODO listen to lane and line overrides
-                    XsdTreeNode stripe;
-                    ChildNodeFinder finder = new ChildNodeFinder(node);
-                    if (finder.hasActiveChild("DefinedStripe"))
-                    {
-                        stripe = finder.get().getCoupledKeyrefNodeValue();
-                    }
-                    else if (finder.hasActiveChild("Custom"))
-                    {
-                        stripe = finder.get();
-                    }
-                    else
+                    StripeAnimation stripe = createStripe(node, offsetFunc, middleOffset, stripeOverrides);
+                    if (stripe == null)
                     {
                         continue;
                     }
-
-                    finder = new ChildNodeFinder(stripe);
-                    if (finder.hasActiveChild("DashOffset"))
-                    {
-                        XsdTreeNode dashOffsetNode = finder.get().getChild(0);
-                        switch (dashOffsetNode.getNodeName())
-                        {
-                            case "SyncUpstream":
-                            {
-                                phaseSync = StripePhaseSync.UPSTREAM;
-                                break;
-                            }
-                            case "SyncDownstream":
-                            {
-                                phaseSync = StripePhaseSync.DOWNSTREAM;
-                                break;
-                            }
-                            case "Fixed":
-                            {
-                                phaseSync = StripePhaseSync.NONE;
-                                dashOffset = Adapters.get(Length.class).unmarshal(dashOffsetNode.getAttributeValue("Offset"))
-                                        .get(getEval());
-                                break;
-                            }
-                            default:
-                            {
-                                System.out.println("Dash synchronization " + dashOffsetNode.getNodeName() + " is unknown.");
-                            }
-                        }
-                    }
-                    if (finder.hasActiveChild("LateralSync"))
-                    {
-                        String latSyncName = finder.get().getValue();
-                        lateralSync = latSyncName == null ? StripeLateralSync.NONE
-                                : Adapters.get(StripeLateralSync.class).unmarshal(latSyncName).get(getEval());
-                    }
-                    Length width = Length.ZERO;
-                    for (XsdTreeNode element : stripe.getFirstChild("Elements").getChildren())
-                    {
-                        Length w = Adapters.get(Length.class).unmarshal(element.getAttributeValue("Width")).get(getEval());
-                        width = width.plus(w);
-                        if (element.getNodeName().equals("Line"))
-                        {
-                            String colorName = element.getAttributeValue("Color");
-                            if (colorName == null)
-                            {
-                                colorName = element.getDefaultAttributeValue(element.getAttributeIndexByName("Color"));
-                            }
-                            Color color = Adapters.get(Color.class).unmarshal(colorName).get(getEval());
-                            if (element.getChild(0).getNodeName().equals("Continuous"))
-                            {
-                                elements.add(StripeElement.continuous(w, color));
-                            }
-                            else
-                            {
-                                List<Double> gapsAndDashes = new ArrayList<>();
-                                for (XsdTreeNode gapDash : element.getChild(0).getChildren())
-                                {
-                                    if (gapDash.getChild(0).isValid() && gapDash.getChild(1).isValid())
-                                    {
-                                        gapsAndDashes.add(Adapters.get(Length.class)
-                                                .unmarshal(gapDash.getChild(0).getValue()).get(getEval()).si);
-                                        gapsAndDashes.add(Adapters.get(Length.class)
-                                                .unmarshal(gapDash.getChild(1).getValue()).get(getEval()).si);
-                                    }
-                                }
-                                elements.add(StripeElement.dashed(w, color,
-                                        new LengthVector(gapsAndDashes.stream().mapToDouble(v -> v).toArray())));
-                            }
-                        }
-                        else
-                        {
-                            elements.add(StripeElement.gap(w));
-                        }
-                    }
-                    widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
-                }
-                else
-                {
-                    widthFunc = FractionalLengthData.of(0.0, cseData.widthStart.si, 1.0, cseData.widthEnd.si);
-                }
-
-                Flattener flattener = getFlattener();
-                CrossSectionGeometry geometry = CrossSectionGeometry.of(this.designLine, flattener, offsetFunc, widthFunc);
-                if (node.getNodeName().equals("Stripe"))
-                {
-                    offsetMin0 = Math.min(offsetMin0, geometry.offset().apply(0.0));
-                    offsetMax0 = Math.max(offsetMax0, geometry.offset().apply(0.0));
-                    offsetMin1 = Math.min(offsetMin1, geometry.offset().apply(1.0));
-                    offsetMax1 = Math.max(offsetMax1, geometry.offset().apply(1.0));
-                    StripeAnimation stripe =
-                            new StripeAnimation(
-                                    new MapStripeData(dashOffset, getNode(), geometry, elements, lateralSync,
-                                            this.flattenedDesignLine, middleOffset, this.directionStart, this.directionEnd),
-                                    getMap().getContextualized());
                     this.crossSectionElements.add(stripe);
                 }
-                else if (node.getNodeName().equals("Lane"))
+                else
                 {
-                    MapLaneData laneData = new MapLaneData(node.getId(), getNode(), geometry);
-                    LaneAnimation lane = new LaneAnimation(laneData, getMap().getContextualized(), Color.GRAY.brighter());
-                    this.crossSectionElements.add(lane);
-                    this.laneData.put(node.getId(), laneData);
+                    ContinuousDoubleFunction widthFunc =
+                            FractionalLengthData.of(0.0, cseData.widthStart.si, 1.0, cseData.widthEnd.si);
+                    CrossSectionGeometry geometry =
+                            CrossSectionGeometry.of(this.designLine, getFlattener(), offsetFunc, widthFunc);
+                    if (node.getNodeName().equals("Lane"))
+                    {
+                        MapLaneData laneData = new MapLaneData(node.getId(), getNode(), geometry);
+                        LaneAnimation lane = new LaneAnimation(laneData, getMap().getContextualized(), Color.GRAY.brighter());
+                        this.crossSectionElements.add(lane);
+                        this.laneData.put(node.getId(), laneData);
+                    }
+                    else if (node.getNodeName().equals("Shoulder"))
+                    {
+                        CrossSectionElementAnimation<?> shoulder = new CrossSectionElementAnimation<>(
+                                new MapShoulderData(getNode(), geometry), getMap().getContextualized(), Color.DARK_GRAY);
+                        this.crossSectionElements.add(shoulder);
+                    }
+                    else if (node.getNodeName().equals("NoTrafficLane"))
+                    {
+                        CrossSectionElementAnimation<?> noTrafficLane = new CrossSectionElementAnimation<>(
+                                new MapCrossSectionData(getNode(), geometry), getMap().getContextualized(), Color.DARK_GRAY);
+                        this.crossSectionElements.add(noTrafficLane);
+                    }
+                    else
+                    {
+                        throw new RuntimeException(
+                                "Element " + node.getNodeName() + " is not a supported cross-section element.");
+                    }
                 }
-                else if (node.getNodeName().equals("Shoulder"))
+            }
+        }
+        StripeSynchronization.synchronize(new LinkedHashMap<>(getMap().getSynchronizableStripes()));
+        Try.execute(() -> this.fireEvent(LAYOUT_REBUILT, this), "Unable to fire LAYOUT event.");
+    }
+
+    /**
+     * Creates stripe animation from stripe node.
+     * @param node node Stripe within road layout
+     * @param offsetFunc offset function
+     * @param middleOffset middle offset to add stripe offsets to
+     * @param stripeOverrides stripe overrides
+     * @return stripe animation, {@code null} if something was not valid
+     */
+    private StripeAnimation createStripe(final XsdTreeNode node, final ContinuousDoubleFunction offsetFunc,
+            final MiddleOffset middleOffset, final Map<String, XsdTreeNode> stripeOverrides)
+    {
+        StripePhaseSync phaseSync = StripePhaseSync.NONE;
+        Length dashOffset = Length.ZERO;
+        StripeLateralSync lateralSync = StripeLateralSync.NONE;
+        List<StripeElement> elements = new ArrayList<>();
+        XsdTreeNode stripeNode;
+        ChildNodeFinder stripeRefFinder = new ChildNodeFinder(node);
+        if (stripeRefFinder.hasActiveChild("DefinedStripe"))
+        {
+            stripeNode = stripeRefFinder.get().getCoupledKeyrefNodeValue();
+        }
+        else if (stripeRefFinder.hasActiveChild("Custom"))
+        {
+            stripeNode = stripeRefFinder.get();
+        }
+        else
+        {
+            return null;
+        }
+        ChildNodeFinder stripeFinder = new ChildNodeFinder(stripeNode);
+        ChildNodeFinder overrideFinder =
+                stripeOverrides.containsKey(node.getId()) ? new ChildNodeFinder(stripeOverrides.get(node.getId())) : null;
+        if ((overrideFinder != null && overrideFinder.hasActiveChild("DashOffset"))
+                || stripeFinder.hasActiveChild("DashOffset"))
+        {
+            try
+            {
+                XsdTreeNode dashOffsetNode = overrideFinder != null && overrideFinder.hasActiveChild("DashOffset")
+                        ? overrideFinder.get().getChild(0) : stripeFinder.get().getChild(0);
+
+                switch (dashOffsetNode.getNodeName())
                 {
-                    CrossSectionElementAnimation<?> shoulder = new CrossSectionElementAnimation<>(
-                            new MapShoulderData(getNode(), geometry), getMap().getContextualized(), Color.DARK_GRAY);
-                    this.crossSectionElements.add(shoulder);
+                    case "SyncUpstream":
+                    {
+                        phaseSync = StripePhaseSync.UPSTREAM;
+                        break;
+                    }
+                    case "SyncDownstream":
+                    {
+                        phaseSync = StripePhaseSync.DOWNSTREAM;
+                        break;
+                    }
+                    case "Fixed":
+                    {
+                        phaseSync = StripePhaseSync.NONE;
+                        dashOffset =
+                                Adapters.get(Length.class).unmarshal(dashOffsetNode.getAttributeValue("Offset")).get(getEval());
+                        break;
+                    }
+                    default:
+                    {
+                        System.out.println("Dash synchronization " + dashOffsetNode.getNodeName() + " is unknown.");
+                    }
                 }
-                else if (node.getNodeName().equals("NoTrafficLane"))
+            }
+            catch (Exception e)
+            {
+                // ignore
+            }
+        }
+        if ((overrideFinder != null && overrideFinder.hasActiveChild("LateralSync"))
+                || stripeFinder.hasActiveChild("LateralSync"))
+        {
+            String latSyncName = overrideFinder != null && overrideFinder.hasActiveChild("DashOffset")
+                    ? overrideFinder.get().getValue() : stripeFinder.get().getValue();
+            lateralSync = latSyncName == null ? StripeLateralSync.NONE
+                    : Adapters.get(StripeLateralSync.class).unmarshal(latSyncName).get(getEval());
+        }
+        Length width = Length.ZERO;
+        List<XsdTreeNode> elementNodes;
+        if (overrideFinder != null && overrideFinder.hasActiveChild("Elements"))
+        {
+            elementNodes = overrideFinder.get().getChildren();
+        }
+        else if (stripeFinder.hasActiveChild("Elements"))
+        {
+            elementNodes = stripeFinder.get().getChildren();
+        }
+        else
+        {
+            elementNodes = Collections.emptyList();
+        }
+        for (XsdTreeNode elementNode : elementNodes)
+        {
+            if (elementNode.isValid())
+            {
+                Length w = Adapters.get(Length.class).unmarshal(elementNode.getAttributeValue("Width")).get(getEval());
+                width = width.plus(w);
+                if (elementNode.getNodeName().equals("Line"))
                 {
-                    CrossSectionElementAnimation<?> noTrafficLane = new CrossSectionElementAnimation<>(
-                            new MapCrossSectionData(getNode(), geometry), getMap().getContextualized(), Color.DARK_GRAY);
-                    this.crossSectionElements.add(noTrafficLane);
+                    String colorName = elementNode.getAttributeValue("Color");
+                    if (colorName == null)
+                    {
+                        colorName = elementNode.getDefaultAttributeValue(elementNode.getAttributeIndexByName("Color"));
+                    }
+                    Color color = Adapters.get(Color.class).unmarshal(colorName).get(getEval());
+                    if (elementNode.getChild(0).getNodeName().equals("Continuous"))
+                    {
+                        elements.add(StripeElement.continuous(w, color));
+                    }
+                    else
+                    {
+                        List<Double> gapsAndDashes = new ArrayList<>();
+                        for (XsdTreeNode gapDash : elementNode.getChild(0).getChildren())
+                        {
+                            if (gapDash.getChild(0).isValid() && gapDash.getChild(1).isValid())
+                            {
+                                gapsAndDashes.add(
+                                        Adapters.get(Length.class).unmarshal(gapDash.getChild(0).getValue()).get(getEval()).si);
+                                gapsAndDashes.add(
+                                        Adapters.get(Length.class).unmarshal(gapDash.getChild(1).getValue()).get(getEval()).si);
+                            }
+                        }
+                        elements.add(StripeElement.dashed(w, color,
+                                new LengthVector(gapsAndDashes.stream().mapToDouble(v -> v).toArray())));
+                    }
                 }
                 else
                 {
-                    throw new RuntimeException("Element " + node.getNodeName() + " is not a supported cross-section element.");
+                    elements.add(StripeElement.gap(w));
                 }
             }
-            middleOffset.setStartOffset(.5 * (offsetMin0 + offsetMax0));
-            middleOffset.setEndOffset(.5 * (offsetMin1 + offsetMax1));
         }
-        Try.execute(() -> this.fireEvent(LAYOUT_REBUILT, this), "Unable to fire LAYOUT event.");
+        ContinuousDoubleFunction widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
+        CrossSectionGeometry geometry = CrossSectionGeometry.of(this.designLine, getFlattener(), offsetFunc, widthFunc);
+        middleOffset.addStartOffset(geometry.offset().apply(0.0));
+        middleOffset.addEndOffset(geometry.offset().apply(1.0));
+        MapStripeData data = new MapStripeData(dashOffset, getNode(), geometry, elements, lateralSync, this.flattenedDesignLine,
+                middleOffset, this.directionStart, this.directionEnd);
+        getMap().getSynchronizableStripes().put(data, new SynchronizableMapStripe(this, data, phaseSync));
+        this.stripeData.put(node.getId(), data);
+        return new StripeAnimation(data, getMap().getContextualized());
+    }
+
+    /**
+     * Returns the stripes.
+     * @return stripes
+     */
+    protected Collection<MapStripeData> getStripeData()
+    {
+        return this.stripeData.values();
     }
 
     @Override
@@ -838,15 +918,21 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     }
 
     /**
-     * Houses offsets to determine middle line of link as reference line to synchronize dashes.
+     * Remembers minimum and maximum start and end offset, to return the mean of both.
      */
     public class MiddleOffset
     {
-        /** Start offset. */
-        private double startOffset;
+        /** Minimum start offset. */
+        private double startOffsetMin = Double.POSITIVE_INFINITY;
 
-        /** End offset. */
-        private double endOffset;
+        /** Minimum start offset. */
+        private double startOffsetMax = Double.NEGATIVE_INFINITY;
+
+        /** Minimum end offset. */
+        private double endOffsetMin = Double.POSITIVE_INFINITY;
+
+        /** Maximum end offset. */
+        private double endOffsetMax = Double.NEGATIVE_INFINITY;
 
         /**
          * Get start offset.
@@ -854,16 +940,17 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
          */
         public double getStartOffset()
         {
-            return this.startOffset;
+            return .5 * (this.startOffsetMin + this.startOffsetMax);
         }
 
         /**
-         * Set start offset.
+         * Add start offset.
          * @param startOffset start offset.
          */
-        public void setStartOffset(final double startOffset)
+        public void addStartOffset(final double startOffset)
         {
-            this.startOffset = startOffset;
+            this.startOffsetMin = Math.min(this.startOffsetMin, startOffset);
+            this.startOffsetMax = Math.max(this.startOffsetMax, startOffset);
         }
 
         /**
@@ -872,16 +959,17 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
          */
         public double getEndOffset()
         {
-            return this.endOffset;
+            return .5 * (this.endOffsetMin + this.endOffsetMax);
         }
 
         /**
-         * Set end offset.
+         * Add end offset.
          * @param endOffset end offset
          */
-        public void setEndOffset(final double endOffset)
+        public void addEndOffset(final double endOffset)
         {
-            this.endOffset = endOffset;
+            this.endOffsetMin = Math.min(this.endOffsetMin, endOffset);
+            this.endOffsetMax = Math.max(this.endOffsetMax, endOffset);
         }
     }
 

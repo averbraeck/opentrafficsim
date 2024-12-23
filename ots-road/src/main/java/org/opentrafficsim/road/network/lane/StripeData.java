@@ -161,22 +161,33 @@ public class StripeData
     {
         if (this.period == null)
         {
-            List<Double> lineLengths = new ArrayList<>();
-            for (StripeElement element : this.elements)
-            {
-                if (element.dashes() != null)
-                {
-                    double length = 0.0;
-                    for (Length gapDash : element.dashes())
-                    {
-                        length += gapDash.si;
-                    }
-                    lineLengths.add(length);
-                }
-            }
-            this.period = getPeriod(lineLengths);
+            this.period = getPeriod(this.elements);
         }
         return this.period;
+    }
+    
+    /**
+     * Returns the period after which the given line gap-dash patterns repeat as a whole. Lengths are rounded to a precision of
+     * 0.0001 to find the greatest common divisor.
+     * @param elements elements
+     * @return period
+     */
+    public static double getPeriod(final List<StripeElement> elements)
+    {
+        List<Double> lineLengths = new ArrayList<>();
+        for (StripeElement element : elements)
+        {
+            if (element.dashes() != null)
+            {
+                double length = 0.0;
+                for (Length gapDash : element.dashes())
+                {
+                    length += gapDash.si;
+                }
+                lineLengths.add(length);
+            }
+        }
+        return getPeriod(lineLengths);
     }
 
     /**

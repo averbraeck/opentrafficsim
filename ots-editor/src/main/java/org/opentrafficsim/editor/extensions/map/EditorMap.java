@@ -141,6 +141,12 @@ public class EditorMap extends JPanel implements EventListener
     /** Map of toggle names to toggle animation classes. */
     private Map<String, Class<? extends Locatable>> toggleLocatableMap = new LinkedHashMap<>();
 
+    /** Map of synchronizable stripes. */
+    private Map<MapStripeData, SynchronizableMapStripe> synStripes = new LinkedHashMap<>();
+    
+    /** Listeners to lane and stripe overrides. */
+    private final Map<XsdTreeNode, ChangeListener<Object>> overrideListeners = new LinkedHashMap<>();
+
     /**
      * Constructor.
      * @param animator thread for frequent painting.
@@ -574,6 +580,38 @@ public class EditorMap extends JPanel implements EventListener
             {
                 setNetworkFlattener(node);
             }
+            else if (node.getPathString().endsWith("LaneOverride") || node.getPathString().endsWith("StripeOverride"))
+            {
+                ChangeListener<Object> listener = new ChangeListener<>(node, () -> this.editor.getEval())
+                {
+                    private static final long serialVersionUID = 20241206L;
+
+                    @Override
+                    public void notify(final Event event) throws RemoteException
+                    {
+                        if (event.getType().equals(ChangeListener.CHANGE_EVENT))
+                        {
+                            MapData data = EditorMap.this.datas.get(getNode().getParent().getParent());
+                            if (data instanceof MapLinkData linkData)
+                            {
+                                linkData.evalChanged();
+                            }
+                        }
+                        else
+                        {
+                            super.notify(event);
+                        }
+                    }
+
+                    @Override
+                    Object calculateData()
+                    {
+                        return null; // This change listener represents no data
+                    }
+                };
+                this.overrideListeners.put(node, listener);
+                listener.addListener(listener, ChangeListener.CHANGE_EVENT); // register to self, but for change events
+            }
         }
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
         {
@@ -597,6 +635,15 @@ public class EditorMap extends JPanel implements EventListener
             else if (node.getPathString().equals(XsdPaths.NETWORK + ".Flattener"))
             {
                 removeNetworkFlattener();
+            }
+            else if (node.getPathString().endsWith("LaneOverride") || node.getPathString().endsWith("StripeOverride"))
+            {
+                ChangeListener<Object> listener = this.overrideListeners.remove(node);
+                if (listener != null)
+                {
+                    listener.removeListener(listener, ChangeListener.CHANGE_EVENT);
+                    listener.destroy();
+                }
             }
         }
         else if (event.getType().equals(XsdTreeNode.ACTIVATION_CHANGED))
@@ -949,6 +996,15 @@ public class EditorMap extends JPanel implements EventListener
             }
         }
         return new NumSegments(64);
+    }
+
+    /**
+     * Returns the map of synchronizable stripes, not a safe copy.
+     * @return map of synchronizable stripes
+     */
+    public Map<MapStripeData, SynchronizableMapStripe> getSynchronizableStripes()
+    {
+        return this.synStripes;
     }
 
 }

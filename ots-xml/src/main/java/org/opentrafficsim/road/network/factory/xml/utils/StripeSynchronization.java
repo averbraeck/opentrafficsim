@@ -34,7 +34,7 @@ public final class StripeSynchronization<T>
      * Constructor. To synchronize stripes use {@code StripeSynchronization.synchronize(Map<T, SynchronizableStripe<T>>)}.
      * @param stripes stripes
      */
-    private StripeSynchronization(final Map<T, SynchronizableStripe<T>> stripes)
+    private StripeSynchronization(final Map<T, ? extends SynchronizableStripe<T>> stripes)
     {
         this.stripes.putAll(stripes);
     }
@@ -44,7 +44,7 @@ public final class StripeSynchronization<T>
      * @param stripes stripes
      * @param <T> underlying stripe object type
      */
-    public static <T> void synchronize(final Map<T, SynchronizableStripe<T>> stripes)
+    public static <T> void synchronize(final Map<T, ? extends SynchronizableStripe<T>> stripes)
     {
         new StripeSynchronization<>(stripes).synchronize();
     }

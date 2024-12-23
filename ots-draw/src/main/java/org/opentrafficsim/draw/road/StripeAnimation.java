@@ -40,7 +40,10 @@ public class StripeAnimation extends OtsRenderable<StripeData>
     private static final long serialVersionUID = 20141017L;
 
     /** Drawable paths. */
-    private final List<PaintData> paintDatas;
+    private List<PaintData> paintDatas;
+    
+    /** Offset that applied when paths were determined. */
+    private Length pathOffset;
 
     /**
      * @param source stripe data
@@ -49,7 +52,6 @@ public class StripeAnimation extends OtsRenderable<StripeData>
     public StripeAnimation(final StripeData source, final Contextualized contextualized)
     {
         super(source, contextualized);
-        this.paintDatas = makePaths(source);
     }
 
     /**
@@ -166,6 +168,7 @@ public class StripeAnimation extends OtsRenderable<StripeData>
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
+        update();
         if (this.paintDatas != null)
         {
             for (PaintData paintData : this.paintDatas)
@@ -175,6 +178,18 @@ public class StripeAnimation extends OtsRenderable<StripeData>
                 PaintPolygons.paintPaths(graphics, paintData.color(), paintData.path(), true);
                 resetRendering(graphics);
             }
+        }
+    }
+    
+    /**
+     * Updates paths to draw when new offset applies.
+     */
+    private void update()
+    {
+        if (!getSource().getDashOffset().equals(this.pathOffset))
+        {
+            this.paintDatas = makePaths(getSource());
+            this.pathOffset = getSource().getDashOffset();
         }
     }
 

@@ -29,10 +29,10 @@ public class MapStripeData extends MapCrossSectionData implements StripeData
     private final Length width;
 
     /** Dash offset. */
-    private final Length dashOffset;
+    private Length dashOffset;
 
     /** Start offset. */
-    private final Length startOffset;
+    private final Length laterealStartOffset;
 
     /** Stripe elements. */
     private final List<StripeElement> elements;
@@ -82,7 +82,7 @@ public class MapStripeData extends MapCrossSectionData implements StripeData
         }
         this.width = w;
         this.dashOffset = dashOffset;
-        this.startOffset = Length.instantiateSI(geometry.offset().apply(0.0));
+        this.laterealStartOffset = Length.instantiateSI(geometry.offset().apply(0.0));
         this.elements = elements;
         this.lateralSync = lateralSync;
         this.linkLine = linkLine;
@@ -144,11 +144,30 @@ public class MapStripeData extends MapCrossSectionData implements StripeData
     {
         return this.dashOffset;
     }
+    
+    /**
+     * Returns the lateral sync.
+     * @return lateral sync.
+     */
+    public StripeLateralSync getLateralSync()
+    {
+        return this.lateralSync;
+    }
+
+    /**
+     * Sets a new dash offset, which should only occur due to synchronization.
+     * @param dashOffset dash offset
+     */
+    public void setDashOffset(final Length dashOffset)
+    {
+        this.dashOffset = dashOffset;
+    }
+    
 
     @Override
     public String toString()
     {
-        return "Stripe " + getLinkId() + " " + this.startOffset;
+        return "Stripe " + getLinkId() + " " + this.laterealStartOffset;
     }
 
 }
