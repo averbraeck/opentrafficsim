@@ -61,8 +61,8 @@ public final class GraphUtil
     public static boolean considerTrajectory(final Trajectory<?> trajectory, final Length startPosition,
             final Length endPosition)
     {
-        return trajectory.size() > 0 && trajectory.getX(0) < startPosition.si
-                && trajectory.getX(trajectory.size() - 1) > endPosition.si;
+        return trajectory.size() > 0 && trajectory.getX(0) < endPosition.si
+                && trajectory.getX(trajectory.size() - 1) > startPosition.si;
     }
 
     /**
