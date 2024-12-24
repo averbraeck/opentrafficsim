@@ -39,11 +39,12 @@ public abstract class AbstractHistoricalMap<K, V, M extends Map<K, V>> extends A
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns the historical value
      * @param map initial map
      */
-    protected AbstractHistoricalMap(final HistoryManager historyManager, final M map)
+    protected AbstractHistoricalMap(final HistoryManager historyManager, final Object owner, final M map)
     {
-        super(historyManager);
+        super(historyManager, owner);
         Throw.when(!map.isEmpty(), IllegalArgumentException.class, "The initial map should be empty.");
         this.current = map;
     }

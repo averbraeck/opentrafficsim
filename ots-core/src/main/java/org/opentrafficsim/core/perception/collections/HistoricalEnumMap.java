@@ -29,23 +29,26 @@ public class HistoricalEnumMap<K extends Enum<K>, V> extends AbstractHistoricalM
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns the historical value
      * @param clazz enum class
      */
-    public HistoricalEnumMap(final HistoryManager historyManager, final Class<K> clazz)
+    public HistoricalEnumMap(final HistoryManager historyManager, final Object owner, final Class<K> clazz)
     {
-        super(historyManager, new EnumMap<>(clazz));
+        super(historyManager, owner, new EnumMap<>(clazz));
         this.clazz = clazz;
     }
 
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns the historical value
      * @param m initial map
      * @param clazz enum class
      */
-    public HistoricalEnumMap(final HistoryManager historyManager, final EnumMap<K, ? extends V> m, final Class<K> clazz)
+    public HistoricalEnumMap(final HistoryManager historyManager, final Object owner, final EnumMap<K, ? extends V> m,
+            final Class<K> clazz)
     {
-        super(historyManager, new EnumMap<>(m));
+        super(historyManager, owner, new EnumMap<>(m));
         this.clazz = clazz;
     }
 

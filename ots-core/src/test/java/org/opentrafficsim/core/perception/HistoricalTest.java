@@ -79,7 +79,7 @@ public class HistoricalTest
     @Test
     public void valueTest()
     {
-        Historical<String> hist = new HistoricalValue<>(this.historyManager);
+        Historical<String> hist = new HistoricalValue<>(this.historyManager, new Object());
         this.time = Time.ZERO;
         String msg = "HistoricalSingle value is incorrect.";
         assertEquals(null, hist.get(Time.instantiateSI(-1.0)), msg);
@@ -170,7 +170,7 @@ public class HistoricalTest
     @Test
     public void listTest()
     {
-        HistoricalLinkedList<String> hist = new HistoricalLinkedList<>(this.historyManager);
+        HistoricalLinkedList<String> hist = new HistoricalLinkedList<>(this.historyManager, new Object());
         this.time = Time.ZERO;
         String msg = "HistoricalLinkedList contents is incorrect.";
         assertEquals(Arrays.asList(), hist.get(Time.instantiateSI(-1.0)), msg);
@@ -217,7 +217,7 @@ public class HistoricalTest
     @Test
     public void mapTest()
     {
-        HistoricalMap<Integer, String> hist = new HistoricalHashMap<>(this.historyManager);
+        HistoricalMap<Integer, String> hist = new HistoricalHashMap<>(this.historyManager, new Object());
         this.time = Time.ZERO;
         String msg = "HistoricalMap contents is incorrect.";
         assertEquals(new LinkedHashMap<>(), hist.get(Time.instantiateSI(-1.0)), msg);

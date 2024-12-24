@@ -27,20 +27,22 @@ public class HistoricalTreeSet<E> extends AbstractHistoricalNavigableSet<E, Tree
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns the historical value
      */
-    public HistoricalTreeSet(final HistoryManager historyManager)
+    public HistoricalTreeSet(final HistoryManager historyManager, final Object owner)
     {
-        super(historyManager, new TreeSet<>());
+        super(historyManager, owner, new TreeSet<>());
     }
 
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns the historical value
      * @param c initial collection
      */
-    public HistoricalTreeSet(final HistoryManager historyManager, final Collection<? extends E> c)
+    public HistoricalTreeSet(final HistoryManager historyManager, final Object owner, final Collection<? extends E> c)
     {
-        super(historyManager, new TreeSet<>(c));
+        super(historyManager, owner, new TreeSet<>(c));
     }
 
     @Override

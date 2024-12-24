@@ -28,10 +28,11 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet<?
      * Constructor.
      * @param manager history manager
      * @param parameters initial parameter set
+     * @param owner object that owns the historical value
      */
-    public HistoricalParameters(final HistoryManager manager, final Parameters parameters)
+    public HistoricalParameters(final HistoryManager manager, final Object owner, final Parameters parameters)
     {
-        super(manager);
+        super(manager, owner);
         this.params = parameters;
     }
 

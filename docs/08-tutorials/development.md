@@ -157,9 +157,9 @@ As an example let’s assume we have a class for a 2-dimensional double (`double
         
         private final double[][] matrix;
         
-        protected HistoricalMatrix(final HistoryManager historyManager, final double[][] matrix)
+        protected HistoricalMatrix(final HistoryManager historyManager, final Object owner, final double[][] matrix)
         {
-            super(historyManager);
+            super(historyManager, owner);
             this.matrix = matrix;
         }
 

@@ -82,9 +82,9 @@ public class Development
 
         private final double[][] matrix;
 
-        protected HistoricalMatrix(final HistoryManager historyManager, final double[][] matrix)
+        protected HistoricalMatrix(final HistoryManager historyManager, final Object owner, final double[][] matrix)
         {
-            super(historyManager);
+            super(historyManager, owner);
             this.matrix = matrix;
         }
 

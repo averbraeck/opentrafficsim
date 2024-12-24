@@ -29,11 +29,12 @@ public abstract class AbstractHistoricalSortedMap<K, V, M extends SortedMap<K, V
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns the historical value
      * @param map initial map
      */
-    protected AbstractHistoricalSortedMap(final HistoryManager historyManager, final M map)
+    protected AbstractHistoricalSortedMap(final HistoryManager historyManager, final Object owner, final M map)
     {
-        super(historyManager, map);
+        super(historyManager, owner, map);
     }
 
     // Non-altering SortedMap methods

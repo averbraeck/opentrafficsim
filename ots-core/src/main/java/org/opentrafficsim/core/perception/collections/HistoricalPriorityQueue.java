@@ -27,20 +27,22 @@ public class HistoricalPriorityQueue<E> extends AbstractHistoricalQueue<E, Prior
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns the historical value
      */
-    public HistoricalPriorityQueue(final HistoryManager historyManager)
+    public HistoricalPriorityQueue(final HistoryManager historyManager, final Object owner)
     {
-        super(historyManager, new PriorityQueue<>());
+        super(historyManager, owner, new PriorityQueue<>());
     }
 
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns the historical value
      * @param c initial collection
      */
-    public HistoricalPriorityQueue(final HistoryManager historyManager, final Collection<? extends E> c)
+    public HistoricalPriorityQueue(final HistoryManager historyManager, final Object owner, final Collection<? extends E> c)
     {
-        super(historyManager, new PriorityQueue<>(c));
+        super(historyManager, owner, new PriorityQueue<>(c));
     }
 
     @Override

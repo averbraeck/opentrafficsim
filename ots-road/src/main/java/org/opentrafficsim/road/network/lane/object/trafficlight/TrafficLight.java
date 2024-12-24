@@ -66,8 +66,8 @@ public class TrafficLight extends AbstractLaneBasedObject
             throws NetworkException
     {
         super(id, lane, longitudinalPosition, LaneBasedObject.makeLine(lane, longitudinalPosition), height);
-        this.trafficLightColor =
-                new HistoricalValue<>(getSimulator().getReplication().getHistoryManager(getSimulator()), TrafficLightColor.RED);
+        this.trafficLightColor = new HistoricalValue<>(getSimulator().getReplication().getHistoryManager(getSimulator()), this,
+                TrafficLightColor.RED);
         init();
     }
 

@@ -30,11 +30,12 @@ public abstract class AbstractHistoricalList<E, L extends List<E>> extends Abstr
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns the historical value
      * @param list initial list
      */
-    protected AbstractHistoricalList(final HistoryManager historyManager, final L list)
+    protected AbstractHistoricalList(final HistoryManager historyManager, final Object owner, final L list)
     {
-        super(historyManager, list);
+        super(historyManager, owner, list);
     }
 
     // Altering List methods

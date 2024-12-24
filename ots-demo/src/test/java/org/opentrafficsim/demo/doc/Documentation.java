@@ -67,11 +67,11 @@ public class Documentation
 
         abstract T get(Time time);
 
-        private Hist(final HistoryManager historyManager)
+        private Hist(final HistoryManager historyManager, final Object owner)
         {
-            super(historyManager);
+            super(historyManager, owner);
             // @docs/05-perception/historical.md
-            this.odometer = new HistoricalValue<>(historyManager, Length.ZERO);
+            this.odometer = new HistoricalValue<>(historyManager, this, Length.ZERO);
         }
 
         T getValue(final Time time)

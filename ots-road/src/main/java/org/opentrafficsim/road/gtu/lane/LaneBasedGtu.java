@@ -187,8 +187,8 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     {
         super(id, gtuType, network.getSimulator(), network, length, width, maximumSpeed, front, Length.ZERO);
         HistoryManager historyManager = network.getSimulator().getReplication().getHistoryManager(network.getSimulator());
-        this.crossSections = new HistoricalArrayList<>(historyManager);
-        this.turnIndicatorStatus = new HistoricalValue<>(historyManager, TurnIndicatorStatus.NOTPRESENT);
+        this.crossSections = new HistoricalArrayList<>(historyManager, this);
+        this.turnIndicatorStatus = new HistoricalValue<>(historyManager, this, TurnIndicatorStatus.NOTPRESENT);
     }
 
     /**

@@ -27,20 +27,22 @@ public class HistoricalLinkedHashSet<E> extends AbstractHistoricalCollection<E, 
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns the historical value
      */
-    public HistoricalLinkedHashSet(final HistoryManager historyManager)
+    public HistoricalLinkedHashSet(final HistoryManager historyManager, final Object owner)
     {
-        super(historyManager, new LinkedHashSet<>());
+        super(historyManager, owner, new LinkedHashSet<>());
     }
 
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns the historical value
      * @param c initial collection
      */
-    public HistoricalLinkedHashSet(final HistoryManager historyManager, final Collection<? extends E> c)
+    public HistoricalLinkedHashSet(final HistoryManager historyManager, final Object owner, final Collection<? extends E> c)
     {
-        super(historyManager, new LinkedHashSet<>(c));
+        super(historyManager, owner, new LinkedHashSet<>(c));
     }
 
     @Override

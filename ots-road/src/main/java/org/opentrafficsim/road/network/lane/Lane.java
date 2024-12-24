@@ -198,7 +198,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         super(link, id, geometry);
         this.laneType = laneType;
         this.speedLimitMap.putAll(speedLimitMap);
-        this.gtuList = new HistoricalArrayList<>(getManager(link));
+        this.gtuList = new HistoricalArrayList<>(getManager(link), this);
     }
 
     /**

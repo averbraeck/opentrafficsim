@@ -31,20 +31,22 @@ public class HistoricalLinkedList<E> extends AbstractHistoricalList<E, LinkedLis
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns the historical value
      */
-    public HistoricalLinkedList(final HistoryManager historyManager)
+    public HistoricalLinkedList(final HistoryManager historyManager, final Object owner)
     {
-        super(historyManager, new LinkedList<>());
+        super(historyManager, owner, new LinkedList<>());
     }
 
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns the historical value
      * @param c initial collection
      */
-    public HistoricalLinkedList(final HistoryManager historyManager, final Collection<? extends E> c)
+    public HistoricalLinkedList(final HistoryManager historyManager, final Object owner, final Collection<? extends E> c)
     {
-        super(historyManager, new LinkedList<>(c));
+        super(historyManager, owner, new LinkedList<>(c));
     }
 
     @Override
@@ -267,6 +269,20 @@ public class HistoricalLinkedList<E> extends AbstractHistoricalList<E, LinkedLis
         List<E> list = new LinkedList<>(getCollection());
         Collections.reverse(list);
         return Collections.unmodifiableList(list).iterator();
+    }
+
+    /**
+     * Returns a reversed list.<br>
+     * <br>
+     * <i>This implementation copies a list and reverses the order before returning. This is not efficient and it should be
+     * avoided when possible.</i>
+     * @return reversed list
+     */
+    public LinkedList<E> reversed()
+    {
+        LinkedList<E> list = new LinkedList<>(getCollection());
+        Collections.reverse(list);
+        return list;
     }
 
 }

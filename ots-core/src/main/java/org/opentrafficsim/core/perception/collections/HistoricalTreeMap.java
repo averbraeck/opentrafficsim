@@ -27,20 +27,22 @@ public class HistoricalTreeMap<K, V> extends AbstractHistoricalNavigableMap<K, V
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns the historical value
      */
-    public HistoricalTreeMap(final HistoryManager historyManager)
+    public HistoricalTreeMap(final HistoryManager historyManager, final Object owner)
     {
-        super(historyManager, new TreeMap<>());
+        super(historyManager, owner, new TreeMap<>());
     }
 
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns the historical value
      * @param m initial map
      */
-    public HistoricalTreeMap(final HistoryManager historyManager, final Map<? extends K, ? extends V> m)
+    public HistoricalTreeMap(final HistoryManager historyManager, final Object owner, final Map<? extends K, ? extends V> m)
     {
-        super(historyManager, new TreeMap<>(m));
+        super(historyManager, owner, new TreeMap<>(m));
     }
 
     @Override

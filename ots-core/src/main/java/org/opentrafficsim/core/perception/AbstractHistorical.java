@@ -48,6 +48,9 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
     /** History manager. */
     private final HistoryManager historyManager;
 
+    /** Object that owns this historical. */
+    private final Object owner;
+
     /** List of events to determine the value at a previous time. */
     private final List<E> events = new ArrayList<>();
 
@@ -61,11 +64,14 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns this historical
      */
-    protected AbstractHistorical(final HistoryManager historyManager)
+    protected AbstractHistorical(final HistoryManager historyManager, final Object owner)
     {
         Throw.whenNull(historyManager, "History manager may not be null.");
+        Throw.whenNull(owner, "owner");
         this.historyManager = historyManager;
+        this.owner = owner;
         historyManager.registerHistorical(this);
     }
 
@@ -166,6 +172,12 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
         {
             this.events.remove(0);
         }
+    }
+
+    @Override
+    public Object getOwner()
+    {
+        return this.owner;
     }
 
     /**

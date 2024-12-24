@@ -26,11 +26,12 @@ public abstract class AbstractHistoricalQueue<E, Q extends Queue<E>> extends Abs
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns the historical value
      * @param queue initial queue
      */
-    protected AbstractHistoricalQueue(final HistoryManager historyManager, final Q queue)
+    protected AbstractHistoricalQueue(final HistoryManager historyManager, final Object owner, final Q queue)
     {
-        super(historyManager, queue);
+        super(historyManager, owner, queue);
     }
 
     // Altering PriorityQueue methods

@@ -50,7 +50,7 @@ public abstract class HistoryManager
      * Returns the current simulation time. This is used by historicals to time-stamp state changes.
      * @return current simulation time.
      */
-    abstract Time now();
+    protected abstract Time now();
 
     /**
      * Historical view for the history manager.
@@ -70,6 +70,13 @@ public abstract class HistoryManager
          * @param history history time to keep
          */
         void cleanUpHistory(Duration history);
+
+        /**
+         * Returns the object that owns the historical value so that a {@code HistoryManager} can apply logic that depends on
+         * the type of object.
+         * @return object that owns the historical value
+         */
+        Object getOwner();
     }
 
     /**

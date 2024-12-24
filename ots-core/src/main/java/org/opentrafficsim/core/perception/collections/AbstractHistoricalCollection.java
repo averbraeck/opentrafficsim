@@ -39,11 +39,12 @@ public abstract class AbstractHistoricalCollection<E, C extends Collection<E>>
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns the historical value
      * @param collection initial collection
      */
-    protected AbstractHistoricalCollection(final HistoryManager historyManager, final C collection)
+    protected AbstractHistoricalCollection(final HistoryManager historyManager, final Object owner, final C collection)
     {
-        super(historyManager);
+        super(historyManager, owner);
         this.current = collection;
     }
 

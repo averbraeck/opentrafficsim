@@ -27,20 +27,22 @@ public class HistoricalArrayList<E> extends AbstractHistoricalList<E, ArrayList<
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns the historical value
      */
-    public HistoricalArrayList(final HistoryManager historyManager)
+    public HistoricalArrayList(final HistoryManager historyManager, final Object owner)
     {
-        super(historyManager, new ArrayList<>());
+        super(historyManager, owner, new ArrayList<>());
     }
 
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns the historical value
      * @param c initial collection
      */
-    public HistoricalArrayList(final HistoryManager historyManager, final Collection<? extends E> c)
+    public HistoricalArrayList(final HistoryManager historyManager, final Object owner, final Collection<? extends E> c)
     {
-        super(historyManager, new ArrayList<>(c));
+        super(historyManager, owner, new ArrayList<>(c));
     }
 
     @Override

@@ -219,12 +219,12 @@ public class Gtu extends LocalEventProducer
         this.uniqueNumber = ++staticUNIQUENUMBER;
         this.gtuType = gtuType;
         this.simulator = simulator;
-        this.odometer = new HistoricalValue<>(historyManager, Length.ZERO);
+        this.odometer = new HistoricalValue<>(historyManager, this, Length.ZERO);
         this.perceivableContext = perceivableContext;
         this.perceivableContext.addGTU(this);
-        this.strategicalPlanner = new HistoricalValue<>(historyManager);
-        this.tacticalPlanner = new HistoricalValue<>(historyManager, null);
-        this.operationalPlan = new HistoricalValue<>(historyManager, null);
+        this.strategicalPlanner = new HistoricalValue<>(historyManager, this);
+        this.tacticalPlanner = new HistoricalValue<>(historyManager, this, null);
+        this.operationalPlan = new HistoricalValue<>(historyManager, this, null);
 
         // sensor positions.
         Length dy2 = width.times(0.5);

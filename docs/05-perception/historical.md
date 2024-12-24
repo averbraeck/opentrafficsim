@@ -19,7 +19,7 @@ The first two set and get the value at the current time, while the latter obtain
 Obviously, the example of a GTUs odometer value is of a type that has a single immutable value (rather than being a set or a complex object) at any time, which is the easiest case. We can use the implementation `HistoricalValue` for this.
 
 ```java
-    this.odometer = new HistoricalValue<>(historyManager, Length.ZERO);
+    this.odometer = new HistoricalValue<>(historyManager, this, Length.ZERO);
 ```
 
 The `Historical` is automatically coupled to the `HistoryManager`. The class `HistoricalValue` internally uses the events from `AbstractHistorical` (its superclass) to return the value at any particular time.

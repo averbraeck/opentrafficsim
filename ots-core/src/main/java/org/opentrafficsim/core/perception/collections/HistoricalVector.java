@@ -30,20 +30,22 @@ public class HistoricalVector<E> extends AbstractHistoricalList<E, Vector<E>>
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns the historical value
      */
-    public HistoricalVector(final HistoryManager historyManager)
+    public HistoricalVector(final HistoryManager historyManager, final Object owner)
     {
-        super(historyManager, new Vector<>());
+        super(historyManager, owner, new Vector<>());
     }
 
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns the historical value
      * @param c initial collection
      */
-    public HistoricalVector(final HistoryManager historyManager, final Collection<? extends E> c)
+    public HistoricalVector(final HistoryManager historyManager, final Object owner, final Collection<? extends E> c)
     {
-        super(historyManager, new Vector<>(c));
+        super(historyManager, owner, new Vector<>(c));
     }
 
     @Override

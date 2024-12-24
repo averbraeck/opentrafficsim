@@ -29,11 +29,12 @@ public abstract class AbstractHistoricalNavigableSet<E, S extends NavigableSet<E
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns the historical value
      * @param set initial set
      */
-    protected AbstractHistoricalNavigableSet(final HistoryManager historyManager, final S set)
+    protected AbstractHistoricalNavigableSet(final HistoryManager historyManager, final Object owner, final S set)
     {
-        super(historyManager, set);
+        super(historyManager, owner, set);
     }
 
     @Override

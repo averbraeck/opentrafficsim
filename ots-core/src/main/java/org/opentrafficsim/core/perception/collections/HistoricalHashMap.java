@@ -27,20 +27,22 @@ public class HistoricalHashMap<K, V> extends AbstractHistoricalMap<K, V, LinkedH
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns the historical value
      */
-    public HistoricalHashMap(final HistoryManager historyManager)
+    public HistoricalHashMap(final HistoryManager historyManager, final Object owner)
     {
-        super(historyManager, new LinkedHashMap<>());
+        super(historyManager, owner, new LinkedHashMap<>());
     }
 
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns the historical value
      * @param m initial map
      */
-    public HistoricalHashMap(final HistoryManager historyManager, final Map<? extends K, ? extends V> m)
+    public HistoricalHashMap(final HistoryManager historyManager, final Object owner, final Map<? extends K, ? extends V> m)
     {
-        super(historyManager, new LinkedHashMap<>(m));
+        super(historyManager, owner, new LinkedHashMap<>(m));
     }
 
     @Override

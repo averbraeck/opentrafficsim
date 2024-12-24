@@ -29,11 +29,12 @@ public abstract class AbstractHistoricalNavigableMap<K, V, M extends NavigableMa
     /**
      * Constructor.
      * @param historyManager history manager
+     * @param owner object that owns the historical value
      * @param map initial map
      */
-    protected AbstractHistoricalNavigableMap(final HistoryManager historyManager, final M map)
+    protected AbstractHistoricalNavigableMap(final HistoryManager historyManager, final Object owner, final M map)
     {
-        super(historyManager, map);
+        super(historyManager, owner, map);
     }
 
     // Altering NavigableMap methods
