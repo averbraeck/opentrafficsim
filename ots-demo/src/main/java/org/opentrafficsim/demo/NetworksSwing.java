@@ -64,7 +64,7 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
      */
     public NetworksSwing(final String title, final OtsAnimationPanel panel, final NetworksModel model)
     {
-        super(model, panel);
+        super(model, panel, DEFAULT_COLORER, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
         RoadNetwork network = model.getNetwork();
         System.out.println(network.getLinkMap());
     }

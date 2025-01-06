@@ -1,5 +1,7 @@
 package org.opentrafficsim.web.test;
 
+import java.util.Collections;
+
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.bounds.Bounds2d;
@@ -34,7 +36,7 @@ public class CircularModelWeb extends OtsWebServer
     {
         super(title, simulator, new Bounds2d(-200, 200, -200, 200));
         DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getNetwork().getSimulator(),
-                new DefaultSwitchableGtuColorer());
+                new DefaultSwitchableGtuColorer(), Collections.emptyMap());
     }
 
     /**

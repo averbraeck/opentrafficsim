@@ -334,6 +334,39 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
         {
             return DrawLevel.GTU.getZ();
         }
+        
+        /**
+         * Marker for GTU when zoomed out.
+         */
+        enum GtuMarker
+        {
+            /** Circle. */
+            CIRCLE(new Ellipse2D.Double(0, 0, 0, 0)),
+            
+            /** Square. */
+            SQUARE(new Rectangle2D.Double(0, 0, 0, 0));
+            
+            /** Shape. */
+            private RectangularShape shape;
+            
+            /**
+             * Constructor.
+             * @param shape shape
+             */
+            GtuMarker(final RectangularShape shape)
+            {
+                this.shape = shape;
+            }
+            
+            /**
+             * Returns the shape.
+             * @return shape.
+             */
+            public RectangularShape getShape()
+            {
+                return this.shape;
+            }
+        }
     }
 
 }

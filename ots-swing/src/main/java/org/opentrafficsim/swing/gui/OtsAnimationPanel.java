@@ -98,9 +98,6 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
     /** Set of GIS layer names to toggle buttons. */
     private Map<String, JToggleButton> toggleGISButtons = new LinkedHashMap<>();
 
-    /** The switchableGtuColorer used to color the GTUs. */
-    private GtuColorer gtuColorer = null;
-
     /** The ColorControlPanel that allows the user to operate the SwitchableGtuColorer. */
     private ColorControlPanel colorControlPanel = null;
 
@@ -172,8 +169,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         getTabbedPane().setSelectedIndex(0); // Show the animation panel as the default tab
 
         // Include the GTU colorer control panel NORTH of the animation.
-        this.gtuColorer = gtuColorer;
-        this.colorControlPanel = new ColorControlPanel(this.gtuColorer);
+        this.colorControlPanel = new ColorControlPanel(gtuColorer);
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
         buttonPanel.setPreferredSize(new Dimension(200, 35));
@@ -655,16 +651,6 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
             parent.revalidate();
         }
         this.coordinateField.repaint();
-    }
-
-    /**
-     * Access the GtuColorer of this animation ControlPanel.
-     * @return GtuColorer the colorer used. If it is a SwitchableGtuColorer, the wrapper with the list will be returned, not the
-     *         actual colorer in use.
-     */
-    public final GtuColorer getGtuColorer()
-    {
-        return this.gtuColorer;
     }
 
     /**

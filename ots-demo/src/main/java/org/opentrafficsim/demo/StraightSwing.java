@@ -56,7 +56,7 @@ public class StraightSwing extends OtsSimulationApplication<StraightModel> imple
      */
     public StraightSwing(final String title, final OtsAnimationPanel panel, final StraightModel model)
     {
-        super(model, panel);
+        super(model, panel, DEFAULT_COLORER, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
     }
 
     @Override

@@ -71,7 +71,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
      */
     public CircularRoadSwing(final String title, final OtsAnimationPanel panel, final CircularRoadModel model)
     {
-        super(model, panel);
+        super(model, panel, DEFAULT_COLORER, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
 
         // NetworkAnimation networkAnimation = new NetworkAnimation(model.getNetwork());
         // networkAnimation.addDrawingInfoClass(Lane.class, new DrawingInfoShape<>(Color.GRAY));

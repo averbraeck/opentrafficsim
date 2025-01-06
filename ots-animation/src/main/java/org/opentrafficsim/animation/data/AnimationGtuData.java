@@ -1,8 +1,6 @@
 package org.opentrafficsim.animation.data;
 
 import java.awt.Color;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 
 import org.djunits.value.vdouble.scalar.Length;
@@ -31,15 +29,20 @@ public class AnimationGtuData implements GtuData
     /** Gtu. */
     private final LaneBasedGtu gtu;
 
+    /** Marker. */
+    private final GtuMarker marker;
+
     /**
      * Constructor.
      * @param gtuColorer factory.
      * @param gtu GTU.
+     * @param marker marker
      */
-    public AnimationGtuData(final GtuColorer gtuColorer, final LaneBasedGtu gtu)
+    public AnimationGtuData(final GtuColorer gtuColorer, final LaneBasedGtu gtu, final GtuMarker marker)
     {
         this.gtuColorer = gtuColorer;
         this.gtu = gtu;
+        this.marker = marker;
     }
 
     @Override
@@ -117,15 +120,7 @@ public class AnimationGtuData implements GtuData
     @Override
     public RectangularShape getMarker()
     {
-        switch (this.gtu.getType().getMarker())
-        {
-            case CIRCLE:
-                return new Ellipse2D.Double(0, 0, 0, 0);
-            case SQUARE:
-                return new Rectangle2D.Double(0, 0, 0, 0);
-            default:
-                return new Ellipse2D.Double(0, 0, 0, 0);
-        }
+        return this.marker.getShape();
     }
 
     @Override

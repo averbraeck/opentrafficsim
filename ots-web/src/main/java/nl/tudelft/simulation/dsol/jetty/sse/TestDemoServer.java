@@ -3,6 +3,7 @@ package nl.tudelft.simulation.dsol.jetty.sse;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -192,7 +193,7 @@ public class TestDemoServer
                         OtsWebModel webModel = new OtsWebModel(model.getShortName(), simulator);
                         TestDemoServer.this.sessionWebModelMap.put(sessionId, webModel);
                         DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getNetwork().getSimulator(),
-                                new DefaultSwitchableGtuColorer());
+                                new DefaultSwitchableGtuColorer(), Collections.emptyMap());
                     }
                     catch (Exception exception)
                     {

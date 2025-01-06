@@ -26,6 +26,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
+import org.opentrafficsim.demo.DefaultsFactory;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
@@ -62,7 +63,8 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
      */
     public LoadXml(final OtsModelInterface model, final OtsAnimationPanel animationPanel)
     {
-        super(model, animationPanel);
+        // TODO: colorer and markers based on XML
+        super(model, animationPanel, DEFAULT_COLORER, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
     }
 
     /**

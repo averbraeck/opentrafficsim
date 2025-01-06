@@ -3,6 +3,7 @@ package org.opentrafficsim.editor;
 import java.awt.Dimension;
 import java.io.File;
 import java.rmi.RemoteException;
+import java.util.Collections;
 
 import javax.naming.NamingException;
 
@@ -42,7 +43,8 @@ public class OtsRunner extends OtsSimulationApplication<OtsRunnerModel>
      */
     public OtsRunner(final OtsAnimationPanel panel, final OtsRunnerModel model)
     {
-        super(model, panel);
+        // TODO: colorer and markers based on user specification
+        super(model, panel, DEFAULT_COLORER, Collections.emptyMap());
     }
 
     /**

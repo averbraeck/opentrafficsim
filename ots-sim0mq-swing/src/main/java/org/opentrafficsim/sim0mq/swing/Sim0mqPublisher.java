@@ -11,6 +11,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -29,8 +30,6 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.decoderdumper.HexDumper;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.serialization.SerializationException;
-import org.opentrafficsim.animation.DefaultAnimationFactory;
-import org.opentrafficsim.animation.gtu.colorer.DefaultSwitchableGtuColorer;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -244,9 +243,8 @@ public final class Sim0mqPublisher
             this.publisher = new Publisher(this.network);
             this.animationPanel = new OtsAnimationPanel(this.model.getNetwork().getExtent(), new Dimension(1100, 1000),
                     animator, this.model, OtsSwingApplication.DEFAULT_COLORER, this.model.getNetwork());
-            new OtsSimulationApplication<Sim0mqOtsModel>(this.model, this.animationPanel);
-            // TODO: remove these hard-coded default GTU types; delegate types to Stripe and GtuType itself
-            DefaultAnimationFactory.animateXmlNetwork(this.model.getNetwork(), new DefaultSwitchableGtuColorer());
+            new OtsSimulationApplication<Sim0mqOtsModel>(this.model, this.animationPanel, OtsSwingApplication.DEFAULT_COLORER,
+                    Collections.emptyMap());
             JFrame frame = (JFrame) this.animationPanel.getParent().getParent().getParent();
             frame.setExtendedState(Frame.NORMAL);
             frame.setSize(new Dimension(1100, 1000));

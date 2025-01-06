@@ -1,20 +1,14 @@
 package org.opentrafficsim.core.definitions;
 
-import java.awt.Color;
-import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.function.BiFunction;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djutils.immutablecollections.Immutable;
-import org.djutils.immutablecollections.ImmutableLinkedHashMap;
-import org.djutils.immutablecollections.ImmutableMap;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.gtu.GtuTemplate;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.gtu.GtuType.Marker;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.object.DetectorType;
 import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
@@ -50,12 +44,6 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
     /** Super type for all road users. */
     public static final GtuType ROAD_USER = new GtuType("NL.ROAD_USER");
 
-    /** Super type for all water way users. */
-    public static final GtuType WATERWAY_USER = new GtuType("NL.WATERWAY_USER");
-
-    /** Super type for all rail users. */
-    public static final GtuType RAILWAY_USER = new GtuType("NL.RAILWAY_USER");
-
     /** Super type for pedestrians. */
     public static final GtuType PEDESTRIAN = new GtuType("NL.PEDESTRIAN", ROAD_USER);
 
@@ -70,12 +58,6 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
 
     /** Super type for emergency vehicles. */
     public static final GtuType EMERGENCY_VEHICLE = new GtuType("NL.EMERGENCY_VEHICLE", VEHICLE);
-
-    /** Super type for ships. */
-    public static final GtuType SHIP = new GtuType("NL.SHIP", WATERWAY_USER);
-
-    /** Super type for trains. */
-    public static final GtuType TRAIN = new GtuType("NL.TRAIN", RAILWAY_USER);
 
     /** Super type for cars. */
     public static final GtuType CAR = new GtuType("NL.CAR", VEHICLE);
@@ -94,23 +76,6 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
 
     /** Super type for scheduled busses. */
     public static final GtuType SCHEDULED_BUS = new GtuType("NL.SCHEDULED_BUS", BUS);
-
-    /** Standard drawing colors for GTU types. */
-    public static final ImmutableMap<GtuType, Color> GTU_TYPE_COLORS;
-
-    static
-    {
-        LinkedHashMap<GtuType, Color> map = new LinkedHashMap<>();
-        map.put(CAR, Color.BLUE);
-        map.put(TRUCK, Color.RED);
-        map.put(VEHICLE, Color.GRAY);
-        map.put(PEDESTRIAN, Color.YELLOW);
-        map.put(MOTORCYCLE, Color.PINK);
-        map.put(BICYCLE, Color.GREEN);
-        GTU_TYPE_COLORS = new ImmutableLinkedHashMap<>(map, Immutable.WRAP);
-
-        TRUCK.setMarker(Marker.SQUARE);
-    }
 
     /**
      * Returns a template for the given GTU type. This can be defined at the level of super types, returning {@code null} for
@@ -214,8 +179,6 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
     static
     {
         CONNECTOR.addCompatibleGtuType(ROAD_USER);
-        CONNECTOR.addCompatibleGtuType(WATERWAY_USER);
-        CONNECTOR.addCompatibleGtuType(RAILWAY_USER);
         ROAD.addCompatibleGtuType(ROAD_USER);
         FREEWAY.addIncompatibleGtuType(PEDESTRIAN);
         FREEWAY.addIncompatibleGtuType(BICYCLE);
@@ -223,8 +186,6 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
         HIGHWAY.addIncompatibleGtuType(BICYCLE);
         PROVINCIAL.addIncompatibleGtuType(PEDESTRIAN);
         PROVINCIAL.addIncompatibleGtuType(BICYCLE);
-        WATERWAY.addCompatibleGtuType(WATERWAY_USER);
-        RAILWAY.addCompatibleGtuType(RAILWAY_USER);
     }
 
     /***************************************************************************************/

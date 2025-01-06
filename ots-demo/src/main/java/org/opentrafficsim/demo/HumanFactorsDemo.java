@@ -160,7 +160,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
      */
     private HumanFactorsDemo(final HumanFactorsModel model, final OtsAnimationPanel panel)
     {
-        super(model, panel);
+        super(model, panel, DEFAULT_COLORER, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
     }
 
     /**

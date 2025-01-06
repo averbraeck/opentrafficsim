@@ -3,6 +3,7 @@ package org.opentrafficsim.swing.script;
 import java.awt.Dimension;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -23,8 +24,10 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
+import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData.GtuMarker;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
@@ -183,6 +186,15 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
         return this.gtuColorer;
     }
 
+    /**
+     * Returns map of (non-default) GTU type markers. The default implementation of this method returns an empty map.
+     * @return map of GTU type markers
+     */
+    public Map<GtuType, GtuMarker> getGtuMarkers()
+    {
+        return Collections.emptyMap();
+    }
+
     @Override
     public void check() throws Exception
     {
@@ -234,17 +246,18 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
                             (OtsAnimator) this.simulator, scriptModel, getGtuColorer(), scriptModel.getNetwork());
             setAnimationToggles(animationPanel);
             setupDemo(animationPanel, scriptModel.getNetwork());
-            OtsSimulationApplication<ScriptModel> app = new OtsSimulationApplication<ScriptModel>(scriptModel, animationPanel)
-            {
-                /** */
-                private static final long serialVersionUID = 20190130L;
+            OtsSimulationApplication<ScriptModel> app =
+                    new OtsSimulationApplication<ScriptModel>(scriptModel, animationPanel, getGtuColorer(), getGtuMarkers())
+                    {
+                        /** */
+                        private static final long serialVersionUID = 20190130L;
 
-                @Override
-                protected void setAnimationToggles()
-                {
-                    // override with nothing to prevent double toggles
-                }
-            };
+                        @Override
+                        protected void setAnimationToggles()
+                        {
+                            // override with nothing to prevent double toggles
+                        }
+                    };
             addTabs(this.simulator, app);
             app.setExitOnClose(true);
             animationPanel.enableSimulationControlButtons();
@@ -297,7 +310,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
      */
     protected void animateNetwork(final Network net)
     {
-        DefaultAnimationFactory.animateNetwork(net, net.getSimulator(), getGtuColorer());
+        DefaultAnimationFactory.animateNetwork(net, net.getSimulator(), getGtuColorer(), getGtuMarkers());
     }
 
     /**

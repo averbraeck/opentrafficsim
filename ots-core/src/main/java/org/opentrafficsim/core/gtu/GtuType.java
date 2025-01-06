@@ -34,9 +34,6 @@ public final class GtuType extends HierarchicalType<GtuType, Gtu>
     private static final Map<GtuType, BiFunction<GtuType, StreamInterface, GtuTemplate>> TEMPLATE_SUPPLIERS =
             new LinkedHashMap<>();
 
-    /** Defines the shape of a marker GTUs are drawn with when zoomed out. */
-    private Marker marker;
-
     /**
      * Constructor for root-level GTU types. The parent will be {@code null}.
      * @param id The id of the GtuType to make it identifiable.
@@ -55,25 +52,6 @@ public final class GtuType extends HierarchicalType<GtuType, Gtu>
     public GtuType(final String id, final GtuType parent) throws NullPointerException
     {
         super(id, parent);
-    }
-
-    /**
-     * Returns the marker. If no marker is specified, the marker of the parent type is requested. If there is also no parent
-     * type, {@code Marker.CIRCLE} is returned.
-     * @return returns the marker to draw a GTU with when zoomed out.
-     */
-    public Marker getMarker()
-    {
-        return this.marker != null ? this.marker : getParent() != null ? getParent().getMarker() : Marker.CIRCLE;
-    }
-
-    /**
-     * Sets the marker.
-     * @param marker marker, may be {@code null} in which case the parent type is referred to.
-     */
-    public void setMarker(final Marker marker)
-    {
-        this.marker = marker;
     }
 
     /**
@@ -147,26 +125,6 @@ public final class GtuType extends HierarchicalType<GtuType, Gtu>
     public String toString()
     {
         return "GtuType: " + this.getId();
-    }
-
-    /**
-     * Defines the shape of a marker GTUs are drawn with when zoomed out.
-     * <p>
-     * Copyright (c) 2022-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
-     */
-    public enum Marker
-    {
-        /** Draw as circle. */
-        CIRCLE,
-
-        /** Draw as square. */
-        SQUARE;
     }
 
 }

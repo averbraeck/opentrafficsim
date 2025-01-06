@@ -27,6 +27,7 @@ import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.object.NonLocatedObject;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
+import org.opentrafficsim.demo.DefaultsFactory;
 import org.opentrafficsim.demo.trafficcontrol.TrafCodDemo2.TrafCodModel;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
@@ -61,7 +62,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
      */
     public TrafCodDemo2(final String title, final OtsAnimationPanel panel, final TrafCodModel model)
     {
-        super(model, panel);
+        super(model, panel, DEFAULT_COLORER, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
     }
 
     /**

@@ -1,7 +1,12 @@
 package org.opentrafficsim.swing.gui;
 
+import java.util.Map;
+
 import org.opentrafficsim.animation.DefaultAnimationFactory;
+import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData.GtuMarker;
 
 /**
  * Extension of a swing application with standard preparation.
@@ -23,14 +28,25 @@ public class OtsSimulationApplication<T extends OtsModelInterface> extends OtsSw
     /** Animation panel. */
     private final OtsAnimationPanel animationPanel;
 
+    /** The switchableGtuColorer used to color the GTUs. */
+    private final GtuColorer gtuColorer;
+
+    /** GTU type markers. */
+    private final Map<GtuType, GtuMarker> markers;
+
     /**
      * @param model model
      * @param panel animation panel
+     * @param gtuColorer GTU colorer
+     * @param markers GTU type markers
      */
-    public OtsSimulationApplication(final T model, final OtsAnimationPanel panel)
+    public OtsSimulationApplication(final T model, final OtsAnimationPanel panel, final GtuColorer gtuColorer,
+            final Map<GtuType, GtuMarker> markers)
     {
         super(model, panel);
         this.animationPanel = panel;
+        this.gtuColorer = gtuColorer;
+        this.markers = markers;
         setAnimationToggles();
         animateNetwork();
         addTabs();
@@ -42,8 +58,26 @@ public class OtsSimulationApplication<T extends OtsModelInterface> extends OtsSw
      */
     private void animateNetwork()
     {
-        DefaultAnimationFactory.animateNetwork(getModel().getNetwork(), getModel().getNetwork().getSimulator(),
-                getAnimationPanel().getGtuColorer());
+        DefaultAnimationFactory.animateNetwork(getModel().getNetwork(), getModel().getNetwork().getSimulator(), this.gtuColorer,
+                this.markers);
+    }
+
+    /**
+     * Returns the GTU colorer.
+     * @return GTU colorer
+     */
+    protected GtuColorer getGtuColorer()
+    {
+        return this.gtuColorer;
+    }
+
+    /**
+     * Returns the GTU type markers.
+     * @return GTU type markers
+     */
+    protected Map<GtuType, GtuMarker> getMarkers()
+    {
+        return this.markers;
     }
 
     /**

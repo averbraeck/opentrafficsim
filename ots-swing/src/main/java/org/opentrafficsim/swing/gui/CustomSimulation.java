@@ -2,10 +2,13 @@ package org.opentrafficsim.swing.gui;
 
 import java.awt.Dimension;
 import java.rmi.RemoteException;
+import java.util.Map;
 
+import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData.GtuMarker;
 import org.opentrafficsim.road.network.RoadNetwork;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -31,7 +34,7 @@ public class CustomSimulation extends OtsSimulationApplication<CustomSimulation.
      */
     public CustomSimulation(final String title, final OtsAnimationPanel panel, final CustomModel model)
     {
-        super(model, panel);
+        super(model, panel, DEFAULT_COLORER, Map.of(DefaultsNl.TRUCK, GtuMarker.SQUARE));
     }
 
     /**
