@@ -31,13 +31,5 @@
   <ots:LinkType Id="NL.URBAN" Parent="NL.ROAD" Default="true" />
   
   <ots:LinkType Id="NL.RESIDENTIAL" Parent="NL.ROAD" Default="true" />
-
-  <ots:LinkType Id="NL.WATERWAY" Default="true">
-    <ots:Compatibility GtuType="NL.WATERWAY_USER" />
-  </ots:LinkType>
-
-  <ots:LinkType Id="NL.RAILWAY" Default="true">
-    <ots:Compatibility GtuType="NL.RAILWAY_USER" />
-  </ots:LinkType>
   
 </ots:LinkTypes>

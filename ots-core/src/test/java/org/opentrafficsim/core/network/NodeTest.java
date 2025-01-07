@@ -180,7 +180,7 @@ public class NodeTest
         {
             // Ignore expected exception
         }
-        GtuType unrelatedGtuType = new GtuType("junk", DefaultsNl.SHIP);
+        GtuType unrelatedGtuType = new GtuType("junk");
         try
         {
             node.nextLinks(unrelatedGtuType, network.getLink("link from neighbor node 1"));
@@ -214,7 +214,8 @@ public class NodeTest
         {
             // Ignore expected exception
         }
-        Link noWay = new Link(network, "no way traffic inbound link", n2, node, DefaultsNl.RAILWAY,
+        LinkType railway = new LinkType("RAILWAY");
+        Link noWay = new Link(network, "no way traffic inbound link", n2, node, railway,
                 new OtsLine2d(n2.getPoint(), node.getPoint()), null);
         try
         {
@@ -234,7 +235,7 @@ public class NodeTest
         {
             // Ignore expected exception
         }
-        noWay = new Link(network, "no way traffic outbound link", node, n2, DefaultsNl.RAILWAY,
+        noWay = new Link(network, "no way traffic outbound link", node, n2, railway,
                 new OtsLine2d(node.getPoint(), n2.getPoint()), null);
         try
         {
@@ -322,7 +323,7 @@ public class NodeTest
         {
             // Ignore expected exception
         }
-        GtuType unrelatedGtuType = new GtuType("junk", DefaultsNl.SHIP);
+        GtuType unrelatedGtuType = new GtuType("junk");
         try
         {
             node.nextLinks(unrelatedGtuType, network.getLink("link from neighbor node 1"));
@@ -357,7 +358,8 @@ public class NodeTest
         {
             // Ignore expected exception
         }
-        Link noWay = new Link(network, "no way traffic inbound link", n2, node, DefaultsNl.RAILWAY,
+        LinkType railway = new LinkType("RAILWAY");
+        Link noWay = new Link(network, "no way traffic inbound link", n2, node, railway,
                 new OtsLine2d(n2.getPoint(), node.getPoint()), null);
         try
         {
@@ -377,7 +379,7 @@ public class NodeTest
         {
             // Ignore expected exception
         }
-        noWay = new Link(network, "no way traffic outbound link", node, n2, DefaultsNl.RAILWAY,
+        noWay = new Link(network, "no way traffic outbound link", node, n2, railway,
                 new OtsLine2d(node.getPoint(), n2.getPoint()), null);
         try
         {

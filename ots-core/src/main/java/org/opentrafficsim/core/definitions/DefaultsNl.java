@@ -170,12 +170,6 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
     /** Residential (buurtweg, 30km/h). */
     public static final LinkType RESIDENTIAL = new LinkType("NL.RESIDENTIAL", ROAD);
 
-    /** Waterway. */
-    public static final LinkType WATERWAY = new LinkType("NL.WATERWAY");
-
-    /** Railway. */
-    public static final LinkType RAILWAY = new LinkType("NL.RAILWAY");
-
     static
     {
         CONNECTOR.addCompatibleGtuType(ROAD_USER);

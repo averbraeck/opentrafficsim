@@ -3,11 +3,7 @@
   xsi:schemaLocation="http://www.opentrafficsim.org/ots ../ots-definitions.xsd">
 
 	<ots:GtuType Id="NL.ROAD_USER" Default="true" />
-	<ots:GtuType Id="NL.WATERWAY_USER" Default="true" />
-	<ots:GtuType Id="NL.RAILWAY_USER" Default="true" />
 
-	<ots:GtuType Id="NL.SHIP" Parent="NL.WATERWAY_USER" Default="true" />
-	<ots:GtuType Id="NL.TRAIN" Parent="NL.RAILWAY_USER" Default="true" />
 	<ots:GtuType Id="NL.PEDESTRIAN" Parent="NL.ROAD_USER" Default="true" />
 	<ots:GtuType Id="NL.BICYCLE" Parent="NL.ROAD_USER" Default="true" />
 	<ots:GtuType Id="NL.MOPED" Parent="NL.BICYCLE" Default="true" />

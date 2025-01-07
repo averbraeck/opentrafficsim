@@ -32,18 +32,18 @@ public class LinkTypeTest
     @SuppressWarnings({"unlikely-arg-type"})
     public final void testLinkType()
     {
-        Network network = new Network("test", new OtsSimulator("Simulator for LinkTypeTest"));
         Try.testFail(() -> new LinkType(null, null), NullPointerException.class);
 
         GtuType carType = new GtuType("Car", DefaultsNl.VEHICLE);
         GtuType truckType = new GtuType("Truck", DefaultsNl.VEHICLE);
-        GtuType catamaran = new GtuType("Catamaran", DefaultsNl.SHIP);
+        GtuType ship = new GtuType("SHIP");
+        GtuType catamaran = new GtuType("Catamaran", ship);
 
         LinkType roadLinkType = new LinkType("Vehicles", null);
         roadLinkType.addCompatibleGtuType(DefaultsNl.VEHICLE);
 
         LinkType waterwayType = new LinkType("Waterway", null);
-        waterwayType.addCompatibleGtuType(DefaultsNl.SHIP);
+        waterwayType.addCompatibleGtuType(ship);
 
         assertTrue(roadLinkType.equals(roadLinkType), "equals to itself");
         assertFalse(roadLinkType.equals(waterwayType), "not equal to the other");
@@ -68,7 +68,7 @@ public class LinkTypeTest
         assertFalse(waterwayType.isCompatible(carType), "compatibility of waterway for car is false");
         assertNull(waterwayType.isCompatibleOnInfraLevel(carType), "compatibility of waterway for car is undecidable on level");
         GtuCompatibility<LinkType> compatibility = waterwayType.getGtuCompatibility();
-        assertTrue(compatibility.isCompatible(DefaultsNl.SHIP), "compatibility allows SHIP");
+        assertTrue(compatibility.isCompatible(ship), "compatibility allows SHIP");
     }
 
 }
