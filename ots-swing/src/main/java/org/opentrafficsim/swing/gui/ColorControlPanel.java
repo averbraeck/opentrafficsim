@@ -133,16 +133,16 @@ public class ColorControlPanel extends JPanel implements ActionListener
             }
             ColorBox colorBox = new ColorBox();
             colorBox.setOpaque(true); // By default, the label is transparent
-            colorBox.setBackground(legendEntry.getColor());
+            colorBox.setBackground(legendEntry.color());
             Border border = LineBorder.createBlackLineBorder();
             colorBox.setBorder(border);
             panel.add(colorBox, BorderLayout.LINE_START);
-            JLabel name = new JLabel(" " + legendEntry.getName().trim());
+            JLabel name = new JLabel(" " + legendEntry.name().trim());
             panel.add(name, BorderLayout.CENTER);
             name.setOpaque(true);
             name.setForeground(getForeground());
             name.setBackground(getBackground());
-            panel.setToolTipText(legendEntry.getDescription());
+            panel.setToolTipText(legendEntry.description());
             this.legendPanel.add(panel);
         }
         this.legendPanel.revalidate();

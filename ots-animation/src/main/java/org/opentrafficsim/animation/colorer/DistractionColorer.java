@@ -50,7 +50,7 @@ public class DistractionColorer implements GtuColorer, Serializable
         this.legend.add(new LegendEntry(NONE, "None", "No distraction"));
         for (int i = 0; i < distractions.length; i++)
         {
-            Color c = IdGtuColorer.LEGEND.get(i % 10).getColor();
+            Color c = IdGtuColorer.LEGEND.get(i % 10).color();
             this.colors.put(distractions[i].getId(), c);
             this.legend.add(new LegendEntry(c, distractions[i].getDescription(), distractions[i].getDescription()));
         }

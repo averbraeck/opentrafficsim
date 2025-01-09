@@ -66,15 +66,15 @@ public class DesiredSpeedColorer implements GtuColorer, Serializable
                     * (this.legend.size() - 2);
             if (ratio <= 0)
             {
-                return this.legend.get(0).getColor();
+                return this.legend.get(0).color();
             }
             if (ratio >= this.legend.size() - 2)
             {
-                return this.legend.get(this.legend.size() - 2).getColor();
+                return this.legend.get(this.legend.size() - 2).color();
             }
             // Interpolate
             int floor = (int) Math.floor(ratio);
-            return ColorInterpolator.interpolateColor(this.legend.get(floor).getColor(), this.legend.get(floor + 1).getColor(),
+            return ColorInterpolator.interpolateColor(this.legend.get(floor).color(), this.legend.get(floor + 1).color(),
                     ratio - floor);
         }
         return Color.WHITE;

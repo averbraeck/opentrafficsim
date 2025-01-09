@@ -37,7 +37,7 @@ public class IdGtuColorer implements GtuColorer
     @Override
     public final Color getColor(final Gtu gtu)
     {
-        return LEGEND.get(Math.abs(gtu.getId().hashCode() % LEGEND.size())).getColor();
+        return LEGEND.get(Math.abs(gtu.getId().hashCode() % LEGEND.size())).color();
     }
 
     @Override
