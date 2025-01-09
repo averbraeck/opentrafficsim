@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.Generator;
-import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
@@ -43,12 +42,10 @@ public class TemplateGtuTypeTest implements OtsModelInterface
      * @throws NamingException should never happen
      * @throws SimRuntimeException should never happen
      * @throws GtuException should never happen
-     * @throws ProbabilityException if probabilities are invalid
      * @throws ParameterException in case a parameter problem occurs
      */
     @Test
-    public final void templateGtuTypeTest()
-            throws SimRuntimeException, NamingException, GtuException, ProbabilityException, ParameterException
+    public final void templateGtuTypeTest() throws SimRuntimeException, NamingException, GtuException, ParameterException
     {
         Network network = new Network("network", this.simulator);
         GtuType gtuTypeA = new GtuType("type name A", DefaultsNl.VEHICLE);
@@ -57,7 +54,7 @@ public class TemplateGtuTypeTest implements OtsModelInterface
         {
 
             @Override
-            public Length draw() throws ProbabilityException
+            public Length draw()
             {
                 return new Length(123, LengthUnit.DECIMETER);
             }
@@ -66,7 +63,7 @@ public class TemplateGtuTypeTest implements OtsModelInterface
         {
 
             @Override
-            public Length draw() throws ProbabilityException
+            public Length draw()
             {
                 return new Length(234, LengthUnit.DECIMETER);
             }
@@ -75,7 +72,7 @@ public class TemplateGtuTypeTest implements OtsModelInterface
         {
 
             @Override
-            public Length draw() throws ProbabilityException
+            public Length draw()
             {
                 return new Length(123, LengthUnit.CENTIMETER);
             }
@@ -84,7 +81,7 @@ public class TemplateGtuTypeTest implements OtsModelInterface
         {
 
             @Override
-            public Length draw() throws ProbabilityException
+            public Length draw()
             {
                 return new Length(139, LengthUnit.CENTIMETER);
             }
@@ -93,7 +90,7 @@ public class TemplateGtuTypeTest implements OtsModelInterface
         {
 
             @Override
-            public Speed draw() throws ProbabilityException
+            public Speed draw()
             {
                 return new Speed(50, SpeedUnit.KM_PER_HOUR);
             }
@@ -102,7 +99,7 @@ public class TemplateGtuTypeTest implements OtsModelInterface
         {
 
             @Override
-            public Speed draw() throws ProbabilityException
+            public Speed draw()
             {
                 return new Speed(70, SpeedUnit.KM_PER_HOUR);
             }

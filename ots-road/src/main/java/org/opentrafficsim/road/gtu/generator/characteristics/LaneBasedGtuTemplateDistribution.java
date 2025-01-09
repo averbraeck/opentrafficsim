@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Distribution;
-import org.opentrafficsim.core.distributions.ProbabilityException;
 
 /**
  * Distribution of LaneBasedTemplateGTUType.
@@ -34,7 +33,7 @@ public class LaneBasedGtuTemplateDistribution implements LaneBasedGtuCharacteris
     }
 
     @Override
-    public final LaneBasedGtuCharacteristics draw() throws ProbabilityException, ParameterException
+    public final LaneBasedGtuCharacteristics draw() throws ParameterException
     {
         return this.distribution.draw().draw();
     }

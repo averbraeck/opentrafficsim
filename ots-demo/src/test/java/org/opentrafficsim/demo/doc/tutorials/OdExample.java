@@ -21,8 +21,7 @@ import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.distributions.Distribution;
-import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
-import org.opentrafficsim.core.distributions.ProbabilityException;
+import org.opentrafficsim.core.distributions.FrequencyAndObject;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuTemplate;
@@ -157,7 +156,7 @@ public class OdExample
                 new DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory(lmrs).create();
     }
 
-    private void factories() throws ProbabilityException
+    private void factories()
     {
         StreamInterface randomStream = null;
 

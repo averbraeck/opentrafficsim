@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
 
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -28,30 +27,28 @@ public class DistributionTest
 {
     /**
      * Test the Distribution class.
-     * @throws ProbabilityException the test fails if this happens uncaught
      */
     @Test
-    public final void distributionTest() throws ProbabilityException
+    public final void distributionTest()
     {
         StreamInterface si = new MersenneTwister(1234);
         try
         {
             new Distribution<TestObject>(null, si);
-            fail("Null pointer for generators should have thrown a ProbabilityException");
+            fail("Null pointer for generators should have thrown a NullPointerException");
         }
-        catch (ProbabilityException npe)
+        catch (NullPointerException npe)
         {
             // Ignore expected exception
         }
 
-        List<Distribution.FrequencyAndObject<TestObject>> generators =
-                new ArrayList<Distribution.FrequencyAndObject<TestObject>>();
+        List<FrequencyAndObject<TestObject>> generators = new ArrayList<FrequencyAndObject<TestObject>>();
         try
         {
             new Distribution<TestObject>(generators, null);
-            fail("Null pointer for stream interface should have thrown a ProbabilityException");
+            fail("Null pointer for stream interface should have thrown a NullPointerException");
         }
-        catch (ProbabilityException npe)
+        catch (NullPointerException npe)
         {
             // Ignore expected exception
         }
@@ -61,16 +58,15 @@ public class DistributionTest
         try
         {
             dist.draw();
-            fail("draw with empty set should have thrown a ProbabilityException");
+            fail("draw with empty set should have thrown a IllegalStateException");
         }
-        catch (ProbabilityException pe)
+        catch (IllegalStateException pe)
         {
             // Ignore expected exception
         }
 
         TestObject to = new TestObject();
-        Distribution.FrequencyAndObject<TestObject> generator =
-                new Distribution.FrequencyAndObject<DistributionTest.TestObject>(123, to);
+        FrequencyAndObject<TestObject> generator = new FrequencyAndObject<DistributionTest.TestObject>(123, to);
         try
         {
             dist.add(1, generator);
@@ -127,7 +123,7 @@ public class DistributionTest
             dist.modifyFrequency(1, 1);
             fail("Bad index for modify should have thrown an IndexOutOfBoundsException");
         }
-        catch (ProbabilityException e)
+        catch (IndexOutOfBoundsException e)
         {
             // Ignore expected exception
         }
@@ -137,7 +133,7 @@ public class DistributionTest
             dist.modifyFrequency(-1, 1);
             fail("Bad index for modify should have thrown an IndexOutOfBoundsException");
         }
-        catch (ProbabilityException e)
+        catch (IndexOutOfBoundsException e)
         {
             // Ignore expected exception
         }
@@ -145,9 +141,9 @@ public class DistributionTest
         try
         {
             dist.modifyFrequency(0, -1);
-            fail("Bad frequency for modify should have thrown a ProbabilityException");
+            fail("Bad frequency for modify should have thrown a IllegalArgumentException");
         }
-        catch (ProbabilityException pe)
+        catch (IllegalArgumentException pe)
         {
             // Ignore expected exception
         }
@@ -156,19 +152,19 @@ public class DistributionTest
         try
         {
             dist.draw();
-            fail("Sum of frequencies == 0 should have thrown a ProbabilityException");
+            fail("Sum of frequencies == 0 should have thrown a IllegalStateException");
         }
-        catch (ProbabilityException pe)
+        catch (IllegalStateException pe)
         {
             // Ignore expected exception
         }
 
         TestObject to2 = new TestObject();
-        dist.add(new Distribution.FrequencyAndObject<TestObject>(10, to2));
-        assertEquals(to, dist.get(0).getObject(), "element 0 should be to");
-        assertEquals(to2, dist.get(1).getObject(), "element 1 should be to2");
-        assertEquals(0, dist.get(0).getFrequency(), 0.00001, "frequency of element 0 should be 0");
-        assertEquals(10, dist.get(1).getFrequency(), 0.00001, "frequency of element 1 should be 10");
+        dist.add(new FrequencyAndObject<TestObject>(10, to2));
+        assertEquals(to, dist.get(0).object(), "element 0 should be to");
+        assertEquals(to2, dist.get(1).object(), "element 1 should be to2");
+        assertEquals(0, dist.get(0).frequency(), 0.00001, "frequency of element 0 should be 0");
+        assertEquals(10, dist.get(1).frequency(), 0.00001, "frequency of element 1 should be 10");
         for (int i = 0; i < 1000; i++)
         {
             TestObject to3 = dist.draw();
@@ -177,9 +173,9 @@ public class DistributionTest
         try
         {
             dist.get(-1);
-            fail("Negative index should have thrown in a ProbabilityException");
+            fail("Negative index should have thrown in a IndexOutOfBoundsException");
         }
-        catch (ProbabilityException pe)
+        catch (IndexOutOfBoundsException pe)
         {
             // Ignore expected exception
         }
@@ -187,9 +183,9 @@ public class DistributionTest
         try
         {
             dist.get(2);
-            fail("Too high index should have thrown in a ProbabilityException");
+            fail("Too high index should have thrown in a IndexOutOfBoundsException");
         }
-        catch (ProbabilityException pe)
+        catch (IndexOutOfBoundsException pe)
         {
             // Ignore expected exception
         }
@@ -221,38 +217,27 @@ public class DistributionTest
         try
         {
             dist.draw();
-            fail("Empty set should throw a ProbabilityException");
+            fail("Empty set should throw a IllegalStateException");
         }
-        catch (ProbabilityException pe)
+        catch (IllegalStateException pe)
         {
             // Ignore expected exception
         }
         // Construct a Distribution from a List of generators
-        generators = new ArrayList<Distribution.FrequencyAndObject<TestObject>>();
+        generators = new ArrayList<FrequencyAndObject<TestObject>>();
         generators.add(new FrequencyAndObject<DistributionTest.TestObject>(123, to));
         generators.add(new FrequencyAndObject<DistributionTest.TestObject>(456, to2));
         dist = new Distribution<TestObject>(generators, si);
-        assertEquals(to, dist.get(0).getObject(), "element 0 should be to");
-        assertEquals(to2, dist.get(1).getObject(), "element 1 should be to2");
-        assertEquals(123, dist.get(0).getFrequency(), 0.00001, "frequency of element 0 should be 123");
-        assertEquals(456, dist.get(1).getFrequency(), 0.00001, "frequency of element 1 should be 456");
-        generators.set(1, new FrequencyAndObject<DistributionTest.TestObject>(-1, to2));
+        assertEquals(to, dist.get(0).object(), "element 0 should be to");
+        assertEquals(to2, dist.get(1).object(), "element 1 should be to2");
+        assertEquals(123, dist.get(0).frequency(), 0.00001, "frequency of element 0 should be 123");
+        assertEquals(456, dist.get(1).frequency(), 0.00001, "frequency of element 1 should be 456");
         try
         {
-            new Distribution<TestObject>(generators, si);
-            fail("Negative frequency should have thrown a ProbabilityException");
+            new FrequencyAndObject<DistributionTest.TestObject>(-1, to2);
+            fail("Negative frequency should have thrown a IllegalArgumentException");
         }
-        catch (ProbabilityException pe)
-        {
-            // Ignore expected exception
-        }
-
-        try
-        {
-            dist.add(generators.get(1));
-            fail("Negative frequency should have thrown a ProbabilityException");
-        }
-        catch (ProbabilityException pe)
+        catch (IllegalArgumentException pe)
         {
             // Ignore expected exception
         }
@@ -261,7 +246,7 @@ public class DistributionTest
         {
             dist.set(-1, new FrequencyAndObject<DistributionTest.TestObject>(456, to2));
         }
-        catch (ProbabilityException pe)
+        catch (IndexOutOfBoundsException pe)
         {
             // Ignore expected exception
         }
@@ -270,7 +255,7 @@ public class DistributionTest
         {
             dist.set(dist.size(), new FrequencyAndObject<DistributionTest.TestObject>(456, to2));
         }
-        catch (ProbabilityException pe)
+        catch (IndexOutOfBoundsException pe)
         {
             // Ignore expected exception
         }
@@ -307,8 +292,8 @@ public class DistributionTest
             }
         }
         // System.out.println("dist is " + dist);
-        double badFrequency = badTotal - dist.get(0).getFrequency() - dist.get(1).getFrequency();
-        double expectedIn0 = (dist.get(0).getFrequency() + badFrequency) / badTotal * 10000;
+        double badFrequency = badTotal - dist.get(0).frequency() - dist.get(1).frequency();
+        double expectedIn0 = (dist.get(0).frequency() + badFrequency) / badTotal * 10000;
         // System.out.println("Observed frequencies: [" + observed[0] + ", " + observed[1] + "]; expected in 0 " + expectedIn0);
         assertEquals(10000, observed[0] + observed[1], "Total number of draws should add up to 10000");
         assertTrue(expectedIn0 - 500 < observed[0] && observed[0] < expectedIn0 + 500,
@@ -349,9 +334,9 @@ public class DistributionTest
         assertEquals(0, observed[0], "observed frequency of to should be 0");
         try
         {
-            dist.modifyFrequency(dist.size(), 0);
+            dist.modifyFrequency(0, -0.01);
         }
-        catch (ProbabilityException pe)
+        catch (IllegalArgumentException pe)
         {
             // Ignore expected exception
         }
@@ -360,7 +345,7 @@ public class DistributionTest
         {
             dist.modifyFrequency(-1, 0);
         }
-        catch (ProbabilityException pe)
+        catch (IndexOutOfBoundsException pe)
         {
             // Ignore expected exception
         }
@@ -378,11 +363,10 @@ public class DistributionTest
 
     /**
      * Test hashCode and equals.
-     * @throws ProbabilityException if that happens uncaught; this test has failed.
      */
     @SuppressWarnings("unlikely-arg-type")
     @Test
-    public void testHashCodeAndEquals() throws ProbabilityException
+    public void testHashCodeAndEquals()
     {
         StreamInterface si = new MersenneTwister(1234);
         Distribution<Double> distribution = new Distribution<>(si);
@@ -411,8 +395,8 @@ public class DistributionTest
     public void frequencyAndObjectTest()
     {
         FrequencyAndObject<String> fao1 = new FrequencyAndObject<>(Math.PI, "One");
-        assertEquals(Math.PI, fao1.getFrequency(), 0, "frequency matches");
-        assertEquals("One", fao1.getObject(), "object matchs");
+        assertEquals(Math.PI, fao1.frequency(), 0, "frequency matches");
+        assertEquals("One", fao1.object(), "object matchs");
         assertTrue(fao1.equals(fao1), "FreqencyAndObject is equal to itself");
         assertFalse(fao1.equals(null), "FrequencyAndObject is not equal to null");
         assertFalse(fao1.equals("Bla"), "FrequencyAndObject is not equal to some totally unrelated object");

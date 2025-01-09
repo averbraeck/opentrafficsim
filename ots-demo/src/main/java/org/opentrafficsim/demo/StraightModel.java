@@ -23,9 +23,8 @@ import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.distributions.Distribution;
-import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
+import org.opentrafficsim.core.distributions.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
-import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -188,8 +187,7 @@ public class StraightModel extends AbstractOtsModel implements UNITS
             // Remove the block at t = 7 minutes
             this.simulator.scheduleEventAbsTime(new Time(420, TimeUnit.BASE_SECOND), this, "removeBlock", null);
         }
-        catch (SimRuntimeException | NetworkException | InputParameterException | ParameterException
-                | ProbabilityException exception)
+        catch (SimRuntimeException | NetworkException | InputParameterException | ParameterException exception)
         {
             exception.printStackTrace();
         }

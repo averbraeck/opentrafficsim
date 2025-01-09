@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.Generator;
-import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
@@ -262,7 +261,6 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
      * @param length the expected length
      * @param width the expected width
      * @param maximumSpeed the expected maximum speed
-     * @throws ProbabilityException in case of probability drawing exception
      * @throws ParameterException in case of a parameter problem.
      * @throws GtuException in case of a GTU exception
      * @throws NamingException in case of a naming exception
@@ -271,7 +269,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> length,
             final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> width,
             final ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> maximumSpeed)
-            throws ProbabilityException, ParameterException, NamingException, GtuException
+            throws ParameterException, NamingException, GtuException
     {
         assertTrue(gtuType.equals(templateGtuType.getGtuType()), "Type should be " + gtuType);
         LaneBasedGtuCharacteristics characteristics = templateGtuType.draw();

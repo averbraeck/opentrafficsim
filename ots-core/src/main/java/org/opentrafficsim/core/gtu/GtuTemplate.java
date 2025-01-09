@@ -6,10 +6,8 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.distributions.Generator;
-import org.opentrafficsim.core.distributions.ProbabilityException;
 
 /**
  * Stores some of the information that is needed to generate a GTU.
@@ -101,12 +99,10 @@ public class GtuTemplate implements Serializable, Generator<GtuCharacteristics>
     /**
      * Returns characteristics for the given GTU.
      * @return characteristics for the given GTU
-     * @throws ProbabilityException in case of probability exception
-     * @throws ParameterException in case of parameter exception
      */
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public GtuCharacteristics draw() throws ProbabilityException, ParameterException
+    public GtuCharacteristics draw()
     {
         Acceleration acceleration = this.maxAcceleration.draw();
         Acceleration deceleration = this.maxDeceleration.draw();

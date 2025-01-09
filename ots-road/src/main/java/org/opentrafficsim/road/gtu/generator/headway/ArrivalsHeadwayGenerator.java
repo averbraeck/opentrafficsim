@@ -2,9 +2,7 @@ package org.opentrafficsim.road.gtu.generator.headway;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
-import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
@@ -83,11 +81,9 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
      * </ul>
      * <br>
      * @return new headway
-     * @throws ProbabilityException if the stored collection is empty
-     * @throws ParameterException in case of a parameter exception
      */
     @Override
-    public Duration draw() throws ProbabilityException, ParameterException
+    public Duration draw()
     {
         Time now = this.simulator.getSimulatorAbsTime();
         // initial slice times and frequencies

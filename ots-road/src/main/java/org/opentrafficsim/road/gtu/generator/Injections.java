@@ -30,7 +30,6 @@ import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
-import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -417,7 +416,7 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
     }
 
     @Override
-    public synchronized Duration draw() throws ProbabilityException, ParameterException
+    public synchronized Duration draw()
     {
         if (!this.characteristicsIterator.hasNext())
         {
@@ -450,7 +449,7 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
                 private GtuCharacteristics defaultCharacteristics;
 
                 @Override
-                public LaneBasedGtuCharacteristics draw() throws ProbabilityException, ParameterException, GtuException
+                public LaneBasedGtuCharacteristics draw() throws ParameterException, GtuException
                 {
                     synchronized (Injections.this)
                     {

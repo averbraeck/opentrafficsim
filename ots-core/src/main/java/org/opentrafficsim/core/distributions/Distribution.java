@@ -36,12 +36,13 @@ public class Distribution<O> implements Generator<O>, Serializable
      * Construct a new Distribution.
      * @param generators the generators and their frequencies (or probabilities)
      * @param stream source for randomness
-     * @throws ProbabilityException when a frequency (or probability) is negative, or when generators is null or stream is null
+     * @throws NullPointerException when generators is null or stream is null
+     * @throws IllegalArgumentException when a frequency (or probability) is negative
      */
-    public Distribution(final List<FrequencyAndObject<O>> generators, final StreamInterface stream) throws ProbabilityException
+    public Distribution(final List<FrequencyAndObject<O>> generators, final StreamInterface stream)
     {
         this(stream);
-        Throw.when(null == generators, ProbabilityException.class, "generators may not be null");
+        Throw.whenNull(generators, "generators");
         // Store a defensive copy of the generator list (the generators are immutable; a list of them is not) and make sure it
         // is a List that supports add, remove, etc.
         this.generators.addAll(generators);
@@ -51,19 +52,19 @@ public class Distribution<O> implements Generator<O>, Serializable
     /**
      * Construct a new Distribution with no generators.
      * @param stream source for randomness
-     * @throws ProbabilityException when a frequency (or probability) is negative, or when generators is null or stream is null
+     * @throws NullPointerException when generators is null or stream is null
      */
-    public Distribution(final StreamInterface stream) throws ProbabilityException
+    public Distribution(final StreamInterface stream)
     {
-        Throw.when(null == stream, ProbabilityException.class, "random stream may not be null");
+        Throw.whenNull(stream, "stream");
         this.random = new DistUniform(stream, 0, 1);
     }
 
     /**
      * Compute the cumulative frequencies of the storedGenerators.
-     * @throws ProbabilityException on negative frequency
+     * @throws IllegalArgumentException on negative frequency
      */
-    private void fixProbabilities() throws ProbabilityException
+    private void fixProbabilities()
     {
         if (0 == this.generators.size())
         {
@@ -72,26 +73,24 @@ public class Distribution<O> implements Generator<O>, Serializable
         this.cumulativeTotal = 0;
         for (FrequencyAndObject<O> generator : this.generators)
         {
-            double frequency = generator.getFrequency();
-            Throw.when(frequency < 0, ProbabilityException.class,
-                    "Negative frequency or probability is not allowed (got " + frequency + ")");
+            double frequency = generator.frequency();
             this.cumulativeTotal += frequency;
         }
     }
 
     @Override
-    public final O draw() throws ProbabilityException
+    public final O draw()
     {
-        Throw.when(0 == this.generators.size(), ProbabilityException.class, "Cannot draw from empty collection");
-        Throw.when(0 == this.cumulativeTotal, ProbabilityException.class, "Sum of frequencies or probabilities must be > 0");
+        Throw.when(0 == this.generators.size(), IllegalStateException.class, "Cannot draw from empty collection");
+        Throw.when(0 == this.cumulativeTotal, IllegalStateException.class, "Sum of frequencies or probabilities must be > 0");
 
         double randomValue = this.random.draw() * this.cumulativeTotal;
         for (FrequencyAndObject<O> fAndO : this.generators)
         {
-            double frequency = fAndO.getFrequency();
+            double frequency = fAndO.frequency();
             if (frequency >= randomValue)
             {
-                return fAndO.getObject();
+                return fAndO.object();
             }
             randomValue -= frequency;
         }
@@ -99,23 +98,24 @@ public class Distribution<O> implements Generator<O>, Serializable
         FrequencyAndObject<O> useThisOne = this.generators.get(0);
         for (FrequencyAndObject<O> fAndO : this.generators)
         {
-            if (fAndO.getFrequency() > 0)
+            if (fAndO.frequency() > 0)
             {
                 useThisOne = fAndO;
                 break;
             }
         }
-        return useThisOne.getObject();
+        return useThisOne.object();
     }
 
     /**
      * Append a generator to the internally stored list.
      * @param generator the generator to add
      * @return this
-     * @throws ProbabilityException when frequency less than zero
+     * @throws NullPointerException when generator is null
      */
-    public final Distribution<O> add(final FrequencyAndObject<O> generator) throws ProbabilityException
+    public final Distribution<O> add(final FrequencyAndObject<O> generator)
     {
+        Throw.whenNull(generator, "generator");
         return add(this.generators.size(), generator);
     }
 
@@ -124,12 +124,12 @@ public class Distribution<O> implements Generator<O>, Serializable
      * @param index position to store the generator
      * @param generator the generator to add
      * @return this
-     * @throws ProbabilityException when frequency less than zero
+     * @throws IndexOutOfBoundsException when index is &lt; 0 or &gt;= size
+     * @throws NullPointerException when generator is null
      */
-    public final Distribution<O> add(final int index, final FrequencyAndObject<O> generator) throws ProbabilityException
+    public final Distribution<O> add(final int index, final FrequencyAndObject<O> generator)
     {
-        Throw.when(generator.getFrequency() < 0, ProbabilityException.class,
-                "frequency (or probability) must be >= 0 (got " + generator.getFrequency() + ")");
+        Throw.whenNull(generator, "generator");
         this.generators.add(index, generator);
         fixProbabilities();
         return this;
@@ -140,9 +140,8 @@ public class Distribution<O> implements Generator<O>, Serializable
      * @param index the position
      * @return this
      * @throws IndexOutOfBoundsException when index is &lt; 0 or &gt;= size
-     * @throws ProbabilityException if the sum of the remaining probabilities or frequencies adds up to 0
      */
-    public final Distribution<O> remove(final int index) throws IndexOutOfBoundsException, ProbabilityException
+    public final Distribution<O> remove(final int index)
     {
         this.generators.remove(index);
         fixProbabilities();
@@ -154,20 +153,13 @@ public class Distribution<O> implements Generator<O>, Serializable
      * @param index the position of the generator that must be replaced
      * @param generator the new generator and the frequency (or probability)
      * @return this
-     * @throws ProbabilityException when the frequency (or probability) &lt; 0, or when index is &lt; 0 or &gt;= size
+     * @throws IndexOutOfBoundsException when index is &lt; 0 or &gt;= size
+     * @throws NullPointerException when generator is null
      */
-    public final Distribution<O> set(final int index, final FrequencyAndObject<O> generator) throws ProbabilityException
+    public final Distribution<O> set(final int index, final FrequencyAndObject<O> generator)
     {
-        Throw.when(generator.getFrequency() < 0, ProbabilityException.class,
-                "frequency (or probability) must be >= 0 (got " + generator.getFrequency() + ")");
-        try
-        {
-            this.generators.set(index, generator);
-        }
-        catch (IndexOutOfBoundsException ie)
-        {
-            throw new ProbabilityException("Index out of bounds for set operation, index=" + index);
-        }
+        Throw.whenNull(generator, "generator");
+        this.generators.set(index, generator);
         fixProbabilities();
         return this;
     }
@@ -177,13 +169,14 @@ public class Distribution<O> implements Generator<O>, Serializable
      * @param index index of the stored generator
      * @param frequency new frequency (or probability)
      * @return this
-     * @throws ProbabilityException when the frequency (or probability) &lt; 0, or when index is &lt; 0 or &gt;= size
+     * @throws IndexOutOfBoundsException when index is &lt; 0 or &gt;= size
+     * @throws IllegalArgumentException when the frequency (or probability) &lt; 0
      */
-    public final Distribution<O> modifyFrequency(final int index, final double frequency) throws ProbabilityException
+    public final Distribution<O> modifyFrequency(final int index, final double frequency)
     {
-        Throw.when(index < 0 || index >= this.size(), ProbabilityException.class, "Index %s out of range (0..%d)", index,
+        Throw.when(index < 0 || index >= this.size(), IndexOutOfBoundsException.class, "Index %s out of range (0..%d)", index,
                 this.size() - 1);
-        return set(index, new FrequencyAndObject<O>(frequency, this.generators.get(index).getObject()));
+        return set(index, new FrequencyAndObject<O>(frequency, this.generators.get(index).object()));
     }
 
     /**
@@ -200,18 +193,11 @@ public class Distribution<O> implements Generator<O>, Serializable
      * Retrieve one of the internally stored generators.
      * @param index the index of the FrequencyAndObject to retrieve
      * @return the generator stored at position <cite>index</cite>
-     * @throws ProbabilityException when index &lt; 0 or &gt;= size()
+     * @throws IndexOutOfBoundsException when index &lt; 0 or &gt;= size()
      */
-    public final FrequencyAndObject<O> get(final int index) throws ProbabilityException
+    public final FrequencyAndObject<O> get(final int index)
     {
-        try
-        {
-            return this.generators.get(index);
-        }
-        catch (IndexOutOfBoundsException ie)
-        {
-            throw new ProbabilityException("Index out of bounds for set operation, index=" + index);
-        }
+        return this.generators.get(index);
     }
 
     /**
@@ -274,105 +260,11 @@ public class Distribution<O> implements Generator<O>, Serializable
         String separator = "";
         for (FrequencyAndObject<O> fAndO : this.generators)
         {
-            result.append(separator + fAndO.getFrequency() + "->" + fAndO.getObject());
+            result.append(separator + fAndO.frequency() + "->" + fAndO.object());
             separator = ", ";
         }
         result.append(']');
         return result.toString();
-    }
-
-    /**
-     * Immutable storage for a frequency (or probability) plus a Generator.
-     * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands.<br>
-     * All rights reserved. <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @param <O> Type of the object returned by the draw method
-     */
-    public static class FrequencyAndObject<O> implements Serializable
-    {
-        /** */
-        private static final long serialVersionUID = 20160301L;
-
-        /** Frequency (or probability) of an object. */
-        private final double frequency;
-
-        /** The object. */
-        private final O object;
-
-        /**
-         * Construct a new FrequencyAndObject instance.
-         * @param frequency the (<b>not cumulative</b>) frequency (or probability) of the <cite>generatingObject</cite>
-         * @param object an object
-         */
-        public FrequencyAndObject(final double frequency, final O object)
-        {
-            this.frequency = frequency;
-            this.object = object;
-        }
-
-        /**
-         * Retrieve the frequency (or probability) of this FrequencyAndObject.
-         * @return the frequency (or probability) of this FrequencyAndObject
-         */
-        public final double getFrequency()
-        {
-            return this.frequency;
-        }
-
-        /**
-         * Call the draw method of the generatingObject and return its result.
-         * @return the result of a call to the draw method of the generatingObject
-         */
-        public final O getObject()
-        {
-            return this.object;
-        }
-
-        @Override
-        public final int hashCode()
-        {
-            final int prime = 31;
-            int result = 1;
-            long temp;
-            temp = Double.doubleToLongBits(this.frequency);
-            result = prime * result + (int) (temp ^ (temp >>> 32));
-            result = prime * result + ((this.object == null) ? 0 : this.object.hashCode());
-            return result;
-        }
-
-        @Override
-        @SuppressWarnings("checkstyle:needbraces")
-        public final boolean equals(final Object obj)
-        {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            FrequencyAndObject<?> other = (FrequencyAndObject<?>) obj;
-            if (Double.doubleToLongBits(this.frequency) != Double.doubleToLongBits(other.frequency))
-                return false;
-            if (this.object == null)
-            {
-                if (other.object != null)
-                    return false;
-            }
-            else if (!this.object.equals(other.object))
-                return false;
-            return true;
-        }
-
-        @Override
-        public final String toString()
-        {
-            return "FrequencyAndObject [frequency=" + this.frequency + ", object=" + this.object + "]";
-        }
-
     }
 
 }

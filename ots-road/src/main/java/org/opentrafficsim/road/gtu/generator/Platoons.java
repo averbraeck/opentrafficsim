@@ -4,7 +4,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -18,7 +17,6 @@ import org.djutils.exceptions.Throw;
 import org.djutils.means.ArithmeticMean;
 import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -120,7 +118,7 @@ public abstract class Platoons<T>
 
             @Override
             protected void placeGtu(final PlatoonGtu<Category> platoonGtu) throws SimRuntimeException, NamingException,
-                    GtuException, NetworkException, OtsGeometryException, ProbabilityException, ParameterException
+                    GtuException, NetworkException, OtsGeometryException, ParameterException
             {
                 getGenerator().queueGtu(this.characteristicsOD.draw(platoonGtu.getOrigin(), platoonGtu.getDestination(),
                         platoonGtu.getCategory(), this.strm), getPosition());
@@ -148,7 +146,7 @@ public abstract class Platoons<T>
 
             @Override
             protected void placeGtu(final PlatoonGtu<GtuType> platoonGtu) throws SimRuntimeException, NamingException,
-                    GtuException, NetworkException, OtsGeometryException, ProbabilityException, ParameterException
+                    GtuException, NetworkException, OtsGeometryException, ParameterException
             {
                 // we actually do nothing with the platoonGtu here
                 getGenerator().queueGtu(this.chrctrstcs.draw(), getPosition());
@@ -351,10 +349,9 @@ public abstract class Platoons<T>
      * @throws NetworkException on exception
      * @throws OtsGeometryException on exception
      * @throws ParameterException on exception
-     * @throws ProbabilityException on exception
      */
     protected abstract void placeGtu(PlatoonGtu<T> platoonGtu) throws SimRuntimeException, NamingException, GtuException,
-            NetworkException, OtsGeometryException, ProbabilityException, ParameterException;
+            NetworkException, OtsGeometryException, ParameterException;
 
     /**
      * Class containing info of a GTU to generate.

@@ -47,7 +47,6 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.Generator;
-import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuErrorHandler;
@@ -235,7 +234,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         Generator<Duration> interarrivelTimeGenerator = new Generator<Duration>()
         {
             @Override
-            public Duration draw() throws ProbabilityException, ParameterException
+            public Duration draw()
             {
                 @SuppressWarnings("synthetic-access")
                 double mean = 1.0 / FundamentalDiagramDemo.this.demand.si;
@@ -272,7 +271,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         LaneBasedGtuCharacteristicsGenerator laneBasedGtuCharacteristicsGenerator = new LaneBasedGtuCharacteristicsGenerator()
         {
             @Override
-            public LaneBasedGtuCharacteristics draw() throws ProbabilityException, ParameterException, GtuException
+            public LaneBasedGtuCharacteristics draw() throws ParameterException, GtuException
             {
                 @SuppressWarnings("synthetic-access")
                 GtuType gtuType = stream.nextDouble() > FundamentalDiagramDemo.this.truckFraction ? car : truck;

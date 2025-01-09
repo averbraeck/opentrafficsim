@@ -2,9 +2,7 @@ package org.opentrafficsim.road.gtu.generator.headway;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
-import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
-import org.opentrafficsim.core.distributions.ProbabilityException;
 
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
@@ -39,7 +37,7 @@ public class HeadwayGenerator implements Generator<Duration>
     }
 
     @Override
-    public Duration draw() throws ProbabilityException, ParameterException
+    public Duration draw()
     {
         return Duration.instantiateSI(-Math.log(this.stream.nextDouble()) / this.demand.si);
     }

@@ -19,7 +19,6 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
-import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -49,7 +48,6 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
-import org.pmw.tinylog.Logger;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -416,7 +414,7 @@ public final class OdApplier
             LaneBasedGtuCharacteristicsGenerator characteristicsGenerator = new LaneBasedGtuCharacteristicsGenerator()
             {
                 @Override
-                public LaneBasedGtuCharacteristics draw() throws ProbabilityException, ParameterException, GtuException
+                public LaneBasedGtuCharacteristics draw() throws ParameterException, GtuException
                 {
                     Time time = simulator.getSimulatorAbsTime();
                     Node origin = root.getObject();
@@ -444,12 +442,6 @@ public final class OdApplier
             catch (SimRuntimeException exception)
             {
                 // should not happen, we check that time is 0
-                simulator.getLogger().always().error(exception);
-                throw new RuntimeException(exception);
-            }
-            catch (ProbabilityException exception)
-            {
-                // should not happen, as we define probabilities in the headwayGenerator
                 simulator.getLogger().always().error(exception);
                 throw new RuntimeException(exception);
             }

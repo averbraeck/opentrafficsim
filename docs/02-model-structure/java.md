@@ -92,7 +92,6 @@ OtsException
   <li>SamplingException</li>
   <li>ParameterException</li>
   <li>NetworkException</li>
-  <li>ProbabilityException</li>
   <li>TrafficControlException</li>
   <li>GtuException</li>
   <ul>

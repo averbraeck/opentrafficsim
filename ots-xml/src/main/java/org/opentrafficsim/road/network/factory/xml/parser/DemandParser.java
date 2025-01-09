@@ -33,9 +33,8 @@ import org.jgrapht.alg.interfaces.AStarAdmissibleHeuristic;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.distributions.Distribution;
-import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
+import org.opentrafficsim.core.distributions.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
-import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdGenerator;
@@ -490,14 +489,7 @@ public final class DemandParser
             }
             Throw.when(routeMixXml == null, XmlParserException.class, "Route mix '%s' not defined.", routeMixId);
             StreamInterface routeMixStream = ParseUtil.findStream(streamInformation, routeMixXml.getRandomStream(), eval);
-            try
-            {
-                routeGenerator = new ProbabilisticRouteGenerator(routeMix, routeMixStream);
-            }
-            catch (ProbabilityException exception)
-            {
-                throw new RuntimeException(errorPre + "Could not generate RouteMix " + routeMixId);
-            }
+            routeGenerator = new ProbabilisticRouteGenerator(routeMix, routeMixStream);
         }
 
         else if (shortestRouteType != null)
@@ -527,14 +519,7 @@ public final class DemandParser
                     shortestRouteMixId);
             StreamInterface shortestRouteMixStream =
                     ParseUtil.findStream(streamInformation, shortestRouteMixXml.getRandomStream(), eval);
-            try
-            {
-                routeGenerator = new ProbabilisticRouteGenerator(shortestRouteMix, shortestRouteMixStream);
-            }
-            catch (ProbabilityException exception)
-            {
-                throw new RuntimeException(errorPre + "Could not generate ShortestRouteMix " + shortestRouteMixId);
-            }
+            routeGenerator = new ProbabilisticRouteGenerator(shortestRouteMix, shortestRouteMixStream);
         }
 
         else
@@ -556,13 +541,12 @@ public final class DemandParser
      * @param stream stream of demand tag
      * @param eval evaluator
      * @return distribution of LaneBasedGtuTemplate
-     * @throws ProbabilityException when a frequency is negative
      * @throws XmlParserException when a referred element does no exist
      */
     private static Distribution<LaneBasedGtuTemplate> getTemplateDistribution(final StringType gtuTemplateType,
             final StringType gtuTemplateMixType, final Generator<Route> routeGenerator, final Definitions definitions,
             final Demand demand, final Map<String, GtuTemplate> gtuTemplates, final StreamInformation streamInformation,
-            final StreamInterface stream, final Eval eval) throws ProbabilityException, XmlParserException
+            final StreamInterface stream, final Eval eval) throws XmlParserException
     {
         LaneBasedStrategicalRoutePlannerFactory strategicalFactory =
                 DefaultLaneBasedGtuCharacteristicsGeneratorOd.defaultLmrs(stream);
@@ -737,8 +721,7 @@ public final class DemandParser
                 generators.add(generator);
             }
         }
-        catch (TextSerializationException | IOException | ProbabilityException | SimRuntimeException | ParameterException
-                | NetworkException ex)
+        catch (TextSerializationException | IOException | SimRuntimeException | ParameterException | NetworkException ex)
         {
             throw new XmlParserException(ex);
         }
@@ -883,7 +866,7 @@ public final class DemandParser
             Generator<T> generator = new Generator<T>()
             {
                 @Override
-                public T draw() throws ProbabilityException, ParameterException
+                public T draw()
                 {
                     return dist.draw();
                 }

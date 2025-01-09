@@ -34,9 +34,8 @@ import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
 import org.opentrafficsim.core.distributions.Distribution;
-import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
+import org.opentrafficsim.core.distributions.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
-import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -292,12 +291,11 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
          * @throws ParameterException on parameter exception
          * @throws GtuException on GTU exception
          * @throws NetworkException if not does not exist
-         * @throws ProbabilityException negative probability
          * @throws SimRuntimeException in case of sim run time exception
          * @throws RemoteException if no simulator
          */
-        private void addGenerator() throws ParameterException, GtuException, NetworkException, ProbabilityException,
-                SimRuntimeException, RemoteException
+        private void addGenerator()
+                throws ParameterException, GtuException, NetworkException, SimRuntimeException, RemoteException
         {
 
             Random seedGenerator = new Random(1L);
@@ -470,7 +468,6 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
          * @param simulationTime simulation time
          * @param stream random numbers stream
          * @throws SimRuntimeException in case of scheduling problems
-         * @throws ProbabilityException in case of an illegal probability distribution
          * @throws GtuException in case the GTU is inconsistent
          * @throws ParameterException in case a parameter for the perception is missing
          * @throws NetworkException if the object could not be added to the network
@@ -479,8 +476,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
                 final Distribution<LaneBasedGtuTemplate> distribution, final Generator<Duration> headwayGenerator,
                 final RoomChecker roomChecker, final ParameterFactory bcFactory,
                 final LaneBasedTacticalPlannerFactory<?> tacticalFactory, final Time simulationTime,
-                final StreamInterface stream)
-                throws SimRuntimeException, ProbabilityException, GtuException, ParameterException, NetworkException
+                final StreamInterface stream) throws SimRuntimeException, GtuException, ParameterException, NetworkException
         {
 
             Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>();

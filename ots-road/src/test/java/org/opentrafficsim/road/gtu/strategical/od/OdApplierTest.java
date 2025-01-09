@@ -36,7 +36,6 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.Generator;
-import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -224,14 +223,13 @@ public class OdApplierTest
      * @throws ValueRuntimeException on exception
      * @throws SimRuntimeException on exception
      * @throws ParameterException on exception
-     * @throws ProbabilityException on exception
      * @throws IllegalAccessException on exception
      * @throws IllegalArgumentException on exception
      * @throws OtsGeometryException on exception
      */
     @Test
     public void headwayGeneratorTest() throws ValueRuntimeException, NetworkException, ParameterException, SimRuntimeException,
-            ProbabilityException, IllegalArgumentException, IllegalAccessException, OtsGeometryException
+            IllegalArgumentException, IllegalAccessException, OtsGeometryException
     {
 
         this.time = Time.ZERO;
@@ -489,11 +487,10 @@ public class OdApplierTest
      * @throws SimRuntimeException on exception
      * @throws ParameterException on exception
      * @throws GtuException on exception
-     * @throws ProbabilityException on exception
      */
     @Test
-    public void gtuFractionTest() throws ValueRuntimeException, NetworkException, ParameterException, SimRuntimeException,
-            ProbabilityException, GtuException
+    public void gtuFractionTest()
+            throws ValueRuntimeException, NetworkException, ParameterException, SimRuntimeException, GtuException
     {
         this.time = Time.ZERO;
         Node nodeA = this.network.getNode("A");

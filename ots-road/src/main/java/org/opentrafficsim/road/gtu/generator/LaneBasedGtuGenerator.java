@@ -28,7 +28,6 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
-import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuErrorHandler;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -143,7 +142,6 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
      * @param roomChecker the way that this generator checks that there is sufficient room to place a new GTU
      * @param idGenerator id generator
      * @throws SimRuntimeException when <cite>startTime</cite> lies before the current simulation time
-     * @throws ProbabilityException pe
      * @throws ParameterException if drawing from the interarrival generator fails
      * @throws NetworkException if the object could not be added to the network
      */
@@ -152,7 +150,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
             final LaneBasedGtuCharacteristicsGenerator laneBasedGtuCharacteristicsGenerator,
             final GeneratorPositions generatorPositions, final RoadNetwork network, final OtsSimulatorInterface simulator,
             final RoomChecker roomChecker, final Supplier<String> idGenerator)
-            throws SimRuntimeException, ProbabilityException, ParameterException, NetworkException
+            throws SimRuntimeException, ParameterException, NetworkException
     {
         this.id = id;
         this.uniqueId = UUID.randomUUID().toString() + "_" + id;
@@ -218,14 +216,13 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
 
     /**
      * Generate the characteristics of the next GTU.
-     * @throws ProbabilityException when something is wrongly defined in the LaneBasedTemplateGTUType
      * @throws SimRuntimeException when this method fails to re-schedule itself or the call to the method that tries to place a
      *             GTU on the road
      * @throws ParameterException in case of a parameter problem
      * @throws GtuException if strategical planner cannot generate a plan
      */
     @SuppressWarnings("unused")
-    private void generateCharacteristics() throws ProbabilityException, SimRuntimeException, ParameterException, GtuException
+    private void generateCharacteristics() throws SimRuntimeException, ParameterException, GtuException
     {
         this.firstCharacteristicsDrawn = true;
         synchronized (this.unplacedTemplates)
@@ -275,11 +272,10 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
      * @throws GtuException when something wrong in the definition of the GTU
      * @throws NetworkException when something is wrong with the initial location of the GTU
      * @throws NamingException ???
-     * @throws ProbabilityException pe
      */
     @SuppressWarnings("unused")
     private void tryToPlaceGTU(final GeneratorLanePosition position)
-            throws SimRuntimeException, GtuException, NamingException, NetworkException, ProbabilityException
+            throws SimRuntimeException, GtuException, NamingException, NetworkException
     {
         TimeStampedObject<LaneBasedGtuCharacteristics> timedCharacteristics;
         Queue<TimeStampedObject<LaneBasedGtuCharacteristics>> queue =

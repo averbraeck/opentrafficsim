@@ -34,7 +34,6 @@ import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
-import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -75,7 +74,6 @@ public class InjectionsTest
 
     /**
      * Test Injections.
-     * @throws ProbabilityException on exception
      * @throws ParameterException on exception
      * @throws NetworkException on exception
      * @throws GtuException on exception
@@ -85,8 +83,8 @@ public class InjectionsTest
      */
     @SuppressWarnings("checkstyle:methodlength") // don't want to define those columns as properties or again and again
     @Test
-    public final void testInjections() throws ProbabilityException, ParameterException, NetworkException, GtuException,
-            OtsGeometryException, SimRuntimeException, NamingException
+    public final void testInjections() throws ParameterException, NetworkException, GtuException, OtsGeometryException,
+            SimRuntimeException, NamingException
     {
         // columns with correct, and incorrect (xxx2) value type
         Column<Duration> time = new Column<>(Injections.TIME_COLUMN, "", Duration.class, "s");
@@ -291,13 +289,11 @@ public class InjectionsTest
      * Tests whether Injection ids are used even when a GTU is delayed due to a lack of space.
      * @throws NetworkException exception
      * @throws ParameterException exception
-     * @throws ProbabilityException exception
      * @throws SimRuntimeException exception
      * @throws NamingException exception
      */
     @Test
-    public final void testIdorder()
-            throws NetworkException, SimRuntimeException, ProbabilityException, ParameterException, NamingException
+    public final void testIdorder() throws NetworkException, SimRuntimeException, ParameterException, NamingException
     {
         // A small test network with two completely separated lanes on different links
         OtsSimulatorInterface simulator = new OtsSimulator("simulator");

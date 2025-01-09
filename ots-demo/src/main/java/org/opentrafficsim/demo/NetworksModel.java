@@ -28,9 +28,8 @@ import org.djutils.event.EventType;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.Distribution;
-import org.opentrafficsim.core.distributions.Distribution.FrequencyAndObject;
+import org.opentrafficsim.core.distributions.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
-import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.ContinuousLine;
@@ -298,14 +297,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
                 sideRouteNodes.add(end2b);
                 Route sideRoute = new Route("side", car, sideRouteNodes);
                 routeProbabilities.add(new FrequencyAndObject<>(lanesOnBranch, sideRoute));
-                try
-                {
-                    this.routeGeneratorMain = new ProbabilisticRouteGenerator(routeProbabilities, new MersenneTwister(1234));
-                }
-                catch (ProbabilityException exception)
-                {
-                    exception.printStackTrace();
-                }
+                this.routeGeneratorMain = new ProbabilisticRouteGenerator(routeProbabilities, new MersenneTwister(1234));
             }
 
             if (merge)
@@ -345,7 +337,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
             }
         }
         catch (SimRuntimeException | NetworkException | InputParameterException | GtuException | ParameterException
-                | NamingException | ProbabilityException exception)
+                | NamingException exception)
         {
             exception.printStackTrace();
         }
@@ -357,12 +349,11 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
      * @return the lanes
      * @throws GtuException when lane position out of bounds
      * @throws SimRuntimeException when generation scheduling fails
-     * @throws ProbabilityException when probability distribution is wrong
      * @throws ParameterException when a parameter is missing for the perception of the GTU
      * @throws NetworkException if the object could not be added to the network
      */
     private Lane[] setupGenerator(final Lane[] lanes)
-            throws SimRuntimeException, GtuException, ProbabilityException, ParameterException, NetworkException
+            throws SimRuntimeException, GtuException, ParameterException, NetworkException
     {
         for (Lane lane : lanes)
         {
@@ -377,12 +368,11 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
      * @return LaneBasedGtuGenerator
      * @throws GtuException when lane position out of bounds
      * @throws SimRuntimeException when generation scheduling fails
-     * @throws ProbabilityException when probability distribution is wrong
      * @throws ParameterException when a parameter is missing for the perception of the GTU
      * @throws NetworkException if the object could not be added to the network
      */
     private LaneBasedGtuGenerator makeGenerator(final Lane lane)
-            throws GtuException, SimRuntimeException, ProbabilityException, ParameterException, NetworkException
+            throws GtuException, SimRuntimeException, ParameterException, NetworkException
     {
         Distribution<LaneBasedGtuTemplate> distribution = new Distribution<>(this.stream);
         Length initialPosition = new Length(16, METER);

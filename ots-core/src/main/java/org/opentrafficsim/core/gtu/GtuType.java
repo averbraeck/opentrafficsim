@@ -6,8 +6,6 @@ import java.util.function.BiFunction;
 
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.HierarchicalType;
-import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.distributions.ProbabilityException;
 import org.opentrafficsim.core.network.Network;
 
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -111,14 +109,7 @@ public final class GtuType extends HierarchicalType<GtuType, Gtu>
                 map.put(gtuType, template);
             }
         }
-        try
-        {
-            return template.draw();
-        }
-        catch (ProbabilityException | ParameterException exception)
-        {
-            throw new GtuException("GtuType draw failed.", exception);
-        }
+        return template.draw();
     }
 
     @Override

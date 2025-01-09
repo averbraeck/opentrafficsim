@@ -3,11 +3,9 @@ package org.opentrafficsim.road.gtu.generator.characteristics;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
-import org.opentrafficsim.core.distributions.ProbabilityException;
-import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.GtuTemplate;
+import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
@@ -58,11 +56,9 @@ public class LaneBasedGtuTemplate extends GtuTemplate implements LaneBasedGtuCha
     /**
      * Generate the properties of the next GTU.
      * @return the LaneBasedGtuCharacteristics with a drawn perception, strategical planner, and initial speed.
-     * @throws ProbabilityException when a generator is improperly configured
-     * @throws ParameterException in case of a parameter problem.
      */
     @Override
-    public final LaneBasedGtuCharacteristics draw() throws ProbabilityException, ParameterException
+    public final LaneBasedGtuCharacteristics draw()
     {
         return new LaneBasedGtuCharacteristics(super.draw(), this.strategicalPlannerFactory, this.routeGenerator.draw(), null,
                 null, VehicleModel.MINMAX);
