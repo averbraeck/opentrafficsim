@@ -59,10 +59,10 @@ Similar to interface `PhonePlanner`, OTS has the following interfaces that give 
 * `Synchronizable`; to show synchronization and cooperation, for use with `SynchronizationColorer`.
 * `Controllable`; to show whether a GTU is being controlled.
 
-Finally the colorer gets an implementation for `toString()`. The value that this method returns is used in the dropdown list as ‘Speed’ on the left side in Figure 8.1.
+Finally the colorer gets an implementation for `getName()`. The value that this method returns is used in the dropdown list as ‘Speed’ on the left side in Figure 8.1.
 
 ```java
-    public String toString()
+    public String getName()
     {
         return "Phone";
     }

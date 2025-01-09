@@ -85,7 +85,7 @@ public class ReactionTimeColorer implements GtuColorer
     }
 
     @Override
-    public String toString()
+    public String getName()
     {
         return "Reaction time";
     }

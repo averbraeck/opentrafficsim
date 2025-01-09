@@ -54,7 +54,7 @@ public class PhoneColorer implements GtuColorer
 
     // @docs/08-tutorials/visualization.md#how-to-add-a-gtu-colorer
     @Override
-    public String toString()
+    public String getName()
     {
         return "Phone";
     }

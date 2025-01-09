@@ -21,4 +21,10 @@ public interface Colorer<D extends OtsLocatable>
      * @return the (fill, line) color of the locatable object
      */
     Color getColor(D drawable);
+    
+    /**
+     * Returns the name of the colorer.
+     * @return name of the colorer
+     */
+    String getName();
 }

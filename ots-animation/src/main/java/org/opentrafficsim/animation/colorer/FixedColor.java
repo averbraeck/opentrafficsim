@@ -63,7 +63,7 @@ public class FixedColor implements GtuColorer, Serializable
     }
 
     @Override
-    public String toString()
+    public String getName()
     {
         return this.name;
     }

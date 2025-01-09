@@ -29,7 +29,7 @@ public class ColorControlPanel extends JPanel implements ActionListener
     private static final long serialVersionUID = 20150527L;
 
     /** The combo box that sets the coloring for the GTUs. */
-    private JComboBox<GtuColorer> comboBoxGTUColor;
+    private JComboBox<ColorerWrapper> comboBoxGTUColor;
 
     /** The panel that holds the legend for the currently selected GtuColorer. */
     private final JPanel legendPanel;
@@ -79,17 +79,30 @@ public class ColorControlPanel extends JPanel implements ActionListener
      */
     public final void addItem(final GtuColorer colorer)
     {
-        this.comboBoxGTUColor.addItem(colorer);
+        this.comboBoxGTUColor.addItem(new ColorerWrapper(colorer));
         // The first item added automatically becomes the current one and triggers a call to actionPerformed.
+    }
+
+    /**
+     * Wraps a colorer so it can be presented in a menu.
+     * @param colorer colorer
+     */
+    record ColorerWrapper(GtuColorer colorer)
+    {
+        @Override
+        public String toString()
+        {
+            return colorer().getName();
+        }
     }
 
     @Override
     public final void actionPerformed(final ActionEvent e)
     {
-        GtuColorer newColorer = (GtuColorer) this.comboBoxGTUColor.getSelectedItem();
-        if (null != newColorer)
+        ColorerWrapper newColorerWrapper = (ColorerWrapper) this.comboBoxGTUColor.getSelectedItem();
+        if (null != newColorerWrapper)
         {
-            this.gtuColorer = newColorer;
+            this.gtuColorer = newColorerWrapper.colorer;
             rebuildLegend();
 
             if (this.switchableGtuColorer != null)

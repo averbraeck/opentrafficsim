@@ -63,7 +63,7 @@ public class SocialPressureColorer implements GtuColorer
     }
 
     @Override
-    public String toString()
+    public String getName()
     {
         return "Social pressure";
     }

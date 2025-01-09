@@ -87,7 +87,7 @@ public class SynchronizationColorer implements GtuColorer, Serializable
     }
 
     @Override
-    public final String toString()
+    public final String getName()
     {
         return "Synchronization";
     }

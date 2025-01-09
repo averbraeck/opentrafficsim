@@ -124,7 +124,7 @@ public class DesiredHeadwayColorer implements GtuColorer, Serializable
     }
 
     @Override
-    public final String toString()
+    public final String getName()
     {
         return "Desired headway";
     }

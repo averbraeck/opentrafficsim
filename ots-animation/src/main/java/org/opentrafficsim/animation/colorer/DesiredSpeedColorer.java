@@ -87,7 +87,7 @@ public class DesiredSpeedColorer implements GtuColorer, Serializable
     }
 
     @Override
-    public final String toString()
+    public final String getName()
     {
         return "Desired speed";
     }

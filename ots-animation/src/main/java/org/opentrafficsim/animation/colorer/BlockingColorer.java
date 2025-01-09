@@ -56,7 +56,7 @@ public class BlockingColorer implements GtuColorer
     }
 
     @Override
-    public String toString()
+    public String getName()
     {
         return "Blocking";
     }

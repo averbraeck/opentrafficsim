@@ -80,7 +80,7 @@ public class TaskSaturationColorer implements GtuColorer
     }
 
     @Override
-    public String toString()
+    public String getName()
     {
         return "Task saturation";
     }

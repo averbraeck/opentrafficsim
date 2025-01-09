@@ -47,7 +47,7 @@ public class IdGtuColorer implements GtuColorer
     }
 
     @Override
-    public final String toString()
+    public final String getName()
     {
         return "ID";
     }

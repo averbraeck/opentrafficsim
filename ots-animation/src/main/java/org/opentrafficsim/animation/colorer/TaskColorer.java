@@ -100,7 +100,7 @@ public class TaskColorer implements GtuColorer
     }
 
     @Override
-    public String toString()
+    public String getName()
     {
         return "Task load (" + this.id + ")";
     }

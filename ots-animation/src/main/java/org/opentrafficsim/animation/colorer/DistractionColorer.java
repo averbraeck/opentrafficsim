@@ -84,7 +84,7 @@ public class DistractionColorer implements GtuColorer, Serializable
     }
 
     @Override
-    public final String toString()
+    public final String getName()
     {
         return "Distraction";
     }

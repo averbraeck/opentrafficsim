@@ -50,7 +50,7 @@ public class IncentiveColorer extends DesireColorer
     }
 
     @Override
-    public final String toString()
+    public final String getName()
     {
         return this.incentiveClass.getSimpleName();
     }

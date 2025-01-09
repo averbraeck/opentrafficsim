@@ -81,7 +81,7 @@ public class ControlColorer implements GtuColorer, Serializable
     }
 
     @Override
-    public final String toString()
+    public final String getName()
     {
         return "Control";
     }

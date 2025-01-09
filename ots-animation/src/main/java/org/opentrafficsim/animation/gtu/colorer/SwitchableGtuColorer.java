@@ -74,7 +74,7 @@ public class SwitchableGtuColorer implements GtuColorer, Serializable
     }
 
     @Override
-    public final String toString()
+    public final String getName()
     {
         return "Switchable GTU Colorer";
     }

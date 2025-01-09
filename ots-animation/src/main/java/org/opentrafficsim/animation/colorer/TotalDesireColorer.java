@@ -36,7 +36,7 @@ public class TotalDesireColorer extends DesireColorer
     }
 
     @Override
-    public final String toString()
+    public final String getName()
     {
         return "Total desire";
     }

@@ -152,7 +152,7 @@ public class SplitColorer implements GtuColorer
     }
 
     @Override
-    public final String toString()
+    public final String getName()
     {
         return "Split";
     }

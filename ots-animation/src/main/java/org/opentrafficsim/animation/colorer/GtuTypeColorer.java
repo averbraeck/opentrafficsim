@@ -122,7 +122,7 @@ public class GtuTypeColorer implements GtuColorer, Serializable
     }
 
     @Override
-    public String toString()
+    public String getName()
     {
         return "GTU Type";
     }

@@ -23,7 +23,7 @@ public interface GtuColorer extends Colorer<Gtu>
      * @return the list of legend entries; the caller should not (try to) modify this List
      */
     List<LegendEntry> getLegend();
-
+    
     /**
      * Packs a Color, a short description and a long description in one object.
      * @param color the color of the new LegendEntry
