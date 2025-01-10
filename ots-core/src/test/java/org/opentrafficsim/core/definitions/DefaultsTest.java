@@ -27,13 +27,6 @@ public class DefaultsTest
 {
 
     /**
-     * Constructor.
-     */
-    public DefaultsTest()
-    {
-    }
-
-    /**
      * Tests DefaultsNl.
      */
     @Test
