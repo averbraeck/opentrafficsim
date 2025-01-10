@@ -27,7 +27,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
 import org.opentrafficsim.animation.GraphLaneUtil;
-import org.opentrafficsim.animation.colorer.LmrsSwitchableColorer;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -216,9 +215,8 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             final ShortMergeModel otsModel = new ShortMergeModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(SIMTIME.si), otsModel,
                     HistoryManagerDevs.noHistory(simulator));
-            OtsAnimationPanel animationPanel =
-                    new OtsAnimationPanel(otsModel.getNetwork().getExtent(), new Dimension(800, 600), simulator, otsModel,
-                            new LmrsSwitchableColorer(DefaultsFactory.GTU_TYPE_COLORS.toMap()), otsModel.getNetwork());
+            OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(), new Dimension(800, 600),
+                    simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
             ShortMerge app = new ShortMerge("ShortMerge", animationPanel, otsModel);
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();
