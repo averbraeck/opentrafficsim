@@ -318,7 +318,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
                             - (lane.getOffsetAtEnd().si + lane.getEndWidth().si / 2.0) < ADJACENT_MARGIN.si)
             {
                 // look at stripes between the two lanes
-                if (legal)
+                if (!(this instanceof Shoulder) && legal) // may always leave shoulder
                 {
                     for (CrossSectionElement cse : this.link.getCrossSectionElementList())
                     {
