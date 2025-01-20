@@ -46,7 +46,6 @@ import org.opentrafficsim.animation.colorer.IncentiveColorer;
 import org.opentrafficsim.animation.colorer.SocialPressureColorer;
 import org.opentrafficsim.animation.gtu.colorer.AccelerationGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.SpeedGtuColorer;
-import org.opentrafficsim.animation.gtu.colorer.SwitchableGtuColorer;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -164,12 +163,11 @@ public class StrategiesDemo extends AbstractSimulationScript
     protected StrategiesDemo()
     {
         super("Strategies demo", "Demo of driving strategies in LMRS.");
-        setGtuColorer(SwitchableGtuColorer.builder().addColorer(new FixedColor(Color.BLUE, "Blue"))
-                .addColorer(new SpeedGtuColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)))
-                .addColorer(new AccelerationGtuColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)))
-                .addActiveColorer(new SocialPressureColorer())
-                .addColorer(new DesiredHeadwayColorer(Duration.instantiateSI(0.5), Duration.instantiateSI(1.6)))
-                .addColorer(new IncentiveColorer(IncentiveSocioSpeed.class)).build());
+        setGtuColorers(List.of(new FixedColor(Color.BLUE, "Blue"), new SpeedGtuColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)),
+                new AccelerationGtuColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)),
+                new SocialPressureColorer(),
+                new DesiredHeadwayColorer(Duration.instantiateSI(0.5), Duration.instantiateSI(1.6)),
+                new IncentiveColorer(IncentiveSocioSpeed.class)));
         try
         {
             CliUtil.changeOptionDefault(this, "simulationTime", "3600000s");

@@ -29,7 +29,6 @@ import org.eclipse.jetty.server.session.SessionDataStore;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.util.resource.Resource;
 import org.opentrafficsim.animation.DefaultAnimationFactory;
-import org.opentrafficsim.animation.gtu.colorer.DefaultSwitchableGtuColorer;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -193,7 +192,7 @@ public class TestDemoServer
                         OtsWebModel webModel = new OtsWebModel(model.getShortName(), simulator);
                         TestDemoServer.this.sessionWebModelMap.put(sessionId, webModel);
                         DefaultAnimationFactory.animateNetwork(model.getNetwork(), model.getNetwork().getSimulator(),
-                                new DefaultSwitchableGtuColorer(), Collections.emptyMap());
+                                webModel.getAnimationPanel().getGtuColorerManager(), Collections.emptyMap());
                     }
                     catch (Exception exception)
                     {

@@ -56,7 +56,7 @@ public class StraightSwing extends OtsSimulationApplication<StraightModel> imple
      */
     public StraightSwing(final String title, final OtsAnimationPanel panel, final StraightModel model)
     {
-        super(model, panel, DEFAULT_COLORER, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
+        super(model, panel, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
     }
 
     @Override
@@ -89,7 +89,7 @@ public class StraightSwing extends OtsSimulationApplication<StraightModel> imple
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(1500.0), otsModel,
                         HistoryManagerDevs.noHistory(simulator));
                 OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(),
-                        new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
+                        new Dimension(800, 600), simulator, otsModel, DEFAULT_GTU_COLORERS, otsModel.getNetwork());
                 StraightSwing app = new StraightSwing("Straight", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
                 animationPanel.enableSimulationControlButtons();

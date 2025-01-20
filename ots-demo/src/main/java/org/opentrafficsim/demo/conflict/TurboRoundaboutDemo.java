@@ -45,7 +45,7 @@ public class TurboRoundaboutDemo extends OtsSimulationApplication<TurboRoundabou
      */
     public TurboRoundaboutDemo(final String title, final OtsAnimationPanel panel, final TurboRoundaboutModel model)
     {
-        super(model, panel, DEFAULT_COLORER, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
+        super(model, panel, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
     }
 
     /**
@@ -70,7 +70,7 @@ public class TurboRoundaboutDemo extends OtsSimulationApplication<TurboRoundabou
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), junctionModel,
                     HistoryManagerDevs.noHistory(simulator));
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(junctionModel.getNetwork().getExtent(),
-                    new Dimension(800, 600), simulator, junctionModel, DEFAULT_COLORER, junctionModel.getNetwork());
+                    new Dimension(800, 600), simulator, junctionModel, DEFAULT_GTU_COLORERS, junctionModel.getNetwork());
             TurboRoundaboutDemo app = new TurboRoundaboutDemo("Turbo-Roundabout demo", animationPanel, junctionModel);
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();

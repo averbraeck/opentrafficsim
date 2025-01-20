@@ -71,7 +71,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
      */
     public CircularRoadSwing(final String title, final OtsAnimationPanel panel, final CircularRoadModel model)
     {
-        super(model, panel, DEFAULT_COLORER, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
+        super(model, panel, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
 
         // NetworkAnimation networkAnimation = new NetworkAnimation(model.getNetwork());
         // networkAnimation.addDrawingInfoClass(Lane.class, new DrawingInfoShape<>(Color.GRAY));
@@ -261,7 +261,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel,
                         HistoryManagerDevs.noHistory(simulator));
                 OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(),
-                        new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
+                        new Dimension(800, 600), simulator, otsModel, DEFAULT_GTU_COLORERS, otsModel.getNetwork());
                 CircularRoadSwing app = new CircularRoadSwing("Circular Road", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
                 animationPanel.enableSimulationControlButtons();

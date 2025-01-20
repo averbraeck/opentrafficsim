@@ -31,7 +31,6 @@ import org.opentrafficsim.animation.colorer.TaskSaturationColorer;
 import org.opentrafficsim.animation.gtu.colorer.AccelerationGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.SpeedGtuColorer;
-import org.opentrafficsim.animation.gtu.colorer.SwitchableGtuColorer;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
@@ -160,7 +159,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
      */
     private HumanFactorsDemo(final HumanFactorsModel model, final OtsAnimationPanel panel)
     {
-        super(model, panel, DEFAULT_COLORER, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
+        super(model, panel, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
     }
 
     /**
@@ -176,12 +175,12 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), junctionModel,
                     new HistoryManagerDevs(simulator, Duration.instantiateSI(3.0), Duration.instantiateSI(10.0)));
             // Note some relevant colorers for social interactions and task saturation
-            GtuColorer colorer = new SwitchableGtuColorer(0, new FixedColor(Color.BLUE, "Blue"),
+            List<GtuColorer> colorers = List.of(new FixedColor(Color.BLUE, "Blue"),
                     new SpeedGtuColorer(new Speed(150.0, SpeedUnit.KM_PER_HOUR)),
                     new AccelerationGtuColorer(Acceleration.instantiateSI(-4.0), Acceleration.instantiateSI(2.0)),
                     new SocialPressureColorer(), new IncentiveColorer(IncentiveSocioSpeed.class), new TaskSaturationColorer());
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(junctionModel.getNetwork().getExtent(),
-                    new Dimension(800, 600), simulator, junctionModel, colorer, junctionModel.getNetwork());
+                    new Dimension(800, 600), simulator, junctionModel, colorers, junctionModel.getNetwork());
             new HumanFactorsDemo(junctionModel, animationPanel);
             animationPanel.enableSimulationControlButtons();
         }

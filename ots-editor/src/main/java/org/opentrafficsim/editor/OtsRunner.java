@@ -44,7 +44,7 @@ public class OtsRunner extends OtsSimulationApplication<OtsRunnerModel>
     public OtsRunner(final OtsAnimationPanel panel, final OtsRunnerModel model)
     {
         // TODO: colorer and markers based on user specification
-        super(model, panel, DEFAULT_COLORER, Collections.emptyMap());
+        super(model, panel, Collections.emptyMap());
     }
 
     /**
@@ -61,7 +61,7 @@ public class OtsRunner extends OtsSimulationApplication<OtsRunnerModel>
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), runnerModel,
                     new HistoryManagerDevs(simulator, Duration.instantiateSI(5.0), Duration.instantiateSI(10.0)));
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(runnerModel.getNetwork().getExtent(),
-                    new Dimension(800, 600), simulator, runnerModel, DEFAULT_COLORER, runnerModel.getNetwork());
+                    new Dimension(800, 600), simulator, runnerModel, DEFAULT_GTU_COLORERS, runnerModel.getNetwork());
             OtsRunner app = new OtsRunner(animationPanel, runnerModel);
             app.setExitOnClose(false);
             animationPanel.enableSimulationControlButtons();

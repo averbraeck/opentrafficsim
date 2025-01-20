@@ -62,7 +62,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
      */
     public TrafCodDemo2(final String title, final OtsAnimationPanel panel, final TrafCodModel model)
     {
-        super(model, panel, DEFAULT_COLORER, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
+        super(model, panel, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
     }
 
     /**
@@ -108,7 +108,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), trafcodModel,
                     HistoryManagerDevs.noHistory(simulator));
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(trafcodModel.getNetwork().getExtent(),
-                    new Dimension(800, 600), simulator, trafcodModel, DEFAULT_COLORER, trafcodModel.getNetwork());
+                    new Dimension(800, 600), simulator, trafcodModel, DEFAULT_GTU_COLORERS, trafcodModel.getNetwork());
             TrafCodDemo2 app = new TrafCodDemo2("TrafCOD demo complex crossing", animationPanel, trafcodModel);
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();

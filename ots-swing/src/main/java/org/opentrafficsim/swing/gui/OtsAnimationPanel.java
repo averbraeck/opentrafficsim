@@ -148,13 +148,13 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
      * @param size the size to be used for the animation.
      * @param simulator the simulator or animator of the model.
      * @param otsModel the builder and rebuilder of the simulation, based on properties.
-     * @param gtuColorer the colorer to use for the GTUs.
+     * @param gtuColorers the colorers to use for the GTUs.
      * @param network network
      * @throws RemoteException when notification of the animation panel fails
      * @throws DsolException when simulator does not implement AnimatorInterface
      */
     public OtsAnimationPanel(final Rectangle2D extent, final Dimension size, final OtsAnimator simulator,
-            final OtsModelInterface otsModel, final GtuColorer gtuColorer, final Network network)
+            final OtsModelInterface otsModel, final List<GtuColorer> gtuColorers, final Network network)
             throws RemoteException, DsolException
     {
         super(simulator, otsModel);
@@ -169,7 +169,11 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         getTabbedPane().setSelectedIndex(0); // Show the animation panel as the default tab
 
         // Include the GTU colorer control panel NORTH of the animation.
-        this.colorControlPanel = new ColorControlPanel(gtuColorer);
+        this.colorControlPanel = new ColorControlPanel();
+        for (GtuColorer colorer : gtuColorers)
+        {
+            this.colorControlPanel.addItem(colorer);
+        }
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
         buttonPanel.setPreferredSize(new Dimension(200, 35));

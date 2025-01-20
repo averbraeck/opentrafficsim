@@ -46,7 +46,7 @@ public class TJunctionDemo extends OtsSimulationApplication<TJunctionModel>
      */
     public TJunctionDemo(final String title, final OtsAnimationPanel panel, final TJunctionModel model)
     {
-        super(model, panel, DEFAULT_COLORER, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
+        super(model, panel, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
     }
 
     /**
@@ -72,7 +72,7 @@ public class TJunctionDemo extends OtsSimulationApplication<TJunctionModel>
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), junctionModel,
                     HistoryManagerDevs.noHistory(simulator));
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(junctionModel.getNetwork().getExtent(),
-                    new Dimension(800, 600), simulator, junctionModel, DEFAULT_COLORER, junctionModel.getNetwork());
+                    new Dimension(800, 600), simulator, junctionModel, DEFAULT_GTU_COLORERS, junctionModel.getNetwork());
             TJunctionDemo app = new TJunctionDemo("T-Junction demo", animationPanel, junctionModel);
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();

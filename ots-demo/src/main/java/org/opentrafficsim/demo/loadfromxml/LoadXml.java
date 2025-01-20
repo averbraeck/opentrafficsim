@@ -64,7 +64,7 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
     public LoadXml(final OtsModelInterface model, final OtsAnimationPanel animationPanel)
     {
         // TODO: colorer and markers based on XML
-        super(model, animationPanel, DEFAULT_COLORER, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
+        super(model, animationPanel, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
     }
 
     /**
@@ -134,7 +134,7 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), xmlModel, map,
                     new HistoryManagerDevs(simulator, Duration.instantiateSI(5.0), Duration.instantiateSI(10.0)));
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(xmlModel.getNetwork().getExtent(), new Dimension(800, 600),
-                    simulator, xmlModel, DEFAULT_COLORER, xmlModel.getNetwork());
+                    simulator, xmlModel, DEFAULT_GTU_COLORERS, xmlModel.getNetwork());
             animationPanel.enableSimulationControlButtons();
             LoadXml loadXml = new LoadXml(xmlModel, animationPanel);
             // TODO: permabilityType (CAR above) can probably not be null, but we will move stripe type to stripe later

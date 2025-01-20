@@ -64,7 +64,7 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
      */
     public NetworksSwing(final String title, final OtsAnimationPanel panel, final NetworksModel model)
     {
-        super(model, panel, DEFAULT_COLORER, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
+        super(model, panel, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
         RoadNetwork network = model.getNetwork();
         System.out.println(network.getLinkMap());
     }
@@ -99,7 +99,7 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel,
                         HistoryManagerDevs.noHistory(simulator));
                 OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(),
-                        new Dimension(800, 600), simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
+                        new Dimension(800, 600), simulator, otsModel, DEFAULT_GTU_COLORERS, otsModel.getNetwork());
                 NetworksSwing app = new NetworksSwing("Networks", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
                 animationPanel.enableSimulationControlButtons();

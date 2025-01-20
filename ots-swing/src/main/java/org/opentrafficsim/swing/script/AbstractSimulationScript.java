@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Duration;
@@ -72,8 +73,8 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
     /** The network. */
     private RoadNetwork network;
 
-    /** GTU colorer. */
-    private GtuColorer gtuColorer = OtsSwingApplication.DEFAULT_COLORER;
+    /** GTU colorers. */
+    private List<GtuColorer> gtuColorers = OtsSwingApplication.DEFAULT_GTU_COLORERS;
 
     /** Seed. */
     @Option(names = "--seed", description = "Seed", defaultValue = "1")
@@ -169,21 +170,21 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
     }
 
     /**
-     * Set GTU colorer.
-     * @param colorer GTU colorer
+     * Set GTU colorers.
+     * @param colorers GTU colorers
      */
-    public final void setGtuColorer(final GtuColorer colorer)
+    public final void setGtuColorers(final List<GtuColorer> colorers)
     {
-        this.gtuColorer = colorer;
+        this.gtuColorers = colorers;
     }
 
     /**
-     * Returns the GTU colorer.
-     * @return returns the GTU colorer
+     * Returns the GTU colorers.
+     * @return returns the GTU colorers
      */
-    public final GtuColorer getGtuColorer()
+    public final List<GtuColorer> getGtuColorers()
     {
-        return this.gtuColorer;
+        return this.gtuColorers;
     }
 
     /**
@@ -243,11 +244,11 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
                     new HistoryManagerDevs(this.simulator, this.historyTime, Duration.instantiateSI(10.0)));
             OtsAnimationPanel animationPanel =
                     new OtsAnimationPanel(scriptModel.getNetwork().getExtent(), new Dimension(800, 600),
-                            (OtsAnimator) this.simulator, scriptModel, getGtuColorer(), scriptModel.getNetwork());
+                            (OtsAnimator) this.simulator, scriptModel, getGtuColorers(), scriptModel.getNetwork());
             setAnimationToggles(animationPanel);
             setupDemo(animationPanel, scriptModel.getNetwork());
             OtsSimulationApplication<ScriptModel> app =
-                    new OtsSimulationApplication<ScriptModel>(scriptModel, animationPanel, getGtuColorer(), getGtuMarkers())
+                    new OtsSimulationApplication<ScriptModel>(scriptModel, animationPanel, getGtuMarkers())
                     {
                         /** */
                         private static final long serialVersionUID = 20190130L;
@@ -307,10 +308,12 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
     /**
      * Creates animations for nodes, links and lanes. This can be used if the network is not read from XML.
      * @param net network
+     * @param animationPanel animation panel
      */
-    protected void animateNetwork(final Network net)
+    protected void animateNetwork(final Network net, final OtsAnimationPanel animationPanel)
     {
-        DefaultAnimationFactory.animateNetwork(net, net.getSimulator(), getGtuColorer(), getGtuMarkers());
+        DefaultAnimationFactory.animateNetwork(net, net.getSimulator(),
+                animationPanel.getColorControlPanel().getGtuColorerManager(), getGtuMarkers());
     }
 
     /**

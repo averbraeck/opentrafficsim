@@ -7,7 +7,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
-import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
+import org.opentrafficsim.animation.gtu.colorer.GtuColorerManager;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -24,7 +24,7 @@ public class AnimationGtuData implements GtuData
 {
 
     /** GTU colorer. */
-    private final GtuColorer gtuColorer;
+    private final GtuColorerManager gtuColorerManager;
 
     /** Gtu. */
     private final LaneBasedGtu gtu;
@@ -34,13 +34,13 @@ public class AnimationGtuData implements GtuData
 
     /**
      * Constructor.
-     * @param gtuColorer factory.
+     * @param gtuColorerManager factory.
      * @param gtu GTU.
      * @param marker marker
      */
-    public AnimationGtuData(final GtuColorer gtuColorer, final LaneBasedGtu gtu, final GtuMarker marker)
+    public AnimationGtuData(final GtuColorerManager gtuColorerManager, final LaneBasedGtu gtu, final GtuMarker marker)
     {
-        this.gtuColorer = gtuColorer;
+        this.gtuColorerManager = gtuColorerManager;
         this.gtu = gtu;
         this.marker = marker;
     }
@@ -78,7 +78,7 @@ public class AnimationGtuData implements GtuData
     @Override
     public Color getColor()
     {
-        return this.gtuColorer.getColor(this.gtu);
+        return this.gtuColorerManager.getColor(this.gtu);
     }
 
     @Override

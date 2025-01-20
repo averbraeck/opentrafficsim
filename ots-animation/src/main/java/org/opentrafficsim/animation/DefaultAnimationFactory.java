@@ -27,7 +27,7 @@ import org.opentrafficsim.animation.data.AnimationSpeedSignData;
 import org.opentrafficsim.animation.data.AnimationStripeData;
 import org.opentrafficsim.animation.data.AnimationTrafficLightData;
 import org.opentrafficsim.animation.data.AnimationTrafficLightDetectorData;
-import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
+import org.opentrafficsim.animation.gtu.colorer.GtuColorerManager;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuGenerator.GtuGeneratorPosition;
@@ -101,7 +101,7 @@ public class DefaultAnimationFactory implements EventListener
     private final OtsSimulatorInterface simulator;
 
     /** GTU colorer. */
-    private final GtuColorer gtuColorer;
+    private final GtuColorerManager gtuColorerManager;
 
     /** Rendered gtus. */
     private Map<LaneBasedGtu, Renderable2d<GtuData>> animatedGTUs = Collections.synchronizedMap(new LinkedHashMap<>());
@@ -120,14 +120,15 @@ public class DefaultAnimationFactory implements EventListener
      * Creates animations for nodes, links and lanes. The class will subscribe to the network and listen to changes, so the
      * adding and removing of GTUs and Objects is animated correctly.
      * @param network the network
-     * @param gtuColorer GTU colorer
+     * @param gtuColorerManager GTU colorer manager
      * @param animateNetwork whether to animate the current network objects
      */
-    protected DefaultAnimationFactory(final Network network, final GtuColorer gtuColorer, final boolean animateNetwork)
+    protected DefaultAnimationFactory(final Network network, final GtuColorerManager gtuColorerManager,
+            final boolean animateNetwork)
     {
         this.network = network;
         this.simulator = network.getSimulator();
-        this.gtuColorer = gtuColorer;
+        this.gtuColorerManager = gtuColorerManager;
 
         // subscribe to adding and removing events
         network.addListener(this, Network.GTU_ADD_EVENT);
@@ -180,7 +181,7 @@ public class DefaultAnimationFactory implements EventListener
 
         for (Gtu gtu : network.getGTUs())
         {
-            GtuData gtuData = new AnimationGtuData(this.gtuColorer, (LaneBasedGtu) gtu,
+            GtuData gtuData = new AnimationGtuData(this.gtuColorerManager, (LaneBasedGtu) gtu,
                     this.gtuMarkers.getOrDefault(gtu.getType(), GtuMarker.CIRCLE));
             Renderable2d<GtuData> gtuAnimation = new DefaultCarAnimation(gtuData, this.simulator);
             this.animatedGTUs.put((LaneBasedGtu) gtu, gtuAnimation);
@@ -215,14 +216,14 @@ public class DefaultAnimationFactory implements EventListener
      * subscribe to the network and listen to changes, so the adding and removing of GTUs and Objects is animated correctly.
      * @param network the network
      * @param contextualized context provider
-     * @param gtuColorer GTU colorer
+     * @param gtuColorerManager GTU colorer manager
      * @param markers GTU type markers
      * @return the DefaultAnimationFactory
      */
     public static DefaultAnimationFactory animateNetwork(final Network network, final Contextualized contextualized,
-            final GtuColorer gtuColorer, final Map<GtuType, GtuMarker> markers)
+            final GtuColorerManager gtuColorerManager, final Map<GtuType, GtuMarker> markers)
     {
-        DefaultAnimationFactory factory = new DefaultAnimationFactory(network, gtuColorer, true);
+        DefaultAnimationFactory factory = new DefaultAnimationFactory(network, gtuColorerManager, true);
         markers.forEach((type, marker) -> factory.setGtuMarker(type, marker));
         return factory;
     }
@@ -231,14 +232,14 @@ public class DefaultAnimationFactory implements EventListener
      * Creates animations for nodes, links, lanes and GTUs. This can be used if the network is read from XML. The class will
      * subscribe to the network and listen to changes, so the adding and removing of GTUs and Objects is animated correctly.
      * @param network the network
-     * @param gtuColorer GTU colorer
+     * @param gtuColorerManager GTU colorer manager
      * @param markers GTU type markers
      * @return the DefaultAnimationFactory
      */
-    public static DefaultAnimationFactory animateXmlNetwork(final Network network, final GtuColorer gtuColorer,
+    public static DefaultAnimationFactory animateXmlNetwork(final Network network, final GtuColorerManager gtuColorerManager,
             final Map<GtuType, GtuMarker> markers)
     {
-        DefaultAnimationFactory factory = new DefaultAnimationFactory(network, gtuColorer, false);
+        DefaultAnimationFactory factory = new DefaultAnimationFactory(network, gtuColorerManager, false);
         markers.forEach((type, marker) -> factory.setGtuMarker(type, marker));
         return factory;
     }
@@ -300,8 +301,8 @@ public class DefaultAnimationFactory implements EventListener
      */
     protected void animateGTU(final LaneBasedGtu gtu)
     {
-        GtuData gtuData =
-                new AnimationGtuData(this.gtuColorer, gtu, this.gtuMarkers.getOrDefault(gtu.getType(), GtuMarker.CIRCLE));
+        GtuData gtuData = new AnimationGtuData(this.gtuColorerManager, gtu,
+                this.gtuMarkers.getOrDefault(gtu.getType(), GtuMarker.CIRCLE));
         Renderable2d<GtuData> gtuAnimation = new DefaultCarAnimation(gtuData, this.simulator);
         this.animatedGTUs.put(gtu, gtuAnimation);
     }

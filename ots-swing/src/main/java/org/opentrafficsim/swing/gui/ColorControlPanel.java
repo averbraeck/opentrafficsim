@@ -1,10 +1,12 @@
 package org.opentrafficsim.swing.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.function.Predicate;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -13,7 +15,9 @@ import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
 import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
-import org.opentrafficsim.animation.gtu.colorer.SwitchableGtuColorer;
+import org.opentrafficsim.animation.gtu.colorer.GtuColorerManager;
+import org.opentrafficsim.animation.gtu.colorer.GtuColorerManager.PredicatedColorer;
+import org.opentrafficsim.core.gtu.Gtu;
 
 /**
  * Let the user select what the colors in the animation mean.
@@ -29,86 +33,63 @@ public class ColorControlPanel extends JPanel implements ActionListener
     private static final long serialVersionUID = 20150527L;
 
     /** The combo box that sets the coloring for the GTUs. */
-    private JComboBox<ColorerWrapper> comboBoxGTUColor;
+    private final JComboBox<PredicatedColorer> comboBoxGTUColor = new AppearanceControlComboBox<>();
 
     /** The panel that holds the legend for the currently selected GtuColorer. */
     private final JPanel legendPanel;
 
+    /** GTU colorer manager. */
+    private final GtuColorerManager gtuColorerManager = new GtuColorerManager(Color.WHITE);
+
     /** The GtuColorer that is currently active. */
     private GtuColorer gtuColorer;
 
-    /** The SwitchableGtuColorer that is controlled by this ColorControlPanel, if available. */
-    private final SwitchableGtuColorer switchableGtuColorer;
-
     /**
      * Add a ColorControlPanel to an AnimationPanel. Initially the ColorControlPanel will have no items. Items are added with
-     * the <code>addItem</code> method. The first item added automatically becomes the active one.
-     * @param gtuColorer the switchable GTU colorer that will be controlled by this ColorControlPanel
+     * the <code>addItem</code> method.
      */
-    public ColorControlPanel(final GtuColorer gtuColorer)
+    public ColorControlPanel()
     {
         this.setLayout(new FlowLayout(FlowLayout.LEFT));
         this.legendPanel = new JPanel(new FlowLayout());
-
-        if (gtuColorer instanceof SwitchableGtuColorer)
-        {
-            this.switchableGtuColorer = (SwitchableGtuColorer) gtuColorer;
-
-            this.comboBoxGTUColor = new AppearanceControlComboBox<>();
-            this.add(this.comboBoxGTUColor);
-            this.comboBoxGTUColor.addActionListener(this);
-
-            for (GtuColorer colorer : ((SwitchableGtuColorer) gtuColorer).getColorers())
-            {
-                addItem(colorer);
-            }
-        }
-        else
-        {
-            this.gtuColorer = gtuColorer;
-            this.switchableGtuColorer = null;
-            rebuildLegend();
-        }
-
+        this.add(this.comboBoxGTUColor);
         this.add(this.legendPanel);
+        this.comboBoxGTUColor.addActionListener(this);
     }
 
     /**
-     * Add one item to this ColorControlPanel. The <cite>getName</cite> method of the
+     * Add one item to this ColorControlPanel.
      * @param colorer the GtuColorer that will be added
      */
     public final void addItem(final GtuColorer colorer)
     {
-        this.comboBoxGTUColor.addItem(new ColorerWrapper(colorer));
-        // The first item added automatically becomes the current one and triggers a call to actionPerformed.
+        if (this.gtuColorer == null)
+        {
+            this.gtuColorer = colorer;
+        }
+        Predicate<Gtu> predicate = (gtu) -> colorer.equals(ColorControlPanel.this.gtuColorer);
+        this.comboBoxGTUColor.addItem(new PredicatedColorer(predicate, colorer));
+        this.gtuColorerManager.add(predicate, colorer);
+        rebuildLegend();
     }
 
     /**
-     * Wraps a colorer so it can be presented in a menu.
-     * @param colorer colorer
+     * Returns the GTU colorer manager.
+     * @return GTU colorer manager
      */
-    record ColorerWrapper(GtuColorer colorer)
+    public GtuColorerManager getGtuColorerManager()
     {
-        @Override
-        public String toString()
-        {
-            return colorer().getName();
-        }
+        return this.gtuColorerManager;
     }
 
     @Override
     public final void actionPerformed(final ActionEvent e)
     {
-        ColorerWrapper newColorerWrapper = (ColorerWrapper) this.comboBoxGTUColor.getSelectedItem();
+        PredicatedColorer newColorerWrapper = (PredicatedColorer) this.comboBoxGTUColor.getSelectedItem();
         if (null != newColorerWrapper)
         {
-            this.gtuColorer = newColorerWrapper.colorer;
+            this.gtuColorer = newColorerWrapper.colorer();
             rebuildLegend();
-
-            if (this.switchableGtuColorer != null)
-            {
-                this.switchableGtuColorer.setGtuColorer(this.comboBoxGTUColor.getSelectedIndex());
-            }
         }
     }
 

@@ -34,7 +34,6 @@ import org.opentrafficsim.animation.gtu.colorer.AccelerationGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.IdGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.SpeedGtuColorer;
-import org.opentrafficsim.animation.gtu.colorer.SwitchableGtuColorer;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
@@ -257,12 +256,10 @@ public class RampMeteringDemo extends AbstractSimulationScript
         this.definitions.add(GtuType.class, car);
         this.definitions.add(GtuType.class, controlledCar);
 
-        GtuColorer[] colorers =
-                new GtuColorer[] {new IdGtuColorer(), new SpeedGtuColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)),
-                        new AccelerationGtuColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)),
-                        new GtuTypeColorer().add(car).add(controlledCar)};
-        SwitchableGtuColorer colorer = new SwitchableGtuColorer(0, colorers);
-        setGtuColorer(colorer);
+        List<GtuColorer> colorers = List.of(new IdGtuColorer(), new SpeedGtuColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)),
+                new AccelerationGtuColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)),
+                new GtuTypeColorer().add(car).add(controlledCar));
+        setGtuColorers(colorers);
 
         // parameters
         StreamInterface stream = sim.getModel().getStream("generation");

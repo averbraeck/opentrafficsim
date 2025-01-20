@@ -159,7 +159,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
      */
     public ShortMerge(final String title, final OtsAnimationPanel panel, final ShortMergeModel model)
     {
-        super(model, panel, DEFAULT_COLORER, Map.of(DefaultsNl.TRUCK, GtuMarker.SQUARE));
+        super(model, panel, Map.of(DefaultsNl.TRUCK, GtuMarker.SQUARE));
     }
 
     @Override
@@ -216,7 +216,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(SIMTIME.si), otsModel,
                     HistoryManagerDevs.noHistory(simulator));
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(), new Dimension(800, 600),
-                    simulator, otsModel, DEFAULT_COLORER, otsModel.getNetwork());
+                    simulator, otsModel, DEFAULT_GTU_COLORERS, otsModel.getNetwork());
             ShortMerge app = new ShortMerge("ShortMerge", animationPanel, otsModel);
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();

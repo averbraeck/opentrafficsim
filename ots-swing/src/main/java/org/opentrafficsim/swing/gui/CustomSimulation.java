@@ -34,7 +34,7 @@ public class CustomSimulation extends OtsSimulationApplication<CustomSimulation.
      */
     public CustomSimulation(final String title, final OtsAnimationPanel panel, final CustomModel model)
     {
-        super(model, panel, DEFAULT_COLORER, Map.of(DefaultsNl.TRUCK, GtuMarker.SQUARE));
+        super(model, panel, Map.of(DefaultsNl.TRUCK, GtuMarker.SQUARE));
     }
 
     /**
@@ -48,7 +48,7 @@ public class CustomSimulation extends OtsSimulationApplication<CustomSimulation.
         try
         {
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(model.getNetwork().getExtent(), new Dimension(800, 600),
-                    simulator, model, DEFAULT_COLORER, model.getNetwork());
+                    simulator, model, DEFAULT_GTU_COLORERS, model.getNetwork());
             CustomSimulation app = new CustomSimulation("Custom Simulation", animationPanel, model);
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();

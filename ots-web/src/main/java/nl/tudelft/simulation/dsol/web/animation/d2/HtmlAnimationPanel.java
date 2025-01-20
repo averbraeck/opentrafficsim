@@ -17,7 +17,7 @@ import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.Point;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
-import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
+import org.opentrafficsim.animation.gtu.colorer.GtuColorerManager;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -90,8 +90,8 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
     /** List of buttons in the right order. */
     private List<ToggleButtonInfo> toggleButtons = new ArrayList<>();
 
-    /** The switchableGtuColorer used to color the GTUs. */
-    private GtuColorer gtuColorer = null;
+    /** GTU colorer manager. */
+    private final GtuColorerManager gtuColorerManager = new GtuColorerManager(Color.WHITE);
 
     /** the margin factor 'around' the extent. */
     public static final double EXTENT_MARGIN_FACTOR = 0.05;
@@ -108,6 +108,15 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
         super.showGrid = true;
         this.simulator = simulator;
         simulator.addListener(this, Replication.START_REPLICATION_EVENT);
+    }
+
+    /**
+     * Returns the GTU colorer manager.
+     * @return GTU colorer manager
+     */
+    public GtuColorerManager getGtuColorerManager()
+    {
+        return this.gtuColorerManager;
     }
 
     @Override
