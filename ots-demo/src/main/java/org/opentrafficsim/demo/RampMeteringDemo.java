@@ -286,7 +286,8 @@ public class RampMeteringDemo extends AbstractSimulationScript
                 .addLanes(stripes, DefaultsRoadNl.DASHED, DefaultsRoadNl.BLOCK).getLanes();
         stripes.get(2).addPermeability(car, LateralDirectionality.LEFT); // prevent right lane changes over block stripe
         List<Lane> lanesCD = new LaneFactory(network, nodeC, nodeD, freeway, sim, policy, DefaultsNl.VEHICLE)
-                .leftToRight(1.0, laneWidth, freewayLane, speedLimit).addLanes(DefaultsRoadNl.DASHED).getLanes();
+                .leftToRight(1.0, laneWidth, freewayLane, speedLimit).addLanes(DefaultsRoadNl.DASHED)
+                .addShoulder(laneWidth, LateralDirectionality.RIGHT, new LaneType("SHOULDER")).getLanes();
         List<Lane> lanesEF = new LaneFactory(network, nodeE, nodeF, freeway, sim, policy, DefaultsNl.VEHICLE)
                 .setOffsetEnd(laneWidth.times(1.5).neg()).leftToRight(0.5, laneWidth, freewayLane, rampSpeedLimit).addLanes()
                 .getLanes();

@@ -107,6 +107,10 @@ public interface Synchronization extends LmrsParameters
         {
             Acceleration a =
                     DEADEND.synchronize(perception, params, sli, cfm, desire, lat, lmrsData, laneChange, initiatedLaneChange);
+            if (a.lt(params.getParameter(ParameterTypes.BCRIT).neg()))
+            {
+                return a;
+            }
             double dCoop = params.getParameter(DCOOP);
             RelativeLane relativeLane = new RelativeLane(lat, 1);
 
