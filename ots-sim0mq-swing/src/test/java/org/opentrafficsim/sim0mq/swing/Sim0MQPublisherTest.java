@@ -20,6 +20,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
 import org.djutils.serialization.SerializationException;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.sim0mq.publisher.SubscriptionHandler;
 import org.sim0mq.Sim0MQException;
 import org.sim0mq.message.Sim0MQMessage;
@@ -40,6 +41,15 @@ import nl.tudelft.simulation.language.DsolException;
  */
 public class Sim0MQPublisherTest
 {
+    
+    /**
+     * This test exists such that the project has a test, and no errors occur during build.
+     */
+    @Test
+    public void dummyTest()
+    {
+        //
+    }
 
     /**
      * Verify an ACK or a NACK message.
