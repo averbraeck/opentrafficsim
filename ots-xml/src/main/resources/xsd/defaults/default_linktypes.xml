@@ -3,8 +3,6 @@
   
   <ots:LinkType Id="NL.CONNECTOR" Default="true">
     <ots:Compatibility GtuType="NL.ROAD_USER" />
-    <ots:Compatibility GtuType="NL.WATERWAY_USER" />
-    <ots:Compatibility GtuType="NL.RAILWAY_USER" />
   </ots:LinkType>
 
   <ots:LinkType Id="NL.ROAD" Default="true">
