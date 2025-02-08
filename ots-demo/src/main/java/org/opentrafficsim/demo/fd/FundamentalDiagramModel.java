@@ -31,7 +31,7 @@ public class FundamentalDiagramModel extends AbstractOtsModel
      */
     public FundamentalDiagramModel(final OtsSimulatorInterface simulator)
     {
-        super(simulator, "FD Demo", "Fundamental Diagram Demo");
+        super(simulator, "FD Demo", "Fundamental Diagram Demo", AbstractOtsModel.defaultInitialStreams());
     }
 
     @Override

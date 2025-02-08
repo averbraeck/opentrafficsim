@@ -238,8 +238,8 @@ public final class Sim0mqPublisher
             this.model = new Sim0mqOtsModel("Remotely controlled OTS model", this.network, xml);
             Map<String, StreamInterface> map = new LinkedHashMap<>();
             map.put("generation", new MersenneTwister(seed));
-            animator.initialize(Time.ZERO, warmupTime, simulationDuration, this.model, map,
-                    HistoryManagerDevs.noHistory(animator));
+            this.model.getStreams().putAll(map);
+            animator.initialize(Time.ZERO, warmupTime, simulationDuration, this.model, HistoryManagerDevs.noHistory(animator));
             this.publisher = new Publisher(this.network);
             this.animationPanel = new OtsAnimationPanel(this.model.getNetwork().getExtent(), new Dimension(1100, 1000),
                     animator, this.model, OtsSwingApplication.DEFAULT_GTU_COLORERS, this.model.getNetwork());
@@ -512,7 +512,7 @@ class Sim0mqOtsModel extends AbstractOtsModel
      */
     Sim0mqOtsModel(final String description, final RoadNetwork network, final String xml)
     {
-        super(network.getSimulator(), network.getId(), description);
+        super(network.getSimulator(), network.getId(), description, AbstractOtsModel.defaultInitialStreams());
         this.network = network;
         this.xml = xml;
     }

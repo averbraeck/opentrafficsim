@@ -131,7 +131,8 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
             Map<String, StreamInterface> map = new LinkedHashMap<>();
             // TODO: This seed is Aimsun specific.
             map.put("generation", new MersenneTwister(6L));
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), xmlModel, map,
+            xmlModel.getStreams().putAll(map);
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), xmlModel,
                     new HistoryManagerDevs(simulator, Duration.instantiateSI(5.0), Duration.instantiateSI(10.0)));
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(xmlModel.getNetwork().getExtent(), new Dimension(800, 600),
                     simulator, xmlModel, DEFAULT_GTU_COLORERS, xmlModel.getNetwork());
@@ -169,7 +170,7 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
          */
         XmlModel(final OtsSimulatorInterface simulator, final String shortName, final String description, final String xml)
         {
-            super(simulator, shortName, description);
+            super(simulator, shortName, description, AbstractOtsModel.defaultInitialStreams());
             this.xml = xml;
         }
 

@@ -178,7 +178,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
         public TrafCodModel(final OtsSimulatorInterface simulator, final String shortName, final String description,
                 final String xml)
         {
-            super(simulator, shortName, description);
+            super(simulator, shortName, description, AbstractOtsModel.defaultInitialStreams());
             this.xml = xml;
         }
 
