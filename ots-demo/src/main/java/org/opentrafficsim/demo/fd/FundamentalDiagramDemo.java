@@ -209,8 +209,6 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         RoadNetwork network = new RoadNetwork("FD demo network", sim);
         GtuType car = DefaultsNl.CAR;
         GtuType truck = DefaultsNl.TRUCK;
-        GtuType.registerTemplateSupplier(car, Defaults.NL);
-        GtuType.registerTemplateSupplier(truck, Defaults.NL);
 
         Node nodeA = new Node(network, "Origin", new Point2d(0.0, 0.0), Direction.ZERO);
         Node nodeB = new Node(network, "Lane-drop", new Point2d(1500.0, 0.0), Direction.ZERO);
@@ -275,7 +273,8 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             {
                 @SuppressWarnings("synthetic-access")
                 GtuType gtuType = stream.nextDouble() > FundamentalDiagramDemo.this.truckFraction ? car : truck;
-                return new LaneBasedGtuCharacteristics(GtuType.defaultCharacteristics(gtuType, network, stream),
+
+                return new LaneBasedGtuCharacteristics(Defaults.NL.apply(gtuType, stream).draw(),
                         laneBasedStrategicalPlannerFactory, null, nodeA, nodeC, VehicleModel.MINMAX);
             }
         };

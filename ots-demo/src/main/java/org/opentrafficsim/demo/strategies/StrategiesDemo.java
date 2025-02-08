@@ -496,10 +496,8 @@ public class StrategiesDemo extends AbstractSimulationScript
     {
         RoadNetwork network = new RoadNetwork("Strategies demo", getSimulator());
 
-        GtuType.registerTemplateSupplier(DefaultsNl.TRUCK, Defaults.NL);
-        GtuType.registerTemplateSupplier(DefaultsNl.CAR, Defaults.NL);
-        GtuCharacteristics truck = GtuType.defaultCharacteristics(DefaultsNl.TRUCK, network, this.stream);
-        GtuCharacteristics car = GtuType.defaultCharacteristics(DefaultsNl.CAR, network, this.stream);
+        GtuCharacteristics truck = Defaults.NL.apply(DefaultsNl.TRUCK, this.stream).draw();
+        GtuCharacteristics car = Defaults.NL.apply(DefaultsNl.CAR, this.stream).draw();
         this.truckLength = truck.getLength();
         this.truckMid = truck.getLength().times(0.5).minus(truck.getFront());
         this.carLength = car.getLength();
@@ -624,8 +622,7 @@ public class StrategiesDemo extends AbstractSimulationScript
     public void createGtu(final Lane lane, final Length pos, final GtuType gtuType, final Speed initialSpeed,
             final RoadNetwork net) throws NamingException, GtuException, NetworkException, SimRuntimeException
     {
-        GtuCharacteristics gtuCharacteristics = Try.assign(() -> GtuType.defaultCharacteristics(gtuType, net, this.stream),
-                "Exception while applying default GTU characteristics.");
+        GtuCharacteristics gtuCharacteristics = Defaults.NL.apply(gtuType, this.stream).draw();
 
         LaneBasedGtu gtu = new LaneBasedGtu("" + (++this.gtuIdNum), gtuType, gtuCharacteristics.getLength(),
                 gtuCharacteristics.getWidth(), gtuCharacteristics.getMaximumSpeed(), gtuCharacteristics.getFront(), net);

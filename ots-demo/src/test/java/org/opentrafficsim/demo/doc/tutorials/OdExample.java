@@ -20,9 +20,8 @@ import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
-import org.opentrafficsim.core.distributions.Distribution;
 import org.opentrafficsim.core.distributions.FrequencyAndObject;
-import org.opentrafficsim.core.gtu.GtuCharacteristics;
+import org.opentrafficsim.core.distributions.ObjectDistribution;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuTemplate;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -131,8 +130,6 @@ public class OdExample
                 // @docs/08-tutorials/simulation-setup.md#How-to-set-up-model-factories-when-using-an-od-matrix
                 GtuType gtuType = category.get(GtuType.class);
                 Route route = category.get(Route.class);
-                GtuCharacteristics gtuCharacteristics =
-                        GtuType.defaultCharacteristics(gtuType, origin.getNetwork(), randomStream);
                 VehicleModel vehicleModel = VehicleModel.NONE;
 
                 CarFollowingModelFactory<?> carFollowing = new IdmPlusFactory(randomStream);
@@ -140,8 +137,8 @@ public class OdExample
                 LaneBasedTacticalPlannerFactory<?> tactical = new LmrsFactory(carFollowing, perception);
                 LaneBasedStrategicalPlannerFactory<?> strategical = new LaneBasedStrategicalRoutePlannerFactory(tactical);
 
-                return new LaneBasedGtuCharacteristics(gtuCharacteristics, strategical, route, origin, destination,
-                        vehicleModel);
+                return new LaneBasedGtuCharacteristics(Defaults.NL.apply(gtuType, randomStream).draw(), strategical, route,
+                        origin, destination, vehicleModel);
             }
         };
     }
@@ -172,7 +169,7 @@ public class OdExample
         LaneBasedStrategicalPlannerFactory<?> strategical = new LaneBasedStrategicalRoutePlannerFactory(tactical, params);
         Factory factoryOD = new DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory(strategical);
 
-        Distribution<GtuType> gtuTypeGenerator = new Distribution<>(randomStream);
+        ObjectDistribution<GtuType> gtuTypeGenerator = new ObjectDistribution<>(randomStream);
         gtuTypeGenerator.add(new FrequencyAndObject<>(0.9, car));
         gtuTypeGenerator.add(new FrequencyAndObject<>(0.1, truck));
         factoryOD.setGtuTypeGenerator(gtuTypeGenerator);
@@ -181,7 +178,6 @@ public class OdExample
         templates.add(new GtuTemplate(car, new ConstantGenerator<>(Length.instantiateSI(4.5)),
                 new ConstantGenerator<>(Length.instantiateSI(1.9)), new ConstantGenerator<>(Speed.instantiateSI(50))));
         factoryOD.setTemplates(templates);
-        GtuType.registerTemplateSupplier(truck, Defaults.NL);
 
         DistContinuousMass carMass = new DistContinuousMass(new DistUniform(randomStream, 500, 1500));
         DistContinuousMass truckMass = new DistContinuousMass(new DistUniform(randomStream, 800, 10000));

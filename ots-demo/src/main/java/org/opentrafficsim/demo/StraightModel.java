@@ -22,7 +22,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
-import org.opentrafficsim.core.distributions.Distribution;
+import org.opentrafficsim.core.distributions.ObjectDistribution;
 import org.opentrafficsim.core.distributions.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
@@ -165,7 +165,7 @@ public class StraightModel extends AbstractOtsModel implements UNITS
             LaneBasedGtuTemplate truckTemplate = new LaneBasedGtuTemplate(truck,
                     new ConstantGenerator<>(Length.instantiateSI(15.0)), new ConstantGenerator<>(Length.instantiateSI(2.5)),
                     speedTruck, strategicalPlannerFctoryTrucks, routeGenerator);
-            Distribution<LaneBasedGtuTemplate> gtuTypeDistribution = new Distribution<>(this.stream);
+            ObjectDistribution<LaneBasedGtuTemplate> gtuTypeDistribution = new ObjectDistribution<>(this.stream);
             gtuTypeDistribution.add(new FrequencyAndObject<>(this.carProbability, carTemplate));
             gtuTypeDistribution.add(new FrequencyAndObject<>(1.0 - this.carProbability, truckTemplate));
             Generator<Duration> headwayGenerator =

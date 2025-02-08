@@ -45,7 +45,6 @@ import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
@@ -251,7 +250,6 @@ public class RampMeteringDemo extends AbstractSimulationScript
             network.addListener(this, Network.GTU_REMOVE_EVENT);
         }
         GtuType car = DefaultsNl.CAR;
-        GtuType.registerTemplateSupplier(car, Defaults.NL);
         GtuType controlledCar = new GtuType(CONTROLLED_CAR_ID, car);
         this.definitions.add(GtuType.class, car);
         this.definitions.add(GtuType.class, controlledCar);
@@ -540,10 +538,8 @@ public class RampMeteringDemo extends AbstractSimulationScript
             {
                 Route route = null;
                 VehicleModel vehicleModel = VehicleModel.MINMAX;
-                GtuCharacteristics gtuCharacteristics =
-                        GtuType.defaultCharacteristics(gtuType, origin.getNetwork(), randomStream);
-                return new LaneBasedGtuCharacteristics(gtuCharacteristics, this.controlledPlannerFactory, route, origin,
-                        destination, vehicleModel);
+                return new LaneBasedGtuCharacteristics(Defaults.NL.apply(gtuType, randomStream).draw(),
+                        this.controlledPlannerFactory, route, origin, destination, vehicleModel);
             }
             // otherwise generate default characteristics
             return this.defaultGenerator.draw(origin, destination, category, randomStream);

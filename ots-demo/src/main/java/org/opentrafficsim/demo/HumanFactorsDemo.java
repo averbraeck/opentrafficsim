@@ -453,8 +453,6 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             Node nodeA = this.network.getNode("A");
             Node nodeB = this.network.getNode("B");
             Categorization categorization = new Categorization("GTU type", GtuType.class);
-            GtuType.registerTemplateSupplier(DefaultsNl.CAR, DefaultsNl.NL);
-            GtuType.registerTemplateSupplier(DefaultsNl.TRUCK, DefaultsNl.NL);
             List<Node> origins = new ArrayList<>();
             origins.add(nodeA);
             List<Node> destinations = new ArrayList<>();

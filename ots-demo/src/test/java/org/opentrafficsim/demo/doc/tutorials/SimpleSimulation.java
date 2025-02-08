@@ -67,7 +67,6 @@ public class SimpleSimulation extends AbstractSimulationScript
         Node nodeA = new Node(network, "A", pointA, Direction.ZERO);
         Node nodeB = new Node(network, "B", pointB, Direction.ZERO);
         GtuType car = DefaultsNl.CAR;
-        GtuType.registerTemplateSupplier(car, Defaults.NL);
         LinkType freewayLink = DefaultsNl.FREEWAY;
         LaneType freewayLane = DefaultsRoadNl.FREEWAY;
         CrossSectionLink link = new CrossSectionLink(network, "AB", nodeA, nodeB, freewayLink, new OtsLine2d(pointA, pointB),

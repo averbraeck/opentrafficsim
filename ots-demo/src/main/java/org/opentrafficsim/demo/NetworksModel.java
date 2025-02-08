@@ -27,7 +27,7 @@ import org.djutils.event.EventListener;
 import org.djutils.event.EventType;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.definitions.DefaultsNl;
-import org.opentrafficsim.core.distributions.Distribution;
+import org.opentrafficsim.core.distributions.ObjectDistribution;
 import org.opentrafficsim.core.distributions.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
@@ -374,7 +374,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
     private LaneBasedGtuGenerator makeGenerator(final Lane lane)
             throws GtuException, SimRuntimeException, ParameterException, NetworkException
     {
-        Distribution<LaneBasedGtuTemplate> distribution = new Distribution<>(this.stream);
+        ObjectDistribution<LaneBasedGtuTemplate> distribution = new ObjectDistribution<>(this.stream);
         Length initialPosition = new Length(16, METER);
         Set<LanePosition> initialPositions = new LinkedHashSet<>(1);
         initialPositions.add(new LanePosition(lane, initialPosition));

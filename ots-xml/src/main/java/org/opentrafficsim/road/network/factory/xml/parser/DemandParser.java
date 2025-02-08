@@ -31,8 +31,9 @@ import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
 import org.jgrapht.alg.interfaces.AStarAdmissibleHeuristic;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.Definitions;
-import org.opentrafficsim.core.distributions.Distribution;
+import org.opentrafficsim.core.distributions.ObjectDistribution;
 import org.opentrafficsim.core.distributions.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -416,7 +417,7 @@ public final class DemandParser
 
                 StringType gtuTemplateType = generatorTag.getGtuTemplate();
                 StringType gtuTemplateMixType = generatorTag.getGtuTemplateMix();
-                Distribution<LaneBasedGtuTemplate> gtuTypeDistribution = getTemplateDistribution(gtuTemplateType,
+                ObjectDistribution<LaneBasedGtuTemplate> gtuTypeDistribution = getTemplateDistribution(gtuTemplateType,
                         gtuTemplateMixType, routeGenerator, definitions, demand, gtuTemplates, streamInformation, stream, eval);
 
                 RoomChecker roomChecker = ParseUtil.parseRoomChecker(generatorTag.getRoomChecker(), eval);
@@ -543,17 +544,17 @@ public final class DemandParser
      * @return distribution of LaneBasedGtuTemplate
      * @throws XmlParserException when a referred element does no exist
      */
-    private static Distribution<LaneBasedGtuTemplate> getTemplateDistribution(final StringType gtuTemplateType,
+    private static ObjectDistribution<LaneBasedGtuTemplate> getTemplateDistribution(final StringType gtuTemplateType,
             final StringType gtuTemplateMixType, final Generator<Route> routeGenerator, final Definitions definitions,
             final Demand demand, final Map<String, GtuTemplate> gtuTemplates, final StreamInformation streamInformation,
             final StreamInterface stream, final Eval eval) throws XmlParserException
     {
         LaneBasedStrategicalRoutePlannerFactory strategicalFactory =
                 DefaultLaneBasedGtuCharacteristicsGeneratorOd.defaultLmrs(stream);
-        Distribution<LaneBasedGtuTemplate> gtuTypeDistribution;
+        ObjectDistribution<LaneBasedGtuTemplate> gtuTypeDistribution;
         if (gtuTemplateType != null)
         {
-            gtuTypeDistribution = new Distribution<>(stream);
+            gtuTypeDistribution = new ObjectDistribution<>(stream);
             String gtuTemplateId = gtuTemplateType.get(eval);
             GtuTemplate templateTag = gtuTemplates.get(gtuTemplateId);
             Throw.when(templateTag == null, XmlParserException.class, "GtuTemplate %s in generator not defined", gtuTemplateId);
@@ -578,7 +579,7 @@ public final class DemandParser
             Throw.when(gtuTemplateMix == null, XmlParserException.class, "GtuTemplateMix %s is not defined.", gtuTemplateMixId);
             StreamInterface mixStream = gtuTemplateMix.getRandomStream() == null ? stream
                     : ParseUtil.findStream(streamInformation, gtuTemplateMix.getRandomStream(), eval);
-            gtuTypeDistribution = new Distribution<>(mixStream);
+            gtuTypeDistribution = new ObjectDistribution<>(mixStream);
             for (org.opentrafficsim.xml.generated.GtuTemplateMix.GtuTemplate template : gtuTemplateMix.getGtuTemplate())
             {
                 Throw.when(!gtuTemplates.containsKey(template.getId()), XmlParserException.class,
@@ -640,7 +641,8 @@ public final class DemandParser
                 LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory = gtuCharateristicsFromInjections
                         ? DefaultLaneBasedGtuCharacteristicsGeneratorOd.defaultLmrs(stream) : null;
                 Duration ttc = generatorTag.getTimeToCollision() == null ? null : generatorTag.getTimeToCollision().get(eval);
-                Injections injections = new Injections(table, otsNetwork, definitions.getAll(GtuType.class),
+                // TODO: XML should specify which defaults to use, if required
+                Injections injections = new Injections(table, otsNetwork, definitions.getAll(GtuType.class), Defaults.NL,
                         strategicalPlannerFactory, stream, ttc);
 
                 // Room checker, from injections (speed + time-to-collision) or defined
@@ -709,7 +711,7 @@ public final class DemandParser
 
                     StringType gtuTemplateType = generatorTag.getGtuCharacteristics().getGtuTemplate();
                     StringType gtuTemplateMixType = generatorTag.getGtuCharacteristics().getGtuTemplateMix();
-                    Distribution<LaneBasedGtuTemplate> gtuTypeDistribution =
+                    ObjectDistribution<LaneBasedGtuTemplate> gtuTypeDistribution =
                             getTemplateDistribution(gtuTemplateType, gtuTemplateMixType, routeGenerator, definitions, demand,
                                     gtuTemplates, streamInformation, stream, eval);
 

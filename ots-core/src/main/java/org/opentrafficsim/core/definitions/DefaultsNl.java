@@ -91,7 +91,7 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
     @Override
     public GtuTemplate apply(final GtuType gtuType, final StreamInterface randomStream)
     {
-        GtuTemplate template = null;
+        GtuTemplate template;
         if (gtuType.equals(CAR))
         {
             // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
@@ -138,6 +138,10 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
             template = new GtuTemplate(gtuType, new ConstantGenerator<>(Length.instantiateSI(1.9)),
                     new ConstantGenerator<>(Length.instantiateSI(0.6)),
                     new ConstantGenerator<>(new Speed(35, SpeedUnit.KM_PER_HOUR)));
+        }
+        else
+        {
+            template = apply(gtuType.getParent(), randomStream);
         }
         return template;
     };

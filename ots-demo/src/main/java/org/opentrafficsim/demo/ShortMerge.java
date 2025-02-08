@@ -32,7 +32,7 @@ import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.ConstantGenerator;
-import org.opentrafficsim.core.distributions.Distribution;
+import org.opentrafficsim.core.distributions.ObjectDistribution;
 import org.opentrafficsim.core.distributions.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
@@ -404,18 +404,18 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             LaneBasedGtuTemplate truckF = new LaneBasedGtuTemplate(truck, new ConstantGenerator<>(Length.instantiateSI(15.0)),
                     new ConstantGenerator<>(Length.instantiateSI(2.5)), speedTruck, strategicalFactory, routeGeneratorF);
             //
-            Distribution<LaneBasedGtuTemplate> gtuTypeAllCarA = new Distribution<>(streams.get("gtuClass"));
+            ObjectDistribution<LaneBasedGtuTemplate> gtuTypeAllCarA = new ObjectDistribution<>(streams.get("gtuClass"));
             gtuTypeAllCarA.add(new FrequencyAndObject<>(1.0, carA));
 
-            Distribution<LaneBasedGtuTemplate> gtuType1LaneF = new Distribution<>(streams.get("gtuClass"));
+            ObjectDistribution<LaneBasedGtuTemplate> gtuType1LaneF = new ObjectDistribution<>(streams.get("gtuClass"));
             gtuType1LaneF.add(new FrequencyAndObject<>(1.0 - 2 * TRUCK_FRACTION, carF));
             gtuType1LaneF.add(new FrequencyAndObject<>(2 * TRUCK_FRACTION, truckF));
 
-            Distribution<LaneBasedGtuTemplate> gtuType2ndLaneA = new Distribution<>(streams.get("gtuClass"));
+            ObjectDistribution<LaneBasedGtuTemplate> gtuType2ndLaneA = new ObjectDistribution<>(streams.get("gtuClass"));
             gtuType2ndLaneA.add(new FrequencyAndObject<>(1.0 - 2 * TRUCK_FRACTION, carA));
             gtuType2ndLaneA.add(new FrequencyAndObject<>(2 * TRUCK_FRACTION, truckA));
 
-            Distribution<LaneBasedGtuTemplate> gtuType3rdLaneA = new Distribution<>(streams.get("gtuClass"));
+            ObjectDistribution<LaneBasedGtuTemplate> gtuType3rdLaneA = new ObjectDistribution<>(streams.get("gtuClass"));
             gtuType3rdLaneA.add(new FrequencyAndObject<>(1.0 - 3 * TRUCK_FRACTION, carA));
             gtuType3rdLaneA.add(new FrequencyAndObject<>(3 * TRUCK_FRACTION, truckA));
 
@@ -471,7 +471,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
          * @throws NetworkException if the object could not be added to the network
          */
         private void makeGenerator(final Lane lane, final Speed generationSpeed, final String id, final IdGenerator idGenerator,
-                final Distribution<LaneBasedGtuTemplate> distribution, final Generator<Duration> headwayGenerator,
+                final ObjectDistribution<LaneBasedGtuTemplate> distribution, final Generator<Duration> headwayGenerator,
                 final RoomChecker roomChecker, final ParameterFactory bcFactory,
                 final LaneBasedTacticalPlannerFactory<?> tacticalFactory, final Time simulationTime,
                 final StreamInterface stream) throws SimRuntimeException, GtuException, ParameterException, NetworkException
