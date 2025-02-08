@@ -47,8 +47,7 @@ public class OtsReplicationTest
         Duration history = new Duration(123, DurationUnit.SECOND);
         Duration cleanupInterval = new Duration(234, DurationUnit.SECOND);
         HistoryManager ourHM = new HistoryManagerDevs(simulator, history, cleanupInterval);
-        OtsReplication replication =
-                new OtsReplication(id, startTime, warmupPeriod, runLength, ourHM);
+        OtsReplication replication = new OtsReplication(id, startTime, warmupPeriod, runLength, ourHM);
         assertEquals(startTime, replication.getStartTimeAbs(), "startTime can be retrieved");
         assertEquals(warmupPeriod, replication.getWarmupPeriod(), "warmupPeriod can be retrieved");
         assertEquals(runLength, replication.getRunLength(), "runLength can be retrieved");
@@ -78,7 +77,7 @@ public class OtsReplicationTest
          */
         OtsModel(final OtsSimulatorInterface simulator, final String shortName, final String description)
         {
-            super(simulator, shortName, description);
+            super(simulator, shortName, description, AbstractOtsModel.defaultInitialStreams());
         }
 
         /**

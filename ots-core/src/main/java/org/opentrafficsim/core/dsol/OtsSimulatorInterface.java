@@ -35,7 +35,7 @@ public interface OtsSimulatorInterface extends DevsSimulatorInterface<Duration>,
     /**
      * Initialize a simulation engine without animation; the easy way. PauseOnError is set to true;
      * @param startTime the start time of the simulation
-     * @param warmupPeriod the warm up period of the simulation (use new Duration(0, SECOND) if you don't know what this is)
+     * @param warmupPeriod the warm up period of the simulation (use Duration.ZERO if you don't know what this is)
      * @param runLength the duration of the simulation
      * @param model the simulation to execute
      * @param historyManager history manager
@@ -49,7 +49,7 @@ public interface OtsSimulatorInterface extends DevsSimulatorInterface<Duration>,
      * Initialize a simulation engine without animation and prescribed replication number; the easy way. PauseOnError is set to
      * true;
      * @param startTime the start time of the simulation
-     * @param warmupPeriod the warm up period of the simulation (use new Duration(0, SECOND) if you don't know what this is)
+     * @param warmupPeriod the warm up period of the simulation (use Duration.ZERO if you don't know what this is)
      * @param runLength the duration of the simulation
      * @param model the simulation to execute
      * @param historyManager history manager

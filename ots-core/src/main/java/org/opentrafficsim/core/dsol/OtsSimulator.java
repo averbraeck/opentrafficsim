@@ -49,15 +49,13 @@ public class OtsSimulator extends DevsSimulator<Duration> implements OtsSimulato
             final OtsModelInterface model, final HistoryManager historyManager, final int replicationNr)
             throws SimRuntimeException, NamingException
     {
-        setErrorStrategy(ErrorStrategy.WARN_AND_PAUSE);
-        OtsReplication newReplication =
-                new OtsReplication("rep" + replicationNr, startTime, warmupPeriod, runLength, historyManager);
-        super.initialize(model, newReplication);
+        initialize(model, new OtsReplication("rep" + replicationNr, startTime, warmupPeriod, runLength, historyManager));
     }
 
     @Override
     public void initialize(final OtsModelInterface model, final OtsReplication replication) throws SimRuntimeException
     {
+        setErrorStrategy(ErrorStrategy.WARN_AND_PAUSE);
         super.initialize(model, replication);
     }
 

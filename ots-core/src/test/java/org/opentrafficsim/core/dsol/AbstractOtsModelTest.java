@@ -66,7 +66,7 @@ public class AbstractOtsModelTest
          */
         OtsModel(final OtsSimulatorInterface simulator, final String shortName, final String description)
         {
-            super(simulator, shortName, description);
+            super(simulator, shortName, description, AbstractOtsModel.defaultInitialStreams());
         }
 
         /**

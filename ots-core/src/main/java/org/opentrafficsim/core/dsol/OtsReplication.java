@@ -10,6 +10,7 @@ import org.opentrafficsim.core.perception.HistoryManager;
 import nl.tudelft.simulation.dsol.experiment.SingleReplication;
 
 /**
+ * Simulation replication with history manager.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -21,7 +22,7 @@ public class OtsReplication extends SingleReplication<Duration>
     /** History manager. */
     private final HistoryManager historyManager;
 
-    /** the (absolute) start time of the replication. */
+    /** The (absolute) start time of the replication. */
     private final Time startTimeAbs;
 
     /**

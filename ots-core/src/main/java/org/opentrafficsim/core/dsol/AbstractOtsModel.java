@@ -8,7 +8,7 @@ import nl.tudelft.simulation.dsol.model.AbstractDsolModel;
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 
 /**
- * AbstractOtsModel is the base class for a model that runs on an OtsSimulator.
+ * AbstractOtsModel is the base class for a model that runs on an OtsSimulatorInterface.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -20,35 +20,21 @@ public abstract class AbstractOtsModel extends AbstractDsolModel<Duration, OtsSi
     /** */
     private static final long serialVersionUID = 1L;
 
-    /** a very short description of the simulation. */
+    /** A very short description of the simulation. */
     private String shortName;
 
-    /** a description of the simulation (HTML formatted). */
+    /** A description of the simulation (HTML formatted). */
     private String description;
 
-    // TODO add default, settable and gettable replication details, so XmlParser using models can set them, and model users can
-    // get them
-
     /**
-     * Instantiate an abstract OtsModel. The name and description will be set as the class name.
+     * Instantiate an abstract OtsModel. The name and description will be set as the class name. Streams will be default.
      * @param simulator the simulator to use
      */
     public AbstractOtsModel(final OtsSimulatorInterface simulator)
     {
-        this(simulator, "", "");
+        this(simulator, "", "", defaultInitialStreams());
         this.shortName = getClass().getSimpleName();
         this.description = getClass().getSimpleName();
-    }
-
-    /**
-     * Instantiate an abstract OtsModel.
-     * @param simulator the simulator to use
-     * @param shortName a very short description of the simulation
-     * @param description a description of the simulation (HTML formatted)
-     */
-    public AbstractOtsModel(final OtsSimulatorInterface simulator, final String shortName, final String description)
-    {
-        this(simulator, shortName, description, setInitialStreams());
     }
 
     /**
@@ -72,7 +58,7 @@ public abstract class AbstractOtsModel extends AbstractDsolModel<Duration, OtsSi
      * Create the default initial streams.
      * @return the default initial streams
      */
-    public static StreamInformation setInitialStreams()
+    public static StreamInformation defaultInitialStreams()
     {
         StreamInformation streamInformation = new StreamInformation();
         streamInformation.addStream("default", new MersenneTwister(10L));
