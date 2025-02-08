@@ -3,7 +3,7 @@ package org.opentrafficsim.road.gtu.generator.characteristics;
 import java.io.Serializable;
 
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.distributions.Distribution;
+import org.opentrafficsim.core.distributions.ObjectDistribution;
 
 /**
  * Distribution of LaneBasedTemplateGTUType.
@@ -21,13 +21,13 @@ public class LaneBasedGtuTemplateDistribution implements LaneBasedGtuCharacteris
     private static final long serialVersionUID = 20160000L;
 
     /** The Distribution of lane based template GTU types. */
-    private final Distribution<LaneBasedGtuTemplate> distribution;
+    private final ObjectDistribution<LaneBasedGtuTemplate> distribution;
 
     /**
      * Construct a new LaneBasedTemplateGTUTypeDistribution.
      * @param distributionOfLanebasedTemplateGTUType the distribution of LaneBasedTemplateGTUTypes
      */
-    public LaneBasedGtuTemplateDistribution(final Distribution<LaneBasedGtuTemplate> distributionOfLanebasedTemplateGTUType)
+    public LaneBasedGtuTemplateDistribution(final ObjectDistribution<LaneBasedGtuTemplate> distributionOfLanebasedTemplateGTUType)
     {
         this.distribution = distributionOfLanebasedTemplateGTUType;
     }
