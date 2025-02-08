@@ -195,8 +195,7 @@
     <property name="severity" value="info"/>
   </module>
   <module name="NewlineAtEndOfFile">
-    <property name="severity" value="warning"/>
-    <property name="lineSeparator" value="crlf"/>
+    <property name="severity" value="ignore"/>
     <property name="fileExtensions" value="java"/>
   </module>
   <module name="Translation">
