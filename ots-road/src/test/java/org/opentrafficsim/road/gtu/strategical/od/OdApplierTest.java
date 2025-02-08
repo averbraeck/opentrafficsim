@@ -33,7 +33,6 @@ import org.mockito.stubbing.Answer;
 import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.dsol.OtsReplication;
@@ -499,8 +498,6 @@ public class OdApplierTest
         Lane lane2 = this.lanes.get("lane2");
         OdOptions odOptions = new OdOptions().set(OdOptions.HEADWAY_DIST, HeadwayDistribution.CONSTANT);
         Factory factory = new Factory(DefaultLaneBasedGtuCharacteristicsGeneratorOd.defaultLmrs(new MersenneTwister()));
-        GtuType.registerTemplateSupplier(DefaultsNl.CAR, Defaults.NL);
-        GtuType.registerTemplateSupplier(DefaultsNl.TRUCK, Defaults.NL);
         odOptions.set(OdOptions.GTU_TYPE, factory.create());
         OdMatrix od = getOD(new double[] {0, 100, 200}, new double[] {1000, 1500, 0}, Interpolation.LINEAR, nodeA, nodeB, lane1,
                 lane2);
