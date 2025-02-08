@@ -64,7 +64,6 @@ public class TJunctionDemo extends OtsSimulationApplication<TJunctionModel>
      */
     public static void demo(final boolean exitOnClose)
     {
-        Gtu.ALIGNED = false;
         try
         {
             OtsAnimator simulator = new OtsAnimator("TJunctionDemo");

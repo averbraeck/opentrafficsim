@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.djunits.unit.DirectionUnit;
@@ -120,13 +121,8 @@ public class Gtu extends LocalEventProducer
     /** Is this GTU destroyed? */
     private boolean destroyed = false;
 
-    /** aligned or not. */
-    // TODO: should be indicated with a Parameter
-    public static boolean ALIGNED = true;
-
-    /** aligned schedule count. */
-    // TODO: can be removed after testing period
-    public static int ALIGN_COUNT = 0;
+    /** Align step. */
+    private double alignStep = Double.NaN;
 
     /** Cached speed time. */
     private double cachedSpeedTime = Double.NaN;
@@ -156,7 +152,7 @@ public class Gtu extends LocalEventProducer
     private final OtsShape shape;
 
     /** Sensing positions. */
-    private final Map<RelativePosition.Type, RelativePosition> relativePositions = new LinkedHashMap<>();
+    protected final Map<RelativePosition.Type, RelativePosition> relativePositions = new LinkedHashMap<>();
 
     /** cached front. */
     private final RelativePosition frontPos;
@@ -226,7 +222,6 @@ public class Gtu extends LocalEventProducer
         this.tacticalPlanner = new HistoricalValue<>(historyManager, this, null);
         this.operationalPlan = new HistoricalValue<>(historyManager, this, null);
 
-        // sensor positions.
         Length dy2 = width.times(0.5);
         this.frontPos = new RelativePosition(front, Length.ZERO, Length.ZERO, RelativePosition.FRONT);
         this.relativePositions.put(RelativePosition.FRONT, this.frontPos);
@@ -259,7 +254,7 @@ public class Gtu extends LocalEventProducer
      * @throws GtuException when the preconditions of the parameters are not met or when the construction of the original
      *             waiting path fails
      */
-    @SuppressWarnings({"checkstyle:hiddenfield", "hiding", "checkstyle:designforextension"})
+    @SuppressWarnings({"checkstyle:hiddenfield", "checkstyle:designforextension"})
     public void init(final StrategicalPlanner strategicalPlanner, final OrientedPoint2d initialLocation,
             final Speed initialSpeed) throws SimRuntimeException, GtuException
     {
@@ -389,7 +384,6 @@ public class Gtu extends LocalEventProducer
             }
 
             // Do we have an operational plan?
-            // TODO discuss when a new tactical planner may be needed
             TacticalPlanner<?, ?> tactPlanner = this.tacticalPlanner.get();
             if (tactPlanner == null)
             {
@@ -410,18 +404,15 @@ public class Gtu extends LocalEventProducer
                 this.odometer.set(currentOdometer);
             }
 
-            // TODO allow alignment at different intervals, also different between GTU's within a single simulation
-            if (ALIGNED && newOperationalPlan.getTotalDuration().si == 0.5)
+            if (!Double.isNaN(this.alignStep))
             {
-                // schedule the next move at exactly 0.5 seconds on the clock
                 // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
-                double tNext = Math.floor(2.0 * now.si + 1.0) / 2.0;
-                OrientedPoint2d p = (tNext - now.si < 0.5) ? newOperationalPlan.getEndLocation()
+                double tNext = Math.floor(now.si / this.alignStep + 1.0) * this.alignStep;
+                OrientedPoint2d p = (tNext - now.si < this.alignStep) ? newOperationalPlan.getEndLocation()
                         : newOperationalPlan.getLocation(new Duration(tNext - now.si, DurationUnit.SI));
                 this.nextMoveEvent =
                         new SimEvent<Duration>(new Duration(tNext - getSimulator().getStartTimeAbs().si, DurationUnit.SI), this,
                                 "move", new Object[] {p});
-                ALIGN_COUNT++;
             }
             else
             {
@@ -968,6 +959,24 @@ public class Gtu extends LocalEventProducer
     }
 
     /**
+     * Returns the align step.
+     * @return align step, NaN if not present
+     */
+    public double getAlignStep()
+    {
+        return this.alignStep;
+    }
+
+    /**
+     * Set align step, use NaN to not align.
+     * @param alignStep align step
+     */
+    public void setAlignStep(final double alignStep)
+    {
+        this.alignStep = alignStep;
+    }
+
+    /**
      * Note that destroying the next move event of the GTU can be dangerous!
      * @return nextMoveEvent the next move event of the GTU, e.g. to cancel it from outside.
      */
@@ -977,18 +986,13 @@ public class Gtu extends LocalEventProducer
     }
 
     @Override
-    @SuppressWarnings("designforextension")
     public int hashCode()
     {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
-        result = prime * result + this.uniqueNumber;
-        return result;
+        return Objects.hash(this.uniqueNumber);
     }
 
     @Override
-    @SuppressWarnings({"designforextension", "needbraces"})
+    @SuppressWarnings("checkstyle:needbraces")
     public boolean equals(final Object obj)
     {
         if (this == obj)
@@ -998,23 +1002,14 @@ public class Gtu extends LocalEventProducer
         if (getClass() != obj.getClass())
             return false;
         Gtu other = (Gtu) obj;
-        if (this.id == null)
-        {
-            if (other.id != null)
-                return false;
-        }
-        else if (!this.id.equals(other.id))
-            return false;
-        if (this.uniqueNumber != other.uniqueNumber)
-            return false;
-        return true;
+        return this.uniqueNumber == other.uniqueNumber;
     }
 
     /**
      * The event type for pub/sub indicating a move. <br>
      * Payload: [String id, DirectedPoint position, Speed speed, Acceleration acceleration, Length odometer]
      */
-    public static EventType MOVE_EVENT = new EventType("GTU.MOVE",
+    public static final EventType MOVE_EVENT = new EventType("GTU.MOVE",
             new MetaData("GTU move", "GTU id, position, speed, acceleration, odometer",
                     new ObjectDescriptor[] {new ObjectDescriptor("Id", "GTU Id", String.class),
                             new ObjectDescriptor("position", "position", PositionVector.class),
@@ -1027,7 +1022,7 @@ public class Gtu extends LocalEventProducer
      * The event type for pub/sub indicating destruction of the GTU. <br>
      * Payload: [String id, DirectedPoint lastPosition, Length odometer]
      */
-    public static EventType DESTROY_EVENT = new EventType("GTU.DESTROY",
+    public static final EventType DESTROY_EVENT = new EventType("GTU.DESTROY",
             new MetaData("GTU destroy", "GTU id, final position, final odometer",
                     new ObjectDescriptor[] {new ObjectDescriptor("Id", "GTU Id", String.class),
                             new ObjectDescriptor("position", "position", PositionVector.class),
