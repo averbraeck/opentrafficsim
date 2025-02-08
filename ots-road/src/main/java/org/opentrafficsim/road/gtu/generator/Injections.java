@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -32,6 +33,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuTemplate;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.Network;
@@ -130,6 +132,9 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
     /** GTU types per their id. */
     private final ImmutableMap<String, GtuType> gtuTypes;
 
+    /** GTU characteristics generator. */
+    private final BiFunction<GtuType, StreamInterface, GtuTemplate> gtuCharacteristicsGenerator;
+
     /** Strategical planner factory. */
     private final LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory;
 
@@ -183,18 +188,20 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
      * <li>"speed": allows the {@code Injections} to be used as a {@code RoomChecker}, requires <b>timeToCollision</b>.</li>
      * <li><i>all other columns</i>: allows the {@code Injections} to be used as a {@code LaneBasedGtuCharacteristicsGenerator}
      * through {@code asLaneBasedGtuCharacteristicsGenerator()}, requires <b>gtuTypes</b>, <b>network</b>,
-     * <b>strategicalPlannerFactory</b> and <b>stream</b>.
+     * <b>strategicalPlannerFactory</b> and <b>stream</b>; gtuCharacteristicsGenerator may then be null.
      * </ul>
      * Time should be in increasing order. If length is provided, but no front, front will be 75% of the length.
      * @param table table with at least a "time" column.
      * @param network network, may be {@code null}.
      * @param gtuTypes GTU types, as obtained from {@code Definitions}, may be {@code null}.
+     * @param gtuCharacteristicsGenerator generator of GTU characteristics, may be {@code null}.
      * @param strategicalPlannerFactory strategical planner factory, may be {@code null}.
      * @param stream random number stream, may be {@code null}.
      * @param timeToCollision critical time-to-collision to allow GTU generation, may be {@code null}.
      * @throws IllegalArgumentException when the right arguments are not provided for the columns in the injection table.
      */
     public Injections(final Table table, final Network network, final ImmutableMap<String, GtuType> gtuTypes,
+            final BiFunction<GtuType, StreamInterface, GtuTemplate> gtuCharacteristicsGenerator,
             final LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory, final StreamInterface stream,
             final Duration timeToCollision) throws IllegalArgumentException
     {
@@ -205,6 +212,7 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
         this.characteristicsIterator = sortedTable.iterator();
         this.network = network;
         this.gtuTypes = gtuTypes == null ? new ImmutableLinkedHashMap<>(Collections.emptyMap()) : gtuTypes;
+        this.gtuCharacteristicsGenerator = gtuCharacteristicsGenerator;
         this.strategicalPlannerFactory = strategicalPlannerFactory;
         this.timeToCollision = timeToCollision;
         this.stream = stream;
@@ -503,7 +511,7 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
                     if (this.defaultCharacteristics == null)
                     {
                         this.defaultCharacteristics =
-                                GtuType.defaultCharacteristics(gtuType, Injections.this.network, Injections.this.stream);
+                                Injections.this.gtuCharacteristicsGenerator.apply(gtuType, Injections.this.stream).draw();
                     }
                     return supplier.apply(this.defaultCharacteristics);
                 }

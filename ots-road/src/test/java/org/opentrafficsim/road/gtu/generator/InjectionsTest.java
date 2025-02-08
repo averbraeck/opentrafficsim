@@ -170,7 +170,7 @@ public class InjectionsTest
         arrivals.addRow(Map.of(time, Duration.instantiateSI(10.0), id, "4", speed, Speed.instantiateSI(13.0)));
         arrivals.addRow(Map.of(time, Duration.instantiateSI(15.0), id, "5", speed, Speed.instantiateSI(14.0)));
         arrivals.addRow(Map.of(time, Duration.instantiateSI(21.0), id, "6", speed, Speed.instantiateSI(15.0)));
-        Injections arrivalsInjection = new Injections(arrivals, null, null, null, null, Duration.ONE);
+        Injections arrivalsInjection = new Injections(arrivals, null, null, null, null, null, Duration.ONE);
         LanePosition generationLane = Mockito.mock(LanePosition.class);
         for (int i = 0; i < 6; i++)
         {
@@ -252,7 +252,7 @@ public class InjectionsTest
      */
     private Injections baseInjections(final Column<?>... columns)
     {
-        return new Injections(new ListTable("id", "", Set.of(columns)), null, null, null, null, null);
+        return new Injections(new ListTable("id", "", Set.of(columns)), null, null, null, null, null, null);
     }
 
     /**
@@ -264,7 +264,7 @@ public class InjectionsTest
     private Injections mockInjections(final Column<?>... columns)
     {
         return new Injections(new ListTable("id", "", Set.of(columns)), Mockito.mock(Network.class),
-                Mockito.mock(ImmutableMap.class), Mockito.mock(LaneBasedStrategicalPlannerFactory.class),
+                Mockito.mock(ImmutableMap.class), Defaults.NL, Mockito.mock(LaneBasedStrategicalPlannerFactory.class),
                 Mockito.mock(StreamInterface.class), Duration.ONE);
     }
 
@@ -279,10 +279,8 @@ public class InjectionsTest
         StreamInterface stream = new MersenneTwister();
         ImmutableMap<String, GtuType> gtuTypes = new ImmutableLinkedHashMap<>(
                 Map.of(DefaultsNl.CAR.getId(), DefaultsNl.CAR, DefaultsNl.TRUCK.getId(), DefaultsNl.TRUCK));
-        GtuType.registerTemplateSupplier(DefaultsNl.CAR, Defaults.NL);
-        GtuType.registerTemplateSupplier(DefaultsNl.TRUCK, Defaults.NL);
-        return new Injections(table, network, gtuTypes, DefaultLaneBasedGtuCharacteristicsGeneratorOd.defaultLmrs(stream),
-                stream, Duration.ONE);
+        return new Injections(table, network, gtuTypes, Defaults.NL,
+                DefaultLaneBasedGtuCharacteristicsGeneratorOd.defaultLmrs(stream), stream, Duration.ONE);
     }
 
     /**
@@ -342,11 +340,10 @@ public class InjectionsTest
         LmrsFactory tacticalFactory = new LmrsFactory(new IdmPlusFactory(stream), new DefaultLmrsPerceptionFactory());
         LaneBasedStrategicalRoutePlannerFactory strategicalPlannerFactory =
                 new LaneBasedStrategicalRoutePlannerFactory(tacticalFactory);
-        Injections injections =
-                new Injections(arrivals, network, gtuTypes, strategicalPlannerFactory, stream, Duration.instantiateSI(60.0));
+        Injections injections = new Injections(arrivals, network, gtuTypes, Defaults.NL, strategicalPlannerFactory, stream,
+                Duration.instantiateSI(60.0));
         new LaneBasedGtuGenerator("id", injections, injections.asLaneBasedGtuCharacteristicsGenerator(), injections, network,
                 simulator, injections, injections);
-        GtuType.registerTemplateSupplier(DefaultsNl.CAR, Defaults.NL);
 
         // Simulate till 1.7s and check that GTU 2 was not yet generated
         while (simulator.getSimulatorTime().si < 1.7)

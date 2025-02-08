@@ -4,9 +4,11 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
@@ -51,16 +53,21 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
     /** Vehicle factory. */
     private VehicleModelFactory vehicleModelFactory = VehicleModelFactory.MINMAX;
 
+    /** Template function. */
+    private BiFunction<GtuType, StreamInterface, GtuTemplate> templateFunction;
+
     /**
      * Constructor using route supplier, provided GTU templates and provided strategical planner factory supplier.
      * @param gtuTypeGenerator GTU type generator
      * @param templates templates
      * @param factory strategical factory supplier
      * @param vehicleModelFactory vehicle model factory
+     * @param templateFunction template function
      */
     private DefaultLaneBasedGtuCharacteristicsGeneratorOd(final Generator<GtuType> gtuTypeGenerator,
             final Set<GtuTemplate> templates, final LaneBasedStrategicalPlannerFactory<?> factory,
-            final VehicleModelFactory vehicleModelFactory)
+            final VehicleModelFactory vehicleModelFactory,
+            final BiFunction<GtuType, StreamInterface, GtuTemplate> templateFunction)
     {
         Throw.whenNull(factory, "Strategical planner factory may not be null.");
         this.gtuTypeGenerator = gtuTypeGenerator;
@@ -80,6 +87,7 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
         {
             this.vehicleModelFactory = vehicleModelFactory;
         }
+        this.templateFunction = templateFunction;
     }
 
     @Override
@@ -109,8 +117,7 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
         }
         else
         {
-            gtuCharacteristics = Try.assign(() -> GtuType.defaultCharacteristics(gtuType, origin.getNetwork(), randomStream),
-                    "Exception while applying default GTU characteristics.");
+            gtuCharacteristics = this.templateFunction.apply(gtuType, randomStream).draw();
         }
         Route route = categorization.entails(Route.class) ? category.get(Route.class) : null;
         VehicleModel vehicleModel = this.vehicleModelFactory.create(gtuType);
@@ -155,6 +162,9 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
         /** Vehicle factory. */
         private VehicleModelFactory vehicleModelFactory = VehicleModelFactory.MINMAX;
 
+        /** Default templates. */
+        private BiFunction<GtuType, StreamInterface, GtuTemplate> templateFunction = Defaults.NL;
+
         /**
          * Constructor.
          * @param factory set factorySupplier.
@@ -195,6 +205,16 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
         }
 
         /**
+         * @param templateFunction template function
+         * @return this factory for method chaining
+         */
+        public Factory setGtuTemplateFunction(final BiFunction<GtuType, StreamInterface, GtuTemplate> templateFunction)
+        {
+            this.templateFunction = templateFunction;
+            return this;
+        }
+
+        /**
          * Creates the default GTU characteristics generator based on OD information.
          * @return default GTU characteristics generator based on OD information
          */
@@ -202,7 +222,7 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
         public DefaultLaneBasedGtuCharacteristicsGeneratorOd create()
         {
             return new DefaultLaneBasedGtuCharacteristicsGeneratorOd(this.gtuTypeGenerator, this.templates, this.factory,
-                    this.vehicleModelFactory);
+                    this.vehicleModelFactory, this.templateFunction);
         }
     }
 

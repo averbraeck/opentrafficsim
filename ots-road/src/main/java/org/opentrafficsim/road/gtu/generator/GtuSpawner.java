@@ -1,12 +1,14 @@
 package org.opentrafficsim.road.gtu.generator;
 
+import java.util.function.BiFunction;
+
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GtuErrorHandler;
 import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.GtuTemplate;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
@@ -29,8 +31,8 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 public class GtuSpawner
 {
 
-    /** Use default NL GTU templates. */
-    private boolean useDefaultGtuTemplate = true;
+    /** Default GTU templates. */
+    private BiFunction<GtuType, StreamInterface, GtuTemplate> defaultGtuTemplate = Defaults.NL;
 
     /** Random stream. */
     private StreamInterface stream = new MersenneTwister(123L);
@@ -45,13 +47,13 @@ public class GtuSpawner
     private GtuErrorHandler errorHandler = GtuErrorHandler.THROW;
 
     /**
-     * Sets the use of default NL GTU templates.
-     * @param useDefaultGtuTemplate use of default NL GTU templates.
+     * Sets the default GTU templates.
+     * @param defaultGtuTemplate default GTU templates.
      * @return for method chaining.
      */
-    public GtuSpawner setUseDefaultGtuTemplate(final boolean useDefaultGtuTemplate)
+    public GtuSpawner setUseDefaultGtuTemplate(final BiFunction<GtuType, StreamInterface, GtuTemplate> defaultGtuTemplate)
     {
-        this.useDefaultGtuTemplate = useDefaultGtuTemplate;
+        this.defaultGtuTemplate = defaultGtuTemplate;
         return this;
     }
 
@@ -113,13 +115,8 @@ public class GtuSpawner
             final Speed speed, final LanePosition position) throws GtuException, NetworkException
     {
 
-        if (this.useDefaultGtuTemplate)
-        {
-            GtuType.registerTemplateSupplier(templateGtuType.getGtuType(), Defaults.NL);
-        }
         GtuCharacteristics defaultCharacteristics =
-                Try.assign(() -> GtuType.defaultCharacteristics(templateGtuType.getGtuType(), network, this.stream),
-                        "Failed getting default Characteristics");
+                this.defaultGtuTemplate.apply(templateGtuType.getGtuType(), this.stream).draw();
 
         LaneBasedGtu gtu =
                 new LaneBasedGtu(id, templateGtuType.getGtuType(), templateGtuType.getLength(), templateGtuType.getWidth(),
