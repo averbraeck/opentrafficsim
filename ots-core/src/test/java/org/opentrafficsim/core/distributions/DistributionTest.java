@@ -34,7 +34,7 @@ public class DistributionTest
         StreamInterface si = new MersenneTwister(1234);
         try
         {
-            new Distribution<TestObject>(null, si);
+            new ObjectDistribution<TestObject>(null, si);
             fail("Null pointer for generators should have thrown a NullPointerException");
         }
         catch (NullPointerException npe)
@@ -45,7 +45,7 @@ public class DistributionTest
         List<FrequencyAndObject<TestObject>> generators = new ArrayList<FrequencyAndObject<TestObject>>();
         try
         {
-            new Distribution<TestObject>(generators, null);
+            new ObjectDistribution<TestObject>(generators, null);
             fail("Null pointer for stream interface should have thrown a NullPointerException");
         }
         catch (NullPointerException npe)
@@ -53,7 +53,7 @@ public class DistributionTest
             // Ignore expected exception
         }
 
-        Distribution<TestObject> dist = new Distribution<TestObject>(generators, si);
+        ObjectDistribution<TestObject> dist = new ObjectDistribution<TestObject>(generators, si);
         assertEquals(0, dist.size(), "size should be 0");
         try
         {
@@ -227,7 +227,7 @@ public class DistributionTest
         generators = new ArrayList<FrequencyAndObject<TestObject>>();
         generators.add(new FrequencyAndObject<DistributionTest.TestObject>(123, to));
         generators.add(new FrequencyAndObject<DistributionTest.TestObject>(456, to2));
-        dist = new Distribution<TestObject>(generators, si);
+        dist = new ObjectDistribution<TestObject>(generators, si);
         assertEquals(to, dist.get(0).object(), "element 0 should be to");
         assertEquals(to2, dist.get(1).object(), "element 1 should be to2");
         assertEquals(123, dist.get(0).frequency(), 0.00001, "frequency of element 0 should be 123");
@@ -369,21 +369,21 @@ public class DistributionTest
     public void testHashCodeAndEquals()
     {
         StreamInterface si = new MersenneTwister(1234);
-        Distribution<Double> distribution = new Distribution<>(si);
+        ObjectDistribution<Double> distribution = new ObjectDistribution<>(si);
         distribution.add(new FrequencyAndObject<Double>(Math.PI, 10d));
         distribution.add(new FrequencyAndObject<Double>(2 * Math.PI, 20d));
         assertTrue(distribution.equals(distribution), "distribution is equal to itself");
         assertFalse(distribution.equals(null), "distribution is not equal to null");
         assertFalse(distribution.equals("junk"), "distribution is not equal to something totally different");
-        Distribution<Double> distribution2 = new Distribution<>(si);
+        ObjectDistribution<Double> distribution2 = new ObjectDistribution<>(si);
         assertFalse(distribution.equals(distribution2),
                 "Distribution is not equal to other distribution containing different set of frequency and object");
+        assertNotEquals(distribution.hashCode(), distribution2.hashCode());
         distribution2.add(new FrequencyAndObject<Double>(Math.PI, 10d));
         distribution2.add(new FrequencyAndObject<Double>(2 * Math.PI, 20d));
-        // TODO: Next test fails because the random field of the Distribution does not implement equals
-        // assertTrue(
-        // "Distributions is equal to other distribution containing exact same frequencies and objects and random source",
-        // distribution.equals(distribution2));
+        assertTrue(distribution.equals(distribution2),
+                "Distributions is equal to other distribution containing exact same frequencies and objects and random source");
+        assertEquals(distribution.hashCode(), distribution2.hashCode());
         assertTrue(distribution.toString().startsWith("Distribution"), "The toString method returns something descriptive");
     }
 
