@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.djutils.exceptions.Try;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
@@ -48,24 +47,16 @@ public class GtuTypeTest
     @Test
     public final void defaultsTest()
     {
-        Network network = new Network("network", new OtsSimulator("Simulator for GtuTypeTest"));
         StreamInterface randomStream = new MersenneTwister();
         GtuType car = DefaultsNl.CAR;
-        GtuType.registerTemplateSupplier(DefaultsNl.CAR, Defaults.NL);
         String message = "Exception while deriving default GTU characteristics";
-        GtuCharacteristics characteristicsCar1 =
-                Try.assign(() -> GtuType.defaultCharacteristics(car, network, randomStream), message);
-        GtuCharacteristics characteristicsCar2 =
-                Try.assign(() -> GtuType.defaultCharacteristics(car, network, randomStream), message);
+        GtuCharacteristics characteristicsCar1 = Defaults.NL.apply(car, randomStream).draw();
+        GtuCharacteristics characteristicsCar2 = Defaults.NL.apply(car, randomStream).draw();
         GtuType spaceCar = new GtuType("spaceCar", car);
-        GtuCharacteristics characteristicsSpaceCar1 =
-                Try.assign(() -> GtuType.defaultCharacteristics(spaceCar, network, randomStream), message);
-        GtuCharacteristics characteristicsSpaceCar2 =
-                Try.assign(() -> GtuType.defaultCharacteristics(spaceCar, network, randomStream), message);
+        GtuCharacteristics characteristicsSpaceCar1 = Defaults.NL.apply(spaceCar, randomStream).draw();
+        GtuCharacteristics characteristicsSpaceCar2 = Defaults.NL.apply(spaceCar, randomStream).draw();
         GtuType truck = DefaultsNl.TRUCK;
-        GtuType.registerTemplateSupplier(DefaultsNl.TRUCK, Defaults.NL);
-        GtuCharacteristics characteristicsTruck =
-                Try.assign(() -> GtuType.defaultCharacteristics(truck, network, randomStream), message);
+        GtuCharacteristics characteristicsTruck = Defaults.NL.apply(truck, randomStream).draw();
 
         // Note: we can only compare characteristics that we know are not distributed for the used GTU type CAR.
         message = "Default characteristics of DEFAULTS and derived GtuType should be equal.";
