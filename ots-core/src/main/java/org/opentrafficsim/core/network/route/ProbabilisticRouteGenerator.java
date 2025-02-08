@@ -3,7 +3,7 @@ package org.opentrafficsim.core.network.route;
 import java.io.Serializable;
 import java.util.List;
 
-import org.opentrafficsim.core.distributions.Distribution;
+import org.opentrafficsim.core.distributions.ObjectDistribution;
 import org.opentrafficsim.core.distributions.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.Generator;
 
@@ -26,7 +26,7 @@ public class ProbabilisticRouteGenerator implements Generator<Route>, Serializab
     private static final long serialVersionUID = 20150000L;
 
     /** The Distribution from which routes are drawn. */
-    private final Distribution<Route> distribution;
+    private final ObjectDistribution<Route> distribution;
 
     /**
      * Create a new Probabilistic Route Generator.
@@ -35,7 +35,7 @@ public class ProbabilisticRouteGenerator implements Generator<Route>, Serializab
      */
     public ProbabilisticRouteGenerator(final List<FrequencyAndObject<Route>> generators, final StreamInterface stream)
     {
-        this.distribution = new Distribution<Route>(generators, stream);
+        this.distribution = new ObjectDistribution<Route>(generators, stream);
     }
 
     @Override
