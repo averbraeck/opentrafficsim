@@ -22,10 +22,16 @@ import org.opentrafficsim.road.network.lane.Lane;
 public interface LaneBasedObject extends LocatedObject
 {
 
-    /** @return The lane for which this is a sensor. */
+    /**
+     * Returns the lane.
+     * @return The lane for which this is a sensor.
+     */
     Lane getLane();
 
-    /** @return the position (between 0.0 and the length of the Lane) of the sensor on the design line of the lane. */
+    /**
+     * Returns the longitudinal position.
+     * @return the position (between 0.0 and the length of the Lane) of the sensor on the design line of the lane.
+     */
     Length getLongitudinalPosition();
 
     /**
@@ -48,7 +54,7 @@ public interface LaneBasedObject extends LocatedObject
     {
         return makeLine(getLane(), getLongitudinalPosition());
     }
-    
+
     /**
      * Returns the simulator.
      * @return simulator

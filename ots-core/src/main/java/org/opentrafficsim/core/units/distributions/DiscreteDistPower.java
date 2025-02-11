@@ -21,13 +21,13 @@ public class DiscreteDistPower extends DiscreteDistDoubleScalar.Rel<Power, Power
     private static final long serialVersionUID = 20180829L;
 
     /**
+     * Constructor.
      * @param distribution distribution
-     * @param unit units
+     * @param unit unit
      */
     public DiscreteDistPower(final DistDiscrete distribution, final PowerUnit unit)
     {
         super(distribution, unit);
-
     }
 
     @Override

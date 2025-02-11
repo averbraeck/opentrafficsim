@@ -3,6 +3,7 @@ package org.opentrafficsim.core.network;
 import org.djunits.value.vdouble.scalar.Frequency;
 
 /**
+ * Interface of elements with capacity.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -12,7 +13,11 @@ import org.djunits.value.vdouble.scalar.Frequency;
  */
 public interface Capacity
 {
-    /** @return link capacity. */
+
+    /**
+     * Returns the capacity.
+     * @return link capacity.
+     */
     Frequency getCapacity();
 
     /**

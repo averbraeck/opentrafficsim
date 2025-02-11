@@ -46,11 +46,20 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  */
 public class GtuTest
 {
+
     /** GTU that will be returned when the fake strategical planner is asked for the associated GTU with getGTU. */
     public Gtu gtuOfStrategicalPlanner = null;
 
     /** */
     private static final long serialVersionUID = 20151217L;
+
+    /**
+     * Constructor.
+     */
+    public GtuTest()
+    {
+        //
+    }
 
     /**
      * Test the constructor.
@@ -291,13 +300,14 @@ public class GtuTest
         }
     }
 
-    /** */
+    /** Test GTU model. */
     class GtuModel extends AbstractOtsModel
     {
         /** */
         private static final long serialVersionUID = 1L;
 
         /**
+         * Constructor.
          * @param simulator the simulator
          */
         GtuModel(final OtsSimulatorInterface simulator)
@@ -318,13 +328,14 @@ public class GtuTest
         }
     }
 
-    /** */
+    /** Test GTU class. */
     class TestGtu extends Gtu
     {
         /** */
         private static final long serialVersionUID = 20151111L;
 
         /**
+         * Constructor.
          * @param id id of the new GTU
          * @param gtuType type of the new GTU
          * @param simulator simulator that controls the new GTU
@@ -337,6 +348,12 @@ public class GtuTest
         {
             super(id, gtuType, simulator, perceivableContext, Length.instantiateSI(4.0), Length.instantiateSI(1.8),
                     Speed.instantiateSI(50.0), Length.instantiateSI(2.0), Length.ZERO);
+        }
+
+        @Override
+        public OrientedPoint2d getLocation()
+        {
+            return new OrientedPoint2d(0.0, 0.0, 0.0);
         }
     }
 

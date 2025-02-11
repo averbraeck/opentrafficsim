@@ -41,6 +41,7 @@ public class AlineaSwitch extends SingleCrossSectionSwitch
     private Frequency lastFlow;
 
     /**
+     * Constructor.
      * @param detectors detectors
      */
     public AlineaSwitch(final List<LoopDetector> detectors)

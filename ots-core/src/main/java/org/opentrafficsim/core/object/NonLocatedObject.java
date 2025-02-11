@@ -19,7 +19,10 @@ import org.djutils.base.Identifiable;
 public interface NonLocatedObject extends Identifiable, Serializable
 {
 
-    /** @return the full id that makes the id unique in the network. */
+    /**
+     * Returns the full id.
+     * @return the full id that makes the id unique in the network.
+     */
     String getFullId();
 
 }

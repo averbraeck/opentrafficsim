@@ -23,6 +23,7 @@ public class HeadwayGtuPerceived extends HeadwayGtuRealCopy
     private static final long serialVersionUID = 20180405L;
 
     /**
+     * Constructor.
      * @param gtu gtu
      * @param distance distance
      * @param speed speed
@@ -39,6 +40,7 @@ public class HeadwayGtuPerceived extends HeadwayGtuRealCopy
     }
 
     /**
+     * Constructor.
      * @param gtu gtu
      * @param overlapFront the overlap over the front of the GTU
      * @param overlap ???

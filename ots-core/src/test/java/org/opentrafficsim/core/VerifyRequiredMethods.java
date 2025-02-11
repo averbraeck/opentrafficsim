@@ -23,6 +23,15 @@ import org.junit.jupiter.api.Test;
  */
 public class VerifyRequiredMethods
 {
+
+    /**
+     * Constructor.
+     */
+    public VerifyRequiredMethods()
+    {
+        //
+    }
+
     /**
      * Check that all classes have a toString method.
      */

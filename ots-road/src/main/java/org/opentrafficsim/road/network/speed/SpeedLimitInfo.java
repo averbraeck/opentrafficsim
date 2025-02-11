@@ -16,7 +16,6 @@ import org.djutils.exceptions.Throw;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-
 public class SpeedLimitInfo implements Serializable
 {
 
@@ -25,6 +24,14 @@ public class SpeedLimitInfo implements Serializable
 
     /** Set of current speed info's mapped to speed limit types. */
     private final Map<SpeedLimitType<?>, Object> speedInfoMap = new LinkedHashMap<>();
+
+    /**
+     * Constructor.
+     */
+    public SpeedLimitInfo()
+    {
+        //
+    }
 
     /**
      * Adds or overwrites the speed info of the given speed limit type.

@@ -100,6 +100,7 @@ public class OtsSimulationPanel extends JPanel
     }
 
     /**
+     * Return tabbed pane.
      * @return tabbedPane
      */
     public final TabbedContentPane getTabbedPane()
@@ -108,6 +109,7 @@ public class OtsSimulationPanel extends JPanel
     }
 
     /**
+     * Return simulator.
      * @return simulator.
      */
     public final OtsSimulatorInterface getSimulator()
@@ -125,6 +127,7 @@ public class OtsSimulationPanel extends JPanel
     }
 
     /**
+     * Return console.
      * @return console
      */
     public final ConsoleOutput getConsole()
@@ -133,6 +136,7 @@ public class OtsSimulationPanel extends JPanel
     }
 
     /**
+     * Return model.
      * @return otsModel
      */
     public final OtsModelInterface getOtsModel()
@@ -181,6 +185,7 @@ public class OtsSimulationPanel extends JPanel
         private static final long serialVersionUID = 20180206L;
 
         /**
+         * Constructor.
          * @param tabPlacement tabPlacement
          */
         AppearanceControlTabbedContentPane(final int tabPlacement)

@@ -20,6 +20,14 @@ public class GtuExceptionTest
 {
 
     /**
+     * Constructor.
+     */
+    public GtuExceptionTest()
+    {
+        //
+    }
+
+    /**
      * Test the GTUException class.
      */
     @Test

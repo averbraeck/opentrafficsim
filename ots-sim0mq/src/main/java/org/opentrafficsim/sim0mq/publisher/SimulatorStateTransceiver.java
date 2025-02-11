@@ -120,6 +120,7 @@ class EventMultiplexer extends LocalEventProducer implements EventListener
     private static final long serialVersionUID = 20200618L;
 
     /**
+     * Constructor.
      * @param simulator the simulator
      * @throws RemoteException on network error
      */

@@ -12,6 +12,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.lane.LaneType;
 
 /**
+ * Assumptions at GTU type level.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -33,6 +34,14 @@ public class GtuTypeAssumptions implements Serializable
 
     /** stored speed limit info of the observed GTU. */
     private final Map<GtuType, Map<LaneType, Speed>> laneTypeSpeedMap = new LinkedHashMap<>();
+
+    /**
+     * Constructor.
+     */
+    public GtuTypeAssumptions()
+    {
+        //
+    }
 
     /**
      * Set the car following model for a certain GtuType as an assumption for that GtuType.

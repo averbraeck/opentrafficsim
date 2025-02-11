@@ -13,6 +13,15 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
  */
 public class Egoistic extends AbstractLaneChangeModel
 {
+
+    /**
+     * Constructor.
+     */
+    public Egoistic()
+    {
+        //
+    }
+
     @Override
     public final Acceleration applyDriverPersonality(final DualAccelerationStep accelerations)
     {

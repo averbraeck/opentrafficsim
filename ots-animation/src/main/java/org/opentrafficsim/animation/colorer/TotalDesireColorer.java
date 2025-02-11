@@ -22,6 +22,14 @@ public class TotalDesireColorer extends DesireColorer
     /** */
     private static final long serialVersionUID = 20170414L;
 
+    /**
+     * Constructor.
+     */
+    public TotalDesireColorer()
+    {
+        //
+    }
+
     @Override
     public final Color getColor(final Gtu gtu)
     {

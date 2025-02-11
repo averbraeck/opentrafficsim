@@ -25,6 +25,14 @@ public class StripeElementTest
 {
 
     /**
+     * Constructor.
+     */
+    public StripeElementTest()
+    {
+        //
+    }
+
+    /**
      * Tests StripeElement.
      */
     @Test

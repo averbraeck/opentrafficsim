@@ -17,6 +17,14 @@ import org.opentrafficsim.xml.bindings.types.LengthBeginEndType.LengthBeginEnd;
 public class LengthBeginEndAdapter extends ExpressionAdapter<LengthBeginEnd, LengthBeginEndType>
 {
 
+    /**
+     * Constructor.
+     */
+    public LengthBeginEndAdapter()
+    {
+        //
+    }
+
     @Override
     public LengthBeginEndType unmarshal(final String field) throws IllegalArgumentException
     {

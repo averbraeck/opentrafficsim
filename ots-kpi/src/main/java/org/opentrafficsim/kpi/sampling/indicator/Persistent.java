@@ -5,6 +5,7 @@ import org.djunits.value.vdouble.scalar.base.DoubleScalarRel;
 import org.djutils.exceptions.Throw;
 
 /**
+ * Persistent statistic.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -112,6 +113,7 @@ public class Persistent<U extends Unit<U>, T extends DoubleScalarRel<U, T>, W ex
     }
 
     /**
+     * Return confidence interval.
      * @param alpha confidence level
      * @return both-side confidence interval
      */
@@ -121,6 +123,7 @@ public class Persistent<U extends Unit<U>, T extends DoubleScalarRel<U, T>, W ex
     }
 
     /**
+     * Return confidence interval.
      * @param alpha confidence level
      * @param side side of confidence interval
      * @return confidence interval
@@ -161,6 +164,7 @@ public class Persistent<U extends Unit<U>, T extends DoubleScalarRel<U, T>, W ex
     }
 
     /**
+     * Return minimum value.
      * @return min value
      */
     public T getMin()
@@ -169,6 +173,7 @@ public class Persistent<U extends Unit<U>, T extends DoubleScalarRel<U, T>, W ex
     }
 
     /**
+     * Return maximum value.
      * @return max value
      */
     public T getMax()
@@ -177,6 +182,7 @@ public class Persistent<U extends Unit<U>, T extends DoubleScalarRel<U, T>, W ex
     }
 
     /**
+     * Return number of measurements.
      * @return number of measurments
      */
     public long getN()
@@ -185,6 +191,7 @@ public class Persistent<U extends Unit<U>, T extends DoubleScalarRel<U, T>, W ex
     }
 
     /**
+     * Return mean.
      * @return mean value
      */
     public T getMean()
@@ -193,6 +200,7 @@ public class Persistent<U extends Unit<U>, T extends DoubleScalarRel<U, T>, W ex
     }
 
     /**
+     * Return variance.
      * @return variance in si
      */
     public double getVariance()
@@ -208,6 +216,7 @@ public class Persistent<U extends Unit<U>, T extends DoubleScalarRel<U, T>, W ex
     }
 
     /**
+     * Return standard deviation.
      * @return standard deviation
      */
     public T getStDev()
@@ -223,6 +232,7 @@ public class Persistent<U extends Unit<U>, T extends DoubleScalarRel<U, T>, W ex
     }
 
     /**
+     * Return instantiated value.
      * @param valueSI si value
      * @return instantiate typed value from si value
      */
@@ -232,6 +242,7 @@ public class Persistent<U extends Unit<U>, T extends DoubleScalarRel<U, T>, W ex
     }
 
     /**
+     * Return sum.
      * @return sum
      */
     public T getSum()

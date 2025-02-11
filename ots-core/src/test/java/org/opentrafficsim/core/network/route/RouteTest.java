@@ -14,6 +14,15 @@ import org.opentrafficsim.core.network.NetworkException;
  */
 public class RouteTest
 {
+
+    /**
+     * Constructor.
+     */
+    public RouteTest()
+    {
+        //
+    }
+
     /**
      * Test the Route class.
      * @throws NetworkException on Network inconsistency (should not happen in this test)
@@ -21,10 +30,10 @@ public class RouteTest
     @Test
     public void routeTest() throws NetworkException
     {
-        /*- 
-        
+        /*-
+
         TODO THE ROUTE CLASSES HAVE CHANGED SO THE TESTS HAVE TO BE ADAPTED
-         
+
         Route route = new Route("name");
         assertEquals("No arguments constructor creates an empty Route", 0, route.size());
         try
@@ -132,7 +141,7 @@ public class RouteTest
         assertEquals("vistNextNode should have returned n3", n3, nextNode);
         nextNode = route.visitNextNode();
         assertEquals("vistNextNode should have returned null", null, nextNode);
-        
+
         List<Node> list = new ArrayList<Node>();
         list.add(n0);
         list.add(n1);
@@ -195,7 +204,7 @@ public class RouteTest
         {
             // Ignore expected exception
         }
-        
+
          */
     }
 

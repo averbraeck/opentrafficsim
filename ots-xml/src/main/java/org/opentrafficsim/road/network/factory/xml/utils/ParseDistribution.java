@@ -57,6 +57,8 @@ public final class ParseDistribution
      * @param distribution the tag to parse, a sub type of ConstantDistType
      * @param unit unit
      * @param eval expression evaluator.
+     * @param <T> value type
+     * @param <U> unit type
      * @return a typed continuous random distribution.
      * @throws XmlParserException in case of a parse error.
      */

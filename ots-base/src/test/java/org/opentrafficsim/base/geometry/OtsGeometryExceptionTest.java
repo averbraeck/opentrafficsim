@@ -11,6 +11,14 @@ import org.junit.jupiter.api.Test;
 public class OtsGeometryExceptionTest
 {
 
+    /**
+     * Constructor.
+     */
+    public OtsGeometryExceptionTest()
+    {
+        //
+    }
+
     /** Test the OtsGeometryException class. */
     @Test
     public void testException()

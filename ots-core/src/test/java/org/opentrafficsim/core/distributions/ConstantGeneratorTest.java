@@ -16,6 +16,14 @@ import org.junit.jupiter.api.Test;
 public class ConstantGeneratorTest
 {
 
+    /**
+     * Constructor.
+     */
+    public ConstantGeneratorTest()
+    {
+        //
+    }
+
     /** Test the ConstantGenerator class. */
     @Test
     public void constantGeneratorTest()

@@ -28,6 +28,7 @@ public final class GtuType extends HierarchicalType<GtuType, Gtu>
     }
 
     /**
+     * Constructor.
      * @param id The id of the GtuType to make it identifiable.
      * @param parent parent GTU type.
      * @throws NullPointerException if the id is null

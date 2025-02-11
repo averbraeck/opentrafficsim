@@ -19,16 +19,18 @@ public class ToggleButtonInfo
     private boolean visible;
 
     /**
+     * Constructor.
      * @param name the name of the button
      * @param visible whether the class is initially shown or not
      */
-    protected ToggleButtonInfo(String name, boolean visible)
+    protected ToggleButtonInfo(final String name, final boolean visible)
     {
         this.name = name;
         this.visible = visible;
     }
 
     /**
+     * Return visible.
      * @return visible
      */
     public final boolean isVisible()
@@ -37,14 +39,16 @@ public class ToggleButtonInfo
     }
 
     /**
+     * Set visible.
      * @param visible set visible
      */
-    public final void setVisible(boolean visible)
+    public final void setVisible(final boolean visible)
     {
         this.visible = visible;
     }
 
     /**
+     * Return name.
      * @return name
      */
     public final String getName()
@@ -69,12 +73,14 @@ public class ToggleButtonInfo
         private final String toolTipText;
 
         /**
+         * Constructor.
          * @param name the name of the button
          * @param locatableClass the class for which the button holds (e.g., GTU.class)
          * @param toolTipText the tool tip text to show when hovering over the button
          * @param visible whether the class is initially shown or not
          */
-        public LocatableClass(String name, Class<? extends Locatable> locatableClass, String toolTipText, boolean visible)
+        public LocatableClass(final String name, final Class<? extends Locatable> locatableClass, final String toolTipText,
+                final boolean visible)
         {
             super(name, visible);
             this.locatableClass = locatableClass;
@@ -82,6 +88,7 @@ public class ToggleButtonInfo
         }
 
         /**
+         * Return locatable class.
          * @return locatableClass
          */
         public final Class<? extends Locatable> getLocatableClass()
@@ -90,6 +97,7 @@ public class ToggleButtonInfo
         }
 
         /**
+         * Return tooltip.
          * @return toolTipText
          */
         public final String getToolTipText()
@@ -109,10 +117,11 @@ public class ToggleButtonInfo
     public static class Text extends ToggleButtonInfo
     {
         /**
+         * Constructor.
          * @param name the name of the button
          * @param visible whether the class is initially shown or not
          */
-        public Text(String name, boolean visible)
+        public Text(final String name, final boolean visible)
         {
             super(name, visible);
         }
@@ -135,12 +144,13 @@ public class ToggleButtonInfo
         private final String toolTipText;
 
         /**
+         * Constructor.
          * @param name the name of the button
          * @param layerName the GIS layer name
          * @param toolTipText the tool tip text to show when hovering over the button
          * @param visible whether the class is initially shown or not
          */
-        public Gis(String name, String layerName, String toolTipText, boolean visible)
+        public Gis(final String name, final String layerName, final String toolTipText, final boolean visible)
         {
             super(name, visible);
             this.layerName = layerName;
@@ -148,6 +158,7 @@ public class ToggleButtonInfo
         }
 
         /**
+         * Get layer name.
          * @return layerName
          */
         public final String getLayerName()
@@ -156,6 +167,7 @@ public class ToggleButtonInfo
         }
 
         /**
+         * Get tooltip.
          * @return toolTipText
          */
         public final String getToolTipText()

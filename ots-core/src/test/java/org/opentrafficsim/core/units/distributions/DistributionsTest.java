@@ -75,6 +75,14 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 public class DistributionsTest
 {
 
+    /**
+     * Constructor.
+     */
+    public DistributionsTest()
+    {
+        //
+    }
+
     /** Next value returned by the draw method of the dummy DistContinuous. */
     private double nextDoubleResult = 1d;
 
@@ -404,6 +412,14 @@ public class DistributionsTest
 
         /** m/s3. */
         public static final JunkUnit JUNK = SI;
+
+        /**
+         * Constructor.
+         */
+        public JunkUnit()
+        {
+            //
+        }
     }
 
     /**
@@ -425,5 +441,13 @@ public class DistributionsTest
 
         /** meter. */
         public static final AbsJunkUnit ABSJUNK = DEFAULT;
+
+        /**
+         * Constructor.
+         */
+        public AbsJunkUnit()
+        {
+            //
+        }
     }
 }

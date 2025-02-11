@@ -39,6 +39,7 @@ public class ConflictAnimation extends AbstractLineAnimation<ConflictData>
     private final Set<Path2D.Float> paths;
 
     /**
+     * Constructor.
      * @param source the conflict to draw
      * @param contextualized context provider
      * @throws NamingException in case of registration failure of the animation

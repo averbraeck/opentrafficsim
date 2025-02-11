@@ -53,6 +53,7 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
     public static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 
     /**
+     * Constructor.
      * @param perception perception
      */
     public DirectInfrastructurePerception(final LanePerception perception)

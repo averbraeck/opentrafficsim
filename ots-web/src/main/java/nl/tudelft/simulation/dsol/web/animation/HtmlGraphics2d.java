@@ -50,37 +50,45 @@ import nl.tudelft.simulation.dsol.logger.Cat;
 public class HtmlGraphics2d extends Graphics2D
 {
     /** the current color of the background for drawing. */
-    Color background = Color.WHITE;
+    private Color background = Color.WHITE;
 
     /** the current drawing color. */
-    Color color = Color.BLACK;
+    private Color color = Color.BLACK;
 
     /** the current font. */
-    Font font = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
+    private Font font = new Font(Font.SANS_SERIF, Font.PLAIN, 10);
 
     /** the drawing canvas. */
-    Canvas canvas = new Canvas();
+    private Canvas canvas = new Canvas();
 
     /** the cached current font properties. */
-    FontMetrics fontMetrics = this.canvas.getFontMetrics(this.font);
+    private FontMetrics fontMetrics = this.canvas.getFontMetrics(this.font);
 
     /** the current paint. */
-    Paint paint = Color.BLACK;
+    private Paint paint = Color.BLACK;
 
     /** the current stroke. */
-    Stroke stroke = new BasicStroke();
+    private Stroke stroke = new BasicStroke();
 
     /** TODO: the current rendering hints. */
-    RenderingHints renderingHints = new RenderingHints(new LinkedHashMap<Key, Object>());
+    private RenderingHints renderingHints = new RenderingHints(new LinkedHashMap<Key, Object>());
 
     /** the current affine transform. */
-    AffineTransform affineTransform = new AffineTransform();
+    private AffineTransform affineTransform = new AffineTransform();
 
     /** TODO: the current composite. What is that? */
-    Composite composite = AlphaComposite.Clear;
+    private Composite composite = AlphaComposite.Clear;
 
     /** the commands to send over the channel to the HTML5 code. */
-    StringBuffer commands = new StringBuffer();
+    private StringBuffer commands = new StringBuffer();
+
+    /**
+     * Constructor.
+     */
+    public HtmlGraphics2d()
+    {
+        //
+    }
 
     /**
      * Clear the commands and put the start tag in.
@@ -163,24 +171,38 @@ public class HtmlGraphics2d extends Graphics2D
         String htmlFontName;
         if (javaFontName.contains("arial") || javaFontName.contains("helvetica") || javaFontName.contains("verdana")
                 || javaFontName.contains("tahoma") || javaFontName.contains("segoe") || javaFontName.contains("sans"))
+        {
             htmlFontName = "sans-serif";
+        }
         else if (javaFontName.contains("times") || javaFontName.contains("cambria") || javaFontName.contains("georgia")
                 || javaFontName.contains("serif"))
+        {
             htmlFontName = "serif";
+        }
         else if (javaFontName.contains("courier") || javaFontName.contains("consol") || javaFontName.contains("mono"))
+        {
             htmlFontName = "monospace";
+        }
         else
+        {
             htmlFontName = "sans-serif";
+        }
         this.commands.append(htmlFontName);
         this.commands.append(",");
         this.commands.append(this.font.getSize2D());
         this.commands.append(",");
         if (this.font.isBold())
+        {
             this.commands.append("bold");
+        }
         else if (this.font.isItalic())
+        {
             this.commands.append("italic");
+        }
         else
+        {
             this.commands.append("plain");
+        }
     }
 
     /**
@@ -195,9 +217,13 @@ public class HtmlGraphics2d extends Graphics2D
         this.commands.append("<transformFill>" + fillCommand);
         addAffineTransform();
         if (this.paint instanceof Color)
+        {
             addColor((Color) this.paint);
+        }
         else
+        {
             addColor(this.color);
+        }
         for (Object param : params)
         {
             this.commands.append("," + param.toString());
@@ -217,13 +243,21 @@ public class HtmlGraphics2d extends Graphics2D
         this.commands.append("<transformDraw>" + drawCommand);
         addAffineTransform();
         if (this.paint instanceof Color)
+        {
             addColor((Color) this.paint);
+        }
         else
+        {
             addColor(this.color);
+        }
         if (this.stroke instanceof BasicStroke)
+        {
             this.commands.append("," + ((BasicStroke) this.stroke).getLineWidth());
+        }
         else
+        {
             this.commands.append(", 0.1");
+        }
         for (Object param : params)
         {
             this.commands.append("," + param.toString());
@@ -273,29 +307,41 @@ public class HtmlGraphics2d extends Graphics2D
      * - MOVETO, followed by 1 coordinate (2 numbers)<br>
      * - QUADTO, followed by 2 coordinates (4 numbers)<br>
      * @param path Path2D.Float; the path to draw
-     * @param fill
+     * @param fill fill
      */
     protected void addTransformPathFloat(final Path2D.Float path, final boolean fill)
     {
         if (fill)
+        {
             this.commands.append("<transformPath>FILL");
+        }
         else
+        {
             this.commands.append("<transformPath>DRAW");
+        }
         addAffineTransform();
         addColor(this.color);
         if (fill)
         {
             if (path.getWindingRule() == Path2D.WIND_EVEN_ODD)
+            {
                 this.commands.append(",WIND_EVEN_ODD");
+            }
             else
+            {
                 this.commands.append(",WIND_NON_ZERO");
+            }
         }
         else
         {
             if (this.stroke instanceof BasicStroke)
+            {
                 this.commands.append("," + ((BasicStroke) this.stroke).getLineWidth());
+            }
             else
+            {
                 this.commands.append(", 0.1");
+            }
         }
         float[] coords = new float[6];
         PathIterator i = path.getPathIterator(null);
@@ -347,29 +393,41 @@ public class HtmlGraphics2d extends Graphics2D
      * - MOVETO, followed by 1 coordinate (2 numbers)<br>
      * - QUADTO, followed by 2 coordinates (4 numbers)<br>
      * @param path Path2D.Double; the path to draw
-     * @param fill
+     * @param fill fill
      */
     protected void addTransformPathDouble(final Path2D.Double path, final boolean fill)
     {
         if (fill)
+        {
             this.commands.append("<transformPath>FILL");
+        }
         else
+        {
             this.commands.append("<transformPath>DRAW");
+        }
         addAffineTransform();
         addColor(this.color);
         if (fill)
         {
             if (path.getWindingRule() == Path2D.WIND_EVEN_ODD)
+            {
                 this.commands.append(",WIND_EVEN_ODD");
+            }
             else
+            {
                 this.commands.append(",WIND_NON_ZERO");
+            }
         }
         else
         {
             if (this.stroke instanceof BasicStroke)
+            {
                 this.commands.append("," + ((BasicStroke) this.stroke).getLineWidth());
+            }
             else
+            {
                 this.commands.append(", 0.1");
+            }
         }
         double[] coords = new double[6];
         PathIterator i = path.getPathIterator(null);
@@ -443,21 +501,29 @@ public class HtmlGraphics2d extends Graphics2D
         {
             Ellipse2D.Double ellipse = (Ellipse2D.Double) shape;
             if (fill)
+            {
                 addTransformFill("fillOval", ellipse.getCenterX(), ellipse.getCenterY(), ellipse.width / 2.0,
                         ellipse.height / 2.0);
+            }
             else
+            {
                 addTransformDraw("drawOval", ellipse.getCenterX(), ellipse.getCenterY(), ellipse.width / 2.0,
                         ellipse.height / 2.0);
+            }
         }
         else if (shape instanceof Ellipse2D.Float)
         {
             Ellipse2D.Float ellipse = (Ellipse2D.Float) shape;
             if (fill)
+            {
                 addTransformFill("fillOval", ellipse.getCenterX(), ellipse.getCenterY(), ellipse.width / 2.0,
                         ellipse.height / 2.0);
+            }
             else
+            {
                 addTransformDraw("drawOval", ellipse.getCenterX(), ellipse.getCenterY(), ellipse.width / 2.0,
                         ellipse.height / 2.0);
+            }
         }
         else if (shape instanceof Line2D.Double)
         {
@@ -473,17 +539,25 @@ public class HtmlGraphics2d extends Graphics2D
         {
             Rectangle2D.Double rect = (Rectangle2D.Double) shape;
             if (fill)
+            {
                 addTransformFill("fillRect", rect.x, rect.y, rect.width, rect.height);
+            }
             else
+            {
                 addTransformDraw("drawRect", rect.x, rect.y, rect.width, rect.height);
+            }
         }
         else if (shape instanceof Rectangle2D.Float)
         {
             Rectangle2D.Float rect = (Rectangle2D.Float) shape;
             if (fill)
+            {
                 addTransformFill("fillRect", rect.x, rect.y, rect.width, rect.height);
+            }
             else
+            {
                 addTransformDraw("drawRect", rect.x, rect.y, rect.width, rect.height);
+            }
         }
         else if (shape instanceof SerializablePath)
         {

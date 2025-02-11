@@ -44,6 +44,7 @@ public class Categorization implements Serializable, Identifiable
     }
 
     /**
+     * Constructor.
      * @param id Id
      * @param class1 1st class
      * @param classes other classes

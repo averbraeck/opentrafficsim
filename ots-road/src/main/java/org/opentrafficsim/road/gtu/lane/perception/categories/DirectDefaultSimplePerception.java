@@ -108,6 +108,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     private TimeStampedObject<LanePathInfo> lanePathInfo;
 
     /**
+     * Constructor.
      * @param perception perception
      */
     public DirectDefaultSimplePerception(final LanePerception perception)
@@ -389,6 +390,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     }
 
     /**
+     * Returns forward headway.
      * @return TimeStamped forwardHeadway, the forward headway and first object (GTU) in front
      */
     public final TimeStampedObject<Headway> getTimeStampedForwardHeadwayGtu()
@@ -397,6 +399,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     }
 
     /**
+     * Returns forward headway objects.
      * @return TimeStamped forwardHeadway, the forward headway and first object (not a GTU) in front
      */
     public final TimeStampedObject<Headway> getTimeStampedForwardHeadwayObject()
@@ -405,6 +408,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     }
 
     /**
+     * Returns backward headway.
      * @return TimeStamped backwardHeadwayGtu, the backward headway and first object (e.g., a GTU) behind
      */
     public final TimeStampedObject<Headway> getTimeStampedBackwardHeadway()
@@ -413,6 +417,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     }
 
     /**
+     * Returns left accessible adjacent lanes.
      * @return TimeStamped accessibleAdjacentLanesLeft, the accessible adjacent lanes on the left
      */
     public final TimeStampedObject<Map<Lane, Set<Lane>>> getTimeStampedAccessibleAdjacentLanesLeft()
@@ -421,6 +426,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     }
 
     /**
+     * Returns right accessible adjacent lanes.
      * @return TimeStamped accessibleAdjacentLanesRight, the accessible adjacent lanes on the right
      */
     public final TimeStampedObject<Map<Lane, Set<Lane>>> getTimeStampedAccessibleAdjacentLanesRight()
@@ -429,6 +435,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     }
 
     /**
+     * Returns accessible adjacent lanes.
      * @param lateralDirection the direction to return the accessible adjacent lanes for
      * @return TimeStamped accessibleAdjacentLanesRight, the accessible adjacent lanes on the right
      */
@@ -440,6 +447,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     }
 
     /**
+     * Returns left neighbors.
      * @return TimeStamped neighboringHeadwaysLeft, the objects (e.g., GTUs) in parallel, in front and behind on the left
      *         neighboring lane, with their headway relative to our GTU, and information about the status of the adjacent
      *         objects
@@ -450,6 +458,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     }
 
     /**
+     * Returns right neighbors.
      * @return TimeStamped neighboringHeadwaysRight, the objects (e.g., GTUs) in parallel, in front and behind on the right
      *         neighboring lane, with their headway relative to our GTU, and information about the status of the adjacent
      *         objects
@@ -460,6 +469,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     }
 
     /**
+     * Returns neighbors.
      * @param lateralDirection the direction to return the neighboring headways for
      * @return TimeStamped neighboringHeadwaysRight, the objects (e.g., GTUs) in parallel, in front and behind on the right
      *         neighboring lane, with their headway relative to our GTU, and information about the status of the adjacent
@@ -473,6 +483,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     }
 
     /**
+     * Returns left parallel headways.
      * @return TimeStamped parallelHeadwaysLeft, the parallel objects (e.g., GTUs) on the left, with information about their
      *         status and parallel overlap with our GTU.
      */
@@ -482,6 +493,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     }
 
     /**
+     * Returns right parallel headways.
      * @return TimeStamped parallelHeadwaysRight, the parallel objects (e.g., GTUs) on the right, with information about their
      *         status and parallel overlap with our GTU.
      */
@@ -491,6 +503,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     }
 
     /**
+     * Returns parallel headways.
      * @param lateralDirection the direction to return the parallel headways for
      * @return TimeStamped parallelHeadwaysRight, the parallel objects (e.g., GTUs) on the right, with information about their
      *         status and parallel overlap with our GTU.
@@ -502,6 +515,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     }
 
     /**
+     * Returns speed limit.
      * @return TimeStamped speedLimit
      */
     public final TimeStampedObject<Speed> getTimeStampedSpeedLimit()

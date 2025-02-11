@@ -7,8 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
-import org.opentrafficsim.core.dsol.OtsSimulator;
-import org.opentrafficsim.core.network.Network;
 
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -26,12 +24,19 @@ public class GtuTypeTest
 {
 
     /**
+     * Constructor.
+     */
+    public GtuTypeTest()
+    {
+        //
+    }
+
+    /**
      * Run the constructor and verify that all fields get correctly initialized.
      */
     @Test
     public final void constructorTest()
     {
-        Network network = new Network("network", new OtsSimulator("Simulator for GtuTypeTest"));
         GtuType t = new GtuType("abc", DefaultsNl.VEHICLE);
         assertTrue("abc".equals(t.getId()), "Id is stored in the newly created GtuType");
         GtuType t2 = new GtuType("pqr", DefaultsNl.VEHICLE);

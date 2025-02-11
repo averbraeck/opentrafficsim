@@ -86,10 +86,10 @@ public class Route implements Serializable, Identifiable
 
     /**
      * Verify that there are normal (non Connectors) between adjacent nodes, except at start and end (where Connectors are OK.
+     * @throws NetworkException checks links between adjacent nodes.
      */
-    public void verify()
+    public void verify() throws NetworkException
     {
-        // XXX Sanity check - there should be no Connectors (except at start and end)
         for (int index = 0; index < this.nodes.size() - 1; index++)
         {
             Node from = this.nodes.get(index);
@@ -112,18 +112,17 @@ public class Route implements Serializable, Identifiable
             }
             if ((!normalLinkFound) && (!connectorFound))
             {
-                CategoryLogger.always()
-                        .error(String.format("Unlike this route, the network has no link from %s (index %d of %d) to %s", from,
-                                index, this.nodes.size(), to));
+                throw new NetworkException(
+                        String.format("Unlike this route, the network has no link from %s (index %d of %d) to %s", from, index,
+                                this.nodes.size(), to));
             }
             else if ((!normalLinkFound) && index > 0 && index < this.nodes.size() - 2)
             {
-                CategoryLogger.always()
-                        .error(String.format(
-                                "Route (from node %s to node %s) includes connector along the way (index %d; node %s and %d; "
-                                        + "node %s of %d)",
-                                this.nodes.get(0).getId(), this.nodes.get(this.nodes.size() - 1).getId(), index, from,
-                                index + 1, to, this.nodes.size()));
+                throw new NetworkException(String.format(
+                        "Route (from node %s to node %s) includes connector along the way (index %d; node %s and %d; "
+                                + "node %s of %d)",
+                        this.nodes.get(0).getId(), this.nodes.get(this.nodes.size() - 1).getId(), index, from, index + 1, to,
+                        this.nodes.size()));
             }
         }
     }
@@ -152,6 +151,7 @@ public class Route implements Serializable, Identifiable
     }
 
     /**
+     * Returns nodes.
      * @return nodes.
      */
     public final List<Node> getNodes()
@@ -160,6 +160,7 @@ public class Route implements Serializable, Identifiable
     }
 
     /**
+     * Returns node at index.
      * @param i the index of the node to obtain
      * @return node i.
      * @throws NetworkException if i &lt; 0 or i &gt; size
@@ -174,6 +175,7 @@ public class Route implements Serializable, Identifiable
     }
 
     /**
+     * Returns origin node.
      * @return the first node of the route.
      * @throws NetworkException when the list has no nodes.
      */
@@ -187,6 +189,7 @@ public class Route implements Serializable, Identifiable
     }
 
     /**
+     * Returns size.
      * @return the number of nodes in the list. If the list contains more than Integer.MAX_VALUE elements, returns
      *         Integer.MAX_VALUE.
      */
@@ -196,6 +199,7 @@ public class Route implements Serializable, Identifiable
     }
 
     /**
+     * Returns destination node.
      * @return the last node of the route.
      * @throws NetworkException when the list has no nodes.
      */
@@ -212,7 +216,7 @@ public class Route implements Serializable, Identifiable
      * Return the index of a Node in this Route, or -1 if this Route does not contain the specified Node. <br>
      * If this route contains the Node more than once, the index of the first is returned.
      * @param node the Node to find
-     * @return
+     * @return returns index of node.
      */
     public final int indexOf(final Node node)
     {
@@ -220,6 +224,7 @@ public class Route implements Serializable, Identifiable
     }
 
     /**
+     * Returns whether the node is contained.
      * @param node the Node to find
      * @return whether the route contains this node (quick using LinkedHashSet);
      */

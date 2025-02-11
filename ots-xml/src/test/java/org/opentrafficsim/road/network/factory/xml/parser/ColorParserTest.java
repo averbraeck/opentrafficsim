@@ -23,6 +23,14 @@ public class ColorParserTest
 {
 
     /**
+     * Constructor.
+     */
+    public ColorParserTest()
+    {
+        //
+    }
+
+    /**
      * Test the color parser.
      * @throws NetworkException if that happens uncaught; this test has failed
      */

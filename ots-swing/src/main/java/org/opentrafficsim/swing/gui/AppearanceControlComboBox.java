@@ -17,6 +17,14 @@ public class AppearanceControlComboBox<T> extends JComboBox<T> implements Appear
     /** */
     private static final long serialVersionUID = 20231016L;
 
+    /**
+     * Constructor.
+     */
+    public AppearanceControlComboBox()
+    {
+        //
+    }
+
     @Override
     public boolean isFont()
     {

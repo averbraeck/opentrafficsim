@@ -45,6 +45,7 @@ public class DirectBusStopPerception extends AbstractPerceptionCategory<LaneBase
     protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 
     /**
+     * Constructor.
      * @param perception perception
      */
     public DirectBusStopPerception(final LanePerception perception)

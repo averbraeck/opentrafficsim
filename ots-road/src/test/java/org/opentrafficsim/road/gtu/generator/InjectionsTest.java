@@ -72,6 +72,17 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 public class InjectionsTest
 {
 
+    /** Verbose test. */
+    private static final boolean VERBOSE = false;
+
+    /**
+     * Constructor.
+     */
+    public InjectionsTest()
+    {
+        //
+    }
+
     /**
      * Test Injections.
      * @throws ParameterException on exception
@@ -126,11 +137,11 @@ public class InjectionsTest
         Try.testFail(() -> baseInjections(time2), IllegalArgumentException.class); // xxx2 = wrong value type
         baseInjections(time, id);
         Try.testFail(() -> baseInjections(time, id2), IllegalArgumentException.class);
-        Try.testFail(() -> baseInjections(time, position).getAllPositions(), IllegalStateException.class); // pos & lane & link?
+        Try.testFail(() -> baseInjections(time, position).getAllPositions(), IllegalArgumentException.class); // pos,lane,link?
         Try.testFail(() -> baseInjections(time, position2), IllegalArgumentException.class);
-        Try.testFail(() -> baseInjections(time, lane).getAllPositions(), IllegalStateException.class);
+        Try.testFail(() -> baseInjections(time, lane).getAllPositions(), IllegalArgumentException.class);
         Try.testFail(() -> baseInjections(time, lane2), IllegalArgumentException.class);
-        Try.testFail(() -> baseInjections(time, link).getAllPositions(), IllegalStateException.class);
+        Try.testFail(() -> baseInjections(time, link).getAllPositions(), IllegalArgumentException.class);
         Try.testFail(() -> baseInjections(time, link2), IllegalArgumentException.class);
         assertTrue(baseInjections(time, id, position, lane, link).getAllPositions().isEmpty()); // position types are defined
         Try.testFail(() -> baseInjections(time).canPlace(null, null, null, null), IllegalStateException.class); // no speed

@@ -10,7 +10,6 @@ import org.djutils.cli.CliUtil;
 import org.djutils.draw.DrawRuntimeException;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.geometry.OtsLine2d;
-import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;

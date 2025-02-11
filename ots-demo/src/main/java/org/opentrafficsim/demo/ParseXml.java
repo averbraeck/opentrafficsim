@@ -32,13 +32,18 @@ public class ParseXml
 {
     /**
      * Make a DOM tree and do some xpath.
-     * @throws Exception
+     * @throws Exception exception
      */
     public ParseXml() throws Exception
     {
         domTree(URLResource.getResource("/resources/conflict/Simple.xml").getPath());
     }
 
+    /**
+     * Print dom tree.
+     * @param path path
+     * @throws Exception exception
+     */
     private void domTree(final String path) throws Exception
     {
         File file = new File(path);
@@ -60,6 +65,12 @@ public class ParseXml
         print(xmlDocument, ".//ots:GTUTYPE");
     }
 
+    /**
+     * Print document.
+     * @param xmlDocument document
+     * @param expression expression
+     * @throws Exception exception
+     */
     private void print(final Document xmlDocument, final String expression) throws Exception
     {
         XPath xPath = XPathFactory.newInstance().newXPath();
@@ -101,16 +112,28 @@ public class ParseXml
     }
 
     /**
-     * @param args
-     * @throws Exception
+     * Main method.
+     * @param args args
+     * @throws Exception exception
      */
     public static void main(final String[] args) throws Exception
     {
         new ParseXml();
     }
 
+    /**
+     * Defaults resolver.
+     */
     static class DefaultsResolver implements EntityResolver
     {
+        /**
+         * Constructor.
+         */
+        DefaultsResolver()
+        {
+            //
+        }
+
         @Override
         public InputSource resolveEntity(final String publicId, final String systemId)
         {

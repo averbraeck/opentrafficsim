@@ -23,16 +23,16 @@ import nl.tudelft.simulation.dsol.logger.Cat;
 public class HtmlGraphicsEnvironment extends GraphicsEnvironment
 {
     /** the (dummy) device to use in the graphics environment. */
-    HtmlDevice htmlDevice;
+    private HtmlDevice htmlDevice;
 
     /** the canvas to draw on. */
-    HtmlGraphics2d graphics2D;
+    private HtmlGraphics2d graphics2D;
 
     /** the (dummy) configuration to use. */
-    HtmlGraphicsConfiguration graphicsConfiguration;
+    private HtmlGraphicsConfiguration graphicsConfiguration;
 
     /**
-     * 
+     * Constructor.
      */
     public HtmlGraphicsEnvironment()
     {
@@ -58,7 +58,7 @@ public class HtmlGraphicsEnvironment extends GraphicsEnvironment
     }
 
     @Override
-    public Graphics2D createGraphics(BufferedImage img)
+    public Graphics2D createGraphics(final BufferedImage img)
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLGraphicsEnvironment.createGraphics()");
         return this.graphics2D;
@@ -79,7 +79,7 @@ public class HtmlGraphicsEnvironment extends GraphicsEnvironment
     }
 
     @Override
-    public String[] getAvailableFontFamilyNames(Locale l)
+    public String[] getAvailableFontFamilyNames(final Locale l)
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLGraphicsEnvironment.getAvailableFontFamilyNames()");
         return new String[] {};

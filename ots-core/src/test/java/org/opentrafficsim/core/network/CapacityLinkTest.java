@@ -22,6 +22,15 @@ import org.opentrafficsim.core.mock.MockSimulator;
  */
 public class CapacityLinkTest
 {
+
+    /**
+     * Constructor.
+     */
+    public CapacityLinkTest()
+    {
+        //
+    }
+
     /**
      * Test the constructor and all getters.
      * @throws NetworkException this test has failed if this exception occurs uncaught

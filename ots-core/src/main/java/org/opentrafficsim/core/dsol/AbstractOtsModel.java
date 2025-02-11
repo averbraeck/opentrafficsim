@@ -73,6 +73,7 @@ public abstract class AbstractOtsModel extends AbstractDsolModel<Duration, OtsSi
     }
 
     /**
+     * Set short name.
      * @param shortName set shortName
      */
     public final void setShortName(final String shortName)
@@ -87,6 +88,7 @@ public abstract class AbstractOtsModel extends AbstractDsolModel<Duration, OtsSi
     }
 
     /**
+     * Set description.
      * @param description set description
      */
     public final void setDescription(final String description)

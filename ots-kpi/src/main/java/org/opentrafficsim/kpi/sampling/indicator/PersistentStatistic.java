@@ -4,6 +4,7 @@ import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.base.DoubleScalarRel;
 
 /**
+ * Persistent statistic.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -30,6 +31,7 @@ public class PersistentStatistic<U extends Unit<U>, T extends DoubleScalarRel<U,
     }
 
     /**
+     * Returns confidence interval.
      * @param alpha confidence level
      * @return both-side confidence interval
      */
@@ -39,6 +41,7 @@ public class PersistentStatistic<U extends Unit<U>, T extends DoubleScalarRel<U,
     }
 
     /**
+     * Returns confidence interval.
      * @param alpha confidence level
      * @param side side of confidence interval
      * @return confidence interval
@@ -49,6 +52,7 @@ public class PersistentStatistic<U extends Unit<U>, T extends DoubleScalarRel<U,
     }
 
     /**
+     * Returns the sum.
      * @return sum.
      */
     public T getSum()
@@ -57,6 +61,7 @@ public class PersistentStatistic<U extends Unit<U>, T extends DoubleScalarRel<U,
     }
 
     /**
+     * Returns the minimum.
      * @return min.
      */
     public T getMin()
@@ -65,6 +70,7 @@ public class PersistentStatistic<U extends Unit<U>, T extends DoubleScalarRel<U,
     }
 
     /**
+     * Returns the maximum.
      * @return max.
      */
     public T getMax()
@@ -73,6 +79,7 @@ public class PersistentStatistic<U extends Unit<U>, T extends DoubleScalarRel<U,
     }
 
     /**
+     * Returns the mean.
      * @return mean.
      */
     public T getMean()
@@ -81,6 +88,7 @@ public class PersistentStatistic<U extends Unit<U>, T extends DoubleScalarRel<U,
     }
 
     /**
+     * Returns the standard deviation.
      * @return stDev.
      */
     public T getStDev()
@@ -89,6 +97,7 @@ public class PersistentStatistic<U extends Unit<U>, T extends DoubleScalarRel<U,
     }
 
     /**
+     * Returns the variance.
      * @return variance.
      */
     public double getVariance()
@@ -97,6 +106,7 @@ public class PersistentStatistic<U extends Unit<U>, T extends DoubleScalarRel<U,
     }
 
     /**
+     * Return n.
      * @return n.
      */
     public long getN()

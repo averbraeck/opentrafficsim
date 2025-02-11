@@ -20,6 +20,14 @@ public class TrafficControlExceptionTest
 {
 
     /**
+     * Constructor.
+     */
+    public TrafficControlExceptionTest()
+    {
+        //
+    }
+
+    /**
      * Test the TrafficControlException class.
      */
     @Test

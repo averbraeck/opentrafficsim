@@ -28,6 +28,14 @@ public class AdaptationSpeed implements BehavioralAdaptation
     /** Base value for the desired speed. */
     private Double fSpeed0;
 
+    /**
+     * Constructor.
+     */
+    public AdaptationSpeed()
+    {
+        //
+    }
+
     @Override
     public void adapt(final Parameters parameters, final double taskSaturation) throws ParameterException
     {

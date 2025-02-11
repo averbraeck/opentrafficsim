@@ -19,7 +19,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.Blockable;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-
 public class BlockingColorer implements GtuColorer
 {
 
@@ -36,6 +35,14 @@ public class BlockingColorer implements GtuColorer
     {
         LEGEND.add(new LegendEntry(Color.RED, "Not blocking", "Not blocking"));
         LEGEND.add(new LegendEntry(Color.WHITE, "Blocking", "Blocking"));
+    }
+
+    /**
+     * Constructor.
+     */
+    public BlockingColorer()
+    {
+        //
     }
 
     @Override

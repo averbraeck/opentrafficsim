@@ -28,6 +28,7 @@ public interface DefaultSimplePerception extends LaneBasedPerceptionCategory
 {
 
     /**
+     * Update lane path info.
      * @throws GtuException when the GTU was not initialized yet.
      * @throws NetworkException when the speed limit for a GTU type cannot be retrieved from the network.
      * @throws ParameterException in case of not being able to retrieve parameter ParameterTypes.LOOKAHEAD
@@ -145,49 +146,58 @@ public interface DefaultSimplePerception extends LaneBasedPerceptionCategory
     LanePathInfo getLanePathInfo();
 
     /**
+     * Returns forward headways.
      * @return forwardHeadway, the forward headway and first object (GTU) in front
      */
     Headway getForwardHeadwayGtu();
 
     /**
+     * Returns forward headway objects.
      * @return forwardHeadway, the forward headway and first object (not a GTU) in front
      */
     Headway getForwardHeadwayObject();
 
     /**
+     * Returns backward headways.
      * @return backwardHeadwayGtu, the backward headway and first object (e.g., a GTU) behind
      */
     Headway getBackwardHeadway();
 
     /**
+     * Returns right accessible adjacent lanes.
      * @return accessibleAdjacentLanesLeft, the accessible adjacent lanes on the left
      */
     Map<Lane, Set<Lane>> getAccessibleAdjacentLanesLeft();
 
     /**
+     * Returns right accessible adjacent lanes.
      * @return accessibleAdjacentLanesRight, the accessible adjacent lanes on the right
      */
     Map<Lane, Set<Lane>> getAccessibleAdjacentLanesRight();
 
     /**
+     * Returns accessible adjacent lanes.
      * @param lateralDirection the direction to return the accessible adjacent lane map for
      * @return the accessible adjacent lane map for the given direction
      */
     Map<Lane, Set<Lane>> getAccessibleAdjacentLanes(LateralDirectionality lateralDirection);
 
     /**
+     * Returns left neighbors.
      * @return neighboringHeadwaysLeft, the objects (e.g., GTUs) in parallel, in front and behind on the left neighboring lane,
      *         with their headway relative to our GTU, and information about the status of the adjacent objects
      */
     Collection<Headway> getNeighboringHeadwaysLeft();
 
     /**
+     * Returns right neighbors.
      * @return neighboringHeadwaysRight, the objects (e.g., GTUs) in parallel, in front and behind on the right neighboring
      *         lane, with their headway relative to our GTU, and information about the status of the adjacent objects
      */
     Collection<Headway> getNeighboringHeadwaysRight();
 
     /**
+     * Returns neighbors.
      * @param lateralDirection the direction to return the parallel headway collection for
      * @return the the objects (e.g., GTUs) in parallel, in front and behind for the lane in the given direction, with their
      *         headway relative to our GTU, and information about the status of the adjacent objects
@@ -195,18 +205,21 @@ public interface DefaultSimplePerception extends LaneBasedPerceptionCategory
     Collection<Headway> getNeighboringHeadways(LateralDirectionality lateralDirection);
 
     /**
+     * Returns left parallel headways.
      * @return parallelHeadwaysLeft, the parallel objects (e.g., GTUs) on the left, with information about their status and
      *         parallel overlap with our GTU.
      */
     Collection<Headway> getParallelHeadwaysLeft();
 
     /**
+     * Return right parallel headways.
      * @return parallelHeadwaysRight, the parallel objects (e.g., GTUs) on the right, with information about their status and
      *         parallel overlap with our GTU.
      */
     Collection<Headway> getParallelHeadwaysRight();
 
     /**
+     * Returns parallel headways.
      * @param lateralDirection the direction to return the neighboring headway collection for
      * @return the the parallel objects (e.g., GTUs) for the given direction, with information about their status and parallel
      *         overlap with our GTU.
@@ -214,6 +227,7 @@ public interface DefaultSimplePerception extends LaneBasedPerceptionCategory
     Collection<Headway> getParallelHeadways(LateralDirectionality lateralDirection);
 
     /**
+     * Returns the speed limit.
      * @return speedLimit
      */
     Speed getSpeedLimit();

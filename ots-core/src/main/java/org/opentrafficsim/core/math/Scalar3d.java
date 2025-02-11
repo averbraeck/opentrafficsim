@@ -20,6 +20,7 @@ public final class Scalar3d
     }
 
     /**
+     * Constructor.
      * @param r the radius
      * @param theta the angle from the z direction
      * @param phi the projected angle in the xy-plane from the x direction

@@ -58,6 +58,7 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
     private static final long serialVersionUID = 20170421L;
 
     /**
+     * Constructor.
      * @param model the model
      * @param animationPanel the animation panel
      */
@@ -163,6 +164,7 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
         private final String xml;
 
         /**
+         * Constructor.
          * @param simulator the simulator
          * @param shortName name of the model
          * @param description description of the model

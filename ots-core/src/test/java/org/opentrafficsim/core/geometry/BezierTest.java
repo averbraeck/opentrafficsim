@@ -23,6 +23,14 @@ public class BezierTest
 {
 
     /**
+     * Constructor.
+     */
+    public BezierTest()
+    {
+        //
+    }
+
+    /**
      * Test the various methods in the Bezier class.
      */
     @Test

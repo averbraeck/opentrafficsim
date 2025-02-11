@@ -23,15 +23,24 @@ import jakarta.xml.bind.JAXBException;
 public class LengthAdapterTest
 {
     /** the allowed units. */
-    LengthUnit[] units = new LengthUnit[] {LengthUnit.MILLIMETER, LengthUnit.CENTIMETER, LengthUnit.DECIMETER, LengthUnit.METER,
-            LengthUnit.DECAMETER, LengthUnit.HECTOMETER, LengthUnit.KILOMETER, LengthUnit.MILE, LengthUnit.YARD,
-            LengthUnit.FOOT};
+    private static final LengthUnit[] UNITS = new LengthUnit[] {LengthUnit.MILLIMETER, LengthUnit.CENTIMETER,
+            LengthUnit.DECIMETER, LengthUnit.METER, LengthUnit.DECAMETER, LengthUnit.HECTOMETER, LengthUnit.KILOMETER,
+            LengthUnit.MILE, LengthUnit.YARD, LengthUnit.FOOT};
 
     /** the corresponding strings. */
-    String[] unitStrings = new String[] {"mm", "cm", "dm", "m", "dam", "hm", "km", "mi", "yd", "ft"};
+    private static final String[] UNIT_STRINGS = new String[] {"mm", "cm", "dm", "m", "dam", "hm", "km", "mi", "yd", "ft"};
 
     /**
-     * Test the SignedLengthAdapter
+     * Constructor.
+     */
+    public LengthAdapterTest()
+    {
+        //
+    }
+
+    /**
+     * Test the SignedLengthAdapter.
+     * @throws JAXBException exception
      */
     @Test
     public void testSignedLengthAdapter() throws JAXBException
@@ -39,10 +48,10 @@ public class LengthAdapterTest
         Locale.setDefault(Locale.US);
         LengthAdapter lengthAdapter = new LengthAdapter();
 
-        for (int i = 0; i < this.units.length; i++)
+        for (int i = 0; i < UNITS.length; i++)
         {
-            final LengthUnit unit = this.units[i];
-            final String us = this.unitStrings[i];
+            final LengthUnit unit = UNITS[i];
+            final String us = UNIT_STRINGS[i];
 
             assertEquals(new LengthType(new Length(2.3, unit)), lengthAdapter.unmarshal("2.3 " + us));
             // assertEquals(new LengthType(new Length(2.3, unit)), lengthAdapter.unmarshal("+2.3 " + us));
@@ -67,7 +76,8 @@ public class LengthAdapterTest
     }
 
     /**
-     * Test the LengthAdapter
+     * Test the LengthAdapter.
+     * @throws JAXBException exception
      */
     // TODO: Repair @Test
     public void testLengthAdapter() throws JAXBException
@@ -75,10 +85,10 @@ public class LengthAdapterTest
         Locale.setDefault(Locale.US);
         PositiveLengthAdapter lengthAdapter = new PositiveLengthAdapter();
 
-        for (int i = 0; i < this.units.length; i++)
+        for (int i = 0; i < UNITS.length; i++)
         {
-            final LengthUnit unit = this.units[i];
-            final String us = this.unitStrings[i];
+            final LengthUnit unit = UNITS[i];
+            final String us = UNIT_STRINGS[i];
 
             assertEquals(new LengthType(new Length(2.3, unit)), lengthAdapter.unmarshal("2.3 " + us));
             // assertEquals(new LengthType(new Length(2.3, unit)), lengthAdapter.unmarshal("+2.3 " + us));

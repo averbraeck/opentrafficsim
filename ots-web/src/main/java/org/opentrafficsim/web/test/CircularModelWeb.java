@@ -25,6 +25,7 @@ import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialo
 public class CircularModelWeb extends OtsWebServer
 {
     /**
+     * Constructor.
      * @param title the tile for the model
      * @param simulator DevsRealTimeAnimator.TimeDouble; the simulator
      * @param model the model
@@ -39,6 +40,7 @@ public class CircularModelWeb extends OtsWebServer
     }
 
     /**
+     * Main method.
      * @param args arguments, expected to be empty
      * @throws Exception on error
      */

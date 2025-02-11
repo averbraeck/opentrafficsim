@@ -21,7 +21,9 @@ import org.opentrafficsim.kpi.sampling.impl.TestGtuData;
 public class FiltersTest
 {
 
-    /** */
+    /**
+     * Constructor.
+     */
     public FiltersTest()
     {
     }

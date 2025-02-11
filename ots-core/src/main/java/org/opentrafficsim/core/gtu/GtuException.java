@@ -18,13 +18,14 @@ public class GtuException extends OtsException
     private static final long serialVersionUID = 20150217L;
 
     /**
-     * 
+     * Constructor.
      */
     public GtuException()
     {
     }
 
     /**
+     * Constructor.
      * @param message String
      */
     public GtuException(final String message)
@@ -33,6 +34,7 @@ public class GtuException extends OtsException
     }
 
     /**
+     * Constructor.
      * @param cause Throwable
      */
     public GtuException(final Throwable cause)
@@ -41,6 +43,7 @@ public class GtuException extends OtsException
     }
 
     /**
+     * Constructor.
      * @param message String
      * @param cause Throwable
      */

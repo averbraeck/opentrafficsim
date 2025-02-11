@@ -97,6 +97,7 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends TextAni
     }
 
     /**
+     * Returns text object.
      * @return text.
      */
     public final T getText()
@@ -141,6 +142,7 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends TextAni
         private static final long serialVersionUID = 20161211L;
 
         /**
+         * Constructor.
          * @param source the object for which the text is displayed
          * @param text the text to display
          * @param dx the horizontal movement of the text, in meters

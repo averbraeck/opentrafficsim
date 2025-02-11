@@ -34,7 +34,7 @@ public class LinkAnimation extends OtsRenderable<LinkData>
     /** */
     private static final long serialVersionUID = 20140000L;
 
-    /** */
+    /** Width. */
     private float width;
 
     /** the Text object to destroy when the animation is destroyed. */
@@ -59,6 +59,7 @@ public class LinkAnimation extends OtsRenderable<LinkData>
     private boolean dynamic = false;
 
     /**
+     * Constructor.
      * @param link link data.
      * @param contextualized context provider.
      * @param width width
@@ -161,6 +162,7 @@ public class LinkAnimation extends OtsRenderable<LinkData>
         private static final long serialVersionUID = 20161211L;
 
         /**
+         * Constructor.
          * @param source the object for which the text is displayed
          * @param text the text to display
          * @param dx the horizontal movement of the text, in meters

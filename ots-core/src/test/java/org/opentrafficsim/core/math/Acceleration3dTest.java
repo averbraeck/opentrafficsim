@@ -25,6 +25,14 @@ public class Acceleration3dTest
 {
 
     /**
+     * Constructor.
+     */
+    public Acceleration3dTest()
+    {
+        //
+    }
+
+    /**
      * Test the constructors and getters of the Acceleration3d class.
      * @throws ValueRuntimeException Should not happen; test fails if it does
      */

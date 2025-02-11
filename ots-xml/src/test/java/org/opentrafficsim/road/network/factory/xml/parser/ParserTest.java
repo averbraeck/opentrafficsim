@@ -31,6 +31,15 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  */
 public class ParserTest
 {
+
+    /**
+     * Constructor.
+     */
+    public ParserTest()
+    {
+        //
+    }
+
     /**
      * test the XML parser.
      * @throws NamingException on error
@@ -69,6 +78,7 @@ public class ParserTest
         private RoadNetwork network;
 
         /**
+         * Constructor.
          * @param simulator the simulator for this model
          */
         public TestModel(final OtsSimulatorInterface simulator)

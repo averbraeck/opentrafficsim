@@ -40,6 +40,14 @@ public class IncentiveGetInLane implements MandatoryIncentive
     /** Hierarchy parameter. */
     protected static final ParameterTypeDouble SOCIO = LmrsParameters.SOCIO;
 
+    /**
+     * Constructor.
+     */
+    public IncentiveGetInLane()
+    {
+        //
+    }
+
     @Override
     public Desire determineDesire(final Parameters parameters, final LanePerception perception,
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire)

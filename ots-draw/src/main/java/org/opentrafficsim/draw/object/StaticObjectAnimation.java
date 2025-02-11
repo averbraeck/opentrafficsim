@@ -34,19 +34,20 @@ public class StaticObjectAnimation extends OtsRenderable<StaticObjectData>
     /** */
     private static final long serialVersionUID = 20160400L;
 
-    /** */
+    /** Width. */
     private float width;
 
-    /** */
+    /** Color. */
     private Color color;
 
-    /** */
+    /** Fill. */
     private boolean fill;
 
     /** Drawable paths. */
     private final Set<Path2D.Float> paths;
 
     /**
+     * Constructor.
      * @param source Static Object
      * @param contextualized context provider
      * @param width width of the contour line to draw
@@ -80,6 +81,7 @@ public class StaticObjectAnimation extends OtsRenderable<StaticObjectData>
     }
 
     /**
+     * Returns width.
      * @return width
      */
     public final float getWidth()
@@ -88,6 +90,7 @@ public class StaticObjectAnimation extends OtsRenderable<StaticObjectData>
     }
 
     /**
+     * Sets width.
      * @param width set width
      */
     public final void setWidth(final float width)
@@ -96,6 +99,7 @@ public class StaticObjectAnimation extends OtsRenderable<StaticObjectData>
     }
 
     /**
+     * Returns color.
      * @return color
      */
     public final Color getColor()
@@ -104,6 +108,7 @@ public class StaticObjectAnimation extends OtsRenderable<StaticObjectData>
     }
 
     /**
+     * Sets color.
      * @param color set color
      */
     public final void setColor(final Color color)
@@ -112,6 +117,7 @@ public class StaticObjectAnimation extends OtsRenderable<StaticObjectData>
     }
 
     /**
+     * Returns whether to fill.
      * @return fill
      */
     public final boolean isFill()
@@ -120,6 +126,7 @@ public class StaticObjectAnimation extends OtsRenderable<StaticObjectData>
     }
 
     /**
+     * Sets whether to fill.
      * @param fill set fill
      */
     public final void setFill(final boolean fill)

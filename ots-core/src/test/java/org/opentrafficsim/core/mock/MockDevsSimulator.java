@@ -22,6 +22,7 @@ public final class MockDevsSimulator
     }
 
     /**
+     * Creates mock.
      * @return mocked DevsSimulator
      */
     public static OtsSimulatorInterface createMock()

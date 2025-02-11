@@ -24,10 +24,16 @@ import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
  */
 public interface DirectionalOccupancyDetector extends Serializable, Identifiable
 {
-    /** @return the relative position type of the vehicle (e.g., FRONT, BACK) that triggers the detector. */
+    /**
+     * Returns the entry position.
+     * @return the relative position type of the vehicle (e.g., FRONT, BACK) that triggers the detector.
+     */
     RelativePosition.Type getPositionTypeEntry();
 
-    /** @return the relative position type of the vehicle (e.g., FRONT, BACK) that triggers the detector. */
+    /**
+     * Returns the exit position.
+     * @return the relative position type of the vehicle (e.g., FRONT, BACK) that triggers the detector.
+     */
     RelativePosition.Type getPositionTypeExit();
 
     /**
@@ -42,11 +48,17 @@ public interface DirectionalOccupancyDetector extends Serializable, Identifiable
      */
     LaneBasedObject getLanePositionExit();
 
-    /** @return The id of the detector. */
+    /**
+     * Returns the id.
+     * @return The id of the detector.
+     */
     @Override
     String getId();
 
-    /** @return The simulator. */
+    /**
+     * Returns the simulator.
+     * @return The simulator.
+     */
     OtsSimulatorInterface getSimulator();
 
     /**

@@ -27,6 +27,7 @@ public class IncentiveColorer extends DesireColorer
     private Class<? extends Incentive> incentiveClass;
 
     /**
+     * Constructor.
      * @param incentiveClass incentive class
      */
     public IncentiveColorer(final Class<? extends Incentive> incentiveClass)

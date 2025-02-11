@@ -25,6 +25,18 @@ import org.junit.jupiter.api.Test;
  */
 public class Ots2dSetTest
 {
+
+    /** Verbose test. */
+    private static final boolean VERBOSE = false;
+
+    /**
+     * Constructor.
+     */
+    public Ots2dSetTest()
+    {
+        //
+    }
+
     /**
      * Test some simple things.
      */
@@ -72,19 +84,22 @@ public class Ots2dSetTest
         assertFalse(set.add(shape), "Adding the same shape again should return false");
         assertEquals(1, set.size(), "Size of the set should still be one");
         assertEquals(1, set.toArray().length, "Length of result of toArray should be 0");
-        System.out.println("set is " + set.toString(200));
-        System.out.println("level 0:");
-        System.out.println(set.toStringGraphic(0));
-        System.out.println("level 1:");
-        System.out.println(set.toStringGraphic(1));
-        System.out.println("level 2:");
-        System.out.println(set.toStringGraphic(2));
-        System.out.println("level 3:");
-        System.out.println(set.toStringGraphic(3));
-        System.out.println("level 4:");
-        System.out.println(set.toStringGraphic(4));
-        System.out.println("level 5:");
-        System.out.println(set.toStringGraphic(5));
+        if (VERBOSE)
+        {
+            System.out.println("set is " + set.toString(200));
+            System.out.println("level 0:");
+            System.out.println(set.toStringGraphic(0));
+            System.out.println("level 1:");
+            System.out.println(set.toStringGraphic(1));
+            System.out.println("level 2:");
+            System.out.println(set.toStringGraphic(2));
+            System.out.println("level 3:");
+            System.out.println(set.toStringGraphic(3));
+            System.out.println("level 4:");
+            System.out.println(set.toStringGraphic(4));
+            System.out.println("level 5:");
+            System.out.println(set.toStringGraphic(5));
+        }
         // System.out.println("level 6:");
         // System.out.println(set.toStringGraphic(6));
         assertTrue(set.contains(shape), "set contains shape");
@@ -114,8 +129,11 @@ public class Ots2dSetTest
         assertEquals(0, set.size(), "Size of set should be 0 again");
         assertFalse(set.contains(shape), "Set no longer contains shape");
         assertTrue(set.isEmpty(), "Set should be empty again");
-        System.out.println("level 3:");
-        System.out.println(set.toStringGraphic(3));
+        if (VERBOSE)
+        {
+            System.out.println("level 3:");
+            System.out.println(set.toStringGraphic(3));
+        }
         set.add(shape);
         assertEquals(1, set.size(), "Set should contain one shape");
         Polygon2d triangleShape = new Polygon2d(new Point2d(-1, 0), new Point2d(1, 0), new Point2d(0, 1));

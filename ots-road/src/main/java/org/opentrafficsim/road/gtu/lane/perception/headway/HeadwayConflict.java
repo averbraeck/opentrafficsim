@@ -360,6 +360,7 @@ public class HeadwayConflict extends AbstractHeadwayLaneBasedObject
         private final LengthVector width;
 
         /**
+         * Constructor.
          * @param fractions fractions, from 0 to 1
          * @param width vector of equal length with widths
          */

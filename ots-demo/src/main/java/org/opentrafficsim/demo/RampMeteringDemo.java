@@ -204,6 +204,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
     }
 
     /**
+     * Main method.
      * @param args String[] command line arguments
      * @throws Exception any exception
      */

@@ -216,6 +216,7 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
         private boolean isTextDestroyed = false;
 
         /**
+         * Constructor.
          * @param source the object for which the text is displayed
          * @param text the text to display
          * @param dx the horizontal movement of the text, in meters
@@ -231,6 +232,7 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
         }
 
         /**
+         * Constructor.
          * @param source the object for which the text is displayed
          * @param text the text to display
          * @param dx the horizontal movement of the text, in meters
@@ -334,7 +336,7 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
         {
             return DrawLevel.GTU.getZ();
         }
-        
+
         /**
          * Marker for GTU when zoomed out.
          */
@@ -342,13 +344,13 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
         {
             /** Circle. */
             CIRCLE(new Ellipse2D.Double(0, 0, 0, 0)),
-            
+
             /** Square. */
             SQUARE(new Rectangle2D.Double(0, 0, 0, 0));
-            
+
             /** Shape. */
             private RectangularShape shape;
-            
+
             /**
              * Constructor.
              * @param shape shape
@@ -357,7 +359,7 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
             {
                 this.shape = shape;
             }
-            
+
             /**
              * Returns the shape.
              * @return shape.

@@ -369,11 +369,11 @@ public final class ConflictUtil
                 }
                 // conflict GTU (partially) on the conflict
                 // {@formatter:off}
-                // ______________________________________________ 
+                // ______________________________________________
                 //   ___      virtual headway   |  ___  |
                 //  |___|(-----------------------)|___|(vehicle from south, on lane from south)
                 // _____________________________|_______|________
-                //                              /       / 
+                //                              /       /
                 //                             /       /
                 // {@formatter:on}
                 virtualHeadway = conflict.getDistance().plus(con.getOverlapRear());
@@ -412,9 +412,9 @@ public final class ConflictUtil
             // {@formatter:off}
             /*
              * ______________________________________________
-             *    ___    stop for conflict  |       | 
+             *    ___    stop for conflict  |       |
              *   |___|(--------------------)|   ___ |
-             * _____________________________|__/  /_|________ 
+             * _____________________________|__/  /_|________
              *                              / /__/  /
              *                             /       /
              */
@@ -976,14 +976,6 @@ public final class ConflictUtil
      * of the conflict results in deceleration slightly above what is considered safe deceleration, the plan should not be
      * abandoned. Decelerations above what is considered safe deceleration may result due to numerical overshoot or other factor
      * coming into play in car-following models. Many other examples exist where a driver sticks to a certain plan.
-     * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://tudelft.nl/staff/p.knoppers-1">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public static final class ConflictPlans implements Blockable, Serializable
     {
@@ -1005,6 +997,14 @@ public final class ConflictUtil
 
         /** Whether the GTU is blocking conflicts. */
         private boolean blocking;
+
+        /**
+         * Constructor.
+         */
+        public ConflictPlans()
+        {
+            //
+        }
 
         /**
          * Clean any yield plan that was no longer kept active in the last evaluation of conflicts.
@@ -1071,6 +1071,7 @@ public final class ConflictUtil
         }
 
         /**
+         * Return whether plan is in approach stop line phase.
          * @param stopLine stop line
          * @return whether the current phase is 'approach' for the given stop line
          */
@@ -1081,6 +1082,7 @@ public final class ConflictUtil
         }
 
         /**
+         * Return whether plan is in stop phase.
          * @param stopLine stop line
          * @return whether the current phase is 'yield' for the given stop line
          */
@@ -1091,6 +1093,7 @@ public final class ConflictUtil
         }
 
         /**
+         * Return whether plan is in stop phase.
          * @param stopLine stop line
          * @return whether the current phase is 'run' for the given stop line
          */
@@ -1106,6 +1109,7 @@ public final class ConflictUtil
         }
 
         /**
+         * Return indicator intent.
          * @return indicatorIntent.
          */
         public TurnIndicatorIntent getIndicatorIntent()
@@ -1114,6 +1118,7 @@ public final class ConflictUtil
         }
 
         /**
+         * Return length towards object concerning indicator intent.
          * @return indicatorObjectDistance.
          */
         public Length getIndicatorObjectDistance()
@@ -1122,6 +1127,7 @@ public final class ConflictUtil
         }
 
         /**
+         * Set indicator intent.
          * @param intent indicator intent
          * @param distance distance to object pertaining to the turn indicator intent
          */

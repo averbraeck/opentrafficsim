@@ -46,6 +46,14 @@ public class TaskSaturationColorer implements GtuColorer
         LEGEND.add(new LegendEntry(NA, "N/A", "N/A"));
     }
 
+    /**
+     * Constructor.
+     */
+    public TaskSaturationColorer()
+    {
+        //
+    }
+
     @Override
     public Color getColor(final Gtu gtu)
     {

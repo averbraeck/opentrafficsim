@@ -14,6 +14,14 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityUnitType;
 public class LinearDensityUnitAdapter extends ExpressionAdapter<LinearDensityUnit, LinearDensityUnitType>
 {
 
+    /**
+     * Constructor.
+     */
+    public LinearDensityUnitAdapter()
+    {
+        //
+    }
+
     @Override
     public LinearDensityUnitType unmarshal(final String field)
     {

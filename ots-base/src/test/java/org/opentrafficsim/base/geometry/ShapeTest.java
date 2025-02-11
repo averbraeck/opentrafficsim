@@ -21,6 +21,14 @@ public class ShapeTest
 {
 
     /**
+     * Constructor.
+     */
+    public ShapeTest()
+    {
+        //
+    }
+
+    /**
      * Tests CircleShape, and equal RoundedRectangleShape.
      */
     @Test

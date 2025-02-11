@@ -10,6 +10,7 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,7 @@ import org.opentrafficsim.core.network.Network;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
+import nl.tudelft.simulation.dsol.statistics.SimulationStatistic;
 
 /**
  * Test the TemplateGTUType class.
@@ -38,6 +40,14 @@ public class TemplateGtuTypeTest implements OtsModelInterface
     private static final long serialVersionUID = 20160311L;
 
     /**
+     * Constructor.
+     */
+    public TemplateGtuTypeTest()
+    {
+        //
+    }
+
+    /**
      * Test the TemplateGTUType class.
      * @throws NamingException should never happen
      * @throws SimRuntimeException should never happen
@@ -47,7 +57,6 @@ public class TemplateGtuTypeTest implements OtsModelInterface
     @Test
     public final void templateGtuTypeTest() throws SimRuntimeException, NamingException, GtuException, ParameterException
     {
-        Network network = new Network("network", this.simulator);
         GtuType gtuTypeA = new GtuType("type name A", DefaultsNl.VEHICLE);
         GtuType gtuTypeB = new GtuType("type name B", DefaultsNl.VEHICLE);
         Generator<Length> lengthGeneratorA = new Generator<Length>()
@@ -159,7 +168,7 @@ public class TemplateGtuTypeTest implements OtsModelInterface
         }
     }
 
-    /** */
+    /** Simulator. */
     private OtsSimulatorInterface simulator;
 
     @Override
@@ -181,7 +190,7 @@ public class TemplateGtuTypeTest implements OtsModelInterface
     }
 
     @Override
-    public List getOutputStatistics()
+    public List<SimulationStatistic<Duration>> getOutputStatistics()
     {
         return null;
     }

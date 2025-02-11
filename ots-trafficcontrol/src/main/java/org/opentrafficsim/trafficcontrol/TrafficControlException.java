@@ -19,13 +19,14 @@ public class TrafficControlException extends OtsException
     private static final long serialVersionUID = 20161116;
 
     /**
-     * 
+     * Constructor.
      */
     public TrafficControlException()
     {
     }
 
     /**
+     * Constructor.
      * @param message String
      */
     public TrafficControlException(final String message)
@@ -34,6 +35,7 @@ public class TrafficControlException extends OtsException
     }
 
     /**
+     * Constructor.
      * @param cause Throwable
      */
     public TrafficControlException(final Throwable cause)
@@ -42,6 +44,7 @@ public class TrafficControlException extends OtsException
     }
 
     /**
+     * Constructor.
      * @param message String
      * @param cause Throwable
      */

@@ -32,6 +32,14 @@ public class NodeTest
 {
 
     /**
+     * Constructor.
+     */
+    public NodeTest()
+    {
+        //
+    }
+
+    /**
      * Test the basics of the Node class.
      * @throws NetworkException if that happens uncaught; this test has failed
      */

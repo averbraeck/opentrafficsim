@@ -36,6 +36,14 @@ public class StaticObjectTest implements EventListener
     private Event lastEvent = null;
 
     /**
+     * Constructor.
+     */
+    public StaticObjectTest()
+    {
+        //
+    }
+
+    /**
      * Test the StaticObject class.
      * @throws NetworkException if that happens, this test has failed
      */

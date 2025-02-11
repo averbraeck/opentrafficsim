@@ -22,6 +22,14 @@ import org.junit.jupiter.api.Test;
 public class OtsLocatableTest
 {
 
+    /**
+     * Constructor.
+     */
+    public OtsLocatableTest()
+    {
+        //
+    }
+
     /** Contour. */
     private static final Polygon2d CONTOUR =
             new Polygon2d(new double[] {9.0, 9.0, 11.0, 11.0}, new double[] {22.0, 18.0, 18.0, 22.0});

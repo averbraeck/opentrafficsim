@@ -64,6 +64,15 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  */
 public class AbstractLaneBasedGtuTest implements UNITS
 {
+
+    /**
+     * Constructor.
+     */
+    public AbstractLaneBasedGtuTest()
+    {
+        //
+    }
+
     /**
      * Test that the constructor puts the supplied values in the correct fields, then check the motion of the GTU.
      * @throws Exception when something goes wrong (should not happen)
@@ -371,6 +380,7 @@ class DummyModel extends AbstractOtsModel
     private static final long serialVersionUID = 20150114L;
 
     /**
+     * Constructor.
      * @param simulator the simulator to use
      */
     DummyModel(final OtsSimulatorInterface simulator)

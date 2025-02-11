@@ -37,6 +37,14 @@ public abstract class AbstractIndicator<T extends DoubleScalar<?, ?>>
     private T lastValue;
 
     /**
+     * Constructor.
+     */
+    public AbstractIndicator()
+    {
+        //
+    }
+
+    /**
      * Get value for given query over time interval, returning earlier calculated value if possible. This method uses
      * {@code Time.ZERO} as start time.
      * @param query query, only used to check whether earlier calculated value can be returned

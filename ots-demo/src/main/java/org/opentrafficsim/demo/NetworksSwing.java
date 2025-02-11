@@ -268,7 +268,10 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
             return (InputParameterSelectionMap<K, T>) super.getParameter();
         }
 
-        /** @return the mapped value of the field in the gui, selected by the key's toString() value. */
+        /**
+         * Returns value.
+         * @return the mapped value of the field in the gui, selected by the key's toString() value
+         */
         public T getValue()
         {
             for (JRadioButton button : this.buttons)

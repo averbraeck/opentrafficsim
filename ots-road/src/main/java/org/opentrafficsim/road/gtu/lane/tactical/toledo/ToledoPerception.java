@@ -44,6 +44,7 @@ public class ToledoPerception extends AbstractPerceptionCategory<LaneBasedGtu, L
     private final DirectInfrastructurePerception infrastructureCategory;
 
     /**
+     * Constructor.
      * @param perception perception
      */
     public ToledoPerception(final LanePerception perception)
@@ -68,7 +69,7 @@ public class ToledoPerception extends AbstractPerceptionCategory<LaneBasedGtu, L
      * Suppose vehicle A needs to take the off-ramp, and that behavior is that the minimum distance per required lane change
      * determines how critical it is. First, 400m before the lane-drop, the off-ramp is critical. 300m downstream, the lane-drop
      * is critical. Info is sorted by distance, closest first.
-     * 
+     *
      * <pre>
      * _______
      * _ _A_ _\_________
@@ -77,11 +78,11 @@ public class ToledoPerception extends AbstractPerceptionCategory<LaneBasedGtu, L
      *          \_______
      *     (-)        Lane-drop: 1 lane change  in 400m (400m per lane change)
      *     (--------) Off-ramp:  3 lane changes in 900m (300m per lane change, critical)
-     *     
+     *
      *     (-)        Lane-drop: 1 lane change  in 100m (100m per lane change, critical)
      *     (--------) Off-ramp:  3 lane changes in 600m (200m per lane change)
      * </pre>
-     * 
+     *
      * @param lane relative lateral lane
      * @return infrastructure lane change info of a lane
      */
@@ -97,7 +98,7 @@ public class ToledoPerception extends AbstractPerceptionCategory<LaneBasedGtu, L
      * shown below. Suppose vehicle A needs to take the off-ramp, and that behavior is that the minimum distance per required
      * lane change determines how critical it is. First, 400m before the lane-drop, the off-ramp is critical. 300m downstream,
      * the lane-drop is critical. Info is sorted by distance, closest first.
-     * 
+     *
      * <pre>
      * _______
      * _ _A_ _\_________
@@ -106,11 +107,11 @@ public class ToledoPerception extends AbstractPerceptionCategory<LaneBasedGtu, L
      *          \_______
      *     (-)        Lane-drop: 1 lane change  in 400m (400m per lane change)
      *     (--------) Off-ramp:  3 lane changes in 900m (300m per lane change, critical)
-     *     
+     *
      *     (-)        Lane-drop: 1 lane change  in 100m (100m per lane change, critical)
      *     (--------) Off-ramp:  3 lane changes in 600m (200m per lane change)
      * </pre>
-     * 
+     *
      * @param lane relative lateral lane
      * @return time stamped infrastructure lane change info of a lane
      */

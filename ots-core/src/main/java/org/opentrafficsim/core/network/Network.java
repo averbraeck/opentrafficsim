@@ -118,6 +118,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
     }
 
     /**
+     * Return node map.
      * @return only to be used in the 'network' package for cloning.
      */
     final Map<String, Node> getRawNodeMap()
@@ -237,6 +238,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
     }
 
     /**
+     * Return link map.
      * @return only to be used in the 'network' package for cloning.
      */
     final Map<String, Link> getRawLinkMap()
@@ -366,6 +368,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
     }
 
     /**
+     * Return object map.
      * @return only to be used in the 'network' package for cloning.
      */
     final Map<String, LocatedObject> getRawObjectMap()
@@ -487,6 +490,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
     }
 
     /**
+     * Get non-located object map.
      * @return only to be used in the 'network' package for cloning.
      */
     final Map<String, NonLocatedObject> getRawNonLocatedObjectMap()
@@ -896,6 +900,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
     }
 
     /**
+     * Get route map.
      * @return a defensive copy of the routeMap.
      */
     public final ImmutableMap<GtuType, Map<String, Route>> getRouteMap()
@@ -904,6 +909,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
     }
 
     /**
+     * Get route map.
      * @return only to be used in the 'network' package for cloning.
      */
     final Map<GtuType, Map<String, Route>> getRawRouteMap()
@@ -912,6 +918,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
     }
 
     /**
+     * Set route map.
      * @param newRouteMap the routeMap to set, only to be used in the 'network' package for cloning.
      */
     public final void setRawRouteMap(final Map<GtuType, Map<String, Route>> newRouteMap)
@@ -964,6 +971,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
     }
 
     /**
+     * Return GTU map.
      * @return gtuMap
      */
     final Map<String, Gtu> getRawGtuMap()

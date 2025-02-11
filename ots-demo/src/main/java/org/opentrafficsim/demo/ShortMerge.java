@@ -246,6 +246,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         private RoadNetwork network;
 
         /**
+         * Constructor.
          * @param simulator the simulator
          */
         public ShortMergeModel(final OtsSimulatorInterface simulator)
@@ -254,6 +255,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         }
 
         /**
+         * Set network.
          * @param network set network.
          */
         public void setNetwork(final RoadNetwork network)

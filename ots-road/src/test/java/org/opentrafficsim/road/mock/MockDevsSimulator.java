@@ -15,14 +15,18 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
  */
 public final class MockDevsSimulator
 {
-    /** */
+
+    /**
+     * Constructor.
+     */
     private MockDevsSimulator()
     {
         // Utility class
     }
 
     /**
-     * @return mocked DevsSimulator
+     * Return simulator.
+     * @return mocked simulator
      */
     public static OtsSimulatorInterface createMock()
     {

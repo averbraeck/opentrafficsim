@@ -179,6 +179,7 @@ public class Gtu extends LocalEventProducer
     private Bounds2d bounds;
 
     /**
+     * Constructor.
      * @param id the id of the GTU
      * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType
      * @param simulator the simulator to schedule plan changes on
@@ -279,43 +280,64 @@ public class Gtu extends LocalEventProducer
         }
     }
 
-    /** @return the front position of the GTU, relative to its reference point. */
+    /**
+     * Get front.
+     * @return the front position of the GTU, relative to its reference point.
+     */
     public final RelativePosition getFront()
     {
         return this.frontPos;
     }
 
-    /** @return the rear position of the GTU, relative to its reference point. */
+    /**
+     * Get rear.
+     * @return the rear position of the GTU, relative to its reference point.
+     */
     public final RelativePosition getRear()
     {
         return this.rearPos;
     }
 
-    /** @return the center position of the GTU, relative to its reference point. */
+    /**
+     * Get center.
+     * @return the center position of the GTU, relative to its reference point.
+     */
     public final RelativePosition getCenter()
     {
         return this.relativePositions.get(RelativePosition.CENTER);
     }
 
-    /** @return the positions for this GTU, but not the contour points. */
+    /**
+     * Get relative positions.
+     * @return the positions for this GTU, but not the contour points.
+     */
     public final ImmutableMap<Type, RelativePosition> getRelativePositions()
     {
         return new ImmutableLinkedHashMap<>(this.relativePositions, Immutable.WRAP);
     }
 
-    /** @return the maximum length of the GTU (parallel with driving direction). */
+    /**
+     * Get length.
+     * @return the maximum length of the GTU (parallel with driving direction).
+     */
     public final Length getLength()
     {
         return this.length;
     }
 
-    /** @return the maximum width of the GTU (perpendicular to driving direction). */
+    /**
+     * Get width.
+     * @return the maximum width of the GTU (perpendicular to driving direction).
+     */
     public final Length getWidth()
     {
         return this.width;
     }
 
-    /** @return the maximum speed of the GTU, in the direction of movement. */
+    /**
+     * Get maximum speed.
+     * @return the maximum speed of the GTU, in the direction of movement.
+     */
     public final Speed getMaximumSpeed()
     {
         return this.maximumSpeed;
@@ -495,31 +517,44 @@ public class Gtu extends LocalEventProducer
         return this.gtuType;
     }
 
-    /** @return the reference position of the GTU, by definition (0, 0, 0). */
+    /**
+     * Get reference.
+     * @return the reference position of the GTU, by definition (0, 0, 0).
+     */
     public final RelativePosition getReference()
     {
         return RelativePosition.REFERENCE_POSITION;
     }
 
-    /** @return the simulator of the GTU. */
+    /**
+     * Get simulator.
+     * @return the simulator of the GTU.
+     */
     public final OtsSimulatorInterface getSimulator()
     {
         return this.simulator;
     }
 
-    /** @return Parameters. */
+    /**
+     * Get parameters.
+     * @return Parameters.
+     */
     public final Parameters getParameters()
     {
         return this.parameters;
     }
 
-    /** @param parameters parameters */
+    /**
+     * Set parameters.
+     * @param parameters parameters
+     */
     public final void setParameters(final Parameters parameters)
     {
         this.parameters = parameters;
     }
 
     /**
+     * Get strategical planner.
      * @return the planner responsible for the overall 'mission' of the GTU, usually indicating where it needs to go. It
      *         operates by instantiating tactical planners to do the work.
      */
@@ -529,6 +564,7 @@ public class Gtu extends LocalEventProducer
     }
 
     /**
+     * Get strategical planner at time.
      * @param time time to obtain the strategical planner at
      * @return the planner responsible for the overall 'mission' of the GTU, usually indicating where it needs to go. It
      *         operates by instantiating tactical planners to do the work.
@@ -538,13 +574,17 @@ public class Gtu extends LocalEventProducer
         return this.strategicalPlanner.get(time);
     }
 
-    /** @return the current tactical planner that can generate an operational plan */
+    /**
+     * Get tactical planner.
+     * @return the current tactical planner that can generate an operational plan
+     */
     public TacticalPlanner<?, ?> getTacticalPlanner()
     {
         return getStrategicalPlanner().getTacticalPlanner();
     }
 
     /**
+     * Get tactical planner at time.
      * @param time time to obtain the tactical planner at
      * @return the tactical planner that can generate an operational plan at the given time
      */
@@ -553,13 +593,17 @@ public class Gtu extends LocalEventProducer
         return getStrategicalPlanner(time).getTacticalPlanner(time);
     }
 
-    /** @return the current operational plan for the GTU */
+    /**
+     * Get operational plan.
+     * @return the current operational plan for the GTU
+     */
     public final OperationalPlan getOperationalPlan()
     {
         return this.operationalPlan.get();
     }
 
     /**
+     * Get operational plan at time.
      * @param time time to obtain the operational plan at
      * @return the operational plan for the GTU at the given time.
      */
@@ -578,6 +622,7 @@ public class Gtu extends LocalEventProducer
     }
 
     /**
+     * Get odometer.
      * @return the current odometer value.
      */
     public final Length getOdometer()
@@ -586,6 +631,7 @@ public class Gtu extends LocalEventProducer
     }
 
     /**
+     * Get odometer at time.
      * @param time time to obtain the odometer at
      * @return the odometer value at given time.
      */
@@ -608,7 +654,10 @@ public class Gtu extends LocalEventProducer
         }
     }
 
-    /** @return the current speed of the GTU, along the direction of movement. */
+    /**
+     * Get speed.
+     * @return the current speed of the GTU, along the direction of movement.
+     */
     public final Speed getSpeed()
     {
         synchronized (this)
@@ -618,6 +667,7 @@ public class Gtu extends LocalEventProducer
     }
 
     /**
+     * Get speed at time.
      * @param time time at which to obtain the speed
      * @return the current speed of the GTU, along the direction of movement.
      */
@@ -662,7 +712,10 @@ public class Gtu extends LocalEventProducer
         }
     }
 
-    /** @return the current acceleration of the GTU, along the direction of movement. */
+    /**
+     * Get acceleration.
+     * @return the current acceleration of the GTU, along the direction of movement.
+     */
     public final Acceleration getAcceleration()
     {
         synchronized (this)
@@ -672,6 +725,7 @@ public class Gtu extends LocalEventProducer
     }
 
     /**
+     * Get acceleration at time.
      * @param time time at which to obtain the acceleration
      * @return the current acceleration of the GTU, along the direction of movement.
      */
@@ -718,6 +772,7 @@ public class Gtu extends LocalEventProducer
     }
 
     /**
+     * Get maximum acceleration.
      * @return maximumAcceleration
      */
     public final Acceleration getMaximumAcceleration()
@@ -726,6 +781,7 @@ public class Gtu extends LocalEventProducer
     }
 
     /**
+     * Set maximum deceleration.
      * @param maximumAcceleration set maximumAcceleration
      */
     public final void setMaximumAcceleration(final Acceleration maximumAcceleration)
@@ -738,6 +794,7 @@ public class Gtu extends LocalEventProducer
     }
 
     /**
+     * Get maximum deceleration.
      * @return maximumDeceleration
      */
     public final Acceleration getMaximumDeceleration()
@@ -878,7 +935,10 @@ public class Gtu extends LocalEventProducer
         return this.destroyed;
     }
 
-    /** @return the context to which the GTU belongs */
+    /**
+     * Return perceivable context.
+     * @return the context to which the GTU belongs
+     */
     public PerceivableContext getPerceivableContext()
     {
         return this.perceivableContext;
@@ -942,6 +1002,7 @@ public class Gtu extends LocalEventProducer
     }
 
     /**
+     * Get error handler.
      * @return errorHandler.
      */
     protected GtuErrorHandler getErrorHandler()

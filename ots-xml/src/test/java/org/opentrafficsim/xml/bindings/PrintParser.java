@@ -21,13 +21,27 @@ import org.xml.sax.helpers.DefaultHandler;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class PrintParser
+public final class PrintParser
 {
 
     /**
-     * 
+     * Constructor.
      */
-    public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, URISyntaxException
+    private PrintParser()
+    {
+        //
+    }
+
+    /**
+     * Main method.
+     * @param args args
+     * @throws ParserConfigurationException exception
+     * @throws SAXException exception
+     * @throws IOException exception
+     * @throws URISyntaxException exception
+     */
+    public static void main(final String[] args)
+            throws ParserConfigurationException, SAXException, IOException, URISyntaxException
     {
         URL res = URLResource.getResource("/resources/");
         if (res == null)
@@ -44,9 +58,22 @@ public class PrintParser
         saxParser.parse(file, new PrintHandler());
     }
 
+    /**
+     * PrintParser.
+     */
     static class PrintHandler extends DefaultHandler
     {
+
+        /** Depth. */
         private int depth = 0;
+
+        /**
+         * Constructor.
+         */
+        PrintHandler()
+        {
+            //
+        }
 
         @Override
         public void startDocument() throws SAXException
@@ -55,11 +82,14 @@ public class PrintParser
         }
 
         @Override
-        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException
+        public void startElement(final String uri, final String localName, final String qName, final Attributes attributes)
+                throws SAXException
         {
             this.depth++;
             for (int i = 0; i < this.depth; i++)
+            {
                 System.out.print("  ");
+            }
             System.out.print(qName);
             for (int i = 0; i < attributes.getLength(); i++)
             {
@@ -75,7 +105,7 @@ public class PrintParser
         }
 
         @Override
-        public void endElement(String uri, String localName, String qName) throws SAXException
+        public void endElement(final String uri, final String localName, final String qName) throws SAXException
         {
             this.depth--;
         }

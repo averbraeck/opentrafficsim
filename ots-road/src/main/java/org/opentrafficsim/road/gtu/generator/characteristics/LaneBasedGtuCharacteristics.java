@@ -59,6 +59,7 @@ public class LaneBasedGtuCharacteristics extends GtuCharacteristics
     }
 
     /**
+     * Returns the strategical planner factory.
      * @return the strategical planner factory for the GTU
      */
     public final LaneBasedStrategicalPlannerFactory<?> getStrategicalPlannerFactory()
@@ -67,6 +68,7 @@ public class LaneBasedGtuCharacteristics extends GtuCharacteristics
     }
 
     /**
+     * Returns the route.
      * @return route
      */
     public final Route getRoute()
@@ -75,6 +77,7 @@ public class LaneBasedGtuCharacteristics extends GtuCharacteristics
     }
 
     /**
+     * Returns the origin.
      * @return origin
      */
     public Node getOrigin()
@@ -83,6 +86,7 @@ public class LaneBasedGtuCharacteristics extends GtuCharacteristics
     }
 
     /**
+     * Returns the destination.
      * @return destination
      */
     public Node getDestination()

@@ -7,10 +7,22 @@ import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  * SpeedUnit adapter.
- * @author wjschakel
+ * <p>
+ * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class SpeedUnitAdapter extends XmlAdapter<EUnitSpeed, SpeedUnit>
 {
+
+    /**
+     * Constructor.
+     */
+    public SpeedUnitAdapter()
+    {
+        //
+    }
 
     @Override
     public SpeedUnit unmarshal(final EUnitSpeed v)

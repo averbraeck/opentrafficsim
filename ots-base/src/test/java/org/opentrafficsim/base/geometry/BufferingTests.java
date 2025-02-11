@@ -13,6 +13,14 @@ public class BufferingTests
 {
 
     /**
+     * Constructor.
+     */
+    public BufferingTests()
+    {
+        //
+    }
+
+    /**
      * Test the offsetLine method that takes relative fraction and offsets arrays.
      */
     @Test

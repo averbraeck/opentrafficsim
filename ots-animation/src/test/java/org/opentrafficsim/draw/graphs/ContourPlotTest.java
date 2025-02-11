@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -33,7 +32,6 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.opentrafficsim.animation.GraphLaneUtil;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsReplication;
@@ -81,23 +79,41 @@ public class ContourPlotTest implements UNITS
 
     /** Mocked GraphPath. */
     @SuppressWarnings("unchecked")
-    GraphPath<LaneData<?>> mockedPath = Mockito.mock(GraphPath.class);
+    private GraphPath<LaneData<?>> mockedPath = Mockito.mock(GraphPath.class);
 
-    Section<LaneData<?>> section0 = Mockito.mock(Section.class);
+    /** Section 0. */
+    @SuppressWarnings("unchecked")
+    private Section<LaneData<?>> section0 = Mockito.mock(Section.class);
 
-    Section<LaneData<?>> section1 = Mockito.mock(Section.class);
+    /** Section 1. */
+    @SuppressWarnings("unchecked")
+    private Section<LaneData<?>> section1 = Mockito.mock(Section.class);
 
-    LaneData<?> mockedLane0 = Mockito.mock(LaneData.class);
+    /** Lane 2. */
+    private LaneData<?> mockedLane0 = Mockito.mock(LaneData.class);
 
-    LaneData<?> mockedLane1 = Mockito.mock(LaneData.class);
+    /** Lane 1. */
+    private LaneData<?> mockedLane1 = Mockito.mock(LaneData.class);
 
-    SamplerData mockedSamplerData = Mockito.mock(SamplerData.class);
+    /** Sampler data. */
+    private SamplerData<?> mockedSamplerData = Mockito.mock(SamplerData.class);
 
-    OtsSimulatorInterface mockedSimulator = Mockito.mock(OtsSimulatorInterface.class);
+    /** Simulator. */
+    private OtsSimulatorInterface mockedSimulator = Mockito.mock(OtsSimulatorInterface.class);
 
-    PlotScheduler mockedScheduler = Mockito.mock(PlotScheduler.class);
+    /** Scheduler. */
+    private PlotScheduler mockedScheduler = Mockito.mock(PlotScheduler.class);
 
-    SimEventInterface<Duration> lastScheduledEvent = null;
+    /** Last scheduled event. */
+    private SimEventInterface<Duration> lastScheduledEvent = null;
+
+    /**
+     * Constructor.
+     */
+    public ContourPlotTest()
+    {
+        //
+    }
 
     /**
      * Create a network and a path for the tests.
@@ -162,7 +178,6 @@ public class ContourPlotTest implements UNITS
                 });
         Mockito.when(this.mockedSimulator.getSimulatorAbsTime()).thenReturn(Time.ZERO);
         Mockito.when(this.mockedSimulator.getSimulatorTime()).thenReturn(Duration.ZERO);
-        OtsModelInterface model = Mockito.mock(OtsModelInterface.class);
         OtsReplication replication = new OtsReplication("test", Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0),
                 HistoryManagerDevs.noHistory(this.mockedSimulator));
         Mockito.when(this.mockedSimulator.getReplication()).thenReturn(replication);

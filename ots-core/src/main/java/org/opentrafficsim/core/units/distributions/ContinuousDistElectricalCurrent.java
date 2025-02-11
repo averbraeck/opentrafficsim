@@ -21,13 +21,13 @@ public class ContinuousDistElectricalCurrent extends ContinuousDistDoubleScalar.
     private static final long serialVersionUID = 20180829L;
 
     /**
+     * Constructor.
      * @param distribution distribution
-     * @param unit units
+     * @param unit unit
      */
     public ContinuousDistElectricalCurrent(final DistContinuous distribution, final ElectricalCurrentUnit unit)
     {
         super(distribution, unit);
-
     }
 
     @Override

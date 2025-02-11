@@ -11,6 +11,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 
 /**
+ * Route generator test.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -20,6 +21,15 @@ import org.opentrafficsim.core.network.Node;
  */
 public class RouteGeneratorTest
 {
+
+    /**
+     * Constructor.
+     */
+    public RouteGeneratorTest()
+    {
+        //
+    }
+
     /**
      * Test the fixedRouteGenerator class.
      * @throws Exception when something goes wrong (should not happen)
@@ -27,10 +37,10 @@ public class RouteGeneratorTest
     @Test
     public void fixedRouteGeneratorTest() throws Exception
     {
-        /*- 
-        
+        /*-
+
         TODO THE ROUTE CLASSES HAVE CHANGED SO THE TESTS HAVE TO BE ADAPTED
-         
+
         List<Node> nodes = new ArrayList<Node>();
         nodes.add(new Node("n1", new Point2d(0, 0, 0)));
         nodes.add(new Node("n2", new Point2d(1000, 0, 0)));
@@ -49,7 +59,7 @@ public class RouteGeneratorTest
         assertEquals("After visiting one node on r1, the lastVisitedNode on r1 should be the first node in nodes",
                 nodes.get(0), r1.lastVisitedNode());
         assertNull("In r2 lastVisitedNode should be null", r2.lastVisitedNode());
-        
+
          */
     }
 
@@ -60,10 +70,10 @@ public class RouteGeneratorTest
     @Test
     public void probabilisticFixedRouteGeneratorTest() throws Exception
     {
-        /*- 
-         
+        /*-
+
          TODO THE ROUTE CLASSES HAVE CHANGED SO THE TESTS HAVE TO BE ADAPTED
-          
+
         SortedMap<RouteGenerator, Double> routeProbabilities = new TreeMap<RouteGenerator, Double>();
         try
         {

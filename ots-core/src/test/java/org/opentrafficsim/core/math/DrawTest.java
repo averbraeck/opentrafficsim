@@ -26,6 +26,14 @@ public class DrawTest
 {
 
     /**
+     * Constructor.
+     */
+    public DrawTest()
+    {
+        //
+    }
+
+    /**
      * Test the Draw class.
      */
     @Test

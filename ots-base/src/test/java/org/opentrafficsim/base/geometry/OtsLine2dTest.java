@@ -33,6 +33,18 @@ import org.opentrafficsim.base.geometry.OtsLine2d.FractionalFallback;
  */
 public class OtsLine2dTest
 {
+
+    /** Verbose test. */
+    private static final boolean VERBOSE = false;
+
+    /**
+     * Constructor.
+     */
+    public OtsLine2dTest()
+    {
+        //
+    }
+
     /**
      * Test the constructors of OtsLine2d.
      */
@@ -881,11 +893,11 @@ public class OtsLine2dTest
         // square test (THIS TEST IS NOT YET SUCCESSFUL, THE POINTS ARE PROJECTED ORTHOGONALLY TO BEFORE END!!!)
         // {@formatter:off}
         /*
-         * --------- 
+         * ---------
          * a\     /|  'a' should project to end, not just before end
          *   /\ /  |  point in the /\ should project to end, not before end
-         *  /'' \  |               '' 
-         * /      \| 
+         *  /'' \  |               ''
+         * /      \|
          * ---------
          */
         // {@formatter:on}
@@ -1009,11 +1021,14 @@ public class OtsLine2dTest
             radius = line.getProjectedRadius(fraction);
             assertEquals(12, radius.si, 0.1, "radius should be about 12");
         }
-        System.out.println("radius is " + radius);
         // Now a bit harder
         line = new OtsLine2d(
                 new Point2d[] {new Point2d(10, 30), new Point2d(20, 30), new Point2d(30, 40), new Point2d(30, 30)});
-        System.out.println(line.toPlot());
+        if (VERBOSE)
+        {
+            System.out.println("radius is " + radius);
+            System.out.println(line.toPlot());
+        }
         double boundary = 1 / (2 + Math.sqrt(2));
         //double length = line.getLength();
         for (int percentage = 0; percentage <= 100; percentage++)

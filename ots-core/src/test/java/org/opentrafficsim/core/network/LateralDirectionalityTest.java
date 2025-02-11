@@ -16,6 +16,15 @@ import org.junit.jupiter.api.Test;
  */
 public class LateralDirectionalityTest
 {
+
+    /**
+     * Constructor.
+     */
+    public LateralDirectionalityTest()
+    {
+        //
+    }
+
     /**
      * Test the LateralDirectionality enum.
      */

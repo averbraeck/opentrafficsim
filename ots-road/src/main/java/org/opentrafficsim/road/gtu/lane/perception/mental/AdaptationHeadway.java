@@ -32,6 +32,14 @@ public class AdaptationHeadway implements BehavioralAdaptation
     /** Base value for the maximum desired headway. */
     private Duration t0Max;
 
+    /**
+     * Constructor.
+     */
+    public AdaptationHeadway()
+    {
+        //
+    }
+
     @Override
     public void adapt(final Parameters parameters, final double taskSaturation) throws ParameterException
     {

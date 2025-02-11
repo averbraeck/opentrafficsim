@@ -33,6 +33,7 @@ public enum TextWidth
     private final Number value;
 
     /**
+     * Constructor.
      * @param value the corresponding TextAttribute constant
      */
     TextWidth(final Number value)
@@ -41,6 +42,7 @@ public enum TextWidth
     }
 
     /**
+     * Returns the value.
      * @return value the corresponding TextAttribute constant
      */
     protected final Number getValue()

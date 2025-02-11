@@ -19,13 +19,14 @@ public class CollisionException extends OtsRuntimeException
     private static final long serialVersionUID = 20150217L;
 
     /**
-     * 
+     * Constructor.
      */
     public CollisionException()
     {
     }
 
     /**
+     * Constructor.
      * @param message String
      */
     public CollisionException(final String message)
@@ -34,6 +35,7 @@ public class CollisionException extends OtsRuntimeException
     }
 
     /**
+     * Constructor.
      * @param cause Throwable
      */
     public CollisionException(final Throwable cause)
@@ -42,6 +44,7 @@ public class CollisionException extends OtsRuntimeException
     }
 
     /**
+     * Constructor.
      * @param message String
      * @param cause Throwable
      */

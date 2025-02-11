@@ -175,6 +175,7 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
         }
 
         /**
+         * Set GTU type generator.
          * @param gtuTypeGenerator set gtuTypeGenerator.
          * @return this factory for method chaining
          */
@@ -185,6 +186,7 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
         }
 
         /**
+         * Set templates.
          * @param templates set templates.
          * @return this factory for method chaining
          */
@@ -195,6 +197,7 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
         }
 
         /**
+         * Set vehicle model generator.
          * @param vehicleModelFactory set vehicleModelFactory.
          * @return this factory for method chaining
          */
@@ -205,6 +208,7 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
         }
 
         /**
+         * Set GTU template function.
          * @param templateFunction template function
          * @return this factory for method chaining
          */

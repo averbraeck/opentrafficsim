@@ -18,6 +18,14 @@ import org.opentrafficsim.xml.bindings.types.ExpressionType;
 public abstract class ScalarAdapter<S extends DoubleScalar<?, S>, E extends ExpressionType<S>> extends ExpressionAdapter<S, E>
 {
 
+    /**
+     * Constructor.
+     */
+    public ScalarAdapter()
+    {
+        //
+    }
+
     @Override
     public String marshal(final E value)
     {

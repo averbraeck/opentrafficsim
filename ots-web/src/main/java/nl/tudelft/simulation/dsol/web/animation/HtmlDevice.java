@@ -21,9 +21,10 @@ public class HtmlDevice extends GraphicsDevice
     private GraphicsConfiguration[] htmlGraphicsConfigurations;
 
     /**
+     * Constructor.
      * @param htmlGraphicsConfiguration the GraphicsConfiguration to add to the HTMLDevice
      */
-    public HtmlDevice(GraphicsConfiguration htmlGraphicsConfiguration)
+    public HtmlDevice(final GraphicsConfiguration htmlGraphicsConfiguration)
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLDevice.<init>");
         this.htmlGraphicsConfigurations = new GraphicsConfiguration[] {htmlGraphicsConfiguration};

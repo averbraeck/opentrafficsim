@@ -17,6 +17,14 @@ public class FractionalLengthDataTest
 {
 
     /**
+     * Constructor.
+     */
+    public FractionalLengthDataTest()
+    {
+        //
+    }
+
+    /**
      * FractionalLengthDataTest test.
      */
     @Test

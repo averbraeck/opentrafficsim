@@ -22,13 +22,13 @@ public class DiscreteDistElectricalResistance
     private static final long serialVersionUID = 20180829L;
 
     /**
+     * Constructor.
      * @param distribution distribution
-     * @param unit units
+     * @param unit unit
      */
     public DiscreteDistElectricalResistance(final DistDiscrete distribution, final ElectricalResistanceUnit unit)
     {
         super(distribution, unit);
-
     }
 
     @Override

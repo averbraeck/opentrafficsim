@@ -34,6 +34,7 @@ public class HeadwayBusStop extends AbstractHeadwayLaneBasedObject
     private final Set<String> conflictIds;
 
     /**
+     * Constructor.
      * @param busStop bus stop
      * @param distance distance
      * @param relativeLane relative lane
@@ -51,6 +52,7 @@ public class HeadwayBusStop extends AbstractHeadwayLaneBasedObject
     }
 
     /**
+     * Returns relative lane.
      * @return relativeLane.
      */
     public final RelativeLane getRelativeLane()
@@ -59,6 +61,7 @@ public class HeadwayBusStop extends AbstractHeadwayLaneBasedObject
     }
 
     /**
+     * Returns lines.
      * @return lines.
      */
     public final ImmutableSet<String> getLines()
@@ -67,6 +70,7 @@ public class HeadwayBusStop extends AbstractHeadwayLaneBasedObject
     }
 
     /**
+     * Returns conflict ids.
      * @return conflictIds.
      */
     public final Set<String> getConflictIds()

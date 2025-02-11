@@ -14,6 +14,14 @@ import org.opentrafficsim.xml.bindings.types.SpeedUnitType;
 public class SpeedUnitAdapter extends ExpressionAdapter<SpeedUnit, SpeedUnitType>
 {
 
+    /**
+     * Constructor.
+     */
+    public SpeedUnitAdapter()
+    {
+        //
+    }
+
     @Override
     public SpeedUnitType unmarshal(final String field)
     {

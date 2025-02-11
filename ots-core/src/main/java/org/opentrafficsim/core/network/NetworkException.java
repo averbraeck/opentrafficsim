@@ -19,13 +19,14 @@ public class NetworkException extends OtsException
     private static final long serialVersionUID = 20140822L;
 
     /**
-     * 
+     * Constructor.
      */
     public NetworkException()
     {
     }
 
     /**
+     * Constructor.
      * @param message String
      */
     public NetworkException(final String message)
@@ -34,6 +35,7 @@ public class NetworkException extends OtsException
     }
 
     /**
+     * Constructor.
      * @param cause Throwable
      */
     public NetworkException(final Throwable cause)
@@ -42,6 +44,7 @@ public class NetworkException extends OtsException
     }
 
     /**
+     * Constructor.
      * @param message String
      * @param cause Throwable
      */

@@ -23,36 +23,43 @@ public interface HeadwayGtu extends Headway
 {
 
     /**
+     * Returns the GTU type.
      * @return gtuType
      */
     GtuType getGtuType();
 
     /**
+     * Returns whether the GTU is facing the same direction.
      * @return facingSameDirection
      */
     boolean isFacingSameDirection();
 
     /**
+     * Returns whether the braking lights are on.
      * @return were the braking lights on?
      */
     boolean isBrakingLightsOn();
 
     /**
+     * Returns left indicator status.
      * @return was the left turn indicator on?
      */
     boolean isLeftTurnIndicatorOn();
 
     /**
+     * Returns right indicator status.
      * @return was the right turn indicator on?
      */
     boolean isRightTurnIndicatorOn();
 
     /**
+     * Returns whether the emergency lights are on.
      * @return were the emergency lights on?
      */
     boolean isEmergencyLightsOn();
 
     /**
+     * Returns whether the GTU is honking.
      * @return was the vehicle honking or ringing its bell when being observed for the headway?
      */
     boolean isHonking();

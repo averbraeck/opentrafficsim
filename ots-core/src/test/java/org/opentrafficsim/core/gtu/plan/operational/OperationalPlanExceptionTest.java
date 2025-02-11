@@ -11,6 +11,14 @@ import org.junit.jupiter.api.Test;
 public class OperationalPlanExceptionTest
 {
 
+    /**
+     * Constructor.
+     */
+    public OperationalPlanExceptionTest()
+    {
+        //
+    }
+
     /** Test the OperationalPlanException class. */
     @Test
     public void testException()

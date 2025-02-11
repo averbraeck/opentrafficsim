@@ -22,6 +22,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.DesiredSpeedModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
+ * Toledo car-following model.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -33,71 +34,71 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 public class ToledoCarFollowing extends AbstractCarFollowingModel
 {
 
-    /** */
+    /** Constant in desired speed. */
     public static final ParameterTypeSpeed CDS = new ParameterTypeSpeed("C_DS", "Constant in desired speed.",
             new Speed(17.636, SpeedUnit.SI), ConstraintInterface.POSITIVE);
 
-    /** */
+    /** Reduction of desired speed for trucks. */
     public static final ParameterTypeSpeed BETADS = new ParameterTypeSpeed("BETA_DS", "Reduction of desired speed for trucks.",
             new Speed(-1.458, SpeedUnit.SI), ConstraintInterface.NEGATIVE);
 
-    /** */
+    /** Factor on error term of desired speed. */
     public static final ParameterTypeSpeed ALPHADS =
             new ParameterTypeSpeed("ALPHA_DS", "Factor on error term of desired speed.", new Speed(-0.105, SpeedUnit.SI));
 
-    /** */
+    /** Desired time headway. */
     public static final ParameterTypeDuration HSTAR =
             new ParameterTypeDuration("h*", "Desired time headway.", new Duration(2.579, DurationUnit.SI));
 
-    /** */
+    /** Free flow acceleration sensitivity. */
     public static final ParameterTypeDouble LAMBDAFF =
             new ParameterTypeDouble("Lambda_ff", "Free flow acceleration sensitivity.", 0.0881, ConstraintInterface.POSITIVE);
 
-    /** */
+    /** Free flow acceleration standard deviation. */
     public static final ParameterTypeDouble SIGMAFF =
             new ParameterTypeDouble("Sigma_ff", "Free flow acceleration standard deviation.", Math.exp(0.169));
 
-    /** */
+    /** Constant for car following acceleration. */
     public static final ParameterTypeDouble CCFACC = new ParameterTypeDouble("C_CF_ACC",
             "Constant for car following acceleration.", 0.0355, ConstraintInterface.POSITIVE);
 
-    /** */
+    /** Power on speed for acceleration. */
     public static final ParameterTypeDouble BETAACC =
             new ParameterTypeDouble("BETA_ACC", "Power on speed for acceleration.", 0.291, ConstraintInterface.POSITIVE);
 
-    /** */
+    /** Power on distance headway for acceleration. */
     public static final ParameterTypeDouble GAMMAACC = new ParameterTypeDouble("GAMMA_ACC",
             "Power on distance headway for acceleration.", -0.166, ConstraintInterface.NEGATIVE);
 
-    /** */
+    /** Power on density for acceleration. */
     public static final ParameterTypeDouble RHOACC =
             new ParameterTypeDouble("RHO_ACC", "Power on density for acceleration.", 0.550, ConstraintInterface.POSITIVE);
 
-    /** */
+    /** Power on speed difference for acceleration. */
     public static final ParameterTypeDouble LAMBDAACC = new ParameterTypeDouble("LAMBDA_ACC",
             "Power on speed difference for acceleration.", 0.520, ConstraintInterface.POSITIVE);
 
-    /** */
+    /** Car-following acceleration standard deviation. */
     public static final ParameterTypeDouble SIGMAACC =
             new ParameterTypeDouble("Sigma_acc", "Car-following acceleration standard deviation.", Math.exp(0.126));
 
-    /** */
+    /** Constant for car following deceleration. */
     public static final ParameterTypeDouble CCFDEC = new ParameterTypeDouble("C_CF_DEC",
             "Constant for car following deceleration.", -0.860, ConstraintInterface.NEGATIVE);
 
-    /** */
+    /** Power on distance headway for deceleration. */
     public static final ParameterTypeDouble GAMMADEC = new ParameterTypeDouble("GAMMA_DEC",
             "Power on distance headway for deceleration.", -0.565, ConstraintInterface.NEGATIVE);
 
-    /** */
+    /** Power on density for deceleration. */
     public static final ParameterTypeDouble RHODEC =
-            new ParameterTypeDouble("RHO_DEC", "Power on density for deceleration.", 0.143, ConstraintInterface.POSITIVE);
+            new ParameterTypeDouble("RHO_DEC", "", 0.143, ConstraintInterface.POSITIVE);
 
-    /** */
+    /** Power on speed difference for deceleration. */
     public static final ParameterTypeDouble LAMBDADEC = new ParameterTypeDouble("LAMBDA_DEC",
             "Power on speed difference for deceleration.", 0.834, ConstraintInterface.POSITIVE);
 
-    /** */
+    /** Car-following deceleration standard deviation. */
     public static final ParameterTypeDouble SIGMADEC =
             new ParameterTypeDouble("Sigma_DEC", "Car-following deceleration standard deviation.", Math.exp(0.156));
 
@@ -123,7 +124,7 @@ public class ToledoCarFollowing extends AbstractCarFollowingModel
     };
 
     /**
-     * Constructor using Toledo models for desired headway ans speed.
+     * Constructor using Toledo models for desired headway and speed.
      */
     public ToledoCarFollowing()
     {
@@ -149,7 +150,7 @@ public class ToledoCarFollowing extends AbstractCarFollowingModel
                     Toledo.RANDOM.nextGaussian() * parameters.getParameter(SIGMAACC) * parameters.getParameter(SIGMAACC);
             // {@formatter:off}
             return new Acceleration(
-                parameters.getParameter(CCFACC) 
+                parameters.getParameter(CCFACC)
                     * Math.pow(speed.si, parameters.getParameter(BETAACC))
                     * Math.pow(leaders.first().getDistance().si, parameters.getParameter(GAMMAACC))
                     * Math.pow(getDensity(leaders), parameters.getParameter(RHOACC))
@@ -162,7 +163,7 @@ public class ToledoCarFollowing extends AbstractCarFollowingModel
         double eCfDec = Toledo.RANDOM.nextGaussian() * parameters.getParameter(SIGMADEC) * parameters.getParameter(SIGMADEC);
         // {@formatter:off}
         return new Acceleration(
-            parameters.getParameter(CCFDEC) 
+            parameters.getParameter(CCFDEC)
                 * Math.pow(leaders.first().getDistance().si, parameters.getParameter(GAMMADEC))
                 * Math.pow(getDensity(leaders), parameters.getParameter(RHODEC))
                 * Math.pow(speed.si - leaders.first().getSpeed().si, parameters.getParameter(LAMBDADEC))

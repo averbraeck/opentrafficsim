@@ -21,13 +21,13 @@ public class ContinuousDistSolidAngle extends ContinuousDistDoubleScalar.Rel<Sol
     private static final long serialVersionUID = 20180829L;
 
     /**
+     * Constructor.
      * @param distribution distribution
-     * @param unit units
+     * @param unit unit
      */
     public ContinuousDistSolidAngle(final DistContinuous distribution, final SolidAngleUnit unit)
     {
         super(distribution, unit);
-
     }
 
     @Override

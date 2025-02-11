@@ -21,13 +21,13 @@ public class DiscreteDistDuration extends DiscreteDistDoubleScalar.Rel<Duration,
     private static final long serialVersionUID = 20180829L;
 
     /**
+     * Constructor.
      * @param distribution distribution
-     * @param unit units
+     * @param unit unit
      */
     public DiscreteDistDuration(final DistDiscrete distribution, final DurationUnit unit)
     {
         super(distribution, unit);
-
     }
 
     @Override

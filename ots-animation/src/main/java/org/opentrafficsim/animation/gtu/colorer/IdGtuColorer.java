@@ -34,6 +34,14 @@ public class IdGtuColorer implements GtuColorer
         }
     }
 
+    /**
+     * Constructor.
+     */
+    public IdGtuColorer()
+    {
+        //
+    }
+
     @Override
     public final Color getColor(final Gtu gtu)
     {

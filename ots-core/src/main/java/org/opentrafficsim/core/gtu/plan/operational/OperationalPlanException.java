@@ -13,6 +13,7 @@ import org.opentrafficsim.core.gtu.GtuException;
  */
 public class OperationalPlanException extends GtuException
 {
+
     /** */
     private static final long serialVersionUID = 20151223L;
 
@@ -24,6 +25,7 @@ public class OperationalPlanException extends GtuException
     }
 
     /**
+     * Constructor.
      * @param message exception message
      */
     public OperationalPlanException(final String message)
@@ -32,6 +34,7 @@ public class OperationalPlanException extends GtuException
     }
 
     /**
+     * Constructor.
      * @param cause exception that triggered this exception
      */
     public OperationalPlanException(final Throwable cause)
@@ -40,6 +43,7 @@ public class OperationalPlanException extends GtuException
     }
 
     /**
+     * Constructor.
      * @param message exception message
      * @param cause exception that triggered this exception
      */

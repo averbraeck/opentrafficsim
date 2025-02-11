@@ -21,13 +21,13 @@ public class DiscreteDistAcceleration extends DiscreteDistDoubleScalar.Rel<Accel
     private static final long serialVersionUID = 20180829L;
 
     /**
+     * Constructor.
      * @param distribution distribution
-     * @param unit units
+     * @param unit unit
      */
     public DiscreteDistAcceleration(final DistDiscrete distribution, final AccelerationUnit unit)
     {
         super(distribution, unit);
-
     }
 
     @Override

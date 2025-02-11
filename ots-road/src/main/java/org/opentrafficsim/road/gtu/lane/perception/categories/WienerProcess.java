@@ -52,6 +52,7 @@ public class WienerProcess extends DistNormal
     private Time prevTime;
 
     /**
+     * Constructor.
      * @param stream random number stream
      * @param mu mean
      * @param sigma standard deviation

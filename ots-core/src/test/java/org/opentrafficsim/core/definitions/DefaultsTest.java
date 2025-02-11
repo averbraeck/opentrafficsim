@@ -27,6 +27,14 @@ public class DefaultsTest
 {
 
     /**
+     * Constructor.
+     */
+    public DefaultsTest()
+    {
+        //
+    }
+
+    /**
      * Tests DefaultsNl.
      */
     @Test
@@ -40,7 +48,7 @@ public class DefaultsTest
         assertNotNull(Defaults.NL.apply(DefaultsNl.EMERGENCY_VEHICLE, stream));
         assertNotNull(Defaults.NL.apply(DefaultsNl.MOTORCYCLE, stream));
         assertNotNull(Defaults.NL.apply(DefaultsNl.BICYCLE, stream));
-        assertNull(Defaults.NL.apply(new GtuType("NEW"), stream));
+        Try.testFail(() -> Defaults.NL.apply(new GtuType("NEW"), stream), NullPointerException.class);
 
         assertEquals(Defaults.NL.getLocale().getCountry(), "NL");
         assertNotNull(Defaults.getByName(GtuType.class, "NL.CAR"));

@@ -25,6 +25,7 @@ public enum TurnIndicatorIntent
     CONFLICTING;
 
     /**
+     * Return whether there is no indicator intent.
      * @return whether no indicator intent
      */
     public boolean isNone()
@@ -33,6 +34,7 @@ public enum TurnIndicatorIntent
     }
 
     /**
+     * Return whether the intent is left.
      * @return whether left turn indicator intent
      */
     public boolean isLeft()
@@ -41,6 +43,7 @@ public enum TurnIndicatorIntent
     }
 
     /**
+     * Return whether the intent is right.
      * @return whether right turn indicator intent
      */
     public boolean isRight()
@@ -49,6 +52,7 @@ public enum TurnIndicatorIntent
     }
 
     /**
+     * Return whether indicator intent is conflicting.
      * @return whether conflicting indicator intent
      */
     public boolean isConflicting()

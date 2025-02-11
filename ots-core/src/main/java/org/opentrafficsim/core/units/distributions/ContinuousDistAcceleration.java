@@ -21,13 +21,13 @@ public class ContinuousDistAcceleration extends ContinuousDistDoubleScalar.Rel<A
     private static final long serialVersionUID = 20180829L;
 
     /**
+     * Constructor.
      * @param distribution distribution
-     * @param unit units
+     * @param unit unit
      */
     public ContinuousDistAcceleration(final DistContinuous distribution, final AccelerationUnit unit)
     {
         super(distribution, unit);
-
     }
 
     @Override

@@ -14,6 +14,14 @@ import org.opentrafficsim.xml.bindings.types.FrequencyUnitType;
 public class FrequencyUnitAdapter extends ExpressionAdapter<FrequencyUnit, FrequencyUnitType>
 {
 
+    /**
+     * Constructor.
+     */
+    public FrequencyUnitAdapter()
+    {
+        //
+    }
+
     @Override
     public FrequencyUnitType unmarshal(final String field)
     {

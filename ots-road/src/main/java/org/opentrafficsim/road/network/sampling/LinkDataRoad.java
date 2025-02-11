@@ -25,6 +25,7 @@ public class LinkDataRoad implements LinkData<LaneDataRoad>
     private final CrossSectionLink link;
 
     /**
+     * Constructor.
      * @param link wrapped link
      */
     public LinkDataRoad(final CrossSectionLink link)
@@ -33,6 +34,7 @@ public class LinkDataRoad implements LinkData<LaneDataRoad>
     }
 
     /**
+     * Return link.
      * @return link.
      */
     public final CrossSectionLink getLink()

@@ -1041,8 +1041,8 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
                         return; // apply pending operator now
                     }
                     /*-
-                     * apply pending operator later 
-                     * 1: evaluate the RHS operand. 
+                     * apply pending operator later
+                     * 1: evaluate the RHS operand.
                      * 2: multiply the top-most two operands on the stack and push the result on the stack.
                      */
                     this.currentToken++;
@@ -1061,8 +1061,8 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
                         return; // apply pending operator now
                     }
                     /*-
-                     * apply pending operator later 
-                     * 1: evaluate the RHS operand. 
+                     * apply pending operator later
+                     * 1: evaluate the RHS operand.
                      * 2: compare the top-most two operands on the stack and push the result on the stack.
                      */
                     this.currentToken++;
@@ -1104,8 +1104,8 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
                         return; // apply pending operator now
                     }
                     /*-
-                     * apply pending operator later 
-                     * 1: evaluate the RHS operand. 
+                     * apply pending operator later
+                     * 1: evaluate the RHS operand.
                      * 2: add (OR) the top-most two operands on the stack and push the result on the stack.
                      */
                     this.currentToken++;
@@ -1119,8 +1119,8 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
                         return; // apply pending operator now
                     }
                     /*-
-                     * apply pending operator later 
-                     * 1: evaluate the RHS operand. 
+                     * apply pending operator later
+                     * 1: evaluate the RHS operand.
                      * 2: subtract the top-most two operands on the stack and push the result on the stack.
                      */
                     this.currentToken++;
@@ -2249,6 +2249,7 @@ class Variable implements EventListener
     }
 
     /**
+     * Set value.
      * @param newValue the new value of this Variable
      * @param timeStamp10 the time stamp of this update
      * @param cause rule, timer, or detector that caused the change

@@ -506,6 +506,7 @@ class Sim0mqOtsModel extends AbstractOtsModel
     private final String xml;
 
     /**
+     * Constructor.
      * @param description the model description
      * @param network the network
      * @param xml the XML description of the simulation model

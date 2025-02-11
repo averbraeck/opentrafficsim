@@ -96,6 +96,7 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
     private final RoadNetwork network;
 
     /**
+     * Constructor.
      * @param simulator the simulator for this model
      */
     public CircularRoadModel(final OtsSimulatorInterface simulator)
@@ -143,6 +144,7 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
     }
 
     /**
+     * Returns path.
      * @param index the rank number of the path
      * @return the set of lanes for the specified index
      */
@@ -305,6 +307,7 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
     }
 
     /**
+     * Returns the minimum distance.
      * @return minimumDistance
      */
     public final Length getMinimumDistance()

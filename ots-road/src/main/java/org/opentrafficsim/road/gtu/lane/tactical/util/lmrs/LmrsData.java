@@ -55,6 +55,7 @@ public final class LmrsData implements DesireBased, Synchronizable
     private boolean humanLongitudinalControl = true;
 
     /**
+     * Constructor.
      * @param synchronization synchronization
      * @param cooperation cooperation
      * @param gapAcceptance gap-acceptance
@@ -198,6 +199,7 @@ public final class LmrsData implements DesireBased, Synchronizable
     }
 
     /**
+     * Return whether control is human.
      * @return humanLongitudinalControl.
      */
     boolean isHumanLongitudinalControl()
@@ -206,6 +208,7 @@ public final class LmrsData implements DesireBased, Synchronizable
     }
 
     /**
+     * Set human longitudinal control.
      * @param humanLongitudinalControl set humanLongitudinalControl.
      */
     public void setHumanLongitudinalControl(final boolean humanLongitudinalControl)

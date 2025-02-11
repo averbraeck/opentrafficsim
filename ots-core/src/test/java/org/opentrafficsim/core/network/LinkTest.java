@@ -45,6 +45,14 @@ public class LinkTest implements EventListener
     private int otherEventCount = 0;
 
     /**
+     * Constructor.
+     */
+    public LinkTest()
+    {
+        //
+    }
+
+    /**
      * Test the OTSLink class.
      * @throws NetworkException should not happen uncaught in this test
      */

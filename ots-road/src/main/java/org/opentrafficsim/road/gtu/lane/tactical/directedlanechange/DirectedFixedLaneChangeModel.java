@@ -24,6 +24,15 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
  */
 public class DirectedFixedLaneChangeModel implements DirectedLaneChangeModel
 {
+
+    /**
+     * Constructor.
+     */
+    public DirectedFixedLaneChangeModel()
+    {
+        //
+    }
+
     @SuppressWarnings("checkstyle:parameternumber")
     @Override
     public final DirectedLaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGtu gtu,

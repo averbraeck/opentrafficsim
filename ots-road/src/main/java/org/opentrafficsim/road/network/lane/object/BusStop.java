@@ -47,6 +47,7 @@ public class BusStop extends AbstractLaneBasedObject
     private final GtuType busType;
 
     /**
+     * Constructor.
      * @param id id
      * @param lane lane
      * @param longitudinalPosition position

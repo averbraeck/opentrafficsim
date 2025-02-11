@@ -27,6 +27,14 @@ public class IncentiveKeep implements VoluntaryIncentive
     /** Free lane change threshold parameter type. */
     protected static final ParameterTypeDouble DFREE = LmrsParameters.DFREE;
 
+    /**
+     * Constructor.
+     */
+    public IncentiveKeep()
+    {
+        //
+    }
+
     @Override
     public final Desire determineDesire(final Parameters parameters, final LanePerception perception,
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire, final Desire voluntaryDesire)

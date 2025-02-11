@@ -15,12 +15,20 @@ public final class Colors
 {
 
     /** List of colors. */
-    public static Color[] COLORS = new Color[] {Color.BLACK, new Color(0xa5, 0x2a, 0x2a), Color.RED, Color.ORANGE, Color.YELLOW,
-            Color.GREEN, Color.BLUE, Color.MAGENTA, Color.GRAY, Color.WHITE};
+    public static final Color[] COLORS = new Color[] {Color.BLACK, new Color(0xa5, 0x2a, 0x2a), Color.RED, Color.ORANGE,
+            Color.YELLOW, Color.GREEN, Color.BLUE, Color.MAGENTA, Color.GRAY, Color.WHITE};
 
     /** Names of the colors. */
-    public static String[] NAMES =
+    public static final String[] NAMES =
             new String[] {"black", "brown", "red", "orange", "yellow", "green", "blue", "magenta", "gray", "white"};
+
+    /**
+     * Constructor.
+     */
+    private Colors()
+    {
+        //
+    }
 
     /**
      * Returns a color for the index. Modulo is applied for indices outside of the normal range.

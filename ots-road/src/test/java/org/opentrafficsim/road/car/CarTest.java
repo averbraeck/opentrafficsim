@@ -57,6 +57,15 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  */
 public class CarTest implements UNITS
 {
+
+    /**
+     * Constructor.
+     */
+    public CarTest()
+    {
+        //
+    }
+
     /**
      * Test some basics of the Car class.
      * @throws NetworkException on ???
@@ -143,6 +152,7 @@ public class CarTest implements UNITS
     }
 
     /**
+     * Makes lane.
      * @param network the network
      * @param laneType the type of the lane
      * @param simulator simulator
@@ -170,6 +180,7 @@ public class CarTest implements UNITS
         private static final long serialVersionUID = 20141027L;
 
         /**
+         * Constructor.
          * @param simulator the simulator to use
          */
         public Model(final OtsSimulatorInterface simulator)

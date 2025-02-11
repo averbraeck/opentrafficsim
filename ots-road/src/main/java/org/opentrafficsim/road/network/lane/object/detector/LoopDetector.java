@@ -1135,6 +1135,14 @@ public class LoopDetector extends LaneDetector
      */
     static class PlatoonMeasurement
     {
+        /**
+         * Constructor.
+         */
+        PlatoonMeasurement()
+        {
+            //
+        }
+
         /** GTU's counted so far in the current platoon. */
         private int gtuCount = 0;
 

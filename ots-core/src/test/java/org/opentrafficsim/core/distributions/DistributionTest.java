@@ -25,6 +25,15 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  */
 public class DistributionTest
 {
+
+    /**
+     * Constructor.
+     */
+    public DistributionTest()
+    {
+        //
+    }
+
     /**
      * Test the Distribution class.
      */
@@ -358,7 +367,13 @@ public class DistributionTest
     /** Object used as generic parameter. */
     class TestObject
     {
-        //
+        /**
+         * Constructor.
+         */
+        public TestObject()
+        {
+            //
+        }
     }
 
     /**

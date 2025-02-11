@@ -50,6 +50,14 @@ public class LaneChangeInfoTest
 {
 
     /**
+     * Constructor.
+     */
+    public LaneChangeInfoTest()
+    {
+        //
+    }
+
+    /**
      * Test to see whether lane change info is correctly delivered by the network.
      * @throws NetworkException on exception
      * @throws SimRuntimeException on exception

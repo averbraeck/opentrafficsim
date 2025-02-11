@@ -17,6 +17,7 @@ import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
 import org.opentrafficsim.road.ClassList;
 
 /**
+ * Verifies methods in perception categories.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -25,9 +26,16 @@ import org.opentrafficsim.road.ClassList;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-
 public class VerifyPerceptionCategoryMethods
 {
+
+    /**
+     * Constructor.
+     */
+    public VerifyPerceptionCategoryMethods()
+    {
+        //
+    }
 
     /**
      * Check that all sub-classes of AbstractPerceptionCategory have for data named {@code TestField}:
@@ -136,6 +144,7 @@ public class VerifyPerceptionCategoryMethods
     }
 
     /**
+     * Checks class methods.
      * @param c class that is checked, subclass of AbstractPerceptionCategory
      * @param fieldNames field names of c
      * @param methodNames method names of c
@@ -223,6 +232,7 @@ public class VerifyPerceptionCategoryMethods
     }
 
     /**
+     * Main method.
      * @param args arguments
      */
     public static void main(final String[] args)

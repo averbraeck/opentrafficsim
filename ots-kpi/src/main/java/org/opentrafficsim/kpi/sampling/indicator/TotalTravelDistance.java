@@ -22,6 +22,14 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 public class TotalTravelDistance extends AbstractIndicator<Length>
 {
 
+    /**
+     * Constructor.
+     */
+    public TotalTravelDistance()
+    {
+        //
+    }
+
     @Override
     protected <G extends GtuData> Length calculate(final Query<G, ?> query, final Time startTime, final Time endTime,
             final List<TrajectoryGroup<G>> trajectoryGroups)

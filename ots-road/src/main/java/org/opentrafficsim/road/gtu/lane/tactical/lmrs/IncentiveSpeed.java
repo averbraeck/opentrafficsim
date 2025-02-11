@@ -23,6 +23,14 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 public class IncentiveSpeed implements VoluntaryIncentive
 {
 
+    /**
+     * Constructor.
+     */
+    public IncentiveSpeed()
+    {
+        //
+    }
+
     @Override
     public final Desire determineDesire(final Parameters parameters, final LanePerception perception,
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire, final Desire voluntaryDesire)

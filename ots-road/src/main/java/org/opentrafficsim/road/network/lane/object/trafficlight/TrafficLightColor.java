@@ -12,6 +12,7 @@ package org.opentrafficsim.road.network.lane.object.trafficlight;
  */
 public enum TrafficLightColor
 {
+
     /** GTU needs to stop. */
     RED,
 
@@ -27,37 +28,55 @@ public enum TrafficLightColor
     /** Traffic light is not working. */
     BLACK;
 
-    /** @return whether the light is red or yellow. */
+    /**
+     * Returns whether the light is red or yellow.
+     * @return whether the light is red or yellow.
+     */
     public final boolean isRedOrYellow()
     {
         return this.equals(RED) | this.equals(YELLOW);
     }
 
-    /** @return whether the light is red. */
+    /**
+     * Returns whether the light is red.
+     * @return whether the light is red.
+     */
     public final boolean isRed()
     {
         return this.equals(RED);
     }
 
-    /** @return whether the light is yellow. */
+    /**
+     * Returns whether the light is yellow.
+     * @return whether the light is yellow.
+     */
     public final boolean isYellow()
     {
         return this.equals(YELLOW);
     }
 
-    /** @return whether the light is green. */
+    /**
+     * Returns whether the light is green.
+     * @return whether the light is green.
+     */
     public final boolean isGreen()
     {
         return this.equals(GREEN);
     }
 
-    /** @return whether the light is pre-green. */
+    /**
+     * Returns whether the light is pre-green.
+     * @return whether the light is pre-green.
+     */
     public final boolean isPreGreen()
     {
         return this.equals(PREGREEN);
     }
 
-    /** @return whether the light is black (off). */
+    /**
+     * Returns whether the light is black (off).
+     * @return whether the light is black (off).
+     */
     public final boolean isBlack()
     {
         return this.equals(BLACK);

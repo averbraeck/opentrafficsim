@@ -15,6 +15,15 @@ import org.junit.jupiter.api.Test;
  */
 public class TurnIndicatorIntentTest
 {
+
+    /**
+     * Constructor.
+     */
+    public TurnIndicatorIntentTest()
+    {
+        //
+    }
+
     /** Test the TurnIndicatorStatus class. */
     @Test
     public void turnIndicatorIntentTest()

@@ -38,6 +38,14 @@ public class ParametersTest implements ConstraintInterface
 {
 
     /**
+     * Constructor.
+     */
+    public ParametersTest()
+    {
+        //
+    }
+
+    /**
      * Defaults tests.
      */
     @Test

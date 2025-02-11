@@ -2,7 +2,6 @@ package org.opentrafficsim.core.geometry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
@@ -18,6 +17,14 @@ import org.opentrafficsim.core.geometry.Flattener.NumSegments;
  */
 public class ContinuousBezierTest
 {
+
+    /**
+     * Constructor.
+     */
+    public ContinuousBezierTest()
+    {
+        //
+    }
 
     /** Approximate coordinate equality margin. */
     private static final double MARGIN = 1e-6;

@@ -21,13 +21,13 @@ public class ContinuousDistElectricalCharge extends ContinuousDistDoubleScalar.R
     private static final long serialVersionUID = 20180829L;
 
     /**
+     * Constructor.
      * @param distribution distribution
-     * @param unit units
+     * @param unit unit
      */
     public ContinuousDistElectricalCharge(final DistContinuous distribution, final ElectricalChargeUnit unit)
     {
         super(distribution, unit);
-
     }
 
     @Override

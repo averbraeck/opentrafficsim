@@ -47,6 +47,14 @@ public class GtuSpawner
     private GtuErrorHandler errorHandler = GtuErrorHandler.THROW;
 
     /**
+     * Constructor.
+     */
+    public GtuSpawner()
+    {
+        //
+    }
+
+    /**
      * Sets the default GTU templates.
      * @param defaultGtuTemplate default GTU templates.
      * @return for method chaining.

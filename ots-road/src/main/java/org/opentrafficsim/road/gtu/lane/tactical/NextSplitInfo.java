@@ -30,6 +30,7 @@ public record NextSplitInfo(Node nextSplitNode, Set<Lane> correctCurrentLanes, L
     private static final long serialVersionUID = 20151231L;
 
     /**
+     * Constructor.
      * @param nextSplitNode the first subsequent node at which the route splits.
      * @param correctCurrentLanes the lane(s) and/or adjacent lane(s) on which the reference point of the GTU is registered that
      *            lead us in the direction of the route provided by the strategical planner.
@@ -40,6 +41,7 @@ public record NextSplitInfo(Node nextSplitNode, Set<Lane> correctCurrentLanes, L
     }
 
     /**
+     * Return whether this is a split.
      * @return split indicates whether the route splits within the given distance.
      */
     public final boolean isSplit()

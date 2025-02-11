@@ -36,6 +36,14 @@ public class TrajectoryAcceptList
     private final Map<Trajectory<?>, Boolean> trajectoryMap = new LinkedHashMap<>();
 
     /**
+     * Constructor.
+     */
+    public TrajectoryAcceptList()
+    {
+        //
+    }
+
+    /**
      * Adds a {@code Trajectory} with the {@code TrajectoryGroup} it is from to the accept list. By default it is registered to
      * be not accepted for a query.
      * @param trajectory {@code Trajectory} trajectory

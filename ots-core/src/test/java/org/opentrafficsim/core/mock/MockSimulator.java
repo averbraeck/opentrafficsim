@@ -22,6 +22,7 @@ public final class MockSimulator
     }
 
     /**
+     * Returns mocked simulator.
      * @return mocked Simulator
      */
     public static OtsSimulatorInterface createMock()

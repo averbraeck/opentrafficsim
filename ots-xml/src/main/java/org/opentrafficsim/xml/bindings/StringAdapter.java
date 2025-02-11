@@ -13,6 +13,14 @@ import org.opentrafficsim.xml.bindings.types.StringType;
 public class StringAdapter extends ExpressionAdapter<String, StringType>
 {
 
+    /**
+     * Constructor.
+     */
+    public StringAdapter()
+    {
+        //
+    }
+
     @Override
     public StringType unmarshal(final String field)
     {

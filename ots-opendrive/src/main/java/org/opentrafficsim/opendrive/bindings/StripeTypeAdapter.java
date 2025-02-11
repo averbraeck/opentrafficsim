@@ -6,10 +6,23 @@ import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  * Adapter for road mark and OTS stripe type.
- * @author wjschakel
+ * <p>
+ * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class StripeTypeAdapter extends XmlAdapter<ERoadMarkType, Stripe.Type>
 {
+
+    /**
+     * Constructor.
+     */
+    public StripeTypeAdapter()
+    {
+        //
+    }
+
     @Override
     public Stripe.Type unmarshal(final ERoadMarkType v) throws UnsupportedOperationException
     {

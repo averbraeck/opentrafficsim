@@ -24,6 +24,7 @@ public class MockGtu
     private OtsSimulatorInterface simulator = MockDevsSimulator.createMock();
 
     /**
+     * Constructor.
      * @param name the name
      */
     public MockGtu(final String name)
@@ -35,7 +36,8 @@ public class MockGtu
     }
 
     /**
-     * @return mocked DevsSimulator
+     * Get mocked GTU.
+     * @return mocked GTU
      */
     public Gtu getMock()
     {

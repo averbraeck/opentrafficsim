@@ -13,6 +13,14 @@ import org.opentrafficsim.xml.bindings.types.BooleanType;
 public class BooleanAdapter extends ExpressionAdapter<Boolean, BooleanType>
 {
 
+    /**
+     * Constructor.
+     */
+    public BooleanAdapter()
+    {
+        //
+    }
+
     @Override
     public BooleanType unmarshal(final String field)
     {

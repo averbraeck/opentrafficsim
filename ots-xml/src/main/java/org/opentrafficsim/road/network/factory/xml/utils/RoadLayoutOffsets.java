@@ -19,8 +19,16 @@ import org.opentrafficsim.xml.generated.CseStripe;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class RoadLayoutOffsets
+public final class RoadLayoutOffsets
 {
+
+    /**
+     * Constructor.
+     */
+    private RoadLayoutOffsets()
+    {
+        //
+    }
 
     /**
      * Calculate the offsets for the RoadLayout. Note that offsets can be different for begin and end, and that they can be

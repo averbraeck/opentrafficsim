@@ -21,13 +21,13 @@ public class ContinuousDistFlowMass extends ContinuousDistDoubleScalar.Rel<FlowM
     private static final long serialVersionUID = 20180829L;
 
     /**
+     * Constructor.
      * @param distribution distribution
-     * @param unit units
+     * @param unit unit
      */
     public ContinuousDistFlowMass(final DistContinuous distribution, final FlowMassUnit unit)
     {
         super(distribution, unit);
-
     }
 
     @Override

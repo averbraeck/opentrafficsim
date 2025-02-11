@@ -30,7 +30,7 @@ public class TimeToCollision extends ExtendedDataDuration<GtuDataRoad>
 {
 
     /**
-     * 
+     * Constructor.
      */
     public TimeToCollision()
     {

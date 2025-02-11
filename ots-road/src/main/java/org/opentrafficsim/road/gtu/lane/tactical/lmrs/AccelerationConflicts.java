@@ -24,6 +24,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil.ConflictPlans
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
+ * Conflicts acceleration incentive.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -39,6 +40,14 @@ public class AccelerationConflicts implements AccelerationIncentive, Blockable
     /** Set of yield plans at conflicts with priority. Remembering for static model. */
     // @docs/06-behavior/tactical-planner/#modular-utilities
     private final ConflictPlans yieldPlans = new ConflictPlans();
+
+    /**
+     * Constructor.
+     */
+    public AccelerationConflicts()
+    {
+        //
+    }
 
     @Override
     public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,

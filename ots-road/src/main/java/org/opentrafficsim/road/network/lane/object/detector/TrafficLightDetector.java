@@ -335,13 +335,19 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
         }
     }
 
-    /** @return the relative position type of the vehicle (e.g., FRONT, BACK) that triggers the detector. */
+    /**
+     * Returns the relative position type of the vehicle (e.g., FRONT, BACK) that triggers the detector.
+     * @return the relative position type of the vehicle (e.g., FRONT, BACK) that triggers the detector.
+     */
     public final Type getPositionTypeEntry()
     {
         return this.entryA.getPositionType();
     }
 
-    /** @return the relative position type of the vehicle (e.g., FRONT, BACK) that triggers the detector. */
+    /**
+     * Returns the relative position type of the vehicle (e.g., FRONT, BACK) that triggers the detector.
+     * @return the relative position type of the vehicle (e.g., FRONT, BACK) that triggers the detector.
+     */
     public final Type getPositionTypeExit()
     {
         return this.exitB.getPositionType();

@@ -208,7 +208,7 @@ public final class DefinitionsParser
                                         new Class[] {String.class, typeClass})).newInstance(h.getId(), parent),
                                 XmlParserException.class, "No accessible constructor with (String, %s) in %s",
                                 typeClass.getSimpleName(), typeClass.getSimpleName());
-                        CategoryLogger.filter(Cat.PARSER).trace("Added {} {}", typeClass.getSimpleName(), t);
+                        //CategoryLogger.filter(Cat.PARSER).trace("Added {} {}", typeClass.getSimpleName(), t);
                     }
                     else
                     {
@@ -218,7 +218,7 @@ public final class DefinitionsParser
                                         .newInstance(h.getId()),
                                 XmlParserException.class, "No accessible constructor with (String) in %s",
                                 typeClass.getSimpleName());
-                        CategoryLogger.filter(Cat.PARSER).trace("Added {} {}", typeClass.getSimpleName(), t);
+                        //CategoryLogger.filter(Cat.PARSER).trace("Added {} {}", typeClass.getSimpleName(), t);
                     }
                     parsedDefinitions.add(typeClass, t);
 

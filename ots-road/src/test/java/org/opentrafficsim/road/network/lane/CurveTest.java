@@ -45,6 +45,17 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 public class CurveTest
 {
 
+    /** Verbose test. */
+    private static final boolean VERBOSE = false;
+
+    /**
+     * Constructor.
+     */
+    public CurveTest()
+    {
+        //
+    }
+
     /**
      * Let GTUs drive through a curve and check (de-)registration times at each node.
      * @throws NamingException on error
@@ -85,19 +96,31 @@ public class CurveTest
             {
                 cumulativeLength += set[lane].getLength().si;
                 double timeAtEnd = simulator.getSimulatorTime().si + (cumulativeLength - initialPosition.si) / speed.si;
-                System.out.println("lane " + set[lane] + " length is " + set[lane].getLength()
-                        + " time for reference to get to end " + timeAtEnd);
+                if (VERBOSE)
+                {
+                    System.out.println("lane " + set[lane] + " length is " + set[lane].getLength()
+                            + " time for reference to get to end " + timeAtEnd);
+                }
             }
             LaneBasedGtu car = CarTest.makeReferenceCar("car", gtuType, straight1[lane], initialPosition, speed,
                     new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI), new Duration(25, DurationUnit.SI)),
                     new FixedLaneChangeModel(null), (RoadNetwork) network);
-            printEventList(simulator);
-            System.out.println("STEP");
+            if (VERBOSE)
+            {
+                printEventList(simulator);
+                System.out.println("STEP");
+            }
             simulator.step();
-            printEventList(simulator);
-            System.out.println("STEP");
+            if (VERBOSE)
+            {
+                printEventList(simulator);
+                System.out.println("STEP");
+            }
             simulator.step();
-            printEventList(simulator);
+            if (VERBOSE)
+            {
+                printEventList(simulator);
+            }
             // TODO finish writing this test
         }
     }
@@ -112,7 +135,6 @@ public class CurveTest
         {
             System.out.println("se: " + se);
         }
-
     }
 
 }

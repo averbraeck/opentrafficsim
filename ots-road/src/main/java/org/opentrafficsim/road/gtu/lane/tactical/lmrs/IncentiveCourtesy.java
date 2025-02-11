@@ -52,6 +52,14 @@ public class IncentiveCourtesy implements VoluntaryIncentive
     /** Current right lane change desire. */
     protected static final ParameterTypeDouble DRIGHT = LmrsParameters.DRIGHT;
 
+    /**
+     * Constructor.
+     */
+    public IncentiveCourtesy()
+    {
+        //
+    }
+
     @Override
     public final Desire determineDesire(final Parameters parameters, final LanePerception perception,
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire, final Desire voluntaryDesire)

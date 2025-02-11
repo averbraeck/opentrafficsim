@@ -7,7 +7,7 @@ import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
 /**
- * Gtu representation in road sampler.
+ * GTU representation in road sampler.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -19,11 +19,12 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 public class GtuDataRoad implements GtuData
 {
 
-    /** Gtu. */
+    /** GTU. */
     private final LaneBasedGtu gtu;
 
     /**
-     * @param gtu gtu
+     * Constructor.
+     * @param gtu GTU
      */
     public GtuDataRoad(final LaneBasedGtu gtu)
     {
@@ -31,7 +32,8 @@ public class GtuDataRoad implements GtuData
     }
 
     /**
-     * @return gtu.
+     * Get GTU.
+     * @return GTU.
      */
     public final LaneBasedGtu getGtu()
     {

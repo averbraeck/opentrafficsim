@@ -520,7 +520,7 @@
           <detectOfflineLinks>true</detectOfflineLinks>
           <detectLinks>false</detectLinks>
           <release>${jdk.version}</release>
-          <excludePackageNames>*.generated</excludePackageNames>
+          <excludePackageNames>*.generated,org.opentrafficsim.demo.doc,org.opentrafficsim.demo.doc.tutorials,com.bric.multislider</excludePackageNames>
         </configuration>
         <executions>
           <execution>
@@ -780,7 +780,7 @@
           <detectOfflineLinks>true</detectOfflineLinks>
           <detectLinks>false</detectLinks>
           <release>${jdk.version}</release>
-          <excludePackageNames>*.generated</excludePackageNames>
+          <excludePackageNames>*.generated,org.opentrafficsim.demo.doc,org.opentrafficsim.demo.doc.tutorials,com.bric.multislider</excludePackageNames>
         </configuration>
         <reportSets>
           <reportSet>

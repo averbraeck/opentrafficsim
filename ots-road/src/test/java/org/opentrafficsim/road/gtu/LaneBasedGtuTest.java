@@ -71,6 +71,14 @@ public class LaneBasedGtuTest implements UNITS
     private IdGenerator idGenerator = new IdGenerator("id");
 
     /**
+     * Constructor.
+     */
+    public LaneBasedGtuTest()
+    {
+        //
+    }
+
+    /**
      * Test if a Truck covering a specified range of lanes can <i>see</i> a Car covering a specified range of lanes. <br>
      * The network is a linear array of Nodes connected by 5-Lane Links. In the middle, the Nodes are very closely spaced. A
      * truck is positioned over those center Nodes ensuring it covers several of the short Lanes in succession.
@@ -531,6 +539,7 @@ public class LaneBasedGtuTest implements UNITS
     public static class Model extends AbstractOtsModel
     {
         /**
+         * Constructor.
          * @param simulator the simulator to use
          */
         public Model(final OtsSimulatorInterface simulator)

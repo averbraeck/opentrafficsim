@@ -38,6 +38,14 @@ import org.opentrafficsim.road.network.lane.Lane;
 public abstract class AbstractLaneChangeModel implements LaneChangeModel
 {
 
+    /**
+     * Constructor.
+     */
+    public AbstractLaneChangeModel()
+    {
+        //
+    }
+
     /** Look ahead parameter type. */
     protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 

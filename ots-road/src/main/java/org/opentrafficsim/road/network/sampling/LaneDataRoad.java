@@ -21,6 +21,7 @@ public class LaneDataRoad implements LaneData<LaneDataRoad>
     private final Lane lane;
 
     /**
+     * Constructor.
      * @param lane wrapped lane
      */
     public LaneDataRoad(final Lane lane)
@@ -29,6 +30,7 @@ public class LaneDataRoad implements LaneData<LaneDataRoad>
     }
 
     /**
+     * Returns the lane.
      * @return lane.
      */
     public final Lane getLane()

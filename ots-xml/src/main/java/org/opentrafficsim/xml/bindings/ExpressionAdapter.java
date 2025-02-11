@@ -23,6 +23,14 @@ import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 public abstract class ExpressionAdapter<T, E extends ExpressionType<T>> extends XmlAdapter<String, E>
 {
 
+    /**
+     * Constructor.
+     */
+    public ExpressionAdapter()
+    {
+        //
+    }
+
     @Override
     public String marshal(final E value)
     {

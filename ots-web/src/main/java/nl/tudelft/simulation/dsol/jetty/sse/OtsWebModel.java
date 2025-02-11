@@ -69,6 +69,7 @@ public class OtsWebModel implements EventListener
     private boolean killed = false;
 
     /**
+     * Constructor.
      * @param title the title for the model window
      * @param simulator the simulator
      * @throws Exception in case jetty crashes
@@ -99,6 +100,7 @@ public class OtsWebModel implements EventListener
     }
 
     /**
+     * Return title.
      * @return title
      */
     public final String getTitle()
@@ -107,6 +109,7 @@ public class OtsWebModel implements EventListener
     }
 
     /**
+     * Return simulator.
      * @return simulator
      */
     public final OtsSimulatorInterface getSimulator()
@@ -115,6 +118,7 @@ public class OtsWebModel implements EventListener
     }
 
     /**
+     * Return animation panel.
      * @return animationPanel
      */
     public final HtmlAnimationPanel getAnimationPanel()
@@ -123,6 +127,7 @@ public class OtsWebModel implements EventListener
     }
 
     /**
+     * Return killed.
      * @return killed
      */
     public final boolean isKilled()
@@ -131,6 +136,7 @@ public class OtsWebModel implements EventListener
     }
 
     /**
+     * Set killed.
      * @param killed set killed
      */
     public final void setKilled(final boolean killed)
@@ -194,6 +200,7 @@ public class OtsWebModel implements EventListener
     }
 
     /**
+     * Set speed factor.
      * @param speedFactor the new speed factor
      */
     protected void setSpeedFactor(final double speedFactor)

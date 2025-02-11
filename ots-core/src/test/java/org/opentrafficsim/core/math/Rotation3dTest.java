@@ -28,6 +28,14 @@ public class Rotation3dTest
 {
 
     /**
+     * Constructor.
+     */
+    public Rotation3dTest()
+    {
+        //
+    }
+
+    /**
      * Test the constructors and getters.
      * @throws ValueRuntimeException should not happen; test has failed if it does happen
      */

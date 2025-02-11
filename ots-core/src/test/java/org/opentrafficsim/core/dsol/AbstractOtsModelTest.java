@@ -2,8 +2,6 @@ package org.opentrafficsim.core.dsol;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.Serializable;
-
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.network.Network;
 
@@ -19,6 +17,14 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  */
 public class AbstractOtsModelTest
 {
+
+    /**
+     * Constructor.
+     */
+    public AbstractOtsModelTest()
+    {
+        //
+    }
 
     /**
      * Test the AbstractOtsModel class.

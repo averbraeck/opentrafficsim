@@ -170,6 +170,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
         private final String xml;
 
         /**
+         * Constructor.
          * @param simulator the simulator
          * @param shortName name of the model
          * @param description description of the model

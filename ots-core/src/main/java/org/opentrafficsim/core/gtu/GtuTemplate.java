@@ -42,6 +42,7 @@ public class GtuTemplate implements Serializable, Generator<GtuCharacteristics>
     private final Generator<Acceleration> maxDeceleration;
 
     /**
+     * Constructor.
      * @param gtuType GtuType, the GtuType to make it identifiable.
      * @param lengthGenerator generator for the length of the GTU type (parallel with driving direction).
      * @param widthGenerator generator for the width of the GTU type (perpendicular to driving direction).
@@ -57,6 +58,7 @@ public class GtuTemplate implements Serializable, Generator<GtuCharacteristics>
     }
 
     /**
+     * Constructor.
      * @param gtuType GtuType, the GtuType to make it identifiable.
      * @param lengthGenerator generator for the length of the GTU type (parallel with driving direction).
      * @param widthGenerator generator for the width of the GTU type (perpendicular to driving direction).
@@ -114,6 +116,7 @@ public class GtuTemplate implements Serializable, Generator<GtuCharacteristics>
     }
 
     /**
+     * Returns the GTU type.
      * @return gtuType.
      */
     @SuppressWarnings("checkstyle:designforextension")

@@ -22,13 +22,13 @@ public class DiscreteDistPosition extends DiscreteDistDoubleScalar.Abs<Position,
     private static final long serialVersionUID = 20180829L;
 
     /**
+     * Constructor.
      * @param distribution distribution
-     * @param unit units
+     * @param unit unit
      */
     public DiscreteDistPosition(final DistDiscrete distribution, final PositionUnit unit)
     {
         super(distribution, unit);
-
     }
 
     @Override

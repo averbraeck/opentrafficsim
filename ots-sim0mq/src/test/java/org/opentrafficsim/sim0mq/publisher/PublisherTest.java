@@ -57,6 +57,14 @@ public class PublisherTest implements OtsModelInterface
     Object[] lastResult = null;
 
     /**
+     * Constructor.
+     */
+    public PublisherTest()
+    {
+        //
+    }
+
+    /**
      * Test the Publisher class.
      * @throws RemoteException when that happens this test has failed
      * @throws NetworkException if that happens uncaught; this test has failed
@@ -94,7 +102,7 @@ public class PublisherTest implements OtsModelInterface
         Object[] subscriptionHandler = publisher.get(new Object[] {"GTUs in network"}, storeLastResult);
         assertNotNull(subscriptionHandler, "result of get should not be null");
         assertEquals(1, subscriptionHandler.length, "result should contain one elements");
-        System.out.println(subscriptionHandler[0]);
+        //System.out.println(subscriptionHandler[0]);
         assertTrue(subscriptionHandler[0] instanceof SubscriptionHandler, "Result should contain a String");
         this.lastResult = null;
         assertNull(publisher.get(new Object[] {"No such transceiver"}, storeLastResult),
@@ -203,6 +211,7 @@ public class PublisherTest implements OtsModelInterface
         private final String xml;
 
         /**
+         * Constructor.
          * @param simulator the simulator
          * @param shortName the model name
          * @param description the model description

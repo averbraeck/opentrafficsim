@@ -14,7 +14,7 @@ import org.djunits.value.ValueRuntimeException;
 public final class Solver
 {
     /**
-     * 
+     *
      */
     private Solver()
     {
@@ -26,7 +26,7 @@ public final class Solver
      * allowed.
      * @param a the coefficient of <cite>x<sup>2</sup></cite>
      * @param b the coefficient of <cite>x</cite>
-     * @param c
+     * @param c intercept
      * @return array with zero, one, or two elements (depending on the number of solutions of the equation)
      */
     public static double[] solve(final double a, final double b, final double c)
@@ -94,7 +94,7 @@ public final class Solver
     /**
      * Solve linear equation <cite>ax+b=0</cite> for <cite>x</cite>.
      * @param a the coefficient of <cite>x</cite>
-     * @param b
+     * @param b intercept
      * @return array with one or zero elements (depending on the number of solutions of the equation). The case where both
      *         <cite>a</cite> and <cite>b</cite> are zero returns an array of length 0.
      */

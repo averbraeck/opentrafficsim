@@ -18,6 +18,14 @@ public class SolverTest
 {
 
     /**
+     * Constructor.
+     */
+    public SolverTest()
+    {
+        //
+    }
+
+    /**
      * Linear solver.
      */
     @SuppressWarnings("checkstyle:methodlength")

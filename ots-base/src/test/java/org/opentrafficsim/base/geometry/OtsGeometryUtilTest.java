@@ -21,6 +21,15 @@ import org.junit.jupiter.api.Test;
  */
 public class OtsGeometryUtilTest
 {
+
+    /**
+     * Constructor.
+     */
+    public OtsGeometryUtilTest()
+    {
+        //
+    }
+
     /**
      * Test the printCoordinate family of functions.
      */
@@ -67,7 +76,7 @@ public class OtsGeometryUtilTest
         assertEquals(n / 2, OtsGeometryUtil.getNumSegmentsForRadius(deviation * 1.001, ang, radius));
         assertEquals((n / 2) + 1, OtsGeometryUtil.getNumSegmentsForRadius(deviation * 0.999, ang, radius));
     }
-    
+
     /**
      * Test offset point.
      */
@@ -84,7 +93,7 @@ public class OtsGeometryUtilTest
         assertEquals(0.0, o.x, margin);
         assertEquals(-1.0, o.y, margin);
         assertEquals(0.0, o.dirZ, margin);
-        
+
         p = new OrientedPoint2d(0.0, 0.0, .5 * Math.PI);
         o = OtsGeometryUtil.offsetPoint(p, 1.0);
         assertEquals(-1.0, o.x, margin);
@@ -94,7 +103,7 @@ public class OtsGeometryUtilTest
         assertEquals(1.0, o.x, margin);
         assertEquals(0.0, o.y, margin);
         assertEquals(.5 * Math.PI, o.dirZ, margin);
-        
+
         p = new OrientedPoint2d(0.0, 0.0, Math.PI);
         o = OtsGeometryUtil.offsetPoint(p, 1.0);
         assertEquals(0.0, o.x, margin);

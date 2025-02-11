@@ -30,6 +30,14 @@ import org.opentrafficsim.road.network.LaneChangeInfo;
 public class IncentiveStayRight implements VoluntaryIncentive
 {
 
+    /**
+     * Constructor.
+     */
+    public IncentiveStayRight()
+    {
+        //
+    }
+
     @Override
     public Desire determineDesire(final Parameters parameters, final LanePerception perception,
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire, final Desire voluntaryDesire)

@@ -55,6 +55,7 @@ public class XyInterpolatedBlockRenderer extends XYBlockRenderer
     private final XyInterpolatedDataset xyInterpolatedDataset;
 
     /**
+     * Constructor.
      * @param xyInterpolatedDataset dataset that allows retrieving surrounding value for interpolation
      */
     public XyInterpolatedBlockRenderer(final XyInterpolatedDataset xyInterpolatedDataset)

@@ -143,6 +143,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
     private DistContinuous headwayGenerator;
 
     /**
+     * Constructor.
      * @param simulator the simulator for this model
      */
     public NetworksModel(final OtsSimulatorInterface simulator)
@@ -408,6 +409,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
     }
 
     /**
+     * Make GTU template.
      * @param randStream the random stream to use
      * @param lane reference lane to generate GTUs on
      * @param lengthDistribution ContinuousDistDoubleScalar.Rel&lt;Length,LengthUnit&gt;; distribution of the GTU length
@@ -513,6 +515,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
     }
 
     /**
+     * Returns path.
      * @param index the rank number of the path
      * @return the set of lanes for the specified index
      */
@@ -531,6 +534,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
     }
 
     /**
+     * Returns minimum distance.
      * @return minimumDistance
      */
     public final Length getMinimumDistance()
@@ -539,6 +543,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
     }
 
     /**
+     * Returns maximum distance.
      * @return maximumDistance
      */
     public final Length getMaximumDistance()

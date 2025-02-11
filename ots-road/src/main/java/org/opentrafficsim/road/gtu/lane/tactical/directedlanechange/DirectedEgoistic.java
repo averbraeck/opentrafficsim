@@ -15,6 +15,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
 public class DirectedEgoistic extends AbstractDirectedLaneChangeModel
 {
     /**
+     * Constructor.
      * @param perception the perception to use
      */
     public DirectedEgoistic(final LanePerception perception)

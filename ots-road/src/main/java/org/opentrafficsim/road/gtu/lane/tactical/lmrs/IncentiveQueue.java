@@ -39,6 +39,14 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 public class IncentiveQueue implements VoluntaryIncentive
 {
 
+    /**
+     * Constructor.
+     */
+    public IncentiveQueue()
+    {
+        //
+    }
+
     @Override
     public Desire determineDesire(final Parameters parameters, final LanePerception perception,
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire, final Desire voluntaryDesire)

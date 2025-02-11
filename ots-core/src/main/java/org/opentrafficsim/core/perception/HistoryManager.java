@@ -26,6 +26,14 @@ public abstract class HistoryManager
     private final Set<HistoricalElement> historicals = Collections.newSetFromMap(new WeakHashMap<HistoricalElement, Boolean>());
 
     /**
+     * Constructor.
+     */
+    public HistoryManager()
+    {
+        //
+    }
+
+    /**
      * Registers a historical.
      * @param historical historical to register.
      */

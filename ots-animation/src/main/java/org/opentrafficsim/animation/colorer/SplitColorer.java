@@ -24,7 +24,6 @@ import org.opentrafficsim.road.network.lane.LanePosition;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-
 public class SplitColorer implements GtuColorer
 {
 
@@ -50,6 +49,14 @@ public class SplitColorer implements GtuColorer
         LEGEND.add(new LegendEntry(RIGHT, "Right", "Right"));
         LEGEND.add(new LegendEntry(OTHER, "Other", "Other"));
         LEGEND.add(new LegendEntry(UNKNOWN, "Unknown", "Unknown"));
+    }
+
+    /**
+     * Constructor.
+     */
+    public SplitColorer()
+    {
+        //
     }
 
     @Override

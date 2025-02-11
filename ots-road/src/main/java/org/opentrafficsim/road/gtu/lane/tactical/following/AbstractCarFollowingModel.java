@@ -30,6 +30,7 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
     private DesiredSpeedModel desiredSpeedModel;
 
     /**
+     * Constructor.
      * @param desiredHeadwayModel desired headway model
      * @param desiredSpeedModel desired speed model
      */

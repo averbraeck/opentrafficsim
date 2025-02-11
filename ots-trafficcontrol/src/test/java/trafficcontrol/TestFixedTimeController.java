@@ -47,6 +47,14 @@ public class TestFixedTimeController
 {
 
     /**
+     * Constructor.
+     */
+    public TestFixedTimeController()
+    {
+        //
+    }
+
+    /**
      * Test the constructors and initializers of the signal group and fixed time controller classes.
      * @throws SimRuntimeException if that happens uncaught; this test has failed
      * @throws NamingException if that happens uncaught; this test has failed

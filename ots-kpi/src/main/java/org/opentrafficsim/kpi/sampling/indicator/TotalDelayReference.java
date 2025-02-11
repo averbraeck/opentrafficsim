@@ -32,6 +32,14 @@ public class TotalDelayReference extends AbstractIndicator<Duration>
     /** Reference speed extended data type. */
     private static final ReferenceSpeed REF_SPEED_TYPE = ReferenceSpeed.INSTANCE;
 
+    /**
+     * Constructor.
+     */
+    public TotalDelayReference()
+    {
+        //
+    }
+
     @Override
     protected final <G extends GtuData> Duration calculate(final Query<G, ?> query, final Time startTime, final Time endTime,
             final List<TrajectoryGroup<G>> trajectoryGroups)

@@ -42,6 +42,7 @@ public class Category implements Serializable
     }
 
     /**
+     * Constructor.
      * @param categorization categorization
      * @param object1 1st object
      * @param objects other objects
@@ -85,6 +86,7 @@ public class Category implements Serializable
     }
 
     /**
+     * Return categorization.
      * @return categorization.
      */
     public final Categorization getCategorization()

@@ -95,6 +95,7 @@ public class DefaultsRoadNl extends DefaultsRoad
     /************************************** LANE BIAS **************************************/
     /***************************************************************************************/
 
+    /** Lane biases for car and truck. */
     public static final LaneBiases LANE_BIAS_CAR_TRUCK = new LaneBiases();
 
     static
@@ -138,7 +139,7 @@ public class DefaultsRoadNl extends DefaultsRoad
     /** Block stripe. */
     public static final StripeData BLOCK = new StripeData(
             List.of(StripeElement.dashed(CM20.times(2.0), Color.WHITE, new LengthVector(new double[] {3.0, 1.0}))), true, true);
-    
+
     static
     {
         LEFT.setPhaseSync(StripePhaseSync.UPSTREAM);

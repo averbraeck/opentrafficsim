@@ -25,11 +25,19 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil.CarFollow
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-
-public class ToledoCfTester
+public final class ToledoCfTester
 {
 
     /**
+     * Constructor.
+     */
+    private ToledoCfTester()
+    {
+        //
+    }
+
+    /**
+     * Main method.
      * @param args arguments for the run (should be empty at the moment)
      * @throws ParameterException when Toledo parameters cannot be found
      * @throws GtuException when CarFollowingHeadway cannot be calculated

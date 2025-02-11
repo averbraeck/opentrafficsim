@@ -466,6 +466,7 @@ public interface GeneratorPositions
         }
 
         /**
+         * Get speed limit.
          * @param gtuType GTU type
          * @return speed limit
          */
@@ -599,6 +600,14 @@ public interface GeneratorPositions
 
         /** Biases per GTU type. */
         private final Map<GtuType, LaneBias> biases = new LinkedHashMap<>();
+
+        /**
+         * Constructor.
+         */
+        public LaneBiases()
+        {
+            //
+        }
 
         /**
          * Adds a GTU bias for randomly drawing a lane.
@@ -737,17 +746,17 @@ public interface GeneratorPositions
 
         /**
          * Returns a random draw weight for given lane. The weight is calculated as:
-         * 
+         *
          * <pre>
          * weight = { 0,                               d &gt;= number of sticky lanes
          *          { 1 / ((d + 1)^bias * (m + 1)),    otherwise
-         * 
+         *
          * where,
          *      d:      lane deviation from lateral bias position
          *      bias:   bias extent
          *      m:      number of unplaced GTU's
          * </pre>
-         * 
+         *
          * The formula makes sure that all lanes have equal weight for <i>bias</i> &#61; 0, given an equal number of unplaced
          * GTU's <i>m</i>. The bias can be seen to result in this: for each GTU on the 2nd lane, there are 2^(<i>bias</i> - 1)
          * GTU's on the 1st lane. In numbers: 1 vs. 1 for <i>bias</i> &#61; 0, 1 vs. 2 for <i>bias</i> &#61; 1, 1 vs. 4 for
@@ -864,14 +873,6 @@ public interface GeneratorPositions
 
         /**
          * Fixed road position.
-         * <p>
-         * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
-         * reserved. <br>
-         * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-         * <p>
-         * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-         * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-         * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
          */
         class ByValue implements RoadPosition
         {
@@ -934,14 +935,6 @@ public interface GeneratorPositions
 
         /**
          * Road position based on desired speed.
-         * <p>
-         * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights
-         * reserved. <br>
-         * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-         * <p>
-         * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-         * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-         * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
          */
         class BySpeed implements RoadPosition
         {

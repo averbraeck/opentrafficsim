@@ -43,6 +43,14 @@ public class ParameterFactoryByType implements ParameterFactory
     /** Map of correlations. */
     private Map<GtuType, Map<ParameterType<?>, Map<ParameterType<?>, Correlation<?, ?>>>> correlations = new LinkedHashMap<>();
 
+    /**
+     * Constructor.
+     */
+    public ParameterFactoryByType()
+    {
+        //
+    }
+
     @Override
     public void setValues(final Parameters parameters, final GtuType gtuType) throws ParameterException
     {
@@ -70,13 +78,13 @@ public class ParameterFactoryByType implements ParameterFactory
         }
 
         /*-
-         * Based on all given correlations we create two maps: 
-         * - remainingCorrelations, keys are ParameterTypes that depend on values that this class still needs to set 
+         * Based on all given correlations we create two maps:
+         * - remainingCorrelations, keys are ParameterTypes that depend on values that this class still needs to set
          * - allCorrelations, correlations combined from all and the specific GTU type, used to actually alter the values set
-         * The map remainingCorrelations will only contain correlations to parameters also defined in this class. For other 
-         * correlations the independent parameter should already be present in the input Parameters set. If it's not, an 
-         * exception follows as the parameter could not be retrieved. Circular dependencies are recognized as a loop has not 
-         * done anything, while remainingCorrelations is not empty (i.e. some parameters should still be set, but can't as they 
+         * The map remainingCorrelations will only contain correlations to parameters also defined in this class. For other
+         * correlations the independent parameter should already be present in the input Parameters set. If it's not, an
+         * exception follows as the parameter could not be retrieved. Circular dependencies are recognized as a loop has not
+         * done anything, while remainingCorrelations is not empty (i.e. some parameters should still be set, but can't as they
          * all depend on parameters not yet set). {@formatter:on}
          */
         Map<ParameterType<?>, Map<ParameterType<?>, Correlation<?, ?>>> remainingCorrelations = new LinkedHashMap<>();
@@ -202,6 +210,7 @@ public class ParameterFactoryByType implements ParameterFactory
     }
 
     /**
+     * Add parameter.
      * @param gtuType the gtu type
      * @param parameterType the parameter type
      * @param value the value of the parameter
@@ -214,6 +223,7 @@ public class ParameterFactoryByType implements ParameterFactory
     }
 
     /**
+     * Add parameter.
      * @param gtuType the gtu type
      * @param parameterType the parameter type
      * @param distribution ContinuousDistDoubleScalar.Rel&lt;T,U&gt;; the distribution of the parameter
@@ -228,6 +238,7 @@ public class ParameterFactoryByType implements ParameterFactory
     }
 
     /**
+     * Add parameter.
      * @param gtuType the gtu type
      * @param parameterType the parameter type
      * @param distribution the distribution of the parameter
@@ -239,6 +250,7 @@ public class ParameterFactoryByType implements ParameterFactory
     }
 
     /**
+     * Add parameter.
      * @param gtuType the gtu type
      * @param parameterType the parameter type
      * @param distribution the distribution of the parameter

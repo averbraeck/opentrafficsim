@@ -192,6 +192,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     }
 
     /**
+     * Initializes the GTU.
      * @param strategicalPlanner the strategical planner (e.g., route determination) to use
      * @param longitudinalPosition the initial position of the GTU
      * @param initialSpeed the initial speed of the car on the lane
@@ -1436,7 +1437,10 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         return (LaneBasedStrategicalPlanner) super.getStrategicalPlanner(time);
     }
 
-    /** @return the road network to which the LaneBasedGtu belongs */
+    /**
+     * Returns the network.
+     * @return the road network to which the LaneBasedGtu belongs
+     */
     public RoadNetwork getNetwork()
     {
         return (RoadNetwork) super.getPerceivableContext();
@@ -1510,13 +1514,17 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         }
     }
 
-    /** @return the status of the turn indicator */
+    /**
+     * Returns the turn indicator status.
+     * @return the status of the turn indicator
+     */
     public final TurnIndicatorStatus getTurnIndicatorStatus()
     {
         return this.turnIndicatorStatus.get();
     }
 
     /**
+     * Returns the turn indicator status at time.
      * @param time time to obtain the turn indicator status at
      * @return the status of the turn indicator at the given time
      */

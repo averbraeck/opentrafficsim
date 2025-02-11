@@ -78,6 +78,9 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 public class OdApplierTest
 {
 
+    /** Verbose test. */
+    private static final boolean VERBOSE = false;
+
     /** Local time object used in simulator MockUp. Can be set for testing at different simulation times. */
     private Time time;
 
@@ -100,6 +103,7 @@ public class OdApplierTest
     private final Map<String, Lane> lanes = new LinkedHashMap<>();
 
     /**
+     * Returns simulator.
      * @return a mock of the simulator that uses this.time as the time for getSimulatorTime()
      */
     private OtsSimulatorInterface createSimulatorMock()
@@ -129,6 +133,7 @@ public class OdApplierTest
     }
 
     /**
+     * Returns model.
      * @return a mock of the model
      */
     private DsolModel createModelMock()
@@ -157,6 +162,7 @@ public class OdApplierTest
     }
 
     /**
+     * Make network.
      * @throws NetworkException on network exception
      */
     private void makeNetwork() throws NetworkException
@@ -359,9 +365,14 @@ public class OdApplierTest
                         }
                         n /= nSims;
                         double p = 100 * (n / nDemand - 1);
-                        System.out.println(String.format(
-                                "A demand of %.2f resulted in %.0f vehicles (%s%.2f%%) as mean over %d simulations (%s demand, %s headways).",
-                                nDemand, n, p > 0 ? "+" : "", p, nSims, interpolation.name(), headwayRandomization.getName()));
+                        if (VERBOSE)
+                        {
+                            System.out.println(String.format(
+                                    "A demand of %.2f resulted in %.0f vehicles (%s%.2f%%) "
+                                            + "as mean over %d simulations (%s demand, %s headways).",
+                                    nDemand, n, p > 0 ? "+" : "", p, nSims, interpolation.name(),
+                                    headwayRandomization.getName()));
+                        }
                         assertTrue(Math.abs(p) < 5,
                                 String.format("Demand generated with exponential headways was more than 5%% off (%s%.2f%%).",
                                         p > 0 ? "+" : "", p));
@@ -481,6 +492,7 @@ public class OdApplierTest
     }
 
     /**
+     * Test fraction.
      * @throws ValueRuntimeException on exception
      * @throws NetworkException on exception
      * @throws SimRuntimeException on exception
@@ -530,9 +542,13 @@ public class OdApplierTest
                 assertTrue(Math.abs(counts.get(DefaultsNl.TRUCK) - nTruck) < nTot * .05,
                         String.format("Generated number of TRUCKs (%d) deviates too much from the expected value (%d).",
                                 counts.get(DefaultsNl.TRUCK), nTruck));
-                System.out.println(String.format("Generated %d CARs for expected value %d.", counts.get(DefaultsNl.CAR), nCar));
-                System.out.println(
-                        String.format("Generated %d TRUCKs for expected value %d.", counts.get(DefaultsNl.TRUCK), nTruck));
+                if (VERBOSE)
+                {
+                    System.out.println(
+                            String.format("Generated %d CARs for expected value %d.", counts.get(DefaultsNl.CAR), nCar));
+                    System.out.println(
+                            String.format("Generated %d TRUCKs for expected value %d.", counts.get(DefaultsNl.TRUCK), nTruck));
+                }
             }
             nCar = 1000;
             nTruck = 0;

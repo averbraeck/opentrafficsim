@@ -94,6 +94,7 @@ public final class LaneFactory
     private Stripe firstStripe;
 
     /**
+     * Constructor.
      * @param network network
      * @param from from node
      * @param to to node
@@ -111,6 +112,7 @@ public final class LaneFactory
     }
 
     /**
+     * Constructor.
      * @param network network
      * @param from from node
      * @param to to node
@@ -566,6 +568,7 @@ public final class LaneFactory
     }
 
     /**
+     * Make bezier.
      * @param n1 node 1
      * @param n2 node 2
      * @param n3 node 3

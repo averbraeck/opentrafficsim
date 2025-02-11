@@ -23,6 +23,14 @@ import org.opentrafficsim.xml.bindings.types.ColorType;
 public class ColorAdapter extends ExpressionAdapter<Color, ColorType>
 {
 
+    /**
+     * Constructor.
+     */
+    public ColorAdapter()
+    {
+        //
+    }
+
     @Override
     public ColorType unmarshal(final String field) throws IllegalArgumentException
     {
@@ -35,7 +43,9 @@ public class ColorAdapter extends ExpressionAdapter<Color, ColorType>
             String colorStr = field.replaceAll("\\s", "");
 
             if (colorStr.startsWith("#"))
+            {
                 return new ColorType(Color.decode(colorStr));
+            }
 
             if (colorStr.startsWith("RGB"))
             {

@@ -35,6 +35,14 @@ public class GtuCharacteristicsTest implements OtsModelInterface
     private static final long serialVersionUID = 20160311L;
 
     /**
+     * Constructor.
+     */
+    public GtuCharacteristicsTest()
+    {
+        //
+    }
+
+    /**
      * Test the GtuCharacteristics class.
      * @throws SimRuntimeException should never happen
      * @throws NamingException should never happen

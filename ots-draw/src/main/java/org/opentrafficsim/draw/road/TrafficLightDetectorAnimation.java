@@ -101,6 +101,7 @@ public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDet
         private static final long serialVersionUID = 20161211L;
 
         /**
+         * Constructor.
          * @param source the object for which the text is displayed
          * @param text the text to display
          * @param dx the horizontal movement of the text, in meters

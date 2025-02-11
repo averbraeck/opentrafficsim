@@ -65,6 +65,14 @@ public class GtuDumperTest implements OtsModelInterface
     private Network network;
 
     /**
+     * Constructor.
+     */
+    public GtuDumperTest()
+    {
+        //
+    }
+
+    /**
      * Test the GTUDumper class.
      * @throws NamingException when that happens uncaught; this test has failed
      * @throws SimRuntimeException when that happens uncaught; this test has failed

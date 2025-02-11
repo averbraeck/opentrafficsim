@@ -24,6 +24,14 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationDensit
 public class AnticipationDensity implements PerceptionCollector<LinearDensity, Gtu, CountAndDistance>
 {
 
+    /**
+     * Constructor.
+     */
+    public AnticipationDensity()
+    {
+        //
+    }
+
     @Override
     public Supplier<CountAndDistance> getIdentity()
     {
@@ -87,6 +95,15 @@ public class AnticipationDensity implements PerceptionCollector<LinearDensity, G
         private Length distance;
 
         /**
+         * Constructor.
+         */
+        public CountAndDistance()
+        {
+            //
+        }
+
+        /**
+         * Returns count.
          * @return count.
          */
         public int getCount()
@@ -103,6 +120,7 @@ public class AnticipationDensity implements PerceptionCollector<LinearDensity, G
         }
 
         /**
+         * Returns distance.
          * @return distance.
          */
         public Length getDistance()
@@ -111,6 +129,7 @@ public class AnticipationDensity implements PerceptionCollector<LinearDensity, G
         }
 
         /**
+         * Sets distance.
          * @param distance set distance.
          */
         public void setDistance(final Length distance)

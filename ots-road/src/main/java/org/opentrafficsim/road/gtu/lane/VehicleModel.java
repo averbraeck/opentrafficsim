@@ -114,6 +114,7 @@ public interface VehicleModel
         private final double momentOfInertiaAboutZ;
 
         /**
+         * Constructor.
          * @param mass mass
          * @param momentOfInertiaAboutZ moment of inertia about z-axis
          */

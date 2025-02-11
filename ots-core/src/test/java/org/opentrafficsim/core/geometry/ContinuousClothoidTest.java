@@ -28,6 +28,14 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 public class ContinuousClothoidTest
 {
 
+    /**
+     * Constructor.
+     */
+    public ContinuousClothoidTest()
+    {
+        //
+    }
+
     /** Number of segments for the clothoid lines to generated. */
     private static final int SEGMENTS = 64;
 

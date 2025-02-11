@@ -13,13 +13,36 @@ package org.opentrafficsim.opendrive.bindings;
 public final class Stripe
 {
 
-    public static enum Type
+    /**
+     * Constructor.
+     */
+    public Stripe()
     {
+        //
+    }
+
+    /**
+     * Stripe type.
+     */
+    public enum Type
+    {
+        /** Block. */
         BLOCK,
+
+        /** Dashed. */
         DASHED,
+
+        /** Double line. */
         DOUBLE,
+
+        /** Left lane changes only. */
         LEFT,
+
+        /** Right lane changes only. */
         RIGHT,
+
+        /** Solid line. */
         SOLID;
     }
+
 }

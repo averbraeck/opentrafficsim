@@ -45,6 +45,7 @@ public class StaticObject extends LocalEventProducer implements LocatedObject
     private final Length height;
 
     /**
+     * Constructor.
      * @param id the id
      * @param location location.
      * @param contour the top-level 2D outline of the object

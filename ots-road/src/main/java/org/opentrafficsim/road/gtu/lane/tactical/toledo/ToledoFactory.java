@@ -18,9 +18,16 @@ import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-
 public class ToledoFactory implements LaneBasedTacticalPlannerFactory<Toledo>
 {
+
+    /**
+     * Constructor.
+     */
+    public ToledoFactory()
+    {
+        //
+    }
 
     @Override
     public final Parameters getParameters()

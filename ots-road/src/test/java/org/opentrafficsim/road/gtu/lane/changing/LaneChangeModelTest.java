@@ -73,6 +73,7 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
     private RoadNetwork network;
 
     /**
+     * Constructor.
      */
     public LaneChangeModelTest()
     {

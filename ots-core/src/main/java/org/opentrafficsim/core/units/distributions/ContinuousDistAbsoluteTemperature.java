@@ -23,13 +23,13 @@ public class ContinuousDistAbsoluteTemperature
     private static final long serialVersionUID = 20180829L;
 
     /**
+     * Constructor.
      * @param distribution distribution
-     * @param unit units
+     * @param unit unit
      */
     public ContinuousDistAbsoluteTemperature(final DistContinuous distribution, final AbsoluteTemperatureUnit unit)
     {
         super(distribution, unit);
-
     }
 
     @Override

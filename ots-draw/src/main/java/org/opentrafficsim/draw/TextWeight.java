@@ -51,6 +51,7 @@ public enum TextWeight
     private final Number value;
 
     /**
+     * Constructor.
      * @param value the corresponding TextAttribute constant
      */
     TextWeight(final Number value)
@@ -59,6 +60,7 @@ public enum TextWeight
     }
 
     /**
+     * Returns the value.
      * @return value the corresponding TextAttribute constant
      */
     protected final Number getValue()

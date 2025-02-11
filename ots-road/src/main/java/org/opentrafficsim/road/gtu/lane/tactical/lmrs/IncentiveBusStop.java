@@ -17,6 +17,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
 import org.opentrafficsim.road.network.lane.object.BusStop;
 
 /**
+ * Mandatory lane change incentive for bus stops.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -27,6 +28,14 @@ import org.opentrafficsim.road.network.lane.object.BusStop;
  */
 public class IncentiveBusStop implements MandatoryIncentive
 {
+
+    /**
+     * Constructor.
+     */
+    public IncentiveBusStop()
+    {
+        //
+    }
 
     @Override
     public Desire determineDesire(final Parameters parameters, final LanePerception perception,

@@ -8,9 +8,7 @@ import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.definitions.DefaultsNl;
-import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType.Correlation;
 
 /**
@@ -30,6 +28,14 @@ public final class ParameterFactoryByTypeTest
 
     /** Test parameter b. */
     private static final ParameterTypeDouble B = new ParameterTypeDouble("b", "test parameter b", 0.0);
+
+    /**
+     * Constructor.
+     */
+    public ParameterFactoryByTypeTest()
+    {
+        //
+    }
 
     /**
      * Tests whether parameters are set correctly.

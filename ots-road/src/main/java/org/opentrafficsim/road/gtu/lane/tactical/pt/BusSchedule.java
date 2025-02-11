@@ -41,6 +41,7 @@ public class BusSchedule extends Route
     private final Map<String, Time> actualDeparturesConflict = new LinkedHashMap<>();
 
     /**
+     * Constructor.
      * @param id id
      * @param gtuType the GtuType for which this is a route
      * @param nodes nodes
@@ -55,6 +56,7 @@ public class BusSchedule extends Route
     }
 
     /**
+     * Constructor.
      * @param id id
      * @param gtuType the GtuType for which this is a route
      * @param line line of the bus schedule
@@ -173,6 +175,7 @@ public class BusSchedule extends Route
     }
 
     /**
+     * Return bus line.
      * @return line.
      */
     public final String getLine()

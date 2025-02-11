@@ -41,7 +41,15 @@ import nl.tudelft.simulation.language.DsolException;
  */
 public class Sim0MQPublisherTest
 {
-    
+
+    /**
+     * Constructor.
+     */
+    public Sim0MQPublisherTest()
+    {
+        //
+    }
+
     /**
      * This test exists such that the project has a test, and no errors occur during build.
      */

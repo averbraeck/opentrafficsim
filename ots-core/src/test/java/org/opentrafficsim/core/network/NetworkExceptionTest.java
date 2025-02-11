@@ -11,6 +11,14 @@ import org.junit.jupiter.api.Test;
 public class NetworkExceptionTest
 {
 
+    /**
+     * Constructor.
+     */
+    public NetworkExceptionTest()
+    {
+        //
+    }
+
     /** Test the NetworkException class. */
     @Test
     public void testException()

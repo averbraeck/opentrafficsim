@@ -49,6 +49,14 @@ public class ControlColorer implements GtuColorer, Serializable
         LEGEND.add(new LegendEntry(NA, "N/A", "N/A"));
     }
 
+    /**
+     * Constructor.
+     */
+    public ControlColorer()
+    {
+        //
+    }
+
     @Override
     public Color getColor(final Gtu gtu)
     {

@@ -397,9 +397,9 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
         else if (this.columnNumbers.containsKey(POSITION_COLUMN) || this.columnNumbers.containsKey(LANE_COLUMN)
                 || this.columnNumbers.containsKey(LINK_COLUMN))
         {
-            // only partial information is provided (if none, we assume the user intends to use an external fixed position)
-            // as the user may still use another source for generator positions, we do not throw an exception
-            Logger.info("For injections to be used as GeneratorPositions, define a link, lane and position (on lane) column.");
+            throw new IllegalArgumentException(
+                    "For injections to be used as GeneratorPositions, define a link, lane and position (on lane) column."
+                            + " Only partial information is found.");
         }
     }
 

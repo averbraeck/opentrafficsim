@@ -61,7 +61,10 @@ public interface TacticalPlanner<G extends Gtu, P extends Perception<G>>
     OperationalPlan generateOperationalPlan(Time startTime, OrientedPoint2d locationAtStartTime)
             throws GtuException, NetworkException, ParameterException;
 
-    /** @return the perception unit belonging to this tactical planner. */
+    /**
+     * Return perception.
+     * @return the perception unit belonging to this tactical planner.
+     */
     P getPerception();
 
 }

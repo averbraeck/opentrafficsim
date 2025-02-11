@@ -25,6 +25,17 @@ import org.opentrafficsim.core.geometry.Flattener.NumSegments;
 public class ContinuousArcTest
 {
 
+    /** Verbose test. */
+    private static final boolean VERBOSE = false;
+
+    /**
+     * Constructor.
+     */
+    public ContinuousArcTest()
+    {
+        //
+    }
+
     /** Approximate coordinate equality margin. */
     private static final double MARGIN = 1e-9;
 
@@ -211,7 +222,10 @@ public class ContinuousArcTest
             // 1 degree
             MaxAngle maxAngle1 = new MaxAngle(new Angle(1.0, AngleUnit.DEGREE).si);
             line = arc.flattenOffset(offsets, maxAngle1);
-            System.out.println(line.toExcel());
+            if (VERBOSE)
+            {
+                System.out.println(line.toExcel());
+            }
             assertEquals(numSegExpect(1.0, Math.PI), line.size(), "Number of segments incorrect");
 
             // variable radius

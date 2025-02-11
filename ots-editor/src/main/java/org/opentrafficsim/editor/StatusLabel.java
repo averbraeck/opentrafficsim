@@ -20,4 +20,12 @@ public class StatusLabel extends JLabel implements AppearanceControl
     /** */
     private static final long serialVersionUID = 20231017L;
 
+    /**
+     * Constructor.
+     */
+    public StatusLabel()
+    {
+        //
+    }
+
 }

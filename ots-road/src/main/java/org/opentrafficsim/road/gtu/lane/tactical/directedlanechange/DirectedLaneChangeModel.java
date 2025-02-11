@@ -50,7 +50,10 @@ public interface DirectedLaneChangeModel
             Acceleration otherLaneRouteIncentive, Acceleration laneChangeThreshold, Duration laneChangeTime)
             throws GtuException, ParameterException;
 
-    /** @return the perception. */
+    /**
+     * Return perception.
+     * @return the perception.
+     */
     LanePerception getPerception();
 
     /**

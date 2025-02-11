@@ -5,15 +5,15 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 /**
  * A Network consists of a set of links. Each link has, in its turn, a start node and an end node. An expandable network can be
  * an (expanded) node as well. An example is shown below:
- * 
+ *
  * <pre>
  *            |
  *     -------O--------
  *            |
  * </pre>
- * 
+ *
  * can be expanded into:
- * 
+ *
  * <pre>
  *            |
  *            A
@@ -25,11 +25,11 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
  *            E
  *            |
  * </pre>
- * 
+ *
  * Node O in the example is expanded into the subnetwork consisting of nodes A, B, C, D, and E, and links AB, AC, AD, BC, CD,
  * BE, CE, and DE. It also means that when node expansion takes place, the links to node O have to be replaced. In the example
  * below:
- * 
+ *
  * <pre>
  *            X
  *            |
@@ -37,9 +37,9 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
  *            |
  *            W
  * </pre>
- * 
+ *
  * can be expanded into:
- * 
+ *
  * <pre>
  *            X
  *            |
@@ -53,7 +53,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
  *            |
  *            W
  * </pre>
- * 
+ *
  * The node XO is replaced by XA, YO is replaced by YB, OZ is replaced by DZ, and OW is replaced by EW in the network. The
  * reverse takes place when we do node collapse.
  * <p>
@@ -71,6 +71,7 @@ public abstract class ExpansionNetwork extends Network
     private static final long serialVersionUID = 20150104L;
 
     /**
+     * Constructor.
      * @param id the network id.
      * @param simulator the DSOL simulator engine
      */

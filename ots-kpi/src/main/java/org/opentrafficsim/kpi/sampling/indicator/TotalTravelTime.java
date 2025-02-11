@@ -22,6 +22,14 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
 public class TotalTravelTime extends AbstractIndicator<Duration>
 {
 
+    /**
+     * Constructor.
+     */
+    public TotalTravelTime()
+    {
+        //
+    }
+
     @Override
     protected <G extends GtuData> Duration calculate(final Query<G, ?> query, final Time startTime, final Time endTime,
             final List<TrajectoryGroup<G>> trajectoryGroups)

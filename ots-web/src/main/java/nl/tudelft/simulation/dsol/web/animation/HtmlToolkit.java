@@ -33,14 +33,13 @@ import nl.tudelft.simulation.dsol.logger.Cat;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-@SuppressWarnings("restriction")
 public class HtmlToolkit extends Toolkit
 {
     /** the queue of AWT events to process. */
-    EventQueue eventQueue = new EventQueue();
+    private EventQueue eventQueue = new EventQueue();
 
     /**
-     * 
+     * Constructor.
      */
     public HtmlToolkit()
     {
@@ -75,7 +74,7 @@ public class HtmlToolkit extends Toolkit
     }
 
     @Override
-    public FontMetrics getFontMetrics(Font font)
+    public FontMetrics getFontMetrics(final Font font)
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLToolkit.getFontMetrics()");
         return null;
@@ -88,63 +87,63 @@ public class HtmlToolkit extends Toolkit
     }
 
     @Override
-    public Image getImage(String filename)
+    public Image getImage(final String filename)
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLToolkit.getImage()");
         return null;
     }
 
     @Override
-    public Image getImage(URL url)
+    public Image getImage(final URL url)
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLToolkit.getImage()");
         return null;
     }
 
     @Override
-    public Image createImage(String filename)
+    public Image createImage(final String filename)
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLToolkit.createImage()");
         return null;
     }
 
     @Override
-    public Image createImage(URL url)
+    public Image createImage(final URL url)
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLToolkit.createImage()");
         return null;
     }
 
     @Override
-    public boolean prepareImage(Image image, int width, int height, ImageObserver observer)
+    public boolean prepareImage(final Image image, final int width, final int height, final ImageObserver observer)
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLToolkit.prepareImage()");
         return false;
     }
 
     @Override
-    public int checkImage(Image image, int width, int height, ImageObserver observer)
+    public int checkImage(final Image image, final int width, final int height, final ImageObserver observer)
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLToolkit.checkImage()");
         return 0;
     }
 
     @Override
-    public Image createImage(ImageProducer producer)
+    public Image createImage(final ImageProducer producer)
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLToolkit.createImage()");
         return null;
     }
 
     @Override
-    public Image createImage(byte[] imagedata, int imageoffset, int imagelength)
+    public Image createImage(final byte[] imagedata, final int imageoffset, final int imagelength)
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLToolkit.createImage()");
         return null;
     }
 
     @Override
-    public PrintJob getPrintJob(Frame frame, String jobtitle, Properties props)
+    public PrintJob getPrintJob(final Frame frame, final String jobtitle, final Properties props)
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLToolkit.getPrintJob()");
         return null;
@@ -172,21 +171,21 @@ public class HtmlToolkit extends Toolkit
     }
 
     @Override
-    public boolean isModalityTypeSupported(ModalityType modalityType)
+    public boolean isModalityTypeSupported(final ModalityType modalityType)
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLToolkit.isModalityTypeSupported()");
         return false;
     }
 
     @Override
-    public boolean isModalExclusionTypeSupported(ModalExclusionType modalExclusionType)
+    public boolean isModalExclusionTypeSupported(final ModalExclusionType modalExclusionType)
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLToolkit.isModalExclusionTypeSupported()");
         return false;
     }
 
     @Override
-    public Map<TextAttribute, ?> mapInputMethodHighlight(InputMethodHighlight highlight) throws HeadlessException
+    public Map<TextAttribute, ?> mapInputMethodHighlight(final InputMethodHighlight highlight) throws HeadlessException
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLToolkit.mapInputMethodHighlight()");
         return null;

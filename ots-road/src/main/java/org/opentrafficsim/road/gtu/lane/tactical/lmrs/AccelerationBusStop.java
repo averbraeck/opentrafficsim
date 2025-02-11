@@ -24,6 +24,7 @@ import org.opentrafficsim.road.network.lane.object.BusStop;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
+ * Bus stop acceleration incentive.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -38,6 +39,14 @@ public class AccelerationBusStop implements AccelerationIncentive
     /** Distance within which the bus can open the doors. */
     // TODO this process is much more complex: tail blocking other traffic? other bus in front? many people at bus stop?
     private static final Length STOP_DISTANCE = new Length(15.0, LengthUnit.SI);
+
+    /**
+     * Constructor.
+     */
+    public AccelerationBusStop()
+    {
+        //
+    }
 
     @Override
     @SuppressWarnings("checkstyle:parameternumber")

@@ -80,6 +80,7 @@ public class SwitchableGtuColorer implements GtuColorer, Serializable
     }
 
     /**
+     * Return list of colorers.
      * @return the list of colorers.
      */
     public final List<GtuColorer> getColorers()
@@ -114,6 +115,14 @@ public class SwitchableGtuColorer implements GtuColorer, Serializable
 
         /** The currently active GtuColorer. */
         private GtuColorer preActiveColorer;
+
+        /**
+         * Constructor.
+         */
+        public Builder()
+        {
+            //
+        }
 
         /**
          * Adds a colorer.

@@ -17,6 +17,14 @@ public class PeekStack<T> extends ArrayList<T>
     private static final long serialVersionUID = 20150624L;
 
     /**
+     * Constructor.
+     */
+    public PeekStack()
+    {
+        //
+    }
+
+    /**
      * Push an element on this stack.
      * @param element the element to push onto this stack
      */

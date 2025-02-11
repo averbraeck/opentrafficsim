@@ -38,6 +38,7 @@ public class Converter
     private Map<String, String> roadTypeToLinkTypeMap = new LinkedHashMap<>();
 
     /**
+     * Constructor.
      * @throws ParserConfigurationException on error
      * @throws IOException on error
      * @throws SAXException on error
@@ -100,6 +101,11 @@ public class Converter
         }
     }
 
+    /**
+     * Write GTU types.
+     * @param pw writer
+     * @param gtuTypeTagList GTU types
+     */
     private void writeGtuTypes(final PrintWriter pw, final List<Node> gtuTypeTagList)
     {
         /*-
@@ -154,6 +160,11 @@ public class Converter
         pw.println("    </GtuTemplates>\n\n");
     }
 
+    /**
+     * Write lanes.
+     * @param pw writer
+     * @param roadTypeTagList lanes
+     */
     private void writeRoadLaneTypes(final PrintWriter pw, final List<Node> roadTypeTagList)
     {
         /*-
@@ -164,7 +175,7 @@ public class Converter
             <SpeedLimit GtuType="NL.TRUCK" LegalSpeedLimit="40km/h" />
           </LinkType>
         </LinkTypes>
-        
+
         <LaneTypes>
           <LaneType Id="STREET">
             <Compatibility GtuType="NL.VEHICLE" />
@@ -210,6 +221,11 @@ public class Converter
         pw.println("    </LaneTypes>\n\n");
     }
 
+    /**
+     * Write road layouts.
+     * @param pw writer
+     * @param roadLayoutTagList road layouts
+     */
     private void writeRoadLayoutTypes(final PrintWriter pw, final List<Node> roadLayoutTagList)
     {
         /*-
@@ -220,7 +236,7 @@ public class Converter
             <SpeedLimit GtuType="NL.TRUCK" LegalSpeedLimit="40km/h" />
           </LinkType>
         </LinkTypes>
-        
+
         <LaneTypes>
           <LaneType Id="STREET">
             <Compatibility GtuType="NL.VEHICLE" />
@@ -245,16 +261,22 @@ public class Converter
                     String width = cseNode.getAttributes().getNamedItem("Width").getNodeValue();
                     String offset;
                     if (cseNode.getAttributes().getNamedItem("Offset") != null)
+                    {
                         offset = cseNode.getAttributes().getNamedItem("Offset").getNodeValue();
+                    }
                     else if (cseNode.getAttributes().getNamedItem("CenterOffset") != null)
+                    {
                         offset = cseNode.getAttributes().getNamedItem("CenterOffset").getNodeValue();
+                    }
                     else
                     {
                         offset = "";
                         System.err.println("offset for Shoulder in RoadLayout " + id + " unknown");
                     }
                     if (offset.length() > 0)
+                    {
                         pw.println("          <CenterOffset>" + offset + "</CenterOffset>");
+                    }
                     pw.println("          <Width>" + width + "</Width>");
                     pw.println("        </Shoulder>");
                 }
@@ -271,16 +293,22 @@ public class Converter
                     String width = cseNode.getAttributes().getNamedItem("Width").getNodeValue();
                     String offset;
                     if (cseNode.getAttributes().getNamedItem("Offset") != null)
+                    {
                         offset = cseNode.getAttributes().getNamedItem("Offset").getNodeValue();
+                    }
                     else if (cseNode.getAttributes().getNamedItem("CenterOffset") != null)
+                    {
                         offset = cseNode.getAttributes().getNamedItem("CenterOffset").getNodeValue();
+                    }
                     else
                     {
                         offset = "";
                         System.err.println("offset for Shoulder in RoadLayout " + id + " unknown");
                     }
                     if (offset.length() > 0)
+                    {
                         pw.println("          <CenterOffset>" + offset + "</CenterOffset>");
+                    }
                     pw.println("          <Width>" + width + "</Width>");
                     pw.println("        </Lane>");
                 }
@@ -290,16 +318,22 @@ public class Converter
                     String width = cseNode.getAttributes().getNamedItem("Width").getNodeValue();
                     String offset;
                     if (cseNode.getAttributes().getNamedItem("Offset") != null)
+                    {
                         offset = cseNode.getAttributes().getNamedItem("Offset").getNodeValue();
+                    }
                     else if (cseNode.getAttributes().getNamedItem("CenterOffset") != null)
+                    {
                         offset = cseNode.getAttributes().getNamedItem("CenterOffset").getNodeValue();
+                    }
                     else
                     {
                         offset = "";
                         System.err.println("offset for Shoulder in RoadLayout " + id + " unknown");
                     }
                     if (offset.length() > 0)
+                    {
                         pw.println("          <CenterOffset>" + offset + "</CenterOffset>");
+                    }
                     pw.println("          <Width>" + width + "</Width>");
                     pw.println("        </NoTrafficLane>");
                 }
@@ -314,6 +348,11 @@ public class Converter
         pw.println("    </RoadLayouts>\n");
     }
 
+    /**
+     * Write nodes.
+     * @param pw writer
+     * @param networkNodeList node list
+     */
     private void writeNodes(final PrintWriter pw, final List<Node> networkNodeList)
     {
         for (Node nodeTag : networkNodeList)
@@ -322,16 +361,27 @@ public class Converter
             String coord = nodeTag.getAttributes().getNamedItem("Coordinate").getNodeValue();
             String dir = "";
             if (nodeTag.getAttributes().getNamedItem("Direction") != null)
+            {
                 dir = nodeTag.getAttributes().getNamedItem("Direction").getNodeValue();
+            }
             pw.print("      <Node Id=\"" + id + "\" Coordinate=\"" + coord + "\" ");
             if (dir.length() > 1)
+            {
                 pw.println("Direction=\"" + dir + "\" />");
+            }
             else
+            {
                 pw.println(" />");
+            }
         }
         pw.println();
     }
 
+    /**
+     * Write links.
+     * @param pw printer
+     * @param networkLinkList link list
+     */
     private void writeLinks(final PrintWriter pw, final List<Node> networkLinkList)
     {
         /*-
@@ -339,7 +389,7 @@ public class Converter
            <Link Id="L2EB" NodeStart="N2EB" NodeEnd="N3EB" RoadLayout="HW3AFSLAG">
              <Polyline IntermediatePoints="(137792,395679) (137816,395665) (137902.6725,395617.2567)" />
            </Link>
-           
+
            NEW:
              <Link Id="NS23" NodeStart="NS2" NodeEnd="NS3" Type="NL.STREET">
                <Straight />
@@ -367,7 +417,9 @@ public class Converter
                 {
                     pw.print("      <Bezier ");
                     if (layoutNode.getAttributes().getNamedItem("Shape") != null)
+                    {
                         pw.print("Shape=\"" + layoutNode.getAttributes().getNamedItem("Shape").getNodeValue() + "\" ");
+                    }
                     pw.println("/>");
                 }
                 else if (layoutNode.getNodeName().equals("Polyline"))
@@ -394,6 +446,12 @@ public class Converter
         pw.println();
     }
 
+    /**
+     * Retrieves nodes of type.
+     * @param parent parent
+     * @param type type
+     * @return nodes of type
+     */
     private List<Node> nodesOfType(final NodeList parent, final String type)
     {
         List<Node> nodeList = new ArrayList<>();
@@ -409,6 +467,7 @@ public class Converter
     }
 
     /**
+     * Main method.
      * @param args args
      * @throws IOException on error
      * @throws SAXException on error

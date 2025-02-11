@@ -16,6 +16,14 @@ import org.opentrafficsim.xml.bindings.types.DurationType;
 public class DurationAdapter extends ScalarAdapter<Duration, DurationType>
 {
 
+    /**
+     * Constructor.
+     */
+    public DurationAdapter()
+    {
+        //
+    }
+
     @Override
     public DurationType unmarshal(final String field)
     {

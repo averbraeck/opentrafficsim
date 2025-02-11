@@ -59,6 +59,7 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
     private final HeadwayGtuType headwayGtuType;
 
     /**
+     * Constructor.
      * @param perception perception
      * @param headwayGtuType type of headway gtu to generate
      */

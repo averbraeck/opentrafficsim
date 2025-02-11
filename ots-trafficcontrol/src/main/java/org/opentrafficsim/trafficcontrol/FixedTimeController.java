@@ -274,6 +274,7 @@ public class FixedTimeController extends AbstractTrafficController
     }
 
     /**
+     * Return cycle time.
      * @return cycleTime.
      */
     public final Duration getCycleTime()
@@ -282,6 +283,7 @@ public class FixedTimeController extends AbstractTrafficController
     }
 
     /**
+     * Return offset duration.
      * @return offset.
      */
     public final Duration getOffset()
@@ -290,6 +292,7 @@ public class FixedTimeController extends AbstractTrafficController
     }
 
     /**
+     * Return signal groups.
      * @return signalGroups.
      */
     public final Set<SignalGroup> getSignalGroups()
@@ -407,10 +410,10 @@ public class FixedTimeController extends AbstractTrafficController
         /**
          * Connect to the traffic lights in the network, initialize the traffic lights to their initial color and schedule the
          * first transitions.
-         * @param controllerOffset
-         * @param cycleTime
-         * @param theSimulator
-         * @param network
+         * @param controllerOffset controller offset
+         * @param cycleTime cycle time
+         * @param theSimulator simulator
+         * @param network network
          * @throws SimRuntimeException when traffic light does not exist in the network
          */
         public void startup(final Duration controllerOffset, final Duration cycleTime, final OtsSimulatorInterface theSimulator,
@@ -571,6 +574,7 @@ public class FixedTimeController extends AbstractTrafficController
         }
 
         /**
+         * Returns traffic lights.
          * @return trafficLights.
          */
         public final ImmutableList<TrafficLight> getTrafficLights()
@@ -579,6 +583,7 @@ public class FixedTimeController extends AbstractTrafficController
         }
 
         /**
+         * Returns red duration.
          * @return red.
          */
         public final Duration getRed()
@@ -587,6 +592,7 @@ public class FixedTimeController extends AbstractTrafficController
         }
 
         /**
+         * Returns traffic light ids.
          * @return trafficLightIds.
          */
         public final ImmutableSet<String> getTrafficLightIds()
@@ -595,6 +601,7 @@ public class FixedTimeController extends AbstractTrafficController
         }
 
         /**
+         * Returns offset duration.
          * @return offset.
          */
         public final Duration getOffset()
@@ -603,6 +610,7 @@ public class FixedTimeController extends AbstractTrafficController
         }
 
         /**
+         * Returns pre-green duration.
          * @return preGreen.
          */
         public final Duration getPreGreen()
@@ -611,6 +619,7 @@ public class FixedTimeController extends AbstractTrafficController
         }
 
         /**
+         * Returns green duration.
          * @return green.
          */
         public final Duration getGreen()
@@ -619,6 +628,7 @@ public class FixedTimeController extends AbstractTrafficController
         }
 
         /**
+         * Returns yellow duration.
          * @return yellow.
          */
         public final Duration getYellow()

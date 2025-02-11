@@ -72,6 +72,14 @@ public class OdOptions
     private OptionSet<LinkType> linkTypeOptions = new OptionSet<>();
 
     /**
+     * Constructor.
+     */
+    public OdOptions()
+    {
+        //
+    }
+
+    /**
      * Set option value.
      * @param option option
      * @param value option value

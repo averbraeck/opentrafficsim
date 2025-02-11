@@ -70,4 +70,12 @@ public final class XsdPaths
     /** Input parameters path. */
     public static final String INPUT_PARAMETERS = SCENARIO + ".InputParameters";
 
+    /**
+     * Constructor.
+     */
+    private XsdPaths()
+    {
+        //
+    }
+
 }

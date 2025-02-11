@@ -75,6 +75,7 @@ public class TextProperties implements Serializable
     }
 
     /**
+     * Returns text alignment.
      * @return textAlignment
      */
     public final TextAlignment getTextAlignment()
@@ -83,6 +84,7 @@ public class TextProperties implements Serializable
     }
 
     /**
+     * Returns color.
      * @return color
      */
     public final Color getColor()
@@ -91,6 +93,7 @@ public class TextProperties implements Serializable
     }
 
     /**
+     * Returns font.
      * @return font
      */
     public final String getFont()
@@ -99,6 +102,7 @@ public class TextProperties implements Serializable
     }
 
     /**
+     * Returns text attributes.
      * @return textAttributes
      */
     public final Map<TextAttribute, Object> getTextAttributes()
@@ -107,6 +111,7 @@ public class TextProperties implements Serializable
     }
 
     /**
+     * Returns font size.
      * @return fontSize
      */
     public final float getFontSize()

@@ -91,6 +91,7 @@ public enum Interpolation
     abstract int integrate(Frequency frequency0, Time time0, Frequency frequency1, Time time1);
 
     /**
+     * Returns whether this is step-wise interpolation.
      * @return whether this is step-wise interpolation
      */
     public boolean isStepWise()
@@ -99,6 +100,7 @@ public enum Interpolation
     }
 
     /**
+     * Returns whether this is linear interpolation.
      * @return whether this is linear interpolation
      */
     public boolean isLinear()

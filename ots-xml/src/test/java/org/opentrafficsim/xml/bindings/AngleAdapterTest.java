@@ -21,8 +21,18 @@ import jakarta.xml.bind.JAXBException;
  */
 public class AngleAdapterTest
 {
+
     /**
-     * Test the AngleAdapter
+     * Constructor.
+     */
+    public AngleAdapterTest()
+    {
+        //
+    }
+
+    /**
+     * Test the AngleAdapter.
+     * @throws JAXBException exception
      */
     @Test
     public void testAngleAdapter() throws JAXBException

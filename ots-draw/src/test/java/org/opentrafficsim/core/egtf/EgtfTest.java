@@ -13,6 +13,7 @@ import org.opentrafficsim.draw.egtf.Filter;
 import org.opentrafficsim.draw.egtf.typed.TypedQuantity;
 
 /**
+ * EGTF test.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -26,6 +27,14 @@ public class EgtfTest
 
     /** Margin for bigger/smaller-than relations. */
     private static final double MARGIN = 1e-6;
+
+    /**
+     * Constructor.
+     */
+    public EgtfTest()
+    {
+        //
+    }
 
     /** Tests if combined data results in sensible outcomes, e.g. more towards other sources if source less reliable. */
     @Test

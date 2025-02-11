@@ -53,6 +53,14 @@ public class SynchronizationColorer implements GtuColorer, Serializable
         LEGEND.add(new LegendEntry(NA, "N/A", "N/A"));
     }
 
+    /**
+     * Constructor.
+     */
+    public SynchronizationColorer()
+    {
+        //
+    }
+
     @Override
     public Color getColor(final Gtu gtu)
     {

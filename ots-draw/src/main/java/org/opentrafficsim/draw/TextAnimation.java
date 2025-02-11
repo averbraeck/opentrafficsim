@@ -152,6 +152,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
     }
 
     /**
+     * Constructor.
      * @param source the object for which the text is displayed
      * @param text the text to display
      * @param dx the horizontal movement of the text, in meters

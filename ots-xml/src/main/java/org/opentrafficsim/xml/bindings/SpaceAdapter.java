@@ -14,6 +14,14 @@ import org.opentrafficsim.xml.bindings.types.StringType;
 public class SpaceAdapter extends ExpressionAdapter<String, StringType>
 {
 
+    /**
+     * Constructor.
+     */
+    public SpaceAdapter()
+    {
+        //
+    }
+
     @Override
     public StringType unmarshal(final String field)
     {

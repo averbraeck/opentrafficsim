@@ -25,6 +25,7 @@ public class Distraction extends AbstractLaneBasedObject
     private final DistractionProfile profile;
 
     /**
+     * Constructor.
      * @param id id
      * @param lane lane
      * @param longitudinalPosition longitudinal position
@@ -98,6 +99,7 @@ public class Distraction extends AbstractLaneBasedObject
         private final Length dMax;
 
         /**
+         * Constructor.
          * @param maxDistraction maximum distraction (task-demand)
          * @param dMin distance before distraction where distraction starts to have effect (&lt;0)
          * @param dMed distance beyond distraction where distraction has maximum effect (&gt;0)

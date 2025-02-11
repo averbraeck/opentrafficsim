@@ -39,6 +39,7 @@ public class CrossSectionElementAnimation<L extends CrossSectionElementData> ext
     private final Set<Path2D.Float> paths;
 
     /**
+     * Constructor.
      * @param source cross section element
      * @param contextualized context provider
      * @param color the color to draw the shoulder with

@@ -22,6 +22,14 @@ public class HierarchicalTypeTest
 {
 
     /**
+     * Constructor.
+     */
+    public HierarchicalTypeTest()
+    {
+        //
+    }
+
+    /**
      * Test the basics of the HierarchicalType class.
      */
     @SuppressWarnings("unlikely-arg-type")
@@ -82,6 +90,7 @@ public class HierarchicalTypeTest
         private final SubType xType;
 
         /**
+         * Constructor.
          * @param xType type
          */
         S(final SubType xType)
@@ -139,6 +148,7 @@ public class HierarchicalTypeTest
         private final XType xType;
 
         /**
+         * Constructor.
          * @param xType type
          */
         X(final XType xType)
@@ -178,6 +188,7 @@ public class HierarchicalTypeTest
         private final YType yType;
 
         /**
+         * Constructor.
          * @param yType type
          */
         Y(final YType yType)
@@ -254,7 +265,7 @@ public class HierarchicalTypeTest
         assertTrue(zt1.isOfType(car));
         assertTrue(zt1.isOfType(vehicle));
         // Ztype is of course strange. So this should not compile: ZType zt2 = new ZType("zt2", zt1);
-        
+
         // ofType tests
         X xCar = new X(car);
         X xVehicle = new X(vehicle);

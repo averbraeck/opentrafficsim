@@ -17,15 +17,23 @@ import org.opentrafficsim.base.parameters.ParameterType;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class GenerateParametersXml
+public final class GenerateParametersXml
 {
+
+    /**
+     * Constructor.
+     */
+    private GenerateParametersXml()
+    {
+        //
+    }
 
     /**
      * Prints XML lines for all parameters (@code ParameterType) found.
      * @param args args.
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws ParameterException
+     * @throws IllegalAccessException exception
+     * @throws IllegalArgumentException exception
+     * @throws ParameterException exception
      */
     public static void main(final String[] args) throws IllegalArgumentException, IllegalAccessException, ParameterException
     {

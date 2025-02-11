@@ -336,6 +336,7 @@ public final class TestIntersectionPerformance
             }
 
             /**
+             * Return number of tests.
              * @return the number of tests executed
              */
             public final int getNumTests()
@@ -344,6 +345,7 @@ public final class TestIntersectionPerformance
             }
 
             /**
+             * Return number of hits.
              * @return the number of tests executed
              */
             public final int getNumHits()
@@ -352,6 +354,7 @@ public final class TestIntersectionPerformance
             }
 
             /**
+             * Return execution time.
              * @return the number of tests executed
              */
             public final double getExecutionTime()

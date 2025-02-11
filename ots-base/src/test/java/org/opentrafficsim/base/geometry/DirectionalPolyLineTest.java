@@ -21,6 +21,14 @@ public class DirectionalPolyLineTest
 {
 
     /**
+     * Constructor.
+     */
+    public DirectionalPolyLineTest()
+    {
+        //
+    }
+
+    /**
      * Test method.
      */
     @Test
@@ -45,43 +53,43 @@ public class DirectionalPolyLineTest
         DirectionalPolyLine baseLine = new DirectionalPolyLine(line, startDirection, endDirection);
         assertEquals(startDirection, baseLine.getStartDirection());
         assertEquals(endDirection, baseLine.getEndDirection());
-        
+
         DirectionalPolyLine offset = baseLine.directionalOffsetLine(-1.0);
         assertEquals(2.0, offset.getFirst().x, 1e-6);
         assertEquals(0.0, offset.getFirst().y, 1e-6);
         assertEquals(-2.0, offset.getLast().x, 1e-6);
         assertEquals(0.0, offset.getLast().y, 1e-6);
-        
+
         offset = baseLine.directionalOffsetLine(0.5);
         assertEquals(0.5, offset.getFirst().x, 1e-6);
         assertEquals(0.0, offset.getFirst().y, 1e-6);
         assertEquals(-0.5, offset.getLast().x, 1e-6);
         assertEquals(0.0, offset.getLast().y, 1e-6);
-        
+
         offset = baseLine.directionalOffsetLine(-1.0, 0.5);
         assertEquals(2.0, offset.getFirst().x, 1e-6);
         assertEquals(0.0, offset.getFirst().y, 1e-6);
         assertEquals(-0.5, offset.getLast().x, 1e-6);
         assertEquals(0.0, offset.getLast().y, 1e-6);
-        
+
         assertEquals(1.0, baseLine.projectFractional(-2.0, 0.0, FractionalFallback.ENDPOINT), 1e-6);
         assertEquals(0.0, baseLine.projectFractional(2.0, 0.0, FractionalFallback.ENDPOINT), 1e-6);
-        
+
         Ray2d ray = baseLine.getLocationFraction(0.0);
         assertEquals(1.0, ray.x, 1e-6);
         assertEquals(0.0, ray.y, 1e-6);
         assertEquals(startDirection.si, ray.phi, 1e-6);
-        
+
         ray = baseLine.getLocationFraction(0.5);
         assertEquals(0.0, ray.x, 1e-6);
         assertEquals(1.0, ray.y, 1e-6);
         assertEquals(Math.PI, ray.phi < 0.0 ? -ray.phi : ray.phi, 0.1);
-        
+
         ray = baseLine.getLocationFraction(1.0);
         assertEquals(-1.0, ray.x, 1e-6);
         assertEquals(0.0, ray.y, 1e-6);
         assertEquals(endDirection.si, ray.phi, 1e-6);
-        
+
         DirectionalPolyLine extract = baseLine.extractFractional(0.0, 0.5);
         ray = extract.getLocationFraction(0.0);
         assertEquals(1.0, ray.x, 1e-6);
@@ -91,7 +99,7 @@ public class DirectionalPolyLineTest
         assertEquals(0.0, ray.x, 1e-6);
         assertEquals(1.0, ray.y, 1e-6);
         assertEquals(Math.PI, ray.phi < 0.0 ? -ray.phi : ray.phi, 0.1);
-        
+
         extract = baseLine.extractFractional(0.5, 1.0);
         ray = extract.getLocationFraction(0.0);
         assertEquals(0.0, ray.x, 1e-6);

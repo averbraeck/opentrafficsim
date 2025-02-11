@@ -130,9 +130,6 @@ public class OdMatrix implements Serializable, Identifiable
         }
     }
 
-    /**
-     * @return id.
-     */
     @Override
     public final String getId()
     {
@@ -140,7 +137,8 @@ public class OdMatrix implements Serializable, Identifiable
     }
 
     /**
-     * @return origins.
+     * Returns origins.
+     * @return origins
      */
     public final List<Node> getOrigins()
     {
@@ -148,7 +146,8 @@ public class OdMatrix implements Serializable, Identifiable
     }
 
     /**
-     * @return destinations.
+     * Returns destinations.
+     * @return destinations
      */
     public final List<Node> getDestinations()
     {
@@ -156,7 +155,8 @@ public class OdMatrix implements Serializable, Identifiable
     }
 
     /**
-     * @return categorization.
+     * Returns categorization.
+     * @return categorization
      */
     public final Categorization getCategorization()
     {
@@ -164,7 +164,8 @@ public class OdMatrix implements Serializable, Identifiable
     }
 
     /**
-     * @return globalTimeVector.
+     * Returns global time vector.
+     * @return global time vector
      */
     public final TimeVector getGlobalTimeVector()
     {
@@ -172,7 +173,8 @@ public class OdMatrix implements Serializable, Identifiable
     }
 
     /**
-     * @return globalInterpolation.
+     * Returns global interpolation.
+     * @return global interpolation
      */
     public final Interpolation getGlobalInterpolation()
     {
@@ -383,6 +385,7 @@ public class OdMatrix implements Serializable, Identifiable
     }
 
     /**
+     * Returns demand data for given origin, destination and categorization, {@code null} if no data is given.
      * @param origin origin
      * @param destination destination
      * @param category category
@@ -402,6 +405,7 @@ public class OdMatrix implements Serializable, Identifiable
     }
 
     /**
+     * Returns interpolation for given origin, destination and categorization, {@code null} if no data is given.
      * @param origin origin
      * @param destination destination
      * @param category category
@@ -421,6 +425,7 @@ public class OdMatrix implements Serializable, Identifiable
     }
 
     /**
+     * Returns interpolation for given origin, destination and categorization, {@code null} if no data is given.
      * @param origin origin
      * @param destination destination
      * @param category category
@@ -465,6 +470,7 @@ public class OdMatrix implements Serializable, Identifiable
     }
 
     /**
+     * Returns OD entry for given origin, destination and categorization.
      * @param origin origin
      * @param destination destination
      * @param category category
@@ -488,6 +494,7 @@ public class OdMatrix implements Serializable, Identifiable
     }
 
     /**
+     * Returns whether there is data for the specified origin, destination and category.
      * @param origin origin
      * @param destination destination
      * @param category category
@@ -525,6 +532,7 @@ public class OdMatrix implements Serializable, Identifiable
     /******************************************************************************************************/
 
     /**
+     * Put trip vector.
      * @param origin origin
      * @param destination destination
      * @param category category
@@ -585,6 +593,7 @@ public class OdMatrix implements Serializable, Identifiable
     }
 
     /**
+     * Get trip vector.
      * @param origin origin
      * @param destination destination
      * @param category category

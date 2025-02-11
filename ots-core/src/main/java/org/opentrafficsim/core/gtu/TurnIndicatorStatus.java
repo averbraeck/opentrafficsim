@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.gtu;
 
 /**
+ * Turn indicator status.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -26,6 +27,7 @@ public enum TurnIndicatorStatus
     NOTPRESENT;
 
     /**
+     * Returns whether no indicator is on.
      * @return whether no indicator is on
      */
     public boolean isNone()
@@ -34,6 +36,7 @@ public enum TurnIndicatorStatus
     }
 
     /**
+     * Returns whether left turn indicator is on.
      * @return whether left turn indicator is on
      */
     public boolean isLeft()
@@ -42,6 +45,7 @@ public enum TurnIndicatorStatus
     }
 
     /**
+     * Returns whether left turn indicator or hazard light is on.
      * @return whether left turn indicator or hazard light is on
      */
     public boolean isLeftOrBoth()
@@ -50,6 +54,7 @@ public enum TurnIndicatorStatus
     }
 
     /**
+     * Returns whether right turn indicator is on.
      * @return whether right turn indicator is on
      */
     public boolean isRight()
@@ -58,6 +63,7 @@ public enum TurnIndicatorStatus
     }
 
     /**
+     * Returns whether right turn indicator or hazard light is on.
      * @return whether right turn indicator or hazard light is on
      */
     public boolean isRightOrBoth()
@@ -66,6 +72,7 @@ public enum TurnIndicatorStatus
     }
 
     /**
+     * Returns whether hazard lights are on.
      * @return whether hazard lights are on
      */
     public boolean isHazard()

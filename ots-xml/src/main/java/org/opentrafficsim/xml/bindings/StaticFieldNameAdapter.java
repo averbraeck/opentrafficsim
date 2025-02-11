@@ -19,6 +19,14 @@ import org.opentrafficsim.xml.bindings.types.FieldType;
 public class StaticFieldNameAdapter extends ExpressionAdapter<Field, FieldType>
 {
 
+    /**
+     * Constructor.
+     */
+    public StaticFieldNameAdapter()
+    {
+        //
+    }
+
     @Override
     public FieldType unmarshal(final String field)
     {

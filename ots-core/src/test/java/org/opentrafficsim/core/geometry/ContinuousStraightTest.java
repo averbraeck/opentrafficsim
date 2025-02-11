@@ -20,6 +20,14 @@ import org.junit.jupiter.api.Test;
 public class ContinuousStraightTest
 {
 
+    /**
+     * Constructor.
+     */
+    public ContinuousStraightTest()
+    {
+        //
+    }
+
     /** Approximate coordinate equality margin. */
     private static final double MARGIN = 1e-9;
 

@@ -31,6 +31,7 @@ public class LaneBasedGtuTemplate extends GtuTemplate implements LaneBasedGtuCha
     private final Generator<Route> routeGenerator;
 
     /**
+     * Constructor.
      * @param gtuType The GtuType to make it identifiable.
      * @param lengthGenerator Generator&lt;Length&gt; generator for the length of the GTU type (parallel with driving
      *            direction).

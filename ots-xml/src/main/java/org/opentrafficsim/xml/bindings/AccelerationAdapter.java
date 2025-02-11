@@ -16,6 +16,14 @@ import org.opentrafficsim.xml.bindings.types.AccelerationType;
 public class AccelerationAdapter extends ScalarAdapter<Acceleration, AccelerationType>
 {
 
+    /**
+     * Constructor.
+     */
+    public AccelerationAdapter()
+    {
+        //
+    }
+
     @Override
     public AccelerationType unmarshal(final String field)
     {

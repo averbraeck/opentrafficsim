@@ -21,6 +21,18 @@ import org.opentrafficsim.core.mock.MockSimulator;
  */
 public class LinkPositionTest
 {
+
+    /** Verbose test. */
+    private static final boolean VERBOSE = false;
+
+    /**
+     * Constructor.
+     */
+    public LinkPositionTest()
+    {
+        //
+    }
+
     /**
      * Test the LinkPosition class.
      * @throws NetworkException if that happens uncaught; this test has failed
@@ -39,28 +51,40 @@ public class LinkPositionTest
         {
             Length length = new Length(fraction * linkLength, LengthUnit.METER);
             LinkPosition lp = new LinkPosition(link, length);
-            System.out.println(lp);
+            if (VERBOSE)
+            {
+                System.out.println(lp);
+            }
             assertEquals(link, lp.link(), "link can be retrieved");
             assertEquals(fraction, lp.fractionalLongitudinalPosition(), 0.001, "fraction can be retrieved");
             assertEquals(link.getLength(), lp.getLinkLength(), "length can be retrieved");
             assertEquals(length.si, lp.getLongitudinalPosition().si, 0.001, "longitudinal position can be retrieved");
             assertTrue(lp.toString().startsWith("LinkPosition"), "toString returns something descriptive");
             lp = new LinkPosition(link, length);
-            System.out.println(lp);
+            if (VERBOSE)
+            {
+                System.out.println(lp);
+            }
             assertEquals(link, lp.link(), "link can be retrieved");
             assertEquals(fraction, lp.fractionalLongitudinalPosition(), 0.001, "fraction can be retrieved");
             assertEquals(link.getLength(), lp.getLinkLength(), "length can be retrieved");
             assertEquals(length.si, lp.getLongitudinalPosition().si, 0.001, "longitudinal position can be retrieved");
             assertTrue(lp.toString().startsWith("LinkPosition"), "toString returns something descriptive");
             lp = new LinkPosition(link, fraction);
-            System.out.println(lp);
+            if (VERBOSE)
+            {
+                System.out.println(lp);
+            }
             assertEquals(link, lp.link(), "link can be retrieved");
             assertEquals(fraction, lp.fractionalLongitudinalPosition(), 0.001, "fraction can be retrieved");
             assertEquals(link.getLength(), lp.getLinkLength(), "length can be retrieved");
             assertEquals(length.si, lp.getLongitudinalPosition().si, 0.001, "longitudinal position can be retrieved");
             assertTrue(lp.toString().startsWith("LinkPosition"), "toString returns something descriptive");
             lp = new LinkPosition(link, fraction);
-            System.out.println(lp);
+            if (VERBOSE)
+            {
+                System.out.println(lp);
+            }
             assertEquals(link, lp.link(), "link can be retrieved");
             assertEquals(fraction, lp.fractionalLongitudinalPosition(), 0.001, "fraction can be retrieved");
             assertEquals(link.getLength(), lp.getLinkLength(), "length can be retrieved");

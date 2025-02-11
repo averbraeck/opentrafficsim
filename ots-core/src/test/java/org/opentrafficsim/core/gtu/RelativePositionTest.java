@@ -9,6 +9,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.junit.jupiter.api.Test;
 
 /**
+ * Test relative position.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -18,6 +19,14 @@ import org.junit.jupiter.api.Test;
  */
 public class RelativePositionTest
 {
+
+    /**
+     * Constructor.
+     */
+    public RelativePositionTest()
+    {
+        //
+    }
 
     /**
      * Test constructors and getters of RelativePosition.

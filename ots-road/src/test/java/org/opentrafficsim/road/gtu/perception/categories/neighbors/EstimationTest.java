@@ -31,6 +31,14 @@ public class EstimationTest
 {
 
     /**
+     * Constructor.
+     */
+    public EstimationTest()
+    {
+        //
+    }
+
+    /**
      * Test factor estimation and none estimation.
      * @throws ParameterException exception
      * @throws OperationalPlanException exception

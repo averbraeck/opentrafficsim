@@ -50,6 +50,14 @@ public class GtuTypeColorer implements GtuColorer, Serializable
     }
 
     /**
+     * Constructor.
+     */
+    public GtuTypeColorer()
+    {
+        //
+    }
+
+    /**
      * Adds a GTU type to the list with color based on the type.
      * @param gtuType GTU type
      * @return this GTUTypeColorer

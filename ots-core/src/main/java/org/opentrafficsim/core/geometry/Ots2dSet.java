@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.geometry;
 
-import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
@@ -12,7 +11,6 @@ import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.logger.CategoryLogger;
-import org.opentrafficsim.base.geometry.OtsGeometryException;
 
 /**
  * Set of Polygon2d objects and provides methods for fast selection of those objects that intersect a Polygon2d. <br>
@@ -271,6 +269,14 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
 
         /** Remember the last returned result so we can remove it when requested. */
         private Polygon2d lastResult = null;
+
+        /**
+         * Constructor.
+         */
+        public QuadTreeIterator()
+        {
+            //
+        }
 
         @Override
         public final boolean hasNext()

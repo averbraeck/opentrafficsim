@@ -36,7 +36,7 @@ import org.opentrafficsim.core.perception.collections.HistoricalSet;
 public class HistoricalTest
 {
     /** Local time object used in simulator MockUp. Can be set for testing at different simulation times. */
-    Time time;
+    private Time time;
 
     /** Clean-up time. */
     private Duration cleanUp = Duration.instantiateSI(10.0);
@@ -47,7 +47,9 @@ public class HistoricalTest
     /** History manager. */
     private HistoryManagerDevs historyManager;
 
-    /** */
+    /**
+     * Constructor.
+     */
     public HistoricalTest()
     {
         this.simulator = createSimulatorMock();

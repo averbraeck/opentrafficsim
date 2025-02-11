@@ -8,12 +8,12 @@ import picocli.CommandLine.Option;
 /**
  * Class containing a set of command line options for the intelligent driver model (IDM). To integrate in a program, give the
  * program the following property:
- * 
+ *
  * <pre>
- *     {@code @}ArgGroup 
+ *     {@code @}ArgGroup
  *     private IdmOptions idmOptions = new IdmOptions();
  * </pre>
- * 
+ *
  * Note that the variable initiation is only required if default values are changed using
  * {@code CliUtil.changeOptionDefault(...)}.
  * <p>
@@ -46,6 +46,14 @@ public class IdmOptions
     /** Normal desired headway. */
     @Option(names = "--Tmax", description = "Normal desired headway.", defaultValue = "1.2s")
     private Duration tMax;
+
+    /**
+     * Constructor.
+     */
+    public IdmOptions()
+    {
+        //
+    }
 
     /**
      * Returns the maximum acceleration of cars.

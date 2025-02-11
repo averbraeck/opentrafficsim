@@ -16,6 +16,14 @@ import org.opentrafficsim.xml.bindings.types.ClassType;
 public class ClassAdapter extends ExpressionAdapter<Class, ClassType>
 {
 
+    /**
+     * Constructor.
+     */
+    public ClassAdapter()
+    {
+        //
+    }
+
     @Override
     public ClassType unmarshal(final String field) throws IllegalArgumentException
     {

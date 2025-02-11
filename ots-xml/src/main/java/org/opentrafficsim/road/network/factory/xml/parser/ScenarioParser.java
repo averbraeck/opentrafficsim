@@ -31,8 +31,16 @@ import org.opentrafficsim.xml.generated.Scenarios;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ScenarioParser
+public final class ScenarioParser
 {
+
+    /**
+     * Constructor.
+     */
+    private ScenarioParser()
+    {
+        //
+    }
 
     /**
      * Parse input parameters for scenario.

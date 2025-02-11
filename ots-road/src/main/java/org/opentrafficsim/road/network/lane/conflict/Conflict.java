@@ -355,6 +355,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     }
 
     /**
+     * Returns the conflict type.
      * @return conflictType.
      */
     public ConflictType getConflictType()
@@ -363,6 +364,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     }
 
     /**
+     * Returns the conflict rule.
      * @return conflictRule.
      */
     public ConflictRule getConflictRule()
@@ -371,6 +373,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     }
 
     /**
+     * Returns the conflict priority.
      * @return conflictPriority.
      */
     public ConflictPriority conflictPriority()
@@ -385,6 +388,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     }
 
     /**
+     * Returns the other conflict.
      * @return otherConflict.
      */
     public Conflict getOtherConflict()

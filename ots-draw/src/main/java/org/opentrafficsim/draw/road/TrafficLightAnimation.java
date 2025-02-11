@@ -53,6 +53,7 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLightDat
     }
 
     /**
+     * Return text object.
      * @return text.
      */
     public final Text getText()
@@ -100,6 +101,7 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLightDat
         private static final long serialVersionUID = 20161211L;
 
         /**
+         * Constructor.
          * @param source the object for which the text is displayed
          * @param text the text to display
          * @param dx the horizontal movement of the text, in meters

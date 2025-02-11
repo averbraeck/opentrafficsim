@@ -93,6 +93,7 @@ import org.opentrafficsim.core.distributions.Generator;
 import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
 
 /**
+ * Interface for discretely distributed float scalars.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -114,6 +115,7 @@ public interface DiscreteDistFloatScalar
         private static final long serialVersionUID = 20150000L;
 
         /**
+         * Constructor.
          * @param distribution the wrapped distribution function.
          * @param unit the unit.
          */
@@ -123,6 +125,7 @@ public interface DiscreteDistFloatScalar
         }
 
         /**
+         * Constructor.
          * @param constant the constant value.
          * @param unit the unit.
          */
@@ -178,6 +181,7 @@ public interface DiscreteDistFloatScalar
         private static final long serialVersionUID = 20150000L;
 
         /**
+         * Constructor.
          * @param distribution the wrapped distribution function.
          * @param unit the unit.
          */
@@ -187,6 +191,7 @@ public interface DiscreteDistFloatScalar
         }
 
         /**
+         * Constructor.
          * @param constant the constant value.
          * @param unit the unit.
          */

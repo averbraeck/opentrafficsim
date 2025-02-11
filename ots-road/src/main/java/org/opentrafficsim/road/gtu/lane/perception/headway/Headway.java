@@ -52,43 +52,64 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
         /** bus stop. */
         BUSSTOP;
 
-        /** @return whether this object is a GTU or not. */
+        /**
+         * Returns whether this object is a GTU or not.
+         * @return whether this object is a GTU or not.
+         */
         public boolean isGtu()
         {
             return this.equals(GTU);
         }
 
-        /** @return whether this object is a GTU or not. */
+        /**
+         * Returns whether this object is a GTU or not.
+         * @return whether this object is a GTU or not.
+         */
         public boolean isTrafficLight()
         {
             return this.equals(TRAFFICLIGHT);
         }
 
-        /** @return whether this object is an object or not. */
+        /**
+         * Returns whether this object is an object or not.
+         * @return whether this object is an object or not.
+         */
         public boolean isObject()
         {
             return this.equals(OBJECT);
         }
 
-        /** @return whether no object was observed and only a distance was stored. */
+        /**
+         * Returns whether no object was observed and only a distance was stored.
+         * @return whether no object was observed and only a distance was stored.
+         */
         public boolean isDistanceOnly()
         {
             return this.equals(DISTANCEONLY);
         }
 
-        /** @return whether this object is a conflict or not. */
+        /**
+         * Returns whether this object is a conflict or not.
+         * @return whether this object is a conflict or not.
+         */
         public boolean isConflict()
         {
             return this.equals(CONFLICT);
         }
 
-        /** @return whether this object is a stop line or not. */
+        /**
+         * Returns whether this object is a stop line or not.
+         * @return whether this object is a stop line or not.
+         */
         public boolean isStopLine()
         {
             return this.equals(STOPLINE);
         }
 
-        /** @return whether this object is a bus stop or not. */
+        /**
+         * Returns whether this object is a bus stop or not.
+         * @return whether this object is a bus stop or not.
+         */
         public boolean isBusStop()
         {
             return this.equals(BUSSTOP);
@@ -96,18 +117,17 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
 
     }
 
-    /**
-     * @return the id of the other object for comparison purposes, cannot be null.
-     */
     @Override
     String getId();
 
     /**
+     * Returns length.
      * @return the length of the other object; can be null if unknown.
      */
     Length getLength();
 
     /**
+     * Returns speed.
      * @return the (perceived) speed of the other object; can be null if unknown.
      */
     Speed getSpeed();
@@ -119,11 +139,13 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
     Length getDistance();
 
     /**
+     * Returns object type.
      * @return the (perceived) object Type, can be null if no object type unknown.
      */
     ObjectType getObjectType();
 
     /**
+     * Returns acceleration.
      * @return acceleration the (perceived) acceleration of the other object; can be null if unknown.
      */
     Acceleration getAcceleration();
@@ -131,7 +153,7 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
     /**
      * Return the (perceived) front overlap to the other object. This value should be null if there is no overlap. In the figure
      * for two GTUs below, it is distance c, positive for GTU1, negative for GTU2.
-     * 
+     *
      * <pre>
      * ----------
      * |  GTU 1 |          -----&gt;
@@ -141,7 +163,7 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
      *      ---------------
      * | a  | b |     c   |
      * </pre>
-     * 
+     *
      * @return the (perceived) front overlap to the other object or null if there is no overlap.
      */
     Length getOverlapFront();
@@ -149,7 +171,7 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
     /**
      * Return the (perceived) rear overlap to the other object. This value should be null if there is no overlap.In the figure
      * below for two GTUs, it is distance a, positive for GTU1, negative for GTU2.
-     * 
+     *
      * <pre>
      * ----------
      * |  GTU 1 |          -----&gt;
@@ -159,7 +181,7 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
      *      ---------------
      * | a  | b |     c   |
      * </pre>
-     * 
+     *
      * @return the (perceived) rear overlap to the other object or null if there is no overlap.
      */
     Length getOverlapRear();
@@ -167,7 +189,7 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
     /**
      * Return the (perceived) overlap with the other object. This value should be null if there is no overlap. In the figure
      * below for two GTUs, it is distance b, positive for GTU1 and GTU2.
-     * 
+     *
      * <pre>
      * ----------
      * |  GTU 1 |          -----&gt;
@@ -177,22 +199,25 @@ public interface Headway extends PerceivedObject, Comparable<Headway>
      *      ---------------
      * | a  | b |     c   |
      * </pre>
-     * 
+     *
      * @return Length, the (perceived) overlap with the other object or null if there is no overlap.
      */
     Length getOverlap();
 
     /**
+     * Returns whether the object is ahead.
      * @return whether the other object is in front of the reference object.
      */
     boolean isAhead();
 
     /**
+     * Returns whether the object is behind.
      * @return whether the other object is behind the reference object.
      */
     boolean isBehind();
 
     /**
+     * Returns whether the object is parallel.
      * @return whether the other object is parallel the reference object.
      */
     boolean isParallel();

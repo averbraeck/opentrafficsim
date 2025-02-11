@@ -99,6 +99,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
     }
 
     /**
+     * Returns network.
      * @return the road network to which the lane belongs
      */
     public final RoadNetwork getNetwork()

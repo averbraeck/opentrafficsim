@@ -31,6 +31,7 @@ public class OtsSimulationApplication<T extends OtsModelInterface> extends OtsSw
     private final Map<GtuType, GtuMarker> markers;
 
     /**
+     * Constructor.
      * @param model model
      * @param panel animation panel
      * @param markers GTU type markers

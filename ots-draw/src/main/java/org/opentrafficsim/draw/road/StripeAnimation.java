@@ -41,11 +41,12 @@ public class StripeAnimation extends OtsRenderable<StripeData>
 
     /** Drawable paths. */
     private List<PaintData> paintDatas;
-    
+
     /** Offset that applied when paths were determined. */
     private Length pathOffset;
 
     /**
+     * Constructor.
      * @param source stripe data
      * @param contextualized context provider
      */
@@ -180,7 +181,7 @@ public class StripeAnimation extends OtsRenderable<StripeData>
             }
         }
     }
-    
+
     /**
      * Updates paths to draw when new offset applies.
      */

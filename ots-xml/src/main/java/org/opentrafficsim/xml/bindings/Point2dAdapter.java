@@ -16,6 +16,14 @@ import org.opentrafficsim.xml.bindings.types.Point2dType;
 public class Point2dAdapter extends ExpressionAdapter<Point2d, Point2dType>
 {
 
+    /**
+     * Constructor.
+     */
+    public Point2dAdapter()
+    {
+        //
+    }
+
     @Override
     public Point2dType unmarshal(final String field) throws IllegalArgumentException
     {

@@ -21,13 +21,13 @@ public class ContinuousDistFrequency extends ContinuousDistDoubleScalar.Rel<Freq
     private static final long serialVersionUID = 20180829L;
 
     /**
+     * Constructor.
      * @param distribution distribution
-     * @param unit units
+     * @param unit unit
      */
     public ContinuousDistFrequency(final DistContinuous distribution, final FrequencyUnit unit)
     {
         super(distribution, unit);
-
     }
 
     @Override

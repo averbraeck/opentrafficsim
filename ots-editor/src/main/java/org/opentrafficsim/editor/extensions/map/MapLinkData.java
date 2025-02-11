@@ -935,6 +935,14 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         private double endOffsetMax = Double.NEGATIVE_INFINITY;
 
         /**
+         * Constructor.
+         */
+        public MiddleOffset()
+        {
+            //
+        }
+
+        /**
          * Get start offset.
          * @return start offset
          */

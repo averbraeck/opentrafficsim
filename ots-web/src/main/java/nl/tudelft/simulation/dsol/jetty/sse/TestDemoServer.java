@@ -81,6 +81,7 @@ public class TestDemoServer
     }
 
     /**
+     * Constructor.
      * @throws Exception in case jetty crashes
      */
     public TestDemoServer() throws Exception
@@ -91,6 +92,14 @@ public class TestDemoServer
     /** Handle in separate thread to avoid 'lock' of the main application. */
     class ServerThread extends Thread
     {
+        /**
+         * Constructor.
+         */
+        public ServerThread()
+        {
+            //
+        }
+
         @Override
         public void run()
         {
@@ -131,9 +140,16 @@ public class TestDemoServer
         }
     }
 
-    /** */
+    /** Resource handler. */
     class MyResourceHandler extends ResourceHandler
     {
+        /**
+         * Constructor.
+         */
+        public MyResourceHandler()
+        {
+            //
+        }
 
         @Override
         public Resource getResource(final String path) throws IOException

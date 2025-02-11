@@ -67,6 +67,7 @@ public abstract class OtsWebServer implements EventListener
     private HtmlAnimationPanel animationPanel;
 
     /**
+     * Constructor.
      * @param title the title for the model window
      * @param simulator the simulator
      * @param extent the extent to use for the graphics (min/max coordinates)
@@ -102,6 +103,14 @@ public abstract class OtsWebServer implements EventListener
     /** Handle in separate thread to avoid 'lock' of the main application. */
     class ServerThread extends Thread
     {
+        /**
+         * Constructor.
+         */
+        public ServerThread()
+        {
+            //
+        }
+
         @Override
         public void run()
         {
@@ -134,6 +143,7 @@ public abstract class OtsWebServer implements EventListener
     }
 
     /**
+     * Get title.
      * @return title
      */
     public final String getTitle()
@@ -142,6 +152,7 @@ public abstract class OtsWebServer implements EventListener
     }
 
     /**
+     * Get simulator.
      * @return simulator
      */
     public final OtsSimulatorInterface getSimulator()
@@ -150,6 +161,7 @@ public abstract class OtsWebServer implements EventListener
     }
 
     /**
+     * Get animation panel.
      * @return animationPanel
      */
     public final HtmlAnimationPanel getAnimationPanel()
@@ -213,6 +225,7 @@ public abstract class OtsWebServer implements EventListener
     }
 
     /**
+     * Set speed factor.
      * @param speedFactor the new speed factor
      */
     protected void setSpeedFactor(final double speedFactor)

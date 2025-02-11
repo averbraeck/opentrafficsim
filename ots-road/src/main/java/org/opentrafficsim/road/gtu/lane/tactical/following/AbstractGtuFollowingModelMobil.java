@@ -40,6 +40,14 @@ public abstract class AbstractGtuFollowingModelMobil implements GtuFollowingMode
     public static final DualAccelerationStep TOODANGEROUS =
             new DualAccelerationStep(PROHIBITIVEACCELERATIONSTEP, PROHIBITIVEACCELERATIONSTEP);
 
+    /**
+     * Constructor.
+     */
+    public AbstractGtuFollowingModelMobil()
+    {
+        //
+    }
+
     @Override
     public final DualAccelerationStep computeDualAccelerationStep(final LaneBasedGtu referenceGTU,
             final Collection<Headway> otherGTUs, final Length maxDistance, final Speed speedLimit) throws GtuException

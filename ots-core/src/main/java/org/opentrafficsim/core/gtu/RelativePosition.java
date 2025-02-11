@@ -49,6 +49,7 @@ public record RelativePosition(Length dx, Length dy, Length dz, Type type) imple
             new RelativePosition(Length.ZERO, Length.ZERO, Length.ZERO, RelativePosition.REFERENCE);
 
     /**
+     * Constructor.
      * @param p a relative position to make a deep copy of.
      */
     public RelativePosition(final RelativePosition p)
@@ -79,6 +80,7 @@ public record RelativePosition(Length dx, Length dy, Length dz, Type type) imple
         private final int hash;
 
         /**
+         * Constructor.
          * @param name the type name.
          */
         public Type(final String name)
@@ -88,6 +90,7 @@ public record RelativePosition(Length dx, Length dy, Length dz, Type type) imple
         }
 
         /**
+         * Return name.
          * @return name.
          */
         public final String getName()

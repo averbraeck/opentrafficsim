@@ -15,13 +15,17 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
  */
 public final class MockSimulator
 {
-    /** */
+
+    /**
+     * Constructor.
+     */
     private MockSimulator()
     {
         // Utility class
     }
 
     /**
+     * Return simulator.
      * @return mocked Simulator
      */
     public static OtsSimulatorInterface createMock()
@@ -31,4 +35,5 @@ public final class MockSimulator
         Mockito.when(mockSimulator.getSimulatorTime()).thenReturn(Duration.ZERO);
         return mockSimulator;
     }
+
 }

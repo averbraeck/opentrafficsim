@@ -57,6 +57,14 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
     private StreamInterface stream = new MersenneTwister();
 
     /**
+     * Constructor.
+     */
+    public LaneBasedTemplateGtuTypeTest()
+    {
+        //
+    }
+
+    /**
      * Test construction of a TemplateGTUType and prove that each one uses private fields.
      * @throws Exception when something goes wrong (should not happen)
      */
@@ -64,7 +72,6 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
     public final void constructorTest() throws Exception
     {
         OtsSimulatorInterface simulator = new OtsSimulator("LaneBasedTemplateGTUTypeTest");
-        RoadNetwork network = new RoadNetwork("TemplateGTU network", simulator);
         GtuType pcType = DefaultsNl.CAR;
         final ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcLength =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 4), METER);
@@ -145,7 +152,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
     {
 
         /**
-         * 
+         *
          */
         DummyStrategicalPlannerFactory()
         {
@@ -167,8 +174,6 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
     @Test
     public final void compatibleLaneTypeTest() throws Exception
     {
-        OtsSimulatorInterface simulator = new OtsSimulator("LaneBasedTemplateGTUTypeTest");
-        RoadNetwork network = new RoadNetwork("TemplateGTU network", simulator);
         // Create some TemplateGTUTypes
         GtuType pc = DefaultsNl.CAR;
         ContinuousDistDoubleScalar.Rel<Length, LengthUnit> pcLength =
@@ -291,6 +296,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
     static class DummyModelForTemplateGTUTest extends AbstractOtsModel
     {
         /**
+         * Constructor.
          * @param simulator the simulator to use
          */
         DummyModelForTemplateGTUTest(final OtsSimulatorInterface simulator)

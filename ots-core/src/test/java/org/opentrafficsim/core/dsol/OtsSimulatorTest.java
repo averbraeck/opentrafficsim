@@ -30,6 +30,14 @@ public class OtsSimulatorTest
     private String receivedArgument = null;
 
     /**
+     * Constructor.
+     */
+    public OtsSimulatorTest()
+    {
+        //
+    }
+
+    /**
      * Test the OtsSimulator class.
      * @throws NamingException if that happens uncaught; this test has failed
      * @throws SimRuntimeException if that happens uncaught; this test has failed

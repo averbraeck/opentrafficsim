@@ -20,7 +20,7 @@ import org.opentrafficsim.core.geometry.FractionalLengthData;
 public class CrossSectionGeometryTest
 {
 
-    /** */
+    /** Constructor. */
     public CrossSectionGeometryTest()
     {
     }

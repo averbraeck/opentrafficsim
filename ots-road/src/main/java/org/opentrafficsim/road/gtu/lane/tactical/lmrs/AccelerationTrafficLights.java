@@ -17,6 +17,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
+ * Acceleration incentive for traffic lights.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -27,6 +28,14 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  */
 public class AccelerationTrafficLights implements AccelerationIncentive
 {
+
+    /**
+     * Constructor.
+     */
+    public AccelerationTrafficLights()
+    {
+        //
+    }
 
     @Override
     public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,

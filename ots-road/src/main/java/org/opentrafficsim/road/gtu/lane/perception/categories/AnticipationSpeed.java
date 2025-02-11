@@ -163,6 +163,14 @@ public class AnticipationSpeed implements PerceptionCollector<SpeedSet, LaneBase
         private double right = Double.POSITIVE_INFINITY;
 
         /**
+         * Constructor.
+         */
+        public SpeedSet()
+        {
+            //
+        }
+
+        /**
          * Returns the speed regarding the left lane.
          * @return speed regarding the left lane
          */

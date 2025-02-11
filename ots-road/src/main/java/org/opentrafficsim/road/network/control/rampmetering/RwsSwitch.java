@@ -43,6 +43,7 @@ public class RwsSwitch extends SingleCrossSectionSwitch
     private Frequency lastFlow;
 
     /**
+     * Constructor.
      * @param detectors detectors
      */
     public RwsSwitch(final List<LoopDetector> detectors)

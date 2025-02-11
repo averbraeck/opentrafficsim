@@ -84,6 +84,7 @@ public class OtsSwingApplication<T extends OtsModelInterface> extends Appearance
     }
 
     /**
+     * Set exit on close.
      * @param exitOnClose set exitOnClose
      */
     public final void setExitOnClose(final boolean exitOnClose)
@@ -99,6 +100,7 @@ public class OtsSwingApplication<T extends OtsModelInterface> extends Appearance
     }
 
     /**
+     * Return whether the application is closed.
      * @return closed
      */
     public final boolean isClosed()
@@ -107,6 +109,7 @@ public class OtsSwingApplication<T extends OtsModelInterface> extends Appearance
     }
 
     /**
+     * Return model.
      * @return model
      */
     public final T getModel()

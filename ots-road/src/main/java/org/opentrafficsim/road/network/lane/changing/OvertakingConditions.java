@@ -50,6 +50,14 @@ public interface OvertakingConditions
      */
     class LeftOnly implements OvertakingConditions
     {
+        /**
+         * Constructor.
+         */
+        public LeftOnly()
+        {
+            //
+        }
+
         @Override
         public final String toString()
         {
@@ -69,6 +77,14 @@ public interface OvertakingConditions
      */
     class RightOnly implements OvertakingConditions
     {
+        /**
+         * Constructor.
+         */
+        public RightOnly()
+        {
+            //
+        }
+
         @Override
         public final String toString()
         {
@@ -86,6 +102,14 @@ public interface OvertakingConditions
      */
     class None implements OvertakingConditions
     {
+        /**
+         * Constructor.
+         */
+        public None()
+        {
+            //
+        }
+
         @Override
         public final String toString()
         {
@@ -103,6 +127,14 @@ public interface OvertakingConditions
      */
     class LeftAndRight implements OvertakingConditions
     {
+        /**
+         * Constructor.
+         */
+        public LeftAndRight()
+        {
+            //
+        }
+
         @Override
         public final String toString()
         {
@@ -120,6 +152,14 @@ public interface OvertakingConditions
      */
     class SameLaneLeft implements OvertakingConditions
     {
+        /**
+         * Constructor.
+         */
+        public SameLaneLeft()
+        {
+            //
+        }
+
         @Override
         public final String toString()
         {
@@ -137,6 +177,14 @@ public interface OvertakingConditions
      */
     class SameLaneRight implements OvertakingConditions
     {
+        /**
+         * Constructor.
+         */
+        public SameLaneRight()
+        {
+            //
+        }
+
         @Override
         public final String toString()
         {
@@ -154,6 +202,14 @@ public interface OvertakingConditions
      */
     class SameLaneBoth implements OvertakingConditions
     {
+        /**
+         * Constructor.
+         */
+        public SameLaneBoth()
+        {
+            //
+        }
+
         @Override
         public final String toString()
         {
@@ -178,6 +234,7 @@ public interface OvertakingConditions
         private final Speed rightOvertakingSpeedMax;
 
         /**
+         * Constructor.
          * @param rightOvertakingSpeedMax the speed under which overtaking on the "wrong" side is allowed
          */
         public LeftAlwaysRightSpeed(final Speed rightOvertakingSpeedMax)
@@ -205,6 +262,14 @@ public interface OvertakingConditions
         /** */
         private static final long serialVersionUID = 20150913L;
 
+        /**
+         * Constructor.
+         */
+        public LeftAlwaysRightJam()
+        {
+            //
+        }
+
         @Override
         public final String toString()
         {
@@ -229,6 +294,7 @@ public interface OvertakingConditions
         private final Speed leftOvertakingSpeedMax;
 
         /**
+         * Constructor.
          * @param leftOvertakingSpeedMax the speed under which overtaking on the "wrong" side is allowed
          */
         public RightAlwaysLeftSpeed(final Speed leftOvertakingSpeedMax)
@@ -255,6 +321,14 @@ public interface OvertakingConditions
     {
         /** */
         private static final long serialVersionUID = 20150913L;
+
+        /**
+         * Constructor.
+         */
+        public RightAlwaysLeftJam()
+        {
+            //
+        }
 
         @Override
         public final String toString()

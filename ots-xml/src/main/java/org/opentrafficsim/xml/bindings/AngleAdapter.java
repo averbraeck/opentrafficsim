@@ -16,6 +16,14 @@ import org.opentrafficsim.xml.bindings.types.AngleType;
 public class AngleAdapter extends ScalarAdapter<Angle, AngleType>
 {
 
+    /**
+     * Constructor.
+     */
+    public AngleAdapter()
+    {
+        //
+    }
+
     @Override
     public AngleType unmarshal(final String field)
     {

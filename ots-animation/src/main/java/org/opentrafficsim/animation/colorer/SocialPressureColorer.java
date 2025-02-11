@@ -42,6 +42,14 @@ public class SocialPressureColorer implements GtuColorer
         LEGEND.add(new LegendEntry(NA, "N/A", "N/A"));
     }
 
+    /**
+     * Constructor.
+     */
+    public SocialPressureColorer()
+    {
+        //
+    }
+
     @Override
     public Color getColor(final Gtu gtu)
     {

@@ -54,7 +54,7 @@ public final class DocumentReader
     /**
      * Returns an annotation value. These are defined as below, for either xsd:appinfo or xsd:documentation. All space-like
      * characters are replaced by blanks, and consecutive blanks are removed.
-     * 
+     *
      * <pre>
      * &lt;xsd:sequence&gt;
      *   &lt;xsd:annotation&gt;
@@ -62,7 +62,7 @@ public final class DocumentReader
      *   &lt;/xsd:annotation&gt;
      * &lt;/xsd:sequence&gt;
      * </pre>
-     * 
+     *
      * @param node node, either xsd:element or xsd:attribute.
      * @param element either "xsd:documentation" or "xsd:appinfo".
      * @param source name that the source attribute of the annotation should have.
@@ -96,12 +96,12 @@ public final class DocumentReader
 
     /**
      * Returns the attribute of a node. This is short for:
-     * 
+     *
      * <pre>
      * String value = node.hasAttributes() &amp;&amp; node.getAttributes().getNamedItem(name) != null
      *         ? node.getAttributes().getNamedItem(name).getNodeValue() : null;
      * </pre>
-     * 
+     *
      * @param node node.
      * @param name attribute name.
      * @return value of the attribute in the node.
@@ -114,7 +114,7 @@ public final class DocumentReader
 
     /**
      * Returns a child node of specified type. It should be a type of which there may be only one.
-     * @param node
+     * @param node node
      * @param type child type, e.g. xsd:complexType.
      * @return child node of specified type.
      */
@@ -136,7 +136,7 @@ public final class DocumentReader
 
     /**
      * Returns child nodes of specified type.
-     * @param node
+     * @param node node
      * @param type child type, e.g. xsd:field.
      * @return child nodes of specified type.
      */

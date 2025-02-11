@@ -6,24 +6,24 @@ package org.opentrafficsim.base.parameters.constraint;
  * <code>POSITIVE</code> is a property of this interface pointing to the <code>enum</code> field <code>POSITIVE</code>. As a
  * result, the value that is set for <code>X</code> is checked to be above zero. Note that model and parameterType do not have
  * to be defined in the same class.
- * 
+ *
  * <pre>
  * public class myModel implements ConstraintInterface
  * {
- * 
+ *
  *     public static final ParameterTypeLength X = new ParameterTypeLength(&quot;x&quot;, &quot;My parameter.&quot;, POSITIVE);
- * 
+ *
  *     // ... model that uses parameter of type X.
- * 
+ *
  * }
  * </pre>
- * 
+ *
  * Another way to access the <code>enum</code> fields is to import them, e.g.:
- * 
+ *
  * <pre>
  * import static org.opentrafficsim.core.gtu.drivercharacteristics.AbstractParameterType.Constraint.POSITIVE;
  * </pre>
- * 
+ *
  * <br>
  * In order to implement <i>custom</i> checks, any Parameter Type must extend the <code>check</code> method of its super. An
  * example is given below. The method should throw a <code>ParameterException</code> whenever a constraint is not met. The
@@ -31,7 +31,7 @@ package org.opentrafficsim.base.parameters.constraint;
  * second check compares the value with the value of another parameter in the <code>Parameters</code>. These checks can only be
  * performed if the other parameter is present in the <code>Parameters</code>. <b>Checks with other parameter type values should
  * always check whether <code>Parameters</code> contains the other parameter type</b>. i.e. <code>params.contains()</code>.<br>
- * 
+ *
  * <pre>
  * public static final ParameterTypeLength X = new ParameterTypeLength(&quot;x&quot;, &quot;My x parameter.&quot;)
  * {
@@ -43,7 +43,7 @@ package org.opentrafficsim.base.parameters.constraint;
  *     }
  * };
  * </pre>
- * 
+ *
  * Checks are invoked on default values (if given), in which case an empty <code>Parameters</code> is forwarded. At construction
  * of a Parameter Type, no <code>Parameters</code> is available. Checks are also invoked when value are set into
  * <code>Parameters</code>, in which case that <code>Parameters</code> forwards itself. Even still, if in the above case X is
@@ -67,17 +67,29 @@ package org.opentrafficsim.base.parameters.constraint;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-@SuppressWarnings({"checkstyle:interfaceistype", "checkstyle:javadoctype", "checkstyle:javadocvariable", "javadoc"})
+@SuppressWarnings("checkstyle:interfaceistype")
 public interface ConstraintInterface
 {
 
-    // @formatter:off
-    Constraint<Number> POSITIVE     = NumericConstraint.POSITIVE;
-    Constraint<Number> NEGATIVE     = NumericConstraint.NEGATIVE;
+    /** Positive, excluding zero. */
+    Constraint<Number> POSITIVE = NumericConstraint.POSITIVE;
+
+    /** Negative, excluding zero. */
+    Constraint<Number> NEGATIVE = NumericConstraint.NEGATIVE;
+
+    /** Positive or zero. */
     Constraint<Number> POSITIVEZERO = NumericConstraint.POSITIVEZERO;
+
+    /** Negative or zero. */
     Constraint<Number> NEGATIVEZERO = NumericConstraint.NEGATIVEZERO;
-    Constraint<Number> NONZERO      = NumericConstraint.NONZERO;
-    Constraint<Number> ATLEASTONE   = NumericConstraint.ATLEASTONE;
+
+    /** Non-zero. */
+    Constraint<Number> NONZERO = NumericConstraint.NONZERO;
+
+    /** At least one. */
+    Constraint<Number> ATLEASTONE = NumericConstraint.ATLEASTONE;
+
+    /** Unit interval. */
     Constraint<Number> UNITINTERVAL = DualBound.UNITINTERVAL;
-    // @formatter:on
+
 }

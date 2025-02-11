@@ -87,6 +87,7 @@ public final class Break
     }
 
     /**
+     * Break on perception and String of time.
      * @param perception perception to obtain gtu from
      * @param id GTU id to break on
      * @param time time to break at (or after), in format ss, mm:ss or hh:mm:ss
@@ -129,6 +130,7 @@ public final class Break
     }
 
     /**
+     * Break on perception and double time.
      * @param perception perception to obtain gtu from
      * @param id GTU id to break on
      * @param time time to break at (or after)
@@ -141,6 +143,7 @@ public final class Break
     }
 
     /**
+     * Break on GTU and String of time.
      * @param gtu GTU
      * @param id GTU id to break on
      * @param time time to break at (or after), in format ss, mm:ss or hh:mm:ss
@@ -152,6 +155,7 @@ public final class Break
     }
 
     /**
+     * Break on GTU and double time.
      * @param gtu GTU
      * @param id GTU id to break on
      * @param time time to break at (or after)

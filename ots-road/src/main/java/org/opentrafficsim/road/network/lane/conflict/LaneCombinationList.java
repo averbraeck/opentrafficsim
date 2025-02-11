@@ -25,6 +25,14 @@ public class LaneCombinationList
     private final Map<Lane, Set<Lane>> map = new LinkedHashMap<>();
 
     /**
+     * Constructor.
+     */
+    public LaneCombinationList()
+    {
+        //
+    }
+
+    /**
      * Add any combination of lanes on both links to the list. Order of the links does not matter.
      * @param link1 link 1
      * @param link2 link 2

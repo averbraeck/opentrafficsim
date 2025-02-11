@@ -19,7 +19,7 @@ public class XmlParserException extends OtsException
     private static final long serialVersionUID = 20180525L;
 
     /**
-     * 
+     * Constructor.
      */
     public XmlParserException()
     {

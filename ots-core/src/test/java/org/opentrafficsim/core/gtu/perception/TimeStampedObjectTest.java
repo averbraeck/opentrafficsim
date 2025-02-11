@@ -20,6 +20,14 @@ public class TimeStampedObjectTest
 {
 
     /**
+     * Constructor.
+     */
+    public TimeStampedObjectTest()
+    {
+        //
+    }
+
+    /**
      * Test the entire TimeStampedObject class.
      */
     @Test

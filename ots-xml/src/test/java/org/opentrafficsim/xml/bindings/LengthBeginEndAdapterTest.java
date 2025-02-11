@@ -21,15 +21,24 @@ import jakarta.xml.bind.JAXBException;
 public class LengthBeginEndAdapterTest
 {
     /** the allowed units. */
-    LengthUnit[] units = new LengthUnit[] {LengthUnit.MILLIMETER, LengthUnit.CENTIMETER, LengthUnit.DECIMETER, LengthUnit.METER,
-            LengthUnit.DECAMETER, LengthUnit.HECTOMETER, LengthUnit.KILOMETER, LengthUnit.MILE, LengthUnit.YARD,
-            LengthUnit.FOOT};
+    private static final LengthUnit[] UNITS = new LengthUnit[] {LengthUnit.MILLIMETER, LengthUnit.CENTIMETER,
+            LengthUnit.DECIMETER, LengthUnit.METER, LengthUnit.DECAMETER, LengthUnit.HECTOMETER, LengthUnit.KILOMETER,
+            LengthUnit.MILE, LengthUnit.YARD, LengthUnit.FOOT};
 
     /** the corresponding strings. */
-    String[] unitStrings = new String[] {"mm", "cm", "dm", "m", "dam", "hm", "km", "mi", "yd", "ft"};
+    private static final String[] UNIT_STRING = new String[] {"mm", "cm", "dm", "m", "dam", "hm", "km", "mi", "yd", "ft"};
 
     /**
-     * Test the LengthBeginEndAdapter
+     * Constructor.
+     */
+    public LengthBeginEndAdapterTest()
+    {
+        //
+    }
+
+    /**
+     * Test the LengthBeginEndAdapter.
+     * @throws JAXBException exception
      */
     // TODO: repair @Test (problem with Locale when creating Length from String "2.3mm")
     public void testLengthBeginEndAdapter() throws JAXBException
@@ -100,10 +109,10 @@ public class LengthBeginEndAdapterTest
         for (boolean begin : new boolean[] {false, true})
         {
             System.out.println(begin);
-            for (int i = 0; i < this.units.length; i++)
+            for (int i = 0; i < UNITS.length; i++)
             {
-                final LengthUnit unit = this.units[i];
-                final String us = this.unitStrings[i];
+                final LengthUnit unit = UNITS[i];
+                final String us = UNIT_STRING[i];
                 final String prefix = begin ? "" : "END-";
                 final LengthBeginEndType lbe23 = new LengthBeginEndType(new LengthBeginEnd(begin, new Length(2.3, unit)));
                 final LengthBeginEndType lbe00 = new LengthBeginEndType(new LengthBeginEnd(begin, new Length(0.0, unit)));

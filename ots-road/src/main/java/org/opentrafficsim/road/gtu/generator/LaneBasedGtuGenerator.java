@@ -446,6 +446,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
     }
 
     /**
+     * Returns the number of generated GTUs.
      * @return generatedGTUs.
      */
     public final long getGeneratedGTUs()

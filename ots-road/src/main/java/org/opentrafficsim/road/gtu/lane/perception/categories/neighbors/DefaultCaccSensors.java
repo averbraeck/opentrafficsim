@@ -30,6 +30,14 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuSimple;
 public class DefaultCaccSensors implements HeadwayGtuType
 {
 
+    /**
+     * Constructor.
+     */
+    public DefaultCaccSensors()
+    {
+        //
+    }
+
     @Override
     public HeadwayGtu createDownstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
             final Length distance) throws GtuException, ParameterException

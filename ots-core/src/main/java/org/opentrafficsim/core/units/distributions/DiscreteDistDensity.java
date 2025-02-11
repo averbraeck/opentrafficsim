@@ -21,13 +21,13 @@ public class DiscreteDistDensity extends DiscreteDistDoubleScalar.Rel<Density, D
     private static final long serialVersionUID = 20180829L;
 
     /**
+     * Constructor.
      * @param distribution distribution
-     * @param unit units
+     * @param unit unit
      */
     public DiscreteDistDensity(final DistDiscrete distribution, final DensityUnit unit)
     {
         super(distribution, unit);
-
     }
 
     @Override

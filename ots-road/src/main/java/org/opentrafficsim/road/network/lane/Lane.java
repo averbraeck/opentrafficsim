@@ -1298,6 +1298,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     }
 
     /**
+     * Returns GTU list.
      * @return gtuList.
      */
     public final ImmutableList<LaneBasedGtu> getGtuList()

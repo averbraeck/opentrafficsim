@@ -22,7 +22,15 @@ public class RelativeLaneTest
 {
 
     /**
-     * ] Test the RelativeLane class.
+     * Constructor.
+     */
+    public RelativeLaneTest()
+    {
+        //
+    }
+
+    /**
+     * Test the RelativeLane class.
      */
     @Test
     @SuppressWarnings({"unlikely-arg-type"})

@@ -21,13 +21,13 @@ public class DiscreteDistForce extends DiscreteDistDoubleScalar.Rel<Force, Force
     private static final long serialVersionUID = 20180829L;
 
     /**
+     * Constructor.
      * @param distribution distribution
-     * @param unit units
+     * @param unit unit
      */
     public DiscreteDistForce(final DistDiscrete distribution, final ForceUnit unit)
     {
         super(distribution, unit);
-
     }
 
     @Override

@@ -37,6 +37,7 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
     private boolean first = true;
 
     /**
+     * Constructor.
      * @param arrivals arrivals
      * @param simulator simulator
      * @param stream random stream to draw headway

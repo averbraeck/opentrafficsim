@@ -22,6 +22,14 @@ import org.opentrafficsim.base.HierarchicalType;
 public class Definitions
 {
 
+    /**
+     * Constructor.
+     */
+    public Definitions()
+    {
+        //
+    }
+
     /** Map of maps of types per id. */
     private Map<Class<? extends HierarchicalType<?, ?>>, Map<String, HierarchicalType<?, ?>>> typeMap = new LinkedHashMap<>();
 

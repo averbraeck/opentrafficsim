@@ -54,8 +54,19 @@ public class ConflictTest implements EventListener
     /** ... */
     private static final long serialVersionUID = 20200708L;
 
+    /** Verbose test. */
+    private static final boolean VERBOSE = false;
+
     /** Storage for received events. */
     private List<Event> collectedEvents = new ArrayList<>();
+
+    /**
+     * Constructor.
+     */
+    public ConflictTest()
+    {
+        //
+    }
 
     /**
      * Test the Conflict class.
@@ -97,12 +108,15 @@ public class ConflictTest implements EventListener
                 laneType, Map.of(DefaultsNl.VEHICLE, new Speed(50, SpeedUnit.KM_PER_HOUR)));
         laneB.addListener(this, Lane.OBJECT_ADD_EVENT);
         // The intersection of the link design lines is at 50, 0
-        System.out.print(laneA.getContour().toPlot());
-        System.out.print(laneB.getContour().toPlot());
-        System.out.println("c0,1,0");
-        System.out.print(laneA.getCenterLine().toPlot());
-        System.out.print(laneB.getCenterLine().toPlot());
-        System.out.println("c1,0,0");
+        if (VERBOSE)
+        {
+            System.out.print(laneA.getContour().toPlot());
+            System.out.print(laneB.getContour().toPlot());
+            System.out.println("c0,1,0");
+            System.out.print(laneA.getCenterLine().toPlot());
+            System.out.print(laneB.getCenterLine().toPlot());
+            System.out.println("c1,0,0");
+        }
 
         // Find out where the conflict area starts. With acute angles this is the point closest to pointAFrom among the
         // intersections of the lane contours. Similar for conflict area end.
@@ -130,27 +144,33 @@ public class ConflictTest implements EventListener
         // Next statements pretend that vehicle width equals lane width.
         Polygon2d geometry1 =
                 new Polygon2d(conflictStart, conflictEnd, new Point2d(conflictStart.x, conflictEnd.y), conflictStart);
-        System.out.print(geometry1.toPlot());
+
         Polygon2d geometry2 = new Polygon2d(conflictStart,
                 new Point2d(conflictStart.x + laneB.getWidth(0).si * Math.sin(bDirection.si),
                         conflictStart.y - laneB.getWidth(0).si * Math.cos(bDirection.si)),
                 conflictEnd, new Point2d(conflictEnd.x - laneB.getWidth(0).si * Math.sin(bDirection.si),
                         conflictEnd.y + laneB.getWidth(0).si * Math.cos(bDirection.si)),
                 conflictStart);
-        System.out.print(geometry2.toPlot());
 
-        System.out.println("#angle B:           " + bDirection.toString(DirectionUnit.EAST_DEGREE));
         Length conflictBStart =
                 new Length(pointBFrom.distance(new Point2d(conflictStart.x + laneB.getWidth(0).si / 2 * Math.sin(bDirection.si),
                         conflictStart.y - laneB.getWidth(0).si / 2 * Math.cos(bDirection.si))), LengthUnit.SI);
-        System.out.println("#conflict B start:  " + conflictBStart);
+
         Length conflictBLength = new Length(
                 laneA.getWidth(0).si / Math.sin(bDirection.si) + laneB.getWidth(0).si / Math.tan(bDirection.si), LengthUnit.SI);
-        System.out.println("#conflict B length: " + conflictBLength);
-        System.out.println("c0,0,1");
-        System.out.println(String.format("M%.3f,%.3f <%f l%f,0", pointBFrom.x, pointBFrom.y, Math.toDegrees(bDirection.si),
-                conflictBStart.si));
-        System.out.println(String.format("c0,0,0 l%f,0", conflictBLength.si));
+
+        if (VERBOSE)
+        {
+            System.out.print(geometry1.toPlot());
+            System.out.print(geometry2.toPlot());
+            System.out.println("#angle B:           " + bDirection.toString(DirectionUnit.EAST_DEGREE));
+            System.out.println("#conflict B start:  " + conflictBStart);
+            System.out.println("#conflict B length: " + conflictBLength);
+            System.out.println("c0,0,1");
+            System.out.println(String.format("M%.3f,%.3f <%f l%f,0", pointBFrom.x, pointBFrom.y, Math.toDegrees(bDirection.si),
+                    conflictBStart.si));
+            System.out.println(String.format("c0,0,0 l%f,0", conflictBLength.si));
+        }
 
         assertEquals(0, this.collectedEvents.size(), "not events received yet");
 
@@ -164,9 +184,12 @@ public class ConflictTest implements EventListener
         assertEquals(1, laneB.getLaneBasedObjects().size(), "one conflict on lane B");
         // Get the Conflicts
         Conflict conflictA = (Conflict) laneA.getLaneBasedObjects().get(0);
-        System.out.println("Conflict A: " + conflictA);
         Conflict conflictB = (Conflict) laneB.getLaneBasedObjects().get(0);
-        System.out.println("Conflict B: " + conflictB);
+        if (VERBOSE)
+        {
+            System.out.println("Conflict A: " + conflictA);
+            System.out.println("Conflict B: " + conflictB);
+        }
 
         assertEquals(conflictA, conflictB.getOtherConflict(), "the conflicts are each others counter part");
         assertEquals(conflictB, conflictA.getOtherConflict(), "the conflicts are each others counter part");

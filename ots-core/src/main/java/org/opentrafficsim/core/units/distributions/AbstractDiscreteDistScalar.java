@@ -32,6 +32,7 @@ public abstract class AbstractDiscreteDistScalar implements Serializable
     private static final StreamInterface DUMMY_STREAM = new Java2Random();
 
     /**
+     * Constructor.
      * @param distribution the wrapped distribution function.
      * @param unit the unit.
      */
@@ -42,6 +43,7 @@ public abstract class AbstractDiscreteDistScalar implements Serializable
     }
 
     /**
+     * Constructor.
      * @param constant the constant value.
      * @param unit the unit.
      */
@@ -51,6 +53,7 @@ public abstract class AbstractDiscreteDistScalar implements Serializable
     }
 
     /**
+     * Returns the distribution.
      * @return distribution.
      */
     public final DistDiscrete getDistribution()
@@ -59,6 +62,7 @@ public abstract class AbstractDiscreteDistScalar implements Serializable
     }
 
     /**
+     * Returns the unit.
      * @return the unit
      */
     public final Unit<?> getUnit()

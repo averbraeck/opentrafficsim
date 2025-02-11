@@ -23,6 +23,14 @@ public class CompatibilityTest
 {
 
     /**
+     * Constructor.
+     */
+    public CompatibilityTest()
+    {
+        //
+    }
+
+    /**
      * Test Compatibility and GtuCompatibility.
      */
     @SuppressWarnings({"unchecked", "rawtypes", "unlikely-arg-type"})

@@ -13,6 +13,14 @@ import org.opentrafficsim.xml.bindings.types.LongType;
 public class LongAdapter extends ExpressionAdapter<Long, LongType>
 {
 
+    /**
+     * Constructor.
+     */
+    public LongAdapter()
+    {
+        //
+    }
+
     @Override
     public LongType unmarshal(final String field)
     {

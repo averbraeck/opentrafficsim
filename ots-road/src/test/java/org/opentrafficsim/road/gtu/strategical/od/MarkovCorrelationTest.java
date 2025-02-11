@@ -9,6 +9,7 @@ import nl.tudelft.simulation.jstats.streams.MersenneTwister;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
+ * Markov correlation test.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -19,6 +20,14 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  */
 public class MarkovCorrelationTest
 {
+
+    /**
+     * Constructor.
+     */
+    public MarkovCorrelationTest()
+    {
+        //
+    }
 
     /**
      * Tests the input tests.

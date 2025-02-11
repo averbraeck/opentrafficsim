@@ -92,13 +92,13 @@ public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Percep
      * method and invoke it using a lambda expression. For example, suppose we have the method
      * {@code public Speed getEgoSpeed()} for the tactical planner to use, and {@code private Speed computeEgoSpeed()} for
      * internal use, then we could use the following line inside {@code getEgoSpeed()}:
-     * 
+     *
      * <pre>
      * return computeIfAbsent("speedLimit", () -&gt; computeEgoSpeed());
      * </pre>
-     * 
+     *
      * @param key key defining which information is requested
-     * @param supplier
+     * @param supplier supplier
      * @param <T> value type
      * @return cached or computed value
      */
@@ -124,13 +124,13 @@ public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Percep
      * {@code public List<HeadwayGtu> getLeaders(Lane)} for the tactical planner to use, and
      * {@code private List<HeadwayGtu> computeLeaders(Lane)} for internal use, then we could use the following line inside
      * {@code getLeaders(Lane)}:
-     * 
+     *
      * <pre>
      * return computeIfAbsent("leaders", () -&gt; computeLeaders(lane))
      * </pre>
-     * 
+     *
      * @param key key defining which information is requested, it may be contextual if it's context dependent
-     * @param supplier
+     * @param supplier supplier
      * @param context object defining the context, e.g. the lane for which the information is requested
      * @param <T> value type
      * @return cached or computed value
@@ -159,29 +159,29 @@ public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Percep
      * <p>
      * It is not advised to use this method at high frequency as it contains slight overhead. Instead, consider defining keys
      * directly for various contexts. For example:
-     * 
+     *
      * <pre>
      * private final Object leftLaneLeadersKey = new Object();
-     * 
+     *
      * private final Object leftLaneFollowersKey = new Object();
-     * 
+     *
      * private final Object righttLaneLeadersKey = new Object();
-     * 
+     *
      * private final Object rightLaneFollowersKey = new Object();
      * </pre>
-     * 
+     *
      * This method will compute the information if required. A simple manner to define a {@code Supplier<T>} is to create a
      * method and invoke it using a lambda expression. For example, suppose we have the method
      * {@code public List<HeadwayGtu> getNeighbors(Lane, LongiudinalDirection)} for the tactical planner to use, and
      * {@code private List<HeadwayGtu> computeNeighbors(Lane, LongiudinalDirection)} for internal use, then we could use the
      * following line inside {@code getNeighbors(Lane, LongiudinalDirection)}:
-     * 
+     *
      * <pre>
      * return computeIfAbsent("neighbors", () -&gt; computeNeighbors(lane, longDir))
      * </pre>
-     * 
+     *
      * @param key key defining which information is requested, it may be contextual if it's context dependent
-     * @param supplier
+     * @param supplier supplier
      * @param context objects defining the context, e.g. the lane and direction for which the information is requested
      * @param <T> value type
      * @return cached or computed value

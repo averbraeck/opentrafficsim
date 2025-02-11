@@ -21,13 +21,13 @@ public class DiscreteDistFrequency extends DiscreteDistDoubleScalar.Rel<Frequenc
     private static final long serialVersionUID = 20180829L;
 
     /**
+     * Constructor.
      * @param distribution distribution
-     * @param unit units
+     * @param unit unit
      */
     public DiscreteDistFrequency(final DistDiscrete distribution, final FrequencyUnit unit)
     {
         super(distribution, unit);
-
     }
 
     @Override

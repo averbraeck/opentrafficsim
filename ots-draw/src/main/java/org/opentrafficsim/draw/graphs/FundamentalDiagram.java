@@ -581,6 +581,14 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         /** Fundamental diagrams. */
         private Set<FundamentalDiagram> fundamentalDiagrams = new LinkedHashSet<>();
 
+        /**
+         * Constructor.
+         */
+        public AbstractFdSource()
+        {
+            //
+        }
+
         @Override
         public void addFundamentalDiagram(final FundamentalDiagram fundamentalDiagram)
         {

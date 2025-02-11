@@ -21,13 +21,13 @@ public class ContinuousDistSpeed extends ContinuousDistDoubleScalar.Rel<Speed, S
     private static final long serialVersionUID = 20180829L;
 
     /**
+     * Constructor.
      * @param distribution distribution
-     * @param unit units
+     * @param unit unit
      */
     public ContinuousDistSpeed(final DistContinuous distribution, final SpeedUnit unit)
     {
         super(distribution, unit);
-
     }
 
     @Override

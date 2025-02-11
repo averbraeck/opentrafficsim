@@ -28,6 +28,7 @@ public class Direction3d implements Serializable
     private final DirectionVector rotation;
 
     /**
+     * Constructor.
      * @param rotation the angles in 3D (RPY coded)
      * @throws ValueRuntimeException in case the vector does not have exactly three elements
      */
@@ -41,6 +42,7 @@ public class Direction3d implements Serializable
     }
 
     /**
+     * Constructor.
      * @param roll (phi) the rotation around the x-axis
      * @param pitch (theta) the rotation around the y-axis
      * @param yaw (psi) the rotation around the z-axis
@@ -52,6 +54,7 @@ public class Direction3d implements Serializable
     }
 
     /**
+     * Constructor.
      * @param roll (phi) the rotation around the x-axis
      * @param pitch (theta) the rotation around the y-axis
      * @param yaw (psi) the rotation around the z-axis
@@ -65,6 +68,7 @@ public class Direction3d implements Serializable
     }
 
     /**
+     * Returns the roll.
      * @return the roll.
      */
     public final Direction getRoll()
@@ -83,6 +87,7 @@ public class Direction3d implements Serializable
     }
 
     /**
+     * Returns the pitch.
      * @return the pitch.
      */
     public final Direction getPitch()
@@ -101,6 +106,7 @@ public class Direction3d implements Serializable
     }
 
     /**
+     * Returns the yaw.
      * @return the yaw.
      */
     public final Direction getYaw()

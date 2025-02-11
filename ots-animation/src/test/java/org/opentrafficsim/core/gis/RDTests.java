@@ -23,6 +23,17 @@ import org.opentrafficsim.animation.gis.TransformWgs84DutchRdNew;
 public class RDTests
 {
 
+    /** Verbose test. */
+    private static final boolean VERBOSE = false;
+
+    /**
+     * Constructor.
+     */
+    public RDTests()
+    {
+        //
+    }
+
     /**
      * Perform conversion to WGS84 and back and compare the results.
      * @param description description of the test
@@ -30,14 +41,18 @@ public class RDTests
      */
     final void forwardReverseCompare(final String description, final Point2D rdIn)
     {
-        System.out.println(description + ":");
-        System.out.println(String.format(Locale.US, "in:         (%9.2f,%9.2f)", rdIn.getX(), rdIn.getY()));
+
         Point2D wgs = TransformWgs84DutchRdNew.toWgs84(rdIn);
-        System.out.println(String.format(Locale.US, "wgs84:      (%9.6f,%9.6f)", wgs.getX(), wgs.getY()));
         Point2D back = TransformWgs84DutchRdNew.fromWgs84(wgs);
-        System.out.println(String.format(Locale.US, "back:       (%9.2f,%9.2f)", back.getX(), back.getY()));
         double distance = rdIn.distance(back);
-        System.out.println(String.format("difference: %8.6fm", distance));
+        if (VERBOSE)
+        {
+            System.out.println(description + ":");
+            System.out.println(String.format(Locale.US, "in:         (%9.2f,%9.2f)", rdIn.getX(), rdIn.getY()));
+            System.out.println(String.format(Locale.US, "wgs84:      (%9.6f,%9.6f)", wgs.getX(), wgs.getY()));
+            System.out.println(String.format(Locale.US, "back:       (%9.2f,%9.2f)", back.getX(), back.getY()));
+            System.out.println(String.format("difference: %8.6fm", distance));
+        }
         assertTrue(distance < 0.5, "Distance should be less than 0.5m");
     }
 

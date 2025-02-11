@@ -27,6 +27,7 @@ public class RampMetering
     private final RampMeteringLightController rampLightController;
 
     /**
+     * Constructor.
      * @param simulator simulator
      * @param rampSwitch ramp metering switch
      * @param rampLightController ramp metering light controller

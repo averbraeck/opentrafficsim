@@ -283,11 +283,11 @@ public final class XmlParser implements Serializable
             IdGenerator idGenerator = new IdGenerator("");
             List<LaneBasedGtuGenerator> generators = DemandParser.parseGenerators(otsNetwork, definitions, demand, gtuTemplates,
                     routeMixMap, shortestRouteMixMap, streamInformation, idGenerator, eval);
-            System.out.println("Created " + generators.size() + " generators based on explicit generator definitions");
+            // System.out.println("Created " + generators.size() + " generators based on explicit generator definitions");
             generators = DemandParser.parseInjectionGenerators(otsNetwork, definitions, demand, gtuTemplates, routeMixMap,
                     shortestRouteMixMap, streamInformation, idGenerator, eval);
-            System.out
-                    .println("Created " + generators.size() + " generators based on explicit injection generator definitions");
+            // System.out
+            // .println("Created " + generators.size() + " generators based on explicit injection generator definitions");
             DemandParser.parseSinks(otsNetwork, demand, definitions, eval);
         }
 
@@ -309,7 +309,7 @@ public final class XmlParser implements Serializable
             // OD generators
             List<LaneBasedGtuGenerator> generators = OdParser.parseDemand(otsNetwork, definitions, demand, gtuTemplates,
                     laneBiases, factories, modelIdReferrals, streamInformation, eval);
-            System.out.println("Created " + generators.size() + " generators based on origin destination matrices");
+            //System.out.println("Created " + generators.size() + " generators based on origin destination matrices");
         }
 
         // control
@@ -332,7 +332,7 @@ public final class XmlParser implements Serializable
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    private static class DefaultsResolver implements EntityResolver
+    private static final class DefaultsResolver implements EntityResolver
     {
         @Override
         public InputSource resolveEntity(final String publicId, final String systemId)
@@ -351,6 +351,7 @@ public final class XmlParser implements Serializable
     }
 
     /**
+     * Main method.
      * @param args not used
      * @throws Exception on parsing error
      */

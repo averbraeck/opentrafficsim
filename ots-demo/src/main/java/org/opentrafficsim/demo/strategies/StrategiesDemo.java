@@ -647,6 +647,14 @@ public class StrategiesDemo extends AbstractSimulationScript
     /** IDM factory with socio speed. */
     class SocioIDMFactory implements CarFollowingModelFactory<IdmPlus>
     {
+        /**
+         * Constructor.
+         */
+        SocioIDMFactory()
+        {
+            //
+        }
+
         @Override
         public Parameters getParameters() throws ParameterException
         {
@@ -665,6 +673,14 @@ public class StrategiesDemo extends AbstractSimulationScript
     /** Perception factory. */
     class LmrsStrategiesPerceptionFactory implements PerceptionFactory
     {
+        /**
+         * Constructor.
+         */
+        LmrsStrategiesPerceptionFactory()
+        {
+            //
+        }
+
         @Override
         public LanePerception generatePerception(final LaneBasedGtu gtu)
         {

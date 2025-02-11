@@ -67,6 +67,15 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  */
 public class TrafficLightDetectorTest implements EventListener
 {
+
+    /**
+     * Constructor.
+     */
+    public TrafficLightDetectorTest()
+    {
+        //
+    }
+
     /**
      * Build the test network.
      * @param lengths The lengths of the subsequent lanes to construct; negative lengths indicate that the design direction must
@@ -271,6 +280,7 @@ public class TrafficLightDetectorTest implements EventListener
         private static final long serialVersionUID = 20141027L;
 
         /**
+         * Constructor.
          * @param simulator the simulator to use
          */
         public Model(final OtsSimulatorInterface simulator)

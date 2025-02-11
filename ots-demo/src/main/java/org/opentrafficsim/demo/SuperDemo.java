@@ -135,6 +135,7 @@ public class SuperDemo extends JFrame
     }
 
     /**
+     * Main method.
      * @param args should be empty
      */
     public static void main(final String[] args)
@@ -145,6 +146,14 @@ public class SuperDemo extends JFrame
     /** the class to prevent the models from exiting the whole SuperDemo application. */
     static class NoExitSecurityManager extends SecurityManager
     {
+        /**
+         * Constructor.
+         */
+        NoExitSecurityManager()
+        {
+            //
+        }
+
         @Override
         public void checkExit(final int status)
         {

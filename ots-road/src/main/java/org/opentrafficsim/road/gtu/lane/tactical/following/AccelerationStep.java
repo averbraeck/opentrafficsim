@@ -44,6 +44,7 @@ public class AccelerationStep implements Serializable
     }
 
     /**
+     * Returns acceleration.
      * @return acceleration.
      */
     public final Acceleration getAcceleration()
@@ -52,6 +53,7 @@ public class AccelerationStep implements Serializable
     }
 
     /**
+     * Returns valid time.
      * @return validUntil.
      */
     public final Time getValidUntil()
@@ -60,6 +62,7 @@ public class AccelerationStep implements Serializable
     }
 
     /**
+     * Returns duration.
      * @return duration.
      */
     public final Duration getDuration()

@@ -195,6 +195,7 @@ public class CrossSectionLink extends Link implements Serializable
     }
 
     /**
+     * Sets the priority.
      * @return priority.
      */
     public final Priority getPriority()
@@ -203,6 +204,7 @@ public class CrossSectionLink extends Link implements Serializable
     }
 
     /**
+     * Returns the priority.
      * @param priority set priority.
      */
     public final void setPriority(final Priority priority)

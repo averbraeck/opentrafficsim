@@ -14,6 +14,14 @@ import org.opentrafficsim.xml.bindings.types.IntegerType;
 public class PositiveIntegerAdapter extends ExpressionAdapter<Integer, IntegerType>
 {
 
+    /**
+     * Constructor.
+     */
+    public PositiveIntegerAdapter()
+    {
+        //
+    }
+
     @Override
     public IntegerType unmarshal(final String field)
     {

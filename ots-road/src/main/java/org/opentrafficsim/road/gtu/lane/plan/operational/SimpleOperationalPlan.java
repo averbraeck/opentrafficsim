@@ -46,6 +46,7 @@ public class SimpleOperationalPlan implements Serializable
     private final Duration duration;
 
     /**
+     * Constructor.
      * @param acceleration acceleration
      * @param duration duration
      */
@@ -55,6 +56,7 @@ public class SimpleOperationalPlan implements Serializable
     }
 
     /**
+     * Constructor.
      * @param acceleration acceleration
      * @param duration duration
      * @param laneChangeDirection lane change direction, may be {@code null}.
@@ -72,6 +74,7 @@ public class SimpleOperationalPlan implements Serializable
     }
 
     /**
+     * Return acceleration.
      * @return acceleration.
      */
     public final Acceleration getAcceleration()
@@ -90,6 +93,7 @@ public class SimpleOperationalPlan implements Serializable
     }
 
     /**
+     * Return duration.
      * @return duration.
      */
     public Duration getDuration()
@@ -98,6 +102,7 @@ public class SimpleOperationalPlan implements Serializable
     }
 
     /**
+     * Return whether this plan is a lane change plan.
      * @return if lane change.
      */
     public final boolean isLaneChange()
@@ -106,6 +111,7 @@ public class SimpleOperationalPlan implements Serializable
     }
 
     /**
+     * Return lane change direction.
      * @return laneChangeDirection, may be NONE if no lane change.
      */
     public final LateralDirectionality getLaneChangeDirection()
@@ -138,6 +144,7 @@ public class SimpleOperationalPlan implements Serializable
     }
 
     /**
+     * Returns indicator intent.
      * @return indicatorIntent.
      */
     public final TurnIndicatorIntent getIndicatorIntent()
@@ -261,6 +268,7 @@ public class SimpleOperationalPlan implements Serializable
     }
 
     /**
+     * Set turn indicator.
      * @param gtu LaneBasedGtu to set the indicator on
      * @throws GtuException if GTU does not support the indicator
      */

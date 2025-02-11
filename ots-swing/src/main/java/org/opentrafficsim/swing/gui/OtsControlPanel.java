@@ -341,6 +341,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         private OtsControlPanel panel;
 
         /**
+         * Constructor.
          * @param panel the OTSControlpanel container.
          */
         public DisposeOnCloseThread(final OtsControlPanel panel)
@@ -678,6 +679,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
     }
 
     /**
+     * Return simulator.
      * @return simulator.
      */
     public final OtsSimulatorInterface getSimulator()
@@ -741,6 +743,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
     }
 
     /**
+     * Return time font.
      * @return timeFont.
      */
     public final Font getTimeFont()
@@ -1042,6 +1045,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         }
 
         /**
+         * Return speed label.
          * @return speedLabel.
          */
         protected JLabel getSpeedLabel()

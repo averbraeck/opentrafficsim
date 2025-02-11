@@ -88,6 +88,14 @@ public class TransceiverTest
     Time lastTime = null;
 
     /**
+     * Constructor.
+     */
+    public TransceiverTest()
+    {
+        //
+    }
+
+    /**
      * Test the GtuIdTransceiver and the GtuTransceiver.
      * @throws RemoteException if the happens, this test has failed
      * @throws SerializationException on error
@@ -615,6 +623,7 @@ class MyMockGTU
     private final OtsSimulatorInterface simulator;
 
     /**
+     * Constructor.
      * @param name the name of the mocked GTU
      * @param gtuType the GTU type
      * @param location the location of the mocked GTU
@@ -642,6 +651,7 @@ class MyMockGTU
     }
 
     /**
+     * Returns mocked GTU.
      * @return mocked GTU
      */
     public LaneBasedGtu getMock()

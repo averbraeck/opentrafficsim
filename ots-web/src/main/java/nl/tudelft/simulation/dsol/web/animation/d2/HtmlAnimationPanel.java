@@ -376,6 +376,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
     }
 
     /**
+     * Return animation elements.
      * @return the set of animation elements.
      */
     public final SortedSet<Renderable2dInterface<? extends Locatable>> getElements()
@@ -384,6 +385,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
     }
 
     /**
+     * Returns drag line.
      * @return returns the dragLine.
      */
     public final int[] getDragLine()
@@ -392,6 +394,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
     }
 
     /**
+     * Returns drag line enabled.
      * @return returns the dragLineEnabled.
      */
     public final boolean isDragLineEnabled()
@@ -400,6 +403,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
     }
 
     /**
+     * Sets drag line enabled.
      * @param dragLineEnabled the dragLineEnabled to set.
      */
     public final void setDragLineEnabled(final boolean dragLineEnabled)
@@ -574,6 +578,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
     }
 
     /**
+     * Returns toggle buttons.
      * @return toggleButtons
      */
     public final List<ToggleButtonInfo> getToggleButtons()

@@ -29,6 +29,15 @@ import nl.tudelft.simulation.dsol.experiment.Replication;
  */
 public class OtsReplicationTest
 {
+
+    /**
+     * Constructor.
+     */
+    public OtsReplicationTest()
+    {
+        //
+    }
+
     /**
      * Test the OTSReplication class.
      * @throws NamingException if that happens uncaught; this test has failed

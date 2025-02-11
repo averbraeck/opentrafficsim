@@ -9,7 +9,6 @@ import org.djutils.exceptions.Try;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.definitions.DefaultsNl;
-import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.gtu.GtuType;
 
 /**
@@ -24,6 +23,14 @@ import org.opentrafficsim.core.gtu.GtuType;
  */
 public class LinkTypeTest
 {
+
+    /**
+     * Constructor.
+     */
+    public LinkTypeTest()
+    {
+        //
+    }
 
     /**
      * Test the constructor and methods of the LinkType class.

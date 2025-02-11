@@ -44,6 +44,7 @@ import org.opentrafficsim.road.network.lane.LaneType;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
 /**
+ * IDM+ test.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -52,6 +53,15 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  */
 public class IdmPlusTest implements UNITS
 {
+
+    /**
+     * Constructor.
+     */
+    public IdmPlusTest()
+    {
+        //
+    }
+
     /**
      * Test IDMPlus.
      * @throws Exception when something goes wrong (should not happen)
@@ -346,6 +356,7 @@ class IDMPlusTestModel extends AbstractOtsModel
     private static final long serialVersionUID = 20150210L;
 
     /**
+     * Constructor.
      * @param simulator the simulator to use
      */
     IDMPlusTestModel(final OtsSimulatorInterface simulator)

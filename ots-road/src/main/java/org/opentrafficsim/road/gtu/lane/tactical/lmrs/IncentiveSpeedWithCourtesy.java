@@ -55,6 +55,14 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
     /** Speed threshold below which traffic is considered congested. */
     protected static final ParameterTypeSpeed VCONG = ParameterTypes.VCONG;
 
+    /**
+     * Constructor.
+     */
+    public IncentiveSpeedWithCourtesy()
+    {
+        //
+    }
+
     @Override
     public final Desire determineDesire(final Parameters parameters, final LanePerception perception,
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire, final Desire voluntaryDesire)

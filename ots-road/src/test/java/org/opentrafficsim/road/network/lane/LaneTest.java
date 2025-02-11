@@ -61,6 +61,15 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  */
 public class LaneTest implements UNITS
 {
+
+    /**
+     * Constructor.
+     */
+    public LaneTest()
+    {
+        //
+    }
+
     /**
      * Test the constructor.
      * @throws Exception when something goes wrong (should not happen)
@@ -398,6 +407,14 @@ public class LaneTest implements UNITS
     {
         /** Collect the received events. */
         private List<Event> events = new ArrayList<>();
+
+        /**
+         * Constructor.
+         */
+        public Listener()
+        {
+            //
+        }
 
         @Override
         public void notify(final Event event) throws RemoteException
@@ -817,6 +834,7 @@ public class LaneTest implements UNITS
         private static final long serialVersionUID = 20141027L;
 
         /**
+         * Constructor.
          * @param simulator the simulator to use
          */
         public Model(final OtsSimulatorInterface simulator)

@@ -688,6 +688,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         private OtsAnimationPanel panel;
 
         /**
+         * Constructor.
          * @param panel the OTSControlpanel container.
          */
         public DisposeOnCloseThread(final OtsAnimationPanel panel)
@@ -799,6 +800,14 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
      */
     protected class UpdateTimer extends Thread
     {
+        /**
+         * Constructor.
+         */
+        public UpdateTimer()
+        {
+            //
+        }
+
         @Override
         public final void run()
         {
@@ -1060,6 +1069,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         private final String direction;
 
         /**
+         * Constructor.
          * @param direction value used in {@code BorderLayout}
          */
         DemoPanelPosition(final String direction)
@@ -1068,6 +1078,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         }
 
         /**
+         * Return border layout position.
          * @return value used in {@code BorderLayout}
          */
         public String getBorderLayoutPosition()

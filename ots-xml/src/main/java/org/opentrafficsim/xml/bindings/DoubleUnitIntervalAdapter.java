@@ -14,6 +14,14 @@ import org.opentrafficsim.xml.bindings.types.DoubleType;
 public class DoubleUnitIntervalAdapter extends ExpressionAdapter<Double, DoubleType>
 {
 
+    /**
+     * Constructor.
+     */
+    public DoubleUnitIntervalAdapter()
+    {
+        //
+    }
+
     @Override
     public DoubleType unmarshal(final String field)
     {

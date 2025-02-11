@@ -27,6 +27,7 @@ public class TJunctionModel extends AbstractOtsModel
     private RoadNetwork network;
 
     /**
+     * Constructor.
      * @param simulator the simulator for this model
      */
     public TJunctionModel(final OtsSimulatorInterface simulator)

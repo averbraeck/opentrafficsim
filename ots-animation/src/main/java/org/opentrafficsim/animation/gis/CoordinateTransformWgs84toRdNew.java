@@ -30,6 +30,7 @@ public class CoordinateTransformWgs84toRdNew implements CoordinateTransform, Ser
     private final double dy;
 
     /**
+     * Constructor.
      * @param dx the coordinate shift dx w.r.t. the origin if not in Amersfoort. dx will be subtracted from each RD.x coordinate
      * @param dy the coordinate shift dy w.r.t. the origin if not in Amersfoort. dy will be subtracted from each RD.y coordinate
      */

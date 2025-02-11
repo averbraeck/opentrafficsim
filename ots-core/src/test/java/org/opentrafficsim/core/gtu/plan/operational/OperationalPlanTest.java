@@ -29,6 +29,15 @@ import org.opentrafficsim.base.geometry.OtsLine2d;
  */
 public class OperationalPlanTest
 {
+
+    /**
+     * Constructor.
+     */
+    public OperationalPlanTest()
+    {
+        //
+    }
+
     /**
      * Test OperationalPlan.
      * @throws OperationalPlanException Should not happen - test fails if it does

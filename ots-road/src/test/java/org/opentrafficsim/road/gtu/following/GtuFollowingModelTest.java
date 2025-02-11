@@ -65,6 +65,14 @@ public class GtuFollowingModelTest implements UNITS
     private IdGenerator gtuIdGenerator = new IdGenerator("GTU");
 
     /**
+     * Constructor.
+     */
+    public GtuFollowingModelTest()
+    {
+        //
+    }
+
+    /**
      * Test that the methods required by the GtuFollowingModel interface.
      * @param gtuFollowingModel GtuFollowingModel
      * @throws Exception when something goes wrong (should not happen)
@@ -337,10 +345,11 @@ public class GtuFollowingModelTest implements UNITS
         /** */
         private static final long serialVersionUID = 20141027L;
 
-        /** */
+        /** Network. */
         private final RoadNetwork network;
 
         /**
+         * Constructor.
          * @param simulator the simulator to use
          * @param network the network
          */

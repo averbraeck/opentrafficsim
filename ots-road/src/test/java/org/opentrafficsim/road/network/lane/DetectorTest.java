@@ -47,6 +47,18 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
  */
 public class DetectorTest implements UNITS
 {
+
+    /** Verbose test. */
+    private static final boolean VERBOSE = false;
+
+    /**
+     * Constructor.
+     */
+    public DetectorTest()
+    {
+        //
+    }
+
     /**
      * Test the constructors of SensorLaneEnd and SensorLaneStart.
      * @throws Exception when something goes wrong (should not happen)
@@ -129,7 +141,10 @@ public class DetectorTest implements UNITS
         SimEventInterface<Duration> triggerEvent = null;
         for (SimEventInterface<Duration> event : eventList)
         {
-            System.out.println("Scheduled Event " + event);
+            if (VERBOSE)
+            {
+                System.out.println("Scheduled Event " + event);
+            }
             if (event.toString().contains("trigger"))
             {
                 triggerEvent = event;
@@ -147,13 +162,14 @@ public class DetectorTest implements UNITS
     }
 }
 
-/** */
+/** Test detector. */
 class TriggerDetector extends LaneDetector
 {
     /** */
     private static final long serialVersionUID = 1L;
 
     /**
+     * Constructor.
      * @param lane lane of the sensor
      * @param longitudinalPosition position of the sensor on the lane
      * @param positionType trigger position of the GTU
@@ -188,6 +204,7 @@ class DummyModelForSensorTest extends AbstractOtsModel
     private static final long serialVersionUID = 20150114L;
 
     /**
+     * Constructor.
      * @param simulator the simulator to use
      */
     DummyModelForSensorTest(final OtsSimulatorInterface simulator)

@@ -3,6 +3,7 @@ package org.opentrafficsim.trafficcontrol;
 import java.awt.Container;
 
 /**
+ * Interface for actuated traffic controllers.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -17,7 +18,7 @@ public interface ActuatedTrafficController extends TrafficController
     /**
      * Tell the traffic controller that the state of a detector has changed.
      * @param detectorId id of the detector
-     * @param detectingGTU
+     * @param detectingGTU detecting GTU
      */
     void updateDetector(String detectorId, boolean detectingGTU);
 

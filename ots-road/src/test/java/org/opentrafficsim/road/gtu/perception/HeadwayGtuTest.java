@@ -15,13 +15,11 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
-import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.road.gtu.lane.perception.headway.GtuStatus;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuSimple;
-import org.opentrafficsim.road.network.RoadNetwork;
 
 /**
  * Test the HeadwayGtu class and the EnumType in the Headway interface.
@@ -35,8 +33,14 @@ import org.opentrafficsim.road.network.RoadNetwork;
  */
 public class HeadwayGtuTest
 {
-    /** The network. */
-    private RoadNetwork network = new RoadNetwork("test network", new OtsSimulator("Simulator for HeadwayGtuTest"));
+
+    /**
+     * Constructor.
+     */
+    public HeadwayGtuTest()
+    {
+        //
+    }
 
     /**
      * Test the constructor and the getters.

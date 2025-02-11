@@ -16,6 +16,14 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
 public class LinearDensityAdapter extends ScalarAdapter<LinearDensity, LinearDensityType>
 {
 
+    /**
+     * Constructor.
+     */
+    public LinearDensityAdapter()
+    {
+        //
+    }
+
     @Override
     public LinearDensityType unmarshal(final String field)
     {

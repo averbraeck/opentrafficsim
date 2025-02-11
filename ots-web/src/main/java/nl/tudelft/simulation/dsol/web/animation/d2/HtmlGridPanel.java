@@ -209,6 +209,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
+     * Returns world coordinates.
      * @return worldCoordinate
      */
     public final synchronized Point2d getWorldCoordinate()
@@ -230,6 +231,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
+     * Returns whether to show tooltip.
      * @return showToolTip
      */
     public final synchronized boolean isShowToolTip()
@@ -238,6 +240,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
+     * Sets whether to show tooltip.
      * @param showToolTip set showToolTip
      */
     public final synchronized void setShowToolTip(final boolean showToolTip)
@@ -294,6 +297,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
+     * Returns show grid.
      * @return Returns the showGrid.
      */
     public final boolean isShowGrid()
@@ -302,6 +306,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
+     * Sets show grid.
      * @param showGrid The showGrid to set.
      */
     public final void setShowGrid(final boolean showGrid)
@@ -439,6 +444,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
+     * Returns renderable scale.
      * @return renderableScale
      */
     public final RenderableScale getRenderableScale()
@@ -447,6 +453,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
+     * Sets renderable scale.
      * @param renderableScale set renderableScale
      */
     public final void setRenderableScale(final RenderableScale renderableScale)
@@ -464,6 +471,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
+     * Returns size.
      * @return size
      */
     public final Dimension getSize()
@@ -472,6 +480,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
+     * Sets size.
      * @param size set size
      */
     public final void setSize(final Dimension size)
@@ -480,6 +489,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
+     * Returns background.
      * @return background
      */
     public final Color getBackground()
@@ -488,6 +498,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
+     * Sets background.
      * @param background set background
      */
     public final void setBackground(final Color background)
@@ -496,6 +507,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
+     * Returns width.
      * @return width
      */
     public final int getWidth()
@@ -504,6 +516,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
+     * Returns height.
      * @return height
      */
     public final int getHeight()
@@ -512,6 +525,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
+     * Returns preferred size.
      * @return preferredSize
      */
     public final Dimension getPreferredSize()
@@ -520,6 +534,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
+     * Sets preferred size.
      * @param preferredSize set preferredSize
      */
     public final void setPreferredSize(final Dimension preferredSize)
@@ -528,6 +543,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
+     * Returns tooltip.
      * @return toolTipText
      */
     public final String getToolTipText()
@@ -536,6 +552,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
+     * Sets tooltip.
      * @param toolTipText set toolTipText
      */
     public final void setToolTipText(final String toolTipText)
@@ -544,6 +561,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
+     * Returns whether panel is showing.
      * @return showing
      */
     public final boolean isShowing()
@@ -552,6 +570,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
+     * Sets whether panel is showing.
      * @param showing set showing
      */
     public final void setShowing(final boolean showing)
@@ -560,6 +579,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
+     * Returns font.
      * @return font
      */
     public final Font getFont()
@@ -568,6 +588,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
+     * Sets font.
      * @param font set font
      */
     public final void setFont(final Font font)
@@ -576,6 +597,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
+     * Returns font metrics.
      * @param font the font to calculate the fontmetrics for
      * @return fontMetrics
      */
@@ -585,6 +607,7 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
+     * Return whether the panel is dirty.
      * @return dirty
      */
     public final boolean isDirty()

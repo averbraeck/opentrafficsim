@@ -26,6 +26,14 @@ public class Speed3dTest
 {
 
     /**
+     * Constructor.
+     */
+    public Speed3dTest()
+    {
+        //
+    }
+
+    /**
      * Test the constructors and getters of the Speed3d class.
      * @throws ValueRuntimeException should not happen; test has failed if it does happen
      */

@@ -42,6 +42,7 @@ public class SpeedSignAnimation extends OtsRenderable<SpeedSignData>
     private static final double EDGE = 1.3;
 
     /**
+     * Constructor.
      * @param source speed sign
      * @param contextualized context provider
      * @throws NamingException ne

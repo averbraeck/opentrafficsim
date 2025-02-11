@@ -52,31 +52,39 @@ public class MarkovCorrelation<S, I extends Number>
     private TransitionMatrix<S, I> root = new TransitionMatrix<>(null, 0.0); // input not important, it's for sub-groups
 
     /**
+     * Constructor.
+     */
+    public MarkovCorrelation()
+    {
+        //
+    }
+
+    /**
      * Adds a state to the root group of the Markov Chain. The correlation increases the chance that the state will occur after
      * itself. We have: <br>
-     * 
+     *
      * <pre>
      * p_ii = ss_i + (1 - ss_i) * c_i {eq. 1}
      * </pre>
-     * 
+     *
      * where,
-     * 
+     *
      * <pre>
      *   p_ii: the probability state i returns after state i
      *   ss_i: the steady-state (overall mean) probability of state i
      *   c_i:  correlation of state i
      * </pre>
-     * 
+     *
      * Effective correlations of states depend on correlations of other states as well, so the given correlation is not
      * guaranteed to result. One can easily see this from a system with 2 states: A and B. Suppose B has correlation. In order
      * to maintain the same overall steady-state (occurrence proportion of A and B), it follows that state A also must be seen
      * more frequently to follow itself.
-     * 
+     *
      * <pre>
      * not correlated:  A B B A A A B A A A B A A B B
      * very correlated: A A A A A A A A A B B B B B B (all B's grouped together, hence all A's grouped together and correlated)
      * </pre>
-     * 
+     *
      * The effective correlation <i>c_i</i> of any state <i>i</i> can be calculated by reversing equation {@code eq. 1} using
      * for <i>p_ii</i> the effective value after all correlations are applied. The procedure to derive the various probabilities
      * from state <i>i</i> to state <i>j</i> (<i>p_ij</i>) is explained below. The procedure is based on the transition matrix
@@ -86,13 +94,13 @@ public class MarkovCorrelation<S, I extends Number>
      * It is important that the transition matrix <i>T</i> results in a steady-state as provided. In particular we have for
      * steady state <i>S</i> that <b><i>S</i>*<i>T</i> &#61; <i>S</i></b> should hold. Suppose we have <i>S</i> &#61; [0.7, 0.2,
      * 0.1] for states A, B and C. Without any correlation this would give the base transition matrix:
-     * 
+     *
      * <pre>
      *     | p_11  p_12  p_13 |   | 0.70  0.20  0.10 |
-     * T = | p_21  p_22  p_23 | = | 0.70  0.20  0.10 | 
+     * T = | p_21  p_22  p_23 | = | 0.70  0.20  0.10 |
      *     | p_31  p_32  p_33 |   | 0.70  0.20  0.10 |
      * </pre>
-     * 
+     *
      * Our steady-state results as for whatever the previous state was, the steady-state probabilities are applied. Now suppose
      * that state C has a correlation of 0.4. This would give that <i>p_33</i> :&#61; <i>p_33</i> + (1 - <i>p_33</i>) * <i>c</i>
      * &#61; 0.46. With this increased value, the probabilities of row 3 no longer add up to 1. Hence, <i>p_31</i> and
@@ -103,13 +111,13 @@ public class MarkovCorrelation<S, I extends Number>
      * A method to maintain reversibility is to <i>scale symmetric pairs</i>. Hence, if we reduce <i>p_32</i>, we should reduce
      * <i>p_23</i> by the same <i>factor</i>. Forcing row 3 to sum to 1, and scaling <i>p_31</i>, <i>p_13</i>, <i>p_32</i> and
      * <i>p_23</i> by the same factor 0.6 we obtain the third matrix below.
-     * 
+     *
      * <pre>
      *      | 0.70  0.20  0.10 |    | 0.70  0.20  0.10 |    | 0.70  0.20  0.06 |    | 0.74  0.20  0.06 |
      * T =&gt; | 0.70  0.20  0.10 | =&gt; | 0.70  0.20  0.10 | =&gt; | 0.70  0.20  0.06 | =&gt; | 0.70  0.24  0.06 |
      *      | 0.70  0.20  0.10 |    | 0.70  0.20  0.46 |    | 0.42  0.12  0.46 |    | 0.42  0.12  0.46 |
      * </pre>
-     * 
+     *
      * As we reduce <i>p_13</i> and <i>p_23</i>, we also reduce the probability sums of rows 1 and 2. These reductions can be
      * compensated by increasing the values on the diagonals, as is done in the fourth matrix. Note that changing the diagonal
      * values does not affect reversibility. For example, 0.7*0.74 + 0.2*0.70 + 0.1*0.42 &#61; 0.7 for the first column.<br>
@@ -156,24 +164,24 @@ public class MarkovCorrelation<S, I extends Number>
      * <br>
      * To explain sub-groups, suppose we have the following 3-state matrix in which the super state <i>s_2</i> is located (this
      * can be the root matrix, or any sub-matrix). In this matrix, state <i>s_2</i> is replaced by a matrix <i>S_2</i>.
-     * 
+     *
      * <pre>
      *       s_1   s_2   s_3             s_1   S_2   s_3
      * s_1 | p_11  p_12  p_13 |    s_1 | p_11  p_12  p_13 |
      * s_2 | p_21  p_22  p_23 | =&gt; S_2 | p_21  p_22  p_23 |
      * s_3 | p_31  p_32  p_33 |    s_3 | p_31  p_32  p_33 |
      * </pre>
-     * 
+     *
      * From the level of this matrix, nothing changes. Whenever the prior state was any of those inside <i>S_2</i>, row 2 is
      * applied to determine the next state. If the next state is matrix <i>S_2</i>, the state is further specified by
      * <i>S_2</i>. Matrix <i>S_2</i> itself will be:
-     * 
+     *
      * <pre>
      *       s_2   s_4
      * s_2 | p_22' p_24 |
      * s_4 | p_42  p_44 |
      * </pre>
-     * 
+     *
      * It will thus result in either state <i>s_2</i> or state <i>s_4</i>. More states can now be added to <i>S_2</i>, using the
      * same super state <i>s_2</i>. In case the prior state was either <i>s_1</i> or <i>s_3</i>, i.e. no state included in the
      * sub-group, the matrix of the sub-group defaults to fractions based on the steady-state only. Correlations are then also
@@ -579,6 +587,7 @@ public class MarkovCorrelation<S, I extends Number>
          * @param stream to draw random numbers
          * @return the state
          */
+        @Override
         S drawState(final S previousState, final StreamInterface stream)
         {
             return getState();

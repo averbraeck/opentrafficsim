@@ -69,6 +69,7 @@ public class DirectedLaneMovementStep implements Serializable
     }
 
     /**
+     * Return acceleration.
      * @return the acceleration step.
      */
     public final AccelerationStep getGfmr()
@@ -77,6 +78,7 @@ public class DirectedLaneMovementStep implements Serializable
     }
 
     /**
+     * Return lane change.
      * @return laneChange. This has one of the values:
      *         <table >
      *         <caption>&nbsp;</caption>

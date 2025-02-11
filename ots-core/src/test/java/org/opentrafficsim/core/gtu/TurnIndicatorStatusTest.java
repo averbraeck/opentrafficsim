@@ -16,6 +16,14 @@ import org.junit.jupiter.api.Test;
 public class TurnIndicatorStatusTest
 {
 
+    /**
+     * Constructor.
+     */
+    public TurnIndicatorStatusTest()
+    {
+        //
+    }
+
     /** Test the TurnIndicatorStatus class. */
     @Test
     public void turnIndicatorStatusTest()
