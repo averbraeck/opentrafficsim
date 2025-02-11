@@ -31,7 +31,7 @@ public class DiscreteDistPower extends DiscreteDistDoubleScalar.Rel<Power, Power
     }
 
     @Override
-    public Power draw()
+    public Power get()
     {
         return new Power(getDistribution().draw(), (PowerUnit) getUnit());
     }

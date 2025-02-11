@@ -31,7 +31,7 @@ public class DiscreteDistAcceleration extends DiscreteDistDoubleScalar.Rel<Accel
     }
 
     @Override
-    public Acceleration draw()
+    public Acceleration get()
     {
         return new Acceleration(getDistribution().draw(), (AccelerationUnit) getUnit());
     }

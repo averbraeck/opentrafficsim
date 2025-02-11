@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.function.Supplier;
 
 import javax.naming.NamingException;
 
@@ -27,9 +28,8 @@ import org.djutils.event.EventListener;
 import org.djutils.event.EventType;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.definitions.DefaultsNl;
-import org.opentrafficsim.core.distributions.ObjectDistribution;
 import org.opentrafficsim.core.distributions.FrequencyAndObject;
-import org.opentrafficsim.core.distributions.Generator;
+import org.opentrafficsim.core.distributions.ObjectDistribution;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.ContinuousLine;
@@ -39,7 +39,7 @@ import org.opentrafficsim.core.geometry.FractionalLengthData;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.idgenerator.IdGenerator;
+import org.opentrafficsim.core.idgenerator.IdSupplier;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
@@ -49,9 +49,9 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactory;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
-import org.opentrafficsim.road.gtu.generator.CfRoomChecker;
-import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
+import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
+import org.opentrafficsim.road.gtu.generator.CfRoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplate;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplateDistribution;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
@@ -106,10 +106,10 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
     /** The network. */
     private final RoadNetwork network = new RoadNetwork("network", getSimulator());
 
-    /** Strategical planner generator for cars. */
+    /** Strategical planner Supplier for cars. */
     private LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactoryCars = null;
 
-    /** Strategical planner generator for trucks. */
+    /** Strategical planner Supplier for trucks. */
     private LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactoryTrucks = null;
 
     /** The probability that the next generated GTU is a passenger car. */
@@ -121,14 +121,14 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
     /** Maximum distance. */
     private Length maximumDistance = new Length(5000, METER);
 
-    /** The random number generator used to decide what kind of GTU to generate. */
+    /** The random number Supplier used to decide what kind of GTU to generate. */
     private StreamInterface stream = new MersenneTwister(12345);
 
-    /** The route generator for the main line. */
-    private Generator<Route> routeGeneratorMain;
+    /** The route Supplier for the main line. */
+    private Supplier<Route> routeSupplierMain;
 
-    /** The route generator for the onramp. */
-    private Generator<Route> routeGeneratorRamp;
+    /** The route Supplier for the onramp. */
+    private Supplier<Route> routeSupplierRamp;
 
     /** The speed limit. */
     private Speed speedLimit = new Speed(60, KM_PER_HOUR);
@@ -136,11 +136,11 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
     /** The sequence of Lanes that all vehicles will follow. */
     private List<List<Lane>> paths = new ArrayList<>();
 
-    /** Id generator (used by all generators). */
-    private IdGenerator idGenerator = new IdGenerator("");
+    /** Id Supplier (used by all Suppliers). */
+    private IdSupplier idSupplier = new IdSupplier("");
 
     /** The probability distribution for the variable part of the headway. */
-    private DistContinuous headwayGenerator;
+    private DistContinuous headwaySupplier;
 
     /**
      * Constructor.
@@ -225,7 +225,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
             double contP = (double) getInputParameter("generic.flow");
             Duration averageHeadway = new Duration(3600.0 / contP, SECOND);
             Duration minimumHeadway = new Duration(3, SECOND);
-            this.headwayGenerator =
+            this.headwaySupplier =
                     new DistErlang(new MersenneTwister(1234), DoubleScalar.minus(averageHeadway, minimumHeadway).getSI(), 4);
 
             LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
@@ -266,7 +266,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
                 mainRouteNodes.add(secondVia);
                 mainRouteNodes.add(end);
                 Route mainRoute = new Route("main", car, mainRouteNodes);
-                this.routeGeneratorMain = new FixedRouteGenerator(mainRoute);
+                this.routeSupplierMain = new FixedRouteGenerator(mainRoute);
 
                 ArrayList<Node> rampRouteNodes = new ArrayList<>();
                 rampRouteNodes.add(from2a);
@@ -275,7 +275,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
                 rampRouteNodes.add(secondVia);
                 rampRouteNodes.add(end);
                 Route rampRoute = new Route("ramp", car, rampRouteNodes);
-                this.routeGeneratorRamp = new FixedRouteGenerator(rampRoute);
+                this.routeSupplierRamp = new FixedRouteGenerator(rampRoute);
             }
             else
             {
@@ -298,14 +298,14 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
                 sideRouteNodes.add(end2b);
                 Route sideRoute = new Route("side", car, sideRouteNodes);
                 routeProbabilities.add(new FrequencyAndObject<>(lanesOnBranch, sideRoute));
-                this.routeGeneratorMain = new ProbabilisticRouteGenerator(routeProbabilities, new MersenneTwister(1234));
+                this.routeSupplierMain = new ProbabilisticRouteGenerator(routeProbabilities, new MersenneTwister(1234));
             }
 
             if (merge)
             {
-                setupGenerator(rampLanes);
+                setupSupplier(rampLanes);
             }
-            setupGenerator(startLanes);
+            setupSupplier(startLanes);
 
             for (int index = 0; index < lanesOnCommon; index++)
             {
@@ -345,34 +345,34 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
     }
 
     /**
-     * Add a generator to an array of Lane.
-     * @param lanes the lanes that must get a generator at the start
+     * Add a Supplier to an array of Lane.
+     * @param lanes the lanes that must get a Supplier at the start
      * @return the lanes
      * @throws GtuException when lane position out of bounds
      * @throws SimRuntimeException when generation scheduling fails
      * @throws ParameterException when a parameter is missing for the perception of the GTU
      * @throws NetworkException if the object could not be added to the network
      */
-    private Lane[] setupGenerator(final Lane[] lanes)
+    private Lane[] setupSupplier(final Lane[] lanes)
             throws SimRuntimeException, GtuException, ParameterException, NetworkException
     {
         for (Lane lane : lanes)
         {
-            makeGenerator(lane);
+            makeSupplier(lane);
         }
         return lanes;
     }
 
     /**
-     * Build a generator.
+     * Build a Supplier.
      * @param lane the lane on which the generated GTUs are placed
-     * @return LaneBasedGtuGenerator
+     * @return LaneBasedGtuSupplier
      * @throws GtuException when lane position out of bounds
      * @throws SimRuntimeException when generation scheduling fails
      * @throws ParameterException when a parameter is missing for the perception of the GTU
      * @throws NetworkException if the object could not be added to the network
      */
-    private LaneBasedGtuGenerator makeGenerator(final Lane lane)
+    private LaneBasedGtuGenerator makeSupplier(final Lane lane)
             throws GtuException, SimRuntimeException, ParameterException, NetworkException
     {
         ObjectDistribution<LaneBasedGtuTemplate> distribution = new ObjectDistribution<>(this.stream);
@@ -396,16 +396,16 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
         distribution.add(new FrequencyAndObject<>(1.0 - this.carProbability, template));
         LaneBasedGtuTemplateDistribution templateDistribution = new LaneBasedGtuTemplateDistribution(distribution);
         LaneBasedGtuGenerator.RoomChecker roomChecker = new CfRoomChecker();
-        return new LaneBasedGtuGenerator(lane.getId(), new Generator<Duration>()
+        return new LaneBasedGtuGenerator(lane.getId(), new Supplier<Duration>()
         {
             @SuppressWarnings("synthetic-access")
             @Override
-            public Duration draw()
+            public Duration get()
             {
-                return new Duration(NetworksModel.this.headwayGenerator.draw(), DurationUnit.SI);
+                return new Duration(NetworksModel.this.headwaySupplier.draw(), DurationUnit.SI);
             }
         }, templateDistribution, GeneratorPositions.create(initialPositions, this.stream), this.network, this.simulator,
-                roomChecker, this.idGenerator);
+                roomChecker, this.idSupplier);
     }
 
     /**
@@ -428,29 +428,29 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
             final Set<LanePosition> initialPositions, final LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory)
             throws GtuException
     {
-        return new LaneBasedGtuTemplate(DefaultsNl.CAR, new Generator<Length>()
+        return new LaneBasedGtuTemplate(DefaultsNl.CAR, new Supplier<Length>()
         {
             @Override
-            public Length draw()
+            public Length get()
             {
-                return lengthDistribution.draw();
+                return lengthDistribution.get();
             }
-        }, new Generator<Length>()
+        }, new Supplier<Length>()
         {
             @Override
-            public Length draw()
+            public Length get()
             {
-                return widthDistribution.draw();
+                return widthDistribution.get();
             }
-        }, new Generator<Speed>()
+        }, new Supplier<Speed>()
         {
             @Override
-            public Speed draw()
+            public Speed get()
             {
-                return maximumSpeedDistribution.draw();
+                return maximumSpeedDistribution.get();
             }
         }, strategicalPlannerFactory,
-                lane.getLink().getStartNode().getId().equals("From") ? this.routeGeneratorMain : this.routeGeneratorRamp);
+                lane.getLink().getStartNode().getId().equals("From") ? this.routeSupplierMain : this.routeSupplierRamp);
 
     }
 

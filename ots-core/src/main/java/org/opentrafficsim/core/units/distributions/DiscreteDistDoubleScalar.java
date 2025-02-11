@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.units.distributions;
 
 import java.io.Serializable;
+import java.util.function.Supplier;
 
 import org.djunits.unit.AbsoluteLinearUnit;
 import org.djunits.unit.AbsoluteTemperatureUnit;
@@ -88,7 +89,6 @@ import org.djunits.value.vdouble.scalar.Torque;
 import org.djunits.value.vdouble.scalar.Volume;
 import org.djunits.value.vdouble.scalar.base.DoubleScalarAbs;
 import org.djunits.value.vdouble.scalar.base.DoubleScalarRel;
-import org.opentrafficsim.core.distributions.Generator;
 
 import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
 
@@ -109,7 +109,7 @@ public interface DiscreteDistDoubleScalar
      * @param <RU> The relative unit type belonging to AU
      */
     class Abs<T extends DoubleScalarAbs<AU, T, RU, ?>, AU extends AbsoluteLinearUnit<AU, RU>, RU extends Unit<RU>>
-            extends AbstractDiscreteDistScalar implements Serializable, Generator<T>
+            extends AbstractDiscreteDistScalar implements Serializable, Supplier<T>
     {
         /** */
         private static final long serialVersionUID = 20150000L;
@@ -140,7 +140,7 @@ public interface DiscreteDistDoubleScalar
          */
         @Override
         @SuppressWarnings("unchecked")
-        public T draw()
+        public T get()
         {
             switch (getUnit().getClass().getSimpleName())
             {
@@ -174,7 +174,7 @@ public interface DiscreteDistDoubleScalar
      * @param <T> The absolute doublescalar type
      * @param <U> The unit type used
      */
-    class Rel<T extends DoubleScalarRel<U, T>, U extends Unit<U>> extends AbstractDiscreteDistScalar implements Serializable
+    class Rel<T extends DoubleScalarRel<U, T>, U extends Unit<U>> extends AbstractDiscreteDistScalar implements Supplier<T>
     {
         /** */
         private static final long serialVersionUID = 20150000L;
@@ -203,8 +203,9 @@ public interface DiscreteDistDoubleScalar
          * Draw value.
          * @return a drawn number from the distribution in the given unit.
          */
+        @Override
         @SuppressWarnings("unchecked")
-        public T draw()
+        public T get()
         {
             switch (getUnit().getClass().getSimpleName())
             {

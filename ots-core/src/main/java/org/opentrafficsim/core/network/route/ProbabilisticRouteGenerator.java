@@ -2,15 +2,15 @@ package org.opentrafficsim.core.network.route;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.function.Supplier;
 
-import org.opentrafficsim.core.distributions.ObjectDistribution;
 import org.opentrafficsim.core.distributions.FrequencyAndObject;
-import org.opentrafficsim.core.distributions.Generator;
+import org.opentrafficsim.core.distributions.ObjectDistribution;
 
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
- * Generate one of a set of routes, based on a discrete probability density function.
+ * Supply one of a set of routes, based on a discrete probability density function.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -19,7 +19,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class ProbabilisticRouteGenerator implements Generator<Route>, Serializable
+public class ProbabilisticRouteGenerator implements Supplier<Route>, Serializable
 {
 
     /** */
@@ -29,19 +29,19 @@ public class ProbabilisticRouteGenerator implements Generator<Route>, Serializab
     private final ObjectDistribution<Route> distribution;
 
     /**
-     * Create a new Probabilistic Route Generator.
-     * @param generators List&lt;Distribution.FrequencyAndObject&lt;Route&gt;&gt;; list of routes and frequencies
+     * Create a new Probabilistic Route supplier.
+     * @param objects List&lt;Distribution.FrequencyAndObject&lt;Route&gt;&gt;; list of routes and frequencies
      * @param stream the entropy source
      */
-    public ProbabilisticRouteGenerator(final List<FrequencyAndObject<Route>> generators, final StreamInterface stream)
+    public ProbabilisticRouteGenerator(final List<FrequencyAndObject<Route>> objects, final StreamInterface stream)
     {
-        this.distribution = new ObjectDistribution<Route>(generators, stream);
+        this.distribution = new ObjectDistribution<Route>(objects, stream);
     }
 
     @Override
-    public final Route draw()
+    public final Route get()
     {
-        return this.distribution.draw();
+        return this.distribution.get();
     }
 
     @Override

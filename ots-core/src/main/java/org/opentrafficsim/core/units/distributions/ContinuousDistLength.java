@@ -31,7 +31,7 @@ public class ContinuousDistLength extends ContinuousDistDoubleScalar.Rel<Length,
     }
 
     @Override
-    public Length draw()
+    public Length get()
     {
         return new Length(getDistribution().draw(), (LengthUnit) getDisplayUnit());
     }

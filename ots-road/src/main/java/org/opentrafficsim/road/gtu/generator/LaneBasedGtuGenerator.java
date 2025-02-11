@@ -27,7 +27,6 @@ import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuErrorHandler;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -84,7 +83,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
     private final String uniqueId;
 
     /** Time distribution that determines the interval times between GTUs. */
-    private final Generator<Duration> interarrivelTimeGenerator;
+    private final Supplier<Duration> interarrivelTimeGenerator;
 
     /** Generates most properties of the GTUs. */
     private final LaneBasedGtuCharacteristicsGenerator laneBasedGtuCharacteristicsGenerator;
@@ -132,7 +131,8 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
     private boolean firstCharacteristicsDrawn = false;
 
     /**
-     * Construct a new lane base GTU generator.
+     * Construct a new lane base GTU generator. If the ID generator is an instance of IdsWithCharacteristics and its
+     * {@code hasIds()} method returns true, IDs are assigned in order of GTU characteristics.
      * @param id name of the new GTU generator
      * @param interarrivelTimeGenerator generator for the interval times between GTUs
      * @param laneBasedGtuCharacteristicsGenerator generator of the characteristics of each GTU
@@ -146,7 +146,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
      * @throws NetworkException if the object could not be added to the network
      */
     @SuppressWarnings("parameternumber")
-    public LaneBasedGtuGenerator(final String id, final Generator<Duration> interarrivelTimeGenerator,
+    public LaneBasedGtuGenerator(final String id, final Supplier<Duration> interarrivelTimeGenerator,
             final LaneBasedGtuCharacteristicsGenerator laneBasedGtuCharacteristicsGenerator,
             final GeneratorPositions generatorPositions, final RoadNetwork network, final OtsSimulatorInterface simulator,
             final RoomChecker roomChecker, final Supplier<String> idGenerator)
@@ -161,13 +161,13 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
         this.simulator = simulator;
         this.roomChecker = roomChecker;
         this.idGenerator = idGenerator;
-        Duration headway = this.interarrivelTimeGenerator.draw();
+        Duration headway = this.interarrivelTimeGenerator.get();
         if (headway != null) // otherwise no demand at all
         {
             simulator.scheduleEventRel(headway, this, "generateCharacteristics", new Object[] {});
         }
         this.network.addNonLocatedObject(this);
-        if (this.idGenerator instanceof Injections injections && injections.hasColumn(Injections.ID_COLUMN))
+        if (this.idGenerator instanceof IdsWithCharacteristics ids && ids.hasIds())
         {
             setIdsInCharacteristicsOrder(true); // also creates the unplaced ids map
         }
@@ -202,8 +202,8 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
 
     /**
      * Sets what order should be used for the ids. By default this is in the order of successful GTU generation. If however the
-     * id generator is an instance of {@code Injections} with an id column, it is by default in the order of characteristics
-     * drawing.
+     * id generator is an instance of {@code IdsWithCharacteristics} returning true for {@code hasIds()}, it is by default in
+     * the order of characteristics drawing.
      * @param idsInCharacteristicsOrder ids in order of drawing characteristics, or successful generation otherwise.
      */
     public void setIdsInCharacteristicsOrder(final boolean idsInCharacteristicsOrder)
@@ -254,10 +254,9 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
                 }
                 queueGtu(lanePosition, characteristics);
             }
-
         }
         // @docs/02-model-structure/dsol.md#event-based-simulation
-        Duration headway = this.interarrivelTimeGenerator.draw();
+        Duration headway = this.interarrivelTimeGenerator.get();
         if (headway != null)
         {
             this.simulator.scheduleEventRel(headway, this, "generateCharacteristics", new Object[] {});
@@ -664,6 +663,19 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
             return "Placement [speed=" + this.speed + ", position=" + this.position + "]";
         }
 
+    }
+
+    /**
+     * Id suppliers that implement this interface can indicate whether they are coupled to GTU characteristics information. In
+     * that case the GTU generator will assign the IDs in order of GTU characteristics.
+     */
+    public interface IdsWithCharacteristics extends Supplier<String>
+    {
+        /**
+         * Returns whether the characteristics include GTU IDs.
+         * @return whether the characteristics include GTU IDs
+         */
+        boolean hasIds();
     }
 
 }

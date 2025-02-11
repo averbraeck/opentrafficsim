@@ -8,7 +8,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.gtu.GtuErrorHandler;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.idgenerator.IdGenerator;
+import org.opentrafficsim.core.idgenerator.IdSupplier;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.gtu.generator.CfBaRoomChecker;
@@ -36,7 +36,7 @@ public class OdOptions
             new Option<>("headway distribution", HeadwayDistribution.EXPONENTIAL);
 
     /** ID generator option. */
-    public static final Option<IdGenerator> GTU_ID = new Option<>("gtu id", new IdGenerator(""));
+    public static final Option<IdSupplier> GTU_ID = new Option<>("gtu id", new IdSupplier(""));
 
     /** GTU characteristics generator option. */
     public static final Option<LaneBasedGtuCharacteristicsGeneratorOd> GTU_TYPE = new Option<>("gtu type", null);

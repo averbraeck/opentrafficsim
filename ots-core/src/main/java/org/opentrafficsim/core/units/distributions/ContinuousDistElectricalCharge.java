@@ -31,7 +31,7 @@ public class ContinuousDistElectricalCharge extends ContinuousDistDoubleScalar.R
     }
 
     @Override
-    public ElectricalCharge draw()
+    public ElectricalCharge get()
     {
         return new ElectricalCharge(getDistribution().draw(), (ElectricalChargeUnit) getDisplayUnit());
     }

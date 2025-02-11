@@ -72,9 +72,6 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 public class InjectionsTest
 {
 
-    /** Verbose test. */
-    private static final boolean VERBOSE = false;
-
     /**
      * Constructor.
      */
@@ -137,15 +134,19 @@ public class InjectionsTest
         Try.testFail(() -> baseInjections(time2), IllegalArgumentException.class); // xxx2 = wrong value type
         baseInjections(time, id);
         Try.testFail(() -> baseInjections(time, id2), IllegalArgumentException.class);
-        Try.testFail(() -> baseInjections(time, position).getAllPositions(), IllegalArgumentException.class); // pos,lane,link?
+        Try.testFail(() -> baseInjections(time, position).asGeneratorPositions().getAllPositions(),
+                IllegalArgumentException.class); // pos, lane, link?
         Try.testFail(() -> baseInjections(time, position2), IllegalArgumentException.class);
-        Try.testFail(() -> baseInjections(time, lane).getAllPositions(), IllegalArgumentException.class);
+        Try.testFail(() -> baseInjections(time, lane).asGeneratorPositions().getAllPositions(), IllegalArgumentException.class);
         Try.testFail(() -> baseInjections(time, lane2), IllegalArgumentException.class);
-        Try.testFail(() -> baseInjections(time, link).getAllPositions(), IllegalArgumentException.class);
+        Try.testFail(() -> baseInjections(time, link).asGeneratorPositions().getAllPositions(), IllegalArgumentException.class);
         Try.testFail(() -> baseInjections(time, link2), IllegalArgumentException.class);
-        assertTrue(baseInjections(time, id, position, lane, link).getAllPositions().isEmpty()); // position types are defined
-        Try.testFail(() -> baseInjections(time).canPlace(null, null, null, null), IllegalStateException.class); // no speed
-        Try.testFail(() -> baseInjections(time, speed).canPlace(null, null, null, null), IllegalStateException.class); // no ttc
+        // position types are defined
+        assertTrue(baseInjections(time, id, position, lane, link).asGeneratorPositions().getAllPositions().isEmpty());
+        // no speed
+        Try.testFail(() -> baseInjections(time).asRoomChecker().canPlace(null, null, null, null), IllegalStateException.class);
+        Try.testFail(() -> baseInjections(time, speed).asRoomChecker().canPlace(null, null, null, null),
+                IllegalStateException.class); // no ttc
         Try.testFail(() -> baseInjections(time, speed2), IllegalArgumentException.class);
         Try.testFail(() -> baseInjections(time, gtu), IllegalArgumentException.class); // need full Injections constructor input
         Try.testFail(() -> baseInjections(time, origin), IllegalArgumentException.class);
@@ -161,7 +162,9 @@ public class InjectionsTest
         // tests on Injections with table as input, and all other input mocked
         mockInjections(time, gtu);
         mockInjections(time, speed);
-        Try.testFail(() -> mockInjections(time, speed).canPlace(null, null, null, null), NoSuchElementException.class); // data?
+        // data?
+        Try.testFail(() -> mockInjections(time, speed).asRoomChecker().canPlace(null, null, null, null),
+                NoSuchElementException.class);
         Try.testFail(() -> mockInjections(time, gtu2), IllegalArgumentException.class);
         Try.testFail(() -> mockInjections(time, origin2), IllegalArgumentException.class);
         Try.testFail(() -> mockInjections(time, destination2), IllegalArgumentException.class);
@@ -186,23 +189,24 @@ public class InjectionsTest
         for (int i = 0; i < 6; i++)
         {
             // inter-arrival time
-            assertEquals(i + 1, arrivalsInjection.draw().si, 1e-9);
+            assertEquals(i + 1, arrivalsInjection.asArrivalsSupplier().get().si, 1e-9);
             // with leader
             SortedSet<HeadwayGtu> leaders = new TreeSet<>();
             HeadwayGtu mockLeader = Mockito.mock(HeadwayGtu.class);
             Mockito.when(mockLeader.getDistance()).thenReturn(Length.ONE);
             Mockito.when(mockLeader.getSpeed()).thenReturn(Speed.ONE);
             leaders.add(mockLeader);
-            assertFalse(arrivalsInjection.canPlace(leaders, null, Duration.ZERO, generationLane).canPlace());
+            assertFalse(arrivalsInjection.asRoomChecker().canPlace(leaders, null, Duration.ZERO, generationLane).canPlace());
             // without leader (note that these calls do not increase the row iterator, only inter-arrival time does that)
-            Placement p = arrivalsInjection.canPlace(Collections.emptySortedSet(), null, Duration.ZERO, generationLane);
+            Placement p = arrivalsInjection.asRoomChecker().canPlace(Collections.emptySortedSet(), null, Duration.ZERO,
+                    generationLane);
             assertEquals(i + 10, p.getSpeed().si, 1e-9);
         }
-        assertNull(arrivalsInjection.draw()); // stop headway generator at end of rows
+        assertNull(arrivalsInjection.asArrivalsSupplier().get()); // stop headway generator at end of rows
         // separate for-loop for asynchronous access (i.e. of different rows) for inter-arrival time and id
         for (int i = 0; i < 6; i++)
         {
-            assertEquals(String.valueOf(i + 1), arrivalsInjection.get());
+            assertEquals(String.valueOf(i + 1), arrivalsInjection.asIdSupplier().get());
         }
 
         // test GTU characteristics and generator positions
@@ -239,16 +243,17 @@ public class InjectionsTest
                 Length.instantiateSI(60.0), lane, "Lane2", link, "AB"));
         // -- the test
         Injections full = fullInjections(arrivals, network);
-        assertEquals(6, full.getAllPositions().size());
+        assertEquals(6, full.asGeneratorPositions().getAllPositions().size());
         Try.testFail(() -> full.asLaneBasedGtuCharacteristicsGenerator().draw(), IllegalStateException.class); // first headway
         String[] lanes = new String[] {"Lane1", "Lane2"};
         int laneIndex = 0;
         for (int i = 0; i < 5; i++)
         {
-            full.draw(); // headway
+            full.asArrivalsSupplier().get(); // headway
             LaneBasedGtuCharacteristics characteristics = full.asLaneBasedGtuCharacteristicsGenerator().draw();
             assertEquals(i + 1.0, characteristics.getLength().si, 1e-9);
-            GeneratorLanePosition p = full.draw(characteristics.getGtuType(), characteristics, Collections.emptyMap());
+            GeneratorLanePosition p =
+                    full.asGeneratorPositions().draw(characteristics.getGtuType(), characteristics, Collections.emptyMap());
             assertEquals(lanes[laneIndex], p.getPosition().lane().getId());
             laneIndex = 1 - laneIndex;
             assertEquals((i + 1) * 10.0, p.getPosition().position().si, 1e-9);
@@ -353,8 +358,8 @@ public class InjectionsTest
                 new LaneBasedStrategicalRoutePlannerFactory(tacticalFactory);
         Injections injections = new Injections(arrivals, network, gtuTypes, Defaults.NL, strategicalPlannerFactory, stream,
                 Duration.instantiateSI(60.0));
-        new LaneBasedGtuGenerator("id", injections, injections.asLaneBasedGtuCharacteristicsGenerator(), injections, network,
-                simulator, injections, injections);
+        new LaneBasedGtuGenerator("id", injections.asArrivalsSupplier(), injections.asLaneBasedGtuCharacteristicsGenerator(),
+                injections.asGeneratorPositions(), network, simulator, injections.asRoomChecker(), injections.asIdSupplier());
 
         // Simulate till 1.7s and check that GTU 2 was not yet generated
         while (simulator.getSimulatorTime().si < 1.7)

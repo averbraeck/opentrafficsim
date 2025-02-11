@@ -31,7 +31,7 @@ public class DiscreteDistElectricalPotential extends DiscreteDistDoubleScalar.Re
     }
 
     @Override
-    public ElectricalPotential draw()
+    public ElectricalPotential get()
     {
         return new ElectricalPotential(getDistribution().draw(), (ElectricalPotentialUnit) getUnit());
     }

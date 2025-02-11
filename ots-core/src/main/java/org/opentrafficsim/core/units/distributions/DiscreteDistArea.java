@@ -31,7 +31,7 @@ public class DiscreteDistArea extends DiscreteDistDoubleScalar.Rel<Area, AreaUni
     }
 
     @Override
-    public Area draw()
+    public Area get()
     {
         return new Area(getDistribution().draw(), (AreaUnit) getUnit());
     }

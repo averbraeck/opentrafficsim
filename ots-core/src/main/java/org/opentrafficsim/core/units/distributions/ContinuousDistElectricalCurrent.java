@@ -31,7 +31,7 @@ public class ContinuousDistElectricalCurrent extends ContinuousDistDoubleScalar.
     }
 
     @Override
-    public ElectricalCurrent draw()
+    public ElectricalCurrent get()
     {
         return new ElectricalCurrent(getDistribution().draw(), (ElectricalCurrentUnit) getDisplayUnit());
     }

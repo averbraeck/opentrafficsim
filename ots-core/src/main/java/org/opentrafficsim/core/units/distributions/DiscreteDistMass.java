@@ -31,7 +31,7 @@ public class DiscreteDistMass extends DiscreteDistDoubleScalar.Rel<Mass, MassUni
     }
 
     @Override
-    public Mass draw()
+    public Mass get()
     {
         return new Mass(getDistribution().draw(), (MassUnit) getUnit());
     }

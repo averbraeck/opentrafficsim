@@ -31,7 +31,7 @@ public class ContinuousDistSolidAngle extends ContinuousDistDoubleScalar.Rel<Sol
     }
 
     @Override
-    public SolidAngle draw()
+    public SolidAngle get()
     {
         return new SolidAngle(getDistribution().draw(), (SolidAngleUnit) getDisplayUnit());
     }

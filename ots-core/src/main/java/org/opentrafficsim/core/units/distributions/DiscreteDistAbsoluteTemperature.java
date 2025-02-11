@@ -33,7 +33,7 @@ public class DiscreteDistAbsoluteTemperature
     }
 
     @Override
-    public AbsoluteTemperature draw()
+    public AbsoluteTemperature get()
     {
         return new AbsoluteTemperature(getDistribution().draw(), (AbsoluteTemperatureUnit) getUnit());
     }

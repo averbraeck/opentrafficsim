@@ -32,7 +32,7 @@ public class ContinuousDistDirection extends ContinuousDistDoubleScalar.Abs<Dire
     }
 
     @Override
-    public Direction draw()
+    public Direction get()
     {
         return new Direction(getDistribution().draw(), (DirectionUnit) getDisplayUnit());
     }

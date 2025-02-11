@@ -31,7 +31,7 @@ public class DiscreteDistSpeed extends DiscreteDistDoubleScalar.Rel<Speed, Speed
     }
 
     @Override
-    public Speed draw()
+    public Speed get()
     {
         return new Speed(getDistribution().draw(), (SpeedUnit) getUnit());
     }

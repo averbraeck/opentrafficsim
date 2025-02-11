@@ -31,7 +31,7 @@ public class DiscreteDistTemperature extends DiscreteDistDoubleScalar.Rel<Temper
     }
 
     @Override
-    public Temperature draw()
+    public Temperature get()
     {
         return new Temperature(getDistribution().draw(), (TemperatureUnit) getUnit());
     }

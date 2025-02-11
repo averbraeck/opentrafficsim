@@ -32,7 +32,7 @@ public class ContinuousDistDimensionless extends ContinuousDistDoubleScalar.Rel<
     }
 
     @Override
-    public Dimensionless draw()
+    public Dimensionless get()
     {
         return new Dimensionless(getDistribution().draw(), (DimensionlessUnit) getDisplayUnit());
     }

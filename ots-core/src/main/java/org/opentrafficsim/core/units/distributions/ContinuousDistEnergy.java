@@ -31,7 +31,7 @@ public class ContinuousDistEnergy extends ContinuousDistDoubleScalar.Rel<Energy,
     }
 
     @Override
-    public Energy draw()
+    public Energy get()
     {
         return new Energy(getDistribution().draw(), (EnergyUnit) getDisplayUnit());
     }

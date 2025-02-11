@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.units.distributions;
 
 import java.io.Serializable;
+import java.util.function.Supplier;
 
 import org.djunits.unit.AbsoluteLinearUnit;
 import org.djunits.unit.AbsoluteTemperatureUnit;
@@ -88,7 +89,6 @@ import org.djunits.value.vfloat.scalar.FloatTorque;
 import org.djunits.value.vfloat.scalar.FloatVolume;
 import org.djunits.value.vfloat.scalar.base.FloatScalarAbs;
 import org.djunits.value.vfloat.scalar.base.FloatScalarRel;
-import org.opentrafficsim.core.distributions.Generator;
 
 import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
 
@@ -109,7 +109,7 @@ public interface DiscreteDistFloatScalar
      * @param <RU> The relative unit type belonging to AU
      */
     class Abs<T extends FloatScalarAbs<AU, T, RU, ?>, AU extends AbsoluteLinearUnit<AU, RU>, RU extends Unit<RU>>
-            extends AbstractDiscreteDistScalar implements Serializable, Generator<T>
+            extends AbstractDiscreteDistScalar implements Serializable, Supplier<T>
     {
         /** */
         private static final long serialVersionUID = 20150000L;
@@ -140,7 +140,7 @@ public interface DiscreteDistFloatScalar
          */
         @Override
         @SuppressWarnings("unchecked")
-        public final T draw()
+        public final T get()
         {
             switch (getUnit().getClass().getSimpleName())
             {
@@ -174,8 +174,7 @@ public interface DiscreteDistFloatScalar
      * @param <T> The absolute float scalar type
      * @param <U> The unit type used
      */
-    class Rel<T extends FloatScalarRel<U, T>, U extends Unit<U>> extends AbstractDiscreteDistScalar
-            implements Serializable, Generator<T>
+    class Rel<T extends FloatScalarRel<U, T>, U extends Unit<U>> extends AbstractDiscreteDistScalar implements Supplier<T>
     {
         /** */
         private static final long serialVersionUID = 20150000L;
@@ -206,7 +205,7 @@ public interface DiscreteDistFloatScalar
          */
         @Override
         @SuppressWarnings("unchecked")
-        public final T draw()
+        public final T get()
         {
             switch (getUnit().getClass().getSimpleName())
             {

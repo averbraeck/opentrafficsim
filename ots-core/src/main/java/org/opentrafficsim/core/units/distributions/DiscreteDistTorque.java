@@ -31,7 +31,7 @@ public class DiscreteDistTorque extends DiscreteDistDoubleScalar.Rel<Torque, Tor
     }
 
     @Override
-    public Torque draw()
+    public Torque get()
     {
         return new Torque(getDistribution().draw(), (TorqueUnit) getUnit());
     }

@@ -32,7 +32,7 @@ public class DiscreteDistTime extends DiscreteDistDoubleScalar.Abs<Time, TimeUni
     }
 
     @Override
-    public Time draw()
+    public Time get()
     {
         return new Time(getDistribution().draw(), (TimeUnit) getUnit());
     }

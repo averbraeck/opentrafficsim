@@ -32,7 +32,7 @@ public class ContinuousDistPosition extends ContinuousDistDoubleScalar.Abs<Posit
     }
 
     @Override
-    public Position draw()
+    public Position get()
     {
         return new Position(getDistribution().draw(), (PositionUnit) getDisplayUnit());
     }

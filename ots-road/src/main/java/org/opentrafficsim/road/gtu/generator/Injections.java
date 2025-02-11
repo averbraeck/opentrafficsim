@@ -30,7 +30,6 @@ import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuTemplate;
@@ -40,6 +39,8 @@ import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.road.gtu.generator.GeneratorPositions.GeneratorLanePosition;
+import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.IdsWithCharacteristics;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.Placement;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
@@ -64,6 +65,8 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * <li>{@code RoomChecker}</li>
  * <li>{@code Supplier<String>} for GTU ids</li>
  * </ol>
+ * Note that there are various {@code asXxx()} methods to supply a view of injections as the components mentioned above.
+ * <p>
  * It is assumed that for each next GTU, first an inter-arrival time is requested. Functions 2 and 3 will not check order and
  * simply return information from the current row in the injections table. Function 4 and 5 are tracked independently and
  * asynchronous with the rest, as these occur at later times when GTUs are (attempted to be) placed.
@@ -75,7 +78,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class Injections implements Generator<Duration>, Supplier<String>, GeneratorPositions, RoomChecker
+public class Injections
 {
 
     /** Time column id. */
@@ -403,16 +406,6 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
         }
     }
 
-    @Override
-    public String get()
-    {
-        // This method implements Supplier<String> as an id generator.
-        Throw.when(!this.idIterator.hasNext(), NoSuchElementException.class, "No more ids to draw.");
-        Throw.when(!this.columnNumbers.containsKey(ID_COLUMN), IllegalStateException.class,
-                "Using Injections as id generator, but the injection table has no id column.");
-        return (String) this.idIterator.next().getValue(this.columnNumbers.get(ID_COLUMN));
-    }
-
     /**
      * Returns whether the column of given id is present.
      * @param columnId column id.
@@ -423,20 +416,57 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
         return this.columnNumbers.containsKey(columnId);
     }
 
-    @Override
-    public synchronized Duration draw()
+    /**
+     * Returns an Supplier&lt;String&gt; view as id supplier of injections.
+     * @return Supplier&lt;String&gt; view as id supplier of injections
+     */
+    public Supplier<String> asIdSupplier()
     {
-        if (!this.characteristicsIterator.hasNext())
+        return new IdsWithCharacteristics()
         {
-            return null; // stops LaneBasedGtuGenerator
-        }
-        this.characteristicsRow = this.characteristicsIterator.next();
-        this.readyForCharacteristicsDraw = true;
-        Duration t = (Duration) getCharacteristic(TIME_COLUMN);
-        Throw.when(t.lt(this.previousArrival), IllegalStateException.class, "Arrival times in injection not increasing.");
-        Duration interArrivalTime = t.minus(this.previousArrival);
-        this.previousArrival = t;
-        return interArrivalTime;
+            @Override
+            public String get()
+            {
+                // This method implements Supplier<String> as an id generator.
+                Throw.when(!Injections.this.idIterator.hasNext(), NoSuchElementException.class, "No more ids to draw.");
+                Throw.when(!Injections.this.columnNumbers.containsKey(ID_COLUMN), IllegalStateException.class,
+                        "Using Injections as id generator, but the injection table has no id column.");
+                return (String) Injections.this.idIterator.next().getValue(Injections.this.columnNumbers.get(ID_COLUMN));
+            }
+
+            @Override
+            public boolean hasIds()
+            {
+                return hasColumn(ID_COLUMN);
+            }
+        };
+    }
+
+    /**
+     * Returns a Supplier&lt;Duration&gt; view to supply inter-arrival time of injections.
+     * @return Supplier&lt;Duration&gt; view to supply inter-arrival time of injections
+     */
+    public Supplier<Duration> asArrivalsSupplier()
+    {
+        return new Supplier<Duration>()
+        {
+            @Override
+            public synchronized Duration get()
+            {
+                if (!Injections.this.characteristicsIterator.hasNext())
+                {
+                    return null; // stops LaneBasedGtuGenerator
+                }
+                Injections.this.characteristicsRow = Injections.this.characteristicsIterator.next();
+                Injections.this.readyForCharacteristicsDraw = true;
+                Duration t = (Duration) getCharacteristic(TIME_COLUMN);
+                Throw.when(t.lt(Injections.this.previousArrival), IllegalStateException.class,
+                        "Arrival times in injection not increasing.");
+                Duration interArrivalTime = t.minus(Injections.this.previousArrival);
+                Injections.this.previousArrival = t;
+                return interArrivalTime;
+            }
+        };
     }
 
     /**
@@ -511,7 +541,7 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
                     if (this.defaultCharacteristics == null)
                     {
                         this.defaultCharacteristics =
-                                Injections.this.gtuCharacteristicsGenerator.apply(gtuType, Injections.this.stream).draw();
+                                Injections.this.gtuCharacteristicsGenerator.apply(gtuType, Injections.this.stream).get();
                     }
                     return supplier.apply(this.defaultCharacteristics);
                 }
@@ -520,69 +550,93 @@ public class Injections implements Generator<Duration>, Supplier<String>, Genera
         return this.characteristicsGenerator;
     }
 
-    @Override
-    public GeneratorLanePosition draw(final GtuType gtuType, final LaneBasedGtuCharacteristics characteristics,
-            final Map<CrossSectionLink, Map<Integer, Integer>> unplaced) throws GtuException
+    /**
+     * Returns a GeneratorPositions view of injections.
+     * @return GeneratorPositions view of injections
+     */
+    public GeneratorPositions asGeneratorPositions()
     {
-        Throw.when(this.lanePositions == null, IllegalStateException.class,
-                "Injection table without position, lane and link column cannot be used to draw generator positions.");
-        String link = (String) getCharacteristic(LINK_COLUMN);
-        String lane = (String) getCharacteristic(LANE_COLUMN);
-        Length position = (Length) getCharacteristic(POSITION_COLUMN);
-        return this.lanePositions.get(link, lane, position);
-    }
+        return new GeneratorPositions()
+        {
+            @Override
+            public GeneratorLanePosition draw(final GtuType gtuType, final LaneBasedGtuCharacteristics characteristics,
+                    final Map<CrossSectionLink, Map<Integer, Integer>> unplaced) throws GtuException
+            {
+                Throw.when(Injections.this.lanePositions == null, IllegalStateException.class,
+                        "Injection table without position, lane and link column cannot be used to draw generator positions.");
+                String link = (String) getCharacteristic(LINK_COLUMN);
+                String lane = (String) getCharacteristic(LANE_COLUMN);
+                Length position = (Length) getCharacteristic(POSITION_COLUMN);
+                return Injections.this.lanePositions.get(link, lane, position);
+            }
 
-    @Override
-    public Set<GeneratorLanePosition> getAllPositions()
-    {
-        Throw.when(this.lanePositions == null, IllegalStateException.class,
-                "Injection table without position, lane and link column cannot be used to draw generator positions.");
-        return this.allLanePositions;
+            @Override
+            public Set<GeneratorLanePosition> getAllPositions()
+            {
+                Throw.when(Injections.this.lanePositions == null, IllegalStateException.class,
+                        "Injection table without position, lane and link column cannot be used to draw generator positions.");
+                return Injections.this.allLanePositions;
+            }
+        };
     }
 
     /**
-     * Returns placement for injected GTUs, as used by {@code LaneBasedGtuGenerator}. This needs speed to be provided in the
-     * injections, and a minimum time-to-collision value. Besides the time-to-collision value, the minimum headway for a
-     * successful placement is t*v + 3m, where t = 1s and v the generation speed.
-     * @param leaders leaders, usually 1, possibly more after a branch
-     * @param characteristics characteristics of the proposed new GTU
-     * @param since time since the GTU wanted to arrive
-     * @param initialPosition initial position
-     * @return maximum safe speed, or null if a GTU with the specified characteristics cannot be placed at the current time
-     * @throws NetworkException this method may throw a NetworkException if it encounters an error in the network structure
-     * @throws GtuException on parameter exception
+     * Returns RoomChecker view of injections.
+     * @return RoomChecker view of injections
      */
-    @Override
-    public Placement canPlace(final SortedSet<HeadwayGtu> leaders, final LaneBasedGtuCharacteristics characteristics,
-            final Duration since, final LanePosition initialPosition) throws NetworkException, GtuException
+    public RoomChecker asRoomChecker()
     {
-        Throw.when(!this.columnNumbers.containsKey(SPEED_COLUMN), IllegalStateException.class,
-                "Injection table without speed cannot be used to determine a GTU placement.");
-        Throw.when(this.timeToCollision == null, IllegalStateException.class,
-                "Injections used to place GTUs, but no acceptable time-to-collision is provided.");
-        if (this.nextSpeed == null)
+        return new RoomChecker()
         {
-            Throw.when(!this.speedIterator.hasNext(), NoSuchElementException.class, "No more speed to draw.");
-            this.nextSpeed = (Speed) this.speedIterator.next().getValue(this.columnNumbers.get(SPEED_COLUMN));
-        }
-        if (leaders.isEmpty())
-        {
-            // no leaders: free
-            Placement placement = new Placement(this.nextSpeed, initialPosition);
-            this.nextSpeed = null;
-            return placement;
-        }
-        HeadwayGtu leader = leaders.first();
-        if ((this.nextSpeed.le(leader.getSpeed())
-                || leader.getDistance().divide(this.nextSpeed.minus(leader.getSpeed())).gt(this.timeToCollision))
-                && leader.getDistance()
-                        .gt(this.nextSpeed.times(new Duration(1.0, DurationUnit.SI)).plus(new Length(3.0, LengthUnit.SI))))
-        {
-            Placement placement = new Placement(this.nextSpeed, initialPosition);
-            this.nextSpeed = null;
-            return placement;
-        }
-        return Placement.NO;
+            /**
+             * Returns placement for injected GTUs, as used by {@code LaneBasedGtuGenerator}. This needs speed to be provided in
+             * the injections, and a minimum time-to-collision value. Besides the time-to-collision value, the minimum headway
+             * for a successful placement is t*v + 3m, where t = 1s and v the generation speed.
+             * @param leaders leaders, usually 1, possibly more after a branch
+             * @param characteristics characteristics of the proposed new GTU
+             * @param since time since the GTU wanted to arrive
+             * @param initialPosition initial position
+             * @return maximum safe speed, or null if a GTU with the specified characteristics cannot be placed at the current
+             *         time
+             * @throws NetworkException this method may throw a NetworkException if it encounters an error in the network
+             *             structure
+             * @throws GtuException on parameter exception
+             */
+            @Override
+            public Placement canPlace(final SortedSet<HeadwayGtu> leaders, final LaneBasedGtuCharacteristics characteristics,
+                    final Duration since, final LanePosition initialPosition) throws NetworkException, GtuException
+            {
+                Throw.when(!Injections.this.columnNumbers.containsKey(SPEED_COLUMN), IllegalStateException.class,
+                        "Injection table without speed cannot be used to determine a GTU placement.");
+                Throw.when(Injections.this.timeToCollision == null, IllegalStateException.class,
+                        "Injections used to place GTUs, but no acceptable time-to-collision is provided.");
+                if (Injections.this.nextSpeed == null)
+                {
+                    Throw.when(!Injections.this.speedIterator.hasNext(), NoSuchElementException.class,
+                            "No more speed to draw.");
+                    Injections.this.nextSpeed = (Speed) Injections.this.speedIterator.next()
+                            .getValue(Injections.this.columnNumbers.get(SPEED_COLUMN));
+                }
+                if (leaders.isEmpty())
+                {
+                    // no leaders: free
+                    Placement placement = new Placement(Injections.this.nextSpeed, initialPosition);
+                    Injections.this.nextSpeed = null;
+                    return placement;
+                }
+                HeadwayGtu leader = leaders.first();
+                if ((Injections.this.nextSpeed.le(leader.getSpeed()) || leader.getDistance()
+                        .divide(Injections.this.nextSpeed.minus(leader.getSpeed())).gt(Injections.this.timeToCollision))
+                        && leader.getDistance().gt(Injections.this.nextSpeed.times(new Duration(1.0, DurationUnit.SI))
+                                .plus(new Length(3.0, LengthUnit.SI))))
+                {
+                    Placement placement = new Placement(Injections.this.nextSpeed, initialPosition);
+                    Injections.this.nextSpeed = null;
+                    return placement;
+                }
+                return Placement.NO;
+            }
+        };
     }
 
     /**

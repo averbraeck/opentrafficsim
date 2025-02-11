@@ -31,7 +31,7 @@ public class DiscreteDistSolidAngle extends DiscreteDistDoubleScalar.Rel<SolidAn
     }
 
     @Override
-    public SolidAngle draw()
+    public SolidAngle get()
     {
         return new SolidAngle(getDistribution().draw(), (SolidAngleUnit) getUnit());
     }

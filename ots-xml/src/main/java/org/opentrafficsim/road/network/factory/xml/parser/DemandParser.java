@@ -33,12 +33,11 @@ import org.jgrapht.alg.interfaces.AStarAdmissibleHeuristic;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.Definitions;
-import org.opentrafficsim.core.distributions.ObjectDistribution;
 import org.opentrafficsim.core.distributions.FrequencyAndObject;
-import org.opentrafficsim.core.distributions.Generator;
+import org.opentrafficsim.core.distributions.ObjectDistribution;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.idgenerator.IdGenerator;
+import org.opentrafficsim.core.idgenerator.IdSupplier;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkWeight;
 import org.opentrafficsim.core.network.NetworkException;
@@ -393,7 +392,7 @@ public final class DemandParser
             final Demand demand, final Map<String, GtuTemplate> gtuTemplates,
             final Map<String, List<FrequencyAndObject<Route>>> routeMixMap,
             final Map<String, List<FrequencyAndObject<Route>>> shortestRouteMixMap, final StreamInformation streamInformation,
-            final IdGenerator idGenerator, final Eval eval) throws XmlParserException
+            final IdSupplier idGenerator, final Eval eval) throws XmlParserException
     {
         OtsSimulatorInterface simulator = otsNetwork.getSimulator();
         List<LaneBasedGtuGenerator> generators = new ArrayList<>();
@@ -411,7 +410,7 @@ public final class DemandParser
                 StringType shortestRouteType = generatorTag.getShortestRoute();
                 StringType shortestRouteMixType = generatorTag.getShortestRouteMix();
                 String errorPre = "Generator for Lane " + linkId + "." + laneId + ": ";
-                Generator<Route> routeGenerator =
+                Supplier<Route> routeGenerator =
                         getRouteGenerator(routeType, routeMixType, shortestRouteType, shortestRouteMixType, otsNetwork, demand,
                                 routeMixMap, shortestRouteMixMap, streamInformation, errorPre, eval);
 
@@ -422,7 +421,7 @@ public final class DemandParser
 
                 RoomChecker roomChecker = ParseUtil.parseRoomChecker(generatorTag.getRoomChecker(), eval);
 
-                Generator<Duration> headwayGenerator = new HeadwayGenerator(generatorTag.getFrequency().get(eval), stream);
+                Supplier<Duration> headwayGenerator = new HeadwayGenerator(generatorTag.getFrequency().get(eval), stream);
 
                 CrossSectionLink link = (CrossSectionLink) otsNetwork.getLink(linkId);
                 Lane lane = (Lane) link.getCrossSectionElement(laneId);
@@ -460,13 +459,13 @@ public final class DemandParser
      * @return route generator
      * @throws XmlParserException when a referred element does no exist
      */
-    private static Generator<Route> getRouteGenerator(final StringType routeType, final StringType routeMixType,
+    private static Supplier<Route> getRouteGenerator(final StringType routeType, final StringType routeMixType,
             final StringType shortestRouteType, final StringType shortestRouteMixType, final RoadNetwork otsNetwork,
             final Demand demand, final Map<String, List<FrequencyAndObject<Route>>> routeMixMap,
             final Map<String, List<FrequencyAndObject<Route>>> shortestRouteMixMap, final StreamInformation streamInformation,
             final String errorPre, final Eval eval) throws XmlParserException
     {
-        Generator<Route> routeGenerator;
+        Supplier<Route> routeGenerator;
         if (routeType != null)
         {
             String routeId = routeType.get(eval);
@@ -545,7 +544,7 @@ public final class DemandParser
      * @throws XmlParserException when a referred element does no exist
      */
     private static ObjectDistribution<LaneBasedGtuTemplate> getTemplateDistribution(final StringType gtuTemplateType,
-            final StringType gtuTemplateMixType, final Generator<Route> routeGenerator, final Definitions definitions,
+            final StringType gtuTemplateMixType, final Supplier<Route> routeGenerator, final Definitions definitions,
             final Demand demand, final Map<String, GtuTemplate> gtuTemplates, final StreamInformation streamInformation,
             final StreamInterface stream, final Eval eval) throws XmlParserException
     {
@@ -615,7 +614,7 @@ public final class DemandParser
             final Definitions definitions, final Demand demand, final Map<String, GtuTemplate> gtuTemplates,
             final Map<String, List<FrequencyAndObject<Route>>> routeMixMap,
             final Map<String, List<FrequencyAndObject<Route>>> shortestRouteMixMap, final StreamInformation streamInformation,
-            final IdGenerator idGenerator, final Eval eval) throws XmlParserException
+            final IdSupplier idGenerator, final Eval eval) throws XmlParserException
     {
         OtsSimulatorInterface simulator = otsNetwork.getSimulator();
         List<LaneBasedGtuGenerator> generators = new ArrayList<>();
@@ -653,7 +652,7 @@ public final class DemandParser
                             "No room checker provided and no speed data in the arrivals.");
                     Throw.when(ttc == null, XmlParserException.class,
                             "No room checker provided and no time-to-collision provided.");
-                    roomChecker = injections;
+                    roomChecker = injections.asRoomChecker();
                 }
                 else
                 {
@@ -668,14 +667,14 @@ public final class DemandParser
                 }
                 else
                 {
-                    idGeneratorInjections = injections;
+                    idGeneratorInjections = injections.asIdSupplier();
                 }
 
                 // Generator position(s), from injections or defined
                 GeneratorPositions generatorPosition;
                 if (generatorPositionFromInjections)
                 {
-                    generatorPosition = injections;
+                    generatorPosition = injections.asGeneratorPositions();
                 }
                 else
                 {
@@ -705,7 +704,7 @@ public final class DemandParser
                     StringType shortestRouteType = generatorTag.getGtuCharacteristics().getShortestRoute();
                     StringType shortestRouteMixType = generatorTag.getGtuCharacteristics().getShortestRouteMix();
                     String errorPre = "Injections " + (generatorNumber + 1) + ": ";
-                    Generator<Route> routeGenerator =
+                    Supplier<Route> routeGenerator =
                             getRouteGenerator(routeType, routeMixType, shortestRouteType, shortestRouteMixType, otsNetwork,
                                     demand, routeMixMap, shortestRouteMixMap, streamInformation, errorPre, eval);
 
@@ -718,8 +717,9 @@ public final class DemandParser
                     characteristicsGenerator = new LaneBasedGtuTemplateDistribution(gtuTypeDistribution);
                 }
 
-                LaneBasedGtuGenerator generator = new LaneBasedGtuGenerator("Injections " + generatorNumber++, injections,
-                        characteristicsGenerator, generatorPosition, otsNetwork, simulator, roomChecker, idGeneratorInjections);
+                LaneBasedGtuGenerator generator = new LaneBasedGtuGenerator("Injections " + generatorNumber++,
+                        injections.asArrivalsSupplier(), characteristicsGenerator, generatorPosition, otsNetwork, simulator,
+                        roomChecker, idGeneratorInjections);
                 generators.add(generator);
             }
         }
@@ -828,18 +828,18 @@ public final class DemandParser
      * @throws XmlParserException if the GtuType is not defined.
      */
     private static LaneBasedGtuTemplate parseGtuTemplate(final GtuTemplate templateTag, final Definitions definitions,
-            final StreamInformation streamInformation, final String gtuTemplateId, final Generator<Route> routeGenerator,
+            final StreamInformation streamInformation, final String gtuTemplateId, final Supplier<Route> routeGenerator,
             final LaneBasedStrategicalRoutePlannerFactory strategicalFactory, final Eval eval) throws XmlParserException
     {
         String gtuTypeId = templateTag.getGtuType().get(eval);
         GtuType gtuType = definitions.get(GtuType.class, gtuTypeId);
         Throw.when(gtuType == null, XmlParserException.class, "GtuType %s in GtuTemplate %s not defined", gtuTypeId,
                 gtuTemplateId);
-        Generator<Length> lengthGenerator = makeGenerator(streamInformation, templateTag.getLengthDist(),
+        Supplier<Length> lengthGenerator = makeGenerator(streamInformation, templateTag.getLengthDist(),
                 templateTag.getLengthDist().getLengthUnit().get(eval), eval);
-        Generator<Length> widthGenerator = makeGenerator(streamInformation, templateTag.getWidthDist(),
+        Supplier<Length> widthGenerator = makeGenerator(streamInformation, templateTag.getWidthDist(),
                 templateTag.getWidthDist().getLengthUnit().get(eval), eval);
-        Generator<Speed> maximumSpeedGenerator = makeGenerator(streamInformation, templateTag.getMaxSpeedDist(),
+        Supplier<Speed> maximumSpeedGenerator = makeGenerator(streamInformation, templateTag.getMaxSpeedDist(),
                 templateTag.getMaxSpeedDist().getSpeedUnit().get(eval), eval);
         LaneBasedGtuTemplate templateGtuType = new LaneBasedGtuTemplate(gtuType, lengthGenerator, widthGenerator,
                 maximumSpeedGenerator, strategicalFactory, routeGenerator);
@@ -857,7 +857,7 @@ public final class DemandParser
      * @return the generator
      * @throws XmlParserException on parse error
      */
-    private static <T extends DoubleScalarRel<U, T>, U extends Unit<U>> Generator<T> makeGenerator(
+    private static <T extends DoubleScalarRel<U, T>, U extends Unit<U>> Supplier<T> makeGenerator(
             final StreamInformation streamMap, final ConstantDistType distribution, final U unit, final Eval eval)
             throws XmlParserException
     {
@@ -865,12 +865,12 @@ public final class DemandParser
         {
             final ContinuousDistDoubleScalar.Rel<T, U> dist =
                     ParseDistribution.parseContinuousDist(streamMap, distribution, unit, eval);
-            Generator<T> generator = new Generator<T>()
+            Supplier<T> generator = new Supplier<T>()
             {
                 @Override
-                public T draw()
+                public T get()
                 {
-                    return dist.draw();
+                    return dist.get();
                 }
 
                 @Override

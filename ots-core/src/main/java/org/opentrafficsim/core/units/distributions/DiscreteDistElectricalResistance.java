@@ -32,7 +32,7 @@ public class DiscreteDistElectricalResistance
     }
 
     @Override
-    public ElectricalResistance draw()
+    public ElectricalResistance get()
     {
         return new ElectricalResistance(getDistribution().draw(), (ElectricalResistanceUnit) getUnit());
     }

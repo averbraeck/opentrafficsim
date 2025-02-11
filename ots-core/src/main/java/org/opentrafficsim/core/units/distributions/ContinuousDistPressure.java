@@ -31,7 +31,7 @@ public class ContinuousDistPressure extends ContinuousDistDoubleScalar.Rel<Press
     }
 
     @Override
-    public Pressure draw()
+    public Pressure get()
     {
         return new Pressure(getDistribution().draw(), (PressureUnit) getDisplayUnit());
     }

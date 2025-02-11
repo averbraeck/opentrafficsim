@@ -32,7 +32,7 @@ public class DiscreteDistPosition extends DiscreteDistDoubleScalar.Abs<Position,
     }
 
     @Override
-    public Position draw()
+    public Position get()
     {
         return new Position(getDistribution().draw(), (PositionUnit) getUnit());
     }

@@ -32,7 +32,7 @@ public class ContinuousDistElectricalPotential
     }
 
     @Override
-    public ElectricalPotential draw()
+    public ElectricalPotential get()
     {
         return new ElectricalPotential(getDistribution().draw(), (ElectricalPotentialUnit) getDisplayUnit());
     }

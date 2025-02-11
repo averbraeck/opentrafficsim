@@ -11,6 +11,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.naming.NamingException;
 
@@ -34,7 +35,6 @@ import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.definitions.DefaultsNl;
-import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -253,29 +253,29 @@ public class OdApplierTest
         assertEquals(generatorObjects.size(), 2, "Incorrect number of generator created or returned.");
         for (String id : generatorObjects.keySet())
         {
-            Generator<Duration> headwayGenerator = generatorObjects.get(id).headwayGenerator();
+            Supplier<Duration> headwayGenerator = generatorObjects.get(id).headwayGenerator();
             double factor = id.equals("A1") ? 0.4 : 0.6;
             // now check various points in time
             this.time = Time.instantiateSI(0); // spanning initial 0-demand period
-            assertAboutEqual(headwayGenerator.draw(), 100 + 1 / (factor * 1000 / 3600));
+            assertAboutEqual(headwayGenerator.get(), 100 + 1 / (factor * 1000 / 3600));
             this.time = Time.instantiateSI(30); // spanning 0-demand period partially
-            assertAboutEqual(headwayGenerator.draw(), 70 + 1 / (factor * 1000 / 3600));
+            assertAboutEqual(headwayGenerator.get(), 70 + 1 / (factor * 1000 / 3600));
             this.time = Time.instantiateSI(100); // start of demand period
-            assertAboutEqual(headwayGenerator.draw(), 1 / (factor * 1000 / 3600));
+            assertAboutEqual(headwayGenerator.get(), 1 / (factor * 1000 / 3600));
             this.time = Time.instantiateSI(130); // middle of demand period
-            assertAboutEqual(headwayGenerator.draw(), 1 / (factor * 1000 / 3600));
+            assertAboutEqual(headwayGenerator.get(), 1 / (factor * 1000 / 3600));
             this.time = Time.instantiateSI(199); // over slice edge
             double preSlice = factor * 1000 / 3600;
-            assertAboutEqual(headwayGenerator.draw(), 1 + (1 - preSlice) / (factor * 2000 / 3600));
+            assertAboutEqual(headwayGenerator.get(), 1 + (1 - preSlice) / (factor * 2000 / 3600));
             this.time = Time.instantiateSI(299); // spanning 0-demand period in the middle
             preSlice = factor * 2000 / 3600;
-            assertAboutEqual(headwayGenerator.draw(), 201 + (1 - preSlice) / (factor * 2000 / 3600));
+            assertAboutEqual(headwayGenerator.get(), 201 + (1 - preSlice) / (factor * 2000 / 3600));
             this.time = Time.instantiateSI(599); // just before end
-            assertEquals(headwayGenerator.draw(), null);
+            assertEquals(headwayGenerator.get(), null);
             this.time = Time.instantiateSI(600); // on end
-            assertEquals(headwayGenerator.draw(), null);
+            assertEquals(headwayGenerator.get(), null);
             this.time = Time.instantiateSI(700); // beyond end
-            assertEquals(headwayGenerator.draw(), null);
+            assertEquals(headwayGenerator.get(), null);
         }
 
         // new network to avoid placing double sinks...
@@ -289,30 +289,30 @@ public class OdApplierTest
         assertEquals(generatorObjects.size(), 2, "Incorrect number of generator created or returned.");
         for (String id : generatorObjects.keySet())
         {
-            Generator<Duration> headwayGenerator = generatorObjects.get(id).headwayGenerator();
+            Supplier<Duration> headwayGenerator = generatorObjects.get(id).headwayGenerator();
             double factor = id.equals("A1") ? 0.4 : 0.6;
             // now check various points in time
             this.time = Time.instantiateSI(0); // spanning initial 0-demand period
             double inv = inverseTrapezoidal(1.0, 100, 1000, 200, 2000, 100, factor);
-            assertAboutEqual(headwayGenerator.draw(), 100 + inv);
+            assertAboutEqual(headwayGenerator.get(), 100 + inv);
             this.time = Time.instantiateSI(30); // spanning 0-demand period partially
-            assertAboutEqual(headwayGenerator.draw(), 70 + inv);
+            assertAboutEqual(headwayGenerator.get(), 70 + inv);
             this.time = Time.instantiateSI(100); // start of demand period
-            assertAboutEqual(headwayGenerator.draw(), inv);
+            assertAboutEqual(headwayGenerator.get(), inv);
             this.time = Time.instantiateSI(130); // middle of demand period
-            assertAboutEqual(headwayGenerator.draw(), inverseTrapezoidal(1.0, 100, 1000, 200, 2000, 130, factor));
+            assertAboutEqual(headwayGenerator.get(), inverseTrapezoidal(1.0, 100, 1000, 200, 2000, 130, factor));
             this.time = Time.instantiateSI(199); // over slice edge
             double preSlice = trapezoidal(100, 1000, 200, 2000, 199, 200, factor);
-            assertAboutEqual(headwayGenerator.draw(), 1 + inverseTrapezoidal(1.0 - preSlice, 200, 2000, 300, 0, 200, factor));
+            assertAboutEqual(headwayGenerator.get(), 1 + inverseTrapezoidal(1.0 - preSlice, 200, 2000, 300, 0, 200, factor));
             this.time = Time.instantiateSI(299); // spanning 0-demand period in the middle
             preSlice = trapezoidal(200, 2000, 300, 0, 299, 300, factor);
-            assertAboutEqual(headwayGenerator.draw(), 101 + inverseTrapezoidal(1.0 - preSlice, 400, 0, 500, 2000, 400, factor));
+            assertAboutEqual(headwayGenerator.get(), 101 + inverseTrapezoidal(1.0 - preSlice, 400, 0, 500, 2000, 400, factor));
             this.time = Time.instantiateSI(599); // just before end
-            assertEquals(headwayGenerator.draw(), null);
+            assertEquals(headwayGenerator.get(), null);
             this.time = Time.instantiateSI(600); // on end
-            assertEquals(headwayGenerator.draw(), null);
+            assertEquals(headwayGenerator.get(), null);
             this.time = Time.instantiateSI(700); // beyond end
-            assertEquals(headwayGenerator.draw(), null);
+            assertEquals(headwayGenerator.get(), null);
         }
 
         // All interpolations and randomizations tests (only total test)
@@ -332,7 +332,7 @@ public class OdApplierTest
                     assertEquals(generatorObjects.size(), 2, "Incorrect number of generators created or returned.");
                     for (String id : generatorObjects.keySet())
                     {
-                        Generator<Duration> headwayGenerator = generatorObjects.get(id).headwayGenerator();
+                        Supplier<Duration> headwayGenerator = generatorObjects.get(id).headwayGenerator();
                         double factor = id.equals("A1") ? 0.4 : 0.6;
                         double n = 0;
                         int nSims = 10;
@@ -341,7 +341,7 @@ public class OdApplierTest
                             // simulate entire demand period and check total number of vehicles
                             while (this.time.si < 7200)
                             {
-                                Duration headway = headwayGenerator.draw();
+                                Duration headway = headwayGenerator.get();
                                 if (headway != null)
                                 {
                                     n++;

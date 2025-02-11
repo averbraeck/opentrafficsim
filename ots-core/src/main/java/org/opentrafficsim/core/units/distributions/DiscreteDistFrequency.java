@@ -31,7 +31,7 @@ public class DiscreteDistFrequency extends DiscreteDistDoubleScalar.Rel<Frequenc
     }
 
     @Override
-    public Frequency draw()
+    public Frequency get()
     {
         return new Frequency(getDistribution().draw(), (FrequencyUnit) getUnit());
     }

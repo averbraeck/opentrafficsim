@@ -31,7 +31,7 @@ public class DiscreteDistElectricalCurrent extends DiscreteDistDoubleScalar.Rel<
     }
 
     @Override
-    public ElectricalCurrent draw()
+    public ElectricalCurrent get()
     {
         return new ElectricalCurrent(getDistribution().draw(), (ElectricalCurrentUnit) getUnit());
     }

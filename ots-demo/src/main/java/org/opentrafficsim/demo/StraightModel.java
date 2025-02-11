@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
@@ -21,14 +22,13 @@ import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.core.definitions.DefaultsNl;
-import org.opentrafficsim.core.distributions.ConstantGenerator;
-import org.opentrafficsim.core.distributions.ObjectDistribution;
+import org.opentrafficsim.core.distributions.ConstantSupplier;
 import org.opentrafficsim.core.distributions.FrequencyAndObject;
-import org.opentrafficsim.core.distributions.Generator;
+import org.opentrafficsim.core.distributions.ObjectDistribution;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.idgenerator.IdGenerator;
+import org.opentrafficsim.core.idgenerator.IdSupplier;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.FixedRouteGenerator;
@@ -146,7 +146,7 @@ public class StraightModel extends AbstractOtsModel implements UNITS
 
             // Generation of a new car / truck
             TtcRoomChecker roomChecker = new TtcRoomChecker(new Duration(10.0, DurationUnit.SI));
-            IdGenerator idGenerator = new IdGenerator("");
+            IdSupplier idGenerator = new IdSupplier("");
             ParameterSet params = new ParameterSet();
             params.setDefaultParameter(AbstractIdm.DELTA);
             GtuType car = DefaultsNl.CAR;
@@ -155,21 +155,21 @@ public class StraightModel extends AbstractOtsModel implements UNITS
                     new ContinuousDistDoubleScalar.Rel<>(new DistUniform(this.stream, 90.0, 110.0), SpeedUnit.KM_PER_HOUR);
             ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> speedTruck =
                     new ContinuousDistDoubleScalar.Rel<>(new DistUniform(this.stream, 80, 95), SpeedUnit.KM_PER_HOUR);
-            Generator<Route> routeGenerator = new FixedRouteGenerator(null);
+            Supplier<Route> routeGenerator = new FixedRouteGenerator(null);
             LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactoryCars = new LaneBasedStrategicalRoutePlannerFactory(
                     new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()));
             LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFctoryTrucks = new LaneBasedStrategicalRoutePlannerFactory(
                     new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()));
-            LaneBasedGtuTemplate carTemplate = new LaneBasedGtuTemplate(car, new ConstantGenerator<>(Length.instantiateSI(4.0)),
-                    new ConstantGenerator<>(Length.instantiateSI(2.0)), speedCar, strategicalPlannerFactoryCars,
+            LaneBasedGtuTemplate carTemplate = new LaneBasedGtuTemplate(car, new ConstantSupplier<>(Length.instantiateSI(4.0)),
+                    new ConstantSupplier<>(Length.instantiateSI(2.0)), speedCar, strategicalPlannerFactoryCars,
                     routeGenerator);
             LaneBasedGtuTemplate truckTemplate = new LaneBasedGtuTemplate(truck,
-                    new ConstantGenerator<>(Length.instantiateSI(15.0)), new ConstantGenerator<>(Length.instantiateSI(2.5)),
+                    new ConstantSupplier<>(Length.instantiateSI(15.0)), new ConstantSupplier<>(Length.instantiateSI(2.5)),
                     speedTruck, strategicalPlannerFctoryTrucks, routeGenerator);
             ObjectDistribution<LaneBasedGtuTemplate> gtuTypeDistribution = new ObjectDistribution<>(this.stream);
             gtuTypeDistribution.add(new FrequencyAndObject<>(this.carProbability, carTemplate));
             gtuTypeDistribution.add(new FrequencyAndObject<>(1.0 - this.carProbability, truckTemplate));
-            Generator<Duration> headwayGenerator =
+            Supplier<Duration> headwayGenerator =
                     new HeadwayGenerator(new Frequency(1500.0, PER_HOUR), new MersenneTwister(4L));
             Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
             initialLongitudinalPositions.add(new LanePosition(this.lane, new Length(5.0, LengthUnit.SI)));

@@ -124,7 +124,7 @@ public class GtuSpawner
     {
 
         GtuCharacteristics defaultCharacteristics =
-                this.defaultGtuTemplate.apply(templateGtuType.getGtuType(), this.stream).draw();
+                this.defaultGtuTemplate.apply(templateGtuType.getGtuType(), this.stream).get();
 
         LaneBasedGtu gtu =
                 new LaneBasedGtu(id, templateGtuType.getGtuType(), templateGtuType.getLength(), templateGtuType.getWidth(),

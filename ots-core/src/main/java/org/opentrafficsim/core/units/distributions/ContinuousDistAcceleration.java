@@ -31,7 +31,7 @@ public class ContinuousDistAcceleration extends ContinuousDistDoubleScalar.Rel<A
     }
 
     @Override
-    public Acceleration draw()
+    public Acceleration get()
     {
         return new Acceleration(getDistribution().draw(), (AccelerationUnit) getDisplayUnit());
     }

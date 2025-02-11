@@ -27,7 +27,7 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.idgenerator.IdGenerator;
+import org.opentrafficsim.core.idgenerator.IdSupplier;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.car.CarTest;
@@ -62,7 +62,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 public class GtuFollowingModelTest implements UNITS
 {
     /** Generate unique names for the GTUs. */
-    private IdGenerator gtuIdGenerator = new IdGenerator("GTU");
+    private IdSupplier gtuIdGenerator = new IdSupplier("GTU");
 
     /**
      * Constructor.

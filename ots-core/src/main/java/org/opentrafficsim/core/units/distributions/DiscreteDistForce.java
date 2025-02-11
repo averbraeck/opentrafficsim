@@ -31,7 +31,7 @@ public class DiscreteDistForce extends DiscreteDistDoubleScalar.Rel<Force, Force
     }
 
     @Override
-    public Force draw()
+    public Force get()
     {
         return new Force(getDistribution().draw(), (ForceUnit) getUnit());
     }

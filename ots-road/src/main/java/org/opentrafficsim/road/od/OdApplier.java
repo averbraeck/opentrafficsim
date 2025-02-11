@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.djunits.unit.FrequencyUnit;
@@ -18,11 +19,10 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.idgenerator.IdGenerator;
+import org.opentrafficsim.core.idgenerator.IdSupplier;
 import org.opentrafficsim.core.math.Draw;
 import org.opentrafficsim.core.network.Connector;
 import org.opentrafficsim.core.network.Link;
@@ -426,7 +426,7 @@ public final class OdApplier
             };
 
             RoomChecker roomChecker = odOptions.get(OdOptions.ROOM_CHECKER, lane, o, linkType);
-            IdGenerator idGenerator = odOptions.get(OdOptions.GTU_ID, lane, o, linkType);
+            IdSupplier idGenerator = odOptions.get(OdOptions.GTU_ID, lane, o, linkType);
             LaneBiases biases = odOptions.get(OdOptions.LANE_BIAS, lane, o, linkType);
             // and finally, the generator
             try
@@ -907,7 +907,7 @@ public final class OdApplier
      * @param headwayGenerator generator of headways
      * @param characteristicsGenerator generator of GTU characteristics
      */
-    public static record GeneratorObjects(LaneBasedGtuGenerator generator, Generator<Duration> headwayGenerator,
+    public record GeneratorObjects(LaneBasedGtuGenerator generator, Supplier<Duration> headwayGenerator,
             LaneBasedGtuCharacteristicsGenerator characteristicsGenerator)
     {
     }

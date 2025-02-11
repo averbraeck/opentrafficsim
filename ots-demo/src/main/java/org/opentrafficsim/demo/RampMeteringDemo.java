@@ -539,7 +539,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
             {
                 Route route = null;
                 VehicleModel vehicleModel = VehicleModel.MINMAX;
-                return new LaneBasedGtuCharacteristics(Defaults.NL.apply(gtuType, randomStream).draw(),
+                return new LaneBasedGtuCharacteristics(Defaults.NL.apply(gtuType, randomStream).get(),
                         this.controlledPlannerFactory, route, origin, destination, vehicleModel);
             }
             // otherwise generate default characteristics

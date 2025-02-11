@@ -55,13 +55,13 @@ public class GtuTypeTest
         StreamInterface randomStream = new MersenneTwister();
         GtuType car = DefaultsNl.CAR;
         String message = "Exception while deriving default GTU characteristics";
-        GtuCharacteristics characteristicsCar1 = Defaults.NL.apply(car, randomStream).draw();
-        GtuCharacteristics characteristicsCar2 = Defaults.NL.apply(car, randomStream).draw();
+        GtuCharacteristics characteristicsCar1 = Defaults.NL.apply(car, randomStream).get();
+        GtuCharacteristics characteristicsCar2 = Defaults.NL.apply(car, randomStream).get();
         GtuType spaceCar = new GtuType("spaceCar", car);
-        GtuCharacteristics characteristicsSpaceCar1 = Defaults.NL.apply(spaceCar, randomStream).draw();
-        GtuCharacteristics characteristicsSpaceCar2 = Defaults.NL.apply(spaceCar, randomStream).draw();
+        GtuCharacteristics characteristicsSpaceCar1 = Defaults.NL.apply(spaceCar, randomStream).get();
+        GtuCharacteristics characteristicsSpaceCar2 = Defaults.NL.apply(spaceCar, randomStream).get();
         GtuType truck = DefaultsNl.TRUCK;
-        GtuCharacteristics characteristicsTruck = Defaults.NL.apply(truck, randomStream).draw();
+        GtuCharacteristics characteristicsTruck = Defaults.NL.apply(truck, randomStream).get();
 
         // Note: we can only compare characteristics that we know are not distributed for the used GTU type CAR.
         message = "Default characteristics of DEFAULTS and derived GtuType should be equal.";

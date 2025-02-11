@@ -5,12 +5,12 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
-import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuTemplate;
@@ -42,7 +42,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements LaneBasedGtuCharacteristicsGeneratorOd
 {
     /** GTU type generator. */
-    private Generator<GtuType> gtuTypeGenerator = null;
+    private Supplier<GtuType> gtuTypeGenerator = null;
 
     /** Templates. */
     private final Map<GtuType, GtuTemplate> templates = new LinkedHashMap<>();
@@ -58,13 +58,13 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
 
     /**
      * Constructor using route supplier, provided GTU templates and provided strategical planner factory supplier.
-     * @param gtuTypeGenerator GTU type generator
+     * @param gtuTypeGenerator GTU type supplier
      * @param templates templates
      * @param factory strategical factory supplier
      * @param vehicleModelFactory vehicle model factory
      * @param templateFunction template function
      */
-    private DefaultLaneBasedGtuCharacteristicsGeneratorOd(final Generator<GtuType> gtuTypeGenerator,
+    private DefaultLaneBasedGtuCharacteristicsGeneratorOd(final Supplier<GtuType> gtuTypeGenerator,
             final Set<GtuTemplate> templates, final LaneBasedStrategicalPlannerFactory<?> factory,
             final VehicleModelFactory vehicleModelFactory,
             final BiFunction<GtuType, StreamInterface, GtuTemplate> templateFunction)
@@ -103,7 +103,7 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
         }
         else if (this.gtuTypeGenerator != null)
         {
-            gtuType = Try.assign(() -> this.gtuTypeGenerator.draw(), GtuException.class, "Parameter while drawing GTU type.");
+            gtuType = Try.assign(() -> this.gtuTypeGenerator.get(), GtuException.class, "Parameter while drawing GTU type.");
         }
         else
         {
@@ -113,11 +113,11 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
         if (this.templates.containsKey(gtuType))
         {
             gtuCharacteristics =
-                    Try.assign(() -> this.templates.get(gtuType).draw(), "Exception while drawing GTU characteristics.");
+                    Try.assign(() -> this.templates.get(gtuType).get(), "Exception while drawing GTU characteristics.");
         }
         else
         {
-            gtuCharacteristics = this.templateFunction.apply(gtuType, randomStream).draw();
+            gtuCharacteristics = this.templateFunction.apply(gtuType, randomStream).get();
         }
         Route route = categorization.entails(Route.class) ? category.get(Route.class) : null;
         VehicleModel vehicleModel = this.vehicleModelFactory.create(gtuType);
@@ -151,7 +151,7 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
     public static class Factory
     {
         /** GTU type. */
-        private Generator<GtuType> gtuTypeGenerator = null;
+        private Supplier<GtuType> gtuTypeGenerator = null;
 
         /** Templates. */
         private Set<GtuTemplate> templates = new LinkedHashSet<>();
@@ -179,7 +179,7 @@ public final class DefaultLaneBasedGtuCharacteristicsGeneratorOd implements Lane
          * @param gtuTypeGenerator set gtuTypeGenerator.
          * @return this factory for method chaining
          */
-        public Factory setGtuTypeGenerator(final Generator<GtuType> gtuTypeGenerator)
+        public Factory setGtuTypeGenerator(final Supplier<GtuType> gtuTypeGenerator)
         {
             this.gtuTypeGenerator = gtuTypeGenerator;
             return this;

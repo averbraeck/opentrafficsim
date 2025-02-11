@@ -31,7 +31,7 @@ public class ContinuousDistTemperature extends ContinuousDistDoubleScalar.Rel<Te
     }
 
     @Override
-    public Temperature draw()
+    public Temperature get()
     {
         return new Temperature(getDistribution().draw(), (TemperatureUnit) getDisplayUnit());
     }

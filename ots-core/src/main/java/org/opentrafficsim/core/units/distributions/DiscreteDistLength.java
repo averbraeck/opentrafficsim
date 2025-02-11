@@ -31,7 +31,7 @@ public class DiscreteDistLength extends DiscreteDistDoubleScalar.Rel<Length, Len
     }
 
     @Override
-    public Length draw()
+    public Length get()
     {
         return new Length(getDistribution().draw(), (LengthUnit) getUnit());
     }

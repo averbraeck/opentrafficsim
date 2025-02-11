@@ -30,7 +30,7 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.idgenerator.IdGenerator;
+import org.opentrafficsim.core.idgenerator.IdSupplier;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.DefaultTestParameters;
@@ -68,7 +68,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 public class LaneBasedGtuTest implements UNITS
 {
     /** Id generator. */
-    private IdGenerator idGenerator = new IdGenerator("id");
+    private IdSupplier idGenerator = new IdSupplier("id");
 
     /**
      * Constructor.

@@ -31,7 +31,7 @@ public class ContinuousDistForce extends ContinuousDistDoubleScalar.Rel<Force, F
     }
 
     @Override
-    public Force draw()
+    public Force get()
     {
         return new Force(getDistribution().draw(), (ForceUnit) getDisplayUnit());
     }

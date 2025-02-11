@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.TimeUnit;
@@ -23,11 +24,10 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.core.definitions.Definitions;
-import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuTemplate;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.idgenerator.IdGenerator;
+import org.opentrafficsim.core.idgenerator.IdSupplier;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
@@ -424,7 +424,7 @@ public final class OdParser
             final Od od, final Categorization categorization, final Eval eval) throws XmlParserException
     {
         OdOptions odOptions =
-                new OdOptions().set(OdOptions.GTU_ID, new IdGenerator("")).set(OdOptions.NO_LC_DIST, Length.instantiateSI(1.0));
+                new OdOptions().set(OdOptions.GTU_ID, new IdSupplier("")).set(OdOptions.NO_LC_DIST, Length.instantiateSI(1.0));
 
         // default global option to integrate defined templates
         StreamInterface stream = streamMap.getStream("generation");
@@ -614,22 +614,22 @@ public final class OdParser
         for (org.opentrafficsim.xml.generated.GtuTemplate template : gtuTemplates.values())
         {
             GtuType gtuType = definitions.get(GtuType.class, template.getGtuType().get(eval));
-            Generator<Length> lengthGenerator = ParseDistribution.parseContinuousDist(streamMap, template.getLengthDist(),
+            Supplier<Length> lengthGenerator = ParseDistribution.parseContinuousDist(streamMap, template.getLengthDist(),
                     template.getLengthDist().getLengthUnit().get(eval), eval);
-            Generator<Length> widthGenerator = ParseDistribution.parseContinuousDist(streamMap, template.getWidthDist(),
+            Supplier<Length> widthGenerator = ParseDistribution.parseContinuousDist(streamMap, template.getWidthDist(),
                     template.getWidthDist().getLengthUnit().get(eval), eval);
-            Generator<Speed> maximumSpeedGenerator = ParseDistribution.parseContinuousDist(streamMap,
-                    template.getMaxSpeedDist(), template.getMaxSpeedDist().getSpeedUnit().get(eval), eval);
+            Supplier<Speed> maximumSpeedGenerator = ParseDistribution.parseContinuousDist(streamMap, template.getMaxSpeedDist(),
+                    template.getMaxSpeedDist().getSpeedUnit().get(eval), eval);
             if (template.getMaxAccelerationDist() == null || template.getMaxDecelerationDist() == null)
             {
                 templates.add(new GtuTemplate(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator));
             }
             else
             {
-                Generator<Acceleration> maxAccelerationGenerator =
+                Supplier<Acceleration> maxAccelerationGenerator =
                         ParseDistribution.parseContinuousDist(streamMap, template.getMaxAccelerationDist(),
                                 template.getMaxAccelerationDist().getAccelerationUnit().get(eval), eval);
-                Generator<Acceleration> maxDecelerationGenerator =
+                Supplier<Acceleration> maxDecelerationGenerator =
                         ParseDistribution.parseContinuousDist(streamMap, template.getMaxDecelerationDist(),
                                 template.getMaxDecelerationDist().getAccelerationUnit().get(eval), eval);
                 templates.add(new GtuTemplate(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator,

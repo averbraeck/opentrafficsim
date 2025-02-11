@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.function.Supplier;
+
 import javax.naming.NamingException;
 
 import org.djunits.unit.DurationUnit;
@@ -17,7 +19,6 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.definitions.DefaultsNl;
-import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
@@ -82,26 +83,26 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
         OtsModelInterface model = new DummyModelForTemplateGTUTest(simulator);
         simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model,
                 HistoryManagerDevs.noHistory(simulator));
-        LaneBasedGtuTemplate passengerCar = new LaneBasedGtuTemplate(pcType, new Generator<Length>()
+        LaneBasedGtuTemplate passengerCar = new LaneBasedGtuTemplate(pcType, new Supplier<Length>()
         {
             @Override
-            public Length draw()
+            public Length get()
             {
-                return pcLength.draw();
+                return pcLength.get();
             }
-        }, new Generator<Length>()
+        }, new Supplier<Length>()
         {
             @Override
-            public Length draw()
+            public Length get()
             {
-                return pcWidth.draw();
+                return pcWidth.get();
             }
-        }, new Generator<Speed>()
+        }, new Supplier<Speed>()
         {
             @Override
-            public Speed draw()
+            public Speed get()
             {
-                return pcMaximumSpeed.draw();
+                return pcMaximumSpeed.get();
             }
         }, new DummyStrategicalPlannerFactory(), new FixedRouteGenerator(null));
         verifyFields(passengerCar, pcType, pcLength, pcWidth, pcMaximumSpeed);
@@ -112,26 +113,26 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 2.2), METER);
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> truckMaximumSpeed =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 110), KM_PER_HOUR);
-        LaneBasedGtuTemplate truck = new LaneBasedGtuTemplate(truckType, new Generator<Length>()
+        LaneBasedGtuTemplate truck = new LaneBasedGtuTemplate(truckType, new Supplier<Length>()
         {
             @Override
-            public Length draw()
+            public Length get()
             {
-                return truckLength.draw();
+                return truckLength.get();
             }
-        }, new Generator<Length>()
+        }, new Supplier<Length>()
         {
             @Override
-            public Length draw()
+            public Length get()
             {
-                return truckWidth.draw();
+                return truckWidth.get();
             }
-        }, new Generator<Speed>()
+        }, new Supplier<Speed>()
         {
             @Override
-            public Speed draw()
+            public Speed get()
             {
-                return truckMaximumSpeed.draw();
+                return truckMaximumSpeed.get();
             }
         }, new DummyStrategicalPlannerFactory(), new FixedRouteGenerator(null));
         verifyFields(truck, truckType, truckLength, truckWidth, truckMaximumSpeed);
@@ -182,26 +183,26 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 1.6), METER);
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> pcMaximumSpeed =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 180), KM_PER_HOUR);
-        GtuTemplate passengerCar = new GtuTemplate(pc, new Generator<Length>()
+        GtuTemplate passengerCar = new GtuTemplate(pc, new Supplier<Length>()
         {
             @Override
-            public Length draw()
+            public Length get()
             {
-                return pcLength.draw();
+                return pcLength.get();
             }
-        }, new Generator<Length>()
+        }, new Supplier<Length>()
         {
             @Override
-            public Length draw()
+            public Length get()
             {
-                return pcWidth.draw();
+                return pcWidth.get();
             }
-        }, new Generator<Speed>()
+        }, new Supplier<Speed>()
         {
             @Override
-            public Speed draw()
+            public Speed get()
             {
-                return pcMaximumSpeed.draw();
+                return pcMaximumSpeed.get();
             }
         });
         GtuType truckType = DefaultsNl.TRUCK;
@@ -211,26 +212,26 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 2.2), METER);
         ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit> truckMaximumSpeed =
                 new ContinuousDistDoubleScalar.Rel<>(new DistConstant(this.stream, 110), KM_PER_HOUR);
-        GtuTemplate truck = new GtuTemplate(truckType, new Generator<Length>()
+        GtuTemplate truck = new GtuTemplate(truckType, new Supplier<Length>()
         {
             @Override
-            public Length draw()
+            public Length get()
             {
-                return truckLength.draw();
+                return truckLength.get();
             }
-        }, new Generator<Length>()
+        }, new Supplier<Length>()
         {
             @Override
-            public Length draw()
+            public Length get()
             {
-                return truckWidth.draw();
+                return truckWidth.get();
             }
-        }, new Generator<Speed>()
+        }, new Supplier<Speed>()
         {
             @Override
-            public Speed draw()
+            public Speed get()
             {
-                return truckMaximumSpeed.draw();
+                return truckMaximumSpeed.get();
             }
         });
 
@@ -278,9 +279,9 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
     {
         assertTrue(gtuType.equals(templateGtuType.getGtuType()), "Type should be " + gtuType);
         LaneBasedGtuCharacteristics characteristics = templateGtuType.draw();
-        assertEquals(length.draw().getSI(), characteristics.getLength().getSI(), 0.0001, "Length should be " + length);
-        assertEquals(width.draw().getSI(), characteristics.getWidth().getSI(), 0.0001, "Width should be " + width);
-        assertEquals(maximumSpeed.draw().getSI(), characteristics.getMaximumSpeed().getSI(), 0.0001,
+        assertEquals(length.get().getSI(), characteristics.getLength().getSI(), 0.0001, "Length should be " + length);
+        assertEquals(width.get().getSI(), characteristics.getWidth().getSI(), 0.0001, "Width should be " + width);
+        assertEquals(maximumSpeed.get().getSI(), characteristics.getMaximumSpeed().getSI(), 0.0001,
                 "Maximum speed should be " + maximumSpeed);
     }
 

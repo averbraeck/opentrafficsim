@@ -861,7 +861,7 @@ public interface GeneratorPositions
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public interface RoadPosition
+    interface RoadPosition
     {
 
         /**

@@ -19,9 +19,10 @@ import org.mockito.Mockito;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
-import org.opentrafficsim.core.distributions.ConstantGenerator;
+import org.opentrafficsim.core.distributions.ConstantSupplier;
 import org.opentrafficsim.core.distributions.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.ObjectDistribution;
+import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuTemplate;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -130,6 +131,7 @@ public class OdExample
                 // @docs/08-tutorials/simulation-setup.md#How-to-set-up-model-factories-when-using-an-od-matrix
                 GtuType gtuType = category.get(GtuType.class);
                 Route route = category.get(Route.class);
+                GtuCharacteristics gtuCharacteristics = Defaults.NL.apply(gtuType, randomStream).get();
                 VehicleModel vehicleModel = VehicleModel.NONE;
 
                 CarFollowingModelFactory<?> carFollowing = new IdmPlusFactory(randomStream);
@@ -137,8 +139,8 @@ public class OdExample
                 LaneBasedTacticalPlannerFactory<?> tactical = new LmrsFactory(carFollowing, perception);
                 LaneBasedStrategicalPlannerFactory<?> strategical = new LaneBasedStrategicalRoutePlannerFactory(tactical);
 
-                return new LaneBasedGtuCharacteristics(Defaults.NL.apply(gtuType, randomStream).draw(), strategical, route,
-                        origin, destination, vehicleModel);
+                return new LaneBasedGtuCharacteristics(gtuCharacteristics, strategical, route, origin, destination,
+                        vehicleModel);
             }
         };
     }
@@ -175,8 +177,8 @@ public class OdExample
         factoryOD.setGtuTypeGenerator(gtuTypeGenerator);
 
         Set<GtuTemplate> templates = new LinkedHashSet<>();
-        templates.add(new GtuTemplate(car, new ConstantGenerator<>(Length.instantiateSI(4.5)),
-                new ConstantGenerator<>(Length.instantiateSI(1.9)), new ConstantGenerator<>(Speed.instantiateSI(50))));
+        templates.add(new GtuTemplate(car, new ConstantSupplier<>(Length.instantiateSI(4.5)),
+                new ConstantSupplier<>(Length.instantiateSI(1.9)), new ConstantSupplier<>(Speed.instantiateSI(50))));
         factoryOD.setTemplates(templates);
 
         DistContinuousMass carMass = new DistContinuousMass(new DistUniform(randomStream, 500, 1500));

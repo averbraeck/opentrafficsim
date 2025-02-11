@@ -1,5 +1,7 @@
 package org.opentrafficsim.demo.doc;
 
+import java.util.function.Supplier;
+
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
@@ -9,8 +11,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.definitions.DefaultsNl;
-import org.opentrafficsim.core.distributions.ConstantGenerator;
-import org.opentrafficsim.core.distributions.Generator;
+import org.opentrafficsim.core.distributions.ConstantSupplier;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.perception.AbstractHistorical;
@@ -38,7 +39,7 @@ public class Documentation
     static
     {
         // @docs/04-demand/iat-generator.md
-        Generator<Duration> constant = new ConstantGenerator<>(Duration.instantiateSI(2.0));
+        Supplier<Duration> constant = new ConstantSupplier<>(Duration.instantiateSI(2.0));
 
         // @docs/04-demand/traffic-od.md#nested-markov-chain-for-gtu-types
         MarkovCorrelation<GtuType, Frequency> markov = new MarkovCorrelation<>();

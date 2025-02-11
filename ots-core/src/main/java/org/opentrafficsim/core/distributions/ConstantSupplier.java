@@ -1,7 +1,9 @@
 package org.opentrafficsim.core.distributions;
 
+import java.util.function.Supplier;
+
 /**
- * Generator implementation for a constant value.
+ * Supplier implementation for a constant value.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -11,7 +13,7 @@ package org.opentrafficsim.core.distributions;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <O> type of the object returned by the draw method
  */
-public class ConstantGenerator<O> implements Generator<O>
+public class ConstantSupplier<O> implements Supplier<O>
 {
 
     /** Value. */
@@ -21,13 +23,13 @@ public class ConstantGenerator<O> implements Generator<O>
      * Constructor.
      * @param value value
      */
-    public ConstantGenerator(final O value)
+    public ConstantSupplier(final O value)
     {
         this.value = value;
     }
 
     @Override
-    public O draw()
+    public O get()
     {
         return this.value;
     }
@@ -44,7 +46,7 @@ public class ConstantGenerator<O> implements Generator<O>
     @Override
     public String toString()
     {
-        return "ConstantGenerator [value=" + this.value + "]";
+        return "ConstantSupplier [value=" + this.value + "]";
     }
 
 }

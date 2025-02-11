@@ -15,6 +15,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -46,14 +47,13 @@ import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
-import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuErrorHandler;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
-import org.opentrafficsim.core.idgenerator.IdGenerator;
+import org.opentrafficsim.core.idgenerator.IdSupplier;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkPosition;
 import org.opentrafficsim.core.network.LinkType;
@@ -229,10 +229,10 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         // Generator
         // inter-arrival time generator
         StreamInterface stream = sim.getModel().getStream("generation");
-        Generator<Duration> interarrivelTimeGenerator = new Generator<Duration>()
+        Supplier<Duration> interarrivelTimeGenerator = new Supplier<Duration>()
         {
             @Override
-            public Duration draw()
+            public Duration get()
             {
                 @SuppressWarnings("synthetic-access")
                 double mean = 1.0 / FundamentalDiagramDemo.this.demand.si;
@@ -274,7 +274,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
                 @SuppressWarnings("synthetic-access")
                 GtuType gtuType = stream.nextDouble() > FundamentalDiagramDemo.this.truckFraction ? car : truck;
 
-                return new LaneBasedGtuCharacteristics(Defaults.NL.apply(gtuType, stream).draw(),
+                return new LaneBasedGtuCharacteristics(Defaults.NL.apply(gtuType, stream).get(),
                         laneBasedStrategicalPlannerFactory, null, nodeA, nodeC, VehicleModel.MINMAX);
             }
         };
@@ -291,7 +291,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         // room checker
         RoomChecker roomChecker = new CfBaRoomChecker();
         // id generator
-        IdGenerator idGenerator = new IdGenerator("");
+        IdSupplier idGenerator = new IdSupplier("");
         // generator
         LaneBasedGtuGenerator generator = new LaneBasedGtuGenerator("generator", interarrivelTimeGenerator,
                 laneBasedGtuCharacteristicsGenerator, generatorPositions, network, sim, roomChecker, idGenerator);

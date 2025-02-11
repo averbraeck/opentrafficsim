@@ -31,7 +31,7 @@ public class DiscreteDistDuration extends DiscreteDistDoubleScalar.Rel<Duration,
     }
 
     @Override
-    public Duration draw()
+    public Duration get()
     {
         return new Duration(getDistribution().draw(), (DurationUnit) getUnit());
     }

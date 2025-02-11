@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import org.djutils.exceptions.Throw;
 
@@ -18,7 +19,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @param <O> Type of the object returned by the draw method
  */
-public class ObjectDistribution<O> implements Generator<O>, Serializable
+public class ObjectDistribution<O> implements Supplier<O>, Serializable
 {
     /** */
     private static final long serialVersionUID = 20160301L;
@@ -78,7 +79,7 @@ public class ObjectDistribution<O> implements Generator<O>, Serializable
     }
 
     @Override
-    public O draw()
+    public O get()
     {
         Throw.when(0 == this.objects.size(), IllegalStateException.class, "Cannot draw from empty collection");
         Throw.when(0 == this.cumulativeTotal, IllegalStateException.class, "Sum of frequencies or probabilities must be > 0");

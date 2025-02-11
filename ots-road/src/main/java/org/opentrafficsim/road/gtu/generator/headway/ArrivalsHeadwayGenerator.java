@@ -1,8 +1,9 @@
 package org.opentrafficsim.road.gtu.generator.headway;
 
+import java.util.function.Supplier;
+
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
-import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
@@ -18,7 +19,7 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ArrivalsHeadwayGenerator implements Generator<Duration>
+public class ArrivalsHeadwayGenerator implements Supplier<Duration>
 {
 
     /** Arrivals. */
@@ -84,7 +85,7 @@ public class ArrivalsHeadwayGenerator implements Generator<Duration>
      * @return new headway
      */
     @Override
-    public Duration draw()
+    public Duration get()
     {
         Time now = this.simulator.getSimulatorAbsTime();
         // initial slice times and frequencies

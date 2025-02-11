@@ -31,7 +31,7 @@ public class DiscreteDistVolume extends DiscreteDistDoubleScalar.Rel<Volume, Vol
     }
 
     @Override
-    public Volume draw()
+    public Volume get()
     {
         return new Volume(getDistribution().draw(), (VolumeUnit) getUnit());
     }

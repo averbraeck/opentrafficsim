@@ -481,7 +481,7 @@ public class ParameterFactoryByType implements ParameterFactory
         @Override
         public T getValue()
         {
-            return this.distribution.draw();
+            return this.distribution.get();
         }
 
         @Override

@@ -122,7 +122,7 @@ public class Distraction
      */
     public final Duration nextDuration()
     {
-        return this.dist.draw();
+        return this.dist.get();
     }
 
     /**

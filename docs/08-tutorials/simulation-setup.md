@@ -190,7 +190,7 @@ Let us assume that for this simulation the GTU type and route are defined in the
 ```java
     GtuType gtuType = category.get(GtuType.class);
     Route route = category.get(Route.class);
-    GtuCharacteristics gtuCharacteristics = GtuType.defaultCharacteristics(gtuType, origin.getNetwork(), randomStream);
+    GtuCharacteristics gtuCharacteristics = Defaults.NL.apply(gtuType, randomStream).get();
     VehicleModel vehicleModel = VehicleModel.NONE;
 ```
 
@@ -206,7 +206,7 @@ What remains to be defined is a `LaneBasedStrategicalPlannerFactory`. Defining c
 Finally all defined aspects of the characteristics can be returned.
 
 ```java
-    return new LaneBasedGtuCharacteristics(gtuCharacteristics, strategical, route, origin, destination, vehicleModel);
+    return new LaneBasedGtuCharacteristics(Defaults.NL.apply(gtuType, randomStream).get(), strategical, route, origin, destination, vehicleModel);
 ```
 
 Setup code like this is usually more elaborate as more specific, non-default characteristics are used. Extensions to this approach could be:

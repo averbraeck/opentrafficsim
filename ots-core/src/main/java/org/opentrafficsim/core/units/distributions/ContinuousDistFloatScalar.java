@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.units.distributions;
 
 import java.io.Serializable;
+import java.util.function.Supplier;
 
 import org.djunits.unit.AbsoluteLinearUnit;
 import org.djunits.unit.AbsoluteTemperatureUnit;
@@ -88,7 +89,6 @@ import org.djunits.value.vfloat.scalar.FloatTorque;
 import org.djunits.value.vfloat.scalar.FloatVolume;
 import org.djunits.value.vfloat.scalar.base.FloatScalarAbs;
 import org.djunits.value.vfloat.scalar.base.FloatScalarRel;
-import org.opentrafficsim.core.distributions.Generator;
 
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
 
@@ -109,7 +109,7 @@ public interface ContinuousDistFloatScalar
      * @param <RU> The relative unit type belonging to AU
      */
     class Abs<T extends FloatScalarAbs<AU, T, RU, ?>, AU extends AbsoluteLinearUnit<AU, RU>, RU extends Unit<RU>>
-            extends AbstractContinuousDistScalar implements Serializable, Generator<T>
+            extends AbstractContinuousDistScalar implements Serializable, Supplier<T>
     {
         /** */
         private static final long serialVersionUID = 20150000;
@@ -140,7 +140,7 @@ public interface ContinuousDistFloatScalar
          */
         @Override
         @SuppressWarnings("unchecked")
-        public final T draw()
+        public final T get()
         {
             switch (getDisplayUnit().getClass().getSimpleName())
             {
@@ -176,7 +176,7 @@ public interface ContinuousDistFloatScalar
      * @param <U> The unit type used
      */
     class Rel<T extends FloatScalarRel<U, T>, U extends Unit<U>> extends AbstractContinuousDistScalar
-            implements Serializable, Generator<T>
+            implements Serializable, Supplier<T>
     {
         /** */
         private static final long serialVersionUID = 20150000L;
@@ -207,7 +207,7 @@ public interface ContinuousDistFloatScalar
          */
         @Override
         @SuppressWarnings("unchecked")
-        public final T draw()
+        public final T get()
         {
             switch (getDisplayUnit().getClass().getSimpleName())
             {

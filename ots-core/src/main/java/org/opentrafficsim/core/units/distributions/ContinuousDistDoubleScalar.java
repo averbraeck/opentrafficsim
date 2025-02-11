@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.units.distributions;
 
 import java.io.Serializable;
+import java.util.function.Supplier;
 
 import org.djunits.unit.AbsoluteLinearUnit;
 import org.djunits.unit.AbsoluteTemperatureUnit;
@@ -88,7 +89,6 @@ import org.djunits.value.vdouble.scalar.Torque;
 import org.djunits.value.vdouble.scalar.Volume;
 import org.djunits.value.vdouble.scalar.base.DoubleScalarAbs;
 import org.djunits.value.vdouble.scalar.base.DoubleScalarRel;
-import org.opentrafficsim.core.distributions.Generator;
 
 import nl.tudelft.simulation.jstats.distributions.DistContinuous;
 
@@ -109,7 +109,7 @@ public interface ContinuousDistDoubleScalar
      * @param <RU> The relative unit type belonging to AU
      */
     class Abs<T extends DoubleScalarAbs<AU, T, RU, ?>, AU extends AbsoluteLinearUnit<AU, RU>, RU extends Unit<RU>>
-            extends AbstractContinuousDistScalar implements Serializable, Generator<T>
+            extends AbstractContinuousDistScalar implements Serializable, Supplier<T>
     {
         /** */
         private static final long serialVersionUID = 20150000L;
@@ -140,7 +140,7 @@ public interface ContinuousDistDoubleScalar
          */
         @Override
         @SuppressWarnings("unchecked")
-        public T draw()
+        public T get()
         {
             switch (getDisplayUnit().getClass().getSimpleName())
             {
@@ -175,7 +175,7 @@ public interface ContinuousDistDoubleScalar
      * @param <U> The unit type used
      */
     class Rel<T extends DoubleScalarRel<U, T>, U extends Unit<U>> extends AbstractContinuousDistScalar
-            implements Serializable, Generator<T>
+            implements Serializable, Supplier<T>
     {
         /** */
         private static final long serialVersionUID = 20150000L;
@@ -206,7 +206,7 @@ public interface ContinuousDistDoubleScalar
          */
         @Override
         @SuppressWarnings("unchecked")
-        public T draw()
+        public T get()
         {
             switch (getDisplayUnit().getClass().getSimpleName())
             {

@@ -31,7 +31,7 @@ public class DiscreteDistDimensionless extends DiscreteDistDoubleScalar.Rel<Dime
     }
 
     @Override
-    public Dimensionless draw()
+    public Dimensionless get()
     {
         return new Dimensionless(getDistribution().draw(), (DimensionlessUnit) getUnit());
     }

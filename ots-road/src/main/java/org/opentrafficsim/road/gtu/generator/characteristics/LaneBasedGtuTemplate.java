@@ -1,9 +1,10 @@
 package org.opentrafficsim.road.gtu.generator.characteristics;
 
+import java.util.function.Supplier;
+
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.distributions.Generator;
 import org.opentrafficsim.core.gtu.GtuTemplate;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.route.Route;
@@ -27,31 +28,30 @@ public class LaneBasedGtuTemplate extends GtuTemplate implements LaneBasedGtuCha
     /** Factory for the strategical planner. */
     private final LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory;
 
-    /** Route Generator. */
-    private final Generator<Route> routeGenerator;
+    /** Route supplier. */
+    private final Supplier<Route> routeSupplier;
 
     /**
      * Constructor.
      * @param gtuType The GtuType to make it identifiable.
-     * @param lengthGenerator Generator&lt;Length&gt; generator for the length of the GTU type (parallel with driving
-     *            direction).
-     * @param widthGenerator generator for the width of the GTU type (perpendicular to driving direction).
-     * @param maximumSpeedGenerator generator for the maximum speed of the GTU type (in the driving direction).
+     * @param lengthSupplier Supplier&lt;Length&gt; Supplier for the length of the GTU type (parallel with driving direction).
+     * @param widthSupplier Supplier for the width of the GTU type (perpendicular to driving direction).
+     * @param maximumSpeedSupplier Supplier for the maximum speed of the GTU type (in the driving direction).
      * @param strategicalPlannerFactory Factory for the strategical planner (e.g., route determination)
-     * @param routeGenerator route generator
+     * @param routeSupplier route Supplier
      * @throws NullPointerException when one or more parameters are null
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public LaneBasedGtuTemplate(final GtuType gtuType, final Generator<Length> lengthGenerator,
-            final Generator<Length> widthGenerator, final Generator<Speed> maximumSpeedGenerator,
-            final LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory, final Generator<Route> routeGenerator)
+    public LaneBasedGtuTemplate(final GtuType gtuType, final Supplier<Length> lengthSupplier,
+            final Supplier<Length> widthSupplier, final Supplier<Speed> maximumSpeedSupplier,
+            final LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory, final Supplier<Route> routeSupplier)
             throws NullPointerException
     {
-        super(gtuType, lengthGenerator, widthGenerator, maximumSpeedGenerator);
+        super(gtuType, lengthSupplier, widthSupplier, maximumSpeedSupplier);
         Throw.whenNull(strategicalPlannerFactory, "strategicalPlannerFactory is null");
-        Throw.whenNull(routeGenerator, "Route generator is null");
+        Throw.whenNull(routeSupplier, "Route Supplier is null");
         this.strategicalPlannerFactory = strategicalPlannerFactory;
-        this.routeGenerator = routeGenerator;
+        this.routeSupplier = routeSupplier;
     }
 
     /**
@@ -61,7 +61,7 @@ public class LaneBasedGtuTemplate extends GtuTemplate implements LaneBasedGtuCha
     @Override
     public final LaneBasedGtuCharacteristics draw()
     {
-        return new LaneBasedGtuCharacteristics(super.draw(), this.strategicalPlannerFactory, this.routeGenerator.draw(), null,
+        return new LaneBasedGtuCharacteristics(super.get(), this.strategicalPlannerFactory, this.routeSupplier.get(), null,
                 null, VehicleModel.MINMAX);
     }
 

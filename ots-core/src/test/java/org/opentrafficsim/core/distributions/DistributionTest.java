@@ -66,7 +66,7 @@ public class DistributionTest
         assertEquals(0, dist.size(), "size should be 0");
         try
         {
-            dist.draw();
+            dist.get();
             fail("draw with empty set should have thrown a IllegalStateException");
         }
         catch (IllegalStateException pe)
@@ -124,7 +124,7 @@ public class DistributionTest
 
         for (int i = 0; i < 1000; i++)
         {
-            TestObject to2 = dist.draw();
+            TestObject to2 = dist.get();
             assertEquals(to, to2, "Result of draw() should be equal to to");
         }
         try
@@ -160,7 +160,7 @@ public class DistributionTest
         dist.modifyFrequency(0, 0);
         try
         {
-            dist.draw();
+            dist.get();
             fail("Sum of frequencies == 0 should have thrown a IllegalStateException");
         }
         catch (IllegalStateException pe)
@@ -176,7 +176,7 @@ public class DistributionTest
         assertEquals(10, dist.get(1).frequency(), 0.00001, "frequency of element 1 should be 10");
         for (int i = 0; i < 1000; i++)
         {
-            TestObject to3 = dist.draw();
+            TestObject to3 = dist.get();
             assertEquals(to2, to3, "Result of draw() should be equal to to2");
         }
         try
@@ -203,7 +203,7 @@ public class DistributionTest
         int[] observed = new int[2];
         for (int i = 0; i < 10000; i++)
         {
-            TestObject to3 = dist.draw();
+            TestObject to3 = dist.get();
             if (to3.equals(to))
             {
                 observed[0]++;
@@ -225,7 +225,7 @@ public class DistributionTest
         assertEquals(0, dist.size(), "after clear the set should be empty");
         try
         {
-            dist.draw();
+            dist.get();
             fail("Empty set should throw a IllegalStateException");
         }
         catch (IllegalStateException pe)
@@ -286,7 +286,7 @@ public class DistributionTest
         observed = new int[2];
         for (int i = 0; i < 10000; i++)
         {
-            TestObject to3 = dist.draw();
+            TestObject to3 = dist.get();
             if (to3.equals(to))
             {
                 observed[0]++;
@@ -323,7 +323,7 @@ public class DistributionTest
         observed = new int[2];
         for (int i = 0; i < 10000; i++)
         {
-            TestObject to3 = dist.draw();
+            TestObject to3 = dist.get();
             if (to3.equals(to))
             {
                 observed[0]++;
