@@ -48,7 +48,7 @@ public final class LaneGeometryUtil
         System.arraycopy(leftEdge.getPointList().toArray(), 0, points, 0, leftEdge.size());
         System.arraycopy(rightEdge.reverse().getPointList().toArray(), 0, points, leftEdge.size(), rightEdge.size());
         points[points.length - 1] = points[0]; // close loop
-        return new Polygon2d(true, points);
+        return new Polygon2d(points);
     }
 
     /**

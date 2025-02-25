@@ -374,7 +374,7 @@ public class OtsLine2dTest
         assertTrue(p0.equals(result.get(0)), "first point is p0");
         assertTrue(p1.equals(result.get(1)), "second point is p1");
         Point2d p1Same = new Point2d(4, 5);
-        result = new OtsLine2d(new PolyLine2d(true, new Point2d[] {p0, p0, p0, p0, p1Same, p0, p1, p1, p1Same, p1, p1}));
+        result = new OtsLine2d(new PolyLine2d(new Point2d[] {p0, p0, p0, p0, p1Same, p0, p1, p1, p1Same, p1, p1}));
         assertEquals(4, result.size(), "result should contain 4 points");
         assertTrue(p0.equals(result.get(0)), "first point is p0");
         assertTrue(p1.equals(result.get(1)), "second point is p1");

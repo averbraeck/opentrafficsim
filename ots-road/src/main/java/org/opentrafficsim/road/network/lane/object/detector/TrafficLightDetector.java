@@ -154,7 +154,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
                     pathPoints.addAll(intermediateLane.getCenterLine().getPointList());
                 }
                 pathPoints.addAll(laneB.getCenterLine().extract(Length.ZERO, positionB).getPointList());
-                path = new OtsLine2d(new PolyLine2d(true, pathPoints));
+                path = new OtsLine2d(new PolyLine2d(pathPoints));
             }
             OtsLine2d left = path.offsetLine(0.5);
             OtsLine2d right = path.offsetLine(-0.5);

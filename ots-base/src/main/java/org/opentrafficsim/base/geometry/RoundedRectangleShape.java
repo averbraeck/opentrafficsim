@@ -64,7 +64,7 @@ public class RoundedRectangleShape implements OtsShape
     {
         /*-
          * Equation derived from r^2 = (r-dx)^2 + (r-dy^2)  [note: dx and dy here as half of input values, i.e. this.dx/this.dy]
-         * 
+         *
          *                dx
          *    ___       ______
          * ^ |   ''--_ |      | dy
@@ -161,7 +161,7 @@ public class RoundedRectangleShape implements OtsShape
             pqReversed.forEach((p) -> points.add(new Point2d(-p.x, p.y))); // top left quadrant
             pq.forEach((p) -> points.add(p.neg())); // bottom left quadrant
             pqReversed.forEach((p) -> points.add(new Point2d(p.x, -p.y))); // bottom right quadrant
-            this.polygon = new Polygon2d(true, points);
+            this.polygon = new Polygon2d(points);
         }
         return this.polygon;
     }
