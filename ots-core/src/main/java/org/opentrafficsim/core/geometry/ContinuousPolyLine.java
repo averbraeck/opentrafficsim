@@ -3,7 +3,6 @@ package org.opentrafficsim.core.geometry;
 import java.util.List;
 
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
@@ -39,10 +38,10 @@ public class ContinuousPolyLine implements ContinuousLine
     {
         Throw.whenNull(line, "Line may not be null.");
         this.line = line;
-        Ray2d startRay = line.getLocationFractionExtended(0.0);
-        Ray2d endRay = line.getLocationFractionExtended(1.0);
-        this.startPoint = new DirectedPoint2d(startRay.x, startRay.y, startRay.dirZ);
-        this.endPoint = new DirectedPoint2d(endRay.x, endRay.y, endRay.dirZ);
+        DirectedPoint2d startPt = line.getLocationFractionExtended(0.0);
+        DirectedPoint2d endPt = line.getLocationFractionExtended(1.0);
+        this.startPoint = new DirectedPoint2d(startPt.x, startPt.y, startPt.dirZ);
+        this.endPoint = new DirectedPoint2d(endPt.x, endPt.y, endPt.dirZ);
     }
 
     /**
@@ -131,8 +130,7 @@ public class ContinuousPolyLine implements ContinuousLine
         {
             knotOffset[i] = offset.apply(knots[i]);
         }
-        PolyLine2d offsetLine =
-                OtsGeometryUtil.offsetLine(this.line, knots, knotOffset);
+        PolyLine2d offsetLine = OtsGeometryUtil.offsetLine(this.line, knots, knotOffset);
         Point2d start = OtsGeometryUtil.offsetPoint(this.startPoint, offset.apply(0.0));
         Point2d end = OtsGeometryUtil.offsetPoint(this.endPoint, offset.apply(1.0));
         List<Point2d> points = offsetLine.getPointList();

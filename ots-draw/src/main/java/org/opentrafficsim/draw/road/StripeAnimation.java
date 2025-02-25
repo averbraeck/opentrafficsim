@@ -150,8 +150,8 @@ public class StripeAnimation extends OtsRenderable<StripeData>
                 if (!sameLine)
                 {
                     // project dash from reference line on the own center line, using fractional projection (i.e. pizza slices)
-                    Ray2d p1 = referenceLine.getLocationFraction(fraction1);
-                    Ray2d p2 = referenceLine.getLocationFraction(fraction2);
+                    DirectedPoint2d p1 = referenceLine.getLocationFraction(fraction1);
+                    DirectedPoint2d p2 = referenceLine.getLocationFraction(fraction2);
                     fraction1 = centerLine.projectFractional(p1.x, p1.y, FractionalFallback.ENDPOINT);
                     fraction2 = centerLine.projectFractional(p2.x, p2.y, FractionalFallback.ENDPOINT);
                 }

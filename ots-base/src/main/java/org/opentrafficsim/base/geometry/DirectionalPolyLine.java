@@ -74,13 +74,14 @@ public class DirectionalPolyLine extends OtsLine2d
     public DirectionalPolyLine extractFractional(final double start, final double end)
     {
         return new DirectionalPolyLine(super.extractFractional(start, end),
-                Direction.instantiateSI(getLocationFraction(start).dirZ), Direction.instantiateSI(getLocationFraction(end).dirZ));
+                Direction.instantiateSI(getLocationFraction(start).dirZ),
+                Direction.instantiateSI(getLocationFraction(end).dirZ));
     }
 
     @Override
     public Ray2d getLocationFraction(final double fraction)
     {
-        Ray2d ray = super.getLocationFraction(fraction);
+        Ray2d ray = new Ray2d(super.getLocationFraction(fraction));
         if (fraction == 0.0)
         {
             ray = new Ray2d(ray, this.startDirection.si);

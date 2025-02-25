@@ -26,7 +26,6 @@ import org.djunits.value.vdouble.vector.LengthVector;
 import org.djutils.draw.DrawRuntimeException;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
@@ -572,8 +571,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             return;
         }
         this.flattenedDesignLine = this.designLine.flatten(getFlattener());
-        Ray2d ray = this.flattenedDesignLine.getLocationFractionExtended(0.5);
-        this.location = new DirectedPoint2d(ray.x, ray.y, ray.dirZ);
+        DirectedPoint2d point = this.flattenedDesignLine.getLocationFractionExtended(0.5);
+        this.location = new DirectedPoint2d(point.x, point.y, point.dirZ);
         this.contour =
                 new Polygon2d(PolyLine2d.concatenate(this.flattenedDesignLine, this.flattenedDesignLine.reverse()).iterator());
         if (this.priorityAnimation != null)

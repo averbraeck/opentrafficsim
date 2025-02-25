@@ -11,7 +11,6 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.DrawRuntimeException;
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
@@ -241,7 +240,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      */
     public final DirectedPoint2d getLocationExtended(final Length position)
     {
-        return rayToPoint(getLocationExtended(position.si));
+        return getLocationExtended(position.si);
     }
 
     /**
@@ -252,7 +251,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      */
     public final DirectedPoint2d getLocationExtendedSI(final double positionSI)
     {
-        return rayToPoint(getLocationExtended(positionSI));
+        return getLocationExtended(positionSI);
     }
 
     /**
@@ -263,7 +262,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      */
     public final DirectedPoint2d getLocationPointFraction(final double fraction) throws DrawRuntimeException
     {
-        return rayToPoint(getLocationFraction(fraction));
+        return getLocationFraction(fraction);
     }
 
     /**
@@ -276,7 +275,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
     public final DirectedPoint2d getLocationPointFraction(final double fraction, final double tolerance)
             throws DrawRuntimeException
     {
-        return rayToPoint(getLocationFraction(fraction, tolerance));
+        return getLocationFraction(fraction, tolerance);
     }
 
     /**
@@ -286,7 +285,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      */
     public final DirectedPoint2d getLocationPointFractionExtended(final double fraction)
     {
-        return rayToPoint(getLocationFractionExtended(fraction));
+        return getLocationFractionExtended(fraction);
     }
 
     /**
@@ -297,7 +296,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      */
     public final DirectedPoint2d getLocation(final Length position) throws DrawRuntimeException
     {
-        return rayToPoint(getLocation(position.si));
+        return getLocation(position.si);
     }
 
     /**
@@ -308,17 +307,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      */
     public final DirectedPoint2d getLocationSI(final double positionSI) throws DrawRuntimeException
     {
-        return rayToPoint(getLocation(positionSI));
-    }
-
-    /**
-     * Returns an oriented point based on the information of a ray.
-     * @param ray ray
-     * @return oriented point based on the information of a ray
-     */
-    private DirectedPoint2d rayToPoint(final Ray2d ray)
-    {
-        return new DirectedPoint2d(ray.x, ray.y, ray.dirZ);
+        return getLocation(positionSI);
     }
 
     /**

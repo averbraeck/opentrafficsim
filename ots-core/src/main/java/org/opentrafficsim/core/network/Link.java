@@ -126,7 +126,7 @@ public class Link extends LocalEventProducer
         this.endNode.addLink(this);
         this.designLine = designLine;
         this.elevation = elevation;
-        this.contour = new Polygon2d(PolyLine2d.concatenate(this.designLine, this.designLine.reverse()).getPoints());
+        this.contour = new Polygon2d(PolyLine2d.concatenate(this.designLine, this.designLine.reverse()).iterator());
         this.location = this.designLine.getLocationPointFractionExtended(0.5);
         Polygon2d relativeContour = OtsLocatable.relativeContour(this);
         this.shape = new PolygonShape(relativeContour);

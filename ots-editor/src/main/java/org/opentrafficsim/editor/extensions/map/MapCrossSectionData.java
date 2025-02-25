@@ -3,7 +3,6 @@ package org.opentrafficsim.editor.extensions.map;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
@@ -41,8 +40,8 @@ public class MapCrossSectionData implements CrossSectionElementData
     public MapCrossSectionData(final XsdTreeNode linkNode, final CrossSectionGeometry geometry)
     {
         this.linkNode = linkNode;
-        Ray2d ray = geometry.centerLine().getLocationFractionExtended(0.5);
-        this.location = new DirectedPoint2d(ray.x, ray.y, ray.dirZ);
+        DirectedPoint2d point = geometry.centerLine().getLocationFractionExtended(0.5);
+        this.location = new DirectedPoint2d(point.x, point.y, point.dirZ);
         this.geometry = geometry;
     }
 

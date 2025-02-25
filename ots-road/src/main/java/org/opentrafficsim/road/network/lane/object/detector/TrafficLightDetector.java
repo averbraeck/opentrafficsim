@@ -158,10 +158,10 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
             }
             OtsLine2d left = path.offsetLine(0.5);
             OtsLine2d right = path.offsetLine(-0.5);
-            Ray2d ray = path.getLocationFraction(0.5);
-            double dx = ray.x;
-            double dy = ray.y;
-            this.location = new DirectedPoint2d(dx, dy);
+            DirectedPoint2d point = path.getLocationFraction(0.5);
+            double dx = point.x;
+            double dy = point.y;
+            this.location = new DirectedPoint2d(dx, dy, 0.0);
             List<Point2d> geometryPoints = new ArrayList<>();
             geometryPoints.add(new Point2d(right.get(0).x - dx, right.get(0).y - dy));
             for (Point2d p : left.getPointList())
