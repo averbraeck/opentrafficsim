@@ -6,7 +6,7 @@ import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.PositionUnit;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.vector.PositionVector;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
@@ -80,7 +80,7 @@ public class GtuTransceiver extends AbstractEventTransceiver
             returnWrapper.nack("No GTU found with id \"" + address[0] + "\"");
             return null;
         }
-        OrientedPoint2d gtuPosition = gtu.getLocation();
+        DirectedPoint2d gtuPosition = gtu.getLocation();
         return new Object[] {gtu.getId(), gtu.getType().getId(),
                 new PositionVector(new double[] {gtuPosition.x, gtuPosition.y}, PositionUnit.METER),
                 new Direction(gtuPosition.getDirZ(), DirectionUnit.EAST_DEGREE), gtu.getSpeed(), gtu.getAcceleration()};

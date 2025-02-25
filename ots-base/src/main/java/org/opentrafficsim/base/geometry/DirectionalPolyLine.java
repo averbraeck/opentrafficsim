@@ -5,7 +5,7 @@ import java.util.List;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Ray2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 
@@ -49,8 +49,8 @@ public class DirectionalPolyLine extends OtsLine2d
     public DirectionalPolyLine directionalOffsetLine(final double offset)
     {
         PolyLine2d offsetLine = offsetLine(offset);
-        OrientedPoint2d start = new OrientedPoint2d(getFirst().x, getFirst().y, this.startDirection.si);
-        OrientedPoint2d end = new OrientedPoint2d(getLast().x, getLast().y, this.endDirection.si);
+        DirectedPoint2d start = new DirectedPoint2d(getFirst().x, getFirst().y, this.startDirection.si);
+        DirectedPoint2d end = new DirectedPoint2d(getLast().x, getLast().y, this.endDirection.si);
         List<Point2d> points = offsetLine.getPointList();
         points.set(0, OtsGeometryUtil.offsetPoint(start, offset));
         points.set(points.size() - 1, OtsGeometryUtil.offsetPoint(end, offset));

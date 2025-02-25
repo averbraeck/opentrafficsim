@@ -4,7 +4,7 @@ import java.util.Set;
 
 import org.djutils.base.Identifiable;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.core.object.NonLocatedObject;
 
@@ -47,7 +47,7 @@ public interface GtuGenerator extends NonLocatedObject
         int getQueueCount();
 
         @Override
-        OrientedPoint2d getLocation();
+        DirectedPoint2d getLocation();
 
         @Override
         default Polygon2d getContour()

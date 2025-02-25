@@ -6,7 +6,7 @@ import java.awt.geom.RectangularShape;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.animation.gtu.colorer.GtuColorerManager;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData;
@@ -46,7 +46,7 @@ public class AnimationGtuData implements GtuData
     }
 
     @Override
-    public OrientedPoint2d getLocation()
+    public DirectedPoint2d getLocation()
     {
         return this.gtu.getLocation();
     }

@@ -12,7 +12,7 @@ import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.line.Ray2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
@@ -77,7 +77,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
     private final DetectorType type;
 
     /** Center location. */
-    private final OrientedPoint2d location;
+    private final DirectedPoint2d location;
 
     /** Geometry of the detector. */
     private final Polygon2d contour;
@@ -161,7 +161,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
             Ray2d ray = path.getLocationFraction(0.5);
             double dx = ray.x;
             double dy = ray.y;
-            this.location = new OrientedPoint2d(dx, dy);
+            this.location = new DirectedPoint2d(dx, dy);
             List<Point2d> geometryPoints = new ArrayList<>();
             geometryPoints.add(new Point2d(right.get(0).x - dx, right.get(0).y - dy));
             for (Point2d p : left.getPointList())
@@ -408,7 +408,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
     }
 
     @Override
-    public final OrientedPoint2d getLocation()
+    public final DirectedPoint2d getLocation()
     {
         return this.location;
     }

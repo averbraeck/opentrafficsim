@@ -4,7 +4,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.line.Ray2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
 import org.opentrafficsim.editor.XsdTreeNode;
@@ -25,7 +25,7 @@ public class MapCrossSectionData implements CrossSectionElementData
     private final XsdTreeNode linkNode;
 
     /** Location. */
-    private final OrientedPoint2d location;
+    private final DirectedPoint2d location;
 
     /** Geometry. */
     private final CrossSectionGeometry geometry;
@@ -42,12 +42,12 @@ public class MapCrossSectionData implements CrossSectionElementData
     {
         this.linkNode = linkNode;
         Ray2d ray = geometry.centerLine().getLocationFractionExtended(0.5);
-        this.location = new OrientedPoint2d(ray.x, ray.y, ray.phi);
+        this.location = new DirectedPoint2d(ray.x, ray.y, ray.phi);
         this.geometry = geometry;
     }
 
     @Override
-    public OrientedPoint2d getLocation()
+    public DirectedPoint2d getLocation()
     {
         return this.location;
     }

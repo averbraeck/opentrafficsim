@@ -19,7 +19,7 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.DrawRuntimeException;
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.geometry.OtsLine2d.FractionalFallback;
@@ -260,9 +260,9 @@ public class OtsLine2dTest
             final double expectedZRotation)
     {
         double length = line.getLength();
-        checkOrientedPoint2d(line.getLocationExtendedSI(fraction * length), expectedPoint, expectedZRotation);
+        checkDirectedPoint2d(line.getLocationExtendedSI(fraction * length), expectedPoint, expectedZRotation);
         Length typedLength = new Length(fraction * length, LengthUnit.METER);
-        checkOrientedPoint2d(line.getLocationExtended(typedLength), expectedPoint, expectedZRotation);
+        checkDirectedPoint2d(line.getLocationExtended(typedLength), expectedPoint, expectedZRotation);
         if (fraction < 0 || fraction > 1)
         {
             try
@@ -295,20 +295,20 @@ public class OtsLine2dTest
         }
         else
         {
-            checkOrientedPoint2d(line.getLocationSI(fraction * length), expectedPoint, expectedZRotation);
-            checkOrientedPoint2d(line.getLocation(typedLength), expectedPoint, expectedZRotation);
-            checkOrientedPoint2d(line.getLocationPointFraction(fraction), expectedPoint, expectedZRotation);
+            checkDirectedPoint2d(line.getLocationSI(fraction * length), expectedPoint, expectedZRotation);
+            checkDirectedPoint2d(line.getLocation(typedLength), expectedPoint, expectedZRotation);
+            checkDirectedPoint2d(line.getLocationPointFraction(fraction), expectedPoint, expectedZRotation);
         }
 
     }
 
     /**
-     * Verify the location and direction of a OrientedPoint2d.
-     * @param dp the OrientedPoint2d that should be verified
+     * Verify the location and direction of a DirectedPoint2d.
+     * @param dp the DirectedPoint2d that should be verified
      * @param expectedPoint the expected location (or null if location should not be checked)
      * @param expectedZRotation the expected Z rotation
      */
-    private void checkOrientedPoint2d(final OrientedPoint2d dp, final Point2d expectedPoint, final double expectedZRotation)
+    private void checkDirectedPoint2d(final DirectedPoint2d dp, final Point2d expectedPoint, final double expectedZRotation)
     {
         if (null != expectedPoint)
         {

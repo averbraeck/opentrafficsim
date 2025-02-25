@@ -20,7 +20,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.PositionVector;
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
@@ -206,7 +206,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     {
         Throw.when(null == longitudinalPosition, GtuException.class, "InitialLongitudinalPositions is null");
 
-        OrientedPoint2d initialLocation = longitudinalPosition.getLocation();
+        DirectedPoint2d initialLocation = longitudinalPosition.getLocation();
 
         // TODO: move this to super.init(...), and remove setOperationalPlan(...) method
         // Give the GTU a 1 micrometer long operational plan, or a stand-still plan, so the first move and events will work
@@ -393,7 +393,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         List<CrossSection> newLanes = new ArrayList<>();
         int index = laneChangeDirection.isLeft() ? 0 : 1;
         int numRegistered = 0;
-        OrientedPoint2d point = getLocation();
+        DirectedPoint2d point = getLocation();
         Map<Lane, Double> addToLanes = new LinkedHashMap<>();
         for (CrossSection crossSection : this.crossSections)
         {
@@ -489,7 +489,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
 
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    protected synchronized boolean move(final OrientedPoint2d fromLocation)
+    protected synchronized boolean move(final DirectedPoint2d fromLocation)
             throws SimRuntimeException, GtuException, NetworkException, ParameterException
     {
         if (this.isDestroyed())
@@ -1135,7 +1135,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                     }
                     Throw.when(lateralIndex == -1, GtuException.class, "GTU %s is not on lane %s.", this, lane);
 
-                    OrientedPoint2d p = plan.getLocation(when, relativePosition);
+                    DirectedPoint2d p = plan.getLocation(when, relativePosition);
                     double f = lane.getCenterLine().projectFractional(lane.getLink().getStartNode().getHeading(),
                             lane.getLink().getEndNode().getHeading(), p.x, p.y, FractionalFallback.NaN);
                     if (!Double.isNaN(f))
@@ -1380,7 +1380,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         {
             // ignore. not important at destroy
         }
-        OrientedPoint2d location = this.getOperationalPlan() == null ? new OrientedPoint2d(0.0, 0.0, 0.0) : getLocation();
+        DirectedPoint2d location = this.getOperationalPlan() == null ? new DirectedPoint2d(0.0, 0.0, 0.0) : getLocation();
         synchronized (this.lock)
         {
             for (CrossSection crossSection : this.crossSections)
@@ -1596,9 +1596,9 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         }
         Throw.when(latIndex == -1 || longIndex == -1, GtuException.class, "GTU %s is not on %s", getId(), lane);
         Lane refCrossSectionLane = this.crossSections.get(longIndex).getLanes().get(latIndex);
-        OrientedPoint2d loc = getLocation();
+        DirectedPoint2d loc = getLocation();
         double f = refCrossSectionLane.getCenterLine().projectOrthogonalSnap(loc.x, loc.y);
-        OrientedPoint2d p = Try.assign(() -> refCrossSectionLane.getCenterLine().getLocationPointFraction(f),
+        DirectedPoint2d p = Try.assign(() -> refCrossSectionLane.getCenterLine().getLocationPointFraction(f),
                 GtuException.class, "GTU %s is not orthogonal to the reference lane.", getId());
         double d = p.distance(loc);
         if (this.crossSections.get(0).getLanes().size() > 1)

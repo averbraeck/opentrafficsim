@@ -3,7 +3,7 @@ package org.opentrafficsim.core.object;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.geometry.OtsLocatable;
@@ -33,7 +33,7 @@ public class StaticObject extends LocalEventProducer implements LocatedObject
     private final Polygon2d contour;
 
     /** Location. */
-    private final OrientedPoint2d location;
+    private final DirectedPoint2d location;
 
     /** Bounds. */
     private final Bounds2d bounds;
@@ -51,7 +51,7 @@ public class StaticObject extends LocalEventProducer implements LocatedObject
      * @param contour the top-level 2D outline of the object
      * @param height the height of the object
      */
-    protected StaticObject(final String id, final OrientedPoint2d location, final Polygon2d contour, final Length height)
+    protected StaticObject(final String id, final DirectedPoint2d location, final Polygon2d contour, final Length height)
     {
         Throw.whenNull(id, "object id cannot be null");
         Throw.whenNull(contour, "geometry cannot be null");
@@ -90,7 +90,7 @@ public class StaticObject extends LocalEventProducer implements LocatedObject
      */
     public static StaticObject create(final String id, final Polygon2d geometry, final Length height) throws NetworkException
     {
-        OrientedPoint2d point = new OrientedPoint2d(geometry.getBounds().midPoint(), 0.0);
+        DirectedPoint2d point = new DirectedPoint2d(geometry.getBounds().midPoint(), 0.0);
         StaticObject staticObject = new StaticObject(id, point, geometry, height);
         staticObject.init();
         return staticObject;
@@ -141,7 +141,7 @@ public class StaticObject extends LocalEventProducer implements LocatedObject
 
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public OrientedPoint2d getLocation()
+    public DirectedPoint2d getLocation()
     {
         return this.location;
     }

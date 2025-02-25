@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.djunits.unit.AngleUnit;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
 import org.junit.jupiter.api.Test;
@@ -47,7 +47,7 @@ public class ContinuousArcTest
     {
         Try.testFail(() -> new ContinuousArc(null, 1.0, true, Angle.instantiateSI(Math.PI)), "Should fail on null start point.",
                 NullPointerException.class);
-        OrientedPoint2d start = new OrientedPoint2d(1.0, 0.0, Math.PI / 2.0);
+        DirectedPoint2d start = new DirectedPoint2d(1.0, 0.0, Math.PI / 2.0);
         Try.testFail(() -> new ContinuousArc(start, -1.0, true, Angle.instantiateSI(Math.PI)),
                 "Should fail on negative radius.", IllegalArgumentException.class);
         Try.testFail(() -> new ContinuousArc(start, 1.0, true, Angle.instantiateSI(-Math.PI)), "Should fail on negative angle.",
@@ -63,7 +63,7 @@ public class ContinuousArcTest
     public void continuousLineTest()
     {
         // half standard unit circle
-        OrientedPoint2d start = new OrientedPoint2d(1.0, 0.0, Math.PI / 2.0);
+        DirectedPoint2d start = new DirectedPoint2d(1.0, 0.0, Math.PI / 2.0);
         ContinuousArc arc = new ContinuousArc(start, 1.0, true, Angle.instantiateSI(Math.PI));
 
         isApproximal(arc.getStartPoint(), 1.0, 0.0);
@@ -85,7 +85,7 @@ public class ContinuousArcTest
         double u = Math.sin(Math.PI / 4.0);
 
         // half standard unit circle
-        OrientedPoint2d start = new OrientedPoint2d(1.0, 0.0, Math.PI / 2.0);
+        DirectedPoint2d start = new DirectedPoint2d(1.0, 0.0, Math.PI / 2.0);
         ContinuousArc arc = new ContinuousArc(start, 1.0, true, Angle.instantiateSI(Math.PI));
         NumSegments numSegments4 = new NumSegments(4);
         PolyLine2d line = arc.flatten(numSegments4);
@@ -105,7 +105,7 @@ public class ContinuousArcTest
         isApproximal(line.get(4), 3.0, 0.0);
 
         // half unit circle but with r=2.0
-        start = new OrientedPoint2d(2.0, 0.0, Math.PI / 2.0);
+        start = new DirectedPoint2d(2.0, 0.0, Math.PI / 2.0);
         arc = new ContinuousArc(start, 2.0, true, Angle.instantiateSI(Math.PI));
         line = arc.flatten(numSegments4);
         isApproximal(line.get(0), 2.0, 0.0);
@@ -115,7 +115,7 @@ public class ContinuousArcTest
         isApproximal(line.get(4), -2.0, 0.0);
 
         // negative half unit circle
-        start = new OrientedPoint2d(1.0, 0.0, -Math.PI / 2.0);
+        start = new DirectedPoint2d(1.0, 0.0, -Math.PI / 2.0);
         arc = new ContinuousArc(start, 1.0, false, Angle.instantiateSI(Math.PI));
         line = arc.flatten(numSegments4);
         isApproximal(line.get(0), 1.0, 0.0);
@@ -142,7 +142,7 @@ public class ContinuousArcTest
     {
         for (boolean left : new boolean[] {true, false})
         {
-            OrientedPoint2d start = new OrientedPoint2d(1.0, 0.0, Math.PI / 2.0);
+            DirectedPoint2d start = new DirectedPoint2d(1.0, 0.0, Math.PI / 2.0);
             ContinuousArc arc = new ContinuousArc(start, 1.0, left, Angle.instantiateSI(Math.PI));
 
             // 10 degrees
@@ -169,7 +169,7 @@ public class ContinuousArcTest
     public void offsetArcTest()
     {
         // half standard unit circle
-        OrientedPoint2d start = new OrientedPoint2d(1.0, 0.0, Math.PI / 2.0);
+        DirectedPoint2d start = new DirectedPoint2d(1.0, 0.0, Math.PI / 2.0);
         ContinuousArc arc = new ContinuousArc(start, 1.0, true, Angle.instantiateSI(Math.PI));
 
         // right-hand increasing offset
@@ -211,7 +211,7 @@ public class ContinuousArcTest
         for (boolean left : new boolean[] {true, false})
         {
             // half standard unit circle
-            OrientedPoint2d start = new OrientedPoint2d(1.0, 0.0, Math.PI / 2.0);
+            DirectedPoint2d start = new DirectedPoint2d(1.0, 0.0, Math.PI / 2.0);
             ContinuousArc arc = new ContinuousArc(start, 1.0, left, Angle.instantiateSI(Math.PI));
 
             // 10 degrees
@@ -254,7 +254,7 @@ public class ContinuousArcTest
         for (boolean left : new boolean[] {true, false})
         {
             // half standard unit circle
-            OrientedPoint2d start = new OrientedPoint2d(1.0, 0.0, Math.PI / 2.0);
+            DirectedPoint2d start = new DirectedPoint2d(1.0, 0.0, Math.PI / 2.0);
             ContinuousArc arc = new ContinuousArc(start, 1.0, left, Angle.instantiateSI(Math.PI));
             NumSegments numSegments4 = new NumSegments(4);
             PolyLine2d line1 = arc.flatten(numSegments4);

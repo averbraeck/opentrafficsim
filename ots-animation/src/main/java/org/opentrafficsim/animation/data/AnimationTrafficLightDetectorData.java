@@ -2,7 +2,7 @@ package org.opentrafficsim.animation.data;
 
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.draw.road.TrafficLightDetectorAnimation.TrafficLightDetectorData;
 import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector;
 
@@ -30,7 +30,7 @@ public class AnimationTrafficLightDetectorData implements TrafficLightDetectorDa
     }
 
     @Override
-    public OrientedPoint2d getLocation()
+    public DirectedPoint2d getLocation()
     {
         return this.trafficLigthDetector.getLocation();
     }

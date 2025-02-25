@@ -35,7 +35,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.cli.CliException;
 import org.djutils.cli.CliUtil;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
@@ -509,12 +509,12 @@ public class StrategiesDemo extends AbstractSimulationScript
         Node nodeB = new Node(network, "B", new Point2d(radius, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
 
         ContinuousArc half1 =
-                new ContinuousArc(new OrientedPoint2d(radius, 0.0, Math.PI / 2), radius, true, Angle.instantiateSI(Math.PI));
+                new ContinuousArc(new DirectedPoint2d(radius, 0.0, Math.PI / 2), radius, true, Angle.instantiateSI(Math.PI));
         List<Lane> lanes1 = new LaneFactory(network, nodeB, nodeA, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPRIGHT,
                 DefaultsNl.VEHICLE, half1).leftToRight(0.0, Length.instantiateSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit)
                         .addLanes(DefaultsRoadNl.DASHED).getLanes();
         ContinuousArc half2 =
-                new ContinuousArc(new OrientedPoint2d(-radius, 0.0, -Math.PI / 2), radius, true, Angle.instantiateSI(Math.PI));
+                new ContinuousArc(new DirectedPoint2d(-radius, 0.0, -Math.PI / 2), radius, true, Angle.instantiateSI(Math.PI));
         List<Lane> lanes2 = new LaneFactory(network, nodeA, nodeB, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPRIGHT,
                 DefaultsNl.VEHICLE, half2).leftToRight(0.0, Length.instantiateSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit)
                         .addLanes(DefaultsRoadNl.DASHED).getLanes();

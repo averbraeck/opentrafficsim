@@ -8,7 +8,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
@@ -77,7 +77,7 @@ public class OperationalPlan implements Serializable
      * @param duration duration.
      * @return stand-still plan.
      */
-    public static OperationalPlan standStill(final Gtu gtu, final OrientedPoint2d point, final Time startTime,
+    public static OperationalPlan standStill(final Gtu gtu, final DirectedPoint2d point, final Time startTime,
             final Duration duration)
     {
         Point2d p2 = new Point2d(point.x + Math.cos(point.getDirZ()), point.y + Math.sin(point.getDirZ()));
@@ -212,7 +212,7 @@ public class OperationalPlan implements Serializable
      * Provide the end location of this operational plan as a DirectedPoint.
      * @return the end location
      */
-    public OrientedPoint2d getEndLocation()
+    public DirectedPoint2d getEndLocation()
     {
         return Try.assign(() -> this.path.getLocationPointFraction(Math.min(1.0, this.totalLength.si / this.path.getLength())),
                 "Unexpected exception for path extraction till 1.0.");
@@ -259,7 +259,7 @@ public class OperationalPlan implements Serializable
      * @return the location after the given duration since the start of the plan.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
-    public final OrientedPoint2d getLocation(final Duration duration) throws OperationalPlanException
+    public final DirectedPoint2d getLocation(final Duration duration) throws OperationalPlanException
     {
         return getLocation(this.startTime.plus(duration));
     }
@@ -270,7 +270,7 @@ public class OperationalPlan implements Serializable
      * @return the location at the given time.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
-    public final OrientedPoint2d getLocation(final Time time) throws OperationalPlanException
+    public final DirectedPoint2d getLocation(final Time time) throws OperationalPlanException
     {
         Throw.when(time.lt(this.startTime), OperationalPlanException.class, "Requested time is before start time.");
         Throw.when(time.gt(this.getEndTime()), OperationalPlanException.class, "Requested time is beyond end time.");
@@ -285,7 +285,7 @@ public class OperationalPlan implements Serializable
      * @return the location after the given duration since the start of the plan.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
-    public final OrientedPoint2d getLocation(final Time time, final RelativePosition pos) throws OperationalPlanException
+    public final DirectedPoint2d getLocation(final Time time, final RelativePosition pos) throws OperationalPlanException
     {
         double distanceSI = getTraveledDistance(time).si + pos.dx().si;
         return this.path.getLocationExtendedSI(distanceSI);
@@ -392,7 +392,7 @@ public class OperationalPlan implements Serializable
      * @param upstream true if the point is upstream of the path
      * @return time at point
      */
-    public final Time timeAtPoint(final OrientedPoint2d point, final boolean upstream)
+    public final Time timeAtPoint(final DirectedPoint2d point, final boolean upstream)
     {
         Point2d p1 = point;
         // point at 90 degrees

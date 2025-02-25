@@ -8,7 +8,7 @@ import java.util.stream.DoubleStream;
 
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 
@@ -74,9 +74,9 @@ public final class OtsGeometryUtil
      * @param offset offset, negative values are to the right.
      * @return offset point.
      */
-    public static OrientedPoint2d offsetPoint(final OrientedPoint2d point, final double offset)
+    public static DirectedPoint2d offsetPoint(final DirectedPoint2d point, final double offset)
     {
-        return new OrientedPoint2d(point.x - Math.sin(point.dirZ) * offset, point.y + Math.cos(point.dirZ) * offset,
+        return new DirectedPoint2d(point.x - Math.sin(point.dirZ) * offset, point.y + Math.cos(point.dirZ) * offset,
                 point.dirZ);
     }
 

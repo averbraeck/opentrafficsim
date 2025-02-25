@@ -12,7 +12,7 @@ import java.util.Set;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Ray2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.StripeElement;
 import org.opentrafficsim.base.geometry.DirectionalPolyLine;
@@ -212,7 +212,7 @@ public class StripeAnimation extends OtsRenderable<StripeData>
     public interface StripeData extends ClickableLineLocatable
     {
         @Override
-        OrientedPoint2d getLocation();
+        DirectedPoint2d getLocation();
 
         /**
          * Returns the center line in world coordinates, with directions of end-points.

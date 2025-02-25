@@ -2,7 +2,7 @@ package org.opentrafficsim.core.geometry;
 
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 
@@ -18,7 +18,7 @@ public class ContinuousArc implements ContinuousLine
 {
 
     /** Starting point. */
-    private final OrientedPoint2d startPoint;
+    private final DirectedPoint2d startPoint;
 
     /** Curve radius. */
     private final double radius;
@@ -39,7 +39,7 @@ public class ContinuousArc implements ContinuousLine
      * @param left left curve, or right.
      * @param length arc length.
      */
-    public ContinuousArc(final OrientedPoint2d startPoint, final double radius, final boolean left, final double length)
+    public ContinuousArc(final DirectedPoint2d startPoint, final double radius, final boolean left, final double length)
     {
         this(startPoint, radius, left, Angle.instantiateSI(
                 Throw.when(length, length <= 0.0, IllegalArgumentException.class, "Length must be above 0.") / radius));
@@ -52,7 +52,7 @@ public class ContinuousArc implements ContinuousLine
      * @param left left curve, or right.
      * @param angle angle of arc (must be positive).
      */
-    public ContinuousArc(final OrientedPoint2d startPoint, final double radius, final boolean left, final Angle angle)
+    public ContinuousArc(final DirectedPoint2d startPoint, final double radius, final boolean left, final Angle angle)
     {
         Throw.whenNull(startPoint, "Start point may not be null.");
         Throw.when(radius < 0.0, IllegalArgumentException.class, "Radius must be positive.");
@@ -68,18 +68,18 @@ public class ContinuousArc implements ContinuousLine
     }
 
     @Override
-    public OrientedPoint2d getStartPoint()
+    public DirectedPoint2d getStartPoint()
     {
         return this.startPoint;
     }
 
     @Override
-    public OrientedPoint2d getEndPoint()
+    public DirectedPoint2d getEndPoint()
     {
         Point2d point = getPoint(1.0, 0.0);
         double dirZ = this.startPoint.dirZ + this.sign * this.angle.si;
         dirZ = dirZ > Math.PI ? dirZ - 2.0 * Math.PI : (dirZ < -Math.PI ? dirZ + 2.0 * Math.PI : 0.0);
-        return new OrientedPoint2d(point.x, point.y, dirZ);
+        return new DirectedPoint2d(point.x, point.y, dirZ);
     }
 
     @Override

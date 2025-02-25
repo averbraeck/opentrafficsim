@@ -8,7 +8,7 @@ import java.awt.geom.Path2D;
 
 import org.djutils.draw.Transform2d;
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 
@@ -36,7 +36,7 @@ public final class PaintLine
      */
     public static Path2D.Float getPath(final PolyLine2d line)
     {
-        return getPath(new OrientedPoint2d(0.0, 0.0), line);
+        return getPath(new DirectedPoint2d(0.0, 0.0), line);
     }
 
     /**
@@ -47,7 +47,7 @@ public final class PaintLine
      */
     public static Path2D.Float getPath(final Point2d referencePoint, final PolyLine2d line)
     {
-        return getPath(new OrientedPoint2d(referencePoint, 0.0), line);
+        return getPath(new DirectedPoint2d(referencePoint, 0.0), line);
     }
 
     /**
@@ -56,7 +56,7 @@ public final class PaintLine
      * @param line array of points
      * @return Path2D.Float drawable path.
      */
-    public static Path2D.Float getPath(final OrientedPoint2d referencePoint, final PolyLine2d line)
+    public static Path2D.Float getPath(final DirectedPoint2d referencePoint, final PolyLine2d line)
     {
         Transform2d transform = OtsLocatable.toBoundsTransform(referencePoint);
         Path2D.Float path = new Path2D.Float();

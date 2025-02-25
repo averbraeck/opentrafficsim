@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Locale;
 
 import org.djunits.value.vdouble.scalar.Angle;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
 
@@ -84,8 +84,8 @@ public class OtsGeometryUtilTest
     public void testOffsetPoint()
     {
         double margin = 1e-6;
-        OrientedPoint2d p = new OrientedPoint2d(0.0, 0.0, 0.0);
-        OrientedPoint2d o = OtsGeometryUtil.offsetPoint(p, 1.0);
+        DirectedPoint2d p = new DirectedPoint2d(0.0, 0.0, 0.0);
+        DirectedPoint2d o = OtsGeometryUtil.offsetPoint(p, 1.0);
         assertEquals(0.0, o.x, margin);
         assertEquals(1.0, o.y, margin);
         assertEquals(0.0, o.dirZ, margin);
@@ -94,7 +94,7 @@ public class OtsGeometryUtilTest
         assertEquals(-1.0, o.y, margin);
         assertEquals(0.0, o.dirZ, margin);
 
-        p = new OrientedPoint2d(0.0, 0.0, .5 * Math.PI);
+        p = new DirectedPoint2d(0.0, 0.0, .5 * Math.PI);
         o = OtsGeometryUtil.offsetPoint(p, 1.0);
         assertEquals(-1.0, o.x, margin);
         assertEquals(0.0, o.y, margin);
@@ -104,7 +104,7 @@ public class OtsGeometryUtilTest
         assertEquals(0.0, o.y, margin);
         assertEquals(.5 * Math.PI, o.dirZ, margin);
 
-        p = new OrientedPoint2d(0.0, 0.0, Math.PI);
+        p = new DirectedPoint2d(0.0, 0.0, Math.PI);
         o = OtsGeometryUtil.offsetPoint(p, 1.0);
         assertEquals(0.0, o.x, margin);
         assertEquals(-1.0, o.y, margin);

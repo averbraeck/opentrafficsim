@@ -22,7 +22,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.animation.colorer.FixedColor;
 import org.opentrafficsim.animation.colorer.IncentiveColorer;
@@ -379,8 +379,8 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
         {
             this.network = new RoadNetwork("HF network", getSimulator());
 
-            OrientedPoint2d p1 = new OrientedPoint2d(0.0, 0.0, 0.0);
-            OrientedPoint2d p2 = new OrientedPoint2d(3000.0, 0.0, 0.0);
+            DirectedPoint2d p1 = new DirectedPoint2d(0.0, 0.0, 0.0);
+            DirectedPoint2d p2 = new DirectedPoint2d(3000.0, 0.0, 0.0);
 
             Node nodeA = new Node(this.network, "A", p1);
             Node nodeB = new Node(this.network, "B", p2);

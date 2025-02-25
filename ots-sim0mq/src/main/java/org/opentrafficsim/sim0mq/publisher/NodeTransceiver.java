@@ -6,7 +6,7 @@ import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.PositionUnit;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.vector.PositionVector;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
@@ -67,7 +67,7 @@ public class NodeTransceiver extends AbstractTransceiver
             returnWrapper.nack("Network does not contain a node with id " + address[0]);
             return null;
         }
-        OrientedPoint2d nodeLocation = node.getLocation();
+        DirectedPoint2d nodeLocation = node.getLocation();
         return new Object[] {node.getId(),
                 new PositionVector(new double[] {nodeLocation.x, nodeLocation.y}, PositionUnit.METER),
                 new Direction(nodeLocation.getDirZ(), DirectionUnit.EAST_DEGREE), node.getLinks().size()};

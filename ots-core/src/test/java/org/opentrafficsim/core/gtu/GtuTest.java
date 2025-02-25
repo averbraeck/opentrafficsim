@@ -15,7 +15,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.Parameters;
@@ -133,7 +133,7 @@ public class GtuTest
 
         };
         Parameters parameters = new ParameterSet();
-        OrientedPoint2d initialLocation = new OrientedPoint2d(10, 20, Math.toRadians(30));
+        DirectedPoint2d initialLocation = new DirectedPoint2d(10, 20, Math.toRadians(30));
         GtuType gtuType1 = new GtuType("gtu type 1", DefaultsNl.VEHICLE);
         GtuType gtuType2 = new GtuType("gtu type 2", DefaultsNl.VEHICLE);
         for (String id : new String[] {"id1", "id2"})
@@ -225,7 +225,7 @@ public class GtuTest
 
         try
         {
-            gtu.init(strategicalPlanner, new OrientedPoint2d(Double.NaN, 20, 30), initialSpeed);
+            gtu.init(strategicalPlanner, new DirectedPoint2d(Double.NaN, 20, 30), initialSpeed);
             fail("null initialSpeed should have thrown an IllegalArgumentException");
         }
         catch (IllegalArgumentException ge)
@@ -235,7 +235,7 @@ public class GtuTest
 
         try
         {
-            gtu.init(strategicalPlanner, new OrientedPoint2d(10, Double.NaN, 30), initialSpeed);
+            gtu.init(strategicalPlanner, new DirectedPoint2d(10, Double.NaN, 30), initialSpeed);
             fail("null initialSpeed should have thrown an IllegalArgumentException");
         }
         catch (IllegalArgumentException ge)
@@ -245,7 +245,7 @@ public class GtuTest
 
         try
         {
-            gtu.init(strategicalPlanner, new OrientedPoint2d(10, 20, Double.NaN), initialSpeed);
+            gtu.init(strategicalPlanner, new DirectedPoint2d(10, 20, Double.NaN), initialSpeed);
             fail("null initialSpeed should have thrown an IllegalArgumentException");
         }
         catch (IllegalArgumentException ge)
@@ -351,9 +351,9 @@ public class GtuTest
         }
 
         @Override
-        public OrientedPoint2d getLocation()
+        public DirectedPoint2d getLocation()
         {
-            return new OrientedPoint2d(0.0, 0.0, 0.0);
+            return new DirectedPoint2d(0.0, 0.0, 0.0);
         }
     }
 

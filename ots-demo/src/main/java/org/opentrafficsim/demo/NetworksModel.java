@@ -21,7 +21,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.base.DoubleScalar;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
@@ -472,7 +472,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
         Node end = new Node(this.network, link.getId() + "END", new Point2d(endX, endY),
                 Direction.instantiateSI(Math.atan2(to.getPoint().y - from.getPoint().y, to.getPoint().x - from.getPoint().x)));
         double dir = Math.atan2(to.getPoint().y - from.getPoint().y, to.getPoint().x - from.getPoint().x);
-        OrientedPoint2d startPoint = new OrientedPoint2d(to.getPoint().x, to.getPoint().y, dir);
+        DirectedPoint2d startPoint = new DirectedPoint2d(to.getPoint().x, to.getPoint().y, dir);
         ContinuousLine designLine = new ContinuousStraight(startPoint, endLinkLength);
         CrossSectionLink endLink = LaneFactory.makeLink(this.network, link.getId() + "endLink", to, end, null, this.simulator);
 

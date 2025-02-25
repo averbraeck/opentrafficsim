@@ -10,7 +10,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.logger.CategoryLogger;
@@ -87,7 +87,7 @@ public final class LaneOperationalPlanBuilder
         if (startSpeed.si <= OperationalPlan.DRIFTING_SPEED_SI && acceleration.le(Acceleration.ZERO)
                 || distance.le(MINIMUM_CREDIBLE_PATH_LENGTH))
         {
-            OrientedPoint2d point = gtu.getLocation();
+            DirectedPoint2d point = gtu.getLocation();
             Point2d p2 = new Point2d(point.x + Math.cos(point.getDirZ()), point.y + Math.sin(point.getDirZ()));
             OtsLine2d path = new OtsLine2d(point, p2);
             return new LaneBasedOperationalPlan(gtu, path, startTime, Segments.standStill(timeStep), deviative);
@@ -150,7 +150,7 @@ public final class LaneOperationalPlanBuilder
                         if (detector instanceof SinkDetector && ((SinkDetector) detector).willDestroy(gtu))
                         {
                             // just add some length so the GTU is happy to go to the sink
-                            OrientedPoint2d end = path.getLocationExtendedSI(distance.si + n * Lane.MARGIN.si);
+                            DirectedPoint2d end = path.getLocationExtendedSI(distance.si + n * Lane.MARGIN.si);
                             List<Point2d> points = path.getPointList();
                             points.add(end);
                             return new OtsLine2d(points);
@@ -209,7 +209,7 @@ public final class LaneOperationalPlanBuilder
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public static LaneBasedOperationalPlan buildAccelerationLaneChangePlan(final LaneBasedGtu gtu,
-            final LateralDirectionality laneChangeDirectionality, final OrientedPoint2d startPosition, final Time startTime,
+            final LateralDirectionality laneChangeDirectionality, final DirectedPoint2d startPosition, final Time startTime,
             final Speed startSpeed, final Acceleration acceleration, final Duration timeStep, final LaneChange laneChange)
             throws OperationalPlanException
     {

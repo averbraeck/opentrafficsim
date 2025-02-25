@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Ray2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.geometry.OtsGeometryUtil;
@@ -26,10 +26,10 @@ public class ContinuousPolyLine implements ContinuousLine
     private final PolyLine2d line;
 
     /** Start point. */
-    private final OrientedPoint2d startPoint;
+    private final DirectedPoint2d startPoint;
 
     /** End points. */
-    private final OrientedPoint2d endPoint;
+    private final DirectedPoint2d endPoint;
 
     /**
      * Define continuous line from polyline. Start and end point direction are derived from the line.
@@ -41,8 +41,8 @@ public class ContinuousPolyLine implements ContinuousLine
         this.line = line;
         Ray2d startRay = line.getLocationFractionExtended(0.0);
         Ray2d endRay = line.getLocationFractionExtended(1.0);
-        this.startPoint = new OrientedPoint2d(startRay.x, startRay.y, startRay.phi);
-        this.endPoint = new OrientedPoint2d(endRay.x, endRay.y, endRay.phi);
+        this.startPoint = new DirectedPoint2d(startRay.x, startRay.y, startRay.phi);
+        this.endPoint = new DirectedPoint2d(endRay.x, endRay.y, endRay.phi);
     }
 
     /**
@@ -52,7 +52,7 @@ public class ContinuousPolyLine implements ContinuousLine
      * @param startPoint start point.
      * @param endPoint end point.
      */
-    public ContinuousPolyLine(final PolyLine2d line, final OrientedPoint2d startPoint, final OrientedPoint2d endPoint)
+    public ContinuousPolyLine(final PolyLine2d line, final DirectedPoint2d startPoint, final DirectedPoint2d endPoint)
     {
         Throw.whenNull(line, "Line may not be null.");
         this.line = line;
@@ -61,13 +61,13 @@ public class ContinuousPolyLine implements ContinuousLine
     }
 
     @Override
-    public OrientedPoint2d getStartPoint()
+    public DirectedPoint2d getStartPoint()
     {
         return this.startPoint;
     }
 
     @Override
-    public OrientedPoint2d getEndPoint()
+    public DirectedPoint2d getEndPoint()
     {
         return this.endPoint;
     }

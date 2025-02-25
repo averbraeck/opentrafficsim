@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
@@ -44,7 +44,7 @@ public class MapNodeData extends MapData implements NodeData, EventListener
     private Direction direction = null;
 
     /** Location. */
-    private OrientedPoint2d location = new OrientedPoint2d(0.0, 0.0);
+    private DirectedPoint2d location = new DirectedPoint2d(0.0, 0.0);
 
     /** Contour. */
     private final Polygon2d contour;
@@ -115,7 +115,7 @@ public class MapNodeData extends MapData implements NodeData, EventListener
     }
 
     @Override
-    public OrientedPoint2d getLocation()
+    public DirectedPoint2d getLocation()
     {
         return this.location;
     }
@@ -164,7 +164,7 @@ public class MapNodeData extends MapData implements NodeData, EventListener
             setInvalid();
             return;
         }
-        this.location = new OrientedPoint2d(this.coordinate, this.direction == null ? 0.0 : this.direction.si);
+        this.location = new DirectedPoint2d(this.coordinate, this.direction == null ? 0.0 : this.direction.si);
         setValid();
     }
 

@@ -10,7 +10,7 @@ import java.awt.image.ImageObserver;
 import java.util.function.Supplier;
 
 import org.djutils.base.Identifiable;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.draw.ClickablePointLocatable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.OtsRenderable;
@@ -137,7 +137,7 @@ public class NodeAnimation extends OtsRenderable<NodeData>
     public interface NodeData extends ClickablePointLocatable, Identifiable
     {
         @Override
-        OrientedPoint2d getLocation();
+        DirectedPoint2d getLocation();
 
         @Override
         default double getZ()

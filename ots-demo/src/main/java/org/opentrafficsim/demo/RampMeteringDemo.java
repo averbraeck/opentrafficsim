@@ -23,7 +23,7 @@ import org.djunits.value.vdouble.vector.TimeVector;
 import org.djutils.cli.CliUtil;
 import org.djutils.data.csv.CsvData;
 import org.djutils.data.serialization.TextSerializationException;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.exceptions.Throw;
@@ -594,7 +594,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
         }
 
         @Override
-        public OperationalPlan generateOperationalPlan(final Time startTime, final OrientedPoint2d locationAtStartTime)
+        public OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint2d locationAtStartTime)
                 throws GtuException, NetworkException, ParameterException
         {
             // get some general input

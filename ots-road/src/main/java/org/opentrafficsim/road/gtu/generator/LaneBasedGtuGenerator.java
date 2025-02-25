@@ -19,7 +19,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.bounds.Bounds2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
@@ -512,11 +512,11 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
         for (GeneratorLanePosition lanePosition : this.generatorPositions.getAllPositions())
         {
             LanePosition pos = lanePosition.getPosition();
-            OrientedPoint2d p = pos.getLocation();
+            DirectedPoint2d p = pos.getLocation();
             set.add(new GtuGeneratorPosition()
             {
                 @Override
-                public OrientedPoint2d getLocation()
+                public DirectedPoint2d getLocation()
                 {
                     return p;
                 }

@@ -4,7 +4,7 @@ import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djutils.base.AngleUtil;
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
@@ -43,10 +43,10 @@ public class ContinuousClothoid implements ContinuousLine
     private static final double SECANT_TOLERANCE = 1e-8;
 
     /** Start point with direction. */
-    private final OrientedPoint2d startPoint;
+    private final DirectedPoint2d startPoint;
 
     /** End point with direction. */
-    private final OrientedPoint2d endPoint;
+    private final DirectedPoint2d endPoint;
 
     /** Start curvature. */
     private final double startCurvature;
@@ -122,7 +122,7 @@ public class ContinuousClothoid implements ContinuousLine
      * @see <a href="https://www.sciencedirect.com/science/article/pii/S0377042713006286">Connor and Krivodonova (2014)</a>
      * @see <a href="https://www.sciencedirect.com/science/article/pii/S0377042704000925">Waltona and Meek (2009)</a>
      */
-    public ContinuousClothoid(final OrientedPoint2d startPoint, final OrientedPoint2d endPoint)
+    public ContinuousClothoid(final DirectedPoint2d startPoint, final DirectedPoint2d endPoint)
     {
         Throw.whenNull(startPoint, "Start point may not be null.");
         Throw.whenNull(endPoint, "End point may not be null.");
@@ -264,7 +264,7 @@ public class ContinuousClothoid implements ContinuousLine
      * @param startCurvature start curvature.
      * @param endCurvature end curvature;
      */
-    public ContinuousClothoid(final OrientedPoint2d startPoint, final double a, final double startCurvature,
+    public ContinuousClothoid(final DirectedPoint2d startPoint, final double a, final double startCurvature,
             final double endCurvature)
     {
         Throw.whenNull(startPoint, "Start point may not be null.");
@@ -310,7 +310,7 @@ public class ContinuousClothoid implements ContinuousLine
         }
         PolyLine2d line = flatten(new Flattener.NumSegments(1));
         Point2d end = Try.assign(() -> line.get(line.size() - 1), "Line does not have an end point.");
-        this.endPoint = new OrientedPoint2d(end.x, end.y, endDirection.si);
+        this.endPoint = new DirectedPoint2d(end.x, end.y, endDirection.si);
 
         // Fields not relevant for definition with curvatures
         this.straight = null;
@@ -329,7 +329,7 @@ public class ContinuousClothoid implements ContinuousLine
      * @param endCurvature end curvature;
      * @return clothoid based on curvature and length.
      */
-    public static ContinuousClothoid withLength(final OrientedPoint2d startPoint, final double length,
+    public static ContinuousClothoid withLength(final DirectedPoint2d startPoint, final double length,
             final double startCurvature, final double endCurvature)
     {
         Throw.when(length <= 0.0, IllegalArgumentException.class, "Length must be above 0.");
@@ -418,13 +418,13 @@ public class ContinuousClothoid implements ContinuousLine
     }
 
     @Override
-    public OrientedPoint2d getStartPoint()
+    public DirectedPoint2d getStartPoint()
     {
         return this.startPoint;
     }
 
     @Override
-    public OrientedPoint2d getEndPoint()
+    public DirectedPoint2d getEndPoint()
     {
         return this.endPoint;
     }
@@ -474,8 +474,8 @@ public class ContinuousClothoid implements ContinuousLine
             return;
         }
 
-        OrientedPoint2d p1 = this.opposite ? this.endPoint : this.startPoint;
-        OrientedPoint2d p2 = this.opposite ? this.startPoint : this.endPoint;
+        DirectedPoint2d p1 = this.opposite ? this.endPoint : this.startPoint;
+        DirectedPoint2d p2 = this.opposite ? this.startPoint : this.endPoint;
 
         // Create first point to figure out the required overall shift
         Fresnel csMin = Fresnel.integral(alphaToT(this.alphaMin));

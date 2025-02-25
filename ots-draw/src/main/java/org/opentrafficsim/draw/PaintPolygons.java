@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.djutils.draw.Transform2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 
@@ -40,7 +40,7 @@ public final class PaintPolygons
      */
     public static Set<Path2D.Float> getPaths(final Point2d referencePoint, final List<Point2d> line)
     {
-        return getPaths(new OrientedPoint2d(referencePoint, 0.0), line);
+        return getPaths(new DirectedPoint2d(referencePoint, 0.0), line);
     }
 
     /**
@@ -49,7 +49,7 @@ public final class PaintPolygons
      * @param line array of points
      * @return Set&lt;Path2D.Float&gt;; drawable paths.
      */
-    public static Set<Path2D.Float> getPaths(final OrientedPoint2d referencePoint, final List<Point2d> line)
+    public static Set<Path2D.Float> getPaths(final DirectedPoint2d referencePoint, final List<Point2d> line)
     {
         Transform2d transform = OtsLocatable.toBoundsTransform(referencePoint);
         Set<Path2D.Float> paths = new LinkedHashSet<>();
@@ -94,7 +94,7 @@ public final class PaintPolygons
      */
     public static Set<Path2D.Float> getPaths(final List<Point2d> line)
     {
-        return getPaths(new OrientedPoint2d(0.0, 0.0), line);
+        return getPaths(new DirectedPoint2d(0.0, 0.0), line);
     }
 
     /**

@@ -20,7 +20,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.base.AngleUtil;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
@@ -126,7 +126,7 @@ public class GtuDumperTest implements OtsModelInterface
             // This GTU travels a circle around 100, 20, elevation 0, radius 20, angular velocity 0.1 radial / second
             double timeSI = GtuDumperTest.this.simulator.getSimulatorTime().si;
             double angle = AngleUtil.normalizeAroundPi(timeSI / 10.0);
-            return new OrientedPoint2d(100.0 + 20.0 * Math.cos(angle), 20.0 + 20.0 * Math.sin(angle), angle);
+            return new DirectedPoint2d(100.0 + 20.0 * Math.cos(angle), 20.0 + 20.0 * Math.sin(angle), angle);
         });
         Mockito.when(gtu.getSpeed()).thenReturn(Speed.instantiateSI(2.0));
         Mockito.when(gtu.toString()).thenReturn("test GTU");

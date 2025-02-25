@@ -27,7 +27,7 @@ import org.djutils.draw.DrawRuntimeException;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.line.Ray2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
@@ -131,7 +131,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     private PolyLine2d flattenedDesignLine = null;
 
     /** Location. */
-    private OrientedPoint2d location;
+    private DirectedPoint2d location;
 
     /** Contour. */
     private Polygon2d contour;
@@ -252,7 +252,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     }
 
     @Override
-    public OrientedPoint2d getLocation()
+    public DirectedPoint2d getLocation()
     {
         return this.location;
     }
@@ -554,10 +554,10 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         }
         setValue((v) -> this.directionStart = v, Adapters.get(Direction.class), this.nodeStart, "Direction");
         double dirStart = this.directionStart == null ? 0.0 : this.directionStart.si;
-        OrientedPoint2d fromPoint = new OrientedPoint2d(this.from, dirStart);
+        DirectedPoint2d fromPoint = new DirectedPoint2d(this.from, dirStart);
         setValue((v) -> this.directionEnd = v, Adapters.get(Direction.class), this.nodeEnd, "Direction");
         double dirEnd = this.directionEnd == null ? 0.0 : this.directionEnd.si;
-        OrientedPoint2d toPoint = new OrientedPoint2d(this.to, dirEnd);
+        DirectedPoint2d toPoint = new DirectedPoint2d(this.to, dirEnd);
         if (this.offsetStart != null)
         {
             fromPoint = OtsGeometryUtil.offsetPoint(fromPoint, this.offsetStart.si);
@@ -573,7 +573,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         }
         this.flattenedDesignLine = this.designLine.flatten(getFlattener());
         Ray2d ray = this.flattenedDesignLine.getLocationFractionExtended(0.5);
-        this.location = new OrientedPoint2d(ray.x, ray.y, ray.phi);
+        this.location = new DirectedPoint2d(ray.x, ray.y, ray.phi);
         this.contour =
                 new Polygon2d(PolyLine2d.concatenate(this.flattenedDesignLine, this.flattenedDesignLine.reverse()).getPoints());
         if (this.priorityAnimation != null)
@@ -1306,7 +1306,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
          * @param to possibly offset end point.
          * @return line from the shape and attributes.
          */
-        public ContinuousLine getContiuousLine(final OrientedPoint2d from, final OrientedPoint2d to)
+        public ContinuousLine getContiuousLine(final DirectedPoint2d from, final DirectedPoint2d to)
         {
             try
             {

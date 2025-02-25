@@ -10,7 +10,7 @@ import java.rmi.RemoteException;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
@@ -90,7 +90,7 @@ public class StaticObjectTest implements EventListener
         assertEquals(id, so.getFullId(), "full id");
         assertEquals(geometry, so.getContour(), "contour");
         assertEquals(height, so.getHeight(), "height");
-        assertEquals(new OrientedPoint2d(geometry.getBounds().midPoint(), 0.0), so.getLocation(), "location");
+        assertEquals(new DirectedPoint2d(geometry.getBounds().midPoint(), 0.0), so.getLocation(), "location");
         // djutils PolyLine2d returns absolute bounds, StaticObject returns centered around (0, 0)
         // assertEquals("bounds", geometry.getBounds(), so.getBounds());
         assertTrue(so.toString().startsWith("StaticObject"), "toString returns something descriptive");

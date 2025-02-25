@@ -12,7 +12,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.DrawRuntimeException;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Ray2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 
@@ -239,7 +239,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      * @param position the position on the line for which to calculate the point on, before, of after the line
      * @return a directed point
      */
-    public final OrientedPoint2d getLocationExtended(final Length position)
+    public final DirectedPoint2d getLocationExtended(final Length position)
     {
         return rayToPoint(getLocationExtended(position.si));
     }
@@ -250,7 +250,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      * @param positionSI the position on the line for which to calculate the point on, before, of after the line, in SI units
      * @return a directed point
      */
-    public final OrientedPoint2d getLocationExtendedSI(final double positionSI)
+    public final DirectedPoint2d getLocationExtendedSI(final double positionSI)
     {
         return rayToPoint(getLocationExtended(positionSI));
     }
@@ -261,7 +261,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      * @return a directed point
      * @throws DrawRuntimeException when fraction less than 0.0 or more than 1.0.
      */
-    public final OrientedPoint2d getLocationPointFraction(final double fraction) throws DrawRuntimeException
+    public final DirectedPoint2d getLocationPointFraction(final double fraction) throws DrawRuntimeException
     {
         return rayToPoint(getLocationFraction(fraction));
     }
@@ -273,7 +273,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      * @return a directed point
      * @throws DrawRuntimeException when fraction less than 0.0 or more than 1.0.
      */
-    public final OrientedPoint2d getLocationPointFraction(final double fraction, final double tolerance)
+    public final DirectedPoint2d getLocationPointFraction(final double fraction, final double tolerance)
             throws DrawRuntimeException
     {
         return rayToPoint(getLocationFraction(fraction, tolerance));
@@ -284,7 +284,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      * @param fraction the fraction for which to calculate the point on the line
      * @return a directed point
      */
-    public final OrientedPoint2d getLocationPointFractionExtended(final double fraction)
+    public final DirectedPoint2d getLocationPointFractionExtended(final double fraction)
     {
         return rayToPoint(getLocationFractionExtended(fraction));
     }
@@ -295,7 +295,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      * @return a directed point
      * @throws DrawRuntimeException when position less than 0.0 or more than line length.
      */
-    public final OrientedPoint2d getLocation(final Length position) throws DrawRuntimeException
+    public final DirectedPoint2d getLocation(final Length position) throws DrawRuntimeException
     {
         return rayToPoint(getLocation(position.si));
     }
@@ -306,7 +306,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      * @return a directed point
      * @throws DrawRuntimeException when position less than 0.0 or more than line length.
      */
-    public final OrientedPoint2d getLocationSI(final double positionSI) throws DrawRuntimeException
+    public final DirectedPoint2d getLocationSI(final double positionSI) throws DrawRuntimeException
     {
         return rayToPoint(getLocation(positionSI));
     }
@@ -316,9 +316,9 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      * @param ray ray
      * @return oriented point based on the information of a ray
      */
-    private OrientedPoint2d rayToPoint(final Ray2d ray)
+    private DirectedPoint2d rayToPoint(final Ray2d ray)
     {
-        return new OrientedPoint2d(ray.x, ray.y, ray.phi);
+        return new DirectedPoint2d(ray.x, ray.y, ray.phi);
     }
 
     /**

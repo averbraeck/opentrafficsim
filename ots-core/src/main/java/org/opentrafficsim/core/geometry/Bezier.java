@@ -2,7 +2,7 @@ package org.opentrafficsim.core.geometry;
 
 import java.awt.geom.Line2D;
 
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.geometry.OtsGeometryException;
@@ -79,7 +79,7 @@ public final class Bezier
      * @throws OtsGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
      *             constructed
      */
-    public static OtsLine2d cubic(final int numPoints, final OrientedPoint2d start, final OrientedPoint2d end)
+    public static OtsLine2d cubic(final int numPoints, final DirectedPoint2d start, final DirectedPoint2d end)
             throws OtsGeometryException
     {
         return cubic(numPoints, start, end, 1.0);
@@ -97,7 +97,7 @@ public final class Bezier
      * @throws OtsGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
      *             constructed
      */
-    public static OtsLine2d cubic(final int numPoints, final OrientedPoint2d start, final OrientedPoint2d end,
+    public static OtsLine2d cubic(final int numPoints, final DirectedPoint2d start, final DirectedPoint2d end,
             final double shape) throws OtsGeometryException
     {
         return cubic(numPoints, start, end, shape, false);
@@ -116,7 +116,7 @@ public final class Bezier
      * @throws OtsGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
      *             constructed
      */
-    public static OtsLine2d cubic(final int numPoints, final OrientedPoint2d start, final OrientedPoint2d end,
+    public static OtsLine2d cubic(final int numPoints, final DirectedPoint2d start, final DirectedPoint2d end,
             final double shape, final boolean weighted) throws OtsGeometryException
     {
         return bezier(cubicControlPoints(start, end, shape, weighted));
@@ -132,7 +132,7 @@ public final class Bezier
      * @param weighted control point distance relates to distance to projected point on extended line from other end
      * @return a cubic B&eacute;zier curve between start and end, with the two determined control points
      */
-    public static Point2d[] cubicControlPoints(final OrientedPoint2d start, final OrientedPoint2d end, final double shape,
+    public static Point2d[] cubicControlPoints(final DirectedPoint2d start, final DirectedPoint2d end, final double shape,
             final boolean weighted)
     {
         Throw.when(shape <= 0.0, IllegalArgumentException.class, "Shape factor must be above 0.0.");
@@ -183,7 +183,7 @@ public final class Bezier
      * @throws OtsGeometryException in case the number of points is less than 2 or the B&eacute;zier curve could not be
      *             constructed
      */
-    public static OtsLine2d cubic(final OrientedPoint2d start, final OrientedPoint2d end) throws OtsGeometryException
+    public static OtsLine2d cubic(final DirectedPoint2d start, final DirectedPoint2d end) throws OtsGeometryException
     {
         return cubic(DEFAULT_NUM_POINTS, start, end);
     }
