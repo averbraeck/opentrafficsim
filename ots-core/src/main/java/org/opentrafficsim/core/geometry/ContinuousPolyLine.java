@@ -41,8 +41,8 @@ public class ContinuousPolyLine implements ContinuousLine
         this.line = line;
         Ray2d startRay = line.getLocationFractionExtended(0.0);
         Ray2d endRay = line.getLocationFractionExtended(1.0);
-        this.startPoint = new DirectedPoint2d(startRay.x, startRay.y, startRay.phi);
-        this.endPoint = new DirectedPoint2d(endRay.x, endRay.y, endRay.phi);
+        this.startPoint = new DirectedPoint2d(startRay.x, startRay.y, startRay.dirZ);
+        this.endPoint = new DirectedPoint2d(endRay.x, endRay.y, endRay.dirZ);
     }
 
     /**

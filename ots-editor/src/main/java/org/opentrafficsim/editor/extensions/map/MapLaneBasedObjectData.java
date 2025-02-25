@@ -293,7 +293,7 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
         this.laneWidth = w;
         double w45 = 0.45 * getLaneWidth().si;
         Ray2d ray = laneData.getCenterLine().getLocationExtended(this.positionFromStart.si);
-        this.location = new DirectedPoint2d(ray.x, ray.y, ray.phi);
+        this.location = new DirectedPoint2d(ray.x, ray.y, ray.dirZ);
         this.line = new PolyLine2d(new double[] {0.0, 0.0}, new double[] {-w45, w45});
         this.shape = new RectangleShape(0.0, 2.0 * w45);
         this.bounds = LaneBasedObjectData.super.getBounds();

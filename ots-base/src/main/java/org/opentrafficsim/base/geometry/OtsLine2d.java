@@ -318,7 +318,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      */
     private DirectedPoint2d rayToPoint(final Ray2d ray)
     {
-        return new DirectedPoint2d(ray.x, ray.y, ray.phi);
+        return new DirectedPoint2d(ray.x, ray.y, ray.dirZ);
     }
 
     /**

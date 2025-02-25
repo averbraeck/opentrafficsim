@@ -42,7 +42,7 @@ public class MapCrossSectionData implements CrossSectionElementData
     {
         this.linkNode = linkNode;
         Ray2d ray = geometry.centerLine().getLocationFractionExtended(0.5);
-        this.location = new DirectedPoint2d(ray.x, ray.y, ray.phi);
+        this.location = new DirectedPoint2d(ray.x, ray.y, ray.dirZ);
         this.geometry = geometry;
     }
 
