@@ -36,7 +36,7 @@ public final class PaintLine
      */
     public static Path2D.Float getPath(final PolyLine2d line)
     {
-        return getPath(new DirectedPoint2d(0.0, 0.0), line);
+        return getPath(new DirectedPoint2d(0.0, 0.0, 0.0), line);
     }
 
     /**

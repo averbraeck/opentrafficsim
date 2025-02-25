@@ -44,7 +44,7 @@ public class MapNodeData extends MapData implements NodeData, EventListener
     private Direction direction = null;
 
     /** Location. */
-    private DirectedPoint2d location = new DirectedPoint2d(0.0, 0.0);
+    private DirectedPoint2d location = new DirectedPoint2d(0.0, 0.0, 0.0);
 
     /** Contour. */
     private final Polygon2d contour;

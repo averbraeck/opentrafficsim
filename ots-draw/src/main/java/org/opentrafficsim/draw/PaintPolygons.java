@@ -94,7 +94,7 @@ public final class PaintPolygons
      */
     public static Set<Path2D.Float> getPaths(final List<Point2d> line)
     {
-        return getPaths(new DirectedPoint2d(0.0, 0.0), line);
+        return getPaths(new DirectedPoint2d(0.0, 0.0, 0.0), line);
     }
 
     /**

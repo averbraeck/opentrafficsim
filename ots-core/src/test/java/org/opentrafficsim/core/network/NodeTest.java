@@ -58,7 +58,7 @@ public class NodeTest
         assertTrue(node1.toString().contains(node1.getId()), "name is in toString");
         assertEquals(heading.si, node1.getHeading().si, 0.00001, "heading matches");
         Point2d point2 = new Point2d(120, 240);
-        DirectedPoint2d point2Oriented = new DirectedPoint2d(120, 240);
+        DirectedPoint2d point2Oriented = new DirectedPoint2d(120, 240, 0.0);
         Node node2 = new Node(network, "node 2", point2);
         assertEquals(network, node2.getNetwork(), "network matches");
         assertEquals("node 2", node2.getId(), "name matches");
