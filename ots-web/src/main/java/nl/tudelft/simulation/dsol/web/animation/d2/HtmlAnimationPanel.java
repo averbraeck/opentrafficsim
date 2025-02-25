@@ -305,7 +305,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
                 Point<?> l = renderable.getSource().getLocation();
                 if (l != null)
                 {
-                    Bounds<?, ?, ?> b = renderable.getSource().getBounds();
+                    Bounds<?, ?> b = renderable.getSource().getBounds();
                     minX = Math.min(minX, l.getX() + b.getMinX());
                     minY = Math.min(minY, l.getY() + b.getMinY());
                     maxX = Math.max(maxX, l.getX() + b.getMaxX());

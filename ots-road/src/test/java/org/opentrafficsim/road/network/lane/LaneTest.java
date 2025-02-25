@@ -730,7 +730,7 @@ public class LaneTest implements UNITS
                                 // System.out.println(" my bbox is " + minX + "," + minY + " - " + maxX + "," + maxY);
                                 // System.out.println("the bbox is " + (bbLow.x + l.x) + "," + (bbLow.y + l.y) + " - "
                                 // + (bbHigh.x + l.x) + "," + (bbHigh.y + l.y));
-                                Bounds<?, ?, ?> bb = lane.getContour().getBounds();
+                                Bounds<?, ?> bb = lane.getContour().getBounds();
                                 double boundsMinX = bb.getMinX();
                                 double boundsMinY = bb.getMinY();
                                 double boundsMaxX = bb.getMaxX();
