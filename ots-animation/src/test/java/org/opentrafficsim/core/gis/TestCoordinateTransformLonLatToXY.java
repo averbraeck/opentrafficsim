@@ -2,6 +2,7 @@ package org.opentrafficsim.core.gis;
 
 import org.opentrafficsim.animation.gis.CoordinateTransformLonLatToXy;
 
+import nl.tudelft.simulation.dsol.animation.gis.DoubleXY;
 import nl.tudelft.simulation.dsol.animation.gis.transform.CoordinateTransform;
 
 /**
@@ -34,15 +35,15 @@ public class TestCoordinateTransformLonLatToXY
         double latCenter = 37.40897623275873, lonCenter = -122.0246091728831;
         CoordinateTransform latLonToXY = new CoordinateTransformLonLatToXy(lonCenter, latCenter);
         // double[] xy = latLonToXY.doubleTransform(37.419933552777, -122.05752616111); // Moffett
-        double[] xy = latLonToXY.doubleTransform(-122.0246091728831, 37.40897623275873);
-        System.out.println(xy[0] + ", " + xy[1]);
+        DoubleXY xy = latLonToXY.doubleTransform(-122.0246091728831, 37.40897623275873);
+        System.out.println(xy.x() + ", " + xy.y());
         xy = latLonToXY.doubleTransform(-122.0283934, 37.4025104);
-        System.out.println(xy[0] + ", " + xy[1]);
+        System.out.println(xy.x() + ", " + xy.y());
         System.out.println();
         xy = latLonToXY.doubleTransform(-122.0256091728831, 37.40897623275873); // minx,y
-        System.out.println(xy[0] + ", " + xy[1]);
+        System.out.println(xy.x() + ", " + xy.y());
         xy = latLonToXY.doubleTransform(-122.0246091728831, 37.40997623275873); // maxx,y
-        System.out.println(xy[0] + ", " + xy[1]);
+        System.out.println(xy.x() + ", " + xy.y());
     }
 
     @Override

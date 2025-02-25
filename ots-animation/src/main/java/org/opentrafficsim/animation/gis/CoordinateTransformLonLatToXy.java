@@ -2,6 +2,8 @@ package org.opentrafficsim.animation.gis;
 
 import java.io.Serializable;
 
+import nl.tudelft.simulation.dsol.animation.gis.DoubleXY;
+import nl.tudelft.simulation.dsol.animation.gis.FloatXY;
 import nl.tudelft.simulation.dsol.animation.gis.transform.CoordinateTransform;
 
 /**
@@ -52,15 +54,22 @@ public class CoordinateTransformLonLatToXy implements CoordinateTransform, Seria
         this.latCenter = latCenter;
         this.lonCenter = lonCenter;
         double lr = Math.toRadians(latCenter);
-        this.latToM = 111132.92 - 559.82 * Math.cos(2.0 * lr) + 1.175 * Math.cos(4.0 * lr) - 0.0023 * Math.cos(6.0 * lr); // 111.31;
-        this.lonToM = 111412.84 * Math.cos(lr) - 93.5 * Math.cos(3.0 * lr) - 0.118 * Math.cos(5.0 * lr); // 88.32;
+        this.latToM = 111132.92 - 559.82 * Math.cos(2.0 * lr) + 1.175 * Math.cos(4.0 * lr) - 0.0023 * Math.cos(6.0 * lr);
+        this.lonToM = 111412.84 * Math.cos(lr) - 93.5 * Math.cos(3.0 * lr) - 0.118 * Math.cos(5.0 * lr);
     }
 
     @Override
-    public final float[] floatTransform(final double lon, final double lat)
+    public final FloatXY floatTransform(final double lon, final double lat)
     {
-        double[] dt = doubleTransform(lon, lat);
-        return new float[] {(float) dt[0], (float) dt[1]};
+        DoubleXY dt = doubleTransform(lon, lat);
+        return new FloatXY((float) dt.x(), (float) dt.y());
+    }
+
+    @Override
+    public final FloatXY floatTransform(final float lon, final float lat)
+    {
+        DoubleXY dt = doubleTransform(lon, lat);
+        return new FloatXY((float) dt.x(), (float) dt.y());
     }
 
     /**
@@ -69,7 +78,7 @@ public class CoordinateTransformLonLatToXy implements CoordinateTransform, Seria
      * @param lat latitude in degrees
      * @return double[]
      */
-    public final double[] doubleTransformWgs84ToCartesianXy(final double lon, final double lat)
+    public final DoubleXY doubleTransformWgs84ToCartesianXy(final double lon, final double lat)
     {
         double latrad = lat / 180.0 * Math.PI;
         double lonrad = lon / 180.0 * Math.PI;
@@ -86,16 +95,16 @@ public class CoordinateTransformLonLatToXy implements CoordinateTransform, Seria
         double x = coslon * term2 - this.centerX;
         double y = sinlon * term2 - this.centerY;
 
-        return new double[] {x, y};
+        return new DoubleXY(x, y);
     }
 
     @Override
-    public final double[] doubleTransform(final double lon, final double lat)
+    public final DoubleXY doubleTransform(final double lon, final double lat)
     {
         double x = (lon - this.lonCenter) * this.lonToM;
         double y = (lat - this.latCenter) * this.latToM;
 
-        return new double[] {x, y};
+        return new DoubleXY(x, y);
     }
 
     @Override

@@ -5,6 +5,8 @@ import java.io.Serializable;
 
 import org.djutils.logger.CategoryLogger;
 
+import nl.tudelft.simulation.dsol.animation.gis.DoubleXY;
+import nl.tudelft.simulation.dsol.animation.gis.FloatXY;
 import nl.tudelft.simulation.dsol.animation.gis.transform.CoordinateTransform;
 
 /**
@@ -41,24 +43,31 @@ public class CoordinateTransformWgs84toRdNew implements CoordinateTransform, Ser
     }
 
     @Override
-    public final float[] floatTransform(final double x, final double y)
+    public final FloatXY floatTransform(final double x, final double y)
     {
-        double[] d = doubleTransform(x, y);
-        return new float[] {(float) d[0], (float) d[1]};
+        DoubleXY d = doubleTransform(x, y);
+        return new FloatXY((float) d.x(), (float) d.y());
     }
 
     @Override
-    public final double[] doubleTransform(final double x, final double y)
+    public final FloatXY floatTransform(final float x, final float y)
+    {
+        DoubleXY d = doubleTransform(x, y);
+        return new FloatXY((float) d.x(), (float) d.y());
+    }
+
+    @Override
+    public final DoubleXY doubleTransform(final double x, final double y)
     {
         try
         {
             Point2D c = TransformWgs84DutchRdNew.fromWgs84(x, y);
-            return new double[] {c.getX() - this.dx, c.getY() - this.dy};
+            return new DoubleXY(c.getX() - this.dx, c.getY() - this.dy);
         }
         catch (Exception exception)
         {
             CategoryLogger.always().error(exception);
-            return new double[] {0, 0};
+            return new DoubleXY(0, 0);
         }
     }
 
