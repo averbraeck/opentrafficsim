@@ -72,8 +72,8 @@ public class StripeAnimation extends OtsRenderable<StripeData>
             List<Point2d> path = new ArrayList<>();
             if (element.isContinuous())
             {
-                stripe.getCenterLine().directionalOffsetLine(edgeOffset).getPoints().forEachRemaining(path::add);
-                stripe.getCenterLine().directionalOffsetLine(edgeOffset - w).reverse().getPoints().forEachRemaining(path::add);
+                stripe.getCenterLine().directionalOffsetLine(edgeOffset).iterator().forEachRemaining(path::add);
+                stripe.getCenterLine().directionalOffsetLine(edgeOffset - w).reverse().iterator().forEachRemaining(path::add);
             }
             else if (!element.isGap())
             {
@@ -158,8 +158,8 @@ public class StripeAnimation extends OtsRenderable<StripeData>
                 DirectionalPolyLine dashCenter = centerLine.extractFractional(fraction1, fraction2);
 
                 // create offsets on dash center line to add dash contour line
-                dashCenter.directionalOffsetLine(width / 2).getPoints().forEachRemaining(result::add);
-                dashCenter.directionalOffsetLine(-width / 2).reverse().getPoints().forEachRemaining(result::add);
+                dashCenter.directionalOffsetLine(width / 2).iterator().forEachRemaining(result::add);
+                dashCenter.directionalOffsetLine(-width / 2).reverse().iterator().forEachRemaining(result::add);
             }
             position = nextBoundary + dashes[phase++ % dashes.length];
         }

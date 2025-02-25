@@ -92,7 +92,7 @@ public interface OtsLocatable extends Locatable, SpatialObject
      */
     static Polygon2d transformContour(final Polygon2d contour, final Point2d location)
     {
-        return new Polygon2d(transform(toBoundsTransform(location), contour.getPoints()));
+        return new Polygon2d(transform(toBoundsTransform(location), contour.iterator()));
     }
 
     /**
@@ -103,7 +103,7 @@ public interface OtsLocatable extends Locatable, SpatialObject
      */
     static PolyLine2d transformLine(final PolyLine2d line, final Point2d location)
     {
-        return new PolyLine2d(transform(toBoundsTransform(location), line.getPoints()));
+        return new PolyLine2d(transform(toBoundsTransform(location), line.iterator()));
     }
 
     /**

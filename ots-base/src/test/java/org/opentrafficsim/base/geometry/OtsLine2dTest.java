@@ -148,7 +148,7 @@ public class OtsLine2dTest
         OtsLine2d line = new OtsLine2d(list);
         verifyPoints(line, points);
         // Convert it to Point2d[], create another OtsLine2d from that and check that
-        verifyPoints(new OtsLine2d(line.getPoints()), points);
+        verifyPoints(new OtsLine2d(line.iterator()), points);
         double length = 0;
         for (int i = 1; i < points.length; i++)
         {

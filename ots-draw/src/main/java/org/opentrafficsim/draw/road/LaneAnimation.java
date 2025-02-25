@@ -132,7 +132,7 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         @Override
         public Polygon2d getContour()
         {
-            return new Polygon2d(this.centerLine.getPoints());
+            return new Polygon2d(this.centerLine.iterator());
         }
 
         /**

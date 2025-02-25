@@ -575,7 +575,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         Ray2d ray = this.flattenedDesignLine.getLocationFractionExtended(0.5);
         this.location = new DirectedPoint2d(ray.x, ray.y, ray.dirZ);
         this.contour =
-                new Polygon2d(PolyLine2d.concatenate(this.flattenedDesignLine, this.flattenedDesignLine.reverse()).getPoints());
+                new Polygon2d(PolyLine2d.concatenate(this.flattenedDesignLine, this.flattenedDesignLine.reverse()).iterator());
         if (this.priorityAnimation != null)
         {
             getMap().removeAnimation(this.priorityAnimation);

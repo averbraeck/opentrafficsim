@@ -75,7 +75,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      */
     public OtsLine2d(final PolyLine2d line2d)
     {
-        super(line2d.getPoints());
+        super(line2d.iterator());
         this.length = Length.instantiateSI(lengthAtIndex(size() - 1));
     }
 
@@ -354,7 +354,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      * The point 'A' is projected to point 'B' on the 3rd segment of line 'C-D'. The line from 'A' to 'B' extends towards point
      * 'E', which is the intersection of lines 'E-F' and 'E-G'. Line 'E-F' cuts the first bend of the 3rd segment (at point 'H')
      * in half, while the line 'E-G' cuts the second bend of the 3rd segment (at point 'I') in half.
-     * 
+     *
      * <pre>
      *            ____________________________     G                   .
      * .         |                            |    .                 .
@@ -384,7 +384,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      *                             .                   .
      *                              .                    .
      * </pre>
-     * 
+     *
      * Fractional projection may fail in three cases.
      * <ol>
      * <li>Numerical difficulties at slight bend, orthogonal projection returns the correct point.</li>
