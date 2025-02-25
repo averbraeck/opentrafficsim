@@ -18,6 +18,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.DrawRuntimeException;
+import org.djutils.draw.Export;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
@@ -1027,7 +1028,7 @@ public class OtsLine2dTest
         if (VERBOSE)
         {
             System.out.println("radius is " + radius);
-            System.out.println(line.toPlot());
+            System.out.println(Export.toPlot(line));
         }
         double boundary = 1 / (2 + Math.sqrt(2));
         //double length = line.getLength();
