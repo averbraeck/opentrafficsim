@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.djunits.unit.AngleUnit;
 import org.djunits.value.vdouble.scalar.Angle;
+import org.djutils.draw.Export;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
@@ -224,7 +225,7 @@ public class ContinuousArcTest
             line = arc.flattenOffset(offsets, maxAngle1);
             if (VERBOSE)
             {
-                System.out.println(line.toExcel());
+                System.out.println(Export.toTsv(line));
             }
             assertEquals(numSegExpect(1.0, Math.PI), line.size(), "Number of segments incorrect");
 
