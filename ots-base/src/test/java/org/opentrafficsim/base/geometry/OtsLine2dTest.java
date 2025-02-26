@@ -17,7 +17,6 @@ import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.draw.DrawRuntimeException;
 import org.djutils.draw.Export;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.DirectedPoint2d;
@@ -59,7 +58,7 @@ public class OtsLine2dTest
             runConstructors(points);
             fail("Should have thrown a NetworkException");
         }
-        catch (DrawRuntimeException exception)
+        catch (IllegalArgumentException exception)
         {
             // Ignore expected exception
         }
@@ -74,7 +73,7 @@ public class OtsLine2dTest
                     runConstructors(points);
                     fail("Should have thrown a NetworkException");
                 }
-                catch (DrawRuntimeException exception)
+                catch (IllegalArgumentException exception)
                 {
                     // Ignore expected exception
                 }
@@ -92,7 +91,7 @@ public class OtsLine2dTest
                                 runConstructors(points);
                                 fail("Should have thrown a NetworkException");
                             }
-                            catch (DrawRuntimeException exception)
+                            catch (IllegalArgumentException exception)
                             {
                                 // Ignore expected exception
                             }
@@ -115,7 +114,7 @@ public class OtsLine2dTest
                                             runConstructors(points);
                                             fail("Should have thrown a NetworkException");
                                         }
-                                        catch (DrawRuntimeException exception)
+                                        catch (IllegalArgumentException exception)
                                         {
                                             // Ignore expected exception
                                         }
@@ -271,7 +270,7 @@ public class OtsLine2dTest
                 line.getLocationSI(fraction * length);
                 fail("getLocation should have thrown a OTSGeometryException");
             }
-            catch (DrawRuntimeException ne)
+            catch (IllegalArgumentException ne)
             {
                 // Ignore expected exception
             }
@@ -280,7 +279,7 @@ public class OtsLine2dTest
                 line.getLocation(typedLength);
                 fail("getLocation should have thrown a OTSGeometryException");
             }
-            catch (DrawRuntimeException ne)
+            catch (IllegalArgumentException ne)
             {
                 // Ignore expected exception
             }
@@ -289,7 +288,7 @@ public class OtsLine2dTest
                 line.getLocationPointFraction(fraction);
                 fail("getLocation should have thrown a OTSGeometryException");
             }
-            catch (DrawRuntimeException ne)
+            catch (IllegalArgumentException ne)
             {
                 // Ignore expected exception
             }
@@ -353,7 +352,7 @@ public class OtsLine2dTest
             new OtsLine2d(tooShort);
             fail("Array with no points should have thrown an exception");
         }
-        catch (DrawRuntimeException ne)
+        catch (IllegalArgumentException ne)
         {
             // Ignore expected exception
         }
@@ -363,7 +362,7 @@ public class OtsLine2dTest
             new OtsLine2d(tooShort);
             fail("Array with no points should have thrown an exception");
         }
-        catch (DrawRuntimeException ne)
+        catch (IllegalArgumentException ne)
         {
             // Ignore expected exception
         }
@@ -374,7 +373,7 @@ public class OtsLine2dTest
         assertTrue(p0.equals(result.get(0)), "first point is p0");
         assertTrue(p1.equals(result.get(1)), "second point is p1");
         Point2d p1Same = new Point2d(4, 5);
-        result = new OtsLine2d(new PolyLine2d(new Point2d[] {p0, p0, p0, p0, p1Same, p0, p1, p1, p1Same, p1, p1}));
+        result = new OtsLine2d(new PolyLine2d(0.0, new Point2d[] {p0, p0, p0, p0, p1Same, p0, p1, p1, p1Same, p1, p1}));
         assertEquals(4, result.size(), "result should contain 4 points");
         assertTrue(p0.equals(result.get(0)), "first point is p0");
         assertTrue(p1.equals(result.get(1)), "second point is p1");
@@ -449,7 +448,7 @@ public class OtsLine2dTest
             OtsLine2d.concatenate(l0, l2);
             fail("Gap should have throw an exception");
         }
-        catch (DrawRuntimeException e)
+        catch (IllegalArgumentException e)
         {
             // Ignore expected exception
         }
@@ -458,7 +457,7 @@ public class OtsLine2dTest
             OtsLine2d.concatenate();
             fail("concatenate of empty list should have thrown an exception");
         }
-        catch (DrawRuntimeException e)
+        catch (IllegalArgumentException e)
         {
             // Ignore expected exception
         }
@@ -481,7 +480,7 @@ public class OtsLine2dTest
                         {
                             OtsLine2d.concatenate(tolerance, l0, otherLine);
                         }
-                        catch (DrawRuntimeException oge)
+                        catch (IllegalArgumentException oge)
                         {
                             OtsLine2d.concatenate(tolerance, l0, otherLine);
                             fail("concatenation with error " + actualError + " and tolerance " + tolerance
@@ -491,7 +490,7 @@ public class OtsLine2dTest
                         {
                             OtsLine2d.concatenate(tolerance, l0, otherLine, thirdLine);
                         }
-                        catch (DrawRuntimeException oge)
+                        catch (IllegalArgumentException oge)
                         {
                             fail("concatenation with error " + actualError + " and tolerance " + tolerance
                                     + " should not have failed");
@@ -503,7 +502,7 @@ public class OtsLine2dTest
                         {
                             OtsLine2d.concatenate(tolerance, l0, otherLine);
                         }
-                        catch (DrawRuntimeException oge)
+                        catch (IllegalArgumentException oge)
                         {
                             // Ignore expected exception
                         }
@@ -511,7 +510,7 @@ public class OtsLine2dTest
                         {
                             OtsLine2d.concatenate(tolerance, l0, otherLine, thirdLine);
                         }
-                        catch (DrawRuntimeException oge)
+                        catch (IllegalArgumentException oge)
                         {
                             // Ignore expected exception
                         }
@@ -576,7 +575,7 @@ public class OtsLine2dTest
             l.extractFractional(-0.1, 1);
             fail("negative start should have thrown an exception");
         }
-        catch (DrawRuntimeException exception)
+        catch (IllegalArgumentException exception)
         {
             // Ignore expected exception
         }
@@ -585,7 +584,7 @@ public class OtsLine2dTest
             l.extractFractional(Double.NaN, 1);
             fail("NaN start should have thrown an exception");
         }
-        catch (DrawRuntimeException exception)
+        catch (IllegalArgumentException | ArithmeticException exception)
         {
             // Ignore expected exception
         }
@@ -594,7 +593,7 @@ public class OtsLine2dTest
             l.extractFractional(0, 1.1);
             fail("end > 1 should have thrown an exception");
         }
-        catch (DrawRuntimeException exception)
+        catch (IllegalArgumentException exception)
         {
             // Ignore expected exception
         }
@@ -603,7 +602,7 @@ public class OtsLine2dTest
             l.extractFractional(0, Double.NaN);
             fail("NaN end should have thrown an exception");
         }
-        catch (DrawRuntimeException exception)
+        catch (IllegalArgumentException | ArithmeticException exception)
         {
             // Ignore expected exception
         }
@@ -612,7 +611,7 @@ public class OtsLine2dTest
             l.extractFractional(0.6, 0.4);
             fail("start > end should have thrown an exception");
         }
-        catch (DrawRuntimeException exception)
+        catch (IllegalArgumentException exception)
         {
             // Ignore expected exception
         }
@@ -621,7 +620,7 @@ public class OtsLine2dTest
             l.extract(-0.1, 1);
             fail("negative start should have thrown an exception");
         }
-        catch (DrawRuntimeException exception)
+        catch (IllegalArgumentException exception)
         {
             // Ignore expected exception
         }
@@ -630,7 +629,7 @@ public class OtsLine2dTest
             l.extract(Double.NaN, 1);
             fail("NaN start should have thrown an exception");
         }
-        catch (DrawRuntimeException exception)
+        catch (IllegalArgumentException | ArithmeticException exception)
         {
             // Ignore expected exception
         }
@@ -639,7 +638,7 @@ public class OtsLine2dTest
             l.extract(0, l.getLength() + 0.1);
             fail("end > length should have thrown an exception");
         }
-        catch (DrawRuntimeException exception)
+        catch (IllegalArgumentException exception)
         {
             // Ignore expected exception
         }
@@ -648,7 +647,7 @@ public class OtsLine2dTest
             l.extract(0, Double.NaN);
             fail("NaN end should have thrown an exception");
         }
-        catch (DrawRuntimeException exception)
+        catch (IllegalArgumentException | ArithmeticException exception)
         {
             // Ignore expected exception
         }
@@ -657,7 +656,7 @@ public class OtsLine2dTest
             l.extract(0.6, 0.4);
             fail("start > end should have thrown an exception");
         }
-        catch (DrawRuntimeException exception)
+        catch (IllegalArgumentException exception)
         {
             // Ignore expected exception
         }
@@ -966,7 +965,7 @@ public class OtsLine2dTest
             line.truncate(-0.1);
             fail("truncate at negative length should have thrown OTSGeometryException");
         }
-        catch (DrawRuntimeException e)
+        catch (IllegalArgumentException e)
         {
             // Ignore expected exception
         }
@@ -975,7 +974,7 @@ public class OtsLine2dTest
             line.truncate(length + 0.1);
             fail("truncate at length beyond length of line should have thrown OTSGeometryException");
         }
-        catch (DrawRuntimeException e)
+        catch (IllegalArgumentException e)
         {
             // Ignore expected exception
         }
