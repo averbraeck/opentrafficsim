@@ -33,11 +33,11 @@ public class ConstantSupplierTest
             ConstantSupplier<Double> cg = new ConstantSupplier<>(testValue);
             for (int attempt = 0; attempt < 10; attempt++)
             {
-                assertEquals(testValue, cg.get(), 0, "Constant generator returns constant");
+                assertEquals(testValue, cg.get(), 0, "ConstantSupplier returns constant");
             }
             assertEquals(testValue, cg.getValue(), 0, "getValue returns the value");
-            assertTrue(cg.toString().startsWith("ConstantGenerator"),
-                    "The toString method of the ConstantGenerator returns something descriptive");
+            assertTrue(cg.toString().startsWith("ConstantSupplier"),
+                    "The toString method of the ConstantSupplier returns something descriptive");
         }
     }
 
