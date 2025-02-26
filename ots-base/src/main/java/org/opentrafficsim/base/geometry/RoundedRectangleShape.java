@@ -161,7 +161,7 @@ public class RoundedRectangleShape implements OtsShape
             pqReversed.forEach((p) -> points.add(new Point2d(-p.x, p.y))); // top left quadrant
             pq.forEach((p) -> points.add(p.neg())); // bottom left quadrant
             pqReversed.forEach((p) -> points.add(new Point2d(p.x, -p.y))); // bottom right quadrant
-            this.polygon = new Polygon2d(points);
+            this.polygon = new Polygon2d(0.0, points);
         }
         return this.polygon;
     }
