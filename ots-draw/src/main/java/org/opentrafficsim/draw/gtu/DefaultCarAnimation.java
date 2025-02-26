@@ -337,6 +337,13 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
             return DrawLevel.GTU.getZ();
         }
 
+        @Override
+        default double getDirZ()
+        {
+            DirectedPoint2d p = getLocation();
+            return p == null ? 0.0 : p.getDirZ();
+        }
+
         /**
          * Marker for GTU when zoomed out.
          */
