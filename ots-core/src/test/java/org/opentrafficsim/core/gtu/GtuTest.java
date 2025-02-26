@@ -228,7 +228,7 @@ public class GtuTest
             gtu.init(strategicalPlanner, new DirectedPoint2d(Double.NaN, 20, 30), initialSpeed);
             fail("null initialSpeed should have thrown an IllegalArgumentException");
         }
-        catch (IllegalArgumentException ge)
+        catch (IllegalArgumentException | ArithmeticException ge)
         {
             // Ignore expected exception
         }
@@ -238,7 +238,7 @@ public class GtuTest
             gtu.init(strategicalPlanner, new DirectedPoint2d(10, Double.NaN, 30), initialSpeed);
             fail("null initialSpeed should have thrown an IllegalArgumentException");
         }
-        catch (IllegalArgumentException ge)
+        catch (IllegalArgumentException | ArithmeticException ge)
         {
             // Ignore expected exception
         }
@@ -248,7 +248,7 @@ public class GtuTest
             gtu.init(strategicalPlanner, new DirectedPoint2d(10, 20, Double.NaN), initialSpeed);
             fail("null initialSpeed should have thrown an IllegalArgumentException");
         }
-        catch (IllegalArgumentException ge)
+        catch (IllegalArgumentException | ArithmeticException ge)
         {
             // Ignore expected exception
         }
