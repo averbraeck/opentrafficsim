@@ -44,6 +44,7 @@ public abstract class OtsRenderable<L extends OtsLocatable> extends Renderable2d
     public OtsRenderable(final L source, final Contextualized contextProvider)
     {
         super(source, contextProvider);
+        setScaleY(true);
     }
 
     /**
