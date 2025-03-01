@@ -1,4 +1,4 @@
-package nl.tudelft.simulation.dsol.web.animation;
+package org.opentrafficsim.web.animation;
 
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
@@ -65,7 +65,7 @@ public class HtmlGraphicsConfiguration extends GraphicsConfiguration
     }
 
     @Override
-    public ColorModel getColorModel(int transparency)
+    public ColorModel getColorModel(final int transparency)
     {
         CategoryLogger.filter(Cat.WEB).trace("HTMLGraphicsConfiguration.getColorModel()");
         return ColorModel.getRGBdefault();

@@ -6,4 +6,4 @@
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-package nl.tudelft.simulation.dsol.web.animation.d2;
+package org.opentrafficsim.web;

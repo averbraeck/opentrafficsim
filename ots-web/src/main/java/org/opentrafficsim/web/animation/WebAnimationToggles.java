@@ -18,9 +18,9 @@ import org.opentrafficsim.draw.road.LaneAnimation.LaneData;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
 import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.draw.road.TrafficLightAnimation.TrafficLightData;
+import org.opentrafficsim.web.animation.d2.HtmlAnimationPanel;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
-import nl.tudelft.simulation.dsol.web.animation.d2.HtmlAnimationPanel;
 
 /**
  * Set the default animation toggles for the HTML animation panel.

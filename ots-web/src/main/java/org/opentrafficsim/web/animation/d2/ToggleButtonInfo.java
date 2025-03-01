@@ -1,4 +1,4 @@
-package nl.tudelft.simulation.dsol.web.animation.d2;
+package org.opentrafficsim.web.animation.d2;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 

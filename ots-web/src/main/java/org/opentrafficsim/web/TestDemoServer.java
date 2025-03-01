@@ -1,4 +1,4 @@
-package nl.tudelft.simulation.dsol.jetty.sse;
+package org.opentrafficsim.web;
 
 import java.io.IOException;
 import java.net.URL;
@@ -73,7 +73,7 @@ public class TestDemoServer
     /**
      * Run a SuperDemo OTS Web server.
      * @param args not used
-     * @throws Exception o Jetty error
+     * @throws Exception on Jetty error
      */
     public static void main(final String[] args) throws Exception
     {
