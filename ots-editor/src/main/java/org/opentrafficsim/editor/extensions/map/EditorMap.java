@@ -130,20 +130,20 @@ public class EditorMap extends JPanel implements EventListener
     private boolean ignoreKeepScale = false;
 
     /** Last x-scale. */
-    private Double lastXScale = null;
+    //private Double lastXScale = null;
 
     /** Last y-scale. */
-    private Double lastYScale = null;
+    //private Double lastYScale = null;
 
     /** Last screen size. */
-    private Dimension lastScreen = null;
+    //private Dimension lastScreen = null;
 
     /** Map of toggle names to toggle animation classes. */
     private Map<String, Class<? extends Locatable>> toggleLocatableMap = new LinkedHashMap<>();
 
     /** Map of synchronizable stripes. */
     private Map<MapStripeData, SynchronizableMapStripe> synStripes = new LinkedHashMap<>();
-    
+
     /** Listeners to lane and stripe overrides. */
     private final Map<XsdTreeNode, ChangeListener<Object>> overrideListeners = new LinkedHashMap<>();
 
@@ -161,9 +161,10 @@ public class EditorMap extends JPanel implements EventListener
         super(new BorderLayout());
         this.contextualized = contextualized;
         this.editor = editor;
-        this.animationPanel = new VisualizationPanel(new Bounds2d(500, 500), animator, contextualized.getContext())
+        this.animationPanel = new VisualizationPanel(new Bounds2d(500, 500), animator, contextualized.getContext());
+
+        /*-
         {
-            /** */
             private static final long serialVersionUID = 20231016L;
 
             @Override
@@ -203,9 +204,13 @@ public class EditorMap extends JPanel implements EventListener
                 EditorMap.this.ignoreKeepScale = false;
             }
         };
+        */
+
         this.animationPanel.setBackground(Color.GRAY);
         this.animationPanel.setShowToolTip(false);
         editor.addListener(this, OtsEditor.NEW_FILE);
+
+        /*-
         this.animationPanel.setRenderableScale(new RenderableScale()
         {
             @Override
@@ -249,6 +254,8 @@ public class EditorMap extends JPanel implements EventListener
                 return result;
             }
         });
+        */
+
         add(this.animationPanel, BorderLayout.CENTER);
 
         this.toolPanel = new JPanel();
