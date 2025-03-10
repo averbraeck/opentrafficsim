@@ -16,13 +16,12 @@ import org.opentrafficsim.base.geometry.OtsLine2d;
  */
 public final class Test
 {
+
     /** */
     private Test()
     {
+        // do not instantiate test class
     }
-
-    /** Print detailed output. */
-    static boolean printDetails = false;
 
     /**
      * Kink near end of design line.
@@ -192,7 +191,7 @@ public final class Test
         left = reference.offsetLine(2);
         System.out.println(printCoordinates("#left:\nc0,0,1\n#", left, "\n    "));
     }
-    
+
     /**
      * Build a string description from an OtsLine2d.
      * @param prefix text to put before the coordinates

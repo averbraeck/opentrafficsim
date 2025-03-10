@@ -12,15 +12,13 @@ import org.opentrafficsim.core.network.NetworkException;
  * $LastChangedDate$, @version $Revision$, by $Author$, initial version 20 jan. 2015 <br>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class RouteTest
+public final class RouteTest
 {
 
-    /**
-     * Constructor.
-     */
-    public RouteTest()
+    /** */
+    private RouteTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**

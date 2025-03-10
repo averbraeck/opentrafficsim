@@ -22,18 +22,16 @@ import org.opentrafficsim.draw.egtf.typed.TypedQuantity;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class EgtfTest
+public final class EgtfTest
 {
 
     /** Margin for bigger/smaller-than relations. */
     private static final double MARGIN = 1e-6;
 
-    /**
-     * Constructor.
-     */
-    public EgtfTest()
+    /** */
+    private EgtfTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /** Tests if combined data results in sensible outcomes, e.g. more towards other sources if source less reliable. */

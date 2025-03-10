@@ -15,26 +15,24 @@ import org.opentrafficsim.base.parameters.constraint.DualBound;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class DualBoundConstraintsTest
+public final class DualBoundConstraintsTest
 {
 
     /** Test values for the test. */
     private static double[] testValues =
             {Double.NEGATIVE_INFINITY, Double.MIN_VALUE, -100, -10, 0, 20, 200, Double.MAX_VALUE, Double.POSITIVE_INFINITY};
 
-    /**
-     * Constructor.
-     */
-    public DualBoundConstraintsTest()
+    /** */
+    private DualBoundConstraintsTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
      * Test the DoubleBound Constraints.
      */
     @Test
-    public final void testNumericalConstraints()
+    public void testNumericalConstraints()
     {
         for (double low : testValues)
         {
@@ -55,7 +53,7 @@ public class DualBoundConstraintsTest
      * @param includeLow does the DoubleBound include the low limit value
      * @param includeHigh does the DoubleBound include the high limit value
      */
-    public final void checkConstraint(final double low, final double high, final boolean includeLow, final boolean includeHigh)
+    public void checkConstraint(final double low, final double high, final boolean includeLow, final boolean includeHigh)
     {
         if (high < low || (high == low && (!includeLow || !includeHigh)))
         {

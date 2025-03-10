@@ -59,17 +59,15 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class GtuFollowingModelTest implements UNITS
+public final class GtuFollowingModelTest implements UNITS
 {
     /** Generate unique names for the GTUs. */
     private IdSupplier gtuIdGenerator = new IdSupplier("GTU");
 
-    /**
-     * Constructor.
-     */
-    public GtuFollowingModelTest()
+    /** */
+    private GtuFollowingModelTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -324,7 +322,7 @@ public class GtuFollowingModelTest implements UNITS
      * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public final void testIDM() throws Exception
+    public void testIDM() throws Exception
     {
         gtuFollowingModelTests(new IdmOld());
     }
@@ -334,7 +332,7 @@ public class GtuFollowingModelTest implements UNITS
      * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public final void testIDMPlus() throws Exception
+    public void testIDMPlus() throws Exception
     {
         gtuFollowingModelTests(new IdmPlusOld());
     }

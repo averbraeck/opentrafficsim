@@ -13,14 +13,13 @@ import org.junit.jupiter.api.Test;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class IndicatorTest
+public final class IndicatorTest
 {
 
-    /** 
-     * Constructor.
-     */
-    public IndicatorTest()
+    /** */
+    private IndicatorTest()
     {
+        // do not instantiate test class
     }
 
     /**

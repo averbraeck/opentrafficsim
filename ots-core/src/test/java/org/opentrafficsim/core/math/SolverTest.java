@@ -14,15 +14,13 @@ import org.junit.jupiter.api.Test;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class SolverTest
+public final class SolverTest
 {
 
-    /**
-     * Constructor.
-     */
-    public SolverTest()
+    /** */
+    private SolverTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -30,7 +28,7 @@ public class SolverTest
      */
     @SuppressWarnings("checkstyle:methodlength")
     @Test
-    public final void solverTest()
+    public void solverTest()
     {
         // Linear equations
         double[] result = Solver.solve(0, 0);

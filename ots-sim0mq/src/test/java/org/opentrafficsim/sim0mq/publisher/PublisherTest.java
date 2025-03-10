@@ -46,7 +46,7 @@ import nl.tudelft.simulation.dsol.statistics.SimulationStatistic;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class PublisherTest implements OtsModelInterface
+public final class PublisherTest implements OtsModelInterface
 {
 
     /** ... */
@@ -56,12 +56,10 @@ public class PublisherTest implements OtsModelInterface
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Object[] lastResult = null;
 
-    /**
-     * Constructor.
-     */
-    public PublisherTest()
+    /** */
+    private PublisherTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -134,37 +132,37 @@ public class PublisherTest implements OtsModelInterface
     }
 
     @Override
-    public final OtsSimulatorInterface getSimulator()
+    public OtsSimulatorInterface getSimulator()
     {
         return null;
     }
 
     @Override
-    public final InputParameterMap getInputParameterMap()
+    public InputParameterMap getInputParameterMap()
     {
         return null;
     }
 
     @Override
-    public final List<SimulationStatistic<Duration>> getOutputStatistics()
+    public List<SimulationStatistic<Duration>> getOutputStatistics()
     {
         return null;
     }
 
     @Override
-    public final Network getNetwork()
+    public Network getNetwork()
     {
         return null;
     }
 
     @Override
-    public final String getShortName()
+    public String getShortName()
     {
         return null;
     }
 
     @Override
-    public final String getDescription()
+    public String getDescription()
     {
         return null;
     }
@@ -270,7 +268,7 @@ public class PublisherTest implements OtsModelInterface
 
     /** The test network. */
     // @formatter:off
-    static final String TEST_Network_XML = "<?xml version='1.0' encoding='UTF-8'?>\r\n"
+    static final String TEST_NETWORK_XML = "<?xml version='1.0' encoding='UTF-8'?>\r\n"
             + "<OTS xmlns=\"http://www.opentrafficsim.org/ots\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n"
             + "  xsi:schemaLocation=\"http://www.opentrafficsim.org/ots "
             + "../../../../../ots-xsd/src/main/resources/xsd/1.03.00/ots.xsd\" "

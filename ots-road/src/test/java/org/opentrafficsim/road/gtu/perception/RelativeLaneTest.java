@@ -18,15 +18,13 @@ import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class RelativeLaneTest
+public final class RelativeLaneTest
 {
 
-    /**
-     * Constructor.
-     */
-    public RelativeLaneTest()
+    /** */
+    private RelativeLaneTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**

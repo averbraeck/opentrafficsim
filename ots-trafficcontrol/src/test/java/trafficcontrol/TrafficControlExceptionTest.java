@@ -16,22 +16,20 @@ import org.opentrafficsim.trafficcontrol.TrafficControlException;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class TrafficControlExceptionTest
+public final class TrafficControlExceptionTest
 {
 
-    /**
-     * Constructor.
-     */
-    public TrafficControlExceptionTest()
+    /** */
+    private TrafficControlExceptionTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
      * Test the TrafficControlException class.
      */
     @Test
-    public final void trafficControlExceptionTest()
+    public void trafficControlExceptionTest()
     {
         TrafficControlException e = new TrafficControlException();
         assertNotNull(e, "result should not be null");

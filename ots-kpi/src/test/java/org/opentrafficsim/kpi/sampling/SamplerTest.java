@@ -61,14 +61,13 @@ import org.opentrafficsim.kpi.sampling.indicator.TotalTravelTime;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class SamplerTest
+public final class SamplerTest
 {
 
-    /**
-     * Constructor.
-     */
-    public SamplerTest()
+    /** */
+    private SamplerTest()
     {
+        // do not instantiate test class
     }
 
     /**
@@ -212,7 +211,7 @@ public class SamplerTest
 
         // cross sections
         crossSectionTest(sampler, link);
-        
+
         // trajectory accept list
         trajectoryAcceptListTest(sampler, lane1);
     }
@@ -448,7 +447,7 @@ public class SamplerTest
     }
 
     /**
-     * Test FilterDataCrossSection. 
+     * Test FilterDataCrossSection.
      * @param sampler sampler
      * @param link link
      */
@@ -479,7 +478,7 @@ public class SamplerTest
         assertEquals(2, crossSection.size());
         assertEquals(2, crossSection.getLanePositions().size());
     }
-    
+
     /**
      * Test trajectoryAcceptListTest.
      * @param sampler sampler
@@ -510,7 +509,7 @@ public class SamplerTest
             }
             trajectories.add(trajectory);
         }
-        
+
         trajectoryAcceptList.rejectAll();
         assertFalse(trajectoryAcceptList.isAccepted(trajectories.get(0)));
         try
@@ -522,19 +521,19 @@ public class SamplerTest
         {
             // expected: may not add trajectory with different GTU id to same accept list
         }
-        
+
         trajectoryAcceptList.acceptAll();
         assertTrue(trajectoryAcceptList.isAccepted(trajectories.get(0)));
-        
+
         trajectoryAcceptList.rejectTrajectory(trajectories.get(0));
         assertFalse(trajectoryAcceptList.isAccepted(trajectories.get(0)));
-        
+
         trajectoryAcceptList.acceptTrajectory(trajectories.get(0));
         assertTrue(trajectoryAcceptList.isAccepted(trajectories.get(0)));
-        
+
         assertTrue(trajectoryAcceptList.getTrajectoryIterator().hasNext());
         assertTrue(trajectoryAcceptList.getTrajectoryGroupIterator().hasNext());
-        
+
         assertNotNull(trajectoryAcceptList.toString());
     }
 

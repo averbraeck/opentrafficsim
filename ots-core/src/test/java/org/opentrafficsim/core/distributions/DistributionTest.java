@@ -23,22 +23,20 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class DistributionTest
+public final class DistributionTest
 {
 
-    /**
-     * Constructor.
-     */
-    public DistributionTest()
+    /** */
+    private DistributionTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
      * Test the Distribution class.
      */
     @Test
-    public final void distributionTest()
+    public void distributionTest()
     {
         StreamInterface si = new MersenneTwister(1234);
         try
@@ -370,7 +368,7 @@ public class DistributionTest
         /**
          * Constructor.
          */
-        public TestObject()
+        TestObject()
         {
             //
         }

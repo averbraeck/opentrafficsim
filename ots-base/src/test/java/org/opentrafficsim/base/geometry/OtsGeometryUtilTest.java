@@ -19,22 +19,20 @@ import org.junit.jupiter.api.Test;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class OtsGeometryUtilTest
+public final class OtsGeometryUtilTest
 {
 
-    /**
-     * Constructor.
-     */
-    public OtsGeometryUtilTest()
+    /** */
+    private OtsGeometryUtilTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
      * Test the printCoordinate family of functions.
      */
     @Test
-    public final void geometryTest()
+    public void geometryTest()
     {
         Point2d p0 = new Point2d(1.2, 2.3);
         String prefix = "Prefix";

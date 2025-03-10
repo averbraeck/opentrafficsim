@@ -22,15 +22,13 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class DrawTest
+public final class DrawTest
 {
 
-    /**
-     * Constructor.
-     */
-    public DrawTest()
+    /** */
+    private DrawTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**

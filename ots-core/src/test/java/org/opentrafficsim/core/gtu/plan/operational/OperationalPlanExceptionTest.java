@@ -8,15 +8,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.Test;
 
 /** Test the OperationalPlanException class. */
-public class OperationalPlanExceptionTest
+public final class OperationalPlanExceptionTest
 {
 
-    /**
-     * Constructor.
-     */
-    public OperationalPlanExceptionTest()
+    /** */
+    private OperationalPlanExceptionTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /** Test the OperationalPlanException class. */

@@ -18,21 +18,18 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class MarkovCorrelationTest
+public final class MarkovCorrelationTest
 {
 
-    /**
-     * Constructor.
-     */
-    public MarkovCorrelationTest()
+    /** */
+    private MarkovCorrelationTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
      * Tests the input tests.
      */
-    @SuppressWarnings("unused")
     @Test
     public void testInput()
     {

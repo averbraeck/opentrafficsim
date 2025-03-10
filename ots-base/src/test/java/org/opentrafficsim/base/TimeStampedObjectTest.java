@@ -18,22 +18,20 @@ import org.junit.jupiter.api.Test;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class TimeStampedObjectTest
+public final class TimeStampedObjectTest
 {
 
-    /**
-     * Constructor.
-     */
-    public TimeStampedObjectTest()
+    /** */
+    private TimeStampedObjectTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
      * Test the TimeStampedObject class.
      */
     @Test
-    public final void testTimeStampedObject()
+    public void testTimeStampedObject()
     {
         Time timeStamp1 = new Time(123, TimeUnit.DEFAULT);
         Time timeStamp2 = new Time(456, TimeUnit.DEFAULT);

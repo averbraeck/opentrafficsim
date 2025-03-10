@@ -21,15 +21,13 @@ import org.junit.jupiter.api.Test;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class Acceleration3dTest
+public final class Acceleration3dTest
 {
 
-    /**
-     * Constructor.
-     */
-    public Acceleration3dTest()
+    /** */
+    private  Acceleration3dTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -37,7 +35,7 @@ public class Acceleration3dTest
      * @throws ValueRuntimeException Should not happen; test fails if it does
      */
     @Test
-    public final void acceleration3DTest() throws ValueRuntimeException
+    public void acceleration3DTest() throws ValueRuntimeException
     {
         double x = 2.2;
         double y = 3.3;

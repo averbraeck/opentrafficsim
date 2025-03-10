@@ -16,22 +16,20 @@ import org.opentrafficsim.base.TimeStampedObject;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class TimeStampedObjectTest
+public final class TimeStampedObjectTest
 {
 
-    /**
-     * Constructor.
-     */
-    public TimeStampedObjectTest()
+    /** */
+    private TimeStampedObjectTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
      * Test the entire TimeStampedObject class.
      */
     @Test
-    public final void testAll()
+    public void testAll()
     {
         String string1 = "string 1";
         Time time1 = new Time(1234, TimeUnit.DEFAULT);

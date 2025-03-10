@@ -17,15 +17,13 @@ import org.opentrafficsim.base.geometry.OtsLine2d.FractionalFallback;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class DirectionalPolyLineTest
+public final class DirectionalPolyLineTest
 {
 
-    /**
-     * Constructor.
-     */
-    public DirectionalPolyLineTest()
+    /** */
+    private DirectionalPolyLineTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**

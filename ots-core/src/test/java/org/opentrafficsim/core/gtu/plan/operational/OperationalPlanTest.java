@@ -27,15 +27,13 @@ import org.opentrafficsim.base.geometry.OtsLine2d;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class OperationalPlanTest
+public final class OperationalPlanTest
 {
 
-    /**
-     * Constructor.
-     */
-    public OperationalPlanTest()
+    /** */
+    private OperationalPlanTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -43,7 +41,7 @@ public class OperationalPlanTest
      * @throws OperationalPlanException Should not happen - test fails if it does
      */
     @Test
-    public final void testOperationalPlan() throws OperationalPlanException
+    public void testOperationalPlan() throws OperationalPlanException
     {
         OrientedPoint2d waitPoint = new OrientedPoint2d(12, 13, 17);
         Time startTime = new Time(100, TimeUnit.DEFAULT);

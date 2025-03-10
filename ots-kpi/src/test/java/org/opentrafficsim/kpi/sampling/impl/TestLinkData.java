@@ -8,18 +8,12 @@ import org.opentrafficsim.kpi.interfaces.LinkData;
 
 /**
  * Test LinkData class.
+ * @param getId id
+ * @param getLength length
+ * @param getLanes lanes
  */
-public class TestLinkData implements LinkData<TestLaneData>
+public record TestLinkData(String getId, Length getLength, List<TestLaneData> getLanes) implements LinkData<TestLaneData>
 {
-
-    /** Id. */
-    private final String id;
-
-    /** Length. */
-    private final Length length;
-
-    /** Lanes. */
-    private final List<TestLaneData> lanes = new ArrayList<>();
 
     /**
      * Constructor.
@@ -28,35 +22,16 @@ public class TestLinkData implements LinkData<TestLaneData>
      */
     public TestLinkData(final String id, final Length length)
     {
-        this.id = id;
-        this.length = length;
+        this(id, length, new ArrayList<>());
     }
 
-    @Override
-    public String getId()
-    {
-        return this.id;
-    }
-
-    @Override
-    public Length getLength()
-    {
-        return this.length;
-    }
-
-    @Override
-    public List<TestLaneData> getLanes()
-    {
-        return this.lanes;
-    }
-    
     /**
      * Adds lane.
      * @param lane lane
      */
     void addLane(final TestLaneData lane)
     {
-        this.lanes.add(lane);
+        getLanes().add(lane);
     }
 
 }

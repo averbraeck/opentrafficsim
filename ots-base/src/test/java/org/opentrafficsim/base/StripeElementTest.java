@@ -21,15 +21,13 @@ import org.opentrafficsim.base.StripeElement.StripeLateralSync;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class StripeElementTest
+public final class StripeElementTest
 {
 
-    /**
-     * Constructor.
-     */
-    public StripeElementTest()
+    /** */
+    private StripeElementTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**

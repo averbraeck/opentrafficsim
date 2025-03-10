@@ -27,7 +27,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class StaticObjectTest implements EventListener
+public final class StaticObjectTest implements EventListener
 {
     /** ... */
     private static final long serialVersionUID = 1L;
@@ -35,12 +35,10 @@ public class StaticObjectTest implements EventListener
     /** Last received event. */
     private Event lastEvent = null;
 
-    /**
-     * Constructor.
-     */
-    public StaticObjectTest()
+    /** */
+    private StaticObjectTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**

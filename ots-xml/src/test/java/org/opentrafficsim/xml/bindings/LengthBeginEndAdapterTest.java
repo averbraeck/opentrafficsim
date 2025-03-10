@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Try;
+import org.junit.jupiter.api.Test;
 import org.opentrafficsim.xml.bindings.types.LengthBeginEndType;
 import org.opentrafficsim.xml.bindings.types.LengthBeginEndType.LengthBeginEnd;
 
@@ -18,7 +19,7 @@ import jakarta.xml.bind.JAXBException;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class LengthBeginEndAdapterTest
+public final class LengthBeginEndAdapterTest
 {
     /** the allowed units. */
     private static final LengthUnit[] UNITS = new LengthUnit[] {LengthUnit.MILLIMETER, LengthUnit.CENTIMETER,
@@ -28,19 +29,17 @@ public class LengthBeginEndAdapterTest
     /** the corresponding strings. */
     private static final String[] UNIT_STRING = new String[] {"mm", "cm", "dm", "m", "dam", "hm", "km", "mi", "yd", "ft"};
 
-    /**
-     * Constructor.
-     */
-    public LengthBeginEndAdapterTest()
+    /** */
+    private LengthBeginEndAdapterTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
      * Test the LengthBeginEndAdapter.
      * @throws JAXBException exception
      */
-    // TODO: repair @Test (problem with Locale when creating Length from String "2.3mm")
+    @Test
     public void testLengthBeginEndAdapter() throws JAXBException
     {
         LengthBeginEndAdapter lbeAdapter = new LengthBeginEndAdapter();

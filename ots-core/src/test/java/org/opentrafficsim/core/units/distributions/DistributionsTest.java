@@ -72,15 +72,13 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class DistributionsTest
+public final class DistributionsTest
 {
 
-    /**
-     * Constructor.
-     */
-    public DistributionsTest()
+    /** */
+    private DistributionsTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /** Next value returned by the draw method of the dummy DistContinuous. */
@@ -90,7 +88,7 @@ public class DistributionsTest
      * Retrieve the current value of the nextDoubleResult field.
      * @return the current value of the nextDoubleResult field
      */
-    final double getDoubleNextResult()
+    double getDoubleNextResult()
     {
         return this.nextDoubleResult;
     }
@@ -102,7 +100,7 @@ public class DistributionsTest
      * Retrieve the current value of the nextLongResult field.
      * @return the current value of the nextLongResult field
      */
-    final long getLongNextResult()
+    long getLongNextResult()
     {
         return this.nextLongResult;
     }
@@ -112,7 +110,7 @@ public class DistributionsTest
      * @throws ClassNotFoundException if that happens uncaught; this test has failed
      */
     @Test
-    public final void testConstructors() throws ClassNotFoundException
+    public void testConstructors() throws ClassNotFoundException
     {
         AbsoluteLinearUnit<?, ?>[] absoluteUnits = {DirectionUnit.DEFAULT, PositionUnit.DEFAULT, AbsoluteTemperatureUnit.KELVIN,
                 TimeUnit.DEFAULT/* , AbsJunkUnit.DEFAULT */};
@@ -416,7 +414,7 @@ public class DistributionsTest
         /**
          * Constructor.
          */
-        public JunkUnit()
+        JunkUnit()
         {
             //
         }
@@ -445,7 +443,7 @@ public class DistributionsTest
         /**
          * Constructor.
          */
-        public AbsJunkUnit()
+        AbsJunkUnit()
         {
             //
         }

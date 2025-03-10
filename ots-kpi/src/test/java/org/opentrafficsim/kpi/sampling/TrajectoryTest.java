@@ -39,14 +39,13 @@ import org.opentrafficsim.kpi.sampling.impl.TestGtuData;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class TrajectoryTest
+public final class TrajectoryTest
 {
 
-    /**
-     * Constructor.
-     */
-    public TrajectoryTest()
+    /** */
+    private TrajectoryTest()
     {
+        // do not instantiate test class
     }
 
     /**

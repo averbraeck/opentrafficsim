@@ -17,22 +17,20 @@ import org.junit.jupiter.api.Test;
  * $LastChangedDate$, @version $Revision$, by $Author$, initial version 13 jul. 2015 <br>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class RelativePositionTest
+public final class RelativePositionTest
 {
 
-    /**
-     * Constructor.
-     */
-    public RelativePositionTest()
+    /** */
+    private RelativePositionTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
      * Test constructors and getters of RelativePosition.
      */
     @Test
-    public final void relativePositionTest()
+    public void relativePositionTest()
     {
         Length deltaX = new Length(12, LengthUnit.METER);
         Length deltaY = new Length(23, LengthUnit.METER);

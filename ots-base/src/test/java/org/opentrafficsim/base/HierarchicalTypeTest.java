@@ -18,15 +18,13 @@ import org.junit.jupiter.api.Test;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class HierarchicalTypeTest
+public final class HierarchicalTypeTest
 {
 
-    /**
-     * Constructor.
-     */
-    public HierarchicalTypeTest()
+    /** */
+    private HierarchicalTypeTest()
     {
-        //
+        // do not instantiate the test class
     }
 
     /**
@@ -34,7 +32,7 @@ public class HierarchicalTypeTest
      */
     @SuppressWarnings("unlikely-arg-type")
     @Test
-    public final void testBasics()
+    public void testBasics()
     {
         SubType st = new SubType("id");
         assertEquals("id", st.getId(), "id check");

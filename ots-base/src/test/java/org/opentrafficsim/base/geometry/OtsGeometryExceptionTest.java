@@ -8,15 +8,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.Test;
 
 /** Test the OtsGeometryException class. */
-public class OtsGeometryExceptionTest
+public final class OtsGeometryExceptionTest
 {
 
-    /**
-     * Constructor.
-     */
-    public OtsGeometryExceptionTest()
+    /** */
+    private OtsGeometryExceptionTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /** Test the OtsGeometryException class. */

@@ -65,17 +65,15 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class LaneBasedGtuTest implements UNITS
+public final class LaneBasedGtuTest implements UNITS
 {
     /** Id generator. */
     private IdSupplier idGenerator = new IdSupplier("id");
 
-    /**
-     * Constructor.
-     */
-    public LaneBasedGtuTest()
+    /** */
+    private LaneBasedGtuTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -369,7 +367,7 @@ public class LaneBasedGtuTest implements UNITS
      * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public final void timeAtDistanceTest() throws Exception
+    public void timeAtDistanceTest() throws Exception
     {
         for (int a = 1; a >= -1; a--)
         {
@@ -451,7 +449,7 @@ public class LaneBasedGtuTest implements UNITS
     /**
      * Executed as scheduled event.
      */
-    public final void autoPauseSimulator()
+    public void autoPauseSimulator()
     {
         // do nothing
     }

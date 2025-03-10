@@ -20,18 +20,16 @@ import org.opentrafficsim.animation.gis.TransformWgs84DutchRdNew;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class RDTests
+public final class RDTests
 {
 
     /** Verbose test. */
     private static final boolean VERBOSE = false;
 
-    /**
-     * Constructor.
-     */
-    public RDTests()
+    /** */
+    private RDTests()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -39,7 +37,7 @@ public class RDTests
      * @param description description of the test
      * @param rdIn location to test
      */
-    final void forwardReverseCompare(final String description, final Point2D rdIn)
+    void forwardReverseCompare(final String description, final Point2D rdIn)
     {
 
         Point2D wgs = TransformWgs84DutchRdNew.toWgs84(rdIn);
@@ -60,7 +58,7 @@ public class RDTests
      * Test the transformations.
      */
     @Test
-    public final void testMain()
+    public void testMain()
     {
         forwardReverseCompare("Westertoren Amsterdam", new Point2D.Double(120700.723, 487525.501));
         forwardReverseCompare("Martinitoren Groningen", new Point2D.Double(233883.131, 582065.167));

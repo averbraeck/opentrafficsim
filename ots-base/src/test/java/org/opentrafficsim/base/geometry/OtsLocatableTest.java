@@ -19,15 +19,13 @@ import org.junit.jupiter.api.Test;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class OtsLocatableTest
+public final class OtsLocatableTest
 {
 
-    /**
-     * Constructor.
-     */
-    public OtsLocatableTest()
+    /** */
+    private OtsLocatableTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /** Contour. */

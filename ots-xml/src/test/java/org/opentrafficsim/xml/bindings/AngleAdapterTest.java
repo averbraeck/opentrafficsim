@@ -19,15 +19,13 @@ import jakarta.xml.bind.JAXBException;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class AngleAdapterTest
+public final class AngleAdapterTest
 {
 
-    /**
-     * Constructor.
-     */
-    public AngleAdapterTest()
+    /** */
+    private AngleAdapterTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**

@@ -62,15 +62,13 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class AbstractLaneBasedGtuTest implements UNITS
+public final class AbstractLaneBasedGtuTest implements UNITS
 {
 
-    /**
-     * Constructor.
-     */
-    public AbstractLaneBasedGtuTest()
+    /** */
+    private AbstractLaneBasedGtuTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -78,7 +76,7 @@ public class AbstractLaneBasedGtuTest implements UNITS
      * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public final void abstractLaneBasedGtuTest() throws Exception
+    public void abstractLaneBasedGtuTest() throws Exception
     {
         // This initialization code should probably be moved to a helper method that will be used in several tests.
         // First we need a set of Lanes

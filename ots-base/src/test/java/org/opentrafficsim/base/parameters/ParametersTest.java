@@ -33,23 +33,20 @@ import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-
-public class ParametersTest implements ConstraintInterface
+public final class ParametersTest implements ConstraintInterface
 {
 
-    /**
-     * Constructor.
-     */
-    public ParametersTest()
+    /** */
+    private ParametersTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
      * Defaults tests.
      */
     @Test
-    public final void defaultsTest()
+    public void defaultsTest()
     {
         Parameters params = new ParameterSet().setDefaultParameters(ParameterTypes.class);
         try
@@ -67,7 +64,7 @@ public class ParametersTest implements ConstraintInterface
      * Constructor tests.
      */
     @Test
-    public final void constructorTest()
+    public void constructorTest()
     {
         // Check Parameters constructor
         ParameterSet params = new ParameterSet();
@@ -113,7 +110,7 @@ public class ParametersTest implements ConstraintInterface
      * Parameter value default range tests.
      */
     @Test
-    public final void defaultRangeTest()
+    public void defaultRangeTest()
     {
         // Check default values that should work
         checkDefaultValue(1.0, POSITIVE, false);
@@ -223,7 +220,7 @@ public class ParametersTest implements ConstraintInterface
      * Parameter value custom constraint tests.
      */
     @Test
-    public final void customConstraintTest()
+    public void customConstraintTest()
     {
 
         // Check values that should work
@@ -304,7 +301,7 @@ public class ParametersTest implements ConstraintInterface
      * @throws ParameterException Should not be thrown, is for untested methods (in this test) that throw the exception.
      */
     @Test
-    public final void setResetTest() throws ParameterException
+    public void setResetTest() throws ParameterException
     {
         ParameterTypeInteger a = new ParameterTypeInteger("a", "along", 0);
 
@@ -454,7 +451,7 @@ public class ParametersTest implements ConstraintInterface
      * @throws ParameterException Should not be thrown, is for untested methods (in this test) that throw the exception.
      */
     @Test
-    public final void equalizeTest() throws ParameterException
+    public void equalizeTest() throws ParameterException
     {
         // equal double values from different parameters should be equal
         ParameterTypeDouble a1 = new ParameterTypeDouble("a", "along", 0.0);
@@ -491,7 +488,7 @@ public class ParametersTest implements ConstraintInterface
      * Test that exceptions are thrown when trying to use null values.
      */
     @Test
-    public final void testNullNotAllowed()
+    public void testNullNotAllowed()
     {
         // null default value
         try
@@ -538,7 +535,7 @@ public class ParametersTest implements ConstraintInterface
      * @throws InstantiationException Reflection.
      */
     @Test
-    public final void checkDefaultValues() throws InstantiationException, IllegalAccessException, IllegalArgumentException,
+    public void checkDefaultValues() throws InstantiationException, IllegalAccessException, IllegalArgumentException,
             InvocationTargetException, NoSuchMethodException, SecurityException
     {
         // @formatter:off
@@ -688,7 +685,7 @@ public class ParametersTest implements ConstraintInterface
      * @throws ParameterException parameter exception
      */
     @Test
-    public final void mergeTest() throws ParameterException
+    public void mergeTest() throws ParameterException
     {
         ParameterSet paramsA = new ParameterSet();
         paramsA.setDefaultParameter(ParameterTypes.A);

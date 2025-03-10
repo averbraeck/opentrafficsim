@@ -35,7 +35,7 @@ import org.opentrafficsim.core.network.route.Route;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class NetworkTest implements EventListener
+public final class NetworkTest implements EventListener
 {
 
     /** ... */
@@ -62,12 +62,10 @@ public class NetworkTest implements EventListener
     /** Count other events. */
     private int otherEventCount = 0;
 
-    /**
-     * Constructor.
-     */
-    public NetworkTest()
+    /** */
+    private NetworkTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -75,7 +73,7 @@ public class NetworkTest implements EventListener
      * @throws NetworkException if that happens; this test has failed
      */
     @Test
-    public final void testNetwork() throws NetworkException
+    public void testNetwork() throws NetworkException
     {
         String networkId = "testNetwork";
         OtsSimulatorInterface simulator = MockSimulator.createMock();
@@ -340,7 +338,7 @@ public class NetworkTest implements EventListener
      * @throws NetworkException if that happens uncaught, this test has failed
      */
     @Test
-    public final void testExtent() throws NetworkException
+    public void testExtent() throws NetworkException
     {
         Network network = new Network("test", MockSimulator.createMock());
         Rectangle2D extent = network.getExtent();
@@ -369,7 +367,7 @@ public class NetworkTest implements EventListener
     }
 
     @Override
-    public final void notify(final Event event) throws RemoteException
+    public void notify(final Event event) throws RemoteException
     {
         EventType type = event.getType();
         if (type.equals(Network.NODE_ADD_EVENT))
@@ -407,7 +405,7 @@ public class NetworkTest implements EventListener
      * @throws NetworkException if that happens uncaught; this test has failed
      */
     @Test
-    public final void testRouteMap() throws NetworkException
+    public void testRouteMap() throws NetworkException
     {
         Network network = new Network("Route map test network", MockSimulator.createMock());
         Node node1 = new Node(network, "node1", new Point2d(10, 20));
@@ -453,7 +451,7 @@ public class NetworkTest implements EventListener
         badNodeList.add(badNode);
         try
         {
-            Route badRoute = new Route("badRoute", carType, badNodeList);
+            new Route("badRoute", carType, badNodeList);
             fail("creating a route with a node that is not in the network should have thrown a NetworkException");
         }
         catch (NetworkException ne)
@@ -500,7 +498,7 @@ public class NetworkTest implements EventListener
      * @throws NetworkException if that happens uncaught; this test has failed
      */
     @Test
-    public final void testShortestPathBiDirectional() throws NetworkException
+    public void testShortestPathBiDirectional() throws NetworkException
     {
         Network network = new Network("shortest path test network", MockSimulator.createMock());
         List<Node> nodes = createRingNodesAndLinks(network);
@@ -534,7 +532,7 @@ public class NetworkTest implements EventListener
      * @throws NetworkException if that happens uncaught; this test has failed
      */
     @Test
-    public final void testShortestPathClockWise() throws NetworkException
+    public void testShortestPathClockWise() throws NetworkException
     {
         Network network = new Network("shortest path test network", MockSimulator.createMock());
         List<Node> nodes = createRingNodesAndLinks(network);
@@ -570,7 +568,7 @@ public class NetworkTest implements EventListener
      * @throws NetworkException if that happens uncaught; this test has failed
      */
     @Test
-    public final void testShortestPathWithIntermediateNodes() throws NetworkException
+    public void testShortestPathWithIntermediateNodes() throws NetworkException
     {
         Network network = new Network("shortest path test network", MockSimulator.createMock());
         List<Node> nodes = createRingNodesAndLinks(network, 5);
@@ -742,7 +740,7 @@ public class NetworkTest implements EventListener
      * @param sigma Gaussian standard deviation for node location, assuming a unit grid with a spacing of 1.
      * @param sigmaLim limits the random location between -sigmaLim and sigmaLim around its regular grid point.
      * @return origin (at index 0) and destination (at index 1) to use.
-     * @throws NetworkException
+     * @throws NetworkException exception
      */
     private Node[] randomTestNetwork(final Network network, final int gridSize, final double sigma, final double sigmaLim)
             throws NetworkException
@@ -804,7 +802,7 @@ public class NetworkTest implements EventListener
      * Calculates length of the route.
      * @param route route.
      * @return route length.
-     * @throws NetworkException
+     * @throws NetworkException exception
      */
     private double routeLength(final Route route) throws NetworkException
     {

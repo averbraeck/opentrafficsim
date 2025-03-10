@@ -5,14 +5,14 @@ import java.util.PriorityQueue;
 import org.djunits.value.vdouble.scalar.Time;
 
 /**
- * Test simulator. 
+ * Test simulator.
  */
 public class TestSimulator
 {
 
     /** Event queue. */
     private final PriorityQueue<Event> queue = new PriorityQueue<>();
-    
+
     /** Current time. */
     private Time now = Time.ZERO;
 
@@ -21,8 +21,9 @@ public class TestSimulator
      */
     public TestSimulator()
     {
+        //
     }
-    
+
     /**
      * Add event.
      * @param sampler sampler
@@ -34,7 +35,7 @@ public class TestSimulator
     {
         this.queue.add(new Event(sampler, time, lane, start));
     }
-    
+
     /**
      * Executes all events until time (inclusive).
      * @param time time
@@ -53,7 +54,7 @@ public class TestSimulator
             event.execute();
         }
     }
-    
+
     /**
      * Set time.
      * @param time time
@@ -62,7 +63,7 @@ public class TestSimulator
     {
         this.now = time;
     }
-    
+
     /**
      * Returns the current time.
      * @return time

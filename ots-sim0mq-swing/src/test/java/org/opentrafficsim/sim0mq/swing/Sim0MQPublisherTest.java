@@ -39,15 +39,13 @@ import nl.tudelft.simulation.language.DsolException;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class Sim0MQPublisherTest
+public final class Sim0MQPublisherTest
 {
 
-    /**
-     * Constructor.
-     */
-    public Sim0MQPublisherTest()
+    /** */
+    private Sim0MQPublisherTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**

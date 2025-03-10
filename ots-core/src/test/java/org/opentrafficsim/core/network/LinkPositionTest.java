@@ -19,18 +19,16 @@ import org.opentrafficsim.core.mock.MockSimulator;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class LinkPositionTest
+public final class LinkPositionTest
 {
 
     /** Verbose test. */
     private static final boolean VERBOSE = false;
 
-    /**
-     * Constructor.
-     */
-    public LinkPositionTest()
+    /** */
+    private LinkPositionTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**

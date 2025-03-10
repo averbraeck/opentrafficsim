@@ -42,18 +42,16 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class CurveTest
+public final class CurveTest
 {
 
     /** Verbose test. */
     private static final boolean VERBOSE = false;
 
-    /**
-     * Constructor.
-     */
-    public CurveTest()
+    /** */
+    private CurveTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -64,7 +62,7 @@ public class CurveTest
      * @throws GtuException on error
      */
     @Test
-    public final void curveTest() throws SimRuntimeException, NamingException, NetworkException, GtuException
+    public void curveTest() throws SimRuntimeException, NamingException, NetworkException, GtuException
     {
         final int laneCount = 1;
         OtsSimulatorInterface simulator = CarTest.makeSimulator();
@@ -129,7 +127,7 @@ public class CurveTest
      * Print all scheduled events of an OtsSimulatorInterface.
      * @param simulator the OtsSimulatorInterface
      */
-    public final void printEventList(final OtsSimulatorInterface simulator)
+    public void printEventList(final OtsSimulatorInterface simulator)
     {
         for (SimEventInterface<Duration> se : simulator.getEventList())
         {

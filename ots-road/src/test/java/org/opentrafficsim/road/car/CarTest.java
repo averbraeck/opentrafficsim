@@ -55,15 +55,13 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class CarTest implements UNITS
+public final class CarTest implements UNITS
 {
 
-    /**
-     * Constructor.
-     */
-    public CarTest()
+    /** */
+    private CarTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -75,7 +73,7 @@ public class CarTest implements UNITS
      */
     @SuppressWarnings("static-method")
     @Test
-    public final void carTest() throws NetworkException, SimRuntimeException, NamingException, GtuException
+    public void carTest() throws NetworkException, SimRuntimeException, NamingException, GtuException
     {
         Time initialTime = new Time(0, TimeUnit.BASE_SECOND);
         OtsSimulatorInterface simulator = makeSimulator();

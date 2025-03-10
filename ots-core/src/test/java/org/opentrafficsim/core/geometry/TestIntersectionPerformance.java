@@ -22,12 +22,10 @@ import org.djutils.draw.point.Point2d;
 public final class TestIntersectionPerformance
 {
 
-    /**
-     * Inaccessible constructor to prevent instantiation of this class.
-     */
+    /** */
     private TestIntersectionPerformance()
     {
-        // This class cannot be instantiated
+        // do not instantiate test class
     }
 
     /**

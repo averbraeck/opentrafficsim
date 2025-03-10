@@ -17,15 +17,13 @@ import org.junit.jupiter.api.Test;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ContinuousStraightTest
+public final class ContinuousStraightTest
 {
 
-    /**
-     * Constructor.
-     */
-    public ContinuousStraightTest()
+    /** */
+    private ContinuousStraightTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /** Approximate coordinate equality margin. */

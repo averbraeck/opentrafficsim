@@ -29,15 +29,13 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ParserTest
+public final class ParserTest
 {
 
-    /**
-     * Constructor.
-     */
-    public ParserTest()
+    /** */
+    private ParserTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**

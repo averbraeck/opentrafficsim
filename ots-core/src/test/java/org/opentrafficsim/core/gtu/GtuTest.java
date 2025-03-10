@@ -44,7 +44,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class GtuTest
+public final class GtuTest
 {
 
     /** GTU that will be returned when the fake strategical planner is asked for the associated GTU with getGTU. */
@@ -53,12 +53,10 @@ public class GtuTest
     /** */
     private static final long serialVersionUID = 20151217L;
 
-    /**
-     * Constructor.
-     */
-    public GtuTest()
+    /** */
+    private GtuTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -70,7 +68,7 @@ public class GtuTest
      * @throws RemoteException should not happen uncaught; if it does the test has failed
      */
     @Test
-    public final void testAbstractGtu()
+    public void testAbstractGtu()
             throws GtuException, SimRuntimeException, NetworkException, NamingException, RemoteException
     {
         TestGtu firstGTU = null;

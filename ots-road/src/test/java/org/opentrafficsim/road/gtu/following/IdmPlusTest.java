@@ -51,24 +51,22 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class IdmPlusTest implements UNITS
+public final class IdmPlusTest implements UNITS
 {
 
-    /**
-     * Constructor.
-     */
-    public IdmPlusTest()
+    /** */
+    private IdmPlusTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
      * Test IDMPlus.
      * @throws Exception when something goes wrong (should not happen)
      */
-    @SuppressWarnings({"static-method", "checkstyle:methodlength"})
+    @SuppressWarnings("checkstyle:methodlength")
     @Test
-    public final void computeAcceleration() throws Exception
+    public void computeAcceleration() throws Exception
     {
         // Test 1. Check a car standing still with no leaders accelerates with maximum acceleration
         // cars have #10 and up

@@ -34,17 +34,15 @@ import nl.tudelft.simulation.dsol.statistics.SimulationStatistic;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class TemplateGtuTypeTest implements OtsModelInterface
+public final class TemplateGtuTypeTest implements OtsModelInterface
 {
     /** */
     private static final long serialVersionUID = 20160311L;
 
-    /**
-     * Constructor.
-     */
-    public TemplateGtuTypeTest()
+    /** */
+    private TemplateGtuTypeTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -55,7 +53,7 @@ public class TemplateGtuTypeTest implements OtsModelInterface
      * @throws ParameterException in case a parameter problem occurs
      */
     @Test
-    public final void templateGtuTypeTest() throws SimRuntimeException, NamingException, GtuException, ParameterException
+    public void templateGtuTypeTest() throws SimRuntimeException, NamingException, GtuException, ParameterException
     {
         GtuType gtuTypeA = new GtuType("type name A", DefaultsNl.VEHICLE);
         GtuType gtuTypeB = new GtuType("type name B", DefaultsNl.VEHICLE);
@@ -172,13 +170,13 @@ public class TemplateGtuTypeTest implements OtsModelInterface
     private OtsSimulatorInterface simulator;
 
     @Override
-    public final void constructModel() throws SimRuntimeException
+    public void constructModel() throws SimRuntimeException
     {
         //
     }
 
     @Override
-    public final Network getNetwork()
+    public Network getNetwork()
     {
         return null;
     }

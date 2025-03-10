@@ -24,15 +24,13 @@ import org.pmw.tinylog.Logger;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class VerifyPerceptionCategoryMethods
+public final class VerifyPerceptionCategoryMethods
 {
 
-    /**
-     * Constructor.
-     */
-    public VerifyPerceptionCategoryMethods()
+    /** */
+    private VerifyPerceptionCategoryMethods()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -67,7 +65,7 @@ public class VerifyPerceptionCategoryMethods
      * The {@code *} is subtracted as field name, with first character made upper or lower case as by convention.
      */
     @Test
-    public final void perceptionCategotyTest()
+    public void perceptionCategotyTest()
     {
         Collection<Class<?>> classList = ClassList.classList("org.opentrafficsim", true);
         for (Class<?> c : classList)

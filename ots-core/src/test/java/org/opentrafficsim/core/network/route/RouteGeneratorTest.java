@@ -19,15 +19,13 @@ import org.opentrafficsim.core.network.Node;
  * $LastChangedDate$, @version $Revision$, by $Author$, initial version 20 mrt. 2015 <br>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class RouteGeneratorTest
+public final class RouteGeneratorTest
 {
 
-    /**
-     * Constructor.
-     */
-    public RouteGeneratorTest()
+    /** */
+    private RouteGeneratorTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**

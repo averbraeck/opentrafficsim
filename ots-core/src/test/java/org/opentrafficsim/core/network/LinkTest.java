@@ -30,7 +30,7 @@ import org.opentrafficsim.core.mock.MockSimulator;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class LinkTest implements EventListener
+public final class LinkTest implements EventListener
 {
     /** ... */
     private static final long serialVersionUID = 1L;
@@ -44,12 +44,10 @@ public class LinkTest implements EventListener
     /** Count other events. */
     private int otherEventCount = 0;
 
-    /**
-     * Constructor.
-     */
-    public LinkTest()
+    /** */
+    private LinkTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -57,7 +55,7 @@ public class LinkTest implements EventListener
      * @throws NetworkException should not happen uncaught in this test
      */
     @Test
-    public final void testOTSLink() throws NetworkException
+    public void testOTSLink() throws NetworkException
     {
         Network network = new Network("OTSLinkTestNetwork", MockSimulator.createMock());
         Node startNode = new Node(network, "start", new Point2d(10, 20));
@@ -139,7 +137,7 @@ public class LinkTest implements EventListener
     }
 
     @Override
-    public final void notify(final Event event) throws RemoteException
+    public void notify(final Event event) throws RemoteException
     {
         EventType eventType = event.getType();
         if (eventType.equals(Link.GTU_ADD_EVENT))

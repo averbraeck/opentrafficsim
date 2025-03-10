@@ -45,18 +45,16 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class DetectorTest implements UNITS
+public final class DetectorTest implements UNITS
 {
 
     /** Verbose test. */
     private static final boolean VERBOSE = false;
 
-    /**
-     * Constructor.
-     */
-    public DetectorTest()
+    /** */
+    private DetectorTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -64,7 +62,7 @@ public class DetectorTest implements UNITS
      * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public final void sensorTest() throws Exception
+    public void sensorTest() throws Exception
     {
         // We need a simulator, but for that we first need something that implements OtsModelInterface
         OtsSimulatorInterface simulator = new OtsSimulator("SensorTest");

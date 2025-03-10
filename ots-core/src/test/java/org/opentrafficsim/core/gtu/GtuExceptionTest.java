@@ -16,22 +16,20 @@ import org.junit.jupiter.api.Test;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class GtuExceptionTest
+public final class GtuExceptionTest
 {
 
-    /**
-     * Constructor.
-     */
-    public GtuExceptionTest()
+    /** */
+    private GtuExceptionTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
      * Test the GTUException class.
      */
     @Test
-    public final void gtuExceptionTest()
+    public void gtuExceptionTest()
     {
         GtuException e = new GtuException();
         assertNotNull(e, "result should not be null");
@@ -52,7 +50,7 @@ public class GtuExceptionTest
      * @throws GtuException should not happen (this test has failed if it does)
      */
     @Test
-    public final void throwIfTest() throws GtuException
+    public void throwIfTest() throws GtuException
     {
         String message = "message";
         try

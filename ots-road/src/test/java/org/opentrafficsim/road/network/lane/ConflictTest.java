@@ -49,7 +49,7 @@ import org.opentrafficsim.road.network.lane.conflict.DefaultConflictRule;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class ConflictTest implements EventListener
+public final class ConflictTest implements EventListener
 {
     /** ... */
     private static final long serialVersionUID = 20200708L;
@@ -60,12 +60,10 @@ public class ConflictTest implements EventListener
     /** Storage for received events. */
     private List<Event> collectedEvents = new ArrayList<>();
 
-    /**
-     * Constructor.
-     */
-    public ConflictTest()
+    /** */
+    private ConflictTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**

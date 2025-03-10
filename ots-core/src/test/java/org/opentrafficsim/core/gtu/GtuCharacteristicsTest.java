@@ -29,17 +29,15 @@ import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class GtuCharacteristicsTest implements OtsModelInterface
+public final class GtuCharacteristicsTest implements OtsModelInterface
 {
     /** */
     private static final long serialVersionUID = 20160311L;
 
-    /**
-     * Constructor.
-     */
-    public GtuCharacteristicsTest()
+    /** */
+    private GtuCharacteristicsTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -48,7 +46,7 @@ public class GtuCharacteristicsTest implements OtsModelInterface
      * @throws NamingException should never happen
      */
     @Test
-    public final void testGtuCharacteristics() throws SimRuntimeException, NamingException
+    public void testGtuCharacteristics() throws SimRuntimeException, NamingException
     {
         Network network = new Network("network", this.simulator);
         // Make two sets of values so we can prove that the constructed GtuCharacteristics sets are really distinct.
@@ -78,13 +76,13 @@ public class GtuCharacteristicsTest implements OtsModelInterface
     private OtsSimulatorInterface simulator;
 
     @Override
-    public final void constructModel() throws SimRuntimeException
+    public void constructModel() throws SimRuntimeException
     {
         // nothing to do
     }
 
     @Override
-    public final Network getNetwork()
+    public Network getNetwork()
     {
         return null;
     }

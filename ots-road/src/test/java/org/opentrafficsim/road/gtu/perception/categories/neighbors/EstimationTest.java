@@ -27,15 +27,13 @@ import org.opentrafficsim.road.network.lane.conflict.Conflict;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class EstimationTest
+public final class EstimationTest
 {
 
-    /**
-     * Constructor.
-     */
-    public EstimationTest()
+    /** */
+    private EstimationTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**

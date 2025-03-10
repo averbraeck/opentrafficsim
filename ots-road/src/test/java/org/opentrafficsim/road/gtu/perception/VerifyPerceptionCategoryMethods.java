@@ -26,15 +26,13 @@ import org.opentrafficsim.road.ClassList;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class VerifyPerceptionCategoryMethods
+public final class VerifyPerceptionCategoryMethods
 {
 
-    /**
-     * Constructor.
-     */
-    public VerifyPerceptionCategoryMethods()
+    /** */
+    private VerifyPerceptionCategoryMethods()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -69,7 +67,7 @@ public class VerifyPerceptionCategoryMethods
      * The {@code *} is subtracted as field name, with first character made upper or lower case as by convention.
      */
     @Test
-    public final void perceptionCategoryTest()
+    public void perceptionCategoryTest()
     {
         // TODO: to what extent do we want to prescribe this now that we have more flexible perception categories
         Collection<Class<?>> classList = ClassList.classList("org.opentrafficsim", true);

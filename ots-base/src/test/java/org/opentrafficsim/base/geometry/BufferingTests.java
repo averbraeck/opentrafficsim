@@ -9,15 +9,13 @@ import org.junit.jupiter.api.Test;
  * Test the alternative offset line classes.<br>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class BufferingTests
+public final class BufferingTests
 {
 
-    /**
-     * Constructor.
-     */
-    public BufferingTests()
+    /** */
+    private BufferingTests()
     {
-        //
+        // do not instantiate test class
     }
 
     /**

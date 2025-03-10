@@ -31,25 +31,23 @@ import org.opentrafficsim.base.geometry.OtsLine2d.FractionalFallback;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class OtsLine2dTest
+public final class OtsLine2dTest
 {
 
     /** Verbose test. */
     private static final boolean VERBOSE = false;
 
-    /**
-     * Constructor.
-     */
-    public OtsLine2dTest()
+    /** */
+    private OtsLine2dTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
      * Test the constructors of OtsLine2d.
      */
     @Test
-    public final void constructorsTest()
+    public void constructorsTest()
     {
         double[] values = {-999, 0, 99, 9999}; // Keep this list short; execution time grows with 9th power of length
         Point2d[] points = new Point2d[0]; // Empty array
@@ -163,7 +161,7 @@ public class OtsLine2dTest
      * Print a Path2D to the console.
      * @param path the path
      */
-    public final void printPath2D(final Path2D path)
+    public void printPath2D(final Path2D path)
     {
         PathIterator pi = path.getPathIterator(null);
         double[] p = new double[6];
@@ -206,7 +204,7 @@ public class OtsLine2dTest
      * Test that exception is thrown when it should be.
      */
     @Test
-    public final void exceptionTest()
+    public void exceptionTest()
     {
         OtsLine2d line = new OtsLine2d(new Point2d[] {new Point2d(1, 2), new Point2d(4, 5)});
         try
@@ -233,7 +231,7 @@ public class OtsLine2dTest
      * Test the getLocationExtended method and friends.
      */
     @Test
-    public final void locationExtendedTest()
+    public void locationExtendedTest()
     {
         Point2d p0 = new Point2d(10, 20);
         Point2d p1 = new Point2d(40, 50);
@@ -321,7 +319,7 @@ public class OtsLine2dTest
      * Test getLocation method.
      */
     @Test
-    public final void locationTest()
+    public void locationTest()
     {
         Point2d p0 = new Point2d(10, 20);
         Point2d p1 = new Point2d(40, 50);
@@ -344,7 +342,7 @@ public class OtsLine2dTest
      * Test the createAndCleanOtsLine2d method.
      */
     @Test
-    public final void cleanTest()
+    public void cleanTest()
     {
         Point2d[] tooShort = new Point2d[] {};
         try
@@ -386,7 +384,7 @@ public class OtsLine2dTest
      */
     @SuppressWarnings("unlikely-arg-type")
     @Test
-    public final void equalsTest()
+    public void equalsTest()
     {
         Point2d p0 = new Point2d(1.1, 2.2);
         Point2d p1 = new Point2d(2.1, 2.2);
@@ -417,7 +415,7 @@ public class OtsLine2dTest
      * Test the concatenate method.
      */
     @Test
-    public final void concatenateTest()
+    public void concatenateTest()
     {
         Point2d p0 = new Point2d(1.1, 2.2);
         Point2d p1 = new Point2d(2.1, 2.2);
@@ -524,7 +522,7 @@ public class OtsLine2dTest
      * Test the reverse method.
      */
     @Test
-    public final void reverseTest()
+    public void reverseTest()
     {
         Point2d p0 = new Point2d(1.1, 2.2);
         Point2d p1 = new Point2d(2.1, 2.2);
@@ -556,7 +554,7 @@ public class OtsLine2dTest
      */
     @SuppressWarnings("checkstyle:methodlength")
     @Test
-    public final void extractTest()
+    public void extractTest()
     {
         Point2d p0 = new Point2d(1, 2);
         Point2d p1 = new Point2d(2, 3);
@@ -741,7 +739,7 @@ public class OtsLine2dTest
      * Test the offsetLine method. Only tests a few easy cases.
      */
     @Test
-    public final void offsetLineTest()
+    public void offsetLineTest()
     {
         Point2d from = new Point2d(1, 2);
         Point2d to = new Point2d(4, 3);
@@ -781,7 +779,7 @@ public class OtsLine2dTest
      * Tests the fractional projection method.
      */
     @Test
-    public final void testFractionalProjection()
+    public void testFractionalProjection()
     {
         Direction zeroDir = Direction.ZERO;
         // test correct projection with parallel helper lines on line /\/\
@@ -922,7 +920,7 @@ public class OtsLine2dTest
      * @throws IllegalAccessException if that happens uncaught; this test has failed
      */
     @Test
-    public final void testFind() throws NoSuchMethodException, SecurityException, IllegalAccessException,
+    public void testFind() throws NoSuchMethodException, SecurityException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException
     {
         // Construct a line with exponentially increasing distances
@@ -949,7 +947,7 @@ public class OtsLine2dTest
      * Test the truncate method.
      */
     @Test
-    public final void testTruncate()
+    public void testTruncate()
     {
         Point2d from = new Point2d(10, 20);
         Point2d to = new Point2d(70, 80);

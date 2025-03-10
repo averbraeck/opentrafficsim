@@ -22,18 +22,16 @@ import org.opentrafficsim.core.geometry.Flattener.NumSegments;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ContinuousArcTest
+public final class ContinuousArcTest
 {
 
     /** Verbose test. */
     private static final boolean VERBOSE = false;
 
-    /**
-     * Constructor.
-     */
-    public ContinuousArcTest()
+    /** */
+    private ContinuousArcTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /** Approximate coordinate equality margin. */

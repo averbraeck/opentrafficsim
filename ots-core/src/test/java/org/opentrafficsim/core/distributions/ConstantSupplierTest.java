@@ -13,15 +13,13 @@ import org.junit.jupiter.api.Test;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class ConstantSupplierTest
+public final class ConstantSupplierTest
 {
 
-    /**
-     * Constructor.
-     */
-    public ConstantSupplierTest()
+    /** */
+    private ConstantSupplierTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /** Test the ConstantGenerator class. */
@@ -36,7 +34,7 @@ public class ConstantSupplierTest
                 assertEquals(testValue, cg.get(), 0, "Constant generator returns constant");
             }
             assertEquals(testValue, cg.getValue(), 0, "getValue returns the value");
-            assertTrue(cg.toString().startsWith("ConstantGenerator"),
+            assertTrue(cg.toString().startsWith("ConstantSupplier"),
                     "The toString method of the ConstantGenerator returns something descriptive");
         }
     }

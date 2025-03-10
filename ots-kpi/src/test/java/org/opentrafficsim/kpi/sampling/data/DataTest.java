@@ -34,14 +34,13 @@ import org.opentrafficsim.kpi.sampling.impl.TestGtuData;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class DataTest
+public final class DataTest
 {
 
-    /**
-     * Constructor.
-     */
-    public DataTest()
+    /** */
+    private DataTest()
     {
+        // do not instantiate test class
     }
 
     /**

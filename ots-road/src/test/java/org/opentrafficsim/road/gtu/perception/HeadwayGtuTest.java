@@ -31,15 +31,13 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuSimple;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class HeadwayGtuTest
+public final class HeadwayGtuTest
 {
 
-    /**
-     * Constructor.
-     */
-    public HeadwayGtuTest()
+    /** */
+    private HeadwayGtuTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -47,7 +45,7 @@ public class HeadwayGtuTest
      * @throws GtuException when something fails; if uncaught; this test has failed
      */
     @Test
-    public final void constructorTest() throws GtuException
+    public void constructorTest() throws GtuException
     {
         // Make two headway GTUs with different values to prove that HeadwayGtus do not share static fields.
         String id1 = "id1";

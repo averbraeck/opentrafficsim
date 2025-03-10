@@ -13,15 +13,13 @@ import org.junit.jupiter.api.Test;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class FractionalLengthDataTest
+public final class FractionalLengthDataTest
 {
 
-    /**
-     * Constructor.
-     */
-    public FractionalLengthDataTest()
+    /** */
+    private FractionalLengthDataTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**

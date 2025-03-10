@@ -23,25 +23,24 @@ import org.junit.jupiter.api.Test;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class Ots2dSetTest
+public final class Ots2dSetTest
 {
 
     /** Verbose test. */
     private static final boolean VERBOSE = false;
 
-    /**
-     * Constructor.
-     */
-    public Ots2dSetTest()
+    /** */
+    private Ots2dSetTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
      * Test some simple things.
      */
+    @SuppressWarnings("unlikely-arg-type")
     @Test
-    public final void testBasics()
+    public void testBasics()
     {
         try
         {

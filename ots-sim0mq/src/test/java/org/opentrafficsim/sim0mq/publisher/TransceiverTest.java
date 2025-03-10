@@ -69,7 +69,7 @@ import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class TransceiverTest
+public final class TransceiverTest
 {
     /** Storage for the last ACK or NACK value submitted to the ReturnWrapper. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -87,12 +87,10 @@ public class TransceiverTest
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Time lastTime = null;
 
-    /**
-     * Constructor.
-     */
-    public TransceiverTest()
+    /** */
+    private TransceiverTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**

@@ -33,7 +33,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.opentrafficsim.animation.GraphLaneUtil;
 import org.opentrafficsim.core.definitions.DefaultsNl;
-import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsReplication;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -74,7 +73,7 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class ContourPlotTest implements UNITS
+public final class ContourPlotTest implements UNITS
 {
 
     /** Mocked GraphPath. */
@@ -107,12 +106,10 @@ public class ContourPlotTest implements UNITS
     /** Last scheduled event. */
     private SimEventInterface<Duration> lastScheduledEvent = null;
 
-    /**
-     * Constructor.
-     */
-    public ContourPlotTest()
+    /** */
+    private ContourPlotTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -141,7 +138,7 @@ public class ContourPlotTest implements UNITS
      * @throws SimRuntimeException if that happens uncaught; this test has failed
      * @throws NamingException on error
      */
-    public final void setUp() throws SimRuntimeException, NamingException
+    public void setUp() throws SimRuntimeException, NamingException
     {
         Mockito.when(this.mockedPath.getTotalLength()).thenReturn(Length.valueOf("2000m"));
         Mockito.when(this.mockedPath.getNumberOfSeries()).thenReturn(2);
@@ -189,7 +186,7 @@ public class ContourPlotTest implements UNITS
      * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public final void accelerationContourTest() throws Exception
+    public void accelerationContourTest() throws Exception
     {
         setUp();
         ContourDataSource dataPool = new ContourDataSource(this.mockedSamplerData, this.mockedPath);
@@ -203,7 +200,7 @@ public class ContourPlotTest implements UNITS
      * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public final void densityContourTest() throws Exception
+    public void densityContourTest() throws Exception
     {
         setUp();
         OtsSimulatorInterface simulator = this.mockedSimulator;
@@ -222,7 +219,7 @@ public class ContourPlotTest implements UNITS
      * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public final void flowContourTest() throws Exception
+    public void flowContourTest() throws Exception
     {
         setUp();
         OtsSimulatorInterface simulator = this.mockedSimulator;
@@ -241,7 +238,7 @@ public class ContourPlotTest implements UNITS
      * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public final void speedContourTest() throws Exception
+    public void speedContourTest() throws Exception
     {
         setUp();
         OtsSimulatorInterface simulator = this.mockedSimulator;

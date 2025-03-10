@@ -21,15 +21,13 @@ import org.opentrafficsim.core.gtu.GtuType;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class LinkTypeTest
+public final class LinkTypeTest
 {
 
-    /**
-     * Constructor.
-     */
-    public LinkTypeTest()
+    /** */
+    private LinkTypeTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -37,7 +35,7 @@ public class LinkTypeTest
      */
     @Test
     @SuppressWarnings({"unlikely-arg-type"})
-    public final void testLinkType()
+    public void testLinkType()
     {
         Try.testFail(() -> new LinkType(null, null), NullPointerException.class);
 

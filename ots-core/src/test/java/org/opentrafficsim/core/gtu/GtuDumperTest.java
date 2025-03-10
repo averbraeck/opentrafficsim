@@ -43,7 +43,7 @@ import nl.tudelft.simulation.dsol.statistics.SimulationStatistic;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class GtuDumperTest implements OtsModelInterface
+public final class GtuDumperTest implements OtsModelInterface
 {
     /** ... */
     private static final long serialVersionUID = 1L;
@@ -64,12 +64,10 @@ public class GtuDumperTest implements OtsModelInterface
     /** The network. */
     private Network network;
 
-    /**
-     * Constructor.
-     */
-    public GtuDumperTest()
+    /** */
+    private GtuDumperTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -134,7 +132,7 @@ public class GtuDumperTest implements OtsModelInterface
     }
 
     @Override
-    public final void constructModel() throws SimRuntimeException
+    public void constructModel() throws SimRuntimeException
     {
         // System.out.println("constructModel called.");
         try
@@ -150,37 +148,37 @@ public class GtuDumperTest implements OtsModelInterface
     }
 
     @Override
-    public final OtsSimulatorInterface getSimulator()
+    public OtsSimulatorInterface getSimulator()
     {
         return this.simulator;
     }
 
     @Override
-    public final InputParameterMap getInputParameterMap()
+    public InputParameterMap getInputParameterMap()
     {
         return null;
     }
 
     @Override
-    public final List<SimulationStatistic<Duration>> getOutputStatistics()
+    public List<SimulationStatistic<Duration>> getOutputStatistics()
     {
         return new ArrayList<>();
     }
 
     @Override
-    public final Network getNetwork()
+    public Network getNetwork()
     {
         return null;
     }
 
     @Override
-    public final String getShortName()
+    public String getShortName()
     {
         return "";
     }
 
     @Override
-    public final String getDescription()
+    public String getDescription()
     {
         return "";
     }

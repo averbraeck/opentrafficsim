@@ -68,6 +68,8 @@ public class LengthBeginEndAdapter extends ExpressionAdapter<LengthBeginEnd, Len
                 clean = clean.substring(4);
             }
 
+            Throw.when(clean.startsWith("-"), IllegalArgumentException.class, "Field %s contains negative value.", field);
+
             Length length = Length.valueOf(clean);
             return new LengthBeginEndType(new LengthBeginEnd(begin, length));
         }
@@ -97,6 +99,10 @@ public class LengthBeginEndAdapter extends ExpressionAdapter<LengthBeginEnd, Len
                     "fraction must be between 0.0 and 1.0 (inclusive)");
             return "" + lbe.getFraction();
         }
+
+        // Negative values, including -0.0, not allowed.
+        Throw.when(Double.compare(lbe.getOffset().si, 0.0) < 0, IllegalArgumentException.class,
+                "Negative offset in LengthBeginEnd %s", lbe);
 
         if (lbe.getOffset().eq(Length.ZERO))
         {

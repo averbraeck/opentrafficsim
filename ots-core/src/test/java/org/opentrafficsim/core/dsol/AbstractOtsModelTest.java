@@ -15,15 +15,13 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class AbstractOtsModelTest
+public final class AbstractOtsModelTest
 {
 
-    /**
-     * Constructor.
-     */
-    public AbstractOtsModelTest()
+    /** */
+    private AbstractOtsModelTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**

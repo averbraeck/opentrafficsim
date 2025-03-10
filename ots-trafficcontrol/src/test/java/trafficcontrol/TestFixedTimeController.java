@@ -43,15 +43,13 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class TestFixedTimeController
+public final class TestFixedTimeController
 {
 
-    /**
-     * Constructor.
-     */
-    public TestFixedTimeController()
+    /** */
+    private TestFixedTimeController()
     {
-        //
+        // do not instantiate test class
     }
 
     /**

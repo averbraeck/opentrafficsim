@@ -17,15 +17,13 @@ import org.junit.jupiter.api.Test;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ShapeTest
+public final class ShapeTest
 {
 
-    /**
-     * Constructor.
-     */
-    public ShapeTest()
+    /** */
+    private ShapeTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**

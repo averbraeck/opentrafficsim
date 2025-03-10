@@ -69,15 +69,13 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * InjectionsTest.
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class InjectionsTest
+public final class InjectionsTest
 {
 
-    /**
-     * Constructor.
-     */
-    public InjectionsTest()
+    /** */
+    private InjectionsTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -91,7 +89,7 @@ public class InjectionsTest
      */
     @SuppressWarnings("checkstyle:methodlength") // don't want to define those columns as properties or again and again
     @Test
-    public final void testInjections() throws ParameterException, NetworkException, GtuException, OtsGeometryException,
+    public void testInjections() throws ParameterException, NetworkException, GtuException, OtsGeometryException,
             SimRuntimeException, NamingException
     {
         // columns with correct, and incorrect (xxx2) value type
@@ -307,7 +305,7 @@ public class InjectionsTest
      * @throws NamingException exception
      */
     @Test
-    public final void testIdorder() throws NetworkException, SimRuntimeException, ParameterException, NamingException
+    public void testIdorder() throws NetworkException, SimRuntimeException, ParameterException, NamingException
     {
         // A small test network with two completely separated lanes on different links
         OtsSimulatorInterface simulator = new OtsSimulator("simulator");

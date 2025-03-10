@@ -23,15 +23,13 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class DefaultsTest
+public final class DefaultsTest
 {
 
-    /**
-     * Constructor.
-     */
-    public DefaultsTest()
+    /** */
+    private DefaultsTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**

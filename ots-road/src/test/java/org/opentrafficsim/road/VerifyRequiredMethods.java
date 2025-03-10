@@ -21,22 +21,20 @@ import org.junit.jupiter.api.Test;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class VerifyRequiredMethods
+public final class VerifyRequiredMethods
 {
 
-    /**
-     * Constructor.
-     */
-    public VerifyRequiredMethods()
+    /** */
+    private VerifyRequiredMethods()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
      * Check that all classes have a toString method.
      */
     @Test
-    public final void toStringTest()
+    public void toStringTest()
     {
         Collection<Class<?>> classList = ClassList.classList("org.opentrafficsim", true);
         for (Class<?> c : classList)
@@ -121,7 +119,7 @@ public class VerifyRequiredMethods
      * Check that all classes implement the Serializable interface.
      */
     @Test
-    public final void serializableTest()
+    public void serializableTest()
     {
         Collection<Class<?>> classList = ClassList.classList("org.opentrafficsim", true);
         for (Class<?> c : classList)
@@ -194,7 +192,7 @@ public class VerifyRequiredMethods
      * Check that all classes that implement equals also implement hashCode.
      */
     @Test
-    public final void equalsAndHashCodeTest()
+    public void equalsAndHashCodeTest()
     {
         Collection<Class<?>> classList = ClassList.classList("org.opentrafficsim", true);
         for (Class<?> c : classList)

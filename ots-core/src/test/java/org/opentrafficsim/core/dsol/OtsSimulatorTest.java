@@ -24,17 +24,15 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class OtsSimulatorTest
+public final class OtsSimulatorTest
 {
     /** Store argument of eventReceiver. */
     private String receivedArgument = null;
 
-    /**
-     * Constructor.
-     */
-    public OtsSimulatorTest()
+    /** */
+    private OtsSimulatorTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**

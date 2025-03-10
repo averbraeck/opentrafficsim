@@ -52,17 +52,15 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class LaneBasedTemplateGtuTypeTest implements UNITS
+public final class LaneBasedTemplateGtuTypeTest implements UNITS
 {
     /** The random stream. */
     private StreamInterface stream = new MersenneTwister();
 
-    /**
-     * Constructor.
-     */
-    public LaneBasedTemplateGtuTypeTest()
+    /** */
+    private LaneBasedTemplateGtuTypeTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -70,7 +68,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
      * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public final void constructorTest() throws Exception
+    public void constructorTest() throws Exception
     {
         OtsSimulatorInterface simulator = new OtsSimulator("LaneBasedTemplateGTUTypeTest");
         GtuType pcType = DefaultsNl.CAR;
@@ -173,7 +171,7 @@ public class LaneBasedTemplateGtuTypeTest implements UNITS
      * @throws Exception when something goes wrong (should not happen)
      */
     @Test
-    public final void compatibleLaneTypeTest() throws Exception
+    public void compatibleLaneTypeTest() throws Exception
     {
         // Create some TemplateGTUTypes
         GtuType pc = DefaultsNl.CAR;

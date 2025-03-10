@@ -20,15 +20,13 @@ import org.opentrafficsim.core.mock.MockSimulator;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class CapacityLinkTest
+public final class CapacityLinkTest
 {
 
-    /**
-     * Constructor.
-     */
-    public CapacityLinkTest()
+    /** */
+    private CapacityLinkTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -36,7 +34,7 @@ public class CapacityLinkTest
      * @throws NetworkException this test has failed if this exception occurs uncaught
      */
     @Test
-    public final void constructorTest() throws NetworkException
+    public void constructorTest() throws NetworkException
     {
         Point2d fromPoint = new Point2d(100, 200);
         Point2d toPoint = new Point2d(1000, 2000);

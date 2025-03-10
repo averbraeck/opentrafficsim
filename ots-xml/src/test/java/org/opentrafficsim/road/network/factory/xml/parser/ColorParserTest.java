@@ -19,15 +19,13 @@ import org.opentrafficsim.road.network.factory.xml.utils.ColorParser;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ColorParserTest
+public final class ColorParserTest
 {
 
-    /**
-     * Constructor.
-     */
-    public ColorParserTest()
+    /** */
+    private ColorParserTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -35,7 +33,7 @@ public class ColorParserTest
      * @throws NetworkException if that happens uncaught; this test has failed
      */
     @Test
-    public final void testColors() throws NetworkException
+    public void testColors() throws NetworkException
     {
         assertEquals(Color.RED, ColorParser.parseColor("#ff0000"), "should be Red");
         assertEquals(Color.GREEN, ColorParser.parseColor("#00ff00"), "should be Green");

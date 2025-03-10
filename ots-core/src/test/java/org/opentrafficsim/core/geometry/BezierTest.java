@@ -19,22 +19,20 @@ import org.opentrafficsim.base.geometry.OtsLine2d;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class BezierTest
+public final class BezierTest
 {
 
-    /**
-     * Constructor.
-     */
-    public BezierTest()
+    /** */
+    private BezierTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
      * Test the various methods in the Bezier class.
      */
     @Test
-    public final void bezierTest()
+    public void bezierTest()
     {
         Point2d from = new Point2d(10, 0);
         Point2d control1 = new Point2d(20, 0);

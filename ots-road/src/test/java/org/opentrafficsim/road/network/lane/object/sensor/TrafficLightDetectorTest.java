@@ -65,15 +65,13 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class TrafficLightDetectorTest implements EventListener
+public final class TrafficLightDetectorTest implements EventListener
 {
 
-    /**
-     * Constructor.
-     */
-    public TrafficLightDetectorTest()
+    /** */
+    private TrafficLightDetectorTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -155,7 +153,7 @@ public class TrafficLightDetectorTest implements EventListener
      * @throws GtuException if that happens (uncaught) this test has failed
      */
     // XXX @Test
-    public final void trafficLightSensorTest() throws NetworkException, NamingException, SimRuntimeException, GtuException
+    public void trafficLightSensorTest() throws NetworkException, NamingException, SimRuntimeException, GtuException
     {
         double[][] lengthLists = {{101.1, -1, 1, -1, 1, -900}, {1000}, {-1000}, {101.1, 900}, {101.1, 1, 1, 1, 1, 900}};
         for (double[] lengthList : lengthLists)
@@ -267,7 +265,7 @@ public class TrafficLightDetectorTest implements EventListener
     private List<Event> loggedEvents = new ArrayList<>();
 
     @Override
-    public final void notify(final Event event) throws RemoteException
+    public void notify(final Event event) throws RemoteException
     {
         System.out.println("Received event " + event);
         this.loggedEvents.add(event);

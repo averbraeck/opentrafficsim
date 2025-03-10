@@ -13,15 +13,13 @@ import nl.tudelft.simulation.dsol.animation.gis.transform.CoordinateTransform;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class TestCoordinateTransformLonLatToXY
+public final class TestCoordinateTransformLonLatToXY
 {
 
-    /**
-     * Constructor.
-     */
-    public TestCoordinateTransformLonLatToXY()
+    /** */
+    private TestCoordinateTransformLonLatToXY()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -46,7 +44,7 @@ public class TestCoordinateTransformLonLatToXY
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         return "Test []";
     }

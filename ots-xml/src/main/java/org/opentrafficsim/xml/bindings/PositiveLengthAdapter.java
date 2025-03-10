@@ -2,7 +2,6 @@ package org.opentrafficsim.xml.bindings;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
-import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.xml.bindings.types.LengthType;
 
 /**
@@ -32,23 +31,16 @@ public class PositiveLengthAdapter extends ScalarAdapter<Length, LengthType>
         {
             return new LengthType(trimBrackets(field));
         }
-        try
-        {
-            Length value = Length.valueOf(field);
-            Throw.when(value.lt0(), IllegalArgumentException.class, "PositiveLength value %s is not a positive value.", value);
-            return new LengthType(value);
-        }
-        catch (Exception exception)
-        {
-            CategoryLogger.always().error(exception, "Problem parsing Length '" + field + "'");
-            throw exception;
-        }
+        Length value = Length.valueOf(field);
+        Throw.when(Double.compare(value.si, 0.0) < 0, IllegalArgumentException.class,
+                "PositiveLength value %s is not a positive value.", value);
+        return new LengthType(value);
     }
 
     @Override
     public String marshal(final LengthType value)
     {
-        Throw.when(!value.isExpression() && value.getValue().lt0(), IllegalArgumentException.class,
+        Throw.when(!value.isExpression() && Double.compare(value.getValue().si, 0.0) < 0, IllegalArgumentException.class,
                 "PositiveLength value %s is not a positive value.", value.getValue());
         return super.marshal(value);
     }

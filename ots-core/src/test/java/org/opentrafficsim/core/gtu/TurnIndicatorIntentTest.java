@@ -13,15 +13,13 @@ import org.junit.jupiter.api.Test;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class TurnIndicatorIntentTest
+public final class TurnIndicatorIntentTest
 {
 
-    /**
-     * Constructor.
-     */
-    public TurnIndicatorIntentTest()
+    /** */
+    private TurnIndicatorIntentTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /** Test the TurnIndicatorStatus class. */

@@ -59,15 +59,13 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class LaneTest implements UNITS
+public final class LaneTest implements UNITS
 {
 
-    /**
-     * Constructor.
-     */
-    public LaneTest()
+    /** */
+    private LaneTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -204,7 +202,7 @@ public class LaneTest implements UNITS
      * @param lane the lane to manipulate
      * @throws NetworkException when this happens uncaught; this test has failed
      */
-    public final void sensorTest(final Lane lane) throws NetworkException
+    public void sensorTest(final Lane lane) throws NetworkException
     {
         assertEquals(0, lane.getDetectors().size(), "List of sensor is initially empty");
         Listener listener = new Listener();

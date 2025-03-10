@@ -28,15 +28,13 @@ import org.opentrafficsim.core.mock.MockSimulator;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class NodeTest
+public final class NodeTest
 {
 
-    /**
-     * Constructor.
-     */
-    public NodeTest()
+    /** */
+    private NodeTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -44,7 +42,7 @@ public class NodeTest
      * @throws NetworkException if that happens uncaught; this test has failed
      */
     @Test
-    public final void testNode() throws NetworkException
+    public void testNode() throws NetworkException
     {
         Network network = new Network("Node test network", MockSimulator.createMock());
         Point2d point1 = new Point2d(20, 40);
@@ -126,7 +124,7 @@ public class NodeTest
      * @throws NetworkException if that happens uncaught; this test has failed
      */
     @Test
-    public final void connectionTest() throws NetworkException
+    public void connectionTest() throws NetworkException
     {
         OtsSimulatorInterface simulator = MockSimulator.createMock();
         Network network = new Network("connection test network", simulator);
@@ -270,7 +268,7 @@ public class NodeTest
      * @throws NetworkException if that happens uncaught; this test has failed
      */
     @Test
-    public final void connectionSetTest() throws NetworkException
+    public void connectionSetTest() throws NetworkException
     {
         OtsSimulatorInterface simulator = MockSimulator.createMock();
         Network network = new Network("connectionSets test network", simulator);

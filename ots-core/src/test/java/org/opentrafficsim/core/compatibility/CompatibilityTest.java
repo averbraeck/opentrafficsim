@@ -19,15 +19,13 @@ import org.opentrafficsim.core.gtu.GtuType;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class CompatibilityTest
+public final class CompatibilityTest
 {
 
-    /**
-     * Constructor.
-     */
-    public CompatibilityTest()
+    /** */
+    private CompatibilityTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**

@@ -8,15 +8,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.Test;
 
 /** Test the NetworkException class. */
-public class NetworkExceptionTest
+public final class NetworkExceptionTest
 {
 
-    /**
-     * Constructor.
-     */
-    public NetworkExceptionTest()
+    /** */
+    private NetworkExceptionTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /** Test the NetworkException class. */

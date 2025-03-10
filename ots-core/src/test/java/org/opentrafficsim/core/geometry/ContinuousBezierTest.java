@@ -15,15 +15,13 @@ import org.opentrafficsim.core.geometry.Flattener.NumSegments;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ContinuousBezierTest
+public final class ContinuousBezierTest
 {
 
-    /**
-     * Constructor.
-     */
-    public ContinuousBezierTest()
+    /** */
+    private ContinuousBezierTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /** Approximate coordinate equality margin. */

@@ -27,15 +27,13 @@ import nl.tudelft.simulation.dsol.experiment.Replication;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class OtsReplicationTest
+public final class OtsReplicationTest
 {
 
-    /**
-     * Constructor.
-     */
-    public OtsReplicationTest()
+    /** */
+    private OtsReplicationTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**

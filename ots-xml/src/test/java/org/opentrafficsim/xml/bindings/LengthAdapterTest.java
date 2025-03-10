@@ -20,7 +20,7 @@ import jakarta.xml.bind.JAXBException;
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  */
-public class LengthAdapterTest
+public final class LengthAdapterTest
 {
     /** the allowed units. */
     private static final LengthUnit[] UNITS = new LengthUnit[] {LengthUnit.MILLIMETER, LengthUnit.CENTIMETER,
@@ -30,12 +30,10 @@ public class LengthAdapterTest
     /** the corresponding strings. */
     private static final String[] UNIT_STRINGS = new String[] {"mm", "cm", "dm", "m", "dam", "hm", "km", "mi", "yd", "ft"};
 
-    /**
-     * Constructor.
-     */
-    public LengthAdapterTest()
+    /** */
+    private LengthAdapterTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -79,7 +77,7 @@ public class LengthAdapterTest
      * Test the LengthAdapter.
      * @throws JAXBException exception
      */
-    // TODO: Repair @Test
+    @Test
     public void testLengthAdapter() throws JAXBException
     {
         Locale.setDefault(Locale.US);

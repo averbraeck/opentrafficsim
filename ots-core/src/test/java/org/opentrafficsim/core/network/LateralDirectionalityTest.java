@@ -14,15 +14,13 @@ import org.junit.jupiter.api.Test;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class LateralDirectionalityTest
+public final class LateralDirectionalityTest
 {
 
-    /**
-     * Constructor.
-     */
-    public LateralDirectionalityTest()
+    /** */
+    private LateralDirectionalityTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**

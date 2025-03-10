@@ -29,12 +29,10 @@ public final class ParameterFactoryByTypeTest
     /** Test parameter b. */
     private static final ParameterTypeDouble B = new ParameterTypeDouble("b", "test parameter b", 0.0);
 
-    /**
-     * Constructor.
-     */
-    public ParameterFactoryByTypeTest()
+    /** */
+    private ParameterFactoryByTypeTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**

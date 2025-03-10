@@ -20,22 +20,20 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * $LastChangedDate$, @version $Revision$, by $Author$, initial version 15 jan. 2015 <br>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class GtuTypeTest
+public final class GtuTypeTest
 {
 
-    /**
-     * Constructor.
-     */
-    public GtuTypeTest()
+    /** */
+    private GtuTypeTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
      * Run the constructor and verify that all fields get correctly initialized.
      */
     @Test
-    public final void constructorTest()
+    public void constructorTest()
     {
         GtuType t = new GtuType("abc", DefaultsNl.VEHICLE);
         assertTrue("abc".equals(t.getId()), "Id is stored in the newly created GtuType");
@@ -50,7 +48,7 @@ public class GtuTypeTest
      * Check default GTU characteristics.
      */
     @Test
-    public final void defaultsTest()
+    public void defaultsTest()
     {
         StreamInterface randomStream = new MersenneTwister();
         GtuType car = DefaultsNl.CAR;

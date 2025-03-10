@@ -46,15 +46,13 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  * <a href="https://djutils.org/docs/license.html" target="_blank"> https://djutils.org/docs/license.html</a>. <br>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class LaneChangeInfoTest
+public final class LaneChangeInfoTest
 {
 
-    /**
-     * Constructor.
-     */
-    public LaneChangeInfoTest()
+    /** */
+    private LaneChangeInfoTest()
     {
-        //
+        // do not instantiate test class
     }
 
     /**
@@ -64,7 +62,7 @@ public class LaneChangeInfoTest
      * @throws NamingException on exception
      */
     @Test
-    public final void laneChangeInfoTest() throws NetworkException, SimRuntimeException, NamingException
+    public void laneChangeInfoTest() throws NetworkException, SimRuntimeException, NamingException
     {
 
         // Preparations
