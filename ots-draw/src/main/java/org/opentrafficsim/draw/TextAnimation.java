@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 import org.djutils.draw.Oriented;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 
@@ -84,7 +84,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
     private boolean dynamic = false;
 
     /** Location of this text. */
-    private OrientedPoint2d location;
+    private DirectedPoint2d location;
 
     /**
      * Construct a new TextAnimation.
@@ -182,7 +182,7 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
     }
 
     @Override
-    public OrientedPoint2d getLocation()
+    public DirectedPoint2d getLocation()
     {
         if (this.location == null || this.dynamic)
         {
@@ -195,11 +195,11 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
                 {
                     a += Math.PI;
                 }
-                this.location = new OrientedPoint2d(p, a);
+                this.location = new DirectedPoint2d(p, a);
             }
             else
             {
-                this.location = new OrientedPoint2d(p, 0.0);
+                this.location = new DirectedPoint2d(p, 0.0);
             }
         }
         return this.location;

@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ public final class ContinuousStraightTest
     @Test
     public void straightTest()
     {
-        OrientedPoint2d startPoint = new OrientedPoint2d(0.0, 0.0, 0.0);
+        DirectedPoint2d startPoint = new DirectedPoint2d(0.0, 0.0, 0.0);
         Try.testFail(() -> new ContinuousStraight(startPoint, -100.0), "Negative length should not be allowed.",
                 IllegalArgumentException.class);
         ContinuousStraight straight = new ContinuousStraight(startPoint, 100.0);

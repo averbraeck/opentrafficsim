@@ -9,7 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Direction;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.geometry.OtsLine2d;
@@ -47,16 +47,16 @@ public final class NodeTest
         Network network = new Network("Node test network", MockSimulator.createMock());
         Point2d point1 = new Point2d(20, 40);
         Direction heading = Direction.instantiateSI(Math.toRadians(123));
-        OrientedPoint2d point1Oriented = new OrientedPoint2d(point1, heading.si);
+        DirectedPoint2d point1Oriented = new DirectedPoint2d(point1, heading.si);
         Node node1 = new Node(network, "node 1", point1, heading);
         assertEquals(network, node1.getNetwork(), "network matches");
         assertEquals("node 1", node1.getId(), "name matches");
         assertEquals(point1Oriented, node1.getPoint(), "point matches");
-        assertEquals(new OrientedPoint2d(point1.x, point1.y, Math.toRadians(123)), node1.getLocation(), "getLocation");
+        assertEquals(new DirectedPoint2d(point1.x, point1.y, Math.toRadians(123)), node1.getLocation(), "getLocation");
         assertTrue(node1.toString().contains(node1.getId()), "name is in toString");
         assertEquals(heading.si, node1.getHeading().si, 0.00001, "heading matches");
         Point2d point2 = new Point2d(120, 240);
-        OrientedPoint2d point2Oriented = new OrientedPoint2d(120, 240);
+        DirectedPoint2d point2Oriented = new DirectedPoint2d(120, 240, 0.0);
         Node node2 = new Node(network, "node 2", point2);
         assertEquals(network, node2.getNetwork(), "network matches");
         assertEquals("node 2", node2.getId(), "name matches");

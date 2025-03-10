@@ -3,7 +3,7 @@ package org.opentrafficsim.core.geometry;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.geometry.OtsGeometryException;
@@ -68,8 +68,8 @@ public final class BezierTest
             {
                 for (boolean weighted : new boolean[] {false, true})
                 {
-                    OrientedPoint2d start = new OrientedPoint2d(from.x, from.y, 0);
-                    OrientedPoint2d end = new OrientedPoint2d(to.x, to.y, -Math.PI / 2);
+                    DirectedPoint2d start = new DirectedPoint2d(from.x, from.y, 0);
+                    DirectedPoint2d end = new DirectedPoint2d(to.x, to.y, -Math.PI / 2);
                     OtsLine2d line = 1.0 == shape ? Bezier.cubic(n, start, end) : Bezier.cubic(n, start, end, shape, weighted);
                     for (int i = 1; i < line.size() - 1; i++)
                     {
@@ -82,7 +82,7 @@ public final class BezierTest
         }
         // Pity that the value 64 is private in the Bezier class.
         assertEquals(64,
-                Bezier.cubic(new OrientedPoint2d(from.x, from.y, 0), new OrientedPoint2d(to.x, to.y, -Math.PI / 2)).size(),
+                Bezier.cubic(new DirectedPoint2d(from.x, from.y, 0), new DirectedPoint2d(to.x, to.y, -Math.PI / 2)).size(),
                 "Number of points is 64");
         assertEquals(64, Bezier.bezier(from, control1, control2, to).size(), "Number of points is 64");
         control1 = new Point2d(5, 0);
@@ -101,7 +101,7 @@ public final class BezierTest
         for (int n : new int[] {2, 3, 4, 100})
         {
             OtsLine2d line =
-                    Bezier.cubic(n, new OrientedPoint2d(from.x, from.y, Math.PI), new OrientedPoint2d(to.x, to.y, Math.PI / 2));
+                    Bezier.cubic(n, new DirectedPoint2d(from.x, from.y, Math.PI), new DirectedPoint2d(to.x, to.y, Math.PI / 2));
             for (int i = 1; i < line.size() - 1; i++)
             {
                 Point2d p = line.get(i);

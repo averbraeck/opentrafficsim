@@ -9,7 +9,7 @@ import org.djutils.base.Identifiable;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
@@ -93,7 +93,7 @@ public class Link extends LocalEventProducer
     private final Set<Gtu> gtus = new LinkedHashSet<>();
 
     /** Location. */
-    private OrientedPoint2d location;
+    private DirectedPoint2d location;
 
     /**
      * Construct a new link.
@@ -126,7 +126,7 @@ public class Link extends LocalEventProducer
         this.endNode.addLink(this);
         this.designLine = designLine;
         this.elevation = elevation;
-        this.contour = new Polygon2d(PolyLine2d.concatenate(this.designLine, this.designLine.reverse()).getPoints());
+        this.contour = new Polygon2d(PolyLine2d.concatenate(this.designLine, this.designLine.reverse()).iterator());
         this.location = this.designLine.getLocationPointFractionExtended(0.5);
         Polygon2d relativeContour = OtsLocatable.relativeContour(this);
         this.shape = new PolygonShape(relativeContour);
@@ -273,7 +273,7 @@ public class Link extends LocalEventProducer
 
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public OrientedPoint2d getLocation()
+    public DirectedPoint2d getLocation()
     {
         return this.location;
     }

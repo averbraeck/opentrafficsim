@@ -10,8 +10,8 @@ import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
+import org.opentrafficsim.web.OtsWebServer;
 
-import nl.tudelft.simulation.dsol.jetty.sse.OtsWebServer;
 import nl.tudelft.simulation.dsol.swing.gui.inputparameters.TabbedParameterDialog;
 
 /**

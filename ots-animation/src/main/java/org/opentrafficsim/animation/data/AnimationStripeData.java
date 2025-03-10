@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.base.StripeElement;
 import org.opentrafficsim.base.StripeElement.StripeLateralSync;
 import org.opentrafficsim.base.geometry.DirectionalPolyLine;
@@ -81,7 +81,7 @@ public class AnimationStripeData extends AnimationCrossSectionElementData<Stripe
     }
 
     @Override
-    public OrientedPoint2d getLocation()
+    public DirectedPoint2d getLocation()
     {
         return getElement().getLocation();
     }

@@ -3,7 +3,7 @@ package org.opentrafficsim.animation.data;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.ClickableLineLocatable;
@@ -45,7 +45,7 @@ public abstract class AnimationLaneBasedObjectData<T extends LaneBasedObject>
     }
 
     @Override
-    public OrientedPoint2d getLocation()
+    public DirectedPoint2d getLocation()
     {
         return this.laneBasedObject.getLocation();
     }

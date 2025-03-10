@@ -3,7 +3,7 @@ package org.opentrafficsim.road.network.lane;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 
 /**
@@ -28,7 +28,7 @@ public record LanePosition(Lane lane, Length position) implements Serializable
      * Retrieve the location and direction of the GTU on the lane.
      * @return the location and direction of the GTU on the lane
      */
-    public final OrientedPoint2d getLocation()
+    public final DirectedPoint2d getLocation()
     {
         // double fraction = this.position.si / this.lane.getParentLink().getLength().si;
         OtsLine2d centerLine = this.lane.getCenterLine();

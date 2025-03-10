@@ -1,4 +1,4 @@
-package nl.tudelft.simulation.dsol.web.animation;
+package org.opentrafficsim.web.animation;
 
 import java.awt.Font;
 import java.awt.Graphics2D;

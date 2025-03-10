@@ -1,4 +1,4 @@
-package nl.tudelft.simulation.dsol.web.animation.d2;
+package org.opentrafficsim.web.animation.d2;
 
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
@@ -19,6 +19,7 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.opentrafficsim.animation.gtu.colorer.GtuColorerManager;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.opentrafficsim.web.animation.HtmlGraphics2d;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2dComparator;
@@ -26,7 +27,6 @@ import nl.tudelft.simulation.dsol.animation.d2.Renderable2dInterface;
 import nl.tudelft.simulation.dsol.animation.gis.GisMapInterface;
 import nl.tudelft.simulation.dsol.animation.gis.GisRenderable2d;
 import nl.tudelft.simulation.dsol.experiment.Replication;
-import nl.tudelft.simulation.dsol.web.animation.HtmlGraphics2d;
 import nl.tudelft.simulation.naming.context.ContextInterface;
 import nl.tudelft.simulation.naming.context.util.ContextUtil;
 
@@ -305,7 +305,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
                 Point<?> l = renderable.getSource().getLocation();
                 if (l != null)
                 {
-                    Bounds<?, ?, ?> b = renderable.getSource().getBounds();
+                    Bounds<?, ?> b = renderable.getSource().getBounds();
                     minX = Math.min(minX, l.getX() + b.getMinX());
                     minY = Math.min(minY, l.getY() + b.getMinY());
                     maxX = Math.max(maxX, l.getX() + b.getMaxX());
@@ -331,7 +331,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
      */
     public synchronized void zoomAll()
     {
-        setExtent(getRenderableScale().computeVisibleExtent(fullExtent(), this.getSize()));
+        setExtent(computeVisibleExtent(fullExtent()));
         this.repaint();
     }
 

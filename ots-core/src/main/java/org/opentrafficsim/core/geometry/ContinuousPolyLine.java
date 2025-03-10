@@ -3,8 +3,7 @@ package org.opentrafficsim.core.geometry;
 import java.util.List;
 
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.line.Ray2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.geometry.OtsGeometryUtil;
@@ -26,10 +25,10 @@ public class ContinuousPolyLine implements ContinuousLine
     private final PolyLine2d line;
 
     /** Start point. */
-    private final OrientedPoint2d startPoint;
+    private final DirectedPoint2d startPoint;
 
     /** End points. */
-    private final OrientedPoint2d endPoint;
+    private final DirectedPoint2d endPoint;
 
     /**
      * Define continuous line from polyline. Start and end point direction are derived from the line.
@@ -39,10 +38,10 @@ public class ContinuousPolyLine implements ContinuousLine
     {
         Throw.whenNull(line, "Line may not be null.");
         this.line = line;
-        Ray2d startRay = line.getLocationFractionExtended(0.0);
-        Ray2d endRay = line.getLocationFractionExtended(1.0);
-        this.startPoint = new OrientedPoint2d(startRay.x, startRay.y, startRay.phi);
-        this.endPoint = new OrientedPoint2d(endRay.x, endRay.y, endRay.phi);
+        DirectedPoint2d startPt = line.getLocationFractionExtended(0.0);
+        DirectedPoint2d endPt = line.getLocationFractionExtended(1.0);
+        this.startPoint = new DirectedPoint2d(startPt.x, startPt.y, startPt.dirZ);
+        this.endPoint = new DirectedPoint2d(endPt.x, endPt.y, endPt.dirZ);
     }
 
     /**
@@ -52,7 +51,7 @@ public class ContinuousPolyLine implements ContinuousLine
      * @param startPoint start point.
      * @param endPoint end point.
      */
-    public ContinuousPolyLine(final PolyLine2d line, final OrientedPoint2d startPoint, final OrientedPoint2d endPoint)
+    public ContinuousPolyLine(final PolyLine2d line, final DirectedPoint2d startPoint, final DirectedPoint2d endPoint)
     {
         Throw.whenNull(line, "Line may not be null.");
         this.line = line;
@@ -61,13 +60,13 @@ public class ContinuousPolyLine implements ContinuousLine
     }
 
     @Override
-    public OrientedPoint2d getStartPoint()
+    public DirectedPoint2d getStartPoint()
     {
         return this.startPoint;
     }
 
     @Override
-    public OrientedPoint2d getEndPoint()
+    public DirectedPoint2d getEndPoint()
     {
         return this.endPoint;
     }
@@ -131,8 +130,7 @@ public class ContinuousPolyLine implements ContinuousLine
         {
             knotOffset[i] = offset.apply(knots[i]);
         }
-        PolyLine2d offsetLine =
-                OtsGeometryUtil.offsetLine(this.line, knots, knotOffset);
+        PolyLine2d offsetLine = OtsGeometryUtil.offsetLine(this.line, knots, knotOffset);
         Point2d start = OtsGeometryUtil.offsetPoint(this.startPoint, offset.apply(0.0));
         Point2d end = OtsGeometryUtil.offsetPoint(this.endPoint, offset.apply(1.0));
         List<Point2d> points = offsetLine.getPointList();

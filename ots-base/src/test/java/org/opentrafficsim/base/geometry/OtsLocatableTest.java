@@ -7,7 +7,7 @@ import java.util.List;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
 
@@ -56,7 +56,7 @@ public final class OtsLocatableTest
         assertEquals(transformed.getLast().x, 5.0, 0.001);
         assertEquals(transformed.getLast().y, 1.5, 0.001);
 
-        transformed = OtsLocatable.transformLine(line, new OrientedPoint2d(2.0, 2.0, Math.PI));
+        transformed = OtsLocatable.transformLine(line, new DirectedPoint2d(2.0, 2.0, Math.PI));
         assertEquals(transformed.getFirst().x, -5.0, 0.001);
         assertEquals(transformed.getFirst().y, 1.5, 0.001);
         assertEquals(transformed.getLast().x, -5.0, 0.001);
@@ -75,9 +75,9 @@ public final class OtsLocatableTest
         }
 
         @Override
-        public OrientedPoint2d getLocation()
+        public DirectedPoint2d getLocation()
         {
-            return new OrientedPoint2d(10.0, 20.0, 0.5 * Math.PI);
+            return new DirectedPoint2d(10.0, 20.0, 0.5 * Math.PI);
         }
 
         @Override

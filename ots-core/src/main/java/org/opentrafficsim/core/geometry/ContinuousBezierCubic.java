@@ -13,7 +13,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 
@@ -35,10 +35,10 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
     private static final double STRAIGHT = Math.PI / 36000; // 1/100th of a degree
 
     /** Start point with direction. */
-    private final OrientedPoint2d startPoint;
+    private final DirectedPoint2d startPoint;
 
     /** End point with direction. */
-    private final OrientedPoint2d endPoint;
+    private final DirectedPoint2d endPoint;
 
     /** Length. */
     private final double length;
@@ -53,19 +53,19 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
     public ContinuousBezierCubic(final Point2d point1, final Point2d point2, final Point2d point3, final Point2d point4)
     {
         super(point1, point2, point3, point4);
-        this.startPoint = new OrientedPoint2d(point1.x, point1.y, Math.atan2(point2.y - point1.y, point2.x - point1.x));
-        this.endPoint = new OrientedPoint2d(point4.x, point4.y, Math.atan2(point4.y - point3.y, point4.x - point3.x));
+        this.startPoint = new DirectedPoint2d(point1.x, point1.y, Math.atan2(point2.y - point1.y, point2.x - point1.x));
+        this.endPoint = new DirectedPoint2d(point4.x, point4.y, Math.atan2(point4.y - point3.y, point4.x - point3.x));
         this.length = length();
     }
 
     @Override
-    public OrientedPoint2d getStartPoint()
+    public DirectedPoint2d getStartPoint()
     {
         return this.startPoint;
     }
 
     @Override
-    public OrientedPoint2d getEndPoint()
+    public DirectedPoint2d getEndPoint()
     {
         return this.endPoint;
     }

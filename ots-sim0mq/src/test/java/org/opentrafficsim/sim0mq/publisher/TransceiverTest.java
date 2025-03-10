@@ -24,7 +24,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.PositionVector;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
@@ -196,14 +196,14 @@ public final class TransceiverTest
                 "Bad address");
 
         GtuType gtuType = new GtuType("gtuType 1");
-        LaneBasedGtu gtu1 = new MyMockGTU("gtu 1", gtuType, new OrientedPoint2d(1, 10, 1), new Speed(1, SpeedUnit.KM_PER_HOUR),
+        LaneBasedGtu gtu1 = new MyMockGTU("gtu 1", gtuType, new DirectedPoint2d(1, 10, 1), new Speed(1, SpeedUnit.KM_PER_HOUR),
                 new Acceleration(1, AccelerationUnit.METER_PER_SECOND_2), simulator).getMock();
         network.addGTU(gtu1);
         result = gtuIdTransceiver.get(null, storeLastResult);
         assertEquals(1, result.length, "length of result is now 1");
         assertTrue(result[0] instanceof String, "result contains a string");
         assertEquals("gtu 1", result[0], "result[0] is name of our mocked GTU");
-        LaneBasedGtu gtu2 = new MyMockGTU("gtu 2", gtuType, new OrientedPoint2d(2, 20, 2), new Speed(2, SpeedUnit.KM_PER_HOUR),
+        LaneBasedGtu gtu2 = new MyMockGTU("gtu 2", gtuType, new DirectedPoint2d(2, 20, 2), new Speed(2, SpeedUnit.KM_PER_HOUR),
                 new Acceleration(2, AccelerationUnit.METER_PER_SECOND_2), simulator).getMock();
         network.addGTU(gtu2);
         result = gtuIdTransceiver.get(new Object[0], storeLastResult);
@@ -609,7 +609,7 @@ class MyMockGTU
     private final GtuType gtuType;
 
     /** location. */
-    private final OrientedPoint2d location;
+    private final DirectedPoint2d location;
 
     /** speed. */
     private final Speed speed;
@@ -630,7 +630,7 @@ class MyMockGTU
      * @param simulator (mocked) simulator
      * @throws RemoteException cannot happen ...
      */
-    MyMockGTU(final String name, final GtuType gtuType, final OrientedPoint2d location, final Speed speed,
+    MyMockGTU(final String name, final GtuType gtuType, final DirectedPoint2d location, final Speed speed,
             final Acceleration acceleration, final OtsSimulatorInterface simulator) throws RemoteException
     {
         this.name = name;

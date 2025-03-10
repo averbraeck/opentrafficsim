@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
@@ -25,13 +25,15 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public final class ContinuousClothoidTest
+public class ContinuousClothoidTest
 {
 
-    /** */
-    private ContinuousClothoidTest()
+    /**
+     * Constructor.
+     */
+    public ContinuousClothoidTest()
     {
-        // do not instantiate test class
+        //
     }
 
     /** Number of segments for the clothoid lines to generated. */
@@ -60,13 +62,13 @@ public final class ContinuousClothoidTest
         StreamInterface r = new MersenneTwister(3L);
         for (int i = 0; i < RUNS; i++)
         {
-            OrientedPoint2d start =
-                    new OrientedPoint2d(r.nextDouble() * 10.0, r.nextDouble() * 10.0, (r.nextDouble() * 2 - 1) * Math.PI);
-            OrientedPoint2d end =
-                    new OrientedPoint2d(r.nextDouble() * 10.0, r.nextDouble() * 10.0, (r.nextDouble() * 2 - 1) * Math.PI);
+            DirectedPoint2d start =
+                    new DirectedPoint2d(r.nextDouble() * 10.0, r.nextDouble() * 10.0, (r.nextDouble() * 2 - 1) * Math.PI);
+            DirectedPoint2d end =
+                    new DirectedPoint2d(r.nextDouble() * 10.0, r.nextDouble() * 10.0, (r.nextDouble() * 2 - 1) * Math.PI);
             ContinuousClothoid clothoid = new ContinuousClothoid(start, end);
             PolyLine2d line = clothoid.flatten(new NumSegments(64));
-            verifyLine(start, clothoid, line, null, null, null);
+            VerifyLine(start, clothoid, line, null, null, null);
         }
     }
 
@@ -86,16 +88,16 @@ public final class ContinuousClothoidTest
         {
             double x = Math.cos(ang);
             double y = Math.sin(ang);
-            OrientedPoint2d start = new OrientedPoint2d(x, y, ang - tolerance + r.nextDouble() * tolerance * 2);
-            OrientedPoint2d end = new OrientedPoint2d(3 * x, 3 * y, ang - tolerance + r.nextDouble() * tolerance * 2);
+            DirectedPoint2d start = new DirectedPoint2d(x, y, ang - tolerance + r.nextDouble() * tolerance * 2);
+            DirectedPoint2d end = new DirectedPoint2d(3 * x, 3 * y, ang - tolerance + r.nextDouble() * tolerance * 2);
 
             ContinuousClothoid clothoid = new ContinuousClothoid(start, end);
             NumSegments numSegments64 = new NumSegments(64);
             PolyLine2d line = clothoid.flatten(numSegments64);
             assertEquals(line.size(), 2, "Clothoid between point on line did not become a straight");
 
-            start = new OrientedPoint2d(x, y, ang + sign * tolerance * 1.1);
-            end = new OrientedPoint2d(3 * x, 3 * y, ang + sign * tolerance * 1.1);
+            start = new DirectedPoint2d(x, y, ang + sign * tolerance * 1.1);
+            end = new DirectedPoint2d(3 * x, 3 * y, ang + sign * tolerance * 1.1);
             sign *= -1.0;
             clothoid = new ContinuousClothoid(start, end);
             line = clothoid.flatten(numSegments64);
@@ -112,8 +114,8 @@ public final class ContinuousClothoidTest
         StreamInterface r = new MersenneTwister(3L);
         for (int i = 0; i < RUNS; i++)
         {
-            OrientedPoint2d start =
-                    new OrientedPoint2d(r.nextDouble() * 10.0, r.nextDouble() * 10.0, (r.nextDouble() * 2 - 1) * Math.PI);
+            DirectedPoint2d start =
+                    new DirectedPoint2d(r.nextDouble() * 10.0, r.nextDouble() * 10.0, (r.nextDouble() * 2 - 1) * Math.PI);
             Length length = Length.instantiateSI(10.0 + r.nextDouble() * 500.0);
             double sign = r.nextBoolean() ? 1.0 : -1.0;
             LinearDensity startCurvature = LinearDensity.instantiateSI(sign / (50.0 + r.nextDouble() * 1000.0));
@@ -122,7 +124,7 @@ public final class ContinuousClothoidTest
 
             ContinuousClothoid clothoid = ContinuousClothoid.withLength(start, length.si, startCurvature.si, endCurvature.si);
             PolyLine2d line = clothoid.flatten(new NumSegments(64));
-            verifyLine(start, clothoid, line, startCurvature, endCurvature, null);
+            VerifyLine(start, clothoid, line, startCurvature, endCurvature, null);
         }
     }
 
@@ -135,8 +137,8 @@ public final class ContinuousClothoidTest
         StreamInterface r = new MersenneTwister(3L);
         for (int i = 0; i < RUNS; i++)
         {
-            OrientedPoint2d start =
-                    new OrientedPoint2d(r.nextDouble() * 10.0, r.nextDouble() * 10.0, (r.nextDouble() * 2 - 1) * Math.PI);
+            DirectedPoint2d start =
+                    new DirectedPoint2d(r.nextDouble() * 10.0, r.nextDouble() * 10.0, (r.nextDouble() * 2 - 1) * Math.PI);
             double sign = r.nextBoolean() ? 1.0 : -1.0;
             LinearDensity startCurvature = LinearDensity.instantiateSI(sign / (50.0 + r.nextDouble() * 1000.0));
             sign = r.nextBoolean() ? 1.0 : -1.0;
@@ -146,7 +148,7 @@ public final class ContinuousClothoidTest
 
             ContinuousClothoid clothoid = new ContinuousClothoid(start, a.si, startCurvature.si, endCurvature.si);
             PolyLine2d line = clothoid.flatten(new NumSegments(64));
-            verifyLine(start, clothoid, line, startCurvature, endCurvature, a);
+            VerifyLine(start, clothoid, line, startCurvature, endCurvature, a);
         }
     }
 
@@ -159,7 +161,7 @@ public final class ContinuousClothoidTest
      * @param endCurvature end curvature, may be {@code null} if no theoretical value available.
      * @param a Length A-value, may be {@code null} if no theoretical value available.
      */
-    private void verifyLine(final OrientedPoint2d start, final ContinuousClothoid clothoid, final PolyLine2d line,
+    private void VerifyLine(final DirectedPoint2d start, final ContinuousClothoid clothoid, final PolyLine2d line,
             final LinearDensity startCurvature, final LinearDensity endCurvature, final Length a)
     {
         assertEquals(0.0, Math.hypot(start.x - line.get(0).x, start.y - line.get(0).y), DISTANCE_TOLERANCE,
@@ -203,9 +205,9 @@ public final class ContinuousClothoidTest
             for (double xB = -20.0; xB < 25.0; xB += 20.0 * 2.0 / 3.0)
             {
                 // point A pointing left/right towards B
-                OrientedPoint2d a = new OrientedPoint2d(0.0, yA, xB < 0.0 ? Math.PI : 0.0);
+                DirectedPoint2d a = new DirectedPoint2d(0.0, yA, xB < 0.0 ? Math.PI : 0.0);
                 // point B pointing up/down away from A
-                OrientedPoint2d b = new OrientedPoint2d(xB, 0.0, yA < 0.0 ? Math.PI / 2 : -Math.PI / 2);
+                DirectedPoint2d b = new DirectedPoint2d(xB, 0.0, yA < 0.0 ? Math.PI / 2 : -Math.PI / 2);
                 ContinuousClothoid clothoid = new ContinuousClothoid(a, b);
                 // offset -2.0 or 2.0
                 for (double offset = -2.0; offset < 3.0; offset += 4.0)

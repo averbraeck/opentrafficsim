@@ -17,7 +17,7 @@ import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.LengthVector;
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
@@ -237,13 +237,13 @@ public final class NetworkParser
 
             // start and end with heading, adjusted with offset
             double startHeading = startNode.getHeading().si;
-            OrientedPoint2d start = new OrientedPoint2d(startPoint.x, startPoint.y, startHeading);
+            DirectedPoint2d start = new DirectedPoint2d(startPoint.x, startPoint.y, startHeading);
             if (xmlLink.getOffsetStart() != null)
             {
                 start = OtsGeometryUtil.offsetPoint(start, xmlLink.getOffsetStart().get(eval).si);
             }
             double endHeading = endNode.getHeading().si;
-            OrientedPoint2d end = new OrientedPoint2d(endPoint.x, endPoint.y, endHeading);
+            DirectedPoint2d end = new DirectedPoint2d(endPoint.x, endPoint.y, endHeading);
             if (xmlLink.getOffsetEnd() != null)
             {
                 end = OtsGeometryUtil.offsetPoint(end, xmlLink.getOffsetEnd().get(eval).si);
@@ -265,7 +265,7 @@ public final class NetworkParser
                 {
                     coordinates[p + 1] = xmlLink.getPolyline().getCoordinate().get(p).get(eval);
                 }
-                designLine = new ContinuousPolyLine(new PolyLine2d(true, coordinates));
+                designLine = new ContinuousPolyLine(new PolyLine2d(coordinates));
             }
             else if (xmlLink.getArc() != null)
             {

@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 import javax.naming.NamingException;
 
 import org.djutils.base.Identifiable;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.OtsRenderable;
 import org.opentrafficsim.draw.PaintPolygons;
@@ -144,7 +144,7 @@ public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDet
         boolean getOccupancy();
 
         @Override
-        OrientedPoint2d getLocation();
+        DirectedPoint2d getLocation();
 
         @Override
         default double getZ()

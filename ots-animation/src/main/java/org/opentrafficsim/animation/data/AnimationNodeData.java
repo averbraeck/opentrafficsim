@@ -1,7 +1,7 @@
 package org.opentrafficsim.animation.data;
 
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
 
@@ -41,7 +41,7 @@ public class AnimationNodeData implements NodeData
     }
 
     @Override
-    public OrientedPoint2d getLocation()
+    public DirectedPoint2d getLocation()
     {
         return this.node.getLocation();
     }

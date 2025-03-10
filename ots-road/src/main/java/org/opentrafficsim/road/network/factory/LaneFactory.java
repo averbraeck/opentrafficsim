@@ -12,7 +12,7 @@ import javax.naming.NamingException;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
@@ -534,9 +534,9 @@ public final class LaneFactory
             final LaneType laneType, final Speed speedLimit, final OtsSimulatorInterface simulator, final GtuType gtuType)
             throws NamingException, NetworkException
     {
-        OrientedPoint2d dp1 = new OrientedPoint2d(n2.getPoint().x, n2.getPoint().y,
+        DirectedPoint2d dp1 = new DirectedPoint2d(n2.getPoint().x, n2.getPoint().y,
                 Math.atan2(n2.getPoint().y - n1.getPoint().y, n2.getPoint().x - n1.getPoint().x));
-        OrientedPoint2d dp2 = new OrientedPoint2d(n3.getPoint().x, n3.getPoint().y,
+        DirectedPoint2d dp2 = new DirectedPoint2d(n3.getPoint().x, n3.getPoint().y,
                 Math.atan2(n4.getPoint().y - n3.getPoint().y, n4.getPoint().x - n3.getPoint().x));
 
         Length width = new Length(4.0, LengthUnit.METER);
@@ -581,8 +581,8 @@ public final class LaneFactory
         Point2d p2 = n2.getPoint();
         Point2d p3 = n3.getPoint();
         Point2d p4 = n4.getPoint();
-        OrientedPoint2d dp1 = new OrientedPoint2d(p2.x, p2.y, Math.atan2(p2.y - p1.y, p2.x - p1.x));
-        OrientedPoint2d dp2 = new OrientedPoint2d(p3.x, p3.y, Math.atan2(p4.y - p3.y, p4.x - p3.x));
+        DirectedPoint2d dp1 = new DirectedPoint2d(p2.x, p2.y, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+        DirectedPoint2d dp2 = new DirectedPoint2d(p3.x, p3.y, Math.atan2(p4.y - p3.y, p4.x - p3.x));
         return Bezier.cubic(dp1, dp2);
     }
 }

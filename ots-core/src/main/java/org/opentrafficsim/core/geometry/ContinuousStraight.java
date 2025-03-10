@@ -1,7 +1,7 @@
 package org.opentrafficsim.core.geometry;
 
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.geometry.OtsGeometryUtil;
@@ -18,10 +18,10 @@ public class ContinuousStraight implements ContinuousLine
 {
 
     /** Start point with direction. */
-    private final OrientedPoint2d startPoint;
+    private final DirectedPoint2d startPoint;
 
     /** End point with direction. */
-    private final OrientedPoint2d endPoint;
+    private final DirectedPoint2d endPoint;
 
     /** Length. */
     private final double length;
@@ -31,24 +31,24 @@ public class ContinuousStraight implements ContinuousLine
      * @param startPoint start point.
      * @param length length.
      */
-    public ContinuousStraight(final OrientedPoint2d startPoint, final double length)
+    public ContinuousStraight(final DirectedPoint2d startPoint, final double length)
     {
         Throw.whenNull(startPoint, "Start point may not be null.");
         Throw.when(length <= 0.0, IllegalArgumentException.class, "Length must be above 0.");
         this.startPoint = startPoint;
-        this.endPoint = new OrientedPoint2d(startPoint.x + length * Math.cos(startPoint.dirZ),
+        this.endPoint = new DirectedPoint2d(startPoint.x + length * Math.cos(startPoint.dirZ),
                 startPoint.y + length * Math.sin(startPoint.dirZ), startPoint.dirZ);
         this.length = length;
     }
 
     @Override
-    public OrientedPoint2d getStartPoint()
+    public DirectedPoint2d getStartPoint()
     {
         return this.startPoint;
     }
 
     @Override
-    public OrientedPoint2d getEndPoint()
+    public DirectedPoint2d getEndPoint()
     {
         return this.endPoint;
     }

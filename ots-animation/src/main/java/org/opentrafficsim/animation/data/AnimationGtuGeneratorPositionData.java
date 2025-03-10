@@ -2,7 +2,7 @@ package org.opentrafficsim.animation.data;
 
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.core.gtu.GtuGenerator.GtuGeneratorPosition;
 import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
 
@@ -30,7 +30,7 @@ public class AnimationGtuGeneratorPositionData implements GtuGeneratorPositionDa
     }
 
     @Override
-    public OrientedPoint2d getLocation()
+    public DirectedPoint2d getLocation()
     {
         return this.position.getLocation();
     }

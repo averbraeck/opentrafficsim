@@ -19,6 +19,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.draw.Export;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
@@ -108,11 +109,11 @@ public final class ConflictTest implements EventListener
         // The intersection of the link design lines is at 50, 0
         if (VERBOSE)
         {
-            System.out.print(laneA.getContour().toPlot());
-            System.out.print(laneB.getContour().toPlot());
+            System.out.print(Export.toPlot(laneA.getContour()));
+            System.out.print(Export.toPlot(laneB.getContour()));
             System.out.println("c0,1,0");
-            System.out.print(laneA.getCenterLine().toPlot());
-            System.out.print(laneB.getCenterLine().toPlot());
+            System.out.print(Export.toPlot(laneA.getCenterLine()));
+            System.out.print(Export.toPlot(laneB.getCenterLine()));
             System.out.println("c1,0,0");
         }
 
@@ -159,8 +160,8 @@ public final class ConflictTest implements EventListener
 
         if (VERBOSE)
         {
-            System.out.print(geometry1.toPlot());
-            System.out.print(geometry2.toPlot());
+            System.out.print(Export.toPlot(geometry1));
+            System.out.print(Export.toPlot(geometry2));
             System.out.println("#angle B:           " + bDirection.toString(DirectionUnit.EAST_DEGREE));
             System.out.println("#conflict B start:  " + conflictBStart);
             System.out.println("#conflict B length: " + conflictBLength);

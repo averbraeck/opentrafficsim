@@ -3,7 +3,7 @@ package org.opentrafficsim.road.network.lane.object;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.object.StaticObject;
@@ -121,7 +121,7 @@ public abstract class AbstractLaneBasedObject extends StaticObject implements La
      * @param longitudinalPosition longitudinal position.
      * @return oriented point of the position on a lane.
      */
-    private static OrientedPoint2d getPoint(final Lane lane, final Length longitudinalPosition)
+    private static DirectedPoint2d getPoint(final Lane lane, final Length longitudinalPosition)
     {
         return lane.getCenterLine().getLocationExtended(longitudinalPosition);
     }

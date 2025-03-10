@@ -12,7 +12,7 @@ import java.util.Set;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Ray2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.StripeElement;
 import org.opentrafficsim.base.geometry.DirectionalPolyLine;
@@ -72,8 +72,8 @@ public class StripeAnimation extends OtsRenderable<StripeData>
             List<Point2d> path = new ArrayList<>();
             if (element.isContinuous())
             {
-                stripe.getCenterLine().directionalOffsetLine(edgeOffset).getPoints().forEachRemaining(path::add);
-                stripe.getCenterLine().directionalOffsetLine(edgeOffset - w).reverse().getPoints().forEachRemaining(path::add);
+                stripe.getCenterLine().directionalOffsetLine(edgeOffset).iterator().forEachRemaining(path::add);
+                stripe.getCenterLine().directionalOffsetLine(edgeOffset - w).reverse().iterator().forEachRemaining(path::add);
             }
             else if (!element.isGap())
             {
@@ -150,16 +150,16 @@ public class StripeAnimation extends OtsRenderable<StripeData>
                 if (!sameLine)
                 {
                     // project dash from reference line on the own center line, using fractional projection (i.e. pizza slices)
-                    Ray2d p1 = referenceLine.getLocationFraction(fraction1);
-                    Ray2d p2 = referenceLine.getLocationFraction(fraction2);
+                    DirectedPoint2d p1 = referenceLine.getLocationFraction(fraction1);
+                    DirectedPoint2d p2 = referenceLine.getLocationFraction(fraction2);
                     fraction1 = centerLine.projectFractional(p1.x, p1.y, FractionalFallback.ENDPOINT);
                     fraction2 = centerLine.projectFractional(p2.x, p2.y, FractionalFallback.ENDPOINT);
                 }
                 DirectionalPolyLine dashCenter = centerLine.extractFractional(fraction1, fraction2);
 
                 // create offsets on dash center line to add dash contour line
-                dashCenter.directionalOffsetLine(width / 2).getPoints().forEachRemaining(result::add);
-                dashCenter.directionalOffsetLine(-width / 2).reverse().getPoints().forEachRemaining(result::add);
+                dashCenter.directionalOffsetLine(width / 2).iterator().forEachRemaining(result::add);
+                dashCenter.directionalOffsetLine(-width / 2).reverse().iterator().forEachRemaining(result::add);
             }
             position = nextBoundary + dashes[phase++ % dashes.length];
         }
@@ -212,7 +212,7 @@ public class StripeAnimation extends OtsRenderable<StripeData>
     public interface StripeData extends ClickableLineLocatable
     {
         @Override
-        OrientedPoint2d getLocation();
+        DirectedPoint2d getLocation();
 
         /**
          * Returns the center line in world coordinates, with directions of end-points.

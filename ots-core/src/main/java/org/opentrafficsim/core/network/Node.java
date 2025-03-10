@@ -10,7 +10,7 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableHashSet;
@@ -46,7 +46,7 @@ public class Node
     private final String id;
 
     /** The point. */
-    private final OrientedPoint2d point;
+    private final DirectedPoint2d point;
 
     /** The contour. */
     private final Polygon2d contour;
@@ -77,7 +77,7 @@ public class Node
      */
     public Node(final Network network, final String id, final Point2d point) throws NetworkException
     {
-        this(network, id, new OrientedPoint2d(point.x, point.y, 0.0));
+        this(network, id, new DirectedPoint2d(point.x, point.y, 0.0));
     }
 
     /**
@@ -90,7 +90,7 @@ public class Node
      */
     public Node(final Network network, final String id, final Point2d point, final Direction heading) throws NetworkException
     {
-        this(network, id, new OrientedPoint2d(point.x, point.y, heading.si));
+        this(network, id, new DirectedPoint2d(point.x, point.y, heading.si));
     }
 
     /**
@@ -100,7 +100,7 @@ public class Node
      * @param point the point with usually an x and y setting.
      * @throws NetworkException if node already exists in the network, or if name of the node is not unique.
      */
-    public Node(final Network network, final String id, final OrientedPoint2d point) throws NetworkException
+    public Node(final Network network, final String id, final DirectedPoint2d point) throws NetworkException
     {
         Throw.whenNull(network, "network cannot be null");
         Throw.whenNull(id, "id cannot be null");
@@ -138,7 +138,7 @@ public class Node
      * Returns the point without direction.
      * @return point.
      */
-    public OrientedPoint2d getPoint()
+    public DirectedPoint2d getPoint()
     {
         return this.point;
     }
@@ -401,7 +401,7 @@ public class Node
 
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public OrientedPoint2d getLocation()
+    public DirectedPoint2d getLocation()
     {
         return this.point;
     }

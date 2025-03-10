@@ -3,7 +3,7 @@ package org.opentrafficsim.road.gtu.lane.plan.operational;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.geometry.OtsLine2d.FractionalFallback;
@@ -99,7 +99,7 @@ public class LaneBasedOperationalPlan extends OperationalPlan
      * @return total length along the path
      * @throws GtuException if the GTU has not reference position
      */
-    public final Length getDistanceAlongLane(final LaneBasedGtu gtu, final OrientedPoint2d point) throws GtuException
+    public final Length getDistanceAlongLane(final LaneBasedGtu gtu, final DirectedPoint2d point) throws GtuException
     {
 
         // start lane center lines at current reference lane

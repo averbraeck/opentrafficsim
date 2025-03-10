@@ -2,7 +2,7 @@ package org.opentrafficsim.road.network.lane.object;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -44,7 +44,7 @@ public interface LaneBasedObject extends LocatedObject
     }
 
     @Override
-    OrientedPoint2d getLocation();
+    DirectedPoint2d getLocation();
 
     /**
      * Returns the line that represent the location of this object on the lane.
@@ -88,7 +88,7 @@ public interface LaneBasedObject extends LocatedObject
         Throw.whenNull(longitudinalPosition, "position is null");
         Throw.whenNull(relativeWidth, "relatve width is null");
         double w50 = lane.getWidth(longitudinalPosition).si * 0.5 * relativeWidth;
-        OrientedPoint2d c = lane.getCenterLine().getLocationExtended(longitudinalPosition);
+        DirectedPoint2d c = lane.getCenterLine().getLocationExtended(longitudinalPosition);
         double a = c.getDirZ();
         Point2d p1 = new Point2d(c.x + w50 * Math.cos(a + Math.PI / 2), c.y - w50 * Math.sin(a + Math.PI / 2));
         Point2d p2 = new Point2d(c.x - w50 * Math.cos(a + Math.PI / 2), c.y + w50 * Math.sin(a + Math.PI / 2));

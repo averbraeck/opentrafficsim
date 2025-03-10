@@ -1,4 +1,4 @@
-package nl.tudelft.simulation.dsol.jetty.sse;
+package org.opentrafficsim.web;
 
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
@@ -24,9 +24,13 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.opentrafficsim.animation.DefaultAnimationFactory;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.web.animation.WebAnimationToggles;
+import org.opentrafficsim.web.animation.d2.HtmlAnimationPanel;
+import org.opentrafficsim.web.animation.d2.HtmlGridPanel;
+import org.opentrafficsim.web.animation.d2.ToggleButtonInfo;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,9 +42,6 @@ import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 import nl.tudelft.simulation.dsol.simulators.DevsRealTimeAnimator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
-import nl.tudelft.simulation.dsol.web.animation.d2.HtmlAnimationPanel;
-import nl.tudelft.simulation.dsol.web.animation.d2.HtmlGridPanel;
-import nl.tudelft.simulation.dsol.web.animation.d2.ToggleButtonInfo;
 import nl.tudelft.simulation.introspection.Property;
 import nl.tudelft.simulation.introspection.beans.BeanIntrospector;
 
@@ -106,7 +107,7 @@ public abstract class OtsWebServer implements EventListener
         /**
          * Constructor.
          */
-        public ServerThread()
+        ServerThread()
         {
             //
         }
@@ -228,6 +229,7 @@ public abstract class OtsWebServer implements EventListener
      * Set speed factor.
      * @param speedFactor the new speed factor
      */
+    @SuppressWarnings("unchecked")
     protected void setSpeedFactor(final double speedFactor)
     {
         if (this.simulator instanceof DevsRealTimeAnimator)

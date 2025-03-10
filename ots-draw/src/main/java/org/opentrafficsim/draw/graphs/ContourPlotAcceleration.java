@@ -9,7 +9,7 @@ import org.djunits.value.vdouble.matrix.AccelerationMatrix;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.means.ArithmeticMean;
+import org.djutils.math.means.ArithmeticMean;
 import org.opentrafficsim.draw.BoundsPaintScale;
 import org.opentrafficsim.draw.egtf.Converter;
 import org.opentrafficsim.draw.egtf.Quantity;

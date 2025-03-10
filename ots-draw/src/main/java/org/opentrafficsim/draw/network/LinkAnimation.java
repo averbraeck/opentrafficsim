@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 
 import org.djutils.base.Identifiable;
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.draw.ClickableLineLocatable;
 import org.opentrafficsim.draw.DrawLevel;
@@ -198,7 +198,7 @@ public class LinkAnimation extends OtsRenderable<LinkData>
     public interface LinkData extends ClickableLineLocatable, Identifiable
     {
         @Override
-        OrientedPoint2d getLocation();
+        DirectedPoint2d getLocation();
 
         /**
          * Returns whether this is a connector.

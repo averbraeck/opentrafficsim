@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.djutils.draw.Oriented;
+import org.djutils.draw.Directed2d;
+import org.djutils.draw.Directed3d;
 import org.djutils.draw.Transform2d;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.point.Point;
 import org.djutils.draw.point.Point2d;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -33,6 +35,14 @@ public interface OtsLocatable extends Locatable, SpatialObject
      */
     @Override
     Bounds2d getBounds();
+
+    @Override
+    default double getDirZ()
+    {
+        Point<?> p = getLocation();
+        return p == null ? 0.0 : p instanceof Directed2d ? ((Directed2d<?>) p).getDirZ()
+                : p instanceof Directed3d ? ((Directed3d<?>) p).getDirZ() : 0.0;
+    }
 
     /**
      * Returns the shape relative to the location.
@@ -92,7 +102,7 @@ public interface OtsLocatable extends Locatable, SpatialObject
      */
     static Polygon2d transformContour(final Polygon2d contour, final Point2d location)
     {
-        return new Polygon2d(transform(toBoundsTransform(location), contour.getPoints()));
+        return new Polygon2d(transform(toBoundsTransform(location), contour.iterator()));
     }
 
     /**
@@ -103,7 +113,7 @@ public interface OtsLocatable extends Locatable, SpatialObject
      */
     static PolyLine2d transformLine(final PolyLine2d line, final Point2d location)
     {
-        return new PolyLine2d(transform(toBoundsTransform(location), line.getPoints()));
+        return new PolyLine2d(transform(toBoundsTransform(location), line.iterator()));
     }
 
     /**
@@ -137,9 +147,9 @@ public interface OtsLocatable extends Locatable, SpatialObject
     static Transform2d toBoundsTransform(final Point2d location)
     {
         Transform2d transformation = new Transform2d();
-        if (location instanceof Oriented<?>)
+        if (location instanceof Directed2d<?>)
         {
-            transformation.rotation(-((Oriented<?>) location).getDirZ());
+            transformation.rotation(-((Directed2d<?>) location).getDirZ());
         }
         transformation.translate(-location.getX(), -location.getY());
         return transformation;
@@ -155,9 +165,9 @@ public interface OtsLocatable extends Locatable, SpatialObject
     {
         Transform2d transformation = new Transform2d();
         transformation.translate(location.getX(), location.getY());
-        if (location instanceof Oriented<?>)
+        if (location instanceof Directed2d<?>)
         {
-            transformation.rotation(((Oriented<?>) location).getDirZ());
+            transformation.rotation(((Directed2d<?>) location).getDirZ());
         }
         return transformation;
     }

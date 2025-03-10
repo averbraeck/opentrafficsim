@@ -1,4 +1,4 @@
-package nl.tudelft.simulation.dsol.web.animation.d2;
+package org.opentrafficsim.web.animation.d2;
 
 import java.awt.Canvas;
 import java.awt.Color;
@@ -14,9 +14,9 @@ import java.text.NumberFormat;
 
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.web.animation.HtmlGraphics2d;
 
 import nl.tudelft.simulation.dsol.animation.d2.RenderableScale;
-import nl.tudelft.simulation.dsol.web.animation.HtmlGraphics2d;
 
 /**
  * The VisualizationPanel introduces the gridPanel.
@@ -74,6 +74,18 @@ public class HtmlGridPanel implements ImageObserver
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected Dimension lastDimension = null;
 
+    /** the last stored screen dimensions for zoom-in, zoom-out. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    protected Dimension lastScreen = null;
+
+    /** the last stored x-scale for zoom-in, zoom-out. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    protected Double lastXScale = null;
+
+    /** the last stored y-scale for zoom-in, zoom-out. */
+    @SuppressWarnings("checkstyle:visibilitymodifier")
+    protected Double lastYScale = null;
+
     /** the last computed Dimension. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     protected Dimension size = null;
@@ -127,18 +139,20 @@ public class HtmlGridPanel implements ImageObserver
 
     /**
      * constructs a new VisualizationPanel.
-     * @param extent the initial extent.
+     * @param homeExtent the initial extent.
      * @param size the size of the panel in pixels.
      */
-    public HtmlGridPanel(final Bounds2d extent, final Dimension size)
+    public HtmlGridPanel(final Bounds2d homeExtent, final Dimension size)
     {
         this.htmlGraphics2D = new HtmlGraphics2d();
-        this.homeExtent = extent;
+        this.extent = homeExtent;
+        this.homeExtent = homeExtent;
         this.renderableScale = new RenderableScale();
         this.setBackground(Color.WHITE);
         this.setPreferredSize(size);
         this.size = (Dimension) size.clone();
         this.lastDimension = this.getSize();
+        this.lastScreen = this.getSize();
         setExtent(this.homeExtent);
     }
 
@@ -162,7 +176,7 @@ public class HtmlGridPanel implements ImageObserver
         if (!this.getSize().equals(this.lastDimension))
         {
             this.lastDimension = this.getSize();
-            setExtent(this.renderableScale.computeVisibleExtent(this.extent, this.getSize()));
+            setExtent(computeVisibleExtent(this.extent));
         }
         if (this.showGrid)
         {
@@ -190,11 +204,17 @@ public class HtmlGridPanel implements ImageObserver
     }
 
     /**
-     * set a new extent for this panel.
-     * @param extent set a new extent
+     * returns the extent of this panel.
+     * @param extent Bounds2d; the new extent
      */
-    public final void setExtent(final Bounds2d extent)
+    public void setExtent(final Bounds2d extent)
     {
+        if (this.lastScreen != null)
+        {
+            // this prevents zoom being undone when resizing the screen afterwards
+            this.lastXScale = this.getRenderableScale().getXScale(extent, this.lastScreen);
+            this.lastYScale = this.getRenderableScale().getYScale(extent, this.lastScreen);
+        }
         this.extent = extent;
         this.repaint();
     }
@@ -292,7 +312,7 @@ public class HtmlGridPanel implements ImageObserver
      */
     public final synchronized void home()
     {
-        setExtent(this.renderableScale.computeVisibleExtent(this.homeExtent, this.getSize()));
+        setExtent(computeVisibleExtent(this.homeExtent));
         this.repaint();
     }
 
@@ -620,6 +640,47 @@ public class HtmlGridPanel implements ImageObserver
             final int height)
     {
         return false;
+    }
+
+    /**
+     * Computes the visible extent, while preserving zoom scale, otherwise dragging the split screen may pump up the zoom factor
+     * @param extent the extent to use
+     * @return a new extent or null if parameters are null or screen is invalid (width / height &lt;= 0)
+     */
+    public Bounds2d computeVisibleExtent(final Bounds2d extent)
+    {
+        Dimension screen = getSize();
+        double xScale = this.renderableScale.getXScale(extent, screen);
+        double yScale = this.renderableScale.getYScale(extent, screen);
+        Bounds2d result;
+        if (this.lastYScale != null && yScale == this.lastYScale)
+        {
+            result = new Bounds2d(extent.midPoint().getX() - 0.5 * screen.getWidth() * yScale,
+                    extent.midPoint().getX() + 0.5 * screen.getWidth() * yScale, extent.getMinY(), extent.getMaxY());
+            xScale = yScale;
+        }
+        else if (this.lastXScale != null && xScale == this.lastXScale)
+        {
+            result = new Bounds2d(extent.getMinX(), extent.getMaxX(),
+                    extent.midPoint().getY() - 0.5 * screen.getHeight() * xScale * this.renderableScale.getYScaleRatio(),
+                    extent.midPoint().getY() + 0.5 * screen.getHeight() * xScale * this.renderableScale.getYScaleRatio());
+            yScale = xScale;
+        }
+        else
+        {
+            double scale = this.lastXScale == null ? Math.min(xScale, yScale)
+                    : this.lastXScale * this.lastScreen.getWidth() / screen.getWidth();
+            result = new Bounds2d(extent.midPoint().getX() - 0.5 * screen.getWidth() * scale,
+                    extent.midPoint().getX() + 0.5 * screen.getWidth() * scale,
+                    extent.midPoint().getY() - 0.5 * screen.getHeight() * scale * this.renderableScale.getYScaleRatio(),
+                    extent.midPoint().getY() + 0.5 * screen.getHeight() * scale * this.renderableScale.getYScaleRatio());
+            yScale = scale;
+            xScale = scale;
+        }
+        this.lastXScale = xScale;
+        this.lastYScale = yScale;
+        this.lastScreen = screen;
+        return result;
     }
 
 }

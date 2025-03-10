@@ -23,7 +23,7 @@ import org.djunits.value.vdouble.vector.PositionVector;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
@@ -256,7 +256,7 @@ public class Gtu extends LocalEventProducer
      *             waiting path fails
      */
     @SuppressWarnings({"checkstyle:hiddenfield", "checkstyle:designforextension"})
-    public void init(final StrategicalPlanner strategicalPlanner, final OrientedPoint2d initialLocation,
+    public void init(final StrategicalPlanner strategicalPlanner, final DirectedPoint2d initialLocation,
             final Speed initialSpeed) throws SimRuntimeException, GtuException
     {
         Throw.when(strategicalPlanner == null, GtuException.class, "strategicalPlanner is null for GTU with id %s", this.id);
@@ -355,7 +355,7 @@ public class Gtu extends LocalEventProducer
     @SuppressWarnings("checkstyle:designforextension")
     public void destroy()
     {
-        OrientedPoint2d location = getLocation();
+        DirectedPoint2d location = getLocation();
         fireTimedEvent(Gtu.DESTROY_EVENT,
                 new Object[] {getId(), new PositionVector(new double[] {location.x, location.y}, PositionUnit.METER),
                         new Direction(location.getDirZ(), DirectionUnit.EAST_RADIAN), getOdometer()},
@@ -386,7 +386,7 @@ public class Gtu extends LocalEventProducer
      * @throws ParameterException in there is a parameter problem
      */
     @SuppressWarnings("checkstyle:designforextension")
-    protected boolean move(final OrientedPoint2d fromLocation)
+    protected boolean move(final DirectedPoint2d fromLocation)
             throws SimRuntimeException, GtuException, NetworkException, ParameterException
     {
         try
@@ -430,7 +430,7 @@ public class Gtu extends LocalEventProducer
             {
                 // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
                 double tNext = Math.floor(now.si / this.alignStep + 1.0) * this.alignStep;
-                OrientedPoint2d p = (tNext - now.si < this.alignStep) ? newOperationalPlan.getEndLocation()
+                DirectedPoint2d p = (tNext - now.si < this.alignStep) ? newOperationalPlan.getEndLocation()
                         : newOperationalPlan.getLocation(new Duration(tNext - now.si, DurationUnit.SI));
                 this.nextMoveEvent =
                         new SimEvent<Duration>(new Duration(tNext - getSimulator().getStartTimeAbs().si, DurationUnit.SI), this,
@@ -820,11 +820,11 @@ public class Gtu extends LocalEventProducer
     private Time cacheLocationTime = new Time(Double.NaN, TimeUnit.DEFAULT);
 
     /** Cached location at that time. */
-    private OrientedPoint2d cacheLocation = null;
+    private DirectedPoint2d cacheLocation = null;
 
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public OrientedPoint2d getLocation()
+    public DirectedPoint2d getLocation()
     {
         synchronized (this)
         {
@@ -832,7 +832,7 @@ public class Gtu extends LocalEventProducer
             {
                 this.simulator.getLogger().always()
                         .error("No operational plan for GTU " + this.id + " at t=" + this.getSimulator().getSimulatorTime());
-                return new OrientedPoint2d(0, 0, 0); // Do not cache it
+                return new DirectedPoint2d(0, 0, 0); // Do not cache it
             }
             try
             {
@@ -848,7 +848,7 @@ public class Gtu extends LocalEventProducer
             }
             catch (OperationalPlanException exception)
             {
-                return new OrientedPoint2d(0, 0, 0);
+                return new DirectedPoint2d(0, 0, 0);
             }
         }
     }

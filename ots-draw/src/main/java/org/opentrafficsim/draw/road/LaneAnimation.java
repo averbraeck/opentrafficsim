@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.ClickableLineLocatable;
@@ -93,7 +93,7 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         private final PolyLine2d centerLine;
 
         /** Location. */
-        private final OrientedPoint2d location;
+        private final DirectedPoint2d location;
 
         /** Shape (cached). */
         private OtsShape shape;
@@ -109,12 +109,12 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         CenterLine(final PolyLine2d centerLine, final String fullId)
         {
             this.centerLine = centerLine;
-            this.location = new OrientedPoint2d(this.centerLine.getBounds().midPoint(), 0.0);
+            this.location = new DirectedPoint2d(this.centerLine.getBounds().midPoint(), 0.0);
             this.fullId = fullId;
         }
 
         @Override
-        public final OrientedPoint2d getLocation()
+        public final DirectedPoint2d getLocation()
         {
             return this.location;
         }
@@ -132,7 +132,7 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         @Override
         public Polygon2d getContour()
         {
-            return new Polygon2d(this.centerLine.getPoints());
+            return new Polygon2d(this.centerLine.iterator());
         }
 
         /**

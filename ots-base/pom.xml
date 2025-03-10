@@ -23,6 +23,11 @@
     </dependency>
     
     <dependency>
+      <groupId>org.djutils</groupId>
+      <artifactId>djutils-math</artifactId>
+    </dependency>
+    
+    <dependency>
       <groupId>nl.tudelft.simulation</groupId>
       <artifactId>dsol-animation</artifactId>
     </dependency>

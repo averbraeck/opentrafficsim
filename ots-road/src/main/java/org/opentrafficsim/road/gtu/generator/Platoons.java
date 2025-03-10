@@ -14,7 +14,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
 import org.djutils.exceptions.Throw;
-import org.djutils.means.ArithmeticMean;
+import org.djutils.math.means.ArithmeticMean;
 import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;

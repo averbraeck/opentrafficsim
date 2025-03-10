@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.OtsRenderable;
@@ -329,12 +329,19 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
         boolean isBrakingLightsOn();
 
         @Override
-        OrientedPoint2d getLocation();
+        DirectedPoint2d getLocation();
 
         @Override
         default double getZ()
         {
             return DrawLevel.GTU.getZ();
+        }
+
+        @Override
+        default double getDirZ()
+        {
+            DirectedPoint2d p = getLocation();
+            return p == null ? 0.0 : p.getDirZ();
         }
 
         /**

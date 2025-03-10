@@ -7,8 +7,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.line.Ray2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.reference.ReferenceType;
@@ -55,7 +54,7 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
     private Length laneWidth;
 
     /** Location. */
-    private OrientedPoint2d location;
+    private DirectedPoint2d location;
 
     /** Bounds. */
     private Bounds2d bounds;
@@ -152,7 +151,7 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
     }
 
     @Override
-    public OrientedPoint2d getLocation()
+    public DirectedPoint2d getLocation()
     {
         return this.location;
     }
@@ -292,8 +291,8 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
         }
         this.laneWidth = w;
         double w45 = 0.45 * getLaneWidth().si;
-        Ray2d ray = laneData.getCenterLine().getLocationExtended(this.positionFromStart.si);
-        this.location = new OrientedPoint2d(ray.x, ray.y, ray.phi);
+        DirectedPoint2d point = laneData.getCenterLine().getLocationExtended(this.positionFromStart.si);
+        this.location = new DirectedPoint2d(point.x, point.y, point.dirZ);
         this.line = new PolyLine2d(new double[] {0.0, 0.0}, new double[] {-w45, w45});
         this.shape = new RectangleShape(0.0, 2.0 * w45);
         this.bounds = LaneBasedObjectData.super.getBounds();

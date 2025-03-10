@@ -98,7 +98,7 @@ public class CircleShape implements OtsShape
         {
             if (this.radius == 0.0)
             {
-                this.polygon = new Polygon2d(false, new Point2d(0.0, 0.0));
+                this.polygon = new Polygon2d(new double[] {0.0}, new double[] {0.0});
             }
             else
             {

@@ -24,7 +24,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.bounds.Bounds;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
@@ -693,7 +693,7 @@ public final class LaneTest implements UNITS
                                 // One meter before the end, right outside the lane
                                 checkInside(lane, link.getLength().getSI() - 1, endLateralOffset + endWidth / 2 + 1, false);
                                 // Check the result of getBounds.
-                                OrientedPoint2d l = lane.getLocation();
+                                DirectedPoint2d l = lane.getLocation();
                                 // System.out.println("bb is " + bb);
                                 // System.out.println("l is " + l.x + "," + l.y + "," + l.z);
                                 // System.out.println("start is at " + start.getX() + ", " + start.getY());
@@ -728,7 +728,7 @@ public final class LaneTest implements UNITS
                                 // System.out.println(" my bbox is " + minX + "," + minY + " - " + maxX + "," + maxY);
                                 // System.out.println("the bbox is " + (bbLow.x + l.x) + "," + (bbLow.y + l.y) + " - "
                                 // + (bbHigh.x + l.x) + "," + (bbHigh.y + l.y));
-                                Bounds<?, ?, ?> bb = lane.getContour().getBounds();
+                                Bounds<?, ?> bb = lane.getContour().getBounds();
                                 double boundsMinX = bb.getMinX();
                                 double boundsMinY = bb.getMinY();
                                 double boundsMaxX = bb.getMaxX();

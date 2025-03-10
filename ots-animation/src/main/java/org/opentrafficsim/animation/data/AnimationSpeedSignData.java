@@ -2,7 +2,7 @@ package org.opentrafficsim.animation.data;
 
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.draw.road.SpeedSignAnimation.SpeedSignData;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 
@@ -30,7 +30,7 @@ public class AnimationSpeedSignData implements SpeedSignData
     }
 
     @Override
-    public OrientedPoint2d getLocation()
+    public DirectedPoint2d getLocation()
     {
         return this.speedSign.getLocation();
     }

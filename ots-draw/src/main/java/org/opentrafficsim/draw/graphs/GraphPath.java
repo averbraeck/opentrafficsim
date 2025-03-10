@@ -12,7 +12,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
-import org.djutils.means.ArithmeticMean;
+import org.djutils.math.means.ArithmeticMean;
 import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.SpaceTimeRegion;

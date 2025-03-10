@@ -6,7 +6,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
@@ -53,7 +53,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
     private final ContinuousDoubleFunction width;
 
     /** Location, center of contour. */
-    private final OrientedPoint2d location;
+    private final DirectedPoint2d location;
 
     /** Bounding box. */
     private final Bounds2d bounds;
@@ -279,7 +279,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
 
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public OrientedPoint2d getLocation()
+    public DirectedPoint2d getLocation()
     {
         return this.location;
     }
