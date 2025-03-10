@@ -68,7 +68,7 @@ public class ContinuousClothoidTest
                     new DirectedPoint2d(r.nextDouble() * 10.0, r.nextDouble() * 10.0, (r.nextDouble() * 2 - 1) * Math.PI);
             ContinuousClothoid clothoid = new ContinuousClothoid(start, end);
             PolyLine2d line = clothoid.flatten(new NumSegments(64));
-            VerifyLine(start, clothoid, line, null, null, null);
+            verifyLine(start, clothoid, line, null, null, null);
         }
     }
 
@@ -124,7 +124,7 @@ public class ContinuousClothoidTest
 
             ContinuousClothoid clothoid = ContinuousClothoid.withLength(start, length.si, startCurvature.si, endCurvature.si);
             PolyLine2d line = clothoid.flatten(new NumSegments(64));
-            VerifyLine(start, clothoid, line, startCurvature, endCurvature, null);
+            verifyLine(start, clothoid, line, startCurvature, endCurvature, null);
         }
     }
 
@@ -148,7 +148,7 @@ public class ContinuousClothoidTest
 
             ContinuousClothoid clothoid = new ContinuousClothoid(start, a.si, startCurvature.si, endCurvature.si);
             PolyLine2d line = clothoid.flatten(new NumSegments(64));
-            VerifyLine(start, clothoid, line, startCurvature, endCurvature, a);
+            verifyLine(start, clothoid, line, startCurvature, endCurvature, a);
         }
     }
 
@@ -161,7 +161,7 @@ public class ContinuousClothoidTest
      * @param endCurvature end curvature, may be {@code null} if no theoretical value available.
      * @param a Length A-value, may be {@code null} if no theoretical value available.
      */
-    private void VerifyLine(final DirectedPoint2d start, final ContinuousClothoid clothoid, final PolyLine2d line,
+    private void verifyLine(final DirectedPoint2d start, final ContinuousClothoid clothoid, final PolyLine2d line,
             final LinearDensity startCurvature, final LinearDensity endCurvature, final Length a)
     {
         assertEquals(0.0, Math.hypot(start.x - line.get(0).x, start.y - line.get(0).y), DISTANCE_TOLERANCE,
