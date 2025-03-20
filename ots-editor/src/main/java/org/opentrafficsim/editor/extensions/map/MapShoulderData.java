@@ -27,7 +27,7 @@ public class MapShoulderData extends MapCrossSectionData implements ShoulderData
     public MapShoulderData(final XsdTreeNode linkNode, final CrossSectionGeometry geometry)
     {
         super(linkNode, geometry);
-        this.startOffset = Length.instantiateSI(geometry.offset().apply(0.0));
+        this.startOffset = Length.instantiateSI(geometry.offset().get(0.0));
     }
 
     @Override

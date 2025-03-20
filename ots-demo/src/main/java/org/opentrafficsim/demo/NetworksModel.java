@@ -21,6 +21,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.base.DoubleScalar;
+import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
@@ -33,9 +34,7 @@ import org.opentrafficsim.core.distributions.ObjectDistribution;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.ContinuousLine;
-import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
-import org.opentrafficsim.core.geometry.FractionalLengthData;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -49,9 +48,9 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactory;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
-import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
-import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.CfRoomChecker;
+import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
+import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplate;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplateDistribution;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
@@ -478,8 +477,9 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
 
         for (Lane lane : lanes)
         {
-            ContinuousDoubleFunction offset = FractionalLengthData.of(0.0, lane.getLateralCenterPosition(1.0).si);
-            ContinuousDoubleFunction width = FractionalLengthData.of(0.0, lane.getWidth(1.0).si);
+            ContinuousPiecewiseLinearFunction offset =
+                    ContinuousPiecewiseLinearFunction.of(0.0, lane.getLateralCenterPosition(1.0).si);
+            ContinuousPiecewiseLinearFunction width = ContinuousPiecewiseLinearFunction.of(0.0, lane.getWidth(1.0).si);
             // Overtaking left and right allowed on the sinkLane
             Lane sinkLane =
                     new Lane(endLink, lane.getId() + "." + "sinkLane", CrossSectionGeometry.of(designLine, null, offset, width),

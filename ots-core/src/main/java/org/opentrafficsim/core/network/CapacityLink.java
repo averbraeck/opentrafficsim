@@ -1,8 +1,8 @@
 package org.opentrafficsim.core.network;
 
 import org.djunits.value.vdouble.scalar.Frequency;
+import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.opentrafficsim.base.geometry.OtsLine2d;
-import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
 
 /**
  * A link with a maximum capacity, expressed as the maximum number of GTUs per time unit that the link can handle.
@@ -36,8 +36,8 @@ public class CapacityLink extends Link implements Capacity
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public CapacityLink(final Network network, final String id, final Node startNode, final Node endNode,
-            final LinkType linkType, final OtsLine2d designLine, final ContinuousDoubleFunction elevation, final Frequency capacity)
-            throws NetworkException
+            final LinkType linkType, final OtsLine2d designLine, final ContinuousPiecewiseLinearFunction elevation,
+            final Frequency capacity) throws NetworkException
     {
         super(network, id, startNode, endNode, linkType, designLine, elevation);
         this.capacity = capacity;

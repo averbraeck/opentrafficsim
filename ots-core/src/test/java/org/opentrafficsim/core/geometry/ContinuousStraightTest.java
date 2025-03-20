@@ -3,6 +3,7 @@ package org.opentrafficsim.core.geometry;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
@@ -49,13 +50,13 @@ public final class ContinuousStraightTest
         assertEquals(0.0, straight.getStartCurvature(), MARGIN, "Start curvature is incorrect.");
         assertEquals(0.0, straight.getEndCurvature(), MARGIN, "End curvature is incorrect.");
 
-        FractionalLengthData offsets = FractionalLengthData.of(0.0, -1.0, 0.5, -1.0, 1.0, -2.0);
+        ContinuousPiecewiseLinearFunction offsets = ContinuousPiecewiseLinearFunction.of(0.0, -1.0, 0.5, -1.0, 1.0, -2.0);
         PolyLine2d line = straight.offset(offsets);
         isApproximal(line.get(0), 0.0, -1.0);
         isApproximal(line.get(1), 50.0, -1.0);
         isApproximal(line.get(2), 100.0, -2.0);
 
-        offsets = FractionalLengthData.of(0.0, 1.0, 0.5, 1.0, 1.0, 2.0);
+        offsets = ContinuousPiecewiseLinearFunction.of(0.0, 1.0, 0.5, 1.0, 1.0, 2.0);
         line = straight.offset(offsets);
         isApproximal(line.get(0), 0.0, 1.0);
         isApproximal(line.get(1), 50.0, 1.0);

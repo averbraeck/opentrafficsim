@@ -82,7 +82,7 @@ public class MapStripeData extends MapCrossSectionData implements StripeData
         }
         this.width = w;
         this.dashOffset = dashOffset;
-        this.laterealStartOffset = Length.instantiateSI(geometry.offset().apply(0.0));
+        this.laterealStartOffset = Length.instantiateSI(geometry.offset().get(0.0));
         this.elements = elements;
         this.lateralSync = lateralSync;
         this.linkLine = linkLine;
@@ -144,7 +144,7 @@ public class MapStripeData extends MapCrossSectionData implements StripeData
     {
         return this.dashOffset;
     }
-    
+
     /**
      * Returns the lateral sync.
      * @return lateral sync.
@@ -162,7 +162,7 @@ public class MapStripeData extends MapCrossSectionData implements StripeData
     {
         this.dashOffset = dashOffset;
     }
-    
+
 
     @Override
     public String toString()

@@ -43,7 +43,7 @@ public interface Flattener
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public static class NumSegments implements Flattener
+    class NumSegments implements Flattener
     {
         /** Number of segments. */
         private final int numSegments;
@@ -82,7 +82,7 @@ public interface Flattener
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public static class MaxDeviation implements Flattener
+    class MaxDeviation implements Flattener
     {
         /** Maximum deviation. */
         private final double maxDeviation;
@@ -130,7 +130,8 @@ public interface Flattener
                 {
                     // Check for an inflection point by creating additional points at one quarter and three quarters. If these
                     // are on opposite sides of the line from prevPoint to nextPoint; there must be an inflection point.
-                    // https://stackoverflow.com/questions/1560492/how-to-tell-whether-a-point-is-to-the-right-or-left-side-of-a-line
+                    // https://stackoverflow.com/questions/1560492/
+                    // how-to-tell-whether-a-point-is-to-the-right-or-left-side-of-a-line
                     Point2d quarter = line.get((prevT + medianT) / 2);
                     int sign1 = (int) Math.signum((nextPoint.x - prevPoint.x) * (quarter.y - prevPoint.y)
                             - (nextPoint.y - prevPoint.y) * (quarter.x - prevPoint.x));
@@ -162,7 +163,7 @@ public interface Flattener
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public static class MaxDeviationAndAngle implements Flattener
+    class MaxDeviationAndAngle implements Flattener
     {
         /** Maximum deviation. */
         private final double maxDeviation;
@@ -242,7 +243,8 @@ public interface Flattener
 
                 // Check for an inflection point by creating additional points at one quarter and three quarters. If these
                 // are on opposite sides of the line from prevPoint to nextPoint; there must be an inflection point.
-                // https://stackoverflow.com/questions/1560492/how-to-tell-whether-a-point-is-to-the-right-or-left-side-of-a-line
+                // https://stackoverflow.com/questions/1560492/
+                // how-to-tell-whether-a-point-is-to-the-right-or-left-side-of-a-line
                 Point2d quarter = line.get((prevT + medianT) / 2);
                 int sign1 = (int) Math.signum((nextPoint.x - prevPoint.x) * (quarter.y - prevPoint.y)
                         - (nextPoint.y - prevPoint.y) * (quarter.x - prevPoint.x));
@@ -274,7 +276,7 @@ public interface Flattener
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public static class MaxAngle implements Flattener
+    class MaxAngle implements Flattener
     {
         /** Maximum angle. */
         private final double maxAngle;
@@ -337,7 +339,8 @@ public interface Flattener
 
                 // Check for an inflection point by creating additional points at one quarter and three quarters. If these
                 // are on opposite sides of the line from prevPoint to nextPoint; there must be an inflection point.
-                // https://stackoverflow.com/questions/1560492/how-to-tell-whether-a-point-is-to-the-right-or-left-side-of-a-line
+                // https://stackoverflow.com/questions/1560492/
+                // how-to-tell-whether-a-point-is-to-the-right-or-left-side-of-a-line
                 Point2d quarter = line.get((prevT + medianT) / 2);
                 int sign1 = (int) Math.signum((nextPoint.x - prevPoint.x) * (quarter.y - prevPoint.y)
                         - (nextPoint.y - prevPoint.y) * (quarter.x - prevPoint.x));

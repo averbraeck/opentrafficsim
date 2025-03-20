@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.geometry;
 
 import org.djunits.value.vdouble.scalar.Angle;
+import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
@@ -161,7 +162,7 @@ public class ContinuousArc implements ContinuousLine
     }
 
     @Override
-    public PolyLine2d flattenOffset(final ContinuousDoubleFunction offset, final Flattener flattener)
+    public PolyLine2d flattenOffset(final ContinuousPiecewiseLinearFunction offset, final Flattener flattener)
     {
         Throw.whenNull(offset, "Offset may not be null.");
         Throw.whenNull(flattener, "Flattener may not be null.");
@@ -170,7 +171,7 @@ public class ContinuousArc implements ContinuousLine
             @Override
             public Point2d get(final double fraction)
             {
-                return getPoint(fraction, offset.apply(fraction));
+                return getPoint(fraction, offset.get(fraction));
             }
 
             @Override
@@ -178,15 +179,15 @@ public class ContinuousArc implements ContinuousLine
             {
                 /*-
                  * x = cos(phi) * (r - s(phi))
-                 * y = sin(phi) * (r - s(phi)) 
-                 * 
+                 * y = sin(phi) * (r - s(phi))
+                 *
                  * with,
                  *   phi    = angle of circle arc point at fraction, relative to circle center
                  *   r      = radius
                  *   s(phi) = offset at phi (or at fraction)
-                 * 
-                 * then using the product rule: 
-                 * 
+                 *
+                 * then using the product rule:
+                 *
                  * x' = -sin(phi) * (r - s(phi)) - cos(phi) * s'(phi)
                  * y' = cos(phi) * (r - s(phi)) - sin(phi) * s'(phi)
                  */
@@ -194,7 +195,7 @@ public class ContinuousArc implements ContinuousLine
                         + ContinuousArc.this.sign * (ContinuousArc.this.angle.si * fraction - Math.PI / 2));
                 double sinPhi = Math.sin(phi);
                 double cosPhi = Math.cos(phi);
-                double sPhi = ContinuousArc.this.sign * offset.apply(fraction);
+                double sPhi = ContinuousArc.this.sign * offset.get(fraction);
                 double sPhiD = offset.getDerivative(fraction) / ContinuousArc.this.angle.si;
                 double dx = -sinPhi * (ContinuousArc.this.radius - sPhi) - cosPhi * sPhiD;
                 double dy = cosPhi * (ContinuousArc.this.radius - sPhi) - sinPhi * sPhiD;

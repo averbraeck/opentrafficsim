@@ -4,14 +4,13 @@ import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.geometry.ContinuousLine;
-import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
-import org.opentrafficsim.core.geometry.FractionalLengthData;
 import org.opentrafficsim.core.gtu.GtuType;
 
 /**
@@ -83,8 +82,8 @@ public final class LaneGeometryUtil
             final Length endOffset, final Length startWidth, final Length endWidth, final LaneType laneType,
             final Map<GtuType, Speed> speedLimits)
     {
-        ContinuousDoubleFunction offset = FractionalLengthData.of(0.0, startOffset.si, 1.0, endOffset.si);
-        ContinuousDoubleFunction width = FractionalLengthData.of(0.0, startWidth.si, 1.0, endWidth.si);
+        ContinuousPiecewiseLinearFunction offset = ContinuousPiecewiseLinearFunction.of(0.0, startOffset.si, 1.0, endOffset.si);
+        ContinuousPiecewiseLinearFunction width = ContinuousPiecewiseLinearFunction.of(0.0, startWidth.si, 1.0, endWidth.si);
         return createStraightLane(link, id, offset, width, laneType, speedLimits);
     }
 
@@ -98,8 +97,9 @@ public final class LaneGeometryUtil
      * @param speedLimits speed limit map
      * @return lane
      */
-    public static Lane createStraightLane(final CrossSectionLink link, final String id, final ContinuousDoubleFunction offset,
-            final ContinuousDoubleFunction width, final LaneType laneType, final Map<GtuType, Speed> speedLimits)
+    public static Lane createStraightLane(final CrossSectionLink link, final String id,
+            final ContinuousPiecewiseLinearFunction offset, final ContinuousPiecewiseLinearFunction width,
+            final LaneType laneType, final Map<GtuType, Speed> speedLimits)
     {
         ContinuousLine designLine = new ContinuousStraight(
                 Try.assign(() -> link.getDesignLine().getLocationPointFraction(0.0), "Link should have a valid design line."),
@@ -124,8 +124,8 @@ public final class LaneGeometryUtil
         ContinuousLine designLine = new ContinuousStraight(
                 Try.assign(() -> link.getDesignLine().getLocationPointFraction(0.0), "Link should have a valid design line."),
                 link.getLength().si);
-        ContinuousDoubleFunction offsetFunc = FractionalLengthData.of(0.0, offset.si, 1.0, offset.si);
-        ContinuousDoubleFunction widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
+        ContinuousPiecewiseLinearFunction offsetFunc = ContinuousPiecewiseLinearFunction.of(0.0, offset.si, 1.0, offset.si);
+        ContinuousPiecewiseLinearFunction widthFunc = ContinuousPiecewiseLinearFunction.of(0.0, width.si, 1.0, width.si);
         return Try.assign(() -> new Stripe(id, type, link, CrossSectionGeometry.of(designLine, null, offsetFunc, widthFunc)),
                 "Network exception.");
     }
@@ -147,8 +147,8 @@ public final class LaneGeometryUtil
         ContinuousLine designLine = new ContinuousStraight(
                 Try.assign(() -> link.getDesignLine().getLocationPointFraction(0.0), "Link should have a valid design line."),
                 link.getLength().si);
-        ContinuousDoubleFunction offset = FractionalLengthData.of(0.0, startOffset.si, 1.0, endOffset.si);
-        ContinuousDoubleFunction width = FractionalLengthData.of(0.0, startWidth.si, 1.0, endWidth.si);
+        ContinuousPiecewiseLinearFunction offset = ContinuousPiecewiseLinearFunction.of(0.0, startOffset.si, 1.0, endOffset.si);
+        ContinuousPiecewiseLinearFunction width = ContinuousPiecewiseLinearFunction.of(0.0, startWidth.si, 1.0, endWidth.si);
         return Try.assign(() -> new Shoulder(link, id, CrossSectionGeometry.of(designLine, null, offset, width), laneType),
                 "Network exception.");
     }

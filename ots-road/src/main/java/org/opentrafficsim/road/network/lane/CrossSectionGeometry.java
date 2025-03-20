@@ -3,14 +3,14 @@ package org.opentrafficsim.road.network.lane;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
+import org.djutils.draw.function.ContinuousPiecewiseLinearFunction.TupleSt;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.core.geometry.ContinuousLine;
-import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
 import org.opentrafficsim.core.geometry.Flattener;
-import org.opentrafficsim.core.geometry.FractionalLengthData;
 
 /**
  * Cross-section element geometry. A static method {@code of(...)} is available to generate geometry based on a design line and
@@ -26,8 +26,8 @@ import org.opentrafficsim.core.geometry.FractionalLengthData;
  * @param width width
  */
 @SuppressWarnings("javadoc")
-public record CrossSectionGeometry(OtsLine2d centerLine, Polygon2d contour, ContinuousDoubleFunction offset,
-        ContinuousDoubleFunction width)
+public record CrossSectionGeometry(OtsLine2d centerLine, Polygon2d contour, ContinuousPiecewiseLinearFunction offset,
+        ContinuousPiecewiseLinearFunction width)
 {
 
     /**
@@ -52,23 +52,23 @@ public record CrossSectionGeometry(OtsLine2d centerLine, Polygon2d contour, Cont
      * @return geometry for cross-section element
      */
     public static CrossSectionGeometry of(final ContinuousLine designLine, final Flattener flattener,
-            final ContinuousDoubleFunction offset, final ContinuousDoubleFunction width)
+            final ContinuousPiecewiseLinearFunction offset, final ContinuousPiecewiseLinearFunction width)
     {
         PolyLine2d line = designLine.flattenOffset(offset, flattener);
         Map<Double, Double> leftMap = new LinkedHashMap<>();
         Map<Double, Double> rightMap = new LinkedHashMap<>();
-        for (double f : offset.getKnots())
+        for (TupleSt st : offset)
         {
-            leftMap.put(f, offset.apply(f) + .5 * width.apply(f));
-            rightMap.put(f, offset.apply(f) - .5 * width.apply(f));
+            leftMap.put(st.s(), st.t() + .5 * width.get(st.s()));
+            rightMap.put(st.s(), st.t() - .5 * width.get(st.s()));
         }
-        for (double f : width.getKnots())
+        for (TupleSt st : width)
         {
-            leftMap.put(f, offset.apply(f) + .5 * width.apply(f));
-            rightMap.put(f, offset.apply(f) - .5 * width.apply(f));
+            leftMap.put(st.s(), offset.get(st.s()) + .5 * width.get(st.s()));
+            rightMap.put(st.s(), offset.get(st.s()) - .5 * width.get(st.s()));
         }
-        PolyLine2d left = designLine.flattenOffset(new FractionalLengthData(leftMap), flattener);
-        PolyLine2d right = designLine.flattenOffset(new FractionalLengthData(rightMap), flattener);
+        PolyLine2d left = designLine.flattenOffset(new ContinuousPiecewiseLinearFunction(leftMap), flattener);
+        PolyLine2d right = designLine.flattenOffset(new ContinuousPiecewiseLinearFunction(rightMap), flattener);
         Polygon2d cont = LaneGeometryUtil.getContour(left, right);
         return new CrossSectionGeometry(new OtsLine2d(line), cont, offset, width);
     }

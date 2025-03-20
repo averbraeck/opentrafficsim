@@ -2,6 +2,7 @@ package org.opentrafficsim.core.geometry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
@@ -54,7 +55,7 @@ public final class ContinuousBezierTest
         PolyLine2d line = bezier.flatten(numSegments32);
         assertEquals(line.getLength(), 171.2213439251704017, MARGIN, "Length of flattened Bezier is not correct");
 
-        FractionalLengthData offsets = FractionalLengthData.of(0.0, 2.0, 0.33, 3.0, 1.0, 10.0);
+        ContinuousPiecewiseLinearFunction offsets = ContinuousPiecewiseLinearFunction.of(0.0, 2.0, 0.33, 3.0, 1.0, 10.0);
         line = bezier.flattenOffset(offsets, numSegments32);
         /*
          * The Bezier flattening procedure used to divide the number of line segments over the Bezier segments, rounded up for
@@ -68,7 +69,7 @@ public final class ContinuousBezierTest
         assertEquals(line.getLength(), 190.5, lengthMargin, "Length of offset Bezier is not correct");
         assertEquals(33, line.size(), "Number of segments of offset Bezier is not correct"); // was 36
 
-        offsets = FractionalLengthData.of(0.0, -1.0, 0.33, -1.5, 1.0, -5.0);
+        offsets = ContinuousPiecewiseLinearFunction.of(0.0, -1.0, 0.33, -1.5, 1.0, -5.0);
         line = bezier.flattenOffset(offsets, numSegments32);
         assertEquals(line.getLength(), 161.8, lengthMargin, "Length of offset Bezier is not correct");
         assertEquals(33, line.size(), "Number of segments of offset Bezier is not correct"); // was 36

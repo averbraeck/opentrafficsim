@@ -12,6 +12,8 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
+import org.djutils.draw.function.ContinuousPiecewiseLinearFunction.TupleSt;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
@@ -293,7 +295,7 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
     }
 
     @Override
-    public PolyLine2d flattenOffset(final ContinuousDoubleFunction offset, final Flattener flattener)
+    public PolyLine2d flattenOffset(final ContinuousPiecewiseLinearFunction offset, final Flattener flattener)
     {
         Throw.whenNull(offset, "Offsets may not be null.");
         Throw.whenNull(flattener, "Flattener may not be null.");
@@ -322,9 +324,9 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
             getInflections().forEach((t) -> splits0.put(t, 2));
         }
         NavigableSet<Double> knots = new TreeSet<>();
-        for (double f : offset.getKnots())
+        for (TupleSt st : offset)
         {
-            knots.add(f);
+            knots.add(st.s());
         }
         getOffsetT(knots).forEach((t) -> splits0.put(t, 3));
         NavigableMap<Double, Integer> splits = splits0.subMap(1e-6, false, 1.0 - 1e-6, false);
@@ -454,11 +456,11 @@ public class ContinuousBezierCubic extends ContinuousBezier implements Continuou
      * @param last {@code true} for the last Bezier segment.
      * @return offset Bezier.
      */
-    private ContinuousBezierCubic offset(final ContinuousDoubleFunction offset, final double lengthSoFar, final double lengthTotal,
-            final double sig, final boolean first, final boolean last)
+    private ContinuousBezierCubic offset(final ContinuousPiecewiseLinearFunction offset, final double lengthSoFar,
+            final double lengthTotal, final double sig, final boolean first, final boolean last)
     {
-        double offsetStart = sig * offset.apply(lengthSoFar / lengthTotal);
-        double offsetEnd = sig * offset.apply((lengthSoFar + getLength()) / lengthTotal);
+        double offsetStart = sig * offset.get(lengthSoFar / lengthTotal);
+        double offsetEnd = sig * offset.get((lengthSoFar + getLength()) / lengthTotal);
 
         Point2d p1 = new Point2d(this.points[0].x - (this.points[1].y - this.points[0].y),
                 this.points[0].y + (this.points[1].x - this.points[0].x));

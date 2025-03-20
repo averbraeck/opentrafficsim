@@ -16,6 +16,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.LengthVector;
+import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
@@ -31,7 +32,6 @@ import org.opentrafficsim.core.geometry.ContinuousArc;
 import org.opentrafficsim.core.geometry.ContinuousBezierCubic;
 import org.opentrafficsim.core.geometry.ContinuousClothoid;
 import org.opentrafficsim.core.geometry.ContinuousLine;
-import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
 import org.opentrafficsim.core.geometry.ContinuousPolyLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
 import org.opentrafficsim.core.geometry.Flattener;
@@ -39,7 +39,6 @@ import org.opentrafficsim.core.geometry.Flattener.MaxAngle;
 import org.opentrafficsim.core.geometry.Flattener.MaxDeviation;
 import org.opentrafficsim.core.geometry.Flattener.MaxDeviationAndAngle;
 import org.opentrafficsim.core.geometry.Flattener.NumSegments;
-import org.opentrafficsim.core.geometry.FractionalLengthData;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Centroid;
@@ -462,9 +461,10 @@ public final class NetworkParser
             {
                 CseData cseData = cseDataList.get(cseTagMap.get(cseTag));
 
-                ContinuousDoubleFunction offset =
-                        FractionalLengthData.of(0.0, cseData.centerOffsetStart.si, 1.0, cseData.centerOffsetEnd.si);
-                ContinuousDoubleFunction width = FractionalLengthData.of(0.0, cseData.widthStart.si, 1.0, cseData.widthEnd.si);
+                ContinuousPiecewiseLinearFunction offset = ContinuousPiecewiseLinearFunction.of(0.0,
+                        cseData.centerOffsetStart.si, 1.0, cseData.centerOffsetEnd.si);
+                ContinuousPiecewiseLinearFunction width =
+                        ContinuousPiecewiseLinearFunction.of(0.0, cseData.widthStart.si, 1.0, cseData.widthEnd.si);
                 CrossSectionGeometry geometry = CrossSectionGeometry.of(designLine, flattener, offset, width);
 
                 // Lane
@@ -594,8 +594,9 @@ public final class NetworkParser
                 elements.add(StripeElement.gap(w));
             }
         }
-        ContinuousDoubleFunction offsetFunc = FractionalLengthData.of(0.0, startOffset.si, 1.0, endOffset.si);
-        ContinuousDoubleFunction widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
+        ContinuousPiecewiseLinearFunction offsetFunc =
+                ContinuousPiecewiseLinearFunction.of(0.0, startOffset.si, 1.0, endOffset.si);
+        ContinuousPiecewiseLinearFunction widthFunc = ContinuousPiecewiseLinearFunction.of(0.0, width.si, 1.0, width.si);
 
         boolean leftLaneChange = false;
         boolean rightLaneChange = false;

@@ -5,11 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
+import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
 import org.opentrafficsim.core.geometry.Flattener.NumSegments;
 
 import nl.tudelft.simulation.jstats.streams.MersenneTwister;
@@ -212,7 +212,7 @@ public class ContinuousClothoidTest
                 // offset -2.0 or 2.0
                 for (double offset = -2.0; offset < 3.0; offset += 4.0)
                 {
-                    ContinuousDoubleFunction f = FractionalLengthData.of(0.0, offset, 1.0, offset);
+                    ContinuousPiecewiseLinearFunction f = ContinuousPiecewiseLinearFunction.of(0.0, offset, 1.0, offset);
                     PolyLine2d line = clothoid.flattenOffset(f, flattener);
                     Point2d start = line.get(0);
                     Point2d end = line.get(line.size() - 1);

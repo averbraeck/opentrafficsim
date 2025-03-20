@@ -3,6 +3,7 @@ package org.opentrafficsim.core.geometry;
 import java.util.function.Function;
 
 import org.djunits.value.vdouble.scalar.Direction;
+import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.DirectedPoint2d;
 
@@ -95,7 +96,7 @@ public interface ContinuousLine
      * @param flattener flattener
      * @return flattened line
      */
-    PolyLine2d flattenOffset(ContinuousDoubleFunction offset, Flattener flattener);
+    PolyLine2d flattenOffset(ContinuousPiecewiseLinearFunction offset, Flattener flattener);
 
     /**
      * Return the length of the line.
@@ -103,22 +104,4 @@ public interface ContinuousLine
      */
     double getLength();
 
-    /**
-     * Temporary function implementation with {@code getDerivative()} and {@code getKnots()} method.
-     */
-    interface ContinuousDoubleFunction extends Function<Double, Double>
-    {
-        /**
-         * Returns the derivative of the data with respect to fractional length.
-         * @param fractionalLength fractional length, may be outside range [0 ... 1]
-         * @return derivative of the data with respect to fractional length
-         */
-        double getDerivative(double fractionalLength);
-
-        /**
-         * Returns knots in the function.
-         * @return knots in the function
-         */
-        double[] getKnots();
-    }
 }

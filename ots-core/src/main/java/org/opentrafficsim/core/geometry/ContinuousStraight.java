@@ -1,5 +1,7 @@
 package org.opentrafficsim.core.geometry;
 
+import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
+import org.djutils.draw.function.ContinuousPiecewiseLinearFunction.TupleSt;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
@@ -90,14 +92,17 @@ public class ContinuousStraight implements ContinuousLine
      * @param offset offset, should contain keys 0.0 and 1.0.
      * @return offset polyline
      */
-    public PolyLine2d offset(final ContinuousDoubleFunction offset)
+    public PolyLine2d offset(final ContinuousPiecewiseLinearFunction offset)
     {
         Throw.whenNull(offset, "Offsets may not be null.");
-        double[] knots = offset.getKnots();
-        double[] knotOffset = new double[knots.length];
-        for (int i = 0; i < knots.length; i++)
+        double[] knots = new double[offset.size()];
+        double[] knotOffset = new double[offset.size()];
+        int i = 0;
+        for (TupleSt st : offset)
         {
-            knotOffset[i] = offset.apply(knots[i]);
+            knots[i] = st.s();
+            knotOffset[i] = st.t();
+            i++;
         }
         return OtsGeometryUtil.offsetLine(flatten(), knots, knotOffset);
     }
@@ -109,7 +114,7 @@ public class ContinuousStraight implements ContinuousLine
      * @return flattened line.
      */
     @Override
-    public PolyLine2d flattenOffset(final ContinuousDoubleFunction offsets, final Flattener flattener)
+    public PolyLine2d flattenOffset(final ContinuousPiecewiseLinearFunction offsets, final Flattener flattener)
     {
         return offset(offsets);
     }

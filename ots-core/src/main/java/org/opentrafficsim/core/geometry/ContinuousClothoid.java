@@ -2,6 +2,7 @@ package org.opentrafficsim.core.geometry;
 
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
+import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
@@ -567,7 +568,7 @@ public class ContinuousClothoid implements ContinuousLine
     }
 
     @Override
-    public PolyLine2d flattenOffset(final ContinuousDoubleFunction offset, final Flattener flattener)
+    public PolyLine2d flattenOffset(final ContinuousPiecewiseLinearFunction offset, final Flattener flattener)
     {
         Throw.whenNull(offset, "Offsets may not be null.");
         Throw.whenNull(flattener, "Flattener may not be null.");
@@ -585,7 +586,7 @@ public class ContinuousClothoid implements ContinuousLine
             @Override
             public Point2d get(final double fraction)
             {
-                return getPoint(fraction, offset.apply(fraction));
+                return getPoint(fraction, offset.get(fraction));
             }
 
             @Override

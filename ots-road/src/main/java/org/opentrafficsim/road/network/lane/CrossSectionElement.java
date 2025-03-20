@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.event.LocalEventProducer;
@@ -14,7 +15,6 @@ import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.base.geometry.PolygonShape;
-import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.network.RoadNetwork;
 
@@ -47,10 +47,10 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
     private final Polygon2d contour;
 
     /** Offset. */
-    private final ContinuousDoubleFunction offset;
+    private final ContinuousPiecewiseLinearFunction offset;
 
     /** Width. */
-    private final ContinuousDoubleFunction width;
+    private final ContinuousPiecewiseLinearFunction width;
 
     /** Location, center of contour. */
     private final DirectedPoint2d location;
@@ -114,7 +114,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      */
     public final Length getLateralCenterPosition(final double fractionalPosition)
     {
-        return Length.instantiateSI(this.offset.apply(fractionalPosition));
+        return Length.instantiateSI(this.offset.get(fractionalPosition));
     }
 
     /**
@@ -144,7 +144,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      */
     public final Length getWidth(final double fractionalPosition)
     {
-        return Length.instantiateSI(this.width.apply(fractionalPosition));
+        return Length.instantiateSI(this.width.get(fractionalPosition));
     }
 
     /**
@@ -162,7 +162,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      */
     public final Length getOffsetAtBegin()
     {
-        return Length.instantiateSI(this.offset.apply(0.0));
+        return Length.instantiateSI(this.offset.get(0.0));
     }
 
     /**
@@ -171,7 +171,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      */
     public final Length getOffsetAtEnd()
     {
-        return Length.instantiateSI(this.offset.apply(1.0));
+        return Length.instantiateSI(this.offset.get(1.0));
     }
 
     /**
@@ -180,7 +180,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      */
     public final Length getBeginWidth()
     {
-        return Length.instantiateSI(this.width.apply(0.0));
+        return Length.instantiateSI(this.width.get(0.0));
     }
 
     /**
@@ -189,7 +189,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      */
     public final Length getEndWidth()
     {
-        return Length.instantiateSI(this.width.apply(1.0));
+        return Length.instantiateSI(this.width.get(1.0));
     }
 
     /**

@@ -12,6 +12,7 @@ import javax.naming.NamingException;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
@@ -23,11 +24,9 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.ContinuousBezierCubic;
 import org.opentrafficsim.core.geometry.ContinuousLine;
-import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
 import org.opentrafficsim.core.geometry.ContinuousPolyLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
 import org.opentrafficsim.core.geometry.Flattener.NumSegments;
-import org.opentrafficsim.core.geometry.FractionalLengthData;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
@@ -184,8 +183,9 @@ public final class LaneFactory
         Length width = DefaultsRoadNl.SOLID.getWidth();
         Length offsetStripeStart = this.offset.plus(this.offsetStart);
         Length offsetStripeEnd = this.offset.plus(this.offsetEnd);
-        ContinuousDoubleFunction offsetFunc = FractionalLengthData.of(0.0, offsetStripeStart.si, 1.0, offsetStripeEnd.si);
-        ContinuousDoubleFunction widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
+        ContinuousPiecewiseLinearFunction offsetFunc =
+                ContinuousPiecewiseLinearFunction.of(0.0, offsetStripeStart.si, 1.0, offsetStripeEnd.si);
+        ContinuousPiecewiseLinearFunction widthFunc = ContinuousPiecewiseLinearFunction.of(0.0, width.si, 1.0, width.si);
         this.firstStripe = Try.assign(
                 () -> new Stripe("1", DefaultsRoadNl.SOLID, this.link,
                         CrossSectionGeometry.of(this.line, SEGMENTS, offsetFunc, widthFunc)),
@@ -211,8 +211,9 @@ public final class LaneFactory
         Length width = DefaultsRoadNl.SOLID.getWidth();
         Length offsetStripeStart = this.offset.plus(this.offsetStart);
         Length offsetStripeEnd = this.offset.plus(this.offsetEnd);
-        ContinuousDoubleFunction offsetFunc = FractionalLengthData.of(0.0, offsetStripeStart.si, 1.0, offsetStripeEnd.si);
-        ContinuousDoubleFunction widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
+        ContinuousPiecewiseLinearFunction offsetFunc =
+                ContinuousPiecewiseLinearFunction.of(0.0, offsetStripeStart.si, 1.0, offsetStripeEnd.si);
+        ContinuousPiecewiseLinearFunction widthFunc = ContinuousPiecewiseLinearFunction.of(0.0, width.si, 1.0, width.si);
         this.firstStripe = Try.assign(
                 () -> new Stripe("1", DefaultsRoadNl.SOLID, this.link,
                         CrossSectionGeometry.of(this.line, SEGMENTS, offsetFunc, widthFunc)),
@@ -276,9 +277,10 @@ public final class LaneFactory
             Length startOffset = this.offset.plus(this.laneWidth0.times(0.5)).plus(this.offsetStart);
             Length endOffset = this.offset.plus(this.laneWidth0.times(0.5)).plus(this.offsetEnd);
 
-            ContinuousDoubleFunction offsetFunc = FractionalLengthData.of(0.0, startOffset.si, 1.0, endOffset.si);
-            ContinuousDoubleFunction widthFunc =
-                    FractionalLengthData.of(0.0, this.laneWidth0.abs().si, 1.0, this.laneWidth0.abs().si);
+            ContinuousPiecewiseLinearFunction offsetFunc =
+                    ContinuousPiecewiseLinearFunction.of(0.0, startOffset.si, 1.0, endOffset.si);
+            ContinuousPiecewiseLinearFunction widthFunc =
+                    ContinuousPiecewiseLinearFunction.of(0.0, this.laneWidth0.abs().si, 1.0, this.laneWidth0.abs().si);
 
             this.lanes.add(Try.assign(() -> new Lane(this.link, "Lane " + (this.lanes.size() + 1),
                     CrossSectionGeometry.of(this.line, SEGMENTS, offsetFunc, widthFunc), this.laneType0,
@@ -288,8 +290,9 @@ public final class LaneFactory
             Length width = type.getWidth();
             startOffset = this.offset.plus(this.offsetStart);
             endOffset = this.offset.plus(this.offsetEnd);
-            ContinuousDoubleFunction offsetFunc2 = FractionalLengthData.of(0.0, startOffset.si, 1.0, endOffset.si);
-            ContinuousDoubleFunction widthFunc2 = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
+            ContinuousPiecewiseLinearFunction offsetFunc2 =
+                    ContinuousPiecewiseLinearFunction.of(0.0, startOffset.si, 1.0, endOffset.si);
+            ContinuousPiecewiseLinearFunction widthFunc2 = ContinuousPiecewiseLinearFunction.of(0.0, width.si, 1.0, width.si);
             stripeList.add(Try.assign(
                     () -> new Stripe("" + idStream.nextInt(), type, this.link,
                             CrossSectionGeometry.of(this.line, SEGMENTS, offsetFunc2, widthFunc2)),
@@ -407,8 +410,9 @@ public final class LaneFactory
     {
         ContinuousLine line = new ContinuousPolyLine(link.getDesignLine(), link.getStartNode().getLocation(),
                 link.getEndNode().getLocation());
-        ContinuousDoubleFunction offsetFunc = FractionalLengthData.of(0.0, latPosAtStart.si, 1.0, latPosAtEnd.si);
-        ContinuousDoubleFunction widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
+        ContinuousPiecewiseLinearFunction offsetFunc =
+                ContinuousPiecewiseLinearFunction.of(0.0, latPosAtStart.si, 1.0, latPosAtEnd.si);
+        ContinuousPiecewiseLinearFunction widthFunc = ContinuousPiecewiseLinearFunction.of(0.0, width.si, 1.0, width.si);
         return new Lane(link, id, CrossSectionGeometry.of(line, SEGMENTS, offsetFunc, widthFunc), laneType,
                 Map.of(gtuType, speedLimit));
     }
@@ -558,8 +562,9 @@ public final class LaneFactory
             Length latPosAtStart = new Length(-laneIndex * width.getSI(), LengthUnit.SI);
             Length latPosAtEnd = new Length(-laneIndex * width.getSI(), LengthUnit.SI);
 
-            ContinuousDoubleFunction offsetFunc = FractionalLengthData.of(0.0, latPosAtStart.si, 1.0, latPosAtEnd.si);
-            ContinuousDoubleFunction widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
+            ContinuousPiecewiseLinearFunction offsetFunc =
+                    ContinuousPiecewiseLinearFunction.of(0.0, latPosAtStart.si, 1.0, latPosAtEnd.si);
+            ContinuousPiecewiseLinearFunction widthFunc = ContinuousPiecewiseLinearFunction.of(0.0, width.si, 1.0, width.si);
             result[laneIndex] =
                     new Lane(link, "lane." + laneIndex, CrossSectionGeometry.of(designLine, SEGMENTS, offsetFunc, widthFunc),
                             laneType, Map.of(gtuType, speedLimit));

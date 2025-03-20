@@ -7,6 +7,7 @@ import java.util.Set;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
@@ -21,7 +22,6 @@ import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.base.geometry.PolygonShape;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
 import org.opentrafficsim.core.gtu.Gtu;
 
 /**
@@ -78,7 +78,7 @@ public class Link extends LocalEventProducer
     private final OtsLine2d designLine;
 
     /** Elevation data. */
-    private final ContinuousDoubleFunction elevation;
+    private final ContinuousPiecewiseLinearFunction elevation;
 
     /** the shape. */
     private final Polygon2d contour;
@@ -108,7 +108,7 @@ public class Link extends LocalEventProducer
      *             or the end node of the link are not registered in the network.
      */
     public Link(final Network network, final String id, final Node startNode, final Node endNode, final LinkType linkType,
-            final OtsLine2d designLine, final ContinuousDoubleFunction elevation) throws NetworkException
+            final OtsLine2d designLine, final ContinuousPiecewiseLinearFunction elevation) throws NetworkException
     {
         Throw.whenNull(network, "network cannot be null");
         Throw.whenNull(id, "id cannot be null");
@@ -306,7 +306,7 @@ public class Link extends LocalEventProducer
         {
             return Length.ZERO;
         }
-        return Length.instantiateSI(this.elevation.apply(fractionalPosition));
+        return Length.instantiateSI(this.elevation.get(fractionalPosition));
     }
 
     /**

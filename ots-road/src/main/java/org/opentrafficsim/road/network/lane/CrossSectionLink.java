@@ -4,13 +4,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.EventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.geometry.OtsLine2d;
-import org.opentrafficsim.core.geometry.FractionalLengthData;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -93,7 +93,7 @@ public class CrossSectionLink extends Link implements Serializable
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public CrossSectionLink(final RoadNetwork network, final String id, final Node startNode, final Node endNode,
-            final LinkType linkType, final OtsLine2d designLine, final FractionalLengthData elevation,
+            final LinkType linkType, final OtsLine2d designLine, final ContinuousPiecewiseLinearFunction elevation,
             final LaneKeepingPolicy laneKeepingPolicy) throws NetworkException
     {
         super(network, id, startNode, endNode, linkType, designLine, elevation);

@@ -24,6 +24,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.vector.LengthVector;
 import org.djutils.draw.DrawRuntimeException;
+import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
@@ -47,11 +48,9 @@ import org.opentrafficsim.core.geometry.ContinuousArc;
 import org.opentrafficsim.core.geometry.ContinuousBezierCubic;
 import org.opentrafficsim.core.geometry.ContinuousClothoid;
 import org.opentrafficsim.core.geometry.ContinuousLine;
-import org.opentrafficsim.core.geometry.ContinuousLine.ContinuousDoubleFunction;
 import org.opentrafficsim.core.geometry.ContinuousPolyLine;
 import org.opentrafficsim.core.geometry.ContinuousStraight;
 import org.opentrafficsim.core.geometry.Flattener;
-import org.opentrafficsim.core.geometry.FractionalLengthData;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation;
@@ -653,8 +652,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             {
                 XsdTreeNode node = entry.getKey();
                 CseData cseData = entry.getValue();
-                ContinuousDoubleFunction offsetFunc =
-                        FractionalLengthData.of(0.0, cseData.centerOffsetStart.si, 1.0, cseData.centerOffsetEnd.si);
+                ContinuousPiecewiseLinearFunction offsetFunc = ContinuousPiecewiseLinearFunction.of(0.0,
+                        cseData.centerOffsetStart.si, 1.0, cseData.centerOffsetEnd.si);
                 if (node.getNodeName().equals("Stripe"))
                 {
                     StripeAnimation stripe = createStripe(node, offsetFunc, middleOffset, stripeOverrides);
@@ -666,8 +665,8 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 }
                 else
                 {
-                    ContinuousDoubleFunction widthFunc =
-                            FractionalLengthData.of(0.0, cseData.widthStart.si, 1.0, cseData.widthEnd.si);
+                    ContinuousPiecewiseLinearFunction widthFunc =
+                            ContinuousPiecewiseLinearFunction.of(0.0, cseData.widthStart.si, 1.0, cseData.widthEnd.si);
                     CrossSectionGeometry geometry =
                             CrossSectionGeometry.of(this.designLine, getFlattener(), offsetFunc, widthFunc);
                     if (node.getNodeName().equals("Lane"))
@@ -709,7 +708,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
      * @param stripeOverrides stripe overrides
      * @return stripe animation, {@code null} if something was not valid
      */
-    private StripeAnimation createStripe(final XsdTreeNode node, final ContinuousDoubleFunction offsetFunc,
+    private StripeAnimation createStripe(final XsdTreeNode node, final ContinuousPiecewiseLinearFunction offsetFunc,
             final MiddleOffset middleOffset, final Map<String, XsdTreeNode> stripeOverrides)
     {
         StripePhaseSync phaseSync = StripePhaseSync.NONE;
@@ -834,10 +833,10 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                 }
             }
         }
-        ContinuousDoubleFunction widthFunc = FractionalLengthData.of(0.0, width.si, 1.0, width.si);
+        ContinuousPiecewiseLinearFunction widthFunc = ContinuousPiecewiseLinearFunction.of(0.0, width.si, 1.0, width.si);
         CrossSectionGeometry geometry = CrossSectionGeometry.of(this.designLine, getFlattener(), offsetFunc, widthFunc);
-        middleOffset.addStartOffset(geometry.offset().apply(0.0));
-        middleOffset.addEndOffset(geometry.offset().apply(1.0));
+        middleOffset.addStartOffset(geometry.offset().get(0.0));
+        middleOffset.addEndOffset(geometry.offset().get(1.0));
         MapStripeData data = new MapStripeData(dashOffset, getNode(), geometry, elements, lateralSync, this.flattenedDesignLine,
                 middleOffset, this.directionStart, this.directionEnd);
         getMap().getSynchronizableStripes().put(data, new SynchronizableMapStripe(this, data, phaseSync));

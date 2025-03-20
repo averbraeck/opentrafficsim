@@ -50,6 +50,7 @@ public class ContinuousBezier
                     0.0123412297999871995468056670700372915759, 0.0123412297999871995468056670700372915759};
 
     /** The shape points. */
+    @SuppressWarnings("checkstyle:VisibilityModifier")
     protected Point2d[] points;
 
     /**

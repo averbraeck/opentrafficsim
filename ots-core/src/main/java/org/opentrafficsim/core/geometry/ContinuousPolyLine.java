@@ -2,6 +2,8 @@ package org.opentrafficsim.core.geometry;
 
 import java.util.List;
 
+import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
+import org.djutils.draw.function.ContinuousPiecewiseLinearFunction.TupleSt;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
@@ -121,18 +123,21 @@ public class ContinuousPolyLine implements ContinuousLine
      * @param offset offset data.
      * @return flattened line.
      */
-    public PolyLine2d offset(final ContinuousDoubleFunction offset)
+    public PolyLine2d offset(final ContinuousPiecewiseLinearFunction offset)
     {
         Throw.whenNull(offset, "Offsets may not be null.");
-        double[] knots = offset.getKnots();
-        double[] knotOffset = new double[knots.length];
-        for (int i = 0; i < knots.length; i++)
+        double[] knots = new double[offset.size()];
+        double[] knotOffset = new double[offset.size()];
+        int i = 0;
+        for (TupleSt st : offset)
         {
-            knotOffset[i] = offset.apply(knots[i]);
+            knots[i] = st.s();
+            knotOffset[i] = st.t();
+            i++;
         }
         PolyLine2d offsetLine = OtsGeometryUtil.offsetLine(this.line, knots, knotOffset);
-        Point2d start = OtsGeometryUtil.offsetPoint(this.startPoint, offset.apply(0.0));
-        Point2d end = OtsGeometryUtil.offsetPoint(this.endPoint, offset.apply(1.0));
+        Point2d start = OtsGeometryUtil.offsetPoint(this.startPoint, offset.get(0.0));
+        Point2d end = OtsGeometryUtil.offsetPoint(this.endPoint, offset.get(1.0));
         List<Point2d> points = offsetLine.getPointList();
         points.set(0, start);
         points.set(points.size() - 1, end);
@@ -146,7 +151,7 @@ public class ContinuousPolyLine implements ContinuousLine
      * @return flattened line.
      */
     @Override
-    public PolyLine2d flattenOffset(final ContinuousDoubleFunction offset, final Flattener flattener)
+    public PolyLine2d flattenOffset(final ContinuousPiecewiseLinearFunction offset, final Flattener flattener)
     {
         return offset(offset);
     }

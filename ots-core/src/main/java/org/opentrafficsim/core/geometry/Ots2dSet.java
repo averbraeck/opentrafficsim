@@ -264,7 +264,6 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
         private static final long serialVersionUID = 20170400L;
 
         /** Underlying iterator that traverses the allShapes Set. */
-        @SuppressWarnings("synthetic-access")
         private final Iterator<Polygon2d> theIterator = Ots2dSet.this.allShapes.iterator();
 
         /** Remember the last returned result so we can remove it when requested. */
@@ -273,7 +272,7 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
         /**
          * Constructor.
          */
-        public QuadTreeIterator()
+        QuadTreeIterator()
         {
             //
         }
@@ -291,7 +290,6 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
             return this.lastResult;
         }
 
-        @SuppressWarnings("synthetic-access")
         @Override
         public final void remove()
         {
@@ -338,7 +336,6 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
          * Construct a new QuadTreeNode.
          * @param boundingBox the bounding box of the area of the new QuadTreeNode
          */
-        @SuppressWarnings("synthetic-access")
         QuadTreeNode(final Bounds2d boundingBox)
         {
             this.boundingBox = boundingBox;
