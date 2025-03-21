@@ -500,68 +500,6 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     }
 
     /**
-     * Schedule triggering of the detectors for a certain time step; from now until the nextEvaluationTime of the GTU.
-     * @param gtu the lane based GTU for which to schedule triggering of the detectors.
-     * @param referenceStartSI the SI distance of the GTU reference point on the lane at the current time
-     * @param referenceMoveSI the SI distance travelled in the next time step.
-     * @throws NetworkException when GTU not on this lane.
-     * @throws SimRuntimeException when method cannot be scheduled.
-     */
-    public final void scheduleDetectorTriggers(final LaneBasedGtu gtu, final double referenceStartSI,
-            final double referenceMoveSI) throws NetworkException, SimRuntimeException
-    {
-        double minPos = referenceStartSI + gtu.getRear().dx().si;
-        double maxPos = referenceStartSI + gtu.getFront().dx().si + referenceMoveSI;
-        Map<Double, List<LaneDetector>> map = this.detectors.subMap(minPos, maxPos);
-        for (double pos : map.keySet())
-        {
-            for (LaneDetector detector : map.get(pos))
-            {
-                if (detector.isCompatible(gtu.getType()))
-                {
-                    double dx = gtu.getRelativePositions().get(detector.getPositionType()).dx().si;
-                    minPos = referenceStartSI + dx;
-                    maxPos = minPos + referenceMoveSI;
-                    if (minPos <= detector.getLongitudinalPosition().si && maxPos > detector.getLongitudinalPosition().si)
-                    {
-                        double d = detector.getLongitudinalPosition().si - minPos;
-                        if (d < 0)
-                        {
-                            throw new NetworkException("scheduleTriggers for gtu: " + gtu + ", d<0 d=" + d);
-                        }
-                        OperationalPlan oPlan = gtu.getOperationalPlan();
-                        Time triggerTime = oPlan.timeAtDistance(Length.instantiateSI(d));
-                        if (triggerTime.gt(oPlan.getEndTime()))
-                        {
-                            System.err.println("Time=" + gtu.getSimulator().getSimulatorTime().getSI()
-                                    + " - Scheduling trigger at " + triggerTime.getSI() + "s. > " + oPlan.getEndTime().getSI()
-                                    + "s. (nextEvalTime) for detector " + detector + " , gtu " + gtu);
-                            System.err.println("  v=" + gtu.getSpeed() + ", a=" + gtu.getAcceleration() + ", lane=" + toString()
-                                    + ", refStartSI=" + referenceStartSI + ", moveSI=" + referenceMoveSI);
-                            triggerTime = new Time(oPlan.getEndTime().getSI() - Math.ulp(oPlan.getEndTime().getSI()),
-                                    TimeUnit.DEFAULT);
-                        }
-                        SimEvent<Duration> event =
-                                new SimEvent<>(new Duration(triggerTime.minus(gtu.getSimulator().getStartTimeAbs())), detector,
-                                        "trigger", new Object[] {gtu});
-                        gtu.getSimulator().scheduleEvent(event);
-                        gtu.addTrigger(this, event);
-                    }
-                    else if (detector.getLongitudinalPosition().si < minPos && detector instanceof SinkDetector)
-                    {
-                        // TODO this is a hack for when sink detectors aren't perfectly adjacent or the GTU overshoots with nose
-                        // due to curvature
-                        SimEvent<Duration> event = new SimEvent<>(new Duration(gtu.getSimulator().getSimulatorTime()), detector,
-                                "trigger", new Object[] {gtu});
-                        gtu.getSimulator().scheduleEvent(event);
-                        gtu.addTrigger(this, event);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Insert a laneBasedObject at the right place in the laneBasedObject list of this Lane. Register it in the network WITH the
      * Lane id.
      * @param laneBasedObject the laneBasedObject to add

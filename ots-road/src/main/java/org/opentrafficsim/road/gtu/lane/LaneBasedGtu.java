@@ -1340,16 +1340,6 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     }
 
     /**
-     * Add an event to the list of lane triggers scheduled for this GTU.
-     * @param lane the lane on which the event occurs
-     * @param event SimeEvent&lt;SimTimeDoubleUnit&gt; the event
-     */
-    public final void addTrigger(final Lane lane, final SimEventInterface<Duration> event)
-    {
-        throw new UnsupportedOperationException("Method addTrigger is not supported.");
-    }
-
-    /**
      * Sets a vehicle model.
      * @param vehicleModel vehicle model
      */
