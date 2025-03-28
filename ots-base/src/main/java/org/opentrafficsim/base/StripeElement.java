@@ -45,7 +45,7 @@ public record StripeElement(Length width, Color color, LengthVector dashes) impl
      */
     public static StripeElement continuous(final Length width, final Color color)
     {
-        Throw.whenNull(width, "color");
+        Throw.whenNull(width, "width");
         return new StripeElement(width, color, null);
     }
 
