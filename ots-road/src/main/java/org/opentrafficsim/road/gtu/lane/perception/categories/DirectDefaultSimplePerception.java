@@ -87,10 +87,10 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     private TimeStampedObject<Speed> speedLimit;
 
     /** The adjacent lanes that are accessible for the GTU at the left side. */
-    private TimeStampedObject<Map<Lane, Set<Lane>>> accessibleAdjacentLanesLeft;
+    private TimeStampedObject<Lane> accessibleAdjacentLanesLeft;
 
     /** The adjacent lanes that are accessible for the GTU at the right side. */
-    private TimeStampedObject<Map<Lane, Set<Lane>>> accessibleAdjacentLanesRight;
+    private TimeStampedObject<Lane> accessibleAdjacentLanesRight;
 
     /** The objects parallel to us on the left side. */
     private TimeStampedObject<Collection<Headway>> parallelHeadwaysLeft;
@@ -160,29 +160,15 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     @Override
     public final void updateAccessibleAdjacentLanesLeft() throws GtuException
     {
-        Time timestamp = getTimestamp();
-        Map<Lane, Set<Lane>> accessibleAdjacentLanesMap = new LinkedHashMap<>();
-        for (Lane lane : getGtu().positions(getGtu().getReference()).keySet())
-        {
-            Set<Lane> adjacentLanes = new LinkedHashSet<>(1);
-            adjacentLanes.addAll(lane.accessibleAdjacentLanesLegal(LateralDirectionality.LEFT, getGtu().getType()));
-            accessibleAdjacentLanesMap.put(lane, adjacentLanes);
-        }
-        this.accessibleAdjacentLanesLeft = new TimeStampedObject<>(accessibleAdjacentLanesMap, timestamp);
+        this.accessibleAdjacentLanesLeft = new TimeStampedObject<>(
+                getGtu().getLane().getAdjacentLane(LateralDirectionality.LEFT, getGtu().getType()), getTimestamp());
     }
 
     @Override
     public final void updateAccessibleAdjacentLanesRight() throws GtuException
     {
-        Time timestamp = getTimestamp();
-        Map<Lane, Set<Lane>> accessibleAdjacentLanesMap = new LinkedHashMap<>();
-        for (Lane lane : getGtu().positions(getGtu().getReference()).keySet())
-        {
-            Set<Lane> adjacentLanes = new LinkedHashSet<>(1);
-            adjacentLanes.addAll(lane.accessibleAdjacentLanesLegal(LateralDirectionality.RIGHT, getGtu().getType()));
-            accessibleAdjacentLanesMap.put(lane, adjacentLanes);
-        }
-        this.accessibleAdjacentLanesRight = new TimeStampedObject<>(accessibleAdjacentLanesMap, timestamp);
+        this.accessibleAdjacentLanesLeft = new TimeStampedObject<>(
+                getGtu().getLane().getAdjacentLane(LateralDirectionality.RIGHT, getGtu().getType()), getTimestamp());
     }
 
     @Override
@@ -251,13 +237,8 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
             updateAccessibleAdjacentLanesLeft();
         }
         Set<Headway> parallelHeadwaySet = new LinkedHashSet<>();
-        for (Lane lane : this.accessibleAdjacentLanesLeft.object().keySet())
-        {
-            for (Lane adjacentLane : this.accessibleAdjacentLanesLeft.object().get(lane))
-            {
-                parallelHeadwaySet.addAll(parallel(adjacentLane, timestamp));
-            }
-        }
+        parallelHeadwaySet.addAll(
+                parallel(getGtu().getLane().getAdjacentLane(LateralDirectionality.LEFT, getGtu().getType()), timestamp));
         this.parallelHeadwaysLeft = new TimeStampedObject<>(parallelHeadwaySet, timestamp);
     }
 
@@ -270,13 +251,8 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
             updateAccessibleAdjacentLanesRight();
         }
         Set<Headway> parallelHeadwaySet = new LinkedHashSet<>();
-        for (Lane lane : this.accessibleAdjacentLanesRight.object().keySet())
-        {
-            for (Lane adjacentLane : this.accessibleAdjacentLanesRight.object().get(lane))
-            {
-                parallelHeadwaySet.addAll(parallel(adjacentLane, timestamp));
-            }
-        }
+        parallelHeadwaySet.addAll(
+                parallel(getGtu().getLane().getAdjacentLane(LateralDirectionality.RIGHT, getGtu().getType()), timestamp));
         this.parallelHeadwaysRight = new TimeStampedObject<>(parallelHeadwaySet, timestamp);
     }
 
@@ -298,7 +274,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     {
         Time timestamp = getTimestamp();
         // assess the speed limit where we are right now
-        Lane lane = getGtu().getReferencePosition().lane();
+        Lane lane = getGtu().getPosition().lane();
         this.speedLimit = new TimeStampedObject<>(lane.getSpeedLimit(getGtu().getType()), timestamp);
     }
 
@@ -327,19 +303,19 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     }
 
     @Override
-    public final Map<Lane, Set<Lane>> getAccessibleAdjacentLanesLeft()
+    public final Lane getAccessibleAdjacentLanesLeft()
     {
         return this.accessibleAdjacentLanesLeft.object();
     }
 
     @Override
-    public final Map<Lane, Set<Lane>> getAccessibleAdjacentLanesRight()
+    public final Lane getAccessibleAdjacentLanesRight()
     {
         return this.accessibleAdjacentLanesRight.object();
     }
 
     @Override
-    public final Map<Lane, Set<Lane>> getAccessibleAdjacentLanes(final LateralDirectionality lateralDirection)
+    public final Lane getAccessibleAdjacentLanes(final LateralDirectionality lateralDirection)
     {
         return lateralDirection.equals(LateralDirectionality.LEFT) ? this.accessibleAdjacentLanesLeft.object()
                 : this.accessibleAdjacentLanesRight.object();
@@ -420,7 +396,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
      * Returns left accessible adjacent lanes.
      * @return TimeStamped accessibleAdjacentLanesLeft, the accessible adjacent lanes on the left
      */
-    public final TimeStampedObject<Map<Lane, Set<Lane>>> getTimeStampedAccessibleAdjacentLanesLeft()
+    public final TimeStampedObject<Lane> getTimeStampedAccessibleAdjacentLanesLeft()
     {
         return this.accessibleAdjacentLanesLeft;
     }
@@ -429,7 +405,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
      * Returns right accessible adjacent lanes.
      * @return TimeStamped accessibleAdjacentLanesRight, the accessible adjacent lanes on the right
      */
-    public final TimeStampedObject<Map<Lane, Set<Lane>>> getTimeStampedAccessibleAdjacentLanesRight()
+    public final TimeStampedObject<Lane> getTimeStampedAccessibleAdjacentLanesRight()
     {
         return this.accessibleAdjacentLanesRight;
     }
@@ -439,8 +415,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
      * @param lateralDirection the direction to return the accessible adjacent lanes for
      * @return TimeStamped accessibleAdjacentLanesRight, the accessible adjacent lanes on the right
      */
-    public final TimeStampedObject<Map<Lane, Set<Lane>>> getTimeStampedAccessibleAdjacentLanes(
-            final LateralDirectionality lateralDirection)
+    public final TimeStampedObject<Lane> getTimeStampedAccessibleAdjacentLanes(final LateralDirectionality lateralDirection)
     {
         return lateralDirection.equals(LateralDirectionality.LEFT) ? this.accessibleAdjacentLanesLeft
                 : this.accessibleAdjacentLanesRight;
@@ -536,27 +511,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     public final Lane bestAccessibleAdjacentLane(final Lane currentLane, final LateralDirectionality lateralDirection,
             final Length longitudinalPosition)
     {
-        Set<Lane> candidates = getAccessibleAdjacentLanes(lateralDirection).get(currentLane);
-        if (candidates == null || candidates.isEmpty())
-        {
-            return null; // There is no adjacent Lane that this GTU type can cross into
-        }
-        if (candidates.size() == 1)
-        {
-            return candidates.iterator().next(); // There is exactly one adjacent Lane that this GTU type can cross into
-        }
-        // There are several candidates; find the one that is widest at the beginning.
-        Lane bestLane = null;
-        double widestSeen = Double.NEGATIVE_INFINITY;
-        for (Lane lane : candidates)
-        {
-            if (lane.getWidth(longitudinalPosition).getSI() > widestSeen)
-            {
-                widestSeen = lane.getWidth(longitudinalPosition).getSI();
-                bestLane = lane;
-            }
-        }
-        return bestLane;
+        return getAccessibleAdjacentLanes(lateralDirection);
     }
 
     @Override
@@ -680,7 +635,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
             {
                 return null;
             }
-            double gtuDistanceSI = Math.abs(laneBasedGTU.position(lane, laneBasedGTU.getRear()).si - startPosSI);
+            double gtuDistanceSI = Math.abs(laneBasedGTU.getPosition(lane, laneBasedGTU.getRear()).si - startPosSI);
             return new HeadwayGtuSimple(laneBasedGTU.getId(), laneBasedGTU.getType(),
                     new Length(cumDistSI + gtuDistanceSI, LengthUnit.SI), laneBasedGTU.getLength(), laneBasedGTU.getWidth(),
                     laneBasedGTU.getSpeed(), laneBasedGTU.getAcceleration(), null, getGtuStatus(laneBasedGTU));
@@ -791,15 +746,12 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
         Time time = getGtu().getSimulator().getSimulatorAbsTime();
         double maxDistanceSI = maxDistance.si;
         Headway foundHeadway = new HeadwayDistance(-maxDistanceSI);
-        for (Lane lane : getGtu().positions(getGtu().getRear()).keySet())
+        Lane lane = getGtu().getPosition(getGtu().getRear()).lane();
+        Headway closest = headwayRecursiveBackwardSI(lane, getGtu().getPosition(getGtu().getRear(), time).position().getSI(),
+                0.0, -maxDistanceSI, time);
+        if (closest.getDistance().si < -maxDistanceSI && closest.getDistance().si < /* NOT - */foundHeadway.getDistance().si)
         {
-            Headway closest = headwayRecursiveBackwardSI(lane, getGtu().position(lane, getGtu().getRear(), time).getSI(), 0.0,
-                    -maxDistanceSI, time);
-            if (closest.getDistance().si < -maxDistanceSI
-                    && closest.getDistance().si < /* NOT - */foundHeadway.getDistance().si)
-            {
-                foundHeadway = closest;
-            }
+            foundHeadway = closest;
         }
         if (foundHeadway instanceof AbstractHeadwayGtu)
         {
@@ -835,7 +787,8 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
         LaneBasedGtu otherGTU = lane.getGtuBehind(new Length(lanePositionSI, LengthUnit.SI), RelativePosition.FRONT, when);
         if (otherGTU != null)
         {
-            double distanceM = cumDistanceSI + lanePositionSI - otherGTU.position(lane, otherGTU.getFront(), when).getSI();
+            double distanceM =
+                    cumDistanceSI + lanePositionSI - otherGTU.getPosition(otherGTU.getFront(), when).position().getSI();
             if (distanceM > 0 && distanceM <= maxDistanceSI)
             {
                 return new HeadwayGtuSimple(otherGTU.getId(), otherGTU.getType(), new Length(distanceM, LengthUnit.SI),
@@ -889,45 +842,41 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     private Collection<Headway> parallel(final Lane lane, final Time when) throws GtuException
     {
         Collection<Headway> headwayCollection = new LinkedHashSet<>();
-        for (Lane l : getGtu().positions(getGtu().getReference()).keySet())
+        Lane l = getGtu().getLane();
+        // only take lanes that we can compare based on a shared design line
+        if (l.getLink().equals(lane.getLink()))
         {
-            // only take lanes that we can compare based on a shared design line
-            if (l.getLink().equals(lane.getLink()))
+            // compare based on fractional positions.
+            double posFractionRef = getGtu().getPosition(when).getFraction();
+            double posFractionFront = Math.max(0.0, posFractionRef + getGtu().getFront().dx().si / lane.getLength().si);
+            double posFractionRear = Math.min(1.0, posFractionRef + getGtu().getRear().dx().si / lane.getLength().si);
+            // double posFractionFront = Math.max(0.0, this.gtu.fractionalPosition(l, this.gtu.getFront(), when));
+            // double posFractionRear = Math.min(1.0, this.gtu.fractionalPosition(l, this.gtu.getRear(), when));
+            double posMin = Math.min(posFractionFront, posFractionRear);
+            double posMax = Math.max(posFractionFront, posFractionRear);
+            for (LaneBasedGtu otherGTU : lane.getGtuList())
             {
-                // compare based on fractional positions.
-                double posFractionRef = getGtu().fractionalPosition(l, getGtu().getReference(), when);
-                double posFractionFront = Math.max(0.0, posFractionRef + getGtu().getFront().dx().si / lane.getLength().si);
-                double posFractionRear = Math.min(1.0, posFractionRef + getGtu().getRear().dx().si / lane.getLength().si);
-                // double posFractionFront = Math.max(0.0, this.gtu.fractionalPosition(l, this.gtu.getFront(), when));
-                // double posFractionRear = Math.min(1.0, this.gtu.fractionalPosition(l, this.gtu.getRear(), when));
-                double posMin = Math.min(posFractionFront, posFractionRear);
-                double posMax = Math.max(posFractionFront, posFractionRear);
-                for (LaneBasedGtu otherGTU : lane.getGtuList())
+                if (!otherGTU.equals(this)) // TODO
                 {
-                    if (!otherGTU.equals(this)) // TODO
+                    /*- cater for: *-----*         *-----*       *-----*       *----------*
+                     *                *-----*    *----*      *------------*       *-----*
+                     * where the GTUs can each drive in two directions (!)
+                     */
+                    double gtuFractionRef = otherGTU.getPosition(when).getFraction();
+                    double gtuFractionFront = Math.max(0.0, gtuFractionRef + otherGTU.getFront().dx().si / lane.getLength().si);
+                    double gtuFractionRear = Math.min(1.0, gtuFractionRef + otherGTU.getRear().dx().si / lane.getLength().si);
+                    double gtuMin = Math.min(gtuFractionFront, gtuFractionRear);
+                    double gtuMax = Math.max(gtuFractionFront, gtuFractionRear);
+                    if ((gtuMin >= posMin && gtuMin <= posMax) || (gtuMax >= posMin && gtuMax <= posMax)
+                            || (posMin >= gtuMin && posMin <= gtuMax) || (posMax >= gtuMin && posMax <= gtuMax))
                     {
-                        /*- cater for: *-----*         *-----*       *-----*       *----------*
-                         *                *-----*    *----*      *------------*       *-----*
-                         * where the GTUs can each drive in two directions (!)
-                         */
-                        double gtuFractionRef = otherGTU.fractionalPosition(lane, otherGTU.getReference(), when);
-                        double gtuFractionFront =
-                                Math.max(0.0, gtuFractionRef + otherGTU.getFront().dx().si / lane.getLength().si);
-                        double gtuFractionRear =
-                                Math.min(1.0, gtuFractionRef + otherGTU.getRear().dx().si / lane.getLength().si);
-                        double gtuMin = Math.min(gtuFractionFront, gtuFractionRear);
-                        double gtuMax = Math.max(gtuFractionFront, gtuFractionRear);
-                        if ((gtuMin >= posMin && gtuMin <= posMax) || (gtuMax >= posMin && gtuMax <= posMax)
-                                || (posMin >= gtuMin && posMin <= gtuMax) || (posMax >= gtuMin && posMax <= gtuMax))
-                        {
-                            // TODO calculate real overlaps
-                            Length overlapFront = new Length(1.0, LengthUnit.SI);
-                            Length overlap = new Length(1.0, LengthUnit.SI);
-                            Length overlapRear = new Length(1.0, LengthUnit.SI);
-                            headwayCollection.add(new HeadwayGtuSimple(otherGTU.getId(), otherGTU.getType(), overlapFront,
-                                    overlap, overlapRear, otherGTU.getLength(), otherGTU.getWidth(), otherGTU.getSpeed(),
-                                    otherGTU.getAcceleration(), null, getGtuStatus(otherGTU)));
-                        }
+                        // TODO calculate real overlaps
+                        Length overlapFront = new Length(1.0, LengthUnit.SI);
+                        Length overlap = new Length(1.0, LengthUnit.SI);
+                        Length overlapRear = new Length(1.0, LengthUnit.SI);
+                        headwayCollection.add(new HeadwayGtuSimple(otherGTU.getId(), otherGTU.getType(), overlapFront, overlap,
+                                overlapRear, otherGTU.getLength(), otherGTU.getWidth(), otherGTU.getSpeed(),
+                                otherGTU.getAcceleration(), null, getGtuStatus(otherGTU)));
                     }
                 }
             }
@@ -949,13 +898,8 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     private Collection<Headway> parallel(final LateralDirectionality lateralDirection, final Time when) throws GtuException
     {
         Collection<Headway> gtuSet = new LinkedHashSet<>();
-        for (Lane lane : getGtu().positions(getGtu().getReference()).keySet())
-        {
-            for (Lane adjacentLane : getAccessibleAdjacentLanes(lateralDirection).get(lane))
-            {
-                gtuSet.addAll(parallel(adjacentLane, when));
-            }
-        }
+        Lane adjacentLane = getGtu().getLane().getAdjacentLane(lateralDirection, getGtu().getType());
+        gtuSet.addAll(parallel(adjacentLane, when));
         return gtuSet;
     }
 
@@ -984,50 +928,45 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
         }
 
         // forward
-        for (Lane adjacentLane : getAccessibleAdjacentLanes(directionality).get(getLanePathInfo().getReferenceLane()))
+        Lane adjacentLane = getAccessibleAdjacentLanes(directionality);
+        LanePathInfo lpiAdjacent = buildLanePathInfoAdjacent(adjacentLane, directionality, when);
+        Headway leader = forwardHeadway(lpiAdjacent, maximumForwardHeadway, true);
+        if (null != leader.getId() && !result.contains(leader))
         {
-            LanePathInfo lpiAdjacent = buildLanePathInfoAdjacent(adjacentLane, directionality, when);
-            Headway leader = forwardHeadway(lpiAdjacent, maximumForwardHeadway, true);
-            if (null != leader.getId() && !result.contains(leader))
-            {
-                result.add(leader);
-            }
+            result.add(leader);
         }
 
         // backward
-        LanePosition ref = getGtu().getReferencePosition();
-        Lane lane = ref.lane();
-        for (Lane adjacentLane : getAccessibleAdjacentLanes(directionality).get(lane))
-        {
-            double pos = adjacentLane.getLength().si * ref.position().si / ref.lane().getLength().si;
-            pos = pos + getGtu().getRear().dx().si;
+        LanePosition ref = getGtu().getPosition();
+        adjacentLane = getAccessibleAdjacentLanes(directionality);
+        double pos = adjacentLane.getLength().si * ref.position().si / ref.lane().getLength().si;
+        pos = pos + getGtu().getRear().dx().si;
 
-            Headway follower = headwayRecursiveBackwardSI(adjacentLane, pos, 0.0, -maximumReverseHeadway.getSI(), when);
-            if (follower instanceof AbstractHeadwayGtu)
+        Headway follower = headwayRecursiveBackwardSI(adjacentLane, pos, 0.0, -maximumReverseHeadway.getSI(), when);
+        if (follower instanceof AbstractHeadwayGtu)
+        {
+            boolean found = false;
+            for (Headway headway : result)
             {
-                boolean found = false;
-                for (Headway headway : result)
+                if (headway.getId().equals(follower.getId()))
                 {
-                    if (headway.getId().equals(follower.getId()))
-                    {
-                        found = true;
-                    }
-                }
-                if (!found)
-                {
-                    result.add(new HeadwayGtuSimple(follower.getId(), ((AbstractHeadwayGtu) follower).getGtuType(),
-                            follower.getDistance().neg(), follower.getLength(), ((AbstractHeadwayGtu) follower).getWidth(),
-                            follower.getSpeed(), follower.getAcceleration(), null));
+                    found = true;
                 }
             }
-            else if (follower instanceof HeadwayDistance) // always add for potential lane drop
+            if (!found)
             {
-                result.add(new HeadwayDistance(follower.getDistance().neg()));
+                result.add(new HeadwayGtuSimple(follower.getId(), ((AbstractHeadwayGtu) follower).getGtuType(),
+                        follower.getDistance().neg(), follower.getLength(), ((AbstractHeadwayGtu) follower).getWidth(),
+                        follower.getSpeed(), follower.getAcceleration(), null));
             }
-            else
-            {
-                throw new GtuException("collectNeighborLaneTraffic not yet suited to observe obstacles on neighboring lanes");
-            }
+        }
+        else if (follower instanceof HeadwayDistance) // always add for potential lane drop
+        {
+            result.add(new HeadwayDistance(follower.getDistance().neg()));
+        }
+        else
+        {
+            throw new GtuException("collectNeighborLaneTraffic not yet suited to observe obstacles on neighboring lanes");
         }
         return result;
     }
@@ -1052,7 +991,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
         LanePathInfo lpi = getLanePathInfo();
         List<Lane> laneList = new ArrayList<>();
         laneList.add(adjacentLane);
-        LanePosition ref = getGtu().getReferencePosition();
+        LanePosition ref = getGtu().getPosition();
         Length referencePosition =
                 Length.instantiateSI(adjacentLane.getLength().si * ref.position().si / ref.lane().getLength().si);
         for (int i = 1; i < lpi.laneList().size(); i++)

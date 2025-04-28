@@ -240,8 +240,9 @@ public class CrossSectionLink extends Link implements Serializable
             double heading = getStartNode().getHeading().si + .5 * Math.PI;
             double cosHeading = Math.cos(heading);
             double sinHeading = Math.sin(heading);
+            // Note: right is negative so same sign before cos and sin
             Point2d leftPoint = new Point2d(start.x + cosHeading * left, start.y + sinHeading * left);
-            Point2d rightPoint = new Point2d(start.x - cosHeading * right, start.y - sinHeading * right);
+            Point2d rightPoint = new Point2d(start.x + cosHeading * right, start.y + sinHeading * right);
             this.startLine = new PolyLine2d(leftPoint, rightPoint);
         }
         return this.startLine;

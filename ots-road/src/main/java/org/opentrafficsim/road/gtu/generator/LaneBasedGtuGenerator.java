@@ -399,7 +399,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
         gtu.setInstantaneousLaneChange(this.instantaneousLaneChange);
         gtu.setErrorHandler(this.errorHandler);
         gtu.init(characteristics.getStrategicalPlannerFactory().create(gtu, characteristics.getRoute(),
-                characteristics.getOrigin(), characteristics.getDestination()), position, speed);
+                characteristics.getOrigin(), characteristics.getDestination()), position.getLocation(), speed);
         this.generatedGTUs++;
         fireEvent(GTU_GENERATED_EVENT, gtu);
     }
@@ -418,7 +418,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
         LaneBasedGtu next = lane.getGtuAhead(beyond, RelativePosition.FRONT, this.simulator.getSimulatorAbsTime());
         if (next != null)
         {
-            Length headway = startDistance.plus(next.position(lane, next.getRear()));
+            Length headway = startDistance.plus(next.getPosition(lane, next.getRear()));
             if (headway.si < 300)
             {
                 set.add(new HeadwayGtuReal(next, headway, true));

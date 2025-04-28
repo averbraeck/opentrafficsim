@@ -144,7 +144,6 @@ public final class ConflictUtil
             final SpeedLimitInfo speedLimitInfo, final ConflictPlans conflictPlans, final LaneBasedGtu gtu,
             final RelativeLane lane) throws GtuException, ParameterException
     {
-
         conflictPlans.cleanPlans();
 
         Acceleration a = Acceleration.POS_MAXVALUE;

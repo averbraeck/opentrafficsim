@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 import java.awt.image.ImageObserver;
@@ -11,7 +12,10 @@ import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
+import org.djutils.draw.Transform2d;
 import org.djutils.draw.point.DirectedPoint2d;
+import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.OtsRenderable;
@@ -162,6 +166,28 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
                     graphics.draw(this.rightBrake);
                 }
             }
+
+            // path is absolute, so need to rotate
+            graphics.setStroke(new BasicStroke(0.10f));
+            graphics.setColor(Color.MAGENTA);
+            Transform2d transform = OtsLocatable.toBoundsTransform(gtu.getLocation());
+            Path2D.Float path = new Path2D.Float();
+            boolean started = false;
+            for (Point2d point : gtu.getPath())
+            {
+                Point2d p = transform.transform(point);
+                if (!started)
+                {
+                    path.moveTo(p.x, -p.y);
+                }
+                else
+                {
+                    path.lineTo(p.x, -p.y);
+                }
+                started = true;
+            }
+            graphics.draw(path);
+
             graphics.setStroke(saveStroke);
         }
         else
@@ -173,6 +199,7 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
             this.marker.setFrame(x, x, w, w);
             graphics.fill(this.marker);
         }
+
         resetRendering(graphics);
     }
 
@@ -342,6 +369,15 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
         {
             DirectedPoint2d p = getLocation();
             return p == null ? 0.0 : p.getDirZ();
+        }
+
+        /**
+         * Returns the path.
+         * @return path
+         */
+        default OtsLine2d getPath()
+        {
+            return null;
         }
 
         /**

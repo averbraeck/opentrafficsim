@@ -94,10 +94,9 @@ public class HeadwayGtuReal extends AbstractHeadway implements HeadwayGtu
         sli.addSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED, wrappedGtu.getMaximumSpeed());
         try
         {
-            sli.addSpeedInfo(SpeedLimitTypes.FIXED_SIGN,
-                    wrappedGtu.getReferencePosition().lane().getSpeedLimit(wrappedGtu.getType()));
+            sli.addSpeedInfo(SpeedLimitTypes.FIXED_SIGN, wrappedGtu.getPosition().lane().getSpeedLimit(wrappedGtu.getType()));
         }
-        catch (NetworkException | GtuException exception)
+        catch (NetworkException exception)
         {
             throw new RuntimeException("Could not obtain speed limit from lane for perception.", exception);
         }
@@ -183,7 +182,7 @@ public class HeadwayGtuReal extends AbstractHeadway implements HeadwayGtu
         }
         return gtuStatus.toArray(new GtuStatus[gtuStatus.size()]);
     }
-    
+
     /**
      * Returns the wrapped GTU.
      * @return wrapped GTU.

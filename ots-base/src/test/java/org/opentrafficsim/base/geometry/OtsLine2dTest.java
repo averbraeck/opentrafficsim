@@ -920,8 +920,8 @@ public final class OtsLine2dTest
      * @throws IllegalAccessException if that happens uncaught; this test has failed
      */
     @Test
-    public void testFind() throws NoSuchMethodException, SecurityException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException
+    public void testFind() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException,
+            InvocationTargetException
     {
         // Construct a line with exponentially increasing distances
         List<Point2d> points = new ArrayList<>();
@@ -1028,12 +1028,12 @@ public final class OtsLine2dTest
             System.out.println(Export.toPlot(line));
         }
         double boundary = 1 / (2 + Math.sqrt(2));
-        //double length = line.getLength();
+        // double length = line.getLength();
         for (int percentage = 0; percentage <= 100; percentage++)
         {
             double fraction = percentage / 100.0;
             double radiusAtFraction = line.getProjectedRadius(fraction).si;
-            //Point2d pointAtFraction = line.getLocationSI(fraction * length);
+            // Point2d pointAtFraction = line.getLocationSI(fraction * length);
             // System.out.println(
             // "At fraction " + fraction + " (point " + pointAtFraction + "), radius at fraction " + radiusAtFraction);
             if (fraction < boundary)

@@ -142,7 +142,7 @@ public final class LaneBasedGtuTest implements UNITS
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCfLcTacticalPlanner(gtuFollowingModel, laneChangeModel, truck), truck);
         truck.setParameters(parameters);
-        truck.init(strategicalPlanner, getReferencePosition(truckPositions), truckSpeed);
+        truck.init(strategicalPlanner, getReferencePosition(truckPositions).getLocation(), truckSpeed);
         // Verify that the truck is registered on the correct Lanes
         int lanesChecked = 0;
         int found = 0;
@@ -217,7 +217,7 @@ public final class LaneBasedGtuTest implements UNITS
                 strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                         new LaneBasedCfLcTacticalPlanner(gtuFollowingModel, laneChangeModel, car), car);
                 car.setParameters(parameters);
-                car.init(strategicalPlanner, getReferencePosition(carPositions), carSpeed);
+                car.init(strategicalPlanner, getReferencePosition(carPositions).getLocation(), carSpeed);
                 // leader = truck.headway(forwardMaxDistance);
                 // TODO see how we can ask the vehicle to look 'forwardMaxDistance' ahead
                 leader = truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class)
@@ -412,7 +412,7 @@ public final class LaneBasedGtuTest implements UNITS
             LaneBasedStrategicalPlanner strategicalPlanner =
                     new LaneBasedStrategicalRoutePlanner(new LaneBasedCfLcTacticalPlanner(fam, laneChangeModel, car), car);
             car.setParameters(parameters);
-            car.init(strategicalPlanner, getReferencePosition(carPositions), carSpeed);
+            car.init(strategicalPlanner, getReferencePosition(carPositions).getLocation(), carSpeed);
             // Let the simulator execute the move method of the car
             simulator.runUpTo(new Time(61, TimeUnit.BASE_SECOND));
             while (simulator.isStartingOrRunning())

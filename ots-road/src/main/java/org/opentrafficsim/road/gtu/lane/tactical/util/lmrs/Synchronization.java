@@ -20,9 +20,7 @@ import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
-import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.network.LaneChangeInfo;
@@ -47,23 +45,11 @@ public interface Synchronization extends LmrsParameters
         @Override
         public Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData,
-                final LaneChange laneChange, final LateralDirectionality initiatedLaneChange)
-                throws ParameterException, OperationalPlanException
+                final LateralDirectionality initiatedLaneChange) throws ParameterException, OperationalPlanException
         {
             Acceleration a = Acceleration.POSITIVE_INFINITY;
             // stop for end
             Length remainingDist = Length.POSITIVE_INFINITY;
-            int dn = laneChange.isChangingLane() ? -1 : 0;
-            Length lcLength = laneChange.getMinimumLaneChangeDistance();
-            for (LaneChangeInfo lcInfo : perception.getPerceptionCategory(InfrastructurePerception.class)
-                    .getPhysicalLaneChangeInfo(RelativeLane.CURRENT))
-            {
-                // TODO replace this hack with something that properly accounts for overshoot this method also
-                // introduces very strong deceleration at low speeds, as the time step makes bMin go from 3.4 (ignored,
-                // so maybe 1.25 acceleration applied) to >10
-                remainingDist = Length.min(remainingDist,
-                        lcInfo.remainingDistance().minus(lcLength.times(lcInfo.numberOfLaneChanges() + dn)));
-            }
             Speed speed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
             Acceleration bCrit = params.getParameter(ParameterTypes.BCRIT);
             remainingDist = remainingDist.minus(params.getParameter(ParameterTypes.S0));
@@ -102,11 +88,9 @@ public interface Synchronization extends LmrsParameters
         @Override
         public Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData,
-                final LaneChange laneChange, final LateralDirectionality initiatedLaneChange)
-                throws ParameterException, OperationalPlanException
+                final LateralDirectionality initiatedLaneChange) throws ParameterException, OperationalPlanException
         {
-            Acceleration a =
-                    DEADEND.synchronize(perception, params, sli, cfm, desire, lat, lmrsData, laneChange, initiatedLaneChange);
+            Acceleration a = DEADEND.synchronize(perception, params, sli, cfm, desire, lat, lmrsData, initiatedLaneChange);
             if (a.lt(params.getParameter(ParameterTypes.BCRIT).neg()))
             {
                 return a;
@@ -138,18 +122,17 @@ public interface Synchronization extends LmrsParameters
             Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
             if (leader != null)
             {
-                Length headway = headwayWithLcSpace(leader, params, laneChange);
+                Length headway = leader.getDistance();
                 Acceleration aSingle =
                         LmrsUtil.singleAcceleration(headway, ownSpeed, leader.getSpeed(), desire, params, sli, cfm);
                 a = Acceleration.min(a, aSingle);
                 a = gentleUrgency(a, desire, params);
             }
-            // keep some space ahead to perform lane change
             PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders =
                     perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT);
             if (!leaders.isEmpty() && leaders.first().getSpeed().lt(params.getParameter(ParameterTypes.VCONG)))
             {
-                Length headway = leaders.first().getDistance().minus(laneChange.getMinimumLaneChangeDistance());
+                Length headway = leaders.first().getDistance();
                 Acceleration aSingle =
                         LmrsUtil.singleAcceleration(headway, ownSpeed, leaders.first().getSpeed(), desire, params, sli, cfm);
                 aSingle = gentleUrgency(aSingle, desire, params);
@@ -185,8 +168,7 @@ public interface Synchronization extends LmrsParameters
         @Override
         public Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData,
-                final LaneChange laneChange, final LateralDirectionality initiatedLaneChange)
-                throws ParameterException, OperationalPlanException
+                final LateralDirectionality initiatedLaneChange) throws ParameterException, OperationalPlanException
         {
             Acceleration a = Acceleration.POSITIVE_INFINITY;
             EgoPerception<?, ?> ego = perception.getPerceptionCategory(EgoPerception.class);
@@ -213,7 +195,7 @@ public interface Synchronization extends LmrsParameters
                 a = gentleUrgency(a, desire, params);
             }
             a = Acceleration.min(a,
-                    DEADEND.synchronize(perception, params, sli, cfm, desire, lat, lmrsData, laneChange, initiatedLaneChange));
+                    DEADEND.synchronize(perception, params, sli, cfm, desire, lat, lmrsData, initiatedLaneChange));
             // never stop before we can actually merge
             Length xMerge = getMergeDistance(perception, lat);
             if (xMerge.gt0())
@@ -237,18 +219,16 @@ public interface Synchronization extends LmrsParameters
         @Override
         public Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData,
-                final LaneChange laneChange, final LateralDirectionality initiatedLaneChange)
-                throws ParameterException, OperationalPlanException
+                final LateralDirectionality initiatedLaneChange) throws ParameterException, OperationalPlanException
         {
             double dCoop = params.getParameter(DCOOP);
             Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
             if (desire < dCoop && ownSpeed.si < params.getParameter(ParameterTypes.LOOKAHEAD).si
                     / params.getParameter(ParameterTypes.T0).si)
             {
-                return DEADEND.synchronize(perception, params, sli, cfm, desire, lat, lmrsData, laneChange,
-                        initiatedLaneChange);
+                return DEADEND.synchronize(perception, params, sli, cfm, desire, lat, lmrsData, initiatedLaneChange);
             }
-            return PASSIVE.synchronize(perception, params, sli, cfm, desire, lat, lmrsData, laneChange, initiatedLaneChange);
+            return PASSIVE.synchronize(perception, params, sli, cfm, desire, lat, lmrsData, initiatedLaneChange);
         }
 
         @Override
@@ -264,8 +244,7 @@ public interface Synchronization extends LmrsParameters
         @Override
         public Acceleration synchronize(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
                 final CarFollowingModel cfm, final double desire, final LateralDirectionality lat, final LmrsData lmrsData,
-                final LaneChange laneChange, final LateralDirectionality initiatedLaneChange)
-                throws ParameterException, OperationalPlanException
+                final LateralDirectionality initiatedLaneChange) throws ParameterException, OperationalPlanException
         {
 
             Acceleration b = params.getParameter(ParameterTypes.B);
@@ -380,8 +359,7 @@ public interface Synchronization extends LmrsParameters
             lmrsData.setSyncVehicle(syncVehicle);
 
             // actual synchronization
-            Acceleration a =
-                    DEADEND.synchronize(perception, params, sli, cfm, desire, lat, lmrsData, laneChange, initiatedLaneChange);
+            Acceleration a = DEADEND.synchronize(perception, params, sli, cfm, desire, lat, lmrsData, initiatedLaneChange);
             if (syncVehicle != null)
             {
                 a = gentleUrgency(tagAlongAcceleration(syncVehicle, ownSpeed, ownLength, tagSpeed, desire, params, sli, cfm),
@@ -410,7 +388,7 @@ public interface Synchronization extends LmrsParameters
                     }
                 }
                 else if (!LmrsUtil.acceptLaneChange(perception, params, sli, cfm, desire, ownSpeed, Acceleration.ZERO, lat,
-                        lmrsData.getGapAcceptance(), laneChange))
+                        lmrsData.getGapAcceptance()))
                 {
                     a = stopForEnd(xCur, xMerge, params, ownSpeed, cfm, sli);
                     // but no stronger than getting behind the leader
@@ -489,33 +467,14 @@ public interface Synchronization extends LmrsParameters
      * @param desire level of lane change desire
      * @param lat lateral direction for synchronization
      * @param lmrsData LMRS data
-     * @param laneChange lane change
      * @param initiatedLaneChange lateral direction of initiated lane change
      * @return acceleration for synchronization
      * @throws ParameterException if a parameter is not defined
      * @throws OperationalPlanException perception exception
      */
     Acceleration synchronize(LanePerception perception, Parameters params, SpeedLimitInfo sli, CarFollowingModel cfm,
-            double desire, LateralDirectionality lat, LmrsData lmrsData, LaneChange laneChange,
-            LateralDirectionality initiatedLaneChange) throws ParameterException, OperationalPlanException;
-
-    /**
-     * Returns a headway (length) to allow space to perform a lane change at low speeds.
-     * @param headway headway
-     * @param parameters parameters
-     * @param laneChange lane change
-     * @return distance to allow space to perform a lane change at low speeds
-     * @throws ParameterException if parameter VCONG is not available
-     */
-    static Length headwayWithLcSpace(final Headway headway, final Parameters parameters, final LaneChange laneChange)
-            throws ParameterException
-    {
-        if (headway.getSpeed().gt(parameters.getParameter(ParameterTypes.VCONG)))
-        {
-            return headway.getDistance();
-        }
-        return headway.getDistance().minus(laneChange.getMinimumLaneChangeDistance());
-    }
+            double desire, LateralDirectionality lat, LmrsData lmrsData, LateralDirectionality initiatedLaneChange)
+            throws ParameterException, OperationalPlanException;
 
     /**
      * Return limited deceleration. Deceleration is limited to {@code b} for {@code d < dCoop}. Beyond {@code dCoop} the limit
@@ -593,12 +552,12 @@ public interface Synchronization extends LmrsParameters
 
         /*-
          * Maximum extent is half a vehicle length, being the minimum of the own vehicle or adjacent vehicle length. At
-         * standstill we get: 
+         * standstill we get:
          *
-         * car>car:    __       car>truck:       ______ 
-         *            __                        __ 
+         * car>car:    __       car>truck:       ______
+         *            __                        __
          *                                                   driving direction -->
-         * truck>car:      __   truck>truck:       ______ 
+         * truck>car:      __   truck>truck:       ______
          *            ______                    ______
          */
         Length headwayAdjustment = params.getParameter(ParameterTypes.S0)
@@ -653,7 +612,7 @@ public interface Synchronization extends LmrsParameters
          * _______________________________________________________________________/
          *            (---------------------------xCur---------------------------)
          *            (-s-)(l)               (-xGap-)(-l-)(----------c-----------)
-         *            
+         *
          *            (----------------------------------) x should cover this distance before
          *                    (-------------) b covers this distance; then we can be ahead (otherwise, follow b)
          */

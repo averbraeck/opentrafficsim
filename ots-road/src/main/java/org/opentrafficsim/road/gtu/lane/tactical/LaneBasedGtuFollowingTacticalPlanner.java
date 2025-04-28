@@ -57,7 +57,7 @@ public class LaneBasedGtuFollowingTacticalPlanner extends AbstractLaneBasedTacti
         LanePerception perception = getPerception();
 
         // if the GTU's maximum speed is zero (block), generate a stand still plan for one second
-        if (laneBasedGTU.getMaximumSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
+        if (laneBasedGTU.getMaximumSpeed().lt(OperationalPlan.DRIFTING_SPEED))
         {
             return OperationalPlan.standStill(getGtu(), getGtu().getLocation(), startTime, Duration.ONE);
         }
@@ -106,7 +106,7 @@ public class LaneBasedGtuFollowingTacticalPlanner extends AbstractLaneBasedTacti
                 ? accelerationStepGTU : accelerationStepObject;
 
         // see if we have to continue standing still. In that case, generate a stand still plan
-        if (accelerationStep.getAcceleration().si < 1E-6 && laneBasedGTU.getSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
+        if (accelerationStep.getAcceleration().si < 1E-6 && laneBasedGTU.getSpeed().lt(OperationalPlan.DRIFTING_SPEED))
         {
             return OperationalPlan.standStill(getGtu(), getGtu().getLocation(), startTime, Duration.ONE);
         }

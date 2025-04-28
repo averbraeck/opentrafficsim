@@ -122,8 +122,7 @@ public class LaneBasedStrategicalRoutePlanner implements LaneBasedStrategicalPla
         if (node.getLinks().size() == 1 && previousLink != null)
         {
             // end node
-            throw new NetworkException(
-                    "LaneBasedStrategicalRoutePlanner is asked for a next link, but node " + node + " has no successors");
+            return null;
         }
         if (node.getLinks().size() == 1 && previousLink == null)
         {
@@ -242,12 +241,12 @@ public class LaneBasedStrategicalRoutePlanner implements LaneBasedStrategicalPla
         {
             try
             {
-                LanePosition pos = getGtu().getReferencePosition();
+                LanePosition pos = getGtu().getPosition();
                 CrossSectionLink link = pos.lane().getLink();
                 Node from = link.getStartNode();
                 this.route = link.getNetwork().getShortestRouteBetween(getGtu().getType(), from, this.destination);
             }
-            catch (GtuException | NetworkException exception)
+            catch (NetworkException exception)
             {
                 throw new RuntimeException("Route could not be determined.", exception);
             }
@@ -263,7 +262,7 @@ public class LaneBasedStrategicalRoutePlanner implements LaneBasedStrategicalPla
     {
         if (this.route == null && this.destination != null && !this.routeGenerator.equals(RouteGenerator.NULL))
         {
-            LanePosition ref = Try.assign(() -> getGtu().getReferencePosition(), "Could not retrieve GTU reference position.");
+            LanePosition ref = Try.assign(() -> getGtu().getPosition(), "Could not retrieve GTU reference position.");
             List<Node> nodes = new ArrayList<>();
             if (this.origin != null)
             {

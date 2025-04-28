@@ -380,13 +380,13 @@ public class StrategiesDemo extends AbstractSimulationScript
                     for (int i = 0; i < l.numberOfGtus(); i++)
                     {
                         LaneBasedGtu gtu1 = l.getGtu(i);
-                        Length up = Try.assign(() -> gtu1.position(l, gtu1.getFront()), "");
+                        Length up = Try.assign(() -> gtu1.getPosition(l, gtu1.getFront()), "");
                         LaneBasedGtu gtu2;
                         Length down;
                         if (i < l.numberOfGtus() - 1)
                         {
                             gtu2 = l.getGtu(i + 1);
-                            down = Try.assign(() -> gtu2.position(l, gtu2.getRear()), "");
+                            down = Try.assign(() -> gtu2.getPosition(l, gtu2.getRear()), "");
                         }
                         else
                         {
@@ -396,7 +396,7 @@ public class StrategiesDemo extends AbstractSimulationScript
                                 continue;
                             }
                             gtu2 = nextLane.getGtu(0);
-                            down = l.getLength().plus(Try.assign(() -> gtu2.position(nextLane, gtu2.getRear()), ""));
+                            down = l.getLength().plus(Try.assign(() -> gtu2.getPosition(nextLane, gtu2.getRear()), ""));
                         }
                         Length tentativeGap = down.minus(up)
                                 .minus(this.nextGtuType.isOfType(DefaultsNl.TRUCK) ? this.truckLength : this.carLength);
@@ -635,7 +635,7 @@ public class StrategiesDemo extends AbstractSimulationScript
         LaneBasedStrategicalPlanner strategicalPlanner = this.factories.get(gtuType).create(gtu, null, null, null);
 
         // init
-        gtu.init(strategicalPlanner, new LanePosition(lane, pos), initialSpeed);
+        gtu.init(strategicalPlanner, new LanePosition(lane, pos).getLocation(), initialSpeed);
 
         if (this.kmplcListener != null)
         {

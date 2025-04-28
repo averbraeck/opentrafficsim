@@ -823,33 +823,31 @@ public class Gtu extends LocalEventProducer
     private DirectedPoint2d cacheLocation = null;
 
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
-    public DirectedPoint2d getLocation()
+    public synchronized DirectedPoint2d getLocation()
     {
-        synchronized (this)
+        Time locationTime = this.simulator.getSimulatorAbsTime();
+        if (null == this.cacheLocationTime || this.cacheLocationTime.si != locationTime.si)
         {
-            if (this.operationalPlan.get() == null)
-            {
-                this.simulator.getLogger().always()
-                        .error("No operational plan for GTU " + this.id + " at t=" + this.getSimulator().getSimulatorTime());
-                return new DirectedPoint2d(0, 0, 0); // Do not cache it
-            }
-            try
-            {
-                // cache
-                Time locationTime = this.simulator.getSimulatorAbsTime();
-                if (null == this.cacheLocationTime || this.cacheLocationTime.si != locationTime.si)
-                {
-                    this.cacheLocationTime = null;
-                    this.cacheLocation = this.operationalPlan.get().getLocation(locationTime);
-                    this.cacheLocationTime = locationTime;
-                }
-                return this.cacheLocation;
-            }
-            catch (OperationalPlanException exception)
-            {
-                return new DirectedPoint2d(0, 0, 0);
-            }
+            this.cacheLocation = getLocation(locationTime);
+            this.cacheLocationTime = locationTime;
+        }
+        return this.cacheLocation;
+    }
+
+    /**
+     * Returns the location of the GTU at the given time.
+     * @param when time
+     * @return location of the GTU at the given time
+     */
+    public synchronized DirectedPoint2d getLocation(final Time when)
+    {
+        try
+        {
+            return this.operationalPlan.get().getLocation(when);
+        }
+        catch (OperationalPlanException exception)
+        {
+            return new DirectedPoint2d(0, 0, 0);
         }
     }
 

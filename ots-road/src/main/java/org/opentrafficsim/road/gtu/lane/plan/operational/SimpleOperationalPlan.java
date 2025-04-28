@@ -33,6 +33,12 @@ public class SimpleOperationalPlan implements Serializable
     /** Acceleration. */
     private Acceleration acceleration;
 
+    /** Duration of the plan. */
+    private final Duration duration;
+
+    /** Deviation from center line. */
+    private final Length deviation;
+
     /** Lane change direction. */
     private final LateralDirectionality laneChangeDirection;
 
@@ -42,9 +48,6 @@ public class SimpleOperationalPlan implements Serializable
     /** Distance to object causing turn indicator intent. */
     private Length indicatorObjectDistance = null;
 
-    /** Duration of the plan. */
-    private final Duration duration;
-
     /**
      * Constructor.
      * @param acceleration acceleration
@@ -52,7 +55,18 @@ public class SimpleOperationalPlan implements Serializable
      */
     public SimpleOperationalPlan(final Acceleration acceleration, final Duration duration)
     {
-        this(acceleration, duration, LateralDirectionality.NONE);
+        this(acceleration, duration, Length.ZERO, LateralDirectionality.NONE);
+    }
+
+    /**
+     * Constructor.
+     * @param acceleration acceleration
+     * @param duration duration
+     * @param deviation deviation from center line, positive values is left
+     */
+    public SimpleOperationalPlan(final Acceleration acceleration, final Duration duration, final Length deviation)
+    {
+        this(acceleration, duration, deviation, LateralDirectionality.NONE);
     }
 
     /**
@@ -64,12 +78,27 @@ public class SimpleOperationalPlan implements Serializable
     public SimpleOperationalPlan(final Acceleration acceleration, final Duration duration,
             final LateralDirectionality laneChangeDirection)
     {
+        this(acceleration, duration, Length.ZERO, laneChangeDirection);
+    }
+
+    /**
+     * Constructor.
+     * @param acceleration acceleration
+     * @param duration duration
+     * @param deviation deviation from center line, positive values is left
+     * @param laneChangeDirection lane change direction, may be {@code null}.
+     */
+    public SimpleOperationalPlan(final Acceleration acceleration, final Duration duration, final Length deviation,
+            final LateralDirectionality laneChangeDirection)
+    {
         Throw.whenNull(acceleration, "Acceleration may not be null.");
         Throw.whenNull(duration, "Duration may not be null.");
+        Throw.whenNull(deviation, "Deviation may not be null.");
         Throw.whenNull(laneChangeDirection, "Lane change direction may not be null.");
         checkAcceleration(acceleration);
         this.acceleration = Acceleration.max(Acceleration.instantiateSI(-100.0), acceleration);
         this.duration = duration;
+        this.deviation = deviation;
         this.laneChangeDirection = laneChangeDirection;
     }
 
@@ -102,6 +131,15 @@ public class SimpleOperationalPlan implements Serializable
     }
 
     /**
+     * Return deviation.
+     * @return deviation.
+     */
+    public Length getDeviation()
+    {
+        return this.deviation;
+    }
+
+    /**
      * Return whether this plan is a lane change plan.
      * @return if lane change.
      */
@@ -126,7 +164,6 @@ public class SimpleOperationalPlan implements Serializable
     public final void minimizeAcceleration(final Acceleration a)
     {
         checkAcceleration(a);
-        // XXX: AV
         this.acceleration = Acceleration.max(Acceleration.instantiateSI(-100.0), Acceleration.min(this.acceleration, a));
     }
 
@@ -138,7 +175,6 @@ public class SimpleOperationalPlan implements Serializable
     {
         if (a.equals(Acceleration.NEGATIVE_INFINITY) || a.equals(Acceleration.NEG_MAXVALUE))
         {
-            // XXX: AV
             CategoryLogger.always().error("Model has calculated a negative infinite or negative max value acceleration.");
         }
     }

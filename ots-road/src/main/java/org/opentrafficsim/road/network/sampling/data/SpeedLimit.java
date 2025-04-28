@@ -3,7 +3,6 @@ package org.opentrafficsim.road.network.sampling.data;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vfloat.scalar.FloatSpeed;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataSpeed;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -37,9 +36,9 @@ public class SpeedLimit extends ExtendedDataSpeed<GtuDataRoad>
         LaneBasedGtu laneGtu = gtu.getGtu();
         try
         {
-            return new FloatSpeed(laneGtu.getReferencePosition().lane().getSpeedLimit(laneGtu.getType()).si, SpeedUnit.SI);
+            return new FloatSpeed(laneGtu.getPosition().lane().getSpeedLimit(laneGtu.getType()).si, SpeedUnit.SI);
         }
-        catch (NetworkException | GtuException exception)
+        catch (NetworkException exception)
         {
             throw new RuntimeException("Could not obtain speed limit.", exception);
         }

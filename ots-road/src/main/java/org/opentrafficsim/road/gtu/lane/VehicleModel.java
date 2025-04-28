@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Mass;
 import org.djunits.value.vdouble.scalar.Speed;
 
@@ -58,6 +59,16 @@ public interface VehicleModel
      * @return possible acceleration
      */
     Acceleration boundAcceleration(Acceleration acceleration, LaneBasedGtu gtu);
+
+    /**
+     * Returns the turn radius, which is actually a diameter. By default this is twice the GTU length.
+     * @param gtu GTU
+     * @return turn radius, which is actually a diameter
+     */
+    default Length getTurnRadius(final LaneBasedGtu gtu)
+    {
+        return gtu.getLength().times(2.0);
+    }
 
     /**
      * GTU mass.

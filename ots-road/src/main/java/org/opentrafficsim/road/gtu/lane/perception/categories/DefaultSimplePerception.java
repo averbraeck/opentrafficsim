@@ -1,8 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
 import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -167,20 +165,20 @@ public interface DefaultSimplePerception extends LaneBasedPerceptionCategory
      * Returns right accessible adjacent lanes.
      * @return accessibleAdjacentLanesLeft, the accessible adjacent lanes on the left
      */
-    Map<Lane, Set<Lane>> getAccessibleAdjacentLanesLeft();
+    Lane getAccessibleAdjacentLanesLeft();
 
     /**
      * Returns right accessible adjacent lanes.
      * @return accessibleAdjacentLanesRight, the accessible adjacent lanes on the right
      */
-    Map<Lane, Set<Lane>> getAccessibleAdjacentLanesRight();
+    Lane getAccessibleAdjacentLanesRight();
 
     /**
      * Returns accessible adjacent lanes.
      * @param lateralDirection the direction to return the accessible adjacent lane map for
      * @return the accessible adjacent lane map for the given direction
      */
-    Map<Lane, Set<Lane>> getAccessibleAdjacentLanes(LateralDirectionality lateralDirection);
+    Lane getAccessibleAdjacentLanes(LateralDirectionality lateralDirection);
 
     /**
      * Returns left neighbors.

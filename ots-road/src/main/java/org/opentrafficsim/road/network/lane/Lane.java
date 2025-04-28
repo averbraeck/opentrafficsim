@@ -13,8 +13,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -30,7 +28,6 @@ import org.opentrafficsim.base.HierarchicallyTyped;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
@@ -41,10 +38,6 @@ import org.opentrafficsim.core.perception.collections.HistoricalList;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
-import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
-
-import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 
 /**
  * The Lane is the CrossSectionElement of a CrossSectionLink on which GTUs can drive. The Lane stores several important
@@ -663,37 +656,27 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @param fractionalPosition the fractional position that the newly added GTU will have on this Lane
      * @return the rank that the newly added GTU has on this Lane (should be 0, except when the GTU enters this Lane due to a
      *         lane change operation)
-     * @throws GtuException when the fractionalPosition is outside the range 0..1, or the GTU is already registered on this Lane
+     * @throws GtuException when the GTU is already registered on this Lane
      */
     // @docs/02-model-structure/djutils.md#event-producers-and-listeners
-    public final int addGtu(final LaneBasedGtu gtu, final double fractionalPosition) throws GtuException
+    public int addGtu(final LaneBasedGtu gtu, final double fractionalPosition) throws GtuException
     {
         int index;
-        // check if we are the first
-        if (this.gtuList.size() == 0)
+        // figure out the rank for the new GTU
+        for (index = 0; index < this.gtuList.size(); index++)
         {
-            this.gtuList.add(gtu);
-            index = 0;
-        }
-        else
-        {
-            // figure out the rank for the new GTU
-            for (index = 0; index < this.gtuList.size(); index++)
+            LaneBasedGtu otherGTU = this.gtuList.get(index);
+            if (gtu == otherGTU)
             {
-                LaneBasedGtu otherGTU = this.gtuList.get(index);
-                if (gtu == otherGTU)
-                {
-                    throw new GtuException(gtu + " already registered on Lane " + this + " [registered lanes: "
-                            + gtu.positions(gtu.getFront()).keySet() + "] locations: " + gtu.positions(gtu.getFront()).values()
-                            + " time: " + gtu.getSimulator().getSimulatorTime());
-                }
-                if (otherGTU.fractionalPosition(this, otherGTU.getFront()) >= fractionalPosition)
-                {
-                    break;
-                }
+                throw new GtuException(gtu + " already registered on Lane " + this + ", location: "
+                        + gtu.getLongitudinalPosition() + " time: " + gtu.getSimulator().getSimulatorTime());
             }
-            this.gtuList.add(index, gtu);
+            if (otherGTU.getPosition().getFraction() >= fractionalPosition)
+            {
+                break;
+            }
         }
+        this.gtuList.add(index, gtu);
         // @docs/02-model-structure/djutils.md#event-producers-and-listeners
         fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] {gtu.getId(), this.gtuList.size(), getId(), getLink().getId()},
                 gtu.getSimulator().getSimulatorTime());
@@ -787,7 +770,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         int[] search = lineSearch((final int index) ->
         {
             LaneBasedGtu gtu = list.get(index);
-            return gtu.position(this, gtu.getRelativePositions().get(relativePosition), when).si;
+            return gtu.getPosition(gtu.getRelativePositions().get(relativePosition), when).position().si;
         }, list.size(), position.si);
         if (search[1] < list.size())
         {
@@ -816,7 +799,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         int[] search = lineSearch((final int index) ->
         {
             LaneBasedGtu gtu = list.get(index);
-            return gtu.position(this, gtu.getRelativePositions().get(relativePosition), when).si;
+            return gtu.getPosition(gtu.getRelativePositions().get(relativePosition), when).position().si;
         }, list.size(), position.si);
         if (search[0] >= 0)
         {
@@ -1118,6 +1101,32 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         return candidates;
     }
 
+    public Lane getLeft(final GtuType gtuType)
+    {
+        Set<Lane> set = neighbors(LateralDirectionality.LEFT, gtuType, false);
+        if (set.isEmpty())
+        {
+            return null;
+        }
+        return set.iterator().next();
+    }
+
+    public Lane getRight(final GtuType gtuType)
+    {
+        Set<Lane> set = neighbors(LateralDirectionality.RIGHT, gtuType, false);
+        if (set.isEmpty())
+        {
+            return null;
+        }
+        return set.iterator().next();
+    }
+
+    public Lane getAdjacent(final LateralDirectionality laneChangeDirection, final GtuType gtuType)
+    {
+        Throw.when(laneChangeDirection.isNone(), IllegalArgumentException.class, "laneChangeDirection should be LEFT or RIGHT");
+        return laneChangeDirection.isLeft() ? getLeft(gtuType) : getRight(gtuType);
+    }
+
     /**
      * Returns one adjacent lane.
      * @param laneChangeDirection lane change direction
@@ -1290,36 +1299,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     {
         return Collections.binarySearch(this.gtuList, gtu, (gtu1, gtu2) ->
         {
-            try
-            {
-                return gtu1.position(this, gtu1.getReference()).compareTo(gtu2.position(this, gtu2.getReference()));
-            }
-            catch (GtuException exception)
-            {
-                throw new RuntimeException(exception);
-            }
-        });
-    }
-
-    /**
-     * Returns the index of the given GTU, or -1 if not present, at specified time.
-     * @param gtu gtu to get the index of
-     * @param time time
-     * @return index of the given GTU, or -1 if not present
-     */
-    public final int indexOfGtu(final LaneBasedGtu gtu, final Time time)
-    {
-        return Collections.binarySearch(getGtuList(time), gtu, (gtu1, gtu2) ->
-        {
-            try
-            {
-                return Double.compare(gtu1.fractionalPosition(this, gtu1.getReference(), time),
-                        gtu2.fractionalPosition(this, gtu2.getReference(), time));
-            }
-            catch (GtuException exception)
-            {
-                throw new RuntimeException(exception);
-            }
+            return gtu1.getPosition().position().compareTo(gtu2.getPosition().position());
         });
     }
 

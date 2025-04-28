@@ -99,7 +99,7 @@ public final class IdmPlusTest implements UNITS
         LaneBasedStrategicalPlanner strategicalPlannerIDM = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGtuFollowingTacticalPlanner(carFollowingModel, referenceCar10), referenceCar10);
         referenceCar10.setParameters(parametersIDM);
-        referenceCar10.init(strategicalPlannerIDM, initialLongitudinalPositions, initialSpeed);
+        referenceCar10.init(strategicalPlannerIDM, initialLongitudinalPositions.getLocation(), initialSpeed);
         referenceCar10.getTacticalPlanner().getPerception().perceive();
         Speed speedLimit = new Speed(100, KM_PER_HOUR);
         AccelerationStep cfmr = carFollowingModel.computeAccelerationStepWithNoLeader(referenceCar10, lookAhead, speedLimit);
@@ -108,7 +108,7 @@ public final class IdmPlusTest implements UNITS
         // Create another car at exactly the stationary following distance
         // Check that the follower remains stationary
         Length leaderPosition = new Length(2 + referenceCar10.getLength().getSI()
-                + referenceCar10.position(lane, referenceCar10.getReference(), initialTime).getSI(), METER);
+                + referenceCar10.getPosition(lane, referenceCar10.getReference(), initialTime).getSI(), METER);
         LanePosition leaderPositions = new LanePosition(lane, leaderPosition);
 
         // The leader gets a car following model that makes it stay in place for a loooong time
@@ -124,7 +124,7 @@ public final class IdmPlusTest implements UNITS
         LaneBasedStrategicalPlanner strategicalPlannerFAM =
                 new LaneBasedStrategicalRoutePlanner(new LaneBasedGtuFollowingTacticalPlanner(fam, leaderCar11), leaderCar11);
         leaderCar11.setParameters(parametersFAM);
-        leaderCar11.init(strategicalPlannerFAM, leaderPositions, initialSpeed);
+        leaderCar11.init(strategicalPlannerFAM, leaderPositions.getLocation(), initialSpeed);
         leaderCar11.getTacticalPlanner().getPerception().perceive();
         HeadwayGtuSimple leader = new HeadwayGtuSimple(leaderCar11.getId(), leaderCar11.getType(),
                 new Length(leaderPosition.getSI() - referenceCar10.getLength().getSI() - initialPosition.getSI(),
@@ -134,7 +134,7 @@ public final class IdmPlusTest implements UNITS
                 lookAhead, speedLimit);
         assertEquals(0, cfmr.getAcceleration().getSI(), 0.0001, "Acceleration should be 0");
         leaderPosition = new Length(1000 + (3 + referenceCar10.getLength().getSI()
-                + referenceCar10.position(lane, referenceCar10.getFront(), initialTime).getSI()), METER);
+                + referenceCar10.getPosition(lane, referenceCar10.getFront(), initialTime).getSI()), METER);
         leaderPositions = new LanePosition(lane, leaderPosition);
         // Exercise the if statement that ignores leaders that are further ahead
         parametersFAM = DefaultTestParameters.create();
@@ -143,7 +143,7 @@ public final class IdmPlusTest implements UNITS
         strategicalPlannerFAM =
                 new LaneBasedStrategicalRoutePlanner(new LaneBasedGtuFollowingTacticalPlanner(fam, leaderCar12), leaderCar12);
         leaderCar12.setParameters(parametersFAM);
-        leaderCar12.init(strategicalPlannerFAM, leaderPositions, initialSpeed);
+        leaderCar12.init(strategicalPlannerFAM, leaderPositions.getLocation(), initialSpeed);
         leaderCar12.getTacticalPlanner().getPerception().perceive();
         // Verify that the result is independent of the order of adding in the Collection
         Collection<Headway> leaders = new ArrayList<>();
@@ -171,16 +171,16 @@ public final class IdmPlusTest implements UNITS
         strategicalPlannerIDM = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGtuFollowingTacticalPlanner(carFollowingModel, referenceCar20), referenceCar20);
         referenceCar20.setParameters(parametersIDM);
-        referenceCar20.init(strategicalPlannerIDM, initialLongitudinalPositions, initialSpeed);
+        referenceCar20.init(strategicalPlannerIDM, initialLongitudinalPositions.getLocation(), initialSpeed);
         leaders.clear();
         leaderPosition = new Length(-(3 + referenceCar20.getLength().getSI())
-                + referenceCar20.position(lane, referenceCar20.getFront(), initialTime).getSI(), METER);
+                + referenceCar20.getPosition(lane, referenceCar20.getFront(), initialTime).getSI(), METER);
         leaderPositions = new LanePosition(lane, leaderPosition);
         LaneBasedGtu leaderCar21 = new LaneBasedGtu("21", gtuType, length, width, maxSpeed, length.times(0.5), network);
         strategicalPlannerFAM =
                 new LaneBasedStrategicalRoutePlanner(new LaneBasedGtuFollowingTacticalPlanner(fam, leaderCar21), leaderCar21);
         leaderCar21.setParameters(parametersFAM);
-        leaderCar21.init(strategicalPlannerFAM, leaderPositions, initialSpeed);
+        leaderCar21.init(strategicalPlannerFAM, leaderPositions.getLocation(), initialSpeed);
         referenceCar20.getTacticalPlanner().getPerception().perceive();
         leaderCar21.getTacticalPlanner().getPerception().perceive();
         leader = new HeadwayGtuSimple(leaderCar21.getId(), leaderCar21.getType(),
@@ -199,13 +199,13 @@ public final class IdmPlusTest implements UNITS
         {
             leaders.clear();
             leaderPosition = new Length(spareDistance + (3 + referenceCar20.getLength().getSI()
-                    + referenceCar20.position(lane, referenceCar20.getFront(), initialTime).getSI()), METER);
+                    + referenceCar20.getPosition(lane, referenceCar20.getFront(), initialTime).getSI()), METER);
             leaderPositions = new LanePosition(lane, leaderPosition);
             LaneBasedGtu leaderCar22 = new LaneBasedGtu("0", gtuType, length, width, maxSpeed, length.times(0.5), network);
             strategicalPlannerFAM = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedGtuFollowingTacticalPlanner(fam, leaderCar22), leaderCar22);
             leaderCar22.setParameters(parametersFAM);
-            leaderCar22.init(strategicalPlannerFAM, leaderPositions, initialSpeed);
+            leaderCar22.init(strategicalPlannerFAM, leaderPositions.getLocation(), initialSpeed);
             leaderCar22.getTacticalPlanner().getPerception().perceive();
             leader = new HeadwayGtuSimple(leaderCar22.getId(), leaderCar22.getType(),
                     new Length(leaderPosition.getSI() - referenceCar20.getLength().getSI() - initialPosition.getSI(),
@@ -231,11 +231,11 @@ public final class IdmPlusTest implements UNITS
         strategicalPlannerIDM = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGtuFollowingTacticalPlanner(carFollowingModel, referenceCar30), referenceCar30);
         referenceCar30.setParameters(parametersIDM);
-        referenceCar30.init(strategicalPlannerIDM, initialLongitudinalPositions, initialSpeed);
+        referenceCar30.init(strategicalPlannerIDM, initialLongitudinalPositions.getLocation(), initialSpeed);
         referenceCar30.getTacticalPlanner().getPerception().perceive();
         referenceAcceleration = Double.NEGATIVE_INFINITY;
         leaderPosition = new Length(2 + 3 + referenceCar30.getLength().getSI()
-                + referenceCar30.position(lane, referenceCar30.getFront(), initialTime).getSI(), METER);
+                + referenceCar30.getPosition(lane, referenceCar30.getFront(), initialTime).getSI(), METER);
         leaderPositions = new LanePosition(lane, leaderPosition);
         // In IDM+ the reference car must have non-zero speed for the leader speed to have any effect
         initialSpeed = new Speed(2, METER_PER_SECOND);
@@ -249,7 +249,7 @@ public final class IdmPlusTest implements UNITS
             strategicalPlannerIDM = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedGtuFollowingTacticalPlanner(carFollowingModel, referenceCar30), referenceCar30);
             referenceCar30.setParameters(parametersIDM);
-            referenceCar30.init(strategicalPlannerIDM, initialPositions, initialSpeed);
+            referenceCar30.init(strategicalPlannerIDM, initialPositions.getLocation(), initialSpeed);
             leaders.clear();
             Speed leaderSpeed = new Speed(integerLeaderSpeed, METER_PER_SECOND);
             parametersFAM = DefaultTestParameters.create(); // new BehavioralCharacteristics();
@@ -258,7 +258,7 @@ public final class IdmPlusTest implements UNITS
             strategicalPlannerFAM = new LaneBasedStrategicalRoutePlanner(
                     new LaneBasedGtuFollowingTacticalPlanner(fam, leaderCar31), leaderCar31);
             leaderCar31.setParameters(parametersFAM);
-            leaderCar31.init(strategicalPlannerFAM, leaderPositions, leaderSpeed);
+            leaderCar31.init(strategicalPlannerFAM, leaderPositions.getLocation(), leaderSpeed);
             leaderCar31.getTacticalPlanner().getPerception().perceive();
             leader = new HeadwayGtuSimple(leaderCar31.getId(), leaderCar31.getType(),
                     new Length(leaderPosition.getSI() - referenceCar30.getLength().getSI() - initialPosition.getSI(),
@@ -292,17 +292,17 @@ public final class IdmPlusTest implements UNITS
         strategicalPlannerIDM = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGtuFollowingTacticalPlanner(carFollowingModel, referenceCar40), referenceCar40);
         referenceCar40.setParameters(parametersIDM);
-        referenceCar40.init(strategicalPlannerIDM, initialPositions, initialSpeed);
+        referenceCar40.init(strategicalPlannerIDM, initialPositions.getLocation(), initialSpeed);
         referenceCar40.getTacticalPlanner().getPerception().perceive();
         leaderPosition = new Length(100 + 3 + referenceCar40.getLength().getSI()
-                + referenceCar40.position(lane, referenceCar40.getFront(), initialTime).getSI(), METER);
+                + referenceCar40.getPosition(lane, referenceCar40.getFront(), initialTime).getSI(), METER);
         parametersFAM = DefaultTestParameters.create(); // new BehavioralCharacteristics();
         // drivingCharacteristicsFAM = new LaneBasedBehavioralCharacteristics(fam, laneChangeModel);
         LaneBasedGtu leaderCar41 = new LaneBasedGtu("41", gtuType, length, width, maxSpeed, length.times(0.5), network);
         strategicalPlannerFAM =
                 new LaneBasedStrategicalRoutePlanner(new LaneBasedGtuFollowingTacticalPlanner(fam, leaderCar41), leaderCar41);
         leaderCar41.setParameters(parametersFAM);
-        leaderCar41.init(strategicalPlannerFAM, leaderPositions, initialSpeed);
+        leaderCar41.init(strategicalPlannerFAM, leaderPositions.getLocation(), initialSpeed);
         leaderCar41.getTacticalPlanner().getPerception().perceive();
         for (int timeStep = 0; timeStep < 200; timeStep++)
         {
@@ -325,8 +325,8 @@ public final class IdmPlusTest implements UNITS
             // simulateUntil, referenceCar, referenceCar.getSpeed(), leaderCar));
             if (timeStep > 120)
             {
-                double position = referenceCar40.position(lane, referenceCar40.getFront()).getSI();
-                assertEquals(leaderCar41.position(lane, referenceCar40.getRear()).getSI() - s0.getSI(), position, 0.2,
+                double position = referenceCar40.getPosition(lane, referenceCar40.getFront()).getSI();
+                assertEquals(leaderCar41.getPosition(lane, referenceCar40.getRear()).getSI() - s0.getSI(), position, 0.2,
                         "After 20 seconds the referenceCar should now be very close to " + s0
                                 + " before the rear of the leader");
                 assertEquals(0, referenceCar40.getSpeed().getSI(), 0.2,

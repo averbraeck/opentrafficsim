@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.network.sampling;
 
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -89,14 +89,9 @@ public class GtuDataRoad implements GtuData
     {
         try
         {
-            double v1 = this.gtu.getReferencePosition().lane().getSpeedLimit(this.gtu.getType()).si;
+            double v1 = this.gtu.getPosition().lane().getSpeedLimit(this.gtu.getType()).si;
             double v2 = this.gtu.getMaximumSpeed().si;
             return Speed.instantiateSI(v1 < v2 ? v1 : v2);
-        }
-        catch (GtuException exception)
-        {
-            // GTU was destroyed and is without a reference location
-            return Speed.NaN;
         }
         catch (NetworkException exception)
         {

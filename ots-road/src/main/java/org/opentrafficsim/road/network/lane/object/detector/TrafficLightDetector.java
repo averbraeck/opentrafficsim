@@ -2,8 +2,10 @@ package org.opentrafficsim.road.network.lane.object.detector;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -11,7 +13,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
@@ -23,8 +24,6 @@ import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.RelativePosition.Type;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
@@ -65,7 +64,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
     private final StartEndDetector exitB;
 
     /** GTUs detected by the entrance detectors, but not yet removed by the exit detectors. */
-    private final Set<LaneBasedGtu> currentGTUs = new LinkedHashSet<>();
+    private final Map<LaneBasedGtu, Integer> currentGTUs = new LinkedHashMap<>();
 
     /** The lanes that the detector (partly) covers. */
     private final Set<Lane> lanes = new LinkedHashSet<>();
@@ -187,7 +186,9 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
      */
     protected final void addGtu(final LaneBasedGtu gtu)
     {
-        if (this.currentGTUs.add(gtu) && this.currentGTUs.size() == 1)
+        int size = this.currentGTUs.size();
+        this.currentGTUs.merge(gtu, 1, (old, add) -> old + add);
+        if (size == 0 && this.currentGTUs.size() > 0)
         {
             fireTimedEvent(TrafficLightDetector.TRAFFIC_LIGHT_DETECTOR_TRIGGER_ENTRY_EVENT, new Object[] {getId()},
                     getSimulator().getSimulatorTime());
@@ -200,7 +201,12 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
      */
     protected final void removeGtu(final LaneBasedGtu gtu)
     {
-        if (this.currentGTUs.remove(gtu) && this.currentGTUs.size() == 0)
+        int size = this.currentGTUs.size();
+        if (this.currentGTUs.merge(gtu, -1, (old, add) -> old + add) == 0)
+        {
+            this.currentGTUs.remove(gtu);
+        }
+        if (size > 0 && this.currentGTUs.size() == 0)
         {
             fireTimedEvent(TrafficLightDetector.TRAFFIC_LIGHT_DETECTOR_TRIGGER_EXIT_EVENT, new Object[] {getId()},
                     getSimulator().getSimulatorTime());
@@ -214,120 +220,76 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
         LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU(gtuId);
         if (Lane.GTU_REMOVE_EVENT.equals(event.getType()))
         {
-            if (!this.currentGTUs.contains(gtu))
+            if (!this.currentGTUs.containsKey(gtu))
             {
                 return; // GTU is not currently detected; nothing to do
             }
-            try
-            {
-                // If the detector covers only (part of) one lane, this must have triggered this event, GTU on longer on det.
-                if (this.lanes.size() == 1)
-                {
-                    removeGtu(gtu);
-                    return;
-                }
-
-                Lane lane = null;
-                String laneId = (String) ((Object[]) event.getContent())[4];
-                String linkId = (String) ((Object[]) event.getContent())[5];
-                for (Lane detectorLane : this.lanes)
-                {
-                    if (detectorLane.getId().equals(laneId) && detectorLane.getLink().getId().equals(linkId))
-                    {
-                        lane = detectorLane;
-                        break;
-                    }
-                }
-
-                Set<Lane> remainingLanes = gtu.positions(gtu.getRelativePositions().get(RelativePosition.CENTER)).keySet();
-                remainingLanes.retainAll(this.lanes);
-                remainingLanes.remove(lane); // still in positions during this event
-                if (remainingLanes.isEmpty())
-                {
-                    removeGtu(gtu);
-                }
-                // else: GTU is still in one of our lanes and we will get another GTU_REMOVE_EVENT or the GTU will trigger one
-                // of our exit flank detectors or when the GTU leaves this detector laterally
-                return;
-            }
-            catch (GtuException exception)
-            {
-                System.err.println("Caught GTU exception trying to get the a position");
-                exception.printStackTrace();
-            }
+            removeGtu(gtu);
         }
         else if (Lane.GTU_ADD_EVENT.equals(event.getType()))
         {
-            if (this.currentGTUs.contains(gtu))
+            if (this.currentGTUs.containsKey(gtu))
             {
                 return; // GTU is already detected; nothing to do
             }
             // Determine whether the GTU is in our range
-            try
+            // If the detector covers only (part of) one lane, this must have triggered this event, check position on it
+            if (this.lanes.size() == 1)
             {
-                // If the detector covers only (part of) one lane, this must have triggered this event, check position on it
-                if (this.lanes.size() == 1)
-                {
-                    Lane lane = this.lanes.iterator().next();
-                    Length frontPos = gtu.position(lane, gtu.getRelativePositions().get(this.entryA.getPositionType()));
-                    Length rearPos = gtu.position(lane, gtu.getRelativePositions().get(this.exitB.getPositionType()));
-                    if (frontPos.gt(this.entryA.getLongitudinalPosition()) && rearPos.lt(this.exitB.getLongitudinalPosition()))
-                    {
-                        addGtu(gtu);
-                    }
-                    return;
-                }
-
-                Lane lane = null;
-                String laneId = (String) ((Object[]) event.getContent())[2];
-                String linkId = (String) ((Object[]) event.getContent())[3];
-                for (Lane detectorLane : this.lanes)
-                {
-                    if (detectorLane.getId().equals(laneId) && detectorLane.getLink().getId().equals(linkId))
-                    {
-                        lane = detectorLane;
-                    }
-                }
-
-                // If the triggering lane neither contains A nor B, it is an intermediate lane, so the GTU is on the detector
-                if (!this.entryA.getLane().equals(lane) && !this.exitB.getLane().equals(lane))
+                Lane lane = this.lanes.iterator().next();
+                Length frontPos = gtu.getPosition(lane, gtu.getRelativePositions().get(this.entryA.getPositionType()));
+                Length rearPos = gtu.getPosition(lane, gtu.getRelativePositions().get(this.exitB.getPositionType()));
+                if (frontPos.gt(this.entryA.getLongitudinalPosition()) && rearPos.lt(this.exitB.getLongitudinalPosition()))
                 {
                     addGtu(gtu);
-                    return;
                 }
-
-                // If triggering lane contains A, detector is triggered if front is beyond A (remainder of lane is all detector)
-                if (this.entryA.getLane().equals(lane))
-                {
-                    Length frontPos =
-                            gtu.position(this.entryA.getLane(), gtu.getRelativePositions().get(this.entryA.getPositionType()));
-                    if (frontPos.gt(this.entryA.getLongitudinalPosition()))
-                    {
-                        addGtu(gtu);
-                    }
-                    return;
-                }
-
-                // If triggering lane contains B, detector is triggered if the rear is before B (before on lane is all detector)
-                if (this.exitB.getLane().equals(lane))
-                {
-                    Length rearPos =
-                            gtu.position(this.exitB.getLane(), gtu.getRelativePositions().get(this.exitB.getPositionType()));
-                    if (rearPos.lt(this.exitB.getLongitudinalPosition()))
-                    {
-                        addGtu(gtu);
-                    }
-                    return;
-                }
-
-                throw new RuntimeException("Traffic light detector was notified that "
-                        + "a GTU was added to a lane, but could not figure out what to do with it.");
+                return;
             }
-            catch (GtuException exception)
+
+            Lane lane = null;
+            String laneId = (String) ((Object[]) event.getContent())[2];
+            String linkId = (String) ((Object[]) event.getContent())[3];
+            for (Lane detectorLane : this.lanes)
             {
-                System.err.println("Caught GTU exception trying to get a position");
-                exception.printStackTrace();
+                if (detectorLane.getId().equals(laneId) && detectorLane.getLink().getId().equals(linkId))
+                {
+                    lane = detectorLane;
+                }
             }
+
+            // If the triggering lane neither contains A nor B, it is an intermediate lane, so the GTU is on the detector
+            if (!this.entryA.getLane().equals(lane) && !this.exitB.getLane().equals(lane))
+            {
+                addGtu(gtu);
+                return;
+            }
+
+            // If triggering lane contains A, detector is triggered if front is beyond A (remainder of lane is all detector)
+            if (this.entryA.getLane().equals(lane))
+            {
+                Length frontPos =
+                        gtu.getPosition(this.entryA.getLane(), gtu.getRelativePositions().get(this.entryA.getPositionType()));
+                if (frontPos.gt(this.entryA.getLongitudinalPosition()))
+                {
+                    addGtu(gtu);
+                }
+                return;
+            }
+
+            // If triggering lane contains B, detector is triggered if the rear is before B (before on lane is all detector)
+            if (this.exitB.getLane().equals(lane))
+            {
+                Length rearPos =
+                        gtu.getPosition(this.exitB.getLane(), gtu.getRelativePositions().get(this.exitB.getPositionType()));
+                if (rearPos.lt(this.exitB.getLongitudinalPosition()))
+                {
+                    addGtu(gtu);
+                }
+                return;
+            }
+
+            throw new RuntimeException("Traffic light detector was notified that "
+                    + "a GTU was added to a lane, but could not figure out what to do with it.");
         }
         else
         {

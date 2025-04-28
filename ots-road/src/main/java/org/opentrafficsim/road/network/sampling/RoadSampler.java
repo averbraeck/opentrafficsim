@@ -20,7 +20,6 @@ import org.djutils.event.reference.ReferenceType;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
@@ -236,7 +235,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
             boolean active = this.activeGtus.contains(gtu.getId());
             if (active)
             {
-                Length position = Try.assign(() -> gtu.position(lane, RelativePosition.REFERENCE_POSITION),
+                Length position = Try.assign(() -> gtu.getPosition(lane, RelativePosition.REFERENCE_POSITION),
                         "Could not determine position.");
                 Speed speed = gtu.getSpeed();
                 Acceleration acceleration = gtu.getAcceleration();
@@ -345,24 +344,17 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
     public final void notifySample(final LaneBasedGtu gtu, final Lane lane, final boolean scheduleNext)
     {
         LaneDataRoad laneData = new LaneDataRoad(lane);
-        try
+        Length position = gtu.getPosition(lane, RelativePosition.REFERENCE_POSITION);
+        if (this.activeGtus.contains(gtu.getId()))
         {
-            Length position = gtu.position(lane, RelativePosition.REFERENCE_POSITION);
-            if (this.activeGtus.contains(gtu.getId()))
-            {
-                // already recording this GTU, just trigger a record through a move
-                snapshot(laneData, position, gtu.getSpeed(), gtu.getAcceleration(), now(), new GtuDataRoad(gtu));
-            }
-            else
-            {
-                // first time encountering this GTU so add, which also triggers a record through a move
-                addGtuWithSnapshot(laneData, position, gtu.getSpeed(), gtu.getAcceleration(), now(), new GtuDataRoad(gtu));
-                this.activeGtus.add(gtu.getId());
-            }
+            // already recording this GTU, just trigger a record through a move
+            snapshot(laneData, position, gtu.getSpeed(), gtu.getAcceleration(), now(), new GtuDataRoad(gtu));
         }
-        catch (GtuException exception)
+        else
         {
-            throw new RuntimeException("Requesting position on lane, but the GTU is not on the lane.", exception);
+            // first time encountering this GTU so add, which also triggers a record through a move
+            addGtuWithSnapshot(laneData, position, gtu.getSpeed(), gtu.getAcceleration(), now(), new GtuDataRoad(gtu));
+            this.activeGtus.add(gtu.getId());
         }
         if (scheduleNext)
         {

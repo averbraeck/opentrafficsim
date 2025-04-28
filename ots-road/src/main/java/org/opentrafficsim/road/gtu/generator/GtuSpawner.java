@@ -138,7 +138,7 @@ public class GtuSpawner
         gtu.setErrorHandler(this.errorHandler);
 
         gtu.init(templateGtuType.getStrategicalPlannerFactory().create(gtu, templateGtuType.getRoute(),
-                templateGtuType.getOrigin(), templateGtuType.getDestination()), position, speed);
+                templateGtuType.getOrigin(), templateGtuType.getDestination()), position.getLocation(), speed);
     }
 
 }

@@ -20,7 +20,7 @@ import org.djutils.immutablecollections.ImmutableList;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class Segments
+public final class Segments
 {
 
     /** List if segments. */

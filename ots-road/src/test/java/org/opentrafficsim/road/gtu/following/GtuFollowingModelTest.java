@@ -125,7 +125,7 @@ public final class GtuFollowingModelTest implements UNITS
         LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(new LaneBasedGtuFollowingTacticalPlanner(gtuFollowingModel, gtu), gtu);
         gtu.setParameters(parameters);
-        gtu.init(strategicalPlanner, initialLongitudinalPositions, speed);
+        gtu.init(strategicalPlanner, initialLongitudinalPositions.getLocation(), speed);
         Length longerHeadway = minimumHeadway.plus(precision);
         Acceleration longerHeadwayAcceleration =
                 gtuFollowingModel.computeAcceleration(speed, maxSpeed, speed, longerHeadway, speedLimit);
@@ -171,7 +171,7 @@ public final class GtuFollowingModelTest implements UNITS
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGtuFollowingTacticalPlanner(gtuFollowingModel, gtu50m), gtu50m);
         gtu50m.setParameters(parameters);
-        gtu50m.init(strategicalPlanner, initialLongitudinalPositions50, speed);
+        gtu50m.init(strategicalPlanner, initialLongitudinalPositions50.getLocation(), speed);
         HeadwayGtuSimple hwgtu50m = new HeadwayGtuSimple(gtu50m.getId(), gtu50m.getType(), headway50m, gtu50m.getLength(),
                 gtu50m.getWidth(), gtu50m.getSpeed(), gtu50m.getAcceleration(), null);
         Collection<Headway> otherGTUs = new ArrayList<>();
@@ -201,7 +201,7 @@ public final class GtuFollowingModelTest implements UNITS
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGtuFollowingTacticalPlanner(gtuFollowingModel, gtu100m), gtu100m);
         gtu100m.setParameters(parameters);
-        gtu100m.init(strategicalPlanner, initialLongitudinalPositions50, speed);
+        gtu100m.init(strategicalPlanner, initialLongitudinalPositions50.getLocation(), speed);
         HeadwayGtuSimple hwgtu100m = new HeadwayGtuSimple(gtu100m.getId(), gtu100m.getType(), headway100m, gtu100m.getLength(),
                 gtu100m.getWidth(), gtu100m.getSpeed(), gtu100m.getAcceleration(), maxSpeed);
         // gtu100m.getDesiredSpeed());
@@ -238,7 +238,7 @@ public final class GtuFollowingModelTest implements UNITS
         strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(new LaneBasedGtuFollowingTacticalPlanner(gtuFollowingModel, gtu1m), gtu1m);
         gtu1m.setParameters(parameters);
-        gtu1m.init(strategicalPlanner, initialLongitudinalPositions50, speed);
+        gtu1m.init(strategicalPlanner, initialLongitudinalPositions50.getLocation(), speed);
         Length overlap = new Length(length.minus(ahead));
         HeadwayGtuSimple hwgtu1m =
                 new HeadwayGtuSimple(gtu1m.getId(), gtu1m.getType(), ahead, overlap, Length.ZERO.minus(overlap),
@@ -259,7 +259,7 @@ public final class GtuFollowingModelTest implements UNITS
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGtuFollowingTacticalPlanner(gtuFollowingModel, gtuMinus75m), gtuMinus75m);
         gtuMinus75m.setParameters(parameters);
-        gtuMinus75m.init(strategicalPlanner, initialLongitudinalPositionsMinus75, speed);
+        gtuMinus75m.init(strategicalPlanner, initialLongitudinalPositionsMinus75.getLocation(), speed);
         HeadwayGtuSimple hwgtuMinus75m =
                 new HeadwayGtuSimple(gtuMinus75m.getId(), gtuMinus75m.getType(), headwayMinus75m, gtuMinus75m.getLength(),
                         gtuMinus75m.getWidth(), gtuMinus75m.getSpeed(), gtuMinus75m.getAcceleration(), maxSpeed);
@@ -278,7 +278,7 @@ public final class GtuFollowingModelTest implements UNITS
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGtuFollowingTacticalPlanner(gtuFollowingModel, gtuMinus200m), gtuMinus200m);
         gtuMinus200m.setParameters(parameters);
-        gtuMinus200m.init(strategicalPlanner, initialLongitudinalPositionsMinus200, speed);
+        gtuMinus200m.init(strategicalPlanner, initialLongitudinalPositionsMinus200.getLocation(), speed);
         HeadwayGtuSimple hwgtuMinus200m =
                 new HeadwayGtuSimple(gtuMinus200m.getId(), gtuMinus200m.getType(), headwayMinus200m, gtuMinus200m.getLength(),
                         gtuMinus200m.getWidth(), gtuMinus200m.getSpeed(), gtuMinus200m.getAcceleration(), maxSpeed); // gtuMinus200m.getDesiredSpeed());

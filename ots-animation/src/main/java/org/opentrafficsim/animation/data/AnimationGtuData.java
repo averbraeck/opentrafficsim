@@ -8,6 +8,7 @@ import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.animation.gtu.colorer.GtuColorerManager;
+import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -142,6 +143,12 @@ public class AnimationGtuData implements GtuData
     public String toString()
     {
         return "Gtu " + this.gtu.getId();
+    }
+
+    @Override
+    public OtsLine2d getPath()
+    {
+        return this.gtu.getOperationalPlan().getPath();
     }
 
 }
