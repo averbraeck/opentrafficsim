@@ -53,15 +53,16 @@ public class HeadwayGtuType extends AbstractHeadwayGtu
      * @param speed the (perceived) speed of the other object; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
      * @param desiredSpeed desired speed
+     * @param deviation lateral deviation
      * @param gtuStatus the observable characteristics of the GTU.
      * @throws GtuException when id is null, objectType is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public HeadwayGtuType(final String id, final GtuType gtuType, final GtuTypeAssumptions gtuTypeAssumptions,
             final Length distance, final Length length, final Length width, final Speed speed, final Acceleration acceleration,
-            final Speed desiredSpeed, final GtuStatus... gtuStatus) throws GtuException
+            final Speed desiredSpeed, final Length deviation, final GtuStatus... gtuStatus) throws GtuException
     {
-        super(id, gtuType, distance, true, length, width, speed, acceleration, desiredSpeed, gtuStatus);
+        super(id, gtuType, distance, true, length, width, speed, acceleration, desiredSpeed, deviation, gtuStatus);
         this.gtuTypeAssumptions = gtuTypeAssumptions;
     }
 
@@ -74,12 +75,14 @@ public class HeadwayGtuType extends AbstractHeadwayGtu
      * @param length if this constructor is used, length cannot be null.
      * @param width the (perceived) width of the other object; can not be null.
      * @param desiredSpeed desired speed
+     * @param deviation lateral deviation
      * @throws GtuException when id is null, or parameters are inconsistent
      */
     public HeadwayGtuType(final String id, final GtuType gtuType, final GtuTypeAssumptions gtuTypeAssumptions,
-            final Length distance, final Length length, final Length width, final Speed desiredSpeed) throws GtuException
+            final Length distance, final Length length, final Length width, final Speed desiredSpeed, final Length deviation)
+            throws GtuException
     {
-        super(id, gtuType, distance, true, length, width, desiredSpeed);
+        super(id, gtuType, distance, true, length, width, desiredSpeed, deviation);
         this.gtuTypeAssumptions = gtuTypeAssumptions;
     }
 
@@ -96,14 +99,17 @@ public class HeadwayGtuType extends AbstractHeadwayGtu
      * @param speed the (perceived) speed of the other Gtu; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other Gtu; can be null if unknown.
      * @param desiredSpeed desired speed
+     * @param deviation lateral deviation
      * @throws GtuException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public HeadwayGtuType(final String id, final GtuType gtuType, final GtuTypeAssumptions gtuTypeAssumptions,
             final Length overlapFront, final Length overlap, final Length overlapRear, final Length length, final Length width,
-            final Speed speed, final Acceleration acceleration, final Speed desiredSpeed) throws GtuException
+            final Speed speed, final Acceleration acceleration, final Speed desiredSpeed, final Length deviation)
+            throws GtuException
     {
-        super(id, gtuType, overlapFront, overlap, overlapRear, true, length, width, speed, acceleration, desiredSpeed);
+        super(id, gtuType, overlapFront, overlap, overlapRear, true, length, width, speed, acceleration, desiredSpeed,
+                deviation);
         this.gtuTypeAssumptions = gtuTypeAssumptions;
     }
 
@@ -118,13 +124,14 @@ public class HeadwayGtuType extends AbstractHeadwayGtu
      * @param length if this constructor is used, length cannot be null.
      * @param width the (perceived) width of the other object; can not be null.
      * @param desiredSpeed desired speed
+     * @param deviation lateral deviation
      * @throws GtuException when id is null, or parameters are inconsistent
      */
     public HeadwayGtuType(final String id, final GtuType gtuType, final GtuTypeAssumptions gtuTypeAssumptions,
             final Length overlapFront, final Length overlap, final Length overlapRear, final Length length, final Length width,
-            final Speed desiredSpeed) throws GtuException
+            final Speed desiredSpeed, final Length deviation) throws GtuException
     {
-        super(id, gtuType, overlapFront, overlap, overlapRear, true, length, width, desiredSpeed);
+        super(id, gtuType, overlapFront, overlap, overlapRear, true, length, width, desiredSpeed, deviation);
         this.gtuTypeAssumptions = gtuTypeAssumptions;
     }
 
@@ -158,7 +165,7 @@ public class HeadwayGtuType extends AbstractHeadwayGtu
         try
         {
             return new HeadwayGtuType(getId(), getGtuType(), this.gtuTypeAssumptions, headway, getLength(), getWidth(), speed,
-                    acceleration, getDesiredSpeed(), getGtuStatus());
+                    acceleration, getDesiredSpeed(), getDeviation(), getGtuStatus());
         }
         catch (GtuException exception)
         {

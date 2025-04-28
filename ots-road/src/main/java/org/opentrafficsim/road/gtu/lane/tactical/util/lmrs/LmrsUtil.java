@@ -7,7 +7,6 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
@@ -82,7 +81,6 @@ public final class LmrsUtil implements LmrsParameters
     /**
      * Determines a simple representation of an operational plan.
      * @param gtu gtu
-     * @param startTime start time
      * @param carFollowingModel car-following model
      * @param lmrsData LMRS data
      * @param perception perception
@@ -94,11 +92,10 @@ public final class LmrsUtil implements LmrsParameters
      * @throws ParameterException parameter exception
      * @throws OperationalPlanException operational plan exception
      */
-    @SuppressWarnings({"checkstyle:parameternumber", "checkstyle:methodlength"})
-    public static SimpleOperationalPlan determinePlan(final LaneBasedGtu gtu, final Time startTime,
-            final CarFollowingModel carFollowingModel, final LmrsData lmrsData, final LanePerception perception,
-            final Iterable<MandatoryIncentive> mandatoryIncentives, final Iterable<VoluntaryIncentive> voluntaryIncentives)
-            throws GtuException, NetworkException, ParameterException
+    @SuppressWarnings("checkstyle:methodlength")
+    public static SimpleOperationalPlan determinePlan(final LaneBasedGtu gtu, final CarFollowingModel carFollowingModel,
+            final LmrsData lmrsData, final LanePerception perception, final Iterable<MandatoryIncentive> mandatoryIncentives,
+            final Iterable<VoluntaryIncentive> voluntaryIncentives) throws GtuException, NetworkException, ParameterException
     {
         // obtain objects to get info
         InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);
@@ -419,6 +416,12 @@ public final class LmrsUtil implements LmrsParameters
             return false;
         }
 
+        // safe regarding neighbors?
+        if (!gapAcceptance.acceptGap(perception, params, sli, cfm, desire, ownSpeed, ownAcceleration, lat))
+        {
+            return false;
+        }
+
         // causes for deceleration
         IntersectionPerception intersection = perception.getPerceptionCategoryOrNull(IntersectionPerception.class);
         if (intersection != null)
@@ -505,8 +508,7 @@ public final class LmrsUtil implements LmrsParameters
             }
         }
 
-        // safe regarding neighbors?
-        return gapAcceptance.acceptGap(perception, params, sli, cfm, desire, ownSpeed, ownAcceleration, lat);
+        return true;
 
     }
 

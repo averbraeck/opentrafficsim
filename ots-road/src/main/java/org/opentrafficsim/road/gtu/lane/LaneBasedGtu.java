@@ -721,8 +721,8 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         // Add distance as plan path may be shorter than lane center line path
         Length remain = getOperationalPlan().getTotalLength().plus(EVENT_MARGIN);
         Length planStartPositionAtLaneOnPath = getLongitudinalPosition();
-        boolean checkLaneChange =
-                ((LaneBasedOperationalPlan) getOperationalPlan()).isDeviative() && !isInstantaneousLaneChange();
+        boolean checkLaneChange = getOperationalPlan() instanceof LaneBasedOperationalPlan lbop && lbop.isDeviative()
+                && !isInstantaneousLaneChange();
         while (true)
         {
             Time enterTime;
@@ -1503,7 +1503,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     @SuppressWarnings("checkstyle:designforextension")
     public String toString()
     {
-        return String.format("GTU " + getId());
+        return "GTU " + getId();
     }
 
 }

@@ -16,6 +16,7 @@ import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
@@ -60,6 +61,7 @@ public interface Cooperation extends LmrsParameters
                     a = Acceleration.min(a, aSingle);
                 }
             }
+            a = Acceleration.min(a, followLaneChanger(perception, params, sli, cfm, lat, ownSpeed));
             return Acceleration.max(a, b.neg());
         }
 
@@ -106,6 +108,7 @@ public interface Cooperation extends LmrsParameters
                     a = Acceleration.min(a, aSingle);
                 }
             }
+            a = Acceleration.min(a, followLaneChanger(perception, params, sli, cfm, lat, ownSpeed));
             return Acceleration.max(a, bCrit.neg());
         }
 
@@ -145,6 +148,7 @@ public interface Cooperation extends LmrsParameters
                     a = Acceleration.min(a, Synchronization.gentleUrgency(aSingle, desire, params));
                 }
             }
+            a = Acceleration.min(a, followLaneChanger(perception, params, sli, cfm, lat, ownSpeed));
             return a;
         }
 
@@ -154,6 +158,34 @@ public interface Cooperation extends LmrsParameters
             return "ACTIVE";
         }
     };
+
+    /**
+     * Follow lane changing vehicles that are not yet registered on the lane.
+     * @param perception perception
+     * @param params ego parameters
+     * @param sli speed limit info
+     * @param cfm ca-following model
+     * @param lat lateral direction
+     * @param ownSpeed ego speed
+     * @return acceleration due to following lane changer
+     * @throws OperationalPlanException exception
+     * @throws ParameterException exception
+     */
+    private static Acceleration followLaneChanger(final LanePerception perception, final Parameters params,
+            final SpeedLimitInfo sli, final CarFollowingModel cfm, final LateralDirectionality lat, final Speed ownSpeed)
+            throws OperationalPlanException, ParameterException
+    {
+        RelativeLane relativeLane = new RelativeLane(lat, 1);
+        for (HeadwayGtu leader : perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane))
+        {
+            if (leader.isTurnIndicatorOn(lat.flip()) && leader.getSpeed().gt0()
+                    && (lat.isLeft() ? leader.getDeviation().si < -0.01 : leader.getDeviation().si > 0.01))
+            {
+                return CarFollowingUtil.followSingleLeader(cfm, params, ownSpeed, sli, leader.getDistance(), leader.getSpeed());
+            }
+        }
+        return Acceleration.POSITIVE_INFINITY;
+    }
 
     /**
      * Determine acceleration for cooperation.

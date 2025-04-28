@@ -737,7 +737,8 @@ public final class ConflictUtil
                 {
                     HeadwayGtuSimple conflictGtu = new HeadwayGtuSimple("virtual " + UUID.randomUUID().toString(),
                             DefaultsNl.CAR, conflict.getConflictingVisibility(), new Length(4.0, LengthUnit.SI),
-                            new Length(2.0, LengthUnit.SI), conflict.getConflictingSpeedLimit(), Acceleration.ZERO, Speed.ZERO);
+                            new Length(2.0, LengthUnit.SI), conflict.getConflictingSpeedLimit(), Acceleration.ZERO, Speed.ZERO,
+                            Length.ZERO);
                     List<HeadwayGtu> conflictingVehiclesList = new ArrayList<>();
                     conflictingVehiclesList.add(conflictGtu);
                     conflictingVehicles = conflictingVehiclesList;

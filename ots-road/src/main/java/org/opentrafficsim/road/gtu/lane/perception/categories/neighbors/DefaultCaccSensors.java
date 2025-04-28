@@ -65,6 +65,7 @@ public class DefaultCaccSensors implements HeadwayGtuType
         Speed v = perceivedGtu.getSpeed(t);
         Acceleration a = perceivedGtu.getAcceleration(t);
         Speed desiredSpeed = null;
+        Length deviation = perceivedGtu.getDeviation();
         List<GtuStatus> status = new ArrayList<>();
         if (perceivedGtu.isBrakingLightsOn(t))
         {
@@ -84,7 +85,7 @@ public class DefaultCaccSensors implements HeadwayGtuType
             default:
                 break;
         }
-        return new HeadwayGtuSimple(id, gtuType, distance, length, width, v, a, desiredSpeed,
+        return new HeadwayGtuSimple(id, gtuType, distance, length, width, v, a, desiredSpeed, deviation,
                 status.toArray(new GtuStatus[status.size()]));
     }
 

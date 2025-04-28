@@ -1,7 +1,9 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
-import org.djunits.unit.AccelerationUnit;
+import java.util.SortedSet;
+
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -9,9 +11,11 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
@@ -42,36 +46,50 @@ public interface GapAcceptance
                 return false;
             }
 
+            Acceleration threshold = params.getParameter(ParameterTypes.B).times(-desire);
+            if (threshold.gt(ownAcceleration))
+            {
+                return false;
+            }
+
+            if (!acceptEgoAcceleration(perception, params, sli, cfm, desire, ownSpeed, lat, threshold))
+            {
+                return false;
+            }
+
             // TODO
             /*-
-             * Followers and are accepted if the acceleration and speed is 0, a leader is accepted if the ego speed is 0. This 
+             * Followers and are accepted if the acceleration and speed is 0, a leader is accepted if the ego speed is 0. This
              * is in place as vehicles that provide courtesy, will decelerate for us and overshoot the stand-still distance. As
              * a consequence, they will cease cooperation as they are too close. A pattern will arise where followers slow down
              * to (near) stand-still, and accelerate again, before we could ever accept the gap.
-             * 
-             * By accepting the gap in the moment that they reach stand-still, this vehicle can at least accept the gap at some 
-             * point. All of this is only a problem if the own vehicle is standing still. Otherwise the stand-still distance is 
+             *
+             * By accepting the gap in the moment that they reach stand-still, this vehicle can at least accept the gap at some
+             * point. All of this is only a problem if the own vehicle is standing still. Otherwise the stand-still distance is
              * not important and movement of our own will create an acceptable situation.
-             * 
-             * What needs to be done, is to find a better way to deal with the cooperation and gap-acceptance, such that this  
+             *
+             * What needs to be done, is to find a better way to deal with the cooperation and gap-acceptance, such that this
              * hack is not required.
              */
-
-            Acceleration b = params.getParameter(ParameterTypes.B);
-            Acceleration aFollow = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
             for (HeadwayGtu follower : neighbors.getFirstFollowers(lat))
             {
                 if (follower.getSpeed().gt0() || follower.getAcceleration().gt0() || follower.getDistance().si < 1.0)
                 {
-                    Acceleration a = LmrsUtil.singleAcceleration(follower.getDistance(), follower.getSpeed(), ownSpeed, desire,
-                            follower.getParameters(), follower.getSpeedLimitInfo(), follower.getCarFollowingModel());
-                    aFollow = Acceleration.min(aFollow, a);
+                    Acceleration aFollow = LmrsUtil.singleAcceleration(follower.getDistance(), follower.getSpeed(), ownSpeed,
+                            desire, follower.getParameters(), follower.getSpeedLimitInfo(), follower.getCarFollowingModel());
+                    if (threshold.gt(aFollow))
+                    {
+                        return false;
+                    }
                 }
             }
 
-            Acceleration aSelf = egoAcceleration(perception, params, sli, cfm, desire, ownSpeed, lat);
-            Acceleration threshold = b.times(-desire);
-            return aFollow.ge(threshold) && aSelf.ge(threshold) && ownAcceleration.ge(threshold);
+            if (!acceptLaneChangers(perception, params, sli, cfm, ownSpeed, lat, threshold))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         @Override
@@ -96,8 +114,12 @@ public interface GapAcceptance
                 return false;
             }
 
-            Acceleration b = params.getParameter(ParameterTypes.B);
-            Acceleration aFollow = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
+            Acceleration threshold = params.getParameter(ParameterTypes.B).times(-desire);
+            if (!acceptEgoAcceleration(perception, params, sli, cfm, desire, ownSpeed, lat, threshold))
+            {
+                return false;
+            }
+
             for (HeadwayGtu follower : neigbors.getFirstFollowers(lat))
             {
                 if (follower.getSpeed().gt0() || follower.getAcceleration().gt0())
@@ -106,17 +128,23 @@ public interface GapAcceptance
                     Parameters folParams = follower.getParameters();
                     folParams.setParameterResettable(ParameterTypes.TMIN, params.getParameter(ParameterTypes.TMIN));
                     folParams.setParameterResettable(ParameterTypes.TMAX, params.getParameter(ParameterTypes.TMAX));
-                    Acceleration a = LmrsUtil.singleAcceleration(follower.getDistance(), follower.getSpeed(), ownSpeed, desire,
-                            folParams, follower.getSpeedLimitInfo(), follower.getCarFollowingModel());
-                    aFollow = Acceleration.min(aFollow, a);
+                    Acceleration aFollow = LmrsUtil.singleAcceleration(follower.getDistance(), follower.getSpeed(), ownSpeed,
+                            desire, folParams, follower.getSpeedLimitInfo(), follower.getCarFollowingModel());
                     folParams.resetParameter(ParameterTypes.TMIN);
                     folParams.resetParameter(ParameterTypes.TMAX);
+                    if (threshold.gt(aFollow))
+                    {
+                        return false;
+                    }
                 }
             }
 
-            Acceleration aSelf = egoAcceleration(perception, params, sli, cfm, desire, ownSpeed, lat);
-            Acceleration threshold = b.times(-desire);
-            return aFollow.ge(threshold) && aSelf.ge(threshold);
+            if (!acceptLaneChangers(perception, params, sli, cfm, ownSpeed, lat, threshold))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         @Override
@@ -135,27 +163,77 @@ public interface GapAcceptance
      * @param desire level of lane change desire
      * @param ownSpeed own speed
      * @param lat lateral direction for synchronization
+     * @param threshold threshold value
      * @return whether a gap is acceptable
      * @throws ParameterException if a parameter is not defined
      * @throws OperationalPlanException perception exception
      */
-    static Acceleration egoAcceleration(final LanePerception perception, final Parameters params, final SpeedLimitInfo sli,
-            final CarFollowingModel cfm, final double desire, final Speed ownSpeed, final LateralDirectionality lat)
-            throws ParameterException, OperationalPlanException
+    private static boolean acceptEgoAcceleration(final LanePerception perception, final Parameters params,
+            final SpeedLimitInfo sli, final CarFollowingModel cfm, final double desire, final Speed ownSpeed,
+            final LateralDirectionality lat, final Acceleration threshold) throws ParameterException, OperationalPlanException
     {
-        Acceleration aSelf = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
         if (ownSpeed.gt0())
         {
-            for (
-
-            HeadwayGtu leader : perception.getPerceptionCategory(NeighborsPerception.class).getFirstLeaders(lat))
+            for (HeadwayGtu leader : perception.getPerceptionCategory(NeighborsPerception.class).getFirstLeaders(lat))
             {
                 Acceleration a = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire, params,
                         sli, cfm);
-                aSelf = Acceleration.min(aSelf, a);
+                if (threshold.gt(a))
+                {
+                    return false;
+                }
             }
         }
-        return aSelf;
+        return true;
+    }
+
+    /**
+     * Determine whether a gap is acceptable regarding lane changers from the second adjacent lane to the first adjacent lane.
+     * @param perception perception
+     * @param params parameters
+     * @param sli speed limit info
+     * @param cfm car-following model
+     * @param ownSpeed own speed
+     * @param lat lateral direction for synchronization
+     * @param threshold threshold value
+     * @return whether a gap is acceptable
+     * @throws ParameterException if a parameter is not defined
+     * @throws OperationalPlanException perception exception
+     */
+    private static boolean acceptLaneChangers(final LanePerception perception, final Parameters params,
+            final SpeedLimitInfo sli, final CarFollowingModel cfm, final Speed ownSpeed, final LateralDirectionality lat,
+            final Acceleration threshold) throws ParameterException, OperationalPlanException
+    {
+        if (ownSpeed.gt0())
+        {
+            NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
+            // Only potential lane changers in the gap to the leader in the target lane are relevant
+            SortedSet<HeadwayGtu> firstLeaders = neighbors.getFirstLeaders(lat);
+            Length range = Length.POS_MAXVALUE;
+            if (!firstLeaders.isEmpty())
+            {
+                range = Length.ZERO;
+                for (HeadwayGtu leader : firstLeaders)
+                {
+                    range = Length.max(range, leader.getDistance());
+                }
+            }
+            for (HeadwayGtu leader : neighbors.getLeaders(new RelativeLane(lat, 2)))
+            {
+                if (leader.getDistance().gt(range))
+                {
+                    return true;
+                }
+                if (leader.isTurnIndicatorOn(lat.flip()) && leader.getSpeed().gt0()
+                        && (lat.isLeft() ? leader.getDeviation().si < -0.01 : leader.getDeviation().si > 0.01))
+                {
+                    Acceleration a = CarFollowingUtil.followSingleLeader(cfm, params, ownSpeed, sli, leader.getDistance(),
+                            leader.getSpeed());
+                    return a.ge(threshold);
+                }
+            }
+        }
+        return true;
     }
 
     /**

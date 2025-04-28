@@ -5,6 +5,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -39,6 +40,16 @@ public interface HeadwayGtu extends Headway
      * @return were the braking lights on?
      */
     boolean isBrakingLightsOn();
+
+    /**
+     * Returns indicator status.
+     * @param lat direction of indicator.
+     * @return indicator status
+     */
+    default boolean isTurnIndicatorOn(final LateralDirectionality lat)
+    {
+        return lat.isLeft() ? isLeftTurnIndicatorOn() : isRightTurnIndicatorOn();
+    }
 
     /**
      * Returns left indicator status.
@@ -128,5 +139,11 @@ public interface HeadwayGtu extends Headway
      * @return width of the GTU
      */
     Length getWidth();
+
+    /**
+     * Returns the lateral deviation from the lane center line. Positive values are left, negative values are right.
+     * @return lateral deviation from the lane center line
+     */
+    Length getDeviation();
 
 }

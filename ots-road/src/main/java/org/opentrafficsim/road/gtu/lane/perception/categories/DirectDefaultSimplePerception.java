@@ -2,10 +2,8 @@ package org.opentrafficsim.road.gtu.lane.perception.categories;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.djunits.unit.AccelerationUnit;
@@ -167,7 +165,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     @Override
     public final void updateAccessibleAdjacentLanesRight() throws GtuException
     {
-        this.accessibleAdjacentLanesLeft = new TimeStampedObject<>(
+        this.accessibleAdjacentLanesRight = new TimeStampedObject<>(
                 getGtu().getLane().getAdjacentLane(LateralDirectionality.RIGHT, getGtu().getType()), getTimestamp());
     }
 
@@ -638,7 +636,8 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
             double gtuDistanceSI = Math.abs(laneBasedGTU.getPosition(lane, laneBasedGTU.getRear()).si - startPosSI);
             return new HeadwayGtuSimple(laneBasedGTU.getId(), laneBasedGTU.getType(),
                     new Length(cumDistSI + gtuDistanceSI, LengthUnit.SI), laneBasedGTU.getLength(), laneBasedGTU.getWidth(),
-                    laneBasedGTU.getSpeed(), laneBasedGTU.getAcceleration(), null, getGtuStatus(laneBasedGTU));
+                    laneBasedGTU.getSpeed(), laneBasedGTU.getAcceleration(), null, laneBasedGTU.getDeviation(),
+                    getGtuStatus(laneBasedGTU));
         }
 
         else
@@ -753,11 +752,12 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
         {
             foundHeadway = closest;
         }
-        if (foundHeadway instanceof AbstractHeadwayGtu)
+        if (foundHeadway instanceof AbstractHeadwayGtu abstractFoundHeadway)
         {
             return new HeadwayGtuSimple(foundHeadway.getId(), ((AbstractHeadwayGtu) foundHeadway).getGtuType(),
                     foundHeadway.getDistance().neg(), foundHeadway.getLength(), ((AbstractHeadwayGtu) foundHeadway).getWidth(),
-                    foundHeadway.getSpeed(), foundHeadway.getAcceleration(), null);
+                    foundHeadway.getSpeed(), foundHeadway.getAcceleration(), abstractFoundHeadway.getDesiredSpeed(),
+                    abstractFoundHeadway.getDeviation());
         }
         if (foundHeadway instanceof HeadwayDistance)
         {
@@ -792,7 +792,8 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
             if (distanceM > 0 && distanceM <= maxDistanceSI)
             {
                 return new HeadwayGtuSimple(otherGTU.getId(), otherGTU.getType(), new Length(distanceM, LengthUnit.SI),
-                        otherGTU.getLength(), otherGTU.getWidth(), otherGTU.getSpeed(), otherGTU.getAcceleration(), null);
+                        otherGTU.getLength(), otherGTU.getWidth(), otherGTU.getSpeed(), otherGTU.getAcceleration(), null,
+                        otherGTU.getDeviation());
             }
             return new HeadwayDistance(Double.MAX_VALUE);
         }
@@ -842,6 +843,10 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
     private Collection<Headway> parallel(final Lane lane, final Time when) throws GtuException
     {
         Collection<Headway> headwayCollection = new LinkedHashSet<>();
+        if (lane == null)
+        {
+            return headwayCollection;
+        }
         Lane l = getGtu().getLane();
         // only take lanes that we can compare based on a shared design line
         if (l.getLink().equals(lane.getLink()))
@@ -876,7 +881,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
                         Length overlapRear = new Length(1.0, LengthUnit.SI);
                         headwayCollection.add(new HeadwayGtuSimple(otherGTU.getId(), otherGTU.getType(), overlapFront, overlap,
                                 overlapRear, otherGTU.getLength(), otherGTU.getWidth(), otherGTU.getSpeed(),
-                                otherGTU.getAcceleration(), null, getGtuStatus(otherGTU)));
+                                otherGTU.getAcceleration(), null, otherGTU.getDeviation(), getGtuStatus(otherGTU)));
                     }
                 }
             }
@@ -929,44 +934,50 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
 
         // forward
         Lane adjacentLane = getAccessibleAdjacentLanes(directionality);
-        LanePathInfo lpiAdjacent = buildLanePathInfoAdjacent(adjacentLane, directionality, when);
-        Headway leader = forwardHeadway(lpiAdjacent, maximumForwardHeadway, true);
-        if (null != leader.getId() && !result.contains(leader))
+        if (adjacentLane != null)
         {
-            result.add(leader);
+            LanePathInfo lpiAdjacent = buildLanePathInfoAdjacent(adjacentLane, directionality, when);
+            Headway leader = forwardHeadway(lpiAdjacent, maximumForwardHeadway, true);
+            if (null != leader.getId() && !result.contains(leader))
+            {
+                result.add(leader);
+            }
         }
 
         // backward
         LanePosition ref = getGtu().getPosition();
         adjacentLane = getAccessibleAdjacentLanes(directionality);
-        double pos = adjacentLane.getLength().si * ref.position().si / ref.lane().getLength().si;
-        pos = pos + getGtu().getRear().dx().si;
-
-        Headway follower = headwayRecursiveBackwardSI(adjacentLane, pos, 0.0, -maximumReverseHeadway.getSI(), when);
-        if (follower instanceof AbstractHeadwayGtu)
+        if (adjacentLane != null)
         {
-            boolean found = false;
-            for (Headway headway : result)
+            double pos = adjacentLane.getLength().si * ref.position().si / ref.lane().getLength().si;
+            pos = pos + getGtu().getRear().dx().si;
+
+            Headway follower = headwayRecursiveBackwardSI(adjacentLane, pos, 0.0, -maximumReverseHeadway.getSI(), when);
+            if (follower instanceof AbstractHeadwayGtu abstractFollower)
             {
-                if (headway.getId().equals(follower.getId()))
+                boolean found = false;
+                for (Headway headway : result)
                 {
-                    found = true;
+                    if (headway.getId().equals(follower.getId()))
+                    {
+                        found = true;
+                    }
+                }
+                if (!found)
+                {
+                    result.add(new HeadwayGtuSimple(follower.getId(), abstractFollower.getGtuType(),
+                            follower.getDistance().neg(), follower.getLength(), abstractFollower.getWidth(),
+                            follower.getSpeed(), follower.getAcceleration(), null, abstractFollower.getDeviation()));
                 }
             }
-            if (!found)
+            else if (follower instanceof HeadwayDistance) // always add for potential lane drop
             {
-                result.add(new HeadwayGtuSimple(follower.getId(), ((AbstractHeadwayGtu) follower).getGtuType(),
-                        follower.getDistance().neg(), follower.getLength(), ((AbstractHeadwayGtu) follower).getWidth(),
-                        follower.getSpeed(), follower.getAcceleration(), null));
+                result.add(new HeadwayDistance(follower.getDistance().neg()));
             }
-        }
-        else if (follower instanceof HeadwayDistance) // always add for potential lane drop
-        {
-            result.add(new HeadwayDistance(follower.getDistance().neg()));
-        }
-        else
-        {
-            throw new GtuException("collectNeighborLaneTraffic not yet suited to observe obstacles on neighboring lanes");
+            else
+            {
+                throw new GtuException("collectNeighborLaneTraffic not yet suited to observe obstacles on neighboring lanes");
+            }
         }
         return result;
     }
