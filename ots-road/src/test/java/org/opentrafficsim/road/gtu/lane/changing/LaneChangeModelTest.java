@@ -196,7 +196,7 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
         car.getTacticalPlanner().getPerception().perceive();
         Collection<Headway> sameLaneGTUs = new LinkedHashSet<>();
         sameLaneGTUs.add(new HeadwayGtuSimple(car.getId(), car.getType(), Length.ZERO, Length.ZERO, car.getLength(),
-                car.getSpeed(), car.getAcceleration(), null));
+                car.getSpeed(), car.getAcceleration(), null, Length.ZERO));
         Collection<Headway> preferredLaneGTUs = new LinkedHashSet<>();
         Collection<Headway> nonPreferredLaneGTUs = new LinkedHashSet<>();
         LaneMovementStep laneChangeModelResult = laneChangeModel.computeLaneChangeAndAcceleration(car, sameLaneGTUs,
@@ -238,7 +238,7 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
             preferredLaneGTUs.clear();
             HeadwayGtuSimple collisionHWGTU = new HeadwayGtuSimple(collisionCar.getId(), collisionCar.getType(),
                     new Length(pos - reference.getSI(), LengthUnit.SI), collisionCar.getLength(), collisionCar.getWidth(),
-                    collisionCar.getSpeed(), collisionCar.getAcceleration(), null);
+                    collisionCar.getSpeed(), collisionCar.getAcceleration(), null, Length.ZERO);
             preferredLaneGTUs.add(collisionHWGTU);
             laneChangeModelResult = new Egoistic().computeLaneChangeAndAcceleration(car, sameLaneGTUs, preferredLaneGTUs,
                     nonPreferredLaneGTUs, new Speed(100, KM_PER_HOUR), new Acceleration(0.3, METER_PER_SECOND_2),
@@ -272,7 +272,8 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
             preferredLaneGTUs.clear();
             HeadwayGtuSimple collisionHWGTU = new HeadwayGtuSimple(otherCar.getId(), otherCar.getType(),
                     new Length(pos - car.getPosition(lanes[0], car.getReference()).getSI(), LengthUnit.SI),
-                    otherCar.getLength(), otherCar.getWidth(), otherCar.getSpeed(), otherCar.getAcceleration(), null);
+                    otherCar.getLength(), otherCar.getWidth(), otherCar.getSpeed(), otherCar.getAcceleration(), null,
+                    Length.ZERO);
             preferredLaneGTUs.add(collisionHWGTU);
             laneChangeModelResult = new Egoistic().computeLaneChangeAndAcceleration(car, sameLaneGTUs, preferredLaneGTUs,
                     nonPreferredLaneGTUs, new Speed(100, KM_PER_HOUR), new Acceleration(0.3, METER_PER_SECOND_2),
