@@ -1,5 +1,6 @@
 package org.opentrafficsim.base.geometry;
 
+import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 
@@ -11,28 +12,13 @@ import org.djutils.draw.point.Point2d;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class OffsetRectangleShape implements OtsShape
+public abstract class OffsetRectangleShape implements OtsShape
 {
 
-    /** Minimum x coordinate. */
-    private final double minX;
+    /** Bounds. */
+    private final Bounds2d bounds;
 
-    /** Maximum x coordinate. */
-    private final double maxX;
-
-    /** Minimum y coordinate. */
-    private final double minY;
-
-    /** Maximum y coordinate. */
-    private final double maxY;
-
-    /** Half width. */
-    private final double dx;
-
-    /** Half height. */
-    private final double dy;
-
-    /** Middle point. */
+    /** Middle point relative to location. */
     private final Point2d midPoint;
 
     /** Resulting polygon. */
@@ -47,75 +33,40 @@ public class OffsetRectangleShape implements OtsShape
      */
     public OffsetRectangleShape(final double minX, final double maxX, final double minY, final double maxY)
     {
-        this.minX = minX;
-        this.maxX = maxX;
-        this.minY = minY;
-        this.maxY = maxY;
-        this.dx = (maxX - minX) / 2.0;
-        this.dy = (maxY - minY) / 2.0;
-        this.midPoint = new Point2d(minX + this.dx, minY + this.dy);
+        this.bounds = new Bounds2d(minX, maxX, minY, maxY);
+        this.midPoint = new Point2d(minX + this.bounds.getDeltaX() / 2.0, minY + this.bounds.getDeltaY() / 2.0);
     }
 
     @Override
-    public double getMinX()
-    {
-        return this.minX;
-    }
-
-    @Override
-    public double getMaxX()
-    {
-        return this.maxX;
-    }
-
-    @Override
-    public double getMinY()
-    {
-        return this.minY;
-    }
-
-    @Override
-    public double getMaxY()
-    {
-        return this.maxY;
-    }
-
-    @Override
-    public boolean contains(final double x, final double y)
-    {
-        return this.minX < x & x < this.maxX & this.minY < y & y < this.maxY;
-    }
-
-    @Override
-    public Point2d midPoint()
-    {
-        return this.midPoint;
-    }
-
-    @Override
-    public double signedDistance(final Point2d point)
-    {
-        double qx = Math.abs(point.x - this.midPoint.x) - this.dx;
-        double qy = Math.abs(point.y - this.midPoint.y) - this.dy;
-        return Math.hypot(Math.max(qx, 0.0), Math.max(qy, 0.0)) + Math.min(Math.max(qx, qy), 0.0);
-    }
-
-    @Override
-    public Polygon2d asPolygon()
+    public Polygon2d getRelativeContour()
     {
         if (this.polygon == null)
         {
-            this.polygon = new Polygon2d(new double[] {this.maxX, this.minX, this.minX, this.maxX},
-                    new double[] {this.maxY, this.maxY, this.minY, this.minY});
+            this.polygon = new Polygon2d(
+                    new double[] {getBounds().getMaxX(), getBounds().getMinX(), getBounds().getMinX(), getBounds().getMaxX()},
+                    new double[] {getBounds().getMaxY(), getBounds().getMaxY(), getBounds().getMinY(), getBounds().getMinY()});
         }
         return this.polygon;
     }
 
     @Override
+    public Bounds2d getBounds()
+    {
+        return this.bounds;
+    }
+
+    @Override
+    public double signedDistance(final Point2d point)
+    {
+        double qx = Math.abs(point.x - this.midPoint.x) - this.bounds.getDeltaX() / 2.0;
+        double qy = Math.abs(point.y - this.midPoint.y) - this.bounds.getDeltaY() / 2.0;
+        return Math.hypot(Math.max(qx, 0.0), Math.max(qy, 0.0)) + Math.min(Math.max(qx, qy), 0.0);
+    }
+
+    @Override
     public String toString()
     {
-        return "OffsetRectangleShape [minX=" + this.minX + ", maxX=" + this.maxX + ", minY=" + this.minY + ", maxY=" + this.maxY
-                + "]";
+        return "OffsetRectangleShape [bounds=" + this.bounds + "]";
     }
 
 }

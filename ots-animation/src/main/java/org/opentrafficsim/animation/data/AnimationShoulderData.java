@@ -26,7 +26,7 @@ public class AnimationShoulderData extends AnimationCrossSectionElementData<Lane
     @Override
     public String toString()
     {
-        return "Shoulder " + getElement().getLink().getId() + " " + getElement().getOffsetAtBegin();
+        return "Shoulder " + getObject().getLink().getId() + " " + getObject().getOffsetAtBegin();
     }
 
 }

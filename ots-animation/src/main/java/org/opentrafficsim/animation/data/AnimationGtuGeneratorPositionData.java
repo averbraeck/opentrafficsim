@@ -43,7 +43,13 @@ public class AnimationGtuGeneratorPositionData implements GtuGeneratorPositionDa
     }
 
     @Override
-    public Polygon2d getContour()
+    public Polygon2d getAbsoluteContour()
+    {
+        throw new UnsupportedOperationException("GtuGeneratorPosition does not have a contour.");
+    }
+
+    @Override
+    public Polygon2d getRelativeContour()
     {
         throw new UnsupportedOperationException("GtuGeneratorPosition does not have a contour.");
     }

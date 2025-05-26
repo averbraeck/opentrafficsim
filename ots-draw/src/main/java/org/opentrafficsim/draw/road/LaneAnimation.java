@@ -10,7 +10,6 @@ import org.djutils.base.Identifiable;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
-import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.ClickableLineLocatable;
 import org.opentrafficsim.draw.DrawLevel;
@@ -96,7 +95,7 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         private final DirectedPoint2d location;
 
         /** Shape (cached). */
-        private OtsShape shape;
+        private Polygon2d relativeContour;
 
         /** Lane id. */
         private final String fullId;
@@ -120,17 +119,18 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         }
 
         @Override
-        public OtsShape getShape()
+        public Polygon2d getRelativeContour()
         {
-            if (this.shape == null)
+            if (this.relativeContour == null)
             {
-                this.shape = ClickableLineLocatable.super.getShape();
+                this.relativeContour =
+                        new Polygon2d(OtsShape.toRelativeTransform(getLocation()).transform(getAbsoluteContour().iterator()));
             }
-            return this.shape;
+            return this.relativeContour;
         }
 
         @Override
-        public Polygon2d getContour()
+        public Polygon2d getAbsoluteContour()
         {
             return new Polygon2d(this.centerLine.iterator());
         }
@@ -147,7 +147,7 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         @Override
         public PolyLine2d getLine()
         {
-            return OtsLocatable.transformLine(this.centerLine, getLocation());
+            return OtsShape.transformLine(this.centerLine, getLocation());
         }
 
         @Override

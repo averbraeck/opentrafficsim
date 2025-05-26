@@ -4,11 +4,7 @@ import java.awt.Color;
 import java.awt.geom.RectangularShape;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.draw.bounds.Bounds2d;
-import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.animation.gtu.colorer.GtuColorerManager;
-import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
@@ -20,14 +16,11 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class AnimationGtuData implements GtuData
+public class AnimationGtuData extends AnimationIdentifiableShape<LaneBasedGtu> implements GtuData
 {
 
     /** GTU colorer. */
     private final GtuColorerManager gtuColorerManager;
-
-    /** Gtu. */
-    private final LaneBasedGtu gtu;
 
     /** Marker. */
     private final GtuMarker marker;
@@ -40,81 +33,51 @@ public class AnimationGtuData implements GtuData
      */
     public AnimationGtuData(final GtuColorerManager gtuColorerManager, final LaneBasedGtu gtu, final GtuMarker marker)
     {
+        super(gtu);
         this.gtuColorerManager = gtuColorerManager;
-        this.gtu = gtu;
         this.marker = marker;
-    }
-
-    @Override
-    public DirectedPoint2d getLocation()
-    {
-        return this.gtu.getLocation();
-    }
-
-    @Override
-    public Polygon2d getContour()
-    {
-        return this.gtu.getContour();
-    }
-
-    @Override
-    public Bounds2d getBounds()
-    {
-        return this.gtu.getBounds();
-    }
-
-    @Override
-    public OtsShape getShape()
-    {
-        return this.gtu.getShape();
-    }
-
-    @Override
-    public String getId()
-    {
-        return this.gtu.getId();
     }
 
     @Override
     public Color getColor()
     {
-        return this.gtuColorerManager.getColor(this.gtu);
+        return this.gtuColorerManager.getColor(getObject());
     }
 
     @Override
     public Length getLength()
     {
-        return this.gtu.getLength();
+        return getObject().getLength();
     }
 
     @Override
     public Length getWidth()
     {
-        return this.gtu.getWidth();
+        return getObject().getWidth();
     }
 
     @Override
     public Length getFront()
     {
-        return this.gtu.getFront().dx();
+        return getObject().getFront().dx();
     }
 
     @Override
     public Length getRear()
     {
-        return this.gtu.getRear().dx();
+        return getObject().getRear().dx();
     }
 
     @Override
     public boolean leftIndicatorOn()
     {
-        return this.gtu.getTurnIndicatorStatus().isLeftOrBoth();
+        return getObject().getTurnIndicatorStatus().isLeftOrBoth();
     }
 
     @Override
     public boolean rightIndicatorOn()
     {
-        return this.gtu.getTurnIndicatorStatus().isRightOrBoth();
+        return getObject().getTurnIndicatorStatus().isRightOrBoth();
     }
 
     @Override
@@ -126,22 +89,13 @@ public class AnimationGtuData implements GtuData
     @Override
     public boolean isBrakingLightsOn()
     {
-        return this.gtu.isBrakingLightsOn();
-    }
-
-    /**
-     * Returns the GTU.
-     * @return GTU.
-     */
-    public LaneBasedGtu getGtu()
-    {
-        return this.gtu;
+        return getObject().isBrakingLightsOn();
     }
 
     @Override
     public String toString()
     {
-        return "Gtu " + this.gtu.getId();
+        return "Gtu " + getId();
     }
 
 }

@@ -1,8 +1,5 @@
 package org.opentrafficsim.animation.data;
 
-import org.djutils.draw.bounds.Bounds2d;
-import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.draw.road.TrafficLightDetectorAnimation.TrafficLightDetectorData;
 import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector;
 
@@ -14,11 +11,9 @@ import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class AnimationTrafficLightDetectorData implements TrafficLightDetectorData
+public class AnimationTrafficLightDetectorData extends AnimationIdentifiableShape<TrafficLightDetector>
+        implements TrafficLightDetectorData
 {
-
-    /** Traffic light detector. */
-    private final TrafficLightDetector trafficLigthDetector;
 
     /**
      * Constructor.
@@ -26,52 +21,19 @@ public class AnimationTrafficLightDetectorData implements TrafficLightDetectorDa
      */
     public AnimationTrafficLightDetectorData(final TrafficLightDetector trafficLigthDetector)
     {
-        this.trafficLigthDetector = trafficLigthDetector;
-    }
-
-    @Override
-    public DirectedPoint2d getLocation()
-    {
-        return this.trafficLigthDetector.getLocation();
-    }
-
-    @Override
-    public Bounds2d getBounds()
-    {
-        return this.trafficLigthDetector.getBounds();
-    }
-
-    @Override
-    public Polygon2d getContour()
-    {
-        return this.trafficLigthDetector.getContour();
+        super(trafficLigthDetector);
     }
 
     @Override
     public boolean getOccupancy()
     {
-        return this.trafficLigthDetector.getOccupancy();
-    }
-
-    @Override
-    public String getId()
-    {
-        return this.trafficLigthDetector.getId();
-    }
-
-    /**
-     * Returns the traffic light detector.
-     * @return traffic light detector.
-     */
-    public TrafficLightDetector getTrafficLightDetector()
-    {
-        return this.trafficLigthDetector;
+        return getObject().getOccupancy();
     }
 
     @Override
     public String toString()
     {
-        return "Traffic light detector " + this.trafficLigthDetector.getId();
+        return "Traffic light detector " + getId();
     }
 
 }

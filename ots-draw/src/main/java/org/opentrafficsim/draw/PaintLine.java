@@ -10,7 +10,7 @@ import org.djutils.draw.Transform2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
 
 /**
  * Paint a line as a Path2D.Double
@@ -58,7 +58,7 @@ public final class PaintLine
      */
     public static Path2D.Float getPath(final DirectedPoint2d referencePoint, final PolyLine2d line)
     {
-        Transform2d transform = OtsLocatable.toBoundsTransform(referencePoint);
+        Transform2d transform = OtsShape.toRelativeTransform(referencePoint);
         Path2D.Float path = new Path2D.Float();
         Point2d p = transform.transform(line.getFirst());
         path.moveTo(p.x, -p.y);

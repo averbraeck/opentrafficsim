@@ -18,7 +18,7 @@ import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
 
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 import nl.tudelft.simulation.language.d2.Angle;
@@ -36,7 +36,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @param <L> locatable type
  * @param <T> text animation type
  */
-public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimation<L, T>> implements OtsLocatable, Serializable
+public abstract class TextAnimation<L extends OtsShape, T extends TextAnimation<L, T>> implements OtsShape, Serializable
 {
     /** */
     private static final long serialVersionUID = 20161211L;
@@ -212,9 +212,15 @@ public abstract class TextAnimation<L extends OtsLocatable, T extends TextAnimat
     }
 
     @Override
-    public Polygon2d getContour()
+    public Polygon2d getAbsoluteContour()
     {
-        return new Polygon2d(new double[] {-1.0, 1.0, 1.0, -1.0}, new double[] {-1.0, -1.0, 1.0, 1.0});
+        return getSource().getAbsoluteContour();
+    }
+
+    @Override
+    public Polygon2d getRelativeContour()
+    {
+        return getSource().getRelativeContour();
     }
 
     /**

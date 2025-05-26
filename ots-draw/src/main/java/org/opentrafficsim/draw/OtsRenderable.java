@@ -7,7 +7,7 @@ import java.awt.RenderingHints.Key;
 import org.djutils.draw.Transform2d;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
 
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 import nl.tudelft.simulation.naming.context.Contextualized;
@@ -21,7 +21,7 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <L> locatable type
  */
-public abstract class OtsRenderable<L extends OtsLocatable> extends Renderable2d<L>
+public abstract class OtsRenderable<L extends OtsShape> extends Renderable2d<L>
 {
 
     /** */
@@ -81,7 +81,7 @@ public abstract class OtsRenderable<L extends OtsLocatable> extends Renderable2d
     @Override
     public boolean contains(final Point2d pointWorldCoordinates, final Bounds2d extent)
     {
-        Transform2d transformation = OtsLocatable.toBoundsTransform(getSource().getLocation());
+        Transform2d transformation = OtsShape.toRelativeTransform(getSource().getLocation());
         Point2d pointObjectCoordinates = transformation.transform(pointWorldCoordinates);
         return getSource().getBounds().contains(pointObjectCoordinates);
     }

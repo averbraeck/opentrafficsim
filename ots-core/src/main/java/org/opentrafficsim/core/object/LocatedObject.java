@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
 import org.djutils.event.EventProducer;
-import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
 
 /**
  * Generic object that can be placed in the model. This could be implemented for a traffic light, a road sign, or an obstacle.
@@ -16,7 +16,7 @@ import org.opentrafficsim.base.geometry.OtsLocatable;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public interface LocatedObject extends OtsLocatable, Identifiable, EventProducer, Serializable
+public interface LocatedObject extends OtsShape, Identifiable, EventProducer, Serializable
 {
 
     /**

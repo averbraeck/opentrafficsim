@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
@@ -16,7 +17,7 @@ import org.djutils.exceptions.Throw;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class RoundedRectangleShape implements OtsShape
+public abstract class RoundedRectangleShape implements OtsShape
 {
 
     /** Half length along y dimension. */
@@ -28,17 +29,14 @@ public class RoundedRectangleShape implements OtsShape
     /** Rounding radius. */
     private final double r;
 
-    /** Max x coordinate, can be lower than dx due to large r. */
-    private final double maxX;
-
-    /** Max y coordinate, can be lower than dy due to large r. */
-    private final double maxY;
-
     /** Number of line segments in polygon representation. */
     private final int polygonSegments;
 
     /** Polygon representation. */
     private Polygon2d polygon;
+
+    /** Bounds. */
+    private Bounds2d bounds;
 
     /**
      * Constructor.
@@ -83,45 +81,16 @@ public class RoundedRectangleShape implements OtsShape
                 "Radius makes rounded rectangle non-existent.");
         Throw.when(r < 0.0, IllegalArgumentException.class, "Radius must be positive.");
         this.r = r;
-        this.maxX = this.dx - signedDistance(new Point2d(this.dx, 0.0));
-        this.maxY = this.dy - signedDistance(new Point2d(0.0, this.dy));
+        double maxX = this.dx - signedDistance(new Point2d(this.dx, 0.0));
+        double maxY = this.dy - signedDistance(new Point2d(0.0, this.dy));
         this.polygonSegments = polygonSegments;
+        this.bounds = new Bounds2d(-maxX, maxX, -maxY, maxY);
     }
 
     @Override
-    public double getMinX()
+    public Bounds2d getBounds()
     {
-        return -this.maxX;
-    }
-
-    @Override
-    public double getMaxX()
-    {
-        return this.maxX;
-    }
-
-    @Override
-    public double getMinY()
-    {
-        return -this.maxY;
-    }
-
-    @Override
-    public double getMaxY()
-    {
-        return this.maxY;
-    }
-
-    @Override
-    public boolean contains(final Point2d point) throws NullPointerException
-    {
-        return signedDistance(point) < 0.0;
-    }
-
-    @Override
-    public boolean contains(final double x, final double y) throws NullPointerException
-    {
-        return contains(new Point2d(x, y));
+        return this.bounds;
     }
 
     /**
@@ -137,7 +106,7 @@ public class RoundedRectangleShape implements OtsShape
     }
 
     @Override
-    public Polygon2d asPolygon()
+    public Polygon2d getRelativeContour()
     {
         if (this.polygon == null)
         {

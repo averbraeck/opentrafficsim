@@ -2,7 +2,7 @@ package org.opentrafficsim.animation;
 
 import java.awt.Color;
 
-import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
 
 /**
  * Colorer is the generic interface for anything that can get a static or dynamic color in an animation within OTS.
@@ -13,7 +13,7 @@ import org.opentrafficsim.base.geometry.OtsLocatable;
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
  * @param <D> the drawable type
  */
-public interface Colorer<D extends OtsLocatable>
+public interface Colorer<D extends OtsShape>
 {
     /**
      * Get the color, based on the OtsLocatable object.

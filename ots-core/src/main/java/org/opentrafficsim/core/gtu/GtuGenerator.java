@@ -5,7 +5,7 @@ import java.util.Set;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
-import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.core.object.NonLocatedObject;
 
 /**
@@ -38,7 +38,7 @@ public interface GtuGenerator extends NonLocatedObject
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    interface GtuGeneratorPosition extends OtsLocatable, Identifiable
+    interface GtuGeneratorPosition extends OtsShape, Identifiable
     {
         /**
          * Returns the number of GTUs in the queue.
@@ -50,7 +50,14 @@ public interface GtuGenerator extends NonLocatedObject
         DirectedPoint2d getLocation();
 
         @Override
-        default Polygon2d getContour()
+        default Polygon2d getAbsoluteContour()
+        {
+            throw new UnsupportedOperationException(
+                    "A GtuGeneratorPosition does not have geometry. Geometry should be defined in animation.");
+        }
+
+        @Override
+        default Polygon2d getRelativeContour()
         {
             throw new UnsupportedOperationException(
                     "A GtuGeneratorPosition does not have geometry. Geometry should be defined in animation.");

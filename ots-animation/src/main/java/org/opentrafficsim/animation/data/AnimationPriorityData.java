@@ -2,8 +2,8 @@ package org.opentrafficsim.animation.data;
 
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.djutils.draw.point.DirectedPoint2d;
+import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.road.PriorityAnimation.PriorityData;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 
@@ -20,12 +20,15 @@ public class AnimationPriorityData implements PriorityData
 
     /** Link. */
     private final CrossSectionLink link;
-    
+
     /** Bounds. */
     private final Bounds2d bounds = new Bounds2d(2.0, 2.0);
-    
-    /** Contour. */
-    private final Polygon2d contour;
+
+    /** Relative contour. */
+    private final Polygon2d relativeContour;
+
+    /** Absolute contour. */
+    private final Polygon2d absoluteContour;
 
     /**
      * Constructor.
@@ -34,21 +37,29 @@ public class AnimationPriorityData implements PriorityData
     public AnimationPriorityData(final CrossSectionLink link)
     {
         this.link = link;
-        this.contour = OtsLocatable.boundsAsContour(this);
+        this.absoluteContour = OtsShape.boundsAsAbsoluteContour(this);
+        this.relativeContour =
+                new Polygon2d(OtsShape.toRelativeTransform(getLocation()).transform(this.absoluteContour.iterator()));
     }
 
     @Override
-    public Point2d getLocation()
+    public DirectedPoint2d getLocation()
     {
         return this.link.getDesignLine().getLocationFractionExtended(0.5);
     }
-    
+
     @Override
-    public Polygon2d getContour()
+    public Polygon2d getAbsoluteContour()
     {
-        return this.contour;
+        return this.absoluteContour;
     }
-    
+
+    @Override
+    public Polygon2d getRelativeContour()
+    {
+        return this.relativeContour;
+    }
+
     @Override
     public Bounds2d getBounds()
     {

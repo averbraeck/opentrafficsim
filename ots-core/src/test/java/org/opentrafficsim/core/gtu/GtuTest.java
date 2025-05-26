@@ -164,7 +164,7 @@ public final class GtuTest
             new TestGtu((String) null, gtuType1, simulator, perceivableContext);
             fail("null id should have thrown a GTUException");
         }
-        catch (GtuException ge)
+        catch (NullPointerException ge)
         {
             // Ignore expected exception
         }
@@ -174,7 +174,7 @@ public final class GtuTest
             new TestGtu("IdOfGTU", null, simulator, perceivableContext);
             fail("null gtuType should have thrown a GTUException");
         }
-        catch (GtuException ge)
+        catch (NullPointerException ge)
         {
             // Ignore expected exception
         }
@@ -184,7 +184,7 @@ public final class GtuTest
             new TestGtu("IdOfGTU", gtuType1, null, perceivableContext);
             fail("null simulator should have thrown a GTUException");
         }
-        catch (GtuException ge)
+        catch (NullPointerException ge)
         {
             // Ignore expected exception
         }
@@ -194,7 +194,7 @@ public final class GtuTest
             new TestGtu("IdOfGTU", gtuType1, simulator, null);
             fail("null perceivableContext should have thrown a GTUException");
         }
-        catch (GtuException ge)
+        catch (NullPointerException ge)
         {
             // Ignore expected exception
         }
@@ -205,7 +205,7 @@ public final class GtuTest
             gtu.init(null, initialLocation, initialSpeed);
             fail("null strategicalPlanner should have thrown a GTUException");
         }
-        catch (GtuException ge)
+        catch (NullPointerException ge)
         {
             // Ignore expected exception
         }
@@ -234,7 +234,7 @@ public final class GtuTest
         try
         {
             gtu.init(strategicalPlanner, new DirectedPoint2d(10, Double.NaN, 30), initialSpeed);
-            fail("null initialSpeed should have thrown an IllegalArgumentException");
+            fail("NaN position should have thrown an IllegalArgumentException");
         }
         catch (IllegalArgumentException | ArithmeticException ge)
         {
@@ -256,7 +256,7 @@ public final class GtuTest
             gtu.init(strategicalPlanner, initialLocation, null);
             fail("null initialSpeed should have thrown a GTUException");
         }
-        catch (GtuException ge)
+        catch (NullPointerException ge)
         {
             // Ignore expected exception
         }
@@ -345,7 +345,7 @@ public final class GtuTest
                 final PerceivableContext perceivableContext) throws SimRuntimeException, GtuException
         {
             super(id, gtuType, simulator, perceivableContext, Length.instantiateSI(4.0), Length.instantiateSI(1.8),
-                    Speed.instantiateSI(50.0), Length.instantiateSI(2.0), Length.ZERO);
+                    Length.instantiateSI(2.0), Speed.instantiateSI(50.0));
         }
 
         @Override

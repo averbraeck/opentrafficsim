@@ -1,9 +1,6 @@
 package org.opentrafficsim.animation.data;
 
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.DirectedPoint2d;
-import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
@@ -16,14 +13,8 @@ import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class AnimationLinkData implements LinkData
+public class AnimationLinkData extends AnimationIdentifiableShape<Link> implements LinkData
 {
-
-    /** Link. */
-    private final Link link;
-
-    /** Shape (cached). */
-    private OtsShape shape;
 
     /**
      * Constructor.
@@ -31,68 +22,31 @@ public class AnimationLinkData implements LinkData
      */
     public AnimationLinkData(final Link link)
     {
-        this.link = link;
-    }
-
-    @Override
-    public Polygon2d getContour()
-    {
-        return this.link.getContour();
-    }
-
-    @Override
-    public OtsShape getShape()
-    {
-        if (this.shape == null)
-        {
-            this.shape = LinkData.super.getShape();
-        }
-        return this.shape;
-    }
-
-    @Override
-    public String getId()
-    {
-        return this.link.getId();
+        super(link);
     }
 
     @Override
     public boolean isConnector()
     {
-        return this.link.isConnector();
+        return getObject().isConnector();
     }
 
     @Override
     public PolyLine2d getCenterLine()
     {
-        return this.link.getDesignLine();
+        return getObject().getDesignLine();
     }
 
     @Override
     public PolyLine2d getLine()
     {
-        return OtsLocatable.transformLine(getCenterLine(), getLocation());
-    }
-
-    @Override
-    public DirectedPoint2d getLocation()
-    {
-        return this.link.getLocation();
-    }
-
-    /**
-     * Returns the link.
-     * @return link.
-     */
-    public Link getLink()
-    {
-        return this.link;
+        return OtsShape.transformLine(getCenterLine(), getLocation());
     }
 
     @Override
     public String toString()
     {
-        return "Link " + this.link.getId();
+        return "Link " + getId();
     }
 
 }

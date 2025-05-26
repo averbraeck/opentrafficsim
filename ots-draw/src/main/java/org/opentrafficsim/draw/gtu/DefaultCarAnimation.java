@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.point.DirectedPoint2d;
-import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.OtsRenderable;
 import org.opentrafficsim.draw.TextAlignment;
@@ -269,7 +269,7 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public interface GtuData extends OtsLocatable, Identifiable
+    public interface GtuData extends OtsShape, Identifiable
     {
         /**
          * Returns the GTU color.

@@ -16,10 +16,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableHashSet;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.base.HierarchicallyTyped;
-import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsShape;
-import org.opentrafficsim.base.geometry.PolygonShape;
-import org.opentrafficsim.base.geometry.SpatialObject;
 import org.opentrafficsim.core.gtu.GtuType;
 
 /**
@@ -33,26 +30,25 @@ import org.opentrafficsim.core.gtu.GtuType;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class Node
-        implements HierarchicallyTyped<NodeType, Node>, OtsLocatable, Serializable, Identifiable
+public class Node implements HierarchicallyTyped<NodeType, Node>, OtsShape, Serializable, Identifiable
 {
     /** */
     private static final long serialVersionUID = 20150722L;
 
-    /** The Network. */
+    /** Network. */
     private final Network network;
 
-    /** The node id. */
+    /** Id. */
     private final String id;
 
-    /** The point. */
+    /** Point. */
     private final DirectedPoint2d point;
 
-    /** The contour. */
-    private final Polygon2d contour;
+    /** Absolute contour. */
+    private final Polygon2d absoluteContour;
 
-    /** Shape. */
-    private final OtsShape shape;
+    /** Relative contour. */
+    private final Polygon2d relativeContour;
 
     /** The links connected to the Node. */
     private final Set<Link> links = new LinkedHashSet<>();
@@ -112,9 +108,10 @@ public class Node
 
         double x = this.point.x;
         double y = this.point.y;
-        this.contour = new Polygon2d(new Point2d(x - 0.5, y - 0.5), new Point2d(x - 0.5, y + 0.5),
+        this.absoluteContour = new Polygon2d(new Point2d(x - 0.5, y - 0.5), new Point2d(x - 0.5, y + 0.5),
                 new Point2d(x + 0.5, y + 0.5), new Point2d(x + 0.5, y - 0.5));
-        this.shape = new PolygonShape(OtsLocatable.relativeContour(this));
+        this.relativeContour =
+                new Polygon2d(new Point2d(-0.5, -0.5), new Point2d(-0.5, 0.5), new Point2d(0.5, 0.5), new Point2d(0.5, -0.5));
 
         this.network.addNode(this);
     }
@@ -144,15 +141,15 @@ public class Node
     }
 
     @Override
-    public Polygon2d getContour()
+    public Polygon2d getAbsoluteContour()
     {
-        return this.contour;
+        return this.absoluteContour;
     }
 
     @Override
-    public OtsShape getShape()
+    public Polygon2d getRelativeContour()
     {
-        return this.shape;
+        return this.relativeContour;
     }
 
     /**

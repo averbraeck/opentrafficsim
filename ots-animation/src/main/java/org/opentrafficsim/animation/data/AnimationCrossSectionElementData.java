@@ -1,9 +1,6 @@
 package org.opentrafficsim.animation.data;
 
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
 import org.opentrafficsim.road.network.lane.CrossSectionElement;
 
@@ -16,11 +13,9 @@ import org.opentrafficsim.road.network.lane.CrossSectionElement;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <T> cross-section element type.
  */
-public class AnimationCrossSectionElementData<T extends CrossSectionElement> implements CrossSectionElementData
+public class AnimationCrossSectionElementData<T extends CrossSectionElement> extends AnimationIdentifiableShape<T>
+        implements CrossSectionElementData
 {
-
-    /** Cross section element. */
-    private final T element;
 
     /**
      * Constructor.
@@ -28,52 +23,25 @@ public class AnimationCrossSectionElementData<T extends CrossSectionElement> imp
      */
     public AnimationCrossSectionElementData(final T element)
     {
-        this.element = element;
-    }
-
-    @Override
-    public Polygon2d getContour()
-    {
-        return this.element.getContour();
-    }
-
-    @Override
-    public OtsShape getShape()
-    {
-        return this.element.getShape();
+        super(element);
     }
 
     @Override
     public PolyLine2d getCenterLine()
     {
-        return this.element.getCenterLine();
+        return getObject().getCenterLine();
     }
 
     @Override
     public String getLinkId()
     {
-        return this.element.getId();
-    }
-
-    @Override
-    public Point2d getLocation()
-    {
-        return this.element.getLocation();
-    }
-
-    /**
-     * Returns the cross section element.
-     * @return cross-section element.
-     */
-    public T getElement()
-    {
-        return this.element;
+        return getObject().getLink().getId();
     }
 
     @Override
     public String toString()
     {
-        return "Cross section element " + getElement().getId();
+        return "Cross section element " + getId();
     }
 
 }

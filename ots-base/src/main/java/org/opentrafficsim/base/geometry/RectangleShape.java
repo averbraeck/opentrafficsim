@@ -1,6 +1,5 @@
 package org.opentrafficsim.base.geometry;
 
-import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 
 /**
@@ -11,17 +10,8 @@ import org.djutils.draw.point.Point2d;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class RectangleShape implements OtsShape
+public abstract class RectangleShape extends OffsetRectangleShape
 {
-
-    /** Half length along y dimension. */
-    private final double dx;
-
-    /** Half length along y dimension. */
-    private final double dy;
-
-    /** Polygon representation. */
-    private Polygon2d polygon;
 
     /**
      * Constructor.
@@ -30,38 +20,7 @@ public class RectangleShape implements OtsShape
      */
     public RectangleShape(final double dx, final double dy)
     {
-        this.dx = Math.abs(dx) / 2.0;
-        this.dy = Math.abs(dy) / 2.0;
-    }
-
-    @Override
-    public double getMinX()
-    {
-        return -this.dx;
-    }
-
-    @Override
-    public double getMaxX()
-    {
-        return this.dx;
-    }
-
-    @Override
-    public double getMinY()
-    {
-        return -this.dy;
-    }
-
-    @Override
-    public double getMaxY()
-    {
-        return this.dy;
-    }
-
-    @Override
-    public boolean contains(final double x, final double y) throws NullPointerException
-    {
-        return Math.abs(x) < this.dx && Math.abs(y) < this.dy;
+        super(-dx / 2.0, dx / 2.0, -dy / 2.0, dy / 2.0);
     }
 
     /**
@@ -71,26 +30,15 @@ public class RectangleShape implements OtsShape
     @Override
     public double signedDistance(final Point2d point)
     {
-        double qx = Math.abs(point.x) - this.dx;
-        double qy = Math.abs(point.y) - this.dy;
+        double qx = Math.abs(point.x) - getBounds().getDeltaX() / 2.0;
+        double qy = Math.abs(point.y) - getBounds().getDeltaY() / 2.0;
         return Math.hypot(Math.max(qx, 0.0), Math.max(qy, 0.0)) + Math.min(Math.max(qx, qy), 0.0);
-    }
-
-    @Override
-    public Polygon2d asPolygon()
-    {
-        if (this.polygon == null)
-        {
-            this.polygon = new Polygon2d(new Point2d(this.dx, this.dy), new Point2d(-this.dx, this.dy),
-                    new Point2d(-this.dx, -this.dy), new Point2d(this.dx, -this.dy), new Point2d(this.dx, this.dy));
-        }
-        return this.polygon;
     }
 
     @Override
     public String toString()
     {
-        return "RectangleShape [dx=" + this.dx + ", dy=" + this.dy + "]";
+        return "RectangleShape [dx=" + getBounds().getDeltaX() + ", dy=" + getBounds().getDeltaY() + "]";
     }
 
 }

@@ -11,9 +11,7 @@ import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.reference.ReferenceType;
-import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsShape;
-import org.opentrafficsim.base.geometry.RectangleShape;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
@@ -59,11 +57,11 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
     /** Bounds. */
     private Bounds2d bounds;
 
-    /** Contour. */
-    private Polygon2d contour;
+    /** Absolute contour. */
+    private Polygon2d absoluteContour;
 
-    /** Shape (cached). */
-    private OtsShape shape;
+    /** Relative contour. */
+    private Polygon2d relativeContour;
 
     /** Line on lane. */
     private PolyLine2d line;
@@ -163,15 +161,15 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
     }
 
     @Override
-    public Polygon2d getContour()
+    public Polygon2d getAbsoluteContour()
     {
-        return this.contour;
+        return this.absoluteContour;
     }
 
     @Override
-    public OtsShape getShape()
+    public Polygon2d getRelativeContour()
     {
-        return this.shape;
+        return this.relativeContour;
     }
 
     @Override
@@ -294,9 +292,10 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
         DirectedPoint2d point = laneData.getCenterLine().getLocationExtended(this.positionFromStart.si);
         this.location = new DirectedPoint2d(point.x, point.y, point.dirZ);
         this.line = new PolyLine2d(new double[] {0.0, 0.0}, new double[] {-w45, w45});
-        this.shape = new RectangleShape(0.0, 2.0 * w45);
         this.bounds = LaneBasedObjectData.super.getBounds();
-        this.contour = OtsLocatable.boundsAsContour(this);
+        this.absoluteContour = OtsShape.boundsAsAbsoluteContour(this);
+        this.relativeContour =
+                new Polygon2d(OtsShape.toRelativeTransform(this.location).transform(this.absoluteContour.iterator()));
         setValid();
     }
 

@@ -4,7 +4,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
-import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.road.network.lane.CrossSectionGeometry;
@@ -23,14 +22,8 @@ public class MapCrossSectionData implements CrossSectionElementData
     /** Node representing the element. */
     private final XsdTreeNode linkNode;
 
-    /** Location. */
-    private final DirectedPoint2d location;
-
     /** Geometry. */
     private final CrossSectionGeometry geometry;
-
-    /** Shape (cached). */
-    private OtsShape shape;
 
     /**
      * Constructor.
@@ -40,31 +33,25 @@ public class MapCrossSectionData implements CrossSectionElementData
     public MapCrossSectionData(final XsdTreeNode linkNode, final CrossSectionGeometry geometry)
     {
         this.linkNode = linkNode;
-        DirectedPoint2d point = geometry.centerLine().getLocationFractionExtended(0.5);
-        this.location = new DirectedPoint2d(point.x, point.y, point.dirZ);
         this.geometry = geometry;
     }
 
     @Override
     public DirectedPoint2d getLocation()
     {
-        return this.location;
+        return this.geometry.getLocation();
     }
 
     @Override
-    public Polygon2d getContour()
+    public Polygon2d getAbsoluteContour()
     {
-        return this.geometry.contour();
+        return this.geometry.absoluteContour();
     }
 
     @Override
-    public OtsShape getShape()
+    public Polygon2d getRelativeContour()
     {
-        if (this.shape == null)
-        {
-            this.shape = CrossSectionElementData.super.getShape();
-        }
-        return this.shape;
+        return this.geometry.getRelativeContour();
     }
 
     @Override

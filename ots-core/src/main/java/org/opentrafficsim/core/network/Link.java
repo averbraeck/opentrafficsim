@@ -18,9 +18,7 @@ import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.HierarchicallyTyped;
 import org.opentrafficsim.base.geometry.OtsLine2d;
-import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsShape;
-import org.opentrafficsim.base.geometry.PolygonShape;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 
@@ -35,7 +33,7 @@ import org.opentrafficsim.core.gtu.Gtu;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
 public class Link extends LocalEventProducer
-        implements HierarchicallyTyped<LinkType, Link>, OtsLocatable, Serializable, Identifiable
+        implements HierarchicallyTyped<LinkType, Link>, OtsShape, Serializable, Identifiable
 {
 
     /** */
@@ -80,14 +78,11 @@ public class Link extends LocalEventProducer
     /** Elevation data. */
     private final ContinuousPiecewiseLinearFunction elevation;
 
-    /** the shape. */
-    private final Polygon2d contour;
+    /** Absolute contour. */
+    private final Polygon2d absoluteContour;
 
-    /** Bounds. */
-    private final Bounds2d bounds;
-
-    /** Shape. */
-    private final OtsShape shape;
+    /** Absolute contour. */
+    private final Polygon2d relativeContour;
 
     /** The GTUs on this Link. */
     private final Set<Gtu> gtus = new LinkedHashSet<>();
@@ -126,11 +121,10 @@ public class Link extends LocalEventProducer
         this.endNode.addLink(this);
         this.designLine = designLine;
         this.elevation = elevation;
-        this.contour = new Polygon2d(PolyLine2d.concatenate(this.designLine, this.designLine.reverse()).iterator());
+        this.absoluteContour = new Polygon2d(PolyLine2d.concatenate(this.designLine, this.designLine.reverse()).iterator());
         this.location = this.designLine.getLocationPointFractionExtended(0.5);
-        Polygon2d relativeContour = OtsLocatable.relativeContour(this);
-        this.shape = new PolygonShape(relativeContour);
-        this.bounds = relativeContour.getBounds();
+        this.relativeContour =
+                new Polygon2d(OtsShape.toRelativeTransform(getLocation()).transform(this.absoluteContour.iterator()));
         this.network.addLink(this);
     }
 
@@ -242,15 +236,15 @@ public class Link extends LocalEventProducer
     }
 
     @Override
-    public Polygon2d getContour()
+    public Polygon2d getAbsoluteContour()
     {
-        return this.contour;
+        return this.absoluteContour;
     }
 
     @Override
-    public OtsShape getShape()
+    public Polygon2d getRelativeContour()
     {
-        return this.shape;
+        return this.relativeContour;
     }
 
     /**
@@ -272,17 +266,15 @@ public class Link extends LocalEventProducer
     }
 
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public DirectedPoint2d getLocation()
     {
         return this.location;
     }
 
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public Bounds2d getBounds()
     {
-        return this.bounds;
+        return this.relativeContour.getBounds();
     }
 
     /**

@@ -109,8 +109,8 @@ public final class ConflictTest implements EventListener
         // The intersection of the link design lines is at 50, 0
         if (VERBOSE)
         {
-            System.out.print(Export.toPlot(laneA.getContour()));
-            System.out.print(Export.toPlot(laneB.getContour()));
+            System.out.print(Export.toPlot(laneA.getAbsoluteContour()));
+            System.out.print(Export.toPlot(laneB.getAbsoluteContour()));
             System.out.println("c0,1,0");
             System.out.print(Export.toPlot(laneA.getCenterLine()));
             System.out.print(Export.toPlot(laneB.getCenterLine()));
@@ -123,7 +123,7 @@ public final class ConflictTest implements EventListener
         double closestDistance = Double.MAX_VALUE;
         Point2d conflictEnd = null;
         double furthestDistance = 0.0;
-        for (Point2d intersection : intersections(laneA.getContour(), laneB.getContour()))
+        for (Point2d intersection : intersections(laneA.getAbsoluteContour(), laneB.getAbsoluteContour()))
         {
             double distance = pointAFrom.distance(intersection);
             if (distance < closestDistance)
@@ -196,8 +196,8 @@ public final class ConflictTest implements EventListener
         assertEquals(conflictBStart, conflictB.getLongitudinalPosition(), "longitudinal position");
         assertEquals(new Length(conflictEnd.x - conflictStart.x, LengthUnit.SI), conflictA.getLength(), "length");
         assertEquals(conflictBLength, conflictB.getLength(), "length");
-        assertEquals(geometry1, conflictA.getContour(), "contour");
-        assertEquals(geometry2, conflictB.getContour(), "contour");
+        assertEquals(geometry1, conflictA.getAbsoluteContour(), "contour");
+        assertEquals(geometry2, conflictB.getAbsoluteContour(), "contour");
         assertTrue(conflictA.getConflictRule() instanceof DefaultConflictRule, "conflict rule");
         assertTrue(conflictB.getConflictRule() instanceof DefaultConflictRule, "conflict rule");
         assertFalse(conflictA.isPermitted(), "conflict A is not permitted");

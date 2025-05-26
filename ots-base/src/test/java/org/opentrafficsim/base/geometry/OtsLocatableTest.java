@@ -2,9 +2,9 @@ package org.opentrafficsim.base.geometry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 
-import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
@@ -38,53 +38,35 @@ public final class OtsLocatableTest
     @Test
     public void test()
     {
-        TestLocatable locatable = new TestLocatable();
-
-        locatable.getShape();
+        OtsShape locatable = new RectangleShape(4.0, 2.0)
+        {
+            @Override
+            public DirectedPoint2d getLocation()
+            {
+                return new DirectedPoint2d(10.0, 20.0, 0.5 * Math.PI);
+            }
+        };
 
         // bounds and polygon
         Polygon2d relativePolygon = new Polygon2d(new double[] {2.0, -2.0, -2.0, 2.0}, new double[] {1.0, 1.0, -1.0, -1.0});
-        pointsEqual(relativePolygon.getPointList(), OtsLocatable.relativeContour(locatable).getPointList());
-        pointsEqual(locatable.getBounds().getPointList(), OtsLocatable.contourAsBounds(locatable).getPointList());
-        assertEquals(CONTOUR, OtsLocatable.boundsAsContour(locatable));
+        pointsEqual(relativePolygon.getPointList(), locatable.getRelativeContour().getPointList());
+        pointsEqual(locatable.getBounds().getPointList(), locatable.getRelativeContour().getBounds().getPointList());
+        assertEquals(new LinkedHashSet<>(CONTOUR.getPointList()),
+                new LinkedHashSet<>(OtsShape.boundsAsAbsoluteContour(locatable).getPointList()));
 
         // line transformation
         PolyLine2d line = new PolyLine2d(new double[] {7.0, 7.0}, new double[] {0.5, 3.5});
-        PolyLine2d transformed = OtsLocatable.transformLine(line, new Point2d(2.0, 2.0));
+        PolyLine2d transformed = OtsShape.transformLine(line, new Point2d(2.0, 2.0));
         assertEquals(transformed.getFirst().x, 5.0, 0.001);
         assertEquals(transformed.getFirst().y, -1.5, 0.001);
         assertEquals(transformed.getLast().x, 5.0, 0.001);
         assertEquals(transformed.getLast().y, 1.5, 0.001);
 
-        transformed = OtsLocatable.transformLine(line, new DirectedPoint2d(2.0, 2.0, Math.PI));
+        transformed = OtsShape.transformLine(line, new DirectedPoint2d(2.0, 2.0, Math.PI));
         assertEquals(transformed.getFirst().x, -5.0, 0.001);
         assertEquals(transformed.getFirst().y, 1.5, 0.001);
         assertEquals(transformed.getLast().x, -5.0, 0.001);
         assertEquals(transformed.getLast().y, -1.5, 0.001);
-    }
-
-    /**
-     * Test locatable class.
-     */
-    private final class TestLocatable implements OtsLocatable
-    {
-        @Override
-        public Polygon2d getContour()
-        {
-            return CONTOUR;
-        }
-
-        @Override
-        public DirectedPoint2d getLocation()
-        {
-            return new DirectedPoint2d(10.0, 20.0, 0.5 * Math.PI);
-        }
-
-        @Override
-        public Bounds2d getBounds()
-        {
-            return new Bounds2d(4.0, 2.0);
-        }
     }
 
     /**

@@ -50,8 +50,8 @@ public class ConflictAnimation extends AbstractLineAnimation<ConflictData>
     {
         super(source, contextualized, new Length(0.5, LengthUnit.SI));
         // geometry of area (not the line) is absolute; pre-transform geometry to fit rotation of source
-        this.paths = this.getSource().getContour() == null ? null
-                : PaintPolygons.getPaths(getSource().getLocation(), getSource().getContour().getPointList());
+        this.paths = this.getSource().getAbsoluteContour() == null ? null
+                : PaintPolygons.getPaths(getSource().getLocation(), getSource().getAbsoluteContour().getPointList());
     }
 
     @Override

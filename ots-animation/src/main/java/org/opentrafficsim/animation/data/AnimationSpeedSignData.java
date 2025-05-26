@@ -1,8 +1,6 @@
 package org.opentrafficsim.animation.data;
 
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.draw.road.SpeedSignAnimation.SpeedSignData;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 
@@ -14,11 +12,8 @@ import org.opentrafficsim.road.network.lane.object.SpeedSign;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class AnimationSpeedSignData implements SpeedSignData
+public class AnimationSpeedSignData extends AnimationIdentifiableShape<SpeedSign> implements SpeedSignData
 {
-
-    /** Speed sign. */
-    private final SpeedSign speedSign;
 
     /**
      * Constructor.
@@ -26,40 +21,19 @@ public class AnimationSpeedSignData implements SpeedSignData
      */
     public AnimationSpeedSignData(final SpeedSign speedSign)
     {
-        this.speedSign = speedSign;
-    }
-
-    @Override
-    public DirectedPoint2d getLocation()
-    {
-        return this.speedSign.getLocation();
-    }
-
-    @Override
-    public Polygon2d getContour()
-    {
-        return this.speedSign.getContour();
+        super(speedSign);
     }
 
     @Override
     public Speed getSpeed()
     {
-        return this.speedSign.getSpeed();
-    }
-
-    /**
-     * Returns the speed sign.
-     * @return speed sign.
-     */
-    public SpeedSign getSpeedSign()
-    {
-        return this.speedSign;
+        return getObject().getSpeed();
     }
 
     @Override
     public String toString()
     {
-        return "Speed sign " + this.speedSign.getId();
+        return "Speed sign " + getId();
     }
 
 }

@@ -4,11 +4,10 @@ import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.base.StripeElement;
 import org.opentrafficsim.base.StripeElement.StripeLateralSync;
 import org.opentrafficsim.base.geometry.DirectionalPolyLine;
-import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
 import org.opentrafficsim.road.network.lane.Stripe;
 
@@ -40,8 +39,8 @@ public class AnimationStripeData extends AnimationCrossSectionElementData<Stripe
     {
         if (this.directionalCenterLine == null)
         {
-            this.directionalCenterLine = new DirectionalPolyLine(getElement().getCenterLine(),
-                    getElement().getLink().getStartNode().getHeading(), getElement().getLink().getEndNode().getHeading());
+            this.directionalCenterLine = new DirectionalPolyLine(getObject().getCenterLine(),
+                    getObject().getLink().getStartNode().getHeading(), getObject().getLink().getEndNode().getHeading());
         }
         return this.directionalCenterLine;
     }
@@ -49,7 +48,7 @@ public class AnimationStripeData extends AnimationCrossSectionElementData<Stripe
     @Override
     public PolyLine2d getReferenceLine()
     {
-        return getElement().getLateralSync().equals(StripeLateralSync.NONE) ? getElement().getCenterLine()
+        return getObject().getLateralSync().equals(StripeLateralSync.NONE) ? getObject().getCenterLine()
                 : getLinkReferenceLine();
     }
 
@@ -59,43 +58,37 @@ public class AnimationStripeData extends AnimationCrossSectionElementData<Stripe
      */
     private PolyLine2d getLinkReferenceLine()
     {
-        return getElement().getLinkReferenceLine();
+        return getObject().getLinkReferenceLine();
     }
 
     @Override
     public PolyLine2d getLine()
     {
-        return OtsLocatable.transformLine(getElement().getCenterLine(), getLocation());
+        return OtsShape.transformLine(getObject().getCenterLine(), getLocation());
     }
 
     @Override
     public List<StripeElement> getElements()
     {
-        return getElement().getElements();
+        return getObject().getElements();
     }
 
     @Override
     public Length getDashOffset()
     {
-        return getElement().getDashOffset();
-    }
-
-    @Override
-    public DirectedPoint2d getLocation()
-    {
-        return getElement().getLocation();
+        return getObject().getDashOffset();
     }
 
     @Override
     public Length getWidth(final Length location)
     {
-        return getElement().getWidth(location);
+        return getObject().getWidth(location);
     }
 
     @Override
     public String toString()
     {
-        return "Stripe " + getElement().getLink().getId() + " " + getElement().getOffsetAtBegin();
+        return "Stripe " + getObject().getLink().getId() + " " + getObject().getOffsetAtBegin();
     }
 
 }

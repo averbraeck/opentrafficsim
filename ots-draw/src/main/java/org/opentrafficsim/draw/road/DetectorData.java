@@ -1,6 +1,6 @@
 package org.opentrafficsim.draw.road;
 
-import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.ClickableLocatable;
 
 /**
@@ -24,7 +24,7 @@ public interface DetectorData extends ClickableLocatable
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    interface Text extends OtsLocatable
+    interface Text extends OtsShape
     {
         //
     }

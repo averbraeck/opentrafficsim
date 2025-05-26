@@ -7,8 +7,10 @@ import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.function.ContinuousPiecewiseLinearFunction.TupleSt;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.geometry.OtsLine2d;
+import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.core.geometry.ContinuousLine;
 import org.opentrafficsim.core.geometry.Flattener;
 
@@ -21,12 +23,12 @@ import org.opentrafficsim.core.geometry.Flattener;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param centerLine center line
- * @param contour contour
+ * @param absoluteContour contour
  * @param offset offset
  * @param width width
  */
 @SuppressWarnings("javadoc")
-public record CrossSectionGeometry(OtsLine2d centerLine, Polygon2d contour, ContinuousPiecewiseLinearFunction offset,
+public record CrossSectionGeometry(OtsLine2d centerLine, Polygon2d absoluteContour, ContinuousPiecewiseLinearFunction offset,
         ContinuousPiecewiseLinearFunction width)
 {
 
@@ -37,10 +39,10 @@ public record CrossSectionGeometry(OtsLine2d centerLine, Polygon2d contour, Cont
     public CrossSectionGeometry
 
     {
-        Throw.whenNull(centerLine, "Center line may not be null.");
-        Throw.whenNull(contour, "Contour may not be null.");
-        Throw.whenNull(offset, "Offset may not be null.");
-        Throw.whenNull(width, "Width may not be null.");
+        Throw.whenNull(centerLine, "centerLine");
+        Throw.whenNull(absoluteContour, "absoluteContour");
+        Throw.whenNull(offset, "offset");
+        Throw.whenNull(width, "width");
     }
 
     /**
@@ -71,6 +73,24 @@ public record CrossSectionGeometry(OtsLine2d centerLine, Polygon2d contour, Cont
         PolyLine2d right = designLine.flattenOffset(new ContinuousPiecewiseLinearFunction(rightMap), flattener);
         Polygon2d cont = LaneGeometryUtil.getContour(left, right);
         return new CrossSectionGeometry(new OtsLine2d(line), cont, offset, width);
+    }
+
+    /**
+     * Returns the location.
+     * @return
+     */
+    public DirectedPoint2d getLocation()
+    {
+        return centerLine().getLocationFractionExtended(0.5);
+    }
+
+    /**
+     * Returns the relative contour.
+     * @return relative contour
+     */
+    public Polygon2d getRelativeContour()
+    {
+        return new Polygon2d(OtsShape.toRelativeTransform(getLocation()).transform(absoluteContour().iterator()));
     }
 
 }

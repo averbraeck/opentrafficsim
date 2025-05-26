@@ -10,7 +10,7 @@ import java.util.Set;
 import org.djutils.draw.Transform2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
 
 /**
  * Paint a (series of) filled polygon(s) defined as a Path2D.Double
@@ -51,7 +51,7 @@ public final class PaintPolygons
      */
     public static Set<Path2D.Float> getPaths(final DirectedPoint2d referencePoint, final List<Point2d> line)
     {
-        Transform2d transform = OtsLocatable.toBoundsTransform(referencePoint);
+        Transform2d transform = OtsShape.toRelativeTransform(referencePoint);
         Set<Path2D.Float> paths = new LinkedHashSet<>();
         Path2D.Float path = new Path2D.Float();
         paths.add(path);

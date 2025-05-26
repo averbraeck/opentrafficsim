@@ -8,7 +8,6 @@ import java.awt.image.ImageObserver;
 import java.util.Set;
 
 import org.djutils.draw.line.PolyLine2d;
-import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.draw.ClickableLocatable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.OtsRenderable;
@@ -48,7 +47,7 @@ public class CrossSectionElementAnimation<L extends CrossSectionElementData> ext
     {
         super(source, contextualized);
         this.color = color;
-        this.paths = PaintPolygons.getPaths(OtsLocatable.relativeContour(source).getPointList());
+        this.paths = PaintPolygons.getPaths(source.getRelativeContour().getPointList());
     }
 
     @Override

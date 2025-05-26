@@ -11,7 +11,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
@@ -22,6 +21,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.geometry.OtsLine2d;
+import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -80,7 +80,10 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
     private final DirectedPoint2d location;
 
     /** Geometry of the detector. */
-    private final Polygon2d contour;
+    private final Polygon2d absoluteContour;
+
+    /** Relative contour. */
+    private final Polygon2d relativeContour;
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the triggering of the entry of a NonDirectionalOccupancyDetector. <br>
@@ -172,12 +175,14 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
             {
                 geometryPoints.add(new Point2d(p.x - dx, p.y - dy));
             }
-            this.contour = new Polygon2d(geometryPoints);
+            this.absoluteContour = new Polygon2d(geometryPoints);
         }
         catch (IndexOutOfBoundsException exception)
         {
             throw new NetworkException("Points A and B may be the same.", exception);
         }
+        this.relativeContour =
+                new Polygon2d(OtsShape.toRelativeTransform(this.location).transform(this.absoluteContour.iterator()));
         this.network.addObject(this);
     }
 
@@ -416,7 +421,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
     @Override
     public final Bounds2d getBounds()
     {
-        return this.contour.getBounds();
+        return this.relativeContour.getBounds();
     }
 
     /**
@@ -429,9 +434,15 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
     }
 
     @Override
-    public Polygon2d getContour()
+    public Polygon2d getAbsoluteContour()
     {
-        return this.contour;
+        return this.absoluteContour;
+    }
+
+    @Override
+    public Polygon2d getRelativeContour()
+    {
+        return this.relativeContour;
     }
 
     @Override
@@ -456,7 +467,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
     public final String toString()
     {
         return "TrafficLightDetector [id=" + this.id + ", entryA=" + this.entryA + ", exitB=" + this.exitB + ", currentGTUs="
-                + this.currentGTUs + ", lanes=" + this.lanes + ", geometry=" + this.contour + "]";
+                + this.currentGTUs + ", lanes=" + this.lanes + ", geometry=" + this.absoluteContour + "]";
     }
 
     /**

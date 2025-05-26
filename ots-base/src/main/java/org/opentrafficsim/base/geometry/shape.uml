@@ -14,11 +14,11 @@ interface Network {
 }
 
 abstract class OtsRenderable {}
-OtsRenderable o-- OtsLocatable: draws >
+OtsRenderable o-- OtsShape: draws >
 
-interface OtsLocatable {}
+interface OtsShape {}
 
-interface LocatedObject extends OtsLocatable {}
+interface LocatedObject extends OtsShape {}
 LocatedObject --o Network 
 
 interface Detector extends LocatedObject {}
@@ -39,7 +39,7 @@ interface GtuGenerator extends NonLocatedObject {
     + Set<GtuGeneratorPosition> getPositions()
 }
 
-interface GtuGeneratorPosition extends OtsLocatable {}
+interface GtuGeneratorPosition extends OtsShape {}
 GtuGeneratorPosition --* GtuGenerator: < has
 
 class LaneBasedGtuGenerator implements GtuGenerator {}

@@ -41,7 +41,6 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.StripeElement;
 import org.opentrafficsim.base.StripeElement.StripeLateralSync;
 import org.opentrafficsim.base.geometry.OtsGeometryUtil;
-import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.core.geometry.Bezier;
 import org.opentrafficsim.core.geometry.ContinuousArc;
@@ -131,11 +130,11 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     /** Location. */
     private DirectedPoint2d location;
 
-    /** Contour. */
-    private Polygon2d contour;
+    /** Absolute contour. */
+    private Polygon2d absoluteContour;
 
-    /** Shape (cached). */
-    private OtsShape shape;
+    /** Relative contour. */
+    private Polygon2d relativeContour;
 
     /** Node describing the road layout. */
     private XsdTreeNode roadLayoutNode;
@@ -256,19 +255,15 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     }
 
     @Override
-    public Polygon2d getContour()
+    public Polygon2d getAbsoluteContour()
     {
-        return this.contour;
+        return this.absoluteContour;
     }
 
     @Override
-    public OtsShape getShape()
+    public Polygon2d getRelativeContour()
     {
-        if (this.shape == null)
-        {
-            this.shape = LinkData.super.getShape();
-        }
-        return this.shape;
+        return this.relativeContour;
     }
 
     @Override
@@ -292,7 +287,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     @Override
     public PolyLine2d getLine()
     {
-        return OtsLocatable.transformLine(this.flattenedDesignLine, this.location);
+        return OtsShape.transformLine(this.flattenedDesignLine, this.location);
     }
 
     @Override
@@ -572,8 +567,10 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         this.flattenedDesignLine = this.designLine.flatten(getFlattener());
         DirectedPoint2d point = this.flattenedDesignLine.getLocationFractionExtended(0.5);
         this.location = new DirectedPoint2d(point.x, point.y, point.dirZ);
-        this.contour =
+        this.absoluteContour =
                 new Polygon2d(PolyLine2d.concatenate(this.flattenedDesignLine, this.flattenedDesignLine.reverse()).iterator());
+        this.relativeContour =
+                new Polygon2d(OtsShape.toRelativeTransform(this.location).transform(this.absoluteContour.iterator()));
         if (this.priorityAnimation != null)
         {
             getMap().removeAnimation(this.priorityAnimation);

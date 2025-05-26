@@ -266,7 +266,7 @@ public final class ConflictBuilder
         // Quick contour check, skip if not overlapping -- Don't repeat if it has taken place
         if (intersectionCheck)
         {
-            if (!lane1.getContour().intersects(lane2.getContour()))
+            if (!lane1.getAbsoluteContour().intersects(lane2.getAbsoluteContour()))
             {
                 return;
             }
@@ -1051,7 +1051,7 @@ public final class ConflictBuilder
                 // Quick contour check, skip if non-overlapping envelopes
                 try
                 {
-                    if (!lane1.getContour().intersects(lane2.getContour()))
+                    if (!lane1.getAbsoluteContour().intersects(lane2.getAbsoluteContour()))
                     {
                         continue;
                     }
@@ -1370,7 +1370,7 @@ public final class ConflictBuilder
                     // Quick contour check, skip if non-overlapping envelopes
                     try
                     {
-                        if (!lane1.getContour().intersects(lane2.getContour()))
+                        if (!lane1.getAbsoluteContour().intersects(lane2.getAbsoluteContour()))
                         {
                             continue;
                         }

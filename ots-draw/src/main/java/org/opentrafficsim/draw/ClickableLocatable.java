@@ -1,7 +1,6 @@
 package org.opentrafficsim.draw;
 
 import org.djutils.draw.bounds.Bounds2d;
-import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsShape;
 
 /**
@@ -13,7 +12,7 @@ import org.opentrafficsim.base.geometry.OtsShape;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public interface ClickableLocatable extends OtsLocatable
+public interface ClickableLocatable extends OtsShape
 {
 
     /** Minimum expanse to click on object. */
@@ -38,12 +37,10 @@ public interface ClickableLocatable extends OtsLocatable
          * AnimationConflictData extends that via LaneBasedObjectData, but should be clickable over the entire region of the
          * conflict as a ClickableLocatable.
          */
-        OtsShape shape = locatable.getShape();
-        double deltaX = shape.getMaxX() - shape.getMinX();
-        double deltaY = shape.getMaxY() - shape.getMinY();
-        boolean xExpand = deltaX < EXPANSE;
-        boolean yExpand = deltaY < EXPANSE;
-        return new Bounds2d(xExpand ? EXPANSE : deltaX, yExpand ? EXPANSE : deltaY)
+        Bounds2d bounds = locatable.getRelativeContour().getBounds();
+        boolean xExpand = bounds.getDeltaX() < EXPANSE;
+        boolean yExpand = bounds.getDeltaY() < EXPANSE;
+        return new Bounds2d(xExpand ? EXPANSE : bounds.getDeltaX(), yExpand ? EXPANSE : bounds.getDeltaY())
         {
             /** */
             private static final long serialVersionUID = 20241006L;
@@ -55,7 +52,7 @@ public interface ClickableLocatable extends OtsLocatable
                 {
                     return getMinX() <= x && x <= getMaxX() && getMinY() <= y && y <= getMaxY();
                 }
-                return shape.contains(x, y);
+                return bounds.contains(x, y);
             }
         };
     }

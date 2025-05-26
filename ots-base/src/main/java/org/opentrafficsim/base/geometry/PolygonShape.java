@@ -1,16 +1,17 @@
 package org.opentrafficsim.base.geometry;
 
+import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 
 /**
- * Bounds defined by a polygon.
+ * Shape defined by a polygon.
  * <p>
  * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class PolygonShape implements OtsShape
+public abstract class PolygonShape implements OtsShape
 {
 
     /** Polygon. */
@@ -26,9 +27,15 @@ public class PolygonShape implements OtsShape
     }
 
     @Override
-    public Polygon2d asPolygon()
+    public Polygon2d getRelativeContour()
     {
         return this.polygon;
+    }
+
+    @Override
+    public Bounds2d getBounds()
+    {
+        return this.polygon.getBounds();
     }
 
     @Override
@@ -36,5 +43,5 @@ public class PolygonShape implements OtsShape
     {
         return "PolygonShape [polygon=" + this.polygon + "]";
     }
-    
+
 }

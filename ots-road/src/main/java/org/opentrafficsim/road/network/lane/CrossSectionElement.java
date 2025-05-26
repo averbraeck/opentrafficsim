@@ -12,9 +12,7 @@ import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.geometry.OtsLine2d;
-import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsShape;
-import org.opentrafficsim.base.geometry.PolygonShape;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.network.RoadNetwork;
 
@@ -28,7 +26,7 @@ import org.opentrafficsim.road.network.RoadNetwork;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public abstract class CrossSectionElement extends LocalEventProducer implements OtsLocatable, Serializable, Identifiable
+public abstract class CrossSectionElement extends LocalEventProducer implements OtsShape, Serializable, Identifiable
 {
     /** */
     private static final long serialVersionUID = 20150826L;
@@ -44,7 +42,10 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
     private final OtsLine2d centerLine;
 
     /** The contour of the element. Calculated once at the creation. */
-    private final Polygon2d contour;
+    private final Polygon2d absoluteContour;
+
+    /** Relative contour.. */
+    private final Polygon2d relativeContour;
 
     /** Offset. */
     private final ContinuousPiecewiseLinearFunction offset;
@@ -55,12 +56,6 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
     /** Location, center of contour. */
     private final DirectedPoint2d location;
 
-    /** Bounding box. */
-    private final Bounds2d bounds;
-
-    /** Shape. */
-    private final OtsShape shape;
-
     /**
      * Constructor.
      * @param link link
@@ -69,17 +64,16 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      */
     public CrossSectionElement(final CrossSectionLink link, final String id, final CrossSectionGeometry geometry)
     {
-        Throw.whenNull(link, "Link may not be null.");
-        Throw.whenNull(id, "Id may not be null.");
-        Throw.whenNull(geometry, "Geometry may not be null.");
+        Throw.whenNull(link, "link");
+        Throw.whenNull(id, "id");
+        Throw.whenNull(geometry, "geometry");
         this.link = link;
         this.id = id;
         this.centerLine = geometry.centerLine();
         this.location = geometry.centerLine().getLocationPointFractionExtended(0.5);
-        this.contour = geometry.contour();
-        Polygon2d relativeContour = OtsLocatable.relativeContour(this);
-        this.shape = new PolygonShape(relativeContour);
-        this.bounds = relativeContour.getBounds();
+        this.absoluteContour = geometry.absoluteContour();
+        this.relativeContour =
+                new Polygon2d(OtsShape.toRelativeTransform(this.location).transform(this.absoluteContour.iterator()));
         this.offset = geometry.offset();
         this.width = geometry.width();
 
@@ -200,7 +194,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
     public double getZ()
     {
         // default implementation returns 0.0 in case of a null location or a 2D location
-        return Try.assign(() -> OtsLocatable.super.getZ(), "Remote exception on calling getZ()");
+        return Try.assign(() -> OtsShape.super.getZ(), "Remote exception on calling getZ()");
     }
 
     /**
@@ -213,15 +207,15 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
     }
 
     @Override
-    public final Polygon2d getContour()
+    public final Polygon2d getAbsoluteContour()
     {
-        return this.contour;
+        return this.absoluteContour;
     }
 
     @Override
-    public final OtsShape getShape()
+    public final Polygon2d getRelativeContour()
     {
-        return this.shape;
+        return this.relativeContour;
     }
 
     @Override
@@ -288,7 +282,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
     @SuppressWarnings("checkstyle:designforextension")
     public Bounds2d getBounds()
     {
-        return this.bounds;
+        return this.relativeContour.getBounds();
     }
 
     /**

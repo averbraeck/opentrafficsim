@@ -1,6 +1,5 @@
 package org.opentrafficsim.animation.data;
 
-import org.djutils.draw.line.PolyLine2d;
 import org.opentrafficsim.draw.road.LaneAnimation.LaneData;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -25,27 +24,9 @@ public class AnimationLaneData extends AnimationCrossSectionElementData<Lane> im
     }
 
     @Override
-    public String getId()
-    {
-        return getElement().getId();
-    }
-
-    @Override
-    public PolyLine2d getCenterLine()
-    {
-        return getElement().getCenterLine();
-    }
-
-    @Override
-    public String getLinkId()
-    {
-        return getElement().getLink().getId();
-    }
-
-    @Override
     public String toString()
     {
-        return "Lane " + getElement().getFullId();
+        return "Lane " + getObject().getFullId();
     }
 
 }

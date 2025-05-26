@@ -3,7 +3,6 @@ package org.opentrafficsim.draw;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.base.geometry.OtsShape;
 
 /**
  * This class returns bounds that respond to {@code contains(x, y)} by checking a clickable expanse around a line.
@@ -19,8 +18,8 @@ public interface ClickableLineLocatable extends ClickableLocatable
     @Override
     default Bounds2d getBounds()
     {
-        OtsShape shape = getShape();
-        return new Bounds2d(shape.getMaxX() - shape.getMinX(), shape.getMaxY() - shape.getMinY())
+        Bounds2d bounds = getRelativeContour().getBounds();
+        return new Bounds2d(bounds.getDeltaX(), bounds.getDeltaY())
         {
             /** */
             private static final long serialVersionUID = 20241006L;
@@ -35,7 +34,6 @@ public interface ClickableLineLocatable extends ClickableLocatable
     }
 
     /**
-     * 
      * Returns line representation of this object in object coordinates.
      * @return line representation of this object in object coordinates.
      */

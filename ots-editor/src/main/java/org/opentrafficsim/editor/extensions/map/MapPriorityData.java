@@ -2,8 +2,7 @@ package org.opentrafficsim.editor.extensions.map;
 
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.road.PriorityAnimation.PriorityData;
 
@@ -22,16 +21,16 @@ public class MapPriorityData implements PriorityData
     private final MapLinkData linkData;
 
     /** Location. */
-    private final Point2d location;
+    private final DirectedPoint2d location;
 
     /** Bounds. */
     private final Bounds2d bounds = new Bounds2d(2.0, 2.0);
 
-    /** Contour. */
-    private final Polygon2d contour;
+    /** Absolute contour. */
+    private final Polygon2d absoluteContour;
 
-    /** Shape (cached). */
-    private OtsShape shape;
+    /** Relative contour. */
+    private final Polygon2d relativeContour;
 
     /**
      * Constructor.
@@ -41,29 +40,27 @@ public class MapPriorityData implements PriorityData
     {
         this.location = linkData.getCenterLine().getLocationFractionExtended(0.5);
         this.linkData = linkData;
-        this.contour = OtsLocatable.boundsAsContour(this);
+        this.absoluteContour = OtsShape.boundsAsAbsoluteContour(this);
+        this.relativeContour =
+                new Polygon2d(OtsShape.toRelativeTransform(this.location).transform(this.absoluteContour.iterator()));
     }
 
     @Override
-    public Point2d getLocation()
+    public DirectedPoint2d getLocation()
     {
         return this.location;
     }
 
     @Override
-    public Polygon2d getContour()
+    public Polygon2d getAbsoluteContour()
     {
-        return this.contour;
+        return this.absoluteContour;
     }
 
     @Override
-    public OtsShape getShape()
+    public Polygon2d getRelativeContour()
     {
-        if (this.shape == null)
-        {
-            this.shape = PriorityData.super.getShape();
-        }
-        return this.shape;
+        return this.relativeContour;
     }
 
     @Override

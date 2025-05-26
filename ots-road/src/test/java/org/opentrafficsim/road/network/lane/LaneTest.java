@@ -109,7 +109,7 @@ public final class LaneTest implements UNITS
         assertEquals(0, lane.nextLanes(gtuTypeCar).size(), "NextLanes should be empty");
         double approximateLengthOfContour =
                 2 * nodeFrom.getPoint().distance(nodeTo.getPoint()) + startWidth.getSI() + endWidth.getSI();
-        assertEquals(approximateLengthOfContour, lane.getContour().getLength(), 0.1,
+        assertEquals(approximateLengthOfContour, lane.getAbsoluteContour().getLength(), 0.1,
                 "Length of contour is approximately " + approximateLengthOfContour);
         assertEquals(new Speed(100, KM_PER_HOUR), lane.getSpeedLimit(DefaultsNl.VEHICLE),
                 "SpeedLimit should be " + (new Speed(100, KM_PER_HOUR)));
@@ -727,7 +727,7 @@ public final class LaneTest implements UNITS
                                 // System.out.println(" my bbox is " + minX + "," + minY + " - " + maxX + "," + maxY);
                                 // System.out.println("the bbox is " + (bbLow.x + l.x) + "," + (bbLow.y + l.y) + " - "
                                 // + (bbHigh.x + l.x) + "," + (bbHigh.y + l.y));
-                                Bounds<?, ?> bb = lane.getContour().getBounds();
+                                Bounds<?, ?> bb = lane.getAbsoluteContour().getBounds();
                                 double boundsMinX = bb.getMinX();
                                 double boundsMinY = bb.getMinY();
                                 double boundsMaxX = bb.getMaxX();
@@ -772,7 +772,7 @@ public final class LaneTest implements UNITS
         double lateralAngle = Math.atan2(endY - startY, endX - startX) + Math.PI / 2;
         double px = designLineX + lateral * Math.cos(lateralAngle);
         double py = designLineY + lateral * Math.sin(lateralAngle);
-        Polygon2d contour = lane.getContour();
+        Polygon2d contour = lane.getAbsoluteContour();
         // GeometryFactory factory = new GeometryFactory();
         // Geometry p = factory.createPoint(new Coordinate(px, py));
         Point2d p = new Point2d(px, py);

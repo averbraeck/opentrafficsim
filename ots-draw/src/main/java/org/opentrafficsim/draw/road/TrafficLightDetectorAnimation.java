@@ -58,7 +58,7 @@ public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDet
     {
         super(detector, contextualized);
         this.detector = detector;
-        this.paths = PaintPolygons.getPaths(this.detector.getContour().getPointList());
+        this.paths = PaintPolygons.getPaths(this.detector.getAbsoluteContour().getPointList());
         this.text = new Text(detector, detector::getId, 0.0f, 0.5f + 0.2f, TextAlignment.CENTER, Color.BLACK, contextualized);
     }
 

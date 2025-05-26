@@ -3,6 +3,7 @@ package org.opentrafficsim.base.geometry;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
@@ -15,7 +16,7 @@ import org.djutils.exceptions.Throw;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class CircleShape implements OtsShape
+public abstract class CircleShape implements OtsShape
 {
 
     /** Radius. */
@@ -26,6 +27,9 @@ public class CircleShape implements OtsShape
 
     /** Polygon representation. */
     private Polygon2d polygon;
+
+    /** Bounds. */
+    private final Bounds2d bounds;
 
     /**
      * Constructor.
@@ -47,52 +51,23 @@ public class CircleShape implements OtsShape
         Throw.when(radius <= 0.0, IllegalArgumentException.class, "Radius must be above 0.0.");
         this.radius = radius;
         this.polygonSegments = polygonSegments;
+        this.bounds = new Bounds2d(2 * radius, 2 * radius);
     }
 
     @Override
-    public double getMinX()
+    public Bounds2d getBounds()
     {
-        return -this.radius;
-    }
-
-    @Override
-    public double getMaxX()
-    {
-        return this.radius;
-    }
-
-    @Override
-    public double getMinY()
-    {
-        return -this.radius;
-    }
-
-    @Override
-    public double getMaxY()
-    {
-        return this.radius;
-    }
-
-    @Override
-    public boolean contains(final Point2d point) throws NullPointerException
-    {
-        return CENTER.distance(point) < this.radius;
-    }
-
-    @Override
-    public boolean contains(final double x, final double y)
-    {
-        return contains(new Point2d(x, y));
+        return this.bounds;
     }
 
     @Override
     public double signedDistance(final Point2d point)
     {
-        return CENTER.distance(point) - this.radius;
+        return Math.hypot(point.x, point.y) - this.radius;
     }
 
     @Override
-    public Polygon2d asPolygon()
+    public Polygon2d getRelativeContour()
     {
         if (this.polygon == null)
         {
@@ -129,6 +104,8 @@ public class CircleShape implements OtsShape
         }
         return this.polygon;
     }
+
+
 
     @Override
     public String toString()

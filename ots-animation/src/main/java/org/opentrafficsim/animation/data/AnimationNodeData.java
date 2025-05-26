@@ -1,7 +1,6 @@
 package org.opentrafficsim.animation.data;
 
 import org.djutils.draw.line.Polygon2d;
-import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
 
@@ -13,11 +12,8 @@ import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class AnimationNodeData implements NodeData
+public class AnimationNodeData extends AnimationIdentifiableShape<Node> implements NodeData
 {
-
-    /** Node. */
-    private final Node node;
 
     /**
      * Constructor.
@@ -25,40 +21,25 @@ public class AnimationNodeData implements NodeData
      */
     public AnimationNodeData(final Node node)
     {
-        this.node = node;
+        super(node);
     }
 
     @Override
-    public Polygon2d getContour()
+    public Polygon2d getAbsoluteContour()
     {
         throw new UnsupportedOperationException("Nodes do not have a drawable contour.");
     }
 
     @Override
-    public String getId()
+    public Polygon2d getRelativeContour()
     {
-        return this.node.getId();
-    }
-
-    @Override
-    public DirectedPoint2d getLocation()
-    {
-        return this.node.getLocation();
-    }
-
-    /**
-     * Returns the node.
-     * @return node.
-     */
-    public Node getNode()
-    {
-        return this.node;
+        throw new UnsupportedOperationException("Nodes do not have a drawable contour.");
     }
 
     @Override
     public String toString()
     {
-        return "Node " + this.node.getId();
+        return "Node " + getId();
     }
 
 }

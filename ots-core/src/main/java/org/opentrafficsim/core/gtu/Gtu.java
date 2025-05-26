@@ -35,11 +35,10 @@ import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.HierarchicallyTyped;
-import org.opentrafficsim.base.geometry.DynamicSpatialObject;
 import org.opentrafficsim.base.geometry.OffsetRectangleShape;
 import org.opentrafficsim.base.geometry.OtsLine2d;
-import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsShape;
+import org.opentrafficsim.base.geometry.PolygonShape;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -66,8 +65,7 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class Gtu extends LocalEventProducer
-        implements HierarchicallyTyped<GtuType, Gtu>, DynamicSpatialObject, OtsLocatable, Serializable, Identifiable
+public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuType, Gtu>, OtsShape, Serializable, Identifiable
 {
     /** */
     private static final long serialVersionUID = 20140822L;
@@ -145,23 +143,11 @@ public class Gtu extends LocalEventProducer
     /** Error handler. */
     private GtuErrorHandler errorHandler = GtuErrorHandler.THROW;
 
-    /** shape of the Gtu contour. */
-    private Polygon2d contour;
-
     /** Shape. */
     private final OtsShape shape;
 
-    /** Sensing positions. */
-    protected final Map<RelativePosition.Type, RelativePosition> relativePositions = new LinkedHashMap<>();
-
-    /** cached front. */
-    private final RelativePosition frontPos;
-
-    /** cached rear. */
-    private final RelativePosition rearPos;
-
-    /** contour points. */
-    private final Set<RelativePosition> contourPoints = new LinkedHashSet<>();
+    /** Relative positions to the reference point of type RelativePosition.REFERENCE. */
+    private final Map<RelativePosition.Type, RelativePosition> relativePositions = new LinkedHashMap<>();
 
     /** The maximum length of the GTU (parallel with driving direction). */
     private final Length length;
@@ -175,40 +161,32 @@ public class Gtu extends LocalEventProducer
     /** Tags of the GTU, these are used for specific use cases of any sort. */
     private final Map<String, String> tags = new LinkedHashMap<>();
 
-    /** Bounds. */
-    private Bounds2d bounds;
-
     /**
-     * Constructor.
+     * Constructor using shape.
      * @param id the id of the GTU
      * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType
      * @param simulator the simulator to schedule plan changes on
      * @param perceivableContext the perceivable context in which this GTU will be registered
      * @param length the maximum length of the GTU (parallel with driving direction)
      * @param width the maximum width of the GTU (perpendicular to driving direction)
-     * @param maximumSpeed Speed;the maximum speed of the GTU (in the driving direction)
      * @param front front distance relative to the reference position
-     * @param centerOfGravity distance from the center of gravity to the reference position
-     * @throws GtuException when the preconditions of the constructor are not met
+     * @param contour contour relative to reference position, may be {@code null}
+     * @param maximumSpeed the maximum speed of the GTU (in the driving direction)
+     * @throws GtuException when id already exists in the context
+     * @throws NullPointerException when any input is null
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public Gtu(final String id, final GtuType gtuType, final OtsSimulatorInterface simulator,
-            final PerceivableContext perceivableContext, final Length length, final Length width, final Speed maximumSpeed,
-            final Length front, final Length centerOfGravity) throws GtuException
+    private Gtu(final String id, final GtuType gtuType, final OtsSimulatorInterface simulator,
+            final PerceivableContext perceivableContext, final Length length, final Length width, final Length front,
+            final Polygon2d contour, final Speed maximumSpeed) throws GtuException
     {
-        Throw.when(id == null, GtuException.class, "id is null");
-        Throw.when(gtuType == null, GtuException.class, "gtuType is null");
-        Throw.when(perceivableContext == null, GtuException.class, "perceivableContext is null for GTU with id %s", id);
+        Throw.whenNull(id, "id");
+        Throw.whenNull(gtuType, "gtuType");
+        Throw.whenNull(simulator, "simulator");
+        Throw.whenNull(perceivableContext, "perceivableContext");
         Throw.when(perceivableContext.containsGtuId(id), GtuException.class,
                 "GTU with id %s already registered in perceivableContext %s", id, perceivableContext.getId());
-        Throw.when(simulator == null, GtuException.class, "simulator is null for GTU with id %s", id);
-
-        this.length = length;
-        this.width = width;
-        if (null == maximumSpeed)
-        {
-            throw new GtuException("maximumSpeed may not be null");
-        }
+        Throw.whenNull(maximumSpeed, "maximumSpeed");
         this.maximumSpeed = maximumSpeed;
 
         HistoryManager historyManager = simulator.getReplication().getHistoryManager(simulator);
@@ -223,26 +201,80 @@ public class Gtu extends LocalEventProducer
         this.tacticalPlanner = new HistoricalValue<>(historyManager, this, null);
         this.operationalPlan = new HistoricalValue<>(historyManager, this, null);
 
-        Length dy2 = width.times(0.5);
-        this.frontPos = new RelativePosition(front, Length.ZERO, Length.ZERO, RelativePosition.FRONT);
-        this.relativePositions.put(RelativePosition.FRONT, this.frontPos);
-        this.rearPos = new RelativePosition(front.minus(length), Length.ZERO, Length.ZERO, RelativePosition.REAR);
-        this.relativePositions.put(RelativePosition.REAR, this.rearPos);
-        this.relativePositions.put(RelativePosition.REFERENCE, RelativePosition.REFERENCE_POSITION);
-        this.relativePositions.put(RelativePosition.CENTER,
-                new RelativePosition(Length.ZERO, Length.ZERO, Length.ZERO, RelativePosition.CENTER));
-        this.bounds = new Bounds2d(front.minus(length).si, front.si, -width.si / 2.0, width.si / 2.0);
-        this.shape = new OffsetRectangleShape(front.minus(length).si, front.si, -width.si / 2.0, width.si / 2.0);
-
-        // Contour positions. For now, a rectangle with the four corners.
-        for (int i = -1; i <= 1; i += 2)
+        this.length = length;
+        this.width = width;
+        if (contour == null)
         {
-            Length x = i < 0 ? front.minus(length) : front;
-            for (int j = -1; j <= 1; j += 2)
-            {
-                this.contourPoints.add(new RelativePosition(x, dy2.times(j), Length.ZERO, RelativePosition.CONTOUR));
-            }
+            this.shape =
+                    new OffsetRectangleShape(front.si - this.length.si, front.si, -this.width.si / 2.0, this.width.si / 2.0)
+                    {
+                        @Override
+                        public DirectedPoint2d getLocation()
+                        {
+                            return Gtu.this.getLocation();
+                        }
+                    };
         }
+        else
+        {
+            this.shape = new PolygonShape(contour)
+            {
+                @Override
+                public DirectedPoint2d getLocation()
+                {
+                    return Gtu.this.getLocation();
+                }
+            };
+        }
+
+        this.relativePositions.put(RelativePosition.REFERENCE, RelativePosition.REFERENCE_POSITION);
+        this.relativePositions.put(RelativePosition.FRONT,
+                new RelativePosition(front, Length.ZERO, Length.ZERO, RelativePosition.FRONT));
+        this.relativePositions.put(RelativePosition.REAR,
+                new RelativePosition(front.minus(this.length), Length.ZERO, Length.ZERO, RelativePosition.REAR));
+        Point2d midPoint = this.shape.getBounds().midPoint();
+        this.relativePositions.put(RelativePosition.CENTER, new RelativePosition(Length.instantiateSI(midPoint.x),
+                Length.instantiateSI(midPoint.y), Length.ZERO, RelativePosition.CENTER));
+    }
+
+    /**
+     * Constructor using contour.
+     * @param id the id of the GTU
+     * @param gtuType the type of GTU, e.g. TruckType, CarType, BusType
+     * @param simulator the simulator to schedule plan changes on
+     * @param perceivableContext the perceivable context in which this GTU will be registered
+     * @param contour contour relative to reference position
+     * @param maximumSpeed the maximum speed of the GTU (in the driving direction)
+     * @throws GtuException when id already exists in the context
+     * @throws NullPointerException when any input is null
+     */
+    public Gtu(final String id, final GtuType gtuType, final OtsSimulatorInterface simulator,
+            final PerceivableContext perceivableContext, final Polygon2d contour, final Speed maximumSpeed) throws GtuException
+    {
+        this(id, gtuType, simulator, perceivableContext, Length.instantiateSI(contour.getBounds().getDeltaX()),
+                Length.instantiateSI(contour.getBounds().getDeltaY()), Length.instantiateSI(contour.getBounds().getMaxX()),
+                contour, maximumSpeed);
+    }
+
+    /**
+     * Constructor using length, width and front.
+     * @param id the id of the GTU
+     * @param gtuType the type of GTU, e.g. NL.CAR or NL.TRUCK
+     * @param simulator the simulator to schedule plan changes on
+     * @param perceivableContext the perceivable context in which this GTU will be registered
+     * @param length the maximum length of the GTU (parallel with driving direction)
+     * @param width the maximum width of the GTU (perpendicular to driving direction)
+     * @param front front distance relative to the reference position
+     * @param maximumSpeed the maximum speed of the GTU (in the driving direction)
+     * @throws GtuException when id already exists in the context
+     * @throws NullPointerException when any input is null
+     */
+    @SuppressWarnings("checkstyle:parameternumber")
+    public Gtu(final String id, final GtuType gtuType, final OtsSimulatorInterface simulator,
+            final PerceivableContext perceivableContext, final Length length, final Length width, final Length front,
+            final Speed maximumSpeed) throws GtuException
+    {
+        this(id, gtuType, simulator, perceivableContext, length, width, front, null, maximumSpeed);
     }
 
     /**
@@ -259,11 +291,11 @@ public class Gtu extends LocalEventProducer
     public void init(final StrategicalPlanner strategicalPlanner, final DirectedPoint2d initialLocation,
             final Speed initialSpeed) throws SimRuntimeException, GtuException
     {
-        Throw.when(strategicalPlanner == null, GtuException.class, "strategicalPlanner is null for GTU with id %s", this.id);
+        Throw.whenNull(strategicalPlanner, "strategicalPlanner");
         Throw.whenNull(initialLocation, "Initial location of GTU cannot be null");
         Throw.when(Double.isNaN(initialLocation.x) || Double.isNaN(initialLocation.y), GtuException.class,
                 "initialLocation %s invalid for GTU with id %s", initialLocation, this.id);
-        Throw.when(initialSpeed == null, GtuException.class, "initialSpeed is null for GTU with id %s", this.id);
+        Throw.whenNull(initialSpeed, "initialSpeed");
         Throw.when(!getId().equals(strategicalPlanner.getGtu().getId()), GtuException.class,
                 "GTU %s is initialized with a strategical planner for GTU %s", getId(), strategicalPlanner.getGtu().getId());
 
@@ -286,7 +318,7 @@ public class Gtu extends LocalEventProducer
      */
     public final RelativePosition getFront()
     {
-        return this.frontPos;
+        return this.relativePositions.get(RelativePosition.FRONT);
     }
 
     /**
@@ -295,7 +327,7 @@ public class Gtu extends LocalEventProducer
      */
     public final RelativePosition getRear()
     {
-        return this.rearPos;
+        return this.relativePositions.get(RelativePosition.REAR);
     }
 
     /**
@@ -346,7 +378,7 @@ public class Gtu extends LocalEventProducer
     @Override
     public final Bounds2d getBounds()
     {
-        return this.bounds;
+        return this.shape.getBounds();
     }
 
     /**
@@ -483,7 +515,6 @@ public class Gtu extends LocalEventProducer
         move(this.operationalPlan.get().getLocation(this.simulator.getSimulatorAbsTime()));
     }
 
-    /** @return the id of the GTU */
     @Override
     public final String getId()
     {
@@ -510,7 +541,6 @@ public class Gtu extends LocalEventProducer
         return this.tags.get(tag);
     }
 
-    @SuppressWarnings("checkstyle:designforextension")
     @Override
     public GtuType getType()
     {
@@ -823,7 +853,6 @@ public class Gtu extends LocalEventProducer
     private DirectedPoint2d cacheLocation = null;
 
     @Override
-    @SuppressWarnings("checkstyle:designforextension")
     public DirectedPoint2d getLocation()
     {
         synchronized (this)
@@ -853,6 +882,12 @@ public class Gtu extends LocalEventProducer
         }
     }
 
+    @Override
+    public double signedDistance(final Point2d point)
+    {
+        return this.shape.signedDistance(point);
+    }
+
     /**
      * Return the shape of a dynamic object at time 'time'. Note that the getContour() method without a time returns the
      * Minkowski sum of all shapes of the spatial object for a validity time window, e.g., a contour that describes all
@@ -861,21 +896,12 @@ public class Gtu extends LocalEventProducer
      * @return the shape of the object at time 'time'
      */
     @Override
-    public Polygon2d getContour(final Time time)
+    public Polygon2d getAbsoluteContour(final Time time)
     {
         try
         {
-            if (this.contour == null)
-            {
-                // TODO: this should account for the reference position
-                double w = getWidth().si;
-                double l = getLength().si;
-                this.contour = new Polygon2d(new Point2d(-0.5 * l, -0.5 * w), new Point2d(-0.5 * l, 0.5 * w),
-                        new Point2d(0.5 * l, 0.5 * w), new Point2d(0.5 * l, -0.5 * w));
-            }
-            Polygon2d s = OtsLocatable.transformContour(this.contour, this.operationalPlan.get(time).getLocation(time));
-            System.out.println("gtu " + getId() + ", shape(t)=" + s);
-            return s;
+            return new Polygon2d(OtsShape.toAbsoluteTransform(this.operationalPlan.get(time).getLocation(time))
+                    .transform(getRelativeContour().iterator()));
         }
         catch (OperationalPlanException exception)
         {
@@ -890,7 +916,7 @@ public class Gtu extends LocalEventProducer
      * @return the shape of the object over the validity of the operational plan
      */
     @Override
-    public Polygon2d getContour()
+    public Polygon2d getAbsoluteContour()
     {
         try
         {
@@ -921,9 +947,9 @@ public class Gtu extends LocalEventProducer
     }
 
     @Override
-    public OtsShape getShape()
+    public Polygon2d getRelativeContour()
     {
-        return this.shape;
+        return this.shape.getRelativeContour();
     }
 
     /**

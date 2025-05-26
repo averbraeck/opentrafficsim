@@ -10,7 +10,6 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.reference.ReferenceType;
-import org.opentrafficsim.base.geometry.OtsLocatable;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
 import org.opentrafficsim.editor.OtsEditor;
@@ -46,11 +45,11 @@ public class MapNodeData extends MapData implements NodeData, EventListener
     /** Location. */
     private DirectedPoint2d location = new DirectedPoint2d(0.0, 0.0, 0.0);
 
-    /** Contour. */
-    private final Polygon2d contour;
+    /** Absolute contour. */
+    private Polygon2d absoluteContour;
 
-    /** Shape (cached). */
-    private OtsShape shape;
+    /** Relative contour. */
+    private Polygon2d relativeContour;
 
     /**
      * Constructor.
@@ -76,7 +75,9 @@ public class MapNodeData extends MapData implements NodeData, EventListener
         {
             throw new RuntimeException(e);
         }
-        this.contour = OtsLocatable.boundsAsContour(this);
+        this.absoluteContour = OtsShape.boundsAsAbsoluteContour(this);
+        this.relativeContour =
+                new Polygon2d(OtsShape.toRelativeTransform(this.location).transform(this.absoluteContour.iterator()));
     }
 
     @Override
@@ -86,19 +87,15 @@ public class MapNodeData extends MapData implements NodeData, EventListener
     }
 
     @Override
-    public Polygon2d getContour()
+    public Polygon2d getAbsoluteContour()
     {
-        return this.contour;
+        return this.absoluteContour;
     }
 
     @Override
-    public OtsShape getShape()
+    public Polygon2d getRelativeContour()
     {
-        if (this.shape == null)
-        {
-            this.shape = NodeData.super.getShape();
-        }
-        return this.shape;
+        return this.relativeContour;
     }
 
     @Override
@@ -165,6 +162,9 @@ public class MapNodeData extends MapData implements NodeData, EventListener
             return;
         }
         this.location = new DirectedPoint2d(this.coordinate, this.direction == null ? 0.0 : this.direction.si);
+        this.absoluteContour = OtsShape.boundsAsAbsoluteContour(this);
+        this.relativeContour =
+                new Polygon2d(OtsShape.toRelativeTransform(this.location).transform(this.absoluteContour.iterator()));
         setValid();
     }
 

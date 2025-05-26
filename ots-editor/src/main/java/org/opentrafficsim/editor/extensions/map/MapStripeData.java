@@ -8,7 +8,7 @@ import org.djutils.draw.line.PolyLine2d;
 import org.opentrafficsim.base.StripeElement;
 import org.opentrafficsim.base.StripeElement.StripeLateralSync;
 import org.opentrafficsim.base.geometry.DirectionalPolyLine;
-import org.opentrafficsim.base.geometry.OtsLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.extensions.map.MapLinkData.MiddleOffset;
@@ -94,7 +94,7 @@ public class MapStripeData extends MapCrossSectionData implements StripeData
     @Override
     public PolyLine2d getLine()
     {
-        return OtsLocatable.transformLine(getCenterLine(), getLocation());
+        return OtsShape.transformLine(getCenterLine(), getLocation());
     }
 
     @Override
