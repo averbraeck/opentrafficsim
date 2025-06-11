@@ -489,7 +489,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
 
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    protected synchronized boolean move(final DirectedPoint2d fromLocation)
+    protected boolean move(final DirectedPoint2d fromLocation)
             throws SimRuntimeException, GtuException, NetworkException, ParameterException
     {
         if (this.isDestroyed())
@@ -498,50 +498,51 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         }
         try
         {
-            if (this.crossSections.isEmpty())
-            {
-                destroy();
-                return false; // Done; do not re-schedule execution of this move method.
-            }
-
-            // cancel events, if any
-            // FIXME: If there are still events left, clearly something went wrong?
-            // XXX: Added boolean to indicate whether warnings need to be given when events were found
-            cancelAllEvents();
-
-            // generate the next operational plan and carry it out
-            // in case of an instantaneous lane change, fractionalLinkPositions will be accordingly adjusted to the new lane
-            try
-            {
-                boolean error = super.move(fromLocation);
-                if (error)
+            synchronized(this) {
+                if (this.crossSections.isEmpty())
                 {
-                    return error;
+                    destroy();
+                    return false; // Done; do not re-schedule execution of this move method.
+                }
+
+                // cancel events, if any
+                // FIXME: If there are still events left, clearly something went wrong?
+                // XXX: Added boolean to indicate whether warnings need to be given when events were found
+                cancelAllEvents();
+
+                // generate the next operational plan and carry it out
+                // in case of an instantaneous lane change, fractionalLinkPositions will be accordingly adjusted to the new lane
+                try
+                {
+                    boolean error = super.move(fromLocation);
+                    if (error)
+                    {
+                        return error;
+                    }
+                }
+                catch (Exception exception)
+                {
+                    System.err.println(exception.getMessage());
+                    System.err.println("  GTU " + this + " DESTROYED AND REMOVED FROM THE SIMULATION");
+                    this.destroy();
+                    this.cancelAllEvents();
+                    return true;
+                }
+
+
+                scheduleEnterEvent();
+                scheduleLeaveEvent();
+
+                // sensors
+                for (CrossSection crossSection : this.crossSections)
+                {
+                    for (Lane lane : crossSection.getLanes())
+                    {
+                        scheduleTriggers(lane);
+                    }
                 }
             }
-            catch (Exception exception)
-            {
-                System.err.println(exception.getMessage());
-                System.err.println("  GTU " + this + " DESTROYED AND REMOVED FROM THE SIMULATION");
-                this.destroy();
-                this.cancelAllEvents();
-                return true;
-            }
-
             LanePosition dlp = getReferencePosition();
-
-            scheduleEnterEvent();
-            scheduleLeaveEvent();
-
-            // sensors
-            for (CrossSection crossSection : this.crossSections)
-            {
-                for (Lane lane : crossSection.getLanes())
-                {
-                    scheduleTriggers(lane);
-                }
-            }
-
             fireTimedEvent(LaneBasedGtu.LANEBASED_MOVE_EVENT,
                     new Object[] {getId(),
                             new PositionVector(new double[] {fromLocation.x, fromLocation.y}, PositionUnit.METER),
