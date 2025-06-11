@@ -15,9 +15,9 @@ import org.opentrafficsim.xml.bindings.types.StringType;
 
 
 /**
- * <p>Java class for anonymous complex type</p>.
+ * <p>Java-Klasse für anonymous complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType>
@@ -53,7 +53,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     protected BooleanType compatible;
 
     /**
-     * Gets the value of the gtuType property.
+     * Ruft den Wert der gtuType-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -65,7 +65,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the gtuType property.
+     * Legt den Wert der gtuType-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -94,7 +94,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the compatible property.
+     * Legt den Wert der compatible-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

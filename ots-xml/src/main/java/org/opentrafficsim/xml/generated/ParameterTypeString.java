@@ -12,9 +12,9 @@ import org.opentrafficsim.xml.bindings.types.StringType;
 
 
 /**
- * <p>Java class for ParameterTypeString complex type</p>.
+ * <p>Java-Klasse für ParameterTypeString complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="ParameterTypeString">
@@ -41,7 +41,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     protected StringType _default;
 
     /**
-     * Gets the value of the default property.
+     * Ruft den Wert der default-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -53,7 +53,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the default property.
+     * Legt den Wert der default-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

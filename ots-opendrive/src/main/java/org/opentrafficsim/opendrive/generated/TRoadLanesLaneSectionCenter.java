@@ -13,9 +13,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * For easier navigation through an OpenDRIVE road description, the lanes within a lane section are grouped into left, center, and right lanes. Each lane section shall contain one <center> element and at least one <right> or <left> element.
  * 
- * <p>Java class for t_road_lanes_laneSection_center complex type</p>.
+ * <p>Java-Klasse für t_road_lanes_laneSection_center complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_road_lanes_laneSection_center">

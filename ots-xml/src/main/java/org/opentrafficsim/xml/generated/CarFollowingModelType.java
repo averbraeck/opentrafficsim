@@ -9,9 +9,9 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for CarFollowingModelType complex type</p>.
+ * <p>Java-Klasse für CarFollowingModelType complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="CarFollowingModelType">
@@ -44,7 +44,7 @@ import jakarta.xml.bind.annotation.XmlType;
     protected CarFollowingModelHeadwaySpeedType idmPlus;
 
     /**
-     * Gets the value of the idm property.
+     * Ruft den Wert der idm-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -56,7 +56,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the idm property.
+     * Legt den Wert der idm-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -68,7 +68,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Gets the value of the idmPlus property.
+     * Ruft den Wert der idmPlus-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -80,7 +80,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the idmPlus property.
+     * Legt den Wert der idmPlus-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

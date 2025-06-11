@@ -17,9 +17,9 @@ import org.opentrafficsim.xml.bindings.types.StringType;
 
 
 /**
- * <p>Java class for TrafficLightType complex type</p>.
+ * <p>Java-Klasse für TrafficLightType complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="TrafficLightType">
@@ -92,7 +92,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Gets the value of the id property.
+     * Ruft den Wert der id-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -104,7 +104,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the id property.
+     * Legt den Wert der id-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -116,7 +116,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Gets the value of the lane property.
+     * Ruft den Wert der lane-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -128,7 +128,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the lane property.
+     * Legt den Wert der lane-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -140,7 +140,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Gets the value of the position property.
+     * Ruft den Wert der position-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -152,7 +152,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the position property.
+     * Legt den Wert der position-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

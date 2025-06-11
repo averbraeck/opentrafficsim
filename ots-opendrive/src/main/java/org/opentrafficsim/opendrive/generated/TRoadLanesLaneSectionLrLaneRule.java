@@ -10,9 +10,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * Used to add rules that are not covered by any of the other lane attributes that are described in this specification.
  * 
- * <p>Java class for t_road_lanes_laneSection_lr_lane_rule complex type</p>.
+ * <p>Java-Klasse für t_road_lanes_laneSection_lr_lane_rule complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_road_lanes_laneSection_lr_lane_rule">
@@ -60,7 +60,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the sOffset property.
+     * Legt den Wert der sOffset-Eigenschaft fest.
      * 
      */
     public void setSOffset(double value) {
@@ -83,7 +83,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the value property.
+     * Legt den Wert der value-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

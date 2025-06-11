@@ -12,9 +12,9 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for t_road_railroad_switch_sideTrack complex type</p>.
+ * <p>Java-Klasse für t_road_railroad_switch_sideTrack complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_road_railroad_switch_sideTrack">
@@ -121,7 +121,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the id property.
+     * Legt den Wert der id-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -142,7 +142,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the s property.
+     * Legt den Wert der s-Eigenschaft fest.
      * 
      */
     public void setS(double value) {
@@ -162,7 +162,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the dir property.
+     * Legt den Wert der dir-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

@@ -9,9 +9,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * The lane type is defined per lane. A lane type defines the main purpose of a lane and its corresponding traffic rules.
  * 
- * <p>Java class for e_laneType</p>.
+ * <p>Java-Klasse für e_laneType.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * <pre>{@code
  * <simpleType name="e_laneType">
  *   <restriction base="{http://www.w3.org/2001/XMLSchema}string">

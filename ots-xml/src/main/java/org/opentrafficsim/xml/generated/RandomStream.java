@@ -15,9 +15,9 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type</p>.
+ * <p>Java-Klasse für anonymous complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType>
@@ -91,7 +91,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Gets the value of the id property.
+     * Ruft den Wert der id-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -103,7 +103,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the id property.
+     * Legt den Wert der id-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -116,9 +116,9 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
     /**
-     * <p>Java class for anonymous complex type</p>.
+     * <p>Java-Klasse für anonymous complex type.</p>
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
      * 
      * <pre>{@code
      * <complexType>
@@ -147,7 +147,7 @@ import jakarta.xml.bind.annotation.XmlType;
         protected BigInteger seed;
 
         /**
-         * Gets the value of the id property.
+         * Ruft den Wert der id-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -159,7 +159,7 @@ import jakarta.xml.bind.annotation.XmlType;
         }
 
         /**
-         * Sets the value of the id property.
+         * Legt den Wert der id-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -171,7 +171,7 @@ import jakarta.xml.bind.annotation.XmlType;
         }
 
         /**
-         * Gets the value of the seed property.
+         * Ruft den Wert der seed-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -183,7 +183,7 @@ import jakarta.xml.bind.annotation.XmlType;
         }
 
         /**
-         * Sets the value of the seed property.
+         * Legt den Wert der seed-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is

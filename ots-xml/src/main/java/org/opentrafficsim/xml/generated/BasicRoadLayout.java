@@ -17,9 +17,9 @@ import org.opentrafficsim.xml.bindings.types.LaneKeepingPolicyType;
 
 
 /**
- * <p>Java class for BasicRoadLayout complex type</p>.
+ * <p>Java-Klasse für BasicRoadLayout complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="BasicRoadLayout">
@@ -134,7 +134,7 @@ import org.opentrafficsim.xml.bindings.types.LaneKeepingPolicyType;
     }
 
     /**
-     * Gets the value of the laneKeeping property.
+     * Ruft den Wert der laneKeeping-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -146,7 +146,7 @@ import org.opentrafficsim.xml.bindings.types.LaneKeepingPolicyType;
     }
 
     /**
-     * Sets the value of the laneKeeping property.
+     * Legt den Wert der laneKeeping-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

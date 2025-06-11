@@ -16,9 +16,9 @@ import org.opentrafficsim.xml.bindings.types.StringType;
 
 
 /**
- * <p>Java class for ControlType complex type</p>.
+ * <p>Java-Klasse für ControlType complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="ControlType">
@@ -115,7 +115,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Gets the value of the id property.
+     * Ruft den Wert der id-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -127,7 +127,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the id property.
+     * Legt den Wert der id-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -139,7 +139,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Gets the value of the startTime property.
+     * Ruft den Wert der startTime-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -151,7 +151,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the startTime property.
+     * Legt den Wert der startTime-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -163,7 +163,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Gets the value of the endTime property.
+     * Ruft den Wert der endTime-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -175,7 +175,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the endTime property.
+     * Legt den Wert der endTime-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -188,9 +188,9 @@ import org.opentrafficsim.xml.bindings.types.StringType;
 
 
     /**
-     * <p>Java class for anonymous complex type</p>.
+     * <p>Java-Klasse für anonymous complex type.</p>
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
      * 
      * <pre>{@code
      * <complexType>
@@ -264,7 +264,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
         }
 
         /**
-         * Gets the value of the id property.
+         * Ruft den Wert der id-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -276,7 +276,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
         }
 
         /**
-         * Sets the value of the id property.
+         * Legt den Wert der id-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -289,9 +289,9 @@ import org.opentrafficsim.xml.bindings.types.StringType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -325,7 +325,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
             protected StringType trafficLightId;
 
             /**
-             * Gets the value of the link property.
+             * Ruft den Wert der link-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -337,7 +337,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
             }
 
             /**
-             * Sets the value of the link property.
+             * Legt den Wert der link-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -349,7 +349,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
             }
 
             /**
-             * Gets the value of the lane property.
+             * Ruft den Wert der lane-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -361,7 +361,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
             }
 
             /**
-             * Sets the value of the lane property.
+             * Legt den Wert der lane-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -373,7 +373,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
             }
 
             /**
-             * Gets the value of the trafficLightId property.
+             * Ruft den Wert der trafficLightId-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -385,7 +385,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
             }
 
             /**
-             * Sets the value of the trafficLightId property.
+             * Legt den Wert der trafficLightId-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is

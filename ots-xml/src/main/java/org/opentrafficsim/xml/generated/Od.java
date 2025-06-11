@@ -20,9 +20,9 @@ import org.opentrafficsim.xml.bindings.types.StringType;
 
 
 /**
- * <p>Java class for anonymous complex type</p>.
+ * <p>Java-Klasse für anonymous complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType>
@@ -98,7 +98,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     protected StringType options;
 
     /**
-     * Gets the value of the globalTime property.
+     * Ruft den Wert der globalTime-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -110,7 +110,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the globalTime property.
+     * Legt den Wert der globalTime-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -186,7 +186,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Gets the value of the randomStream property.
+     * Ruft den Wert der randomStream-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -198,7 +198,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the randomStream property.
+     * Legt den Wert der randomStream-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -210,7 +210,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Gets the value of the id property.
+     * Ruft den Wert der id-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -222,7 +222,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the id property.
+     * Legt den Wert der id-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -234,7 +234,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Gets the value of the sinkType property.
+     * Ruft den Wert der sinkType-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -246,7 +246,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the sinkType property.
+     * Legt den Wert der sinkType-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -258,7 +258,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Gets the value of the globalInterpolation property.
+     * Ruft den Wert der globalInterpolation-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -274,7 +274,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the globalInterpolation property.
+     * Legt den Wert der globalInterpolation-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -286,7 +286,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Gets the value of the globalFactor property.
+     * Ruft den Wert der globalFactor-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -302,7 +302,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the globalFactor property.
+     * Legt den Wert der globalFactor-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -314,7 +314,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Gets the value of the options property.
+     * Ruft den Wert der options-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -326,7 +326,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the options property.
+     * Legt den Wert der options-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -339,9 +339,9 @@ import org.opentrafficsim.xml.bindings.types.StringType;
 
 
     /**
-     * <p>Java class for anonymous complex type</p>.
+     * <p>Java-Klasse für anonymous complex type.</p>
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
      * 
      * <pre>{@code
      * <complexType>
@@ -422,7 +422,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
         }
 
         /**
-         * Gets the value of the origin property.
+         * Ruft den Wert der origin-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -434,7 +434,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
         }
 
         /**
-         * Sets the value of the origin property.
+         * Legt den Wert der origin-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -446,7 +446,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
         }
 
         /**
-         * Gets the value of the destination property.
+         * Ruft den Wert der destination-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -458,7 +458,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
         }
 
         /**
-         * Sets the value of the destination property.
+         * Legt den Wert der destination-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -470,7 +470,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
         }
 
         /**
-         * Gets the value of the category property.
+         * Ruft den Wert der category-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -482,7 +482,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
         }
 
         /**
-         * Sets the value of the category property.
+         * Legt den Wert der category-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -494,7 +494,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
         }
 
         /**
-         * Gets the value of the interpolation property.
+         * Ruft den Wert der interpolation-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -506,7 +506,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
         }
 
         /**
-         * Sets the value of the interpolation property.
+         * Legt den Wert der interpolation-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -518,7 +518,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
         }
 
         /**
-         * Gets the value of the factor property.
+         * Ruft den Wert der factor-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -530,7 +530,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
         }
 
         /**
-         * Sets the value of the factor property.
+         * Legt den Wert der factor-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is

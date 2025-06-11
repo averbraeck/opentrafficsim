@@ -10,9 +10,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * Some basic metadata containing information about raw data included in OpenDRIVE is described by the <rawData> element within the <dataQuality> element.
  * 
- * <p>Java class for t_dataQuality_RawData complex type</p>.
+ * <p>Java-Klasse für t_dataQuality_RawData complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_dataQuality_RawData">
@@ -80,7 +80,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the date property.
+     * Legt den Wert der date-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -105,7 +105,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the source property.
+     * Legt den Wert der source-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -130,7 +130,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the sourceComment property.
+     * Legt den Wert der sourceComment-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -155,7 +155,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the postProcessing property.
+     * Legt den Wert der postProcessing-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -180,7 +180,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the postProcessingComment property.
+     * Legt den Wert der postProcessingComment-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

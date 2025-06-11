@@ -10,9 +10,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * An arc describes a road reference line with constant curvature. In OpenDRIVE, an arc is represented by an <arc> element within the <geometry> element.
  * 
- * <p>Java class for t_road_planView_geometry_arc complex type</p>.
+ * <p>Java-Klasse für t_road_planView_geometry_arc complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_road_planView_geometry_arc">
@@ -50,7 +50,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the curvature property.
+     * Legt den Wert der curvature-Eigenschaft fest.
      * 
      */
     public void setCurvature(double value) {

@@ -13,9 +13,9 @@ import org.opentrafficsim.xml.bindings.types.Point2dType;
 
 
 /**
- * <p>Java class for anonymous complex type</p>.
+ * <p>Java-Klasse für anonymous complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType>
@@ -45,7 +45,7 @@ import org.opentrafficsim.xml.bindings.types.Point2dType;
     protected Point2dType coordinate;
 
     /**
-     * Gets the value of the id property.
+     * Ruft den Wert der id-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -57,7 +57,7 @@ import org.opentrafficsim.xml.bindings.types.Point2dType;
     }
 
     /**
-     * Sets the value of the id property.
+     * Legt den Wert der id-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -69,7 +69,7 @@ import org.opentrafficsim.xml.bindings.types.Point2dType;
     }
 
     /**
-     * Gets the value of the coordinate property.
+     * Ruft den Wert der coordinate-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -81,7 +81,7 @@ import org.opentrafficsim.xml.bindings.types.Point2dType;
     }
 
     /**
-     * Sets the value of the coordinate property.
+     * Legt den Wert der coordinate-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

@@ -19,9 +19,9 @@ import jakarta.xml.bind.annotation.XmlType;
  * 
  * OpenDRIVE 1.4 outline definitions (without <outlines> parent element) shall still be supported.
  * 
- * <p>Java class for t_road_objects_object_outlines_outline complex type</p>.
+ * <p>Java-Klasse für t_road_objects_object_outlines_outline complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_road_objects_object_outlines_outline">
@@ -215,7 +215,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the id property.
+     * Legt den Wert der id-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -240,7 +240,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the fillType property.
+     * Legt den Wert der fillType-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -265,7 +265,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the outer property.
+     * Legt den Wert der outer-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -290,7 +290,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the closed property.
+     * Legt den Wert der closed-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -315,7 +315,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the laneType property.
+     * Legt den Wert der laneType-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

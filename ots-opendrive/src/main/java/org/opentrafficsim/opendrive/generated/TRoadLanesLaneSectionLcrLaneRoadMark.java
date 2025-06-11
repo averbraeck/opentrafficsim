@@ -17,9 +17,9 @@ import org.opentrafficsim.opendrive.bindings.StripeTypeAdapter;
 /**
  * Defines the style of the line at the outer border of a lane. The style of the center line that separates left and right lanes is determined by the road mark element for the center lane.
  * 
- * <p>Java class for t_road_lanes_laneSection_lcr_lane_roadMark complex type</p>.
+ * <p>Java-Klasse für t_road_lanes_laneSection_lcr_lane_roadMark complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_road_lanes_laneSection_lcr_lane_roadMark">
@@ -154,7 +154,7 @@ import org.opentrafficsim.opendrive.bindings.StripeTypeAdapter;
     }
 
     /**
-     * Gets the value of the type property.
+     * Ruft den Wert der type-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -166,7 +166,7 @@ import org.opentrafficsim.opendrive.bindings.StripeTypeAdapter;
     }
 
     /**
-     * Sets the value of the type property.
+     * Legt den Wert der type-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -178,7 +178,7 @@ import org.opentrafficsim.opendrive.bindings.StripeTypeAdapter;
     }
 
     /**
-     * Gets the value of the explicit property.
+     * Ruft den Wert der explicit-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -190,7 +190,7 @@ import org.opentrafficsim.opendrive.bindings.StripeTypeAdapter;
     }
 
     /**
-     * Sets the value of the explicit property.
+     * Legt den Wert der explicit-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -247,7 +247,7 @@ import org.opentrafficsim.opendrive.bindings.StripeTypeAdapter;
     }
 
     /**
-     * Sets the value of the sOffset property.
+     * Legt den Wert der sOffset-Eigenschaft fest.
      * 
      */
     public void setSOffset(double value) {
@@ -267,7 +267,7 @@ import org.opentrafficsim.opendrive.bindings.StripeTypeAdapter;
     }
 
     /**
-     * Sets the value of the roadMarkType property.
+     * Legt den Wert der roadMarkType-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -292,7 +292,7 @@ import org.opentrafficsim.opendrive.bindings.StripeTypeAdapter;
     }
 
     /**
-     * Sets the value of the weight property.
+     * Legt den Wert der weight-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -317,7 +317,7 @@ import org.opentrafficsim.opendrive.bindings.StripeTypeAdapter;
     }
 
     /**
-     * Sets the value of the color property.
+     * Legt den Wert der color-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -342,7 +342,7 @@ import org.opentrafficsim.opendrive.bindings.StripeTypeAdapter;
     }
 
     /**
-     * Sets the value of the material property.
+     * Legt den Wert der material-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -367,7 +367,7 @@ import org.opentrafficsim.opendrive.bindings.StripeTypeAdapter;
     }
 
     /**
-     * Sets the value of the width property.
+     * Legt den Wert der width-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -392,7 +392,7 @@ import org.opentrafficsim.opendrive.bindings.StripeTypeAdapter;
     }
 
     /**
-     * Sets the value of the laneChange property.
+     * Legt den Wert der laneChange-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -417,7 +417,7 @@ import org.opentrafficsim.opendrive.bindings.StripeTypeAdapter;
     }
 
     /**
-     * Sets the value of the height property.
+     * Legt den Wert der height-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

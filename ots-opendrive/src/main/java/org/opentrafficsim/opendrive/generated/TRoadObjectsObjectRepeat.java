@@ -10,9 +10,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * To avoid lengthy XML code, objects of the same type may be repeated. The attributes of the repeated object may be changed. Attributes of the repeated object shall overrule the attributes from the original object. If attributes are omitted in the repeated objects, the attributes from the original object apply.
  * 
- * <p>Java class for t_road_objects_object_repeat complex type</p>.
+ * <p>Java-Klasse für t_road_objects_object_repeat complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_road_objects_object_repeat">
@@ -149,7 +149,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the s property.
+     * Legt den Wert der s-Eigenschaft fest.
      * 
      */
     public void setS(double value) {
@@ -165,7 +165,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the length property.
+     * Legt den Wert der length-Eigenschaft fest.
      * 
      */
     public void setLength(double value) {
@@ -182,7 +182,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the distance property.
+     * Legt den Wert der distance-Eigenschaft fest.
      * 
      */
     public void setDistance(double value) {
@@ -198,7 +198,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the tStart property.
+     * Legt den Wert der tStart-Eigenschaft fest.
      * 
      */
     public void setTStart(double value) {
@@ -214,7 +214,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the tEnd property.
+     * Legt den Wert der tEnd-Eigenschaft fest.
      * 
      */
     public void setTEnd(double value) {
@@ -230,7 +230,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the heightStart property.
+     * Legt den Wert der heightStart-Eigenschaft fest.
      * 
      */
     public void setHeightStart(double value) {
@@ -246,7 +246,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the heightEnd property.
+     * Legt den Wert der heightEnd-Eigenschaft fest.
      * 
      */
     public void setHeightEnd(double value) {
@@ -262,7 +262,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the zOffsetStart property.
+     * Legt den Wert der zOffsetStart-Eigenschaft fest.
      * 
      */
     public void setZOffsetStart(double value) {
@@ -278,7 +278,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the zOffsetEnd property.
+     * Legt den Wert der zOffsetEnd-Eigenschaft fest.
      * 
      */
     public void setZOffsetEnd(double value) {
@@ -298,7 +298,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the widthStart property.
+     * Legt den Wert der widthStart-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -323,7 +323,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the widthEnd property.
+     * Legt den Wert der widthEnd-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -348,7 +348,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the lengthStart property.
+     * Legt den Wert der lengthStart-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -373,7 +373,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the lengthEnd property.
+     * Legt den Wert der lengthEnd-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -398,7 +398,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the radiusStart property.
+     * Legt den Wert der radiusStart-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -423,7 +423,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the radiusEnd property.
+     * Legt den Wert der radiusEnd-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

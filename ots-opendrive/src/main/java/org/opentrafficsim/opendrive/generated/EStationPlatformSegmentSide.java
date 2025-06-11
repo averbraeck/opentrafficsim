@@ -9,9 +9,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * 
  * 
- * <p>Java class for e_station_platform_segment_side</p>.
+ * <p>Java-Klasse für e_station_platform_segment_side.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * <pre>{@code
  * <simpleType name="e_station_platform_segment_side">
  *   <restriction base="{http://www.w3.org/2001/XMLSchema}string">

@@ -11,9 +11,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * Provides information about the lanes that are linked between an incoming road and a connecting road. It is strongly recommended to provide this element. It is deprecated to omit the <laneLink> element.
  * 
- * <p>Java class for t_junction_connection_laneLink complex type</p>.
+ * <p>Java-Klasse für t_junction_connection_laneLink complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_junction_connection_laneLink">
@@ -62,7 +62,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the from property.
+     * Legt den Wert der from-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -87,7 +87,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the to property.
+     * Legt den Wert der to-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

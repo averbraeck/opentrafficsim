@@ -18,9 +18,9 @@ import org.opentrafficsim.xml.bindings.types.LongType;
 
 
 /**
- * <p>Java class for DiscreteDistType complex type</p>.
+ * <p>Java-Klasse für DiscreteDistType complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="DiscreteDistType">
@@ -140,7 +140,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
     protected RandomStreamSource randomStream;
 
     /**
-     * Gets the value of the constant property.
+     * Ruft den Wert der constant-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -152,7 +152,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
     }
 
     /**
-     * Sets the value of the constant property.
+     * Legt den Wert der constant-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -164,7 +164,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
     }
 
     /**
-     * Gets the value of the bernoulliI property.
+     * Ruft den Wert der bernoulliI-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -176,7 +176,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
     }
 
     /**
-     * Sets the value of the bernoulliI property.
+     * Legt den Wert der bernoulliI-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -188,7 +188,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
     }
 
     /**
-     * Gets the value of the binomial property.
+     * Ruft den Wert der binomial-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -200,7 +200,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
     }
 
     /**
-     * Sets the value of the binomial property.
+     * Legt den Wert der binomial-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -212,7 +212,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
     }
 
     /**
-     * Gets the value of the uniform property.
+     * Ruft den Wert der uniform-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -224,7 +224,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
     }
 
     /**
-     * Sets the value of the uniform property.
+     * Legt den Wert der uniform-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -236,7 +236,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
     }
 
     /**
-     * Gets the value of the geometric property.
+     * Ruft den Wert der geometric-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -248,7 +248,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
     }
 
     /**
-     * Sets the value of the geometric property.
+     * Legt den Wert der geometric-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -260,7 +260,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
     }
 
     /**
-     * Gets the value of the negBinomial property.
+     * Ruft den Wert der negBinomial-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -272,7 +272,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
     }
 
     /**
-     * Sets the value of the negBinomial property.
+     * Legt den Wert der negBinomial-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -284,7 +284,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
     }
 
     /**
-     * Gets the value of the poisson property.
+     * Ruft den Wert der poisson-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -296,7 +296,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
     }
 
     /**
-     * Sets the value of the poisson property.
+     * Legt den Wert der poisson-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -308,7 +308,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
     }
 
     /**
-     * Gets the value of the randomStream property.
+     * Ruft den Wert der randomStream-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -320,7 +320,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
     }
 
     /**
-     * Sets the value of the randomStream property.
+     * Legt den Wert der randomStream-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -333,9 +333,9 @@ import org.opentrafficsim.xml.bindings.types.LongType;
 
 
     /**
-     * <p>Java class for anonymous complex type</p>.
+     * <p>Java-Klasse für anonymous complex type.</p>
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
      * 
      * <pre>{@code
      * <complexType>
@@ -361,7 +361,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
         protected org.opentrafficsim.xml.bindings.types.DoubleType p;
 
         /**
-         * Gets the value of the p property.
+         * Ruft den Wert der p-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -373,7 +373,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
         }
 
         /**
-         * Sets the value of the p property.
+         * Legt den Wert der p-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -388,9 +388,9 @@ import org.opentrafficsim.xml.bindings.types.LongType;
 
 
     /**
-     * <p>Java class for anonymous complex type</p>.
+     * <p>Java-Klasse für anonymous complex type.</p>
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
      * 
      * <pre>{@code
      * <complexType>
@@ -420,7 +420,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
         protected org.opentrafficsim.xml.bindings.types.DoubleType p;
 
         /**
-         * Gets the value of the n property.
+         * Ruft den Wert der n-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -432,7 +432,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
         }
 
         /**
-         * Sets the value of the n property.
+         * Legt den Wert der n-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -444,7 +444,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
         }
 
         /**
-         * Gets the value of the p property.
+         * Ruft den Wert der p-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -456,7 +456,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
         }
 
         /**
-         * Sets the value of the p property.
+         * Legt den Wert der p-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -471,9 +471,9 @@ import org.opentrafficsim.xml.bindings.types.LongType;
 
 
     /**
-     * <p>Java class for anonymous complex type</p>.
+     * <p>Java-Klasse für anonymous complex type.</p>
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
      * 
      * <pre>{@code
      * <complexType>
@@ -499,7 +499,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
         protected LongType c;
 
         /**
-         * Gets the value of the c property.
+         * Ruft den Wert der c-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -511,7 +511,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
         }
 
         /**
-         * Sets the value of the c property.
+         * Legt den Wert der c-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -526,9 +526,9 @@ import org.opentrafficsim.xml.bindings.types.LongType;
 
 
     /**
-     * <p>Java class for anonymous complex type</p>.
+     * <p>Java-Klasse für anonymous complex type.</p>
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
      * 
      * <pre>{@code
      * <complexType>
@@ -554,7 +554,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
         protected org.opentrafficsim.xml.bindings.types.DoubleType p;
 
         /**
-         * Gets the value of the p property.
+         * Ruft den Wert der p-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -566,7 +566,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
         }
 
         /**
-         * Sets the value of the p property.
+         * Legt den Wert der p-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -581,9 +581,9 @@ import org.opentrafficsim.xml.bindings.types.LongType;
 
 
     /**
-     * <p>Java class for anonymous complex type</p>.
+     * <p>Java-Klasse für anonymous complex type.</p>
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
      * 
      * <pre>{@code
      * <complexType>
@@ -613,7 +613,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
         protected org.opentrafficsim.xml.bindings.types.DoubleType p;
 
         /**
-         * Gets the value of the n property.
+         * Ruft den Wert der n-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -625,7 +625,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
         }
 
         /**
-         * Sets the value of the n property.
+         * Legt den Wert der n-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -637,7 +637,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
         }
 
         /**
-         * Gets the value of the p property.
+         * Ruft den Wert der p-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -649,7 +649,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
         }
 
         /**
-         * Sets the value of the p property.
+         * Legt den Wert der p-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -664,9 +664,9 @@ import org.opentrafficsim.xml.bindings.types.LongType;
 
 
     /**
-     * <p>Java class for anonymous complex type</p>.
+     * <p>Java-Klasse für anonymous complex type.</p>
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
      * 
      * <pre>{@code
      * <complexType>
@@ -692,7 +692,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
         protected org.opentrafficsim.xml.bindings.types.DoubleType lambda;
 
         /**
-         * Gets the value of the lambda property.
+         * Ruft den Wert der lambda-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -704,7 +704,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
         }
 
         /**
-         * Sets the value of the lambda property.
+         * Legt den Wert der lambda-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -719,9 +719,9 @@ import org.opentrafficsim.xml.bindings.types.LongType;
 
 
     /**
-     * <p>Java class for anonymous complex type</p>.
+     * <p>Java-Klasse für anonymous complex type.</p>
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
      * 
      * <pre>{@code
      * <complexType>
@@ -751,7 +751,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
         protected org.opentrafficsim.xml.bindings.types.IntegerType max;
 
         /**
-         * Gets the value of the min property.
+         * Ruft den Wert der min-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -763,7 +763,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
         }
 
         /**
-         * Sets the value of the min property.
+         * Legt den Wert der min-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -775,7 +775,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
         }
 
         /**
-         * Gets the value of the max property.
+         * Ruft den Wert der max-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -787,7 +787,7 @@ import org.opentrafficsim.xml.bindings.types.LongType;
         }
 
         /**
-         * Sets the value of the max property.
+         * Legt den Wert der max-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is

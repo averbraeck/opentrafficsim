@@ -10,9 +10,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * Each platform element is valid on one or more track segments. The <segment> element must be specified.
  * 
- * <p>Java class for t_station_platform_segment complex type</p>.
+ * <p>Java-Klasse für t_station_platform_segment complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_station_platform_segment">
@@ -75,7 +75,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the roadId property.
+     * Legt den Wert der roadId-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -96,7 +96,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the sStart property.
+     * Legt den Wert der sStart-Eigenschaft fest.
      * 
      */
     public void setSStart(double value) {
@@ -112,7 +112,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the sEnd property.
+     * Legt den Wert der sEnd-Eigenschaft fest.
      * 
      */
     public void setSEnd(double value) {
@@ -132,7 +132,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the side property.
+     * Legt den Wert der side-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

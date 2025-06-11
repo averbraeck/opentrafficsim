@@ -10,9 +10,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * Lane height shall be defined along the h-coordinate. Lane height may be used to elevate a lane independent from the road elevation. Lane height is used to implement small-scale elevation such as raising pedestrian walkways. Lane height is specified as offset from the road (including elevation, superelevation, shape) in z direction.
  * 
- * <p>Java class for t_road_lanes_laneSection_lr_lane_height complex type</p>.
+ * <p>Java-Klasse für t_road_lanes_laneSection_lr_lane_height complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_road_lanes_laneSection_lr_lane_height">
@@ -64,7 +64,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the sOffset property.
+     * Legt den Wert der sOffset-Eigenschaft fest.
      * 
      */
     public void setSOffset(double value) {
@@ -80,7 +80,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the inner property.
+     * Legt den Wert der inner-Eigenschaft fest.
      * 
      */
     public void setInner(double value) {
@@ -96,7 +96,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the outer property.
+     * Legt den Wert der outer-Eigenschaft fest.
      * 
      */
     public void setOuter(double value) {

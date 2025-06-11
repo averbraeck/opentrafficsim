@@ -10,9 +10,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * The absolute or relative errors of road data are described by <error> elements within the <dataQuality> element.
  * 
- * <p>Java class for t_dataQuality_Error complex type</p>.
+ * <p>Java-Klasse für t_dataQuality_Error complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_dataQuality_Error">
@@ -69,7 +69,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the xyAbsolute property.
+     * Legt den Wert der xyAbsolute-Eigenschaft fest.
      * 
      */
     public void setXyAbsolute(double value) {
@@ -85,7 +85,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the zAbsolute property.
+     * Legt den Wert der zAbsolute-Eigenschaft fest.
      * 
      */
     public void setZAbsolute(double value) {
@@ -101,7 +101,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the xyRelative property.
+     * Legt den Wert der xyRelative-Eigenschaft fest.
      * 
      */
     public void setXyRelative(double value) {
@@ -117,7 +117,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the zRelative property.
+     * Legt den Wert der zRelative-Eigenschaft fest.
      * 
      */
     public void setZRelative(double value) {

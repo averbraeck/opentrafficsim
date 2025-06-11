@@ -15,9 +15,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * Lane elements are included in left/center/right elements. Lane elements should represent the lanes from left to right, that is, with descending ID.
  * 
- * <p>Java class for t_road_lanes_laneSection_lr_lane complex type</p>.
+ * <p>Java-Klasse für t_road_lanes_laneSection_lr_lane complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_road_lanes_laneSection_lr_lane">
@@ -105,7 +105,7 @@ import jakarta.xml.bind.annotation.XmlType;
     protected TBool level;
 
     /**
-     * Gets the value of the link property.
+     * Ruft den Wert der link-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -117,7 +117,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the link property.
+     * Legt den Wert der link-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -403,7 +403,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the type property.
+     * Legt den Wert der type-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -429,7 +429,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the level property.
+     * Legt den Wert der level-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

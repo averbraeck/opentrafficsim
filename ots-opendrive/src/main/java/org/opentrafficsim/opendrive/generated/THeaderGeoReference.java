@@ -18,9 +18,9 @@ import jakarta.xml.bind.annotation.XmlType;
  * A geodetic datum is described by a projection string according to PROJ, that is, a format for the exchange of data between two coordinate systems. This data shall be marked as CDATA, because it may contain characters that interfere with the XML syntax of an element’s attribute.
  * In OpenDRIVE, the information about the geographic reference of an OpenDRIVE dataset is represented by the <geoReference> element within the <header> element.
  * 
- * <p>Java class for t_header_GeoReference complex type</p>.
+ * <p>Java-Klasse für t_header_GeoReference complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_header_GeoReference">

@@ -14,9 +14,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * Specifies a marking that is either attached to one side of the object bounding box or referencing outline points.
  * 
- * <p>Java class for t_road_objects_object_markings_marking complex type</p>.
+ * <p>Java-Klasse für t_road_objects_object_markings_marking complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_road_objects_object_markings_marking">
@@ -200,7 +200,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the side property.
+     * Legt den Wert der side-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -225,7 +225,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the weight property.
+     * Legt den Wert der weight-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -250,7 +250,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the width property.
+     * Legt den Wert der width-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -275,7 +275,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the color property.
+     * Legt den Wert der color-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -300,7 +300,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the zOffset property.
+     * Legt den Wert der zOffset-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -321,7 +321,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the spaceLength property.
+     * Legt den Wert der spaceLength-Eigenschaft fest.
      * 
      */
     public void setSpaceLength(double value) {
@@ -341,7 +341,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the lineLength property.
+     * Legt den Wert der lineLength-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -362,7 +362,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the startOffset property.
+     * Legt den Wert der startOffset-Eigenschaft fest.
      * 
      */
     public void setStartOffset(double value) {
@@ -378,7 +378,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the stopOffset property.
+     * Legt den Wert der stopOffset-Eigenschaft fest.
      * 
      */
     public void setStopOffset(double value) {

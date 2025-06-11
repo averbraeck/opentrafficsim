@@ -9,9 +9,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * 
  * 
- * <p>Java class for e_countryCode_deprecated</p>.
+ * <p>Java-Klasse für e_countryCode_deprecated.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * <pre>{@code
  * <simpleType name="e_countryCode_deprecated">
  *   <restriction base="{http://www.w3.org/2001/XMLSchema}string">

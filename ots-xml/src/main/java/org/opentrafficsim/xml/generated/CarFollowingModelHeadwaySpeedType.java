@@ -9,9 +9,9 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for CarFollowingModelHeadwaySpeedType complex type</p>.
+ * <p>Java-Klasse für CarFollowingModelHeadwaySpeedType complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="CarFollowingModelHeadwaySpeedType">
@@ -44,7 +44,7 @@ import jakarta.xml.bind.annotation.XmlType;
     protected DesiredSpeedModelType desiredSpeedModel;
 
     /**
-     * Gets the value of the desiredHeadwayModel property.
+     * Ruft den Wert der desiredHeadwayModel-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -56,7 +56,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the desiredHeadwayModel property.
+     * Legt den Wert der desiredHeadwayModel-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -68,7 +68,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Gets the value of the desiredSpeedModel property.
+     * Ruft den Wert der desiredSpeedModel-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -80,7 +80,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the desiredSpeedModel property.
+     * Legt den Wert der desiredSpeedModel-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

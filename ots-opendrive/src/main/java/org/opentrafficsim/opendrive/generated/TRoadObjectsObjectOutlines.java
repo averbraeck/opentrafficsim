@@ -13,9 +13,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * An outline defines a series of corner points, including the height of the object relative to the road reference line. The inner area of the described outline may be filled with a filling type, such as grass, concrete, asphalt, or pavement.
  * 
- * <p>Java class for t_road_objects_object_outlines complex type</p>.
+ * <p>Java-Klasse für t_road_objects_object_outlines complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_road_objects_object_outlines">

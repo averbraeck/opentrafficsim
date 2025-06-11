@@ -10,9 +10,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * Describes the reference point of the physical position in inertial coordinates in cases where it deviates from the logical position. Defines the inertial position.
  * 
- * <p>Java class for t_road_signals_signal_positionInertial complex type</p>.
+ * <p>Java-Klasse für t_road_signals_signal_positionInertial complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_road_signals_signal_positionInertial">
@@ -85,7 +85,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the x property.
+     * Legt den Wert der x-Eigenschaft fest.
      * 
      */
     public void setX(double value) {
@@ -101,7 +101,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the y property.
+     * Legt den Wert der y-Eigenschaft fest.
      * 
      */
     public void setY(double value) {
@@ -117,7 +117,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the z property.
+     * Legt den Wert der z-Eigenschaft fest.
      * 
      */
     public void setZ(double value) {
@@ -133,7 +133,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the hdg property.
+     * Legt den Wert der hdg-Eigenschaft fest.
      * 
      */
     public void setHdg(double value) {
@@ -153,7 +153,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the pitch property.
+     * Legt den Wert der pitch-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -178,7 +178,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the roll property.
+     * Legt den Wert der roll-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

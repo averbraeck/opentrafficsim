@@ -15,9 +15,9 @@ import jakarta.xml.bind.annotation.XmlType;
  * Refers to the same, that is, identical signal from multiple roads. 
  * The referenced signals require a unique ID. The <signalReference> element consists of a main element and an optional lane validity element.
  * 
- * <p>Java class for t_road_signals_signalReference complex type</p>.
+ * <p>Java-Klasse für t_road_signals_signalReference complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_road_signals_signalReference">
@@ -164,7 +164,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the s property.
+     * Legt den Wert der s-Eigenschaft fest.
      * 
      */
     public void setS(double value) {
@@ -180,7 +180,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the t property.
+     * Legt den Wert der t-Eigenschaft fest.
      * 
      */
     public void setT(double value) {
@@ -200,7 +200,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the id property.
+     * Legt den Wert der id-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -227,7 +227,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the orientation property.
+     * Legt den Wert der orientation-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

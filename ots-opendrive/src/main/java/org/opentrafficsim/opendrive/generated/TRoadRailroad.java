@@ -14,9 +14,9 @@ import jakarta.xml.bind.annotation.XmlType;
  * Container for all railroad definitions that shall be applied along a road.
  * The available set of railroad elements is currently limited to the definition of switches. All other entries shall be covered with the existing elements, for example, track definition by <road>, signal definition by <signal>, etc. Railroad-specific elements are defined against the background of streetcar applications.
  * 
- * <p>Java class for t_road_railroad complex type</p>.
+ * <p>Java-Klasse für t_road_railroad complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_road_railroad">

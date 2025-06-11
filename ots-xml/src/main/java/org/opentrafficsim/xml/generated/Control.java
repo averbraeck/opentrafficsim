@@ -23,9 +23,9 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
 
 
 /**
- * <p>Java class for anonymous complex type</p>.
+ * <p>Java-Klasse für anonymous complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType>
@@ -197,9 +197,9 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
 
 
     /**
-     * <p>Java class for anonymous complex type</p>.
+     * <p>Java-Klasse für anonymous complex type.</p>
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
      * 
      * <pre>{@code
      * <complexType>
@@ -281,7 +281,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
         }
 
         /**
-         * Gets the value of the cycleTime property.
+         * Ruft den Wert der cycleTime-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -293,7 +293,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
         }
 
         /**
-         * Sets the value of the cycleTime property.
+         * Legt den Wert der cycleTime-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -305,7 +305,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
         }
 
         /**
-         * Gets the value of the offset property.
+         * Ruft den Wert der offset-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -321,7 +321,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
         }
 
         /**
-         * Sets the value of the offset property.
+         * Legt den Wert der offset-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -334,9 +334,9 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -378,7 +378,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
             protected DurationType yellow;
 
             /**
-             * Gets the value of the signalGroupId property.
+             * Ruft den Wert der signalGroupId-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -390,7 +390,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
             }
 
             /**
-             * Sets the value of the signalGroupId property.
+             * Legt den Wert der signalGroupId-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -402,7 +402,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
             }
 
             /**
-             * Gets the value of the offset property.
+             * Ruft den Wert der offset-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -414,7 +414,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
             }
 
             /**
-             * Sets the value of the offset property.
+             * Legt den Wert der offset-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -426,7 +426,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
             }
 
             /**
-             * Gets the value of the preGreen property.
+             * Ruft den Wert der preGreen-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -438,7 +438,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
             }
 
             /**
-             * Sets the value of the preGreen property.
+             * Legt den Wert der preGreen-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -450,7 +450,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
             }
 
             /**
-             * Gets the value of the green property.
+             * Ruft den Wert der green-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -462,7 +462,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
             }
 
             /**
-             * Sets the value of the green property.
+             * Legt den Wert der green-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -474,7 +474,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
             }
 
             /**
-             * Gets the value of the yellow property.
+             * Ruft den Wert der yellow-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -486,7 +486,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
             }
 
             /**
-             * Sets the value of the yellow property.
+             * Legt den Wert der yellow-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -503,9 +503,9 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
 
 
     /**
-     * <p>Java class for anonymous complex type</p>.
+     * <p>Java-Klasse für anonymous complex type.</p>
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
      * 
      * <pre>{@code
      * <complexType>
@@ -580,7 +580,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
         protected Control.TrafCod.Console console;
 
         /**
-         * Gets the value of the program property.
+         * Ruft den Wert der program-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -592,7 +592,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
         }
 
         /**
-         * Sets the value of the program property.
+         * Legt den Wert der program-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -604,7 +604,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
         }
 
         /**
-         * Gets the value of the programFile property.
+         * Ruft den Wert der programFile-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -616,7 +616,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
         }
 
         /**
-         * Sets the value of the programFile property.
+         * Legt den Wert der programFile-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -628,7 +628,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
         }
 
         /**
-         * Gets the value of the console property.
+         * Ruft den Wert der console-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -640,7 +640,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
         }
 
         /**
-         * Sets the value of the console property.
+         * Legt den Wert der console-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -653,9 +653,9 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -710,7 +710,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
             protected String coordinatesFile;
 
             /**
-             * Gets the value of the map property.
+             * Ruft den Wert der map-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -722,7 +722,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
             }
 
             /**
-             * Sets the value of the map property.
+             * Legt den Wert der map-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -734,7 +734,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
             }
 
             /**
-             * Gets the value of the mapFile property.
+             * Ruft den Wert der mapFile-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -746,7 +746,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
             }
 
             /**
-             * Sets the value of the mapFile property.
+             * Legt den Wert der mapFile-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -758,7 +758,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
             }
 
             /**
-             * Gets the value of the coordinates property.
+             * Ruft den Wert der coordinates-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -770,7 +770,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
             }
 
             /**
-             * Sets the value of the coordinates property.
+             * Legt den Wert der coordinates-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -782,7 +782,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
             }
 
             /**
-             * Gets the value of the coordinatesFile property.
+             * Ruft den Wert der coordinatesFile-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -794,7 +794,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
             }
 
             /**
-             * Sets the value of the coordinatesFile property.
+             * Legt den Wert der coordinatesFile-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -807,9 +807,9 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
 
 
             /**
-             * <p>Java class for anonymous complex type</p>.
+             * <p>Java-Klasse für anonymous complex type.</p>
              * 
-             * <p>The following schema fragment specifies the expected content contained within this class.</p>
+             * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
              * 
              * <pre>{@code
              * <complexType>
@@ -848,7 +848,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
                 protected org.opentrafficsim.xml.bindings.types.StringType space;
 
                 /**
-                 * Gets the value of the value property.
+                 * Ruft den Wert der value-Eigenschaft ab.
                  * 
                  * @return
                  *     possible object is
@@ -860,7 +860,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
                 }
 
                 /**
-                 * Sets the value of the value property.
+                 * Legt den Wert der value-Eigenschaft fest.
                  * 
                  * @param value
                  *     allowed object is
@@ -872,7 +872,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
                 }
 
                 /**
-                 * Gets the value of the type property.
+                 * Ruft den Wert der type-Eigenschaft ab.
                  * 
                  * @return
                  *     possible object is
@@ -884,7 +884,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
                 }
 
                 /**
-                 * Sets the value of the type property.
+                 * Legt den Wert der type-Eigenschaft fest.
                  * 
                  * @param value
                  *     allowed object is
@@ -896,7 +896,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
                 }
 
                 /**
-                 * Gets the value of the encoding property.
+                 * Ruft den Wert der encoding-Eigenschaft ab.
                  * 
                  * @return
                  *     possible object is
@@ -908,7 +908,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
                 }
 
                 /**
-                 * Sets the value of the encoding property.
+                 * Legt den Wert der encoding-Eigenschaft fest.
                  * 
                  * @param value
                  *     allowed object is
@@ -920,7 +920,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
                 }
 
                 /**
-                 * Gets the value of the space property.
+                 * Ruft den Wert der space-Eigenschaft ab.
                  * 
                  * @return
                  *     possible object is
@@ -936,7 +936,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
                 }
 
                 /**
-                 * Sets the value of the space property.
+                 * Legt den Wert der space-Eigenschaft fest.
                  * 
                  * @param value
                  *     allowed object is
@@ -953,9 +953,9 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -986,7 +986,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
             protected org.opentrafficsim.xml.bindings.types.StringType space;
 
             /**
-             * Gets the value of the value property.
+             * Ruft den Wert der value-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -998,7 +998,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
             }
 
             /**
-             * Sets the value of the value property.
+             * Legt den Wert der value-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -1010,7 +1010,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
             }
 
             /**
-             * Gets the value of the space property.
+             * Ruft den Wert der space-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -1026,7 +1026,7 @@ import org.opentrafficsim.xml.bindings.types.GraphicsTypeType;
             }
 
             /**
-             * Sets the value of the space property.
+             * Legt den Wert der space-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is

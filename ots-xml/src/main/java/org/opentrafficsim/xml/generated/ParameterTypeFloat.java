@@ -12,9 +12,9 @@ import org.opentrafficsim.xml.bindings.types.DoubleType;
 
 
 /**
- * <p>Java class for ParameterTypeFloat complex type</p>.
+ * <p>Java-Klasse für ParameterTypeFloat complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="ParameterTypeFloat">
@@ -41,7 +41,7 @@ import org.opentrafficsim.xml.bindings.types.DoubleType;
     protected DoubleType _default;
 
     /**
-     * Gets the value of the default property.
+     * Ruft den Wert der default-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -53,7 +53,7 @@ import org.opentrafficsim.xml.bindings.types.DoubleType;
     }
 
     /**
-     * Sets the value of the default property.
+     * Legt den Wert der default-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

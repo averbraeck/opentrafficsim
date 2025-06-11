@@ -12,9 +12,9 @@ import org.opentrafficsim.xml.bindings.types.ClassType;
 
 
 /**
- * <p>Java class for DesiredHeadwayModelType complex type</p>.
+ * <p>Java-Klasse für DesiredHeadwayModelType complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="DesiredHeadwayModelType">
@@ -48,7 +48,7 @@ import org.opentrafficsim.xml.bindings.types.ClassType;
     protected ClassType clazz;
 
     /**
-     * Gets the value of the idm property.
+     * Ruft den Wert der idm-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -60,7 +60,7 @@ import org.opentrafficsim.xml.bindings.types.ClassType;
     }
 
     /**
-     * Sets the value of the idm property.
+     * Legt den Wert der idm-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -72,7 +72,7 @@ import org.opentrafficsim.xml.bindings.types.ClassType;
     }
 
     /**
-     * Gets the value of the clazz property.
+     * Ruft den Wert der clazz-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -84,7 +84,7 @@ import org.opentrafficsim.xml.bindings.types.ClassType;
     }
 
     /**
-     * Sets the value of the clazz property.
+     * Legt den Wert der clazz-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

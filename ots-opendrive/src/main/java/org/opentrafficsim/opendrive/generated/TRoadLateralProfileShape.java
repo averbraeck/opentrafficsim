@@ -10,9 +10,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * Defined as the road section’s surface relative to the reference plane. There may be several shape definitions at one s-position that have different t-values, thereby describing the curvy shape of the road.
  * 
- * <p>Java class for t_road_lateralProfile_shape complex type</p>.
+ * <p>Java-Klasse für t_road_lateralProfile_shape complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_road_lateralProfile_shape">
@@ -85,7 +85,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the s property.
+     * Legt den Wert der s-Eigenschaft fest.
      * 
      */
     public void setS(double value) {
@@ -101,7 +101,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the t property.
+     * Legt den Wert der t-Eigenschaft fest.
      * 
      */
     public void setT(double value) {
@@ -117,7 +117,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the a property.
+     * Legt den Wert der a-Eigenschaft fest.
      * 
      */
     public void setA(double value) {
@@ -133,7 +133,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the b property.
+     * Legt den Wert der b-Eigenschaft fest.
      * 
      */
     public void setB(double value) {
@@ -149,7 +149,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the c property.
+     * Legt den Wert der c-Eigenschaft fest.
      * 
      */
     public void setC(double value) {
@@ -165,7 +165,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the d property.
+     * Legt den Wert der d-Eigenschaft fest.
      * 
      */
     public void setD(double value) {

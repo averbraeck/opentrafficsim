@@ -45,9 +45,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
 /**
- * <p>Java class for ModelType complex type</p>.
+ * <p>Java-Klasse für ModelType complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="ModelType">
@@ -443,7 +443,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
     protected StringType gtuType;
 
     /**
-     * Gets the value of the modelParameters property.
+     * Ruft den Wert der modelParameters-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -455,7 +455,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
     }
 
     /**
-     * Sets the value of the modelParameters property.
+     * Legt den Wert der modelParameters-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -467,7 +467,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
     }
 
     /**
-     * Gets the value of the strategicalPlanner property.
+     * Ruft den Wert der strategicalPlanner-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -479,7 +479,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
     }
 
     /**
-     * Sets the value of the strategicalPlanner property.
+     * Legt den Wert der strategicalPlanner-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -491,7 +491,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
     }
 
     /**
-     * Gets the value of the tacticalPlanner property.
+     * Ruft den Wert der tacticalPlanner-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -503,7 +503,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
     }
 
     /**
-     * Sets the value of the tacticalPlanner property.
+     * Legt den Wert der tacticalPlanner-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -515,7 +515,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
     }
 
     /**
-     * Gets the value of the id property.
+     * Ruft den Wert der id-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -527,7 +527,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
     }
 
     /**
-     * Sets the value of the id property.
+     * Legt den Wert der id-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -539,7 +539,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
     }
 
     /**
-     * Gets the value of the parent property.
+     * Ruft den Wert der parent-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -551,7 +551,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
     }
 
     /**
-     * Sets the value of the parent property.
+     * Legt den Wert der parent-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -563,7 +563,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
     }
 
     /**
-     * Gets the value of the gtuType property.
+     * Ruft den Wert der gtuType-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -575,7 +575,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
     }
 
     /**
-     * Sets the value of the gtuType property.
+     * Legt den Wert der gtuType-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -588,9 +588,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
     /**
-     * <p>Java class for anonymous complex type</p>.
+     * <p>Java-Klasse für anonymous complex type.</p>
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
      * 
      * <pre>{@code
      * <complexType>
@@ -894,9 +894,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -926,7 +926,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             protected StringType id;
 
             /**
-             * Gets the value of the value property.
+             * Ruft den Wert der value-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -938,7 +938,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the value property.
+             * Legt den Wert der value-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -950,7 +950,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Gets the value of the id property.
+             * Ruft den Wert der id-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -962,7 +962,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the id property.
+             * Legt den Wert der id-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -977,9 +977,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -1006,7 +1006,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             protected StringType id;
 
             /**
-             * Gets the value of the id property.
+             * Ruft den Wert der id-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -1018,7 +1018,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the id property.
+             * Legt den Wert der id-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -1033,9 +1033,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -1065,7 +1065,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             protected StringType id;
 
             /**
-             * Gets the value of the value property.
+             * Ruft den Wert der value-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -1077,7 +1077,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the value property.
+             * Legt den Wert der value-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -1089,7 +1089,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Gets the value of the id property.
+             * Ruft den Wert der id-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -1101,7 +1101,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the id property.
+             * Legt den Wert der id-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -1116,9 +1116,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -1148,7 +1148,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             protected StringType id;
 
             /**
-             * Gets the value of the value property.
+             * Ruft den Wert der value-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -1160,7 +1160,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the value property.
+             * Legt den Wert der value-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -1172,7 +1172,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Gets the value of the id property.
+             * Ruft den Wert der id-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -1184,7 +1184,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the id property.
+             * Legt den Wert der id-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -1199,9 +1199,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -1247,7 +1247,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             protected java.lang.String expression;
 
             /**
-             * Gets the value of the first property.
+             * Ruft den Wert der first-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -1259,7 +1259,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the first property.
+             * Legt den Wert der first-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -1271,7 +1271,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Gets the value of the then property.
+             * Ruft den Wert der then-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -1283,7 +1283,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the then property.
+             * Legt den Wert der then-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -1308,7 +1308,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the expression property.
+             * Legt den Wert der expression-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -1324,9 +1324,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -1356,7 +1356,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             protected StringType id;
 
             /**
-             * Gets the value of the value property.
+             * Ruft den Wert der value-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -1368,7 +1368,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the value property.
+             * Legt den Wert der value-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -1380,7 +1380,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Gets the value of the id property.
+             * Ruft den Wert der id-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -1392,7 +1392,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the id property.
+             * Legt den Wert der id-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -1407,9 +1407,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -1436,7 +1436,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             protected StringType id;
 
             /**
-             * Gets the value of the id property.
+             * Ruft den Wert der id-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -1448,7 +1448,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the id property.
+             * Legt den Wert der id-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -1463,9 +1463,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -1495,7 +1495,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             protected StringType id;
 
             /**
-             * Gets the value of the value property.
+             * Ruft den Wert der value-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -1507,7 +1507,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the value property.
+             * Legt den Wert der value-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -1519,7 +1519,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Gets the value of the id property.
+             * Ruft den Wert der id-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -1531,7 +1531,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the id property.
+             * Legt den Wert der id-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -1546,9 +1546,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -1575,7 +1575,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             protected StringType id;
 
             /**
-             * Gets the value of the id property.
+             * Ruft den Wert der id-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -1587,7 +1587,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the id property.
+             * Legt den Wert der id-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -1602,9 +1602,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -1634,7 +1634,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             protected StringType id;
 
             /**
-             * Gets the value of the value property.
+             * Ruft den Wert der value-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -1646,7 +1646,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the value property.
+             * Legt den Wert der value-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -1658,7 +1658,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Gets the value of the id property.
+             * Ruft den Wert der id-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -1670,7 +1670,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the id property.
+             * Legt den Wert der id-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -1685,9 +1685,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -1717,7 +1717,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             protected StringType id;
 
             /**
-             * Gets the value of the value property.
+             * Ruft den Wert der value-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -1729,7 +1729,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the value property.
+             * Legt den Wert der value-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -1741,7 +1741,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Gets the value of the id property.
+             * Ruft den Wert der id-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -1753,7 +1753,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the id property.
+             * Legt den Wert der id-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -1768,9 +1768,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -1797,7 +1797,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             protected StringType id;
 
             /**
-             * Gets the value of the id property.
+             * Ruft den Wert der id-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -1809,7 +1809,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the id property.
+             * Legt den Wert der id-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -1824,9 +1824,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -1856,7 +1856,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             protected StringType id;
 
             /**
-             * Gets the value of the value property.
+             * Ruft den Wert der value-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -1868,7 +1868,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the value property.
+             * Legt den Wert der value-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -1880,7 +1880,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Gets the value of the id property.
+             * Ruft den Wert der id-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -1892,7 +1892,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the id property.
+             * Legt den Wert der id-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -1907,9 +1907,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -1936,7 +1936,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             protected StringType id;
 
             /**
-             * Gets the value of the id property.
+             * Ruft den Wert der id-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -1948,7 +1948,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the id property.
+             * Legt den Wert der id-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -1963,9 +1963,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -1995,7 +1995,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             protected StringType id;
 
             /**
-             * Gets the value of the value property.
+             * Ruft den Wert der value-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -2007,7 +2007,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the value property.
+             * Legt den Wert der value-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -2019,7 +2019,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Gets the value of the id property.
+             * Ruft den Wert der id-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -2031,7 +2031,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the id property.
+             * Legt den Wert der id-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -2046,9 +2046,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -2075,7 +2075,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             protected StringType id;
 
             /**
-             * Gets the value of the id property.
+             * Ruft den Wert der id-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -2087,7 +2087,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the id property.
+             * Legt den Wert der id-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -2102,9 +2102,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -2134,7 +2134,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             protected StringType id;
 
             /**
-             * Gets the value of the value property.
+             * Ruft den Wert der value-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -2146,7 +2146,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the value property.
+             * Legt den Wert der value-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -2158,7 +2158,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Gets the value of the id property.
+             * Ruft den Wert der id-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -2170,7 +2170,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the id property.
+             * Legt den Wert der id-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -2185,9 +2185,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -2214,7 +2214,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             protected StringType id;
 
             /**
-             * Gets the value of the id property.
+             * Ruft den Wert der id-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -2226,7 +2226,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the id property.
+             * Legt den Wert der id-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -2241,9 +2241,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -2273,7 +2273,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             protected StringType id;
 
             /**
-             * Gets the value of the value property.
+             * Ruft den Wert der value-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -2285,7 +2285,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the value property.
+             * Legt den Wert der value-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -2297,7 +2297,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Gets the value of the id property.
+             * Ruft den Wert der id-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -2309,7 +2309,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the id property.
+             * Legt den Wert der id-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -2324,9 +2324,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -2353,7 +2353,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             protected StringType id;
 
             /**
-             * Gets the value of the id property.
+             * Ruft den Wert der id-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -2365,7 +2365,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the id property.
+             * Legt den Wert der id-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -2380,9 +2380,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -2412,7 +2412,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             protected StringType id;
 
             /**
-             * Gets the value of the value property.
+             * Ruft den Wert der value-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -2424,7 +2424,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the value property.
+             * Legt den Wert der value-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -2436,7 +2436,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Gets the value of the id property.
+             * Ruft den Wert der id-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -2448,7 +2448,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the id property.
+             * Legt den Wert der id-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -2465,9 +2465,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
     /**
-     * <p>Java class for anonymous complex type</p>.
+     * <p>Java-Klasse für anonymous complex type.</p>
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
      * 
      * <pre>{@code
      * <complexType>
@@ -2507,7 +2507,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
         protected ModelType.StrategicalPlanner.Route route;
 
         /**
-         * Gets the value of the route property.
+         * Ruft den Wert der route-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -2519,7 +2519,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
         }
 
         /**
-         * Sets the value of the route property.
+         * Legt den Wert der route-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -2532,9 +2532,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -2567,7 +2567,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             protected EmptyType shortest;
 
             /**
-             * Gets the value of the none property.
+             * Ruft den Wert der none-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -2579,7 +2579,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the none property.
+             * Legt den Wert der none-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -2591,7 +2591,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Gets the value of the shortest property.
+             * Ruft den Wert der shortest-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -2603,7 +2603,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the shortest property.
+             * Legt den Wert der shortest-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -2620,9 +2620,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
     /**
-     * <p>Java class for anonymous complex type</p>.
+     * <p>Java-Klasse für anonymous complex type.</p>
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
      * 
      * <pre>{@code
      * <complexType>
@@ -2758,7 +2758,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
         protected ModelType.TacticalPlanner.Lmrs lmrs;
 
         /**
-         * Gets the value of the lmrs property.
+         * Ruft den Wert der lmrs-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -2770,7 +2770,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
         }
 
         /**
-         * Sets the value of the lmrs property.
+         * Legt den Wert der lmrs-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -2783,9 +2783,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
         /**
-         * <p>Java class for anonymous complex type</p>.
+         * <p>Java-Klasse für anonymous complex type.</p>
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.</p>
+         * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
          * 
          * <pre>{@code
          * <complexType>
@@ -2961,7 +2961,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             protected PerceptionType perception;
 
             /**
-             * Gets the value of the carFollowingModel property.
+             * Ruft den Wert der carFollowingModel-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -2973,7 +2973,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the carFollowingModel property.
+             * Legt den Wert der carFollowingModel-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -2999,7 +2999,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the synchronization property.
+             * Legt den Wert der synchronization-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -3026,7 +3026,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the cooperation property.
+             * Legt den Wert der cooperation-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -3052,7 +3052,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the gapAcceptance property.
+             * Legt den Wert der gapAcceptance-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -3078,7 +3078,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the tailgating property.
+             * Legt den Wert der tailgating-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -3091,7 +3091,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Gets the value of the mandatoryIncentives property.
+             * Ruft den Wert der mandatoryIncentives-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -3103,7 +3103,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the mandatoryIncentives property.
+             * Legt den Wert der mandatoryIncentives-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -3115,7 +3115,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Gets the value of the voluntaryIncentives property.
+             * Ruft den Wert der voluntaryIncentives-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -3127,7 +3127,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the voluntaryIncentives property.
+             * Legt den Wert der voluntaryIncentives-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -3139,7 +3139,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Gets the value of the accelerationIncentives property.
+             * Ruft den Wert der accelerationIncentives-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -3151,7 +3151,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the accelerationIncentives property.
+             * Legt den Wert der accelerationIncentives-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -3163,7 +3163,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Gets the value of the perception property.
+             * Ruft den Wert der perception-Eigenschaft ab.
              * 
              * @return
              *     possible object is
@@ -3175,7 +3175,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
             }
 
             /**
-             * Sets the value of the perception property.
+             * Legt den Wert der perception-Eigenschaft fest.
              * 
              * @param value
              *     allowed object is
@@ -3193,9 +3193,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
              *                           NoRightOvertake: follow left leader, in some circumstances. BusStop: for scheduled busses to stop.
              *                           Class: from a class with empty constructor.
              * 
-             * <p>Java class for anonymous complex type</p>.
+             * <p>Java-Klasse für anonymous complex type.</p>
              * 
-             * <p>The following schema fragment specifies the expected content contained within this class.</p>
+             * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
              * 
              * <pre>{@code
              * <complexType>
@@ -3236,7 +3236,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 protected EmptyType busStop;
 
                 /**
-                 * Gets the value of the trafficLights property.
+                 * Ruft den Wert der trafficLights-Eigenschaft ab.
                  * 
                  * @return
                  *     possible object is
@@ -3248,7 +3248,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 }
 
                 /**
-                 * Sets the value of the trafficLights property.
+                 * Legt den Wert der trafficLights-Eigenschaft fest.
                  * 
                  * @param value
                  *     allowed object is
@@ -3260,7 +3260,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 }
 
                 /**
-                 * Gets the value of the conflicts property.
+                 * Ruft den Wert der conflicts-Eigenschaft ab.
                  * 
                  * @return
                  *     possible object is
@@ -3272,7 +3272,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 }
 
                 /**
-                 * Sets the value of the conflicts property.
+                 * Legt den Wert der conflicts-Eigenschaft fest.
                  * 
                  * @param value
                  *     allowed object is
@@ -3284,7 +3284,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 }
 
                 /**
-                 * Gets the value of the speedLimitTransitions property.
+                 * Ruft den Wert der speedLimitTransitions-Eigenschaft ab.
                  * 
                  * @return
                  *     possible object is
@@ -3296,7 +3296,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 }
 
                 /**
-                 * Sets the value of the speedLimitTransitions property.
+                 * Legt den Wert der speedLimitTransitions-Eigenschaft fest.
                  * 
                  * @param value
                  *     allowed object is
@@ -3308,7 +3308,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 }
 
                 /**
-                 * Gets the value of the noRightOvertake property.
+                 * Ruft den Wert der noRightOvertake-Eigenschaft ab.
                  * 
                  * @return
                  *     possible object is
@@ -3320,7 +3320,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 }
 
                 /**
-                 * Sets the value of the noRightOvertake property.
+                 * Legt den Wert der noRightOvertake-Eigenschaft fest.
                  * 
                  * @param value
                  *     allowed object is
@@ -3332,7 +3332,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 }
 
                 /**
-                 * Gets the value of the busStop property.
+                 * Ruft den Wert der busStop-Eigenschaft ab.
                  * 
                  * @return
                  *     possible object is
@@ -3344,7 +3344,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 }
 
                 /**
-                 * Sets the value of the busStop property.
+                 * Legt den Wert der busStop-Eigenschaft fest.
                  * 
                  * @param value
                  *     allowed object is
@@ -3363,9 +3363,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
              *                           change when traffic on target lane is slow. BusStop: for scheduled busses. Class: from a class with
              *                           empty constructor.
              * 
-             * <p>Java class for anonymous complex type</p>.
+             * <p>Java-Klasse für anonymous complex type.</p>
              * 
-             * <p>The following schema fragment specifies the expected content contained within this class.</p>
+             * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
              * 
              * <pre>{@code
              * <complexType>
@@ -3400,7 +3400,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 protected EmptyType busStop;
 
                 /**
-                 * Gets the value of the route property.
+                 * Ruft den Wert der route-Eigenschaft ab.
                  * 
                  * @return
                  *     possible object is
@@ -3412,7 +3412,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 }
 
                 /**
-                 * Sets the value of the route property.
+                 * Legt den Wert der route-Eigenschaft fest.
                  * 
                  * @param value
                  *     allowed object is
@@ -3424,7 +3424,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 }
 
                 /**
-                 * Gets the value of the getInLane property.
+                 * Ruft den Wert der getInLane-Eigenschaft ab.
                  * 
                  * @return
                  *     possible object is
@@ -3436,7 +3436,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 }
 
                 /**
-                 * Sets the value of the getInLane property.
+                 * Legt den Wert der getInLane-Eigenschaft fest.
                  * 
                  * @param value
                  *     allowed object is
@@ -3448,7 +3448,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 }
 
                 /**
-                 * Gets the value of the busStop property.
+                 * Ruft den Wert der busStop-Eigenschaft ab.
                  * 
                  * @return
                  *     possible object is
@@ -3460,7 +3460,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 }
 
                 /**
-                 * Sets the value of the busStop property.
+                 * Legt den Wert der busStop-Eigenschaft fest.
                  * 
                  * @param value
                  *     allowed object is
@@ -3481,9 +3481,9 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
              *                           trucks to stay on the right-most two lanes, interpreted in line with the route. Class: from a class
              *                           with empty constructor.
              * 
-             * <p>Java class for anonymous complex type</p>.
+             * <p>Java-Klasse für anonymous complex type.</p>
              * 
-             * <p>The following schema fragment specifies the expected content contained within this class.</p>
+             * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
              * 
              * <pre>{@code
              * <complexType>
@@ -3524,7 +3524,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 protected EmptyType stayRight;
 
                 /**
-                 * Gets the value of the keep property.
+                 * Ruft den Wert der keep-Eigenschaft ab.
                  * 
                  * @return
                  *     possible object is
@@ -3536,7 +3536,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 }
 
                 /**
-                 * Sets the value of the keep property.
+                 * Legt den Wert der keep-Eigenschaft fest.
                  * 
                  * @param value
                  *     allowed object is
@@ -3548,7 +3548,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 }
 
                 /**
-                 * Gets the value of the speedWithCourtesy property.
+                 * Ruft den Wert der speedWithCourtesy-Eigenschaft ab.
                  * 
                  * @return
                  *     possible object is
@@ -3560,7 +3560,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 }
 
                 /**
-                 * Sets the value of the speedWithCourtesy property.
+                 * Legt den Wert der speedWithCourtesy-Eigenschaft fest.
                  * 
                  * @param value
                  *     allowed object is
@@ -3572,7 +3572,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 }
 
                 /**
-                 * Gets the value of the courtesy property.
+                 * Ruft den Wert der courtesy-Eigenschaft ab.
                  * 
                  * @return
                  *     possible object is
@@ -3584,7 +3584,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 }
 
                 /**
-                 * Sets the value of the courtesy property.
+                 * Legt den Wert der courtesy-Eigenschaft fest.
                  * 
                  * @param value
                  *     allowed object is
@@ -3596,7 +3596,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 }
 
                 /**
-                 * Gets the value of the socioSpeed property.
+                 * Ruft den Wert der socioSpeed-Eigenschaft ab.
                  * 
                  * @return
                  *     possible object is
@@ -3608,7 +3608,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 }
 
                 /**
-                 * Sets the value of the socioSpeed property.
+                 * Legt den Wert der socioSpeed-Eigenschaft fest.
                  * 
                  * @param value
                  *     allowed object is
@@ -3620,7 +3620,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 }
 
                 /**
-                 * Gets the value of the stayRight property.
+                 * Ruft den Wert der stayRight-Eigenschaft ab.
                  * 
                  * @return
                  *     possible object is
@@ -3632,7 +3632,7 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
                 }
 
                 /**
-                 * Sets the value of the stayRight property.
+                 * Legt den Wert der stayRight-Eigenschaft fest.
                  * 
                  * @param value
                  *     allowed object is

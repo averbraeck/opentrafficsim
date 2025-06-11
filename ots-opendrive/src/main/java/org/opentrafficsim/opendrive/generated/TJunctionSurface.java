@@ -13,9 +13,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * Used to describe the road elevation profile within a junction. When a <junction> element contains a <surface> element, the <surface> element supersedes all elevation data for connecting roads.
  * 
- * <p>Java class for t_junction_surface complex type</p>.
+ * <p>Java-Klasse für t_junction_surface complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_junction_surface">

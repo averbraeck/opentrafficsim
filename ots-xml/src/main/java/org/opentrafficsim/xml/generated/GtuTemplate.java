@@ -14,9 +14,9 @@ import org.opentrafficsim.xml.bindings.types.StringType;
 
 
 /**
- * <p>Java class for anonymous complex type</p>.
+ * <p>Java-Klasse für anonymous complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType>
@@ -72,7 +72,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     protected Boolean _default;
 
     /**
-     * Gets the value of the lengthDist property.
+     * Ruft den Wert der lengthDist-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -84,7 +84,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the lengthDist property.
+     * Legt den Wert der lengthDist-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -96,7 +96,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Gets the value of the widthDist property.
+     * Ruft den Wert der widthDist-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -108,7 +108,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the widthDist property.
+     * Legt den Wert der widthDist-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -120,7 +120,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Gets the value of the maxSpeedDist property.
+     * Ruft den Wert der maxSpeedDist-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -132,7 +132,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the maxSpeedDist property.
+     * Legt den Wert der maxSpeedDist-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -144,7 +144,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Gets the value of the maxAccelerationDist property.
+     * Ruft den Wert der maxAccelerationDist-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -156,7 +156,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the maxAccelerationDist property.
+     * Legt den Wert der maxAccelerationDist-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -168,7 +168,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Gets the value of the maxDecelerationDist property.
+     * Ruft den Wert der maxDecelerationDist-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -180,7 +180,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the maxDecelerationDist property.
+     * Legt den Wert der maxDecelerationDist-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -192,7 +192,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Gets the value of the id property.
+     * Ruft den Wert der id-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -204,7 +204,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the id property.
+     * Legt den Wert der id-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -216,7 +216,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Gets the value of the gtuType property.
+     * Ruft den Wert der gtuType-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -228,7 +228,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the gtuType property.
+     * Legt den Wert der gtuType-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -240,7 +240,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Gets the value of the default property.
+     * Ruft den Wert der default-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -256,7 +256,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the default property.
+     * Legt den Wert der default-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

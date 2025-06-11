@@ -34,9 +34,9 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
 
 
 /**
- * <p>Java class for anonymous complex type</p>.
+ * <p>Java-Klasse für anonymous complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType>
@@ -242,7 +242,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     protected StringType conflictId;
 
     /**
-     * Gets the value of the straight property.
+     * Ruft den Wert der straight-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -254,7 +254,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Sets the value of the straight property.
+     * Legt den Wert der straight-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -266,7 +266,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Gets the value of the bezier property.
+     * Ruft den Wert der bezier-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -278,7 +278,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Sets the value of the bezier property.
+     * Legt den Wert der bezier-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -290,7 +290,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Gets the value of the clothoid property.
+     * Ruft den Wert der clothoid-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -302,7 +302,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Sets the value of the clothoid property.
+     * Legt den Wert der clothoid-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -314,7 +314,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Gets the value of the arc property.
+     * Ruft den Wert der arc-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -326,7 +326,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Sets the value of the arc property.
+     * Legt den Wert der arc-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -338,7 +338,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Gets the value of the polyline property.
+     * Ruft den Wert der polyline-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -350,7 +350,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Sets the value of the polyline property.
+     * Legt den Wert der polyline-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -362,7 +362,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Gets the value of the roadLayout property.
+     * Ruft den Wert der roadLayout-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -374,7 +374,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Sets the value of the roadLayout property.
+     * Legt den Wert der roadLayout-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -386,7 +386,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Gets the value of the definedLayout property.
+     * Ruft den Wert der definedLayout-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -398,7 +398,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Sets the value of the definedLayout property.
+     * Legt den Wert der definedLayout-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -538,7 +538,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Gets the value of the id property.
+     * Ruft den Wert der id-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -550,7 +550,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Sets the value of the id property.
+     * Legt den Wert der id-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -562,7 +562,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Gets the value of the type property.
+     * Ruft den Wert der type-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -574,7 +574,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Sets the value of the type property.
+     * Legt den Wert der type-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -586,7 +586,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Gets the value of the nodeStart property.
+     * Ruft den Wert der nodeStart-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -598,7 +598,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Sets the value of the nodeStart property.
+     * Legt den Wert der nodeStart-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -610,7 +610,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Gets the value of the nodeEnd property.
+     * Ruft den Wert der nodeEnd-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -622,7 +622,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Sets the value of the nodeEnd property.
+     * Legt den Wert der nodeEnd-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -634,7 +634,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Gets the value of the offsetStart property.
+     * Ruft den Wert der offsetStart-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -650,7 +650,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Sets the value of the offsetStart property.
+     * Legt den Wert der offsetStart-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -662,7 +662,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Gets the value of the offsetEnd property.
+     * Ruft den Wert der offsetEnd-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -678,7 +678,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Sets the value of the offsetEnd property.
+     * Legt den Wert der offsetEnd-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -690,7 +690,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Gets the value of the laneKeeping property.
+     * Ruft den Wert der laneKeeping-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -706,7 +706,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Sets the value of the laneKeeping property.
+     * Legt den Wert der laneKeeping-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -718,7 +718,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Gets the value of the priority property.
+     * Ruft den Wert der priority-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -730,7 +730,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Sets the value of the priority property.
+     * Legt den Wert der priority-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -742,7 +742,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Gets the value of the conflictId property.
+     * Ruft den Wert der conflictId-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -754,7 +754,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
     }
 
     /**
-     * Sets the value of the conflictId property.
+     * Legt den Wert der conflictId-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -767,9 +767,9 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
 
 
     /**
-     * <p>Java class for anonymous complex type</p>.
+     * <p>Java-Klasse für anonymous complex type.</p>
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
      * 
      * <pre>{@code
      * <complexType>
@@ -806,7 +806,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         protected ArcDirectionType direction;
 
         /**
-         * Gets the value of the flattener property.
+         * Ruft den Wert der flattener-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -818,7 +818,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         }
 
         /**
-         * Sets the value of the flattener property.
+         * Legt den Wert der flattener-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -830,7 +830,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         }
 
         /**
-         * Gets the value of the radius property.
+         * Ruft den Wert der radius-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -842,7 +842,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         }
 
         /**
-         * Sets the value of the radius property.
+         * Legt den Wert der radius-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -854,7 +854,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         }
 
         /**
-         * Gets the value of the direction property.
+         * Ruft den Wert der direction-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -866,7 +866,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         }
 
         /**
-         * Sets the value of the direction property.
+         * Legt den Wert der direction-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -881,9 +881,9 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
 
 
     /**
-     * <p>Java class for anonymous complex type</p>.
+     * <p>Java-Klasse für anonymous complex type.</p>
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
      * 
      * <pre>{@code
      * <complexType>
@@ -919,7 +919,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         protected Boolean weighted;
 
         /**
-         * Gets the value of the flattener property.
+         * Ruft den Wert der flattener-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -931,7 +931,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         }
 
         /**
-         * Sets the value of the flattener property.
+         * Legt den Wert der flattener-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -943,7 +943,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         }
 
         /**
-         * Gets the value of the shape property.
+         * Ruft den Wert der shape-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -959,7 +959,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         }
 
         /**
-         * Sets the value of the shape property.
+         * Legt den Wert der shape-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -971,7 +971,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         }
 
         /**
-         * Gets the value of the weighted property.
+         * Ruft den Wert der weighted-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -987,7 +987,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         }
 
         /**
-         * Sets the value of the weighted property.
+         * Legt den Wert der weighted-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -1002,9 +1002,9 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
 
 
     /**
-     * <p>Java class for anonymous complex type</p>.
+     * <p>Java-Klasse für anonymous complex type.</p>
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
      * 
      * <pre>{@code
      * <complexType>
@@ -1263,7 +1263,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         }
 
         /**
-         * Gets the value of the endElevation property.
+         * Ruft den Wert der endElevation-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -1275,7 +1275,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         }
 
         /**
-         * Sets the value of the endElevation property.
+         * Legt den Wert der endElevation-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -1290,9 +1290,9 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
 
 
     /**
-     * <p>Java class for anonymous complex type</p>.
+     * <p>Java-Klasse für anonymous complex type.</p>
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
      * 
      * <pre>{@code
      * <complexType>
@@ -1357,7 +1357,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         }
 
         /**
-         * Gets the value of the lane property.
+         * Ruft den Wert der lane-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -1369,7 +1369,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         }
 
         /**
-         * Sets the value of the lane property.
+         * Legt den Wert der lane-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -1384,9 +1384,9 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
 
 
     /**
-     * <p>Java class for anonymous complex type</p>.
+     * <p>Java-Klasse für anonymous complex type.</p>
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
      * 
      * <pre>{@code
      * <complexType>
@@ -1451,9 +1451,9 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
 
 
     /**
-     * <p>Java class for anonymous complex type</p>.
+     * <p>Java-Klasse für anonymous complex type.</p>
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
      * 
      * <pre>{@code
      * <complexType>
@@ -1479,9 +1479,9 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
 
 
     /**
-     * <p>Java class for anonymous complex type</p>.
+     * <p>Java-Klasse für anonymous complex type.</p>
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
      * 
      * <pre>{@code
      * <complexType>
@@ -1534,7 +1534,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         protected StringType stripe;
 
         /**
-         * Gets the value of the elements property.
+         * Ruft den Wert der elements-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -1546,7 +1546,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         }
 
         /**
-         * Sets the value of the elements property.
+         * Legt den Wert der elements-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -1558,7 +1558,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         }
 
         /**
-         * Gets the value of the dashOffset property.
+         * Ruft den Wert der dashOffset-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -1570,7 +1570,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         }
 
         /**
-         * Sets the value of the dashOffset property.
+         * Legt den Wert der dashOffset-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -1614,7 +1614,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         }
 
         /**
-         * Gets the value of the leftChangeLane property.
+         * Ruft den Wert der leftChangeLane-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -1626,7 +1626,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         }
 
         /**
-         * Sets the value of the leftChangeLane property.
+         * Legt den Wert der leftChangeLane-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -1638,7 +1638,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         }
 
         /**
-         * Gets the value of the rightChangeLane property.
+         * Ruft den Wert der rightChangeLane-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -1650,7 +1650,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         }
 
         /**
-         * Sets the value of the rightChangeLane property.
+         * Legt den Wert der rightChangeLane-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -1662,7 +1662,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         }
 
         /**
-         * Gets the value of the lateralSync property.
+         * Ruft den Wert der lateralSync-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -1674,7 +1674,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         }
 
         /**
-         * Sets the value of the lateralSync property.
+         * Legt den Wert der lateralSync-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -1686,7 +1686,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         }
 
         /**
-         * Gets the value of the stripe property.
+         * Ruft den Wert der stripe-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -1698,7 +1698,7 @@ import org.opentrafficsim.xml.bindings.types.StripeLateralSyncType;
         }
 
         /**
-         * Sets the value of the stripe property.
+         * Legt den Wert der stripe-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is

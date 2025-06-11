@@ -10,9 +10,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * References to existing junction elements.
  * 
- * <p>Java class for t_junctionGroup_junctionReference complex type</p>.
+ * <p>Java-Klasse für t_junctionGroup_junctionReference complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_junctionGroup_junctionReference">
@@ -54,7 +54,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the junction property.
+     * Legt den Wert der junction-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

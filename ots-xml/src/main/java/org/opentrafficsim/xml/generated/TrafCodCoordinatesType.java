@@ -13,9 +13,9 @@ import org.opentrafficsim.xml.bindings.StringAdapter;
 
 
 /**
- * <p>Java class for TrafCodCoordinatesType complex type</p>.
+ * <p>Java-Klasse für TrafCodCoordinatesType complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="TrafCodCoordinatesType">
@@ -46,7 +46,7 @@ import org.opentrafficsim.xml.bindings.StringAdapter;
     protected org.opentrafficsim.xml.bindings.types.StringType space;
 
     /**
-     * Gets the value of the value property.
+     * Ruft den Wert der value-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -58,7 +58,7 @@ import org.opentrafficsim.xml.bindings.StringAdapter;
     }
 
     /**
-     * Sets the value of the value property.
+     * Legt den Wert der value-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -70,7 +70,7 @@ import org.opentrafficsim.xml.bindings.StringAdapter;
     }
 
     /**
-     * Gets the value of the space property.
+     * Ruft den Wert der space-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -86,7 +86,7 @@ import org.opentrafficsim.xml.bindings.StringAdapter;
     }
 
     /**
-     * Sets the value of the space property.
+     * Legt den Wert der space-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

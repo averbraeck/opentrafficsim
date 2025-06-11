@@ -9,9 +9,9 @@ import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for TimeDistType complex type</p>.
+ * <p>Java-Klasse für TimeDistType complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="TimeDistType">
@@ -37,7 +37,7 @@ import jakarta.xml.bind.annotation.XmlType;
     protected String timeUnit;
 
     /**
-     * Gets the value of the timeUnit property.
+     * Ruft den Wert der timeUnit-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -49,7 +49,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the timeUnit property.
+     * Legt den Wert der timeUnit-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

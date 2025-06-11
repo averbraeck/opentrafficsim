@@ -21,9 +21,9 @@ import org.w3c.dom.Element;
 
 
 /**
- * <p>Java class for includeType complex type</p>.
+ * <p>Java-Klasse für includeType complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="includeType">
@@ -112,7 +112,7 @@ import org.w3c.dom.Element;
     }
 
     /**
-     * Gets the value of the href property.
+     * Ruft den Wert der href-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -124,7 +124,7 @@ import org.w3c.dom.Element;
     }
 
     /**
-     * Sets the value of the href property.
+     * Legt den Wert der href-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -136,7 +136,7 @@ import org.w3c.dom.Element;
     }
 
     /**
-     * Gets the value of the parse property.
+     * Ruft den Wert der parse-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -152,7 +152,7 @@ import org.w3c.dom.Element;
     }
 
     /**
-     * Sets the value of the parse property.
+     * Legt den Wert der parse-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -164,7 +164,7 @@ import org.w3c.dom.Element;
     }
 
     /**
-     * Gets the value of the xpointer property.
+     * Ruft den Wert der xpointer-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -176,7 +176,7 @@ import org.w3c.dom.Element;
     }
 
     /**
-     * Sets the value of the xpointer property.
+     * Legt den Wert der xpointer-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -188,7 +188,7 @@ import org.w3c.dom.Element;
     }
 
     /**
-     * Gets the value of the encoding property.
+     * Ruft den Wert der encoding-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -200,7 +200,7 @@ import org.w3c.dom.Element;
     }
 
     /**
-     * Sets the value of the encoding property.
+     * Legt den Wert der encoding-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -212,7 +212,7 @@ import org.w3c.dom.Element;
     }
 
     /**
-     * Gets the value of the accept property.
+     * Ruft den Wert der accept-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -224,7 +224,7 @@ import org.w3c.dom.Element;
     }
 
     /**
-     * Sets the value of the accept property.
+     * Legt den Wert der accept-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -236,7 +236,7 @@ import org.w3c.dom.Element;
     }
 
     /**
-     * Gets the value of the acceptLanguage property.
+     * Ruft den Wert der acceptLanguage-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -248,7 +248,7 @@ import org.w3c.dom.Element;
     }
 
     /**
-     * Sets the value of the acceptLanguage property.
+     * Legt den Wert der acceptLanguage-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

@@ -16,9 +16,9 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
 
 
 /**
- * <p>Java class for FlattenerType complex type</p>.
+ * <p>Java-Klasse für FlattenerType complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="FlattenerType">
@@ -63,7 +63,7 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
     protected FlattenerType.DeviationAndAngle deviationAndAngle;
 
     /**
-     * Gets the value of the numSegments property.
+     * Ruft den Wert der numSegments-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -75,7 +75,7 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
     }
 
     /**
-     * Sets the value of the numSegments property.
+     * Legt den Wert der numSegments-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -87,7 +87,7 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
     }
 
     /**
-     * Gets the value of the deviationAndAngle property.
+     * Ruft den Wert der deviationAndAngle-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -99,7 +99,7 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
     }
 
     /**
-     * Sets the value of the deviationAndAngle property.
+     * Legt den Wert der deviationAndAngle-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -112,9 +112,9 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
 
 
     /**
-     * <p>Java class for anonymous complex type</p>.
+     * <p>Java-Klasse für anonymous complex type.</p>
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.</p>
+     * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
      * 
      * <pre>{@code
      * <complexType>
@@ -149,7 +149,7 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
         protected AngleType maxAngle;
 
         /**
-         * Gets the value of the maxDeviation property.
+         * Ruft den Wert der maxDeviation-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -161,7 +161,7 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
         }
 
         /**
-         * Sets the value of the maxDeviation property.
+         * Legt den Wert der maxDeviation-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is
@@ -173,7 +173,7 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
         }
 
         /**
-         * Gets the value of the maxAngle property.
+         * Ruft den Wert der maxAngle-Eigenschaft ab.
          * 
          * @return
          *     possible object is
@@ -185,7 +185,7 @@ import org.opentrafficsim.xml.bindings.types.LengthType;
         }
 
         /**
-         * Sets the value of the maxAngle property.
+         * Legt den Wert der maxAngle-Eigenschaft fest.
          * 
          * @param value
          *     allowed object is

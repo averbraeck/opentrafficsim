@@ -13,9 +13,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * For links between lanes with an identical reference line, the lane predecessor and successor information provide the IDs of lanes on the preceding or following lane section. For links between lanes with different reference line,  the lane predecessor and successor information provide the IDs of lanes on the first or last lane section of the other reference line depending on the contact point of the road linkage. This element may only be omitted, if lanes end at a junction or have no physical link.
  * 
- * <p>Java class for t_road_lanes_laneSection_lcr_lane_link complex type</p>.
+ * <p>Java-Klasse für t_road_lanes_laneSection_lcr_lane_link complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_road_lanes_laneSection_lcr_lane_link">

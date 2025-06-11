@@ -20,9 +20,9 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
  * In OpenDRIVE, the road network is represented by <road> elements. Each road runs along one road reference line. A road shall have at least one lane with a width larger than 0.
  * OpenDRIVE roads may be roads in the real road network or artificial road network created for application use. Each road is described by one or more <road> elements. One <road> element may cover a long stretch of a road, shorter stretches between junctions, or even several roads. A new <road> element should only start if the properties of the road cannot be described within the previous <road> element or if a junction is required.
  * 
- * <p>Java class for t_road complex type</p>.
+ * <p>Java-Klasse für t_road complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_road">
@@ -128,7 +128,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     protected LaneKeepingPolicy rule;
 
     /**
-     * Gets the value of the link property.
+     * Ruft den Wert der link-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -140,7 +140,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     }
 
     /**
-     * Sets the value of the link property.
+     * Legt den Wert der link-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -184,7 +184,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     }
 
     /**
-     * Gets the value of the planView property.
+     * Ruft den Wert der planView-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -196,7 +196,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     }
 
     /**
-     * Sets the value of the planView property.
+     * Legt den Wert der planView-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -208,7 +208,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     }
 
     /**
-     * Gets the value of the elevationProfile property.
+     * Ruft den Wert der elevationProfile-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -220,7 +220,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     }
 
     /**
-     * Sets the value of the elevationProfile property.
+     * Legt den Wert der elevationProfile-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -232,7 +232,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     }
 
     /**
-     * Gets the value of the lateralProfile property.
+     * Ruft den Wert der lateralProfile-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -244,7 +244,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     }
 
     /**
-     * Sets the value of the lateralProfile property.
+     * Legt den Wert der lateralProfile-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -256,7 +256,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     }
 
     /**
-     * Gets the value of the lanes property.
+     * Ruft den Wert der lanes-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -268,7 +268,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     }
 
     /**
-     * Sets the value of the lanes property.
+     * Legt den Wert der lanes-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -280,7 +280,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     }
 
     /**
-     * Gets the value of the objects property.
+     * Ruft den Wert der objects-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -292,7 +292,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     }
 
     /**
-     * Sets the value of the objects property.
+     * Legt den Wert der objects-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -304,7 +304,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     }
 
     /**
-     * Gets the value of the signals property.
+     * Ruft den Wert der signals-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -316,7 +316,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     }
 
     /**
-     * Sets the value of the signals property.
+     * Legt den Wert der signals-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -328,7 +328,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     }
 
     /**
-     * Gets the value of the surface property.
+     * Ruft den Wert der surface-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -340,7 +340,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     }
 
     /**
-     * Sets the value of the surface property.
+     * Legt den Wert der surface-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -352,7 +352,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     }
 
     /**
-     * Gets the value of the railroad property.
+     * Ruft den Wert der railroad-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -364,7 +364,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     }
 
     /**
-     * Sets the value of the railroad property.
+     * Legt den Wert der railroad-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -425,7 +425,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     }
 
     /**
-     * Sets the value of the name property.
+     * Legt den Wert der name-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -450,7 +450,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     }
 
     /**
-     * Sets the value of the length property.
+     * Legt den Wert der length-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -475,7 +475,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     }
 
     /**
-     * Sets the value of the id property.
+     * Legt den Wert der id-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -500,7 +500,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     }
 
     /**
-     * Sets the value of the junction property.
+     * Legt den Wert der junction-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -525,7 +525,7 @@ import org.opentrafficsim.opendrive.bindings.LengthAdapter;
     }
 
     /**
-     * Sets the value of the rule property.
+     * Legt den Wert der rule-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

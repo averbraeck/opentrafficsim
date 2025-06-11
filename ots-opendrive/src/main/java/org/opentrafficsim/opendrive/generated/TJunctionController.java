@@ -12,9 +12,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * Lists the controllers that are used for the management of a junction.
  * 
- * <p>Java class for t_junction_controller complex type</p>.
+ * <p>Java-Klasse für t_junction_controller complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_junction_controller">
@@ -71,7 +71,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the id property.
+     * Legt den Wert der id-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -96,7 +96,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the type property.
+     * Legt den Wert der type-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -121,7 +121,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the sequence property.
+     * Legt den Wert der sequence-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

@@ -11,9 +11,9 @@ import jakarta.xml.bind.annotation.XmlType;
  * The description of the data quality is represented by <dataQuality> elements. They may be stored at any position in OpenDRIVE.
  * Measurement data derived from external sources like GPS that is integrated in OpenDRIVE may be inaccurate. The error range, given in [m], may be listed in the application.
  * 
- * <p>Java class for t_dataQuality complex type</p>.
+ * <p>Java-Klasse für t_dataQuality complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_dataQuality">
@@ -41,7 +41,7 @@ import jakarta.xml.bind.annotation.XmlType;
     protected TDataQualityRawData rawData;
 
     /**
-     * Gets the value of the error property.
+     * Ruft den Wert der error-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -53,7 +53,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the error property.
+     * Legt den Wert der error-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -65,7 +65,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Gets the value of the rawData property.
+     * Ruft den Wert der rawData-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -77,7 +77,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the rawData property.
+     * Legt den Wert der rawData-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

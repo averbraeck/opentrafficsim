@@ -13,9 +13,9 @@ import org.opentrafficsim.xml.bindings.types.LengthUnitType;
 
 
 /**
- * <p>Java class for LengthDistType complex type</p>.
+ * <p>Java-Klasse für LengthDistType complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="LengthDistType">
@@ -45,7 +45,7 @@ import org.opentrafficsim.xml.bindings.types.LengthUnitType;
     protected LengthUnitType lengthUnit;
 
     /**
-     * Gets the value of the lengthUnit property.
+     * Ruft den Wert der lengthUnit-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -57,7 +57,7 @@ import org.opentrafficsim.xml.bindings.types.LengthUnitType;
     }
 
     /**
-     * Sets the value of the lengthUnit property.
+     * Legt den Wert der lengthUnit-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

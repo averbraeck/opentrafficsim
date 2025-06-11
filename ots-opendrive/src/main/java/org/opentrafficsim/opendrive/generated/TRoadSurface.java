@@ -13,9 +13,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * In OpenDRIVE, the road surface is represented by the <surface> element within the <road> element.
  * 
- * <p>Java class for t_road_surface complex type</p>.
+ * <p>Java-Klasse für t_road_surface complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_road_surface">

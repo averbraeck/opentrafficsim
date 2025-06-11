@@ -15,9 +15,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * The <header> element is the very first element within the <OpenDRIVE> element.
  * 
- * <p>Java class for t_header complex type</p>.
+ * <p>Java-Klasse für t_header complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_header">
@@ -131,7 +131,7 @@ import jakarta.xml.bind.annotation.XmlType;
     protected String vendor;
 
     /**
-     * Gets the value of the geoReference property.
+     * Ruft den Wert der geoReference-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -143,7 +143,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the geoReference property.
+     * Legt den Wert der geoReference-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -155,7 +155,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Gets the value of the offset property.
+     * Ruft den Wert der offset-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -167,7 +167,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the offset property.
+     * Legt den Wert der offset-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -232,7 +232,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the revMajor property.
+     * Legt den Wert der revMajor-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -257,7 +257,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the revMinor property.
+     * Legt den Wert der revMinor-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -282,7 +282,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the name property.
+     * Legt den Wert der name-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -307,7 +307,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the version property.
+     * Legt den Wert der version-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -333,7 +333,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the date property.
+     * Legt den Wert der date-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -358,7 +358,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the north property.
+     * Legt den Wert der north-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -383,7 +383,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the south property.
+     * Legt den Wert der south-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -408,7 +408,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the east property.
+     * Legt den Wert der east-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -433,7 +433,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the west property.
+     * Legt den Wert der west-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -458,7 +458,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the vendor property.
+     * Legt den Wert der vendor-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

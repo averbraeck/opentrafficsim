@@ -14,9 +14,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * To avoid large coordinates, an offset of the whole dataset may be applied using the <offset> element. It enables inertial relocation and re-orientation of datasets. The dataset is first translated by @x, @y, and @z. Afterwards, it is rotated by @hdg around the new origin. Rotation around the z-axis should be avoided.In OpenDRIVE, the offset of a database is represented by the <offset> element within the <header> element.
  * 
- * <p>Java class for t_header_Offset complex type</p>.
+ * <p>Java-Klasse für t_header_Offset complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_header_Offset">
@@ -126,7 +126,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the x property.
+     * Legt den Wert der x-Eigenschaft fest.
      * 
      */
     public void setX(double value) {
@@ -142,7 +142,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the y property.
+     * Legt den Wert der y-Eigenschaft fest.
      * 
      */
     public void setY(double value) {
@@ -158,7 +158,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the z property.
+     * Legt den Wert der z-Eigenschaft fest.
      * 
      */
     public void setZ(double value) {
@@ -174,7 +174,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the hdg property.
+     * Legt den Wert der hdg-Eigenschaft fest.
      * 
      */
     public void setHdg(float value) {

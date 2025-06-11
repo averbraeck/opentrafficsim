@@ -17,9 +17,9 @@ import org.opentrafficsim.xml.bindings.types.StringType;
 
 
 /**
- * <p>Java class for anonymous complex type</p>.
+ * <p>Java-Klasse für anonymous complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType>
@@ -70,7 +70,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     protected DoubleType demandWeight;
 
     /**
-     * Gets the value of the id property.
+     * Ruft den Wert der id-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -82,7 +82,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the id property.
+     * Legt den Wert der id-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -94,7 +94,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Gets the value of the type property.
+     * Ruft den Wert der type-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -106,7 +106,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the type property.
+     * Legt den Wert der type-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -118,7 +118,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Gets the value of the centroid property.
+     * Ruft den Wert der centroid-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -130,7 +130,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the centroid property.
+     * Legt den Wert der centroid-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -142,7 +142,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Gets the value of the node property.
+     * Ruft den Wert der node-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -154,7 +154,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the node property.
+     * Legt den Wert der node-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -179,7 +179,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the outbound property.
+     * Legt den Wert der outbound-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -192,7 +192,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Gets the value of the demandWeight property.
+     * Ruft den Wert der demandWeight-Eigenschaft ab.
      * 
      * @return
      *     possible object is
@@ -208,7 +208,7 @@ import org.opentrafficsim.xml.bindings.types.StringType;
     }
 
     /**
-     * Sets the value of the demandWeight property.
+     * Legt den Wert der demandWeight-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

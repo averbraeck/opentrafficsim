@@ -10,9 +10,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * In OpenDRIVE, a cubic polynom is represented by a <poly3> element within the <geometry> element.
  * 
- * <p>Java class for t_road_planView_geometry_poly3 complex type</p>.
+ * <p>Java-Klasse für t_road_planView_geometry_poly3 complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_road_planView_geometry_poly3">
@@ -71,7 +71,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the a property.
+     * Legt den Wert der a-Eigenschaft fest.
      * 
      */
     public void setA(double value) {
@@ -87,7 +87,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the b property.
+     * Legt den Wert der b-Eigenschaft fest.
      * 
      */
     public void setB(double value) {
@@ -103,7 +103,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the c property.
+     * Legt den Wert der c-Eigenschaft fest.
      * 
      */
     public void setC(double value) {
@@ -119,7 +119,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the d property.
+     * Legt den Wert der d-Eigenschaft fest.
      * 
      */
     public void setD(double value) {

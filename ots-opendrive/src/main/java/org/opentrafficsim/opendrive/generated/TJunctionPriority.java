@@ -10,9 +10,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * If an incoming road is linked to an outgoing road with multiple connection roads to represent several possible lane connections, then one of these connections may be prioritized. Assigning a priority is only required if the application is unable to derive priorities from signals before or inside a junction or from the lanes leading to a junction. At least one attribute must be given.
  * 
- * <p>Java class for t_junction_priority complex type</p>.
+ * <p>Java-Klasse für t_junction_priority complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_junction_priority">
@@ -61,7 +61,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the high property.
+     * Legt den Wert der high-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is
@@ -86,7 +86,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the low property.
+     * Legt den Wert der low-Eigenschaft fest.
      * 
      * @param value
      *     allowed object is

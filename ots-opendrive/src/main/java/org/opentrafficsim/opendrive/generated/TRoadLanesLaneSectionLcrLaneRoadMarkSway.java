@@ -10,9 +10,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * Relocates the lateral reference position for the following (explicit) type definition and thus defines an offset. The sway offset is relative to the nominal reference position of the lane marking, meaning the lane border.
  * 
- * <p>Java class for t_road_lanes_laneSection_lcr_lane_roadMark_sway complex type</p>.
+ * <p>Java-Klasse für t_road_lanes_laneSection_lcr_lane_roadMark_sway complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_road_lanes_laneSection_lcr_lane_roadMark_sway">
@@ -78,7 +78,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the ds property.
+     * Legt den Wert der ds-Eigenschaft fest.
      * 
      */
     public void setDs(double value) {
@@ -94,7 +94,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the a property.
+     * Legt den Wert der a-Eigenschaft fest.
      * 
      */
     public void setA(double value) {
@@ -110,7 +110,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the b property.
+     * Legt den Wert der b-Eigenschaft fest.
      * 
      */
     public void setB(double value) {
@@ -126,7 +126,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the c property.
+     * Legt den Wert der c-Eigenschaft fest.
      * 
      */
     public void setC(double value) {
@@ -142,7 +142,7 @@ import jakarta.xml.bind.annotation.XmlType;
     }
 
     /**
-     * Sets the value of the d property.
+     * Legt den Wert der d-Eigenschaft fest.
      * 
      */
     public void setD(double value) {

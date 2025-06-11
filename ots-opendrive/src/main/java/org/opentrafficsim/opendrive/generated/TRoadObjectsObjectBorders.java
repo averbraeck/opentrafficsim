@@ -13,9 +13,9 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * Objects may have a border, that is, a frame of a defined width. Different border types are available.
  * 
- * <p>Java class for t_road_objects_object_borders complex type</p>.
+ * <p>Java-Klasse für t_road_objects_object_borders complex type.</p>
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.</p>
+ * <p>Das folgende Schemafragment gibt den erwarteten Content an, der in dieser Klasse enthalten ist.</p>
  * 
  * <pre>{@code
  * <complexType name="t_road_objects_object_borders">
