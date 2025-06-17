@@ -1,5 +1,7 @@
-package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.Cruise.BasicHuman.Overtaking;
+package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.Cruise.BasicHuman.OvertakingManeuver;
 
+import org.djunits.value.vdouble.scalar.Duration;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.DrivingTask;
 
 public class AbortOvertakingManeuver extends StartOvertakingManeuver {
@@ -10,6 +12,13 @@ public class AbortOvertakingManeuver extends StartOvertakingManeuver {
 
     @Override
     public void executeControl() {
+
+        Duration minimumTimeHeadway = this.drivingTask.getParameters().getParameter(ParameterTypes.TMIN);
+        if (this.drivingTask.getParameters().getParameter(ParameterTypes.T).eq(minimumTimeHeadway))
+        {
+            this.drivingTask.getParameters().resetParameter(ParameterTypes.T);
+        }
+
         AbstractMirovaVehicle v = this.drivingTask.getContextVehicle();
         int desLane = (int) v.getContextDriverDevice().getVissimVehicle().AttValue("DesLane");
         v.getContextDriverDevice().getVissimVehicle().SetAttValue("DesLane", desLane - 1);

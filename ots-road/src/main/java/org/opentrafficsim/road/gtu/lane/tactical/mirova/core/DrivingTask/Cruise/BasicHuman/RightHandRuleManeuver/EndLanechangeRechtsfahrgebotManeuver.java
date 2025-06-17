@@ -1,9 +1,10 @@
-package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.Cruise.BasicHuman.Overtaking;
+package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.Cruise.BasicHuman.RightHandRuleManeuver;
 
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.DrivingTask;
 
-public class EndOvertakingManeuver extends StartOvertakingManeuver {
-    public EndOvertakingManeuver(final DrivingTask drivingTask) {
+// end_lanechange_rechtsfahrgebot_maneuver.java
+public class EndLanechangeRechtsfahrgebotManeuver extends StartLanechangeRechtsfahrgebotManeuver {
+    public EndLanechangeRechtsfahrgebotManeuver(final DrivingTask drivingTask) {
         super(drivingTask);
         this.update();
     }
