@@ -1,6 +1,9 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.core;
 //package mirova.scripts.model.prototype.abstract_classes;
 
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.DrivingTask;
 
 public abstract class ActionState {
@@ -25,9 +28,11 @@ public abstract class ActionState {
      */
 
     protected DrivingTask drivingTask;
+    private SimpleOperationalPlan operationalPlan;
 
     public ActionState(final DrivingTask drivingTask) {
         this.drivingTask = drivingTask;
+
     }
 
     /**
@@ -35,7 +40,7 @@ public abstract class ActionState {
      * This method adjusts the vehicle's behavior, such as speed or lateral position,
      * based on the logic defined in the specific action state.
      */
-    public abstract void executeControl();
+    public abstract SimpleOperationalPlan executeControl();
 
     /**
      * Updates the ActionState at each simulation timestep or customized discretization.
@@ -44,27 +49,37 @@ public abstract class ActionState {
      * - Checks for transitions to subsequent action states using the next method.
      * - Checks if the current maneuver is still appropriate using the abort method.
      * - Executes the control logic for the current state using the executeControl method.
+     * @throws IllegalArgumentException
+     * @throws NullPointerException
+     * @throws ParameterException
+     * @throws OperationalPlanException
      */
-    public void update() {
-//        this.drivingTask.getContextVehicle().getContextDriverDevice().getVissimVehicle()
-//            .setAttValue("ActionState", this.getClass().getSimpleName());
+    public SimpleOperationalPlan update() throws OperationalPlanException, ParameterException, NullPointerException, IllegalArgumentException {
         this.drivingTask.getAbstractMirovaVehicle().setRunningManeuver(true);
         this.next();
         this.abort();
-        this.executeControl();
+        return this.executeControl();
     }
 
     /**
      * Checks whether the conditions for transitioning to the next action state are met.
      * If the transition conditions are satisfied, this method triggers the transition
      * to the subsequent action state.
+     * @throws IllegalArgumentException
+     * @throws NullPointerException
+     * @throws ParameterException
+     * @throws OperationalPlanException
      */
-    public abstract void next();
+    public abstract void next() throws OperationalPlanException, ParameterException, NullPointerException, IllegalArgumentException;
 
     /**
      * Checks whether the current maneuver is still appropriate.
      * If the conditions for continuing the current maneuver are no longer valid,
      * this method handles the logic for aborting the current state.
+     * @throws ParameterException
+     * @throws IllegalArgumentException
+     * @throws NullPointerException
+     * @throws OperationalPlanException
      */
-    public abstract void abort();
+    public abstract void abort() throws ParameterException, OperationalPlanException, NullPointerException, IllegalArgumentException;
 }
