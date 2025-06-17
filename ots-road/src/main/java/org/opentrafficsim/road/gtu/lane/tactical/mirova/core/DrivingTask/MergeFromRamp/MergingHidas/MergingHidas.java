@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.MergeF
 
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.*;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.DrivingTask;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes.AbstractMirovaVehicle;
 
 /**
  * Implements the ramp merging behavior based on the methodology described by Hidas (2005).
