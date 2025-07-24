@@ -1,13 +1,13 @@
 package org.opentrafficsim.core.network;
 
 import java.io.Serializable;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.OrientedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
@@ -106,7 +106,7 @@ public class Link extends LocalEventProducer
      *             or the end node of the link are not registered in the network.
      */
     public Link(final Network network, final String id, final Node startNode, final Node endNode, final LinkType linkType,
-            final OtsLine2d designLine, final FractionalLengthData elevation) throws NetworkException
+                final OtsLine2d designLine, final FractionalLengthData elevation) throws NetworkException
     {
         Throw.whenNull(network, "network cannot be null");
         Throw.whenNull(id, "id cannot be null");
@@ -126,8 +126,9 @@ public class Link extends LocalEventProducer
         this.elevation = elevation;
         this.shape = new Polygon2d(this.designLine.offsetLine(0.5).getPoints());
         this.location = this.designLine.getLocationFractionExtended(0.5);
-        this.bounds =
-                BoundingPolygon.geometryToBounds(this.location, ClickableBounds.get(this.designLine.getLine2d()).asPolygon());
+        OtsLine2d otsLine = new OtsLine2d(this.designLine.getLine2d());
+        otsLine = otsLine.noiseFilterRamerDouglasPeucker(1, false);
+        this.bounds = BoundingPolygon.geometryToBounds(this.location, ClickableBounds.get(otsLine.getLine2d()).asPolygon());
         this.network.addLink(this);
     }
 
