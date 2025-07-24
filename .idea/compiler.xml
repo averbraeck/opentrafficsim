@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="ots-sim0mq-kpi" />
+        <module name="ots-core" />
+        <module name="ots-web" />
+        <module name="ots-trafficcontrol" />
+        <module name="ots-swing" />
+        <module name="ots-base" />
+        <module name="ots-editor" />
+        <module name="ots-parser-xml" />
+        <module name="ots-sim0mq" />
+        <module name="ots-sim0mq-swing" />
+        <module name="ots-kpi" />
+        <module name="ots-draw" />
+        <module name="ots-demo" />
+        <module name="ots-animation" />
+        <module name="ots-road" />
+      </profile>
+    </annotationProcessing>
+  </component>
+</project>
