@@ -112,9 +112,8 @@ public class GtuSpawner
      * @throws NetworkException when the GTU cannot be placed on the given lane
      */
     public void spawnGtu(final String id, final LaneBasedGtuCharacteristics templateGtuType, final RoadNetwork network,
-            final Speed speed, final LanePosition position) throws GtuException, OtsGeometryException, NetworkException
+                         final Speed speed, final Speed temporarySpeedLimit, final LanePosition position) throws GtuException, OtsGeometryException, NetworkException
     {
-
         if (this.useDefaultGtuTemplate)
         {
             GtuType.registerTemplateSupplier(templateGtuType.getGtuType(), Defaults.NL);
@@ -133,6 +132,7 @@ public class GtuSpawner
         gtu.setNoLaneChangeDistance(this.noLaneChangeDistance);
         gtu.setInstantaneousLaneChange(this.instantaneousLaneChanges);
         gtu.setErrorHandler(this.errorHandler);
+        gtu.setTemporarySpeedLimit(temporarySpeedLimit);
 
         gtu.init(templateGtuType.getStrategicalPlannerFactory().create(gtu, templateGtuType.getRoute(),
                 templateGtuType.getOrigin(), templateGtuType.getDestination()), position, speed);

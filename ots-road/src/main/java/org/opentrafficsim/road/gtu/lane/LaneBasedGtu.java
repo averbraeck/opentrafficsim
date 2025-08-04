@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 
+import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.PositionUnit;
@@ -1477,9 +1478,6 @@ public class LaneBasedGtu extends Gtu
                     // Throw.whenNull(infra, "InfrastructurePerception is required to determine the desired speed.");
                     speedInfo = infra.getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
                 }
-                if (this.temporarySpeedLimit != null) {
-                    speedInfo.addSpeedInfo(SpeedLimitTypes.DYNAMIC_SIGN, this.temporarySpeedLimit);
-                }
                 this.cachedDesiredSpeed =
                         Try.assign(() -> getTacticalPlanner().getCarFollowingModel().desiredSpeed(getParameters(), speedInfo),
                                 "Parameter exception while obtaining the desired speed.");
@@ -1514,6 +1512,9 @@ public class LaneBasedGtu extends Gtu
                 InfrastructurePerception infra = perception.getPerceptionCategoryOrNull(InfrastructurePerception.class);
                 Throw.whenNull(infra, "InfrastructurePerception is required to determine the desired speed.");
                 SpeedLimitInfo speedInfo = infra.getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
+                if (this.temporarySpeedLimit != null) {
+                    speedInfo.addSpeedInfo(SpeedLimitTypes.DYNAMIC_SIGN, this.temporarySpeedLimit);
+                }
                 // leaders
                 NeighborsPerception neighbors = perception.getPerceptionCategoryOrNull(NeighborsPerception.class);
                 Throw.whenNull(neighbors, "NeighborsPerception is required to determine the car-following acceleration.");
@@ -1523,6 +1524,9 @@ public class LaneBasedGtu extends Gtu
                         Try.assign(() -> getTacticalPlanner().getCarFollowingModel().followingAcceleration(getParameters(),
                                 speed, speedInfo, leaders), "Parameter exception while obtaining the desired speed.");
                 this.carFollowingAccelerationTime = simTime;
+            }
+            if (this.temporarySpeedLimit != null && this.temporarySpeedLimit.getSI() <= 0) {
+                return new Acceleration(0, AccelerationUnit.METER_PER_SECOND_2);
             }
             return this.cachedCarFollowingAcceleration;
         }
