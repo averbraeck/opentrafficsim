@@ -24,8 +24,12 @@ public class SilabColorer implements GtuColorer, Serializable
     /** */
     private static final long serialVersionUID = 20250804L;
 
-    public SilabColorer()
-    {
+    private String avId;
+    private String userId;
+
+    public SilabColorer(String avId, String userId) {
+        this.avId = avId;
+        this.userId = userId;
     }
 
 
@@ -33,10 +37,10 @@ public class SilabColorer implements GtuColorer, Serializable
     @Override
     public Color getColor(final Gtu gtu)
     {
-        if (gtu.getId().equals("AV"))
+        if (gtu.getId().equals(this.avId))
         {
             return Color.MAGENTA;
-        } else if (gtu.getId().equals("USER")) {
+        } else if (gtu.getId().equals(this.userId)) {
             return Color.BLUE;
         } else {
             return Color.BLACK;
