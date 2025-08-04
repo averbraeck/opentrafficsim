@@ -128,7 +128,8 @@ public class LaneBasedGtu extends Gtu
     /** Cached desired speed. */
     private Speed cachedDesiredSpeed;
 
-    /** Using this to temporarily slow down */
+    /** Using this to temporarily slow down. Values < 0 or null means there is no temporarySpeedLimit.
+     * There can ofc be other SpeedLimits, e.g. Sign Speed Limits */
     private Speed temporarySpeedLimit = null;
 
     /** Time desired speed was cached. */
@@ -1512,7 +1513,7 @@ public class LaneBasedGtu extends Gtu
                 InfrastructurePerception infra = perception.getPerceptionCategoryOrNull(InfrastructurePerception.class);
                 Throw.whenNull(infra, "InfrastructurePerception is required to determine the desired speed.");
                 SpeedLimitInfo speedInfo = infra.getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
-                if (this.temporarySpeedLimit != null) {
+                if (this.temporarySpeedLimit != null && this.temporarySpeedLimit.getSI() >= 0) {
                     speedInfo.addSpeedInfo(SpeedLimitTypes.DYNAMIC_SIGN, this.temporarySpeedLimit);
                 }
                 // leaders
@@ -1525,7 +1526,7 @@ public class LaneBasedGtu extends Gtu
                                 speed, speedInfo, leaders), "Parameter exception while obtaining the desired speed.");
                 this.carFollowingAccelerationTime = simTime;
             }
-            if (this.temporarySpeedLimit != null && this.temporarySpeedLimit.getSI() <= 0) {
+            if (this.temporarySpeedLimit != null && this.temporarySpeedLimit.getSI() >= 0 && this.temporarySpeedLimit.getSI() <= 0) {
                 return new Acceleration(0, AccelerationUnit.METER_PER_SECOND_2);
             }
             return this.cachedCarFollowingAcceleration;
