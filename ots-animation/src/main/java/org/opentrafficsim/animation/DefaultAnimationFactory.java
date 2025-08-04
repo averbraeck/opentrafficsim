@@ -11,21 +11,7 @@ import javax.naming.NamingException;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.logger.CategoryLogger;
-import org.opentrafficsim.animation.data.AnimationBusStopData;
-import org.opentrafficsim.animation.data.AnimationConflictData;
-import org.opentrafficsim.animation.data.AnimationCrossSectionElementData;
-import org.opentrafficsim.animation.data.AnimationGtuData;
-import org.opentrafficsim.animation.data.AnimationGtuGeneratorPositionData;
-import org.opentrafficsim.animation.data.AnimationLaneData;
-import org.opentrafficsim.animation.data.AnimationLaneDetectorData;
-import org.opentrafficsim.animation.data.AnimationLinkData;
-import org.opentrafficsim.animation.data.AnimationNodeData;
-import org.opentrafficsim.animation.data.AnimationPriorityData;
-import org.opentrafficsim.animation.data.AnimationShoulderData;
-import org.opentrafficsim.animation.data.AnimationSpeedSignData;
-import org.opentrafficsim.animation.data.AnimationStripeData;
-import org.opentrafficsim.animation.data.AnimationTrafficLightData;
-import org.opentrafficsim.animation.data.AnimationTrafficLightDetectorData;
+import org.opentrafficsim.animation.data.*;
 import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
@@ -40,23 +26,13 @@ import org.opentrafficsim.draw.gtu.DefaultCarAnimation;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData;
 import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.network.NodeAnimation;
-import org.opentrafficsim.draw.road.BusStopAnimation;
+import org.opentrafficsim.draw.road.*;
 import org.opentrafficsim.draw.road.BusStopAnimation.BusStopData;
-import org.opentrafficsim.draw.road.ConflictAnimation;
 import org.opentrafficsim.draw.road.ConflictAnimation.ConflictData;
-import org.opentrafficsim.draw.road.CrossSectionElementAnimation;
-import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation;
 import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
-import org.opentrafficsim.draw.road.LaneAnimation;
-import org.opentrafficsim.draw.road.LaneDetectorAnimation;
 import org.opentrafficsim.draw.road.LaneDetectorAnimation.LaneDetectorData;
-import org.opentrafficsim.draw.road.PriorityAnimation;
-import org.opentrafficsim.draw.road.SpeedSignAnimation;
 import org.opentrafficsim.draw.road.SpeedSignAnimation.SpeedSignData;
-import org.opentrafficsim.draw.road.StripeAnimation;
-import org.opentrafficsim.draw.road.TrafficLightAnimation;
 import org.opentrafficsim.draw.road.TrafficLightAnimation.TrafficLightData;
-import org.opentrafficsim.draw.road.TrafficLightDetectorAnimation;
 import org.opentrafficsim.draw.road.TrafficLightDetectorAnimation.TrafficLightDetectorData;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -67,6 +43,7 @@ import org.opentrafficsim.road.network.lane.Shoulder;
 import org.opentrafficsim.road.network.lane.Stripe;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.object.BusStop;
+import org.opentrafficsim.road.network.lane.object.IndicatorPoint;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
 import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
 import org.opentrafficsim.road.network.lane.object.detector.SinkDetector;
@@ -354,6 +331,13 @@ public class DefaultAnimationFactory implements EventListener
                 SpeedSign speedSign = (SpeedSign) object;
                 Renderable2d<SpeedSignData> objectAnimation =
                         new SpeedSignAnimation(new AnimationSpeedSignData(speedSign), this.simulator);
+                this.animatedLocatedObjects.put(object, objectAnimation);
+            }
+            else if (object instanceof IndicatorPoint)
+            {
+                IndicatorPoint indicatorPoint = (IndicatorPoint) object;
+                Renderable2d<IndicatorPointAnimation.IndicatorPointData> objectAnimation =
+                        new IndicatorPointAnimation(new AnimationIndicatorPointData(indicatorPoint), this.simulator);
                 this.animatedLocatedObjects.put(object, objectAnimation);
             }
             else if (object instanceof BusStop)

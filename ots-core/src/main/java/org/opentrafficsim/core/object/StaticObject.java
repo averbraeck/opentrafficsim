@@ -33,7 +33,7 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, D
     private final PolyLine2d geometry;
 
     /** Location. */
-    private final OrientedPoint2d location;
+    private OrientedPoint2d location;
 
     /** Bounds. */
     private final OtsBounds2d bounds;
@@ -137,6 +137,11 @@ public class StaticObject extends LocalEventProducer implements LocatedObject, D
     public OrientedPoint2d getLocation()
     {
         return this.location;
+    }
+
+    public void setLocation(OrientedPoint2d newLocation)
+    {
+        this.location = newLocation;
     }
 
     /** {@inheritDoc} */
