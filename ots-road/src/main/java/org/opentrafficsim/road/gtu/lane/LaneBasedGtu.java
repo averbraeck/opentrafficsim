@@ -127,6 +127,9 @@ public class LaneBasedGtu extends Gtu
     /** Cached desired speed. */
     private Speed cachedDesiredSpeed;
 
+    /** Using this to temporarily slow down */
+    private Speed temporarySpeedLimit = null;
+
     /** Time desired speed was cached. */
     private Time desiredSpeedTime;
 
@@ -1474,6 +1477,9 @@ public class LaneBasedGtu extends Gtu
                     // Throw.whenNull(infra, "InfrastructurePerception is required to determine the desired speed.");
                     speedInfo = infra.getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO);
                 }
+                if (this.temporarySpeedLimit != null) {
+                    speedInfo.addSpeedInfo(SpeedLimitTypes.DYNAMIC_SIGN, this.temporarySpeedLimit);
+                }
                 this.cachedDesiredSpeed =
                         Try.assign(() -> getTacticalPlanner().getCarFollowingModel().desiredSpeed(getParameters(), speedInfo),
                                 "Parameter exception while obtaining the desired speed.");
@@ -1481,6 +1487,10 @@ public class LaneBasedGtu extends Gtu
             }
             return this.cachedDesiredSpeed;
         }
+    }
+
+    public void setTemporarySpeedLimit(Speed temporarySpeedLimit) {
+        this.temporarySpeedLimit = temporarySpeedLimit;
     }
 
     /**
