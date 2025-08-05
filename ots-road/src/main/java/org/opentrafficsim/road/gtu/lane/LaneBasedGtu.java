@@ -1536,7 +1536,7 @@ public class LaneBasedGtu extends Gtu
                                 speed, speedInfo, leaders), "Parameter exception while obtaining the desired speed.");
                 this.carFollowingAccelerationTime = simTime;
             }
-            if (this.temporarySpeedLimit != null && this.temporarySpeedLimit.getSI() >= 0 && this.temporarySpeedLimit.getSI() <= 0) {
+            if (this.temporarySpeedLimit != null && this.temporarySpeedLimit.getSI() >= 0) {
                 return new Acceleration(0, AccelerationUnit.METER_PER_SECOND_2);
             }
             return this.cachedCarFollowingAcceleration;
