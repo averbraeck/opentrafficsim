@@ -1508,7 +1508,7 @@ public class LaneBasedGtu extends Gtu
     {
         synchronized (this)
         {
-            if (this.overwrittenAcceleration != null && this.overwrittenAcceleration.getSI() >= 0) {
+            if (this.overwrittenAcceleration != null && this.overwrittenAcceleration.getSI() > Double.NEGATIVE_INFINITY) {
                 return this.overwrittenAcceleration;
             }
             Time simTime = getSimulator().getSimulatorAbsTime();
