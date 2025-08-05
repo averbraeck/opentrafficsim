@@ -39,8 +39,10 @@ public abstract class ActionState {
      * Executes the control logic for the action state.
      * This method adjusts the vehicle's behavior, such as speed or lateral position,
      * based on the logic defined in the specific action state.
+     * @throws OperationalPlanException
+     * @throws ParameterException
      */
-    public abstract SimpleOperationalPlan executeControl();
+    public abstract SimpleOperationalPlan executeControl() throws ParameterException, OperationalPlanException;
 
     /**
      * Updates the ActionState at each simulation timestep or customized discretization.

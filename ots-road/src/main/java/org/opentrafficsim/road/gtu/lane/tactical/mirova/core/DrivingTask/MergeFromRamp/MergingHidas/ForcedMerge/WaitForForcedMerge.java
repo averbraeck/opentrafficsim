@@ -1,6 +1,14 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.MergeFromRamp.MergingHidas.ForcedMerge;
 
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.MergeFromRamp.MergingHidas.MergingHidas;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.MergeFromRamp.MergingHidas.FreeMerge.LaneChangeToTargetGap;
 
 /**
  * Represents the state where the vehicle waits for a suitable condition to perform a forced merge.
@@ -27,40 +35,50 @@ import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.MergeFr
  */
 public class WaitForForcedMerge extends StartForcedMerge {
 
-    public WaitForForcedMerge(final MergingHidas drivingTask) {
+    /** Time until end of lane. */
+    private Duration timeToEndOfLane;
+
+    /** Ego vehicle deceleration for lane change. */
+    private Acceleration egoDecel;
+
+    /** Follower vehicle deceleration for lane change. */
+    private Acceleration rearDecel;
+
+    public WaitForForcedMerge(final MergingHidas drivingTask) throws OperationalPlanException, ParameterException, NullPointerException, IllegalArgumentException {
         super(drivingTask);
         this.update();
     }
 
     @Override
-    public void executeControl() {
-        var vehicle = this.drivingTask.getContextVehicle();
-        vehicle.setTemporaryTimeHeadwayReduction(0.5);
-        vehicle.setTemporaryTimeHeadwayReductionRelaxationTime(10);
-
-        double distanceEndOfLane = vehicle.getContextDriverDevice().getVissimVehicle().AttValue("LANE\\LINK\\LENGTH2D")
-                - vehicle.getCurrentPosition();
-
-        double decelerationYield = vehicle.getCarFollowingModel().calculateDecelerationYield(
-            distanceEndOfLane, 0, 10, vehicle.getMaximumDeceleration()
-        );
-
-        // Uncomment if you want to use decelerationYield logic
-        // if (decelerationYield < vehicle.getMaximumDeceleration() * 0.9) {
-        //     vehicle.setUpdatedAcceleration(decelerationYield);
-        // } else {
-        vehicle.setUpdatedAcceleration(Math.min(vehicle.getMaximumAcceleration(), vehicle.getMaximumAcceleration()));
-        // }
+    public SimpleOperationalPlan update()
+            throws OperationalPlanException, ParameterException, NullPointerException, IllegalArgumentException
+    {
+     // Berechne und speichere die Werte als Attribute
+        this.timeToEndOfLane = this.drivingTask.getTimeUntilEndOfLane();
+        this.egoDecel = this.drivingTask.getAbstractMirovaVehicle()
+                .getLaneChangeEgoDeceleration(LateralDirectionality.LEFT);
+        this.rearDecel = this.drivingTask.getAbstractMirovaVehicle()
+                .getLaneChangeFollowerDeceleration(LateralDirectionality.LEFT);
+        return super.update();
     }
 
     @Override
-    public void next() {
-        var vehicle = this.drivingTask.getContextVehicle();
-        if (vehicle.checkOperationalLaneChange(
-                0.5 * vehicle.getContextDriverDevice().getMinimumTimeHeadway(),
-                0.5 * vehicle.getContextDriverDevice().getMinimumTimeHeadway(),
-                -4, -4, 1)) {
-            vehicle.setLastExecutedActionState(new ForcedMergeLaneChange((MergingHidas) this.drivingTask));
+    public SimpleOperationalPlan executeControl() throws ParameterException {
+        this.drivingTask.getAbstractMirovaVehicle().setDesire(1.0,
+                this.drivingTask.getParameters().getParameter(ParameterTypes.TAU));
+        return null; // No operational plan is executed in this state
+    }
+
+    @Override
+    public void next() throws OperationalPlanException, ParameterException, NullPointerException, IllegalArgumentException {
+        if (this.timeToEndOfLane.ge(this.drivingTask.getParameters().getParameter(ParameterTypes.LCDUR).times(0.5)))
+        {
+            if (this.timeToEndOfLane.le(this.drivingTask.getParameters().getParameter(ParameterTypes.LCDUR))
+                    && this.rearDecel.ge(this.drivingTask.getParameters().getParameter(ParameterTypes.BCRIT).neg())
+                    && this.egoDecel.ge(this.drivingTask.getParameters().getParameter(ParameterTypes.BCRIT).neg()))
+            {
+                this.drivingTask.getAbstractMirovaVehicle().setCurrentActionState(new ForcedMergeLaneChange(this.drivingTask));
+            }
         }
     }
 }

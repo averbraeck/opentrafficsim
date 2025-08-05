@@ -4,15 +4,16 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ActionState;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.DrivingTask;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.ManeuverPattern;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.Cruise.BasicHuman.BasicHuman;
 
 public class RightHandRuleManeuver extends ManeuverPattern
 {
     protected final LateralDirectionality laneChangeDirection;
     protected final ActionState initialActionState;
-    protected final DrivingTask drivingTask;
+    protected final BasicHuman drivingTask;
     private double desire;
 
-    public RightHandRuleManeuver(final DrivingTask drivingTask)
+    public RightHandRuleManeuver(final BasicHuman drivingTask)
     {
         this.initialActionState = new StartLanechangeRechtsfahrgebotManeuver(drivingTask);
         this.laneChangeDirection = LateralDirectionality.RIGHT; // Example: right for right-hand rule

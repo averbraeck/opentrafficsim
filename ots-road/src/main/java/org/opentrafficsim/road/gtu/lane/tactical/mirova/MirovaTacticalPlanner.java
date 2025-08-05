@@ -5,6 +5,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -49,8 +50,8 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
     }
 
 
-    public Duration getDT()
+    public Duration getDT() throws ParameterException
     {
-        return DT.getDefaultValue();
+        return mirovaVehicle.getGtu().getParameters().getParameter(ParameterTypes.DT);
     }
 }

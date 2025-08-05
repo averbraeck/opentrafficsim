@@ -1,12 +1,15 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.Cruise.BasicHuman;
 
+import org.djunits.unit.DimensionlessUnit;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -46,6 +49,8 @@ public class BasicHuman extends DrivingTask
 
     private Speed possibleSpeedGain; // Speed gain in left lane
 
+    protected Speed vGain = new Speed(69.6, SpeedUnit.KM_PER_HOUR);
+
     public BasicHuman(final HumanDrivenVehicle AbstractMirovaVehicle) throws OperationalPlanException
     {
         super(AbstractMirovaVehicle);
@@ -65,12 +70,63 @@ public class BasicHuman extends DrivingTask
 
     /**
      * Placeholder for utility calculation.
+     * @throws ParameterException
      */
     @Override
-    public double calculateUtility()
+    public double calculateDesire() throws ParameterException
     {
-        // Not implemented
-        return 0.0;
+        double leftDist = getInfrastructurePerception().getLegalLaneChangePossibility(RelativeLane.CURRENT,
+                LateralDirectionality.LEFT).si;
+        double rightDist = getInfrastructurePerception().getLegalLaneChangePossibility(RelativeLane.CURRENT,
+                LateralDirectionality.RIGHT).si;
+        Dimensionless aGain;
+        Speed vCur = getTrafficPerception().getSpeed(RelativeLane.CURRENT);
+
+        Acceleration aCur = getEgoPerception().getAcceleration();
+
+        aCur = Try.assign(() -> getAbstractMirovaVehicle().getGtu().getCarFollowingAcceleration(), "Could not obtain the GTU.");
+        if (aCur.si > 0)
+        {
+            Acceleration a = getParameters().getParameter(ParameterTypes.A);
+            aGain = a.minus(aCur).divide(a);
+        }
+        else
+        {
+            aGain = new Dimensionless(1, DimensionlessUnit.SI);
+        }
+
+        // left desire
+        double dLeft;
+        if (leftDist > 0.0 && getInfrastructurePerception().getCrossSection().contains(RelativeLane.LEFT))
+        {
+            Speed vLeft = getTrafficPerception().getSpeed(RelativeLane.LEFT);
+            dLeft = aGain.si * (vLeft.si - vCur.si) / this.vGain.si;
+        }
+        else
+        {
+            dLeft = 0.0;
+        }
+
+        // right desire
+        // double dRight;
+        // if (rightDist > 0.0 && getInfrastructurePerception().getCrossSection().contains(RelativeLane.RIGHT))
+        // {
+        // Speed vRight = getTrafficPerception().getSpeed(RelativeLane.RIGHT);
+        // if (vCur.si >= getParameters().getParameter(ParameterTypes.VCONG).si)
+        // {
+        // dRight = aGain.si * Math.min(vRight.si - vCur.si, 0) / vGain.si;
+        // }
+        // else
+        // {
+        // dRight = aGain.si * (vRight.si - vCur.si) / vGain.si;
+        // }
+        // }
+        // else
+        // {
+        // dRight = 0.0;
+        // }
+
+        return dLeft; // Return left desire as the main driving task decision factor
     }
 
     /**

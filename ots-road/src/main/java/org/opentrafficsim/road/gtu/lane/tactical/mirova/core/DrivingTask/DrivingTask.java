@@ -59,17 +59,14 @@ public abstract class DrivingTask
      * Determines whether the driving task should be activated. If the utility of the task (calculated using calculateUtility)
      * is greater than or equal to 100, the task is activated.
      * @return true if the task should be activated, false otherwise.
+     * @throws ParameterException
      */
-    public boolean getActivation()
+    public boolean getActivation() throws ParameterException
     {
-        return calculateUtility() >= 100;
+        return calculateDesire() >= 100;
     }
 
-    /**
-     * Calculates the current utility of the driving task. The specific utility function should be implemented in subclasses.
-     * @return the latest utility value calculated for the task.
-     */
-    public abstract double calculateUtility();
+
 
     /**
      * Executes the decision tree to determine the appropriate maneuver advice. The decision tree should be implemented in
@@ -109,6 +106,20 @@ public abstract class DrivingTask
 
     public Parameters getParameters() {
         return this.parameters;
+    }
+
+    /**
+     * Placeholder for calculating the utility of the merging maneuver.
+     * <p>
+     * This method can be extended to evaluate the benefits or costs of the merging maneuver based on various factors such as
+     * traffic density, gap size, and vehicle speed.
+     * </p>
+     * @return the utility value (currently always 0.0)
+     * @throws ParameterException
+     */
+    public double calculateDesire() throws ParameterException
+    {
+        return 0;
     }
 
 }

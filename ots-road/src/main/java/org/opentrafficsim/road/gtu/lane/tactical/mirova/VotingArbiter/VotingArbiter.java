@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.mirova.VotingArbiter;
 
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ActionAdvice;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ActionState;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.ManeuverPattern;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,24 +12,24 @@ import java.util.List;
  * It processes the advices, removes vetoed actions, and determines the most preferred action based on voting logic.
  */
 public class VotingArbiter {
-    private List<ActionAdvice> advices;
+    private List<ManeuverPattern> maneuverPatterns;
 
     /**
      * Initializes a new instance of the VotingArbiter class.
      */
     public VotingArbiter() {
-        this.advices = new ArrayList<>();
+        this.maneuverPatterns = new ArrayList<>();
     }
 
     /**
      * Executes the voting process on a list of ActionAdvice objects.
      *
-     * @param listAdvices A list of ActionAdvice objects containing action recommendations.
+     * @param listManeuverPatterns A list of ActionAdvice objects containing action recommendations.
      * @return The initial ActionState of the highest voted advice, or null if no valid advice is found.
      */
-    public ActionState execute(final List<ActionAdvice> listAdvices) {
-        this.advices = listAdvices;
-        List<ActionAdvice> filteredAdvices = deleteVetos(this.advices);
+    public ActionState execute(final List<ManeuverPattern> listManeuverPatterns) {
+        this.maneuverPatterns = listManeuverPatterns;
+        List<ManeuverPattern> filteredAdvices = deleteVetos(this.maneuverPatterns);
         // combineVotes(); // Not yet implemented
         return vote(filteredAdvices);
     }
@@ -40,9 +41,9 @@ public class VotingArbiter {
      * @param advices The list of ActionAdvice objects.
      * @return A filtered list of ActionAdvice objects without vetoes.
      */
-    private List<ActionAdvice> deleteVetos(final List<ActionAdvice> advices) {
-        List<ActionAdvice> allowed = new ArrayList<>();
-        for (ActionAdvice advice : advices) {
+    private List<ManeuverPattern> deleteVetos(final List<ManeuverPattern> advices) {
+        List<ManeuverPattern> allowed = new ArrayList<>();
+        for (ManeuverPattern advice : advices) {
             boolean leftAllowed = advice.getLeftLaneDesire() == null || advice.getLeftLaneDesire() >= 0;
             boolean keepAllowed = advice.getKeepLaneDesire() == null || advice.getKeepLaneDesire() >= 0;
             boolean rightAllowed = advice.getRightLaneDesire() == null || advice.getRightLaneDesire() >= 0;
@@ -76,10 +77,10 @@ public class VotingArbiter {
      * @param advices The list of ActionAdvice objects.
      * @return The initial ActionState of the highest voted advice, or null if no valid advice is found.
      */
-    private ActionState vote(final List<ActionAdvice> advices) {
+    private ManeuverPattern vote(final List<ManeuverPattern> advices) {
         double maxDesire = Double.NEGATIVE_INFINITY;
         ActionState bestActionState = null;
-        for (ActionAdvice advice : advices) {
+        for (ManeuverPattern advice : advices) {
             double sum = 0.0;
             if (advice.getLeftLaneDesire() != null) sum += advice.getLeftLaneDesire();
             if (advice.getKeepLaneDesire() != null) sum += advice.getKeepLaneDesire();

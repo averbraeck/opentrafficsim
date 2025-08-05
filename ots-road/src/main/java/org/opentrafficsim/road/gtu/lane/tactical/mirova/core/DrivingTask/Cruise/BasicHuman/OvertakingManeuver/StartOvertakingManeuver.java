@@ -30,9 +30,10 @@ public class StartOvertakingManeuver extends ActionState
      * This method does not execute any control action in the starting state of the overtaking maneuver.
      * @return always returns {@code null} as no operational plan is executed in this state
      * @throws ParameterException
+     * @throws OperationalPlanException
      */
     @Override
-    public SimpleOperationalPlan executeControl() throws ParameterException
+    public SimpleOperationalPlan executeControl() throws ParameterException, OperationalPlanException
     {
         return null;
     }
@@ -66,7 +67,8 @@ public class StartOvertakingManeuver extends ActionState
     @Override
     public void next() throws OperationalPlanException, ParameterException, NullPointerException, IllegalArgumentException
     {
-        if (this.drivingTask.getAbstractMirovaVehicle().getLaneChangeFollowerDeceleration(LateralDirectionality.LEFT).si >= 0)
+        if (this.drivingTask.getAbstractMirovaVehicle().getLaneChangeFollowerDeceleration(LateralDirectionality.LEFT,
+                0.0).si >= 0)
         {
             this.drivingTask.getAbstractMirovaVehicle().setCurrentActionState(new AccelerateOnOriginalLane(this.drivingTask));
         }

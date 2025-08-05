@@ -1,6 +1,9 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.MergeFromRamp.MergingHidas.ForcedMerge;
 
 
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ActionState;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.MergeFromRamp.MergingHidas.MergingHidas;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.MergeFromRamp.MergingHidas.ForcedMerge.*;
@@ -25,38 +28,30 @@ import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.MergeFr
  */
 public class StartForcedMerge extends ActionState {
 
+    protected MergingHidas drivingTask;
+
     public StartForcedMerge(final MergingHidas drivingTask) {
         super(drivingTask);
     }
 
     @Override
     public void abort() {
-        super.abort();
+
     }
 
     @Override
-    public void next() {
-        if (this.drivingTask.getContextVehicle().checkOperationalLaneChange(
-                0.5 * this.drivingTask.getContextVehicle().getContextDriverDevice().getMinimumTimeHeadway(),
-                0.5 * this.drivingTask.getContextVehicle().getContextDriverDevice().getMinimumTimeHeadway(),
-                -4, -4, 1)) {
-            this.drivingTask.getContextVehicle().setLastExecutedActionState(
-                new ForcedMergeLaneChange((MergingHidas) this.drivingTask)
-            );
-        } else {
-            this.drivingTask.getContextVehicle().setLastExecutedActionState(
-                new WaitForForcedMerge((MergingHidas) this.drivingTask)
-            );
-        }
+    public void next() throws OperationalPlanException, ParameterException, NullPointerException, IllegalArgumentException {
+        this.drivingTask.getAbstractMirovaVehicle().setCurrentActionState(new WaitForForcedMerge(this.drivingTask));
     }
 
     @Override
-    public void executeControl() {
+    public SimpleOperationalPlan executeControl() throws ParameterException, OperationalPlanException {
         // Placeholder
+        return null;
     }
 
     @Override
-    public void update() {
-        super.update();
+    public SimpleOperationalPlan update() throws OperationalPlanException, ParameterException, NullPointerException, IllegalArgumentException {
+        return super.update();
     }
 }

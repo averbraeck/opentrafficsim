@@ -1,21 +1,30 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.Cruise.BasicHuman.OvertakingManeuver;
 
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.DrivingTask;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.Cruise.BasicHuman.BasicHuman;
 
-public class EndOvertakingManeuver extends StartOvertakingManeuver {
-    public EndOvertakingManeuver(final DrivingTask drivingTask) {
+public class EndOvertakingManeuver extends StartOvertakingManeuver
+{
+    public EndOvertakingManeuver(final BasicHuman drivingTask)
+            throws OperationalPlanException, ParameterException, NullPointerException, IllegalArgumentException
+    {
         super(drivingTask);
         this.update();
     }
 
     @Override
-    public void executeControl() {
-        this.active = false;
-        this.drivingTask.getContextVehicle().setRunningManeuver(false);
+    public SimpleOperationalPlan executeControl()
+    {
+        this.drivingTask.getAbstractMirovaVehicle().setRunningManeuver(false);
+        return null; // No operational plan is executed in this state
     }
 
     @Override
-    public void next() {
+    public void next()
+    {
         // No further action
     }
 }

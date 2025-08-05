@@ -24,7 +24,7 @@ public class OvertakingManeuver extends ManeuverPattern
 
 
 
-    public OvertakingManeuver(final BasicHuman drivingTask)
+    public OvertakingManeuver(final BasicHuman drivingTask) throws ParameterException
     {
         this.initialActionState = new StartOvertakingManeuver(drivingTask);
         this.laneChangeDirection = LateralDirectionality.LEFT; // Default to left lane change for overtaking

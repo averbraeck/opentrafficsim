@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.MergeFromRamp.MergingHidas.FreeMerge;
 
+import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.MergeFromRamp.MergingHidas.MergingHidas;
 
 /**
@@ -31,8 +32,9 @@ public class EndFreeMergeToTargetGap extends StartFreeMergeToTargetGap {
     }
 
     @Override
-    public void executeControl() {
-        ((MergingHidas) this.drivingTask).getContextVehicle().setRunningManeuver(false);
+    public SimpleOperationalPlan executeControl() {
+        this.drivingTask.getAbstractMirovaVehicle().setRunningManeuver(false);
+        return null; // No operational plan needed in this state
     }
 
     @Override
