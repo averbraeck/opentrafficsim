@@ -136,7 +136,7 @@ public class LaneBasedGtu extends Gtu
     private Time desiredSpeedTime;
 
     /** If != null and >=0 this will overwrite this.cachedCarFollowingAcceleration. */
-    private Acceleration overwrittenAcceleration = new Acceleration(1, AccelerationUnit.METER_PER_SECOND_2);
+    private Acceleration overwrittenAcceleration = null;
 
     /** Cached car-following acceleration. */
     private Acceleration cachedCarFollowingAcceleration;
@@ -1493,6 +1493,10 @@ public class LaneBasedGtu extends Gtu
 
     public void setTemporarySpeedLimit(Speed temporarySpeedLimit) {
         this.temporarySpeedLimit = temporarySpeedLimit;
+    }
+
+    public void setOverwrittenAcceleration(Acceleration overwrittenAcceleration) {
+        this.overwrittenAcceleration = overwrittenAcceleration;
     }
 
     /**
