@@ -135,7 +135,7 @@ public class LaneBasedGtu extends Gtu
     /** Time desired speed was cached. */
     private Time desiredSpeedTime;
 
-    /** If != null and >=0 this will overwrite this.cachedCarFollowingAcceleration. */
+    /** If != null and >=Double.NEGATIVE_INFINITY this will overwrite this.cachedCarFollowingAcceleration. */
     private Acceleration overwrittenAcceleration = null;
 
     /** Cached car-following acceleration. */
