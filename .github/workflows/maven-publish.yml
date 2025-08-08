@@ -9,23 +9,24 @@ on:
     types: [created]
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
     - name: Set up Java 17 for publishing to Maven Central Repository
       uses: actions/setup-java@v4
       with:
-        java-version: '17'
         distribution: 'temurin'
-        server-id: ossrh # Value of the distributionManagement/repository/id field
-        server-username: MAVEN_USERNAME
-        server-password: MAVEN_PASSWORD
-        # gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }} # don't duplicate'
+        java-version: '17'
+        server-id: central # must match <publishingServerId> in pom.xml
+        server-username: CENTRAL_TOKEN_USERNAME
+        server-password: CENTRAL_TOKEN_PASSWORD
         gpg-passphrase: MAVEN_GPG_PASSPHRASE
         settings-path: ${{ github.workspace }} # location for the settings.xml file
         
@@ -35,14 +36,18 @@ jobs:
         gpg_private_key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
         passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
+    - name: Build with Maven and check if site building works
+      run: mvn clean site --file pom.xml
+
     - name: Build with Maven and test if signing works
       run: mvn clean package -P release --file pom.xml
       env:
         MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
-    - name: Publish to Apache Maven Central
-      run: mvn -DskipTests deploy -P release -s $GITHUB_WORKSPACE/settings.xml
+    - name: Deploy and publish to Maven Central
+      run: mvn deploy -P release -DskipTests -s $GITHUB_WORKSPACE/settings.xml
       env:
-        MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-        MAVEN_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+        CENTRAL_TOKEN_USERNAME: ${{ secrets.CENTRAL_TOKEN_USERNAME }}
+        CENTRAL_TOKEN_PASSWORD: ${{ secrets.CENTRAL_TOKEN_PASSWORD }}
         MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+        
