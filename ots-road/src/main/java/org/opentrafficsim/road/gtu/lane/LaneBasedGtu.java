@@ -158,6 +158,9 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     /** Distance over which the GTU should not change lane after being created. */
     private Length noLaneChangeDistance;
 
+    /** Lane change direction. */
+    private final Historical<LateralDirectionality> laneChangeDirection;
+
     /**
      * The lane-based event type for pub/sub indicating a move.<br>
      * Payload: [String gtuId, PositionVector currentPosition, Direction currentDirection, Speed speed, Acceleration
@@ -243,6 +246,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         HistoryManager historyManager = network.getSimulator().getReplication().getHistoryManager(network.getSimulator());
         this.lane = new HistoricalValue<>(historyManager, this);
         this.turnIndicatorStatus = new HistoricalValue<>(historyManager, this, TurnIndicatorStatus.NOTPRESENT);
+        this.laneChangeDirection = new HistoricalValue<>(historyManager, this, LateralDirectionality.NONE);
     }
 
     /**
@@ -341,6 +345,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
             if (exitLanePosition.lane().getLink().equals(lane.getLink()))
             {
                 // Same link, so must be a lane change
+                setLaneChangeDirection(LateralDirectionality.NONE);
                 String direction = lane.equals(exitLanePosition.lane().getLeft(getType())) ? LateralDirectionality.LEFT.name()
                         : LateralDirectionality.RIGHT.name();
                 fireTimedEvent(LaneBasedGtu.LANE_CHANGE_EVENT,
@@ -1431,6 +1436,34 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     public boolean laneChangeAllowed()
     {
         return this.noLaneChangeDistance == null ? true : getOdometer().gt(this.noLaneChangeDistance);
+    }
+
+    /**
+     * Set lane change direction. This should only be set by a controller of the GTU, e.g. the tactical planner.
+     * @param direction lane change direction
+     */
+    public void setLaneChangeDirection(final LateralDirectionality direction)
+    {
+        this.laneChangeDirection.set(direction);
+    }
+
+    /**
+     * Returns the lane change direction.
+     * @return lane change direction
+     */
+    public LateralDirectionality getLaneChangeDirection()
+    {
+        return this.laneChangeDirection.get();
+    }
+
+    /**
+     * Returns the lane change direction at the given time.
+     * @param time time
+     * @return lane change direction at the given time
+     */
+    public LateralDirectionality getLaneChangeDirection(final Time time)
+    {
+        return this.laneChangeDirection.get(time);
     }
 
     /**

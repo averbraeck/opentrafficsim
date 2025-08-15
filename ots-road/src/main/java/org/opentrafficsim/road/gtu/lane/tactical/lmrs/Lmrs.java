@@ -84,8 +84,8 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements DesireBas
         Parameters params = getGtu().getParameters();
 
         // LMRS
-        SimpleOperationalPlan simplePlan = LmrsUtil.determinePlan(getGtu(), getCarFollowingModel(), this.lmrsData, getPerception(),
-                getMandatoryIncentives(), getVoluntaryIncentives());
+        SimpleOperationalPlan simplePlan = LmrsUtil.determinePlan(getGtu(), getCarFollowingModel(), this.lmrsData,
+                getPerception(), getMandatoryIncentives(), getVoluntaryIncentives());
 
         // Lower acceleration from additional sources, consider adjacent lane when changing lane or synchronizing
         Speed speed = getPerception().getPerceptionCategory(EgoPerception.class).getSpeed();

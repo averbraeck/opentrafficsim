@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.perception.headway;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -45,9 +46,12 @@ public interface HeadwayGtu extends Headway
      * Returns indicator status.
      * @param lat direction of indicator.
      * @return indicator status
+     * @throws IllegalArgumentException when the direction is not LEFT or RIGHT
      */
     default boolean isTurnIndicatorOn(final LateralDirectionality lat)
     {
+        Throw.when(lat == null || lat.equals(LateralDirectionality.NONE), IllegalArgumentException.class,
+                "Lateral direction should be LEFT or RIGHT.");
         return lat.isLeft() ? isLeftTurnIndicatorOn() : isRightTurnIndicatorOn();
     }
 
@@ -62,6 +66,31 @@ public interface HeadwayGtu extends Headway
      * @return was the right turn indicator on?
      */
     boolean isRightTurnIndicatorOn();
+
+    /**
+     * Returns whether the GTU is changing either left or right.
+     * @param lat lateral lane change direction
+     * @return whether the GTU is changing either left or right
+     * @throws IllegalArgumentException when the direction is not LEFT or RIGHT
+     */
+    default boolean isChangingLane(final LateralDirectionality lat)
+    {
+        Throw.when(lat == null || lat.equals(LateralDirectionality.NONE), IllegalArgumentException.class,
+                "Lateral direction should be LEFT or RIGHT.");
+        return lat.isLeft() ? isChangingLeft() : isChangingRight();
+    }
+
+    /**
+     * Returns whether the GTU is changing lanes to the left.
+     * @return whether the GTU is changing lanes to the left
+     */
+    boolean isChangingLeft();
+
+    /**
+     * Returns whether the GTU is changing lanes to the right.
+     * @return whether the GTU is changing lanes to the right
+     */
+    boolean isChangingRight();
 
     /**
      * Returns whether the emergency lights are on.

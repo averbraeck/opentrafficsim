@@ -224,8 +224,7 @@ public interface GapAcceptance
                 {
                     return true;
                 }
-                if (leader.isTurnIndicatorOn(lat.flip()) && leader.getSpeed().gt0()
-                        && (lat.isLeft() ? leader.getDeviation().si < -0.01 : leader.getDeviation().si > 0.01))
+                if (leader.isChangingLane(lat.flip()))
                 {
                     Acceleration a = CarFollowingUtil.followSingleLeader(cfm, params, ownSpeed, sli, leader.getDistance(),
                             leader.getSpeed());

@@ -16,7 +16,6 @@ import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
-import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
@@ -52,8 +51,9 @@ public interface Cooperation extends LmrsParameters
             for (HeadwayGtu leader : perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane))
             {
                 Parameters params2 = leader.getParameters();
-                double desire = lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)
-                        : lat.equals(LateralDirectionality.RIGHT) ? params2.getParameter(DLEFT) : 0;
+                double desire = leader.isChangingLane(lat.flip()) ? 1.0
+                        : (lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)
+                                : lat.equals(LateralDirectionality.RIGHT) ? params2.getParameter(DLEFT) : 0.0);
                 if (desire >= dCoop && (leader.getSpeed().gt0() || leader.getDistance().gt0()))
                 {
                     Acceleration aSingle = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(),
@@ -61,7 +61,6 @@ public interface Cooperation extends LmrsParameters
                     a = Acceleration.min(a, aSingle);
                 }
             }
-            a = Acceleration.min(a, followLaneChanger(perception, params, sli, cfm, lat, ownSpeed));
             return Acceleration.max(a, b.neg());
         }
 
@@ -96,8 +95,9 @@ public interface Cooperation extends LmrsParameters
             for (HeadwayGtu leader : neighbours.getLeaders(relativeLane))
             {
                 Parameters params2 = leader.getParameters();
-                double desire = lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)
-                        : lat.equals(LateralDirectionality.RIGHT) ? params2.getParameter(DLEFT) : 0;
+                double desire = leader.isChangingLane(lat.flip()) ? 1.0
+                        : (lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)
+                                : lat.equals(LateralDirectionality.RIGHT) ? params2.getParameter(DLEFT) : 0.0);
                 // TODO: only cooperate if merger still quite fast or there's congestion downstream anyway (which we can better
                 // estimate than only considering the direct leader
                 if (desire >= dCoop && (leader.getSpeed().gt0() || leader.getDistance().gt0())
@@ -108,7 +108,6 @@ public interface Cooperation extends LmrsParameters
                     a = Acceleration.min(a, aSingle);
                 }
             }
-            a = Acceleration.min(a, followLaneChanger(perception, params, sli, cfm, lat, ownSpeed));
             return Acceleration.max(a, bCrit.neg());
         }
 
@@ -138,8 +137,9 @@ public interface Cooperation extends LmrsParameters
             for (HeadwayGtu leader : perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane))
             {
                 Parameters params2 = leader.getParameters();
-                double desire = lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)
-                        : lat.equals(LateralDirectionality.RIGHT) ? params2.getParameter(DLEFT) : 0;
+                double desire = leader.isChangingLane(lat.flip()) ? 1.0
+                        : (lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)
+                                : lat.equals(LateralDirectionality.RIGHT) ? params2.getParameter(DLEFT) : 0.0);
                 if (desire >= dCoop && leader.getDistance().gt0()
                         && leader.getAcceleration().gt(params.getParameter(ParameterTypes.BCRIT).neg()))
                 {
@@ -148,7 +148,6 @@ public interface Cooperation extends LmrsParameters
                     a = Acceleration.min(a, Synchronization.gentleUrgency(aSingle, desire, params));
                 }
             }
-            a = Acceleration.min(a, followLaneChanger(perception, params, sli, cfm, lat, ownSpeed));
             return a;
         }
 
@@ -158,34 +157,6 @@ public interface Cooperation extends LmrsParameters
             return "ACTIVE";
         }
     };
-
-    /**
-     * Follow lane changing vehicles that are not yet registered on the lane.
-     * @param perception perception
-     * @param params ego parameters
-     * @param sli speed limit info
-     * @param cfm ca-following model
-     * @param lat lateral direction
-     * @param ownSpeed ego speed
-     * @return acceleration due to following lane changer
-     * @throws OperationalPlanException exception
-     * @throws ParameterException exception
-     */
-    private static Acceleration followLaneChanger(final LanePerception perception, final Parameters params,
-            final SpeedLimitInfo sli, final CarFollowingModel cfm, final LateralDirectionality lat, final Speed ownSpeed)
-            throws OperationalPlanException, ParameterException
-    {
-        RelativeLane relativeLane = new RelativeLane(lat, 1);
-        for (HeadwayGtu leader : perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane))
-        {
-            if (leader.isTurnIndicatorOn(lat.flip()) && leader.getSpeed().gt0()
-                    && (lat.isLeft() ? leader.getDeviation().si < -0.01 : leader.getDeviation().si > 0.01))
-            {
-                return CarFollowingUtil.followSingleLeader(cfm, params, ownSpeed, sli, leader.getDistance(), leader.getSpeed());
-            }
-        }
-        return Acceleration.POSITIVE_INFINITY;
-    }
 
     /**
      * Determine acceleration for cooperation.

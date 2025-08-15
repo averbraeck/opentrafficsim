@@ -444,7 +444,7 @@ public interface Synchronization extends LmrsParameters
      * @return distance to the next merge
      * @throws OperationalPlanException if there is no infrastructure perception
      */
-    public static Length getMergeDistance(final LanePerception perception, final LateralDirectionality lat)
+    static Length getMergeDistance(final LanePerception perception, final LateralDirectionality lat)
             throws OperationalPlanException
     {
         InfrastructurePerception infra = perception.getPerceptionCategory(InfrastructurePerception.class);

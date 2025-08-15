@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.headway.GtuStatus;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuSimple;
@@ -55,9 +56,9 @@ public final class HeadwayGtuTest
         GtuType gtuType2 = new GtuType("type2", DefaultsNl.CAR);
         Length distance2 = new Length(234, LengthUnit.METER);
         HeadwayGtuSimple hg1 = new HeadwayGtuSimple(id1, gtuType1, distance1, Length.ZERO, Length.ZERO, (Speed) null,
-                (Acceleration) null, null, Length.ZERO);
+                (Acceleration) null, null, Length.ZERO, LateralDirectionality.NONE);
         HeadwayGtuSimple hg2 = new HeadwayGtuSimple(id2, gtuType2, distance2, Length.ZERO, Length.ZERO, (Speed) null,
-                (Acceleration) null, null, Length.ZERO);
+                (Acceleration) null, null, Length.ZERO, LateralDirectionality.NONE);
         verifyFields(hg1, null, distance1, gtuType1, id1, Headway.ObjectType.GTU, null, null, null, null, true, false, false,
                 false, false, false, false, false);
         verifyFields(hg2, null, distance2, gtuType2, id2, Headway.ObjectType.GTU, null, null, null, null, true, false, false,
@@ -66,13 +67,13 @@ public final class HeadwayGtuTest
         Length overlap = new Length(3, LengthUnit.METER);
         Length overlapRear = new Length(4, LengthUnit.METER);
         hg2 = new HeadwayGtuSimple(id2, gtuType2, overlapFront, overlap, overlapRear, Length.ZERO, Length.ZERO, (Speed) null,
-                (Acceleration) null, null, Length.ZERO);
+                (Acceleration) null, null, Length.ZERO, LateralDirectionality.NONE);
         verifyFields(hg2, null, null, gtuType2, id2, Headway.ObjectType.GTU, overlap, overlapFront, overlapRear, null, false,
                 false, false, false, false, false, false, true);
         Speed speed2 = new Speed(50, SpeedUnit.KM_PER_HOUR);
         Acceleration acceleration2 = new Acceleration(1.234, AccelerationUnit.METER_PER_SECOND_2);
         hg2 = new HeadwayGtuSimple(id2, gtuType2, overlapFront, overlap, overlapRear, Length.ZERO, Length.ZERO, speed2,
-                acceleration2, null, Length.ZERO);
+                acceleration2, null, Length.ZERO, LateralDirectionality.NONE);
         verifyFields(hg2, acceleration2, null, gtuType2, id2, Headway.ObjectType.GTU, overlap, overlapFront, overlapRear,
                 speed2, false, false, false, false, false, false, false, true);
         // Test all combinations of two GtuStatus values.
@@ -81,7 +82,7 @@ public final class HeadwayGtuTest
             for (GtuStatus gtuStatus2 : GtuStatus.values())
             {
                 hg2 = new HeadwayGtuSimple(id2, gtuType2, distance2, Length.ZERO, Length.ZERO, speed2, acceleration2, null,
-                        Length.ZERO, gtuStatus1, gtuStatus2);
+                        Length.ZERO, LateralDirectionality.NONE, gtuStatus1, gtuStatus2);
                 boolean honking = GtuStatus.HONK == gtuStatus1 || GtuStatus.HONK == gtuStatus2;
                 boolean braking = GtuStatus.BRAKING_LIGHTS == gtuStatus1 || GtuStatus.BRAKING_LIGHTS == gtuStatus2;
                 boolean leftIndicator =
@@ -99,7 +100,8 @@ public final class HeadwayGtuTest
         assertTrue(hg2.toString().length() > 10, "toString returns something");
         try
         {
-            new HeadwayGtuSimple(null, gtuType1, distance1, Length.ZERO, Length.ZERO, Speed.ZERO, Length.ZERO);
+            new HeadwayGtuSimple(null, gtuType1, distance1, Length.ZERO, Length.ZERO, Speed.ZERO, Length.ZERO,
+                    LateralDirectionality.NONE);
             fail("null for id should have thrown a GTUException");
         }
         catch (GtuException e)
@@ -108,7 +110,8 @@ public final class HeadwayGtuTest
         }
         try
         {
-            new HeadwayGtuSimple(id1, gtuType1, null, Length.ZERO, Length.ZERO, Speed.ZERO, Length.ZERO);
+            new HeadwayGtuSimple(id1, gtuType1, null, Length.ZERO, Length.ZERO, Speed.ZERO, Length.ZERO,
+                    LateralDirectionality.NONE);
             fail("null for distance should have thrown a GTUException");
         }
         catch (GtuException e)

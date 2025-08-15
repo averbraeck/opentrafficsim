@@ -74,6 +74,7 @@ public final class LaneOperationalPlanBuilder
     public static LaneBasedOperationalPlan buildRoamingPlan(final LaneBasedGtu gtu, final Acceleration acceleration,
             final Duration duration, final Duration tManeuver)
     {
+        gtu.setLaneChangeDirection(LateralDirectionality.NONE);
         LanePosition nearestPosition = gtu.getRoamingPosition();
         Length deviation = Length.ZERO;
         boolean deviative = true;
@@ -85,7 +86,7 @@ public final class LaneOperationalPlanBuilder
     }
 
     /**
-     * Build operational plan from a simple plan.
+     * Build operational plan from a simple plan. Sets or resets the GTU lane change direction.
      * @param gtu GTU
      * @param simplePlan simple operational plan
      * @param tManeuver maneuver time, e.g. lane change
@@ -108,6 +109,7 @@ public final class LaneOperationalPlanBuilder
             }
             else
             {
+                gtu.setLaneChangeDirection(simplePlan.getLaneChangeDirection());
                 deviative = true;
                 nearestPosition = gtu.getPosition();
                 // TODO: use different method to get Lane once lane methods are changed
@@ -121,6 +123,7 @@ public final class LaneOperationalPlanBuilder
         }
         else
         {
+            gtu.setLaneChangeDirection(LateralDirectionality.NONE);
             nearestPosition = gtu.getPosition();
         }
         deviative = deviative || simplePlan.getDeviation().si > SNAP.si

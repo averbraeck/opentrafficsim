@@ -640,7 +640,7 @@ public class LaneStructure
                         }
                         else
                         {
-                            mergeDistance = Length.ZERO;
+                            mergeDistance = record.getMergeDistance(); // zero, or continue same value in downstream branch
                         }
                     }
                     else

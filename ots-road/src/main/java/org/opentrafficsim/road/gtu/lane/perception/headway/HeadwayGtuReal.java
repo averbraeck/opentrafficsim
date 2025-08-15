@@ -8,6 +8,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -142,9 +143,11 @@ public class HeadwayGtuReal extends AbstractHeadway implements HeadwayGtu
     {
         try
         {
+            LateralDirectionality lcDirection = isChangingLeft() ? LateralDirectionality.LEFT
+                    : (isChangingRight() ? LateralDirectionality.RIGHT : LateralDirectionality.NONE);
             return new HeadwayGtuRealCopy(getId(), getGtuType(), headway, getLength(), getWidth(), speed, acceleration,
                     getCarFollowingModel(), getParameters(), getSpeedLimitInfo(), getRoute(), getDesiredSpeed(), getDeviation(),
-                    getGtuStatus());
+                    lcDirection, getGtuStatus());
         }
         catch (GtuException exception)
         {
@@ -289,6 +292,18 @@ public class HeadwayGtuReal extends AbstractHeadway implements HeadwayGtu
     public Length getDeviation()
     {
         return this.gtu.getDeviation();
+    }
+
+    @Override
+    public boolean isChangingLeft()
+    {
+        return this.gtu.getLaneChangeDirection().isLeft();
+    }
+
+    @Override
+    public boolean isChangingRight()
+    {
+        return this.gtu.getLaneChangeDirection().isRight();
     }
 
 }

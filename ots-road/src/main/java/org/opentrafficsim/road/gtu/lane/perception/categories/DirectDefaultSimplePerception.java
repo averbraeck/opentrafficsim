@@ -637,7 +637,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
             return new HeadwayGtuSimple(laneBasedGTU.getId(), laneBasedGTU.getType(),
                     new Length(cumDistSI + gtuDistanceSI, LengthUnit.SI), laneBasedGTU.getLength(), laneBasedGTU.getWidth(),
                     laneBasedGTU.getSpeed(), laneBasedGTU.getAcceleration(), null, laneBasedGTU.getDeviation(),
-                    getGtuStatus(laneBasedGTU));
+                    laneBasedGTU.getLaneChangeDirection(), getGtuStatus(laneBasedGTU));
         }
 
         else
@@ -754,10 +754,12 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
         }
         if (foundHeadway instanceof AbstractHeadwayGtu abstractFoundHeadway)
         {
+            LateralDirectionality lcDirection = abstractFoundHeadway.isChangingLeft() ? LateralDirectionality.LEFT
+                    : (abstractFoundHeadway.isChangingRight() ? LateralDirectionality.RIGHT : LateralDirectionality.NONE);
             return new HeadwayGtuSimple(foundHeadway.getId(), ((AbstractHeadwayGtu) foundHeadway).getGtuType(),
                     foundHeadway.getDistance().neg(), foundHeadway.getLength(), ((AbstractHeadwayGtu) foundHeadway).getWidth(),
                     foundHeadway.getSpeed(), foundHeadway.getAcceleration(), abstractFoundHeadway.getDesiredSpeed(),
-                    abstractFoundHeadway.getDeviation());
+                    abstractFoundHeadway.getDeviation(), lcDirection);
         }
         if (foundHeadway instanceof HeadwayDistance)
         {
@@ -793,7 +795,7 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
             {
                 return new HeadwayGtuSimple(otherGTU.getId(), otherGTU.getType(), new Length(distanceM, LengthUnit.SI),
                         otherGTU.getLength(), otherGTU.getWidth(), otherGTU.getSpeed(), otherGTU.getAcceleration(), null,
-                        otherGTU.getDeviation());
+                        otherGTU.getDeviation(), otherGTU.getLaneChangeDirection());
             }
             return new HeadwayDistance(Double.MAX_VALUE);
         }
@@ -881,7 +883,8 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
                         Length overlapRear = new Length(1.0, LengthUnit.SI);
                         headwayCollection.add(new HeadwayGtuSimple(otherGTU.getId(), otherGTU.getType(), overlapFront, overlap,
                                 overlapRear, otherGTU.getLength(), otherGTU.getWidth(), otherGTU.getSpeed(),
-                                otherGTU.getAcceleration(), null, otherGTU.getDeviation(), getGtuStatus(otherGTU)));
+                                otherGTU.getAcceleration(), null, otherGTU.getDeviation(), otherGTU.getLaneChangeDirection(),
+                                getGtuStatus(otherGTU)));
                     }
                 }
             }
@@ -965,9 +968,12 @@ public class DirectDefaultSimplePerception extends AbstractPerceptionCategory<La
                 }
                 if (!found)
                 {
-                    result.add(new HeadwayGtuSimple(follower.getId(), abstractFollower.getGtuType(),
-                            follower.getDistance().neg(), follower.getLength(), abstractFollower.getWidth(),
-                            follower.getSpeed(), follower.getAcceleration(), null, abstractFollower.getDeviation()));
+                    LateralDirectionality lcDirection = abstractFollower.isChangingLeft() ? LateralDirectionality.LEFT
+                            : (abstractFollower.isChangingRight() ? LateralDirectionality.RIGHT : LateralDirectionality.NONE);
+                    result.add(
+                            new HeadwayGtuSimple(follower.getId(), abstractFollower.getGtuType(), follower.getDistance().neg(),
+                                    follower.getLength(), abstractFollower.getWidth(), follower.getSpeed(),
+                                    follower.getAcceleration(), null, abstractFollower.getDeviation(), lcDirection));
                 }
             }
             else if (follower instanceof HeadwayDistance) // always add for potential lane drop
