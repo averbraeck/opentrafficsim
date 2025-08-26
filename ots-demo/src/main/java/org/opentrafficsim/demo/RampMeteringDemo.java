@@ -65,6 +65,7 @@ import org.opentrafficsim.road.gtu.generator.characteristics.DefaultLaneBasedGtu
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGeneratorOd;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
 import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -348,7 +349,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
                 new DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory(new LaneBasedStrategicalRoutePlannerFactory(
                         new LmrsFactory(new IdmPlusFactory(stream), new DefaultLmrsPerceptionFactory())));
         odOptions.set(OdOptions.GTU_TYPE, new ControlledStrategicalPlannerGenerator(factory.create()));
-        odOptions.set(OdOptions.INSTANT_LC, true);
+        odOptions.set(OdOptions.BOOKKEEPING, LaneBookkeeping.INSTANT);
         odOptions.set(OdOptions.LANE_BIAS, new LaneBiases().addBias(car, LaneBias.WEAK_LEFT));
         odOptions.set(OdOptions.NO_LC_DIST, Length.instantiateSI(300));
         OdApplier.applyOd(network, od, odOptions, DefaultsNl.ROAD_USERS);

@@ -28,6 +28,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
@@ -279,7 +280,8 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
                 new Speed(200, KM_PER_HOUR), vehicleLength.times(0.5), this.network);
         gtu.setParameters(generateTruck ? this.parametersTruck : this.parametersCar);
         gtu.setNoLaneChangeDistance(Length.ZERO);
-        gtu.setInstantaneousLaneChange(!((boolean) getInputParameter("generic.gradualLaneChange")));
+        gtu.setBookkeeping(
+                ((boolean) getInputParameter("generic.gradualLaneChange")) ? LaneBookkeeping.EDGE : LaneBookkeeping.INSTANT);
         gtu.setMaximumAcceleration(Acceleration.instantiateSI(3.0));
         gtu.setMaximumDeceleration(Acceleration.instantiateSI(-8.0));
 

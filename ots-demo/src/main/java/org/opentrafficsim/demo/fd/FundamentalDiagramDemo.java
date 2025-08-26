@@ -77,6 +77,7 @@ import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGenerator;
+import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
 import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
@@ -296,7 +297,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         LaneBasedGtuGenerator generator = new LaneBasedGtuGenerator("generator", interarrivelTimeGenerator,
                 laneBasedGtuCharacteristicsGenerator, generatorPositions, network, sim, roomChecker, idGenerator);
         generator.setErrorHandler(GtuErrorHandler.DELETE);
-        generator.setInstantaneousLaneChange(true);
+        generator.setBookkeeping(LaneBookkeeping.INSTANT);
         generator.setNoLaneChangeDistance(Length.instantiateSI(100.0));
 
         // Sinks

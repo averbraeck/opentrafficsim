@@ -17,6 +17,7 @@ import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.MarkovCorrelation;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGeneratorOd;
 import org.opentrafficsim.road.gtu.generator.headway.ArrivalsHeadwayGenerator.HeadwayDistribution;
+import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -50,8 +51,8 @@ public class OdOptions
     /** Initial distance over which lane changes shouldn't be performed option. */
     public static final Option<Length> NO_LC_DIST = new Option<>("no lc distance", null);
 
-    /** Whether to perform instantaneous lane changes. */
-    public static final Option<Boolean> INSTANT_LC = new Option<>("instant lc", false);
+    /** Lane bookkeeping. */
+    public static final Option<LaneBookkeeping> BOOKKEEPING = new Option<>("bookkeeping", LaneBookkeeping.EDGE);
 
     /** Error handler when GTU exceptions occur. */
     public static final Option<GtuErrorHandler> ERROR_HANDLER = new Option<>("error handler", GtuErrorHandler.THROW);

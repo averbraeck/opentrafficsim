@@ -25,6 +25,7 @@ import org.opentrafficsim.base.geometry.OtsLine2d.FractionalFallback;
 import org.opentrafficsim.core.gtu.plan.operational.Segments;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
@@ -102,18 +103,22 @@ public final class LaneOperationalPlanBuilder
         LanePosition nearestPosition;
         if (simplePlan.isLaneChange())
         {
-            if (gtu.isInstantaneousLaneChange())
+            boolean start = gtu.getBookkeeping().equals(LaneBookkeeping.START)
+                    || (gtu.getBookkeeping().equals(LaneBookkeeping.START_AND_EDGE)
+                            && gtu.getSpeed().lt(LaneBookkeeping.START_THRESHOLD));
+            if (gtu.getBookkeeping().equals(LaneBookkeeping.INSTANT) || start)
             {
+                // changes the bookkeeping only, not the position
                 gtu.changeLaneInstantaneously(simplePlan.getLaneChangeDirection());
                 nearestPosition = gtu.getPosition();
+                // only for INSTANT deviative should be false to make a jump to the center line
+                deviative = start;
             }
             else
             {
                 gtu.setLaneChangeDirection(simplePlan.getLaneChangeDirection());
                 deviative = true;
-                nearestPosition = gtu.getPosition();
-                // TODO: use different method to get Lane once lane methods are changed
-                Lane lane = nearestPosition.lane().getAdjacent(simplePlan.getLaneChangeDirection(), gtu.getType());
+                Lane lane = gtu.getPosition().lane().getAdjacentLane(simplePlan.getLaneChangeDirection(), gtu.getType());
                 Throw.when(lane == null, IllegalStateException.class, "Starting lane change without adjacent lane.");
                 double fraction = lane.getCenterLine().projectFractional(lane.getLink().getStartNode().getHeading(),
                         lane.getLink().getEndNode().getHeading(), gtu.getLocation().x, gtu.getLocation().y,
@@ -125,9 +130,9 @@ public final class LaneOperationalPlanBuilder
         {
             gtu.setLaneChangeDirection(LateralDirectionality.NONE);
             nearestPosition = gtu.getPosition();
+            deviative = deviative || nearestPosition.getLocation().distance(gtu.getLocation()) > SNAP.si;
         }
-        deviative = deviative || simplePlan.getDeviation().si > SNAP.si
-                || nearestPosition.getLocation().distance(gtu.getLocation()) > SNAP.si;
+        deviative = deviative || simplePlan.getDeviation().si > SNAP.si;
         OtsLine2d path = getPath(gtu, nearestPosition, simplePlan.getAcceleration(), simplePlan.getDuration(), tManeuver,
                 simplePlan.getDeviation(), deviative);
         Time now = gtu.getSimulator().getSimulatorAbsTime();

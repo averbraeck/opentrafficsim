@@ -61,6 +61,7 @@ import org.opentrafficsim.road.gtu.generator.TtcRoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplate;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplateDistribution;
 import org.opentrafficsim.road.gtu.generator.headway.HeadwayGenerator;
+import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
@@ -475,6 +476,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
                     GeneratorPositions.create(initialLongitudinalPositions, stream), this.network, getSimulator(), roomChecker,
                     idSupplier);
             generator.setNoLaneChangeDistance(Length.instantiateSI(100.0));
+            generator.setBookkeeping(LaneBookkeeping.START);
         }
 
     }

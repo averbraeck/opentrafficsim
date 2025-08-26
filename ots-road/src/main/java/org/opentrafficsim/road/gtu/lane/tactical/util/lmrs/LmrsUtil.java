@@ -116,15 +116,7 @@ public final class LmrsUtil implements LmrsParameters
             {
                 initHeadwayRelaxation(params, leaders.first());
             }
-            if (gtu.getLaneChangeDirection().isNone() || (!leaders.isEmpty() && leaders.first().getSpeed().ge0()))
-            {
-                a = gtu.getCarFollowingAcceleration();
-            }
-            else
-            {
-                // do not follow stand-still leader while changing lane; this prevents dead-locks between lanes
-                a = CarFollowingUtil.freeAcceleration(carFollowingModel, params, speed, sli);
-            }
+            a = gtu.getCarFollowingAcceleration();
         }
         else
         {
@@ -143,7 +135,6 @@ public final class LmrsUtil implements LmrsParameters
         turnIndicatorStatus = TurnIndicatorIntent.NONE;
         if (desire.leftIsLargerOrEqual() && desire.left() >= dFree)
         {
-            // once initiated, accept gap with maximum urgency
             if (acceptLaneChange(perception, params, sli, carFollowingModel, desire.left(), speed, a,
                     LateralDirectionality.LEFT, lmrsData.getGapAcceptance()))
             {
@@ -165,7 +156,6 @@ public final class LmrsUtil implements LmrsParameters
         }
         else if (!desire.leftIsLargerOrEqual() && desire.right() >= dFree)
         {
-            // once initiated, accept gap with maximum urgency
             if (acceptLaneChange(perception, params, sli, carFollowingModel, desire.right(), speed, a,
                     LateralDirectionality.RIGHT, lmrsData.getGapAcceptance()))
             {
@@ -177,8 +167,7 @@ public final class LmrsUtil implements LmrsParameters
                 leaders = neighbors.getLeaders(RelativeLane.RIGHT);
                 if (!leaders.isEmpty())
                 {
-                    // don't respond on its lane change desire, but remember it such that it isn't a new leader in the next
-                    // step
+                    // don't respond on its lane change desire, but remember it such that it isn't a new leader in the next step
                     lmrsData.isNewLeader(leaders.first());
                 }
                 a = Acceleration.min(a,

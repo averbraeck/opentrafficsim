@@ -152,8 +152,8 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     /** Vehicle model. */
     private VehicleModel vehicleModel = VehicleModel.MINMAX;
 
-    /** Whether the GTU performs lane changes instantaneously or not. */
-    private boolean instantaneousLaneChange = false;
+    /** Lane bookkeeping. */
+    private LaneBookkeeping bookkeeping = LaneBookkeeping.EDGE;
 
     /** Distance over which the GTU should not change lane after being created. */
     private Length noLaneChangeDistance;
@@ -607,6 +607,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
      * Change lanes instantaneously.
      * @param laneChangeDirection the direction to change to
      */
+    @SuppressWarnings("hiddenfield")
     public synchronized void changeLaneInstantaneously(final LateralDirectionality laneChangeDirection)
     {
         LanePosition from = getPosition();
@@ -727,7 +728,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         Length remain = getOperationalPlan().getTotalLength().plus(EVENT_MARGIN);
         Length planStartPositionAtLaneOnPath = getLongitudinalPosition();
         boolean checkLaneChange = getOperationalPlan() instanceof LaneBasedOperationalPlan lbop && lbop.isDeviative()
-                && !isInstantaneousLaneChange();
+                && !this.bookkeeping.equals(LaneBookkeeping.INSTANT);
         while (true)
         {
             Time enterTime;
@@ -1391,21 +1392,21 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
     }
 
     /**
-     * Sets whether the GTU perform lane changes instantaneously or not.
-     * @param instantaneous whether the GTU perform lane changes instantaneously or not
+     * Sets how lane bookkeeping at lane changes is done.
+     * @param bookkeeping how lane bookkeeping at lane changes is done
      */
-    public void setInstantaneousLaneChange(final boolean instantaneous)
+    public void setBookkeeping(final LaneBookkeeping bookkeeping)
     {
-        this.instantaneousLaneChange = instantaneous;
+        this.bookkeeping = bookkeeping;
     }
 
     /**
-     * Returns whether the GTU perform lane changes instantaneously or not.
-     * @return whether the GTU perform lane changes instantaneously or not
+     * Returns how lane bookkeeping at lane changes is done.
+     * @return how lane bookkeeping at lane changes is done
      */
-    public boolean isInstantaneousLaneChange()
+    public LaneBookkeeping getBookkeeping()
     {
-        return this.instantaneousLaneChange;
+        return this.bookkeeping;
     }
 
     @Override

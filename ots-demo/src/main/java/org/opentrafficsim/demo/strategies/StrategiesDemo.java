@@ -65,6 +65,7 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
@@ -629,7 +630,7 @@ public class StrategiesDemo extends AbstractSimulationScript
         gtu.setMaximumAcceleration(gtuCharacteristics.getMaximumAcceleration());
         gtu.setMaximumDeceleration(gtuCharacteristics.getMaximumDeceleration());
         gtu.setNoLaneChangeDistance(Length.instantiateSI(50));
-        gtu.setInstantaneousLaneChange(true);
+        gtu.setBookkeeping(LaneBookkeeping.INSTANT);
 
         // strategical planner
         LaneBasedStrategicalPlanner strategicalPlanner = this.factories.get(gtuType).create(gtu, null, null, null);
