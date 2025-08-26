@@ -1101,6 +1101,11 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         return candidates;
     }
 
+    /**
+     * Returns the left lane for given GTU type.
+     * @param gtuType GTU type
+     * @return left lane for given GTU type
+     */
     public Lane getLeft(final GtuType gtuType)
     {
         Set<Lane> set = neighbors(LateralDirectionality.LEFT, gtuType, false);
@@ -1111,6 +1116,11 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         return set.iterator().next();
     }
 
+    /**
+     * Returns the right lane for given GTU type.
+     * @param gtuType GTU type
+     * @return right lane for given GTU type
+     */
     public Lane getRight(final GtuType gtuType)
     {
         Set<Lane> set = neighbors(LateralDirectionality.RIGHT, gtuType, false);
@@ -1119,12 +1129,6 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             return null;
         }
         return set.iterator().next();
-    }
-
-    public Lane getAdjacent(final LateralDirectionality laneChangeDirection, final GtuType gtuType)
-    {
-        Throw.when(laneChangeDirection.isNone(), IllegalArgumentException.class, "laneChangeDirection should be LEFT or RIGHT");
-        return laneChangeDirection.isLeft() ? getLeft(gtuType) : getRight(gtuType);
     }
 
     /**
