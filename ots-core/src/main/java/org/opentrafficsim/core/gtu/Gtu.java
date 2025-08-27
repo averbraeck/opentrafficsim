@@ -843,7 +843,7 @@ public class Gtu extends LocalEventProducer
     {
         try
         {
-            return this.operationalPlan.get().getLocation(when);
+            return this.operationalPlan.get(when).getLocation(when);
         }
         catch (OperationalPlanException exception)
         {
