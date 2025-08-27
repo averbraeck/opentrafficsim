@@ -519,7 +519,7 @@ public final class LaneOperationalPlanBuilder
     /**
      * Returns the target position by following lanes from the start position until a point is found that is at the horizon
      * distance removed from the GTU. If such a point is not within the viewport, {@code null} is returned. This method is part
-     * of {@code getTargetPoint()}, but also used for non-deviative plans directly.
+     * of {@code getTargetPoint()}.
      * @param gtu GTU
      * @param startPosition start position of path, which should be the projected location on an adjacent lane for a lane change
      * @param horizon distance as the crow flies of the next target point
@@ -572,15 +572,23 @@ public final class LaneOperationalPlanBuilder
                         double xP = loc0.x + (det * dy + pointSign * sgn * dx * sqrtDisc) / dr2;
                         double yP = loc0.y + (-det * dx + pointSign * Math.abs(dy) * sqrtDisc) / dr2;
                         double alpha = AngleUtil.normalizeAroundZero(Math.atan2(yP - loc0.y, xP - loc0.x) - loc0.dirZ);
-                        // In viewing port?
-                        if (Math.abs(alpha) <= viewport.si)
+
+                        double f = Math.abs(dx) > 0.0 && Math.abs(dx) > Math.abs(dy) ? (xP - laneCenter.getX(i)) / dx
+                                : (dy == 0.0 ? 0.0 : (yP - laneCenter.getY(i)) / dy);
+                        // Crosses within line segment?
+                        if (f >= 0.0 && f <= 1.0)
                         {
-                            double f = Math.abs(dx) > 0.0 && Math.abs(dx) > Math.abs(dy) ? (xP - laneCenter.getX(i)) / dx
-                                    : (dy == 0.0 ? 0.0 : (yP - laneCenter.getY(i)) / dy);
-                            // Crosses within line segment?
-                            if (f >= 0.0 && f <= 1.0)
+                            // In viewing port?
+                            if (Math.abs(alpha) <= viewport.si)
                             {
                                 return new LanePosition(lane, Length.instantiateSI(distCumulLane + f * dr));
+                            }
+                            else
+                            {
+                                // Crossing with center line outside of viewport (could be turn radius). Increase horizon and
+                                // try again but with full default viewport.
+                                return getTargetLanePosition(gtu, startPosition, horizon.times(2.0),
+                                        Angle.instantiateSI(Math.PI / 4.0));
                             }
                         }
                         pointSign = -1.0;
