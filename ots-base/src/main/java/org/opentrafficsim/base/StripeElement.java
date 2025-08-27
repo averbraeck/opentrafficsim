@@ -58,8 +58,9 @@ public record StripeElement(Length width, Color color, LengthVector dashes) impl
      */
     public static StripeElement dashed(final Length width, final Color color, final LengthVector dashes)
     {
-        Throw.whenNull(width, "color");
-        Throw.whenNull(width, "dashes");
+        Throw.whenNull(width, "width");
+        Throw.whenNull(color, "color");
+        Throw.whenNull(dashes, "dashes");
         return new StripeElement(width, color, dashes);
     }
 
