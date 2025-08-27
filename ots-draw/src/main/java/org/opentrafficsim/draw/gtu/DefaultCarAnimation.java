@@ -168,6 +168,7 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
             }
 
             // path is absolute, so need to rotate
+            /*-
             graphics.setStroke(new BasicStroke(0.10f));
             graphics.setColor(Color.MAGENTA);
             Transform2d transform = OtsLocatable.toBoundsTransform(gtu.getLocation());
@@ -187,6 +188,7 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
                 started = true;
             }
             graphics.draw(path);
+            */
 
             graphics.setStroke(saveStroke);
         }
