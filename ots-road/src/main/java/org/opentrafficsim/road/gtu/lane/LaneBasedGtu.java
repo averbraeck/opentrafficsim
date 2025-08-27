@@ -1073,8 +1073,6 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
      * @return next lane, {@code null} if none
      */
     @SuppressWarnings("hiddenfield")
-    @Deprecated
-    // should maintain a map to cache, which is cleared at the start of every move
     public synchronized Lane getNextLaneForRoute(final Lane lane)
     {
         // ask strategical planner
@@ -1107,8 +1105,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
      * @return set of {@code Lane}s that can be followed considering the route
      */
     @SuppressWarnings("hiddenfield")
-    @Deprecated // make private and no longer use outside of LaneBasedGtu
-    public Set<Lane> getNextLanesForRoute(final Lane lane)
+    private Set<Lane> getNextLanesForRoute(final Lane lane)
     {
         Set<Lane> out = new LinkedHashSet<>();
         Set<Lane> nextPhysical = lane.nextLanes(null);
