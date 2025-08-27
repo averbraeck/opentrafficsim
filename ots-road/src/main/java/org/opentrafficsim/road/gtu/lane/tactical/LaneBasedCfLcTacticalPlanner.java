@@ -111,7 +111,7 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
             LanePerception perception = getPerception();
 
             // if the GTU's maximum speed is zero (block), generate a stand still plan for one second
-            if (laneBasedGTU.getMaximumSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
+            if (laneBasedGTU.getMaximumSpeed().lt(OperationalPlan.DRIFTING_SPEED))
             {
                 return OperationalPlan.standStill(getGtu(), getGtu().getLocation(), startTime, Duration.ONE);
             }
@@ -193,7 +193,7 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
                     getGtu().getMaximumSpeed(), Speed.ZERO, dist, speedLimit));
 
             // build a list of lanes forward, with a maximum headway.
-            if (a.si < 1E-6 && laneBasedGTU.getSpeed().si < OperationalPlan.DRIFTING_SPEED_SI)
+            if (a.si < 1E-6 && laneBasedGTU.getSpeed().lt(OperationalPlan.DRIFTING_SPEED))
             {
                 return OperationalPlan.standStill(getGtu(), getGtu().getLocation(), startTime, Duration.ONE);
             }
@@ -308,7 +308,7 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
      */
     private Length laneDrop(final LaneBasedGtu gtu, final LateralDirectionality direction) throws NetworkException, GtuException
     {
-        LanePosition dlp = gtu.getReferencePosition();
+        LanePosition dlp = gtu.getPosition();
         Lane lane = dlp.lane();
         Length longitudinalPosition = dlp.position();
         if (null != direction)
@@ -360,7 +360,7 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
     private Length suitability(final LaneBasedGtu gtu, final LateralDirectionality direction)
             throws NetworkException, GtuException
     {
-        LanePosition dlp = gtu.getReferencePosition();
+        LanePosition dlp = gtu.getPosition();
         Lane lane = dlp.lane();
         Length longitudinalPosition = dlp.position().plus(gtu.getFront().dx());
         if (null != direction)
@@ -594,9 +594,9 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
     {
         /*-
          * The time per required lane change seems more relevant than distance per required lane change.
-         * Total time required does not grow linearly with the number of required lane changes. Logarithmic, arc tangent 
+         * Total time required does not grow linearly with the number of required lane changes. Logarithmic, arc tangent
          * is more like it.
-         * Rijkswaterstaat appears to use a fixed time for ANY number of lane changes (about 60s). 
+         * Rijkswaterstaat appears to use a fixed time for ANY number of lane changes (about 60s).
          * TomTom navigation systems give more time (about 90s).
          * In this method the returned suitability decreases linearly with the number of required lane changes. This
          * ensures that there is a gradient that coaches the GTU towards the most suitable lane.

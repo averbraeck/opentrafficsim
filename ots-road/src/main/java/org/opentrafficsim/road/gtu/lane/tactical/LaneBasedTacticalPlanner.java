@@ -1,22 +1,20 @@
 package org.opentrafficsim.road.gtu.lane.tactical;
 
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.djutils.immutablecollections.ImmutableSortedSet;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.core.network.Link;
-import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.plan.operational.LaneBasedOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.network.LaneAccessLaw;
+import org.opentrafficsim.road.network.LaneChangeInfo;
 import org.opentrafficsim.road.network.lane.Lane;
 
 /**
@@ -37,7 +35,7 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGtu, 
     CarFollowingModel getCarFollowingModel();
 
     /**
-     * Selects a lane from a possible set. This set contains all viable lanes in to which a lanes splits.
+     * Selects a lane from a possible set. This set contains all viable lanes in to which a lane splits.
      * @param from lane we come from
      * @param lanes set of lanes possible
      * @return preferred lane
@@ -45,117 +43,36 @@ public interface LaneBasedTacticalPlanner extends TacticalPlanner<LaneBasedGtu, 
      */
     default Lane chooseLaneAtSplit(final Lane from, final Set<Lane> lanes) throws ParameterException
     {
-        if (getGtu().getOperationalPlan() instanceof LaneBasedOperationalPlan
-                && ((LaneBasedOperationalPlan) getGtu().getOperationalPlan()).isDeviative())
+        Route route = getGtu().getStrategicalPlanner().getRoute();
+        Length perception = getGtu().getParameters().getParameter(ParameterTypes.PERCEPTION);
+        Set<Lane> bestRegardingRoute = new LinkedHashSet<>();
+        LaneChangeInfo bestInfo = null;
+        for (Lane lane : lanes)
         {
-            // take the lane adjacent to lane we are registered on, if any
-            LateralDirectionality forceSide = LateralDirectionality.NONE;
-            try
+            ImmutableSortedSet<LaneChangeInfo> lcInfo =
+                    lane.getNetwork().getLaneChangeInfo(lane, route, getGtu().getType(), perception, LaneAccessLaw.LEGAL);
+            LaneChangeInfo info = lcInfo.isEmpty() ? null : lcInfo.first();
+            int comp = bestInfo == null ? (info == null ? 0 : -info.compareTo(bestInfo)) : bestInfo.compareTo(info);
+            if (comp >= 0)
             {
-                Set<Lane> leftLanes = from.accessibleAdjacentLanesPhysical(LateralDirectionality.LEFT, getGtu().getType());
-                if (!Collections.disjoint(getGtu().positions(getGtu().getReference()).keySet(), leftLanes))
+                if (comp > 0)
                 {
-                    forceSide = LateralDirectionality.LEFT;
+                    bestRegardingRoute.clear();
+                    bestInfo = info;
                 }
-                else
-                {
-                    Set<Lane> rightLanes =
-                            from.accessibleAdjacentLanesPhysical(LateralDirectionality.RIGHT, getGtu().getType());
-                    if (!Collections.disjoint(getGtu().positions(getGtu().getReference()).keySet(), rightLanes))
-                    {
-                        forceSide = LateralDirectionality.RIGHT;
-                    }
-                }
-            }
-            catch (GtuException exception)
-            {
-                throw new RuntimeException("Exception obtaining reference position.", exception);
-            }
-            if (!forceSide.isNone())
-            {
-                if (lanes.isEmpty())
-                {
-                    // A sink should delete the GTU, or a lane change should end, before reaching the end of the lane
-                    return null;
-                }
-                else
-                {
-                    Iterator<Lane> iter = lanes.iterator();
-                    Lane next = iter.next();
-                    while (iter.hasNext())
-                    {
-                        Lane candidate = iter.next();
-                        next = LaneBasedTacticalPlanner.mostOnSide(next, candidate, forceSide);
-                    }
-                    return next;
-                }
+                bestRegardingRoute.add(lane);
             }
         }
-        Route route = getGtu().getStrategicalPlanner().getRoute();
-        if (route == null)
+        if (bestRegardingRoute.size() > 1)
         {
-            // select right-most lane
             Lane rightMost = null;
-            for (Lane lane : lanes)
+            for (Lane lane : bestRegardingRoute)
             {
                 rightMost = rightMost == null ? lane : mostOnSide(rightMost, lane, LateralDirectionality.RIGHT);
             }
             return rightMost;
         }
-        Length maxDistance = Length.NEGATIVE_INFINITY;
-        Lane best = null;
-        for (Lane lane : lanes)
-        {
-            Lane next = getGtu().getNextLaneForRoute(lane);
-            if (next != null)
-            {
-                Length okDistance = okDistance(next, lane.getLength(), route,
-                        getGtu().getParameters().getParameter(ParameterTypes.PERCEPTION));
-                if (maxDistance.eq(okDistance))
-                {
-                    best = mostOnSide(best, lane, LateralDirectionality.RIGHT);
-                }
-                else if (okDistance.gt(maxDistance))
-                {
-                    maxDistance = okDistance;
-                    best = lane;
-                }
-            }
-        }
-        return best;
-    }
-
-    /**
-     * Helper method for default chooseLaneAtSplit implementation that returns the distance from this lane onwards where the
-     * route can be followed.
-     * @param lane lane and direction
-     * @param distance distance so far
-     * @param route route
-     * @param maxDistance max search distance
-     * @return distance from this lane onwards where the route can be followed
-     */
-    // TODO private when we use java 9
-    default Length okDistance(final Lane lane, final Length distance, final Route route, final Length maxDistance)
-    {
-        if (distance.gt(maxDistance))
-        {
-            return maxDistance;
-        }
-        Lane next = getGtu().getNextLaneForRoute(lane);
-        if (next == null)
-        {
-            Node endNode = lane.getLink().getEndNode();
-            Set<Link> links = endNode.getLinks().toSet();
-            links.remove(lane.getLink());
-            if (route.contains(endNode) && (links.isEmpty() || links.iterator().next().isConnector()))
-            {
-                // dead-end link, must be destination
-                return maxDistance;
-            }
-            // there is no next lane on the route, return the distance to the end of this lane
-            return distance.plus(lane.getLength());
-        }
-        return okDistance(next, distance.plus(lane.getLength()), route, maxDistance);
+        return bestRegardingRoute.iterator().next();
     }
 
     /**

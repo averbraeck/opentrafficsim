@@ -217,8 +217,7 @@ public class LaneStructure
                         from++;
                     }
                     int to = gtus.size() - 1;
-                    while (to >= 0 && (position(gtus.get(to), record, otherPosition).gt(record.getLength())
-                            || gtus.get(to).getId().equals(this.egoGtu.getId())))
+                    while (to >= 0 && gtus.get(to).getId().equals(this.egoGtu.getId()))
                     {
                         to--;
                     }
@@ -268,8 +267,7 @@ public class LaneStructure
                         return gtus;
                     }
                     int from = 0;
-                    while (from < gtus.size() && (position(gtus.get(from), record, otherPosition).lt0()
-                            || gtus.get(from).getId().equals(this.egoGtu.getId())))
+                    while (from < gtus.size() && gtus.get(from).getId().equals(this.egoGtu.getId()))
                     {
                         from++;
                     }
@@ -456,7 +454,7 @@ public class LaneStructure
         {
             return record.getStartDistance().neg().plus(gtu.getRelativePositions().get(positionType).dx());
         }
-        return Try.assign(() -> gtu.position(record.getLane(), gtu.getRelativePositions().get(positionType)),
+        return Try.assign(() -> gtu.getPosition(record.getLane(), gtu.getRelativePositions().get(positionType)),
                 "Unable to obtain position %s of GTU.", positionType);
     }
 
@@ -477,7 +475,7 @@ public class LaneStructure
         Deque<LaneRecord> upQueue = new LinkedList<>();
         Deque<LaneRecord> latDownQueue = new LinkedList<>();
         Deque<LaneRecord> latUpQueue = new LinkedList<>();
-        LanePosition position = Try.assign(() -> this.egoGtu.getReferencePosition(), "GTU does not have a reference position.");
+        LanePosition position = Try.assign(() -> this.egoGtu.getPosition(), "GTU does not have a reference position.");
         LaneRecord root = new LaneRecord(position.lane(), RelativeLane.CURRENT, position.position().neg(), Length.ZERO);
         visited.add(position.lane());
         addToCrossSection(root);
@@ -642,7 +640,7 @@ public class LaneStructure
                         }
                         else
                         {
-                            mergeDistance = Length.ZERO;
+                            mergeDistance = record.getMergeDistance(); // zero, or continue same value in downstream branch
                         }
                     }
                     else

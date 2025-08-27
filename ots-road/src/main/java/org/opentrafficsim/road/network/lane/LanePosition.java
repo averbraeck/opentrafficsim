@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.point.DirectedPoint2d;
-import org.opentrafficsim.base.geometry.OtsLine2d;
 
 /**
  * Store one position and lane of a GTU.
@@ -28,13 +27,18 @@ public record LanePosition(Lane lane, Length position) implements Serializable
      * Retrieve the location and direction of the GTU on the lane.
      * @return the location and direction of the GTU on the lane
      */
-    public final DirectedPoint2d getLocation()
+    public DirectedPoint2d getLocation()
     {
-        // double fraction = this.position.si / this.lane.getParentLink().getLength().si;
-        OtsLine2d centerLine = this.lane.getCenterLine();
-        double centerLineLength = centerLine.getLength();
-        double fraction = this.position.si / centerLineLength;
-        return centerLine.getLocationPointFractionExtended(fraction);
+        return this.lane.getCenterLine().getLocationExtended(this.position);
+    }
+
+    /**
+     * Returns the fractional longitudinal position on the lane.
+     * @return fractional longitudinal position on the lane
+     */
+    public double getFraction()
+    {
+        return position().si / lane().getLength().si;
     }
 
 }

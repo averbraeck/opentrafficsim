@@ -44,6 +44,12 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
     /** The cached helper directions for fractional projection; will be calculated when needed for the first time. */
     private Point2D.Double[] fractionalHelperDirections = null;
 
+    /** Last start direction for which fractional helpers were calculated. */
+    private Direction lastStartDirection;
+
+    /** Last start direction for which fractional helpers were calculated. */
+    private Direction lastEndDirection;
+
     /** Intersection of unit offset lines of first two segments. */
     private Point2d firstOffsetIntersection;
 
@@ -505,6 +511,16 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
             }
         },
 
+        /** Orthogonal projection with extension. */
+        ORTHOGONAL_EXTENDED
+        {
+            @Override
+            double getFraction(final OtsLine2d line, final double x, final double y)
+            {
+                return line.projectOrthogonalFractionalExtended(new Point2d(x, y));
+            }
+        },
+
         /** Distance to nearest end point. */
         ENDPOINT
         {
@@ -605,6 +621,15 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
                 this.lastOffsetIntersection = parStartPoint;
             }
         }
+
+        // skip when same directions previously used to calculate edge helpers
+        if (this.lastStartDirection != null && this.lastStartDirection.eq(start) && this.lastEndDirection != null
+                && this.lastEndDirection.eq(end))
+        {
+            return;
+        }
+        this.lastStartDirection = start;
+        this.lastEndDirection = end;
 
         // use directions at start and end to get unit offset points to the left at a distance of 1
         double ang = (start == null ? Math.atan2(get(1).y - get(0).y, get(1).x - get(0).x) : start.si) + Math.PI / 2;

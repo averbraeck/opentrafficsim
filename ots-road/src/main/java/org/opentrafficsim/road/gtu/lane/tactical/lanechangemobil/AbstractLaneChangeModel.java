@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil;
 
 import java.util.Collection;
-import java.util.Map;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -13,7 +12,6 @@ import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -67,9 +65,8 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
         {
             LanePerception perception = gtu.getTacticalPlanner().getPerception();
             Length headway = gtu.getParameters().getParameter(LOOKAHEAD);
-            Map<Lane, Length> positions = gtu.positions(RelativePosition.REFERENCE_POSITION);
-            Lane lane = positions.keySet().iterator().next();
-            Length longitudinalPosition = positions.get(lane);
+            Lane lane = gtu.getLane();
+            Length longitudinalPosition = gtu.getLongitudinalPosition();
             // TODO make this driving side dependent; i.e. implement a general way to figure out on which side of the
             // road cars are supposed to drive
             final LateralDirectionality preferred = LateralDirectionality.RIGHT;

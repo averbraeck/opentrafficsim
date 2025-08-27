@@ -8,6 +8,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -94,10 +95,9 @@ public class HeadwayGtuReal extends AbstractHeadway implements HeadwayGtu
         sli.addSpeedInfo(SpeedLimitTypes.MAX_VEHICLE_SPEED, wrappedGtu.getMaximumSpeed());
         try
         {
-            sli.addSpeedInfo(SpeedLimitTypes.FIXED_SIGN,
-                    wrappedGtu.getReferencePosition().lane().getSpeedLimit(wrappedGtu.getType()));
+            sli.addSpeedInfo(SpeedLimitTypes.FIXED_SIGN, wrappedGtu.getPosition().lane().getSpeedLimit(wrappedGtu.getType()));
         }
-        catch (NetworkException | GtuException exception)
+        catch (NetworkException exception)
         {
             throw new RuntimeException("Could not obtain speed limit from lane for perception.", exception);
         }
@@ -143,9 +143,11 @@ public class HeadwayGtuReal extends AbstractHeadway implements HeadwayGtu
     {
         try
         {
+            LateralDirectionality lcDirection = isChangingLeft() ? LateralDirectionality.LEFT
+                    : (isChangingRight() ? LateralDirectionality.RIGHT : LateralDirectionality.NONE);
             return new HeadwayGtuRealCopy(getId(), getGtuType(), headway, getLength(), getWidth(), speed, acceleration,
-                    getCarFollowingModel(), getParameters(), getSpeedLimitInfo(), getRoute(), getDesiredSpeed(),
-                    getGtuStatus());
+                    getCarFollowingModel(), getParameters(), getSpeedLimitInfo(), getRoute(), getDesiredSpeed(), getDeviation(),
+                    lcDirection, getGtuStatus());
         }
         catch (GtuException exception)
         {
@@ -183,7 +185,7 @@ public class HeadwayGtuReal extends AbstractHeadway implements HeadwayGtu
         }
         return gtuStatus.toArray(new GtuStatus[gtuStatus.size()]);
     }
-    
+
     /**
      * Returns the wrapped GTU.
      * @return wrapped GTU.
@@ -284,6 +286,24 @@ public class HeadwayGtuReal extends AbstractHeadway implements HeadwayGtu
     {
         return "HeadwayGtuReal [speedLimitInfo=" + this.speedLimitInfo + ", gtu=" + this.gtu + ", facingSameDirection="
                 + this.facingSameDirection + "]";
+    }
+
+    @Override
+    public Length getDeviation()
+    {
+        return this.gtu.getDeviation();
+    }
+
+    @Override
+    public boolean isChangingLeft()
+    {
+        return this.gtu.getLaneChangeDirection().isLeft();
+    }
+
+    @Override
+    public boolean isChangingRight()
+    {
+        return this.gtu.getLaneChangeDirection().isRight();
     }
 
 }

@@ -1,7 +1,9 @@
 package org.opentrafficsim.core.perception;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
@@ -178,6 +180,13 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
     public Object getOwner()
     {
         return this.owner;
+    }
+
+    @Override
+    public Iterator<Time> timeIterator()
+    {
+        return IntStream.range(0, this.events.size())
+                .mapToObj((index) -> Time.instantiateSI(this.events.get(this.events.size() - 1 - index).getTime())).iterator();
     }
 
     /**

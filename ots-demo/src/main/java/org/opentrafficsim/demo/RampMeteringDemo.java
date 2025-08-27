@@ -27,7 +27,6 @@ import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.exceptions.Throw;
-import org.djutils.exceptions.Try;
 import org.djutils.io.CompressedFileWriter;
 import org.opentrafficsim.animation.colorer.GtuTypeColorer;
 import org.opentrafficsim.animation.gtu.colorer.AccelerationGtuColorer;
@@ -66,6 +65,7 @@ import org.opentrafficsim.road.gtu.generator.characteristics.DefaultLaneBasedGtu
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGeneratorOd;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
 import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -79,7 +79,6 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNe
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
-import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
@@ -350,7 +349,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
                 new DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory(new LaneBasedStrategicalRoutePlannerFactory(
                         new LmrsFactory(new IdmPlusFactory(stream), new DefaultLmrsPerceptionFactory())));
         odOptions.set(OdOptions.GTU_TYPE, new ControlledStrategicalPlannerGenerator(factory.create()));
-        odOptions.set(OdOptions.INSTANT_LC, true);
+        odOptions.set(OdOptions.BOOKKEEPING, LaneBookkeeping.INSTANT);
         odOptions.set(OdOptions.LANE_BIAS, new LaneBiases().addBias(car, LaneBias.WEAK_LEFT));
         odOptions.set(OdOptions.NO_LC_DIST, Length.instantiateSI(300));
         OdApplier.applyOd(network, od, odOptions, DefaultsNl.ROAD_USERS);
@@ -557,9 +556,6 @@ public class RampMeteringDemo extends AbstractSimulationScript
         /** Lane change system. */
         private AutomaticLaneChangeSystem laneChangeSystem;
 
-        /** Lane change status. */
-        private final LaneChange laneChange;
-
         /** Map that {@code getLaneChangeDesire} writes current desires in. This is not used here. */
         private Map<Class<? extends Incentive>, Desire> dummyMap = new LinkedHashMap<>();
 
@@ -573,7 +569,6 @@ public class RampMeteringDemo extends AbstractSimulationScript
             super(new IdmPlus(), gtu, generatePerception(gtu));
             setDefaultIncentives();
             this.laneChangeSystem = laneChangeSystem;
-            this.laneChange = Try.assign(() -> new LaneChange(gtu), "Parameter LCDUR is required.", GtuException.class);
         }
 
         /**
@@ -632,34 +627,32 @@ public class RampMeteringDemo extends AbstractSimulationScript
             }
 
             // add lane change control
-            if (!this.laneChange.isChangingLane())
+            double dFree = getGtu().getParameters().getParameter(LmrsParameters.DFREE);
+            if (this.laneChangeSystem.initiatedLaneChange().isNone())
             {
-                double dFree = getGtu().getParameters().getParameter(LmrsParameters.DFREE);
-                if (this.laneChangeSystem.initiatedLaneChange().isNone())
+                if (desire.leftIsLargerOrEqual() && desire.left() > dFree)
                 {
-                    if (desire.leftIsLargerOrEqual() && desire.left() > dFree)
-                    {
-                        this.laneChangeSystem.initiateLaneChange(LateralDirectionality.LEFT);
-                    }
-                    else if (desire.right() > dFree)
-                    {
-                        this.laneChangeSystem.initiateLaneChange(LateralDirectionality.RIGHT);
-                    }
+                    this.laneChangeSystem.initiateLaneChange(LateralDirectionality.LEFT);
                 }
-                else
+                else if (desire.right() > dFree)
                 {
-                    if ((this.laneChangeSystem.initiatedLaneChange().isLeft() && desire.left() < dFree)
-                            || (this.laneChangeSystem.initiatedLaneChange().isRight() && desire.right() < dFree))
-                    {
-                        this.laneChangeSystem.initiateLaneChange(LateralDirectionality.NONE);
-                    }
+                    this.laneChangeSystem.initiateLaneChange(LateralDirectionality.RIGHT);
+                }
+            }
+            else
+            {
+                if ((this.laneChangeSystem.initiatedLaneChange().isLeft() && desire.left() < dFree)
+                        || (this.laneChangeSystem.initiatedLaneChange().isRight() && desire.right() < dFree))
+                {
+                    this.laneChangeSystem.initiateLaneChange(LateralDirectionality.NONE);
                 }
             }
             simplePlan = this.laneChangeSystem.operate(simplePlan, getGtu().getParameters());
             simplePlan.setTurnIndicator(getGtu());
 
             // create plan
-            return LaneOperationalPlanBuilder.buildPlanFromSimplePlan(getGtu(), startTime, simplePlan, this.laneChange);
+            return LaneOperationalPlanBuilder.buildPlanFromSimplePlan(getGtu(), simplePlan,
+                    getGtu().getParameters().getParameter(ParameterTypes.LCDUR));
         }
     }
 

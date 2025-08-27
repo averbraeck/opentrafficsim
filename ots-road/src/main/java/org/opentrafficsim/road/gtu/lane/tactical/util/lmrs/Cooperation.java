@@ -51,8 +51,9 @@ public interface Cooperation extends LmrsParameters
             for (HeadwayGtu leader : perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane))
             {
                 Parameters params2 = leader.getParameters();
-                double desire = lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)
-                        : lat.equals(LateralDirectionality.RIGHT) ? params2.getParameter(DLEFT) : 0;
+                double desire = leader.isChangingLane(lat.flip()) ? 1.0
+                        : (lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)
+                                : lat.equals(LateralDirectionality.RIGHT) ? params2.getParameter(DLEFT) : 0.0);
                 if (desire >= dCoop && (leader.getSpeed().gt0() || leader.getDistance().gt0()))
                 {
                     Acceleration aSingle = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(),
@@ -94,8 +95,9 @@ public interface Cooperation extends LmrsParameters
             for (HeadwayGtu leader : neighbours.getLeaders(relativeLane))
             {
                 Parameters params2 = leader.getParameters();
-                double desire = lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)
-                        : lat.equals(LateralDirectionality.RIGHT) ? params2.getParameter(DLEFT) : 0;
+                double desire = leader.isChangingLane(lat.flip()) ? 1.0
+                        : (lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)
+                                : lat.equals(LateralDirectionality.RIGHT) ? params2.getParameter(DLEFT) : 0.0);
                 // TODO: only cooperate if merger still quite fast or there's congestion downstream anyway (which we can better
                 // estimate than only considering the direct leader
                 if (desire >= dCoop && (leader.getSpeed().gt0() || leader.getDistance().gt0())
@@ -135,8 +137,9 @@ public interface Cooperation extends LmrsParameters
             for (HeadwayGtu leader : perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane))
             {
                 Parameters params2 = leader.getParameters();
-                double desire = lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)
-                        : lat.equals(LateralDirectionality.RIGHT) ? params2.getParameter(DLEFT) : 0;
+                double desire = leader.isChangingLane(lat.flip()) ? 1.0
+                        : (lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)
+                                : lat.equals(LateralDirectionality.RIGHT) ? params2.getParameter(DLEFT) : 0.0);
                 if (desire >= dCoop && leader.getDistance().gt0()
                         && leader.getAcceleration().gt(params.getParameter(ParameterTypes.BCRIT).neg()))
                 {

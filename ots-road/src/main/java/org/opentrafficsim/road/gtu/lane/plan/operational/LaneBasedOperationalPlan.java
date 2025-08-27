@@ -1,19 +1,11 @@
 package org.opentrafficsim.road.gtu.lane.plan.operational;
 
-import org.djunits.value.vdouble.scalar.Direction;
-import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.draw.point.DirectedPoint2d;
-import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.geometry.OtsLine2d;
-import org.opentrafficsim.base.geometry.OtsLine2d.FractionalFallback;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.gtu.plan.operational.Segments;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.network.lane.Lane;
-import org.opentrafficsim.road.network.lane.LanePosition;
 
 /**
  * An operational plan with some extra information about the lanes and lane changes so this information does not have to be
@@ -59,122 +51,6 @@ public class LaneBasedOperationalPlan extends OperationalPlan
     public final boolean isDeviative()
     {
         return this.deviative;
-    }
-
-    /**
-     * Returns the total length along the reference lane that the GTU travels. In case of a deviative plan this involves
-     * projection of the actual path to the lane center lines.
-     * @param gtu GTU
-     * @return total length along the path
-     * @throws GtuException if the GTU has not reference position
-     */
-    public final Length getTotalLengthAlongLane(final LaneBasedGtu gtu) throws GtuException
-    {
-        if (!this.deviative)
-        {
-            // along the lane center lines
-            return getTotalLength();
-        }
-
-        // let's project the end position of the plan
-        return getDistanceAlongLane(gtu, getEndLocation());
-    }
-
-    /**
-     * Helper method to get rotation at start or end of lane.
-     * @param lane lane
-     * @param start start (or end)
-     * @return rotation at start or end of lane
-     */
-    private double getRotZAtFraction(final Lane lane, final boolean start)
-    {
-        double f = start ? 0.0 : 1.0;
-        return lane.getCenterLine().getLocationPointFraction(f).getDirZ();
-    }
-
-    /**
-     * Returns the distance along the reference lane that the GTU travels from the current location up to the point.
-     * @param gtu GTU
-     * @param point point where the GTU is or will be
-     * @return total length along the path
-     * @throws GtuException if the GTU has not reference position
-     */
-    public final Length getDistanceAlongLane(final LaneBasedGtu gtu, final DirectedPoint2d point) throws GtuException
-    {
-
-        // start lane center lines at current reference lane
-        LanePosition pos = gtu.getReferencePosition();
-        Lane lane = pos.lane();
-
-        // initialize loop data
-        double length = -lane.coveredDistance(pos.position().si / pos.lane().getLength().si).si;
-        double f = Double.NaN;
-        Direction prevDir = Direction.instantiateSI(getRotZAtFraction(lane, true));
-
-        // move to next lane while projection fails
-        while (Double.isNaN(f))
-        {
-            Lane nextLane = gtu.getNextLaneForRoute(lane);
-            Direction nextDir = Direction.instantiateSI(nextLane == null ? getRotZAtFraction(lane, false)
-                    : .5 * getRotZAtFraction(lane, false) + .5 * getRotZAtFraction(nextLane, true));
-            f = lane.getCenterLine().projectFractional(prevDir, nextDir, point.x, point.y, FractionalFallback.NaN);
-
-            // check if the GTU is adjacent to the bit between the lanes (if there is such a bit)
-            if (Double.isNaN(f))
-            {
-                if (nextLane == null)
-                {
-                    // projection error on dad-end lane, add the length of the lane
-                    f = 1.0;
-                    length += lane.coveredDistance(f).si;
-                }
-                else
-                {
-                    try
-                    {
-                        // compose gap line
-                        Point2d last = lane.getCenterLine().getLast();
-                        Point2d first = nextLane.getCenterLine().get(0);
-                        if (!(last).equals(first))
-                        {
-                            OtsLine2d gap = new OtsLine2d(last, first);
-                            double fGap = gap.projectFractional(null, null, point.x, point.y, FractionalFallback.NaN);
-                            if (!Double.isNaN(fGap))
-                            {
-                                f = (lane.getLength().si + fGap * gap.getLength()) / lane.getLength().si;
-                            }
-                            else
-                            {
-                                // gap, but no successful projection, use next lane in next loop, increase length so far
-                                length += lane.getLength().si;
-                                lane = nextLane;
-                                prevDir = nextDir;
-                            }
-                        }
-                        else
-                        {
-                            // no gap, use next lane in next loop, increase length so far
-                            length += lane.getLength().si;
-                            lane = nextLane;
-                            prevDir = nextDir;
-                        }
-                    }
-                    catch (IndexOutOfBoundsException exception)
-                    {
-                        // should not occur, we use get(0) and getLast()
-                        throw new RuntimeException("Unexpected exception while assessing if a GTU is between lanes.",
-                                exception);
-                    }
-                }
-            }
-            else
-            {
-                // projection is ok on lane, increase length so far
-                length += lane.coveredDistance(f).si;
-            }
-        }
-        // add length on lane where the reference position was projected to (or to it's consecutive gap between lanes)
-        return Length.instantiateSI(length);
     }
 
     @Override

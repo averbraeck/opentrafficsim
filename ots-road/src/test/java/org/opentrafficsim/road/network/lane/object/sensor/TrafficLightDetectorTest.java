@@ -228,7 +228,7 @@ public final class TrafficLightDetectorTest implements EventListener
                 {
                     System.out.println("let op. InitialLongitudinalPositions: " + initialLongitudinalPositions);
                 }
-                gtu.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
+                gtu.init(strategicalPlanner, initialLongitudinalPositions.getLocation(), initialSpeed);
                 if (initialPosition.plus(gtuLength.divide(2)).lt(a) || initialPosition.minus(gtuLength.divide(2)).gt(b))
                 {
                     assertEquals(0, this.loggedEvents.size(), "event list is empty");

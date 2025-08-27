@@ -7,7 +7,6 @@ import java.util.Set;
 
 import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
@@ -67,15 +66,7 @@ public class SplitColorer implements GtuColorer
             return UNKNOWN;
         }
         LaneBasedGtu laneGtu = (LaneBasedGtu) gtu;
-        LanePosition refPos;
-        try
-        {
-            refPos = laneGtu.getReferencePosition();
-        }
-        catch (GtuException exception)
-        {
-            return UNKNOWN;
-        }
+        LanePosition refPos = laneGtu.getPosition();
         Link link = refPos.lane().getLink();
         Route route = laneGtu.getStrategicalPlanner().getRoute();
         if (route == null)

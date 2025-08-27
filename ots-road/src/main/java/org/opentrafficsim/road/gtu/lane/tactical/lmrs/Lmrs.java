@@ -4,7 +4,6 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.DirectedPoint2d;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
@@ -16,7 +15,6 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
-import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.Blockable;
@@ -54,9 +52,6 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements DesireBas
     /** Serialization id. */
     private static final long serialVersionUID = 20160300L;
 
-    /** Lane change status. */
-    private final LaneChange laneChange;
-
     /** LMRS data. */
     private final LmrsData lmrsData;
 
@@ -75,7 +70,6 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements DesireBas
             final Tailgating tailgating)
     {
         super(carFollowingModel, gtu, lanePerception);
-        this.laneChange = Try.assign(() -> new LaneChange(gtu), "Parameter LCDUR is required.", GtuException.class);
         this.lmrsData = new LmrsData(synchronization, cooperation, gapAcceptance, tailgating);
     }
 
@@ -90,8 +84,8 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements DesireBas
         Parameters params = getGtu().getParameters();
 
         // LMRS
-        SimpleOperationalPlan simplePlan = LmrsUtil.determinePlan(getGtu(), startTime, getCarFollowingModel(), this.laneChange,
-                this.lmrsData, getPerception(), getMandatoryIncentives(), getVoluntaryIncentives());
+        SimpleOperationalPlan simplePlan = LmrsUtil.determinePlan(getGtu(), getCarFollowingModel(), this.lmrsData,
+                getPerception(), getMandatoryIncentives(), getVoluntaryIncentives());
 
         // Lower acceleration from additional sources, consider adjacent lane when changing lane or synchronizing
         Speed speed = getPerception().getPerceptionCategory(EgoPerception.class).getSpeed();
@@ -99,11 +93,7 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements DesireBas
         double dLeft = params.getParameterOrNull(LmrsParameters.DLEFT);
         double dRight = params.getParameterOrNull(LmrsParameters.DRIGHT);
         double dSync = params.getParameterOrNull(LmrsParameters.DSYNC);
-        if (this.laneChange.isChangingLane())
-        {
-            lanes = new RelativeLane[] {RelativeLane.CURRENT, this.laneChange.getSecondLane(getGtu())};
-        }
-        else if (dLeft >= dSync && dLeft >= dRight)
+        if (dLeft >= dSync && dLeft >= dRight)
         {
             lanes = new RelativeLane[] {RelativeLane.CURRENT, RelativeLane.LEFT};
         }
@@ -133,17 +123,12 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements DesireBas
             }
         }
 
-        if (simplePlan.isLaneChange())
-        {
-            this.laneChange.setDesiredLaneChangeDuration(getGtu().getParameters().getParameter(ParameterTypes.LCDUR));
-            // adjust lane based data in perception
-        }
-
         // set turn indicator
         simplePlan.setTurnIndicator(getGtu());
 
         // create plan
-        return LaneOperationalPlanBuilder.buildPlanFromSimplePlan(getGtu(), startTime, simplePlan, this.laneChange);
+        return LaneOperationalPlanBuilder.buildPlanFromSimplePlan(getGtu(), simplePlan,
+                getGtu().getParameters().getParameter(ParameterTypes.LCDUR));
 
     }
 

@@ -6,6 +6,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -48,14 +49,18 @@ public class HeadwayGtuSimple extends AbstractHeadwayGtu
      * @param speed the (perceived) speed of the other object; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other object; can be null if unknown.
      * @param desiredSpeed desired speed
+     * @param deviation lateral deviation
+     * @param laneChangeDirection lane change direction
      * @param gtuStatus the observable characteristics of the GTU.
      * @throws GtuException when id is null, objectType is null, or parameters are inconsistent
      */
     public HeadwayGtuSimple(final String id, final GtuType gtuType, final Length distance, final Length length,
             final Length width, final Speed speed, final Acceleration acceleration, final Speed desiredSpeed,
-            final GtuStatus... gtuStatus) throws GtuException
+            final Length deviation, final LateralDirectionality laneChangeDirection, final GtuStatus... gtuStatus)
+            throws GtuException
     {
-        super(id, gtuType, distance, true, length, width, speed, acceleration, desiredSpeed, gtuStatus);
+        super(id, gtuType, distance, true, length, width, speed, acceleration, desiredSpeed, deviation, laneChangeDirection,
+                gtuStatus);
     }
 
     /**
@@ -66,13 +71,16 @@ public class HeadwayGtuSimple extends AbstractHeadwayGtu
      * @param length if this constructor is used, length cannot be null.
      * @param width the (perceived) width of the other object; can not be null.
      * @param desiredSpeed desired speed
+     * @param deviation lateral deviation
+     * @param laneChangeDirection lane change direction
      * @param gtuStatus the observable characteristics of the GTU.
      * @throws GtuException when id is null, or parameters are inconsistent
      */
     public HeadwayGtuSimple(final String id, final GtuType gtuType, final Length distance, final Length length,
-            final Length width, final Speed desiredSpeed, final GtuStatus... gtuStatus) throws GtuException
+            final Length width, final Speed desiredSpeed, final Length deviation,
+            final LateralDirectionality laneChangeDirection, final GtuStatus... gtuStatus) throws GtuException
     {
-        super(id, gtuType, distance, true, length, width, desiredSpeed, gtuStatus);
+        super(id, gtuType, distance, true, length, width, desiredSpeed, deviation, laneChangeDirection, gtuStatus);
     }
 
     /**
@@ -87,16 +95,19 @@ public class HeadwayGtuSimple extends AbstractHeadwayGtu
      * @param speed the (perceived) speed of the other Gtu; can be null if unknown.
      * @param acceleration the (perceived) acceleration of the other Gtu; can be null if unknown.
      * @param desiredSpeed desired speed
+     * @param deviation lateral deviation
+     * @param laneChangeDirection lane change direction
      * @param gtuStatus the observable characteristics of the GTU.
      * @throws GtuException when id is null, or parameters are inconsistent
      */
     @SuppressWarnings("checkstyle:parameternumber")
     public HeadwayGtuSimple(final String id, final GtuType gtuType, final Length overlapFront, final Length overlap,
             final Length overlapRear, final Length length, final Length width, final Speed speed,
-            final Acceleration acceleration, final Speed desiredSpeed, final GtuStatus... gtuStatus) throws GtuException
+            final Acceleration acceleration, final Speed desiredSpeed, final Length deviation,
+            final LateralDirectionality laneChangeDirection, final GtuStatus... gtuStatus) throws GtuException
     {
         super(id, gtuType, overlapFront, overlap, overlapRear, true, length, width, speed, acceleration, desiredSpeed,
-                gtuStatus);
+                deviation, laneChangeDirection, gtuStatus);
     }
 
     /**
@@ -109,14 +120,17 @@ public class HeadwayGtuSimple extends AbstractHeadwayGtu
      * @param length if this constructor is used, length cannot be null.
      * @param width the (perceived) width of the other object; can not be null.
      * @param desiredSpeed desired speed
+     * @param deviation lateral deviation
+     * @param laneChangeDirection lane change direction
      * @param gtuStatus the observable characteristics of the GTU.
      * @throws GtuException when id is null, or parameters are inconsistent
      */
     public HeadwayGtuSimple(final String id, final GtuType gtuType, final Length overlapFront, final Length overlap,
-            final Length overlapRear, final Length length, final Length width, final Speed desiredSpeed,
-            final GtuStatus... gtuStatus) throws GtuException
+            final Length overlapRear, final Length length, final Length width, final Speed desiredSpeed, final Length deviation,
+            final LateralDirectionality laneChangeDirection, final GtuStatus... gtuStatus) throws GtuException
     {
-        super(id, gtuType, overlapFront, overlap, overlapRear, true, length, width, desiredSpeed, gtuStatus);
+        super(id, gtuType, overlapFront, overlap, overlapRear, true, length, width, desiredSpeed, deviation,
+                laneChangeDirection, gtuStatus);
     }
 
     @Override
@@ -148,8 +162,10 @@ public class HeadwayGtuSimple extends AbstractHeadwayGtu
     {
         try
         {
+            LateralDirectionality lcDirection = isChangingLeft() ? LateralDirectionality.LEFT
+                    : (isChangingRight() ? LateralDirectionality.RIGHT : LateralDirectionality.NONE);
             return new HeadwayGtuSimple(getId(), getGtuType(), headway, getLength(), getWidth(), speed, acceleration,
-                    getDesiredSpeed(), getGtuStatus());
+                    getDesiredSpeed(), getDeviation(), lcDirection, getGtuStatus());
         }
         catch (GtuException exception)
         {

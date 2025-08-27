@@ -90,6 +90,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdmFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
@@ -360,11 +361,12 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
                 }
                 return voluntaryIncentives;
             };
+            Supplier<Set<AccelerationIncentive>> accelerationSupplier = () -> new LinkedHashSet<>();
 
             // Layered factories (tactical, strategical, strategical in an OD context)
-            LmrsFactory lmrsFactory = new LmrsFactory(cfModelFactory, perceptionFactory, Synchronization.PASSIVE,
-                    Cooperation.PASSIVE, GapAcceptance.INFORMED, tailgating, mandatorySupplier, voluntarySupplier,
-                    () -> new LinkedHashSet<>());
+            LmrsFactory lmrsFactory =
+                    new LmrsFactory(cfModelFactory, perceptionFactory, Synchronization.PASSIVE, Cooperation.PASSIVE,
+                            GapAcceptance.INFORMED, tailgating, mandatorySupplier, voluntarySupplier, accelerationSupplier);
             LaneBasedStrategicalRoutePlannerFactory strategicalPlannerFactory =
                     new LaneBasedStrategicalRoutePlannerFactory(lmrsFactory, parameterFactory);
             this.characteristics =

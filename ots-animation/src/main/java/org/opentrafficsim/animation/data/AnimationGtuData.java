@@ -5,6 +5,7 @@ import java.awt.geom.RectangularShape;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.animation.gtu.colorer.GtuColorerManager;
+import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
@@ -96,6 +97,12 @@ public class AnimationGtuData extends AnimationIdentifiableShape<LaneBasedGtu> i
     public String toString()
     {
         return "Gtu " + getId();
+    }
+
+    @Override
+    public OtsLine2d getPath()
+    {
+        return getObject().getOperationalPlan().getPath();
     }
 
 }

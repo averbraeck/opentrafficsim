@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.djunits.unit.DurationUnit;
@@ -28,7 +27,6 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.Node;
@@ -95,16 +93,16 @@ public final class AbstractLaneBasedGtuTest implements UNITS
         Lane[] lanesGroupA = LaneFactory.makeMultiLane(network, "A", nodeAFrom, nodeATo, null, 3, laneType,
                 new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
         // A GTU can exist on several lanes at once; create another lane group to test that
-        Node nodeBFrom = new Node(network, "BFrom", new Point2d(10, 0), Direction.ZERO);
-        Node nodeBTo = new Node(network, "BTo", new Point2d(1000, 0), Direction.ZERO);
-        Lane[] lanesGroupB = LaneFactory.makeMultiLane(network, "B", nodeBFrom, nodeBTo, null, 3, laneType,
-                new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
+        // Node nodeBFrom = new Node(network, "BFrom", new Point2d(10, 0), Direction.ZERO);
+        // Node nodeBTo = new Node(network, "BTo", new Point2d(1000, 0), Direction.ZERO);
+        // Lane[] lanesGroupB = LaneFactory.makeMultiLane(network, "B", nodeBFrom, nodeBTo, null, 3, laneType,
+        // new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
         Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>(2);
 
         Length positionA = new Length(100, METER);
         initialLongitudinalPositions.add(new LanePosition(lanesGroupA[1], positionA));
-        Length positionB = new Length(90, METER);
-        initialLongitudinalPositions.add(new LanePosition(lanesGroupB[1], positionB));
+        // Length positionB = new Length(90, METER);
+        // initialLongitudinalPositions.add(new LanePosition(lanesGroupB[1], positionB));
         // A Car needs a CarFollowingModel
         Acceleration acceleration = new Acceleration(2, METER_PER_SECOND_2);
         Duration validFor = new Duration(10, SECOND);
@@ -137,7 +135,7 @@ public final class AbstractLaneBasedGtuTest implements UNITS
         LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(new LaneBasedCfLcTacticalPlanner(gfm, laneChangeModel, car), car);
         car.setParameters(parameters);
-        car.init(strategicalPlanner, new LanePosition(lanesGroupA[1], positionA), initialSpeed);
+        car.init(strategicalPlanner, new LanePosition(lanesGroupA[1], positionA).getLocation(), initialSpeed);
         // Now we can verify the various fields in the newly created Car
         assertEquals(carID, car.getId(), "ID of the car should be identical to the provided one");
         // TODO: Test with gfm as part of tactical planner
@@ -146,7 +144,7 @@ public final class AbstractLaneBasedGtuTest implements UNITS
         assertEquals(carWidth, car.getWidth(), "Width should be identical to the provided width");
         assertEquals(carLength, car.getLength(), "Length should be identical to the provided length");
         assertEquals(gtuType, car.getType(), "GTU type should be identical to the provided one");
-        assertEquals(positionA.getSI(), car.position(lanesGroupA[1], car.getReference()).getSI(), 0.0001,
+        assertEquals(positionA.getSI(), car.getPosition(lanesGroupA[1], car.getReference()).getSI(), 0.0001,
                 "front in lanesGroupA[1] is positionA");
         // assertEquals("acceleration is 0", 0, car.getAcceleration().getSI(), 0.00001);
         // edit wouter schakel: fixed acceleration model has a=2.0m/s^2, first plan is made during initialization
@@ -169,38 +167,17 @@ public final class AbstractLaneBasedGtuTest implements UNITS
             for (int laneIndex = 0; laneIndex < laneGroup.length; laneIndex++)
             {
                 Lane lane = laneGroup[laneIndex];
-                boolean expectException = 1 != laneIndex;
                 for (RelativePosition relativePosition : new RelativePosition[] {car.getFront(), car.getReference(),
                         car.getRear()})
                 {
                     // System.out.println("lane:" + lane + ", expectedException: " + expectException
                     // + ", relativePostion: " + relativePosition);
-                    try
-                    {
-                        Length position = car.position(lane, relativePosition);
-                        if (expectException)
-                        {
-                            // System.out.println("position: " + position);
-                            fail("Calling position on lane that the car is NOT on should have thrown a NetworkException");
-                        }
-                        else
-                        {
-                            Length expectedPosition = laneGroup == lanesGroupA ? positionA : positionB;
-                            expectedPosition = expectedPosition.plus(relativePosition.dx());
-                            // System.out.println("reported position: " + position);
-                            // System.out.println("expected position: " + expectedPosition);
-                            assertEquals(expectedPosition.getSI(), position.getSI(), 0.0001,
-                                    "Position should match initial position");
-                        }
-                    }
-                    catch (GtuException ne)
-                    {
-                        if (!expectException)
-                        {
-                            System.out.println(ne);
-                            fail("Calling position on lane that the car is on should NOT have thrown a NetworkException");
-                        }
-                    }
+                    Length position = car.getPosition(lane, relativePosition);
+                    Length expectedPosition = positionA;// laneGroup == lanesGroupA ? positionA : positionB;
+                    expectedPosition = expectedPosition.plus(relativePosition.dx());
+                    // System.out.println("reported position: " + position);
+                    // System.out.println("expected position: " + expectedPosition);
+                    assertEquals(expectedPosition.getSI(), position.getSI(), 0.0001, "Position should match initial position");
                 }
             }
         }
@@ -259,12 +236,11 @@ public final class AbstractLaneBasedGtuTest implements UNITS
                     "longitudinal speed is " + expectedLongitudinalSpeed);
             for (RelativePosition relativePosition : new RelativePosition[] {car.getFront(), car.getRear()})
             {
-                Map<Lane, Double> positions = car.fractionalPositions(relativePosition);
-                assertEquals(1, positions.size(), "Car should be in one lane");
-                Double pos = positions.get(lanesGroupA[1]);
+                LanePosition pos = car.getPosition();
                 // System.out.println("Fractional positions: " + positions);
                 assertTrue(null != pos, "Car should be in lane 1 of lane group A");
-                assertEquals(pos, car.fractionalPosition(lanesGroupA[1], relativePosition), 0.0000001,
+                assertEquals(pos.getFraction() + relativePosition.dx().si / lanesGroupA[1].getLength().si,
+                        car.getPosition(lanesGroupA[1], relativePosition).si / lanesGroupA[1].getLength().si, 0.0000001,
                         "fractional position should be equal to result of fractionalPosition(lane, ...)");
             }
             for (Lane[] laneGroup : new Lane[][] {lanesGroupA})// , lanesGroupB})
@@ -272,75 +248,34 @@ public final class AbstractLaneBasedGtuTest implements UNITS
                 for (int laneIndex = 0; laneIndex < laneGroup.length; laneIndex++)
                 {
                     Lane lane = laneGroup[laneIndex];
-                    boolean expectException = 1 != laneIndex;
                     for (RelativePosition relativePosition : new RelativePosition[] {car.getFront(), car.getReference(),
                             car.getRear()})
                     {
                         // System.out.println("lane:" + lane + ", expectedException: " + expectException
                         // + ", relativePostion: " + relativePosition);
-                        try
-                        {
-                            Length position = car.position(lane, relativePosition);
-                            if (expectException)
-                            {
-                                // System.out.println("position: " + position);
-                                fail("Calling position on lane that the car is NOT on should have thrown a "
-                                        + "NetworkException");
-                            }
-                            else
-                            {
-                                Length expectedPosition = laneGroup == lanesGroupA ? positionA : positionB;
-                                expectedPosition = expectedPosition
-                                        .plus(new Length(stepTime.getSI() * initialSpeed.getSI(), LengthUnit.SI));
-                                expectedPosition = expectedPosition.plus(new Length(
-                                        0.5 * acceleration.getSI() * stepTime.getSI() * stepTime.getSI(), LengthUnit.SI));
-                                expectedPosition = expectedPosition.plus(relativePosition.dx());
-                                // System.out.println("reported position: " + position);
-                                // System.out.println("expected position: " + expectedPosition);
-                                assertEquals(expectedPosition.getSI(), position.getSI(), 0.0001,
-                                        "Position should match initial position");
-                            }
-                        }
-                        catch (GtuException ne)
-                        {
-                            if (!expectException)
-                            {
-                                System.out.println(ne);
-                                fail("Calling position on lane that the car is on should NOT have thrown a NetworkException");
-                            }
-                        }
-                        try
-                        {
-                            double fractionalPosition = car.fractionalPosition(lane, relativePosition);
-                            if (expectException)
-                            {
-                                // System.out.println("position: " + position);
-                                fail("Calling position on lane that the car is NOT on should have thrown a NetworkException");
-                            }
-                            else
-                            {
-                                Length expectedPosition = laneGroup == lanesGroupA ? positionA : positionB;
-                                expectedPosition = expectedPosition
-                                        .plus(new Length(stepTime.getSI() * initialSpeed.getSI(), LengthUnit.SI));
-                                expectedPosition = expectedPosition.plus(new Length(
-                                        0.5 * acceleration.getSI() * stepTime.getSI() * stepTime.getSI(), LengthUnit.SI));
-                                expectedPosition = expectedPosition.plus(relativePosition.dx());
-                                // System.out.println("reported position: " + position);
-                                // System.out.println("expected position: " + expectedPosition);
-                                double expectedFractionalPosition = expectedPosition.getSI() / lane.getLength().getSI();
-                                assertEquals(expectedFractionalPosition, fractionalPosition, 0.000001,
-                                        "Position should match initial position");
-                            }
-                        }
-                        catch (GtuException ne)
-                        {
-                            if (!expectException)
-                            {
-                                System.out.println(ne);
-                                fail("Calling fractionalPosition on lane that the car is on should NOT have thrown a "
-                                        + "NetworkException");
-                            }
-                        }
+                        Length position = car.getPosition(lane, relativePosition);
+                        Length expectedPosition = positionA;// laneGroup == lanesGroupA ? positionA : positionB;
+                        expectedPosition =
+                                expectedPosition.plus(new Length(stepTime.getSI() * initialSpeed.getSI(), LengthUnit.SI));
+                        expectedPosition = expectedPosition.plus(
+                                new Length(0.5 * acceleration.getSI() * stepTime.getSI() * stepTime.getSI(), LengthUnit.SI));
+                        expectedPosition = expectedPosition.plus(relativePosition.dx());
+                        // System.out.println("reported position: " + position);
+                        // System.out.println("expected position: " + expectedPosition);
+                        assertEquals(expectedPosition.getSI(), position.getSI(), 0.0001,
+                                "Position should match initial position");
+                        double fractionalPosition = car.getPosition(lane, relativePosition).si / lane.getLength().si;
+                        expectedPosition = positionA;// laneGroup == lanesGroupA ? positionA : positionB;
+                        expectedPosition =
+                                expectedPosition.plus(new Length(stepTime.getSI() * initialSpeed.getSI(), LengthUnit.SI));
+                        expectedPosition = expectedPosition.plus(
+                                new Length(0.5 * acceleration.getSI() * stepTime.getSI() * stepTime.getSI(), LengthUnit.SI));
+                        expectedPosition = expectedPosition.plus(relativePosition.dx());
+                        // System.out.println("reported position: " + position);
+                        // System.out.println("expected position: " + expectedPosition);
+                        double expectedFractionalPosition = expectedPosition.getSI() / lane.getLength().getSI();
+                        assertEquals(expectedFractionalPosition, fractionalPosition, 0.000001,
+                                "Position should match initial position");
                     }
                 }
             }
@@ -352,12 +287,11 @@ public final class AbstractLaneBasedGtuTest implements UNITS
                 new Speed(100, KM_PER_HOUR), simulator, DefaultsNl.VEHICLE);
         for (RelativePosition relativePosition : new RelativePosition[] {car.getFront(), car.getRear()})
         {
-            Map<Lane, Double> positions = car.fractionalPositions(relativePosition);
-            Double pos = positions.get(lanesGroupA[1]);
+            LanePosition pos = car.getPosition();
             assertTrue(null != pos, "Car should be in lane 1 of lane group A");
-            assertEquals(pos, car.fractionalPosition(lanesGroupA[1], relativePosition), 0.0000001,
+            assertEquals(pos.getFraction() + relativePosition.dx().si / lanesGroupA[1].getLength().si,
+                    car.getPosition(lanesGroupA[1], relativePosition).si / lanesGroupA[1].getLength().si, 0.0000001,
                     "fractional position should be equal to result of fractionalPosition(lane, ...)");
-            pos = positions.get(lanesGroupC[0]);
         }
         // TODO removeLane should throw an Error when the car is not on that lane (currently this is silently ignored)
         // TODO figure out why the added lane has a non-zero position

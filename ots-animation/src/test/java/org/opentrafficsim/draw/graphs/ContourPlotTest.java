@@ -784,7 +784,7 @@ public final class ContourPlotTest implements UNITS
         LaneBasedGtu gtu = new LaneBasedGtu(id, gtuType, length, width, maxSpeed, length.times(0.5), network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCfLcTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
-        gtu.init(strategicalPlanner, new LanePosition(lane, initialPosition), initialSpeed);
+        gtu.init(strategicalPlanner, new LanePosition(lane, initialPosition).getLocation(), initialSpeed);
 
         return gtu;
     }

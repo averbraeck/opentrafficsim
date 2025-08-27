@@ -121,7 +121,9 @@ public class LoopDetector extends LaneDetector
                 @Override
                 protected Speed aggregate(final Double cumulative, final int gtuCount, final Duration aggregation)
                 {
-                    return new Speed(3.6 * gtuCount / cumulative, SpeedUnit.KM_PER_HOUR);
+                    Speed speed = Speed.instantiateSI(gtuCount / cumulative);
+                    speed.setDisplayUnit(SpeedUnit.KM_PER_HOUR);
+                    return speed;
                 }
 
                 @Override
@@ -301,6 +303,7 @@ public class LoopDetector extends LaneDetector
             }
         }
         Length pos = position.position().plus(length);
+        // TODO: figure out what possible downstream lanes should get a rear detector
         new RearDetector(id + "_rear", position.lane(), pos, detectorType);
     }
 

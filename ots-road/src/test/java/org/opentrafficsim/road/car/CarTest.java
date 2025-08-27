@@ -89,7 +89,7 @@ public final class CarTest implements UNITS
         LaneBasedGtu referenceCar = makeReferenceCar("12345", gtuType, lane, initialPosition, initialSpeed, gtuFollowingModel,
                 laneChangeModel, network);
         assertEquals("12345", referenceCar.getId(), "The car should store it's ID");
-        assertEquals(initialPosition.getSI(), referenceCar.position(lane, referenceCar.getReference(), initialTime).getSI(),
+        assertEquals(initialPosition.getSI(), referenceCar.getPosition(lane, referenceCar.getReference(), initialTime).getSI(),
                 0.0001, "At t=initialTime the car should be at it's initial position");
         assertEquals(initialSpeed.getSI(), referenceCar.getSpeed().getSI(), 0.00001, "The car should store it's initial speed");
         assertEquals(0, referenceCar.getAcceleration().getSI(), 0.0001,
@@ -144,7 +144,7 @@ public final class CarTest implements UNITS
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedCfLcTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
         gtu.setParameters(parameters);
-        gtu.init(strategicalPlanner, new LanePosition(lane, initialPosition), initialSpeed);
+        gtu.init(strategicalPlanner, new LanePosition(lane, initialPosition).getLocation(), initialSpeed);
 
         return gtu;
     }

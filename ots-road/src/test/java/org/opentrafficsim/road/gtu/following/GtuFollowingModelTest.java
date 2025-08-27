@@ -28,6 +28,7 @@ import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdSupplier;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.car.CarTest;
@@ -125,7 +126,7 @@ public final class GtuFollowingModelTest implements UNITS
         LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(new LaneBasedGtuFollowingTacticalPlanner(gtuFollowingModel, gtu), gtu);
         gtu.setParameters(parameters);
-        gtu.init(strategicalPlanner, initialLongitudinalPositions, speed);
+        gtu.init(strategicalPlanner, initialLongitudinalPositions.getLocation(), speed);
         Length longerHeadway = minimumHeadway.plus(precision);
         Acceleration longerHeadwayAcceleration =
                 gtuFollowingModel.computeAcceleration(speed, maxSpeed, speed, longerHeadway, speedLimit);
@@ -171,9 +172,9 @@ public final class GtuFollowingModelTest implements UNITS
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGtuFollowingTacticalPlanner(gtuFollowingModel, gtu50m), gtu50m);
         gtu50m.setParameters(parameters);
-        gtu50m.init(strategicalPlanner, initialLongitudinalPositions50, speed);
+        gtu50m.init(strategicalPlanner, initialLongitudinalPositions50.getLocation(), speed);
         HeadwayGtuSimple hwgtu50m = new HeadwayGtuSimple(gtu50m.getId(), gtu50m.getType(), headway50m, gtu50m.getLength(),
-                gtu50m.getWidth(), gtu50m.getSpeed(), gtu50m.getAcceleration(), null);
+                gtu50m.getWidth(), gtu50m.getSpeed(), gtu50m.getAcceleration(), null, Length.ZERO, LateralDirectionality.NONE);
         Collection<Headway> otherGTUs = new ArrayList<>();
         DualAccelerationStep asEmpty = gtuFollowingModel.computeDualAccelerationStep(gtu, otherGTUs, maxHeadway, speedLimit);
         // System.out.println("asEmpty: [" + asEmpty[0] + ", " + asEmpty[1] + "]");
@@ -181,7 +182,7 @@ public final class GtuFollowingModelTest implements UNITS
         checkAccelerationStep("Empty collection", asEmpty, noLeader.getAcceleration(), noLeader.getAcceleration(),
                 expectedValidUntil);
         otherGTUs.add(new HeadwayGtuSimple(gtu.getId(), gtu.getType(), new Length(Double.NaN, LengthUnit.SI), gtu.getLength(),
-                gtu.getWidth(), gtu.getSpeed()));
+                gtu.getWidth(), gtu.getSpeed(), Length.ZERO, LateralDirectionality.NONE));
         // If otherGTUs only contains the reference GTU, the result should be exactly the same
         asEmpty = gtuFollowingModel.computeDualAccelerationStep(gtu, otherGTUs, maxHeadway, speedLimit);
         checkAccelerationStep("Empty collection", asEmpty, noLeader.getAcceleration(), noLeader.getAcceleration(),
@@ -201,9 +202,10 @@ public final class GtuFollowingModelTest implements UNITS
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGtuFollowingTacticalPlanner(gtuFollowingModel, gtu100m), gtu100m);
         gtu100m.setParameters(parameters);
-        gtu100m.init(strategicalPlanner, initialLongitudinalPositions50, speed);
-        HeadwayGtuSimple hwgtu100m = new HeadwayGtuSimple(gtu100m.getId(), gtu100m.getType(), headway100m, gtu100m.getLength(),
-                gtu100m.getWidth(), gtu100m.getSpeed(), gtu100m.getAcceleration(), maxSpeed);
+        gtu100m.init(strategicalPlanner, initialLongitudinalPositions50.getLocation(), speed);
+        HeadwayGtuSimple hwgtu100m =
+                new HeadwayGtuSimple(gtu100m.getId(), gtu100m.getType(), headway100m, gtu100m.getLength(), gtu100m.getWidth(),
+                        gtu100m.getSpeed(), gtu100m.getAcceleration(), maxSpeed, Length.ZERO, LateralDirectionality.NONE);
         // gtu100m.getDesiredSpeed());
         otherGTUs.add(hwgtu100m);
         DualAccelerationStep as50and100m =
@@ -211,12 +213,12 @@ public final class GtuFollowingModelTest implements UNITS
         checkAccelerationStep("leader at " + headway50m + " and at " + headway100m, as50and100m, a50.getAcceleration(),
                 noLeader.getAcceleration(), expectedValidUntil);
         otherGTUs.add(new HeadwayGtuSimple(gtu.getId(), gtu.getType(), Length.ZERO, gtu.getLength(), gtu.getWidth(),
-                gtu.getSpeed(), gtu.getAcceleration(), maxSpeed)); // gtu.getDesiredSpeed()));
+                gtu.getSpeed(), gtu.getAcceleration(), maxSpeed, Length.ZERO, LateralDirectionality.NONE)); // gtu.getDesiredSpeed()));
         as50and100m = gtuFollowingModel.computeDualAccelerationStep(gtu, otherGTUs, maxHeadway, speedLimit);
         checkAccelerationStep("follower at 0, leader at " + headway50m + " and at " + headway100m, as50and100m,
                 a50.getAcceleration(), noLeader.getAcceleration(), expectedValidUntil);
         otherGTUs.add(new HeadwayGtuSimple(gtu.getId(), gtu.getType(), new Length(Double.NaN, LengthUnit.SI), gtu.getLength(),
-                gtu.getWidth(), gtu.getSpeed(), gtu.getAcceleration(), maxSpeed)); // gtu.getDesiredSpeed()));
+                gtu.getWidth(), gtu.getSpeed(), gtu.getAcceleration(), maxSpeed, Length.ZERO, LateralDirectionality.NONE)); // gtu.getDesiredSpeed()));
         as50and100m = gtuFollowingModel.computeDualAccelerationStep(gtu, otherGTUs, maxHeadway, speedLimit);
         checkAccelerationStep("follower at NaN, leader at " + headway50m + " and at " + headway100m, as50and100m,
                 a50.getAcceleration(), noLeader.getAcceleration(), expectedValidUntil);
@@ -238,11 +240,11 @@ public final class GtuFollowingModelTest implements UNITS
         strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(new LaneBasedGtuFollowingTacticalPlanner(gtuFollowingModel, gtu1m), gtu1m);
         gtu1m.setParameters(parameters);
-        gtu1m.init(strategicalPlanner, initialLongitudinalPositions50, speed);
+        gtu1m.init(strategicalPlanner, initialLongitudinalPositions50.getLocation(), speed);
         Length overlap = new Length(length.minus(ahead));
-        HeadwayGtuSimple hwgtu1m =
-                new HeadwayGtuSimple(gtu1m.getId(), gtu1m.getType(), ahead, overlap, Length.ZERO.minus(overlap),
-                        gtu1m.getLength(), gtu1m.getWidth(), gtu1m.getSpeed(), gtu1m.getAcceleration(), maxSpeed);
+        HeadwayGtuSimple hwgtu1m = new HeadwayGtuSimple(gtu1m.getId(), gtu1m.getType(), ahead, overlap,
+                Length.ZERO.minus(overlap), gtu1m.getLength(), gtu1m.getWidth(), gtu1m.getSpeed(), gtu1m.getAcceleration(),
+                maxSpeed, Length.ZERO, LateralDirectionality.NONE);
         // gtu1m.getDesiredSpeed());
         otherGTUs.add(hwgtu1m);
         DualAccelerationStep as1m = gtuFollowingModel.computeDualAccelerationStep(gtu, otherGTUs, maxHeadway, speedLimit);
@@ -259,10 +261,10 @@ public final class GtuFollowingModelTest implements UNITS
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGtuFollowingTacticalPlanner(gtuFollowingModel, gtuMinus75m), gtuMinus75m);
         gtuMinus75m.setParameters(parameters);
-        gtuMinus75m.init(strategicalPlanner, initialLongitudinalPositionsMinus75, speed);
-        HeadwayGtuSimple hwgtuMinus75m =
-                new HeadwayGtuSimple(gtuMinus75m.getId(), gtuMinus75m.getType(), headwayMinus75m, gtuMinus75m.getLength(),
-                        gtuMinus75m.getWidth(), gtuMinus75m.getSpeed(), gtuMinus75m.getAcceleration(), maxSpeed);
+        gtuMinus75m.init(strategicalPlanner, initialLongitudinalPositionsMinus75.getLocation(), speed);
+        HeadwayGtuSimple hwgtuMinus75m = new HeadwayGtuSimple(gtuMinus75m.getId(), gtuMinus75m.getType(), headwayMinus75m,
+                gtuMinus75m.getLength(), gtuMinus75m.getWidth(), gtuMinus75m.getSpeed(), gtuMinus75m.getAcceleration(),
+                maxSpeed, Length.ZERO, LateralDirectionality.NONE);
         // gtuMinus75m.getDesiredSpeed());
         otherGTUs.add(hwgtuMinus75m);
         DualAccelerationStep asMinus75And100m =
@@ -278,10 +280,10 @@ public final class GtuFollowingModelTest implements UNITS
         strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
                 new LaneBasedGtuFollowingTacticalPlanner(gtuFollowingModel, gtuMinus200m), gtuMinus200m);
         gtuMinus200m.setParameters(parameters);
-        gtuMinus200m.init(strategicalPlanner, initialLongitudinalPositionsMinus200, speed);
-        HeadwayGtuSimple hwgtuMinus200m =
-                new HeadwayGtuSimple(gtuMinus200m.getId(), gtuMinus200m.getType(), headwayMinus200m, gtuMinus200m.getLength(),
-                        gtuMinus200m.getWidth(), gtuMinus200m.getSpeed(), gtuMinus200m.getAcceleration(), maxSpeed); // gtuMinus200m.getDesiredSpeed());
+        gtuMinus200m.init(strategicalPlanner, initialLongitudinalPositionsMinus200.getLocation(), speed);
+        HeadwayGtuSimple hwgtuMinus200m = new HeadwayGtuSimple(gtuMinus200m.getId(), gtuMinus200m.getType(), headwayMinus200m,
+                gtuMinus200m.getLength(), gtuMinus200m.getWidth(), gtuMinus200m.getSpeed(), gtuMinus200m.getAcceleration(),
+                maxSpeed, Length.ZERO, LateralDirectionality.NONE); // gtuMinus200m.getDesiredSpeed());
         otherGTUs.add(hwgtuMinus200m);
         DualAccelerationStep asMinus200Minus75And100m =
                 gtuFollowingModel.computeDualAccelerationStep(gtu, otherGTUs, maxHeadway, speedLimit);

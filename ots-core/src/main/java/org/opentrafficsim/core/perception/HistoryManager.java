@@ -1,6 +1,7 @@
 package org.opentrafficsim.core.perception;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.WeakHashMap;
 
@@ -85,6 +86,12 @@ public abstract class HistoryManager
          * @return object that owns the historical value
          */
         Object getOwner();
+
+        /**
+         * Returns event times from most recent to oldest.
+         * @return iterator over event times
+         */
+        Iterator<Time> timeIterator();
     }
 
     /**

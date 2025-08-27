@@ -10,6 +10,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.control.ControlTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.perception.headway.GtuStatus;
@@ -65,6 +66,8 @@ public class DefaultCaccSensors implements HeadwayGtuType
         Speed v = perceivedGtu.getSpeed(t);
         Acceleration a = perceivedGtu.getAcceleration(t);
         Speed desiredSpeed = null;
+        Length deviation = perceivedGtu.getDeviation();
+        LateralDirectionality laneChangeDirection = perceivedGtu.getLaneChangeDirection();
         List<GtuStatus> status = new ArrayList<>();
         if (perceivedGtu.isBrakingLightsOn(t))
         {
@@ -84,7 +87,7 @@ public class DefaultCaccSensors implements HeadwayGtuType
             default:
                 break;
         }
-        return new HeadwayGtuSimple(id, gtuType, distance, length, width, v, a, desiredSpeed,
+        return new HeadwayGtuSimple(id, gtuType, distance, length, width, v, a, desiredSpeed, deviation, laneChangeDirection,
                 status.toArray(new GtuStatus[status.size()]));
     }
 

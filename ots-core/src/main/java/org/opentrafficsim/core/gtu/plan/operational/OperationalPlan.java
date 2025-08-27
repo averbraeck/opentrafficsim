@@ -67,7 +67,10 @@ public class OperationalPlan implements Serializable
     private final double[] segmentStartDistances;
 
     /** The drifting speed. Speeds under this value will be cropped to zero. */
-    public static final double DRIFTING_SPEED_SI = 1E-3;
+    public static final Speed DRIFTING_SPEED = Speed.instantiateSI(0.001);
+
+    /** Minimum distance of an operational plan path; anything shorter will be truncated to 0. */
+    public static final Length MINIMUM_CREDIBLE_PATH_LENGTH = Length.instantiateSI(0.001);
 
     /**
      * Creates a stand-still plan at a point. A 1m path in the direction of the point is created.
@@ -97,27 +100,43 @@ public class OperationalPlan implements Serializable
     {
         this.gtu = gtu;
         this.startTime = startTime;
-        this.segments = segments;
-        this.segmentStartDurations = new double[this.segments.size() + 1];
-        this.segmentStartDistances = new double[this.segments.size() + 1];
 
         Length pathLength = path.getTypedLength();
         Duration segmentsDuration = Duration.ZERO;
         Length segmentsLength = Length.ZERO;
-        for (int i = 0; i < this.segments.size(); i++)
+        double[] segStartDurations = new double[segments.size() + 1];
+        double[] segStartDistances = new double[segments.size() + 1];
+        for (int i = 0; i < segments.size(); i++)
         {
-            this.segmentStartDurations[i] = segmentsDuration.si;
-            this.segmentStartDistances[i] = segmentsLength.si;
-            Segment segment = this.segments.get(i);
+            segStartDurations[i] = segmentsDuration.si;
+            segStartDistances[i] = segmentsLength.si;
+            Segment segment = segments.get(i);
             segmentsDuration = segmentsDuration.plus(segment.duration());
             segmentsLength = segmentsLength.plus(segment.totalDistance());
         }
+        // Catch situation of very small speeds
+        if (segmentsLength.lt(MINIMUM_CREDIBLE_PATH_LENGTH) && segments.get(0).startSpeed().lt(DRIFTING_SPEED)
+                && segments.get(0).acceleration().le0())
+        {
+            this.segments = Segments.standStill(segmentsDuration);
+            this.segmentStartDurations = new double[] {0.0, segmentsDuration.si};
+            this.segmentStartDistances = new double[] {0.0, 0.0};
+            this.totalDuration = segmentsDuration;
+            this.totalLength = Length.ZERO;
+            DirectedPoint2d point = path.getLocation(0.0);
+            Point2d p2 = new Point2d(point.x + Math.cos(point.getDirZ()), point.y + Math.sin(point.getDirZ()));
+            this.path = Try.assign(() -> new OtsLine2d(point, p2), "Unexpected geometry exception.");
+            return;
+        }
+        this.segments = segments;
+        this.segmentStartDurations = segStartDurations;
+        this.segmentStartDistances = segStartDistances;
         this.segmentStartDurations[this.segments.size()] = segmentsDuration.si;
         this.segmentStartDistances[this.segments.size()] = segmentsLength.si;
 
         // If segmentsLength == 0, we have a stand-still plan with non-zero length path. This path is required as a degenerate
         // OtsLine2d (with <2 points) is not allowed. In that case (in else) do not truncate path.
-        if (segmentsLength.gt0() && pathLength.gt(segmentsLength))
+        if (segmentsLength.gt0() && pathLength.ge(segmentsLength))
         {
             this.totalDuration = segmentsDuration;
             this.totalLength = segmentsLength;
@@ -139,8 +158,9 @@ public class OperationalPlan implements Serializable
         else
         {
             this.totalDuration = segmentsDuration;
-            this.totalLength = segmentsLength;
-            this.path = path;
+            this.totalLength = Length.ZERO;
+            this.path =
+                    Try.assign(() -> path.extract(0.0, Math.min(pathLength.si, 1.0)), "Unexpected path truncation exception.");
         }
     }
 
@@ -382,6 +402,37 @@ public class OperationalPlan implements Serializable
         durationInSegment = fixDoublePrecision(durationInSegment, segment);
         double distanceInSegment = this.segments.get(segment).distance(durationInSegment).si;
         return Length.instantiateSI(this.segmentStartDistances[segment] + distanceInSegment);
+    }
+
+    /**
+     * Calculates the duration at which the given distance is traveled.
+     * @param traveledDistance traveled distance
+     * @return duration at which the given distance is traveled
+     * @throws OperationalPlanException if the traveled distance is beyond the plan length
+     */
+    public Duration getDurationAtDistance(final Length traveledDistance) throws OperationalPlanException
+    {
+        Throw.when(traveledDistance.gt(getTotalLength()), OperationalPlanException.class,
+                "Traveled distance for requested time is beyond plan length.");
+        int segment = 0;
+        while (this.segments.size() > segment + 1 && this.segmentStartDistances[segment] > traveledDistance.si)
+        {
+            segment++;
+        }
+        Duration dt = this.segments.get(segment)
+                .durationAtDistance(traveledDistance.minus(Length.instantiateSI(this.segmentStartDistances[segment])));
+        return Duration.instantiateSI(this.segmentStartDurations[segment] + dt.si);
+    }
+
+    /**
+     * Calculates the time at which the given distance is traveled.
+     * @param traveledDistance traveled distance
+     * @return time at which the given distance is traveled
+     * @throws OperationalPlanException if the traveled distance is beyond the plan length
+     */
+    public Time getTimeAtDistance(final Length traveledDistance) throws OperationalPlanException
+    {
+        return this.startTime.plus(getDurationAtDistance(traveledDistance));
     }
 
     /**

@@ -38,6 +38,7 @@ import org.opentrafficsim.road.gtu.generator.GeneratorPositions.GeneratorLanePos
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuReal;
 import org.opentrafficsim.road.network.RoadNetwork;
@@ -112,8 +113,8 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
     /** Initial distance over which lane changes shouldn't be performed. */
     private Length noLaneChangeDistance = null;
 
-    /** Whether GTUs change lane instantaneously. */
-    private boolean instantaneousLaneChange = false;
+    /** Lane bookkeeping. */
+    private LaneBookkeeping bookkeeping = LaneBookkeeping.EDGE;
 
     /** GTU error handler. */
     private GtuErrorHandler errorHandler = GtuErrorHandler.THROW;
@@ -183,12 +184,12 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
     }
 
     /**
-     * Sets whether GTUs will change lane instantaneously.
-     * @param instantaneous whether GTUs will change lane instantaneously
+     * Sets how lane bookkeeping at lane changes is done.
+     * @param bookkeeping how lane bookkeeping at lane changes is done
      */
-    public void setInstantaneousLaneChange(final boolean instantaneous)
+    public void setBookkeeping(final LaneBookkeeping bookkeeping)
     {
-        this.instantaneousLaneChange = instantaneous;
+        this.bookkeeping = bookkeeping;
     }
 
     /**
@@ -396,10 +397,10 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
         gtu.setMaximumDeceleration(characteristics.getMaximumDeceleration());
         gtu.setVehicleModel(characteristics.getVehicleModel());
         gtu.setNoLaneChangeDistance(this.noLaneChangeDistance);
-        gtu.setInstantaneousLaneChange(this.instantaneousLaneChange);
+        gtu.setBookkeeping(this.bookkeeping);
         gtu.setErrorHandler(this.errorHandler);
         gtu.init(characteristics.getStrategicalPlannerFactory().create(gtu, characteristics.getRoute(),
-                characteristics.getOrigin(), characteristics.getDestination()), position, speed);
+                characteristics.getOrigin(), characteristics.getDestination()), position.getLocation(), speed);
         this.generatedGTUs++;
         fireEvent(GTU_GENERATED_EVENT, gtu);
     }
@@ -418,7 +419,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
         LaneBasedGtu next = lane.getGtuAhead(beyond, RelativePosition.FRONT, this.simulator.getSimulatorAbsTime());
         if (next != null)
         {
-            Length headway = startDistance.plus(next.position(lane, next.getRear()));
+            Length headway = startDistance.plus(next.getPosition(lane, next.getRear()));
             if (headway.si < 300)
             {
                 set.add(new HeadwayGtuReal(next, headway, true));

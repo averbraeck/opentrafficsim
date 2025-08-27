@@ -7,6 +7,7 @@ import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -66,6 +67,8 @@ public class HeadwayGtuRealCopy extends AbstractHeadwayGtu
      * @param speedLimitInfo speed limit info
      * @param route route
      * @param desiredSpeed desired speed
+     * @param deviation lateral deviation
+     * @param laneChangeDirection lane change direction
      * @param gtuStatus gtu status
      * @throws GtuException when id is null, objectType is null, or parameters are inconsistent
      */
@@ -73,9 +76,11 @@ public class HeadwayGtuRealCopy extends AbstractHeadwayGtu
     HeadwayGtuRealCopy(final String id, final GtuType gtuType, final Length distance, final Length length, final Length width,
             final Speed speed, final Acceleration acceleration, final CarFollowingModel carFollowingModel,
             final Parameters parameters, final SpeedLimitInfo speedLimitInfo, final Route route, final Speed desiredSpeed,
-            final GtuStatus... gtuStatus) throws GtuException
+            final Length deviation, final LateralDirectionality laneChangeDirection, final GtuStatus... gtuStatus)
+            throws GtuException
     {
-        super(id, gtuType, distance, true, length, width, speed, acceleration, desiredSpeed, gtuStatus);
+        super(id, gtuType, distance, true, length, width, speed, acceleration, desiredSpeed, deviation, laneChangeDirection,
+                gtuStatus);
         this.carFollowingModel = carFollowingModel;
         this.parameters = parameters;
         this.speedLimitInfo = speedLimitInfo;
@@ -98,6 +103,8 @@ public class HeadwayGtuRealCopy extends AbstractHeadwayGtu
      * @param speedLimitInfo speed limit info
      * @param route route
      * @param desiredSpeed desired speed
+     * @param deviation lateral deviation
+     * @param laneChangeDirection lane change direction
      * @param gtuStatus gtu status
      * @throws GtuException when id is null, objectType is null, or parameters are inconsistent
      */
@@ -105,11 +112,11 @@ public class HeadwayGtuRealCopy extends AbstractHeadwayGtu
     HeadwayGtuRealCopy(final String id, final GtuType gtuType, final Length overlapFront, final Length overlap,
             final Length overlapRear, final Length length, final Length width, final Speed speed,
             final Acceleration acceleration, final CarFollowingModel carFollowingModel, final Parameters parameters,
-            final SpeedLimitInfo speedLimitInfo, final Route route, final Speed desiredSpeed, final GtuStatus... gtuStatus)
-            throws GtuException
+            final SpeedLimitInfo speedLimitInfo, final Route route, final Speed desiredSpeed, final Length deviation,
+            final LateralDirectionality laneChangeDirection, final GtuStatus... gtuStatus) throws GtuException
     {
         super(id, gtuType, overlapFront, overlap, overlapRear, true, length, width, speed, acceleration, desiredSpeed,
-                gtuStatus);
+                deviation, laneChangeDirection, gtuStatus);
         this.carFollowingModel = carFollowingModel;
         this.parameters = parameters;
         this.speedLimitInfo = speedLimitInfo;
@@ -125,7 +132,8 @@ public class HeadwayGtuRealCopy extends AbstractHeadwayGtu
     public HeadwayGtuRealCopy(final LaneBasedGtu gtu, final Length distance) throws GtuException
     {
         super(gtu.getId(), gtu.getType(), distance, true, gtu.getLength(), gtu.getWidth(), gtu.getSpeed(),
-                gtu.getAcceleration(), gtu.getDesiredSpeed(), getGtuStatuses(gtu, gtu.getSimulator().getSimulatorAbsTime()));
+                gtu.getAcceleration(), gtu.getDesiredSpeed(), gtu.getDeviation(), gtu.getLaneChangeDirection(),
+                getGtuStatuses(gtu, gtu.getSimulator().getSimulatorAbsTime()));
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
         this.parameters = new ParameterSet(gtu.getParameters());
         this.speedLimitInfo = getSpeedLimitInfo(gtu);
@@ -144,7 +152,7 @@ public class HeadwayGtuRealCopy extends AbstractHeadwayGtu
             throws GtuException
     {
         super(gtu.getId(), gtu.getType(), overlapFront, overlap, overlapRear, true, gtu.getLength(), gtu.getWidth(),
-                gtu.getSpeed(), gtu.getAcceleration(), gtu.getDesiredSpeed(),
+                gtu.getSpeed(), gtu.getAcceleration(), gtu.getDesiredSpeed(), gtu.getDeviation(), gtu.getLaneChangeDirection(),
                 getGtuStatuses(gtu, gtu.getSimulator().getSimulatorAbsTime()));
         this.carFollowingModel = gtu.getTacticalPlanner().getCarFollowingModel();
         this.parameters = new ParameterSet(gtu.getParameters());
@@ -181,9 +189,11 @@ public class HeadwayGtuRealCopy extends AbstractHeadwayGtu
     {
         try
         {
+            LateralDirectionality lcDirection = isChangingLeft() ? LateralDirectionality.LEFT
+                    : (isChangingRight() ? LateralDirectionality.RIGHT : LateralDirectionality.NONE);
             return new HeadwayGtuRealCopy(getId(), getGtuType(), headway, getLength(), getWidth(), speed, acceleration,
-                    getCarFollowingModel(), getParameters(), getSpeedLimitInfo(), getRoute(), getDesiredSpeed(),
-                    getGtuStatus());
+                    getCarFollowingModel(), getParameters(), getSpeedLimitInfo(), getRoute(), getDesiredSpeed(), getDeviation(),
+                    lcDirection, getGtuStatus());
         }
         catch (GtuException exception)
         {

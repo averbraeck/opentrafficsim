@@ -435,7 +435,7 @@ public final class OdApplier
                         GeneratorPositions.create(initialPosition, stream, biases, linkWeights, viaNodes), network, simulator,
                         roomChecker, idGenerator);
                 generator.setNoLaneChangeDistance(odOptions.get(OdOptions.NO_LC_DIST, lane, o, linkType));
-                generator.setInstantaneousLaneChange(odOptions.get(OdOptions.INSTANT_LC, lane, o, linkType));
+                generator.setBookkeeping(odOptions.get(OdOptions.BOOKKEEPING, lane, o, linkType));
                 generator.setErrorHandler(odOptions.get(OdOptions.ERROR_HANDLER, lane, o, linkType));
                 output.put(id, new GeneratorObjects(generator, headwayGenerator, characteristicsGenerator));
             }

@@ -13,6 +13,7 @@ import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.LanePosition;
 
@@ -40,8 +41,8 @@ public class GtuSpawner
     /** Length over which no lane changes will happen. */
     private Length noLaneChangeDistance = Length.instantiateSI(100.0);
 
-    /** Instantaneous lane changes. */
-    private boolean instantaneousLaneChanges = false;
+    /** Lane bookkeeping. */
+    private LaneBookkeeping bookkeeping = LaneBookkeeping.EDGE;
 
     /** Error handler. */
     private GtuErrorHandler errorHandler = GtuErrorHandler.THROW;
@@ -88,13 +89,13 @@ public class GtuSpawner
     }
 
     /**
-     * Sets instantaneous lane changes.
-     * @param instantaneousLaneChanges instantaneous lane changes.
-     * @return for method chaining.
+     * Sets how lane bookkeeping at lane changes is done.
+     * @param bookkeeping how lane bookkeeping at lane changes is done
+     * @return for method chaining
      */
-    public GtuSpawner setInstantaneousLaneChanges(final boolean instantaneousLaneChanges)
+    public GtuSpawner setBookkeeping(final LaneBookkeeping bookkeeping)
     {
-        this.instantaneousLaneChanges = instantaneousLaneChanges;
+        this.bookkeeping = bookkeeping;
         return this;
     }
 
@@ -134,11 +135,11 @@ public class GtuSpawner
         gtu.setMaximumDeceleration(defaultCharacteristics.getMaximumDeceleration());
         gtu.setVehicleModel(templateGtuType.getVehicleModel());
         gtu.setNoLaneChangeDistance(this.noLaneChangeDistance);
-        gtu.setInstantaneousLaneChange(this.instantaneousLaneChanges);
+        gtu.setBookkeeping(this.bookkeeping);
         gtu.setErrorHandler(this.errorHandler);
 
         gtu.init(templateGtuType.getStrategicalPlannerFactory().create(gtu, templateGtuType.getRoute(),
-                templateGtuType.getOrigin(), templateGtuType.getDestination()), position, speed);
+                templateGtuType.getOrigin(), templateGtuType.getDestination()), position.getLocation(), speed);
     }
 
 }

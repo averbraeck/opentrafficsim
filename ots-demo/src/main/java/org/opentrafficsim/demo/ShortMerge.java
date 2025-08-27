@@ -61,15 +61,13 @@ import org.opentrafficsim.road.gtu.generator.TtcRoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplate;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplateDistribution;
 import org.opentrafficsim.road.gtu.generator.headway.HeadwayGenerator;
+import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationConflicts;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationSpeedLimitTransition;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationTrafficLights;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveGetInLane;
@@ -337,14 +335,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
                 }
                 return voluntaryIncentives;
             };
-            Supplier<Set<AccelerationIncentive>> accelerationSupplier = () ->
-            {
-                Set<AccelerationIncentive> accelerationIncentives = new LinkedHashSet<>();
-                accelerationIncentives.add(new AccelerationSpeedLimitTransition());
-                accelerationIncentives.add(new AccelerationTrafficLights());
-                accelerationIncentives.add(new AccelerationConflicts());
-                return accelerationIncentives;
-            };
+            Supplier<Set<AccelerationIncentive>> accelerationSupplier = () -> new LinkedHashSet<>();
 
             LaneBasedTacticalPlannerFactory<Lmrs> tacticalFactory = new LmrsFactory(idmPlusFactory,
                     new DefaultLmrsPerceptionFactory(), SYNCHRONIZATION, COOPERATION, GapAcceptance.INFORMED, Tailgating.NONE,
@@ -481,9 +472,11 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             Set<LanePosition> initialLongitudinalPositions = new LinkedHashSet<>();
             initialLongitudinalPositions.add(new LanePosition(lane, new Length(5.0, LengthUnit.SI)));
             LaneBasedGtuTemplateDistribution characteristicsGenerator = new LaneBasedGtuTemplateDistribution(distribution);
-            new LaneBasedGtuGenerator(id, headwaySupplier, characteristicsGenerator,
+            LaneBasedGtuGenerator generator = new LaneBasedGtuGenerator(id, headwaySupplier, characteristicsGenerator,
                     GeneratorPositions.create(initialLongitudinalPositions, stream), this.network, getSimulator(), roomChecker,
                     idSupplier);
+            generator.setNoLaneChangeDistance(Length.instantiateSI(100.0));
+            generator.setBookkeeping(LaneBookkeeping.START);
         }
 
     }

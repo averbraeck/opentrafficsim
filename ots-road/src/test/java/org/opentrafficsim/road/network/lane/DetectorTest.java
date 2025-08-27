@@ -117,7 +117,7 @@ public final class DetectorTest implements UNITS
         LaneBasedStrategicalPlanner strategicalPlanner =
                 new LaneBasedStrategicalRoutePlanner(new LaneBasedGtuFollowingTacticalPlanner(fas, car), car);
         car.setParameters(parameters);
-        car.init(strategicalPlanner, initialLongitudinalPositions, initialSpeed);
+        car.init(strategicalPlanner, initialLongitudinalPositions.getLocation(), initialSpeed);
         simulator.runUpTo(new Time(1, TimeUnit.BASE_SECOND));
         if (!simulator.isStartingOrRunning())
         {

@@ -234,7 +234,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                             return gtus;
                         }
                         int from = 0;
-                        while (from < gtus.size() && position(gtus.get(from), l, RelativePosition.FRONT).lt0())
+                        while (from < gtus.size() && position(gtus.get(from), l, RelativePosition.REFERENCE).lt0())
                         {
                             from++;
                         }
@@ -301,7 +301,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
                             from++;
                         }
                         int to = gtus.size() - 1;
-                        while (to >= 0 && position(gtus.get(to), l, RelativePosition.FRONT).gt(l.getLength()))
+                        while (to >= 0 && position(gtus.get(to), l, RelativePosition.REFERENCE).gt(l.getLength()))
                         {
                             to--;
                         }
@@ -335,7 +335,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     private Length position(final LaneBasedGtu gtu, final LaneRecordInterface<?> record,
             final RelativePosition.Type positionType)
     {
-        return Try.assign(() -> gtu.position(record.getLane(), gtu.getRelativePositions().get(positionType)),
+        return Try.assign(() -> gtu.getPosition(record.getLane(), gtu.getRelativePositions().get(positionType)),
                 "Unable to obtain position %s of GTU.", positionType);
     }
 
