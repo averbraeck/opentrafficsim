@@ -35,6 +35,7 @@ import javax.swing.SwingUtilities;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
+import org.djutils.event.LocalEventProducer;
 import org.djutils.event.reference.ReferenceType;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.geometry.Flattener;
@@ -68,8 +69,7 @@ import org.opentrafficsim.swing.gui.OtsControlPanel;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
-import nl.tudelft.simulation.dsol.animation.d2.RenderableScale;
-import nl.tudelft.simulation.dsol.swing.animation.d2.AnimationUpdaterThread;
+import nl.tudelft.simulation.dsol.simulators.AnimatorInterface;
 import nl.tudelft.simulation.dsol.swing.animation.d2.VisualizationPanel;
 import nl.tudelft.simulation.naming.context.ContextInterface;
 import nl.tudelft.simulation.naming.context.Contextualized;
@@ -83,7 +83,7 @@ import nl.tudelft.simulation.naming.context.JvmContext;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class EditorMap extends JPanel implements EventListener
+public final class EditorMap extends JPanel implements EventListener
 {
 
     /** */
@@ -103,7 +103,7 @@ public class EditorMap extends JPanel implements EventListener
     private final OtsEditor editor;
 
     /** Panel to draw in. */
-    private final VisualizationPanel animationPanel;
+    private final VisualizationPanel visualizationPanel;
 
     /** Panel with tools. */
     private final JPanel toolPanel;
@@ -127,16 +127,16 @@ public class EditorMap extends JPanel implements EventListener
     private final LinkedHashMap<XsdTreeNode, Renderable2d<?>> animations = new LinkedHashMap<>();
 
     /** Whether we can ignore maintaining the scale. */
-    private boolean ignoreKeepScale = false;
+    // private boolean ignoreKeepScale = false;
 
     /** Last x-scale. */
-    //private Double lastXScale = null;
+    // private Double lastXScale = null;
 
     /** Last y-scale. */
-    //private Double lastYScale = null;
+    // private Double lastYScale = null;
 
     /** Last screen size. */
-    //private Dimension lastScreen = null;
+    // private Dimension lastScreen = null;
 
     /** Map of toggle names to toggle animation classes. */
     private Map<String, Class<? extends Locatable>> toggleLocatableMap = new LinkedHashMap<>();
@@ -147,21 +147,23 @@ public class EditorMap extends JPanel implements EventListener
     /** Listeners to lane and stripe overrides. */
     private final Map<XsdTreeNode, ChangeListener<Object>> overrideListeners = new LinkedHashMap<>();
 
+    /** Updater of map animation. */
+    private final MapUpdater updater = new MapUpdater();
+
     /**
      * Constructor.
-     * @param animator thread for frequent painting.
      * @param contextualized context provider.
      * @param editor editor.
      * @throws RemoteException context binding problem.
      * @throws NamingException context binding problem.
      */
-    private EditorMap(final AnimationUpdaterThread animator, final Contextualized contextualized, final OtsEditor editor)
-            throws RemoteException, NamingException
+    private EditorMap(final Contextualized contextualized, final OtsEditor editor) throws RemoteException, NamingException
     {
         super(new BorderLayout());
         this.contextualized = contextualized;
         this.editor = editor;
-        this.animationPanel = new VisualizationPanel(new Bounds2d(500, 500), animator, contextualized.getContext());
+        this.visualizationPanel = new VisualizationPanel(new Bounds2d(500, 500), this.updater, contextualized.getContext());
+        this.updater.addListener(this.visualizationPanel, AnimatorInterface.UPDATE_ANIMATION_EVENT);
 
         /*-
         {
@@ -206,8 +208,8 @@ public class EditorMap extends JPanel implements EventListener
         };
         */
 
-        this.animationPanel.setBackground(Color.GRAY);
-        this.animationPanel.setShowToolTip(false);
+        this.visualizationPanel.setBackground(Color.GRAY);
+        this.visualizationPanel.setShowToolTip(false);
         editor.addListener(this, OtsEditor.NEW_FILE);
 
         /*-
@@ -256,7 +258,7 @@ public class EditorMap extends JPanel implements EventListener
         });
         */
 
-        add(this.animationPanel, BorderLayout.CENTER);
+        add(this.visualizationPanel, BorderLayout.CENTER);
 
         this.toolPanel = new JPanel();
         setupTools();
@@ -377,7 +379,7 @@ public class EditorMap extends JPanel implements EventListener
         extent.setMaximumSize(new Dimension(24, 24));
         extent.setPreferredSize(new Dimension(24, 24));
         extent.setToolTipText("Zoom whole network");
-        extent.addActionListener((e) -> this.animationPanel.zoomAll());
+        extent.addActionListener((e) -> this.visualizationPanel.zoomAll());
         this.toolPanel.add(extent);
 
         JButton grid = new JButton(loadIcon("./Grid.png"));
@@ -385,7 +387,7 @@ public class EditorMap extends JPanel implements EventListener
         grid.setMaximumSize(new Dimension(24, 24));
         grid.setPreferredSize(new Dimension(24, 24));
         grid.setToolTipText("Toggle grid on/off");
-        grid.addActionListener((e) -> this.animationPanel.setShowGrid(!this.animationPanel.isShowGrid()));
+        grid.addActionListener((e) -> this.visualizationPanel.setShowGrid(!this.visualizationPanel.isShowGrid()));
         this.toolPanel.add(grid);
 
         this.toolPanel.add(Box.createHorizontalStrut(5));
@@ -448,7 +450,7 @@ public class EditorMap extends JPanel implements EventListener
      * @param initiallyVisible whether the class is initially shown or not
      * @param idButton id button that needs to be placed next to the previous button
      */
-    public final void addToggle(final String name, final Class<? extends Locatable> locatableClass, final String iconPath,
+    public void addToggle(final String name, final Class<? extends Locatable> locatableClass, final String iconPath,
             final String toolTipText, final boolean initiallyVisible, final boolean idButton)
     {
         JToggleButton button;
@@ -472,7 +474,7 @@ public class EditorMap extends JPanel implements EventListener
                 if (EditorMap.this.toggleLocatableMap.containsKey(actionCommand))
                 {
                     Class<? extends Locatable> locatableClass = EditorMap.this.toggleLocatableMap.get(actionCommand);
-                    EditorMap.this.animationPanel.toggleClass(locatableClass);
+                    EditorMap.this.visualizationPanel.toggleClass(locatableClass);
                     EditorMap.this.togglePanel.repaint();
                 }
             }
@@ -495,11 +497,11 @@ public class EditorMap extends JPanel implements EventListener
 
         if (initiallyVisible)
         {
-            this.animationPanel.showClass(locatableClass);
+            this.visualizationPanel.showClass(locatableClass);
         }
         else
         {
-            this.animationPanel.hideClass(locatableClass);
+            this.visualizationPanel.hideClass(locatableClass);
         }
         this.toggleLocatableMap.put(name, locatableClass);
     }
@@ -513,8 +515,6 @@ public class EditorMap extends JPanel implements EventListener
      */
     public static EditorMap build(final OtsEditor editor) throws RemoteException, NamingException
     {
-        AnimationUpdaterThread animator = new AnimationUpdaterThread();
-        animator.start();
         ContextInterface context = new JvmContext("ots-context");
         Contextualized contextualized = new Contextualized()
         {
@@ -524,7 +524,7 @@ public class EditorMap extends JPanel implements EventListener
                 return context;
             }
         };
-        return new EditorMap(animator, contextualized, editor);
+        return new EditorMap(contextualized, editor);
     }
 
     @Override
@@ -557,7 +557,7 @@ public class EditorMap extends JPanel implements EventListener
             XsdTreeNodeRoot root = (XsdTreeNodeRoot) event.getContent();
             root.addListener(this, XsdTreeNodeRoot.NODE_CREATED);
             root.addListener(this, XsdTreeNodeRoot.NODE_REMOVED);
-            SwingUtilities.invokeLater(() -> this.animationPanel.zoomAll());
+            SwingUtilities.invokeLater(() -> this.visualizationPanel.zoomAll());
         }
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
         {
@@ -619,6 +619,7 @@ public class EditorMap extends JPanel implements EventListener
                 this.overrideListeners.put(node, listener);
                 listener.addListener(listener, ChangeListener.CHANGE_EVENT); // register to self, but for change events
             }
+            this.updater.update();
         }
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
         {
@@ -626,7 +627,7 @@ public class EditorMap extends JPanel implements EventListener
             XsdTreeNode node = (XsdTreeNode) content[0];
             if (this.datas.containsKey(node)) // node.isType does not work as parent is gone, i.e. type is just "Node"
             {
-                remove(node);
+                remove(node); // updates animation panel
             }
             else if (node.getPathString().equals(XsdPaths.POLYLINE_COORDINATE))
             {
@@ -652,6 +653,7 @@ public class EditorMap extends JPanel implements EventListener
                     listener.destroy();
                 }
             }
+            this.updater.update();
         }
         else if (event.getType().equals(XsdTreeNode.ACTIVATION_CHANGED))
         {
@@ -690,6 +692,7 @@ public class EditorMap extends JPanel implements EventListener
                     removeNetworkFlattener();
                 }
             }
+            this.updater.update();
         }
         else if (event.getType().equals(XsdTreeNode.OPTION_CHANGED))
         {
@@ -708,6 +711,7 @@ public class EditorMap extends JPanel implements EventListener
                     add(selected);
                 }
             }
+            this.updater.update();
         }
         else if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED))
         {
@@ -715,6 +719,7 @@ public class EditorMap extends JPanel implements EventListener
             {
                 linkData.notifyNodeIdChanged(linkData.getNode());
             }
+            this.updater.update();
         }
     }
 
@@ -974,7 +979,7 @@ public class EditorMap extends JPanel implements EventListener
     {
         if (animation != null)
         {
-            this.animationPanel.objectRemoved(animation);
+            this.visualizationPanel.objectRemoved(animation);
             animation.destroy(this.contextualized);
         }
     }
@@ -1012,6 +1017,23 @@ public class EditorMap extends JPanel implements EventListener
     public Map<MapStripeData, SynchronizableMapStripe> getSynchronizableStripes()
     {
         return this.synStripes;
+    }
+
+    /**
+     * Event producer that fires an update animation event.
+     */
+    public static class MapUpdater extends LocalEventProducer
+    {
+        /** */
+        private static final long serialVersionUID = 1L;
+
+        /**
+         * Fire update animation event.
+         */
+        public void update()
+        {
+            fireEvent(AnimatorInterface.UPDATE_ANIMATION_EVENT);
+        }
     }
 
 }
