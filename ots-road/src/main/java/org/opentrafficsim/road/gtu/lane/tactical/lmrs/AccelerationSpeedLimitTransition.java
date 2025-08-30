@@ -4,6 +4,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -25,19 +26,29 @@ import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class AccelerationSpeedLimitTransition implements AccelerationIncentive
+public final class AccelerationSpeedLimitTransition
+        implements AccelerationIncentive, Stateless<AccelerationSpeedLimitTransition>
 {
+
+    /** Singleton instance. */
+    public static final AccelerationSpeedLimitTransition SINGLETON = new AccelerationSpeedLimitTransition();
+
+    @Override
+    public AccelerationSpeedLimitTransition get()
+    {
+        return SINGLETON;
+    }
 
     /**
      * Constructor.
      */
-    public AccelerationSpeedLimitTransition()
+    private AccelerationSpeedLimitTransition()
     {
         //
     }
 
     @Override
-    public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
+    public void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
             final LaneBasedGtu gtu, final LanePerception perception, final CarFollowingModel carFollowingModel,
             final Speed speed, final Parameters params, final SpeedLimitInfo speedLimitInfo)
             throws OperationalPlanException, ParameterException
@@ -47,7 +58,7 @@ public class AccelerationSpeedLimitTransition implements AccelerationIncentive
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         return "AccelerationSpeedLimitTransition";
     }

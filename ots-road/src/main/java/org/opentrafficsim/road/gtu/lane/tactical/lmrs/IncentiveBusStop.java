@@ -4,6 +4,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -26,13 +27,22 @@ import org.opentrafficsim.road.network.lane.object.BusStop;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class IncentiveBusStop implements MandatoryIncentive
+public final class IncentiveBusStop implements MandatoryIncentive, Stateless<IncentiveBusStop>
 {
+
+    /** Singleton instance. */
+    public static final IncentiveBusStop SINGLETON = new IncentiveBusStop();
+
+    @Override
+    public IncentiveBusStop get()
+    {
+        return SINGLETON;
+    }
 
     /**
      * Constructor.
      */
-    public IncentiveBusStop()
+    private IncentiveBusStop()
     {
         //
     }
@@ -42,7 +52,6 @@ public class IncentiveBusStop implements MandatoryIncentive
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire)
             throws ParameterException, OperationalPlanException
     {
-
         HeadwayBusStop firstStop = null;
         PerceptionCollectable<HeadwayBusStop, BusStop> stops =
                 perception.getPerceptionCategory(BusStopPerception.class).getBusStops();
@@ -77,7 +86,7 @@ public class IncentiveBusStop implements MandatoryIncentive
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         return "IncentiveBusStop";
     }

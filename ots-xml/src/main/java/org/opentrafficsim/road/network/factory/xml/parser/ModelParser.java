@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -65,7 +64,7 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
 import org.opentrafficsim.road.gtu.lane.perception.mental.TaskManager;
 import org.opentrafficsim.road.gtu.lane.perception.mental.TaskManager.SummativeTaskManager;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.ModelComponentFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.ModelComponentSupplier;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
@@ -554,7 +553,6 @@ public class ModelParser
      * @return Lmrs factory
      * @throws XmlParserException unknown value, missing constructor, etc.
      */
-    @SuppressWarnings("unchecked")
     private static LaneBasedTacticalPlannerFactory<Lmrs> parseLmrs(
             final org.opentrafficsim.xml.generated.ModelType.TacticalPlanner.Lmrs lmrs,
             final StreamInformation streamInformation, final Eval eval) throws XmlParserException
@@ -574,52 +572,52 @@ public class ModelParser
         Tailgating tailgating = lmrs.getTailgating() != null ? lmrs.getTailgating().get(eval) : Tailgating.NONE;
 
         // Mandatory incentives
-        Set<Supplier<MandatoryIncentive>> mandatoryIncentives = new LinkedHashSet<>();
+        Set<Supplier<? extends MandatoryIncentive>> mandatoryIncentives = new LinkedHashSet<>();
         if (lmrs.getMandatoryIncentives().getRoute() != null)
         {
-            mandatoryIncentives.add(() -> new IncentiveRoute());
+            mandatoryIncentives.add(IncentiveRoute.SINGLETON);
         }
         if (lmrs.getMandatoryIncentives().getGetInLane() != null)
         {
-            mandatoryIncentives.add(() -> new IncentiveGetInLane());
+            mandatoryIncentives.add(IncentiveGetInLane.SINGLETON);
         }
         if (lmrs.getMandatoryIncentives().getBusStop() != null)
         {
-            mandatoryIncentives.add(() -> new IncentiveBusStop());
+            mandatoryIncentives.add(IncentiveBusStop.SINGLETON);
         }
         if (mandatoryIncentives.isEmpty())
         {
-            mandatoryIncentives.add(() -> new IncentiveDummy());
+            mandatoryIncentives.add(IncentiveDummy.SINGLETON);
         }
 
         // Voluntary incentives
-        Set<Supplier<VoluntaryIncentive>> voluntaryIncentives = new LinkedHashSet<>();
+        Set<Supplier<? extends VoluntaryIncentive>> voluntaryIncentives = new LinkedHashSet<>();
         if (lmrs.getVoluntaryIncentives().getKeep() != null)
         {
-            voluntaryIncentives.add(() -> new IncentiveKeep());
+            voluntaryIncentives.add(IncentiveKeep.SINGLETON);
         }
         if (lmrs.getVoluntaryIncentives().getSpeedWithCourtesy() != null)
         {
-            voluntaryIncentives.add(() -> new IncentiveSpeedWithCourtesy());
+            voluntaryIncentives.add(IncentiveSpeedWithCourtesy.SINGLETON);
         }
         if (lmrs.getVoluntaryIncentives().getCourtesy() != null)
         {
-            voluntaryIncentives.add(() -> new IncentiveCourtesy());
+            voluntaryIncentives.add(IncentiveCourtesy.SINGLETON);
         }
         if (lmrs.getVoluntaryIncentives().getSocioSpeed() != null)
         {
-            voluntaryIncentives.add(() -> new IncentiveSocioSpeed());
+            voluntaryIncentives.add(IncentiveSocioSpeed.SINGLETON);
         }
         if (lmrs.getVoluntaryIncentives().getStayRight() != null)
         {
-            voluntaryIncentives.add(() -> new IncentiveStayRight());
+            voluntaryIncentives.add(IncentiveStayRight.SINGLETON);
         }
 
         // Acceleration incentives
-        Set<Supplier<AccelerationIncentive>> accelerationIncentives = new LinkedHashSet<>();
+        Set<Supplier<? extends AccelerationIncentive>> accelerationIncentives = new LinkedHashSet<>();
         if (lmrs.getAccelerationIncentives().getBusStop() != null)
         {
-            accelerationIncentives.add(() -> new AccelerationBusStop());
+            accelerationIncentives.add(AccelerationBusStop.SINGLETON);
         }
         if (lmrs.getAccelerationIncentives().getConflicts() != null)
         {
@@ -627,15 +625,15 @@ public class ModelParser
         }
         if (lmrs.getAccelerationIncentives().getSpeedLimitTransitions() != null)
         {
-            accelerationIncentives.add(() -> new AccelerationSpeedLimitTransition());
+            accelerationIncentives.add(AccelerationSpeedLimitTransition.SINGLETON);
         }
         if (lmrs.getAccelerationIncentives().getTrafficLights() != null)
         {
-            accelerationIncentives.add(() -> new AccelerationTrafficLights());
+            accelerationIncentives.add(AccelerationTrafficLights.SINGLETON);
         }
         if (lmrs.getAccelerationIncentives().getNoRightOvertake() != null)
         {
-            accelerationIncentives.add(() -> new AccelerationNoRightOvertake());
+            accelerationIncentives.add(AccelerationNoRightOvertake.SINGLETON);
         }
 
         // Perception
@@ -646,14 +644,8 @@ public class ModelParser
                 parseCarFollowingModel(lmrs.getCarFollowingModel(), streamInformation, eval);
 
         // Lmrs factory
-        Supplier<Set<MandatoryIncentive>> mandatorySupplier =
-                () -> mandatoryIncentives.stream().map((mis) -> mis.get()).collect(Collectors.toSet());
-        Supplier<Set<VoluntaryIncentive>> voluntarySupplier =
-                () -> voluntaryIncentives.stream().map((vis) -> vis.get()).collect(Collectors.toSet());
-        Supplier<Set<AccelerationIncentive>> accelerationSupplier =
-                () -> accelerationIncentives.stream().map((ais) -> ais.get()).collect(Collectors.toSet());
         return new LmrsFactory(carFollowingModelFactory, perceptionFactory, synchronization, cooperation, gapAcceptance,
-                tailgating, mandatorySupplier, voluntarySupplier, accelerationSupplier);
+                tailgating, mandatoryIncentives, voluntaryIncentives, accelerationIncentives);
     }
 
     /**
@@ -669,18 +661,19 @@ public class ModelParser
             throws XmlParserException
     {
         // This method works for either IDM or IDM+; for other car-following models the structure needs to be elaborated
-        BiFunction<DesiredHeadwayModel, DesiredSpeedModel, CarFollowingModel> carFollowingModelFunction;
-        Factory<DesiredHeadwayModel> desiredHeadwayModelFactory;
-        Factory<DesiredSpeedModel> desiredSpeedModelFactory;
+        BiFunction<ModelComponentSupplier<DesiredHeadwayModel>, ModelComponentSupplier<DesiredSpeedModel>,
+                CarFollowingModel> carFollowingModelFunction;
+        ModelComponentSupplier<DesiredHeadwayModel> desiredHeadwayModelFactory;
+        ModelComponentSupplier<DesiredSpeedModel> desiredSpeedModelFactory;
         if (carFollowingModel.getIdm() != null)
         {
-            carFollowingModelFunction = (headway, speed) -> new Idm(headway, speed);
+            carFollowingModelFunction = (headway, speed) -> new Idm(headway.get(), speed.get());
             desiredHeadwayModelFactory = parseDesiredHeadwayModel(carFollowingModel.getIdm().getDesiredHeadwayModel(), eval);
             desiredSpeedModelFactory = parseDesiredSpeedModel(carFollowingModel.getIdm().getDesiredSpeedModel(), eval);
         }
         else if (carFollowingModel.getIdmPlus() != null)
         {
-            carFollowingModelFunction = (headway, speed) -> new IdmPlus(headway, speed);
+            carFollowingModelFunction = (headway, speed) -> new IdmPlus(headway.get(), speed.get());
             desiredHeadwayModelFactory =
                     parseDesiredHeadwayModel(carFollowingModel.getIdmPlus().getDesiredHeadwayModel(), eval);
             desiredSpeedModelFactory = parseDesiredSpeedModel(carFollowingModel.getIdmPlus().getDesiredSpeedModel(), eval);
@@ -706,9 +699,9 @@ public class ModelParser
             }
 
             @Override
-            public CarFollowingModel generateCarFollowingModel()
+            public CarFollowingModel get()
             {
-                return carFollowingModelFunction.apply(desiredHeadwayModelFactory.get(), desiredSpeedModelFactory.get());
+                return carFollowingModelFunction.apply(desiredHeadwayModelFactory, desiredSpeedModelFactory);
             }
         };
     }
@@ -721,12 +714,12 @@ public class ModelParser
      * @throws XmlParserException when no supported tag is provided.
      */
     @SuppressWarnings("unchecked")
-    private static Factory<DesiredHeadwayModel> parseDesiredHeadwayModel(final DesiredHeadwayModelType desiredHeadwayModel,
-            final Eval eval) throws XmlParserException
+    private static ModelComponentSupplier<DesiredHeadwayModel> parseDesiredHeadwayModel(
+            final DesiredHeadwayModelType desiredHeadwayModel, final Eval eval) throws XmlParserException
     {
         if (desiredHeadwayModel.getIdm() != null)
         {
-            return new Factory<>()
+            return new ModelComponentSupplier<>()
             {
                 @Override
                 public Parameters getParameters() throws ParameterException
@@ -756,12 +749,12 @@ public class ModelParser
      * @throws XmlParserException when no supported tag is provided.
      */
     @SuppressWarnings("unchecked")
-    private static Factory<DesiredSpeedModel> parseDesiredSpeedModel(final DesiredSpeedModelType desiredSpeedModel,
-            final Eval eval) throws XmlParserException
+    private static ModelComponentSupplier<DesiredSpeedModel> parseDesiredSpeedModel(
+            final DesiredSpeedModelType desiredSpeedModel, final Eval eval) throws XmlParserException
     {
         if (desiredSpeedModel.getIdm() != null)
         {
-            return new Factory<>()
+            return new ModelComponentSupplier<>()
             {
                 @Override
                 public Parameters getParameters() throws ParameterException
@@ -780,8 +773,8 @@ public class ModelParser
         {
             Throw.when(desiredSpeedModel.getSocio().getSocio() != null, XmlParserException.class,
                     "Socio desired speed model wraps another socio desired speed model. This is not allowed.");
-            Factory<DesiredSpeedModel> wrapped = parseDesiredSpeedModel(desiredSpeedModel.getSocio(), eval);
-            return new Factory<>()
+            ModelComponentSupplier<DesiredSpeedModel> wrapped = parseDesiredSpeedModel(desiredSpeedModel.getSocio(), eval);
+            return new ModelComponentSupplier<>()
             {
 
                 @Override
@@ -816,12 +809,12 @@ public class ModelParser
      * @return Factory for component.
      * @throws XmlParserException if the class or empty constructor cannot be found.
      */
-    private static <T> Factory<T> getFactoryForClass(final Class<T> clazz) throws XmlParserException
+    private static <T> ModelComponentSupplier<T> getFactoryForClass(final Class<T> clazz) throws XmlParserException
     {
         Constructor<? extends T> constructor =
                 Try.assign(() -> (Constructor<? extends T>) ClassUtil.resolveConstructor(clazz, new Object[0]),
                         XmlParserException.class, "Class %s does not have a valid empty constructor.", clazz);
-        return new Factory<>()
+        return new ModelComponentSupplier<>()
         {
             @Override
             public Parameters getParameters() throws ParameterException
@@ -841,33 +834,13 @@ public class ModelParser
     }
 
     /**
-     * Defines a simple factory for model components, combining {@code ModelComponentFactory.getParameters()} with a
-     * {@code get()} method.
-     * <p>
-     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
-     * @param <T> model component type.
-     */
-    private static interface Factory<T> extends ModelComponentFactory
-    {
-        /**
-         * Returns component.
-         * @return component.
-         */
-        T get();
-    }
-
-    /**
      * Parse perception for any tactical planner that has PerceptionType to support perception.
      * @param perception perception xml information
      * @param eval expression evaluator.
+     * @param <G> gtu type
      * @return parsed perception factory
      * @throws XmlParserException unknown value, missing constructor, etc.
      */
-    @SuppressWarnings("unchecked")
     private static <G extends Gtu> PerceptionFactory parsePerception(final PerceptionType perception, final Eval eval)
             throws XmlParserException
     {

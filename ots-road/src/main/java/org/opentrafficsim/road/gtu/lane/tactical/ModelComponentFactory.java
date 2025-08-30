@@ -4,7 +4,9 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 
 /**
- * Interface for factories of model components, such as strategical planners, tactical planners and car-following models.
+ * Interface for factories of model components, such as strategical planners, tactical planners and car-following models. This
+ * interface defines no method to obtain the model component. This is because different factories may require different input.
+ * For all cases that require no input {@code ModelComponentSupplier} defines an additional {@code get()} method.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -13,6 +15,7 @@ import org.opentrafficsim.base.parameters.Parameters;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
+@FunctionalInterface
 public interface ModelComponentFactory
 {
     /**
@@ -23,7 +26,7 @@ public interface ModelComponentFactory
      * the class.<br>
      * <br>
      * Conventional use is:<br>
-     * 
+     *
      * <pre>
      * Parameters parameters = this.subComponent1Factory.getParameters();
      * this.subComponent2Factory.getParameters().setAllIn(parameters);
@@ -31,17 +34,17 @@ public interface ModelComponentFactory
      * parameters.setDefaultParameters(staticUtilityClass);
      * return parameters;
      * </pre>
-     * 
+     *
      * where all parameters used in {@code componentClass} are defined or forwarded in {@code componentClass}.<br>
-     * 
+     *
      * <pre>
      * // forwarded
      * public static final ParameterTypeAcceleration A = ParameterTypes.A;
-     * 
+     *
      * // defined
      * public static final ParameterTypeDouble FACTOR = new ParameterTypeDouble("factor", "factor on response", 1.0);
      * </pre>
-     * 
+     *
      * The same holds for static utilities that are used. Parameters should be defined at the utility class, and parameters of
      * used utilities should be included.<br>
      * <br>

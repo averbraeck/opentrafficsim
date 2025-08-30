@@ -25,7 +25,7 @@ public class AbstractIdmFactory<T extends AbstractIdm> implements CarFollowingMo
 {
 
     /** Single instance as it is state-less. */
-    private final Supplier<T> idm;
+    private final Supplier<? extends T> idm;
 
     /** Distribution for fSpeed parameter. */
     private final DistContinuous fSpeed;
@@ -35,14 +35,14 @@ public class AbstractIdmFactory<T extends AbstractIdm> implements CarFollowingMo
      * @param idm idm model supplier
      * @param randomStream random number stream
      */
-    public AbstractIdmFactory(final Supplier<T> idm, final StreamInterface randomStream)
+    public AbstractIdmFactory(final Supplier<? extends T> idm, final StreamInterface randomStream)
     {
         this.idm = idm;
         this.fSpeed = new DistNormal(randomStream, 123.7 / 120.0, 0.1);
     }
 
     @Override
-    public final T generateCarFollowingModel()
+    public final T get()
     {
         return this.idm.get();
     }

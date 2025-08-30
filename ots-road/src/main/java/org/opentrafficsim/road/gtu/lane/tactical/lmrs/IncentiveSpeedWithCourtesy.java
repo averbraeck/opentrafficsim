@@ -10,6 +10,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -43,7 +44,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
+public final class IncentiveSpeedWithCourtesy implements VoluntaryIncentive, Stateless<IncentiveSpeedWithCourtesy>
 {
 
     /** Acceleration parameter type. */
@@ -55,16 +56,25 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
     /** Speed threshold below which traffic is considered congested. */
     protected static final ParameterTypeSpeed VCONG = ParameterTypes.VCONG;
 
+    /** Singleton instance. */
+    public static final IncentiveSpeedWithCourtesy SINGLETON = new IncentiveSpeedWithCourtesy();
+
+    @Override
+    public IncentiveSpeedWithCourtesy get()
+    {
+        return SINGLETON;
+    }
+
     /**
      * Constructor.
      */
-    public IncentiveSpeedWithCourtesy()
+    private IncentiveSpeedWithCourtesy()
     {
         //
     }
 
     @Override
-    public final Desire determineDesire(final Parameters parameters, final LanePerception perception,
+    public Desire determineDesire(final Parameters parameters, final LanePerception perception,
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire, final Desire voluntaryDesire)
             throws ParameterException, OperationalPlanException
     {
@@ -140,7 +150,7 @@ public class IncentiveSpeedWithCourtesy implements VoluntaryIncentive
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         return "IncentiveSpeedWithCourtesy";
     }

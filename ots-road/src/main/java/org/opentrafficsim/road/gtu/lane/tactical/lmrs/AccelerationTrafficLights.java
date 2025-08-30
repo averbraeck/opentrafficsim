@@ -4,6 +4,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.FilteredIterable;
@@ -26,19 +27,28 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class AccelerationTrafficLights implements AccelerationIncentive
+public final class AccelerationTrafficLights implements AccelerationIncentive, Stateless<AccelerationTrafficLights>
 {
+
+    /** Singleton instance. */
+    public static final AccelerationTrafficLights SINGLETON = new AccelerationTrafficLights();
+
+    @Override
+    public AccelerationTrafficLights get()
+    {
+        return SINGLETON;
+    }
 
     /**
      * Constructor.
      */
-    public AccelerationTrafficLights()
+    private AccelerationTrafficLights()
     {
         //
     }
 
     @Override
-    public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
+    public void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
             final LaneBasedGtu gtu, final LanePerception perception, final CarFollowingModel carFollowingModel,
             final Speed speed, final Parameters params, final SpeedLimitInfo speedLimitInfo)
             throws ParameterException, OperationalPlanException
@@ -58,7 +68,7 @@ public class AccelerationTrafficLights implements AccelerationIncentive
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         return "AccelerationTrafficLights";
     }

@@ -9,6 +9,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
@@ -31,7 +32,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class AccelerationNoRightOvertake implements AccelerationIncentive
+public final class AccelerationNoRightOvertake implements AccelerationIncentive, Stateless<AccelerationNoRightOvertake>
 {
 
     /** Speed threshold below which traffic is considered congested. */
@@ -40,10 +41,19 @@ public class AccelerationNoRightOvertake implements AccelerationIncentive
     /** Maximum adjustment deceleration, e.g. when speed limit drops. */
     public static final ParameterTypeAcceleration B0 = ParameterTypes.B0;
 
+    /** Singleton instance. */
+    public static final AccelerationNoRightOvertake SINGLETON = new AccelerationNoRightOvertake();
+
+    @Override
+    public AccelerationNoRightOvertake get()
+    {
+        return SINGLETON;
+    }
+
     /**
      * Constructor.
      */
-    public AccelerationNoRightOvertake()
+    private AccelerationNoRightOvertake()
     {
         //
     }

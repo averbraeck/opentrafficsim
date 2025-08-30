@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -21,22 +22,31 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class IncentiveKeep implements VoluntaryIncentive
+public final class IncentiveKeep implements VoluntaryIncentive, Stateless<IncentiveKeep>
 {
 
     /** Free lane change threshold parameter type. */
     protected static final ParameterTypeDouble DFREE = LmrsParameters.DFREE;
 
+    /** Singleton instance. */
+    public static final IncentiveKeep SINGLETON = new IncentiveKeep();
+
+    @Override
+    public IncentiveKeep get()
+    {
+        return SINGLETON;
+    }
+
     /**
      * Constructor.
      */
-    public IncentiveKeep()
+    private IncentiveKeep()
     {
         //
     }
 
     @Override
-    public final Desire determineDesire(final Parameters parameters, final LanePerception perception,
+    public Desire determineDesire(final Parameters parameters, final LanePerception perception,
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire, final Desire voluntaryDesire)
             throws ParameterException, OperationalPlanException
     {
@@ -51,7 +61,7 @@ public class IncentiveKeep implements VoluntaryIncentive
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         return "IncentiveKeep";
     }

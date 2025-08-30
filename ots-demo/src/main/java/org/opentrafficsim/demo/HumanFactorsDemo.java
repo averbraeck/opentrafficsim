@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -340,33 +341,20 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             Tailgating tailgating = social ? Tailgating.PRESSURE : Tailgating.NONE;
 
             // incentives: mandatory, voluntary
-            Supplier<Set<MandatoryIncentive>> mandatorySupplier = () ->
+            Set<Supplier<? extends MandatoryIncentive>> mandatoryIncentives = Set.of(IncentiveRoute.SINGLETON);
+            Set<Supplier<? extends VoluntaryIncentive>> voluntaryIncentives = new LinkedHashSet<>();
+            voluntaryIncentives.add(IncentiveSpeedWithCourtesy.SINGLETON);
+            voluntaryIncentives.add(IncentiveKeep.SINGLETON);
+            if (social)
             {
-                Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
-                mandatoryIncentives.add(new IncentiveRoute());
-                return mandatoryIncentives;
-            };
-            Supplier<Set<VoluntaryIncentive>> voluntarySupplier = () ->
-            {
-                Set<VoluntaryIncentive> voluntaryIncentives = new LinkedHashSet<>();
-                voluntaryIncentives.add(new IncentiveSpeedWithCourtesy());
-                voluntaryIncentives.add(new IncentiveKeep());
-                /*
-                 * Next to increasing speed, social interactions include a change in lane change desire to get or stay out of
-                 * the way of faster (potential) followers.
-                 */
-                if (social)
-                {
-                    voluntaryIncentives.add(new IncentiveSocioSpeed());
-                }
-                return voluntaryIncentives;
-            };
-            Supplier<Set<AccelerationIncentive>> accelerationSupplier = () -> new LinkedHashSet<>();
+                voluntaryIncentives.add(IncentiveSocioSpeed.SINGLETON);
+            }
+            Set<Supplier<? extends AccelerationIncentive>> accelerationIncentives = Collections.emptySet();
 
             // Layered factories (tactical, strategical, strategical in an OD context)
-            LmrsFactory lmrsFactory =
-                    new LmrsFactory(cfModelFactory, perceptionFactory, Synchronization.PASSIVE, Cooperation.PASSIVE,
-                            GapAcceptance.INFORMED, tailgating, mandatorySupplier, voluntarySupplier, accelerationSupplier);
+            LmrsFactory lmrsFactory = new LmrsFactory(cfModelFactory, perceptionFactory, Synchronization.PASSIVE,
+                    Cooperation.PASSIVE, GapAcceptance.INFORMED, tailgating, mandatoryIncentives, voluntaryIncentives,
+                    accelerationIncentives);
             LaneBasedStrategicalRoutePlannerFactory strategicalPlannerFactory =
                     new LaneBasedStrategicalRoutePlannerFactory(lmrsFactory, parameterFactory);
             this.characteristics =

@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
-import org.opentrafficsim.road.gtu.lane.tactical.ModelComponentFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.ModelComponentSupplier;
 
 /**
  * Factory for car-following models.
@@ -13,13 +13,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.ModelComponentFactory;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <T> class of car following model
  */
-public interface CarFollowingModelFactory<T extends CarFollowingModel> extends ModelComponentFactory
+public interface CarFollowingModelFactory<T extends CarFollowingModel> extends ModelComponentSupplier<T>
 {
-
-    /**
-     * Returns a new instance of a car-following model.
-     * @return new instance of a car-following model
-     */
-    T generateCarFollowingModel();
-
 }

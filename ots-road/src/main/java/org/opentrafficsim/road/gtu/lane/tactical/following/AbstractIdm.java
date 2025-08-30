@@ -11,6 +11,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
+import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.tactical.util.SpeedLimitUtil;
@@ -56,26 +57,10 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
             "Acceleration flattening exponent towards desired speed", 4.0, ConstraintInterface.POSITIVE);
 
     /** Default IDM desired headway model. */
-    public static final DesiredHeadwayModel HEADWAY = new DesiredHeadwayModel()
-    {
-        @Override
-        public Length desiredHeadway(final Parameters parameters, final Speed speed) throws ParameterException
-        {
-            return Length.instantiateSI(parameters.getParameter(S0).si + speed.si * parameters.getParameter(T).si);
-        }
-    };
+    public static final IdmDesiredHeadwayModel HEADWAY = IdmDesiredHeadwayModel.SINGLETON;
 
     /** Default IDM desired speed model. */
-    public static final DesiredSpeedModel DESIRED_SPEED = new DesiredSpeedModel()
-    {
-        @Override
-        public Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo) throws ParameterException
-        {
-            Speed consideredSpeed = SpeedLimitUtil.getLegalSpeedLimit(speedInfo).times(parameters.getParameter(FSPEED));
-            Speed maxVehicleSpeed = SpeedLimitUtil.getMaximumVehicleSpeed(speedInfo);
-            return consideredSpeed.le(maxVehicleSpeed) ? consideredSpeed : maxVehicleSpeed;
-        }
-    };
+    public static final IdmDesiredSpeedModel DESIRED_SPEED = IdmDesiredSpeedModel.SINGLETON;
 
     /**
      * Constructor with modular models for desired headway and desired speed.
@@ -178,6 +163,50 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
         Acceleration a = parameters.getParameter(A);
         Acceleration b = parameters.getParameter(B);
         return Length.instantiateSI(speed.si * (speed.si - leaderSpeed.si) / (2 * Math.sqrt(a.si * b.si)));
+    }
+
+    /**
+     * IDM desired headway model.
+     */
+    public static class IdmDesiredHeadwayModel implements DesiredHeadwayModel, Stateless<IdmDesiredHeadwayModel>
+    {
+        /** Singleton instance. */
+        public static final IdmDesiredHeadwayModel SINGLETON = new IdmDesiredHeadwayModel();
+
+        @Override
+        public IdmDesiredHeadwayModel get()
+        {
+            return SINGLETON;
+        }
+
+        @Override
+        public Length desiredHeadway(final Parameters parameters, final Speed speed) throws ParameterException
+        {
+            return Length.instantiateSI(parameters.getParameter(S0).si + speed.si * parameters.getParameter(T).si);
+        }
+    }
+
+    /**
+     * IDM desired speed model.
+     */
+    public static class IdmDesiredSpeedModel implements DesiredSpeedModel, Stateless<IdmDesiredSpeedModel>
+    {
+        /** Singleton instance. */
+        public static final IdmDesiredSpeedModel SINGLETON = new IdmDesiredSpeedModel();
+
+        @Override
+        public IdmDesiredSpeedModel get()
+        {
+            return SINGLETON;
+        }
+
+        @Override
+        public Speed desiredSpeed(final Parameters parameters, final SpeedLimitInfo speedInfo) throws ParameterException
+        {
+            Speed consideredSpeed = SpeedLimitUtil.getLegalSpeedLimit(speedInfo).times(parameters.getParameter(FSPEED));
+            Speed maxVehicleSpeed = SpeedLimitUtil.getMaximumVehicleSpeed(speedInfo);
+            return consideredSpeed.le(maxVehicleSpeed) ? consideredSpeed : maxVehicleSpeed;
+        }
     }
 
 }

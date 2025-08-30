@@ -8,6 +8,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -37,7 +38,7 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class IncentiveCourtesy implements VoluntaryIncentive
+public final class IncentiveCourtesy implements VoluntaryIncentive, Stateless<IncentiveCourtesy>
 {
 
     /** Comfortable deceleration parameter type. */
@@ -52,16 +53,25 @@ public class IncentiveCourtesy implements VoluntaryIncentive
     /** Current right lane change desire. */
     protected static final ParameterTypeDouble DRIGHT = LmrsParameters.DRIGHT;
 
+    /** Singleton instance. */
+    public static final IncentiveCourtesy SINGLETON = new IncentiveCourtesy();
+
+    @Override
+    public IncentiveCourtesy get()
+    {
+        return SINGLETON;
+    }
+
     /**
      * Constructor.
      */
-    public IncentiveCourtesy()
+    private IncentiveCourtesy()
     {
         //
     }
 
     @Override
-    public final Desire determineDesire(final Parameters parameters, final LanePerception perception,
+    public Desire determineDesire(final Parameters parameters, final LanePerception perception,
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire, final Desire voluntaryDesire)
             throws ParameterException, OperationalPlanException
     {
@@ -181,7 +191,7 @@ public class IncentiveCourtesy implements VoluntaryIncentive
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         return "IncentiveCourtesy";
     }

@@ -5,6 +5,7 @@ import java.util.SortedSet;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -27,13 +28,22 @@ import org.opentrafficsim.road.network.LaneChangeInfo;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class IncentiveStayRight implements VoluntaryIncentive
+public final class IncentiveStayRight implements VoluntaryIncentive, Stateless<IncentiveStayRight>
 {
+
+    /** Singleton instance. */
+    public static final IncentiveStayRight SINGLETON = new IncentiveStayRight();
+
+    @Override
+    public IncentiveStayRight get()
+    {
+        return SINGLETON;
+    }
 
     /**
      * Constructor.
      */
-    public IncentiveStayRight()
+    private IncentiveStayRight()
     {
         //
     }
@@ -91,6 +101,12 @@ public class IncentiveStayRight implements VoluntaryIncentive
             urgency = urgency > nextUrgency ? urgency : nextUrgency;
         }
         return urgency;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "IncentiveStayRight";
     }
 
 }

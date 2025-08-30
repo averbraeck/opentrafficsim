@@ -9,6 +9,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -38,7 +39,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 // TODO keep left or right rules
-public class IncentiveSocioSpeed implements VoluntaryIncentive
+public final class IncentiveSocioSpeed implements VoluntaryIncentive, Stateless<IncentiveSocioSpeed>
 {
 
     /** Social pressure applied to the leader. */
@@ -56,16 +57,25 @@ public class IncentiveSocioSpeed implements VoluntaryIncentive
     /** Look-ahead distance. */
     protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 
+    /** Singleton instance. */
+    public static final IncentiveSocioSpeed SINGLETON = new IncentiveSocioSpeed();
+
+    @Override
+    public IncentiveSocioSpeed get()
+    {
+        return SINGLETON;
+    }
+
     /**
      * Constructor.
      */
-    public IncentiveSocioSpeed()
+    private IncentiveSocioSpeed()
     {
         //
     }
 
     @Override
-    public final Desire determineDesire(final Parameters parameters, final LanePerception perception,
+    public Desire determineDesire(final Parameters parameters, final LanePerception perception,
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire, final Desire voluntaryDesire)
             throws ParameterException, OperationalPlanException
     {
@@ -133,7 +143,7 @@ public class IncentiveSocioSpeed implements VoluntaryIncentive
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         return "IncentiveSocioSpeed";
     }

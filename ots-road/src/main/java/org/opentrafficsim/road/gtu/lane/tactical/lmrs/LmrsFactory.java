@@ -54,13 +54,13 @@ public class LmrsFactory extends AbstractLaneBasedTacticalPlannerFactory<Lmrs> i
     private final Tailgating tailgating;
 
     /** Mandatory incentives. */
-    private final Supplier<Set<MandatoryIncentive>> mandatoryIncentives;
+    private final Set<Supplier<? extends MandatoryIncentive>> mandatoryIncentives;
 
     /** Mandatory incentives. */
-    private final Supplier<Set<VoluntaryIncentive>> voluntaryIncentives;
+    private final Set<Supplier<? extends VoluntaryIncentive>> voluntaryIncentives;
 
     /** Mandatory incentives. */
-    private final Supplier<Set<AccelerationIncentive>> accelerationIncentives;
+    private final Set<Supplier<? extends AccelerationIncentive>> accelerationIncentives;
 
     /**
      * Constructor using default incentives and passive synchronization.
@@ -95,9 +95,9 @@ public class LmrsFactory extends AbstractLaneBasedTacticalPlannerFactory<Lmrs> i
     public LmrsFactory(final CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory,
             final PerceptionFactory perceptionFactory, final Synchronization synchronization, final Cooperation cooperation,
             final GapAcceptance gapAcceptance, final Tailgating tailgating,
-            final Supplier<Set<MandatoryIncentive>> mandatoryIncentives,
-            final Supplier<Set<VoluntaryIncentive>> voluntaryIncentives,
-            final Supplier<Set<AccelerationIncentive>> accelerationIncentives)
+            final Set<Supplier<? extends MandatoryIncentive>> mandatoryIncentives,
+            final Set<Supplier<? extends VoluntaryIncentive>> voluntaryIncentives,
+            final Set<Supplier<? extends AccelerationIncentive>> accelerationIncentives)
     {
         super(carFollowingModelFactory, perceptionFactory);
         this.synchronization = synchronization;
@@ -138,9 +138,9 @@ public class LmrsFactory extends AbstractLaneBasedTacticalPlannerFactory<Lmrs> i
         }
         else
         {
-            this.mandatoryIncentives.get().forEach(incentive -> lmrs.addMandatoryIncentive(incentive));
-            this.voluntaryIncentives.get().forEach(incentive -> lmrs.addVoluntaryIncentive(incentive));
-            this.accelerationIncentives.get().forEach(incentive -> lmrs.addAccelerationIncentive(incentive));
+            this.mandatoryIncentives.forEach(supplier -> lmrs.addMandatoryIncentive(supplier.get()));
+            this.voluntaryIncentives.forEach(supplier -> lmrs.addVoluntaryIncentive(supplier.get()));
+            this.accelerationIncentives.forEach(supplier -> lmrs.addAccelerationIncentive(supplier.get()));
         }
         return lmrs;
     }

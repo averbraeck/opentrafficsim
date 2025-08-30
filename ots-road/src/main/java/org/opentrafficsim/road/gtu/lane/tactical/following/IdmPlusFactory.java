@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.following;
 
+import java.util.function.Supplier;
+
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
@@ -24,10 +26,22 @@ public class IdmPlusFactory extends AbstractIdmFactory<IdmPlus>
         super(() -> new IdmPlus(), randomStream);
     }
 
+    /**
+     * Constructor.
+     * @param randomStream random number stream
+     * @param desiredHeadway desired headway model
+     * @param desiredSpeed desired speed model
+     */
+    public IdmPlusFactory(final StreamInterface randomStream, final Supplier<? extends DesiredHeadwayModel> desiredHeadway,
+            final Supplier<? extends DesiredSpeedModel> desiredSpeed)
+    {
+        super(() -> new IdmPlus(desiredHeadway.get(), desiredSpeed.get()), randomStream);
+    }
+
     @Override
     public final String toString()
     {
-        return "IDMPlusFactory";
+        return "IdmPlusFactory";
     }
 
 }

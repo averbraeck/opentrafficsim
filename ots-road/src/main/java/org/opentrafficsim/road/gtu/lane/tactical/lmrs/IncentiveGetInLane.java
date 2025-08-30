@@ -8,6 +8,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
@@ -31,7 +32,7 @@ import org.opentrafficsim.road.network.LaneChangeInfo;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class IncentiveGetInLane implements MandatoryIncentive
+public final class IncentiveGetInLane implements MandatoryIncentive, Stateless<IncentiveGetInLane>
 {
 
     /** Congestion speed threshold parameter type. */
@@ -40,10 +41,19 @@ public class IncentiveGetInLane implements MandatoryIncentive
     /** Hierarchy parameter. */
     protected static final ParameterTypeDouble SOCIO = LmrsParameters.SOCIO;
 
+    /** Singleton instance. */
+    public static final IncentiveGetInLane SINGLETON = new IncentiveGetInLane();
+
+    @Override
+    public IncentiveGetInLane get()
+    {
+        return SINGLETON;
+    }
+
     /**
      * Constructor.
      */
-    public IncentiveGetInLane()
+    private IncentiveGetInLane()
     {
         //
     }
@@ -117,7 +127,7 @@ public class IncentiveGetInLane implements MandatoryIncentive
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         return "IncentiveGetInLane";
     }

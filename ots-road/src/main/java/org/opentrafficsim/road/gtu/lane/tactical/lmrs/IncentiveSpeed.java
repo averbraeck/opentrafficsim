@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
@@ -20,19 +21,28 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class IncentiveSpeed implements VoluntaryIncentive
+public final class IncentiveSpeed implements VoluntaryIncentive, Stateless<IncentiveSpeed>
 {
+
+    /** Singleton instance. */
+    public static final IncentiveSpeed SINGLETON = new IncentiveSpeed();
+
+    @Override
+    public IncentiveSpeed get()
+    {
+        return SINGLETON;
+    }
 
     /**
      * Constructor.
      */
-    public IncentiveSpeed()
+    private IncentiveSpeed()
     {
         //
     }
 
     @Override
-    public final Desire determineDesire(final Parameters parameters, final LanePerception perception,
+    public Desire determineDesire(final Parameters parameters, final LanePerception perception,
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire, final Desire voluntaryDesire)
             throws ParameterException
     {
@@ -41,7 +51,7 @@ public class IncentiveSpeed implements VoluntaryIncentive
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         return "IncentiveSpeed []";
     }

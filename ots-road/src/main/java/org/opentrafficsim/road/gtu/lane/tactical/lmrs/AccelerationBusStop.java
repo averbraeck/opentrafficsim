@@ -8,6 +8,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.FilteredIterable;
@@ -33,24 +34,33 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class AccelerationBusStop implements AccelerationIncentive
+public final class AccelerationBusStop implements AccelerationIncentive, Stateless<AccelerationIncentive>
 {
 
     /** Distance within which the bus can open the doors. */
     // TODO this process is much more complex: tail blocking other traffic? other bus in front? many people at bus stop?
     private static final Length STOP_DISTANCE = new Length(15.0, LengthUnit.SI);
 
+    /** Singleton instance. */
+    public static final AccelerationBusStop SINGLETON = new AccelerationBusStop();
+
+    @Override
+    public AccelerationBusStop get()
+    {
+        return SINGLETON;
+    }
+
     /**
      * Constructor.
      */
-    public AccelerationBusStop()
+    private AccelerationBusStop()
     {
         //
     }
 
     @Override
     @SuppressWarnings("checkstyle:parameternumber")
-    public final void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
+    public void accelerate(final SimpleOperationalPlan simplePlan, final RelativeLane lane, final Length mergeDistance,
             final LaneBasedGtu gtu, final LanePerception perception, final CarFollowingModel carFollowingModel,
             final Speed speed, final Parameters params, final SpeedLimitInfo speedLimitInfo)
             throws ParameterException, GtuException
@@ -111,7 +121,7 @@ public class AccelerationBusStop implements AccelerationIncentive
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         return "AccelerationBusStop";
     }

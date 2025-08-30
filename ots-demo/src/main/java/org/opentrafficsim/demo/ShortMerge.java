@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -310,36 +311,28 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             ParameterSet params = new ParameterSet();
             params.setDefaultParameter(AbstractIdm.DELTA);
 
-            Supplier<Set<MandatoryIncentive>> mandatorySupplier = () ->
+            Set<Supplier<? extends MandatoryIncentive>> mandatoryIncentives = new LinkedHashSet<>();
+            mandatoryIncentives.add(IncentiveRoute.SINGLETON);
+            if (ADDITIONAL_INCENTIVES)
             {
-                Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
-                mandatoryIncentives.add(new IncentiveRoute());
-                if (ADDITIONAL_INCENTIVES)
+                if ("".equals("We skip this for now"))
                 {
-                    if ("".equals("We skip this for now"))
-                    {
-                        mandatoryIncentives.add(new IncentiveGetInLane());
-                    }
+                    mandatoryIncentives.add(IncentiveGetInLane.SINGLETON);
                 }
-                return mandatoryIncentives;
-            };
-            Supplier<Set<VoluntaryIncentive>> voluntarySupplier = () ->
+            }
+            Set<Supplier<? extends VoluntaryIncentive>> voluntaryIncentives = new LinkedHashSet<>();
+            voluntaryIncentives.add(IncentiveSpeedWithCourtesy.SINGLETON);
+            voluntaryIncentives.add(IncentiveKeep.SINGLETON);
+            if (ADDITIONAL_INCENTIVES)
             {
-                Set<VoluntaryIncentive> voluntaryIncentives = new LinkedHashSet<>();
-                voluntaryIncentives.add(new IncentiveSpeedWithCourtesy());
-                voluntaryIncentives.add(new IncentiveKeep());
-                if (ADDITIONAL_INCENTIVES)
-                {
-                    voluntaryIncentives.add(new IncentiveCourtesy());
-                    voluntaryIncentives.add(new IncentiveSocioSpeed());
-                }
-                return voluntaryIncentives;
-            };
-            Supplier<Set<AccelerationIncentive>> accelerationSupplier = () -> new LinkedHashSet<>();
+                voluntaryIncentives.add(IncentiveCourtesy.SINGLETON);
+                voluntaryIncentives.add(IncentiveSocioSpeed.SINGLETON);
+            }
+            Set<Supplier<? extends AccelerationIncentive>> accelerationIncentives = Collections.emptySet();
 
             LaneBasedTacticalPlannerFactory<Lmrs> tacticalFactory = new LmrsFactory(idmPlusFactory,
                     new DefaultLmrsPerceptionFactory(), SYNCHRONIZATION, COOPERATION, GapAcceptance.INFORMED, Tailgating.NONE,
-                    mandatorySupplier, voluntarySupplier, accelerationSupplier);
+                    mandatoryIncentives, voluntaryIncentives, accelerationIncentives);
 
             GtuType car = DefaultsNl.CAR;
             GtuType truck = DefaultsNl.TRUCK;

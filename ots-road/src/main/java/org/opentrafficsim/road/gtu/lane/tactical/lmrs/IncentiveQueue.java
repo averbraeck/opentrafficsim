@@ -6,6 +6,7 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -36,13 +37,22 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class IncentiveQueue implements VoluntaryIncentive
+public final class IncentiveQueue implements VoluntaryIncentive, Stateless<IncentiveQueue>
 {
+
+    /** Singleton instance. */
+    public static final IncentiveQueue SINGLETON = new IncentiveQueue();
+
+    @Override
+    public IncentiveQueue get()
+    {
+        return SINGLETON;
+    }
 
     /**
      * Constructor.
      */
-    public IncentiveQueue()
+    private IncentiveQueue()
     {
         //
     }
@@ -103,7 +113,7 @@ public class IncentiveQueue implements VoluntaryIncentive
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         return "IncentiveQueue";
     }

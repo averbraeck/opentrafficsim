@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -16,19 +17,28 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class IncentiveDummy implements MandatoryIncentive
+public final class IncentiveDummy implements MandatoryIncentive, Stateless<IncentiveDummy>
 {
+
+    /** Singleton instance. */
+    public static final IncentiveDummy SINGLETON = new IncentiveDummy();
+
+    @Override
+    public IncentiveDummy get()
+    {
+        return SINGLETON;
+    }
 
     /**
      * Constructor.
      */
-    public IncentiveDummy()
+    private IncentiveDummy()
     {
         //
     }
 
     @Override
-    public final Desire determineDesire(final Parameters parameters, final LanePerception perception,
+    public Desire determineDesire(final Parameters parameters, final LanePerception perception,
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire)
             throws ParameterException, OperationalPlanException
     {
@@ -36,7 +46,7 @@ public class IncentiveDummy implements MandatoryIncentive
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         return "IncentiveDummy";
     }

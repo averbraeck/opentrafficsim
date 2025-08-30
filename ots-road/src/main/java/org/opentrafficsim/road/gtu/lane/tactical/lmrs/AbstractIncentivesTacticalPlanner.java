@@ -119,13 +119,13 @@ public abstract class AbstractIncentivesTacticalPlanner extends AbstractLaneBase
         this.mandatoryIncentives.clear();
         this.voluntaryIncentives.clear();
         this.accelerationIncentives.clear();
-        this.mandatoryIncentives.add(new IncentiveRoute());
-        // this.mandatoryIncentives.add(new IncentiveGetInLane());
-        this.voluntaryIncentives.add(new IncentiveSpeedWithCourtesy());
-        this.voluntaryIncentives.add(new IncentiveKeep());
-        this.voluntaryIncentives.add(new IncentiveQueue());
-        this.accelerationIncentives.add(new AccelerationSpeedLimitTransition());
-        this.accelerationIncentives.add(new AccelerationTrafficLights());
+        this.mandatoryIncentives.add(IncentiveRoute.SINGLETON);
+        // this.mandatoryIncentives.add(IncentiveGetInLane.SINGLETON);
+        this.voluntaryIncentives.add(IncentiveSpeedWithCourtesy.SINGLETON);
+        this.voluntaryIncentives.add(IncentiveKeep.SINGLETON);
+        this.voluntaryIncentives.add(IncentiveQueue.SINGLETON);
+        this.accelerationIncentives.add(AccelerationSpeedLimitTransition.SINGLETON);
+        this.accelerationIncentives.add(AccelerationTrafficLights.SINGLETON);
         this.accelerationIncentives.add(new AccelerationConflicts());
     }
 

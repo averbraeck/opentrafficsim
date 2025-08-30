@@ -9,6 +9,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -32,7 +33,7 @@ import org.opentrafficsim.road.network.LaneChangeInfo;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class IncentiveRoute implements MandatoryIncentive
+public final class IncentiveRoute implements MandatoryIncentive, Stateless<IncentiveRoute>
 {
 
     /** Look ahead parameter type. */
@@ -41,16 +42,25 @@ public class IncentiveRoute implements MandatoryIncentive
     /** Look-ahead time for mandatory lane changes parameter type. */
     public static final ParameterTypeDuration T0 = ParameterTypes.T0;
 
+    /** Singleton instance. */
+    public static final IncentiveRoute SINGLETON = new IncentiveRoute();
+
+    @Override
+    public IncentiveRoute get()
+    {
+        return SINGLETON;
+    }
+
     /**
      * Constructor.
      */
-    public IncentiveRoute()
+    private IncentiveRoute()
     {
         //
     }
 
     @Override
-    public final Desire determineDesire(final Parameters parameters, final LanePerception perception,
+    public Desire determineDesire(final Parameters parameters, final LanePerception perception,
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire)
             throws ParameterException, OperationalPlanException
     {
@@ -128,7 +138,7 @@ public class IncentiveRoute implements MandatoryIncentive
     }
 
     @Override
-    public final String toString()
+    public String toString()
     {
         return "IncentiveRoute";
     }

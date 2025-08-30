@@ -65,7 +65,7 @@ public abstract class AbstractLaneBasedTacticalPlannerFactory<T extends LaneBase
         {
             return this.peekedCarFollowingModel;
         }
-        this.peekedCarFollowingModel = this.carFollowingModelFactory.generateCarFollowingModel();
+        this.peekedCarFollowingModel = this.carFollowingModelFactory.get();
         return this.peekedCarFollowingModel;
     }
 

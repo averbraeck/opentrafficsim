@@ -537,36 +537,29 @@ public class StrategiesDemo extends AbstractSimulationScript
         for (GtuType gtuType : new GtuType[] {DefaultsNl.CAR, DefaultsNl.TRUCK})
         {
             // incentives
-            Supplier<Set<MandatoryIncentive>> mandatorySupplier = () ->
+            Set<Supplier<? extends MandatoryIncentive>> mandatoryIncentives = Set.of(IncentiveRoute.SINGLETON);
+
+            Set<Supplier<? extends VoluntaryIncentive>> voluntaryIncentives = new LinkedHashSet<>();
+            voluntaryIncentives.add(IncentiveSpeedWithCourtesy.SINGLETON);
+            voluntaryIncentives.add(IncentiveKeep.SINGLETON);
+            voluntaryIncentives.add(IncentiveSocioSpeed.SINGLETON);
+            if (gtuType.equals(DefaultsNl.TRUCK))
             {
-                Set<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
-                mandatoryIncentives.add(new IncentiveRoute());
-                return mandatoryIncentives;
-            };
-            Supplier<Set<VoluntaryIncentive>> voluntarySupplier = () ->
-            {
-                Set<VoluntaryIncentive> voluntaryIncentives = new LinkedHashSet<>();
-                voluntaryIncentives.add(new IncentiveSpeedWithCourtesy());
-                voluntaryIncentives.add(new IncentiveKeep());
-                voluntaryIncentives.add(new IncentiveSocioSpeed());
-                if (gtuType.equals(DefaultsNl.TRUCK))
-                {
-                    voluntaryIncentives.add(new IncentiveStayRight());
-                }
-                return voluntaryIncentives;
-            };
-            Supplier<Set<AccelerationIncentive>> accelerationSupplier = () -> Collections.emptySet();
+                voluntaryIncentives.add(IncentiveStayRight.SINGLETON);
+            }
+
+            Set<Supplier<? extends AccelerationIncentive>> accelerationIncentives = Collections.emptySet();
+
             // car-following factory
             CarFollowingModelFactory<?> cfFactory = // trucks don't change their desired speed
-                    gtuType.equals(DefaultsNl.CAR) ? new SocioIDMFactory() : new IdmPlusFactory(this.stream);
+                    gtuType.equals(DefaultsNl.CAR) ? new SocioIdmFactory() : new IdmPlusFactory(this.stream);
             // tailgating
             Tailgating tlgt = Tailgating.PRESSURE;
             // strategical and tactical factory
             LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory =
-                    new LaneBasedStrategicalRoutePlannerFactory(
-                            new LmrsFactory(cfFactory, perceptionFactory, Synchronization.PASSIVE, Cooperation.PASSIVE,
-                                    GapAcceptance.INFORMED, tlgt, mandatorySupplier, voluntarySupplier, accelerationSupplier),
-                            parameterFactory);
+                    new LaneBasedStrategicalRoutePlannerFactory(new LmrsFactory(cfFactory, perceptionFactory,
+                            Synchronization.PASSIVE, Cooperation.PASSIVE, GapAcceptance.INFORMED, tlgt, mandatoryIncentives,
+                            voluntaryIncentives, accelerationIncentives), parameterFactory);
             this.factories.put(gtuType, laneBasedStrategicalPlannerFactory);
         }
         for (int i = 0; i < lanes1.size(); i++)
@@ -646,12 +639,12 @@ public class StrategiesDemo extends AbstractSimulationScript
     }
 
     /** IDM factory with socio speed. */
-    class SocioIDMFactory implements CarFollowingModelFactory<IdmPlus>
+    class SocioIdmFactory implements CarFollowingModelFactory<IdmPlus>
     {
         /**
          * Constructor.
          */
-        SocioIDMFactory()
+        SocioIdmFactory()
         {
             //
         }
@@ -665,7 +658,7 @@ public class StrategiesDemo extends AbstractSimulationScript
         }
 
         @Override
-        public IdmPlus generateCarFollowingModel()
+        public IdmPlus get()
         {
             return new IdmPlus(AbstractIdm.HEADWAY, new SocioDesiredSpeed(AbstractIdm.DESIRED_SPEED));
         }

@@ -98,13 +98,13 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
     @Override
     public final void init(final LaneBasedGtu gtu)
     {
-        if (this.desiredHeadwayModel instanceof Initialisable)
+        if (this.desiredHeadwayModel instanceof Initialisable initialisable)
         {
-            ((Initialisable) this.desiredHeadwayModel).init(gtu);
+            initialisable.init(gtu);
         }
-        if (this.desiredSpeedModel instanceof Initialisable)
+        if (this.desiredSpeedModel instanceof Initialisable initialisable)
         {
-            ((Initialisable) this.desiredSpeedModel).init(gtu);
+            initialisable.init(gtu);
         }
     }
 
