@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Random;
 
 import org.djunits.unit.DirectionUnit;
-import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -170,7 +169,7 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
             }
 
             tv.sample(this.simulator.getSimulatorTime().toString(), state.toString());
-            this.simulator.scheduleEventRel(new Duration(1, DurationUnit.SECOND), this, "sample", new Object[] {tv});
+            this.simulator.scheduleEventRel(Duration.ONE, () -> sample(tv));
         }
         catch (IOException e)
         {

@@ -7,8 +7,6 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.perception.HistoryManager;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simulators.DevsSimulatorInterface;
 import nl.tudelft.simulation.naming.context.ContextInterface;
 import nl.tudelft.simulation.naming.context.Contextualized;
@@ -59,41 +57,6 @@ public interface OtsSimulatorInterface extends DevsSimulatorInterface<Duration>,
      */
     void initialize(Time startTime, Duration warmupPeriod, Duration runLength, OtsModelInterface model,
             HistoryManager historyManager, int replicationNr) throws SimRuntimeException, NamingException;
-
-    /**
-     * Construct and schedule a SimEvent using a Time to specify the execution time.
-     * @param executionTime the time at which the event must happen
-     * @param priority should be between <cite>SimEventInterface.MAX_PRIORITY</cite> and
-     *            <cite>SimEventInterface.MIN_PRIORITY</cite>; most normal events should use
-     *            <cite>SimEventInterface.NORMAL_PRIORITY</cite>
-     * @param target the object that must execute the event
-     * @param method the name of the method of <code>target</code> that must execute the event
-     * @param args the arguments of the <code>method</code> that must execute the event
-     * @return the event that was scheduled (the caller should save this if a need to cancel the event may arise later)
-     * @throws SimRuntimeException when the <code>executionTime</code> is in the past
-     */
-    default SimEvent<Duration> scheduleEventAbsTime(final Time executionTime, final short priority, final Object target,
-            final String method, final Object[] args) throws SimRuntimeException
-    {
-        SimEvent<Duration> simEvent = new SimEvent<>(executionTime.minus(getStartTimeAbs()), priority, target, method, args);
-        scheduleEvent(simEvent);
-        return simEvent;
-    }
-
-    /**
-     * Construct and schedule a SimEvent using a Time to specify the execution time.
-     * @param executionTime the time at which the event must happen
-     * @param target the object that must execute the event
-     * @param method the name of the method of <code>target</code> that must execute the event
-     * @param args the arguments of the <code>method</code> that must execute the event
-     * @return the event that was scheduled (the caller should save this if a need to cancel the event may arise later)
-     * @throws SimRuntimeException when the <code>executionTime</code> is in the past
-     */
-    default SimEvent<Duration> scheduleEventAbsTime(final Time executionTime, final Object target, final String method,
-            final Object[] args) throws SimRuntimeException
-    {
-        return scheduleEventAbsTime(executionTime, SimEventInterface.NORMAL_PRIORITY, target, method, args);
-    }
 
     /**
      * Return the absolute simulator time rather than the relative one since the start of the simulation.

@@ -58,7 +58,7 @@ public class RampMetering
         }
         try
         {
-            this.simulator.scheduleEventRel(this.rampSwitch.getInterval(), this, "control", null);
+            this.simulator.scheduleEventRel(this.rampSwitch.getInterval(), () -> control());
         }
         catch (SimRuntimeException exception)
         {

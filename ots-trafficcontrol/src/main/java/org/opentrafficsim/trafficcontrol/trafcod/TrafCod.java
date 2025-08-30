@@ -25,6 +25,7 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
+import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableCollection;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -215,9 +216,11 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
         }
         // Schedule the consistency check (don't call it directly) to allow interested parties to subscribe before the
         // consistency check is performed
-        this.simulator.scheduleEventRel(Duration.ZERO, this, "checkConsistency", null);
+        this.simulator.scheduleEventRel(Duration.ZERO,
+                () -> Try.execute(() -> checkConsistency(), "Exception during TrafCod consistency check."));
         // The first rule evaluation should occur at t=0.1s
-        this.simulator.scheduleEventRel(EVALUATION_INTERVAL, this, "evalExprs", null);
+        this.simulator.scheduleEventRel(EVALUATION_INTERVAL,
+                () -> Try.execute(() -> evalExprs(), "Exception during TrafCod expression evaluation."));
     }
 
     /**
@@ -745,7 +748,8 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
             fireTimedEvent(TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING,
                     new Object[] {getId(), warningMessage.toString()}, this.simulator.getSimulatorTime());
         }
-        this.simulator.scheduleEventRel(EVALUATION_INTERVAL, this, "evalExprs", null);
+        this.simulator.scheduleEventRel(EVALUATION_INTERVAL,
+                () -> Try.execute(() -> evalExprs(), "Exception evaluating expressions in TrafCod."));
     }
 
     /**

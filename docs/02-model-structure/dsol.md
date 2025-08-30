@@ -41,7 +41,8 @@ The generator has a separate chain of events to actually place the GTUs on the n
 ```java
     if (queue.size() == 1)
     {
-        this.simulator.scheduleEventNow(this, "tryToPlaceGtu", new Object[] {lanePosition});
+        this.simulator.scheduleEventNow(
+                    () -> Try.execute(() -> tryToPlaceGTU(lanePosition), "Exception during attempt to place GTU."));
     }
 ```
 
@@ -50,8 +51,8 @@ The method `tryToPlaceGtu(…)` attempts to place the GTU on the network. If suc
 ```java
     if (queue.size() > 0)
     {
-        this.simulator.scheduleEventRel(this.reTryInterval, this, this, 
-                "tryToPlaceGTU", new Object[] { position });
+        this.simulator.scheduleEventRel(this.reTryInterval,
+                    () -> Try.execute(() -> tryToPlaceGTU(position), "Exception during attempt to place GTU."));
     }
 ```
 

@@ -62,6 +62,7 @@ import org.opentrafficsim.road.network.sampling.LaneDataRoad;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.Executable;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 
@@ -162,8 +163,8 @@ public final class ContourPlotTest implements UNITS
         Mockito.when(this.mockedPath.getSections()).thenReturn(new ImmutableArrayList<>(sectionList));
         Mockito.when(this.section0.length()).thenReturn(Length.valueOf("2000m"));
         Mockito.when(this.section1.length()).thenReturn(Length.valueOf("766m"));
-        Mockito.when(this.mockedSimulator.scheduleEventAbsTime(ArgumentMatchers.any(Time.class), ArgumentMatchers.any(),
-                ArgumentMatchers.anyString(), ArgumentMatchers.isNull())).thenAnswer(new Answer<SimEventInterface<Duration>>()
+        Mockito.when(this.mockedSimulator.scheduleEventAbs(ArgumentMatchers.any(Duration.class),
+                ArgumentMatchers.any(Executable.class))).thenAnswer(new Answer<SimEventInterface<Duration>>()
                 {
                     @Override
                     public SimEventInterface<Duration> answer(final InvocationOnMock invocation) throws Throwable

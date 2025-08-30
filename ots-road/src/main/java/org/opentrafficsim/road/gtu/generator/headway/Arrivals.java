@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.generator.headway;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
-import org.djunits.value.vdouble.scalar.Time;
 
 /**
  * Interface for arrivals in an {@code ArrivalsHeadwayGenerator}. Arrivals are defined as a piece-wise linear frequency over
@@ -28,7 +28,7 @@ public interface Arrivals
      * @param sliceStart whether the time is at the start of an arbitrary time slice
      * @return returns the total demand for branching nodes, or the demand at a leaf node, at the given time
      */
-    Frequency getFrequency(Time time, boolean sliceStart);
+    Frequency getFrequency(Duration time, boolean sliceStart);
 
     /**
      * Returns the start time of the next time slice after the given time or {@code null} if no such slice exists. The next time
@@ -38,6 +38,6 @@ public interface Arrivals
      * @param time time after which the first slice start time is requested
      * @return start time of the next time slice after the given time or {@code null} if no such slice exists
      */
-    Time nextTimeSlice(Time time);
+    Duration nextTimeSlice(Duration time);
 
 }

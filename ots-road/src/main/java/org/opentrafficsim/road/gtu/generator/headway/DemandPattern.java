@@ -1,9 +1,9 @@
 package org.opentrafficsim.road.gtu.generator.headway;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.FrequencyVector;
-import org.djunits.value.vdouble.vector.TimeVector;
 import org.opentrafficsim.road.od.Interpolation;
 
 /**
@@ -19,20 +19,20 @@ import org.opentrafficsim.road.od.Interpolation;
  * @param timeVector time vector
  * @param interpolation interpolation
  */
-public record DemandPattern(FrequencyVector demandVector, TimeVector timeVector, Interpolation interpolation)
+public record DemandPattern(FrequencyVector demandVector, DurationVector timeVector, Interpolation interpolation)
         implements Arrivals
 {
 
     @Override
-    public Frequency getFrequency(final Time time, final boolean sliceStart)
+    public Frequency getFrequency(final Duration time, final boolean sliceStart)
     {
         return this.interpolation.interpolateVector(time, this.demandVector, this.timeVector, sliceStart);
     }
 
     @Override
-    public Time nextTimeSlice(final Time time)
+    public Duration nextTimeSlice(final Duration time)
     {
-        for (Time d : this.timeVector)
+        for (Duration d : this.timeVector)
         {
             if (d.gt(time))
             {

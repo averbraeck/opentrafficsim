@@ -139,7 +139,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
     {
         try
         {
-            this.simulator.scheduleEventAbsTime(time, this, "startRecording", new Object[] {lane});
+            this.simulator.scheduleEventAbs(Duration.instantiateSI(time.si), () -> startRecording(lane));
         }
         catch (SimRuntimeException exception)
         {
@@ -152,7 +152,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
     {
         try
         {
-            this.simulator.scheduleEventAbsTime(time, this, "stopRecording", new Object[] {lane});
+            this.simulator.scheduleEventAbs(Duration.instantiateSI(time.si), () -> stopRecording(lane));
         }
         catch (SimRuntimeException exception)
         {
@@ -325,7 +325,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
         SimEventInterface<Duration> simEvent;
         try
         {
-            simEvent = this.simulator.scheduleEventRel(inTime, this, "notifySample", new Object[] {gtu, lane, true});
+            simEvent = this.simulator.scheduleEventRel(inTime, () -> notifySample(gtu, lane, true));
         }
         catch (SimRuntimeException exception)
         {

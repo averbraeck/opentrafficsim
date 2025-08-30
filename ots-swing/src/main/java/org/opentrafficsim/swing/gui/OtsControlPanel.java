@@ -57,7 +57,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.Replication;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.Executable;
 import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 import nl.tudelft.simulation.dsol.simulators.DevsRealTimeAnimator;
 import nl.tudelft.simulation.dsol.simulators.SimulatorInterface;
@@ -101,7 +101,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
     private final OtsSearchPanel otsSearchPanel;
 
     /** The currently registered stop at event. */
-    private SimEvent<Duration> stopAtEvent = null;
+    private SimEventInterface<Duration> stopAtEvent = null;
 
     /** The current enabled state of the buttons. */
     private boolean buttonsEnabled = false;
@@ -304,20 +304,14 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
      * @param priority should be between <cite>SimEventInterface.MAX_PRIORITY</cite> and
      *            <cite>SimEventInterface.MIN_PRIORITY</cite>; most normal events should use
      *            <cite>SimEventInterface.NORMAL_PRIORITY</cite>
-     * @param source the object that creates/schedules the event
-     * @param eventTarget the object that must execute the event
-     * @param method the name of the method of <code>target</code> that must execute the event
-     * @param args the arguments of the <code>method</code> that must execute the event
+     * @param executable executable
      * @return the event that was scheduled (the caller should save this if a need to cancel the event may arise later)
      * @throws SimRuntimeException when the <code>executionTime</code> is in the past
      */
-    private SimEvent<Duration> scheduleEvent(final Time executionTime, final short priority, final Object source,
-            final Object eventTarget, final String method, final Object[] args) throws SimRuntimeException
+    private SimEventInterface<Duration> scheduleEvent(final Duration executionTime, final short priority,
+            final Executable executable) throws SimRuntimeException
     {
-        SimEvent<Duration> simEvent =
-                new SimEvent<>(executionTime.minus(getSimulator().getStartTimeAbs()), priority, eventTarget, method, args);
-        this.simulator.scheduleEvent(simEvent);
-        return simEvent;
+        return this.simulator.scheduleEventAbs(executionTime, priority, executable);
     }
 
     /**
@@ -419,12 +413,10 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                     // System.out.println("NextTime: Stopping simulator");
                     getSimulator().stop();
                 }
-                double now = getSimulator().getSimulatorTime().getSI();
-                // System.out.println("now is " + now);
                 try
                 {
-                    this.stopAtEvent = scheduleEvent(new Time(now, TimeUnit.DEFAULT), SimEventInterface.MIN_PRIORITY, this,
-                            this, "autoPauseSimulator", null);
+                    this.stopAtEvent = scheduleEvent(getSimulator().getSimulatorTime(), SimEventInterface.MIN_PRIORITY,
+                            () -> autoPauseSimulator());
                 }
                 catch (SimRuntimeException exception)
                 {
@@ -578,11 +570,11 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             {
                 exception1.printStackTrace();
             }
-            double currentTick = getSimulator().getSimulatorTime().getSI();
-            double nextTick = getSimulator().getEventList().first().getAbsoluteExecutionTime().getSI();
+            Duration currentTick = getSimulator().getSimulatorTime();
+            Duration nextTick = getSimulator().getEventList().first().getAbsoluteExecutionTime();
             // System.out.println("currentTick is " + currentTick);
             // System.out.println("nextTick is " + nextTick);
-            if (nextTick > currentTick)
+            if (nextTick.gt(currentTick))
             {
                 // The clock is now just beyond where it was when the user requested the NextTime operation
                 // Insert another autoPauseSimulator event just before what is now the time of the next event
@@ -590,8 +582,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 // System.out.println("Re-Scheduling at " + nextTick);
                 try
                 {
-                    this.stopAtEvent = scheduleEvent(new Time(nextTick, TimeUnit.DEFAULT), SimEventInterface.MAX_PRIORITY, this,
-                            this, "autoPauseSimulator", null);
+                    this.stopAtEvent = scheduleEvent(nextTick, SimEventInterface.MAX_PRIORITY, () -> autoPauseSimulator());
                     // System.out.println("AutoPauseSimulator: starting simulator");
                     getSimulator().start();
                 }
@@ -667,8 +658,8 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         {
             try
             {
-                this.stopAtEvent = scheduleEvent(new Time(stopTime, TimeUnit.DEFAULT), SimEventInterface.MAX_PRIORITY, this,
-                        this, "autoPauseSimulator", null);
+                this.stopAtEvent = scheduleEvent(Duration.instantiateSI(stopTime), SimEventInterface.MAX_PRIORITY,
+                        () -> autoPauseSimulator());
             }
             catch (SimRuntimeException exception)
             {

@@ -54,7 +54,7 @@ import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.PerceivableContext;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 
 /**
  * Implements the basic functionalities of any GTU: the ability to move on 3D-space according to a plan.
@@ -111,7 +111,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
     private final Historical<OperationalPlan> operationalPlan;
 
     /** The next move event as scheduled on the simulator, can be used for interrupting the current move. */
-    private SimEvent<Duration> nextMoveEvent;
+    private SimEventInterface<Duration> nextMoveEvent;
 
     /** The model in which this GTU is registered. */
     private PerceivableContext perceivableContext;
@@ -464,19 +464,17 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
                 double tNext = Math.floor(now.si / this.alignStep + 1.0) * this.alignStep;
                 DirectedPoint2d p = (tNext - now.si < this.alignStep) ? newOperationalPlan.getEndLocation()
                         : newOperationalPlan.getLocation(new Duration(tNext - now.si, DurationUnit.SI));
-                this.nextMoveEvent =
-                        new SimEvent<Duration>(new Duration(tNext - getSimulator().getStartTimeAbs().si, DurationUnit.SI), this,
-                                "move", new Object[] {p});
+                this.nextMoveEvent = this.simulator.scheduleEventRel(Duration.instantiateSI(tNext),
+                        () -> Try.execute(() -> move(p), "ParameterException in move"));
             }
             else
             {
                 // schedule the next move at the end of the current operational plan
                 // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
-                this.nextMoveEvent =
-                        new SimEvent<>(now.plus(newOperationalPlan.getTotalDuration()).minus(getSimulator().getStartTimeAbs()),
-                                this, "move", new Object[] {newOperationalPlan.getEndLocation()});
+                this.nextMoveEvent = this.simulator.scheduleEventRel(newOperationalPlan.getTotalDuration(),
+                        () -> Try.execute(() -> move(newOperationalPlan.getEndLocation()), "ParameterException in move"));
             }
-            this.simulator.scheduleEvent(this.nextMoveEvent);
+
             fireTimedEvent(Gtu.MOVE_EVENT,
                     new Object[] {getId(),
                             new PositionVector(new double[] {fromLocation.x, fromLocation.y}, PositionUnit.METER),
@@ -1066,7 +1064,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * Note that destroying the next move event of the GTU can be dangerous!
      * @return nextMoveEvent the next move event of the GTU, e.g. to cancel it from outside.
      */
-    public final SimEvent<Duration> getNextMoveEvent()
+    public final SimEventInterface<Duration> getNextMoveEvent()
     {
         return this.nextMoveEvent;
     }

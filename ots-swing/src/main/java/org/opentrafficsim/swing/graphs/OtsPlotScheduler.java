@@ -9,7 +9,7 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.draw.graphs.AbstractPlot;
 import org.opentrafficsim.draw.graphs.PlotScheduler;
 
-import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEvent;
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 
 /**
  * This scheduler allows plots to work live with an OTS simulation.
@@ -26,7 +26,7 @@ public class OtsPlotScheduler implements PlotScheduler
     private final OtsSimulatorInterface simulator;
 
     /** Lastest update event per plot. */
-    private final Map<AbstractPlot, SimEvent<Duration>> events = new LinkedHashMap<>();
+    private final Map<AbstractPlot, SimEventInterface<Duration>> events = new LinkedHashMap<>();
 
     /**
      * Constructor.
@@ -40,13 +40,13 @@ public class OtsPlotScheduler implements PlotScheduler
     @Override
     public Time getTime()
     {
-        return this.simulator.getSimulatorAbsTime();
+        return Time.instantiateSI(this.simulator.getSimulatorTime().si);
     }
 
     @Override
     public void cancelEvent(final AbstractPlot abstractPlot)
     {
-        SimEvent<Duration> event = this.events.get(abstractPlot);
+        SimEventInterface<Duration> event = this.events.get(abstractPlot);
         if (event != null)
         {
             this.simulator.cancelEvent(event);
@@ -54,9 +54,9 @@ public class OtsPlotScheduler implements PlotScheduler
     }
 
     @Override
-    public void scheduleUpdate(final Time time, final AbstractPlot abstractPlot)
+    public void scheduleUpdate(final Duration time, final AbstractPlot abstractPlot)
     {
-        this.events.put(abstractPlot, this.simulator.scheduleEventAbsTime(time, abstractPlot, "update", null));
+        this.events.put(abstractPlot, this.simulator.scheduleEventAbs(time, () -> abstractPlot.update()));
     }
 
 }

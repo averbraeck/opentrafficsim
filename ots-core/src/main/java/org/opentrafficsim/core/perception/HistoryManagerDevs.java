@@ -36,9 +36,6 @@ public class HistoryManagerDevs extends HistoryManager implements EventListener
     /** Clean-up interval. */
     private final Duration cleanUpInterval;
 
-    /** Event input, can be the same as it's nothing. */
-    private final Object[] none = new Object[0];
-
     /**
      * Constructor.
      * @param simulator simulator
@@ -81,7 +78,7 @@ public class HistoryManagerDevs extends HistoryManager implements EventListener
         }
         try
         {
-            this.simulator.scheduleEventRel(this.cleanUpInterval, this, "cleanUpHistory", this.none);
+            this.simulator.scheduleEventRel(this.cleanUpInterval, () -> cleanUpHistory());
         }
         catch (SimRuntimeException exception)
         {

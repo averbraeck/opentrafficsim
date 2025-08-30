@@ -187,14 +187,13 @@ public class CycleTimeLightController implements RampMeteringLightController
                     {
                         getSimulator().getLogger().always().info("Traffic light set to YELLOW (RED over 'MIN_RED_TIME')");
                         this.trafficLight.setTrafficLightColor(TrafficLightColor.YELLOW);
-                        CycleTimeLightController.this.redEvents.put(this.trafficLight,
-                                CycleTimeLightController.this.simulator.scheduleEventRel(MIN_RED_TIME,
-                                        CycleTimeLightController.this, "setRed", new Object[] {this.trafficLight}));
+                        CycleTimeLightController.this.redEvents.put(this.trafficLight, CycleTimeLightController.this.simulator
+                                .scheduleEventRel(MIN_RED_TIME, () -> CycleTimeLightController.this.setRed(this.trafficLight)));
                         green = cycleRedTime;
                     }
                     CycleTimeLightController.this.greenEvents.put(this.trafficLight,
-                            CycleTimeLightController.this.simulator.scheduleEventAbsTime(green, CycleTimeLightController.this,
-                                    "setGreen", new Object[] {this.trafficLight}));
+                            CycleTimeLightController.this.simulator.scheduleEventAbs(Duration.instantiateSI(green.si),
+                                    () -> CycleTimeLightController.this.setGreen(this.trafficLight)));
                 }
                 catch (SimRuntimeException exception)
                 {

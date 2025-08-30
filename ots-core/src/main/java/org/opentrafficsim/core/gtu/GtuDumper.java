@@ -41,7 +41,7 @@ public class GtuDumper
                         Math.toDegrees(dp.getDirZ()), gtu.getSpeed());
             }
             pw.close();
-            this.simulator.scheduleEventRel(this.interval, this, "dump", new Object[] {});
+            this.simulator.scheduleEventRel(this.interval, () -> dump());
         }
         catch (Exception e)
         {
@@ -70,13 +70,13 @@ public class GtuDumper
      *            file name. The file type will be .txt
      * @throws SimRuntimeException when scheduling the first dump time fails
      */
-    public GtuDumper(final Time firstDumpTime, final Duration interval, final Network network, final String fileNamePrefix)
+    public GtuDumper(final Duration firstDumpTime, final Duration interval, final Network network, final String fileNamePrefix)
             throws SimRuntimeException
     {
         Throw.whenNull(network, "Network may not be null");
         this.simulator = network.getSimulator();
         Throw.whenNull(firstDumpTime, "firstDumpTime may not be null");
-        Throw.when(firstDumpTime.lt(this.simulator.getSimulatorAbsTime()), RuntimeException.class,
+        Throw.when(firstDumpTime.lt(this.simulator.getSimulatorTime()), RuntimeException.class,
                 "firstDumptTime may not be before current simulator time");
         Throw.whenNull(interval, "interval may not be null");
         Throw.when(interval.le(Duration.ZERO), RuntimeException.class, "Duration must be positive");
@@ -84,7 +84,7 @@ public class GtuDumper
         this.interval = interval;
         this.network = network;
         this.fileNamePrefix = fileNamePrefix;
-        this.simulator.scheduleEventAbsTime(firstDumpTime, this, "dump", new Object[] {});
+        this.simulator.scheduleEventAbs(firstDumpTime, () -> dump());
     }
 
     @Override

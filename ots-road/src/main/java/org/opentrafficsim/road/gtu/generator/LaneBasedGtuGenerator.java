@@ -17,12 +17,12 @@ import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
+import org.djutils.exceptions.Try;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.TimeStampedObject;
@@ -165,7 +165,9 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
         Duration headway = this.interarrivelTimeGenerator.get();
         if (headway != null) // otherwise no demand at all
         {
-            simulator.scheduleEventRel(headway, this, "generateCharacteristics", new Object[] {});
+
+            simulator.scheduleEventRel(headway,
+                    () -> Try.execute(() -> generateCharacteristics(), "Exception generating characteristics."));
         }
         this.network.addNonLocatedObject(this);
         if (this.idGenerator instanceof IdsWithCharacteristics ids && ids.hasIds())
@@ -260,7 +262,8 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
         Duration headway = this.interarrivelTimeGenerator.get();
         if (headway != null)
         {
-            this.simulator.scheduleEventRel(headway, this, "generateCharacteristics", new Object[] {});
+            this.simulator.scheduleEventRel(headway,
+                    () -> Try.execute(() -> generateCharacteristics(), "Exception generating characteristics."));
         }
         // @end
     }
@@ -307,13 +310,15 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
             placeGtu(characteristics, placement.getPosition(), placement.getSpeed());
             if (queue.size() > 0)
             {
-                this.simulator.scheduleEventNow(this, "tryToPlaceGTU", new Object[] {position});
+                this.simulator.scheduleEventNow(
+                        () -> Try.execute(() -> tryToPlaceGTU(position), "Exception during attempt to place GTU."));
             }
         }
         // @docs/02-model-structure/dsol.md#event-based-simulation (without the 'else')
         else if (queue.size() > 0)
         {
-            this.simulator.scheduleEventRel(this.reTryInterval, this, "tryToPlaceGTU", new Object[] {position});
+            this.simulator.scheduleEventRel(this.reTryInterval,
+                    () -> Try.execute(() -> tryToPlaceGTU(position), "Exception during attempt to place GTU."));
         }
         // @end
     }
@@ -372,7 +377,8 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
         // @docs/02-model-structure/dsol.md#event-based-simulation
         if (queue.size() == 1)
         {
-            this.simulator.scheduleEventNow(this, "tryToPlaceGTU", new Object[] {lanePosition});
+            this.simulator.scheduleEventNow(
+                    () -> Try.execute(() -> tryToPlaceGTU(lanePosition), "Exception during attempt to place GTU."));
         }
         // @end
     }
@@ -472,11 +478,11 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
      * @param lane lane to disable generation on
      * @throws SimRuntimeException if time is incorrect
      */
-    public void disable(final Time start, final Time end, final Lane lane) throws SimRuntimeException
+    public void disable(final Duration start, final Duration end, final Lane lane) throws SimRuntimeException
     {
         Throw.when(end.lt(start), SimRuntimeException.class, "End time %s is before start time %s.", end, start);
-        this.simulator.scheduleEventAbsTime(start, this, "disable", new Object[] {lane});
-        this.simulator.scheduleEventAbsTime(end, this, "enable", new Object[0]);
+        this.simulator.scheduleEventAbs(start, () -> disable(lane));
+        this.simulator.scheduleEventAbs(end, () -> enable());
     }
 
     /**

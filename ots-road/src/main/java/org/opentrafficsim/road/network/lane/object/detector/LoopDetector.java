@@ -265,7 +265,7 @@ public class LoopDetector extends LaneDetector
         this.currentAggregation = Duration.instantiateSI(firstAggregation.si);
         this.aggregation = aggregation;
         this.firstAggregation = firstAggregation;
-        Try.execute(() -> getSimulator().scheduleEventAbsTime(firstAggregation, this, "aggregate", null), "");
+        Try.execute(() -> getSimulator().scheduleEventAbs(this.currentAggregation, () -> aggregate()), "");
         this.measurements = measurements;
         this.periodicMeasurements = Arrays.stream(measurements).filter((m) -> m.isPeriodic()).collect(Collectors.toSet());
         this.data.put(null, new GtuTypeData());
@@ -410,8 +410,8 @@ public class LoopDetector extends LaneDetector
             }
         }
         this.currentAggregation = this.aggregation; // after first possibly irregular period, all periods regular
-        Time time = Time.instantiateSI(this.firstAggregation.si + this.aggregation.si * this.period++);
-        Try.execute(() -> getSimulator().scheduleEventAbsTime(time, this, "aggregate", null), "");
+        Duration time = Duration.instantiateSI(this.firstAggregation.si).plus(this.aggregation.times(this.period++));
+        Try.execute(() -> getSimulator().scheduleEventAbs(time, () -> aggregate()), "");
     }
 
     /**

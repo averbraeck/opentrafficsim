@@ -56,8 +56,7 @@ public final class OtsSimulatorTest
         assertEquals(runLength, simulator.getReplication().getRunLength(), "runLength is returned");
         assertTrue(simulator.toString().startsWith("OtsSimulator"), "toString returns something descriptive");
         String testArgument = "test argument";
-        simulator.scheduleEventAbsTime(new Time(400, TimeUnit.BASE_SECOND), (short) 0, this, "eventReceiver",
-                new Object[] {testArgument});
+        simulator.scheduleEventAbs(Duration.instantiateSI(400.0), (short) 0, () -> eventReceiver(testArgument));
         simulator.start();
         while (simulator.isStartingOrRunning())
         {

@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.base.Identifiable;
 import org.djutils.event.Event;
 import org.djutils.exceptions.Throw;
@@ -92,7 +91,7 @@ public class FixedTimeController extends AbstractTrafficController
         this.signalGroups = new LinkedHashSet<>(signalGroups); // make a copy so we can modify it.
         mergeGreenPhasesInNewSignalGroups();
         // Schedule setup at time == 0 (when the network should be fully created and all traffic lights have been constructed)
-        simulator.scheduleEventAbsTime(Time.ZERO, this, "setup", new Object[] {simulator, network});
+        simulator.scheduleEventAbs(Duration.ZERO, () -> setup(simulator, network));
     }
 
     /**
@@ -474,7 +473,7 @@ public class FixedTimeController extends AbstractTrafficController
                 throw new SimRuntimeException("Cannot determine initial state of signal group " + this);
             }
             setTrafficLights(this.currentColor);
-            this.simulator.scheduleEventRel(duration, this, "updateColors", null);
+            this.simulator.scheduleEventRel(duration, () -> updateColors());
         }
 
         /**
@@ -512,7 +511,7 @@ public class FixedTimeController extends AbstractTrafficController
                     }
                 }
                 setTrafficLights(color);
-                this.simulator.scheduleEventRel(duration, this, "updateColors", null);
+                this.simulator.scheduleEventRel(duration, () -> updateColors());
             }
             catch (SimRuntimeException exception)
             {

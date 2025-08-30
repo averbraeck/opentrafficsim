@@ -15,7 +15,6 @@ import java.util.List;
 import javax.naming.NamingException;
 
 import org.djunits.unit.DurationUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -88,7 +87,7 @@ public final class GtuDumperTest implements OtsModelInterface
         this.network = new Network("Network for testing GTUDumper class", this.simulator);
         this.simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(1, DurationUnit.HOUR), this,
                 HistoryManagerDevs.noHistory(this.simulator));
-        this.simulator.scheduleEventAbsTime(new Time(40.0, TimeUnit.BASE_SECOND), this, "createGtu", new Object[] {});
+        this.simulator.scheduleEventAbs(Duration.instantiateSI(40.0), () -> createGtu());
         this.simulator.start();
         while (this.simulator.isStartingOrRunning())
         {
@@ -137,8 +136,8 @@ public final class GtuDumperTest implements OtsModelInterface
         // System.out.println("constructModel called.");
         try
         {
-            this.gtuDumper = new GtuDumper(new Time(10, TimeUnit.BASE_SECOND), new Duration(300, DurationUnit.SECOND),
-                    this.network, this.containerDir.getCanonicalPath() + "/");
+            this.gtuDumper = new GtuDumper(Duration.instantiateSI(10.0), new Duration(300, DurationUnit.SECOND), this.network,
+                    this.containerDir.getCanonicalPath() + "/");
         }
         catch (SimRuntimeException | IOException e)
         {
@@ -212,8 +211,7 @@ public final class GtuDumperTest implements OtsModelInterface
                 HistoryManagerDevs.noHistory(this.simulator));
         try
         {
-            new GtuDumper(null, new Duration(300, DurationUnit.SECOND), this.network,
-                    this.containerDir.getCanonicalPath() + "/");
+            new GtuDumper(null, Duration.instantiateSI(300.0), this.network, this.containerDir.getCanonicalPath() + "/");
             fail("null firstDumpTime should have thrown a NullPointerException");
         }
         catch (NullPointerException npe)
@@ -223,7 +221,7 @@ public final class GtuDumperTest implements OtsModelInterface
 
         try
         {
-            new GtuDumper(new Time(10, TimeUnit.BASE_SECOND), null, this.network, this.containerDir.getCanonicalPath() + "/");
+            new GtuDumper(Duration.instantiateSI(10.0), null, this.network, this.containerDir.getCanonicalPath() + "/");
             fail("null interval should have thrown a NullPointerException");
         }
         catch (NullPointerException npe)
@@ -233,7 +231,7 @@ public final class GtuDumperTest implements OtsModelInterface
 
         try
         {
-            new GtuDumper(new Time(10, TimeUnit.BASE_SECOND), new Duration(300, DurationUnit.SECOND), null,
+            new GtuDumper(Duration.instantiateSI(10.0), Duration.instantiateSI(300.0), null,
                     this.containerDir.getCanonicalPath() + "/");
             fail("null network should have thrown a NullPointerException");
         }
@@ -244,7 +242,7 @@ public final class GtuDumperTest implements OtsModelInterface
 
         try
         {
-            new GtuDumper(new Time(10, TimeUnit.BASE_SECOND), new Duration(300, DurationUnit.SECOND), this.network, null);
+            new GtuDumper(Duration.instantiateSI(10.0), Duration.instantiateSI(300.0), this.network, null);
             fail("null fileNamePrefix should have thrown a NullPointerException");
         }
         catch (NullPointerException npe)
@@ -254,7 +252,7 @@ public final class GtuDumperTest implements OtsModelInterface
 
         try
         {
-            new GtuDumper(new Time(-10, TimeUnit.BASE_SECOND), new Duration(300, DurationUnit.SECOND), this.network,
+            new GtuDumper(Duration.instantiateSI(-10.0), Duration.instantiateSI(300.0), this.network,
                     this.containerDir.getCanonicalPath() + "/");
             fail("null parameter should have thrown a NullPointerException");
         }
@@ -265,7 +263,7 @@ public final class GtuDumperTest implements OtsModelInterface
 
         try
         {
-            new GtuDumper(new Time(10, TimeUnit.BASE_SECOND), new Duration(-300, DurationUnit.SECOND), this.network,
+            new GtuDumper(Duration.instantiateSI(10.0), Duration.instantiateSI(-300.0), this.network,
                     this.containerDir.getCanonicalPath() + "/");
             fail("firstDumpTime before current simulator time should have thrown a RuntimeException");
         }

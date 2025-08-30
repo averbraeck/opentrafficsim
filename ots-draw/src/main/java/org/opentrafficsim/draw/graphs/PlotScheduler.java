@@ -1,5 +1,6 @@
 package org.opentrafficsim.draw.graphs;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 
 /**
@@ -33,7 +34,7 @@ public interface PlotScheduler
         }
 
         @Override
-        public void scheduleUpdate(final Time time, final AbstractPlot abstractPlot)
+        public void scheduleUpdate(final Duration time, final AbstractPlot abstractPlot)
         {
             // no action required
         }
@@ -52,10 +53,10 @@ public interface PlotScheduler
     void cancelEvent(AbstractPlot abstractPlot);
 
     /**
-     * Schedule {@code update()} call on abstractPlot
+     * Schedule {@code update()} call on abstractPlot.
      * @param time time.
      * @param abstractPlot plot.
      */
-    void scheduleUpdate(Time time, AbstractPlot abstractPlot);
+    void scheduleUpdate(Duration time, AbstractPlot abstractPlot);
 
 }

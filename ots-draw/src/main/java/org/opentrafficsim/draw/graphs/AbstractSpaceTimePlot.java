@@ -76,7 +76,7 @@ public abstract class AbstractSpaceTimePlot extends AbstractBoundedPlot
     }
 
     @Override
-    protected void update()
+    public void update()
     {
         if (getUpdateTime() != null && this.initialEnd != null)
         {

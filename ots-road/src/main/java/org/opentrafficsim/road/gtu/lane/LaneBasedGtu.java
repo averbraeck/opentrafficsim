@@ -763,7 +763,8 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                     Time lateralCrossingTime = getTimeOfLateralCrossing(firstTimeOnLane, lastTimeOnLane, willRoam);
                     if (willRoam)
                     {
-                        this.roamEvent = getSimulator().scheduleEventAbsTime(lateralCrossingTime, this, "exitLane", null);
+                        this.roamEvent = getSimulator().scheduleEventAbs(Duration.instantiateSI(lateralCrossingTime.si),
+                                () -> exitLane());
                         return; // no further lanes to check when roaming
                     }
                     else
@@ -781,8 +782,10 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                             double fractionOnTargetLane = positionOnTargetLane.si / laneOnPath.getLength().si;
                             planStartPositionAtLaneOnPath = positionOnTargetLane.minus(distanceTillLaneChange);
                             this.pendingLanesToEnter.put(lateralCrossingTime, laneOnPath);
-                            this.pendingEnterEvents.put(laneOnPath, getSimulator().scheduleEventAbsTime(lateralCrossingTime,
-                                    this, "enterLane", new Object[] {laneOnPath, fractionOnTargetLane}));
+                            Lane finalLane = laneOnPath;
+                            this.pendingEnterEvents.put(laneOnPath,
+                                    getSimulator().scheduleEventAbs(Duration.instantiateSI(lateralCrossingTime.si),
+                                            () -> enterLane(finalLane, fractionOnTargetLane)));
                         }
                     }
                 }
@@ -802,7 +805,8 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                     {
                         Time timeRearLeaving = Try.assign(() -> getOperationalPlan().getTimeAtDistance(distanceRearLeaving),
                                 "Distance till rear leaves link is beyond plan.");
-                        this.roamEvent = getSimulator().scheduleEventAbsTime(timeRearLeaving, this, "exitLane", null);
+                        this.roamEvent =
+                                getSimulator().scheduleEventAbs(Duration.instantiateSI(timeRearLeaving.si), () -> exitLane());
                         return; // no further lanes to check when roaming
                     }
                 }
@@ -815,8 +819,9 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                         CategoryLogger.always().error("GTU {} enters lane through hack.", getId());
                     }
                     this.pendingLanesToEnter.put(enterTime, laneOnPath);
-                    this.pendingEnterEvents.put(laneOnPath,
-                            getSimulator().scheduleEventAbsTime(enterTime, this, "enterLane", new Object[] {laneOnPath, 0.0}));
+                    Lane finalLane = laneOnPath;
+                    this.pendingEnterEvents.put(laneOnPath, getSimulator()
+                            .scheduleEventAbs(Duration.instantiateSI(enterTime.si), () -> enterLane(finalLane, 0.0)));
                 }
             }
             else
@@ -965,8 +970,8 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                 {
                     Time triggerTime = Try.assign(() -> getOperationalPlan().getTimeAtDistance(toDetector),
                             "Distance to detector beyond plan length.");
-                    this.detectorEvents.add(getSimulator().scheduleEventAbsTime(triggerTime, this, "triggerDetector",
-                            new Object[] {trigger.getKey()}));
+                    this.detectorEvents.add(getSimulator().scheduleEventAbs(Duration.instantiateSI(triggerTime.si),
+                            () -> triggerDetector(trigger.getKey())));
                 }
             }
         }

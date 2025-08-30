@@ -16,7 +16,6 @@ import org.djunits.unit.FrequencyUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -416,7 +415,7 @@ public final class OdApplier
                 @Override
                 public LaneBasedGtuCharacteristics draw() throws ParameterException, GtuException
                 {
-                    Time time = simulator.getSimulatorAbsTime();
+                    Duration time = simulator.getSimulatorTime();
                     Node origin = root.getObject();
                     DemandNode<Node, DemandNode<Category, ?>> destinationNode = root.draw(time);
                     Node destination = destinationNode.getObject();
@@ -748,7 +747,7 @@ public final class OdApplier
          * @param time simulation time
          * @return randomly drawn child node
          */
-        public K draw(final Time time)
+        public K draw(final Duration time)
         {
             Throw.when(this.children.isEmpty(), RuntimeException.class, "Calling draw on a leaf node in the demand tree.");
             Map<K, Double> weightMap = new LinkedHashMap<>();
@@ -818,7 +817,7 @@ public final class OdApplier
         }
 
         @Override
-        public Frequency getFrequency(final Time time, final boolean sliceStart)
+        public Frequency getFrequency(final Duration time, final boolean sliceStart)
         {
             if (this.demandPattern != null)
             {
@@ -833,16 +832,16 @@ public final class OdApplier
         }
 
         @Override
-        public Time nextTimeSlice(final Time time)
+        public Duration nextTimeSlice(final Duration time)
         {
             if (this.demandPattern != null)
             {
                 return this.demandPattern.nextTimeSlice(time);
             }
-            Time out = null;
+            Duration out = null;
             for (K child : this.children)
             {
-                Time childSlice = child.nextTimeSlice(time);
+                Duration childSlice = child.nextTimeSlice(time);
                 out = out == null || (childSlice != null && childSlice.lt(out)) ? childSlice : out;
             }
             return out;

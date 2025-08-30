@@ -12,7 +12,6 @@ import java.util.Set;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
-import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Network;
@@ -101,7 +100,7 @@ public class StochasticDistractionModel implements EventListener
             Task task = distraction.getTask(gtu);
             ((Fuller) gtu.getTacticalPlanner().getPerception().getMental()).addTask(task);
             // stop the distraction
-            this.simulator.scheduleEventRel(distraction.nextDuration(), this, "stopDistraction", new Object[] {gtu, task});
+            this.simulator.scheduleEventRel(distraction.nextDuration(), () -> stopDistraction(gtu, task));
         }
         else
         {
@@ -115,8 +114,7 @@ public class StochasticDistractionModel implements EventListener
         if (scheduleNext)
         {
             // schedule next distraction
-            this.simulator.scheduleEventRel(distraction.nextInterArrival(), this, "startDistraction",
-                    new Object[] {gtu, distraction, true});
+            this.simulator.scheduleEventRel(distraction.nextInterArrival(), () -> startDistraction(gtu, distraction, true));
         }
     }
 
@@ -172,10 +170,8 @@ public class StochasticDistractionModel implements EventListener
                 {
                     if (distraction.nextExposure())
                     {
-                        Try.execute(
-                                () -> this.simulator.scheduleEventRel(distraction.nextInterArrival(), this, "startDistraction",
-                                        new Object[] {gtu, distraction, true}),
-                                "Exception while scheduling distraction start.");
+                        this.simulator.scheduleEventRel(distraction.nextInterArrival(),
+                                () -> startDistraction(gtu, distraction, true));
                     }
                 }
             }

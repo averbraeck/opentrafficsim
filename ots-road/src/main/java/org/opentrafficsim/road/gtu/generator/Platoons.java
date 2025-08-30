@@ -9,11 +9,12 @@ import java.util.TreeMap;
 
 import javax.naming.NamingException;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.FrequencyVector;
-import org.djunits.value.vdouble.vector.TimeVector;
 import org.djutils.exceptions.Throw;
+import org.djutils.exceptions.Try;
 import org.djutils.math.means.ArithmeticMean;
 import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -63,13 +64,13 @@ public abstract class Platoons<T>
     private final Queue<PlatoonGtu<T>> queue = new PriorityQueue<>();
 
     /** Map of platoon start and end times. */
-    private final SortedMap<Time, Time> periods = new TreeMap<>();
+    private final SortedMap<Duration, Duration> periods = new TreeMap<>();
 
     /** Start time of current platoon. */
-    private Time startTime;
+    private Duration startTime;
 
     /** End time of current platoon. */
-    private Time endTime;
+    private Duration endTime;
 
     /** Origin to use on added GTU. */
     private Node fixedOrigin;
@@ -120,8 +121,8 @@ public abstract class Platoons<T>
             protected void placeGtu(final PlatoonGtu<Category> platoonGtu) throws SimRuntimeException, NamingException,
                     GtuException, NetworkException, OtsGeometryException, ParameterException
             {
-                getGenerator().queueGtu(this.characteristicsOD.draw(platoonGtu.getOrigin(), platoonGtu.getDestination(),
-                        platoonGtu.getCategory(), this.strm), getPosition());
+                getGenerator().queueGtu(this.characteristicsOD.draw(platoonGtu.origin(), platoonGtu.destination(),
+                        platoonGtu.category(), this.strm), getPosition());
                 start();
             }
         };
@@ -163,7 +164,7 @@ public abstract class Platoons<T>
      * @return for method chaining
      * @throws SimRuntimeException on exception
      */
-    public Platoons<T> addPlatoon(final Time start, final Time end) throws SimRuntimeException
+    public Platoons<T> addPlatoon(final Duration start, final Duration end) throws SimRuntimeException
     {
         Throw.when(this.started, IllegalStateException.class, "Cannot add a platoon after the Platoons was started.");
         Throw.whenNull(start, "Start may not be null.");
@@ -196,7 +197,7 @@ public abstract class Platoons<T>
      * @return for method chaining
      * @throws IllegalStateException if no fixed info was set using {@code fixInfo}
      */
-    public Platoons<T> addGtu(final Time time)
+    public Platoons<T> addGtu(final Duration time)
     {
         Throw.when(this.fixedOrigin == null || this.fixedDestination == null || this.fixedCategory == null,
                 IllegalStateException.class, "When using addGtu(Time), used fixInfo(...) before to set other info.");
@@ -212,7 +213,7 @@ public abstract class Platoons<T>
      * @return for method chaining
      * @throws IllegalStateException if no platoon was started or time is outside of the platoon time range
      */
-    public Platoons<T> addGtu(final Time time, final Node origin, final Node destination, final T category)
+    public Platoons<T> addGtu(final Duration time, final Node origin, final Node destination, final T category)
     {
         Throw.when(this.started, IllegalStateException.class, "Cannot add a GTU after the Platoons was started.");
         Throw.when(this.startTime == null || this.endTime == null, IllegalStateException.class,
@@ -234,10 +235,10 @@ public abstract class Platoons<T>
         Throw.when(this.started, IllegalStateException.class, "Cannot start the Platoons, it was already started.");
         this.gen = generator;
         // check platoon overlap
-        Time prevEnd = null;
-        for (Map.Entry<Time, Time> entry : this.periods.entrySet())
+        Duration prevEnd = null;
+        for (Map.Entry<Duration, Duration> entry : this.periods.entrySet())
         {
-            Time start = entry.getKey();
+            Duration start = entry.getKey();
             Throw.when(prevEnd != null && start.le(prevEnd), IllegalStateException.class, "Platoons are overlapping.");
             prevEnd = entry.getValue();
             this.gen.disable(start, prevEnd, this.position);
@@ -272,8 +273,8 @@ public abstract class Platoons<T>
     {
         if (!this.queue.isEmpty())
         {
-            this.simulator.scheduleEventAbsTime(this.queue.peek().getTime(), this, "placeGtu",
-                    new Object[] {this.queue.poll()});
+            this.simulator.scheduleEventAbs(this.queue.peek().time(),
+                    () -> Try.execute(() -> placeGtu(this.queue.poll()), "Exception while placing platoon GTU."));
         }
     }
 
@@ -286,7 +287,7 @@ public abstract class Platoons<T>
      * @param interpolation interpolation
      * @return demand vector in which the platoon demand has been compensated from the input demand vector
      */
-    public FrequencyVector compensate(final T category, final FrequencyVector demand, final TimeVector time,
+    public FrequencyVector compensate(final T category, final FrequencyVector demand, final DurationVector time,
             final Interpolation interpolation)
     {
         Throw.whenNull(category, "Category may not be null.");
@@ -295,14 +296,14 @@ public abstract class Platoons<T>
         Throw.whenNull(interpolation, "Interpolation may not be null.");
         Throw.when(demand.size() != time.size(), IllegalArgumentException.class, "Demand and time have unequal length.");
         ArithmeticMean<Double, Double> weightedSumLost = new ArithmeticMean<>();
-        for (Map.Entry<Time, Time> entry : this.periods.entrySet())
+        for (Map.Entry<Duration, Duration> entry : this.periods.entrySet())
         {
-            Time start = entry.getKey();
-            Time end = entry.getValue();
+            Duration start = entry.getKey();
+            Duration end = entry.getValue();
             for (int i = 0; i < demand.size() - 1; i++)
             {
-                Time s = Time.max(start, time.get(i));
-                Time e = Time.min(end, time.get(i + 1));
+                Duration s = Duration.max(start, time.get(i));
+                Duration e = Duration.min(end, time.get(i + 1));
                 if (s.lt(e))
                 {
                     Frequency fStart = interpolation.interpolateVector(s, demand, time, true);
@@ -363,38 +364,14 @@ public abstract class Platoons<T>
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * @param time time to generate
+     * @param origin origin
+     * @param destination destination
+     * @param category category
      * @param <K> type of demand category, typically a Category in an OdMatrix or a GtuType
      */
-    private static class PlatoonGtu<K> implements Comparable<PlatoonGtu<K>>
+    private record PlatoonGtu<K>(Duration time, Node origin, Node destination, K category) implements Comparable<PlatoonGtu<K>>
     {
-
-        /** Time to generate. */
-        private final Time time;
-
-        /** Origin. */
-        private final Node origin;
-
-        /** Destination. */
-        private final Node destination;
-
-        /** Category. */
-        private final K category;
-
-        /**
-         * Constructor.
-         * @param time time to generate
-         * @param origin origin
-         * @param destination destination
-         * @param category category
-         */
-        PlatoonGtu(final Time time, final Node origin, final Node destination, final K category)
-        {
-            this.time = time;
-            this.origin = origin;
-            this.destination = destination;
-            this.category = category;
-        }
-
         @Override
         public int compareTo(final PlatoonGtu<K> o)
         {
@@ -404,38 +381,5 @@ public abstract class Platoons<T>
             }
             return this.time.compareTo(o.time);
         }
-
-        /**
-         * @return time.
-         */
-        protected Time getTime()
-        {
-            return this.time;
-        }
-
-        /**
-         * @return origin.
-         */
-        protected Node getOrigin()
-        {
-            return this.origin;
-        }
-
-        /**
-         * @return destination.
-         */
-        protected Node getDestination()
-        {
-            return this.destination;
-        }
-
-        /**
-         * @return category.
-         */
-        protected K getCategory()
-        {
-            return this.category;
-        }
-
     }
 }

@@ -271,7 +271,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
     /**
      * Redraws the plot and schedules the next update.
      */
-    protected void update()
+    public void update()
     {
         // TODO: next event may be scheduled in the past if the scheduler is running fast during these few calls
         this.updateTime = this.scheduler.getTime();
@@ -287,7 +287,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
     {
         this.updates++;
         // events are scheduled slightly later, so all influencing movements have occurred
-        this.scheduler.scheduleUpdate(Time.instantiateSI(this.updateInterval.si * this.updates + this.delay.si), this);
+        this.scheduler.scheduleUpdate(Duration.instantiateSI(this.updateInterval.si * this.updates + this.delay.si), this);
     }
 
     /**

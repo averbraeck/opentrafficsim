@@ -11,11 +11,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.ValueRuntimeException;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djunits.value.vdouble.vector.TimeVector;
 import org.djutils.base.Identifiable;
@@ -289,7 +292,8 @@ public class OdMatrix implements Serializable, Identifiable
                 throw new IllegalArgumentException("Route in OD has no nodes.", exception);
             }
         }
-        DemandPattern demandPattern = new DemandPattern(demand, timeVector, interpolation);
+        DurationVector durationVector = new DurationVector(timeVector.getValuesInUnit());
+        DemandPattern demandPattern = new DemandPattern(demand, durationVector, interpolation);
         this.demandData.get(origin).get(destination).put(category, demandPattern);
     }
 
@@ -414,7 +418,7 @@ public class OdMatrix implements Serializable, Identifiable
      * @throws IllegalArgumentException if the category does not belong to the categorization
      * @throws NullPointerException if an input is null
      */
-    public final TimeVector getTimeVector(final Node origin, final Node destination, final Category category)
+    public final DurationVector getTimeVector(final Node origin, final Node destination, final Category category)
     {
         DemandPattern demandPattern = getDemandPattern(origin, destination, category);
         if (demandPattern == null)
@@ -466,7 +470,7 @@ public class OdMatrix implements Serializable, Identifiable
         {
             return new Frequency(0.0, FrequencyUnit.PER_HOUR); // Frequency.ZERO gives "Hz" which is not nice for flow
         }
-        return demandPattern.getFrequency(time, sliceStart);
+        return demandPattern.getFrequency(Duration.instantiateSI(time.si), sliceStart);
     }
 
     /**
@@ -610,7 +614,7 @@ public class OdMatrix implements Serializable, Identifiable
             return null;
         }
         int[] trips = new int[demand.size() - 1];
-        TimeVector time = getTimeVector(origin, destination, category);
+        DurationVector time = getTimeVector(origin, destination, category);
         Interpolation interpolation = getInterpolation(origin, destination, category);
         for (int i = 0; i < trips.length; i++)
         {
@@ -641,7 +645,7 @@ public class OdMatrix implements Serializable, Identifiable
      */
     public final int getTrips(final Node origin, final Node destination, final Category category, final int periodIndex)
     {
-        TimeVector time = getTimeVector(origin, destination, category);
+        DurationVector time = getTimeVector(origin, destination, category);
         if (time == null)
         {
             return 0;
@@ -682,19 +686,20 @@ public class OdMatrix implements Serializable, Identifiable
         Interpolation interpolation = getInterpolation(origin, destination, category);
         Throw.when(!interpolation.equals(Interpolation.STEPWISE), UnsupportedOperationException.class,
                 "Can only increase the number of trips for data with stepwise interpolation.");
-        TimeVector time = getTimeVector(origin, destination, category);
+        DurationVector time = getTimeVector(origin, destination, category);
         Throw.when(periodIndex < 0 || periodIndex >= time.size() - 1, IndexOutOfBoundsException.class,
                 "Period index out of range.");
         FrequencyVector demand = getDemandVector(origin, destination, category);
         try
         {
-            double additionalDemand = trips / (time.get(periodIndex + 1).getInUnit(TimeUnit.BASE_HOUR)
-                    - time.get(periodIndex).getInUnit(TimeUnit.BASE_HOUR));
+            double additionalDemand = trips / (time.get(periodIndex + 1).getInUnit(DurationUnit.HOUR)
+                    - time.get(periodIndex).getInUnit(DurationUnit.HOUR));
             double[] dem = demand.getValuesInUnit(FrequencyUnit.PER_HOUR);
             Throw.when(dem[periodIndex] < -additionalDemand, UnsupportedOperationException.class,
                     "Demand may not become negative.");
             dem[periodIndex] += additionalDemand;
-            putDemandVector(origin, destination, category, new FrequencyVector(dem, FrequencyUnit.PER_HOUR), time,
+            TimeVector timeVector = new TimeVector(time.getValuesInUnit());
+            putDemandVector(origin, destination, category, new FrequencyVector(dem, FrequencyUnit.PER_HOUR), timeVector,
                     Interpolation.STEPWISE);
         }
         catch (ValueRuntimeException exception)
@@ -770,7 +775,7 @@ public class OdMatrix implements Serializable, Identifiable
         int sum = 0;
         for (Category category : getCategories(origin, destination))
         {
-            TimeVector time = getTimeVector(origin, destination, category);
+            DurationVector time = getTimeVector(origin, destination, category);
             FrequencyVector demand = getDemandVector(origin, destination, category);
             Interpolation interpolation = getInterpolation(origin, destination, category);
             for (int i = 0; i < time.size() - 1; i++)
