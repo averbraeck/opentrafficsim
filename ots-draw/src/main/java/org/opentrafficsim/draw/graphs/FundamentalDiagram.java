@@ -683,7 +683,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
                 final Length length, final int series, final double[] measurements)
         {
             Length x = getSpace().position(series);
-            if (GraphUtil.considerTrajectory(trajectory, x, x))
+            if (GraphUtil.considerTrajectory(trajectory, x, x.plus(Length.instantiateSI(1.0e-3))))
             {
                 // detailed check
                 Time t = trajectory.getTimeAtPosition(x);
