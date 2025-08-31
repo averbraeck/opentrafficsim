@@ -4,7 +4,9 @@ import java.rmi.RemoteException;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -65,6 +67,9 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
     /** Set of actively sampled GTUs. */
     private final Set<String> activeGtus = new LinkedHashSet<>();
+
+    /** Unique id. */
+    private final UUID uuid = UUID.randomUUID();
 
     /**
      * Constructor which uses the operational plan updates of GTU's as sampling interval.
@@ -139,6 +144,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
     {
         try
         {
+            System.out.println("Recording " + lane.getId() + " on " + lane.getLinkData().getId() + " at " + time);
             this.simulator.scheduleEventAbs(Duration.instantiateSI(time.si), () -> startRecording(lane));
         }
         catch (SimRuntimeException exception)
@@ -363,18 +369,16 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
     }
 
     @Override
-    public final int hashCode()
+    public int hashCode()
     {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((this.eventsPerGtu == null) ? 0 : this.eventsPerGtu.hashCode());
-        result = prime * result + ((this.samplingInterval == null) ? 0 : this.samplingInterval.hashCode());
-        result = prime * result + ((this.simulator == null) ? 0 : this.simulator.hashCode());
+        result = prime * result + Objects.hash(this.uuid);
         return result;
     }
 
     @Override
-    public final boolean equals(final Object obj)
+    public boolean equals(final Object obj)
     {
         if (this == obj)
         {
@@ -389,47 +393,13 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
             return false;
         }
         RoadSampler other = (RoadSampler) obj;
-        if (this.eventsPerGtu == null)
-        {
-            if (other.eventsPerGtu != null)
-            {
-                return false;
-            }
-        }
-        else if (!this.eventsPerGtu.equals(other.eventsPerGtu))
-        {
-            return false;
-        }
-        if (this.samplingInterval == null)
-        {
-            if (other.samplingInterval != null)
-            {
-                return false;
-            }
-        }
-        else if (!this.samplingInterval.equals(other.samplingInterval))
-        {
-            return false;
-        }
-        if (this.simulator == null)
-        {
-            if (other.simulator != null)
-            {
-                return false;
-            }
-        }
-        else if (!this.simulator.equals(other.simulator))
-        {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.uuid, other.uuid);
     }
 
     @Override
     public final String toString()
     {
         return "RoadSampler [samplingInterval=" + this.samplingInterval + "]";
-        // do not use "this.eventPerGtu", it creates circular toString and hence stack overflow
     }
 
     /**

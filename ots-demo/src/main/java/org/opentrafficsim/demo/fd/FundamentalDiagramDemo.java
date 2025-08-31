@@ -6,7 +6,6 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -52,7 +51,6 @@ import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuErrorHandler;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.idgenerator.IdSupplier;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.LinkPosition;
@@ -80,8 +78,6 @@ import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharact
 import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
 import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
@@ -163,6 +159,9 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
     /** Fd line in graphs based on settings. */
     @SuppressWarnings("synthetic-access")
     private DynamicFdLine fdLine = new DynamicFdLine();
+
+    /** Trajectory plot. */
+    private TrajectoryPlot trajectoryPlot;
 
     /** Fundamental diagrams that are updated when a setting is changed. */
     private Set<FundamentalDiagram> funamentalDiagrams = new LinkedHashSet<>();
@@ -612,6 +611,13 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             this.fdSourceMap.put(String.format("%.2f", i / 1000.0).replace(",", "."), source);
         }
 
+        // clear updates on plots that might already be there
+        if (this.trajectoryPlot != null)
+        {
+            this.scheduler.cancelEvent(this.trajectoryPlot);
+        }
+        this.funamentalDiagrams.forEach((fd) -> this.scheduler.cancelEvent(fd));
+
         // create sampler plot
         List<String> names = new ArrayList<>();
         names.add("Left lane");
@@ -623,10 +629,10 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             firstLanes.add(lane);
         }
         GraphPath<LaneDataRoad> path = Try.assign(() -> GraphLaneUtil.createPath(names, firstLanes), "");
-        TrajectoryPlot trajectoryPlot = new TrajectoryPlot("Trajectories", Duration.instantiateSI(5.0), this.scheduler,
+        this.trajectoryPlot = new TrajectoryPlot("Trajectories", Duration.instantiateSI(5.0), this.scheduler,
                 this.sampler.getSamplerData(), path);
-        trajectoryPlot.updateFixedDomainRange(true);
-        SwingTrajectoryPlot swingTrajectoryPlot = new SwingTrajectoryPlot(trajectoryPlot)
+        this.trajectoryPlot.updateFixedDomainRange(true);
+        SwingTrajectoryPlot swingTrajectoryPlot = new SwingTrajectoryPlot(this.trajectoryPlot)
         {
             /** */
             private static final long serialVersionUID = 20200516L;
