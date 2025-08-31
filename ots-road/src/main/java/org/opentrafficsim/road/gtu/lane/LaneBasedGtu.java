@@ -807,8 +807,8 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                                 "Distance till rear leaves link is beyond plan.");
                         this.roamEvent =
                                 getSimulator().scheduleEventAbs(Duration.instantiateSI(timeRearLeaving.si), () -> exitLane());
-                        return; // no further lanes to check when roaming
                     }
+                    return; // no further lanes to check
                 }
                 else
                 {
