@@ -575,6 +575,10 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         }
 
         // new sampler to loose all data
+        if (this.sampler != null)
+        {
+            this.sampler.getSamplerData().getLanes().forEach((l) -> this.sampler.finalizeRecording((LaneDataRoad) l));
+        }
         this.sampler = new RoadSampler(getNetwork());
 
         // create fundamental diagram source for each cross section (plots are (re)created in setCrossSections())
