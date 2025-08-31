@@ -144,7 +144,6 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
     {
         try
         {
-            System.out.println("Recording " + lane.getId() + " on " + lane.getLinkData().getId() + " at " + time);
             this.simulator.scheduleEventAbs(Duration.instantiateSI(time.si), () -> startRecording(lane));
         }
         catch (SimRuntimeException exception)
