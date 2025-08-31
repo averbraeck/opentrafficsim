@@ -543,24 +543,6 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
                         lane.setSpeedLimit(DefaultsNl.VEHICLE, FundamentalDiagramDemo.this.speedLimit);
                     }
                 }
-                for (Gtu gtu : getNetwork().getGTUs())
-                {
-                    DirectInfrastructurePerception infra;
-                    try
-                    {
-                        infra = (DirectInfrastructurePerception) gtu.getTacticalPlanner().getPerception()
-                                .getPerceptionCategory(InfrastructurePerception.class);
-                        // hack to reset the perceived speed limit cache
-                        Field field = DirectInfrastructurePerception.class.getDeclaredField("root");
-                        field.setAccessible(true);
-                        field.set(infra, null);
-                    }
-                    catch (OperationalPlanException | NoSuchFieldException | SecurityException | IllegalArgumentException
-                            | IllegalAccessException exception)
-                    {
-                        System.err.println("Unable to update perceived speed limit.");
-                    }
-                }
             }
         });
         controlPanel.add(vSlider);
