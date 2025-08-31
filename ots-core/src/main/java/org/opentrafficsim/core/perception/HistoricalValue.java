@@ -4,6 +4,8 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.perception.AbstractHistorical.EventValue;
 
+import com.google.common.base.Objects;
+
 /**
  * Single-valued historical state.
  * <p>
@@ -49,6 +51,10 @@ public class HistoricalValue<T> extends AbstractHistorical<T, EventValue<T>> imp
     @Override
     public final void set(final T value)
     {
+        if (Objects.equal(value, this.lastValue))
+        {
+            return;
+        }
         this.lastValue = value;
         this.lastTime = now().si;
         EventValue<T> event = getLastEvent();

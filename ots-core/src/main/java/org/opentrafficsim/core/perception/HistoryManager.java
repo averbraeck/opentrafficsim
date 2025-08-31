@@ -75,7 +75,10 @@ public abstract class HistoryManager
     public interface HistoricalElement
     {
         /**
-         * Removes events that are no longer needed to guarantee the history time. This is invoked by the history manager.
+         * Removes events that are no longer needed to guarantee the history time. Events of before this time may remain in
+         * memory if they are required to determine the earliest state within the history. For example in a single-valued
+         * element, to maintain history from 60s through 65s, events at 58s, 61s and 64s may be kept in memory. In this way the
+         * value at 60s can be gathered from the event at 58s. This method is invoked by the history manager.
          * @param history history time to keep
          */
         void cleanUpHistory(Duration history);

@@ -17,8 +17,8 @@ public interface Historical<T>
 {
 
     /**
-     * Set value at the current simulation time. If a value is already given at this time, it is overwritten. Values should be
-     * set in chronological order.
+     * Set value at the current simulation time. If a value is already given at this time, it is overwritten. Setting of a value
+     * that is equal to the most recent value is ignored. Values should be set in chronological order.
      * @param value value
      */
     void set(T value);
