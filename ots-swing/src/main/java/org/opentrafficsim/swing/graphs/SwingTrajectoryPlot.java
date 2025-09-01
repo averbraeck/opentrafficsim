@@ -70,7 +70,7 @@ public class SwingTrajectoryPlot extends SwingSpaceTimePlot
     public SwingTrajectoryPlot(final TrajectoryPlot plot)
     {
         super(plot);
-        if (plot.getCurveCount() == 1)
+        if (plot.getLaneCount() == 1)
         {
             addColorer("Blue", TrajectoryColorer.BLUE, false);
             addColorer("Id", TrajectoryColorer.ID, true);
@@ -116,7 +116,7 @@ public class SwingTrajectoryPlot extends SwingSpaceTimePlot
     protected void addPopUpMenuItems(final JPopupMenu popupMenu)
     {
         super.addPopUpMenuItems(popupMenu);
-        if (getPlot().getCurveCount() == 1)
+        if (getPlot().getLaneCount() == 1)
         {
             this.colorMenu = new JMenu("Color");
             popupMenu.insert(this.colorMenu, 0);

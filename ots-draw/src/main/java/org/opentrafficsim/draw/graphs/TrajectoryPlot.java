@@ -241,10 +241,10 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
     }
 
     /**
-     * Returns the number of curves (usually a lane).
-     * @return the number of curves (usually a lane)
+     * Returns the number of lanes.
+     * @return the number of lanes
      */
-    public int getCurveCount()
+    public int getLaneCount()
     {
         return this.curves.size();
     }
