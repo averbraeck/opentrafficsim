@@ -11,11 +11,12 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.exceptions.Try;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.LegendItem;
 import org.jfree.chart.LegendItemCollection;
@@ -34,6 +35,7 @@ import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.SamplerData;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
+import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
 
 /**
  * Plot of trajectories along a path.
@@ -50,7 +52,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
     /** Single shape to provide due to non-null requirement, but actually not used. */
     private static final Shape NO_SHAPE = new Line2D.Float(0, 0, 0, 0);
 
-    /** Color map. */
+    /** Color map for multiple curves. */
     private static final Color[] COLORMAP;
 
     /** Strokes. */
@@ -79,6 +81,12 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
 
     /** Whether each lane is visible or not. */
     private final List<Boolean> laneVisible = new ArrayList<>();
+
+    /** Colorer. */
+    private TrajectoryColorer colorer;
+
+    /** Line renderer. */
+    private XYLineAndShapeRendererColor renderer;
 
     static
     {
@@ -146,7 +154,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
                             }
                             this.strokes.get(i).add(stroke);
                         }
-                        this.curves.get(i).add(new OffsetTrajectory(trajectory, startDistance, scaleFactor, lane.getLength()));
+                        this.curves.get(i).add(new OffsetTrajectory(trajectory, startDistance, scaleFactor));
                     }
                     this.knownTrajectories.put(lane, to);
                 }
@@ -162,8 +170,8 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
     {
         NumberAxis xAxis = new NumberAxis("Time [s] \u2192");
         NumberAxis yAxis = new NumberAxis("Distance [m] \u2192");
-        XYLineAndShapeRendererID renderer = new XYLineAndShapeRendererID();
-        XYPlot plot = new XYPlot(this, xAxis, yAxis, renderer);
+        this.renderer = new XYLineAndShapeRendererColor();
+        XYPlot plot = new XYPlot(this, xAxis, yAxis, this.renderer);
         boolean showLegend;
         if (getPath().getNumberOfSeries() < 2)
         {
@@ -185,6 +193,16 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
             showLegend = true;
         }
         return new JFreeChart(getCaption(), JFreeChart.DEFAULT_TITLE_FONT, plot, showLegend);
+    }
+
+    /**
+     * Sets the color renderer for trajectories.
+     * @param colorer color renderer
+     */
+    public void setColorer(final TrajectoryColorer colorer)
+    {
+        this.colorer = colorer;
+        this.renderer.setDrawSeriesLineAsPath(colorer.isSingleColor());
     }
 
     @Override
@@ -220,6 +238,15 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
             n += m;
         }
         return n;
+    }
+
+    /**
+     * Returns the number of curves (usually a lane).
+     * @return the number of curves (usually a lane)
+     */
+    public int getCurveCount()
+    {
+        return this.curves.size();
     }
 
     @Override
@@ -314,7 +341,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    private final class XYLineAndShapeRendererID extends XYLineAndShapeRenderer
+    private final class XYLineAndShapeRendererColor extends XYLineAndShapeRenderer
     {
         /** */
         private static final long serialVersionUID = 20181014L;
@@ -322,7 +349,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
         /**
          * Constructor.
          */
-        XYLineAndShapeRendererID()
+        XYLineAndShapeRendererColor()
         {
             super(false, true);
             setDefaultLinesVisible(true);
@@ -354,20 +381,18 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
         @Override
         public Paint getSeriesPaint(final int series)
         {
-            if (TrajectoryPlot.this.curves.size() == 1)
-            {
-                String gtuId = getTrajectory(series).getGtuId();
-                for (int pos = gtuId.length(); --pos >= 0;)
-                {
-                    Character c = gtuId.charAt(pos);
-                    if (Character.isDigit(c))
-                    {
-                        return Colors.get(c - '0');
-                    }
-                }
-            }
             int[] n = getLaneAndSeriesNumber(series);
             return COLORMAP[n[0] % COLORMAP.length];
+        }
+
+        @Override
+        public Paint getItemPaint(final int row, final int column)
+        {
+            if (TrajectoryPlot.this.colorer == null)
+            {
+                return getSeriesPaint(row);
+            }
+            return TrajectoryPlot.this.colorer.apply(getTrajectory(row), column);
         }
 
         /**
@@ -434,73 +459,27 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
         /** Scale factor for space dimension. */
         private final double scaleFactor;
 
-        /** First index of the trajectory to include, possibly cutting some measurements before the lane. */
-        private int first;
-
-        /** Size of the trajectory to consider starting at first, possibly cutting some measurements beyond the lane. */
-        private int size;
-
-        /** Length of the lane to determine {@code size}. */
-        private final Length laneLength;
-
         /**
          * Construct a new TrajectoryAndLengthOffset object.
          * @param trajectory the trajectory
          * @param offset the length from the beginning of the sampled path to the start of the lane to which the trajectory
          *            belongs
          * @param scaleFactor scale factor for space dimension
-         * @param laneLength length of the lane
          */
-        OffsetTrajectory(final Trajectory<?> trajectory, final Length offset, final double scaleFactor, final Length laneLength)
+        OffsetTrajectory(final Trajectory<?> trajectory, final Length offset, final double scaleFactor)
         {
             this.trajectory = trajectory;
             this.offset = offset.si;
             this.scaleFactor = scaleFactor;
-            this.laneLength = laneLength;
         }
 
         /**
          * Returns the number of measurements in the trajectory.
          * @return number of measurements in the trajectory
          */
-        public final int size()
+        public int size()
         {
-            // as trajectories grow, this calculation needs to be done on each request
-            /*
-             * Note on overlap:
-             * 
-             * Suppose a GTU crosses a lane boundary producing the following events, where distance e->| is the front, and
-             * |->l is the tail, relative to the reference point of the GTU.
-             * @formatter:off
-             * -------------------------------------------  o) regular move event
-             *  o     e   o         o |  l    o         o   e) lane enter event on next lane
-             * -------------------------------------------  l) lane leave event on previous lane
-             *  o         o         o   (l)                 measurements on previous lane
-             *       (e) (o)       (o)        o         o   measurements on next lane
-             * @formatter:on
-             * Trajectories of a particular GTU are not explicitly tied together. Not only would this involve quite some work,
-             * it is also impossible to distinguish a lane change near the start or end of a lane, from moving longitudinally on
-             * to the next lane. The basic idea to minimize overlap is to remove all positions on the previous lane beyond the
-             * lane length, and all negative positions on the next lane, i.e. all between ( ). This would however create a gap
-             * at the lane boundary '|'. Allowing one event beyond the lane length may still result in a gap, l->o in this case.
-             * Allowing one event before the lane would work in this case, but 'e' could also fall between an 'o' and '|'. At
-             * one trajectory it is thus not known whether the other trajectory continues from, or is continued from, the extra
-             * point. Hence we require an extra point before the lane and one beyond the lane to assure there is no gap. The
-             * resulting overlap can be as large as a move, but this is better than occasional gaps.
-             */
-            int f = 0;
-            while (f < this.trajectory.size() - 1 && this.trajectory.getX(f + 1) < 0.0)
-            {
-                f++;
-            }
-            this.first = f;
-            int s = this.trajectory.size() - 1;
-            while (s > 1 && this.trajectory.getX(s - 1) > this.laneLength.si)
-            {
-                s--;
-            }
-            this.size = s - f + 1;
-            return this.size;
+            return this.trajectory.size();
         }
 
         /**
@@ -508,10 +487,9 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
          * @param item item (sample) number
          * @return location, including offset, of an item
          */
-        public final double getX(final int item)
+        public double getX(final int item)
         {
-            return Try.assign(() -> this.offset + this.trajectory.getX(this.first + item) * this.scaleFactor,
-                    "Unexpected exception while obtaining location value from trajectory for plotting.");
+            return this.offset + this.trajectory.getX(item) * this.scaleFactor;
         }
 
         /**
@@ -519,25 +497,177 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
          * @param item item (sample) number
          * @return time of an item
          */
-        public final double getT(final int item)
+        public double getT(final int item)
         {
-            return Try.assign(() -> (double) this.trajectory.getT(this.first + item),
-                    "Unexpected exception while obtaining time value from trajectory for plotting.");
+            return (double) this.trajectory.getT(item);
+        }
+
+        /**
+         * Returns the speed of an item.
+         * @param item item (sample) number
+         * @return speed of an item
+         */
+        public double getV(final int item)
+        {
+            return (double) this.trajectory.getV(item);
+        }
+
+        /**
+         * Returns the acceleration of an item.
+         * @param item item (sample) number
+         * @return acceleration of an item
+         */
+        public double getA(final int item)
+        {
+            return (double) this.trajectory.getA(item);
+        }
+
+        /**
+         * Returns value of an extended data type.
+         * @param <T> value type
+         * @param item item (sample) number
+         * @param dataType extended data type
+         * @return value of extended data type
+         */
+        public <T> T getValue(final int item, final ExtendedDataType<? extends T, ?, ?, ?> dataType)
+        {
+            return this.trajectory.getExtendedData(dataType, item);
         }
 
         /**
          * Returns the ID of the GTU of this trajectory.
          * @return the ID of the GTU of this trajectory
          */
-        public final String getGtuId()
+        public String getGtuId()
         {
             return this.trajectory.getGtuId();
         }
 
         @Override
-        public final String toString()
+        public String toString()
         {
             return "OffsetTrajectory [trajectory=" + this.trajectory + ", offset=" + this.offset + "]";
+        }
+
+    }
+
+    /**
+     * Trajectory colorer.
+     */
+    public abstract static class TrajectoryColorer implements BiFunction<OffsetTrajectory, Integer, Color>
+    {
+
+        /** Blue colorer. */
+        public static final TrajectoryColorer BLUE = new TrajectoryColorer(true)
+        {
+            @Override
+            public Color apply(final OffsetTrajectory t, final Integer u)
+            {
+                return Color.BLUE;
+            }
+        };
+
+        /** Id colorer. */
+        public static final TrajectoryColorer ID = new TrajectoryColorer(true)
+        {
+            @Override
+            public Color apply(final OffsetTrajectory t, final Integer u)
+            {
+                String gtuId = t.getGtuId();
+                for (int pos = gtuId.length(); --pos >= 0;)
+                {
+                    Character c = gtuId.charAt(pos);
+                    if (Character.isDigit(c))
+                    {
+                        return Colors.get(c - '0');
+                    }
+                }
+                return Color.CYAN;
+            }
+        };
+
+        /** Speed colorer. */
+        public static final TrajectoryColorer SPEED = new TrajectoryColorer(false)
+        {
+            /** Color scale. */
+            private static final BoundsPaintScale SCALE =
+                    new BoundsPaintScale(new double[] {0.0, 30.0 / 3.6, 60.0 / 3.6, 90.0 / 3.6, 120.0 / 3.6},
+                            BoundsPaintScale.reverse(BoundsPaintScale.GREEN_RED_DARK));
+
+            @Override
+            public Color apply(final OffsetTrajectory t, final Integer u)
+            {
+                return SCALE.getPaint(t.getV(u));
+            }
+        };
+
+        /** Acceleration colorer. */
+        public static final TrajectoryColorer ACCELERATION = new TrajectoryColorer(false)
+        {
+            /** Color scale. */
+            private static final BoundsPaintScale SCALE = new BoundsPaintScale(new double[] {-6.0, -4.0, -2.0, 0.0, 1.0, 2.0},
+                    new Color[] {Color.MAGENTA, Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.BLUE});
+
+            @Override
+            public Color apply(final OffsetTrajectory t, final Integer u)
+            {
+                return SCALE.getPaint(t.getA(u));
+            }
+        };
+
+        /** Whether this colorer has one color per trajectory. */
+        private final boolean singleColor;
+
+        /**
+         * Constructor.
+         * @param singleColor whether this colorer has one color per trajectory
+         */
+        public TrajectoryColorer(final boolean singleColor)
+        {
+            this.singleColor = singleColor;
+        }
+
+        /**
+         * Whether the trajectory of a GTU is a single color. By default this is false.
+         * @return whether the trajectory of a GTU is a single color
+         */
+        public boolean isSingleColor()
+        {
+            return this.singleColor;
+        }
+    }
+
+    /**
+     * Colorer based on extended data in trajectory.
+     * @param <T> extended data value type
+     */
+    public static class TrajectoryColorerExtended<T> extends TrajectoryColorer
+    {
+
+        /** Extended data type. */
+        private final ExtendedDataType<? extends T, ?, ?, ?> dataType;
+
+        /** Coloring function. */
+        private final Function<T, Color> colorFunction;
+
+        /**
+         * Constructor.
+         * @param singleColor whether this colorer has one color per trajectory
+         * @param dataType extended data type
+         * @param colorFunction coloring function
+         */
+        public TrajectoryColorerExtended(final boolean singleColor,
+                final ExtendedDataType<? extends T, ?, ?, ?> dataType, final Function<T, Color> colorFunction)
+        {
+            super(singleColor);
+            this.dataType = dataType;
+            this.colorFunction = colorFunction;
+        }
+
+        @Override
+        public Color apply(final OffsetTrajectory t, final Integer u)
+        {
+            return this.colorFunction.apply(t.getValue(u, this.dataType));
         }
 
     }

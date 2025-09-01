@@ -3,8 +3,15 @@ package org.opentrafficsim.swing.graphs;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JMenu;
+import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 
 import org.djutils.draw.point.Point2d;
 import org.jfree.chart.ChartMouseEvent;
@@ -15,6 +22,7 @@ import org.jfree.chart.entity.PlotEntity;
 import org.jfree.chart.plot.XYPlot;
 import org.opentrafficsim.draw.graphs.GraphUtil;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
+import org.opentrafficsim.draw.graphs.TrajectoryPlot.TrajectoryColorer;
 
 /**
  * Embed a TrajectoryPlot in a Swing JPanel.
@@ -49,6 +57,12 @@ public class SwingTrajectoryPlot extends SwingSpaceTimePlot
     /** Text annotation for line statistics. */
     private XYTextAnnotation textAnnotation;
 
+    /** Menu to select color. */
+    private JMenu colorMenu;
+
+    /** Color button group (so one is selected at a time). */
+    private ButtonGroup colorButtonGroup = new ButtonGroup();
+
     /**
      * Construct a new Swing container for a TrajectoryPlot.
      * @param plot the plot to embed
@@ -56,6 +70,57 @@ public class SwingTrajectoryPlot extends SwingSpaceTimePlot
     public SwingTrajectoryPlot(final TrajectoryPlot plot)
     {
         super(plot);
+        if (plot.getCurveCount() == 1)
+        {
+            addColorer("Blue", TrajectoryColorer.BLUE, false);
+            addColorer("Id", TrajectoryColorer.ID, true);
+            addColorer("Speed", TrajectoryColorer.SPEED, false);
+            addColorer("Acceleration", TrajectoryColorer.ACCELERATION, false);
+        }
+    }
+
+    /**
+     * Add colorer.
+     * @param label label in the menu
+     * @param colorer colorer
+     * @param selected whether the colorer should be the selected one
+     */
+    public void addColorer(final String label, final TrajectoryColorer colorer, final boolean selected)
+    {
+        if (this.colorMenu == null)
+        {
+            // a sub-class may override addPopUpMenuItems() in which case there is perhaps no color menu
+            return;
+        }
+        JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(label);
+        menuItem.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(final ActionEvent e)
+            {
+                SwingTrajectoryPlot.this.getPlot().setColorer(colorer);
+                SwingTrajectoryPlot.this.getPlot().update();
+            }
+        });
+        this.colorButtonGroup.add(menuItem);
+        if (selected)
+        {
+            menuItem.setSelected(selected);
+            SwingTrajectoryPlot.this.getPlot().setColorer(colorer);
+        }
+        menuItem.setFont(this.colorMenu.getFont());
+        this.colorMenu.add(menuItem);
+    }
+
+    @Override
+    protected void addPopUpMenuItems(final JPopupMenu popupMenu)
+    {
+        super.addPopUpMenuItems(popupMenu);
+        if (getPlot().getCurveCount() == 1)
+        {
+            this.colorMenu = new JMenu("Color");
+            popupMenu.insert(this.colorMenu, 0);
+        }
     }
 
     /**

@@ -1,5 +1,6 @@
 package org.opentrafficsim.demo;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -54,7 +55,9 @@ import org.opentrafficsim.demo.ShortMerge.ShortMergeModel;
 import org.opentrafficsim.draw.graphs.GraphPath;
 import org.opentrafficsim.draw.graphs.PlotScheduler;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
+import org.opentrafficsim.draw.graphs.TrajectoryPlot.TrajectoryColorerExtended;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData.GtuMarker;
+import org.opentrafficsim.kpi.sampling.data.ExtendedDataString;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
@@ -64,6 +67,7 @@ import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplat
 import org.opentrafficsim.road.gtu.generator.headway.HeadwayGenerator;
 import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.Synchronizable;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
@@ -92,10 +96,10 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.object.SpeedSign;
+import org.opentrafficsim.road.network.sampling.GtuDataRoad;
 import org.opentrafficsim.road.network.sampling.LaneDataRoad;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.graphs.OtsPlotScheduler;
-import org.opentrafficsim.swing.graphs.SwingPlot;
 import org.opentrafficsim.swing.graphs.SwingTrajectoryPlot;
 import org.opentrafficsim.swing.gui.AnimationToggles;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
@@ -182,12 +186,29 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         {
             throw new RuntimeException("Could not create a path as a lane has no set speed limit.", exception);
         }
-        RoadSampler sampler = new RoadSampler(getModel().getNetwork());
+        ExtendedDataSync<GtuDataRoad> syncData = new ExtendedDataSync<GtuDataRoad>();
+        RoadSampler sampler = new RoadSampler(Set.of(syncData), Collections.emptySet(), getModel().getNetwork());
         GraphPath.initRecording(sampler, path);
         PlotScheduler scheduler = new OtsPlotScheduler(getModel().getSimulator());
         Duration updateInterval = Duration.instantiateSI(10.0);
-        SwingPlot plot = new SwingTrajectoryPlot(
+        SwingTrajectoryPlot plot = new SwingTrajectoryPlot(
                 new TrajectoryPlot("Trajectory right lane", updateInterval, scheduler, sampler.getSamplerData(), path));
+        plot.addColorer("Synchronization", new TrajectoryColorerExtended<>(false, syncData, (str) ->
+        {
+            switch ((String) str)
+            {
+                case "NONE":
+                    return Color.BLACK;
+                case "SYNCHRONIZING":
+                    return Color.ORANGE;
+                case "INDICATING":
+                    return Color.RED;
+                case "COOPERATING":
+                    return new Color(0, 192, 0);
+                default:
+                    return Color.YELLOW;
+            }
+        }), false);
         getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "Trajectories",
                 plot.getContentPane());
     }
@@ -470,6 +491,33 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
                     idSupplier);
             generator.setNoLaneChangeDistance(Length.instantiateSI(100.0));
             generator.setBookkeeping(LaneBookkeeping.START);
+        }
+
+    }
+
+    /**
+     * Extended data of synchronization phase.
+     * @param <G> GTU data type
+     */
+    public static class ExtendedDataSync<G extends GtuDataRoad> extends ExtendedDataString<G>
+    {
+
+        /**
+         * Constructor.
+         */
+        public ExtendedDataSync()
+        {
+            super("sync", "Synchronization status");
+        }
+
+        @Override
+        public String getValue(final GtuDataRoad gtu)
+        {
+            if (gtu.getGtu().getTacticalPlanner() instanceof Synchronizable sync)
+            {
+                return sync.getSynchronizationState().toString();
+            }
+            return "N/A";
         }
 
     }
