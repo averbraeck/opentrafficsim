@@ -192,7 +192,7 @@ public class SwingTrajectoryPlot extends SwingSpaceTimePlot
             {
                 if (toggle != null)
                 {
-                    toggle.chartMouseClicked(event); // forward to second listener
+                    toggle.chartMouseMoved(event); // forward to second listener
                 }
                 if (event.getEntity() instanceof PlotEntity && SwingTrajectoryPlot.this.from != null
                         && SwingTrajectoryPlot.this.to == null)
