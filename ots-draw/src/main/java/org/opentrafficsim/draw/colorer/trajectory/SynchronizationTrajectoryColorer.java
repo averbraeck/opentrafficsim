@@ -1,6 +1,7 @@
 package org.opentrafficsim.draw.colorer.trajectory;
 
 import java.awt.Color;
+import java.util.List;
 import java.util.Map;
 
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
@@ -35,7 +36,12 @@ public class SynchronizationTrajectoryColorer extends ExtendedDataTrajectoryColo
      */
     public SynchronizationTrajectoryColorer(final ExtendedDataType<? extends String, ?, ?, ?> dataType)
     {
-        super(dataType, (str) -> str, (str) -> COLOR_MAP.containsKey(str) ? COLOR_MAP.get(str) : NA);
+        super(dataType, (str) -> str, (str) -> COLOR_MAP.containsKey(str) ? COLOR_MAP.get(str) : NA,
+                List.of(new LegendEntry(COLOR_MAP.get("NONE"), "None", "None"),
+                        new LegendEntry(COLOR_MAP.get("SYNCHRONIZING"), "Synchronizing", "Synchronizing"),
+                        new LegendEntry(COLOR_MAP.get("INDICATING"), "Indicating", "Indicating"),
+                        new LegendEntry(COLOR_MAP.get("COOPERATING"), "Cooperating", "Cooperating"),
+                        new LegendEntry(NA, "N/A", "N/A")));
     }
 
 }
