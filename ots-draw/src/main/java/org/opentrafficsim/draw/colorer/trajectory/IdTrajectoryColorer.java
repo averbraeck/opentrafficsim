@@ -1,5 +1,8 @@
 package org.opentrafficsim.draw.colorer.trajectory;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.opentrafficsim.draw.colorer.IdColorer;
 import org.opentrafficsim.draw.graphs.OffsetTrajectory.TrajectorySection;
 
@@ -29,6 +32,13 @@ public class IdTrajectoryColorer extends IdColorer<TrajectorySection> implements
     public boolean isSingleColor()
     {
         return true;
+    }
+
+    @Override
+    public List<LegendEntry> getLegend()
+    {
+        // A legend just stating the color names is a waste of space in a trajectory plot.
+        return Collections.emptyList();
     }
 
 }
