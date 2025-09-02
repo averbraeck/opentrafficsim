@@ -1,12 +1,11 @@
-package org.opentrafficsim.animation.colorer;
+package org.opentrafficsim.animation.gtu.colorer;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.draw.ColorInterpolator;
+import org.opentrafficsim.draw.BoundsPaintScale;
+import org.opentrafficsim.draw.colorer.AbstractLegendBarColorer;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
 
 /**
@@ -19,11 +18,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class SocialPressureColorer implements GtuColorer
+public class SocialPressureGtuColorer extends AbstractLegendBarColorer<Gtu, Double>
 {
-
-    /** The legend. */
-    private static final List<LegendEntry> LEGEND;
 
     /** No pressure color. */
     private static final Color NONE = Color.WHITE;
@@ -34,40 +30,18 @@ public class SocialPressureColorer implements GtuColorer
     /** Not applicable color. */
     private static final Color NA = Color.YELLOW;
 
-    static
-    {
-        LEGEND = new ArrayList<>(3);
-        LEGEND.add(new LegendEntry(NONE, "None", "None: 0.0"));
-        LEGEND.add(new LegendEntry(FULL, "Full", "Full: 1.0"));
-        LEGEND.add(new LegendEntry(NA, "N/A", "N/A"));
-    }
+    /** Bounds paint scale. */
+    private static final BoundsPaintScale SCALE = new BoundsPaintScale(new double[] {0.0, 1.0}, new Color[] {NONE, FULL});
 
     /**
      * Constructor.
      */
-    public SocialPressureColorer()
+    public SocialPressureGtuColorer()
     {
-        //
-    }
-
-    @Override
-    public Color getColor(final Gtu gtu)
-    {
-        try
-        {
-            double rho = gtu.getParameters().getParameter(Tailgating.RHO);
-            return ColorInterpolator.interpolateColor(NONE, FULL, rho);
-        }
-        catch (Exception exception)
-        {
-            return NA;
-        }
-    }
-
-    @Override
-    public List<LegendEntry> getLegend()
-    {
-        return LEGEND;
+        super((gtu) -> gtu.getParameters().getParameterOrNull(Tailgating.RHO), (rho) -> rho == null ? NA : SCALE.getPaint(rho),
+                List.of(new LegendEntry(NONE, "None", "None: 0.0"), new LegendEntry(FULL, "Full", "Full: 1.0"),
+                        new LegendEntry(NA, "N/A", "N/A")),
+                SCALE);
     }
 
     @Override

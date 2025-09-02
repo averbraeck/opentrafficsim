@@ -1,10 +1,6 @@
-package org.opentrafficsim.animation.colorer;
+package org.opentrafficsim.animation.gtu.colorer;
 
-import java.awt.Color;
-
-import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.road.gtu.lane.tactical.DesireBased;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Incentive;
 
 /**
@@ -17,43 +13,41 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Incentive;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class IncentiveColorer extends DesireColorer
+public class IncentiveGtuColorer extends DesireGtuColorer
 {
 
     /** */
     private static final long serialVersionUID = 20170414L;
 
     /** Incentive class. */
-    private Class<? extends Incentive> incentiveClass;
+    private final String incentiveName;
 
     /**
      * Constructor.
      * @param incentiveClass incentive class
      */
-    public IncentiveColorer(final Class<? extends Incentive> incentiveClass)
+    public IncentiveGtuColorer(final Class<? extends Incentive> incentiveClass)
     {
-        this.incentiveClass = incentiveClass;
+        this(incentiveClass, incentiveClass.getSimpleName());
     }
 
-    @Override
-    public final Color getColor(final Gtu gtu)
+    /**
+     * Constructor.
+     * @param incentiveClass incentive class
+     * @param incentiveName name of incentive
+     */
+    public IncentiveGtuColorer(final Class<? extends Incentive> incentiveClass, final String incentiveName)
     {
-        if (!(gtu.getTacticalPlanner() instanceof DesireBased))
-        {
-            return NA;
-        }
-        Desire d = ((DesireBased) gtu.getTacticalPlanner()).getLatestDesire(this.incentiveClass);
-        if (d != null)
-        {
-            return getColor(d.left(), d.right());
-        }
-        return NA;
+        super((gtu) -> gtu.getTacticalPlanner() instanceof DesireBased desireBased
+                ? (desireBased.getLatestDesire(incentiveClass) == null ? null : desireBased.getLatestDesire(incentiveClass))
+                : null);
+        this.incentiveName = incentiveName;
     }
 
     @Override
     public final String getName()
     {
-        return this.incentiveClass.getSimpleName();
+        return this.incentiveName;
     }
 
 }

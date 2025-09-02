@@ -43,12 +43,12 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.TimedEvent;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Network;
+import org.opentrafficsim.draw.colorer.Colorer;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2dInterface;
@@ -154,7 +154,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
      * @throws DsolException when simulator does not implement AnimatorInterface
      */
     public OtsAnimationPanel(final Rectangle2D extent, final Dimension size, final OtsAnimator simulator,
-            final OtsModelInterface otsModel, final List<GtuColorer> gtuColorers, final Network network)
+            final OtsModelInterface otsModel, final List<Colorer<? super Gtu>> gtuColorers, final Network network)
             throws RemoteException, DsolException
     {
         super(simulator, otsModel);
@@ -170,7 +170,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
 
         // Include the GTU colorer control panel NORTH of the animation.
         this.colorControlPanel = new ColorControlPanel();
-        for (GtuColorer colorer : gtuColorers)
+        for (Colorer<? super Gtu> colorer : gtuColorers)
         {
             this.colorControlPanel.addItem(colorer);
         }

@@ -1,9 +1,6 @@
-package org.opentrafficsim.animation.colorer;
+package org.opentrafficsim.animation.gtu.colorer;
 
-import java.awt.Color;
-
-import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 
 /**
@@ -16,7 +13,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class TotalDesireColorer extends DesireColorer
+public class TotalDesireGtuColorer extends DesireGtuColorer
 {
 
     /** */
@@ -25,22 +22,12 @@ public class TotalDesireColorer extends DesireColorer
     /**
      * Constructor.
      */
-    public TotalDesireColorer()
+    public TotalDesireGtuColorer()
     {
-        //
-    }
-
-    @Override
-    public final Color getColor(final Gtu gtu)
-    {
-        Parameters params = gtu.getParameters();
-        Double dLeft = params.getParameterOrNull(LmrsParameters.DLEFT);
-        Double dRight = params.getParameterOrNull(LmrsParameters.DRIGHT);
-        if (dLeft == null || dRight == null)
-        {
-            return NA;
-        }
-        return getColor(dLeft, dRight);
+        super((gtu) -> gtu.getParameters().contains(LmrsParameters.DLEFT) && gtu.getParameters().contains(LmrsParameters.DRIGHT)
+                ? new Desire(gtu.getParameters().getParameterOrNull(LmrsParameters.DLEFT),
+                        gtu.getParameters().getParameterOrNull(LmrsParameters.DRIGHT))
+                : null);
     }
 
     @Override

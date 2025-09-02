@@ -40,11 +40,10 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.animation.colorer.DesiredHeadwayColorer;
-import org.opentrafficsim.animation.colorer.FixedColor;
-import org.opentrafficsim.animation.colorer.IncentiveColorer;
-import org.opentrafficsim.animation.colorer.SocialPressureColorer;
 import org.opentrafficsim.animation.gtu.colorer.AccelerationGtuColorer;
+import org.opentrafficsim.animation.gtu.colorer.DesiredHeadwayGtuColorer;
+import org.opentrafficsim.animation.gtu.colorer.IncentiveGtuColorer;
+import org.opentrafficsim.animation.gtu.colorer.SocialPressureGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.SpeedGtuColorer;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
@@ -63,6 +62,7 @@ import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
+import org.opentrafficsim.draw.colorer.FixedColorer;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
@@ -164,11 +164,10 @@ public class StrategiesDemo extends AbstractSimulationScript
     protected StrategiesDemo()
     {
         super("Strategies demo", "Demo of driving strategies in LMRS.");
-        setGtuColorers(List.of(new FixedColor(Color.BLUE, "Blue"), new SpeedGtuColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)),
-                new AccelerationGtuColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)),
-                new SocialPressureColorer(),
-                new DesiredHeadwayColorer(Duration.instantiateSI(0.5), Duration.instantiateSI(1.6)),
-                new IncentiveColorer(IncentiveSocioSpeed.class)));
+        setGtuColorers(List.of(new FixedColorer<>(Color.BLUE, "Blue"), new SpeedGtuColorer(), new AccelerationGtuColorer(),
+                new SocialPressureGtuColorer(),
+                new DesiredHeadwayGtuColorer(Duration.instantiateSI(0.5), Duration.instantiateSI(1.6)),
+                new IncentiveGtuColorer(IncentiveSocioSpeed.class)));
         try
         {
             CliUtil.changeOptionDefault(this, "simulationTime", "3600000s");

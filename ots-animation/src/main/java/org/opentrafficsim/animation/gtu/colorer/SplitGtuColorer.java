@@ -1,15 +1,14 @@
-package org.opentrafficsim.animation.colorer;
+package org.opentrafficsim.animation.gtu.colorer;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
+import org.opentrafficsim.draw.colorer.AbstractLegendColorer;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.LanePosition;
 
@@ -23,7 +22,7 @@ import org.opentrafficsim.road.network.lane.LanePosition;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class SplitColorer implements GtuColorer
+public class SplitGtuColorer extends AbstractLegendColorer<Gtu, Gtu>
 {
 
     /** Left color. */
@@ -38,28 +37,22 @@ public class SplitColorer implements GtuColorer
     /** Unknown color. */
     static final Color UNKNOWN = Color.WHITE;
 
-    /** The legend. */
-    private static final List<LegendEntry> LEGEND;
-
-    static
-    {
-        LEGEND = new ArrayList<>(4);
-        LEGEND.add(new LegendEntry(LEFT, "Left", "Left"));
-        LEGEND.add(new LegendEntry(RIGHT, "Right", "Right"));
-        LEGEND.add(new LegendEntry(OTHER, "Other", "Other"));
-        LEGEND.add(new LegendEntry(UNKNOWN, "Unknown", "Unknown"));
-    }
-
     /**
      * Constructor.
      */
-    public SplitColorer()
+    public SplitGtuColorer()
     {
-        //
+        super((gtu) -> gtu, SplitGtuColorer::colorFunction,
+                List.of(new LegendEntry(LEFT, "Left", "Left"), new LegendEntry(RIGHT, "Right", "Right"),
+                        new LegendEntry(OTHER, "Other", "Other"), new LegendEntry(UNKNOWN, "Unknown", "Unknown")));
     }
 
-    @Override
-    public final Color getColor(final Gtu gtu)
+    /**
+     * Color function.
+     * @param gtu GTU
+     * @return color indicating the split
+     */
+    private static Color colorFunction(final Gtu gtu)
     {
         if (!(gtu instanceof LaneBasedGtu))
         {
@@ -141,12 +134,6 @@ public class SplitColorer implements GtuColorer
             return LEFT;
         }
         return OTHER;
-    }
-
-    @Override
-    public final List<LegendEntry> getLegend()
-    {
-        return LEGEND;
     }
 
     @Override

@@ -12,6 +12,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vfloat.vector.FloatSpeedVector;
 import org.opentrafficsim.draw.BoundsPaintScale;
+import org.opentrafficsim.draw.Colors;
 import org.opentrafficsim.draw.egtf.Converter;
 import org.opentrafficsim.draw.egtf.Quantity;
 import org.opentrafficsim.draw.graphs.ContourDataSource.ContourDataType;
@@ -137,7 +138,7 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
     private static BoundsPaintScale createPaintScale()
     {
         double[] boundaries = {0.0, 0.05, 0.2};
-        Color[] colorValues = BoundsPaintScale.GREEN_RED;
+        Color[] colorValues = Colors.GREEN_RED;
         return new BoundsPaintScale(boundaries, colorValues);
     }
 

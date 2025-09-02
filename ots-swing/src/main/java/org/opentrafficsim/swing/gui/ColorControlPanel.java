@@ -14,10 +14,12 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
-import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.GtuColorerManager;
 import org.opentrafficsim.animation.gtu.colorer.GtuColorerManager.PredicatedColorer;
 import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.draw.colorer.Colorer;
+import org.opentrafficsim.draw.colorer.LegendColorer;
+import org.opentrafficsim.draw.colorer.LegendColorer.LegendEntry;
 
 /**
  * Let the user select what the colors in the animation mean.
@@ -42,7 +44,7 @@ public class ColorControlPanel extends JPanel implements ActionListener
     private final GtuColorerManager gtuColorerManager = new GtuColorerManager(Color.WHITE);
 
     /** The GtuColorer that is currently active. */
-    private GtuColorer gtuColorer;
+    private Colorer<? super Gtu> gtuColorer;
 
     /**
      * Add a ColorControlPanel to an AnimationPanel. Initially the ColorControlPanel will have no items. Items are added with
@@ -61,7 +63,7 @@ public class ColorControlPanel extends JPanel implements ActionListener
      * Add one item to this ColorControlPanel.
      * @param colorer the GtuColorer that will be added
      */
-    public final void addItem(final GtuColorer colorer)
+    public final void addItem(final Colorer<? super Gtu> colorer)
     {
         if (this.gtuColorer == null)
         {
@@ -99,45 +101,48 @@ public class ColorControlPanel extends JPanel implements ActionListener
     private void rebuildLegend()
     {
         this.legendPanel.removeAll();
-        for (GtuColorer.LegendEntry legendEntry : this.gtuColorer.getLegend())
+        if (this.gtuColorer instanceof LegendColorer<?> legendColorer)
         {
-            JPanel panel = new JPanel(new BorderLayout());
-            /**
-             * ColorBox for AppearanceControl.
-             */
-            class ColorBox extends JLabel implements AppearanceControl
+            for (LegendEntry legendEntry : legendColorer.getLegend())
             {
-                /** */
-                private static final long serialVersionUID = 20180206L;
-
+                JPanel panel = new JPanel(new BorderLayout());
                 /**
-                 * Constructor.
+                 * ColorBox for AppearanceControl.
                  */
-                ColorBox()
+                class ColorBox extends JLabel implements AppearanceControl
                 {
-                    super("     ");
-                }
+                    /** */
+                    private static final long serialVersionUID = 20180206L;
 
-                @Override
-                public String toString()
-                {
-                    return "ColorBox []";
-                }
+                    /**
+                     * Constructor.
+                     */
+                    ColorBox()
+                    {
+                        super("     ");
+                    }
 
+                    @Override
+                    public String toString()
+                    {
+                        return "ColorBox []";
+                    }
+
+                }
+                ColorBox colorBox = new ColorBox();
+                colorBox.setOpaque(true); // By default, the label is transparent
+                colorBox.setBackground(legendEntry.color());
+                Border border = LineBorder.createBlackLineBorder();
+                colorBox.setBorder(border);
+                panel.add(colorBox, BorderLayout.LINE_START);
+                JLabel name = new JLabel(" " + legendEntry.name().trim());
+                panel.add(name, BorderLayout.CENTER);
+                name.setOpaque(true);
+                name.setForeground(getForeground());
+                name.setBackground(getBackground());
+                panel.setToolTipText(legendEntry.description());
+                this.legendPanel.add(panel);
             }
-            ColorBox colorBox = new ColorBox();
-            colorBox.setOpaque(true); // By default, the label is transparent
-            colorBox.setBackground(legendEntry.color());
-            Border border = LineBorder.createBlackLineBorder();
-            colorBox.setBorder(border);
-            panel.add(colorBox, BorderLayout.LINE_START);
-            JLabel name = new JLabel(" " + legendEntry.name().trim());
-            panel.add(name, BorderLayout.CENTER);
-            name.setOpaque(true);
-            name.setForeground(getForeground());
-            name.setBackground(getBackground());
-            panel.setToolTipText(legendEntry.description());
-            this.legendPanel.add(panel);
         }
         this.legendPanel.revalidate();
 

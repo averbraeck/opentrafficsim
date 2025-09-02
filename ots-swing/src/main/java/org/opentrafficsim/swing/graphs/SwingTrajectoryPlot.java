@@ -20,9 +20,13 @@ import org.jfree.chart.annotations.XYLineAnnotation;
 import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.entity.PlotEntity;
 import org.jfree.chart.plot.XYPlot;
+import org.opentrafficsim.draw.colorer.trajectory.AccelerationTrajectoryColorer;
+import org.opentrafficsim.draw.colorer.trajectory.FixedTrajectoryColorer;
+import org.opentrafficsim.draw.colorer.trajectory.IdTrajectoryColorer;
+import org.opentrafficsim.draw.colorer.trajectory.SpeedTrajectoryColorer;
+import org.opentrafficsim.draw.colorer.trajectory.TrajectoryColorer;
 import org.opentrafficsim.draw.graphs.GraphUtil;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
-import org.opentrafficsim.draw.graphs.TrajectoryPlot.TrajectoryColorer;
 
 /**
  * Embed a TrajectoryPlot in a Swing JPanel.
@@ -72,27 +76,26 @@ public class SwingTrajectoryPlot extends SwingSpaceTimePlot
         super(plot);
         if (plot.getLaneCount() == 1)
         {
-            addColorer("Blue", TrajectoryColorer.BLUE, false);
-            addColorer("Id", TrajectoryColorer.ID, true);
-            addColorer("Speed", TrajectoryColorer.SPEED, false);
-            addColorer("Acceleration", TrajectoryColorer.ACCELERATION, false);
+            addColorer(new FixedTrajectoryColorer(Color.BLUE, "Blue"), true);
+            addColorer(new IdTrajectoryColorer(), false);
+            addColorer(new SpeedTrajectoryColorer(), false);
+            addColorer(new AccelerationTrajectoryColorer(), false);
         }
     }
 
     /**
      * Add colorer.
-     * @param label label in the menu
      * @param colorer colorer
      * @param selected whether the colorer should be the selected one
      */
-    public void addColorer(final String label, final TrajectoryColorer colorer, final boolean selected)
+    public void addColorer(final TrajectoryColorer colorer, final boolean selected)
     {
         if (this.colorMenu == null)
         {
             // a sub-class may override addPopUpMenuItems() in which case there is perhaps no color menu
             return;
         }
-        JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(label);
+        JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(colorer.getName());
         menuItem.addActionListener(new ActionListener()
         {
             @Override

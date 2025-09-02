@@ -1,12 +1,12 @@
-package org.opentrafficsim.animation.colorer;
+package org.opentrafficsim.animation.gtu.colorer;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.draw.ColorInterpolator;
+import org.opentrafficsim.draw.colorer.LegendColorer;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Mental;
@@ -22,7 +22,7 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class TaskColorer implements GtuColorer
+public class TaskGtuColorer implements LegendColorer<Gtu>
 {
 
     /** Full. */
@@ -54,13 +54,13 @@ public class TaskColorer implements GtuColorer
     }
 
     /** Id. */
-    final String id;
+    private final String id;
 
     /**
      * Constructor.
-     * @param id id
+     * @param id id of the task
      */
-    public TaskColorer(final String id)
+    public TaskGtuColorer(final String id)
     {
         this.id = id;
     }

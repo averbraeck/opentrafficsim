@@ -7,6 +7,7 @@ import java.util.function.Predicate;
 
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.draw.colorer.Colorer;
 
 /**
  * With a GTU color manager, advanced logic can be applied to determine what the color of a GTU should be. Predicates are
@@ -44,7 +45,7 @@ public class GtuColorerManager
      * @param predicate predicate
      * @param gtuColorer GTU colorer
      */
-    public void add(final Predicate<Gtu> predicate, final GtuColorer gtuColorer)
+    public void add(final Predicate<Gtu> predicate, final Colorer<? super Gtu> gtuColorer)
     {
         Throw.whenNull(predicate, "predicate");
         Throw.whenNull(gtuColorer, "gtuColorer");
@@ -58,7 +59,7 @@ public class GtuColorerManager
      * @param gtuColorer GTU colorer
      * @throws IndexOutOfBoundsException if the index is out of bounds
      */
-    public void add(final int index, final Predicate<Gtu> predicate, final GtuColorer gtuColorer)
+    public void add(final int index, final Predicate<Gtu> predicate, final Colorer<? super Gtu> gtuColorer)
     {
         Throw.whenNull(predicate, "predicate");
         Throw.whenNull(gtuColorer, "gtuColorer");
@@ -96,7 +97,7 @@ public class GtuColorerManager
      * @param predicate predicate
      * @param colorer GTU colorer
      */
-    public record PredicatedColorer(Predicate<Gtu> predicate, GtuColorer colorer)
+    public record PredicatedColorer(Predicate<Gtu> predicate, Colorer<? super Gtu> colorer)
     {
         @Override
         public String toString()
@@ -104,4 +105,5 @@ public class GtuColorerManager
             return colorer().getName();
         }
     };
+
 }

@@ -20,21 +20,17 @@ import org.djutils.logger.CategoryLogger;
 public class BoundsPaintScale implements ColorPaintScale, Serializable
 {
 
-    /** 3-color scale from green to red. */
-    public static final Color[] GREEN_RED = new Color[] {Color.GREEN, Color.YELLOW, Color.RED};
-
-    /** 5-color scale from green to red with dark edges. */
-    public static final Color[] GREEN_RED_DARK =
-            new Color[] {Color.GREEN.darker(), Color.GREEN, Color.YELLOW, Color.RED, Color.RED.darker()};
-
     /** */
     private static final long serialVersionUID = 20181008L;
 
     /** Boundary values for this ColorPaintScale. */
-    private double[] bounds;
+    private final double[] bounds;
 
     /** Color values to use at the boundary values. */
-    private Color[] boundColors;
+    private final Color[] boundColors;
+
+    /** Color for non applicable values. */
+    private final Color notApplicable;
 
     /**
      * Constructor.
@@ -43,6 +39,19 @@ public class BoundsPaintScale implements ColorPaintScale, Serializable
      * @throws IllegalArgumentException if less than 2 bounds, unequal number of bounds and colors, or duplicate bounds
      */
     public BoundsPaintScale(final double[] bounds, final Color[] boundColors) throws IllegalArgumentException
+    {
+        this(bounds, boundColors, Color.BLACK);
+    }
+
+    /**
+     * Constructor.
+     * @param bounds value bounds
+     * @param boundColors colors at bounds
+     * @param notApplicable color for NaN values
+     * @throws IllegalArgumentException if less than 2 bounds, unequal number of bounds and colors, or duplicate bounds
+     */
+    public BoundsPaintScale(final double[] bounds, final Color[] boundColors, final Color notApplicable)
+            throws IllegalArgumentException
     {
         Throw.when(bounds.length < 2, IllegalArgumentException.class, "bounds must have >= 2 entries");
         Throw.when(bounds.length != boundColors.length, IllegalArgumentException.class,
@@ -69,36 +78,7 @@ public class BoundsPaintScale implements ColorPaintScale, Serializable
             this.bounds[nextBound] = bounds[bestIndex];
             this.boundColors[nextBound] = boundColors[bestIndex];
         }
-    }
-
-    /**
-     * Reverses the color array.
-     * @param colors array of colors
-     * @return reversed color array
-     */
-    public static Color[] reverse(final Color[] colors)
-    {
-        Color[] out = new Color[colors.length];
-        for (int i = 0; i < colors.length; i++)
-        {
-            out[colors.length - i - 1] = colors[i];
-        }
-        return out;
-    }
-
-    /**
-     * Creates an array of {@code n} colors with varying hue.
-     * @param n number of colors.
-     * @return array of {@code n} colors with varying hue
-     */
-    public static Color[] hue(final int n)
-    {
-        Color[] out = new Color[n];
-        for (int i = 0; i < n; i++)
-        {
-            out[i] = new Color(Color.HSBtoRGB(((float) i) / n, 1.0f, 1.0f));
-        }
-        return out;
+        this.notApplicable = notApplicable;
     }
 
     @Override
@@ -106,7 +86,7 @@ public class BoundsPaintScale implements ColorPaintScale, Serializable
     {
         if (Double.isNaN(value))
         {
-            return Color.BLACK;
+            return this.notApplicable;
         }
         if (value < this.bounds[0])
         {
@@ -153,6 +133,24 @@ public class BoundsPaintScale implements ColorPaintScale, Serializable
     public final double getUpperBound()
     {
         return this.bounds[this.bounds.length - 1];
+    }
+
+    /**
+     * Returns the bound values.
+     * @return bound values
+     */
+    public double[] getBounds()
+    {
+        return Arrays.copyOf(this.bounds, this.bounds.length);
+    }
+
+    /**
+     * Returns the bound colors.
+     * @return bound colors
+     */
+    public Color[] getBoundColors()
+    {
+        return Arrays.copyOf(this.boundColors, this.boundColors.length);
     }
 
     @Override

@@ -1,8 +1,6 @@
-package org.opentrafficsim.animation;
+package org.opentrafficsim.draw.colorer;
 
 import java.awt.Color;
-
-import org.opentrafficsim.base.geometry.OtsShape;
 
 /**
  * Colorer is the generic interface for anything that can get a static or dynamic color in an animation within OTS.
@@ -11,20 +9,23 @@ import org.opentrafficsim.base.geometry.OtsShape;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
- * @param <D> the drawable type
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ * @param <T> type of object to be colored
  */
-public interface Colorer<D extends OtsShape>
+public interface Colorer<T>
 {
+
     /**
-     * Get the color, based on the OtsLocatable object.
-     * @param drawable the object to determine the color for
-     * @return the (fill, line) color of the locatable object
+     * Get the color, based on the object.
+     * @param object the object to determine the color for
+     * @return the (fill, line) color of the object
      */
-    Color getColor(D drawable);
-    
+    Color getColor(T object);
+
     /**
      * Returns the name of the colorer.
      * @return name of the colorer
      */
     String getName();
+
 }

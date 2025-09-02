@@ -1,16 +1,13 @@
-package org.opentrafficsim.animation.colorer;
+package org.opentrafficsim.animation.gtu.colorer;
 
 import java.awt.Color;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
-import org.opentrafficsim.animation.gtu.colorer.IdGtuColorer;
 import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.draw.Colors;
+import org.opentrafficsim.draw.colorer.AbstractLegendColorer;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Mental;
@@ -18,6 +15,7 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
 import org.opentrafficsim.road.gtu.lane.perception.mental.sdm.DefaultDistraction;
 
 /**
+ * Distraction colorer, which shows which distraction is active. This only works on GTUs with the Fuller mental model.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -26,38 +24,30 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.sdm.DefaultDistraction
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class DistractionColorer implements GtuColorer, Serializable
+public class DistractionGtuColorer extends AbstractLegendColorer<Gtu, String> implements Serializable
 {
 
     /** */
     private static final long serialVersionUID = 20181106L;
 
     /** None color. */
-    private static final Color NONE = Color.MAGENTA.darker().darker();
-
-    /** The legend. */
-    private final ArrayList<LegendEntry> legend = new ArrayList<>();
-
-    /** Colors. */
-    private final Map<String, Color> colors = new LinkedHashMap<>();
+    private static final Color NONE = Color.CYAN;
 
     /**
      * Constructor.
      * @param distractions DefaultDistraction... distractions to color
      */
-    public DistractionColorer(final DefaultDistraction... distractions)
+    public DistractionGtuColorer(final DefaultDistraction... distractions)
     {
-        this.legend.add(new LegendEntry(NONE, "None", "No distraction"));
-        for (int i = 0; i < distractions.length; i++)
-        {
-            Color c = IdGtuColorer.LEGEND.get(i % 10).color();
-            this.colors.put(distractions[i].getId(), c);
-            this.legend.add(new LegendEntry(c, distractions[i].getDescription(), distractions[i].getDescription()));
-        }
+        super(DistractionGtuColorer::getDistractionId, DistractionGtuColorer::getColor, createLegend(distractions));
     }
 
-    @Override
-    public Color getColor(final Gtu gtu)
+    /**
+     * Value function.
+     * @param gtu GTU
+     * @return id of distraction, or {@code null} if there is no distraction
+     */
+    private static String getDistractionId(final Gtu gtu)
     {
         if (gtu.getTacticalPlanner().getPerception() instanceof LanePerception)
         {
@@ -66,21 +56,41 @@ public class DistractionColorer implements GtuColorer, Serializable
             {
                 for (Task task : ((Fuller) mental).getTasks())
                 {
-                    String id = task.getId();
-                    if (this.colors.containsKey(id))
-                    {
-                        return this.colors.get(id);
-                    }
+                    return task.getId();
                 }
             }
         }
-        return NONE;
+        return null;
     }
 
-    @Override
-    public final List<LegendEntry> getLegend()
+    /**
+     * Color function.
+     * @param id distraction id
+     * @return color for the distraction
+     */
+    private static Color getColor(final String id)
     {
-        return Collections.unmodifiableList(this.legend);
+        if (id == null)
+        {
+            return NONE;
+        }
+        return Colors.getIdColor(id, Colors.ENUMERATE);
+    }
+
+    /**
+     * Creates legend.
+     * @param distractions distractions
+     * @return legend
+     */
+    private static List<LegendEntry> createLegend(final DefaultDistraction... distractions)
+    {
+        List<LegendEntry> list = new ArrayList<>();
+        list.add(new LegendEntry(NONE, "None", "None"));
+        for (DefaultDistraction distraction : distractions)
+        {
+            list.add(new LegendEntry(getColor(distraction.getId()), distraction.getId(), distraction.getDescription()));
+        }
+        return list;
     }
 
     @Override

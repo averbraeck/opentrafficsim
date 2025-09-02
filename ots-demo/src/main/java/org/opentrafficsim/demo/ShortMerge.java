@@ -1,6 +1,5 @@
 package org.opentrafficsim.demo;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -52,10 +51,10 @@ import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
 import org.opentrafficsim.demo.ShortMerge.ShortMergeModel;
+import org.opentrafficsim.draw.colorer.trajectory.SynchronizationTrajectoryColorer;
 import org.opentrafficsim.draw.graphs.GraphPath;
 import org.opentrafficsim.draw.graphs.PlotScheduler;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
-import org.opentrafficsim.draw.graphs.TrajectoryPlot.TrajectoryColorerExtended;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData.GtuMarker;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataString;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
@@ -193,22 +192,7 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
         Duration updateInterval = Duration.instantiateSI(10.0);
         SwingTrajectoryPlot plot = new SwingTrajectoryPlot(
                 new TrajectoryPlot("Trajectory right lane", updateInterval, scheduler, sampler.getSamplerData(), path));
-        plot.addColorer("Synchronization", new TrajectoryColorerExtended<>(false, syncData, (str) ->
-        {
-            switch ((String) str)
-            {
-                case "NONE":
-                    return Color.BLACK;
-                case "SYNCHRONIZING":
-                    return Color.ORANGE;
-                case "INDICATING":
-                    return Color.RED;
-                case "COOPERATING":
-                    return new Color(0, 192, 0);
-                default:
-                    return Color.YELLOW;
-            }
-        }), false);
+        plot.addColorer(new SynchronizationTrajectoryColorer(syncData), false);
         getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "Trajectories",
                 plot.getContentPane());
     }

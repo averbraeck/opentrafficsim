@@ -1,5 +1,6 @@
 package org.opentrafficsim.swing.gui;
 
+import java.awt.Color;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -9,14 +10,13 @@ import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
-import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.animation.gtu.colorer.AccelerationGtuColorer;
-import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.IdGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.SpeedGtuColorer;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
+import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.draw.colorer.Colorer;
+import org.opentrafficsim.draw.colorer.FixedColorer;
 
 /**
  * Wrap a DSOL simulation model, or any (descendant of a) JPanel in a JFrame (wrap it in a window). The window will be
@@ -42,9 +42,8 @@ public class OtsSwingApplication<T extends OtsModelInterface> extends Appearance
     protected boolean closed = false;
 
     /** Default GTU colorers. */
-    public static final List<GtuColorer> DEFAULT_GTU_COLORERS =
-            List.of(new IdGtuColorer(), new SpeedGtuColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)),
-                    new AccelerationGtuColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)));
+    public static final List<Colorer<? super Gtu>> DEFAULT_GTU_COLORERS = List.of(new FixedColorer<>(Color.BLUE, "Blue"),
+            new IdGtuColorer(), new SpeedGtuColorer(), new AccelerationGtuColorer());
 
     /**
      * Wrap an OtsModel in a JFrame. Uses a default GTU colorer.

@@ -4,8 +4,9 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.draw.colorer.LegendColorer;
+import org.opentrafficsim.draw.colorer.LegendColorer.LegendEntry;
 
 /**
  * This class contains code snippets that are used in the documentation. Whenever errors arise in this code, they need to be
@@ -18,7 +19,7 @@ import org.opentrafficsim.core.gtu.Gtu;
  */
 @SuppressWarnings("all")
 // @docs/08-tutorials/visualization.md#how-to-add-a-gtu-colorer
-public class PhoneColorer implements GtuColorer
+public class PhoneColorer implements LegendColorer<Gtu>
 {
     private final static Color UNKNOWN = Color.WHITE;
 

@@ -1,15 +1,11 @@
 package org.opentrafficsim.animation.gtu.colorer;
 
-import java.awt.Color;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.function.Function;
 
-import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.draw.ColorInterpolator;
+import org.opentrafficsim.draw.BoundsPaintScale;
+import org.opentrafficsim.draw.colorer.SpeedColorer;
 
 /**
  * Color GTU depending on their speed.
@@ -19,66 +15,41 @@ import org.opentrafficsim.draw.ColorInterpolator;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class SpeedGtuColorer implements GtuColorer, Serializable
+public class SpeedGtuColorer extends SpeedColorer<Gtu>
 {
+
     /** */
     private static final long serialVersionUID = 20150000L;
 
-    /** The legend. */
-    private final ArrayList<LegendEntry> legend;
-
-    /** The speed that corresponds to the last entry in the legend. */
-    private final Speed maximumSpeed;
+    /** Value function. */
+    private static final Function<Gtu, Speed> VALUE = (gtu) -> gtu.getSpeed();
 
     /**
-     * Construct a new SpeedGtuColorer.
-     * @param maximumSpeed the speed at (and above) which the returned color will be green
+     * Constructor.
+     * @param boundPaintScale bounds paint scale, based on values in km/h
+     */
+    public SpeedGtuColorer(final BoundsPaintScale boundPaintScale)
+    {
+        super(VALUE, boundPaintScale);
+    }
+
+    /**
+     * Constructor.
+     * @param maximumSpeed maximum speed
      */
     public SpeedGtuColorer(final Speed maximumSpeed)
     {
-        this.maximumSpeed = maximumSpeed;
-        this.legend = new ArrayList<>(4);
-        Color[] colorTable = {Color.RED, Color.YELLOW, Color.GREEN};
-        Speed zeroSpeed = new Speed(0.0, SpeedUnit.KM_PER_HOUR);
-        for (int index = 0; index < colorTable.length; index++)
-        {
-            double ratio = index * 1.0 / (colorTable.length - 1);
-            Speed speed = Speed.interpolate(zeroSpeed, maximumSpeed, ratio);
-            String label = speed.toString().replaceFirst("\\.0*|,0*", ".0");
-            this.legend.add(new LegendEntry(colorTable[index], label, index == 0 ? "stationary" : "driving " + label));
-        }
+        super(VALUE, maximumSpeed);
     }
 
-    @Override
-    public final Color getColor(final Gtu gtu)
+    /**
+     * Constructor constructing a range to 150km/h.
+     */
+    public SpeedGtuColorer()
     {
-        Speed speed = gtu.getSpeed();
-        double ratio = speed.getSI() / this.maximumSpeed.getSI() * (this.legend.size() - 1);
-        if (ratio <= 0)
-        {
-            return this.legend.get(0).color();
-        }
-        if (ratio >= this.legend.size() - 1)
-        {
-            return this.legend.get(this.legend.size() - 1).color();
-        }
-        // Interpolate
-        int floor = (int) Math.floor(ratio);
-        return ColorInterpolator.interpolateColor(this.legend.get(floor).color(), this.legend.get(floor + 1).color(),
-                ratio - floor);
-    }
-
-    @Override
-    public final List<LegendEntry> getLegend()
-    {
-        return Collections.unmodifiableList(this.legend);
-    }
-
-    @Override
-    public final String getName()
-    {
-        return "Speed";
+        super(VALUE);
     }
 
 }

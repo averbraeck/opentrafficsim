@@ -1,12 +1,10 @@
-package org.opentrafficsim.animation.colorer;
+package org.opentrafficsim.animation.gtu.colorer;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.core.gtu.plan.tactical.TacticalPlanner;
+import org.opentrafficsim.draw.colorer.AbstractLegendColorer;
 import org.opentrafficsim.road.gtu.lane.tactical.Blockable;
 
 /**
@@ -19,7 +17,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.Blockable;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class BlockingColorer implements GtuColorer
+public class BlockingGtuColorer extends AbstractLegendColorer<Gtu, Boolean>
 {
 
     /** Blocking color. */
@@ -28,38 +26,18 @@ public class BlockingColorer implements GtuColorer
     /** Not blocking color. */
     private static final Color NOT_BLOCKING = Color.WHITE;
 
-    /** Legend. */
-    private static final List<LegendEntry> LEGEND = new ArrayList<>();
-
-    static
-    {
-        LEGEND.add(new LegendEntry(Color.RED, "Not blocking", "Not blocking"));
-        LEGEND.add(new LegendEntry(Color.WHITE, "Blocking", "Blocking"));
-    }
+    /** Unknown blocking color. */
+    private static final Color NA = Color.YELLOW;
 
     /**
      * Constructor.
      */
-    public BlockingColorer()
+    public BlockingGtuColorer()
     {
-        //
-    }
-
-    @Override
-    public List<LegendEntry> getLegend()
-    {
-        return LEGEND;
-    }
-
-    @Override
-    public Color getColor(final Gtu gtu)
-    {
-        TacticalPlanner<?, ?> tact = gtu.getTacticalPlanner();
-        if (tact instanceof Blockable && ((Blockable) tact).isBlocking())
-        {
-            return BLOCKING;
-        }
-        return NOT_BLOCKING;
+        super((gtu) -> gtu.getTacticalPlanner() instanceof Blockable block ? block.isBlocking() : null,
+                (blocking) -> blocking == null ? NA : (blocking ? BLOCKING : NOT_BLOCKING),
+                List.of(new LegendEntry(NOT_BLOCKING, "Not blocking", "Not blocking"),
+                        new LegendEntry(BLOCKING, "Blocking", "Blocking"), new LegendEntry(NA, "N/A", "N/A")));
     }
 
     @Override

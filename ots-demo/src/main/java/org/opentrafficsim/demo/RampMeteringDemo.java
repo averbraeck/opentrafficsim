@@ -28,9 +28,8 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.exceptions.Throw;
 import org.djutils.io.CompressedFileWriter;
-import org.opentrafficsim.animation.colorer.GtuTypeColorer;
 import org.opentrafficsim.animation.gtu.colorer.AccelerationGtuColorer;
-import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
+import org.opentrafficsim.animation.gtu.colorer.GtuTypeGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.IdGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.SpeedGtuColorer;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -58,6 +57,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.parameters.ParameterFactoryByType;
+import org.opentrafficsim.draw.colorer.Colorer;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBias;
 import org.opentrafficsim.road.gtu.generator.GeneratorPositions.LaneBiases;
@@ -254,9 +254,8 @@ public class RampMeteringDemo extends AbstractSimulationScript
         this.definitions.add(GtuType.class, car);
         this.definitions.add(GtuType.class, controlledCar);
 
-        List<GtuColorer> colorers = List.of(new IdGtuColorer(), new SpeedGtuColorer(new Speed(150, SpeedUnit.KM_PER_HOUR)),
-                new AccelerationGtuColorer(Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2)),
-                new GtuTypeColorer().add(car).add(controlledCar));
+        List<Colorer<? super Gtu>> colorers = List.of(new IdGtuColorer(), new SpeedGtuColorer(), new AccelerationGtuColorer(),
+                new GtuTypeGtuColorer(car, controlledCar));
         setGtuColorers(colorers);
 
         // parameters
@@ -490,6 +489,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
                             set.setDefaultParameter(ParameterTypes.VCONG);
                             set.setDefaultParameter(ParameterTypes.T0);
                             set.setDefaultParameter(ParameterTypes.BCRIT);
+                            set.setDefaultParameter(ParameterTypes.LCDUR);
                             set.setDefaultParameters(LmrsParameters.class);
                             set.setDefaultParameters(AbstractIdm.class);
                             return set;

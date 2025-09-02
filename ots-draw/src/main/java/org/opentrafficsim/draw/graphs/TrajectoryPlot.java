@@ -30,7 +30,10 @@ import org.jfree.data.DomainOrder;
 import org.jfree.data.xy.XYDataset;
 import org.opentrafficsim.draw.BoundsPaintScale;
 import org.opentrafficsim.draw.Colors;
+import org.opentrafficsim.draw.colorer.Colorer;
+import org.opentrafficsim.draw.colorer.trajectory.TrajectoryColorer;
 import org.opentrafficsim.draw.graphs.GraphPath.Section;
+import org.opentrafficsim.draw.graphs.OffsetTrajectory.TrajectorySection;
 import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.SamplerData;
 import org.opentrafficsim.kpi.sampling.Trajectory;
@@ -83,14 +86,14 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
     private final List<Boolean> laneVisible = new ArrayList<>();
 
     /** Colorer. */
-    private TrajectoryColorer colorer;
+    private Colorer<? super TrajectorySection> colorer;
 
     /** Line renderer. */
     private XYLineAndShapeRendererColor renderer;
 
     static
     {
-        Color[] c = BoundsPaintScale.hue(6);
+        Color[] c = Colors.hue(6);
         COLORMAP = new Color[] {c[0], c[4], c[2], c[1], c[3], c[5]};
         float lw = 0.4f;
         STROKES = new BasicStroke[] {new BasicStroke(lw, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, null, 0.0f),
@@ -392,7 +395,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
             {
                 return getSeriesPaint(row);
             }
-            return TrajectoryPlot.this.colorer.apply(getTrajectory(row), column);
+            return TrajectoryPlot.this.colorer.getColor(new TrajectorySection(getTrajectory(row), column));
         }
 
         /**
@@ -437,128 +440,13 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
     }
 
     /**
-     * Class containing a trajectory with an offset. Takes care of bits that are before and beyond the lane without affecting
-     * the trajectory itself.
-     * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
-     */
-    private class OffsetTrajectory
-    {
-        /** The trajectory. */
-        private final Trajectory<?> trajectory;
-
-        /** The offset. */
-        private final double offset;
-
-        /** Scale factor for space dimension. */
-        private final double scaleFactor;
-
-        /**
-         * Construct a new TrajectoryAndLengthOffset object.
-         * @param trajectory the trajectory
-         * @param offset the length from the beginning of the sampled path to the start of the lane to which the trajectory
-         *            belongs
-         * @param scaleFactor scale factor for space dimension
-         */
-        OffsetTrajectory(final Trajectory<?> trajectory, final Length offset, final double scaleFactor)
-        {
-            this.trajectory = trajectory;
-            this.offset = offset.si;
-            this.scaleFactor = scaleFactor;
-        }
-
-        /**
-         * Returns the number of measurements in the trajectory.
-         * @return number of measurements in the trajectory
-         */
-        public int size()
-        {
-            return this.trajectory.size();
-        }
-
-        /**
-         * Returns the location, including offset, of an item.
-         * @param item item (sample) number
-         * @return location, including offset, of an item
-         */
-        public double getX(final int item)
-        {
-            return this.offset + this.trajectory.getX(item) * this.scaleFactor;
-        }
-
-        /**
-         * Returns the time of an item.
-         * @param item item (sample) number
-         * @return time of an item
-         */
-        public double getT(final int item)
-        {
-            return (double) this.trajectory.getT(item);
-        }
-
-        /**
-         * Returns the speed of an item.
-         * @param item item (sample) number
-         * @return speed of an item
-         */
-        public double getV(final int item)
-        {
-            return (double) this.trajectory.getV(item);
-        }
-
-        /**
-         * Returns the acceleration of an item.
-         * @param item item (sample) number
-         * @return acceleration of an item
-         */
-        public double getA(final int item)
-        {
-            return (double) this.trajectory.getA(item);
-        }
-
-        /**
-         * Returns value of an extended data type.
-         * @param <T> value type
-         * @param item item (sample) number
-         * @param dataType extended data type
-         * @return value of extended data type
-         */
-        public <T> T getValue(final int item, final ExtendedDataType<? extends T, ?, ?, ?> dataType)
-        {
-            return this.trajectory.getExtendedData(dataType, item);
-        }
-
-        /**
-         * Returns the ID of the GTU of this trajectory.
-         * @return the ID of the GTU of this trajectory
-         */
-        public String getGtuId()
-        {
-            return this.trajectory.getGtuId();
-        }
-
-        @Override
-        public String toString()
-        {
-            return "OffsetTrajectory [trajectory=" + this.trajectory + ", offset=" + this.offset + "]";
-        }
-
-    }
-
-    /**
      * Trajectory colorer.
      */
-    public abstract static class TrajectoryColorer implements BiFunction<OffsetTrajectory, Integer, Color>
+    public abstract static class TrajectoryColorerXXX implements BiFunction<OffsetTrajectory, Integer, Color>
     {
 
         /** Blue colorer. */
-        public static final TrajectoryColorer BLUE = new TrajectoryColorer(true)
+        public static final TrajectoryColorerXXX BLUE = new TrajectoryColorerXXX(true)
         {
             @Override
             public Color apply(final OffsetTrajectory t, final Integer u)
@@ -568,7 +456,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
         };
 
         /** Id colorer. */
-        public static final TrajectoryColorer ID = new TrajectoryColorer(true)
+        public static final TrajectoryColorerXXX ID = new TrajectoryColorerXXX(true)
         {
             @Override
             public Color apply(final OffsetTrajectory t, final Integer u)
@@ -579,7 +467,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
                     Character c = gtuId.charAt(pos);
                     if (Character.isDigit(c))
                     {
-                        return Colors.get(c - '0');
+                        return Colors.getEnumerated(c - '0');
                     }
                 }
                 return Color.CYAN;
@@ -587,12 +475,11 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
         };
 
         /** Speed colorer. */
-        public static final TrajectoryColorer SPEED = new TrajectoryColorer(false)
+        public static final TrajectoryColorerXXX SPEED = new TrajectoryColorerXXX(false)
         {
             /** Color scale. */
-            private static final BoundsPaintScale SCALE =
-                    new BoundsPaintScale(new double[] {0.0, 30.0 / 3.6, 60.0 / 3.6, 90.0 / 3.6, 120.0 / 3.6},
-                            BoundsPaintScale.reverse(BoundsPaintScale.GREEN_RED_DARK));
+            private static final BoundsPaintScale SCALE = new BoundsPaintScale(
+                    new double[] {0.0, 30.0 / 3.6, 60.0 / 3.6, 90.0 / 3.6, 120.0 / 3.6}, Colors.reverse(Colors.GREEN_RED_DARK));
 
             @Override
             public Color apply(final OffsetTrajectory t, final Integer u)
@@ -602,7 +489,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
         };
 
         /** Acceleration colorer. */
-        public static final TrajectoryColorer ACCELERATION = new TrajectoryColorer(false)
+        public static final TrajectoryColorerXXX ACCELERATION = new TrajectoryColorerXXX(false)
         {
             /** Color scale. */
             private static final BoundsPaintScale SCALE = new BoundsPaintScale(new double[] {-6.0, -4.0, -2.0, 0.0, 1.0, 2.0},
@@ -622,7 +509,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
          * Constructor.
          * @param singleColor whether this colorer has one color per trajectory
          */
-        public TrajectoryColorer(final boolean singleColor)
+        public TrajectoryColorerXXX(final boolean singleColor)
         {
             this.singleColor = singleColor;
         }
@@ -641,7 +528,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
      * Colorer based on extended data in trajectory.
      * @param <T> extended data value type
      */
-    public static class TrajectoryColorerExtended<T> extends TrajectoryColorer
+    public static class TrajectoryColorerExtended<T> extends TrajectoryColorerXXX
     {
 
         /** Extended data type. */
@@ -656,8 +543,8 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
          * @param dataType extended data type
          * @param colorFunction coloring function
          */
-        public TrajectoryColorerExtended(final boolean singleColor,
-                final ExtendedDataType<? extends T, ?, ?, ?> dataType, final Function<T, Color> colorFunction)
+        public TrajectoryColorerExtended(final boolean singleColor, final ExtendedDataType<? extends T, ?, ?, ?> dataType,
+                final Function<T, Color> colorFunction)
         {
             super(singleColor);
             this.dataType = dataType;

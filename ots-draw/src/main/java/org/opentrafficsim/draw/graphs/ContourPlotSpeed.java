@@ -5,6 +5,7 @@ import java.awt.Color;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.draw.BoundsPaintScale;
+import org.opentrafficsim.draw.Colors;
 import org.opentrafficsim.draw.graphs.ContourDataSource.ContourDataType;
 
 /**
@@ -39,7 +40,7 @@ public class ContourPlotSpeed extends AbstractContourPlot<Speed>
     private static BoundsPaintScale createPaintScale()
     {
         double[] boundaries = {0.0, 30.0 / 3.6, 60.0 / 3.6, 110.0 / 3.6, 160.0 / 3.6};
-        Color[] colorValues = BoundsPaintScale.reverse(BoundsPaintScale.GREEN_RED_DARK);
+        Color[] colorValues = Colors.reverse(Colors.GREEN_RED_DARK);
         return new BoundsPaintScale(boundaries, colorValues);
     }
 

@@ -1,14 +1,12 @@
 package org.opentrafficsim.animation.gtu.colorer;
 
-import java.awt.Color;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.function.Function;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.draw.ColorInterpolator;
+import org.opentrafficsim.draw.BoundsPaintScale;
+import org.opentrafficsim.draw.colorer.AccelerationColorer;
 
 /**
  * Color GTUs based on their current acceleration.
@@ -18,92 +16,42 @@ import org.opentrafficsim.draw.ColorInterpolator;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class AccelerationGtuColorer implements GtuColorer, Serializable
+public class AccelerationGtuColorer extends AccelerationColorer<Gtu> implements Serializable
 {
+
     /** */
-    private static final long serialVersionUID = 201500001L;
+    private static final long serialVersionUID = 20250902L;
 
-    /** The legend. */
-    private final ArrayList<LegendEntry> legend;
-
-    /** The deceleration that corresponds to the first entry in the legend. */
-    private final Acceleration maximumDeceleration;
-
-    /** The deceleration that corresponds to the last entry in the legend. */
-    private final Acceleration maximumAcceleration;
-
-    /** Negative scale part of the range of colors (excluding the zero value). */
-    private static Color[] decelerationColors = {Color.MAGENTA, Color.RED, Color.ORANGE, Color.YELLOW};
-
-    /** Positive scale part of the range of colors (including the zero value). */
-    private static Color[] accelerationColors = {Color.YELLOW, Color.GREEN, Color.BLUE};
+    /** Value function. */
+    private static final Function<Gtu, Acceleration> VALUE = (gtu) -> gtu.getAcceleration();
 
     /**
-     * Construct a new AccelerationGtuColorer.
-     * @param maximumDeceleration the deceleration (negative acceleration) that corresponds to the first (red) legend entry
-     * @param maximumAcceleration the deceleration that corresponds to the last (blue) legend entry
+     * Constructor.
+     * @param boundPaintScale bound paint scale
      */
-    public AccelerationGtuColorer(final Acceleration maximumDeceleration, final Acceleration maximumAcceleration)
+    public AccelerationGtuColorer(final BoundsPaintScale boundPaintScale)
     {
-        this.maximumDeceleration = maximumDeceleration;
-        this.maximumAcceleration = maximumAcceleration;
-        this.legend = new ArrayList<>(6);
-        for (int index = 0; index < decelerationColors.length - 1; index++)
-        {
-            double ratio = index * 1.0 / (decelerationColors.length - 1);
-            Acceleration acceleration = Acceleration.interpolate(this.maximumDeceleration, Acceleration.ZERO, ratio);
-            String label = acceleration.toString().replaceFirst("\\.0*", ".0");
-            this.legend.add(new LegendEntry(decelerationColors[index], label, "deceleration" + label));
-        }
-        for (int index = 0; index < accelerationColors.length; index++)
-        {
-            double ratio = index * 1.0 / (accelerationColors.length - 1);
-            Acceleration acceleration = Acceleration.interpolate(Acceleration.ZERO, this.maximumAcceleration, ratio);
-            String label = acceleration.toString().replaceFirst("\\.0*", ".0");
-            this.legend.add(new LegendEntry(accelerationColors[index], label, "acceleration" + label));
-        }
+        super(VALUE, boundPaintScale);
     }
 
-    @Override
-    public final Color getColor(final Gtu gtu)
+    /**
+     * Constructor.
+     * @param minimumAcceleration minimum acceleration
+     * @param maximumAcceleration maximum acceleration
+     */
+    public AccelerationGtuColorer(final Acceleration minimumAcceleration, final Acceleration maximumAcceleration)
     {
-        Acceleration acceleration = gtu.getAcceleration();
-        double ratio;
-        if (acceleration.getSI() < 0)
-        {
-            ratio = decelerationColors.length - 1
-                    - acceleration.getSI() / this.maximumDeceleration.getSI() * (decelerationColors.length - 1);
-        }
-        else
-        {
-            ratio = acceleration.getSI() / this.maximumAcceleration.getSI() * (accelerationColors.length - 1)
-                    + decelerationColors.length - 1;
-        }
-        if (ratio <= 0)
-        {
-            return this.legend.get(0).color();
-        }
-        if (ratio >= this.legend.size() - 1)
-        {
-            return this.legend.get(this.legend.size() - 1).color();
-        }
-        // Interpolate
-        int floor = (int) Math.floor(ratio);
-        return ColorInterpolator.interpolateColor(this.legend.get(floor).color(), this.legend.get(floor + 1).color(),
-                ratio - floor);
+        super(VALUE, minimumAcceleration, maximumAcceleration);
     }
 
-    @Override
-    public final List<LegendEntry> getLegend()
+    /**
+     * Constructor constructing a scale from -6.0m/s/s to 2m/s/s.
+     */
+    public AccelerationGtuColorer()
     {
-        return Collections.unmodifiableList(this.legend);
-    }
-
-    @Override
-    public final String getName()
-    {
-        return "Acceleration";
+        super(VALUE);
     }
 
 }

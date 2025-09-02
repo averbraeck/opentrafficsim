@@ -10,7 +10,7 @@ _Figure 8.1: Legend for the ‘Speed’ GTU colorer._
 As an example we are going to create a colorer that indicates whether a driver is on the phone or not. We use three colors, for ‘yes’, ‘no’ and ‘unknown’. The latter is applicable if the GTU for which a color is determined, does not provide such information. With a static code block the legend is created, which is returned in `getLegend()`.
 
 ```java
-    public class PhoneColorer implements GtuColorer
+    public class PhoneColorer implements LegendColorer<Gtu>
     {
         private final static Color UNKNOWN = Color.WHITE;
         private final static Color NO = Color.GREEN;

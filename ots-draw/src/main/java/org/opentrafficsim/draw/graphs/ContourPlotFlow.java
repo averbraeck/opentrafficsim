@@ -5,6 +5,7 @@ import java.awt.Color;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.opentrafficsim.draw.BoundsPaintScale;
+import org.opentrafficsim.draw.Colors;
 import org.opentrafficsim.draw.graphs.ContourDataSource.ContourDataType;
 
 /**
@@ -39,7 +40,7 @@ public class ContourPlotFlow extends AbstractContourPlot<Frequency>
     private static BoundsPaintScale createPaintScale()
     {
         double[] boundaries = {0.0, 500.0 / 3600, 1000.0 / 3600, 1500.0 / 3600, 2000.0 / 3600, 2500.0 / 3600, 3000.0 / 3600};
-        Color[] colorValues = BoundsPaintScale.hue(7);
+        Color[] colorValues = Colors.hue(7);
         return new BoundsPaintScale(boundaries, colorValues);
     }
 

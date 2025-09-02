@@ -15,7 +15,6 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -26,13 +25,11 @@ import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.animation.colorer.FixedColor;
-import org.opentrafficsim.animation.colorer.IncentiveColorer;
-import org.opentrafficsim.animation.colorer.SocialPressureColorer;
-import org.opentrafficsim.animation.colorer.TaskSaturationColorer;
 import org.opentrafficsim.animation.gtu.colorer.AccelerationGtuColorer;
-import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
+import org.opentrafficsim.animation.gtu.colorer.IncentiveGtuColorer;
+import org.opentrafficsim.animation.gtu.colorer.SocialPressureGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.SpeedGtuColorer;
+import org.opentrafficsim.animation.gtu.colorer.TaskSaturationGtuColorer;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
@@ -46,6 +43,7 @@ import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
@@ -57,6 +55,8 @@ import org.opentrafficsim.core.parameters.ParameterFactoryByType;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.core.units.distributions.ContinuousDistSpeed;
 import org.opentrafficsim.demo.HumanFactorsDemo.HumanFactorsModel;
+import org.opentrafficsim.draw.colorer.Colorer;
+import org.opentrafficsim.draw.colorer.FixedColorer;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.generator.characteristics.DefaultLaneBasedGtuCharacteristicsGeneratorOd;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGeneratorOd;
@@ -177,10 +177,9 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), junctionModel,
                     new HistoryManagerDevs(simulator, Duration.instantiateSI(3.0), Duration.instantiateSI(10.0)));
             // Note some relevant colorers for social interactions and task saturation
-            List<GtuColorer> colorers = List.of(new FixedColor(Color.BLUE, "Blue"),
-                    new SpeedGtuColorer(new Speed(150.0, SpeedUnit.KM_PER_HOUR)),
-                    new AccelerationGtuColorer(Acceleration.instantiateSI(-4.0), Acceleration.instantiateSI(2.0)),
-                    new SocialPressureColorer(), new IncentiveColorer(IncentiveSocioSpeed.class), new TaskSaturationColorer());
+            List<Colorer<? super Gtu>> colorers = List.of(new FixedColorer<>(Color.BLUE, "Blue"), new SpeedGtuColorer(),
+                    new AccelerationGtuColorer(), new SocialPressureGtuColorer(),
+                    new IncentiveGtuColorer(IncentiveSocioSpeed.class), new TaskSaturationGtuColorer());
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(junctionModel.getNetwork().getExtent(),
                     new Dimension(800, 600), simulator, junctionModel, colorers, junctionModel.getNetwork());
             new HumanFactorsDemo(junctionModel, animationPanel);

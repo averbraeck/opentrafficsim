@@ -5,6 +5,7 @@ import java.awt.Color;
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.opentrafficsim.draw.BoundsPaintScale;
+import org.opentrafficsim.draw.Colors;
 import org.opentrafficsim.draw.graphs.ContourDataSource.ContourDataType;
 
 /**
@@ -39,7 +40,7 @@ public class ContourPlotDensity extends AbstractContourPlot<LinearDensity>
     private static BoundsPaintScale createPaintScale()
     {
         double[] boundaries = {0.0, 20.0 / 1000, 150.0 / 1000};
-        Color[] colorValues = BoundsPaintScale.GREEN_RED;
+        Color[] colorValues = Colors.GREEN_RED;
         return new BoundsPaintScale(boundaries, colorValues);
     }
 

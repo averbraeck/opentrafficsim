@@ -1,11 +1,7 @@
 package org.opentrafficsim.animation.gtu.colorer;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.draw.Colors;
+import org.opentrafficsim.draw.colorer.IdColorer;
 
 /**
  * Color GTUs based on their id. If the id ends on one or more digits, the value that those digits constitute is used.
@@ -16,48 +12,17 @@ import org.opentrafficsim.draw.Colors;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class IdGtuColorer implements GtuColorer
+public class IdGtuColorer extends IdColorer<Gtu>
 {
-    /** The legend. */
-    public static final ArrayList<LegendEntry> LEGEND;
-
-    /**
-     * Construct a new IdGtuColorer.
-     */
-    static
-    {
-        LEGEND = new ArrayList<LegendEntry>();
-        for (int i = 0; i < Colors.COLORS.length; i++)
-        {
-            LEGEND.add(new LegendEntry(Colors.COLORS[i], Colors.NAMES[i], Colors.NAMES[i]));
-        }
-    }
 
     /**
      * Constructor.
      */
     public IdGtuColorer()
     {
-        //
-    }
-
-    @Override
-    public final Color getColor(final Gtu gtu)
-    {
-        return LEGEND.get(Math.abs(gtu.getId().hashCode() % LEGEND.size())).color();
-    }
-
-    @Override
-    public final List<LegendEntry> getLegend()
-    {
-        return LEGEND;
-    }
-
-    @Override
-    public final String getName()
-    {
-        return "ID";
+        super((gtu) -> gtu.getId());
     }
 
 }

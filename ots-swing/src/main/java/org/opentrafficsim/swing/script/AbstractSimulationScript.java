@@ -20,14 +20,15 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.animation.DefaultAnimationFactory;
-import org.opentrafficsim.animation.gtu.colorer.GtuColorer;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
+import org.opentrafficsim.draw.colorer.Colorer;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData.GtuMarker;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.swing.gui.AnimationToggles;
@@ -74,7 +75,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
     private RoadNetwork network;
 
     /** GTU colorers. */
-    private List<GtuColorer> gtuColorers = OtsSwingApplication.DEFAULT_GTU_COLORERS;
+    private List<Colorer<? super Gtu>> gtuColorers = OtsSwingApplication.DEFAULT_GTU_COLORERS;
 
     /** Seed. */
     @Option(names = "--seed", description = "Seed", defaultValue = "1")
@@ -173,7 +174,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
      * Set GTU colorers.
      * @param colorers GTU colorers
      */
-    public final void setGtuColorers(final List<GtuColorer> colorers)
+    public final void setGtuColorers(final List<Colorer<? super Gtu>> colorers)
     {
         this.gtuColorers = colorers;
     }
@@ -182,7 +183,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
      * Returns the GTU colorers.
      * @return returns the GTU colorers
      */
-    public final List<GtuColorer> getGtuColorers()
+    public final List<Colorer<? super Gtu>> getGtuColorers()
     {
         return this.gtuColorers;
     }
