@@ -1,11 +1,13 @@
 package org.opentrafficsim.animation.gtu.colorer;
 
 import java.awt.Color;
+import java.text.NumberFormat;
 import java.util.List;
 
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.draw.BoundsPaintScale;
 import org.opentrafficsim.draw.colorer.AbstractLegendBarColorer;
+import org.opentrafficsim.draw.colorer.NumberFormatUnit;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
 
 /**
@@ -33,6 +35,9 @@ public class SocialPressureGtuColorer extends AbstractLegendBarColorer<Gtu, Doub
     /** Bounds paint scale. */
     private static final BoundsPaintScale SCALE = new BoundsPaintScale(new double[] {0.0, 1.0}, new Color[] {NONE, FULL});
 
+    /** Number formatter. */
+    private static final NumberFormatUnit FORMAT = new NumberFormatUnit("", 1);
+
     /**
      * Constructor.
      */
@@ -42,6 +47,12 @@ public class SocialPressureGtuColorer extends AbstractLegendBarColorer<Gtu, Doub
                 List.of(new LegendEntry(NONE, "None", "None: 0.0"), new LegendEntry(FULL, "Full", "Full: 1.0"),
                         new LegendEntry(NA, "N/A", "N/A")),
                 SCALE);
+    }
+
+    @Override
+    public NumberFormat getNumberFormat()
+    {
+        return FORMAT;
     }
 
     @Override

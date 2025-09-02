@@ -3,7 +3,10 @@ package org.opentrafficsim.swing.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.function.Predicate;
@@ -14,9 +17,13 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.title.PaintScaleLegend;
+import org.jfree.chart.ui.RectangleInsets;
 import org.opentrafficsim.animation.gtu.colorer.GtuColorerManager;
 import org.opentrafficsim.animation.gtu.colorer.GtuColorerManager.PredicatedColorer;
 import org.opentrafficsim.core.gtu.Gtu;
+import org.opentrafficsim.draw.colorer.ColorbarColorer;
 import org.opentrafficsim.draw.colorer.Colorer;
 import org.opentrafficsim.draw.colorer.LegendColorer;
 import org.opentrafficsim.draw.colorer.LegendColorer.LegendEntry;
@@ -53,7 +60,7 @@ public class ColorControlPanel extends JPanel implements ActionListener
     public ColorControlPanel()
     {
         this.setLayout(new FlowLayout(FlowLayout.LEFT));
-        this.legendPanel = new JPanel(new FlowLayout());
+        this.legendPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
         this.add(this.comboBoxGTUColor);
         this.add(this.legendPanel);
         this.comboBoxGTUColor.addActionListener(this);
@@ -101,7 +108,31 @@ public class ColorControlPanel extends JPanel implements ActionListener
     private void rebuildLegend()
     {
         this.legendPanel.removeAll();
-        if (this.gtuColorer instanceof LegendColorer<?> legendColorer)
+        if (this.gtuColorer instanceof ColorbarColorer<?> colorbarColorer)
+        {
+            NumberAxis scaleAxis = new NumberAxis("");
+            scaleAxis.setNumberFormatOverride(colorbarColorer.getNumberFormat());
+            // reduce tick insets from [t=2.0,l=4.0,b=2.0,r=4.0] to cramp legend in small ColorControlPanel
+            scaleAxis.setTickLabelInsets(new RectangleInsets(0.0, 4.0, 0.0, 4.0));
+            PaintScaleLegend colorbar = new PaintScaleLegend(colorbarColorer.getBoundsPaintScale(), scaleAxis);
+            colorbar.setStripWidth(13.0); // this is all that fits without increasing the height of the ColorControlPanel
+            colorbar.setSubdivisionCount(256);
+            colorbar.setPadding(0.0, 25.0, 0.0, 25.0); // horizontal padding for numbers (and units) centered at extreme ticks
+            colorbar.setBackgroundPaint(new Color(0, 0, 0, 0));
+            JPanel panel = new JPanel()
+            {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void paint(final Graphics g)
+                {
+                    colorbar.draw((Graphics2D) g, getBounds());
+                }
+            };
+            panel.setPreferredSize(new Dimension(400, 26));
+            this.legendPanel.add(panel);
+        }
+        else if (this.gtuColorer instanceof LegendColorer<?> legendColorer)
         {
             for (LegendEntry legendEntry : legendColorer.getLegend())
             {
@@ -147,10 +178,9 @@ public class ColorControlPanel extends JPanel implements ActionListener
         this.legendPanel.revalidate();
 
         Container parentPanel = this.getParent();
-
         if (parentPanel != null)
         {
-            parentPanel.repaint();
+            parentPanel.getParent().repaint();
         }
     }
 

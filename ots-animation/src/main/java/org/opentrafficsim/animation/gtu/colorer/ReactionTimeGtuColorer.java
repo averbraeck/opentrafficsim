@@ -1,6 +1,7 @@
 package org.opentrafficsim.animation.gtu.colorer;
 
 import java.awt.Color;
+import java.text.NumberFormat;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -9,6 +10,7 @@ import org.opentrafficsim.draw.BoundsPaintScale;
 import org.opentrafficsim.draw.Colors;
 import org.opentrafficsim.draw.colorer.AbstractLegendBarColorer;
 import org.opentrafficsim.draw.colorer.LegendColorer;
+import org.opentrafficsim.draw.colorer.NumberFormatUnit;
 
 /**
  * Colors the reaction time.
@@ -23,6 +25,9 @@ import org.opentrafficsim.draw.colorer.LegendColorer;
 public class ReactionTimeGtuColorer extends AbstractLegendBarColorer<Gtu, Duration>
 {
 
+    /** Number formatter. */
+    private static final NumberFormatUnit FORMAT = new NumberFormatUnit("s", 1);
+
     /**
      * Constructor.
      * @param boundsPaintScale bounds paint scale
@@ -32,7 +37,8 @@ public class ReactionTimeGtuColorer extends AbstractLegendBarColorer<Gtu, Durati
     {
         super((gtu) -> gtu.getParameters().getParameterOrNull(ParameterTypes.TR),
                 (t) -> t == null ? notApplicable : boundsPaintScale.getPaint(t.si),
-                LegendColorer.fromBoundsPaintScale(boundsPaintScale, "%.1fs", notApplicable), boundsPaintScale);
+                LegendColorer.fromBoundsPaintScale(boundsPaintScale, FORMAT.getDoubleFormat(), notApplicable),
+                boundsPaintScale);
     }
 
     /**
@@ -43,6 +49,12 @@ public class ReactionTimeGtuColorer extends AbstractLegendBarColorer<Gtu, Durati
     {
         this(new BoundsPaintScale(new double[] {0.0, maxReactionTime.si / 2.0, maxReactionTime.si}, Colors.GREEN_RED),
                 Color.BLUE);
+    }
+
+    @Override
+    public NumberFormat getNumberFormat()
+    {
+        return FORMAT;
     }
 
     @Override

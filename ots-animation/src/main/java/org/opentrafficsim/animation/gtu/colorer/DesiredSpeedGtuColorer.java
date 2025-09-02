@@ -2,6 +2,7 @@ package org.opentrafficsim.animation.gtu.colorer;
 
 import java.awt.Color;
 import java.io.Serializable;
+import java.text.NumberFormat;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -10,6 +11,7 @@ import org.opentrafficsim.draw.BoundsPaintScale;
 import org.opentrafficsim.draw.Colors;
 import org.opentrafficsim.draw.colorer.AbstractLegendBarColorer;
 import org.opentrafficsim.draw.colorer.LegendColorer;
+import org.opentrafficsim.draw.colorer.NumberFormatUnit;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
 /**
@@ -27,6 +29,9 @@ public class DesiredSpeedGtuColorer extends AbstractLegendBarColorer<Gtu, Speed>
     /** */
     private static final long serialVersionUID = 20150000L;
 
+    /** Number formatter. */
+    private static final NumberFormatUnit FORMAT = new NumberFormatUnit("km/h", 0);
+
     /**
      * Constructor.
      * @param boundsPaintScale bounds paint scale for value in km/h
@@ -35,7 +40,7 @@ public class DesiredSpeedGtuColorer extends AbstractLegendBarColorer<Gtu, Speed>
     {
         super((gtu) -> gtu instanceof LaneBasedGtu gtuLane ? gtuLane.getDesiredSpeed() : null,
                 (v) -> v == null ? Color.WHITE : boundsPaintScale.getPaint(v.getInUnit(SpeedUnit.KM_PER_HOUR)),
-                LegendColorer.fromBoundsPaintScale(boundsPaintScale, "%.0fkm/h"), boundsPaintScale);
+                LegendColorer.fromBoundsPaintScale(boundsPaintScale, FORMAT.getDoubleFormat()), boundsPaintScale);
     }
 
     /**
@@ -48,6 +53,12 @@ public class DesiredSpeedGtuColorer extends AbstractLegendBarColorer<Gtu, Speed>
         this(new BoundsPaintScale(new double[] {minimumSpeed.getInUnit(SpeedUnit.KM_PER_HOUR),
                 (minimumSpeed.getInUnit(SpeedUnit.KM_PER_HOUR) + maximumSpeed.getInUnit(SpeedUnit.KM_PER_HOUR)) / 2.0,
                 maximumSpeed.getInUnit(SpeedUnit.KM_PER_HOUR)}, Colors.reverse(Colors.GREEN_RED), Color.WHITE));
+    }
+
+    @Override
+    public NumberFormat getNumberFormat()
+    {
+        return FORMAT;
     }
 
     @Override

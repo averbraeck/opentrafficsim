@@ -2,6 +2,7 @@ package org.opentrafficsim.animation.gtu.colorer;
 
 import java.awt.Color;
 import java.io.Serializable;
+import java.text.NumberFormat;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Duration;
@@ -9,6 +10,7 @@ import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.draw.BoundsPaintScale;
 import org.opentrafficsim.draw.colorer.AbstractLegendBarColorer;
+import org.opentrafficsim.draw.colorer.NumberFormatUnit;
 
 /**
  * Color on a scale from between two given limits.
@@ -38,8 +40,8 @@ public class DesiredHeadwayGtuColorer extends AbstractLegendBarColorer<Gtu, Dura
     /** Unknown color. */
     private static final Color UNKNOWN = Color.WHITE;
 
-    /** Legend label format. */
-    private static final String FORMAT = "%.2fs";
+    /** Number formatter. */
+    private static final NumberFormatUnit FORMAT = new NumberFormatUnit("s", 2);
 
     /**
      * Constructor.
@@ -61,10 +63,16 @@ public class DesiredHeadwayGtuColorer extends AbstractLegendBarColorer<Gtu, Dura
     {
         this(new BoundsPaintScale(new double[] {tMin.si, (tMin.si + tMax.si) / 2.0, tMax.si}, new Color[] {LOW, MIDDLE, HIGH},
                 UNKNOWN),
-                List.of(new LegendEntry(LOW, String.format(FORMAT, tMin.si), "Tmin"),
-                        new LegendEntry(MIDDLE, String.format(FORMAT, (tMin.si + tMax.si) / 2.0), "Mean"),
-                        new LegendEntry(HIGH, String.format(FORMAT, tMax.si), "Tmax"),
+                List.of(new LegendEntry(LOW, String.format(FORMAT.getDoubleFormat(), tMin.si), "Tmin"),
+                        new LegendEntry(MIDDLE, String.format(FORMAT.getDoubleFormat(), (tMin.si + tMax.si) / 2.0), "Mean"),
+                        new LegendEntry(HIGH, String.format(FORMAT.getDoubleFormat(), tMax.si), "Tmax"),
                         new LegendEntry(UNKNOWN, "Unknown", "Unknown")));
+    }
+
+    @Override
+    public NumberFormat getNumberFormat()
+    {
+        return FORMAT;
     }
 
     @Override

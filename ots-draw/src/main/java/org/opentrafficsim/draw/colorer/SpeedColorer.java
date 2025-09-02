@@ -1,6 +1,7 @@
 package org.opentrafficsim.draw.colorer;
 
 import java.io.Serializable;
+import java.text.NumberFormat;
 import java.util.function.Function;
 
 import org.djunits.unit.SpeedUnit;
@@ -25,6 +26,9 @@ public class SpeedColorer<T> extends AbstractLegendBarColorer<T, Speed> implemen
     /** */
     private static final long serialVersionUID = 20150000L;
 
+    /** Number formatter. */
+    private static final NumberFormatUnit FORMAT = new NumberFormatUnit("km/h", 0);
+
     /**
      * Constructor.
      * @param valueFunction value function
@@ -33,7 +37,7 @@ public class SpeedColorer<T> extends AbstractLegendBarColorer<T, Speed> implemen
     public SpeedColorer(final Function<? super T, Speed> valueFunction, final BoundsPaintScale boundPaintScale)
     {
         super(valueFunction, (v) -> boundPaintScale.getPaint(v.getInUnit(SpeedUnit.KM_PER_HOUR)),
-                LegendColorer.fromBoundsPaintScale(boundPaintScale, "%.0fkm/h"), boundPaintScale);
+                LegendColorer.fromBoundsPaintScale(boundPaintScale, FORMAT.getDoubleFormat()), boundPaintScale);
     }
 
     /**
@@ -54,6 +58,12 @@ public class SpeedColorer<T> extends AbstractLegendBarColorer<T, Speed> implemen
     public SpeedColorer(final Function<? super T, Speed> valueFunction)
     {
         this(valueFunction, new Speed(150.0, SpeedUnit.KM_PER_HOUR));
+    }
+
+    @Override
+    public NumberFormat getNumberFormat()
+    {
+        return FORMAT;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.opentrafficsim.draw.colorer;
 
 import java.io.Serializable;
+import java.text.NumberFormat;
 import java.util.function.Function;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -24,6 +25,9 @@ public class AccelerationColorer<T> extends AbstractLegendBarColorer<T, Accelera
     /** */
     private static final long serialVersionUID = 201500001L;
 
+    /** Number formatter. */
+    private static final NumberFormatUnit FORMAT = new NumberFormatUnit("m/s\u00b2", 1);
+
     /**
      * Constructor.
      * @param valueFunction value function
@@ -32,7 +36,7 @@ public class AccelerationColorer<T> extends AbstractLegendBarColorer<T, Accelera
     public AccelerationColorer(final Function<? super T, Acceleration> valueFunction, final BoundsPaintScale boundPaintScale)
     {
         super(valueFunction, (v) -> boundPaintScale.getPaint(v.si),
-                LegendColorer.fromBoundsPaintScale(boundPaintScale, "%.1fm/s\u00b2"), boundPaintScale);
+                LegendColorer.fromBoundsPaintScale(boundPaintScale, FORMAT.getDoubleFormat()), boundPaintScale);
     }
 
     /**
@@ -57,6 +61,12 @@ public class AccelerationColorer<T> extends AbstractLegendBarColorer<T, Accelera
     public AccelerationColorer(final Function<? super T, Acceleration> valueFunction)
     {
         this(valueFunction, Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2.0));
+    }
+
+    @Override
+    public NumberFormat getNumberFormat()
+    {
+        return FORMAT;
     }
 
     @Override

@@ -3,6 +3,7 @@ package org.opentrafficsim.draw.graphs;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Paint;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.CubicCurve2D;
@@ -11,8 +12,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -26,11 +25,16 @@ import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.labels.XYToolTipGenerator;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.title.PaintScaleLegend;
+import org.jfree.chart.ui.RectangleEdge;
+import org.jfree.chart.ui.RectangleInsets;
 import org.jfree.data.DomainOrder;
 import org.jfree.data.xy.XYDataset;
-import org.opentrafficsim.draw.BoundsPaintScale;
 import org.opentrafficsim.draw.Colors;
+import org.opentrafficsim.draw.colorer.ColorbarColorer;
 import org.opentrafficsim.draw.colorer.Colorer;
+import org.opentrafficsim.draw.colorer.LegendColorer;
+import org.opentrafficsim.draw.colorer.LegendColorer.LegendEntry;
 import org.opentrafficsim.draw.colorer.trajectory.TrajectoryColorer;
 import org.opentrafficsim.draw.graphs.GraphPath.Section;
 import org.opentrafficsim.draw.graphs.OffsetTrajectory.TrajectorySection;
@@ -38,7 +42,6 @@ import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.SamplerData;
 import org.opentrafficsim.kpi.sampling.Trajectory;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
-import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
 
 /**
  * Plot of trajectories along a path.
@@ -91,6 +94,9 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
     /** Line renderer. */
     private XYLineAndShapeRendererColor renderer;
 
+    /** Color bar. */
+    private PaintScaleLegend colorbar;
+
     static
     {
         Color[] c = Colors.hue(6);
@@ -136,6 +142,11 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
                         continue; // lane is not part of this section, e.g. after a lane-drop
                     }
                     TrajectoryGroup<?> trajectoryGroup = getSamplerData().getTrajectoryGroup(lane);
+                    if (trajectoryGroup == null)
+                    {
+                        // recording of data not yet started
+                        return;
+                    }
                     int from = this.knownTrajectories.getOrDefault(lane, 0);
                     int to = trajectoryGroup.size();
                     double scaleFactor = section.length().si / lane.getLength().si;
@@ -175,13 +186,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
         NumberAxis yAxis = new NumberAxis("Distance [m] \u2192");
         this.renderer = new XYLineAndShapeRendererColor();
         XYPlot plot = new XYPlot(this, xAxis, yAxis, this.renderer);
-        boolean showLegend;
-        if (getPath().getNumberOfSeries() < 2)
-        {
-            plot.setFixedLegendItems(null);
-            showLegend = false;
-        }
-        else
+        if (getPath().getNumberOfSeries() > 1)
         {
             this.legend = new LegendItemCollection();
             for (int i = 0; i < getPath().getNumberOfSeries(); i++)
@@ -193,9 +198,8 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
                 this.legend.add(li);
             }
             plot.setFixedLegendItems(this.legend);
-            showLegend = true;
         }
-        return new JFreeChart(getCaption(), JFreeChart.DEFAULT_TITLE_FONT, plot, showLegend);
+        return new JFreeChart(getCaption(), JFreeChart.DEFAULT_TITLE_FONT, plot, true);
     }
 
     /**
@@ -206,6 +210,37 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
     {
         this.colorer = colorer;
         this.renderer.setDrawSeriesLineAsPath(colorer.isSingleColor());
+        if (getPath().getNumberOfSeries() < 2)
+        {
+            if (this.colorbar != null)
+            {
+                getChart().removeSubtitle(this.colorbar);
+            }
+            LegendItemCollection colorerLegend = new LegendItemCollection();
+            if (colorer instanceof ColorbarColorer<?> colorbarColorer)
+            {
+                NumberAxis scaleAxis = new NumberAxis("");
+                scaleAxis.setNumberFormatOverride(colorbarColorer.getNumberFormat());
+                // increase tick insets from [t=2.0,l=4.0,b=2.0,r=4.0] to let the automatic ticks be less cluttered
+                scaleAxis.setTickLabelInsets(new RectangleInsets(5.0, 4.0, 5.0, 4.0));
+                this.colorbar = new PaintScaleLegend(colorbarColorer.getBoundsPaintScale(), scaleAxis);
+                this.colorbar.setSubdivisionCount(256);
+                this.colorbar.setPosition(RectangleEdge.RIGHT);
+                // some padding to make space for last tick number on adjacent axes, and vertically match those axes
+                this.colorbar.setPadding(10.0, 15.0, 40.0, 10.0);
+                getChart().addSubtitle(this.colorbar);
+            }
+            else if (colorer instanceof LegendColorer<?> legendColorer)
+            {
+
+                for (LegendEntry entry : legendColorer.getLegend())
+                {
+                    colorerLegend.add(new LegendItem(entry.name(), entry.name(), entry.name(), entry.name(),
+                            new Rectangle(10, 10), entry.color(), new BasicStroke(0.5f), Color.BLACK));
+                }
+            }
+            ((XYPlot) getChart().getPlot()).setFixedLegendItems(colorerLegend);
+        }
     }
 
     @Override
@@ -435,126 +470,6 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
         public String toString()
         {
             return "XYLineAndShapeRendererID []";
-        }
-
-    }
-
-    /**
-     * Trajectory colorer.
-     */
-    public abstract static class TrajectoryColorerXXX implements BiFunction<OffsetTrajectory, Integer, Color>
-    {
-
-        /** Blue colorer. */
-        public static final TrajectoryColorerXXX BLUE = new TrajectoryColorerXXX(true)
-        {
-            @Override
-            public Color apply(final OffsetTrajectory t, final Integer u)
-            {
-                return Color.BLUE;
-            }
-        };
-
-        /** Id colorer. */
-        public static final TrajectoryColorerXXX ID = new TrajectoryColorerXXX(true)
-        {
-            @Override
-            public Color apply(final OffsetTrajectory t, final Integer u)
-            {
-                String gtuId = t.getGtuId();
-                for (int pos = gtuId.length(); --pos >= 0;)
-                {
-                    Character c = gtuId.charAt(pos);
-                    if (Character.isDigit(c))
-                    {
-                        return Colors.getEnumerated(c - '0');
-                    }
-                }
-                return Color.CYAN;
-            }
-        };
-
-        /** Speed colorer. */
-        public static final TrajectoryColorerXXX SPEED = new TrajectoryColorerXXX(false)
-        {
-            /** Color scale. */
-            private static final BoundsPaintScale SCALE = new BoundsPaintScale(
-                    new double[] {0.0, 30.0 / 3.6, 60.0 / 3.6, 90.0 / 3.6, 120.0 / 3.6}, Colors.reverse(Colors.GREEN_RED_DARK));
-
-            @Override
-            public Color apply(final OffsetTrajectory t, final Integer u)
-            {
-                return SCALE.getPaint(t.getV(u));
-            }
-        };
-
-        /** Acceleration colorer. */
-        public static final TrajectoryColorerXXX ACCELERATION = new TrajectoryColorerXXX(false)
-        {
-            /** Color scale. */
-            private static final BoundsPaintScale SCALE = new BoundsPaintScale(new double[] {-6.0, -4.0, -2.0, 0.0, 1.0, 2.0},
-                    new Color[] {Color.MAGENTA, Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.BLUE});
-
-            @Override
-            public Color apply(final OffsetTrajectory t, final Integer u)
-            {
-                return SCALE.getPaint(t.getA(u));
-            }
-        };
-
-        /** Whether this colorer has one color per trajectory. */
-        private final boolean singleColor;
-
-        /**
-         * Constructor.
-         * @param singleColor whether this colorer has one color per trajectory
-         */
-        public TrajectoryColorerXXX(final boolean singleColor)
-        {
-            this.singleColor = singleColor;
-        }
-
-        /**
-         * Whether the trajectory of a GTU is a single color. By default this is false.
-         * @return whether the trajectory of a GTU is a single color
-         */
-        public boolean isSingleColor()
-        {
-            return this.singleColor;
-        }
-    }
-
-    /**
-     * Colorer based on extended data in trajectory.
-     * @param <T> extended data value type
-     */
-    public static class TrajectoryColorerExtended<T> extends TrajectoryColorerXXX
-    {
-
-        /** Extended data type. */
-        private final ExtendedDataType<? extends T, ?, ?, ?> dataType;
-
-        /** Coloring function. */
-        private final Function<T, Color> colorFunction;
-
-        /**
-         * Constructor.
-         * @param singleColor whether this colorer has one color per trajectory
-         * @param dataType extended data type
-         * @param colorFunction coloring function
-         */
-        public TrajectoryColorerExtended(final boolean singleColor, final ExtendedDataType<? extends T, ?, ?, ?> dataType,
-                final Function<T, Color> colorFunction)
-        {
-            super(singleColor);
-            this.dataType = dataType;
-            this.colorFunction = colorFunction;
-        }
-
-        @Override
-        public Color apply(final OffsetTrajectory t, final Integer u)
-        {
-            return this.colorFunction.apply(t.getValue(u, this.dataType));
         }
 
     }

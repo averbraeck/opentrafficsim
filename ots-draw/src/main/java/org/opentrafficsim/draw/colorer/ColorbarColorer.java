@@ -1,5 +1,7 @@
 package org.opentrafficsim.draw.colorer;
 
+import java.text.NumberFormat;
+
 import org.opentrafficsim.draw.BoundsPaintScale;
 
 /**
@@ -19,5 +21,11 @@ public interface ColorbarColorer<T> extends Colorer<T>
      * @return bound paint scale to fill the color bar
      */
     BoundsPaintScale getBoundsPaintScale();
+
+    /**
+     * Returns the number format for values along the colorbar.
+     * @return number format for values along the colorbar
+     */
+    NumberFormat getNumberFormat();
 
 }
