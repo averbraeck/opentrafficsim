@@ -1,7 +1,10 @@
 package org.opentrafficsim.road.network.lane.object.detector;
 
 import java.util.Locale;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Try;
@@ -85,9 +88,35 @@ public class SinkDetector extends LaneDetector
     public SinkDetector(final Lane lane, final Length position, final DetectorType detectorType,
             final BiPredicate<SinkDetector, LaneBasedGtu> predicate) throws NetworkException
     {
-        super(String.format(Locale.US, "Sink@%.3fm", position.si), lane, position, RelativePosition.FRONT,
-                LaneBasedObject.makeLine(lane, position, 1.0), detectorType);
+        super(createId(lane, position), lane, position, RelativePosition.FRONT, LaneBasedObject.makeLine(lane, position, 1.0),
+                detectorType);
         this.predicate = predicate;
+    }
+
+    /**
+     * Returns a unique id for the sink. The basic format is 'Sink@1.234m'. If multiple sinks are within the same rounded
+     * millimeter, they will receive an additional number as 'Sink@1.234m_1'. If the number 9 is still not sufficient, the id
+     * will be 'Sink.{a UUID}'.
+     * @param lane lane of the sink
+     * @param position position of the link
+     * @return unique id for the sink
+     */
+    private static String createId(final Lane lane, final Length position)
+    {
+        String baseId = String.format(Locale.US, "Sink@%.3fm", position.si);
+        String id = baseId;
+        int i = 1;
+        Set<String> currentSinkIds = lane.getDetectors().stream().filter((d) -> d instanceof SinkDetector).map((d) -> d.getId())
+                .collect(Collectors.toSet());
+        while (i < 10 && currentSinkIds.contains(id))
+        {
+            id = baseId + "_" + (i++);
+        }
+        if (i == 10)
+        {
+            return "Sink." + UUID.randomUUID().toString();
+        }
+        return id;
     }
 
     @Override
