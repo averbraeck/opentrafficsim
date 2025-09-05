@@ -279,7 +279,7 @@ public final class NetworkParser
                 {
                     endHeading -= 2.0 * Math.PI;
                 }
-                designLine = new ContinuousArc(start, radius, left, Angle.instantiateSI(Math.abs(endHeading) - startHeading));
+                designLine = new ContinuousArc(start, radius, left, Angle.instantiateSI(Math.abs(endHeading - startHeading)));
             }
             else if (xmlLink.getBezier() != null)
             {
