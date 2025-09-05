@@ -39,6 +39,8 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
 
+import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
+
 /**
  * The Lane is the CrossSectionElement of a CrossSectionLink on which GTUs can drive. The Lane stores several important
  * properties, such as the successor lane(s), predecessor lane(s), and adjacent lane(s), all separated per GTU type. It can, for
@@ -677,10 +679,13 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
             }
         }
         this.gtuList.add(index, gtu);
-        // @docs/02-model-structure/djutils.md#event-producers-and-listeners
-        fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] {gtu.getId(), this.gtuList.size(), getId(), getLink().getId()},
-                gtu.getSimulator().getSimulatorTime());
-        // @end
+        getLink().getSimulator().scheduleEventNow((short) (SimEventInterface.MIN_PRIORITY + 1), () ->
+        {
+            // @docs/02-model-structure/djutils.md#event-producers-and-listeners
+            fireTimedEvent(Lane.GTU_ADD_EVENT, new Object[] {gtu.getId(), this.gtuList.size(), getId(), getLink().getId()},
+                    gtu.getSimulator().getSimulatorTime());
+            // @end
+        });
         getLink().addGTU(gtu);
         return index;
     }
@@ -710,11 +715,14 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
         boolean contained = this.gtuList.remove(gtu);
         if (contained)
         {
-            // @docs/02-model-structure/djutils.md#event-producers-and-listeners
-            fireTimedEvent(Lane.GTU_REMOVE_EVENT,
-                    new Object[] {gtu.getId(), gtu, this.gtuList.size(), position, getId(), getLink().getId()},
-                    gtu.getSimulator().getSimulatorTime());
-            // @end
+            getLink().getSimulator().scheduleEventNow(SimEventInterface.MIN_PRIORITY, () ->
+            {
+                // @docs/02-model-structure/djutils.md#event-producers-and-listeners
+                fireTimedEvent(Lane.GTU_REMOVE_EVENT,
+                        new Object[] {gtu.getId(), gtu, this.gtuList.size(), position, getId(), getLink().getId()},
+                        gtu.getSimulator().getSimulatorTime());
+                // @end
+            });
         }
         if (removeFromParentLink)
         {

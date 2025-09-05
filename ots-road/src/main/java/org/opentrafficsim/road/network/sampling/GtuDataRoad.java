@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.network.sampling;
 
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
