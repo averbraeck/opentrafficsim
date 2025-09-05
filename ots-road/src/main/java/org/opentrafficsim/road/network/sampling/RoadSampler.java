@@ -231,17 +231,9 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
             if (isIntervalBased())
             {
                 double currentTime = now().getSI();
-                double next = Math.ceil(currentTime / this.samplingInterval.getSI()) * this.samplingInterval.getSI();
-                if (next > currentTime)
-                {
-                    // synchronize in interval
-                    scheduleSamplingInterval(gtu, lane, Duration.instantiateSI(next - currentTime));
-                }
-                else
-                {
-                    // already synchronous
-                    scheduleSamplingInterval(gtu, lane, this.samplingInterval);
-                }
+                int steps = (int) Math.ceil(currentTime / this.samplingInterval.getSI());
+                // add 1 step if right now happens to be synchronous with sampling interval
+                scheduleSamplingInterval(gtu, lane, steps + (steps * this.samplingInterval.getSI() > currentTime ? 0 : 1));
             }
             else
             {
@@ -306,14 +298,15 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
      * Schedules a sampling event for the given gtu on the given lane for the sampling interval from the current time.
      * @param gtu gtu to sample
      * @param lane lane where the gtu is at
-     * @param inTime relative time to schedule
+     * @param steps number of steps in interval based sampling
      */
-    private void scheduleSamplingInterval(final LaneBasedGtu gtu, final Lane lane, final Duration inTime)
+    private void scheduleSamplingInterval(final LaneBasedGtu gtu, final Lane lane, final int steps)
     {
         SimEventInterface<Duration> simEvent;
         try
         {
-            simEvent = this.simulator.scheduleEventRel(inTime, () -> notifySample(gtu, lane));
+            simEvent =
+                    this.simulator.scheduleEventAbs(this.samplingInterval.times(steps), () -> notifySample(gtu, lane, steps));
         }
         catch (SimRuntimeException exception)
         {
@@ -327,13 +320,14 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
      * Samples a gtu and schedules the next sampling event. This is used for interval-based sampling.
      * @param gtu gtu to sample
      * @param lane lane where the gtu is at
+     * @param steps number of steps in interval based sampling
      */
-    public final void notifySample(final LaneBasedGtu gtu, final Lane lane)
+    private void notifySample(final LaneBasedGtu gtu, final Lane lane, final int steps)
     {
         LaneDataRoad laneData = new LaneDataRoad(lane);
         Length position = gtu.getPosition(lane, RelativePosition.REFERENCE_POSITION);
         snapshot(laneData, position, gtu.getSpeed(), gtu.getAcceleration(), now(), new GtuDataRoad(gtu));
-        scheduleSamplingInterval(gtu, lane, this.samplingInterval);
+        scheduleSamplingInterval(gtu, lane, steps + 1);
     }
 
     @Override
