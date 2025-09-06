@@ -13,11 +13,11 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
-import org.djutils.draw.function.ContinuousPiecewiseLinearFunction.TupleSt;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
+import org.djutils.math.functions.MathFunction.TupleSt;
 
 /**
  * Continuous definition of a cubic Bezier. This extends from the more general {@code ContinuousBezier} as certain methods are

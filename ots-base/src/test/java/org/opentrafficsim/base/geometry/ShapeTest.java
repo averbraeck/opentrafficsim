@@ -121,14 +121,14 @@ public final class ShapeTest
         assertFalse(circle.getRelativeContour().contains(new Point2d(0.01, -r - p + 0.01)));
 
         // bounds
-        assertEquals(2.0 * r, circle.getBounds().getDeltaX(), 0.001);
-        assertEquals(2.0 * r, circle.getBounds().getDeltaY(), 0.001);
-        assertEquals(-r, circle.getBounds().getMinX(), 0.001);
-        assertEquals(r, circle.getBounds().getMaxX(), 0.001);
-        assertEquals(-r, circle.getBounds().getMinY(), 0.001);
-        assertEquals(r, circle.getBounds().getMaxY(), 0.001);
-        assertEquals(0.0, circle.getBounds().midPoint().x, 0.001);
-        assertEquals(0.0, circle.getBounds().midPoint().y, 0.001);
+        assertEquals(2.0 * r, circle.getRelativeBounds().getDeltaX(), 0.001);
+        assertEquals(2.0 * r, circle.getRelativeBounds().getDeltaY(), 0.001);
+        assertEquals(-r, circle.getRelativeBounds().getMinX(), 0.001);
+        assertEquals(r, circle.getRelativeBounds().getMaxX(), 0.001);
+        assertEquals(-r, circle.getRelativeBounds().getMinY(), 0.001);
+        assertEquals(r, circle.getRelativeBounds().getMaxY(), 0.001);
+        assertEquals(0.0, circle.getRelativeBounds().midPoint().x, 0.001);
+        assertEquals(0.0, circle.getRelativeBounds().midPoint().y, 0.001);
     }
 
     /**
@@ -260,14 +260,14 @@ public final class ShapeTest
         assertFalse(rectangle.getRelativeContour().contains(new Point2d(0.0 + dx, -r2 - p + dy)));
 
         // bounds
-        assertEquals(2.0 * r1, rectangle.getBounds().getDeltaX(), 0.001);
-        assertEquals(2.0 * r2, rectangle.getBounds().getDeltaY(), 0.001);
-        assertEquals(-r1 + dx, rectangle.getBounds().getMinX(), 0.001);
-        assertEquals(r1 + dx, rectangle.getBounds().getMaxX(), 0.001);
-        assertEquals(-r2 + dy, rectangle.getBounds().getMinY(), 0.001);
-        assertEquals(r2 + dy, rectangle.getBounds().getMaxY(), 0.001);
-        assertEquals(dx, rectangle.getBounds().midPoint().x, 0.001);
-        assertEquals(dy, rectangle.getBounds().midPoint().y, 0.001);
+        assertEquals(2.0 * r1, rectangle.getRelativeBounds().getDeltaX(), 0.001);
+        assertEquals(2.0 * r2, rectangle.getRelativeBounds().getDeltaY(), 0.001);
+        assertEquals(-r1 + dx, rectangle.getRelativeBounds().getMinX(), 0.001);
+        assertEquals(r1 + dx, rectangle.getRelativeBounds().getMaxX(), 0.001);
+        assertEquals(-r2 + dy, rectangle.getRelativeBounds().getMinY(), 0.001);
+        assertEquals(r2 + dy, rectangle.getRelativeBounds().getMaxY(), 0.001);
+        assertEquals(dx, rectangle.getRelativeBounds().midPoint().x, 0.001);
+        assertEquals(dy, rectangle.getRelativeBounds().midPoint().y, 0.001);
     }
 
     /**
@@ -310,14 +310,14 @@ public final class ShapeTest
             assertFalse(polygon.contains(new Point2d(0.0, -r - p + 0.01)));
 
             // bounds
-            assertEquals(2.0 * r, polygon.getBounds().getDeltaX(), 0.001);
-            assertEquals(2.0 * r, polygon.getBounds().getDeltaY(), 0.001);
-            assertEquals(-r, polygon.getBounds().getMinX(), 0.001);
-            assertEquals(r, polygon.getBounds().getMaxX(), 0.001);
-            assertEquals(-r, polygon.getBounds().getMinY(), 0.001);
-            assertEquals(r, polygon.getBounds().getMaxY(), 0.001);
-            assertEquals(0.0, polygon.getBounds().midPoint().x, 0.001);
-            assertEquals(0.0, polygon.getBounds().midPoint().y, 0.001);
+            assertEquals(2.0 * r, polygon.getRelativeBounds().getDeltaX(), 0.001);
+            assertEquals(2.0 * r, polygon.getRelativeBounds().getDeltaY(), 0.001);
+            assertEquals(-r, polygon.getRelativeBounds().getMinX(), 0.001);
+            assertEquals(r, polygon.getRelativeBounds().getMaxX(), 0.001);
+            assertEquals(-r, polygon.getRelativeBounds().getMinY(), 0.001);
+            assertEquals(r, polygon.getRelativeBounds().getMaxY(), 0.001);
+            assertEquals(0.0, polygon.getRelativeBounds().midPoint().x, 0.001);
+            assertEquals(0.0, polygon.getRelativeBounds().midPoint().y, 0.001);
         }
     }
 

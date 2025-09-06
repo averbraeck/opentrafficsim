@@ -84,7 +84,7 @@ public class StaticObject extends LocalEventProducer implements LocatedObject
      */
     public static StaticObject create(final String id, final Polygon2d geometry, final Length height) throws NetworkException
     {
-        DirectedPoint2d point = new DirectedPoint2d(geometry.getBounds().midPoint(), 0.0);
+        DirectedPoint2d point = new DirectedPoint2d(geometry.getAbsoluteBounds().midPoint(), 0.0);
         StaticObject staticObject = new StaticObject(id, point, geometry, height);
         staticObject.init();
         return staticObject;
@@ -142,9 +142,9 @@ public class StaticObject extends LocalEventProducer implements LocatedObject
 
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Bounds2d getBounds()
+    public Bounds2d getRelativeBounds()
     {
-        return this.relativeContour.getBounds();
+        return this.relativeContour.getAbsoluteBounds();
     }
 
     @Override

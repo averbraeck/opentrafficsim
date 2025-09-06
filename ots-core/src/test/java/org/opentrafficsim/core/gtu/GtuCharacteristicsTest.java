@@ -9,6 +9,7 @@ import javax.naming.NamingException;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import org.opentrafficsim.core.network.Network;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.experiment.StreamInformation;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterMap;
+import nl.tudelft.simulation.dsol.statistics.SimulationStatistic;
 
 /**
  * Test the GtuCharacteristics class
@@ -88,13 +90,18 @@ public final class GtuCharacteristicsTest implements OtsModelInterface
     }
 
     @Override
+    public void setInputParameterMap(final InputParameterMap inputParameterMap)
+    {
+    }
+
+    @Override
     public InputParameterMap getInputParameterMap()
     {
         return null;
     }
 
     @Override
-    public List getOutputStatistics()
+    public List<SimulationStatistic<Duration>> getOutputStatistics()
     {
         return null;
     }
@@ -128,4 +135,21 @@ public final class GtuCharacteristicsTest implements OtsModelInterface
     {
         return null;
     }
+
+    @Override
+    public void setResetApplicationExecutable(final Runnable resetApplicationExecutable)
+    {
+    }
+
+    @Override
+    public Runnable getResetApplicationExecutable()
+    {
+        return null;
+    }
+
+    @Override
+    public void resetApplication()
+    {
+    }
+
 }

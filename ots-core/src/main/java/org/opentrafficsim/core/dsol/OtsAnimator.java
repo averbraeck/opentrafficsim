@@ -63,7 +63,7 @@ public class OtsAnimator extends DevsRealTimeAnimator<Duration> implements OtsSi
     }
 
     @Override
-    protected Duration simulatorTimeForWallClockMillis(final double wallMilliseconds)
+    public Duration simulatorTimeForWallClockMillis(final double wallMilliseconds)
     {
         return new Duration(wallMilliseconds, DurationUnit.MILLISECOND);
     }

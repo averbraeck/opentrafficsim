@@ -155,7 +155,7 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
     }
 
     @Override
-    public Bounds2d getBounds()
+    public Bounds2d getRelativeBounds()
     {
         return this.bounds;
     }
@@ -292,7 +292,7 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
         DirectedPoint2d point = laneData.getCenterLine().getLocationExtended(this.positionFromStart.si);
         this.location = new DirectedPoint2d(point.x, point.y, point.dirZ);
         this.line = new PolyLine2d(new double[] {0.0, 0.0}, new double[] {-w45, w45});
-        this.bounds = LaneBasedObjectData.super.getBounds();
+        this.bounds = LaneBasedObjectData.super.getRelativeBounds();
         this.absoluteContour = OtsShape.boundsAsAbsoluteContour(this);
         this.relativeContour =
                 new Polygon2d(OtsShape.toRelativeTransform(this.location).transform(this.absoluteContour.iterator()));

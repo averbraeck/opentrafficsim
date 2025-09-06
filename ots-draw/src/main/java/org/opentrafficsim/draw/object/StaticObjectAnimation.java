@@ -7,13 +7,11 @@ import java.awt.Stroke;
 import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
 import java.rmi.RemoteException;
-import java.util.List;
 import java.util.Set;
 
 import javax.naming.NamingException;
 
-import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.draw.ClickableLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.OtsRenderable;
 import org.opentrafficsim.draw.PaintPolygons;
 import org.opentrafficsim.draw.object.StaticObjectAnimation.StaticObjectData;
@@ -63,7 +61,7 @@ public class StaticObjectAnimation extends OtsRenderable<StaticObjectData>
         this.width = width;
         this.color = color;
         this.fill = fill;
-        this.paths = PaintPolygons.getPaths(getSource().getLocation(), getSource().getGeometry());
+        this.paths = PaintPolygons.getPaths(getSource().getLocation(), getSource().getAbsoluteContour().getPointList());
     }
 
     @Override
@@ -149,13 +147,8 @@ public class StaticObjectAnimation extends OtsRenderable<StaticObjectData>
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public interface StaticObjectData extends ClickableLocatable
+    public interface StaticObjectData extends OtsShape
     {
-        /**
-         * Returns the geometry of the object.
-         * @return List&lt;Point2d&gt; list of points of the geometry.
-         */
-        List<Point2d> getGeometry();
     }
 
 }

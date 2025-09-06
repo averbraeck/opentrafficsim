@@ -10,7 +10,7 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.draw.ClickableLineLocatable;
+import org.opentrafficsim.draw.LineLocatable;
 import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
@@ -133,7 +133,7 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStopData>
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public interface BusStopData extends LaneBasedObjectData, ClickableLineLocatable
+    public interface BusStopData extends LaneBasedObjectData, LineLocatable
     {
     }
 

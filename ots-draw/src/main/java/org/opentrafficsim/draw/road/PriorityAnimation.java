@@ -11,10 +11,9 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.ImageObserver;
-import java.rmi.RemoteException;
 import java.util.Map;
 
-import org.opentrafficsim.draw.ClickableLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.OtsRenderable;
 import org.opentrafficsim.draw.road.PriorityAnimation.PriorityData;
@@ -307,11 +306,11 @@ public class PriorityAnimation extends OtsRenderable<PriorityData>
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public interface PriorityData extends ClickableLocatable
+    public interface PriorityData extends OtsShape
     {
 
         @Override
-        default double getZ() throws RemoteException
+        default double getZ()
         {
             return DrawLevel.NODE.getZ();
         }

@@ -98,6 +98,9 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
     /** Location provider for all generated GTUs. */
     private final GeneratorPositions generatorPositions;
 
+    /** Cached view objects to expose information on generator queue's. */
+    private Set<GtuGeneratorPosition> positions;
+
     /** Network. */
     private final RoadNetwork network;
 
@@ -515,39 +518,42 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
     @Override
     public Set<GtuGeneratorPosition> getPositions()
     {
-        Set<GtuGeneratorPosition> set = new LinkedHashSet<>();
-        for (GeneratorLanePosition lanePosition : this.generatorPositions.getAllPositions())
+        if (this.positions == null)
         {
-            LanePosition pos = lanePosition.getPosition();
-            DirectedPoint2d p = pos.getLocation();
-            set.add(new GtuGeneratorPosition()
+            this.positions = new LinkedHashSet<>();
+            for (GeneratorLanePosition lanePosition : this.generatorPositions.getAllPositions())
             {
-                @Override
-                public DirectedPoint2d getLocation()
+                LanePosition pos = lanePosition.getPosition();
+                DirectedPoint2d p = pos.getLocation();
+                this.positions.add(new GtuGeneratorPosition()
                 {
-                    return p;
-                }
+                    @Override
+                    public DirectedPoint2d getLocation()
+                    {
+                        return p;
+                    }
 
-                @Override
-                public Bounds2d getBounds()
-                {
-                    return new Bounds2d(0.0, 0.0);
-                }
+                    @Override
+                    public Bounds2d getRelativeBounds()
+                    {
+                        return new Bounds2d(0.0, 0.0);
+                    }
 
-                @Override
-                public int getQueueCount()
-                {
-                    return getQueueLength(lanePosition);
-                }
+                    @Override
+                    public int getQueueSize()
+                    {
+                        return LaneBasedGtuGenerator.this.getQueueSize(lanePosition);
+                    }
 
-                @Override
-                public String getId()
-                {
-                    return LaneBasedGtuGenerator.this.id + "@" + lanePosition.getLink().getId() + "." + pos.lane().getId();
-                }
-            });
+                    @Override
+                    public String getId()
+                    {
+                        return LaneBasedGtuGenerator.this.id + "@" + lanePosition.getLink().getId() + "." + pos.lane().getId();
+                    }
+                });
+            }
         }
-        return set;
+        return this.positions;
     }
 
     /**
@@ -555,7 +561,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
      * @param position position.
      * @return number of GTUs in queue at the position.
      */
-    private int getQueueLength(final GeneratorLanePosition position)
+    private int getQueueSize(final GeneratorLanePosition position)
     {
         for (CrossSectionLink link : this.unplacedTemplates.keySet())
         {

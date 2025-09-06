@@ -405,7 +405,7 @@ public class Node implements HierarchicallyTyped<NodeType, Node>, OtsShape, Seri
 
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Bounds2d getBounds()
+    public Bounds2d getRelativeBounds()
     {
         return new Bounds2d(-1.0, 1.0, -1.0, 1.0);
     }

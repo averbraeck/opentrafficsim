@@ -88,7 +88,7 @@ public final class StaticObjectTest implements EventListener
         assertEquals(id, so.getFullId(), "full id");
         assertEquals(geometry, so.getAbsoluteContour(), "contour");
         assertEquals(height, so.getHeight(), "height");
-        assertEquals(new DirectedPoint2d(geometry.getBounds().midPoint(), 0.0), so.getLocation(), "location");
+        assertEquals(new DirectedPoint2d(geometry.getAbsoluteBounds().midPoint(), 0.0), so.getLocation(), "location");
         // djutils PolyLine2d returns absolute bounds, StaticObject returns centered around (0, 0)
         // assertEquals("bounds", geometry.getBounds(), so.getBounds());
         assertTrue(so.toString().startsWith("StaticObject"), "toString returns something descriptive");

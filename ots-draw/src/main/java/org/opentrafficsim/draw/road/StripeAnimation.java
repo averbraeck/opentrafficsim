@@ -17,7 +17,7 @@ import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.StripeElement;
 import org.opentrafficsim.base.geometry.DirectionalPolyLine;
 import org.opentrafficsim.base.geometry.OtsLine2d.FractionalFallback;
-import org.opentrafficsim.draw.ClickableLineLocatable;
+import org.opentrafficsim.draw.LineLocatable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.OtsRenderable;
 import org.opentrafficsim.draw.PaintPolygons;
@@ -209,7 +209,7 @@ public class StripeAnimation extends OtsRenderable<StripeData>
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public interface StripeData extends ClickableLineLocatable
+    public interface StripeData extends LineLocatable
     {
         @Override
         DirectedPoint2d getLocation();

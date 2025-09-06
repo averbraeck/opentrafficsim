@@ -1,11 +1,9 @@
 package org.opentrafficsim.animation.data;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.opentrafficsim.base.geometry.OtsShape;
-import org.opentrafficsim.draw.ClickableLineLocatable;
-import org.opentrafficsim.draw.ClickableLocatable;
+import org.opentrafficsim.draw.LineLocatable;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
@@ -19,7 +17,7 @@ import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
  * @param <T> lane based object type
  */
 public abstract class AnimationLaneBasedObjectData<T extends LaneBasedObject> extends AnimationIdentifiableShape<T>
-        implements LaneBasedObjectData, ClickableLineLocatable
+        implements LaneBasedObjectData, LineLocatable
 {
 
     /**
@@ -47,12 +45,6 @@ public abstract class AnimationLaneBasedObjectData<T extends LaneBasedObject> ex
     public String getId()
     {
         return getObject().getFullId();
-    }
-
-    @Override
-    public Bounds2d getBounds()
-    {
-        return ClickableLocatable.getBounds(this);
     }
 
 }

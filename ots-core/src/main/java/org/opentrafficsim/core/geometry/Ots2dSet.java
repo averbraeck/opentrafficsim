@@ -232,7 +232,7 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
      */
     public final Set<Polygon2d> intersectingShapes(final Polygon2d shape)
     {
-        Bounds2d bounds = shape.getBounds();
+        Bounds2d bounds = shape.getAbsoluteBounds();
         Set<Polygon2d> result =
                 intersectingShapes(new Bounds2d(bounds.getMinX(), bounds.getMinY(), bounds.getDeltaX(), bounds.getDeltaY()));
         for (Iterator<Polygon2d> it = result.iterator(); it.hasNext();)

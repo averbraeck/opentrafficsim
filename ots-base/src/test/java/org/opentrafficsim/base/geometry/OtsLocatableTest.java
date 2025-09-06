@@ -50,7 +50,8 @@ public final class OtsLocatableTest
         // bounds and polygon
         Polygon2d relativePolygon = new Polygon2d(new double[] {2.0, -2.0, -2.0, 2.0}, new double[] {1.0, 1.0, -1.0, -1.0});
         pointsEqual(relativePolygon.getPointList(), locatable.getRelativeContour().getPointList());
-        pointsEqual(locatable.getBounds().getPointList(), locatable.getRelativeContour().getBounds().getPointList());
+        pointsEqual(locatable.getRelativeBounds().getPointList(),
+                locatable.getRelativeContour().getAbsoluteBounds().getPointList());
         assertEquals(new LinkedHashSet<>(CONTOUR.getPointList()),
                 new LinkedHashSet<>(OtsShape.boundsAsAbsoluteContour(locatable).getPointList()));
 

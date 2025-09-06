@@ -1,6 +1,7 @@
 package org.opentrafficsim.editor.extensions.map;
 
 import org.djutils.draw.bounds.Bounds2d;
+import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
 import org.opentrafficsim.editor.OtsEditor;
@@ -39,7 +40,7 @@ public class MapGeneratorData extends MapLaneBasedObjectData implements GtuGener
     }
 
     @Override
-    public Bounds2d getBounds()
+    public Bounds2d getRelativeBounds()
     {
         return this.bounds;
     }
@@ -60,6 +61,17 @@ public class MapGeneratorData extends MapLaneBasedObjectData implements GtuGener
     public String toString()
     {
         return this.type + getLinkLanePositionId();
+    }
+
+    /**
+     * Signed distance function. The point must be relative. As this is a line object, only positive values are returned.
+     * @param point point for which distance is returned
+     * @return distance from point to these bounds
+     */
+    @Override
+    public double signedDistance(final Point2d point)
+    {
+        return getLine().closestPointOnPolyLine(point).distance(point);
     }
 
 }

@@ -395,16 +395,9 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
     {
         addToggleText(" ");
         addToggleText(header);
-        try
+        for (String layerName : gisMap.getMap().getLayerMap().keySet())
         {
-            for (String layerName : gisMap.getMap().getLayerMap().keySet())
-            {
-                addToggleGISButtonText(layerName, layerName, gisMap, toolTipText);
-            }
-        }
-        catch (RemoteException exception)
-        {
-            exception.printStackTrace();
+            addToggleGISButtonText(layerName, layerName, gisMap, toolTipText);
         }
     }
 
@@ -446,16 +439,9 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         GisMapInterface gisMap = this.toggleGISMap.get(layerName);
         if (gisMap != null)
         {
-            try
-            {
-                gisMap.showLayer(layerName);
-                this.toggleGISButtons.get(layerName).setSelected(true);
-                this.animationPanel.repaint();
-            }
-            catch (RemoteException exception)
-            {
-                exception.printStackTrace();
-            }
+            gisMap.showLayer(layerName);
+            this.toggleGISButtons.get(layerName).setSelected(true);
+            this.animationPanel.repaint();
         }
     }
 
@@ -468,16 +454,9 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         GisMapInterface gisMap = this.toggleGISMap.get(layerName);
         if (gisMap != null)
         {
-            try
-            {
-                gisMap.hideLayer(layerName);
-                this.toggleGISButtons.get(layerName).setSelected(false);
-                this.animationPanel.repaint();
-            }
-            catch (RemoteException exception)
-            {
-                exception.printStackTrace();
-            }
+            gisMap.hideLayer(layerName);
+            this.toggleGISButtons.get(layerName).setSelected(false);
+            this.animationPanel.repaint();
         }
     }
 
@@ -490,24 +469,17 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         GisMapInterface gisMap = this.toggleGISMap.get(layerName);
         if (gisMap != null)
         {
-            try
+            if (gisMap.getVisibleLayers().contains(gisMap.getLayerMap().get(layerName)))
             {
-                if (gisMap.getVisibleLayers().contains(gisMap.getLayerMap().get(layerName)))
-                {
-                    gisMap.hideLayer(layerName);
-                    this.toggleGISButtons.get(layerName).setSelected(false);
-                }
-                else
-                {
-                    gisMap.showLayer(layerName);
-                    this.toggleGISButtons.get(layerName).setSelected(true);
-                }
-                this.animationPanel.repaint();
+                gisMap.hideLayer(layerName);
+                this.toggleGISButtons.get(layerName).setSelected(false);
             }
-            catch (RemoteException exception)
+            else
             {
-                exception.printStackTrace();
+                gisMap.showLayer(layerName);
+                this.toggleGISButtons.get(layerName).setSelected(true);
             }
+            this.animationPanel.repaint();
         }
     }
 

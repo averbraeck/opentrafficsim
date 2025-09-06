@@ -280,9 +280,9 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
 
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public Bounds2d getBounds()
+    public Bounds2d getRelativeBounds()
     {
-        return this.relativeContour.getBounds();
+        return this.relativeContour.getAbsoluteBounds();
     }
 
     /**

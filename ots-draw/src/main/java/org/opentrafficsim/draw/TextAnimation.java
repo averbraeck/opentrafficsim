@@ -1,11 +1,13 @@
 package org.opentrafficsim.draw;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.ImageObserver;
@@ -13,7 +15,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.function.Supplier;
 
-import org.djutils.draw.Oriented;
+import org.djutils.draw.Directed;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
@@ -21,6 +23,7 @@ import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.geometry.OtsShape;
 
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
+import nl.tudelft.simulation.dsol.animation.d2.RenderableScale;
 import nl.tudelft.simulation.language.d2.Angle;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
@@ -187,10 +190,10 @@ public abstract class TextAnimation<L extends OtsShape, T extends TextAnimation<
         if (this.location == null || this.dynamic)
         {
             Point2d p = this.source.getLocation();
-            if (p instanceof Oriented)
+            if (isRotate() && p instanceof Directed dir)
             {
                 // draw not upside down.
-                double a = Angle.normalizePi(((Oriented<?>) p).getDirZ());
+                double a = Angle.normalizePi(dir.getDirZ());
                 if (a > Math.PI / 2.0 || a < -0.99 * Math.PI / 2.0)
                 {
                     a += Math.PI;
@@ -206,7 +209,7 @@ public abstract class TextAnimation<L extends OtsShape, T extends TextAnimation<
     }
 
     @Override
-    public final Bounds2d getBounds()
+    public final Bounds2d getRelativeBounds()
     {
         return new Bounds2d(2.0, 2.0);
     }
@@ -535,7 +538,8 @@ public abstract class TextAnimation<L extends OtsShape, T extends TextAnimation<
         }
 
         @Override
-        public boolean contains(final Point2d pointWorldCoordinates, final Bounds2d extent)
+        public boolean contains(final Point2D pointScreenCoordinates, final Bounds2d extent, final Dimension screenSize,
+                final RenderableScale scale, final double worldMargin, final double pixelMargin)
         {
             return false;
         }

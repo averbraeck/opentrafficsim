@@ -11,7 +11,8 @@ import java.util.function.Supplier;
 
 import org.djutils.base.Identifiable;
 import org.djutils.draw.point.DirectedPoint2d;
-import org.opentrafficsim.draw.ClickablePointLocatable;
+import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.OtsRenderable;
 import org.opentrafficsim.draw.TextAlignment;
@@ -134,10 +135,22 @@ public class NodeAnimation extends OtsRenderable<NodeData>
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public interface NodeData extends ClickablePointLocatable, Identifiable
+    public interface NodeData extends OtsShape, Identifiable
     {
         @Override
         DirectedPoint2d getLocation();
+
+        @Override
+        default double signedDistance(final Point2d point)
+        {
+            return getLocation().distance(point);
+        }
+
+        @Override
+        default boolean contains(final Point2d point)
+        {
+            return signedDistance(point) < WORLD_MARGIN_LINE;
+        }
 
         @Override
         default double getZ()

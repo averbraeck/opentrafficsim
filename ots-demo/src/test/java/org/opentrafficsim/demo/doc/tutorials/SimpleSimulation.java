@@ -7,7 +7,6 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.cli.CliUtil;
-import org.djutils.draw.DrawRuntimeException;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.core.definitions.DefaultsNl;
@@ -57,8 +56,7 @@ public class SimpleSimulation extends AbstractSimulationScript
 
     // @docs/08-tutorials/simulation-setup.md#how-to-set-up-a-simulation
     @Override
-    protected RoadNetwork setupSimulation(final OtsSimulatorInterface sim)
-            throws NullPointerException, DrawRuntimeException, NetworkException
+    protected RoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws NullPointerException, NetworkException
     {
         RoadNetwork network = new RoadNetwork("Simple network", sim);
         Point2d pointA = new Point2d(0, 0);

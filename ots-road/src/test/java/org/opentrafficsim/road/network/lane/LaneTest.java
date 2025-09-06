@@ -727,7 +727,7 @@ public final class LaneTest implements UNITS
                                 // System.out.println(" my bbox is " + minX + "," + minY + " - " + maxX + "," + maxY);
                                 // System.out.println("the bbox is " + (bbLow.x + l.x) + "," + (bbLow.y + l.y) + " - "
                                 // + (bbHigh.x + l.x) + "," + (bbHigh.y + l.y));
-                                Bounds<?, ?> bb = lane.getAbsoluteContour().getBounds();
+                                Bounds<?, ?> bb = lane.getAbsoluteContour().getAbsoluteBounds();
                                 double boundsMinX = bb.getMinX();
                                 double boundsMinY = bb.getMinY();
                                 double boundsMaxX = bb.getMaxX();
@@ -778,8 +778,7 @@ public final class LaneTest implements UNITS
         Point2d p = new Point2d(px, py);
         // CrossSectionElement.printCoordinates("contour: ", contour);
         // System.out.println("p: " + p);
-        boolean result2 = contour.contains(p);
-        boolean result = contains(contour, p);
+        boolean result = contour.contains(p);
         if (expectedResult)
         {
             assertTrue(result, "Point at " + longitudinal + " along and " + lateral + " lateral is within lane");
@@ -788,40 +787,6 @@ public final class LaneTest implements UNITS
         {
             assertFalse(result, "Point at " + longitudinal + " along and " + lateral + " lateral is outside lane");
         }
-    }
-
-    /*
-     * TODO: remove this method Pending djutils issue #15, this method should be removed. Then, 'result2' above should become
-     * 'result' instead.
-     */
-    private boolean contains(final Polygon2d contour, final Point2d p)
-    {
-        if (!contour.getBounds().contains(p.x, p.y))
-        {
-            return false;
-        }
-        int counter = 0;
-        // Unlike Paul Bourke, we initialize prevPoint to the last point of the polygon (so we never have to wrap around)
-        double prevPointX = contour.getX(contour.size() - 1);
-        double prevPointY = contour.getY(contour.size() - 1);
-        for (int i = 0; i < contour.size(); i++)
-        {
-            double curPointX = contour.getX(i);
-            double curPointY = contour.getY(i);
-            // Combined 4 if statements into one; I trust that the java compiler will short-circuit this nicely
-            if (p.y >= Math.min(prevPointY, curPointY) && p.y < Math.max(prevPointY, curPointY)
-                    && p.x <= Math.max(prevPointX, curPointX) && prevPointY != curPointY)
-            {
-                double xIntersection = (p.y - prevPointY) * (curPointX - prevPointX) / (curPointY - prevPointY) + prevPointX;
-                if (prevPointX == curPointX || p.x <= xIntersection)
-                {
-                    counter++;
-                }
-            }
-            prevPointX = curPointX;
-            prevPointY = curPointY;
-        }
-        return counter % 2 != 0;
     }
 
     /** The helper model. */

@@ -382,9 +382,9 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
     }
 
     @Override
-    public final Bounds2d getBounds()
+    public final Bounds2d getRelativeBounds()
     {
-        return this.relativeContour.getBounds();
+        return this.relativeContour.getAbsoluteBounds();
     }
 
     /**

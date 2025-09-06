@@ -1,8 +1,10 @@
 package org.opentrafficsim.draw;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.RenderingHints.Key;
+import java.awt.geom.Point2D;
 
 import org.djutils.draw.Transform2d;
 import org.djutils.draw.bounds.Bounds2d;
@@ -10,6 +12,7 @@ import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.geometry.OtsShape;
 
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
+import nl.tudelft.simulation.dsol.animation.d2.RenderableScale;
 import nl.tudelft.simulation.naming.context.Contextualized;
 
 /**
@@ -79,11 +82,28 @@ public abstract class OtsRenderable<L extends OtsShape> extends Renderable2d<L>
     }
 
     @Override
-    public boolean contains(final Point2d pointWorldCoordinates, final Bounds2d extent)
+    public boolean contains(final Point2D pointScreenCoordinates, final Bounds2d extent, final Dimension screenSize,
+            final RenderableScale scale, final double worldMargin, final double pixelMargin)
     {
-        Transform2d transformation = OtsShape.toRelativeTransform(getSource().getLocation());
-        Point2d pointObjectCoordinates = transformation.transform(pointWorldCoordinates);
-        return getSource().getBounds().contains(pointObjectCoordinates);
+        // super implementation seems to not handle rotation well, so we apply a different transformation order here
+        Point2d screenLocation = scale.getScreenCoordinatesAsPoint2d(getSource().getLocation(), extent, screenSize);
+        double xScale = scale.getXScale(extent, screenSize);
+        double yScale = scale.getYScale(extent, screenSize);
+        Transform2d transformation = new Transform2d();
+        transformation.rotation(-getSource().getDirZ());
+        transformation.scale(xScale, yScale);
+        transformation.reflectY();
+        transformation.translate(screenLocation.neg());
+        Point2d pointRelativeTo00 =
+                transformation.transform(new Point2d(pointScreenCoordinates.getX(), pointScreenCoordinates.getY()));
+        return contains(pointRelativeTo00, scale, worldMargin, pixelMargin, xScale, yScale);
+    }
+
+    @Override
+    public boolean contains(final Point2d pointRelativeTo00, final RenderableScale scale, final double worldMargin,
+            final double pixelMargin, final double xScale, final double yScale)
+    {
+        return getSource().contains(pointRelativeTo00.x, pointRelativeTo00.y);
     }
 
 }

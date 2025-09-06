@@ -234,8 +234,7 @@ public class OperationalPlan implements Serializable
      */
     public DirectedPoint2d getEndLocation()
     {
-        return Try.assign(() -> this.path.getLocationPointFraction(Math.min(1.0, this.totalLength.si / this.path.getLength())),
-                "Unexpected exception for path extraction till 1.0.");
+        return this.path.getLocationPointFraction(Math.min(1.0, this.totalLength.si / this.path.getLength()));
     }
 
     /**

@@ -64,7 +64,7 @@ public class MapPriorityData implements PriorityData
     }
 
     @Override
-    public Bounds2d getBounds()
+    public Bounds2d getRelativeBounds()
     {
         return this.bounds;
     }

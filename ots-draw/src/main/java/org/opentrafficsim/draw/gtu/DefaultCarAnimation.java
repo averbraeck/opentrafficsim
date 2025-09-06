@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.point.DirectedPoint2d;
+import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.DrawLevel;
@@ -274,6 +275,7 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
                 final TextAnimation.ContrastToBackground background)
         {
             super(source, text, dx, dy, textAlignment, color, 1.0f, 12.0f, 50f, contextualized, background, RENDERWHEN1);
+            setRotate(false);
         }
 
         @Override

@@ -121,7 +121,9 @@ public final class LinkTest implements EventListener
         assertEquals(expectedLocation.distance(location), 0.0, 0.1,
                 "location is at halfway point of design line (because design line contains only two points)");
         // RotZ of location is bogus; makes no sense to test that
-        Bounds bounds = link.getBounds();
+        Bounds bounds = link.getAbsoluteBounds();
+        assertNotNull(bounds, "bounds should not be null");
+        bounds = link.getRelativeBounds();
         assertNotNull(bounds, "bounds should not be null");
         assertFalse(link.equals(null), "link is not equal to null");
         assertFalse(link.equals("Hello World!"), "link is not equal to some other object");

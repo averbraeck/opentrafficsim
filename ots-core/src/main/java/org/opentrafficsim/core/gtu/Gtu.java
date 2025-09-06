@@ -232,7 +232,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
                 new RelativePosition(front, Length.ZERO, Length.ZERO, RelativePosition.FRONT));
         this.relativePositions.put(RelativePosition.REAR,
                 new RelativePosition(front.minus(this.length), Length.ZERO, Length.ZERO, RelativePosition.REAR));
-        Point2d midPoint = this.shape.getBounds().midPoint();
+        Point2d midPoint = this.shape.getRelativeBounds().midPoint();
         this.relativePositions.put(RelativePosition.CENTER, new RelativePosition(Length.instantiateSI(midPoint.x),
                 Length.instantiateSI(midPoint.y), Length.ZERO, RelativePosition.CENTER));
     }
@@ -251,9 +251,9 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
     public Gtu(final String id, final GtuType gtuType, final OtsSimulatorInterface simulator,
             final PerceivableContext perceivableContext, final Polygon2d contour, final Speed maximumSpeed) throws GtuException
     {
-        this(id, gtuType, simulator, perceivableContext, Length.instantiateSI(contour.getBounds().getDeltaX()),
-                Length.instantiateSI(contour.getBounds().getDeltaY()), Length.instantiateSI(contour.getBounds().getMaxX()),
-                contour, maximumSpeed);
+        this(id, gtuType, simulator, perceivableContext, Length.instantiateSI(contour.getAbsoluteBounds().getDeltaX()),
+                Length.instantiateSI(contour.getAbsoluteBounds().getDeltaY()),
+                Length.instantiateSI(contour.getAbsoluteBounds().getMaxX()), contour, maximumSpeed);
     }
 
     /**
@@ -376,9 +376,9 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
     }
 
     @Override
-    public final Bounds2d getBounds()
+    public final Bounds2d getRelativeBounds()
     {
-        return this.shape.getBounds();
+        return this.shape.getRelativeBounds();
     }
 
     /**

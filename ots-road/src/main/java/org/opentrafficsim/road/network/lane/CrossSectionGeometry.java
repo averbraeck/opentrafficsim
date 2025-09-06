@@ -4,11 +4,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
-import org.djutils.draw.function.ContinuousPiecewiseLinearFunction.TupleSt;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.exceptions.Throw;
+import org.djutils.math.functions.MathFunction.TupleSt;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.core.geometry.ContinuousLine;

@@ -81,7 +81,7 @@ public class MapNodeData extends MapData implements NodeData, EventListener
     }
 
     @Override
-    public Bounds2d getBounds()
+    public Bounds2d getRelativeBounds()
     {
         return BOUNDS;
     }

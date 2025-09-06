@@ -997,29 +997,29 @@ public class Network extends LocalEventProducer implements PerceivableContext, S
         boolean content = false;
         for (Node node : this.nodeMap.values())
         {
-            Bounds2d b = node.getBounds();
-            minX = Math.min(minX, node.getLocation().getX() + b.getMinX());
-            minY = Math.min(minY, node.getLocation().getY() + b.getMinY());
-            maxX = Math.max(maxX, node.getLocation().getX() + b.getMaxX());
-            maxY = Math.max(maxY, node.getLocation().getY() + b.getMaxY());
+            Bounds2d b = node.getAbsoluteBounds();
+            minX = Math.min(minX, b.getMinX());
+            minY = Math.min(minY, b.getMinY());
+            maxX = Math.max(maxX, b.getMaxX());
+            maxY = Math.max(maxY, b.getMaxY());
             content = true;
         }
         for (Link link : this.linkMap.values())
         {
-            Bounds2d b = link.getBounds();
-            minX = Math.min(minX, link.getLocation().getX() + b.getMinX());
-            minY = Math.min(minY, link.getLocation().getY() + b.getMinY());
-            maxX = Math.max(maxX, link.getLocation().getX() + b.getMaxX());
-            maxY = Math.max(maxY, link.getLocation().getY() + b.getMaxY());
+            Bounds2d b = link.getAbsoluteBounds();
+            minX = Math.min(minX, b.getMinX());
+            minY = Math.min(minY, b.getMinY());
+            maxX = Math.max(maxX, b.getMaxX());
+            maxY = Math.max(maxY, b.getMaxY());
             content = true;
         }
         for (LocatedObject object : this.objectMap.values())
         {
-            Bounds2d b = object.getBounds();
-            minX = Math.min(minX, object.getLocation().getX() + b.getMinX());
-            minY = Math.min(minY, object.getLocation().getY() + b.getMinY());
-            maxX = Math.max(maxX, object.getLocation().getX() + b.getMaxX());
-            maxY = Math.max(maxY, object.getLocation().getY() + b.getMaxY());
+            Bounds2d b = object.getAbsoluteBounds();
+            minX = Math.min(minX, b.getMinX());
+            minY = Math.min(minY, b.getMinY());
+            maxX = Math.max(maxX, b.getMaxX());
+            maxY = Math.max(maxY, b.getMaxY());
             content = true;
         }
         if (content)

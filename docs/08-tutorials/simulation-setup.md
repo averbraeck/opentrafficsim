@@ -37,8 +37,7 @@ Command line arguments are used to set values of properties of `AbstractSimulati
 The autorun parameter triggers animation when false. These, and other, parameters can be determined with the command line arguments. The example `SimpleSimulation` has to implement one more method to actually define the simulation content. This is given below for a simple network of two nodes and one link with two lanes. An alternative to this is to use the XML parser to read an XML file and create a network including animation from it.
 
 ```java
-    protected RoadNetwork setupSimulation(final OtsSimulatorInterface sim)
-            throws NullPointerException, DrawRuntimeException, NetworkException
+    protected RoadNetwork setupSimulation(final OtsSimulatorInterface sim) throws NullPointerException, NetworkException
     {
         RoadNetwork network = new RoadNetwork("Simple network", sim);
         Point2d pointA = new Point2d(0, 0);

@@ -44,7 +44,7 @@ public interface GtuGenerator extends NonLocatedObject
          * Returns the number of GTUs in the queue.
          * @return number of GTUs in the queue.
          */
-        int getQueueCount();
+        int getQueueSize();
 
         @Override
         DirectedPoint2d getLocation();

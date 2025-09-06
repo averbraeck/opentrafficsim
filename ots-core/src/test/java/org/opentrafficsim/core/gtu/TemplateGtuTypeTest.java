@@ -222,4 +222,25 @@ public final class TemplateGtuTypeTest implements OtsModelInterface
     {
         return null;
     }
+
+    @Override
+    public void setResetApplicationExecutable(final Runnable resetApplicationExecutable)
+    {
+    }
+
+    @Override
+    public Runnable getResetApplicationExecutable()
+    {
+        return null;
+    }
+
+    @Override
+    public void resetApplication()
+    {
+    }
+
+    @Override
+    public void setInputParameterMap(final InputParameterMap inputParameterMap)
+    {
+    }
 }

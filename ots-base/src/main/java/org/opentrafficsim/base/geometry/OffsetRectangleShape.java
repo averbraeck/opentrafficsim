@@ -43,14 +43,16 @@ public abstract class OffsetRectangleShape implements OtsShape
         if (this.polygon == null)
         {
             this.polygon = new Polygon2d(
-                    new double[] {getBounds().getMaxX(), getBounds().getMinX(), getBounds().getMinX(), getBounds().getMaxX()},
-                    new double[] {getBounds().getMaxY(), getBounds().getMaxY(), getBounds().getMinY(), getBounds().getMinY()});
+                    new double[] {getRelativeBounds().getMaxX(), getRelativeBounds().getMinX(), getRelativeBounds().getMinX(),
+                            getRelativeBounds().getMaxX()},
+                    new double[] {getRelativeBounds().getMaxY(), getRelativeBounds().getMaxY(), getRelativeBounds().getMinY(),
+                            getRelativeBounds().getMinY()});
         }
         return this.polygon;
     }
 
     @Override
-    public Bounds2d getBounds()
+    public Bounds2d getRelativeBounds()
     {
         return this.bounds;
     }

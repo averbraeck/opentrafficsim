@@ -5,7 +5,8 @@ import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 import java.awt.image.ImageObserver;
 
-import org.opentrafficsim.draw.ClickableLocatable;
+import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.OtsRenderable;
 import org.opentrafficsim.draw.TextAlignment;
@@ -115,13 +116,19 @@ public class GtuGeneratorPositionAnimation extends OtsRenderable<GtuGeneratorPos
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public interface GtuGeneratorPositionData extends ClickableLocatable
+    public interface GtuGeneratorPositionData extends OtsShape
     {
         /**
          * Returns the queue count.
          * @return queue count.
          */
         int getQueueCount();
+
+        @Override
+        default double signedDistance(final Point2d point)
+        {
+            return getLocation().distance(point);
+        }
 
         @Override
         default double getZ()

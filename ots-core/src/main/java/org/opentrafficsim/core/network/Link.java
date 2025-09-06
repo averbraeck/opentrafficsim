@@ -272,9 +272,9 @@ public class Link extends LocalEventProducer
     }
 
     @Override
-    public Bounds2d getBounds()
+    public Bounds2d getRelativeBounds()
     {
-        return this.relativeContour.getBounds();
+        return this.relativeContour.getAbsoluteBounds();
     }
 
     /**

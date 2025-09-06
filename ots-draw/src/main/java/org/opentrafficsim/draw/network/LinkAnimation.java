@@ -10,7 +10,7 @@ import org.djutils.base.Identifiable;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.draw.ClickableLineLocatable;
+import org.opentrafficsim.draw.LineLocatable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.OtsRenderable;
 import org.opentrafficsim.draw.PaintLine;
@@ -195,7 +195,7 @@ public class LinkAnimation extends OtsRenderable<LinkData>
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public interface LinkData extends ClickableLineLocatable, Identifiable
+    public interface LinkData extends LineLocatable, Identifiable
     {
         @Override
         DirectedPoint2d getLocation();

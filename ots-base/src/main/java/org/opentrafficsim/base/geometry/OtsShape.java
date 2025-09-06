@@ -1,14 +1,12 @@
 package org.opentrafficsim.base.geometry;
 
 import org.djunits.value.vdouble.scalar.Time;
-import org.djutils.draw.Directed2d;
-import org.djutils.draw.Directed3d;
+import org.djutils.draw.Directed;
 import org.djutils.draw.Transform2d;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
-import org.djutils.draw.point.Point;
 import org.djutils.draw.point.Point2d;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
@@ -23,6 +21,9 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  */
 public interface OtsShape extends Locatable
 {
+
+    /** Minimum world margin to click on object line or point objects. */
+    double WORLD_MARGIN_LINE = 1.0;
 
     /** The default intended number of polygon segments to represent continuous shapes. */
     int DEFAULT_POLYGON_SEGMENTS = 128;
@@ -62,9 +63,9 @@ public interface OtsShape extends Locatable
      * @return bounds relative to the location.
      */
     @Override
-    default Bounds2d getBounds()
+    default Bounds2d getRelativeBounds()
     {
-        return getRelativeContour().getBounds();
+        return getRelativeContour().getAbsoluteBounds();
     }
 
     /**
@@ -94,16 +95,13 @@ public interface OtsShape extends Locatable
      */
     default Bounds2d getAbsoluteBounds()
     {
-        return new Bounds2d(getBounds().getMinX() + getLocation().x, getBounds().getMaxX() + getLocation().x,
-                getBounds().getMinY() + getLocation().y, getBounds().getMaxY() + getLocation().y);
+        return getAbsoluteContour().getAbsoluteBounds();
     }
 
     @Override
     default double getDirZ()
     {
-        Point<?> p = getLocation();
-        return p == null ? 0.0 : p instanceof Directed2d ? ((Directed2d<?>) p).getDirZ()
-                : p instanceof Directed3d ? ((Directed3d<?>) p).getDirZ() : 0.0;
+        return getLocation().dirZ;
     }
 
     /**
@@ -115,8 +113,8 @@ public interface OtsShape extends Locatable
      */
     default double signedDistance(final Point2d point)
     {
-        double dist = getAbsoluteContour().closestPointOnPolyLine(point).distance(point);
-        return getAbsoluteContour().contains(point) ? -dist : dist;
+        double dist = getRelativeContour().closestPointOnPolyLine(point).distance(point);
+        return getRelativeContour().contains(point) ? -dist : dist;
     }
 
     /**
@@ -144,7 +142,7 @@ public interface OtsShape extends Locatable
      */
     static Polygon2d boundsAsAbsoluteContour(final OtsShape locatable)
     {
-        return new Polygon2d(toAbsoluteTransform(locatable.getLocation()).transform(locatable.getBounds().iterator()));
+        return new Polygon2d(toAbsoluteTransform(locatable.getLocation()).transform(locatable.getRelativeBounds().iterator()));
     }
 
     /**
@@ -167,9 +165,9 @@ public interface OtsShape extends Locatable
     static Transform2d toRelativeTransform(final Point2d location)
     {
         Transform2d transformation = new Transform2d();
-        if (location instanceof Directed2d<?>)
+        if (location instanceof Directed dir)
         {
-            transformation.rotation(-((Directed2d<?>) location).getDirZ());
+            transformation.rotation(-dir.getDirZ());
         }
         transformation.translate(-location.getX(), -location.getY());
         return transformation;
@@ -185,9 +183,9 @@ public interface OtsShape extends Locatable
     {
         Transform2d transformation = new Transform2d();
         transformation.translate(location.getX(), location.getY());
-        if (location instanceof Directed2d<?>)
+        if (location instanceof Directed dir)
         {
-            transformation.rotation(((Directed2d<?>) location).getDirZ());
+            transformation.rotation(dir.getDirZ());
         }
         return transformation;
     }

@@ -36,7 +36,7 @@ public class AnimationGtuGeneratorPositionData implements GtuGeneratorPositionDa
     }
 
     @Override
-    public Bounds2d getBounds()
+    public Bounds2d getRelativeBounds()
     {
         // this correlates to how generators are drawn as three chevrons
         return new Bounds2d(0.0, 4.75, -1.0, 1.0);
@@ -57,7 +57,7 @@ public class AnimationGtuGeneratorPositionData implements GtuGeneratorPositionDa
     @Override
     public int getQueueCount()
     {
-        return this.position.getQueueCount();
+        return this.position.getQueueSize();
     }
 
     /**

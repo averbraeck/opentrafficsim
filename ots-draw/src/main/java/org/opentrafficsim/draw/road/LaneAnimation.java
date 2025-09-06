@@ -11,7 +11,7 @@ import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.base.geometry.OtsShape;
-import org.opentrafficsim.draw.ClickableLineLocatable;
+import org.opentrafficsim.draw.LineLocatable;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.OtsRenderable;
 import org.opentrafficsim.draw.PaintLine;
@@ -86,7 +86,7 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
     /**
      * Draw center line of a lane.
      */
-    public static class CenterLine implements ClickableLineLocatable
+    public static class CenterLine implements LineLocatable
     {
         /** The center line. */
         private final PolyLine2d centerLine;
@@ -108,7 +108,7 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         CenterLine(final PolyLine2d centerLine, final String fullId)
         {
             this.centerLine = centerLine;
-            this.location = new DirectedPoint2d(this.centerLine.getBounds().midPoint(), 0.0);
+            this.location = new DirectedPoint2d(this.centerLine.getAbsoluteBounds().midPoint(), 0.0);
             this.fullId = fullId;
         }
 

@@ -12,7 +12,7 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.opentrafficsim.draw.ClickableLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.OtsRenderable;
 import org.opentrafficsim.draw.road.SpeedSignAnimation.SpeedSignData;
@@ -96,7 +96,7 @@ public class SpeedSignAnimation extends OtsRenderable<SpeedSignData>
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public interface SpeedSignData extends ClickableLocatable
+    public interface SpeedSignData extends OtsShape
     {
         /**
          * Returns the speed.

@@ -3,13 +3,14 @@ package org.opentrafficsim.base.geometry;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.draw.DrawRuntimeException;
+import org.djutils.draw.bounds.Bounds;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
@@ -18,7 +19,7 @@ import org.djutils.exceptions.Throw;
 import nl.tudelft.simulation.dsol.animation.Locatable;
 
 /**
- * This class supports fractional projection, radius, and has location methods .
+ * This class supports fractional projection, radius, and has locatable methods.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -264,9 +265,8 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      * Get the location at a fraction of the line, with its direction. Fraction should be between 0.0 and 1.0.
      * @param fraction the fraction for which to calculate the point on the line
      * @return a directed point
-     * @throws DrawRuntimeException when fraction less than 0.0 or more than 1.0.
      */
-    public final DirectedPoint2d getLocationPointFraction(final double fraction) throws DrawRuntimeException
+    public final DirectedPoint2d getLocationPointFraction(final double fraction)
     {
         return getLocationFraction(fraction);
     }
@@ -276,10 +276,8 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      * @param fraction the fraction for which to calculate the point on the line
      * @param tolerance the delta from 0.0 and 1.0 that will be forgiven
      * @return a directed point
-     * @throws DrawRuntimeException when fraction less than 0.0 or more than 1.0.
      */
     public final DirectedPoint2d getLocationPointFraction(final double fraction, final double tolerance)
-            throws DrawRuntimeException
     {
         return getLocationFraction(fraction, tolerance);
     }
@@ -298,9 +296,8 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      * Get the location at a position on the line, with its direction. Position should be between 0.0 and line length.
      * @param position the position on the line for which to calculate the point on the line
      * @return a directed point
-     * @throws DrawRuntimeException when position less than 0.0 or more than line length.
      */
-    public final DirectedPoint2d getLocation(final Length position) throws DrawRuntimeException
+    public final DirectedPoint2d getLocation(final Length position)
     {
         return getLocation(position.si);
     }
@@ -309,9 +306,8 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      * Get the location at a position on the line, with its direction. Position should be between 0.0 and line length.
      * @param positionSI the position on the line for which to calculate the point on the line
      * @return a directed point
-     * @throws DrawRuntimeException when position less than 0.0 or more than line length.
      */
-    public final DirectedPoint2d getLocationSI(final double positionSI) throws DrawRuntimeException
+    public final DirectedPoint2d getLocationSI(final double positionSI)
     {
         return getLocation(positionSI);
     }
@@ -811,9 +807,15 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
      * Retrieve the centroid of this OtsLine2d.
      * @return the centroid of this OtsLine2d
      */
-    public final Point2d getCentroid()
+    public Point2d getCentroid()
     {
-        return getBounds().midPoint();
+        return getAbsoluteBounds().midPoint();
+    }
+
+    @Override
+    public Bounds<?, ?> getRelativeBounds() throws RemoteException
+    {
+        return OtsShape.toRelativeTransform(getLocation()).transform(getAbsoluteBounds());
     }
 
     @Override

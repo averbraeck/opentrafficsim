@@ -58,9 +58,9 @@ public abstract class AnimationIdentifiableShape<T extends OtsShape & Identifiab
     }
 
     @Override
-    public Bounds2d getBounds()
+    public Bounds2d getRelativeBounds()
     {
-        return this.object.getBounds();
+        return this.object.getRelativeBounds();
     }
 
     @Override

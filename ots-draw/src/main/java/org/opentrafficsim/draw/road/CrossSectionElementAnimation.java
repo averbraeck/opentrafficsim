@@ -8,7 +8,7 @@ import java.awt.image.ImageObserver;
 import java.util.Set;
 
 import org.djutils.draw.line.PolyLine2d;
-import org.opentrafficsim.draw.ClickableLocatable;
+import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.OtsRenderable;
 import org.opentrafficsim.draw.PaintPolygons;
@@ -77,7 +77,7 @@ public class CrossSectionElementAnimation<L extends CrossSectionElementData> ext
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public interface CrossSectionElementData extends ClickableLocatable
+    public interface CrossSectionElementData extends OtsShape
     {
         /**
          * Returns the center line in world coordinates.

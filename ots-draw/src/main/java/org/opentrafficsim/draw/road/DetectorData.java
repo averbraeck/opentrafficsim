@@ -1,7 +1,6 @@
 package org.opentrafficsim.draw.road;
 
 import org.opentrafficsim.base.geometry.OtsShape;
-import org.opentrafficsim.draw.ClickableLocatable;
 
 /**
  * Tagging interface to toggle different types of detectors in animation.
@@ -11,7 +10,7 @@ import org.opentrafficsim.draw.ClickableLocatable;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public interface DetectorData extends ClickableLocatable
+public interface DetectorData extends OtsShape
 {
     //
 

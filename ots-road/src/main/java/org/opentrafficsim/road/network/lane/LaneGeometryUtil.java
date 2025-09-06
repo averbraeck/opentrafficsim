@@ -101,9 +101,8 @@ public final class LaneGeometryUtil
             final ContinuousPiecewiseLinearFunction offset, final ContinuousPiecewiseLinearFunction width,
             final LaneType laneType, final Map<GtuType, Speed> speedLimits)
     {
-        ContinuousLine designLine = new ContinuousStraight(
-                Try.assign(() -> link.getDesignLine().getLocationPointFraction(0.0), "Link should have a valid design line."),
-                link.getLength().si);
+        ContinuousLine designLine =
+                new ContinuousStraight(link.getDesignLine().getLocationPointFraction(0.0), link.getLength().si);
         return Try.assign(
                 () -> new Lane(link, id, CrossSectionGeometry.of(designLine, null, offset, width), laneType, speedLimits),
                 "Network exception.");
@@ -121,9 +120,8 @@ public final class LaneGeometryUtil
     public static Stripe createStraightStripe(final StripeData type, final String id, final CrossSectionLink link,
             final Length offset, final Length width)
     {
-        ContinuousLine designLine = new ContinuousStraight(
-                Try.assign(() -> link.getDesignLine().getLocationPointFraction(0.0), "Link should have a valid design line."),
-                link.getLength().si);
+        ContinuousLine designLine =
+                new ContinuousStraight(link.getDesignLine().getLocationPointFraction(0.0), link.getLength().si);
         ContinuousPiecewiseLinearFunction offsetFunc = ContinuousPiecewiseLinearFunction.of(0.0, offset.si, 1.0, offset.si);
         ContinuousPiecewiseLinearFunction widthFunc = ContinuousPiecewiseLinearFunction.of(0.0, width.si, 1.0, width.si);
         return Try.assign(() -> new Stripe(id, type, link, CrossSectionGeometry.of(designLine, null, offsetFunc, widthFunc)),
@@ -144,9 +142,8 @@ public final class LaneGeometryUtil
     public static Object createStraightShoulder(final CrossSectionLink link, final String id, final Length startOffset,
             final Length endOffset, final Length startWidth, final Length endWidth, final LaneType laneType)
     {
-        ContinuousLine designLine = new ContinuousStraight(
-                Try.assign(() -> link.getDesignLine().getLocationPointFraction(0.0), "Link should have a valid design line."),
-                link.getLength().si);
+        ContinuousLine designLine =
+                new ContinuousStraight(link.getDesignLine().getLocationPointFraction(0.0), link.getLength().si);
         ContinuousPiecewiseLinearFunction offset = ContinuousPiecewiseLinearFunction.of(0.0, startOffset.si, 1.0, endOffset.si);
         ContinuousPiecewiseLinearFunction width = ContinuousPiecewiseLinearFunction.of(0.0, startWidth.si, 1.0, endWidth.si);
         return Try.assign(() -> new Shoulder(link, id, CrossSectionGeometry.of(designLine, null, offset, width), laneType),

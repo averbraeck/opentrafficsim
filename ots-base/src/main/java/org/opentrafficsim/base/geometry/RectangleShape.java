@@ -30,15 +30,15 @@ public abstract class RectangleShape extends OffsetRectangleShape
     @Override
     public double signedDistance(final Point2d point)
     {
-        double qx = Math.abs(point.x) - getBounds().getDeltaX() / 2.0;
-        double qy = Math.abs(point.y) - getBounds().getDeltaY() / 2.0;
+        double qx = Math.abs(point.x) - getRelativeBounds().getDeltaX() / 2.0;
+        double qy = Math.abs(point.y) - getRelativeBounds().getDeltaY() / 2.0;
         return Math.hypot(Math.max(qx, 0.0), Math.max(qy, 0.0)) + Math.min(Math.max(qx, qy), 0.0);
     }
 
     @Override
     public String toString()
     {
-        return "RectangleShape [dx=" + getBounds().getDeltaX() + ", dy=" + getBounds().getDeltaY() + "]";
+        return "RectangleShape [dx=" + getRelativeBounds().getDeltaX() + ", dy=" + getRelativeBounds().getDeltaY() + "]";
     }
 
 }

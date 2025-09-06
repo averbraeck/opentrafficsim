@@ -100,7 +100,7 @@ public final class PublisherTest implements OtsModelInterface
         Object[] subscriptionHandler = publisher.get(new Object[] {"GTUs in network"}, storeLastResult);
         assertNotNull(subscriptionHandler, "result of get should not be null");
         assertEquals(1, subscriptionHandler.length, "result should contain one elements");
-        //System.out.println(subscriptionHandler[0]);
+        // System.out.println(subscriptionHandler[0]);
         assertTrue(subscriptionHandler[0] instanceof SubscriptionHandler, "Result should contain a String");
         this.lastResult = null;
         assertNull(publisher.get(new Object[] {"No such transceiver"}, storeLastResult),
@@ -887,5 +887,26 @@ public final class PublisherTest implements OtsModelInterface
             + "\r\n"
             + "</OTS>\r\n";
     // @formatter:on
+
+    @Override
+    public void setResetApplicationExecutable(final Runnable resetApplicationExecutable)
+    {
+    }
+
+    @Override
+    public Runnable getResetApplicationExecutable()
+    {
+        return null;
+    }
+
+    @Override
+    public void resetApplication()
+    {
+    }
+
+    @Override
+    public void setInputParameterMap(final InputParameterMap inputParameterMap)
+    {
+    }
 
 }

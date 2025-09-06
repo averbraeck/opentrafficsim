@@ -49,16 +49,7 @@ public class AnimationStripeData extends AnimationCrossSectionElementData<Stripe
     public PolyLine2d getReferenceLine()
     {
         return getObject().getLateralSync().equals(StripeLateralSync.NONE) ? getObject().getCenterLine()
-                : getLinkReferenceLine();
-    }
-
-    /**
-     * Return link reference line.
-     * @return link reference line
-     */
-    private PolyLine2d getLinkReferenceLine()
-    {
-        return getObject().getLinkReferenceLine();
+                : getObject().getLinkReferenceLine();
     }
 
     @Override

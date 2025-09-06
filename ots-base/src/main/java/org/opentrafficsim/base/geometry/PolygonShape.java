@@ -33,9 +33,9 @@ public abstract class PolygonShape implements OtsShape
     }
 
     @Override
-    public Bounds2d getBounds()
+    public Bounds2d getRelativeBounds()
     {
-        return this.polygon.getBounds();
+        return this.polygon.getAbsoluteBounds();
     }
 
     @Override
