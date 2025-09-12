@@ -46,7 +46,7 @@ import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.lane.VehicleModel;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -603,7 +603,7 @@ public class Injections
              * @throws GtuException on parameter exception
              */
             @Override
-            public Placement canPlace(final SortedSet<HeadwayGtu> leaders, final LaneBasedGtuCharacteristics characteristics,
+            public Placement canPlace(final SortedSet<PerceivedGtu> leaders, final LaneBasedGtuCharacteristics characteristics,
                     final Duration since, final LanePosition initialPosition) throws NetworkException, GtuException
             {
                 Throw.when(!Injections.this.columnNumbers.containsKey(SPEED_COLUMN), IllegalStateException.class,
@@ -624,7 +624,7 @@ public class Injections
                     Injections.this.nextSpeed = null;
                     return placement;
                 }
-                HeadwayGtu leader = leaders.first();
+                PerceivedGtu leader = leaders.first();
                 if ((Injections.this.nextSpeed.le(leader.getSpeed()) || leader.getDistance()
                         .divide(Injections.this.nextSpeed.minus(leader.getSpeed())).gt(Injections.this.timeToCollision))
                         && leader.getDistance().gt(Injections.this.nextSpeed.times(new Duration(1.0, DurationUnit.SI))

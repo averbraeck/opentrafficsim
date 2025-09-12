@@ -6,7 +6,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 
 /**
  * Linear CACC implementation based on derivatives by Jeroen Ploeg.
@@ -35,9 +35,9 @@ public class PloegCacc extends PloegAcc
 
     @Override
     public Acceleration getFollowingAcceleration(final LaneBasedGtu gtu,
-            final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders, final Parameters settings) throws ParameterException
+            final PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders, final Parameters settings) throws ParameterException
     {
-        HeadwayGtu leader = leaders.first();
+        PerceivedGtu leader = leaders.first();
         if (leader.getAcceleration() == null)
         {
             return super.getFollowingAcceleration(gtu, leaders, settings);

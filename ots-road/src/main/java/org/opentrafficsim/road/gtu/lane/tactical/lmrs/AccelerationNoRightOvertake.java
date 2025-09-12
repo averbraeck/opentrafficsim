@@ -16,7 +16,7 @@ import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.TrafficPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
@@ -70,11 +70,11 @@ public final class AccelerationNoRightOvertake implements AccelerationIncentive,
             Speed vCong = params.getParameter(VCONG);
             if (perception.getPerceptionCategory(TrafficPerception.class).getSpeed(RelativeLane.CURRENT).si > vCong.si)
             {
-                PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders =
+                PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
                         perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(RelativeLane.LEFT);
                 if (!leaders.isEmpty())
                 {
-                    HeadwayGtu leader = leaders.first();
+                    PerceivedGtu leader = leaders.first();
                     Speed desiredSpeed = perception.getGtu().getDesiredSpeed();
                     if (desiredSpeed.si > leader.getSpeed().si)
                     {

@@ -477,9 +477,10 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
 
         for (Lane lane : lanes)
         {
-            ContinuousPiecewiseLinearFunction offset =
-                    ContinuousPiecewiseLinearFunction.of(0.0, lane.getLateralCenterPosition(1.0).si);
-            ContinuousPiecewiseLinearFunction width = ContinuousPiecewiseLinearFunction.of(0.0, lane.getWidth(1.0).si);
+            ContinuousPiecewiseLinearFunction offset = ContinuousPiecewiseLinearFunction.of(0.0,
+                    lane.getLateralCenterPosition(1.0).si, 1.0, lane.getLateralCenterPosition(1.0).si);
+            ContinuousPiecewiseLinearFunction width =
+                    ContinuousPiecewiseLinearFunction.of(0.0, lane.getWidth(1.0).si, 1.0, lane.getWidth(1.0).si);
             // Overtaking left and right allowed on the sinkLane
             Lane sinkLane =
                     new Lane(endLink, lane.getId() + "." + "sinkLane", CrossSectionGeometry.of(designLine, null, offset, width),

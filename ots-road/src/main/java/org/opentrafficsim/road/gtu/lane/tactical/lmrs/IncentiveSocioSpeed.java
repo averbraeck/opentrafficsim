@@ -19,7 +19,7 @@ import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
@@ -93,12 +93,12 @@ public final class IncentiveSocioSpeed implements VoluntaryIncentive, Stateless<
             // change right to get out of the way
             if (rightLane && mandatoryDesire.right() >= 0.0)
             {
-                PerceptionCollectable<HeadwayGtu, LaneBasedGtu> followers = neighbors.getFollowers(RelativeLane.CURRENT);
+                PerceptionCollectable<PerceivedGtu, LaneBasedGtu> followers = neighbors.getFollowers(RelativeLane.CURRENT);
                 if (!followers.isEmpty())
                 {
                     double rho = parameters.getParameter(RHO);
-                    HeadwayGtu follower = followers.first();
-                    double rhoFollower = follower.getParameters().getParameter(RHO);
+                    PerceivedGtu follower = followers.first();
+                    double rhoFollower = follower.getBehavior().getParameters().getParameter(RHO);
                     if (rhoFollower * sigma > rho)
                     {
                         dRight = rhoFollower * sigma;
@@ -108,14 +108,14 @@ public final class IncentiveSocioSpeed implements VoluntaryIncentive, Stateless<
             // stay right to keep out of the way
             if (leftLane && mandatoryDesire.left() <= 0.0)
             {
-                PerceptionCollectable<HeadwayGtu, LaneBasedGtu> followers = neighbors.getFollowers(RelativeLane.LEFT);
+                PerceptionCollectable<PerceivedGtu, LaneBasedGtu> followers = neighbors.getFollowers(RelativeLane.LEFT);
                 if (followers != null && !followers.isEmpty())
                 {
                     double rho;
-                    PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.LEFT);
+                    PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.LEFT);
                     if (leaders != null && !leaders.isEmpty())
                     {
-                        HeadwayGtu leader = leaders.first();
+                        PerceivedGtu leader = leaders.first();
                         Speed vDes = Try.assign(() -> perception.getGtu().getDesiredSpeed(),
                                 "Could not obtain GTU from perception.");
                         Speed vGain = parameters.getParameter(VGAIN);
@@ -127,11 +127,12 @@ public final class IncentiveSocioSpeed implements VoluntaryIncentive, Stateless<
                     {
                         rho = 0.0;
                     }
-                    HeadwayGtu follower = followers.first();
-                    Speed vGainFollower = follower.getParameters().getParameter(VGAIN);
-                    Length x0Follower = follower.getParameters().getParameter(LOOKAHEAD);
-                    double rhoFollower = Tailgating.socialPressure(follower.getSpeed(), vCong, follower.getDesiredSpeed(),
-                            ownSpeed, vGainFollower, follower.getDistance(), x0Follower);
+                    PerceivedGtu follower = followers.first();
+                    Speed vGainFollower = follower.getBehavior().getParameters().getParameter(VGAIN);
+                    Length x0Follower = follower.getBehavior().getParameters().getParameter(LOOKAHEAD);
+                    double rhoFollower =
+                            Tailgating.socialPressure(follower.getSpeed(), vCong, follower.getBehavior().getDesiredSpeed(),
+                                    ownSpeed, vGainFollower, follower.getDistance(), x0Follower);
                     if (rhoFollower * sigma > rho)
                     {
                         dLeft = -rhoFollower * sigma;

@@ -62,6 +62,7 @@ public class SpeedLimitProspect implements Serializable
         {
             entry.move(dx);
         }
+        this.odometer = newOdometer;
     }
 
     /**

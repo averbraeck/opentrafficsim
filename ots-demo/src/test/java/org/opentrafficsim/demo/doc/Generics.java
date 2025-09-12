@@ -9,8 +9,8 @@ import org.opentrafficsim.base.Type;
 import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.base.parameters.constraint.Constraint;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable.PerceptionAccumulator;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 
 /**
  * This class contains code snippets that are used in the documentation. Whenever errors arise in this code, they need to be
@@ -64,7 +64,7 @@ public class Generics
     }
 
     // @docs/02-model-structure/java.md#java-generics
-    public interface PerceptionCollectable<H extends Headway, U> extends PerceptionIterable<H>
+    public interface PerceptionCollectable<H extends PerceivedObject, U> extends PerceptionIterable<H>
     {
         <C, I> C collect(Supplier<I> identity, PerceptionAccumulator<? super U, I> accumulator, Function<I, C> finalizer);
     }

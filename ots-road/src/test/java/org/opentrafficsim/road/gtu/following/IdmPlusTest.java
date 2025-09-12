@@ -22,14 +22,15 @@ import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuSimple;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics.Overlap;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedGtuFollowingTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
@@ -127,11 +128,11 @@ public final class IdmPlusTest implements UNITS
         leaderCar11.setParameters(parametersFAM);
         leaderCar11.init(strategicalPlannerFAM, leaderPositions.getLocation(), initialSpeed);
         leaderCar11.getTacticalPlanner().getPerception().perceive();
-        HeadwayGtuSimple leader = new HeadwayGtuSimple(leaderCar11.getId(), leaderCar11.getType(),
-                new Length(leaderPosition.getSI() - referenceCar10.getLength().getSI() - initialPosition.getSI(),
-                        LengthUnit.SI),
-                leaderCar11.getLength(), leaderCar11.getWidth(), leaderCar11.getSpeed(), leaderCar11.getAcceleration(), null,
-                Length.ZERO, LateralDirectionality.NONE);
+        PerceivedGtu leader = PerceivedGtu.of(leaderCar11,
+                new Kinematics.Record(
+                        Length.instantiateSI(
+                                leaderPosition.getSI() - referenceCar10.getLength().getSI() - initialPosition.getSI()),
+                        leaderCar11.getSpeed(), leaderCar11.getAcceleration(), true, Overlap.AHEAD));
         cfmr = carFollowingModel.computeAccelerationStep(referenceCar10, leaderCar11.getSpeed(), leader.getDistance(),
                 lookAhead, speedLimit);
         assertEquals(0, cfmr.getAcceleration().getSI(), 0.0001, "Acceleration should be 0");
@@ -148,12 +149,12 @@ public final class IdmPlusTest implements UNITS
         leaderCar12.init(strategicalPlannerFAM, leaderPositions.getLocation(), initialSpeed);
         leaderCar12.getTacticalPlanner().getPerception().perceive();
         // Verify that the result is independent of the order of adding in the Collection
-        Collection<Headway> leaders = new ArrayList<>();
-        HeadwayGtuSimple leader2 = new HeadwayGtuSimple(leaderCar12.getId(), leaderCar12.getType(),
-                new Length(leaderPosition.getSI() - referenceCar10.getLength().getSI() - initialPosition.getSI(),
-                        LengthUnit.SI),
-                leaderCar12.getLength(), leaderCar12.getWidth(), leaderCar12.getSpeed(), leaderCar12.getAcceleration(), null,
-                Length.ZERO, LateralDirectionality.NONE);
+        Collection<PerceivedObject> leaders = new ArrayList<>();
+        PerceivedGtu leader2 = PerceivedGtu.of(leaderCar12,
+                new Kinematics.Record(
+                        Length.instantiateSI(
+                                leaderPosition.getSI() - referenceCar10.getLength().getSI() - initialPosition.getSI()),
+                        leaderCar12.getSpeed(), leaderCar12.getAcceleration(), true, Overlap.AHEAD));
         leaders.add(leader2); // Put the 2nd leader in first place
         leaders.add(leader);
         cfmr = carFollowingModel.computeDualAccelerationStep(referenceCar10, leaders, lookAhead, speedLimit)
@@ -186,11 +187,11 @@ public final class IdmPlusTest implements UNITS
         leaderCar21.init(strategicalPlannerFAM, leaderPositions.getLocation(), initialSpeed);
         referenceCar20.getTacticalPlanner().getPerception().perceive();
         leaderCar21.getTacticalPlanner().getPerception().perceive();
-        leader = new HeadwayGtuSimple(leaderCar21.getId(), leaderCar21.getType(),
-                new Length(leaderPosition.getSI() - referenceCar20.getLength().getSI() - initialPosition.getSI(),
-                        LengthUnit.SI),
-                leaderCar21.getLength(), leaderCar21.getWidth(), leaderCar21.getSpeed(), leaderCar21.getAcceleration(), null,
-                Length.ZERO, LateralDirectionality.NONE);
+        leader = PerceivedGtu.of(leaderCar21,
+                new Kinematics.Record(
+                        Length.instantiateSI(
+                                leaderPosition.getSI() - referenceCar20.getLength().getSI() - initialPosition.getSI()),
+                        leaderCar21.getSpeed(), leaderCar21.getAcceleration(), true, Overlap.AHEAD));
         leaders.add(leader);
         cfmr = carFollowingModel.computeDualAccelerationStep(referenceCar20, leaders, lookAhead, speedLimit)
                 .getLeaderAccelerationStep();
@@ -211,11 +212,11 @@ public final class IdmPlusTest implements UNITS
             leaderCar22.setParameters(parametersFAM);
             leaderCar22.init(strategicalPlannerFAM, leaderPositions.getLocation(), initialSpeed);
             leaderCar22.getTacticalPlanner().getPerception().perceive();
-            leader = new HeadwayGtuSimple(leaderCar22.getId(), leaderCar22.getType(),
-                    new Length(leaderPosition.getSI() - referenceCar20.getLength().getSI() - initialPosition.getSI(),
-                            LengthUnit.SI),
-                    leaderCar22.getLength(), leaderCar22.getWidth(), leaderCar22.getSpeed(), leaderCar22.getAcceleration(),
-                    null, Length.ZERO, LateralDirectionality.NONE);
+            leader = PerceivedGtu.of(leaderCar22,
+                    new Kinematics.Record(
+                            Length.instantiateSI(
+                                    leaderPosition.getSI() - referenceCar20.getLength().getSI() - initialPosition.getSI()),
+                            leaderCar22.getSpeed(), leaderCar22.getAcceleration(), true, Overlap.AHEAD));
             leaders.add(leader);
             cfmr = carFollowingModel.computeDualAccelerationStep(referenceCar20, leaders, lookAhead, speedLimit)
                     .getFollowerAccelerationStep();
@@ -264,11 +265,11 @@ public final class IdmPlusTest implements UNITS
             leaderCar31.setParameters(parametersFAM);
             leaderCar31.init(strategicalPlannerFAM, leaderPositions.getLocation(), leaderSpeed);
             leaderCar31.getTacticalPlanner().getPerception().perceive();
-            leader = new HeadwayGtuSimple(leaderCar31.getId(), leaderCar31.getType(),
-                    new Length(leaderPosition.getSI() - referenceCar30.getLength().getSI() - initialPosition.getSI(),
-                            LengthUnit.SI),
-                    leaderCar31.getLength(), leaderCar31.getWidth(), leaderCar31.getSpeed(), leaderCar31.getAcceleration(),
-                    null, Length.ZERO, LateralDirectionality.NONE);
+            leader = PerceivedGtu.of(leaderCar31,
+                    new Kinematics.Record(
+                            Length.instantiateSI(
+                                    leaderPosition.getSI() - referenceCar30.getLength().getSI() - initialPosition.getSI()),
+                            leaderCar31.getSpeed(), leaderCar31.getAcceleration(), true, Overlap.AHEAD));
             leaders.add(leader);
             // System.out.println("referenceCar: " + referenceCar);
             // System.out.println("leaderCar : " + leaderCar);

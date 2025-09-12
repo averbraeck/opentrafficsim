@@ -13,7 +13,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.FilteredIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayLaneBasedObject;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedLaneBasedObject;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -56,7 +56,7 @@ public interface AccelerationIncentive
      * @param <T> type of lane-based object
      * @return iterable with only those lane-based objects that are on the route
      */
-    default <T extends HeadwayLaneBasedObject> Iterable<T> onRoute(final Iterable<T> iterable, final LaneBasedGtu gtu)
+    default <T extends PerceivedLaneBasedObject> Iterable<T> onRoute(final Iterable<T> iterable, final LaneBasedGtu gtu)
     {
         Route route = gtu.getStrategicalPlanner().getRoute();
         return new FilteredIterable<>(iterable, new Predicate<T>()

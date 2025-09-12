@@ -2,8 +2,8 @@ package org.opentrafficsim.road.gtu.lane.perception.categories;
 
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedConflict;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedTrafficLight;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
@@ -25,14 +25,14 @@ public interface IntersectionPerception extends LaneBasedPerceptionCategory
      * @param lane lane
      * @return set of traffic lights along the route
      */
-    PerceptionCollectable<HeadwayTrafficLight, TrafficLight> getTrafficLights(RelativeLane lane);
+    PerceptionCollectable<PerceivedTrafficLight, TrafficLight> getTrafficLights(RelativeLane lane);
 
     /**
      * Returns a set of conflicts along the route. Conflicts are sorted by headway value.
      * @param lane lane
      * @return set of conflicts along the route
      */
-    PerceptionCollectable<HeadwayConflict, Conflict> getConflicts(RelativeLane lane);
+    PerceptionCollectable<PerceivedConflict, Conflict> getConflicts(RelativeLane lane);
 
     /**
      * Returns whether there is a conflict alongside to the left.

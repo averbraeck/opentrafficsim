@@ -34,8 +34,8 @@ import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectDefaultSimplePerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.ObjectType;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
 import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneMovementStep;
@@ -127,10 +127,10 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
             Speed speedLimit = simplePerception.getSpeedLimit();
 
             // look at the conditions for headway on the current lane
-            Headway sameLaneLeader = simplePerception.getForwardHeadwayGtu();
+            PerceivedObject sameLaneLeader = simplePerception.getForwardHeadwayGtu();
             // TODO how to handle objects on this lane or another lane???
-            Headway sameLaneFollower = simplePerception.getBackwardHeadway();
-            Collection<Headway> sameLaneTraffic = new ArrayList<>();
+            PerceivedObject sameLaneFollower = simplePerception.getBackwardHeadway();
+            Collection<PerceivedObject> sameLaneTraffic = new ArrayList<>();
             if (sameLaneLeader.getObjectType().isGtu())
             {
                 sameLaneTraffic.add(sameLaneLeader);
@@ -151,8 +151,8 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
             // TODO skip if:
             // - we are in the right lane and drive at max speed or we accelerate maximally
             // - there are no other lanes
-            Collection<Headway> leftLaneTraffic = simplePerception.getNeighboringHeadwaysLeft();
-            Collection<Headway> rightLaneTraffic = simplePerception.getNeighboringHeadwaysRight();
+            Collection<PerceivedObject> leftLaneTraffic = simplePerception.getNeighboringHeadwaysLeft();
+            Collection<PerceivedObject> rightLaneTraffic = simplePerception.getNeighboringHeadwaysRight();
 
             // FIXME: whether we drive on the right should be stored in some central place.
             final LateralDirectionality preferred = LateralDirectionality.RIGHT;
@@ -178,9 +178,9 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
             }
 
             // incorporate traffic light
-            Headway object = simplePerception.getForwardHeadwayObject();
+            PerceivedObject object = simplePerception.getForwardHeadwayObject();
             Acceleration a = lcmr.getGfmr().getAcceleration();
-            if (object instanceof HeadwayTrafficLight)
+            if (object.getObjectType().equals(ObjectType.TRAFFICLIGHT))
             {
                 // if it was perceived, it was red, or yellow and judged as requiring to stop
                 a = Acceleration.min(a, ((GtuFollowingModelOld) getCarFollowingModel()).computeAcceleration(getGtu().getSpeed(),

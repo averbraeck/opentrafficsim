@@ -12,7 +12,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.Placement;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
 
@@ -40,7 +40,7 @@ public class CfRoomChecker implements RoomChecker
     }
 
     @Override
-    public Placement canPlace(final SortedSet<HeadwayGtu> leaders, final LaneBasedGtuCharacteristics characteristics,
+    public Placement canPlace(final SortedSet<PerceivedGtu> leaders, final LaneBasedGtuCharacteristics characteristics,
             final Duration since, final LanePosition initialPosition) throws NetworkException, GtuException
     {
         Speed speedLimit = initialPosition.lane().getSpeedLimit(characteristics.getGtuType());
@@ -60,7 +60,7 @@ public class CfRoomChecker implements RoomChecker
         // loop leaders and determine most downstream location that would be ok
         Length move = Length.POSITIVE_INFINITY;
         Speed generationSpeed = desiredSpeed;
-        for (HeadwayGtu leader : leaders)
+        for (PerceivedGtu leader : leaders)
         {
             Speed speed = Speed.min(desiredSpeed, leader.getSpeed());
             Length headway =

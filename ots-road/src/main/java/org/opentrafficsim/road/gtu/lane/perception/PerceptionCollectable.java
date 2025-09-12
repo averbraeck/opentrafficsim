@@ -5,7 +5,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 
 /**
  * Iterable that additionally provides support for PerceptionCollectors. These gather raw data, to only 'perceive' the result.
@@ -19,7 +19,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
  * @param <H> headway type
  * @param <U> underlying object type
  */
-public interface PerceptionCollectable<H extends Headway, U> extends PerceptionIterable<H>
+public interface PerceptionCollectable<H extends PerceivedObject, U> extends PerceptionIterable<H>
 {
 
     /**

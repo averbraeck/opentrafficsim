@@ -17,7 +17,7 @@ import org.opentrafficsim.road.gtu.lane.perception.AbstractPerceptionReiterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.structure.NavigatingIterable.Entry;
 
 /**
@@ -52,7 +52,7 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
     }
 
     @Override
-    public final SortedSet<HeadwayGtu> getFirstLeaders(final LateralDirectionality lat)
+    public final SortedSet<PerceivedGtu> getFirstLeaders(final LateralDirectionality lat)
             throws ParameterException, NullPointerException, IllegalArgumentException
     {
         checkLateralDirectionality(lat);
@@ -64,11 +64,11 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
      * @param lat lateral directionality
      * @return first leaders
      */
-    private SortedSet<HeadwayGtu> computeFirstLeaders(final LateralDirectionality lat)
+    private SortedSet<PerceivedGtu> computeFirstLeaders(final LateralDirectionality lat)
     {
         try
         {
-            SortedSet<HeadwayGtu> set = new TreeSet<>();
+            SortedSet<PerceivedGtu> set = new TreeSet<>();
             for (Entry<LaneBasedGtu> entry : getPerception().getLaneStructure().getFirstDownstreamGtus(new RelativeLane(lat, 1),
                     RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT, RelativePosition.REAR))
             {
@@ -83,7 +83,7 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
     }
 
     @Override
-    public final SortedSet<HeadwayGtu> getFirstFollowers(final LateralDirectionality lat)
+    public final SortedSet<PerceivedGtu> getFirstFollowers(final LateralDirectionality lat)
             throws ParameterException, NullPointerException, IllegalArgumentException
     {
         checkLateralDirectionality(lat);
@@ -95,11 +95,11 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
      * @param lat lateral directionality
      * @return first followers
      */
-    private SortedSet<HeadwayGtu> computeFirstFollowers(final LateralDirectionality lat)
+    private SortedSet<PerceivedGtu> computeFirstFollowers(final LateralDirectionality lat)
     {
         try
         {
-            SortedSet<HeadwayGtu> set = new TreeSet<>();
+            SortedSet<PerceivedGtu> set = new TreeSet<>();
             for (Entry<LaneBasedGtu> entry : getPerception().getLaneStructure().getFirstUpstreamGtus(new RelativeLane(lat, 1),
                     RelativePosition.REAR, RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT))
             {
@@ -159,7 +159,7 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
     }
 
     @Override
-    public final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> getLeaders(final RelativeLane lane)
+    public final PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getLeaders(final RelativeLane lane)
     {
         Throw.whenNull(lane, "Lane may not be null.");
         return computeIfAbsent("leaders", () -> computeLeaders(lane), lane);
@@ -170,7 +170,7 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
      * @param lane lane
      * @return perception iterable for leaders
      */
-    private PerceptionCollectable<HeadwayGtu, LaneBasedGtu> computeLeaders(final RelativeLane lane)
+    private PerceptionCollectable<PerceivedGtu, LaneBasedGtu> computeLeaders(final RelativeLane lane)
     {
         Iterable<Entry<LaneBasedGtu>> iterable = Try.assign(() -> getPerception().getLaneStructure().getDownstreamGtus(lane,
                 RelativePosition.FRONT, RelativePosition.FRONT, RelativePosition.FRONT, RelativePosition.REAR), "");
@@ -189,7 +189,7 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
                     }
 
                     @Override
-                    public AbstractPerceptionReiterable<LaneBasedGtu, HeadwayGtu, LaneBasedGtu>.PrimaryIteratorEntry next()
+                    public AbstractPerceptionReiterable<LaneBasedGtu, PerceivedGtu, LaneBasedGtu>.PrimaryIteratorEntry next()
                     {
                         Entry<LaneBasedGtu> entry = iterator.next();
                         return new PrimaryIteratorEntry(entry.object(), entry.distance());
@@ -198,7 +198,7 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
             }
 
             @Override
-            protected HeadwayGtu perceive(final LaneBasedGtu object, final Length distance)
+            protected PerceivedGtu perceive(final LaneBasedGtu object, final Length distance)
                     throws GtuException, ParameterException
             {
                 return DirectNeighborsPerception.this.headwayGtuType.createDownstreamGtu(getObject(), object, distance);
@@ -207,7 +207,7 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
     }
 
     @Override
-    public final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> getFollowers(final RelativeLane lane)
+    public final PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getFollowers(final RelativeLane lane)
     {
         Throw.whenNull(lane, "Lane may not be null.");
         return computeIfAbsent("followers", () -> computeFollowers(lane), lane);
@@ -218,7 +218,7 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
      * @param lane lane
      * @return perception iterable for followers
      */
-    private PerceptionCollectable<HeadwayGtu, LaneBasedGtu> computeFollowers(final RelativeLane lane)
+    private PerceptionCollectable<PerceivedGtu, LaneBasedGtu> computeFollowers(final RelativeLane lane)
     {
         Iterable<Entry<LaneBasedGtu>> iterable = Try.assign(() -> getPerception().getLaneStructure().getUpstreamGtus(lane,
                 RelativePosition.FRONT, RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT), "");
@@ -237,7 +237,7 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
                     }
 
                     @Override
-                    public AbstractPerceptionReiterable<LaneBasedGtu, HeadwayGtu, LaneBasedGtu>.PrimaryIteratorEntry next()
+                    public AbstractPerceptionReiterable<LaneBasedGtu, PerceivedGtu, LaneBasedGtu>.PrimaryIteratorEntry next()
                     {
                         Entry<LaneBasedGtu> entry = iterator.next();
                         return new PrimaryIteratorEntry(entry.object(), entry.distance());
@@ -246,7 +246,7 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
             }
 
             @Override
-            protected HeadwayGtu perceive(final LaneBasedGtu object, final Length distance)
+            protected PerceivedGtu perceive(final LaneBasedGtu object, final Length distance)
                     throws GtuException, ParameterException
             {
                 return DirectNeighborsPerception.this.headwayGtuType.createUpstreamGtu(getObject(), object, distance);

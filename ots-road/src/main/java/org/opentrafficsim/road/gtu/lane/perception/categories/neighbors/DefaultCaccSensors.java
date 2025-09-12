@@ -1,8 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories.neighbors;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -10,12 +7,13 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.control.ControlTacticalPlanner;
-import org.opentrafficsim.road.gtu.lane.perception.headway.GtuStatus;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuSimple;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu.Maneuver;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu.Signals;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtuSimple;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics;
 
 /**
  * Default CACC sensors. This returns all information except desired speed for the first leader and CACC leaders. Remaining
@@ -40,7 +38,7 @@ public class DefaultCaccSensors implements HeadwayGtuType
     }
 
     @Override
-    public HeadwayGtu createDownstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
+    public PerceivedGtu createDownstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
             final Length distance) throws GtuException, ParameterException
     {
         Time t;
@@ -65,41 +63,20 @@ public class DefaultCaccSensors implements HeadwayGtuType
         Length width = perceivedGtu.getWidth();
         Speed v = perceivedGtu.getSpeed(t);
         Acceleration a = perceivedGtu.getAcceleration(t);
-        Speed desiredSpeed = null;
-        Length deviation = perceivedGtu.getDeviation();
-        LateralDirectionality laneChangeDirection = perceivedGtu.getLaneChangeDirection();
-        List<GtuStatus> status = new ArrayList<>();
-        if (perceivedGtu.isBrakingLightsOn(t))
-        {
-            status.add(GtuStatus.BRAKING_LIGHTS);
-        }
-        switch (perceivedGtu.getTurnIndicatorStatus(t))
-        {
-            case HAZARD:
-                status.add(GtuStatus.EMERGENCY_LIGHTS);
-                break;
-            case LEFT:
-                status.add(GtuStatus.LEFT_TURNINDICATOR);
-                break;
-            case RIGHT:
-                status.add(GtuStatus.RIGHT_TURNINDICATOR);
-                break;
-            default:
-                break;
-        }
-        return new HeadwayGtuSimple(id, gtuType, distance, length, width, v, a, desiredSpeed, deviation, laneChangeDirection,
-                status.toArray(new GtuStatus[status.size()]));
+        return new PerceivedGtuSimple(id, gtuType, length, width,
+                Kinematics.dynamicAhead(distance, v, a, true, length, perceivingGtu.getLength()), Signals.of(perceivedGtu),
+                Maneuver.of(perceivedGtu));
     }
 
     @Override
-    public HeadwayGtu createUpstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
+    public PerceivedGtu createUpstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
             final Length distance) throws GtuException, ParameterException
     {
         throw new UnsupportedOperationException("Default CACC sensors can only determine leaders.");
     }
 
     @Override
-    public HeadwayGtu createParallelGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
+    public PerceivedGtu createParallelGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
             final Length overlapFront, final Length overlap, final Length overlapRear) throws GtuException
     {
         throw new UnsupportedOperationException("Default CACC sensors can only determine leaders.");

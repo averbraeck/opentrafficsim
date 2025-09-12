@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.lane.perception.headway;
+package org.opentrafficsim.road.gtu.lane.perception.object;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
@@ -15,12 +15,13 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColo
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class HeadwayTrafficLightReal extends AbstractHeadwayLaneBasedObject implements HeadwayTrafficLight
+public class PerceivedTrafficLight extends PerceivedLaneBasedObject
 {
-    /** */
-    private static final long serialVersionUID = 20160410L;
 
-    /** the traffic light object for further observation, can not be null. */
+    /** */
+    private static final long serialVersionUID = 2025908L;
+
+    /** The traffic light object for further observation, can not be null. */
     private final TrafficLight trafficLight;
 
     /** Whether we can turn on red. */
@@ -34,10 +35,10 @@ public class HeadwayTrafficLightReal extends AbstractHeadwayLaneBasedObject impl
      * @param turnOnRed whether the perceiving GTU may turn on red.
      * @throws GtuException when id is null, or parameters are inconsistent
      */
-    public HeadwayTrafficLightReal(final TrafficLight trafficLight, final Length distance, final boolean turnOnRed)
+    public PerceivedTrafficLight(final TrafficLight trafficLight, final Length distance, final boolean turnOnRed)
             throws GtuException
     {
-        super(ObjectType.TRAFFICLIGHT, id(trafficLight), distance, trafficLight.getLane());
+        super(id(trafficLight), ObjectType.TRAFFICLIGHT, Length.ZERO, Kinematics.staticAhead(distance), trafficLight.getLane());
         this.trafficLight = trafficLight;
         this.turnOnRed = turnOnRed;
     }
@@ -50,17 +51,23 @@ public class HeadwayTrafficLightReal extends AbstractHeadwayLaneBasedObject impl
      */
     private static String id(final TrafficLight trafficLight) throws GtuException
     {
-        Throw.when(trafficLight == null, GtuException.class, "Headway constructor: trafficLight == null");
+        Throw.whenNull(trafficLight, "trafficLight");
         return trafficLight.getId();
     }
 
-    @Override
+    /**
+     * Returns the traffic light color.
+     * @return the traffic light color.
+     */
     public final TrafficLightColor getTrafficLightColor()
     {
         return this.trafficLight.getTrafficLightColor();
     }
 
-    @Override
+    /**
+     * Whether the perceiving GTU may turn on red.
+     * @return whether the perceiving GTU may turn on red.
+     */
     public final boolean canTurnOnRed()
     {
         return this.turnOnRed;

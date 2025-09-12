@@ -30,6 +30,7 @@ import org.opentrafficsim.road.network.sampling.LaneDataRoad;
 import org.opentrafficsim.road.network.sampling.RoadSampler;
 import org.opentrafficsim.swing.graphs.OtsPlotScheduler;
 import org.opentrafficsim.swing.graphs.SwingPlot;
+import org.opentrafficsim.swing.graphs.SwingTrajectoryPlot;
 import org.opentrafficsim.swing.gui.OtsAnimationPanel;
 import org.opentrafficsim.swing.gui.OtsSimulationApplication;
 
@@ -144,8 +145,8 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
                 throw new RuntimeException(exception);
             }
             GraphPath.initRecording(sampler, path);
-            SwingPlot plot = new SwingPlot(new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1), updateInterval,
-                    new OtsPlotScheduler(simulator), sampler.getSamplerData(), path));
+            SwingPlot plot = new SwingTrajectoryPlot(new TrajectoryPlot("Trajectories on lane " + (graphIndex + 1),
+                    updateInterval, new OtsPlotScheduler(simulator), sampler.getSamplerData(), path));
             charts.setCell(plot.getContentPane(), graphIndex % columns, graphIndex / columns);
         }
 

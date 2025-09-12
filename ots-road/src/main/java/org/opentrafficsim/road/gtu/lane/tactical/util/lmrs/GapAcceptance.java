@@ -13,7 +13,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
@@ -71,12 +71,13 @@ public interface GapAcceptance
              * What needs to be done, is to find a better way to deal with the cooperation and gap-acceptance, such that this
              * hack is not required.
              */
-            for (HeadwayGtu follower : neighbors.getFirstFollowers(lat))
+            for (PerceivedGtu follower : neighbors.getFirstFollowers(lat))
             {
                 if (follower.getSpeed().gt0() || follower.getAcceleration().gt0() || follower.getDistance().si < 1.0)
                 {
                     Acceleration aFollow = LmrsUtil.singleAcceleration(follower.getDistance(), follower.getSpeed(), ownSpeed,
-                            desire, follower.getParameters(), follower.getSpeedLimitInfo(), follower.getCarFollowingModel());
+                            desire, follower.getBehavior().getParameters(), follower.getBehavior().getSpeedLimitInfo(),
+                            follower.getBehavior().getCarFollowingModel());
                     if (threshold.gt(aFollow))
                     {
                         return false;
@@ -120,16 +121,17 @@ public interface GapAcceptance
                 return false;
             }
 
-            for (HeadwayGtu follower : neigbors.getFirstFollowers(lat))
+            for (PerceivedGtu follower : neigbors.getFirstFollowers(lat))
             {
                 if (follower.getSpeed().gt0() || follower.getAcceleration().gt0())
                 {
                     // Change headway parameter
-                    Parameters folParams = follower.getParameters();
+                    Parameters folParams = follower.getBehavior().getParameters();
                     folParams.setParameterResettable(ParameterTypes.TMIN, params.getParameter(ParameterTypes.TMIN));
                     folParams.setParameterResettable(ParameterTypes.TMAX, params.getParameter(ParameterTypes.TMAX));
                     Acceleration aFollow = LmrsUtil.singleAcceleration(follower.getDistance(), follower.getSpeed(), ownSpeed,
-                            desire, folParams, follower.getSpeedLimitInfo(), follower.getCarFollowingModel());
+                            desire, folParams, follower.getBehavior().getSpeedLimitInfo(),
+                            follower.getBehavior().getCarFollowingModel());
                     folParams.resetParameter(ParameterTypes.TMIN);
                     folParams.resetParameter(ParameterTypes.TMAX);
                     if (threshold.gt(aFollow))
@@ -174,7 +176,7 @@ public interface GapAcceptance
     {
         if (ownSpeed.gt0())
         {
-            for (HeadwayGtu leader : perception.getPerceptionCategory(NeighborsPerception.class).getFirstLeaders(lat))
+            for (PerceivedGtu leader : perception.getPerceptionCategory(NeighborsPerception.class).getFirstLeaders(lat))
             {
                 Acceleration a = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire, params,
                         sli, cfm);
@@ -208,23 +210,23 @@ public interface GapAcceptance
         {
             NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
             // Only potential lane changers in the gap to the leader in the target lane are relevant
-            SortedSet<HeadwayGtu> firstLeaders = neighbors.getFirstLeaders(lat);
+            SortedSet<PerceivedGtu> firstLeaders = neighbors.getFirstLeaders(lat);
             Length range = Length.POS_MAXVALUE;
             if (!firstLeaders.isEmpty())
             {
                 range = Length.ZERO;
-                for (HeadwayGtu leader : firstLeaders)
+                for (PerceivedGtu leader : firstLeaders)
                 {
                     range = Length.max(range, leader.getDistance());
                 }
             }
-            for (HeadwayGtu leader : neighbors.getLeaders(new RelativeLane(lat, 2)))
+            for (PerceivedGtu leader : neighbors.getLeaders(new RelativeLane(lat, 2)))
             {
                 if (leader.getDistance().gt(range))
                 {
                     return true;
                 }
-                if (leader.isChangingLane(lat.flip()))
+                if (leader.getManeuver().isChangingLane(lat.flip()))
                 {
                     Acceleration a = CarFollowingUtil.followSingleLeader(cfm, params, ownSpeed, sli, leader.getDistance(),
                             leader.getSpeed());

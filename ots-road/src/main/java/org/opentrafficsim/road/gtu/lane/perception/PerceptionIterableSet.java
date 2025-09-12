@@ -5,7 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.SortedSet;
 
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 
 /**
  * Simple implementation of {@code PerceptionIterable} which wraps a set. Constructors are available for an empty set, a
@@ -19,7 +19,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <H> headway type
  */
-public class PerceptionIterableSet<H extends Headway> implements PerceptionIterable<H>
+public class PerceptionIterableSet<H extends PerceivedObject> implements PerceptionIterable<H>
 {
 
     /** Internal set. */

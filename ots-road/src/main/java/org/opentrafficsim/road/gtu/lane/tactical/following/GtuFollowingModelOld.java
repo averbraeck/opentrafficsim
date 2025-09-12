@@ -9,7 +9,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 
 /**
  * GTU following model interface. <br>
@@ -120,7 +120,7 @@ public interface GtuFollowingModelOld extends CarFollowingModel
      *         of the referenceGTU for each leader and follower
      * @throws GtuException when the speed of the gtu cannot be determined
      */
-    DualAccelerationStep computeDualAccelerationStep(LaneBasedGtu gtu, Collection<Headway> otherHeadways, Length maxDistance,
+    DualAccelerationStep computeDualAccelerationStep(LaneBasedGtu gtu, Collection<PerceivedObject> otherHeadways, Length maxDistance,
             Speed speedLimit) throws GtuException;
 
     /**
@@ -140,7 +140,7 @@ public interface GtuFollowingModelOld extends CarFollowingModel
      *         of the referenceGTU for each leader and follower
      * @throws GtuException when the speed of the gtu cannot be determined
      */
-    DualAccelerationStep computeDualAccelerationStep(LaneBasedGtu gtu, Collection<Headway> otherHeadways, Length maxDistance,
+    DualAccelerationStep computeDualAccelerationStep(LaneBasedGtu gtu, Collection<PerceivedObject> otherHeadways, Length maxDistance,
             Speed speedLimit, Duration stepSize) throws GtuException;
 
     /**

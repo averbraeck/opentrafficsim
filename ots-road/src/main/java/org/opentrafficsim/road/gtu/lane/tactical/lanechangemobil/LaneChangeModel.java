@@ -7,7 +7,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 
 /**
  * All lane change models must implement this interface. <br>
@@ -41,8 +41,8 @@ public interface LaneChangeModel
      * @throws ParameterException in case of a parameter problem.
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    LaneMovementStep computeLaneChangeAndAcceleration(LaneBasedGtu gtu, Collection<Headway> sameLaneTraffic,
-            Collection<Headway> rightLaneTraffic, Collection<Headway> leftLaneTraffic, Speed speedLimit,
+    LaneMovementStep computeLaneChangeAndAcceleration(LaneBasedGtu gtu, Collection<PerceivedObject> sameLaneTraffic,
+            Collection<PerceivedObject> rightLaneTraffic, Collection<PerceivedObject> leftLaneTraffic, Speed speedLimit,
             Acceleration preferredLaneRouteIncentive, Acceleration laneChangeThreshold,
             Acceleration nonPreferredLaneRouteIncentive) throws GtuException, ParameterException;
 

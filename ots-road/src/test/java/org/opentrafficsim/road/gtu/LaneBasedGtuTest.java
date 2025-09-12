@@ -37,7 +37,7 @@ import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCfLcTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
@@ -181,14 +181,14 @@ public final class LaneBasedGtuTest implements UNITS
         Length forwardMaxDistance = truck.getParameters().getParameter(ParameterTypes.LOOKAHEAD);
         // TODO see how we can ask the vehicle to look this far ahead
         truck.getTacticalPlanner().getPerception().perceive();
-        Headway leader = truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class)
+        PerceivedObject leader = truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class)
                 .getForwardHeadwayGtu();
         assertTrue(forwardMaxDistance.getSI() >= leader.getDistance().si && leader.getDistance().si > 0,
                 "With one vehicle in the network forward headway should return a value larger than zero, and smaller than maxDistance");
         assertEquals(null, leader.getId(), "With one vehicle in the network forward headwayGTU should return null");
         // TODO see how we can ask the vehicle to look this far behind
         Length reverseMaxDistance = truck.getParameters().getParameter(ParameterTypes.LOOKBACKOLD);
-        Headway follower = truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class)
+        PerceivedObject follower = truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class)
                 .getBackwardHeadway();
         assertTrue(Math.abs(reverseMaxDistance.getSI()) >= Math.abs(follower.getDistance().si) && follower.getDistance().si < 0,
                 "With one vehicle in the network reverse headway should return a value less than zero, and smaller than |maxDistance|");
@@ -308,7 +308,7 @@ public final class LaneBasedGtuTest implements UNITS
                         assertEquals(null, followerGtuId, "Follower id should be null");
                     }
                 }
-                Collection<Headway> leftParallel = truck.getTacticalPlanner().getPerception()
+                Collection<PerceivedObject> leftParallel = truck.getTacticalPlanner().getPerception()
                         .getPerceptionCategory(DefaultSimplePerception.class).getParallelHeadwaysLeft();
                 int expectedLeftSize = laneRank + carLanesCovered - 1 < truckFromLane - 1 || laneRank >= truckUpToLane
                         || step + carLength.getSI() <= truckPosition.getSI()
@@ -316,7 +316,7 @@ public final class LaneBasedGtuTest implements UNITS
                 // This one caught a complex bug
                 assertEquals(expectedLeftSize, leftParallel.size(), "Left parallel set size should be " + expectedLeftSize);
                 boolean foundCar = false;
-                for (Headway hw : leftParallel)
+                for (PerceivedObject hw : leftParallel)
                 {
                     if (car.getId().equals(hw.getId()))
                     {
@@ -325,14 +325,14 @@ public final class LaneBasedGtuTest implements UNITS
                     }
                 }
                 assertTrue(foundCar, "car was not found in rightParallel");
-                Collection<Headway> rightParallel = truck.getTacticalPlanner().getPerception()
+                Collection<PerceivedObject> rightParallel = truck.getTacticalPlanner().getPerception()
                         .getPerceptionCategory(DefaultSimplePerception.class).getParallelHeadwaysRight();
                 int expectedRightSize = laneRank + carLanesCovered - 1 <= truckFromLane || laneRank > truckUpToLane + 1
                         || step + carLength.getSI() < truckPosition.getSI()
                         || step > truckPosition.getSI() + truckLength.getSI() ? 0 : 1;
                 assertEquals(expectedRightSize, rightParallel.size(), "Right parallel set size should be " + expectedRightSize);
                 foundCar = false;
-                for (Headway hw : rightParallel)
+                for (PerceivedObject hw : rightParallel)
                 {
                     if (car.getId().equals(hw.getId()))
                     {

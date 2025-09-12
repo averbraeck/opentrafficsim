@@ -7,7 +7,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 
 /**
  * Implementation of the IDM+. See Schakel, W.J., Knoop, V.L., and Van Arem, B. (2012),
@@ -58,10 +58,10 @@ public class IdmPlus extends AbstractIdm
     @Override
     protected final Acceleration combineInteractionTerm(final Acceleration aFree, final Parameters parameters,
             final Speed speed, final Speed desiredSpeed, final Length desiredHeadway,
-            final PerceptionIterable<? extends Headway> leaders) throws ParameterException
+            final PerceptionIterable<? extends PerceivedObject> leaders) throws ParameterException
     {
         Acceleration a = parameters.getParameter(A);
-        Headway leader = leaders.first();
+        PerceivedObject leader = leaders.first();
         double sRatio =
                 dynamicDesiredHeadway(parameters, speed, desiredHeadway, leader.getSpeed()).si / leader.getDistance().si;
         double aInt = a.si * (1 - sRatio * sRatio);

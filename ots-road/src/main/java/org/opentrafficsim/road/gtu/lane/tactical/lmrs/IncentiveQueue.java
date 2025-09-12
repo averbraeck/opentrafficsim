@@ -16,9 +16,9 @@ import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedConflict;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedTrafficLight;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
@@ -74,8 +74,8 @@ public final class IncentiveQueue implements VoluntaryIncentive, Stateless<Incen
             return Desire.ZERO;
         }
         IntersectionPerception inter = perception.getPerceptionCategoryOrNull(IntersectionPerception.class);
-        PerceptionCollectable<HeadwayConflict, Conflict> conflicts = inter.getConflicts(RelativeLane.CURRENT);
-        PerceptionCollectable<HeadwayTrafficLight, TrafficLight> lights = inter.getTrafficLights(RelativeLane.CURRENT);
+        PerceptionCollectable<PerceivedConflict, Conflict> conflicts = inter.getConflicts(RelativeLane.CURRENT);
+        PerceptionCollectable<PerceivedTrafficLight, TrafficLight> lights = inter.getTrafficLights(RelativeLane.CURRENT);
         // TODO: a ramp-metering traffic light triggers this incentive with possible cooperation from the main line
         if (conflicts.isEmpty() && lights.isEmpty())
         {
@@ -90,7 +90,7 @@ public final class IncentiveQueue implements VoluntaryIncentive, Stateless<Incen
         double dLeft = 0.0;
         if (infra.getCrossSection().contains(RelativeLane.LEFT))
         {
-            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = neigbors.getLeaders(RelativeLane.LEFT);
+            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neigbors.getLeaders(RelativeLane.LEFT);
             if (!leaders.isEmpty())
             {
                 Acceleration acc = CarFollowingUtil.followSingleLeader(carFollowingModel, parameters, ego.getSpeed(), sli,
@@ -101,7 +101,7 @@ public final class IncentiveQueue implements VoluntaryIncentive, Stateless<Incen
         double dRight = 0.0;
         if (infra.getCrossSection().contains(RelativeLane.RIGHT))
         {
-            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = neigbors.getLeaders(RelativeLane.RIGHT);
+            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neigbors.getLeaders(RelativeLane.RIGHT);
             if (!leaders.isEmpty())
             {
                 Acceleration acc = CarFollowingUtil.followSingleLeader(carFollowingModel, parameters, ego.getSpeed(), sli,

@@ -9,7 +9,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
@@ -58,7 +58,7 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
 
     @Override
     public final Acceleration followingAcceleration(final Parameters parameters, final Speed speed,
-            final SpeedLimitInfo speedLimitInfo, final PerceptionIterable<? extends Headway> leaders) throws ParameterException
+            final SpeedLimitInfo speedLimitInfo, final PerceptionIterable<? extends PerceivedObject> leaders) throws ParameterException
     {
         Throw.whenNull(parameters, "Parameters may not be null.");
         Throw.whenNull(speed, "Speed may not be null.");
@@ -86,7 +86,7 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
      * @throws ParameterException if parameter exception occurs
      */
     protected abstract Acceleration followingAcceleration(Parameters parameters, Speed speed, Speed desiredSpeed,
-            Length desiredHeadway, PerceptionIterable<? extends Headway> leaders) throws ParameterException;
+            Length desiredHeadway, PerceptionIterable<? extends PerceivedObject> leaders) throws ParameterException;
 
     @SuppressWarnings("checkstyle:designforextension")
     @Override

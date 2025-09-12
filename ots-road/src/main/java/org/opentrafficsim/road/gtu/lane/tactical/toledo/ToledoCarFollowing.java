@@ -15,7 +15,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeSpeed;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractCarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DesiredHeadwayModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DesiredSpeedModel;
@@ -133,7 +133,7 @@ public class ToledoCarFollowing extends AbstractCarFollowingModel
 
     @Override
     protected final Acceleration followingAcceleration(final Parameters parameters, final Speed speed, final Speed desiredSpeed,
-            final Length desiredHeadway, final PerceptionIterable<? extends Headway> leaders) throws ParameterException
+            final Length desiredHeadway, final PerceptionIterable<? extends PerceivedObject> leaders) throws ParameterException
     {
         if (leaders.isEmpty() || leaders.first().getDistance().gt(desiredHeadway))
         {
@@ -189,15 +189,15 @@ public class ToledoCarFollowing extends AbstractCarFollowingModel
      * @param leaders leading vehicles
      * @return density based on the leaders in veh/km
      */
-    private double getDensity(final PerceptionIterable<? extends Headway> leaders)
+    private double getDensity(final PerceptionIterable<? extends PerceivedObject> leaders)
     {
         if (leaders.isEmpty())
         {
             return 0;
         }
-        Headway last = null;
+        PerceivedObject last = null;
         int n = 0;
-        for (Headway next : leaders)
+        for (PerceivedObject next : leaders)
         {
             n++;
             last = next;

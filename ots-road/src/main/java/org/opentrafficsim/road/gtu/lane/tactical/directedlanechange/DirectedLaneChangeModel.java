@@ -11,7 +11,7 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 
 /**
  * All directed lane change models must implement this interface. A directed lane change model is a lane change model where the
@@ -46,7 +46,7 @@ public interface DirectedLaneChangeModel
      */
     @SuppressWarnings("checkstyle:parameternumber")
     DirectedLaneMovementStep computeLaneChangeAndAcceleration(LaneBasedGtu gtu, LateralDirectionality direction,
-            Collection<Headway> sameLaneTraffic, Collection<Headway> otherLaneTraffic, Length maxDistance, Speed speedLimit,
+            Collection<PerceivedObject> sameLaneTraffic, Collection<PerceivedObject> otherLaneTraffic, Length maxDistance, Speed speedLimit,
             Acceleration otherLaneRouteIncentive, Acceleration laneChangeThreshold, Duration laneChangeTime)
             throws GtuException, ParameterException;
 

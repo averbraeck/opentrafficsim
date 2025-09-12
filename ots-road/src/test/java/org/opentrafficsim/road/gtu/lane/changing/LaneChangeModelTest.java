@@ -9,7 +9,6 @@ import java.util.Map;
 import javax.naming.NamingException;
 
 import org.djunits.unit.DurationUnit;
-import org.djunits.unit.LengthUnit;
 import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
@@ -35,8 +34,10 @@ import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.DefaultTestParameters;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuSimple;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics.Overlap;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCfLcTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusOld;
@@ -194,11 +195,12 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
         car.init(strategicalPlanner, new LanePosition(lanes[1], new Length(100, METER)).getLocation(),
                 new Speed(100, KM_PER_HOUR));
         car.getTacticalPlanner().getPerception().perceive();
-        Collection<Headway> sameLaneGTUs = new LinkedHashSet<>();
-        sameLaneGTUs.add(new HeadwayGtuSimple(car.getId(), car.getType(), Length.ZERO, Length.ZERO, car.getLength(),
-                car.getSpeed(), car.getAcceleration(), null, Length.ZERO, LateralDirectionality.NONE));
-        Collection<Headway> preferredLaneGTUs = new LinkedHashSet<>();
-        Collection<Headway> nonPreferredLaneGTUs = new LinkedHashSet<>();
+        Collection<PerceivedObject> sameLaneGTUs = new LinkedHashSet<>();
+
+        sameLaneGTUs.add(PerceivedGtu.of(car,
+                new Kinematics.Record(Length.ZERO, car.getSpeed(), car.getAcceleration(), true, Overlap.AHEAD)));
+        Collection<PerceivedObject> preferredLaneGTUs = new LinkedHashSet<>();
+        Collection<PerceivedObject> nonPreferredLaneGTUs = new LinkedHashSet<>();
         LaneMovementStep laneChangeModelResult = laneChangeModel.computeLaneChangeAndAcceleration(car, sameLaneGTUs,
                 preferredLaneGTUs, nonPreferredLaneGTUs, new Speed(100, KM_PER_HOUR), new Acceleration(0.3, METER_PER_SECOND_2),
                 new Acceleration(0.1, METER_PER_SECOND_2), new Acceleration(-0.3, METER_PER_SECOND_2));
@@ -236,9 +238,9 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
             collisionCar.init(strategicalPlanner, new LanePosition(lanes[1], new Length(pos, METER)).getLocation(),
                     new Speed(100, KM_PER_HOUR));
             preferredLaneGTUs.clear();
-            HeadwayGtuSimple collisionHWGTU = new HeadwayGtuSimple(collisionCar.getId(), collisionCar.getType(),
-                    new Length(pos - reference.getSI(), LengthUnit.SI), collisionCar.getLength(), collisionCar.getWidth(),
-                    collisionCar.getSpeed(), collisionCar.getAcceleration(), null, Length.ZERO, LateralDirectionality.NONE);
+            PerceivedGtu collisionHWGTU =
+                    PerceivedGtu.of(collisionCar, new Kinematics.Record(Length.instantiateSI(pos - reference.getSI()),
+                            collisionCar.getSpeed(), collisionCar.getAcceleration(), true, Overlap.AHEAD));
             preferredLaneGTUs.add(collisionHWGTU);
             laneChangeModelResult = new Egoistic().computeLaneChangeAndAcceleration(car, sameLaneGTUs, preferredLaneGTUs,
                     nonPreferredLaneGTUs, new Speed(100, KM_PER_HOUR), new Acceleration(0.3, METER_PER_SECOND_2),
@@ -270,10 +272,9 @@ public class LaneChangeModelTest extends AbstractOtsModel implements UNITS
             otherCar.init(strategicalPlanner, new LanePosition(lanes[1], new Length(pos, METER)).getLocation(),
                     new Speed(100, KM_PER_HOUR));
             preferredLaneGTUs.clear();
-            HeadwayGtuSimple collisionHWGTU = new HeadwayGtuSimple(otherCar.getId(), otherCar.getType(),
-                    new Length(pos - car.getPosition(lanes[0], car.getReference()).getSI(), LengthUnit.SI),
-                    otherCar.getLength(), otherCar.getWidth(), otherCar.getSpeed(), otherCar.getAcceleration(), null,
-                    Length.ZERO, LateralDirectionality.NONE);
+            PerceivedGtu collisionHWGTU =
+                    PerceivedGtu.of(otherCar, new Kinematics.Record(Length.instantiateSI(pos - reference.getSI()),
+                            otherCar.getSpeed(), otherCar.getAcceleration(), true, Overlap.AHEAD));
             preferredLaneGTUs.add(collisionHWGTU);
             laneChangeModelResult = new Egoistic().computeLaneChangeAndAcceleration(car, sameLaneGTUs, preferredLaneGTUs,
                     nonPreferredLaneGTUs, new Speed(100, KM_PER_HOUR), new Acceleration(0.3, METER_PER_SECOND_2),

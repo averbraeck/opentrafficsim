@@ -12,7 +12,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
@@ -44,7 +44,7 @@ public abstract class AbstractLinearFreeControl extends AbstractActuatedControl
 
     @Override
     public final Acceleration getDesiredAcceleration(final LaneBasedGtu gtu,
-            final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders, final Parameters settings) throws ParameterException
+            final PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders, final Parameters settings) throws ParameterException
     {
         SpeedLimitInfo speedInfo;
         try
@@ -75,6 +75,6 @@ public abstract class AbstractLinearFreeControl extends AbstractActuatedControl
      * @throws ParameterException if parameter is not present
      */
     public abstract Acceleration getFollowingAcceleration(LaneBasedGtu gtu,
-            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders, Parameters settings) throws ParameterException;
+            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders, Parameters settings) throws ParameterException;
 
 }

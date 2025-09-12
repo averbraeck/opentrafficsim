@@ -30,7 +30,7 @@ import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
@@ -287,20 +287,20 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         {
             constant = params.getParameter(ToledoLaneChangeParameters.C_FWD_TG);
             alpha = 0;
-            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> itAble = neighbors.getLeaders(lane);
-            HeadwayGtu second = null;
+            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> itAble = neighbors.getLeaders(lane);
+            PerceivedGtu second = null;
             if (!itAble.isEmpty())
             {
-                Iterator<HeadwayGtu> it = itAble.iterator();
+                Iterator<PerceivedGtu> it = itAble.iterator();
                 it.next();
                 second = it.next();
             }
             if (second != null)
             {
                 // two leaders
-                Iterator<HeadwayGtu> it = neighbors.getLeaders(lane).iterator();
+                Iterator<PerceivedGtu> it = neighbors.getLeaders(lane).iterator();
                 it.next();
-                HeadwayGtu leader = it.next();
+                PerceivedGtu leader = it.next();
                 leaderDist = leader.getDistance();
                 leaderSpeed = leader.getSpeed();
                 putativeLength = leaderDist.minus(neighbors.getLeaders(lane).first().getDistance())
@@ -358,20 +358,20 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
             constant = params.getParameter(ToledoLaneChangeParameters.C_BCK_TG);
             alpha = params.getParameter(ToledoLaneChangeParameters.ALPHA_BCK);
             deltaFrontVehicle = 0;
-            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> itAble = neighbors.getFollowers(lane);
-            HeadwayGtu second = null;
+            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> itAble = neighbors.getFollowers(lane);
+            PerceivedGtu second = null;
             if (!itAble.isEmpty())
             {
-                Iterator<HeadwayGtu> it = itAble.iterator();
+                Iterator<PerceivedGtu> it = itAble.iterator();
                 it.next();
                 second = it.next();
             }
             if (second != null)
             {
                 // two followers
-                Iterator<HeadwayGtu> it = neighbors.getFollowers(lane).iterator();
+                Iterator<PerceivedGtu> it = neighbors.getFollowers(lane).iterator();
                 it.next();
-                HeadwayGtu follower = it.next();
+                PerceivedGtu follower = it.next();
                 followerDist = follower.getDistance();
                 followerSpeed = follower.getSpeed();
                 putativeLength = followerDist.minus(neighbors.getFollowers(lane).first().getDistance())
@@ -679,12 +679,12 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
         NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
         Length up = Length.ZERO;
         Length down = Length.ZERO;
-        for (HeadwayGtu neighbor : neighbors.getFollowers(lane))
+        for (PerceivedGtu neighbor : neighbors.getFollowers(lane))
         {
             nVehicles++;
             down = neighbor.getDistance();
         }
-        for (HeadwayGtu neighbor : neighbors.getLeaders(lane))
+        for (PerceivedGtu neighbor : neighbors.getLeaders(lane))
         {
             nVehicles++;
             up = neighbor.getDistance();

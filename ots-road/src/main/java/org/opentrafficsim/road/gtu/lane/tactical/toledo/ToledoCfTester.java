@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.toledo;
 
+import java.util.UUID;
+
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
@@ -13,8 +15,11 @@ import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterableSet;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
-import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil.CarFollowingHeadway;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics.Overlap;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.ObjectType;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObjectBase;
 
 /**
  * <p>
@@ -60,7 +65,9 @@ public final class ToledoCfTester
         while (x.eq0() || speed.gt0())
         {
             Length s = leader.minus(x);
-            PerceptionIterable<Headway> leaders = new PerceptionIterableSet<>(new CarFollowingHeadway(s, Speed.ZERO));
+            PerceptionIterable<PerceivedObject> leaders =
+                    new PerceptionIterableSet<>(new PerceivedObjectBase(UUID.randomUUID().toString(), ObjectType.GTU,
+                            Length.ONE, new Kinematics.Record(s, Speed.ZERO, Acceleration.ZERO, true, Overlap.AHEAD)));
             Length desiredHeadway = cf.desiredHeadway(params, speed);
             Acceleration a = cf.followingAcceleration(params, speed, desiredSpeed, desiredHeadway, leaders);
             System.out.println("t=" + t + ", v=" + speed + ", s=" + s + ", a=" + a);

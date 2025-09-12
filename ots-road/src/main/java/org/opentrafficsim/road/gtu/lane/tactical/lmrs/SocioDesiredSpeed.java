@@ -10,7 +10,7 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DesiredSpeedModel;
 import org.opentrafficsim.road.gtu.lane.tactical.following.Initialisable;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
@@ -62,7 +62,7 @@ public class SocioDesiredSpeed implements DesiredSpeedModel, Initialisable
         {
             return desiredSpeed;
         }
-        PerceptionCollectable<HeadwayGtu, LaneBasedGtu> followers;
+        PerceptionCollectable<PerceivedGtu, LaneBasedGtu> followers;
         LanePerception perception = this.gtu.getTacticalPlanner().getPerception();
         NeighborsPerception neighbors = perception.getPerceptionCategoryOrNull(NeighborsPerception.class);
         if (neighbors != null)
@@ -72,8 +72,8 @@ public class SocioDesiredSpeed implements DesiredSpeedModel, Initialisable
             {
                 double sigma = parameters.getParameter(SOCIO);
                 Speed vGain = parameters.getParameter(VGAIN);
-                HeadwayGtu follower = followers.first();
-                double rhoFollower = follower.getParameters().getParameter(RHO);
+                PerceivedGtu follower = followers.first();
+                double rhoFollower = follower.getBehavior().socialPressure();
                 desiredSpeed = Speed.instantiateSI(desiredSpeed.si + rhoFollower * sigma * vGain.si);
             }
         }

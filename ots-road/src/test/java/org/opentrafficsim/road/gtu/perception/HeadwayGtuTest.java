@@ -17,10 +17,13 @@ import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
-import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.road.gtu.lane.perception.headway.GtuStatus;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuSimple;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu.Maneuver;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu.Signals;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtuSimple;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics.Overlap;
 
 /**
  * Test the HeadwayGtu class and the EnumType in the Headway interface.
@@ -55,66 +58,51 @@ public final class HeadwayGtuTest
         String id2 = "id2";
         GtuType gtuType2 = new GtuType("type2", DefaultsNl.CAR);
         Length distance2 = new Length(234, LengthUnit.METER);
-        HeadwayGtuSimple hg1 = new HeadwayGtuSimple(id1, gtuType1, distance1, Length.ZERO, Length.ZERO, (Speed) null,
-                (Acceleration) null, null, Length.ZERO, LateralDirectionality.NONE);
-        HeadwayGtuSimple hg2 = new HeadwayGtuSimple(id2, gtuType2, distance2, Length.ZERO, Length.ZERO, (Speed) null,
-                (Acceleration) null, null, Length.ZERO, LateralDirectionality.NONE);
-        verifyFields(hg1, null, distance1, gtuType1, id1, Headway.ObjectType.GTU, null, null, null, null, true, false, false,
-                false, false, false, false, false);
-        verifyFields(hg2, null, distance2, gtuType2, id2, Headway.ObjectType.GTU, null, null, null, null, true, false, false,
-                false, false, false, false, false);
+        PerceivedGtu hg1 = new PerceivedGtuSimple(id1, gtuType1, Length.ZERO, Length.ZERO,
+                new Kinematics.Record(distance1, Speed.ZERO, Acceleration.ZERO, true, Overlap.AHEAD), Signals.NONE,
+                Maneuver.NONE);
+        PerceivedGtu hg2 = new PerceivedGtuSimple(id2, gtuType2, Length.ZERO, Length.ZERO,
+                new Kinematics.Record(distance2, Speed.ZERO, Acceleration.ZERO, true, Overlap.AHEAD), Signals.NONE,
+                Maneuver.NONE);
+        verifyFields(hg1, Acceleration.ZERO, distance1, gtuType1, id1, PerceivedObject.ObjectType.GTU, null, null, null,
+                Speed.ZERO, true, false, false, false, false, false, false, false);
+        verifyFields(hg2, Acceleration.ZERO, distance2, gtuType2, id2, PerceivedObject.ObjectType.GTU, null, null, null,
+                Speed.ZERO, true, false, false, false, false, false, false, false);
         Length overlapFront = new Length(2, LengthUnit.METER);
         Length overlap = new Length(3, LengthUnit.METER);
         Length overlapRear = new Length(4, LengthUnit.METER);
-        hg2 = new HeadwayGtuSimple(id2, gtuType2, overlapFront, overlap, overlapRear, Length.ZERO, Length.ZERO, (Speed) null,
-                (Acceleration) null, null, Length.ZERO, LateralDirectionality.NONE);
-        verifyFields(hg2, null, null, gtuType2, id2, Headway.ObjectType.GTU, overlap, overlapFront, overlapRear, null, false,
-                false, false, false, false, false, false, true);
+        hg2 = new PerceivedGtuSimple(id2, gtuType2, Length.ZERO, Length.ZERO, new Kinematics.Record(Length.ZERO, Speed.ZERO,
+                Acceleration.ZERO, true, new Overlap.Record(overlap, overlapFront, overlapRear, false, false)), Signals.NONE,
+                Maneuver.NONE);
+        verifyFields(hg2, Acceleration.ZERO, Length.ZERO, gtuType2, id2, PerceivedObject.ObjectType.GTU, overlap, overlapFront,
+                overlapRear, Speed.ZERO, false, false, false, false, false, false, false, true);
         Speed speed2 = new Speed(50, SpeedUnit.KM_PER_HOUR);
         Acceleration acceleration2 = new Acceleration(1.234, AccelerationUnit.METER_PER_SECOND_2);
-        hg2 = new HeadwayGtuSimple(id2, gtuType2, overlapFront, overlap, overlapRear, Length.ZERO, Length.ZERO, speed2,
-                acceleration2, null, Length.ZERO, LateralDirectionality.NONE);
-        verifyFields(hg2, acceleration2, null, gtuType2, id2, Headway.ObjectType.GTU, overlap, overlapFront, overlapRear,
-                speed2, false, false, false, false, false, false, false, true);
-        // Test all combinations of two GtuStatus values.
-        for (GtuStatus gtuStatus1 : GtuStatus.values())
-        {
-            for (GtuStatus gtuStatus2 : GtuStatus.values())
-            {
-                hg2 = new HeadwayGtuSimple(id2, gtuType2, distance2, Length.ZERO, Length.ZERO, speed2, acceleration2, null,
-                        Length.ZERO, LateralDirectionality.NONE, gtuStatus1, gtuStatus2);
-                boolean honking = GtuStatus.HONK == gtuStatus1 || GtuStatus.HONK == gtuStatus2;
-                boolean braking = GtuStatus.BRAKING_LIGHTS == gtuStatus1 || GtuStatus.BRAKING_LIGHTS == gtuStatus2;
-                boolean leftIndicator =
-                        GtuStatus.LEFT_TURNINDICATOR == gtuStatus1 || GtuStatus.LEFT_TURNINDICATOR == gtuStatus2;
-                boolean rightIndicator =
-                        GtuStatus.RIGHT_TURNINDICATOR == gtuStatus1 || GtuStatus.RIGHT_TURNINDICATOR == gtuStatus2;
-                boolean hazardLights = GtuStatus.EMERGENCY_LIGHTS == gtuStatus1 || GtuStatus.EMERGENCY_LIGHTS == gtuStatus2;
-                verifyFields(hg2, acceleration2, distance2, gtuType2, id2, Headway.ObjectType.GTU, null, null, null, speed2,
-                        true, false, braking, hazardLights, honking, leftIndicator, rightIndicator, false);
-
-            }
-        }
+        hg2 = new PerceivedGtuSimple(id2, gtuType2, Length.ZERO, Length.ZERO, new Kinematics.Record(Length.ZERO, speed2,
+                acceleration2, true, new Overlap.Record(overlap, overlapFront, overlapRear, false, false)), Signals.NONE,
+                Maneuver.NONE);
+        verifyFields(hg2, acceleration2, Length.ZERO, gtuType2, id2, PerceivedObject.ObjectType.GTU, overlap, overlapFront,
+                overlapRear, speed2, false, false, false, false, false, false, false, true);
         // Verify that toString returns something
         assertTrue(hg1.toString().length() > 10, "toString returns something");
         assertTrue(hg2.toString().length() > 10, "toString returns something");
         try
         {
-            new HeadwayGtuSimple(null, gtuType1, distance1, Length.ZERO, Length.ZERO, Speed.ZERO, Length.ZERO,
-                    LateralDirectionality.NONE);
+            new PerceivedGtuSimple(null, gtuType1, Length.ZERO, Length.ZERO,
+                    new Kinematics.Record(distance1, speed2, acceleration2, true, Overlap.AHEAD), Signals.NONE, Maneuver.NONE);
             fail("null for id should have thrown a GTUException");
         }
-        catch (GtuException e)
+        catch (NullPointerException e)
         {
             // Ignore expected exception
         }
         try
         {
-            new HeadwayGtuSimple(id1, gtuType1, null, Length.ZERO, Length.ZERO, Speed.ZERO, Length.ZERO,
-                    LateralDirectionality.NONE);
-            fail("null for distance should have thrown a GTUException");
+            new PerceivedGtuSimple(id1, gtuType1, Length.ZERO, Length.ZERO,
+                    new Kinematics.Record(null, speed2, acceleration2, true, Overlap.AHEAD), Signals.NONE, Maneuver.NONE);
+            fail("null for distance should have thrown a NullPointerException");
         }
-        catch (GtuException e)
+        catch (NullPointerException e)
         {
             // Ignore expected exception
         }
@@ -126,7 +114,7 @@ public final class HeadwayGtuTest
 
     /**
      * Verify all fields in a HeadwayGtu.
-     * @param headwayGTU the HeadwayGtu to check
+     * @param perceivedGTU the HeadwayGtu to check
      * @param acceleration the expected return value for getAcceleration
      * @param distance the expected return value for getDistance
      * @param gtuType the expected return value for getGtuType
@@ -145,130 +133,123 @@ public final class HeadwayGtuTest
      * @param rightIndicator the expected return value for isRightTurnIndicatorOn
      * @param parallel the expected return value for isParallel
      */
-    private void verifyFields(final HeadwayGtuSimple headwayGTU, final Acceleration acceleration, final Length distance,
-            final GtuType gtuType, final String id, final Headway.ObjectType objectType, final Length overlap,
+    private void verifyFields(final PerceivedGtu perceivedGTU, final Acceleration acceleration, final Length distance,
+            final GtuType gtuType, final String id, final PerceivedObject.ObjectType objectType, final Length overlap,
             final Length overlapFront, final Length overlapRear, final Speed speed, final boolean ahead, final boolean behind,
             final boolean breakingLights, final boolean hazardLights, final boolean honk, final boolean leftIndicator,
             final boolean rightIndicator, final boolean parallel)
     {
-        assertNotNull(headwayGTU, "headwayGTU should not be null");
+        assertNotNull(perceivedGTU, "headwayGTU should not be null");
         if (null == acceleration)
         {
-            assertNull(headwayGTU.getAcceleration(), "acceleration should be null");
+            assertNull(perceivedGTU.getAcceleration(), "acceleration should be null");
         }
         else
         {
-            assertEquals(acceleration.si, headwayGTU.getAcceleration().si, acceleration.si / 99999,
+            assertEquals(acceleration.si, perceivedGTU.getAcceleration().si, acceleration.si / 99999,
                     "acceleration should be " + acceleration);
         }
         if (null == distance)
         {
-            assertNull(headwayGTU.getDistance(), "distance should be null");
+            assertNull(perceivedGTU.getDistance(), "distance should be null");
         }
         else
         {
-            assertEquals(distance.si, headwayGTU.getDistance().si, distance.si / 99999, "distance should be " + distance);
+            assertEquals(distance.si, perceivedGTU.getDistance().si, distance.si / 99999, "distance should be " + distance);
         }
-        assertEquals(gtuType, headwayGTU.getGtuType(), "GTU type should be " + gtuType);
-        assertEquals(id, headwayGTU.getId(), "Id should be " + id);
-        assertEquals(objectType, headwayGTU.getObjectType(), "Object type should be " + objectType);
+        assertEquals(gtuType, perceivedGTU.getGtuType(), "GTU type should be " + gtuType);
+        assertEquals(id, perceivedGTU.getId(), "Id should be " + id);
+        assertEquals(objectType, perceivedGTU.getObjectType(), "Object type should be " + objectType);
         if (null == overlap)
         {
-            assertNull(headwayGTU.getOverlap(), "overlap should be null");
+            assertNull(perceivedGTU.getKinematics().getOverlap().getOverlap(), "overlap should be null");
         }
         else
         {
-            assertEquals(overlap.si, headwayGTU.getOverlap().si, overlap.si / 99999, "overlap should be " + overlap);
+            assertEquals(overlap.si, perceivedGTU.getKinematics().getOverlap().getOverlap().si, overlap.si / 99999,
+                    "overlap should be " + overlap);
         }
         if (null == overlapFront)
         {
-            assertNull(headwayGTU.getOverlapFront(), "overlapFront should be null");
+            assertNull(perceivedGTU.getKinematics().getOverlap().getOverlapFront(), "overlapFront should be null");
         }
         else
         {
-            assertEquals(overlapFront.si, headwayGTU.getOverlapFront().si, overlapFront.si / 99999,
-                    "overlapFront should be " + overlapFront);
+            assertEquals(overlapFront.si, perceivedGTU.getKinematics().getOverlap().getOverlapFront().si,
+                    overlapFront.si / 99999, "overlapFront should be " + overlapFront);
         }
         if (null == overlap)
         {
-            assertNull(headwayGTU.getOverlapRear(), "overlapRear should be null");
+            assertNull(perceivedGTU.getKinematics().getOverlap().getOverlapRear(), "overlapRear should be null");
         }
         else
         {
-            assertEquals(overlapRear.si, headwayGTU.getOverlapRear().si, overlapRear.si / 99999,
+            assertEquals(overlapRear.si, perceivedGTU.getKinematics().getOverlap().getOverlapRear().si, overlapRear.si / 99999,
                     "overlapRear should be " + overlapRear);
         }
         if (null == speed)
         {
-            assertNull(headwayGTU.getSpeed(), "speed should be null");
+            assertNull(perceivedGTU.getSpeed(), "speed should be null");
         }
         else
         {
-            assertEquals(speed.si, headwayGTU.getSpeed().si, speed.si / 99999, "Speed should be " + speed);
+            assertEquals(speed.si, perceivedGTU.getSpeed().si, speed.si / 99999, "Speed should be " + speed);
         }
         if (ahead)
         {
-            assertTrue(headwayGTU.isAhead(), "ahead should be true");
+            assertTrue(perceivedGTU.getKinematics().getOverlap().isAhead(), "ahead should be true");
         }
         else
         {
-            assertFalse(headwayGTU.isAhead(), "ahead should be false");
+            assertFalse(perceivedGTU.getKinematics().getOverlap().isAhead(), "ahead should be false");
         }
         if (behind)
         {
-            assertTrue(headwayGTU.isBehind(), "behind should be true");
+            assertTrue(perceivedGTU.getKinematics().getOverlap().isBehind(), "behind should be true");
         }
         else
         {
-            assertFalse(headwayGTU.isBehind(), "behind should be false");
+            assertFalse(perceivedGTU.getKinematics().getOverlap().isBehind(), "behind should be false");
         }
         if (breakingLights)
         {
-            assertTrue(headwayGTU.isBrakingLightsOn(), "breaking lights should be on");
+            assertTrue(perceivedGTU.getSignals().isBrakingLightsOn(), "breaking lights should be on");
         }
         else
         {
-            assertFalse(headwayGTU.isBrakingLightsOn(), "breaking lights should be off");
+            assertFalse(perceivedGTU.getSignals().isBrakingLightsOn(), "breaking lights should be off");
         }
         if (hazardLights)
         {
-            assertTrue(headwayGTU.isEmergencyLightsOn(), "hazard lights should be on");
+            assertTrue(perceivedGTU.getSignals().getTurnIndicatorStatus().isHazard(), "hazard lights should be on");
         }
         else
         {
-            assertFalse(headwayGTU.isEmergencyLightsOn(), "hazard lights should be off");
-        }
-        if (honk)
-        {
-            assertTrue(headwayGTU.isHonking(), "GTU should be honking");
-        }
-        else
-        {
-            assertFalse(headwayGTU.isHonking(), "GTU should not be honking");
+            assertFalse(perceivedGTU.getSignals().getTurnIndicatorStatus().isHazard(), "hazard lights should be off");
         }
         if (leftIndicator)
         {
-            assertTrue(headwayGTU.isLeftTurnIndicatorOn(), "Left indicator lights should be on");
+            assertTrue(perceivedGTU.getSignals().getTurnIndicatorStatus().isLeft(), "Left indicator lights should be on");
         }
         else
         {
-            assertFalse(headwayGTU.isLeftTurnIndicatorOn(), "Left indicator lights should be off");
+            assertFalse(perceivedGTU.getSignals().getTurnIndicatorStatus().isLeft(), "Left indicator lights should be off");
         }
         if (rightIndicator)
         {
-            assertTrue(headwayGTU.isRightTurnIndicatorOn(), "Right indicator lights should be on");
+            assertTrue(perceivedGTU.getSignals().getTurnIndicatorStatus().isRight(), "Right indicator lights should be on");
         }
         else
         {
-            assertFalse(headwayGTU.isRightTurnIndicatorOn(), "Right indicator lights should be off");
+            assertFalse(perceivedGTU.getSignals().getTurnIndicatorStatus().isRight(), "Right indicator lights should be off");
         }
         if (parallel)
         {
-            assertTrue(headwayGTU.isParallel(), "Parallel should be true");
+            assertTrue(perceivedGTU.getKinematics().getOverlap().isParallel(), "Parallel should be true");
         }
         else
         {
-            assertFalse(headwayGTU.isParallel(), "Parallel should be false");
+            assertFalse(perceivedGTU.getKinematics().getOverlap().isParallel(), "Parallel should be false");
         }
     }
 

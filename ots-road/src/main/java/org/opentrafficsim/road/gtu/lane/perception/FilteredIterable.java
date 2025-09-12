@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 
 /**
  * Returns only those elements that comply with the predicate.
@@ -17,7 +17,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <T> type
  */
-public class FilteredIterable<T extends Headway> implements Iterable<T>
+public class FilteredIterable<T extends PerceivedObject> implements Iterable<T>
 {
 
     /** Iterable. */

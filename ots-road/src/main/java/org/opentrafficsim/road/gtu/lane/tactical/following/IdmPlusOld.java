@@ -13,7 +13,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 import org.opentrafficsim.road.network.speed.SpeedLimitTypes;
 
@@ -210,7 +210,7 @@ public class IdmPlusOld extends AbstractGtuFollowingModelMobil implements Serial
 
     @Override
     public final Acceleration followingAcceleration(final Parameters parameters, final Speed speed,
-            final SpeedLimitInfo speedInfo, final PerceptionIterable<? extends Headway> leaders) throws ParameterException
+            final SpeedLimitInfo speedInfo, final PerceptionIterable<? extends PerceivedObject> leaders) throws ParameterException
     {
         Length headway;
         Speed leaderSpeed;
@@ -221,7 +221,7 @@ public class IdmPlusOld extends AbstractGtuFollowingModelMobil implements Serial
         }
         else
         {
-            Headway leader = leaders.first();
+            PerceivedObject leader = leaders.first();
             headway = leader.getDistance();
             leaderSpeed = leader.getSpeed();
         }

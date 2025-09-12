@@ -14,8 +14,8 @@ import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedConflict;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.Blockable;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -59,8 +59,8 @@ public class AccelerationConflicts implements AccelerationIncentive, Blockable
         Acceleration acceleration = ego.getAcceleration();
         Length length = ego.getLength();
         Length width = ego.getWidth();
-        Iterable<HeadwayConflict> conflicts = perception.getPerceptionCategory(IntersectionPerception.class).getConflicts(lane);
-        PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders =
+        Iterable<PerceivedConflict> conflicts = perception.getPerceptionCategory(IntersectionPerception.class).getConflicts(lane);
+        PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
                 perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane);
         if (!lane.isCurrent())
         {

@@ -7,7 +7,7 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 
 /**
  * Simple linear CACC implementation.
@@ -37,9 +37,9 @@ public class LinearCacc extends LinearAcc
 
     @Override
     public Acceleration getFollowingAcceleration(final LaneBasedGtu gtu,
-            final PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders, final Parameters settings) throws ParameterException
+            final PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders, final Parameters settings) throws ParameterException
     {
-        HeadwayGtu leader = leaders.first();
+        PerceivedGtu leader = leaders.first();
         if (leader.getAcceleration() == null)
         {
             // ACC mode

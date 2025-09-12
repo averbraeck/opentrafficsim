@@ -14,7 +14,7 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
@@ -85,7 +85,7 @@ public final class IncentiveGetInLane implements MandatoryIncentive, Stateless<I
                 if (!info.isEmpty() && !info.first().deadEnd() && dCur < dAdj)
                 {
                     double v = Double.POSITIVE_INFINITY;
-                    for (HeadwayGtu neighbor : neighbors.getLeaders(lane))
+                    for (PerceivedGtu neighbor : neighbors.getLeaders(lane))
                     {
                         v = Math.min(v, neighbor.getSpeed().si);
                     }
@@ -107,7 +107,7 @@ public final class IncentiveGetInLane implements MandatoryIncentive, Stateless<I
                 {
                     if (Double.isInfinite(vCur))
                     {
-                        for (HeadwayGtu neighbor : neighbors.getLeaders(RelativeLane.CURRENT))
+                        for (PerceivedGtu neighbor : neighbors.getLeaders(RelativeLane.CURRENT))
                         {
                             vCur = Math.min(vCur, neighbor.getSpeed().si);
                         }

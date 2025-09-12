@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 
 /**
  * Wraps a {@code PerceptionCollectable} and only iterates over all objects that are accepted by a predicate.
@@ -21,7 +21,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
  * @param <H> headway type
  * @param <U> underlying object type
  */
-public class PerceptionCollectableFiltered<H extends Headway, U> implements PerceptionCollectable<H, U>
+public class PerceptionCollectableFiltered<H extends PerceivedObject, U> implements PerceptionCollectable<H, U>
 {
 
     /** Iterator of headway objects. */

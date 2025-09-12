@@ -16,7 +16,7 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.BusStopPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayBusStop;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedBusStop;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.pt.BusSchedule;
@@ -65,7 +65,7 @@ public final class AccelerationBusStop implements AccelerationIncentive, Statele
             final Speed speed, final Parameters params, final SpeedLimitInfo speedLimitInfo)
             throws ParameterException, GtuException
     {
-        PerceptionCollectable<HeadwayBusStop, BusStop> stops =
+        PerceptionCollectable<PerceivedBusStop, BusStop> stops =
                 perception.getPerceptionCategory(BusStopPerception.class).getBusStops();
         if (stops.isEmpty())
         {
@@ -73,11 +73,11 @@ public final class AccelerationBusStop implements AccelerationIncentive, Statele
         }
         BusSchedule busSchedule = (BusSchedule) gtu.getStrategicalPlanner().getRoute();
         Time now = gtu.getSimulator().getSimulatorAbsTime();
-        Iterable<HeadwayBusStop> it = lane.isCurrent() ? stops : new FilteredIterable<>(stops, (busStop) ->
+        Iterable<PerceivedBusStop> it = lane.isCurrent() ? stops : new FilteredIterable<>(stops, (busStop) ->
         {
             return busStop.getDistance().gt(mergeDistance);
         });
-        for (HeadwayBusStop stop : it)
+        for (PerceivedBusStop stop : it)
         {
             String busStopId = stop.getId();
             if (busSchedule.isLineStop(busStopId, now))

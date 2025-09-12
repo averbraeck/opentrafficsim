@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.lane.perception.headway;
+package org.opentrafficsim.road.gtu.lane.perception.object;
 
 import java.util.Set;
 
@@ -10,6 +10,7 @@ import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.object.BusStop;
 
 /**
+ * Perceived bus stop.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -18,7 +19,7 @@ import org.opentrafficsim.road.network.lane.object.BusStop;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class HeadwayBusStop extends AbstractHeadwayLaneBasedObject
+public class PerceivedBusStop extends PerceivedLaneBasedObject
 {
 
     /** */
@@ -42,10 +43,10 @@ public class HeadwayBusStop extends AbstractHeadwayLaneBasedObject
      * @param lane lane
      * @throws GtuException when id is null, or parameters are inconsistent
      */
-    public HeadwayBusStop(final BusStop busStop, final Length distance, final RelativeLane relativeLane,
+    public PerceivedBusStop(final BusStop busStop, final Length distance, final RelativeLane relativeLane,
             final Set<String> conflictIds, final Lane lane) throws GtuException
     {
-        super(ObjectType.BUSSTOP, busStop.getId(), distance, lane);
+        super(busStop.getId(), ObjectType.BUSSTOP, Length.ZERO, Kinematics.staticAhead(distance), lane);
         this.relativeLane = relativeLane;
         this.lines = busStop.getLines();
         this.conflictIds = conflictIds;
@@ -81,7 +82,7 @@ public class HeadwayBusStop extends AbstractHeadwayLaneBasedObject
     @Override
     public final String toString()
     {
-        return "HeadwayBusStop [relativeLane=" + this.relativeLane + ", lines=" + this.lines + ", conflictIds="
+        return "PerceivedBusStop [relativeLane=" + this.relativeLane + ", lines=" + this.lines + ", conflictIds="
                 + this.conflictIds + "]";
     }
 

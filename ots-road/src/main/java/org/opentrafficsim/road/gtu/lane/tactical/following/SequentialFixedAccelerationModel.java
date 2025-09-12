@@ -15,7 +15,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
@@ -210,7 +210,7 @@ public class SequentialFixedAccelerationModel extends AbstractGtuFollowingModelM
 
     @Override
     public final Acceleration followingAcceleration(final Parameters parameters, final Speed speed,
-            final SpeedLimitInfo speedInfo, final PerceptionIterable<? extends Headway> leaders) throws ParameterException
+            final SpeedLimitInfo speedInfo, final PerceptionIterable<? extends PerceivedObject> leaders) throws ParameterException
     {
         return null;
     }

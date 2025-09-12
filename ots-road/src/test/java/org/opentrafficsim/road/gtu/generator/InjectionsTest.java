@@ -48,7 +48,7 @@ import org.opentrafficsim.road.gtu.generator.GeneratorPositions.GeneratorLanePos
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.Placement;
 import org.opentrafficsim.road.gtu.generator.characteristics.DefaultLaneBasedGtuCharacteristicsGeneratorOd;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
@@ -189,8 +189,8 @@ public final class InjectionsTest
             // inter-arrival time
             assertEquals(i + 1, arrivalsInjection.asArrivalsSupplier().get().si, 1e-9);
             // with leader
-            SortedSet<HeadwayGtu> leaders = new TreeSet<>();
-            HeadwayGtu mockLeader = Mockito.mock(HeadwayGtu.class);
+            SortedSet<PerceivedGtu> leaders = new TreeSet<>();
+            PerceivedGtu mockLeader = Mockito.mock(PerceivedGtu.class);
             Mockito.when(mockLeader.getDistance()).thenReturn(Length.ONE);
             Mockito.when(mockLeader.getSpeed()).thenReturn(Speed.ONE);
             leaders.add(mockLeader);

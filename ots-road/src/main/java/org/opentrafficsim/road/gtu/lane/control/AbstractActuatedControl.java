@@ -12,7 +12,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.LongitudinalControllerPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 
 /**
  * Simple linear CACC controller.
@@ -67,7 +67,7 @@ public abstract class AbstractActuatedControl implements LongitudinalControl
     {
         try
         {
-            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = gtu.getTacticalPlanner().getPerception()
+            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = gtu.getTacticalPlanner().getPerception()
                     .getPerceptionCategory(LongitudinalControllerPerception.class).getLeaders();
             return delayActuation(getDesiredAcceleration(gtu, leaders, settings), gtu);
         }
@@ -90,6 +90,6 @@ public abstract class AbstractActuatedControl implements LongitudinalControl
      * @throws ParameterException if parameter is not present
      */
     public abstract Acceleration getDesiredAcceleration(LaneBasedGtu gtu,
-            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders, Parameters settings) throws ParameterException;
+            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders, Parameters settings) throws ParameterException;
 
 }

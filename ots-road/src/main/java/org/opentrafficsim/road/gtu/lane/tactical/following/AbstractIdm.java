@@ -13,7 +13,7 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.base.parameters.constraint.ConstraintInterface;
 import org.opentrafficsim.core.gtu.Stateless;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 import org.opentrafficsim.road.gtu.lane.tactical.util.SpeedLimitUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
@@ -89,7 +89,7 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     protected Acceleration followingAcceleration(final Parameters parameters, final Speed speed, final Speed desiredSpeed,
-            final Length desiredHeadway, final PerceptionIterable<? extends Headway> leaders) throws ParameterException
+            final Length desiredHeadway, final PerceptionIterable<? extends PerceivedObject> leaders) throws ParameterException
     {
         Acceleration a = parameters.getParameter(A);
         Acceleration b0 = parameters.getParameter(B0);
@@ -119,7 +119,7 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
      * @throws ParameterException In case of parameter exception.
      */
     protected abstract Acceleration combineInteractionTerm(Acceleration aFree, Parameters parameters, Speed speed,
-            Speed desiredSpeed, Length desiredHeadway, PerceptionIterable<? extends Headway> leaders) throws ParameterException;
+            Speed desiredSpeed, Length desiredHeadway, PerceptionIterable<? extends PerceivedObject> leaders) throws ParameterException;
 
     /**
      * Determines the dynamic desired headway, which is non-negative.

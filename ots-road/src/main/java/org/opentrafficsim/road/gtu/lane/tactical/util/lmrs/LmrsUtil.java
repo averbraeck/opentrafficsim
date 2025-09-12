@@ -26,9 +26,9 @@ import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayConflict;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedConflict;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedTrafficLight;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.Synchronizable;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -105,7 +105,7 @@ public final class LmrsUtil implements LmrsParameters
         EgoPerception<?, ?> ego = perception.getPerceptionCategory(EgoPerception.class);
         Speed speed = ego.getSpeed();
         NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
-        PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
+        PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
 
         // regular car-following
         Acceleration a;
@@ -286,9 +286,9 @@ public final class LmrsUtil implements LmrsParameters
      * @param leader leader
      * @throws ParameterException if DLC is not present
      */
-    private static void initHeadwayRelaxation(final Parameters params, final HeadwayGtu leader) throws ParameterException
+    private static void initHeadwayRelaxation(final Parameters params, final PerceivedGtu leader) throws ParameterException
     {
-        Double dlc = leader.getParameters().getParameterOrNull(DLC);
+        Double dlc = leader.getBehavior().getParameters().getParameterOrNull(DLC);
         if (dlc != null)
         {
             setDesiredHeadway(params, dlc);
@@ -442,7 +442,7 @@ public final class LmrsUtil implements LmrsParameters
         {
             NeighborsPerception neighbors = perception.getPerceptionCategoryOrNull(NeighborsPerception.class);
             RelativeLane lane = new RelativeLane(lat, 1);
-            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = neighbors.getLeaders(lane);
+            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neighbors.getLeaders(lane);
 
             // // conflicts alongside?
             // if ((lat.isLeft() && intersection.isAlongsideConflictLeft())
@@ -457,7 +457,7 @@ public final class LmrsUtil implements LmrsParameters
 
             // conflicts
             EgoPerception<?, ?> ego = perception.getPerceptionCategoryOrNull(EgoPerception.class);
-            PerceptionCollectable<HeadwayConflict, Conflict> conflicts = intersection.getConflicts(lane);
+            PerceptionCollectable<PerceivedConflict, Conflict> conflicts = intersection.getConflicts(lane);
             try
             {
                 Acceleration a = ConflictUtil.approachConflicts(params, conflicts, leaders, cfm, ego.getLength(),
@@ -468,17 +468,17 @@ public final class LmrsUtil implements LmrsParameters
                 }
                 // gap-acceptance on merge conflicts
                 // TODO: this approach is a hack
-                for (HeadwayConflict conflict : conflicts)
+                for (PerceivedConflict conflict : conflicts)
                 {
                     if (conflict.isMerge() && conflict.getDistance().si < 10.0)
                     {
-                        PerceptionCollectable<HeadwayGtu, LaneBasedGtu> down = conflict.getDownstreamConflictingGTUs();
-                        if (!down.isEmpty() && down.first().isParallel())
+                        PerceptionCollectable<PerceivedGtu, LaneBasedGtu> down = conflict.getDownstreamConflictingGTUs();
+                        if (!down.isEmpty() && down.first().getKinematics().getOverlap().isParallel())
                         {
                             return false; // GTU on conflict
                         }
-                        PerceptionCollectable<HeadwayGtu, LaneBasedGtu> up = conflict.getUpstreamConflictingGTUs();
-                        if (!up.isEmpty() && up.first().isParallel())
+                        PerceptionCollectable<PerceivedGtu, LaneBasedGtu> up = conflict.getUpstreamConflictingGTUs();
+                        if (!up.isEmpty() && up.first().getKinematics().getOverlap().isParallel())
                         {
                             return false; // GTU on conflict
                         }
@@ -490,7 +490,7 @@ public final class LmrsUtil implements LmrsParameters
                 throw new OperationalPlanException(exception);
             }
             conflicts = intersection.getConflicts(RelativeLane.CURRENT);
-            for (HeadwayConflict conflict : conflicts)
+            for (PerceivedConflict conflict : conflicts)
             {
                 if (conflict.getLane().getLink().equals(conflict.getConflictingLink()))
                 {
@@ -508,8 +508,8 @@ public final class LmrsUtil implements LmrsParameters
             }
 
             // traffic lights
-            Iterable<HeadwayTrafficLight> trafficLights = intersection.getTrafficLights(lane);
-            for (HeadwayTrafficLight trafficLight : trafficLights)
+            Iterable<PerceivedTrafficLight> trafficLights = intersection.getTrafficLights(lane);
+            for (PerceivedTrafficLight trafficLight : trafficLights)
             {
                 if (trafficLight.getTrafficLightColor().isRedOrYellow())
                 {
@@ -525,9 +525,9 @@ public final class LmrsUtil implements LmrsParameters
         // cut-in vehicles from 2nd lane
         RelativeLane lane = new RelativeLane(lat, 2);
         Acceleration b = params.getParameter(ParameterTypes.B).neg();
-        for (HeadwayGtu leader : perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane))
+        for (PerceivedGtu leader : perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane))
         {
-            if (leader.isChangingLane(lat.flip())
+            if (leader.getManeuver().isChangingLane(lat.flip())
                     && CarFollowingUtil.followSingleLeader(cfm, params, ownSpeed, sli, leader).lt(b))
             {
                 return false;
@@ -557,19 +557,19 @@ public final class LmrsUtil implements LmrsParameters
         if (intersection != null)
         {
             RelativeLane lane = lat.isRight() ? RelativeLane.RIGHT : RelativeLane.LEFT;
-            Iterable<HeadwayConflict> iterable = intersection.getConflicts(lane);
+            Iterable<PerceivedConflict> iterable = intersection.getConflicts(lane);
             if (iterable != null)
             {
-                Iterator<HeadwayConflict> conflicts = iterable.iterator();
+                Iterator<PerceivedConflict> conflicts = iterable.iterator();
                 if (conflicts.hasNext())
                 {
                     a = Acceleration.min(a, CarFollowingUtil.followSingleLeader(cfm, params, ownSpeed, sli,
                             conflicts.next().getDistance(), Speed.ZERO));
                 }
-                Iterator<HeadwayTrafficLight> trafficLights = intersection.getTrafficLights(lane).iterator();
+                Iterator<PerceivedTrafficLight> trafficLights = intersection.getTrafficLights(lane).iterator();
                 if (trafficLights.hasNext())
                 {
-                    HeadwayTrafficLight trafficLight = trafficLights.next();
+                    PerceivedTrafficLight trafficLight = trafficLights.next();
                     if (trafficLight.getTrafficLightColor().isRedOrYellow())
                     {
                         a = Acceleration.min(a, CarFollowingUtil.followSingleLeader(cfm, params, ownSpeed, sli,

@@ -17,7 +17,7 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 
 /**
  * Interface for LMRS tailgating behavior.
@@ -57,7 +57,7 @@ public interface Tailgating
         @Override
         public void tailgate(final LanePerception perception, final Parameters parameters)
         {
-            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders =
+            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
                     perception.getPerceptionCategoryOrNull(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT);
             if (leaders == null || leaders.isEmpty())
             {
@@ -69,7 +69,7 @@ public interface Tailgating
                 Speed vCong = parameters.getParameter(ParameterTypes.VCONG);
                 Length x0 = parameters.getParameter(ParameterTypes.LOOKAHEAD);
                 Speed vGain = parameters.getParameter(LmrsParameters.VGAIN);
-                HeadwayGtu leader = leaders.first();
+                PerceivedGtu leader = leaders.first();
                 Speed desiredSpeed = Try.assign(() -> perception.getGtu().getDesiredSpeed(), "Could not obtain the GTU.");
                 double rho = socialPressure(speed, vCong, desiredSpeed, leader.getSpeed(), vGain, leader.getDistance(), x0);
                 parameters.setParameter(RHO, rho);
@@ -93,7 +93,7 @@ public interface Tailgating
         @Override
         public void tailgate(final LanePerception perception, final Parameters parameters)
         {
-            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders =
+            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
                     perception.getPerceptionCategoryOrNull(NeighborsPerception.class).getLeaders(RelativeLane.CURRENT);
             if (leaders == null || leaders.isEmpty())
             {
@@ -108,7 +108,7 @@ public interface Tailgating
                 Duration tMax = parameters.getParameter(ParameterTypes.TMAX);
                 Length x0 = parameters.getParameter(ParameterTypes.LOOKAHEAD);
                 Speed vGain = parameters.getParameter(LmrsParameters.VGAIN);
-                HeadwayGtu leader = leaders.first();
+                PerceivedGtu leader = leaders.first();
                 Speed desiredSpeed = Try.assign(() -> perception.getGtu().getDesiredSpeed(), "Could not obtain the GTU.");
                 double rho = socialPressure(speed, vCong, desiredSpeed, leader.getSpeed(), vGain, leader.getDistance(), x0);
                 parameters.setParameter(RHO, rho);

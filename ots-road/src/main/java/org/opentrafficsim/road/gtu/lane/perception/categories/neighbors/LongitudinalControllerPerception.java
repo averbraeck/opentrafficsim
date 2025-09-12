@@ -9,7 +9,7 @@ import org.opentrafficsim.core.gtu.perception.PerceptionCategory;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 
 /**
  * Perception category for longitudinal control such as ACC and CACC.
@@ -36,6 +36,6 @@ public interface LongitudinalControllerPerception extends PerceptionCategory<Lan
      * Returns the leaders.
      * @return leaders
      */
-    PerceptionCollectable<HeadwayGtu, LaneBasedGtu> getLeaders();
+    PerceptionCollectable<PerceivedGtu, LaneBasedGtu> getLeaders();
 
 }

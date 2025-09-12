@@ -39,8 +39,9 @@ import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharact
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtuReal;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics.Overlap;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -297,7 +298,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
         }
 
         LaneBasedGtuCharacteristics characteristics = timedCharacteristics.object();
-        SortedSet<HeadwayGtu> leaders = new TreeSet<>();
+        SortedSet<PerceivedGtu> leaders = new TreeSet<>();
         getFirstLeaders(position.getPosition().lane(),
                 position.getPosition().position().neg().minus(characteristics.getFront()), position.getPosition().position(),
                 leaders);
@@ -418,11 +419,11 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
      * Adds the first GTU on the lane to the set, or any number or leaders on downstream lane(s) if there is no GTU on the lane.
      * @param lane lane to search on
      * @param startDistance distance from generator location (nose) to start of the lane
-     * @param beyond location to search downstream of which is the generator position, or the start for downstream lanes
+     * @param beyond location to search downstream of, which is the generator position, or the lane start for downstream lanes
      * @param set set to add the GTU's to
      * @throws GtuException if a GTU is incorrectly positioned on a lane
      */
-    private void getFirstLeaders(final Lane lane, final Length startDistance, final Length beyond, final Set<HeadwayGtu> set)
+    private void getFirstLeaders(final Lane lane, final Length startDistance, final Length beyond, final Set<PerceivedGtu> set)
             throws GtuException
     {
         LaneBasedGtu next = lane.getGtuAhead(beyond, RelativePosition.FRONT, this.simulator.getSimulatorAbsTime());
@@ -431,7 +432,8 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
             Length headway = startDistance.plus(next.getPosition(lane, next.getRear()));
             if (headway.si < 300)
             {
-                set.add(new HeadwayGtuReal(next, headway, true));
+                set.add(PerceivedGtu.of(next,
+                        new Kinematics.Record(headway, next.getSpeed(), next.getAcceleration(), true, Overlap.AHEAD)));
             }
             return;
         }
@@ -594,7 +596,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
          * @throws NetworkException this method may throw a NetworkException if it encounters an error in the network structure
          * @throws GtuException on parameter exception
          */
-        Placement canPlace(SortedSet<HeadwayGtu> leaders, LaneBasedGtuCharacteristics characteristics, Duration since,
+        Placement canPlace(SortedSet<PerceivedGtu> leaders, LaneBasedGtuCharacteristics characteristics, Duration since,
                 LanePosition initialPosition) throws NetworkException, GtuException;
     }
 

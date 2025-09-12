@@ -17,7 +17,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
 import org.opentrafficsim.road.network.lane.Lane;
@@ -53,8 +53,8 @@ public abstract class AbstractDirectedLaneChangeModel implements DirectedLaneCha
 
     @Override
     public final DirectedLaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGtu gtu,
-            final LateralDirectionality direction, final Collection<Headway> sameLaneGTUs,
-            final Collection<Headway> otherLaneGTUs, final Length maxDistance, final Speed speedLimit,
+            final LateralDirectionality direction, final Collection<PerceivedObject> sameLaneGTUs,
+            final Collection<PerceivedObject> otherLaneGTUs, final Length maxDistance, final Speed speedLimit,
             final Acceleration otherLaneRouteIncentive, final Acceleration laneChangeThreshold, final Duration laneChangeTime)
             throws GtuException, ParameterException
     {

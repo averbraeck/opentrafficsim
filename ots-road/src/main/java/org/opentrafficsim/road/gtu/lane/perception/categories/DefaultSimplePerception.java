@@ -8,7 +8,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 import org.opentrafficsim.road.gtu.lane.tactical.LanePathInfo;
 import org.opentrafficsim.road.network.lane.Lane;
 
@@ -147,19 +147,19 @@ public interface DefaultSimplePerception extends LaneBasedPerceptionCategory
      * Returns forward headways.
      * @return forwardHeadway, the forward headway and first object (GTU) in front
      */
-    Headway getForwardHeadwayGtu();
+    PerceivedObject getForwardHeadwayGtu();
 
     /**
      * Returns forward headway objects.
      * @return forwardHeadway, the forward headway and first object (not a GTU) in front
      */
-    Headway getForwardHeadwayObject();
+    PerceivedObject getForwardHeadwayObject();
 
     /**
      * Returns backward headways.
      * @return backwardHeadwayGtu, the backward headway and first object (e.g., a GTU) behind
      */
-    Headway getBackwardHeadway();
+    PerceivedObject getBackwardHeadway();
 
     /**
      * Returns right accessible adjacent lanes.
@@ -185,14 +185,14 @@ public interface DefaultSimplePerception extends LaneBasedPerceptionCategory
      * @return neighboringHeadwaysLeft, the objects (e.g., GTUs) in parallel, in front and behind on the left neighboring lane,
      *         with their headway relative to our GTU, and information about the status of the adjacent objects
      */
-    Collection<Headway> getNeighboringHeadwaysLeft();
+    Collection<PerceivedObject> getNeighboringHeadwaysLeft();
 
     /**
      * Returns right neighbors.
      * @return neighboringHeadwaysRight, the objects (e.g., GTUs) in parallel, in front and behind on the right neighboring
      *         lane, with their headway relative to our GTU, and information about the status of the adjacent objects
      */
-    Collection<Headway> getNeighboringHeadwaysRight();
+    Collection<PerceivedObject> getNeighboringHeadwaysRight();
 
     /**
      * Returns neighbors.
@@ -200,21 +200,21 @@ public interface DefaultSimplePerception extends LaneBasedPerceptionCategory
      * @return the the objects (e.g., GTUs) in parallel, in front and behind for the lane in the given direction, with their
      *         headway relative to our GTU, and information about the status of the adjacent objects
      */
-    Collection<Headway> getNeighboringHeadways(LateralDirectionality lateralDirection);
+    Collection<PerceivedObject> getNeighboringHeadways(LateralDirectionality lateralDirection);
 
     /**
      * Returns left parallel headways.
      * @return parallelHeadwaysLeft, the parallel objects (e.g., GTUs) on the left, with information about their status and
      *         parallel overlap with our GTU.
      */
-    Collection<Headway> getParallelHeadwaysLeft();
+    Collection<PerceivedObject> getParallelHeadwaysLeft();
 
     /**
      * Return right parallel headways.
      * @return parallelHeadwaysRight, the parallel objects (e.g., GTUs) on the right, with information about their status and
      *         parallel overlap with our GTU.
      */
-    Collection<Headway> getParallelHeadwaysRight();
+    Collection<PerceivedObject> getParallelHeadwaysRight();
 
     /**
      * Returns parallel headways.
@@ -222,7 +222,7 @@ public interface DefaultSimplePerception extends LaneBasedPerceptionCategory
      * @return the the parallel objects (e.g., GTUs) for the given direction, with information about their status and parallel
      *         overlap with our GTU.
      */
-    Collection<Headway> getParallelHeadways(LateralDirectionality lateralDirection);
+    Collection<PerceivedObject> getParallelHeadways(LateralDirectionality lateralDirection);
 
     /**
      * Returns the speed limit.

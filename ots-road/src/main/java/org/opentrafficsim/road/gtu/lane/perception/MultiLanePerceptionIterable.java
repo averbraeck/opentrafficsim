@@ -10,7 +10,7 @@ import java.util.TreeMap;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 /**
@@ -26,7 +26,7 @@ import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
  * @param <H> headway type
  * @param <U> underlying headway type
  */
-public class MultiLanePerceptionIterable<P extends LaneBasedObject, H extends Headway, U>
+public class MultiLanePerceptionIterable<P extends LaneBasedObject, H extends PerceivedObject, U>
         extends AbstractPerceptionReiterable<P, H, U>
 {
 

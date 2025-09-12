@@ -16,7 +16,7 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
@@ -46,12 +46,6 @@ public final class IncentiveCourtesy implements VoluntaryIncentive, Stateless<In
 
     /** Socio-speed sensitivity parameter. */
     protected static final ParameterTypeDouble SOCIO = LmrsParameters.SOCIO;
-
-    /** Current left lane change desire. */
-    protected static final ParameterTypeDouble DLEFT = LmrsParameters.DLEFT;
-
-    /** Current right lane change desire. */
-    protected static final ParameterTypeDouble DRIGHT = LmrsParameters.DRIGHT;
 
     /** Singleton instance. */
     public static final IncentiveCourtesy SINGLETON = new IncentiveCourtesy();
@@ -90,13 +84,13 @@ public final class IncentiveCourtesy implements VoluntaryIncentive, Stateless<In
         boolean rightLane = infra.getLegalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).si > 0.0;
         for (LateralDirectionality dir : new LateralDirectionality[] {LateralDirectionality.LEFT, LateralDirectionality.RIGHT})
         {
-            Iterable<HeadwayGtu> leaders = neighbors.getLeaders(new RelativeLane(dir, 1));
+            Iterable<PerceivedGtu> leaders = neighbors.getLeaders(new RelativeLane(dir, 1));
             if (leaders != null)
             {
-                for (HeadwayGtu leader : leaders)
+                for (PerceivedGtu leader : leaders)
                 {
-                    Parameters params = leader.getParameters();
-                    double desire = dir.isLeft() ? params.getParameter(DRIGHT) : params.getParameter(DLEFT);
+                    double desire = dir.isLeft() ? leader.getBehavior().rightLaneChangeDesire()
+                            : leader.getBehavior().leftLaneChangeDesire();
                     if (desire > 0)
                     {
                         // TODO factor -a/b as influence factor is heavy in calculation, consider v<vEgo & 1-s/x0
@@ -120,16 +114,17 @@ public final class IncentiveCourtesy implements VoluntaryIncentive, Stateless<In
                 }
             }
             // consider close followers on 2 lanes away
-            Iterable<HeadwayGtu> followers = neighbors.getFollowers(new RelativeLane(dir, 2));
+            Iterable<PerceivedGtu> followers = neighbors.getFollowers(new RelativeLane(dir, 2));
             if (followers != null)
             {
-                for (HeadwayGtu follower : followers)
+                for (PerceivedGtu follower : followers)
                 {
-                    Parameters params = follower.getParameters();
-                    double desire = dir.isLeft() ? params.getParameter(DRIGHT) : params.getParameter(DLEFT);
+                    Parameters params = follower.getBehavior().getParameters();
+                    double desire = dir.isLeft() ? follower.getBehavior().rightLaneChangeDesire()
+                            : follower.getBehavior().leftLaneChangeDesire();
                     Acceleration a = follower.getDistance().lt0() ? b.neg()
                             : LmrsUtil.singleAcceleration(follower.getDistance(), follower.getSpeed(), ownSpeed, desire, params,
-                                    follower.getSpeedLimitInfo(), follower.getCarFollowingModel());
+                                    follower.getBehavior().getSpeedLimitInfo(), follower.getBehavior().getCarFollowingModel());
                     if (a.lt0())
                     {
                         if (desire > 0)
@@ -157,10 +152,11 @@ public final class IncentiveCourtesy implements VoluntaryIncentive, Stateless<In
             leaders = neighbors.getLeaders(new RelativeLane(dir, 2));
             if (leaders != null)
             {
-                for (HeadwayGtu leader : leaders)
+                for (PerceivedGtu leader : leaders)
                 {
-                    Parameters params = leader.getParameters();
-                    double desire = dir.isLeft() ? params.getParameter(DRIGHT) : params.getParameter(DLEFT);
+                    Parameters params = leader.getBehavior().getParameters();
+                    double desire = dir.isLeft() ? leader.getBehavior().rightLaneChangeDesire()
+                            : leader.getBehavior().leftLaneChangeDesire();
                     if (desire > 0)
                     {
                         Acceleration a = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(), desire,

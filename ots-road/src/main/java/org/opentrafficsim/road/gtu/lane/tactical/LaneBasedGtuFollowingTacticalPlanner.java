@@ -15,7 +15,7 @@ import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectDefaultSimplePerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AccelerationStep;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
 
@@ -71,7 +71,7 @@ public class LaneBasedGtuFollowingTacticalPlanner extends AbstractLaneBasedTacti
         simplePerception.updateForwardHeadwayGtu();
         simplePerception.updateSpeedLimit();
         simplePerception.updateForwardHeadwayObject();
-        Headway headwayGTU = simplePerception.getForwardHeadwayGtu();
+        PerceivedObject headwayGTU = simplePerception.getForwardHeadwayGtu();
         AccelerationStep accelerationStepGTU = null;
         if (headwayGTU.getDistance().ge(maxDistance))
         {
@@ -87,7 +87,7 @@ public class LaneBasedGtuFollowingTacticalPlanner extends AbstractLaneBasedTacti
         }
 
         // look at the conditions for headway from an object in front
-        Headway headwayObject = simplePerception.getForwardHeadwayObject();
+        PerceivedObject headwayObject = simplePerception.getForwardHeadwayObject();
         AccelerationStep accelerationStepObject = null;
         if (headwayObject.getDistance().ge(maxDistance))
         {

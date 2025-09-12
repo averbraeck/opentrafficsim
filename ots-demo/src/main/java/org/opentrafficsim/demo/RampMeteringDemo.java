@@ -78,7 +78,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerc
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
@@ -758,11 +758,11 @@ public class RampMeteringDemo extends AbstractSimulationScript
             if (since.gt(this.settings.getParameter(SYNCTIME))
                     || this.gtu.getSpeed().lt(this.settings.getParameter(ParameterTypes.VCONG)))
             {
-                PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders =
+                PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
                         neighbors.getLeaders(new RelativeLane(this.direction, 1));
                 if (!leaders.isEmpty())
                 {
-                    HeadwayGtu leader = leaders.first();
+                    PerceivedGtu leader = leaders.first();
                     Acceleration a = CarFollowingUtil.followSingleLeader(this.carFollowingModel, this.settings,
                             this.gtu.getSpeed(), sli, leader);
                     a = Acceleration.max(a, this.settings.getParameter(ParameterTypes.B).neg());
@@ -796,10 +796,10 @@ public class RampMeteringDemo extends AbstractSimulationScript
          * @return whether the gap is accepted
          * @throws ParameterException if a parameter is not defined
          */
-        private boolean acceptGap(final Set<HeadwayGtu> neighbors, final SpeedLimitInfo sli, final boolean leaders)
+        private boolean acceptGap(final Set<PerceivedGtu> neighbors, final SpeedLimitInfo sli, final boolean leaders)
                 throws ParameterException
         {
-            for (HeadwayGtu neighbor : neighbors)
+            for (PerceivedGtu neighbor : neighbors)
             {
                 Acceleration a = CarFollowingUtil.followSingleLeader(this.carFollowingModel, this.settings,
                         leaders ? this.gtu.getSpeed() : neighbor.getSpeed(), sli, neighbor.getDistance(),

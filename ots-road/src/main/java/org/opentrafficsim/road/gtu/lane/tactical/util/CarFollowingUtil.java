@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util;
 
+import java.util.UUID;
+
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -9,12 +11,14 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterableSet;
-import org.opentrafficsim.road.gtu.lane.perception.headway.AbstractHeadway;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics.Overlap;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.ObjectType;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObjectBase;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
@@ -67,7 +71,7 @@ public final class CarFollowingUtil
      * @throws ParameterException if a parameter is not given or out of bounds
      */
     public static Acceleration followSingleLeader(final CarFollowingModel carFollowingModel, final Parameters parameters,
-            final Speed speed, final SpeedLimitInfo speedLimitInfo, final HeadwayGtu leader) throws ParameterException
+            final Speed speed, final SpeedLimitInfo speedLimitInfo, final PerceivedGtu leader) throws ParameterException
     {
         return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, new PerceptionIterableSet<>(leader));
     }
@@ -117,7 +121,7 @@ public final class CarFollowingUtil
     public static Acceleration freeAcceleration(final CarFollowingModel carFollowingModel, final Parameters parameters,
             final Speed speed, final SpeedLimitInfo speedLimitInfo) throws ParameterException
     {
-        PerceptionIterableSet<Headway> leaders = new PerceptionIterableSet<>();
+        PerceptionIterableSet<PerceivedObject> leaders = new PerceptionIterableSet<>();
         return carFollowingModel.followingAcceleration(parameters, speed, speedLimitInfo, leaders);
     }
 
@@ -126,13 +130,13 @@ public final class CarFollowingUtil
      * ahead. This is done by placing a virtual vehicle somewhere near the location. Both the location and speed of this virtual
      * vehicle are dynamically adjusted to resemble a car-following situation. To explain, first consider the situation where a
      * virtual vehicle is placed at the target speed and such that the equilibrium headway is in line with the location:
-     * 
+     *
      * <pre>
-     * 
+     *
      *  ___    location of target speed --)|        ___
      * |___|(--------------s--------------) (--h--)|___| ))) vTar
      * </pre>
-     * 
+     *
      * Here, {@code s} is the distance to the target speed, and {@code h} is the desired headway if the vehicle would drive at
      * the target speed {@code vTar}.<br>
      * <br>
@@ -210,74 +214,13 @@ public final class CarFollowingUtil
      * @param speed leader speed
      * @return set with a single leader
      */
-    private static PerceptionIterable<Headway> createLeader(final Length headway, final Speed speed)
+    private static PerceptionIterable<PerceivedObject> createLeader(final Length headway, final Speed speed)
     {
-        PerceptionIterable<Headway> leaders =
-                Try.assign(() -> new PerceptionIterableSet<>(new CarFollowingHeadway(headway, speed)),
-                        "Exception during headway creation.");
+        PerceptionIterable<PerceivedObject> leaders = Try.assign(
+                () -> new PerceptionIterableSet<>(new PerceivedObjectBase(UUID.randomUUID().toString(), ObjectType.GTU,
+                        Length.ONE, new Kinematics.Record(headway, speed, Acceleration.ZERO, true, Overlap.AHEAD))),
+                "Exception during headway creation.");
         return leaders;
-    }
-
-    /**
-     * Simple headway implementation for minimum car-following information.
-     * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
-     */
-    public static class CarFollowingHeadway extends AbstractHeadway
-    {
-        /** */
-        private static final long serialVersionUID = 20180226L;
-
-        /** Speed of the leader. */
-        private final Speed speed;
-
-        /**
-         * Constructor.
-         * @param headway distance to the leader
-         * @param speed leader speed
-         * @throws GtuException on exception
-         */
-        public CarFollowingHeadway(final Length headway, final Speed speed) throws GtuException
-        {
-            super(headway);
-            this.speed = speed;
-        }
-
-        @Override
-        public String getId()
-        {
-            return null;
-        }
-
-        @Override
-        public Length getLength()
-        {
-            return null;
-        }
-
-        @Override
-        public Speed getSpeed()
-        {
-            return this.speed;
-        }
-
-        @Override
-        public ObjectType getObjectType()
-        {
-            return null;
-        }
-
-        @Override
-        public Acceleration getAcceleration()
-        {
-            return null;
-        }
     }
 
 }

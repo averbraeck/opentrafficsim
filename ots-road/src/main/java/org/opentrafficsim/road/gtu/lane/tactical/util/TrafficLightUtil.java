@@ -10,7 +10,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterableSet;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedTrafficLight;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
@@ -54,12 +54,12 @@ public final class TrafficLightUtil
      * @throws IllegalArgumentException if the traffic light is not downstream
      */
     public static Acceleration respondToTrafficLights(final Parameters parameters,
-            final Iterable<HeadwayTrafficLight> headwayTrafficLights, final CarFollowingModel carFollowingModel,
+            final Iterable<PerceivedTrafficLight> headwayTrafficLights, final CarFollowingModel carFollowingModel,
             final Speed speed, final SpeedLimitInfo speedLimitInfo) throws ParameterException
     {
         Throw.whenNull(headwayTrafficLights, "Traffic light set may not be null.");
         Acceleration a = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
-        for (HeadwayTrafficLight headwayTrafficLight : headwayTrafficLights)
+        for (PerceivedTrafficLight headwayTrafficLight : headwayTrafficLights)
         {
             Acceleration aLight =
                     respondToTrafficLight(parameters, headwayTrafficLight, carFollowingModel, speed, speedLimitInfo);
@@ -86,16 +86,15 @@ public final class TrafficLightUtil
      * @throws IllegalArgumentException if the traffic light is not downstream
      */
     // @docs/06-behavior/tactical-planner/#modular-utilities
-    public static Acceleration respondToTrafficLight(final Parameters parameters, final HeadwayTrafficLight headwayTrafficLight,
-            final CarFollowingModel carFollowingModel, final Speed speed, final SpeedLimitInfo speedLimitInfo)
-            throws ParameterException
+    public static Acceleration respondToTrafficLight(final Parameters parameters,
+            final PerceivedTrafficLight headwayTrafficLight, final CarFollowingModel carFollowingModel, final Speed speed,
+            final SpeedLimitInfo speedLimitInfo) throws ParameterException
     {
         Throw.whenNull(parameters, "Parameters may not be null.");
         Throw.whenNull(headwayTrafficLight, "Traffic light may not be null.");
         Throw.whenNull(carFollowingModel, "Car-following model may not be null.");
         Throw.whenNull(speed, "Speed may not be null.");
         Throw.whenNull(speedLimitInfo, "Speed limit info may not be null.");
-        Throw.when(!headwayTrafficLight.isAhead(), IllegalArgumentException.class, "Traffic light must be downstream.");
         if ((headwayTrafficLight.getTrafficLightColor().isRed() || headwayTrafficLight.getTrafficLightColor().isYellow())
                 && !headwayTrafficLight.canTurnOnRed())
         {

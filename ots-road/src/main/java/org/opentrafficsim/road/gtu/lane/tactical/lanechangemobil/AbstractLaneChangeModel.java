@@ -17,7 +17,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DefaultSimplePerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractGtuFollowingModelMobil;
 import org.opentrafficsim.road.gtu.lane.tactical.following.DualAccelerationStep;
@@ -56,8 +56,8 @@ public abstract class AbstractLaneChangeModel implements LaneChangeModel
     @SuppressWarnings("checkstyle:parameternumber")
     @Override
     public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGtu gtu,
-            final Collection<Headway> sameLaneGTUs, final Collection<Headway> preferredLaneGTUs,
-            final Collection<Headway> nonPreferredLaneGTUs, final Speed speedLimit,
+            final Collection<PerceivedObject> sameLaneGTUs, final Collection<PerceivedObject> preferredLaneGTUs,
+            final Collection<PerceivedObject> nonPreferredLaneGTUs, final Speed speedLimit,
             final Acceleration preferredLaneRouteIncentive, final Acceleration laneChangeThreshold,
             final Acceleration nonPreferredLaneRouteIncentive) throws ParameterException, OperationalPlanException
     {

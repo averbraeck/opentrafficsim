@@ -13,7 +13,7 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlanner;
 
@@ -50,18 +50,18 @@ public abstract class AbstractGtuFollowingModelMobil implements GtuFollowingMode
 
     @Override
     public final DualAccelerationStep computeDualAccelerationStep(final LaneBasedGtu referenceGTU,
-            final Collection<Headway> otherGTUs, final Length maxDistance, final Speed speedLimit) throws GtuException
+            final Collection<PerceivedObject> otherGTUs, final Length maxDistance, final Speed speedLimit) throws GtuException
     {
         return computeDualAccelerationStep(referenceGTU, otherGTUs, maxDistance, speedLimit, getStepSize());
     }
 
     @Override
     public final DualAccelerationStep computeDualAccelerationStep(final LaneBasedGtu referenceGTU,
-            final Collection<Headway> otherHeadways, final Length maxDistance, final Speed speedLimit, final Duration stepSize)
+            final Collection<PerceivedObject> otherHeadways, final Length maxDistance, final Speed speedLimit, final Duration stepSize)
             throws GtuException
     {
         // Find out if there is an immediate collision
-        for (Headway headway : otherHeadways)
+        for (PerceivedObject headway : otherHeadways)
         {
             // XXX: Under which circumstances can getDistance() be NULL? Should that indeed result in TOODANGEROUS?
             if (headway.getDistance() == null)
@@ -84,7 +84,7 @@ public abstract class AbstractGtuFollowingModelMobil implements GtuFollowingMode
         GtuFollowingModelOld gfm = (GtuFollowingModelOld) ((AbstractLaneBasedTacticalPlanner) referenceGTU.getTacticalPlanner())
                 .getCarFollowingModel();
         // Find the leader and the follower that cause/experience the least positive (most negative) acceleration.
-        for (Headway headway : otherHeadways)
+        for (PerceivedObject headway : otherHeadways)
         {
             if (headway.getId().equals(referenceGTU.getId()))
             {

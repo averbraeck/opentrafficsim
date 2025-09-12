@@ -12,7 +12,7 @@ import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
 
@@ -47,8 +47,8 @@ public class FixedLaneChangeModel implements LaneChangeModel, Serializable
     @SuppressWarnings("checkstyle:parameternumber")
     @Override
     public final LaneMovementStep computeLaneChangeAndAcceleration(final LaneBasedGtu gtu,
-            final Collection<Headway> sameLaneTraffic, final Collection<Headway> rightLaneTraffic,
-            final Collection<Headway> leftLaneTraffic, final Speed speedLimit, final Acceleration preferredLaneRouteIncentive,
+            final Collection<PerceivedObject> sameLaneTraffic, final Collection<PerceivedObject> rightLaneTraffic,
+            final Collection<PerceivedObject> leftLaneTraffic, final Speed speedLimit, final Acceleration preferredLaneRouteIncentive,
             final Acceleration laneChangeThreshold, final Acceleration nonPreferredLaneRouteIncentive)
             throws GtuException, ParameterException
     {

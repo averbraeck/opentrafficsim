@@ -573,7 +573,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
     }
 
     /**
-     * Set parameters.
+     * Set parameters. This method clears any existing parameter history and should normally only be invoked for initialization.
      * @param parameters parameters
      */
     public final void setParameters(final Parameters parameters)

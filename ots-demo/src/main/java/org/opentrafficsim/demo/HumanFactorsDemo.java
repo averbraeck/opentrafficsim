@@ -75,13 +75,13 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayG
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType.PerceivedHeadwayGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.TaskHeadwayCollector;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTask;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationHeadway;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSpeed;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.BehavioralAdaptation;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
 import org.opentrafficsim.road.gtu.lane.perception.mental.TaskCarFollowing;
 import org.opentrafficsim.road.gtu.lane.perception.mental.TaskManager;
@@ -543,7 +543,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             try
             {
                 NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
-                PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
+                PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
                 Duration headway = leaders.collect(new TaskHeadwayCollector(gtu.getSpeed()));
                 return headway == null ? 0.0 : Math.exp(-headway.si / parameters.getParameter(HEXP).si);
             }

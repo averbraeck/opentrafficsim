@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayBusStop;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedBusStop;
 import org.opentrafficsim.road.network.lane.object.BusStop;
 
 /**
@@ -21,6 +21,6 @@ public interface BusStopPerception extends LaneBasedPerceptionCategory
      * Returns the bus stops.
      * @return bus stops
      */
-    PerceptionCollectable<HeadwayBusStop, BusStop> getBusStops();
+    PerceptionCollectable<PerceivedBusStop, BusStop> getBusStops();
 
 }

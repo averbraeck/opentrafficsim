@@ -1,19 +1,12 @@
-package org.opentrafficsim.core.perception;
-
-import java.io.Serializable;
-
-import org.djutils.base.Identifiable;
-
 /**
- * Information about a perceived object, which can be a GTU, a road sign, a traffic light, or an obstacle.
+ * Interfaces and classes describing perceived objects. These form the input in to behavioral models, either based on perfect
+ * information, or information altered by modeled perception processes.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public interface PerceivedObject extends Serializable, Identifiable
-{
-    //
-}
+package org.opentrafficsim.road.gtu.lane.perception.object;

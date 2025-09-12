@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 
 /**
  * Iterable set of elements, sorted close to far.
@@ -13,7 +13,7 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <H> headway type
  */
-public interface PerceptionIterable<H extends Headway> extends Iterable<H>
+public interface PerceptionIterable<H extends PerceivedObject> extends Iterable<H>
 {
 
     /**

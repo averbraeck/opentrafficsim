@@ -14,7 +14,7 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
@@ -48,12 +48,11 @@ public interface Cooperation extends LmrsParameters
             double dCoop = params.getParameter(DCOOP);
             Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
             RelativeLane relativeLane = new RelativeLane(lat, 1);
-            for (HeadwayGtu leader : perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane))
+            for (PerceivedGtu leader : perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane))
             {
-                Parameters params2 = leader.getParameters();
-                double desire = leader.isChangingLane(lat.flip()) ? 1.0
-                        : (lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)
-                                : lat.equals(LateralDirectionality.RIGHT) ? params2.getParameter(DLEFT) : 0.0);
+                double desire = leader.getManeuver().isChangingLane(lat.flip()) ? 1.0
+                        : (lat.equals(LateralDirectionality.LEFT) ? leader.getBehavior().rightLaneChangeDesire()
+                                : lat.equals(LateralDirectionality.RIGHT) ? leader.getBehavior().leftLaneChangeDesire() : 0.0);
                 if (desire >= dCoop && (leader.getSpeed().gt0() || leader.getDistance().gt0()))
                 {
                     Acceleration aSingle = LmrsUtil.singleAcceleration(leader.getDistance(), ownSpeed, leader.getSpeed(),
@@ -89,15 +88,14 @@ public interface Cooperation extends LmrsParameters
             Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
             RelativeLane relativeLane = new RelativeLane(lat, 1);
             NeighborsPerception neighbours = perception.getPerceptionCategory(NeighborsPerception.class);
-            PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders = neighbours.getLeaders(RelativeLane.CURRENT);
+            PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neighbours.getLeaders(RelativeLane.CURRENT);
             Speed thresholdSpeed = Speed.instantiateSI(6.86); // 295m / 43s
             boolean leaderInCongestion = leaders.isEmpty() ? false : leaders.first().getSpeed().lt(thresholdSpeed);
-            for (HeadwayGtu leader : neighbours.getLeaders(relativeLane))
+            for (PerceivedGtu leader : neighbours.getLeaders(relativeLane))
             {
-                Parameters params2 = leader.getParameters();
-                double desire = leader.isChangingLane(lat.flip()) ? 1.0
-                        : (lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)
-                                : lat.equals(LateralDirectionality.RIGHT) ? params2.getParameter(DLEFT) : 0.0);
+                double desire = leader.getManeuver().isChangingLane(lat.flip()) ? 1.0
+                        : (lat.equals(LateralDirectionality.LEFT) ? leader.getBehavior().rightLaneChangeDesire()
+                                : lat.equals(LateralDirectionality.RIGHT) ? leader.getBehavior().leftLaneChangeDesire() : 0.0);
                 // TODO: only cooperate if merger still quite fast or there's congestion downstream anyway (which we can better
                 // estimate than only considering the direct leader
                 if (desire >= dCoop && (leader.getSpeed().gt0() || leader.getDistance().gt0())
@@ -134,12 +132,11 @@ public interface Cooperation extends LmrsParameters
             double dCoop = params.getParameter(DCOOP);
             Speed ownSpeed = perception.getPerceptionCategory(EgoPerception.class).getSpeed();
             RelativeLane relativeLane = new RelativeLane(lat, 1);
-            for (HeadwayGtu leader : perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane))
+            for (PerceivedGtu leader : perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(relativeLane))
             {
-                Parameters params2 = leader.getParameters();
-                double desire = leader.isChangingLane(lat.flip()) ? 1.0
-                        : (lat.equals(LateralDirectionality.LEFT) ? params2.getParameter(DRIGHT)
-                                : lat.equals(LateralDirectionality.RIGHT) ? params2.getParameter(DLEFT) : 0.0);
+                double desire = leader.getManeuver().isChangingLane(lat.flip()) ? 1.0
+                        : (lat.equals(LateralDirectionality.LEFT) ? leader.getBehavior().rightLaneChangeDesire()
+                                : lat.equals(LateralDirectionality.RIGHT) ? leader.getBehavior().leftLaneChangeDesire() : 0.0);
                 if (desire >= dCoop && leader.getDistance().gt0()
                         && leader.getAcceleration().gt(params.getParameter(ParameterTypes.BCRIT).neg()))
                 {

@@ -11,7 +11,7 @@ import org.opentrafficsim.road.gtu.lane.perception.FilteredIterable;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.IntersectionPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayTrafficLight;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedTrafficLight;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
@@ -53,7 +53,7 @@ public final class AccelerationTrafficLights implements AccelerationIncentive, S
             final Speed speed, final Parameters params, final SpeedLimitInfo speedLimitInfo)
             throws ParameterException, OperationalPlanException
     {
-        Iterable<HeadwayTrafficLight> it =
+        Iterable<PerceivedTrafficLight> it =
                 perception.getPerceptionCategory(IntersectionPerception.class).getTrafficLights(lane);
         if (!lane.isCurrent() && mergeDistance.gt0())
         {

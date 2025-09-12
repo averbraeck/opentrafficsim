@@ -10,7 +10,7 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.categories.BusStopPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayBusStop;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedBusStop;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.pt.BusSchedule;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
@@ -52,11 +52,11 @@ public final class IncentiveBusStop implements MandatoryIncentive, Stateless<Inc
             final CarFollowingModel carFollowingModel, final Desire mandatoryDesire)
             throws ParameterException, OperationalPlanException
     {
-        HeadwayBusStop firstStop = null;
-        PerceptionCollectable<HeadwayBusStop, BusStop> stops =
+        PerceivedBusStop firstStop = null;
+        PerceptionCollectable<PerceivedBusStop, BusStop> stops =
                 perception.getPerceptionCategory(BusStopPerception.class).getBusStops();
         Time now = perception.getGtu().getSimulator().getSimulatorAbsTime();
-        for (HeadwayBusStop stop : stops)
+        for (PerceivedBusStop stop : stops)
         {
             if (((BusSchedule) perception.getGtu().getStrategicalPlanner().getRoute()).isLineStop(stop.getId(), now))
             {

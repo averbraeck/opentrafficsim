@@ -10,7 +10,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeInteger;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionIterable;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
 
 /**
  * <p>
@@ -60,14 +60,14 @@ public class IdmPlusMulti extends AbstractIdm
     @Override
     protected final Acceleration combineInteractionTerm(final Acceleration aFree, final Parameters parameters,
             final Speed speed, final Speed desiredSpeed, final Length desiredHeadway,
-            final PerceptionIterable<? extends Headway> leaders) throws ParameterException
+            final PerceptionIterable<? extends PerceivedObject> leaders) throws ParameterException
     {
         Acceleration a = parameters.getParameter(A);
         double aIntMulti = Double.POSITIVE_INFINITY;
         int i = 1;
         double cumulVehicleLengths = 0;
         int n = parameters.getParameter(NLEADERS);
-        for (Headway leader : leaders)
+        for (PerceivedObject leader : leaders)
         {
             // desired headway is scaled to the i'th leader
             // current headway is the sum of net headways (i.e. vehicle lengths of vehicles in between are subtracted)

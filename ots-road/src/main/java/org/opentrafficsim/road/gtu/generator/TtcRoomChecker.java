@@ -12,7 +12,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.Placement;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.RoomChecker;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.network.lane.LanePosition;
 
 /**
@@ -46,7 +46,7 @@ public class TtcRoomChecker implements RoomChecker
     }
 
     @Override
-    public final Placement canPlace(final SortedSet<HeadwayGtu> leaders, final LaneBasedGtuCharacteristics characteristics,
+    public final Placement canPlace(final SortedSet<PerceivedGtu> leaders, final LaneBasedGtuCharacteristics characteristics,
             final Duration since, final LanePosition initialPosition) throws NetworkException, GtuException
     {
         Speed speedLimit = initialPosition.lane().getSpeedLimit(characteristics.getGtuType());
@@ -55,7 +55,7 @@ public class TtcRoomChecker implements RoomChecker
         {
             return new Placement(desiredSpeedProxy, initialPosition);
         }
-        HeadwayGtu leader = leaders.first();
+        PerceivedGtu leader = leaders.first();
         Speed speed = Speed.min(leader.getSpeed(), desiredSpeedProxy);
         if ((speed.le(leader.getSpeed()) || leader.getDistance().divide(speed.minus(leader.getSpeed())).gt(this.ttc)) && leader
                 .getDistance().gt(speed.times(new Duration(1.0, DurationUnit.SI)).plus(new Length(3.0, LengthUnit.SI))))
