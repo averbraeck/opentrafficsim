@@ -16,6 +16,7 @@ import java.util.Map;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.exceptions.Throw;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.LegendItem;
 import org.jfree.chart.LegendItemCollection;
@@ -100,8 +101,8 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
     static
     {
         Color[] c = Colors.hue(6);
-        COLORMAP = new Color[] {c[0], c[4], c[2], c[1], c[3], c[5]};
-        float lw = 0.4f;
+        COLORMAP = new Color[] {c[0], c[4], c[2].darker().darker(), c[1], c[3], c[5]};
+        float lw = 1.0f;
         STROKES = new BasicStroke[] {new BasicStroke(lw, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10.0f, null, 0.0f),
                 new BasicStroke(lw, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 1.0f, new float[] {13f, 4f}, 0.0f),
                 new BasicStroke(lw, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 1.0f, new float[] {11f, 3f, 2f, 3f}, 0.0f)};
@@ -114,11 +115,13 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
      * @param scheduler scheduler.
      * @param samplerData sampler data
      * @param path path
+     * @throws IllegalArgumentException when the path contains more than 6 lanes
      */
     public TrajectoryPlot(final String caption, final Duration updateInterval, final PlotScheduler scheduler,
             final SamplerData<?> samplerData, final GraphPath<? extends LaneData<?>> path)
     {
         super(caption, updateInterval, scheduler, samplerData, path, Duration.ZERO);
+        Throw.when(path.getNumberOfSeries() > 6, IllegalArgumentException.class, "The trajectory plot supports up to 6 lanes");
         for (int i = 0; i < path.getNumberOfSeries(); i++)
         {
             this.curves.add(new ArrayList<>());
