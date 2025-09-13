@@ -13,7 +13,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.draw.LineLocatable;
 import org.opentrafficsim.draw.TextAlignment;
-import org.opentrafficsim.draw.TextAnimation;
+import org.opentrafficsim.draw.RenderableTextSource;
 import org.opentrafficsim.draw.road.LaneDetectorAnimation.LaneDetectorData;
 
 import nl.tudelft.simulation.naming.context.Contextualized;
@@ -31,7 +31,8 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @param <L> detector data type
  * @param <T> text type
  */
-public class LaneDetectorAnimation<L extends LaneDetectorData, T extends TextAnimation<L, T>> extends AbstractLineAnimation<L>
+public class LaneDetectorAnimation<L extends LaneDetectorData, T extends RenderableTextSource<L, T>>
+        extends AbstractLineAnimation<L>
 {
     /** */
     private static final long serialVersionUID = 20150130L;
@@ -136,7 +137,7 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends TextAni
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public static class Text extends TextAnimation<LaneDetectorData, Text> implements DetectorData.Text
+    public static class Text extends RenderableTextSource<LaneDetectorData, Text> implements DetectorData.Text
     {
         /** */
         private static final long serialVersionUID = 20161211L;
@@ -157,7 +158,7 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends TextAni
                 final TextAlignment textPlacement, final Color color, final Contextualized contextualized)
                 throws RemoteException, NamingException
         {
-            super(source, text, dx, dy, textPlacement, color, contextualized, TextAnimation.RENDERWHEN10);
+            super(source, text, dx, dy, textPlacement, color, contextualized, RenderableTextSource.RENDERWHEN10);
         }
 
         @Override
@@ -200,7 +201,7 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends TextAni
          * </p>
          * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
          */
-        public class LoopDetectorText extends TextAnimation<LoopDetectorData, LoopDetectorText>
+        class LoopDetectorText extends RenderableTextSource<LoopDetectorData, LoopDetectorText>
         {
             /** */
             private static final long serialVersionUID = 20240301L;
@@ -217,7 +218,7 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends TextAni
                     throws RemoteException, NamingException
             {
                 super(laneDetector, laneDetector::getId, 0.0f, dy, TextAlignment.CENTER, Color.BLACK, contextualized,
-                        TextAnimation.RENDERWHEN10);
+                        RenderableTextSource.RENDERWHEN10);
             }
         }
     }
@@ -242,7 +243,7 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends TextAni
          * </p>
          * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
          */
-        public class SinkText extends TextAnimation<SinkData, SinkText>
+        class SinkText extends RenderableTextSource<SinkData, SinkText>
         {
             /** */
             private static final long serialVersionUID = 20240301L;
@@ -259,7 +260,7 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends TextAni
                     throws RemoteException, NamingException
             {
                 super(sink, sink::getId, 0.0f, dy, TextAlignment.CENTER, Color.BLACK, contextualized,
-                        TextAnimation.RENDERWHEN10);
+                        RenderableTextSource.RENDERWHEN10);
             }
         }
     }

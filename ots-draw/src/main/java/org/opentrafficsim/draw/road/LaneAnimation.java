@@ -16,7 +16,7 @@ import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.OtsRenderable;
 import org.opentrafficsim.draw.PaintLine;
 import org.opentrafficsim.draw.TextAlignment;
-import org.opentrafficsim.draw.TextAnimation;
+import org.opentrafficsim.draw.RenderableTextSource;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
 import org.opentrafficsim.draw.road.LaneAnimation.LaneData;
 
@@ -210,7 +210,7 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public class Text extends TextAnimation<LaneData, Text>
+    public static class Text extends RenderableTextSource<LaneData, Text>
     {
         /** */
         private static final long serialVersionUID = 20161211L;
@@ -228,7 +228,7 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         public Text(final LaneData source, final Supplier<String> text, final float dx, final float dy,
                 final TextAlignment textPlacement, final Color color, final Contextualized contextualized)
         {
-            super(source, text, dx, dy, textPlacement, color, contextualized, TextAnimation.RENDERWHEN10);
+            super(source, text, dx, dy, textPlacement, color, contextualized, RenderableTextSource.RENDERWHEN10);
         }
 
         @Override

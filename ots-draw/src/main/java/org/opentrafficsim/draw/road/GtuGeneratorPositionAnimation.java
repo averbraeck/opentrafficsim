@@ -10,7 +10,7 @@ import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.OtsRenderable;
 import org.opentrafficsim.draw.TextAlignment;
-import org.opentrafficsim.draw.TextAnimation;
+import org.opentrafficsim.draw.RenderableTextSource;
 import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
 
 import nl.tudelft.simulation.naming.context.Contextualized;
@@ -90,7 +90,7 @@ public class GtuGeneratorPositionAnimation extends OtsRenderable<GtuGeneratorPos
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public class Queue extends TextAnimation<GtuGeneratorPositionData, Queue>
+    public static class Queue extends RenderableTextSource<GtuGeneratorPositionData, Queue>
     {
         /** */
         private static final long serialVersionUID = 20230204L;
@@ -103,7 +103,7 @@ public class GtuGeneratorPositionAnimation extends OtsRenderable<GtuGeneratorPos
         public Queue(final GtuGeneratorPositionData source, final Contextualized contextualized)
         {
             super(source, () -> Integer.toString(source.getQueueCount()), 0.0f, 0.0f, TextAlignment.CENTER, Color.BLACK, 3.0f,
-                    12.0f, 50f, contextualized, null, TextAnimation.RENDERWHEN10);
+                    12.0f, 50f, contextualized, null, RenderableTextSource.RENDERWHEN10);
         }
     }
 

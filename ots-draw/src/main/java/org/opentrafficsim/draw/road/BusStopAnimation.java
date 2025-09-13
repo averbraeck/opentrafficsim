@@ -12,7 +12,7 @@ import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.draw.LineLocatable;
 import org.opentrafficsim.draw.TextAlignment;
-import org.opentrafficsim.draw.TextAnimation;
+import org.opentrafficsim.draw.RenderableTextSource;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 import org.opentrafficsim.draw.road.BusStopAnimation.BusStopData;
 
@@ -93,7 +93,7 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStopData>
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public class Text extends TextAnimation<BusStopData, Text>
+    public static class Text extends RenderableTextSource<BusStopData, Text>
     {
         /** */
         private static final long serialVersionUID = 20161211L;
@@ -114,7 +114,7 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStopData>
                 final TextAlignment textPlacement, final Color color, final Contextualized contextualized)
                 throws RemoteException, NamingException
         {
-            super(source, text, dx, dy, textPlacement, color, contextualized, TextAnimation.RENDERWHEN10);
+            super(source, text, dx, dy, textPlacement, color, contextualized, RenderableTextSource.RENDERWHEN10);
         }
 
         @Override

@@ -16,7 +16,7 @@ import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.OtsRenderable;
 import org.opentrafficsim.draw.TextAlignment;
-import org.opentrafficsim.draw.TextAnimation;
+import org.opentrafficsim.draw.RenderableTextSource;
 import org.opentrafficsim.draw.network.NodeAnimation.NodeData;
 
 import nl.tudelft.simulation.naming.context.Contextualized;
@@ -47,23 +47,33 @@ public class NodeAnimation extends OtsRenderable<NodeData>
     {
         super(node, contextualized);
         this.text = new Text(node, node::getId, 0.0f, 3.0f, TextAlignment.CENTER, Color.BLACK, contextualized,
-                TextAnimation.RENDERWHEN10);
+                RenderableTextSource.RENDERWHEN10);
+        setScaleY(false);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isScaleY()
+    {
+        return super.isScaleY();
     }
 
     @Override
     public final void paint(final Graphics2D graphics, final ImageObserver observer)
     {
         setRendering(graphics);
+        double scale = Math.sqrt(graphics.getTransform().getDeterminant());
+        double factor = 3.0 / Math.min(scale, 3.0); // do not make smaller when zooming out below scale 3
         graphics.setColor(Color.BLACK);
-        graphics.setStroke(new BasicStroke(0.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-        graphics.draw(new Ellipse2D.Double(-0.5, -0.5, 1.0, 1.0));
+        graphics.setStroke(new BasicStroke((float) (factor * 0.5), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+        graphics.draw(new Ellipse2D.Double(-0.5 * factor, -0.5 * factor, 1.0 * factor, 1.0 * factor));
         double direction = getSource().getLocation().getDirZ();
         if (!Double.isNaN(direction))
         {
             GeneralPath arrow = new GeneralPath(Path2D.WIND_EVEN_ODD, 3);
-            arrow.moveTo(0.5, -0.5);
-            arrow.lineTo(2, 0);
-            arrow.lineTo(0.5, 0.5);
+            arrow.moveTo(0.5 * factor, -0.5 * factor);
+            arrow.lineTo(2.0 * factor, 0.0);
+            arrow.lineTo(0.5 * factor, 0.5 * factor);
             graphics.draw(arrow);
         }
         resetRendering(graphics);
@@ -93,7 +103,7 @@ public class NodeAnimation extends OtsRenderable<NodeData>
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public class Text extends TextAnimation<NodeData, Text>
+    public static class Text extends RenderableTextSource<NodeData, Text>
     {
         /** */
         private static final long serialVersionUID = 20161211L;
@@ -143,7 +153,7 @@ public class NodeAnimation extends OtsRenderable<NodeData>
         @Override
         default double signedDistance(final Point2d point)
         {
-            return getLocation().distance(point);
+            return Math.hypot(point.x, point.y);
         }
 
         @Override

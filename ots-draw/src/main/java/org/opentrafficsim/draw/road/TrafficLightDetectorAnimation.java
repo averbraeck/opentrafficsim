@@ -17,7 +17,7 @@ import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.OtsRenderable;
 import org.opentrafficsim.draw.PaintPolygons;
 import org.opentrafficsim.draw.TextAlignment;
-import org.opentrafficsim.draw.TextAnimation;
+import org.opentrafficsim.draw.RenderableTextSource;
 import org.opentrafficsim.draw.road.TrafficLightDetectorAnimation.TrafficLightDetectorData;
 
 import nl.tudelft.simulation.naming.context.Contextualized;
@@ -95,7 +95,7 @@ public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDet
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public class Text extends TextAnimation<TrafficLightDetectorData, Text> implements DetectorData.Text
+    public static class Text extends RenderableTextSource<TrafficLightDetectorData, Text> implements DetectorData.Text
     {
         /** */
         private static final long serialVersionUID = 20161211L;
@@ -116,7 +116,7 @@ public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDet
                 final TextAlignment textPlacement, final Color color, final Contextualized contextualized)
                 throws RemoteException, NamingException
         {
-            super(source, text, dx, dy, textPlacement, color, contextualized, TextAnimation.RENDERWHEN10);
+            super(source, text, dx, dy, textPlacement, color, contextualized, RenderableTextSource.RENDERWHEN10);
         }
 
         @Override

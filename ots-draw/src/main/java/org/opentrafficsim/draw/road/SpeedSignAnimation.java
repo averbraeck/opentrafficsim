@@ -53,6 +53,7 @@ public class SpeedSignAnimation extends OtsRenderable<SpeedSignData>
     {
         super(source, contextualized);
         setRotate(false);
+        setScaleY(false);
     }
 
     @Override

@@ -10,12 +10,12 @@ import org.djutils.base.Identifiable;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
-import org.opentrafficsim.draw.LineLocatable;
 import org.opentrafficsim.draw.DrawLevel;
+import org.opentrafficsim.draw.LineLocatable;
 import org.opentrafficsim.draw.OtsRenderable;
 import org.opentrafficsim.draw.PaintLine;
+import org.opentrafficsim.draw.RenderableTextSource;
 import org.opentrafficsim.draw.TextAlignment;
-import org.opentrafficsim.draw.TextAnimation;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
 
 import nl.tudelft.simulation.naming.context.Contextualized;
@@ -69,7 +69,7 @@ public class LinkAnimation extends OtsRenderable<LinkData>
         super(link, contextualized);
         this.width = width;
         this.text = new Text(link, link::getId, 0.0f, 1.5f, TextAlignment.CENTER, Color.BLACK, contextualized,
-                TextAnimation.RENDERWHEN10);
+                RenderableTextSource.RENDERWHEN10);
         setPath();
         this.color = getSource().isConnector() ? Color.PINK.darker() : Color.BLUE;
     }
@@ -79,6 +79,7 @@ public class LinkAnimation extends OtsRenderable<LinkData>
      * @param dynamic whether it is dynamic {@code false} by default.
      * @return for method chaining.
      */
+    @SuppressWarnings("all")
     public LinkAnimation setDynamic(final boolean dynamic)
     {
         this.dynamic = dynamic;
@@ -97,7 +98,9 @@ public class LinkAnimation extends OtsRenderable<LinkData>
             }
         }
         setRendering(graphics);
-        PaintLine.paintLine(graphics, this.color, this.width, this.path);
+        double scale = Math.sqrt(graphics.getTransform().getDeterminant());
+        double factor = 2.0 / Math.min(scale, 2.0); // do not make smaller when zooming out below scale 3
+        PaintLine.paintLine(graphics, this.color, factor * this.width, this.path);
         PaintLine.paintLine(graphics, this.color, this.width / 30, this.startPoint);
         PaintLine.paintLine(graphics, this.color, this.width / 30, this.endPoint);
         resetRendering(graphics);
@@ -156,7 +159,7 @@ public class LinkAnimation extends OtsRenderable<LinkData>
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public class Text extends TextAnimation<LinkData, Text>
+    public static class Text extends RenderableTextSource<LinkData, Text>
     {
         /** */
         private static final long serialVersionUID = 20161211L;
