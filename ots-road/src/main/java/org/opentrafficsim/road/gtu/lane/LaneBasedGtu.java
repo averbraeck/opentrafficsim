@@ -996,6 +996,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         Length searchedDistanceAtFrom = searchedDistance;
         Length searchedDistanceAtFromOnPendingLink = Length.ZERO; // value will be overwritten
         boolean encounteredPendingLink = false;
+        Length delta = getFront().dx();
         while (searchLane != null)
         {
             // Bound 'to' by enter position of next pending lane
@@ -1019,8 +1020,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                 }
             }
             // Find all detectors in range [from ... to] + dx
-            for (LaneDetector detector : searchLane.getDetectors(from.plus(getFront().dx()), to.plus(getFront().dx()),
-                    getType()))
+            for (LaneDetector detector : searchLane.getDetectors(from.plus(delta), to.plus(delta), getType()))
             {
                 if (schedule)
                 {
@@ -1038,7 +1038,15 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
             searchedDistanceAtFrom = searchedDistanceAtFrom.plus(to.minus(from));
             if (encounteredPendingLink)
             {
-                to = to.minus(searchLane.getLength());
+                if (to.plus(getFront().dx()).gt(searchLane.getLength()))
+                {
+                    to = to.plus(getFront().dx()).minus(searchLane.getLength());
+                    delta = Length.ZERO;
+                }
+                else
+                {
+                    to = to.minus(searchLane.getLength());
+                }
             }
             searchLane = to.le0() ? null : getNextLaneForRoute(searchLane);
             from = Length.ZERO;
