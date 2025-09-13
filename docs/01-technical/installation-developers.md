@@ -140,6 +140,11 @@ The icons for, e.g., "Push", "Fetch", "Pull", "Commit" and "Merge" will now be v
 
 <center>![](../images/01-technical/install-developer-021.png)</center>
 
+The OTS projects contain generated code, which is also generated at the computer of everyone who has cloned the repository in Eclipse. The generated code will have newline characters that depend on the operating system. Git can ignore different newline characters such that a file is not tagged as changed when only newline characters have changed. A setting is required to enable this in Git. Go to "Window - Preferences - Version Control (Team) - Git - Configuration - User Settings". Click "Add Entry..." and add under key "core.autocrlf" the value "true". Click "Add" to add the setting.
+
+<center>![](../images/01-technical/install-developer-027.png)</center>
+![](../images/01-technical/install-developer-027.png)
+
 
 
 ## 4. Prepare instrumentation for unit tests (only when you use Java 21 or higher)
