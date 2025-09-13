@@ -12,8 +12,6 @@ import java.awt.event.ContainerListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.geom.Point2D;
@@ -43,12 +41,14 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.TimedEvent;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.animation.data.AnimationGtuData;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.draw.colorer.Colorer;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2dInterface;
@@ -56,8 +56,6 @@ import nl.tudelft.simulation.dsol.animation.gis.GisMapInterface;
 import nl.tudelft.simulation.dsol.animation.gis.GisRenderable2d;
 import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.swing.animation.d2.AnimationPanel;
-import nl.tudelft.simulation.dsol.swing.animation.d2.InputListener;
-import nl.tudelft.simulation.dsol.swing.animation.d2.VisualizationPanel;
 import nl.tudelft.simulation.language.DsolException;
 
 /**
@@ -862,7 +860,6 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
                         if (gtu != null)
                         {
                             getOtsControlPanel().getOtsSearchPanel().selectAndTrackObject("GTU", gtu.getId(), true);
-                            e.consume(); // sadly doesn't work to prevent a pop up
                         }
                     }
                     e.consume();
@@ -872,81 +869,6 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
             {
                 addMouseListener(listener);
             }
-            // mouse wheel
-            MouseWheelListener[] wheelListeners = getMouseWheelListeners();
-            for (MouseWheelListener wheelListener : wheelListeners)
-            {
-                removeMouseWheelListener(wheelListener);
-            }
-            this.addMouseWheelListener(new InputListener(this)
-            {
-                @Override
-                public void mouseWheelMoved(final MouseWheelEvent e)
-                {
-                    if (e.isShiftDown())
-                    {
-                        int amount = e.getUnitsToScroll();
-                        if (amount > 0)
-                        {
-                            zoomVertical(VisualizationPanel.ZOOMFACTOR, e.getX(), e.getY());
-                        }
-                        else
-                        {
-                            zoomVertical(1.0 / VisualizationPanel.ZOOMFACTOR, e.getX(), e.getY());
-                        }
-                    }
-                    else if (e.isAltDown())
-                    {
-                        int amount = e.getUnitsToScroll();
-                        if (amount > 0)
-                        {
-                            zoomHorizontal(VisualizationPanel.ZOOMFACTOR, e.getX(), e.getY());
-                        }
-                        else
-                        {
-                            zoomHorizontal(1.0 / VisualizationPanel.ZOOMFACTOR, e.getX(), e.getY());
-                        }
-                    }
-                    else
-                    {
-                        super.mouseWheelMoved(e);
-                    }
-                }
-            });
-        }
-
-        /**
-         * Zoom vertical.
-         * @param factor The zoom factor
-         * @param mouseX x-position of the mouse around which we zoom
-         * @param mouseY y-position of the mouse around which we zoom
-         */
-        final synchronized void zoomVertical(final double factor, final int mouseX, final int mouseY)
-        {
-            double minX = getExtent().getMinX();
-            Point2d mwc =
-                    getRenderableScale().getWorldCoordinates(new Point2D.Double(mouseX, mouseY), getExtent(), this.getSize());
-            double minY = mwc.getY() - (mwc.getY() - getExtent().getMinY()) * factor;
-            double w = getExtent().getDeltaX();
-            double h = getExtent().getDeltaY() * factor;
-            setExtent(new Bounds2d(minX, minX + w, minY, minY + h));
-        }
-
-        /**
-         * Zoom horizontal.
-         * @param factor The zoom factor
-         * @param mouseX x-position of the mouse around which we zoom
-         * @param mouseY y-position of the mouse around which we zoom
-         */
-        final synchronized void zoomHorizontal(final double factor, final int mouseX, final int mouseY)
-        {
-            double minY = getExtent().getMinY();
-            Point2d mwc =
-                    getRenderableScale().getWorldCoordinates(new Point2D.Double(mouseX, mouseY), getExtent(), this.getSize());
-            double minX = mwc.getX() - (mwc.getX() - getExtent().getMinX()) * factor;
-            double w = getExtent().getDeltaX() * factor;
-            double h = getExtent().getDeltaY();
-            setExtent(new Bounds2d(minX, minX + w, minY, minY + h));
         }
 
         /**
@@ -957,15 +879,15 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         @SuppressWarnings("synthetic-access")
         protected Gtu getSelectedGTU(final Point2D mousePoint)
         {
-            List<Gtu> targets = new ArrayList<>();
+            List<LaneBasedGtu> targets = new ArrayList<>();
             Point2d point = getRenderableScale().getWorldCoordinates(mousePoint, getExtent(), getSize());
             for (Renderable2dInterface<?> renderable : getElements())
             {
                 if (isShowElement(renderable) && renderable.contains(point, getExtent()))
                 {
-                    if (renderable.getSource() instanceof Gtu)
+                    if (renderable.getSource() instanceof AnimationGtuData animData)
                     {
-                        targets.add((Gtu) renderable.getSource());
+                        targets.add(animData.getObject());
                     }
                 }
             }
