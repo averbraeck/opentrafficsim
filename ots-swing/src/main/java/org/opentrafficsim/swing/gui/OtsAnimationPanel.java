@@ -185,6 +185,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
 
         // add the buttons for home, zoom all, grid, and mouse coordinates
         buttonPanel.add(Box.createHorizontalStrut(10));
+        buttonPanel.add(makeButton("yZoomButton", "/Up-down.png", "Reset Y-zoom", "Reset Y-zoom to match X-zoom", true));
         buttonPanel.add(makeButton("allButton", "/Expand.png", "ZoomAll", "Zoom whole network", true));
         buttonPanel.add(makeButton("homeButton", "/Home.png", "Home", "Zoom to original extent", true));
         buttonPanel.add(makeButton("gridButton", "/Grid.png", "Grid", "Toggle grid on/off", true));
@@ -488,12 +489,18 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         // System.out.println("Action command is " + actionCommand);
         try
         {
+            if (actionCommand.equals("Reset Y-zoom"))
+            {
+                this.animationPanel.resetZoomY();
+            }
             if (actionCommand.equals("Home"))
             {
+                this.animationPanel.resetZoomY();
                 this.animationPanel.home();
             }
             if (actionCommand.equals("ZoomAll"))
             {
+                this.animationPanel.resetZoomY();
                 this.animationPanel.zoomAll();
             }
             if (actionCommand.equals("Grid"))
