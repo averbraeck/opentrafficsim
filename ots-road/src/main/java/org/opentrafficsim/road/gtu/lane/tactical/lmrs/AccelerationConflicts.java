@@ -59,7 +59,8 @@ public class AccelerationConflicts implements AccelerationIncentive, Blockable
         Acceleration acceleration = ego.getAcceleration();
         Length length = ego.getLength();
         Length width = ego.getWidth();
-        Iterable<PerceivedConflict> conflicts = perception.getPerceptionCategory(IntersectionPerception.class).getConflicts(lane);
+        Iterable<PerceivedConflict> conflicts =
+                perception.getPerceptionCategory(IntersectionPerception.class).getConflicts(lane);
         PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders =
                 perception.getPerceptionCategory(NeighborsPerception.class).getLeaders(lane);
         if (!lane.isCurrent())

@@ -3,9 +3,7 @@ package org.opentrafficsim.road.gtu.lane.perception.categories;
 import java.util.Iterator;
 
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -13,7 +11,6 @@ import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.AbstractPerceptionReiterable;
@@ -22,19 +19,9 @@ import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.PerceivedGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedConflict;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.ObjectType;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObjectBase;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedTrafficLight;
 import org.opentrafficsim.road.gtu.lane.perception.structure.NavigatingIterable.Entry;
-import org.opentrafficsim.road.network.lane.CrossSectionLink;
-import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
-import org.opentrafficsim.road.network.lane.conflict.ConflictPriority;
-import org.opentrafficsim.road.network.lane.conflict.ConflictRule;
-import org.opentrafficsim.road.network.lane.conflict.ConflictType;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 
 /**
@@ -58,7 +45,7 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
     protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 
     /** Headway GTU type that should be used. */
-    private final PerceivedGtuType headwayGtuType;
+    private final PerceivedGtuType perceptionGtuType;
 
     /**
      * Constructor.
@@ -68,7 +55,7 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
     public DirectIntersectionPerception(final LanePerception perception, final PerceivedGtuType headwayGtuType)
     {
         super(perception);
-        this.headwayGtuType = headwayGtuType;
+        this.perceptionGtuType = headwayGtuType;
     }
 
     @Override
@@ -177,77 +164,10 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
             protected PerceivedConflict perceive(final Conflict conflict, final Length distance)
                     throws GtuException, ParameterException
             {
-                Conflict otherConflict = conflict.getOtherConflict();
-                ConflictType conflictType = conflict.getConflictType();
-                ConflictPriority conflictPriority = conflict.conflictPriority();
-                Class<? extends ConflictRule> conflictRuleType = conflict.getConflictRule().getClass();
-                String id = conflict.getId();
-                Length length = conflict.getLength();
-                Length conflictingLength = otherConflict.getLength();
-                CrossSectionLink conflictingLink = otherConflict.getLane().getLink();
-
-                // TODO get from link combination (needs to be a map property on the links)
-                Length lookAhead =
-                        Try.assign(() -> getObject().getParameters().getParameter(LOOKAHEAD), "Parameter not present.");
-                Length conflictingVisibility = lookAhead;
-                Speed conflictingSpeedLimit;
-                try
-                {
-                    conflictingSpeedLimit = otherConflict.getLane().getHighestSpeedLimit();
-                }
-                catch (NetworkException exception)
-                {
-                    throw new RuntimeException("GTU type not available on conflicting lane.", exception);
-                }
-
-                // TODO limit 'conflictingVisibility' to first upstream traffic light, so GTU's behind it are ignored
-
-                PerceivedConflict headwayConflict;
-                try
-                {
-                    PerceptionCollectable<PerceivedGtu, LaneBasedGtu> upstreamConflictingGTUs = otherConflict.getUpstreamGtus(
-                            getObject(), DirectIntersectionPerception.this.headwayGtuType, conflictingVisibility);
-                    PerceptionCollectable<PerceivedGtu, LaneBasedGtu> downstreamConflictingGTUs =
-                            otherConflict.getDownstreamGtus(getObject(), DirectIntersectionPerception.this.headwayGtuType,
-                                    conflictingVisibility);
-                    // TODO stop lines (current models happen not to use this, but should be possible)
-                    PerceivedObject stopLine = new PerceivedObjectBase("stopLineId", ObjectType.STOPLINE, Length.ZERO,
-                            Kinematics.staticAhead(Length.ZERO));
-                    PerceivedObject conflictingStopLine = new PerceivedObjectBase("conflictingStopLineId", ObjectType.STOPLINE,
-                            Length.ZERO, Kinematics.staticAhead(Length.ZERO));
-
-                    Lane thisLane = conflict.getLane();
-                    Lane otherLane = otherConflict.getLane();
-                    Length pos1a = conflict.getLongitudinalPosition();
-                    Length pos2a = otherConflict.getLongitudinalPosition();
-                    Length pos1b = Length.min(pos1a.plus(conflict.getLength()), thisLane.getLength());
-                    Length pos2b = Length.min(pos2a.plus(otherConflict.getLength()), otherLane.getLength());
-                    OtsLine2d line1 = thisLane.getCenterLine();
-                    OtsLine2d line2 = otherLane.getCenterLine();
-                    double dStart = line1.getLocation(pos1a).distance(line2.getLocation(pos2a));
-                    double dEnd = line1.getLocation(pos1b).distance(line2.getLocation(pos2b));
-                    Length startWidth =
-                            Length.instantiateSI(dStart + .5 * thisLane.getWidth(pos1a).si + .5 * otherLane.getWidth(pos2a).si);
-                    Length endWidth =
-                            Length.instantiateSI(dEnd + .5 * thisLane.getWidth(pos1b).si + .5 * otherLane.getWidth(pos2b).si);
-
-                    headwayConflict = new PerceivedConflict(id, distance, length, conflictType, conflictPriority,
-                            conflictRuleType, conflictingLength, upstreamConflictingGTUs, downstreamConflictingGTUs,
-                            conflictingVisibility, conflictingSpeedLimit, conflictingLink,
-                            PerceivedConflict.Width.linear(startWidth, endWidth), stopLine, conflictingStopLine, thisLane);
-
-                    Length trafficLightDistance = conflict.getOtherConflict()
-                            .getTrafficLightDistance(getObject().getParameters().getParameter(ParameterTypes.LOOKAHEAD));
-                    if (trafficLightDistance != null && trafficLightDistance.le(lookAhead))
-                    {
-                        headwayConflict.setConflictingTrafficLight(trafficLightDistance, conflict.isPermitted());
-                    }
-                }
-                catch (ParameterException exception)
-                {
-                    throw new RuntimeException("Could not create headway objects.", exception);
-                }
-                return headwayConflict;
+                Length lookAhead = Try.assign(() -> getObject().getParameters().getParameter(LOOKAHEAD),
+                        "Parameter Look-ahead not present.");
+                return PerceivedConflict.of(getGtu(), conflict, DirectIntersectionPerception.this.perceptionGtuType, distance,
+                        lookAhead);
             }
         };
     }

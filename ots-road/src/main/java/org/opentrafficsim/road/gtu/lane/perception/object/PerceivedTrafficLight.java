@@ -15,7 +15,7 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColo
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class PerceivedTrafficLight extends PerceivedLaneBasedObject
+public class PerceivedTrafficLight extends PerceivedLaneBasedObjectBase
 {
 
     /** */

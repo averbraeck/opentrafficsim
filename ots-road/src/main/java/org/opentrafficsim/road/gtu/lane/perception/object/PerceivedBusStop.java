@@ -19,7 +19,7 @@ import org.opentrafficsim.road.network.lane.object.BusStop;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class PerceivedBusStop extends PerceivedLaneBasedObject
+public class PerceivedBusStop extends PerceivedLaneBasedObjectBase
 {
 
     /** */
