@@ -28,7 +28,7 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.PerceivedGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
@@ -82,7 +82,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
     {
         super(carFollowingModel, gtu, new CategoricalLanePerception(gtu));
         getPerception().addPerceptionCategory(new ToledoPerception(getPerception()));
-        getPerception().addPerceptionCategory(new DirectNeighborsPerception(getPerception(), HeadwayGtuType.WRAP));
+        getPerception().addPerceptionCategory(new DirectNeighborsPerception(getPerception(), PerceivedGtuType.WRAP));
     }
 
     @Override

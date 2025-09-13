@@ -14,6 +14,7 @@ import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu.Maneuver;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu.Signals;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtuSimple;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 /**
  * Default CACC sensors. This returns all information except desired speed for the first leader and CACC leaders. Remaining
@@ -26,7 +27,7 @@ import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinema
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class DefaultCaccSensors implements HeadwayGtuType
+public class DefaultCaccSensors implements PerceivedGtuType
 {
 
     /**
@@ -37,9 +38,10 @@ public class DefaultCaccSensors implements HeadwayGtuType
         //
     }
 
+    /** {@inheritDoc} */
     @Override
-    public PerceivedGtu createDownstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
-            final Length distance) throws GtuException, ParameterException
+    public PerceivedGtu createPerceivedGtu(final LaneBasedGtu perceivingGtu, final LaneBasedObject reference, final LaneBasedGtu perceivedGtu,
+            final Length distance, final boolean downstream) throws GtuException, ParameterException
     {
         Time t;
         try
@@ -66,20 +68,6 @@ public class DefaultCaccSensors implements HeadwayGtuType
         return new PerceivedGtuSimple(id, gtuType, length, width,
                 Kinematics.dynamicAhead(distance, v, a, true, length, perceivingGtu.getLength()), Signals.of(perceivedGtu),
                 Maneuver.of(perceivedGtu));
-    }
-
-    @Override
-    public PerceivedGtu createUpstreamGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
-            final Length distance) throws GtuException, ParameterException
-    {
-        throw new UnsupportedOperationException("Default CACC sensors can only determine leaders.");
-    }
-
-    @Override
-    public PerceivedGtu createParallelGtu(final LaneBasedGtu perceivingGtu, final LaneBasedGtu perceivedGtu,
-            final Length overlapFront, final Length overlap, final Length overlapRear) throws GtuException
-    {
-        throw new UnsupportedOperationException("Default CACC sensors can only determine leaders.");
     }
 
 }

@@ -34,7 +34,7 @@ public class CaccPerception extends AbstractPerceptionCategory<LaneBasedGtu, Lan
     private static final long serialVersionUID = 20190312L;
 
     /** Onboard sensors in the form of a headway GTU type. */
-    private final HeadwayGtuType sensors;
+    private final PerceivedGtuType sensors;
 
     /**
      * Constructor using default sensors with zero delay.
@@ -50,7 +50,7 @@ public class CaccPerception extends AbstractPerceptionCategory<LaneBasedGtu, Lan
      * @param perception perception
      * @param sensors onboard sensor information
      */
-    public CaccPerception(final LanePerception perception, final HeadwayGtuType sensors)
+    public CaccPerception(final LanePerception perception, final PerceivedGtuType sensors)
     {
         super(perception);
         this.sensors = sensors;
@@ -102,7 +102,8 @@ public class CaccPerception extends AbstractPerceptionCategory<LaneBasedGtu, Lan
                         }
 
                         @Override
-                        public AbstractPerceptionReiterable<LaneBasedGtu, PerceivedGtu, LaneBasedGtu>.PrimaryIteratorEntry next()
+                        public AbstractPerceptionReiterable<LaneBasedGtu, PerceivedGtu,
+                                LaneBasedGtu>.PrimaryIteratorEntry next()
                         {
                             hasNext();
                             return this.next;
@@ -114,7 +115,7 @@ public class CaccPerception extends AbstractPerceptionCategory<LaneBasedGtu, Lan
                 protected PerceivedGtu perceive(final LaneBasedGtu object, final Length distance)
                         throws GtuException, ParameterException
                 {
-                    return CaccPerception.this.sensors.createDownstreamGtu(getObject(), object, distance);
+                    return CaccPerception.this.sensors.createPerceivedGtu(getObject(), getObject(), object, distance, true);
                 }
             };
         }

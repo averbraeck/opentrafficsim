@@ -1,0 +1,139 @@
+package org.opentrafficsim.road.gtu.lane.perception.categories.neighbors;
+
+import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
+import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics;
+import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
+
+/**
+ * Whether a GTU needs to be wrapped, or information should be copied for later and unaltered use.
+ * <p>
+ * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
+ * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ */
+public interface PerceivedGtuType
+{
+
+    /** Default wrap implementation. */
+    PerceivedGtuType WRAP = new PerceivedGtuType()
+    {
+    };
+
+    /**
+     * Creates a perceived object from a GTU, downstream or upstream. The default implementation figures out from distance
+     * whether a parallel GTU should be created.
+     * @param perceivingGtu perceiving GTU
+     * @param reference reference object to which distance is given (and to which perception errors should apply, e.g. Conflict)
+     * @param perceivedGtu perceived GTU
+     * @param distance distance
+     * @param downstream downstream (or upstream) neighbor
+     * @return perception object from a gtu
+     * @throws GtuException when headway object cannot be created
+     * @throws ParameterException on invalid parameter value or missing parameter
+     */
+    default PerceivedGtu createPerceivedGtu(final LaneBasedGtu perceivingGtu, final LaneBasedObject reference,
+            final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream)
+            throws GtuException, ParameterException
+    {
+        Speed v = perceivedGtu.getSpeed();
+        Acceleration a = perceivedGtu.getAcceleration();
+        Kinematics kinematics =
+                downstream ? Kinematics.dynamicAhead(distance, v, a, true, perceivedGtu.getLength(), reference.getLength())
+                        : Kinematics.dynamicBehind(distance, v, a, true, perceivedGtu.getLength(), reference.getLength());
+        return PerceivedGtu.of(perceivedGtu, kinematics);
+    }
+
+    /**
+     * Class for neighbors perceived with estimation and anticipation. Adjacent neighbors are perceived exactly.
+     * <p>
+     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
+     * <br>
+     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+     * </p>
+     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
+     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
+     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     */
+    class AnticipationPerceivedGtuType implements PerceivedGtuType
+    {
+        /** Estimation. */
+        private final Estimation estimation;
+
+        /** Anticipation. */
+        private final Anticipation anticipation;
+
+        /** Last update time. */
+        private Time updateTime = null;
+
+        /** Reaction time at update time. */
+        private Duration tr;
+
+        /** Historical moment considered at update time. */
+        private Time when;
+
+        /** Traveled distance during reaction time at update time. */
+        private Length traveledDistance;
+
+        /**
+         * Constructor.
+         * @param estimation estimation
+         * @param anticipation anticipation
+         */
+        public AnticipationPerceivedGtuType(final Estimation estimation, final Anticipation anticipation)
+        {
+            this.estimation = estimation;
+            this.anticipation = anticipation;
+        }
+
+        @Override
+        public PerceivedGtu createPerceivedGtu(final LaneBasedGtu perceivingGtu, final LaneBasedObject reference,
+                final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream)
+                throws GtuException, ParameterException
+        {
+            Time now = perceivedGtu.getSimulator().getSimulatorAbsTime();
+            if (this.updateTime == null || now.si > this.updateTime.si)
+            {
+                this.updateTime = now;
+                this.tr = perceivingGtu.getParameters().getParameter(ParameterTypes.TR);
+                Time whenTemp = now.minus(this.tr);
+                if (this.when == null || whenTemp.si > this.when.si)
+                {
+                    // never go backwards in time if the reaction time increases
+                    this.when = whenTemp;
+                }
+                this.traveledDistance = perceivingGtu.equals(reference)
+                        ? perceivingGtu.getOdometer().minus(perceivingGtu.getOdometer(this.when)) : Length.ZERO;
+            }
+            NeighborTriplet triplet;
+            if (distance.ge0())
+            {
+                triplet = this.estimation.estimate(perceivingGtu, reference, perceivedGtu, distance, downstream, this.when);
+                triplet = this.anticipation.anticipate(triplet, this.tr, this.traveledDistance, downstream);
+            }
+            else
+            {
+                // parallel is estimated exactly
+                triplet = new NeighborTriplet(distance, perceivedGtu.getSpeed(), perceivedGtu.getAcceleration());
+            }
+            Kinematics kinematics = downstream
+                    ? Kinematics.dynamicAhead(triplet.headway(), triplet.speed(), triplet.acceleration(), true,
+                            perceivedGtu.getLength(), perceivingGtu.getLength())
+                    : Kinematics.dynamicBehind(triplet.headway(), triplet.speed(), triplet.acceleration(), true,
+                            perceivedGtu.getLength(), perceivingGtu.getLength());
+            return PerceivedGtu.of(perceivedGtu, kinematics);
+        }
+    }
+
+}

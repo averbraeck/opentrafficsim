@@ -72,7 +72,7 @@ import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationTrafficPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.PerceivedGtuType;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
@@ -678,7 +678,7 @@ public class StrategiesDemo extends AbstractSimulationScript
             LanePerception perception = new CategoricalLanePerception(gtu);
             perception.addPerceptionCategory(new DirectEgoPerception<>(perception));
             perception.addPerceptionCategory(new DirectInfrastructurePerception(perception));
-            perception.addPerceptionCategory(new DirectNeighborsPerception(perception, HeadwayGtuType.WRAP));
+            perception.addPerceptionCategory(new DirectNeighborsPerception(perception, PerceivedGtuType.WRAP));
             perception.addPerceptionCategory(new AnticipationTrafficPerception(perception));
             return perception;
         }

@@ -52,8 +52,8 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.DirectIntersection
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Anticipation;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Estimation;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType.PerceivedHeadwayGtuType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.PerceivedGtuType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.PerceivedGtuType.AnticipationPerceivedGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationHeadway;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSpeed;
@@ -845,10 +845,10 @@ public class ModelParser
             throws XmlParserException
     {
         // Headway GTU type
-        HeadwayGtuType headwayGtuType;
+        PerceivedGtuType headwayGtuType;
         if (perception.getHeadwayGtuType().getWrap() != null)
         {
-            headwayGtuType = HeadwayGtuType.WRAP;
+            headwayGtuType = PerceivedGtuType.WRAP;
         }
         else if (perception.getHeadwayGtuType().getPerceived() != null)
         {
@@ -856,7 +856,7 @@ public class ModelParser
             Estimation estimation = perceived.getEstimation() == null ? Estimation.NONE : perceived.getEstimation().get(eval);
             Anticipation anticipation =
                     perceived.getAnticipation() == null ? Anticipation.NONE : perceived.getAnticipation().get(eval);
-            headwayGtuType = new PerceivedHeadwayGtuType(estimation, anticipation);
+            headwayGtuType = new AnticipationPerceivedGtuType(estimation, anticipation);
         }
         else
         {
@@ -869,7 +869,7 @@ public class ModelParser
         @SuppressWarnings("rawtypes")
         List<Constructor<? extends PerceptionCategory>> categoryConstructorsPerceptionHeadway = new ArrayList<>();
         Class<?>[] perceptionConstructor = new Class[] {LanePerception.class};
-        Class<?>[] perceptionHeadwayConstructor = new Class[] {LanePerception.class, HeadwayGtuType.class};
+        Class<?>[] perceptionHeadwayConstructor = new Class[] {LanePerception.class, PerceivedGtuType.class};
         try
         {
             if (perception.getCategories().getEgo() != null)

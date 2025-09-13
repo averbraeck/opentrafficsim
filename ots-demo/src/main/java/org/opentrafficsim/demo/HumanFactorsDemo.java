@@ -71,8 +71,8 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructu
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Anticipation;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Estimation;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType.PerceivedHeadwayGtuType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.PerceivedGtuType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.PerceivedGtuType.AnticipationPerceivedGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.TaskHeadwayCollector;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTask;
@@ -325,12 +325,12 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
                     CategoricalLanePerception perception =
                             new CategoricalLanePerception(gtu, new Fuller(tasks, behavioralAdapatations, taskManager));
                     // Imperfect estimation of distance and speed difference, with reaction time, and compensatory anticipation
-                    HeadwayGtuType headwayGtuType =
-                            new PerceivedHeadwayGtuType(Estimation.FACTOR_ESTIMATION, Anticipation.CONSTANT_SPEED);
-                    // Standard perception categories, using imperfect perception regarding neighbors with the HeadwayGtuType
+                    PerceivedGtuType perceptionGtuType =
+                            new AnticipationPerceivedGtuType(Estimation.FACTOR_ESTIMATION, Anticipation.CONSTANT_SPEED);
+                    // Standard perception categories, using imperfect perception regarding neighbors
                     perception.addPerceptionCategory(new DirectEgoPerception<>(perception));
                     perception.addPerceptionCategory(new DirectInfrastructurePerception(perception));
-                    perception.addPerceptionCategory(new DirectNeighborsPerception(perception, headwayGtuType));
+                    perception.addPerceptionCategory(new DirectNeighborsPerception(perception, perceptionGtuType));
                     perception.addPerceptionCategory(new AnticipationTrafficPerception(perception));
                     return perception;
                 }

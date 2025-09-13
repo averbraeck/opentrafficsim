@@ -37,18 +37,18 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
     /** */
     private static final long serialVersionUID = 20160811L;
 
-    /** Headway GTU type that should be used. */
-    private final HeadwayGtuType headwayGtuType;
+    /** Perception GTU type that should be used. */
+    private final PerceivedGtuType perceptionGtuType;
 
     /**
      * Constructor.
      * @param perception perception
-     * @param headwayGtuType type of headway gtu to generate
+     * @param perceptionGtuType type of perception gtu to generate
      */
-    public DirectNeighborsPerception(final LanePerception perception, final HeadwayGtuType headwayGtuType)
+    public DirectNeighborsPerception(final LanePerception perception, final PerceivedGtuType perceptionGtuType)
     {
         super(perception);
-        this.headwayGtuType = headwayGtuType;
+        this.perceptionGtuType = perceptionGtuType;
     }
 
     @Override
@@ -72,7 +72,7 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
             for (Entry<LaneBasedGtu> entry : getPerception().getLaneStructure().getFirstDownstreamGtus(new RelativeLane(lat, 1),
                     RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT, RelativePosition.REAR))
             {
-                set.add(this.headwayGtuType.createDownstreamGtu(getGtu(), entry.object(), entry.distance()));
+                set.add(this.perceptionGtuType.createPerceivedGtu(getGtu(), getGtu(), entry.object(), entry.distance(), true));
             }
             return set;
         }
@@ -103,7 +103,7 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
             for (Entry<LaneBasedGtu> entry : getPerception().getLaneStructure().getFirstUpstreamGtus(new RelativeLane(lat, 1),
                     RelativePosition.REAR, RelativePosition.FRONT, RelativePosition.REAR, RelativePosition.FRONT))
             {
-                set.add(this.headwayGtuType.createUpstreamGtu(getGtu(), entry.object(), entry.distance()));
+                set.add(this.perceptionGtuType.createPerceivedGtu(getGtu(), getGtu(), entry.object(), entry.distance(), false));
             }
             return set;
         }
@@ -201,7 +201,8 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
             protected PerceivedGtu perceive(final LaneBasedGtu object, final Length distance)
                     throws GtuException, ParameterException
             {
-                return DirectNeighborsPerception.this.headwayGtuType.createDownstreamGtu(getObject(), object, distance);
+                return DirectNeighborsPerception.this.perceptionGtuType.createPerceivedGtu(getObject(), getObject(), object,
+                        distance, true);
             }
         };
     }
@@ -249,7 +250,8 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
             protected PerceivedGtu perceive(final LaneBasedGtu object, final Length distance)
                     throws GtuException, ParameterException
             {
-                return DirectNeighborsPerception.this.headwayGtuType.createUpstreamGtu(getObject(), object, distance);
+                return DirectNeighborsPerception.this.perceptionGtuType.createPerceivedGtu(getObject(), getObject(), object,
+                        distance, false);
             }
         };
     }

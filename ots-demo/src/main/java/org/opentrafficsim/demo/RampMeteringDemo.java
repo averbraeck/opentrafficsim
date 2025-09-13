@@ -76,7 +76,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructu
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectIntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.HeadwayGtuType;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.PerceivedGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
@@ -582,9 +582,9 @@ public class RampMeteringDemo extends AbstractSimulationScript
             perception.addPerceptionCategory(new DirectEgoPerception<LaneBasedGtu, Perception<LaneBasedGtu>>(perception));
             perception.addPerceptionCategory(new DirectInfrastructurePerception(perception));
             // TODO: perceived GTUs as first type
-            perception.addPerceptionCategory(new DirectNeighborsPerception(perception, HeadwayGtuType.WRAP));
+            perception.addPerceptionCategory(new DirectNeighborsPerception(perception, PerceivedGtuType.WRAP));
             perception.addPerceptionCategory(new AnticipationTrafficPerception(perception));
-            perception.addPerceptionCategory(new DirectIntersectionPerception(perception, HeadwayGtuType.WRAP));
+            perception.addPerceptionCategory(new DirectIntersectionPerception(perception, PerceivedGtuType.WRAP));
             return perception;
         }
 

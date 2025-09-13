@@ -253,7 +253,7 @@ public interface PerceivedObject extends Identifiable, Serializable, Comparable<
                 {
                     overlapVal = overlapVal.plus(overlapFront);
                 }
-                overlap = new Overlap.Record(overlapVal, overlapFront, overlapRear, true, false);
+                overlap = new Overlap.Record(overlapVal, overlapFront, overlapRear, false, false);
             }
             return new Record(distance, objectSpeed, objectAcceleration, facingSameDirection, overlap);
         }
@@ -296,7 +296,7 @@ public interface PerceivedObject extends Identifiable, Serializable, Comparable<
                 {
                     overlapVal = overlapVal.minus(overlapFront);
                 }
-                overlap = new Overlap.Record(overlapVal, overlapFront, overlapRear, true, false);
+                overlap = new Overlap.Record(overlapVal, overlapFront, overlapRear, false, false);
             }
             return new Record(distance, objectSpeed, objectAcceleration, facingSameDirection, overlap);
         }
