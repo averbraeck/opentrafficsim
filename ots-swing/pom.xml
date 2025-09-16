@@ -29,5 +29,10 @@
       <artifactId>dsol-animation-gis</artifactId>
     </dependency>
     
+    <dependency>
+      <groupId>org.djutils</groupId>
+      <artifactId>djutils-swing</artifactId>
+    </dependency>
+    
   </dependencies>
 </project>

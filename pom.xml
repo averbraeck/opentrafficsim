@@ -170,6 +170,12 @@
         <artifactId>djutils-eval</artifactId>
         <version>${djutils.version}</version>
       </dependency>
+      
+      <dependency>
+        <groupId>org.djutils</groupId>
+        <artifactId>djutils-swing</artifactId>
+        <version>${djutils.version}</version>
+      </dependency>
 
       <dependency>
         <groupId>nl.tudelft.simulation</groupId>
