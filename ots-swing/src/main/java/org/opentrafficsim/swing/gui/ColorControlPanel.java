@@ -36,7 +36,7 @@ import org.opentrafficsim.draw.colorer.LegendColorer.LegendEntry;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class ColorControlPanel extends JPanel implements ActionListener
+public class ColorControlPanel extends JPanel implements ActionListener, AppearanceControl
 {
     /** */
     private static final long serialVersionUID = 20150527L;
@@ -114,8 +114,10 @@ public class ColorControlPanel extends JPanel implements ActionListener
             scaleAxis.setNumberFormatOverride(colorbarColorer.getNumberFormat());
             // reduce tick insets from [t=2.0,l=4.0,b=2.0,r=4.0] to cramp legend in small ColorControlPanel
             scaleAxis.setTickLabelInsets(new RectangleInsets(0.0, 4.0, 0.0, 4.0));
+            scaleAxis.setTickLabelPaint(getForeground());
             PaintScaleLegend colorbar = new PaintScaleLegend(colorbarColorer.getBoundsPaintScale(), scaleAxis);
-            colorbar.setStripWidth(13.0); // this is all that fits without increasing the height of the ColorControlPanel
+            // 13px is all that fits without increasing the height of the ColorControlPanel, 1px margin for other computers
+            colorbar.setStripWidth(12.0);
             colorbar.setSubdivisionCount(256);
             colorbar.setPadding(0.0, 25.0, 0.0, 25.0); // horizontal padding for numbers (and units) centered at extreme ticks
             colorbar.setBackgroundPaint(new Color(0, 0, 0, 0));
@@ -181,6 +183,32 @@ public class ColorControlPanel extends JPanel implements ActionListener
         if (parentPanel != null)
         {
             parentPanel.getParent().repaint();
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isBackground()
+    {
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isForeground()
+    {
+        return true;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setForeground(final Color fg)
+    {
+        super.setForeground(fg);
+        if (this.legendPanel != null)
+        {
+            // update tick label color which is based on the foreground color
+            rebuildLegend();
         }
     }
 
