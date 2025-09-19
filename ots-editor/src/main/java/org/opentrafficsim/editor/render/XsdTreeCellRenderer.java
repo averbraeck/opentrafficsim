@@ -95,7 +95,7 @@ public class XsdTreeCellRenderer extends DefaultTreeCellRenderer
         {
             if (node.isInclude())
             {
-                setForeground(OtsEditor.INACTIVE_COLOR);
+                setForeground(OtsEditor.getInvalidColor());
             }
             else
             {
@@ -103,6 +103,7 @@ public class XsdTreeCellRenderer extends DefaultTreeCellRenderer
             }
             if (node.equals(this.editor.getChoiceNode()))
             {
+                // draws cell to mimic header bar above choice menu
                 setOpaque(true);
                 setBackground(new Color(UIManager.getColor("Panel.background").getRGB())); // ColorUIResource is ignored
                 setBorder(new LineBorder(UIManager.getColor("Menu.acceleratorForeground"), 1, false));
@@ -114,7 +115,7 @@ public class XsdTreeCellRenderer extends DefaultTreeCellRenderer
                     if (node.hasExpression())
                     {
                         setOpaque(true);
-                        setBackground(OtsEditor.EXPRESSION_COLOR);
+                        setBackground(OtsEditor.getExpressionColor());
                     }
                     else
                     {
@@ -124,7 +125,7 @@ public class XsdTreeCellRenderer extends DefaultTreeCellRenderer
                 else
                 {
                     setOpaque(true);
-                    setBackground(OtsEditor.INVALID_COLOR);
+                    setBackground(OtsEditor.getInvalidColor());
                 }
                 setBorder(new EmptyBorder(0, 0, 0, 0));
             }

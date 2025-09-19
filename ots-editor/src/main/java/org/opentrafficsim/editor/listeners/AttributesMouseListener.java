@@ -8,6 +8,7 @@ import javax.swing.JTable;
 
 import org.opentrafficsim.editor.AttributesTableModel;
 import org.opentrafficsim.editor.DocumentReader;
+import org.opentrafficsim.editor.DocumentReader.NodeAnnotation;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 
@@ -46,7 +47,7 @@ public class AttributesMouseListener extends MouseAdapter
         int col = this.attributesTable.columnAtPoint(e.getPoint());
         int row = this.attributesTable.rowAtPoint(e.getPoint());
         XsdTreeNode node = ((AttributesTableModel) this.attributesTable.getModel()).getNode();
-        String description = DocumentReader.getAnnotation(node.getAttributeNode(row), "xsd:documentation", "description");
+        String description = DocumentReader.getAnnotation(node.getAttributeNode(row), NodeAnnotation.DOCUMENTATION);
         if (this.attributesTable.convertColumnIndexToModel(col) == 3
                 && this.attributesTable.getModel().getValueAt(row, col) != null)
         {
@@ -80,8 +81,7 @@ public class AttributesMouseListener extends MouseAdapter
             if (!node.isInclude())
             {
                 List<String> allOptions = node.getAttributeRestrictions(row);
-                JTable table = this.attributesTable;
-                this.editor.optionsPopup(allOptions, table, (t) -> node.setAttributeValue(row, t));
+                this.editor.valueOptionsPopup(allOptions, this.attributesTable, (t) -> node.setAttributeValue(row, t));
             }
         }
     }

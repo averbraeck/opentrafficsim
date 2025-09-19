@@ -38,13 +38,13 @@ public class AutomaticConnectorId extends AutomaticLinkId
         if (nodeId != null && centroid != null && ("true".equalsIgnoreCase(outbound) || "false".equalsIgnoreCase(outbound))
                 && id == null)
         {
-            this.lastNode = node;
-            this.lastId = debrace("true".equalsIgnoreCase(outbound) ? (centroid + "-" + nodeId) : (nodeId + "-" + centroid));
+            setLastNode(node);
+            setLastId("true".equalsIgnoreCase(outbound) ? (centroid + "-" + nodeId) : (nodeId + "-" + centroid));
         }
         else
         {
-            this.lastNode = null;
-            this.lastId = null;
+            setLastNode(null);
+            setLastId(null);
         }
     }
 }

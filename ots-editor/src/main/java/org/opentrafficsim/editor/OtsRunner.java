@@ -33,6 +33,7 @@ import nl.tudelft.simulation.language.DsolException;
  */
 public class OtsRunner extends OtsSimulationApplication<OtsRunnerModel>
 {
+
     /** */
     private static final long serialVersionUID = 20231012;
 
@@ -43,7 +44,7 @@ public class OtsRunner extends OtsSimulationApplication<OtsRunnerModel>
      */
     public OtsRunner(final OtsAnimationPanel panel, final OtsRunnerModel model)
     {
-        // TODO: colorer and markers based on user specification
+        // TODO colorer and markers based on user specification
         super(model, panel, Collections.emptyMap());
     }
 
@@ -56,6 +57,7 @@ public class OtsRunner extends OtsSimulationApplication<OtsRunnerModel>
     {
         try
         {
+            // TODO two-pass XML parser to read history, simulation time, etc.
             OtsAnimator simulator = new OtsAnimator("EditorRun");
             final OtsRunnerModel runnerModel = new OtsRunnerModel(simulator, file, scenario);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), runnerModel,
@@ -132,6 +134,6 @@ public class OtsRunner extends OtsSimulationApplication<OtsRunnerModel>
         {
             return this.network;
         }
-
     }
+
 }

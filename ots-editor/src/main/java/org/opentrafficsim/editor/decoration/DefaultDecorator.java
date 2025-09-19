@@ -1,12 +1,17 @@
 package org.opentrafficsim.editor.decoration;
 
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.naming.NamingException;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
+import org.opentrafficsim.base.Resource;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.decoration.string.AttributesStringFunction;
@@ -54,32 +59,32 @@ public final class DefaultDecorator
      */
     public static void decorate(final OtsEditor editor) throws IOException, NamingException
     {
-        ImageIcon roadIcon = OtsEditor.loadIcon("./OTS_road.png", -1, -1, -1, -1);
-        ImageIcon networkIcon = OtsEditor.loadIcon("./OTS_network.png", -1, -1, -1, -1);
-        ImageIcon nodeIcon = OtsEditor.loadIcon("./OTS_node.png", -1, -1, -1, -1);
+        ImageIcon roadIcon = loadIcon("./OTS_road.png", -1, -1, -1, -1);
+        ImageIcon networkIcon = loadIcon("./OTS_network.png", -1, -1, -1, -1);
+        ImageIcon nodeIcon = loadIcon("./OTS_node.png", -1, -1, -1, -1);
 
-        editor.setCustomIcon("Ots", OtsEditor.loadIcon("./OTS_merge.png", 14, 14, 16, 16));
-        editor.setCustomIcon("Ots.Definitions", OtsEditor.loadIcon("./Database.png", 14, 14, 16, 16));
+        editor.setCustomIcon("Ots", loadIcon("./OTS_merge.png", 14, 14, 16, 16));
+        editor.setCustomIcon("Ots.Definitions", loadIcon("./Database.png", 14, 14, 16, 16));
         editor.setCustomIcon(".RoadLayout", roadIcon);
         editor.setCustomIcon("Ots.Network.Link.DefinedLayout", roadIcon);
         editor.setCustomIcon("Ots.Network", networkIcon);
         editor.setCustomIcon(".Node", nodeIcon);
-        editor.setCustomIcon(".Centroid", OtsEditor.loadIcon("./OTS_centroid.png", -1, -1, -1, -1));
-        editor.setCustomIcon("Ots.Network.Connector", OtsEditor.loadIcon("./OTS_connector.png", -1, -1, -1, -1));
-        editor.setCustomIcon(".Link", OtsEditor.loadIcon("./OTS_link.png", -1, -1, -1, -1));
-        editor.setCustomIcon("Ots.Demand", OtsEditor.loadIcon("./Calendar.png", 16, 16, -1, -1));
+        editor.setCustomIcon(".Centroid", loadIcon("./OTS_centroid.png", -1, -1, -1, -1));
+        editor.setCustomIcon("Ots.Network.Connector", loadIcon("./OTS_connector.png", -1, -1, -1, -1));
+        editor.setCustomIcon(".Link", loadIcon("./OTS_link.png", -1, -1, -1, -1));
+        editor.setCustomIcon("Ots.Demand", loadIcon("./Calendar.png", 16, 16, -1, -1));
         editor.setCustomIcon("Ots.Demand.ShortestRoute.From", nodeIcon);
         editor.setCustomIcon("Ots.Demand.ShortestRoute.To", nodeIcon);
         editor.setCustomIcon("Ots.Demand.ShortestRoute.Via", nodeIcon);
         editor.setCustomIcon("Ots.Demand.OdOptions.OdOptionsItem.Origin", nodeIcon);
-        editor.setCustomIcon("Ots.Demand.Od", OtsEditor.loadIcon("./Table_blue.png", 16, 16, -1, -1));
-        editor.setCustomIcon("Ots.Models", OtsEditor.loadIcon("./Component_blue.png", 16, 16, -1, -1));
-        editor.setCustomIcon("Ots.Scenarios", OtsEditor.loadIcon("./Film.png", 14, 14, 16, 16));
-        editor.setCustomIcon("Ots.Control", OtsEditor.loadIcon("./OTS_control.png", -1, -1, -1, -1));
-        editor.setCustomIcon("Ots.Run", OtsEditor.loadIcon("./Stopwatch.png", 16, 16, -1, -1));
-        editor.setCustomIcon("Ots.Animation", OtsEditor.loadIcon("./Play.png", 14, 14, 16, 16));
-        editor.setCustomIcon("Ots.Animation.Connector", OtsEditor.loadIcon("./OTS_connector.png", -1, -1, -1, -1));
-        editor.setCustomIcon("Ots.Output", OtsEditor.loadIcon("./Report.png", 14, 14, 16, 16)); // does not exist yet
+        editor.setCustomIcon("Ots.Demand.Od", loadIcon("./Table_blue.png", 16, 16, -1, -1));
+        editor.setCustomIcon("Ots.Models", loadIcon("./Component_blue.png", 16, 16, -1, -1));
+        editor.setCustomIcon("Ots.Scenarios", loadIcon("./Film.png", 14, 14, 16, 16));
+        editor.setCustomIcon("Ots.Control", loadIcon("./OTS_control.png", -1, -1, -1, -1));
+        editor.setCustomIcon("Ots.Run", loadIcon("./Stopwatch.png", 16, 16, -1, -1));
+        editor.setCustomIcon("Ots.Animation", loadIcon("./Play.png", 14, 14, 16, 16));
+        editor.setCustomIcon("Ots.Animation.Connector", loadIcon("./OTS_connector.png", -1, -1, -1, -1));
+        editor.setCustomIcon("Ots.Output", loadIcon("./Report.png", 14, 14, 16, 16)); // does not exist yet
 
         editor.addTab("Map", networkIcon, EditorMap.build(editor), "Map editor");
         editor.addTab("Parameters", null, buildParameterPane(), null);
@@ -170,6 +175,36 @@ public final class DefaultDecorator
     }
 
     /**
+     * Loads an icon, possibly rescaled.
+     * @param image image filename, relative in resources.
+     * @param width width to resize to, may be -1 to leave as is.
+     * @param height width to resize to, may be -1 to leave as is.
+     * @param bgWidth background image width icon will be centered in, may be -1 to leave as is.
+     * @param bgHeight background image height icon will be centered in, may be -1 to leave as is.
+     * @return image icon.
+     * @throws IOException if the file is not in resources.
+     */
+    public static ImageIcon loadIcon(final String image, final int width, final int height, final int bgWidth,
+            final int bgHeight) throws IOException
+    {
+        Image im = ImageIO.read(Resource.getResourceAsStream(image));
+        if (width > 0 || height > 0)
+        {
+            im = im.getScaledInstance(width > 0 ? width : im.getWidth(null), height > 0 ? height : im.getHeight(null),
+                    Image.SCALE_SMOOTH);
+        }
+        if (bgWidth > 0 && bgHeight > 0)
+        {
+            BufferedImage bg = new BufferedImage(bgWidth > 0 ? bgWidth : im.getWidth(null),
+                    bgHeight > 0 ? bgHeight : im.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+            Graphics g = bg.getGraphics();
+            g.drawImage(im, (bg.getWidth() - im.getWidth(null)) / 2, (bg.getHeight() - im.getHeight(null)) / 2, null);
+            im = bg;
+        }
+        return new ImageIcon(im);
+    }
+
+    /**
      * Prints nodes that are created or removed.
      * <p>
      * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
@@ -188,7 +223,7 @@ public final class DefaultDecorator
          * Constructor.
          * @param editor editor.
          */
-        public NodeCreatedRemovedPrinter(final OtsEditor editor)
+        NodeCreatedRemovedPrinter(final OtsEditor editor)
         {
             super(editor);
         }

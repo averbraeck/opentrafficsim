@@ -104,7 +104,7 @@ public class AttributesCellEditor extends DefaultCellEditor
                 if (message != null)
                 {
                     this.checkBox.setToolTipText(OtsEditor.limitTooltip(message));
-                    this.checkBox.setBackground(OtsEditor.INVALID_COLOR);
+                    this.checkBox.setBackground(OtsEditor.getInvalidColor());
                 }
                 else
                 {

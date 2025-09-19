@@ -4,6 +4,7 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.editor.DocumentReader.NodeAnnotation;
 import org.w3c.dom.Node;
 
 import de.javagl.treetable.JTreeTable;
@@ -76,8 +77,10 @@ public class AttributesTableModel extends AbstractTableModel
     public boolean isCellEditable(final int rowIndex, final int columnIndex)
     {
         if (this.node.getPathString().startsWith(XsdPaths.DEFINITIONS)
+                && "Default".equals(this.node.getAttributeNameByIndex(rowIndex))
                 && "xsd:boolean".equals(this.node.getAttributeBaseType(rowIndex)))
         {
+            // disable check boxes regarding the 'Default' status of definitions as definitions edited in the editor never are
             return false;
         }
         return columnIndex == 1 && !this.node.isInclude();
@@ -98,7 +101,7 @@ public class AttributesTableModel extends AbstractTableModel
                 String use = DocumentReader.getAttribute(attribute, "use");
                 return use != null && use.equals("required") ? "*" : "";
             case 3:
-                return DocumentReader.getAnnotation(attribute, "xsd:documentation", "description") != null ? "i" : null;
+                return DocumentReader.getAnnotation(attribute, NodeAnnotation.DOCUMENTATION) != null ? "i" : null;
             default:
                 throw new IndexOutOfBoundsException();
         }
@@ -107,7 +110,7 @@ public class AttributesTableModel extends AbstractTableModel
     @Override
     public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex)
     {
-        Throw.when(columnIndex != 1, IllegalStateException.class,
+        Throw.when(columnIndex != 1, IllegalArgumentException.class,
                 "Attribute table model requested to set a value from a column that does not represent the attribute value.");
         if (aValue == null)
         {
@@ -120,7 +123,7 @@ public class AttributesTableModel extends AbstractTableModel
         }
         this.node.setAttributeValue(rowIndex, aValue.toString());
         this.treeTable.updateUI();
-        this.fireTableCellUpdated(rowIndex, columnIndex);
+        fireTableCellUpdated(rowIndex, columnIndex);
     }
 
     /**
@@ -138,6 +141,8 @@ public class AttributesTableModel extends AbstractTableModel
      */
     public static void applyColumnWidth(final JTable attributeTable)
     {
+        Throw.when(attributeTable.getColumnCount() != COLUMN_NAMES.length, IllegalArgumentException.class,
+                "The number of columns in the table to show node attributes is not equal to the number of defined columns.");
         for (int i = 0; i < attributeTable.getColumnCount(); i++)
         {
             attributeTable.getColumn(COLUMN_NAMES[i]).setMinWidth(MIN_COLUMN_WIDTHS[i]);

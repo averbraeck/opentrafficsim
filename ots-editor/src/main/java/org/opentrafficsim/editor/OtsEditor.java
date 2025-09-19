@@ -5,27 +5,17 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FileDialog;
-import java.awt.FlowLayout;
-import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -57,7 +47,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -77,21 +66,12 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.CellEditorListener;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
-import javax.swing.event.TreeExpansionEvent;
-import javax.swing.event.TreeWillExpandListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
-import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreePath;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -114,12 +94,14 @@ import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.Resource;
 import org.opentrafficsim.editor.EvalWrapper.EvalListener;
 import org.opentrafficsim.editor.Undo.ActionType;
+import org.opentrafficsim.editor.decoration.DefaultDecorator;
 import org.opentrafficsim.editor.listeners.AttributesListSelectionListener;
 import org.opentrafficsim.editor.listeners.AttributesMouseListener;
 import org.opentrafficsim.editor.listeners.ChangesListener;
+import org.opentrafficsim.editor.listeners.PopupValueSelectedListener;
+import org.opentrafficsim.editor.listeners.XsdTreeEditorListener;
 import org.opentrafficsim.editor.listeners.XsdTreeKeyListener;
-import org.opentrafficsim.editor.listeners.XsdTreeMouseListener;
-import org.opentrafficsim.editor.listeners.XsdTreeSelectionListener;
+import org.opentrafficsim.editor.listeners.XsdTreeListener;
 import org.opentrafficsim.editor.render.AttributeCellRenderer;
 import org.opentrafficsim.editor.render.AttributesCellEditor;
 import org.opentrafficsim.editor.render.StringCellRenderer;
@@ -171,24 +153,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /** Color for inactive nodes (text). */
     public static final Color INACTIVE_COLOR = new Color(160, 160, 160);
-
-    /** Color for status label. */
-    public static final Color STATUS_COLOR = new Color(128, 128, 128);
-
-    /** Color for invalid nodes and values (background). */
-    public static final Color INVALID_COLOR = new Color(255, 240, 240);
-
-    /** Color for expression nodes and values (background). */
-    public static final Color EXPRESSION_COLOR = new Color(252, 250, 239);
-
-    /** Maximum length for tooltips. */
-    private static final int MAX_TOOLTIP_LENGTH = 96;
-
-    /** Maximum number of items to show in a dropdown menu. */
-    private static final int MAX_DROPDOWN_ITEMS = 20;
-
-    /** Maximum number of back navigation steps stored. */
-    private static final int MAX_NAVIGATE = 50;
 
     /** Indent for first item shown in dropdown. */
     private int dropdownIndent = 0;
@@ -264,10 +228,10 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     /** Keyref node that was coupled from to a key node, may be {@code null}. */
     private final LinkedList<XsdTreeNode> backNode = new LinkedList<>();
 
-    /** Candidate atrribute of back node referring to coupled node, may be {@code null}. */
+    /** Candidate attribute of back node referring to coupled node, may be {@code null}. */
     private String candidateBackAttribute;
 
-    /** Atrribute of back node referring to coupled node, may be {@code null}. */
+    /** Attribute of back node referring to coupled node, may be {@code null}. */
     private final LinkedList<String> backAttribute = new LinkedList<>();
 
     /** Menu item for jumping to coupled node. */
@@ -288,7 +252,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     private NodeActions nodeActions;
 
     /** Application store for preferences and recent files. */
-    private ApplicationStore applicationStore = new ApplicationStore("ots", "editor");
+    private static final ApplicationStore APPLICATION_STORE = new ApplicationStore("OTS", "editor");
 
     /** Menu with recent files. */
     private JMenu recentFilesMenu;
@@ -306,9 +270,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     public OtsEditor() throws IOException
     {
         super();
-
         setSize(1280, 720);
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE); // only exit after possible confirmation in case of unsaved changes
         addWindowListener(new WindowAdapter()
         {
             @Override
@@ -327,7 +290,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         this.rightSplitPane.setDividerSize(DIVIDER_SIZE);
         this.rightSplitPane.setResizeWeight(0.5);
         this.rightSplitPane.setAlignmentX(0.5f);
-
         JPanel rightContainer = new JPanel();
         rightContainer.setLayout(new BoxLayout(rightContainer, BoxLayout.Y_AXIS));
         rightContainer.setBorder(new LineBorder(null, -1));
@@ -339,11 +301,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         controlsContainer.setBorder(new LineBorder(null, -1));
         controlsContainer.setMinimumSize(new Dimension(200, 28));
         controlsContainer.setPreferredSize(new Dimension(200, 28));
-        JLabel scenarioLabel = new JLabel("Scenario: ");
-        // scenarioLabel.setFont(FONT);
-        controlsContainer.add(scenarioLabel);
+        controlsContainer.add(new JLabel("Scenario: "));
         this.scenario = new AppearanceControlComboBox<>();
-        // this.scenario.setFont(FONT);
         this.scenario.addItem(new ScenarioWrapper(null));
         this.scenario.setMinimumSize(new Dimension(50, 22));
         this.scenario.setMaximumSize(new Dimension(250, 22));
@@ -369,26 +328,27 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         controlsContainer.add(Box.createHorizontalStrut(2));
         JButton playRun = new JButton();
         playRun.setToolTipText("Run single run");
-        playRun.setIcon(loadIcon("./Play.png", 18, 18, -1, -1));
-        playRun.setMinimumSize(new Dimension(24, 24));
-        playRun.setMaximumSize(new Dimension(24, 24));
-        playRun.setPreferredSize(new Dimension(24, 24));
+        playRun.setIcon(DefaultDecorator.loadIcon("./Play.png", 18, 18, -1, -1));
+        Dimension iconDimension = new Dimension(24, 24);
+        playRun.setMinimumSize(iconDimension);
+        playRun.setMaximumSize(iconDimension);
+        playRun.setPreferredSize(iconDimension);
         playRun.addActionListener((a) -> runSingle());
         controlsContainer.add(playRun);
         JButton playScenario = new JButton();
         playScenario.setToolTipText("Run scenario (batch)");
-        playScenario.setIcon(loadIcon("./NextTrack.png", 18, 18, -1, -1));
-        playScenario.setMinimumSize(new Dimension(24, 24));
-        playScenario.setMaximumSize(new Dimension(24, 24));
-        playScenario.setPreferredSize(new Dimension(24, 24));
+        playScenario.setIcon(DefaultDecorator.loadIcon("./NextTrack.png", 18, 18, -1, -1));
+        playScenario.setMinimumSize(iconDimension);
+        playScenario.setMaximumSize(iconDimension);
+        playScenario.setPreferredSize(iconDimension);
         playScenario.addActionListener((a) -> runBatch(false));
         controlsContainer.add(playScenario);
         JButton playAll = new JButton();
         playAll.setToolTipText("Run all (batch)");
-        playAll.setIcon(loadIcon("./Last_recor.png", 18, 18, -1, -1));
-        playAll.setMinimumSize(new Dimension(24, 24));
-        playAll.setMaximumSize(new Dimension(24, 24));
-        playAll.setPreferredSize(new Dimension(24, 24));
+        playAll.setIcon(DefaultDecorator.loadIcon("./Last_recor.png", 18, 18, -1, -1));
+        playAll.setMinimumSize(iconDimension);
+        playAll.setMaximumSize(iconDimension);
+        playAll.setPreferredSize(iconDimension);
         playAll.addActionListener((a) -> runBatch(true));
         controlsContainer.add(playAll);
         controlsContainer.add(Box.createHorizontalStrut(4));
@@ -397,7 +357,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         rightContainer.add(this.rightSplitPane);
         this.leftRightSplitPane.setRightComponent(rightContainer);
 
-        this.questionIcon = loadIcon("./Question.png", -1, -1, -1, -1);
+        this.questionIcon = DefaultDecorator.loadIcon("./Question.png", -1, -1, -1, -1);
 
         // visualization pane
         UIManager.getInsets("TabbedPane.contentBorderInsets").set(-1, -1, 1, -1);
@@ -438,7 +398,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         this.attributesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.attributesTable.putClientProperty("terminateEditOnFocusLost", true);
         this.attributesTable.setDefaultRenderer(String.class,
-                new AttributeCellRenderer(loadIcon("./Info.png", 12, 12, 16, 16)));
+                new AttributeCellRenderer(DefaultDecorator.loadIcon("./Info.png", 12, 12, 16, 16)));
         AttributesCellEditor editor = new AttributesCellEditor(this.attributesTable, this);
         this.attributesTable.setDefaultEditor(String.class, editor);
         this.attributesTable.addMouseListener(new AttributesMouseListener(this, this.attributesTable));
@@ -450,11 +410,28 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         addMenuBar();
 
         this.statusLabel = new StatusLabel();
-        this.statusLabel.setForeground(STATUS_COLOR);
         this.statusLabel.setHorizontalAlignment(SwingConstants.LEFT);
         this.statusLabel.setBorder(new BevelBorder(BevelBorder.LOWERED));
         add(this.statusLabel, BorderLayout.SOUTH);
         removeStatusLabel();
+    }
+
+    /**
+     * Returns the invalid cell color.
+     * @return the invalid cell color
+     */
+    public static Color getInvalidColor()
+    {
+        return APPLICATION_STORE.getColor("invalid_color");
+    }
+
+    /**
+     * Returns the expression cell color.
+     * @return the expression cell color
+     */
+    public static Color getExpressionColor()
+    {
+        return APPLICATION_STORE.getColor("expression_color");
     }
 
     /**
@@ -464,7 +441,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     {
         if (!((XsdTreeNode) this.treeTable.getTree().getModel().getRoot()).isValid())
         {
-            showInvalidMessage();
+            showInvalidToRunMessage();
             return;
         }
         int index = this.scenario.getSelectedIndex();
@@ -485,7 +462,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         }
         catch (IOException exception)
         {
-            showUnableToRun();
+            showUnableToRunFromTempFile();
             return;
         }
         save(file, (XsdTreeNodeRoot) this.treeTable.getTree().getModel().getRoot(), false);
@@ -496,8 +473,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         }
         else
         {
-            String scenario = this.scenario.getItemAt(index).getScenarioNode().getId();
-            OtsRunner.runSingle(file, scenario);
+            String selectedScenario = this.scenario.getItemAt(index).scenarioNode().getId();
+            OtsRunner.runSingle(file, selectedScenario);
         }
         file.delete();
     }
@@ -510,10 +487,10 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     {
         if (!((XsdTreeNode) this.treeTable.getTree().getModel().getRoot()).isValid())
         {
-            showInvalidMessage();
+            showInvalidToRunMessage();
             return;
         }
-        // TODO: should probably create a utility to run from XML as demo fromXML, but with batch function too
+        // TODO should probably create a utility to run from XML as demo fromXML, but with batch function too
         if (all)
         {
             System.out.println("Running all.");
@@ -550,10 +527,10 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         TreePath path = this.treeTable.getTree().getSelectionPath();
         if (this.treeTable.getTree().isExpanded(path))
         {
-            this.getNodeActions().expand(node, path, true);
+            getNodeActions().expand(node, path, true);
         }
     }
-    
+
     /**
      * Shows and selects the given node in the tree.
      * @param node node.
@@ -597,14 +574,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         bounds.y += this.treeTable.getY();
         ((JComponent) this.treeTable.getParent()).scrollRectToVisible(bounds);
 
-        if (node.isActive())
-        {
-            this.attributesTable.setModel(new AttributesTableModel(node, this.treeTable));
-        }
-        else
-        {
-            this.attributesTable.setModel(new AttributesTableModel(null, this.treeTable));
-        }
+        this.attributesTable.setModel(new AttributesTableModel(node.isActive() ? node : null, this.treeTable));
         if (attribute != null)
         {
             int index = node.getAttributeIndexByName(attribute);
@@ -640,7 +610,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     {
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
-
         JMenu fileMenu = new JMenu("File");
         menuBar.add(fileMenu);
         JMenuItem newFile = new JMenuItem("New");
@@ -662,9 +631,9 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         fileMenu.add(saveAs);
         saveAs.addActionListener((a) -> saveFileAs((XsdTreeNodeRoot) OtsEditor.this.treeTable.getTree().getModel().getRoot()));
         fileMenu.add(new JSeparator());
-        JMenuItem properties = new JMenuItem("Properties...");
-        fileMenu.add(properties);
-        properties.addActionListener((a) -> showProperties());
+        JMenuItem propertiesItem = new JMenuItem("Properties...");
+        fileMenu.add(propertiesItem);
+        propertiesItem.addActionListener((a) -> new PropertiesDialog(this, this.properties, this.questionIcon));
         fileMenu.add(new JSeparator());
         JMenuItem exit = new JMenuItem("Exit");
         fileMenu.add(exit);
@@ -672,28 +641,14 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
         JMenu editMenu = new JMenu("Edit");
         menuBar.add(editMenu);
-
         JMenuItem undoItem = new JMenuItem("Undo");
         undoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, ActionEvent.CTRL_MASK));
         editMenu.add(undoItem);
-        undoItem.addActionListener((a) ->
-        {
-            if (undoItem.isEnabled())
-            {
-                OtsEditor.this.undo.undo();
-            }
-        });
-
+        undoItem.addActionListener((a) -> OtsEditor.this.undo.undo());
         JMenuItem redoItem = new JMenuItem("Redo");
         redoItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, ActionEvent.CTRL_MASK));
         editMenu.add(redoItem);
-        redoItem.addActionListener((a) ->
-        {
-            if (redoItem.isEnabled())
-            {
-                OtsEditor.this.undo.redo();
-            }
-        });
+        redoItem.addActionListener((a) -> OtsEditor.this.undo.redo());
         this.undo = new Undo(this, undoItem, redoItem);
 
         JMenu navigateMenu = new JMenu("Navigate");
@@ -727,7 +682,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             {
                 this.backNode.add(this.candidateBackNode);
                 this.backAttribute.add(this.candidateBackAttribute);
-                while (this.backNode.size() > MAX_NAVIGATE)
+                while (this.backNode.size() > APPLICATION_STORE.getInt("max_navigate"))
                 {
                     this.backNode.remove();
                     this.backAttribute.remove();
@@ -746,7 +701,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     private void updateRecentFileMenu()
     {
         this.recentFilesMenu.removeAll();
-        List<String> files = this.applicationStore.getRecentFiles("recent_files");
+        List<String> files = APPLICATION_STORE.getRecentFiles("recent_files");
         if (!files.isEmpty())
         {
             for (String file : files)
@@ -762,12 +717,12 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                         if (!loadFile(f, "File loaded", true))
                         {
                             boolean remove = JOptionPane.showConfirmDialog(OtsEditor.this,
-                                    "File could not be loaded. Do you want ro remove it from recent files?",
+                                    "File could not be loaded. Do you want to remove it from recent files?",
                                     "Remove from recent files?", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
                                     this.questionIcon) == JOptionPane.OK_OPTION;
                             if (remove)
                             {
-                                this.applicationStore.removeRecentFile("recent_files", file);
+                                APPLICATION_STORE.removeRecentFile("recent_files", file);
                                 updateRecentFileMenu();
                             }
                         }
@@ -786,7 +741,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                     this.questionIcon) == JOptionPane.OK_OPTION;
             if (clear)
             {
-                this.applicationStore.clearProperty("recent_files");
+                APPLICATION_STORE.clearProperty("recent_files");
                 updateRecentFileMenu();
             }
         });
@@ -796,13 +751,13 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     /**
      * Sets coupled node from user action, i.e. the node that contains the key value to which a user selected node with keyref
      * refers to.
-     * @param coupledNode key node that is coupled to from a keyref node, may be {@code null}.
-     * @param backNode keyref node that is coupled from to a key node, may be {@code null}.
-     * @param backAttribute attribute in keyref node that refers to coupled node, may be {@code null}.
+     * @param toNode key node that is coupled to from a keyref node, may be {@code null}.
+     * @param fromNode keyref node that is coupled from to a key node, may be {@code null}.
+     * @param fromAttribute attribute in keyref node that refers to coupled node, may be {@code null}.
      */
-    public void setCoupledNode(final XsdTreeNode coupledNode, final XsdTreeNode backNode, final String backAttribute)
+    public void setCoupledNode(final XsdTreeNode toNode, final XsdTreeNode fromNode, final String fromAttribute)
     {
-        if (coupledNode == null)
+        if (toNode == null)
         {
             this.coupledItem.setEnabled(false);
             this.coupledItem.setText("Go to coupled item");
@@ -810,12 +765,12 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         else
         {
             this.coupledItem.setEnabled(true);
-            this.coupledItem.setText("Go to " + (backAttribute != null ? backNode.getAttributeValue(backAttribute)
-                    : (backNode.isIdentifiable() ? backNode.getId() : backNode.getValue())));
+            this.coupledItem.setText("Go to " + (fromAttribute != null ? fromNode.getAttributeValue(fromAttribute)
+                    : (fromNode.isIdentifiable() ? fromNode.getId() : fromNode.getValue())));
         }
-        this.coupledNode = coupledNode;
-        this.candidateBackNode = backNode;
-        this.candidateBackAttribute = backAttribute;
+        this.coupledNode = toNode;
+        this.candidateBackNode = fromNode;
+        this.candidateBackAttribute = fromAttribute;
     }
 
     /**
@@ -850,12 +805,10 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         initializeTree();
         this.undo.clear();
         setStatusLabel("Schema " + xsdDocument.getBaseURI() + " loaded");
-
         setVisible(true);
         this.leftRightSplitPane.setDividerLocation(0.65);
         this.rightSplitPane.setDividerLocation(0.75);
         setAppearance(getAppearance());
-
         SwingUtilities.invokeLater(() -> checkAutosave());
     }
 
@@ -894,8 +847,8 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                 if (!loaded)
                 {
                     boolean remove = JOptionPane.showConfirmDialog(OtsEditor.this,
-                            "File could not be loaded. Do you want ro remove it from recent files?",
-                            "Remove from recent files?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+                            "Autosave file could not be loaded. Do you want ro remove it?", "Remove autosave?",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
                             this.questionIcon) == JOptionPane.YES_OPTION;
                     if (remove)
                     {
@@ -922,8 +875,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         {
             try
             {
-                XsdTreeNode node = (XsdTreeNode) this.treeTable.getTree().getModel().getRoot();
-                this.undo.startAction(ActionType.ADD, node, null);
+                this.undo.setIgnoreChanges(true);
                 initializeTree();
                 this.attributesTable.setModel(new AttributesTableModel(null, this.treeTable));
                 this.undo.clear();
@@ -956,11 +908,25 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         this.treeTable.setDefaultRenderer(String.class, new StringCellRenderer(this.treeTable));
         ((DefaultCellEditor) this.treeTable.getDefaultEditor(String.class)).setClickCountToStart(1);
         XsdTreeTableModel.applyColumnWidth(this.treeTable);
+        // sets custom icon and appends the choice icon for choice nodes
+        this.treeTable.getTree().setCellRenderer(new XsdTreeCellRenderer(this));
 
-        addTreeTableListeners();
+        // this listener changes Id or node Value for each key being pressed
+        // this listener starts a new undo event when the editor gets focus on the JTreeTable
+        // this listener may cause new undo actions when cells are navigated using the keyboard
+        new XsdTreeEditorListener(this, this.treeTable);
+
+        // throws selection events and updates the attributes table
+        // this listener will make sure no choice popup is presented by a left-click on expand/collapse, even for a choice node
+        // this listener makes sure that a choice popup can be presented again after a left-click on an expansion/collapse node
+        // it also shows the tooltip in tree nodes
+        // this listener opens the attributes of a node, and presents the popup for a choice or for addition/deletion of nodes
+        new XsdTreeListener(this, this.treeTable, this.attributesTable);
+
+        // listener to keyboard shortcuts and key events that should start (i.e. end previous) undo actions
+        new XsdTreeKeyListener(this, this.treeTable);
 
         int dividerLocation = this.rightSplitPane.getDividerLocation();
-        this.rightSplitPane.setTopComponent(null);
         this.rightSplitPane.setTopComponent(new JScrollPane(this.treeTable));
         this.rightSplitPane.setDividerLocation(dividerLocation);
 
@@ -992,13 +958,13 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             }
         };
         new Timer().scheduleAtFixedRate(this.autosave, AUTOSAVE_PERIOD_MS, AUTOSAVE_PERIOD_MS);
-        setAppearance(getAppearance());
+        setAppearance(getAppearance()); // because of new AppearanceControlTreeTable
     }
 
     /**
      * Sets the default properties.
      */
-    private void setDefaultProperties()
+    void setDefaultProperties()
     {
         this.properties.clear();
         this.properties.add("xmlns:ots");
@@ -1012,143 +978,13 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     }
 
     /**
-     * Adds all listeners to the tree table.
-     * @throws IOException on exception.
-     */
-    private void addTreeTableListeners() throws IOException
-    {
-        // this listener changes Id or node value values for each key being pressed
-        DefaultCellEditor editor = (DefaultCellEditor) this.treeTable.getDefaultEditor(String.class);
-        ((JTextField) editor.getComponent()).addKeyListener(new KeyAdapter()
-        {
-            @Override
-            public void keyReleased(final KeyEvent e)
-            {
-                int editorCol = OtsEditor.this.treeTable.convertColumnIndexToView(OtsEditor.this.treeTable.getSelectedColumn());
-                if (editorCol == 1 || editorCol == 2)
-                {
-                    int row = OtsEditor.this.treeTable.getSelectedRow();
-                    int col = OtsEditor.this.treeTable.convertColumnIndexToView(0); // columns may have been moved in view
-                    XsdTreeNode treeNode = (XsdTreeNode) OtsEditor.this.treeTable.getValueAt(row, col);
-                    if (editorCol == 1)
-                    {
-                        treeNode.setId(((JTextField) e.getComponent()).getText());
-                    }
-                    else if (editorCol == 2)
-                    {
-                        treeNode.setValue(((JTextField) e.getComponent()).getText());
-                    }
-                }
-            }
-        });
-
-        // this listener starts a new undo event when the editor gets focus on the JTreeTable
-        ((JTextField) editor.getComponent()).addFocusListener(new FocusListener()
-        {
-            @Override
-            public void focusGained(final FocusEvent e)
-            {
-                startUndoActionOnTreeTable();
-            }
-
-            @Override
-            public void focusLost(final FocusEvent e)
-            {
-                startUndoActionOnTreeTable();
-            }
-        });
-
-        // this listener may cause new undo actions when cells are navigated using the keyboard
-        editor.addCellEditorListener(new CellEditorListener()
-        {
-            @Override
-            public void editingStopped(final ChangeEvent e)
-            {
-                startUndoActionOnTreeTable();
-            }
-
-            @Override
-            public void editingCanceled(final ChangeEvent e)
-            {
-                startUndoActionOnTreeTable();
-            }
-        });
-
-        // throws selection events and updates the attributes table
-        this.treeTable.getTree()
-                .addTreeSelectionListener(new XsdTreeSelectionListener(this, this.treeTable, this.attributesTable));
-
-        // sets custom icon, prepends grouping icon, and appends the choice icon for choice nodes
-        this.treeTable.getTree().setCellRenderer(new XsdTreeCellRenderer(this));
-
-        // this listener will make sure no choice popup is presented by a left-click on expand/collapse, even for a choice node
-        this.treeTable.getTree().addTreeWillExpandListener(new TreeWillExpandListener()
-        {
-            @Override
-            public void treeWillExpand(final TreeExpansionEvent event) throws ExpandVetoException
-            {
-                OtsEditor.this.mayPresentChoice = false;
-            }
-
-            @Override
-            public void treeWillCollapse(final TreeExpansionEvent event) throws ExpandVetoException
-            {
-                OtsEditor.this.mayPresentChoice = false;
-            }
-        });
-
-        // this listener makes sure that a choice popup can be presented again after a left-click on an expansion/collapse node
-        // it also shows the tooltip in tree nodes
-        this.treeTable.addMouseMotionListener(new MouseMotionAdapter()
-        {
-            @Override
-            public void mouseMoved(final MouseEvent e)
-            {
-                OtsEditor.this.mayPresentChoice = true;
-
-                // ToolTip
-                int row = OtsEditor.this.treeTable.rowAtPoint(e.getPoint());
-                int col = OtsEditor.this.treeTable.convertColumnIndexToView(0); // columns may have been moved in view
-                XsdTreeNode treeNode = (XsdTreeNode) OtsEditor.this.treeTable.getValueAt(row, col);
-                try
-                {
-                    if (!treeNode.isSelfValid())
-                    {
-                        OtsEditor.this.treeTable.getTree().setToolTipText(treeNode.reportInvalidNode());
-                    }
-                    else
-                    {
-                        OtsEditor.this.treeTable.getTree().setToolTipText(null);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    if (treeNode.isIdentifiable())
-                    {
-                        System.out.println("Node " + treeNode.getId() + " no valid.");
-                    }
-                    else
-                    {
-                        System.out.println("Node " + treeNode.getNodeName() + " no valid.");
-                    }
-                }
-            }
-        });
-
-        // this listener opens the attributes of a node, and presents the popup for a choice or for addition/deletion of nodes
-        this.treeTable.addMouseListener(new XsdTreeMouseListener(this, this.treeTable, this.attributesTable));
-
-        // this listener removes the selected node, if it is removable
-        this.treeTable.addKeyListener(new XsdTreeKeyListener(this, this.treeTable));
-    }
-
-    /**
-     * Creates a new undo action as the selection is changed in the tree table.
+     * Creates a new undo action as the selection is changed in the tree table, editing is stopped, or focus is gained/lost.
      */
     public void startUndoActionOnTreeTable()
     {
-        XsdTreeNode node = (XsdTreeNode) this.treeTable.getValueAt(this.treeTable.getSelectedRow(), 0);
-        int col = this.treeTable.convertColumnIndexToView(this.treeTable.getSelectedColumn());
+        XsdTreeNode node = (XsdTreeNode) this.treeTable.getValueAt(this.treeTable.getSelectedRow(),
+                this.treeTable.convertColumnIndexToView(0)); // columns may have been moved in view;
+        int col = this.treeTable.convertColumnIndexToModel(this.treeTable.getSelectedColumn());
         if (col == 1)
         {
             this.undo.startAction(ActionType.ID_CHANGE, node, null);
@@ -1160,8 +996,20 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     }
 
     /**
+     * Returns the XsdTreeNode of the row under the given point (from a mouse or key event).
+     * @param point point (from an event)
+     * @return the XsdTreeNode of the row under the given point
+     */
+    public XsdTreeNode getTreeNodeAtPoint(final Point point)
+    {
+        int row = this.treeTable.rowAtPoint(point);
+        int col = this.treeTable.convertColumnIndexToView(0); // columns may have been moved in view
+        return (XsdTreeNode) this.treeTable.getValueAt(row, col);
+    }
+
+    /**
      * Adds a listener to a popup to remove the popop from the component when the popup becomes invisible. This makes sure that
-     * a right-clicks on another location that should show a different popup, is not overruled by the popup of a previous click.
+     * a right-click on another location that should show a different popup, is not overruled by the popup of a previous click.
      * @param popup popup menu.
      * @param component component from which the menu will be removed.
      */
@@ -1190,43 +1038,13 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Sets a custom icon for nodes that comply to the path. The path may be an absolute path (e.g. "Ots.Network.Connector") or
-     * a relative path (e.g. ".Node"). The image should be a filename relative in resources.
+     * a relative path (e.g. ".Node").
      * @param path path.
      * @param icon image icon.
      */
     public void setCustomIcon(final String path, final ImageIcon icon)
     {
         this.customIcons.put(path, icon);
-    }
-
-    /**
-     * Loads an icon, possibly rescaled.
-     * @param image image filename, relative in resources.
-     * @param width width to resize to, may be -1 to leave as is.
-     * @param height width to resize to, may be -1 to leave as is.
-     * @param bgWidth background image width icon will be centered in, may be -1 to leave as is.
-     * @param bgHeight background image height icon will be centered in, may be -1 to leave as is.
-     * @return image icon.
-     * @throws IOException if the file is not in resources.
-     */
-    public static ImageIcon loadIcon(final String image, final int width, final int height, final int bgWidth,
-            final int bgHeight) throws IOException
-    {
-        Image im = ImageIO.read(Resource.getResourceAsStream(image));
-        if (width > 0 || height > 0)
-        {
-            im = im.getScaledInstance(width > 0 ? width : im.getWidth(null), height > 0 ? height : im.getHeight(null),
-                    Image.SCALE_SMOOTH);
-        }
-        if (bgWidth > 0 && bgHeight > 0)
-        {
-            BufferedImage bg = new BufferedImage(bgWidth > 0 ? bgWidth : im.getWidth(null),
-                    bgHeight > 0 ? bgHeight : im.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-            Graphics g = bg.getGraphics();
-            g.drawImage(im, (bg.getWidth() - im.getWidth(null)) / 2, (bg.getHeight() - im.getHeight(null)) / 2, null);
-            im = bg;
-        }
-        return new ImageIcon(im);
     }
 
     /**
@@ -1270,6 +1088,15 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     }
 
     /**
+     * Sets whether the choice menu may appear.
+     * @param mayPresentChoice whether the choice menu may appear
+     */
+    public void setMayPresentChoice(final boolean mayPresentChoice)
+    {
+        this.mayPresentChoice = mayPresentChoice;
+    }
+
+    /**
      * Returns whether a choice may be presented.
      * @return whether a choice may be presented.
      */
@@ -1299,7 +1126,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     /**
      * Returns the component of the tab with given name.
      * @param name name of the tab.
-     * @return component of the tab with given name.
+     * @return component of the tab with given name or {@code null} if no such tab
      */
     public Component getTab(final String name)
     {
@@ -1368,7 +1195,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     /**
      * Show tree invalid.
      */
-    public void showInvalidMessage()
+    public void showInvalidToRunMessage()
     {
         JOptionPane.showMessageDialog(OtsEditor.this, "The setup is not valid. Make sure no red nodes remain.",
                 "Setup is not valid", JOptionPane.INFORMATION_MESSAGE);
@@ -1386,20 +1213,21 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     /**
      * Show unable to run.
      */
-    public void showUnableToRun()
+    public void showUnableToRunFromTempFile()
     {
         JOptionPane.showMessageDialog(OtsEditor.this, "Unable to run, temporary file could not be saved.", "Unable to run",
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**
-     * Places a popup with options under the cell that is being clicked in a table. The popup will show items relevant to what
-     * is being typed in the cell. The maximum number of items shown is limited to {@code MAX_DROPDOWN_ITEMS}.
+     * Places a popup with value options under the cell that is being clicked in a table (tree or attributes). The popup will
+     * show items relevant to what is being typed in the cell. The maximum number of items shown is limited to
+     * {@code MAX_DROPDOWN_ITEMS}.
      * @param allOptions list of all options, will be filtered when typing.
      * @param table table, will be either the tree table or the attributes table.
      * @param action action to perform based on the option in the popup that was selected.
      */
-    public void optionsPopup(final List<String> allOptions, final JTable table, final Consumer<String> action)
+    public void valueOptionsPopup(final List<String> allOptions, final JTable table, final Consumer<String> action)
     {
         // initially no filtering on current value; this allows a quick reset to possible values
         List<String> options = filterOptions(allOptions, "");
@@ -1410,37 +1238,24 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         }
         JPopupMenu popup = new JPopupMenu();
         int index = 0;
+        int maxDropdown = APPLICATION_STORE.getInt("max_dropdown_items");
         for (String option : options)
         {
             JMenuItem item = new JMenuItem(option);
-            item.setVisible(index++ < MAX_DROPDOWN_ITEMS);
-            item.addActionListener(new ActionListener()
-            {
-                @Override
-                public void actionPerformed(final ActionEvent e)
-                {
-                    action.accept(option);
-                    CellEditor cellEditor = table.getCellEditor();
-                    if (cellEditor != null)
-                    {
-                        cellEditor.cancelCellEditing();
-                    }
-                    OtsEditor.this.treeTable.updateUI();
-                }
-            });
+            item.setVisible(index++ < maxDropdown);
+            item.addActionListener(new PopupValueSelectedListener(option, table, action, this.treeTable));
             item.setFont(table.getFont());
             popup.add(item);
         }
         this.dropdownIndent = 0;
         popup.addMouseWheelListener(new MouseWheelListener()
         {
-
             @Override
             public void mouseWheelMoved(final MouseWheelEvent e)
             {
                 OtsEditor.this.dropdownIndent += (e.getWheelRotation() * e.getScrollAmount());
                 OtsEditor.this.dropdownIndent = OtsEditor.this.dropdownIndent < 0 ? 0 : OtsEditor.this.dropdownIndent;
-                int maxIndent = OtsEditor.this.dropdownOptions.size() - MAX_DROPDOWN_ITEMS;
+                int maxIndent = OtsEditor.this.dropdownOptions.size() - maxDropdown;
                 if (maxIndent > 0)
                 {
                     OtsEditor.this.dropdownIndent =
@@ -1451,88 +1266,76 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         });
         preparePopupRemoval(popup, table);
         // invoke later because JTreeTable removes the popup with editable cells and it may take previous editable field
-        SwingUtilities.invokeLater(new Runnable()
+        SwingUtilities.invokeLater(() ->
         {
-            @Override
-            public void run()
+            JTextField field = (JTextField) ((DefaultCellEditor) table.getDefaultEditor(String.class)).getComponent();
+            table.setComponentPopupMenu(popup);
+            popup.pack();
+            popup.setInvoker(table);
+            popup.setVisible(true);
+            field.requestFocus();
+            Rectangle rectangle = field.getBounds();
+            placePopup(popup, rectangle, table);
+            field.addKeyListener(new KeyAdapter()
             {
-                JTextField field = (JTextField) ((DefaultCellEditor) table.getDefaultEditor(String.class)).getComponent();
-                table.setComponentPopupMenu(popup);
-                popup.pack();
-                popup.setInvoker(table);
-                popup.setVisible(true);
-                field.requestFocus();
-                Rectangle rectangle = field.getBounds();
-                placePopup(popup, rectangle, table);
-                field.addKeyListener(new KeyAdapter()
+                @Override
+                public void keyTyped(final KeyEvent e)
                 {
-                    @Override
-                    public void keyTyped(final KeyEvent e)
+                    // invoke later to include this current typed key in the result
+                    SwingUtilities.invokeLater(() ->
                     {
-                        // invoke later to include this current typed key in the result
-                        SwingUtilities.invokeLater(new Runnable()
+                        OtsEditor.this.dropdownIndent = 0;
+                        String currentValue = field.getText();
+                        OtsEditor.this.dropdownOptions = filterOptions(allOptions, currentValue);
+                        boolean anyVisible = showOptionsInScope(popup);
+                        // if no items left, show what was typed as a single item
+                        // it will be hidden later if we are in the scope of the options, or another current value
+                        if (!anyVisible)
                         {
-                            @Override
-                            public void run()
-                            {
-                                OtsEditor.this.dropdownIndent = 0;
-                                String currentValue = field.getText();
-                                OtsEditor.this.dropdownOptions = filterOptions(allOptions, currentValue);
-                                boolean anyVisible = showOptionsInScope(popup);
-                                // if no items left, show what was typed as a single item
-                                // it will be hidden later if we are in the scope of the options, or another current value
-                                if (!anyVisible)
-                                {
-                                    JMenuItem item = new JMenuItem(currentValue);
-                                    item.addActionListener(new ActionListener()
-                                    {
-                                        @Override
-                                        public void actionPerformed(final ActionEvent e)
-                                        {
-                                            action.accept(currentValue);
-                                            CellEditor cellEditor = table.getCellEditor();
-                                            if (cellEditor != null)
-                                            {
-                                                cellEditor.cancelCellEditing();
-                                            }
-                                            OtsEditor.this.treeTable.updateUI();
-                                        }
-                                    });
-                                    item.setFont(table.getFont());
-                                    popup.add(item);
-                                }
-                                popup.pack();
-                                placePopup(popup, rectangle, table);
-                            }
-                        });
-                    }
-                });
-                field.addActionListener(new ActionListener()
-                {
-                    @Override
-                    public void actionPerformed(final ActionEvent e)
-                    {
-                        popup.setVisible(false);
-                        table.setComponentPopupMenu(null);
-                    }
-                });
-            }
+                            JMenuItem item = new JMenuItem(currentValue);
+                            item.addActionListener(
+                                    new PopupValueSelectedListener(currentValue, table, action, OtsEditor.this.treeTable));
+                            item.setFont(table.getFont());
+                            popup.add(item);
+                        }
+                        popup.pack();
+                        placePopup(popup, rectangle, table);
+                    });
+                }
+            });
+            field.addActionListener((e) ->
+            {
+                popup.setVisible(false);
+                table.setComponentPopupMenu(null);
+            });
         });
     }
 
     /**
-     * Updates the options that are shown within an dropdown menu based on an indent from scrolling.
-     * @param popup dropdown menu.
+     * Filter options for popup, leaving only those that start with the current value.
+     * @param options options to filter.
+     * @param currentValue current value.
+     * @return filtered options.
+     */
+    private static List<String> filterOptions(final List<String> options, final String currentValue)
+    {
+        return options.stream().filter((val) -> currentValue == null || currentValue.isEmpty() || val.startsWith(currentValue))
+                .distinct().sorted().collect(Collectors.toList());
+    }
+
+    /**
+     * Updates the options that are shown within a popup menu based on an indent from scrolling.
+     * @param popup popup menu.
      * @return whether at least one item is visible.
      */
     private boolean showOptionsInScope(final JPopupMenu popup)
     {
         int optionIndex = 0;
+        int maxDropdown = APPLICATION_STORE.getInt("max_dropdown_items");
         for (Component component : popup.getComponents())
         {
             JMenuItem item = (JMenuItem) component;
-            boolean visible =
-                    optionIndex < MAX_DROPDOWN_ITEMS && this.dropdownOptions.indexOf(item.getText()) >= this.dropdownIndent;
+            boolean visible = optionIndex < maxDropdown && this.dropdownOptions.indexOf(item.getText()) >= this.dropdownIndent;
             item.setVisible(visible);
             if (visible)
             {
@@ -1557,11 +1360,13 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         Point pWindow = OtsEditor.this.getLocationOnScreen();
         if (pAttributes.y + (int) rectangle.getMaxY() + popup.getBounds().getHeight() > windowSize.height + pWindow.y - 1)
         {
+            // above
             popup.setLocation(pAttributes.x + (int) rectangle.getMinX(),
                     pAttributes.y + (int) rectangle.getMinY() - 1 - (int) popup.getBounds().getHeight());
         }
         else
         {
+            // below
             popup.setLocation(pAttributes.x + (int) rectangle.getMinX(), pAttributes.y + (int) rectangle.getMaxY() - 1);
         }
     }
@@ -1576,14 +1381,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             return;
         }
         FileDialog fileDialog = new FileDialog(this, "Open XML", FileDialog.LOAD);
-        fileDialog.setFilenameFilter(new FilenameFilter()
-        {
-            @Override
-            public boolean accept(final File dir, final String name)
-            {
-                return name.toLowerCase().endsWith(".xml");
-            }
-        });
+        fileDialog.setFilenameFilter((dir, name) -> name.toLowerCase().endsWith(".xml"));
         fileDialog.setVisible(true);
         String fileName = fileDialog.getFile();
         if (fileName == null)
@@ -1607,17 +1405,18 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     /**
      * Load file.
      * @param file file to load.
-     * @param status status message in status bar to show upon loading.
+     * @param postLoadStatus status message in status bar to show after loading.
      * @param updateRecentFiles whether to include the opened file in recent files.
      * @return whether the file was successfully loaded.
      */
-    private boolean loadFile(final File file, final String status, final boolean updateRecentFiles)
+    private boolean loadFile(final File file, final String postLoadStatus, final boolean updateRecentFiles)
     {
         try
         {
             Document document = DocumentReader.open(file.toURI());
             this.undo.setIgnoreChanges(true);
             initializeTree();
+            // load main tag xml properties that are outside of XML OTS specification, so they can remain in a saved file
             NamedNodeMap attributes = document.getFirstChild().getAttributes();
             for (int i = 0; i < attributes.getLength(); i++)
             {
@@ -1638,15 +1437,15 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             root.loadXmlNodes(document.getFirstChild());
             this.undo.clear();
             setUnsavedChanges(false);
-            setStatusLabel(status);
+            setStatusLabel(postLoadStatus);
             this.undo.updateButtons();
             this.backItem.setEnabled(false);
             this.coupledItem.setEnabled(false);
             this.coupledItem.setText("Go to coupled item");
-            this.treeTable.updateUI(); // knowing/changing the directory may change validation status
+            this.treeTable.updateUI(); // knowing/changing the directory may change validation status through imports
             if (updateRecentFiles)
             {
-                this.applicationStore.addRecentFile("recent_files", file.getAbsolutePath());
+                APPLICATION_STORE.addRecentFile("recent_files", file.getAbsolutePath());
                 updateRecentFileMenu();
             }
             return true;
@@ -1658,7 +1457,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     }
 
     /**
-     * Saves the file is a file name is known, otherwise forwards to {@code saveFileAs()}.
+     * Saves the file if a file name is known, otherwise forwards to {@code saveFileAs()}.
      */
     private void saveFile()
     {
@@ -1710,7 +1509,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     }
 
     /**
-     * Performs the actual saving, either from {@code saveFile()} or {@code saveFileAs()}.
+     * Performs the actual saving, either from {@code saveFile()}, {@code saveFileAs()} or for a temporary file for simulation.
      * @param file file to save.
      * @param root root node of tree to save, can be a sub-tree of the full tree.
      * @param storeAsRecent whether to store the file under recent files.
@@ -1774,7 +1573,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             // end of fix
             if (storeAsRecent)
             {
-                this.applicationStore.addRecentFile("recent_files", file.getAbsolutePath());
+                APPLICATION_STORE.addRecentFile("recent_files", file.getAbsolutePath());
                 updateRecentFileMenu();
             }
         }
@@ -1782,122 +1581,6 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         {
             JOptionPane.showMessageDialog(this, "Unable to save file.", "Unable to save file.", JOptionPane.WARNING_MESSAGE);
         }
-    }
-
-    /**
-     * Shows the properties in a modal window.
-     */
-    private void showProperties()
-    {
-        // main panel
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
-        // columns
-        TableColumnModel columns = new DefaultTableColumnModel();
-        TableColumn column1 = new TableColumn(0, 200);
-        column1.setHeaderValue("Property");
-        columns.addColumn(column1);
-        TableColumn column2 = new TableColumn(1, 600);
-        column2.setHeaderValue("Value");
-        columns.addColumn(column2);
-        // model
-        TableModel model = new AbstractTableModel()
-        {
-            /** */
-            private static final long serialVersionUID = 20240314L;
-
-            @Override
-            public int getRowCount()
-            {
-                return OtsEditor.this.properties.size() / 2;
-            }
-
-            @Override
-            public int getColumnCount()
-            {
-                return 2;
-            }
-
-            @Override
-            public Object getValueAt(final int rowIndex, final int columnIndex)
-            {
-                return OtsEditor.this.properties.get(rowIndex * 2 + columnIndex);
-            }
-
-            @Override
-            public boolean isCellEditable(final int rowIndex, final int columnIndex)
-            {
-                return columnIndex == 1;
-            }
-
-            @Override
-            public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex)
-            {
-                OtsEditor.this.properties.set(rowIndex * 2 + columnIndex, aValue.toString());
-                OtsEditor.this.setUnsavedChanges(true);
-            }
-        };
-        // table
-        JTable table = new JTable(model, columns);
-        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer()
-        {
-            /** */
-            private static final long serialVersionUID = 20240314L;
-
-            @Override
-            public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected,
-                    final boolean hasFocus, final int row, final int column)
-            {
-                Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                if (table.convertColumnIndexToModel(column) == 0)
-                {
-                    this.setOpaque(true);
-                }
-                else
-                {
-                    this.setOpaque(false);
-                }
-                return component;
-            }
-        };
-        renderer.setBackground(panel.getBackground()); // for editable cells
-        table.setDefaultRenderer(Object.class, renderer);
-        JScrollPane scroll = new JScrollPane(table); // put table in scroll window, also makes the header visible
-        scroll.setBorder(new EmptyBorder(0, 0, 0, 0));
-        panel.add(scroll, BorderLayout.CENTER);
-        // dialog
-        final JDialog propertyWindow = new JDialog(this, "Properties", true);
-        propertyWindow.setMinimumSize(new Dimension(250, 150));
-        propertyWindow.setPreferredSize(new Dimension(800, 200));
-        // buttons
-        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        JButton defaults = new JButton("Set defaults...");
-        defaults.addActionListener((a) ->
-        {
-            boolean set = JOptionPane.showConfirmDialog(propertyWindow, "Are you sure? This will reset all properties.",
-                    "Are you sure?", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-                    this.questionIcon) == JOptionPane.OK_OPTION;
-            if (set)
-            {
-                setDefaultProperties();
-                table.updateUI();
-                OtsEditor.this.setUnsavedChanges(true);
-            }
-        });
-        buttons.add(defaults);
-        JButton ok = new JButton("Ok");
-        ok.addActionListener((a) ->
-        {
-            table.getDefaultEditor(Object.class).stopCellEditing();
-            propertyWindow.dispose();
-        });
-        buttons.add(ok);
-        panel.add(buttons, BorderLayout.PAGE_END);
-        // pack and visualize
-        propertyWindow.getContentPane().add(panel);
-        propertyWindow.pack();
-        propertyWindow.setLocationRelativeTo(this);
-        propertyWindow.setVisible(true);
     }
 
     /**
@@ -1919,31 +1602,16 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
      */
     public static String limitTooltip(final String message)
     {
-        if (message == null)
-        {
-            return null;
-        }
-        if (message.length() < MAX_TOOLTIP_LENGTH)
+        int maxTooltipLength = APPLICATION_STORE.getInt("max_tooltip_length");
+        if (message == null || message.length() < maxTooltipLength)
         {
             return message;
         }
-        return message.substring(0, MAX_TOOLTIP_LENGTH - 3) + "...";
+        return message.substring(0, maxTooltipLength - 3) + "...";
     }
 
     /**
-     * Filter options, leaving only those that start with the current value.
-     * @param options options to filter.
-     * @param currentValue current value.
-     * @return filtered options.
-     */
-    private static List<String> filterOptions(final List<String> options, final String currentValue)
-    {
-        return options.stream().filter((val) -> currentValue == null || currentValue.isEmpty() || val.startsWith(currentValue))
-                .distinct().sorted().collect(Collectors.toList());
-    }
-
-    /**
-     * Adds a listener to the cell editor of the attributes table.
+     * Adds an external listener to the cell editor of the attributes table.
      * @param listener listener to the cell editor of the attributes table.
      */
     public void addAttributeCellEditorListener(final CellEditorListener listener)
@@ -1956,6 +1624,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
      * @param clipboard node to set in the clipboard.
      * @param cut whether the node was cut.
      */
+    @SuppressWarnings("hiddenfield")
     public void setClipboard(final XsdTreeNode clipboard, final boolean cut)
     {
         this.clipboard = clipboard;
@@ -1972,7 +1641,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     }
 
     /**
-     * Remove node that was cut.
+     * Remove node that was cut. This can be called safely while not knowing the clipboard was cut.
      */
     public void removeClipboardWhenCut()
     {

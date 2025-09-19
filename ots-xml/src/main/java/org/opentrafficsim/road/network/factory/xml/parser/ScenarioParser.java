@@ -229,7 +229,7 @@ public final class ScenarioParser
      * @param eval expression evaluator.
      * @return map from ID to ID
      */
-    public static final Map<String, String> parseModelIdReferral(final List<ScenarioType> scenario, final Demand demand,
+    public static Map<String, String> parseModelIdReferral(final List<ScenarioType> scenario, final Demand demand,
             final Eval eval)
     {
         // TODO: use run to select scenario (probably outside this class, and accept a single Scenario
@@ -258,7 +258,7 @@ public final class ScenarioParser
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    public static interface ScenariosWrapper
+    public interface ScenariosWrapper
     {
         /**
          * Returns default parameters in generic form for parsing.
@@ -274,7 +274,7 @@ public final class ScenarioParser
     }
 
     /**
-     * Generic parameters for for parsing.
+     * Generic parameters for parsing.
      * <p>
      * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
      * <br>
@@ -284,7 +284,7 @@ public final class ScenarioParser
      * @param id id.
      * @param value value expression type.
      */
-    public static record ParameterWrapper(String id, ExpressionType<?> value)
+    public record ParameterWrapper(String id, ExpressionType<?> value)
             implements Identifiable, Supplier<ExpressionType<?>>
     {
         @Override
@@ -324,7 +324,7 @@ public final class ScenarioParser
          * Constructor.
          * @param map map that underlines input parameters.
          */
-        public ParameterMap(final Map<String, Supplier<?>> map)
+        ParameterMap(final Map<String, Supplier<?>> map)
         {
             this.map = map;
         }

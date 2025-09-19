@@ -1243,6 +1243,10 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     buildDesignLine();
                     setFlattenerListener();
                     break;
+                case "xsd:choice":
+                    // inactive node, will be invalid
+                    buildDesignLine();
+                    break;
                 default:
                     throw new RuntimeException("Drawing of shape node " + this.shapeNode.getNodeName() + " is not supported.");
             }

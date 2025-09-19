@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.opentrafficsim.editor.DocumentReader;
+import org.opentrafficsim.editor.DocumentReader.NodeAnnotation;
 import org.opentrafficsim.editor.Schema;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.w3c.dom.Node;
@@ -414,7 +415,7 @@ public interface ValueValidator extends Comparable<ValueValidator>
             {
                 if (!Pattern.matches(patternString, value))
                 {
-                    String patternMessage = DocumentReader.getAnnotation(appInfoNode, "xsd:appinfo", "pattern");
+                    String patternMessage = DocumentReader.getAnnotation(appInfoNode, NodeAnnotation.APPINFO_PATTERN);
                     return patternMessage == null ? "Value does not match pattern " + patternString : patternMessage;
                 }
             }

@@ -144,14 +144,14 @@ public class ChangesListener implements EventListener
             {
                 index++;
                 ScenarioWrapper item = this.scenario.getItemAt(index);
-                if (item != null && item.getScenarioNode().equals(node))
+                if (item != null && item.scenarioNode().equals(node))
                 {
                     itemOfNode = item;
                     break;
                 }
             }
         }
-        if (itemOfNode == null || !itemOfNode.getScenarioNode().equals(node))
+        if (itemOfNode == null || !itemOfNode.scenarioNode().equals(node))
         {
             this.scenario.insertItemAt(new ScenarioWrapper(node), index);
             node.addListener(this.scenarioNameListener, XsdTreeNode.ATTRIBUTE_CHANGED);

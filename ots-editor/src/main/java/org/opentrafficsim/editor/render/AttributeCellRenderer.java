@@ -86,7 +86,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
                 if (message != null)
                 {
                     this.checkBox.setToolTipText(OtsEditor.limitTooltip(message));
-                    this.checkBox.setBackground(OtsEditor.INVALID_COLOR);
+                    this.checkBox.setBackground(OtsEditor.getInvalidColor());
                 }
                 else
                 {
@@ -97,7 +97,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
                     }
                     else if (node.attributeIsExpression(row))
                     {
-                        this.checkBox.setBackground(OtsEditor.EXPRESSION_COLOR);
+                        this.checkBox.setBackground(OtsEditor.getExpressionColor());
                     }
                     else
                     {
@@ -162,7 +162,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
             if (message != null)
             {
                 setToolTipText(OtsEditor.limitTooltip(message));
-                setBackground(OtsEditor.INVALID_COLOR);
+                setBackground(OtsEditor.getInvalidColor());
             }
             else
             {
@@ -173,7 +173,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
                 }
                 else if (node.attributeIsExpression(row))
                 {
-                    setBackground(OtsEditor.EXPRESSION_COLOR);
+                    setBackground(OtsEditor.getExpressionColor());
                 }
                 else
                 {

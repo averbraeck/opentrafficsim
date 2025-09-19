@@ -69,10 +69,10 @@ public class NodeActions
      */
     public void remove(final XsdTreeNode node)
     {
-        CellEditor editor = this.treeTable.getCellEditor();
-        if (editor != null)
+        CellEditor cellEditor = this.treeTable.getCellEditor();
+        if (cellEditor != null)
         {
-            editor.stopCellEditing();
+            cellEditor.stopCellEditing();
         }
         this.editor.collapse(node);
         this.editor.getUndo().startAction(ActionType.REMOVE, node, null);
@@ -102,8 +102,18 @@ public class NodeActions
     {
         this.editor.setClipboard(node, true);
         this.editor.getUndo().startAction(ActionType.CUT, node, null);
-        node.setInactive();
-        this.editor.show(node, null);
+
+        XsdTreeNode parent = node.getParent();
+        int childIndex = parent.getChildren().indexOf(node);
+
+        node.remove();
+
+        childIndex = Math.min(childIndex, parent.getChildCount() - 1);
+        List<XsdTreeNode> nodePath = childIndex < 0 ? parent.getPath() : parent.getChild(childIndex).getPath();
+        TreePath path = new TreePath(nodePath.toArray());
+        this.treeTable.getTree().setSelectionPath(path);
+
+        this.treeTable.updateUI();
     }
 
     /**
@@ -159,7 +169,7 @@ public class NodeActions
      * Revolve to the next option of the node.
      * @param node node.
      * @param options options of the node. These are obtainable from the node, but already gathered by the caller of this method
-     *            and therefore forwarded for efficieny.
+     *            and therefore forwarded for efficiency.
      */
     public void revolveOption(final XsdTreeNode node, final List<XsdOption> options)
     {
@@ -179,6 +189,7 @@ public class NodeActions
         this.editor.getUndo().startAction(ActionType.OPTION, node, null);
         XsdTreeNode next = options.get(optionIndex).optionNode();
         node.setOption(next);
+        this.editor.getUndo().setPostActionShowNode(next);
         this.editor.show(next, null);
     }
 

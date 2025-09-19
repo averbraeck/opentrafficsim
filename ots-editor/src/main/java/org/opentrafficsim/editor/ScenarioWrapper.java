@@ -7,21 +7,10 @@ package org.opentrafficsim.editor;
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ * @param scenarioNode node of the scenario
  */
-public class ScenarioWrapper
+public record ScenarioWrapper(XsdTreeNode scenarioNode)
 {
-
-    /** Scenario node. */
-    private final XsdTreeNode scenarioNode;
-
-    /**
-     * Constructor.
-     * @param scenarioNode node of the scenario.
-     */
-    public ScenarioWrapper(final XsdTreeNode scenarioNode)
-    {
-        this.scenarioNode = scenarioNode;
-    }
 
     /**
      * Returns whether this wraps the given node.
@@ -37,7 +26,7 @@ public class ScenarioWrapper
      * Returns the scenario node.
      * @return scenario node.
      */
-    public XsdTreeNode getScenarioNode()
+    public XsdTreeNode scenarioNode()
     {
         return this.scenarioNode;
     }

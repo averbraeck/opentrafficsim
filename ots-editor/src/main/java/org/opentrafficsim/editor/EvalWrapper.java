@@ -92,7 +92,7 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
                     @Override
                     public Iterable<ParameterWrapper> getScenarioInputParameters()
                     {
-                        return scenario == null ? null : EvalWrapper.this.scenarioParameters.get(scenario.getScenarioNode());
+                        return scenario == null ? null : EvalWrapper.this.scenarioParameters.get(scenario.scenarioNode());
                     }
                 });
             }
@@ -136,7 +136,7 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
         }
         else if ((node.getPathString().startsWith(XsdPaths.INPUT_PARAMETERS + ".")
                 || node.getPathString().startsWith(XsdPaths.DEFAULT_INPUT_PARAMETERS + "."))
-                && !node.getNodeName().equals("xsd:choice"))
+                && !node.getNodeName().equals("xsd:choice")) // ignore the invisible XsdTreeNode created for an xsd:choice
         {
             node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
             node.addListener(this, XsdTreeNode.VALUE_CHANGED);
@@ -192,6 +192,7 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
             if (node.getPathString().equals(XsdPaths.INPUT_PARAMETERS)
                     || node.getPathString().equals(XsdPaths.DEFAULT_INPUT_PARAMETERS))
             {
+                // simulate complete creation or removal of all contained input parameter nodes
                 if (activated)
                 {
                     node.getChildren().forEach((child) -> notifyCreated(child));
@@ -203,7 +204,7 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
             }
             else if ((node.getPathString().startsWith(XsdPaths.INPUT_PARAMETERS + ".")
                     || node.getPathString().startsWith(XsdPaths.DEFAULT_INPUT_PARAMETERS + "."))
-                    && !node.getNodeName().equals("xsd:choice"))
+                    && !node.getNodeName().equals("xsd:choice")) // ignore the invisible XsdTreeNode created for an xsd:choice
             {
                 if (activated)
                 {
@@ -244,7 +245,7 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
             {
                 ParameterWrapper parameter = wrap(node);
                 this.parameterMap.put(node, parameter);
-                XsdTreeNode scenarioNode = node.getParent().getParent();
+                XsdTreeNode scenarioNode = node.getParent().getParent(); // Scenario.InputParameters.Length/Double/etc.
                 if (scenarioNode != null)
                 {
                     this.scenarioParameters.get(scenarioNode).add(parameter);
@@ -315,7 +316,7 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
         /**
          * Notifies the listener that evaluation results may have changed.
          */
-        public void evalChanged();
+        void evalChanged();
     }
 
 }

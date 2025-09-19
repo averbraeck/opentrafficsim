@@ -9,9 +9,8 @@ package org.opentrafficsim.editor;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param optionNode option node.
  * @param choice choice node, the option node is one of its options.
- * @param firstInGroup whether this option is first in a group and a separator might be shown in a menu.
  * @param selected whether this option is currently selected.
  */
-public record XsdOption(XsdTreeNode optionNode, XsdTreeNode choice, boolean firstInGroup, boolean selected)
+public record XsdOption(XsdTreeNode optionNode, XsdTreeNode choice, boolean selected)
 {
 }

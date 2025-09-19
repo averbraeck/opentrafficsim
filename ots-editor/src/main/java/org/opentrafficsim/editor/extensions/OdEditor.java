@@ -11,6 +11,7 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.decoration.DefaultDecorator;
 
 /**
  * Editor for OD.
@@ -36,7 +37,7 @@ public class OdEditor implements EventListener
      */
     public OdEditor(final OtsEditor editor) throws IOException
     {
-        ImageIcon odIcon = OtsEditor.loadIcon("./Table_blue.png", 16, 16, -1, -1);
+        ImageIcon odIcon = DefaultDecorator.loadIcon("./Table_blue.png", 16, 16, -1, -1);
         editor.addTab("OD", odIcon, buildOdPane(), null);
         editor.addListener(this, OtsEditor.SELECTION_CHANGED);
         this.editor = editor;

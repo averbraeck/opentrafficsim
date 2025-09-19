@@ -5,7 +5,6 @@ import java.util.function.Function;
 
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
-import org.opentrafficsim.editor.XsdTreeNodeRoot;
 
 /**
  * Adds the included file name to the include node.

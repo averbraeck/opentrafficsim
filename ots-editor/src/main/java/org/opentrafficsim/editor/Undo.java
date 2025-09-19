@@ -11,7 +11,6 @@ import javax.swing.AbstractButton;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
-import org.djutils.exceptions.Try;
 
 /**
  * Undo unit for the OTS editor. This class stores an internal queue of actions. Changes to XsdTreeNodes should be grouped per
@@ -51,7 +50,7 @@ public class Undo implements EventListener
     private final AbstractButton redoItem;
 
     /** Boolean to ignore changes during undo/redo, so no new undo/redo is made. */
-    boolean ignoreChanges = false;
+    private boolean ignoreChanges = false;
 
     /**
      * Constructor.
@@ -66,11 +65,11 @@ public class Undo implements EventListener
         this.redoItem = redoItem;
         this.undoItem.setEnabled(false);
         this.redoItem.setEnabled(false);
-        Try.execute(() -> editor.addListener(this, OtsEditor.NEW_FILE), "Remote exception when listening for NEW_FILE events.");
+        editor.addListener(this, OtsEditor.NEW_FILE);
     }
 
     /**
-     * Clears the entire queue, suitable for when a new tree is loaded. Also set ignore changes to false.
+     * Clears the entire queue, suitable for when a new tree is loaded. Also sets ignore changes to false.
      */
     public void clear()
     {
@@ -78,6 +77,8 @@ public class Undo implements EventListener
         this.currentSet = null;
         this.cursor = -1;
         this.queue = new LinkedList<>();
+        this.undoItem.setEnabled(false);
+        this.redoItem.setEnabled(false);
     }
 
     /**
@@ -90,10 +91,15 @@ public class Undo implements EventListener
     }
 
     /**
-     * Starts a new action, which groups all sub-actions until a new action is started.
+     * Starts a new action, which groups all sub-actions until a new action is started. This method can be called without being
+     * sure concrete changes will be made. Internal listeners listen to all changes and will combine them in to one undo action,
+     * up to the point the next action is started with this method. If no actual changes were made in between, the former start
+     * of an action does not result in anything the user can undo or redo. When the user has stepped back a few undo actions,
+     * and then makes a new change, rolled back undo steps can no longer be redone. Clearing rolled back undo steps is performed
+     * lazily on the first concrete change. Starting a new action does not clear rolled back undo steps by itself.
      * @param type action type.
      * @param node node on which the action is applied, i.e. node that should be selected on undo/redo.
-     * @param attribute attribute name, may be null for actions that are not an attribute value change.
+     * @param attribute attribute name, may be {@code null} for actions that are not an attribute value change.
      */
     public void startAction(final ActionType type, final XsdTreeNode node, final String attribute)
     {
@@ -106,6 +112,10 @@ public class Undo implements EventListener
             // last action set never resulted in any sub-action, overwrite it
             this.queue.pollLast();
         }
+
+        // TODO The following step must become a lazy execution once a concrete sub-action is added, i.e. like a dirty switch,
+        // otherwise the user loses redo's while nothing was effectively changed. Note that startAction() can be called as
+        // preparation for -possible- upcoming changes. Add this way of using startAction() in the contract.
 
         // remove any possible redos fresher in the queue than our current pointer
         while (this.cursor < this.queue.size() - 1)

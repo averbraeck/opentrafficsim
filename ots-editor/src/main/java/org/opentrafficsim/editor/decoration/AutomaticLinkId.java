@@ -24,10 +24,10 @@ public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements C
     private static final long serialVersionUID = 20230910L;
 
     /** Last node. */
-    protected XsdTreeNode lastNode = null;
+    private XsdTreeNode lastNode = null;
 
     /** Last id. */
-    protected String lastId = null;
+    private String lastId = null;
 
     /**
      * Constructor.
@@ -96,8 +96,27 @@ public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements C
      * @param value candidate value.
      * @return string with the { and } removed
      */
-    protected String debrace(final String value)
+    private String debrace(final String value)
     {
         return value.replace("{", "").replace("}", "");
     }
+
+    /**
+     * Set last node from attribute change.
+     * @param lastNode last node from attribute change
+     */
+    protected void setLastNode(final XsdTreeNode lastNode)
+    {
+        this.lastNode = lastNode;
+    }
+
+    /**
+     * Set last id value from attribute change.
+     * @param lastId last id value from attribute change
+     */
+    protected void setLastId(final String lastId)
+    {
+        this.lastId = lastId == null ? null : debrace(lastId);
+    }
+
 }

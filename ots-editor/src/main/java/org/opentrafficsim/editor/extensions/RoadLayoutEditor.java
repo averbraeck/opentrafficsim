@@ -15,6 +15,7 @@ import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
+import org.opentrafficsim.editor.decoration.DefaultDecorator;
 
 /**
  * Editor for road layouts.
@@ -40,7 +41,7 @@ public class RoadLayoutEditor implements EventListener, Consumer<XsdTreeNode>
      */
     public RoadLayoutEditor(final OtsEditor editor) throws IOException
     {
-        ImageIcon roadIcon = OtsEditor.loadIcon("./OTS_road.png", -1, -1, -1, -1);
+        ImageIcon roadIcon = DefaultDecorator.loadIcon("./OTS_road.png", -1, -1, -1, -1);
         editor.addTab("Road layout", roadIcon, buildRoadLayoutPane(), null);
         editor.addListener(this, OtsEditor.NEW_FILE);
         this.editor = editor;

@@ -17,6 +17,7 @@ import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djutils.exceptions.Throw;
+import org.djutils.logger.CategoryLogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -24,6 +25,9 @@ import org.xml.sax.SAXException;
 /**
  * Reads the XML Schema in XSD format for OTS. This class contains various methods that the editor can use to present relevant
  * structure and information to the user.
+ * <p>
+ * This class performs various checks on XSD consistency. To obtain a list of inconsistencies encountered, allow trace level
+ * logging.
  * <p>
  * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -87,7 +91,7 @@ public class Schema
         while (!this.queue.isEmpty())
         {
             RecursionElement next = this.queue.poll();
-            read(next.getPath(), next.getNode(), next.isExtendPath());
+            read(next.path(), next.node(), next.extendPath());
         }
 
         // all elements with type={type} have that node stored, replace it with the referred node
@@ -113,7 +117,7 @@ public class Schema
         }
         if (!allTypes.isEmpty())
         {
-            System.out.println(allTypes.size() + " types are defined but never extended or referred to.");
+            CategoryLogger.always().trace("{} types are defined but never extended or referred to.", allTypes.size());
             // allTypes.forEach((str) -> System.out.println(" + " + str));
         }
 
@@ -129,7 +133,8 @@ public class Schema
         allElements.removeIf((path) -> path.startsWith("Ots"));
         if (!allElements.isEmpty())
         {
-            System.out.println(allElements.size() + " elements are defined but never referred to, nor are they a type.");
+            CategoryLogger.always().trace("{} elements are defined but never referred to, nor are they a type.",
+                    allElements.size());
             // allElements.forEach((str) -> System.out.println(" + " + str));
         }
 
@@ -141,20 +146,20 @@ public class Schema
         // allElements.removeIf((key) -> !key.startsWith("Ots."));
         // allElements.forEach((key) -> System.out.println(key));
 
-        System.out.println("Root found as '" + DocumentReader.getAttribute(this.getRoot(), "name") + "'.");
-        System.out.println("Read " + this.readFiles.size() + " files.");
-        System.out.println("Read " + this.elements.size() + " elements.");
-        System.out.println("Read " + this.types.size() + " types.");
-        System.out.println("Read " + this.extendedTypes.size() + " extended types.");
-        System.out.println("Read " + this.documentation.size() + " documentations.");
-        System.out.println("Read " + this.keys.size() + " keys.");
-        System.out.println("Read " + this.keyrefs.size() + " keyrefs.");
-        System.out.println("Read " + this.uniques.size() + " uniques.");
+        CategoryLogger.always().trace("Root found as '{}'.", DocumentReader.getAttribute(this.getRoot(), "name"));
+        CategoryLogger.always().trace("Read {} files.", this.readFiles.size());
+        CategoryLogger.always().trace("Read {} elements.", this.elements.size());
+        CategoryLogger.always().trace("Read {} types.", this.types.size());
+        CategoryLogger.always().trace("Read {} extended types.", this.extendedTypes.size());
+        CategoryLogger.always().trace("Read {} documentations.", this.documentation.size());
+        CategoryLogger.always().trace("Read {} keys.", this.keys.size());
+        CategoryLogger.always().trace("Read {} keyrefs.", this.keyrefs.size());
+        CategoryLogger.always().trace("Read {} uniques.", this.uniques.size());
         for (String type : this.extendedTypes.keySet())
         {
             if (!this.types.containsKey(type) && !type.startsWith("xsd:"))
             {
-                System.err.println("Type '" + type + "' is extended but was not found.");
+                CategoryLogger.always().trace("Type '{}' is extended but was not found.", type);
             }
         }
     }
@@ -171,7 +176,7 @@ public class Schema
      * is stored as the root for the whole schema. If there is a ref={ref} attribute, rather than reading the given node, the
      * referred node is read at its place in the path.<br>
      * <br>
-     * Also extends the path for an xsd:simpleType or xsd:complexType node, of it has a name={name} attribute.<br>
+     * Also extends the path for an xsd:simpleType or xsd:complexType node, if it has a name={name} attribute.<br>
      * <br>
      * Finally, loops all the children of the node to read and processes them in the following manner:
      * <ul>
@@ -188,7 +193,7 @@ public class Schema
     {
         if (recursion(path))
         {
-            System.out.println("Recursion found at " + path + ", further expansion is halted.");
+            CategoryLogger.always().trace("Recursion found at {}, further expansion is halted.", path);
             return;
         }
 
@@ -216,6 +221,7 @@ public class Schema
             if (this.extendedTypes.containsKey(base) && this.extendedTypes.get(base).contains(path))
             {
                 // this occurs if a type has a base, with the base being defined later in the XSD
+                // do not read what is additional to the base, as that was done previously and this is the queued base (re)read
                 return;
             }
             this.extendedTypes.computeIfAbsent(base, (key) -> new LinkedHashSet<String>()).add(path);
@@ -258,6 +264,7 @@ public class Schema
         }
 
         String name = DocumentReader.getAttribute(nextNode, "name");
+
         String nodeName = nextNode.getNodeName();
         if (name != null && (nodeName.equals("xsd:complexType") || nodeName.equals("xsd:simpleType")))
         {
@@ -491,6 +498,10 @@ public class Schema
      */
     private void union(final String path, final Node node)
     {
+        /*
+         * Note: unions can only consist of simple types (with only a regular value). Therefore this pertains to valid values
+         * only, and not to children and attributes. Therefore the memberTypes do not need to be read in place of the node.
+         */
         for (String type : DocumentReader.getAttribute(node, "memberTypes").split(" "))
         {
             this.referredTypes.computeIfAbsent(type.replace("ots:", ""), (key) -> new LinkedHashSet<>()).add(path);
@@ -506,58 +517,12 @@ public class Schema
      * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
      * </p>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * @param path node path.
+     * @param node xsd:attribute node.
+     * @param extendPath whether the path should be extended with this node.
      */
-    private class RecursionElement
+    private record RecursionElement(String path, Node node, boolean extendPath)
     {
-        /** Path. */
-        private final String path;
-
-        /** xsd:attribute node. */
-        private final Node node;
-
-        /** Whether to extend the path. */
-        private final boolean extendPath;
-
-        /**
-         * Constructor.
-         * @param path node path.
-         * @param node xsd:attribute node.
-         * @param extendPath whether the path should be extended with this node.
-         */
-        RecursionElement(final String path, final Node node, final boolean extendPath)
-        {
-            this.path = path;
-            this.node = node;
-            this.extendPath = extendPath;
-        }
-
-        /**
-         * Returns the path.
-         * @return path.
-         */
-        public String getPath()
-        {
-            return this.path;
-        }
-
-        /**
-         * Returns the node.
-         * @return node.
-         */
-        public Node getNode()
-        {
-            return this.node;
-        }
-
-        /**
-         * Returns whether to extend the path.
-         * @return whether to extend the path.
-         */
-        public boolean isExtendPath()
-        {
-            return this.extendPath;
-        }
-
     }
 
     /**
@@ -567,116 +532,6 @@ public class Schema
     private void checkKeys()
     {
         checkKeyOrUniques("Key", this.keys);
-    }
-
-    /**
-     * Checks that all xsd:keyrefs refer to loaded keys. That they refer to a loaded type with their xsd:selector node. And that
-     * all xsd:field nodes point to existing attributes (@), values (.), or elements (ots:), in loaded types.
-     */
-    private void checkKeyrefs()
-    {
-        for (String fullPath : this.keyrefs.keySet())
-        {
-            Node node = this.keyrefs.get(fullPath);
-            String keyref = DocumentReader.getAttribute(node, "name");
-            String keyName = DocumentReader.getAttribute(node, "refer").replace("ots:", "");
-            Node key = null;
-            boolean keyFound = false;
-            Iterator<Node> iterator = this.keys.values().iterator();
-            while (!keyFound && iterator.hasNext())
-            {
-                key = iterator.next();
-                keyFound = keyName.equals(DocumentReader.getAttribute(key, "name"));
-            }
-            if (!keyFound)
-            {
-                System.out.println(
-                        "Keyref " + keyref + " refers to non existing key " + DocumentReader.getAttribute(node, "refer") + ".");
-            }
-            String context = fullPath.substring(0, fullPath.lastIndexOf("."));
-            List<Node> elements = getSelectedElements(context, node);
-            if (elements.isEmpty())
-            {
-                System.out.println("Keyref " + keyref + " (" + getXpath(node) + ") not found among elements.");
-            }
-            else
-            {
-                for (Node selected : elements)
-                {
-                    for (Node field : DocumentReader.getChildren(node, "xsd:field"))
-                    {
-                        String xpathFieldString = DocumentReader.getAttribute(field, "xpath");
-                        boolean found = false;
-                        for (String xpathField : xpathFieldString.split("\\|"))
-                        {
-                            found = followXPath(selected, xpathField);
-                        }
-                        if (!found)
-                        {
-                            System.out.println("Keyref " + keyref + " (" + getXpath(node) + ") points to non existing field '"
-                                    + xpathFieldString + "'.");
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Follows to xpath recursively to find a referred element.
-     * @param selected current node from which xpath is relative
-     * @param xpath xpath
-     * @return whether the element was found
-     */
-    private boolean followXPath(final Node selected, final String xpath)
-    {
-        if (xpath.startsWith("@"))
-        {
-            String xpathField = xpath.substring(1); // removes '@'
-            return hasElementAttribute(selected, xpathField);
-        }
-        if (xpath.equals(".")
-                && (selected.getNodeName().equals("xsd:simpleType") || selected.getNodeName().equals("xsd:element")))
-        {
-            return true; // value is in element
-        }
-        int index = xpath.indexOf("/");
-        String name = index < 0 ? xpath : xpath.substring(0, index);
-        String remainder = index < 0 ? null : xpath.substring(index);
-        name = name.replace("ots:", "");
-        boolean found = false;
-        if (name.equals(DocumentReader.getAttribute(selected, "name")))
-        {
-            found = true;
-        }
-        else if (selected.getNodeName().equals("xsd:complexType") || selected.getNodeName().equals("xsd:sequence")
-                || selected.getNodeName().equals("xsd:choice") || selected.getNodeName().equals("xsd:all")
-                || selected.getNodeName().equals("xsd:element"))
-        {
-            for (int i = 0; i < selected.getChildNodes().getLength() && !found; i++)
-            {
-                Node child = selected.getChildNodes().item(i);
-                if (selected.getNodeName().equals("xsd:complexType") || selected.getNodeName().equals("xsd:sequence")
-                        || selected.getNodeName().equals("xsd:choice") || selected.getNodeName().equals("xsd:all")
-                        || selected.getNodeName().equals("xsd:element"))
-                {
-                    found = followXPath(child, name);
-                }
-            }
-        }
-        if (found && remainder != null)
-        {
-            for (int i = 0; i < selected.getChildNodes().getLength() && !found; i++)
-            {
-                Node child = selected.getChildNodes().item(i);
-                if (selected.getNodeName().equals("xsd:simpleType") || selected.getNodeName().equals("xsd:complexType")
-                        || selected.getNodeName().equals("xsd:element"))
-                {
-                    found = followXPath(child, remainder);
-                }
-            }
-        }
-        return found;
     }
 
     /**
@@ -691,7 +546,7 @@ public class Schema
     /**
      * Checks that all xsd:key or xsd:unique refer to a loaded type with their xsd:selector node. And that all xsd:field nodes
      * point to existing attributes in loaded types. This method assumes only attributes (@) and no elements (ots:) are checked.
-     * @param label "Key" or "Unique" for command line messaging.
+     * @param label "Key" or "Unique" for log messaging.
      * @param map map of nodes, either xsd:key or xsd:unique.
      */
     private void checkKeyOrUniques(final String label, final Map<String, Node> map)
@@ -726,7 +581,7 @@ public class Schema
                 }
                 if (selected == null)
                 {
-                    System.out.println(label + " " + element + " (" + path + ") not found among elements.");
+                    CategoryLogger.always().trace("{} {} ({}) not found among elements.", label, element, path);
                 }
                 else
                 {
@@ -744,11 +599,16 @@ public class Schema
                                     found = true;
                                 }
                             }
+                            else
+                            {
+                                CategoryLogger.always().trace("Field {} in {} {} not checked.", xpathField, label.toLowerCase(),
+                                        element);
+                            }
                         }
                         if (!found)
                         {
-                            System.out.println(label + " " + element + " (" + path + ") points to non existing field "
-                                    + xpathFieldString + ".");
+                            CategoryLogger.always().trace("{} {} ({}) points to non existing field {}.", label, element, path,
+                                    xpathFieldString);
                         }
                     }
                 }
@@ -757,7 +617,110 @@ public class Schema
     }
 
     /**
-     * Returns loaded elements referred to from an xsd:selector child of the given node.
+     * Checks that all xsd:keyrefs refer to loaded keys. That they refer to a loaded type with their xsd:selector node. And that
+     * all xsd:field nodes point to existing attributes (@), values (.), or elements (ots:), in loaded types.
+     */
+    private void checkKeyrefs()
+    {
+        for (String fullPath : this.keyrefs.keySet())
+        {
+            Node node = this.keyrefs.get(fullPath);
+            String keyref = DocumentReader.getAttribute(node, "name");
+            String keyName = DocumentReader.getAttribute(node, "refer").replace("ots:", "");
+            Node key = null;
+            boolean keyFound = false;
+            Iterator<Node> iterator = this.keys.values().iterator();
+            while (!keyFound && iterator.hasNext())
+            {
+                key = iterator.next();
+                keyFound = keyName.equals(DocumentReader.getAttribute(key, "name"));
+            }
+            if (!keyFound)
+            {
+                CategoryLogger.always().trace("Keyref {} refers to non existing key {}.", keyref,
+                        DocumentReader.getAttribute(node, "refer"));
+            }
+            String context = fullPath.substring(0, fullPath.lastIndexOf("."));
+            List<Node> elementList = getSelectedElements(context, node);
+            if (elementList.isEmpty())
+            {
+                CategoryLogger.always().trace("Keyref {} ({}) not found among elements.", keyref, getXpath(node));
+            }
+            else
+            {
+                for (int i = 0; i < elementList.size(); i++)
+                {
+                    Node selected = elementList.get(i);
+                    for (Node field : DocumentReader.getChildren(node, "xsd:field"))
+                    {
+                        String xpathFieldString = DocumentReader.getAttribute(field, "xpath");
+                        String[] xpathFieldValues = xpathFieldString.split("\\|");
+                        String xpathField = xpathFieldValues.length == 1 ? xpathFieldValues[0] : xpathFieldValues[i];
+                        if (!followXPath(selected, xpathField))
+                        {
+                            CategoryLogger.always().trace("Keyref {} ({}) points to non existing field {}.", keyref,
+                                    getXpath(node).split("\\|")[i], xpathField);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Follows to xpath recursively to find a referred element.
+     * @param selected current node from which xpath is relative
+     * @param xpath xpath
+     * @return whether the element was found
+     */
+    private boolean followXPath(final Node selected, final String xpath)
+    {
+        if (xpath.startsWith("@"))
+        {
+            String xpathField = xpath.substring(1); // removes '@'
+            return hasElementAttribute(selected, xpathField);
+        }
+        String selectedName = selected.getNodeName();
+        if (xpath.equals(".") && (selectedName.equals("xsd:simpleType") || selectedName.equals("xsd:element")))
+        {
+            return true; // value is in element
+        }
+        int index = xpath.indexOf("/");
+        String name = index < 0 ? xpath : xpath.substring(0, index);
+        String remainder = index < 0 ? null : xpath.substring(index);
+        name = name.replace("ots:", "");
+        boolean found = false;
+        if (name.equals(DocumentReader.getAttribute(selected, "name")))
+        {
+            found = true;
+        }
+        else if (selectedName.equals("xsd:complexType") || selectedName.equals("xsd:sequence")
+                || selectedName.equals("xsd:choice") || selectedName.equals("xsd:all") || selectedName.equals("xsd:element"))
+        {
+            for (int i = 0; i < selected.getChildNodes().getLength() && !found; i++)
+            {
+                Node child = selected.getChildNodes().item(i);
+                found = followXPath(child, name);
+            }
+        }
+        if (found && remainder != null)
+        {
+            for (int i = 0; i < selected.getChildNodes().getLength() && !found; i++)
+            {
+                Node child = selected.getChildNodes().item(i);
+                if (selectedName.equals("xsd:simpleType") || selectedName.equals("xsd:complexType")
+                        || selectedName.equals("xsd:element"))
+                {
+                    found = followXPath(child, remainder);
+                }
+            }
+        }
+        return found;
+    }
+
+    /**
+     * Returns loaded elements referred to from an xsd:selector child of the given node. A list is returned as multiple elements
+     * may be referred to in the selector string split by "|".
      * @param context context.
      * @param node node (xsd:key, xsd:keyref or xsd:unique).
      * @return elements referred to from an xsd:selector child of the given node.
@@ -797,10 +760,12 @@ public class Schema
                             && entry.getKey().endsWith(selector.replace(".//", "").replace("/", ".")))
                     {
                         nodes.add(entry.getValue());
+                        break;
                     }
                     else if (isType(entry.getValue(), selector.replace(".//", "").replace("/", ".")))
                     {
                         nodes.add(entry.getValue());
+                        break;
                     }
                 }
             }
@@ -845,7 +810,7 @@ public class Schema
      * Searches for an xsd:attribute in a given node. If no viaType is specified, this happens on the children of the given
      * node. Otherwise, first a child node of viaType is taken, and the children nodes of that node are considered. If this
      * method encounters an xsd:complexContent child that itself has a xsd:extension child, both the extended type and the
-     * specified extension elements, are considered.
+     * specified extension elements are considered.
      * @param node node.
      * @param name attribute name, i.e. &lt;xsd:attribute name={name} ... &gt;.
      * @param viaType viaType, can be used for recursion with or without an intermediate child layer.
@@ -858,35 +823,27 @@ public class Schema
         {
             Node child = via.getChildNodes().item(childIndex);
             String childName = DocumentReader.getAttribute(child, "name");
-            if (child.getNodeName().equals("xsd:attribute") && name.equals(childName))
+            String childNodeName = child.getNodeName();
+            if (childNodeName.equals("xsd:attribute") && name.equals(childName)
+                    || childNodeName.equals("xsd:sequence") && hasElementAttribute(child, name, null))
             {
                 return true;
             }
-            if (child.getNodeName().equals("xsd:sequence"))
-            {
-                boolean inSub = hasElementAttribute(child, name, null);
-                if (inSub)
-                {
-                    return true;
-                }
-            }
-            if (child.getNodeName().equals("xsd:complexContent") || child.getNodeName().equals("xsd:simpleContent"))
+            if (childNodeName.equals("xsd:complexContent") || childNodeName.equals("xsd:simpleContent"))
             {
                 Node extension = DocumentReader.getChild(child, "xsd:extension");
                 String base = DocumentReader.getAttribute(extension, "base");
                 if (base != null)
                 {
                     Node baseNode = getType(base);
-                    boolean has = hasElementAttribute(baseNode, name, null); // null, referred types are already complex
-                    if (has)
+                    if (hasElementAttribute(baseNode, name, null)) // null, referred types are already complex
                     {
-                        return has;
+                        return true;
                     }
                 }
-                boolean has = hasElementAttribute(extension, name, null); // null, xsd:extension directly contains xsd:attribute
-                if (has)
+                if (hasElementAttribute(extension, name, null)) // null, xsd:extension directly contains xsd:attribute
                 {
-                    return has;
+                    return true;
                 }
             }
         }
@@ -985,19 +942,21 @@ public class Schema
                 if (extension != null)
                 {
                     base = DocumentReader.getAttribute(extension, "base");
-
                 }
                 Node restriction = DocumentReader.getChild(child, "xsd:restriction");
                 if (restriction != null)
                 {
                     base = DocumentReader.getAttribute(restriction, "base");
                 }
-                boolean isType = base.endsWith(path);
-                if (isType)
+                if (base == null)
                 {
-                    return isType;
+                    return false;
                 }
-                if (base != null && !base.startsWith("xsd:"))
+                if (base.endsWith(path))
+                {
+                    return true;
+                }
+                if (!base.startsWith("xsd:"))
                 {
                     Node baseNode = getType(base);
                     if (baseNode != null && !baseNode.equals(nodeUse))

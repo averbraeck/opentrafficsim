@@ -67,7 +67,7 @@ public class StringCellRenderer extends JLabel implements TableCellRenderer
                 if (message != null)
                 {
                     setToolTipText(OtsEditor.limitTooltip(message));
-                    setBackground(OtsEditor.INVALID_COLOR);
+                    setBackground(OtsEditor.getInvalidColor());
                 }
                 else
                 {
@@ -77,7 +77,7 @@ public class StringCellRenderer extends JLabel implements TableCellRenderer
                             : (column == valueColumn ? node.valueIsExpression() : false);
                     if (expression)
                     {
-                        setBackground(OtsEditor.EXPRESSION_COLOR);
+                        setBackground(OtsEditor.getExpressionColor());
                     }
                     else
                     {

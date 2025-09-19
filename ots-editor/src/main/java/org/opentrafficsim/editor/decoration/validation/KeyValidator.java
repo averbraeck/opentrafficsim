@@ -76,7 +76,6 @@ public class KeyValidator extends XPathValidator implements EventListener
                 {
                     node.addValueValidator(this, field);
                     node.addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
-                    node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED, ReferenceType.WEAK);
                     this.dependentValues.put(node, fieldIndex);
                 }
                 else
@@ -84,9 +83,13 @@ public class KeyValidator extends XPathValidator implements EventListener
                     String attribute = path.substring(attr + 1);
                     node.addAttributeValidator(attribute, this, field);
                     node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
-                    node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED, ReferenceType.WEAK);
                     this.dependentAttributes.computeIfAbsent(node, (n) -> new LinkedHashMap<>()).put(attribute, fieldIndex);
                 }
+                node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED, ReferenceType.WEAK);
+//                if (node.isChoice())
+//                {
+//                    node.addListener(this, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
+//                }
             }
         }
 
@@ -106,6 +109,7 @@ public class KeyValidator extends XPathValidator implements EventListener
         node.removeListener(this, XsdTreeNode.VALUE_CHANGED);
         node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
         node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+//        node.removeListener(this, XsdTreeNode.OPTION_CHANGED);
     }
 
     @Override
@@ -169,19 +173,14 @@ public class KeyValidator extends XPathValidator implements EventListener
             Object[] content = (Object[]) event.getContent();
             XsdTreeNode node = (XsdTreeNode) content[0];
             boolean active = (boolean) content[1];
-            activationChanged(node, active);
+            activationOrChoiceStatusChanged(node, active);
             invalidateAllDependent();
         }
         else if (XsdTreeNode.VALUE_CHANGED.equals(event.getType()))
         {
             Object[] content = (Object[]) event.getContent();
             XsdTreeNode node = (XsdTreeNode) content[0];
-            String previous = (String) content[1];
-            boolean updateKeyrefs = !duplicateKeys(node, this.dependentValues.get(node), previous);
-            if (updateKeyrefs)
-            {
-                updateReferringKeyrefs(node, this.dependentValues.get(node), node.getValue());
-            }
+            updateReferringKeyrefs(node, this.dependentValues.get(node), node.getValue());
             invalidateAllDependent();
         }
         else if (XsdTreeNode.ATTRIBUTE_CHANGED.equals(event.getType()))
@@ -198,12 +197,14 @@ public class KeyValidator extends XPathValidator implements EventListener
             {
                 return;
             }
-            String previous = (String) content[2];
-            boolean updateKeyrefs = !duplicateKeys(node, attributeFields.get(attribute), previous);
-            if (updateKeyrefs)
-            {
-                updateReferringKeyrefs(node, attributeFields.get(attribute), node.getAttributeValue(attribute));
-            }
+            updateReferringKeyrefs(node, attributeFields.get(attribute), node.getAttributeValue(attribute));
+            invalidateAllDependent();
+        }
+        else if (XsdTreeNode.OPTION_CHANGED.equals(event.getType()))
+        {
+            Object[] content = (Object[]) event.getContent();
+            XsdTreeNode node = (XsdTreeNode) content[0];
+            activationOrChoiceStatusChanged(node, node.getOption().equals(node));
             invalidateAllDependent();
         }
     }
@@ -260,41 +261,12 @@ public class KeyValidator extends XPathValidator implements EventListener
     }
 
     /**
-     * Returns whether there are or were duplicate keys such that no key change should result in a change of value at the
-     * keyrefs.
-     * @param keyNode node where key is changed.
-     * @param fieldIndex index of the field.
-     * @param previous previous value.
-     * @return whether there are duplicate keys.
-     */
-    private boolean duplicateKeys(final XsdTreeNode keyNode, final int fieldIndex, final String previous)
-    {
-        Map<XsdTreeNode, List<String>> allValues = getAllValueSets(keyNode);
-        List<String> values = allValues.remove(keyNode);
-        if (values == null)
-        {
-            return false;
-        }
-        if (allValues.containsValue(values))
-        {
-            return true; // there are duplicates
-        }
-        values.set(fieldIndex, previous); // get values from state previous to latest value change
-        if (allValues.containsValue(values))
-        {
-            return true; // there were duplicates
-        }
-        return false;
-    }
-
-    /**
      * Recursively removes or adds the children from an activated or deactivated node to/from this key. Children of a
-     * deactivated node no longer have valid key values. Only active nodes are considered. However, when a node gets
-     * deactivated, its children should be removed too. The argument {@code forceDoChildren} is {@code true} in that case.
+     * deactivated node no longer have valid key values. Only active nodes are considered.
      * @param node node to remove or add.
-     * @param active when node was activated, child nodes are add. Otherwise removed.
+     * @param active when node was activated, child nodes are added, otherwise removed.
      */
-    private void activationChanged(final XsdTreeNode node, final boolean active)
+    private void activationOrChoiceStatusChanged(final XsdTreeNode node, final boolean active)
     {
         if (active)
         {
@@ -308,27 +280,68 @@ public class KeyValidator extends XPathValidator implements EventListener
         {
             for (XsdTreeNode child : node.getChildren())
             {
-                activationChanged(child, active);
+                activationOrChoiceStatusChanged(child, active);
             }
         }
     }
 
     /**
-     * Update value in nodes that refer with xsd:keyref to a value that was changed.
+     * Update value in nodes that refer with xsd:keyref to a value that was changed, but only if the key is not duplicate and
+     * the value is not empty.
      * @param node node on which the value was changed.
      * @param fieldIndex index of field that was changed.
      * @param newValue new value.
      */
     private void updateReferringKeyrefs(final XsdTreeNode node, final int fieldIndex, final String newValue)
     {
-        for (KeyrefValidator validator : this.listeningKeyrefValidators)
+        if (canUpdateKeyRefs(node, fieldIndex, newValue))
         {
-            validator.updateFieldValue(node, fieldIndex, newValue);
+            for (KeyrefValidator validator : this.listeningKeyrefValidators)
+            {
+                validator.updateFieldValue(node, fieldIndex, newValue);
+            }
         }
     }
 
     /**
-     * Invalidates all nodes that depend on this key, as a key node was added, removed, or made inactive.
+     * Returns whether keyrefs can be updated. This is not true if there are duplicate keys or the new value is empty.
+     * @param keyNode node where key is changed.
+     * @param fieldIndex index of the field.
+     * @param newValue new value.
+     * @return whether keyrefs can be updated.
+     */
+    private boolean canUpdateKeyRefs(final XsdTreeNode keyNode, final int fieldIndex, final String newValue)
+    {
+        // TODO
+        /*
+         * This approach allows the following to happen. A coupled id is 'Abcd'. The user wants to remove the id by hitting
+         * backspace a few times. The value changes each time, and each change is allowed to change the coupled values. Finally
+         * the 'A' is also removed causing an empty value and the coupled values not to be updated. Effectively, removing the id
+         * value has now changed all coupled values from 'Abcd' to 'A'. A similar thing can happen with the last valid value
+         * before a duplicate new value is encountered. It is difficult to define a closed logic that can know when there is a
+         * final change of the id. Any operation in the editor can change id values, such as an extension, not only editor
+         * fields in the tree table or attributes table. The JTreeTable also has no clear event when editing starts, so we can't
+         * set some boolean to prevent updating the keyrefs during an episode of editing.
+         */
+        if (newValue == null || newValue.isEmpty())
+        {
+            return false; // value is empty
+        }
+        Map<XsdTreeNode, List<String>> allValues = getAllValueSets(keyNode);
+        List<String> values = allValues.remove(keyNode);
+        if (values == null)
+        {
+            return true;
+        }
+        if (allValues.containsValue(values))
+        {
+            return false; // there are duplicates
+        }
+        return true;
+    }
+
+    /**
+     * Invalidates all nodes that depend on this key, as a key node was added or changed.
      */
     private void invalidateAllDependent()
     {

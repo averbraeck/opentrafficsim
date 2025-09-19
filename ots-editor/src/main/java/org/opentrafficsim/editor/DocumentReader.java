@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -64,18 +65,17 @@ public final class DocumentReader
      * </pre>
      *
      * @param node node, either xsd:element or xsd:attribute.
-     * @param element either "xsd:documentation" or "xsd:appinfo".
-     * @param source name that the source attribute of the annotation should have.
+     * @param nodeAnnotation either "xsd:documentation" or "xsd:appinfo".
      * @return annotation value, {@code null} if not found.
      */
-    public static String getAnnotation(final Node node, final String element, final String source)
+    public static String getAnnotation(final Node node, final NodeAnnotation nodeAnnotation)
     {
         for (Node child : DocumentReader.getChildren(node, "xsd:annotation"))
         {
-            for (Node annotation : DocumentReader.getChildren(child, element))
+            for (Node annotation : DocumentReader.getChildren(child, nodeAnnotation.getElementName()))
             {
                 String appInfoSource = DocumentReader.getAttribute(annotation, "source");
-                if (appInfoSource != null && appInfoSource.equals(source))
+                if (appInfoSource != null && appInfoSource.equals(nodeAnnotation.getSource()))
                 {
                     StringBuilder str = new StringBuilder();
                     for (int appIndex = 0; appIndex < annotation.getChildNodes().getLength(); appIndex++)
@@ -116,7 +116,7 @@ public final class DocumentReader
      * Returns a child node of specified type. It should be a type of which there may be only one.
      * @param node node
      * @param type child type, e.g. xsd:complexType.
-     * @return child node of specified type.
+     * @return child node of specified type, or {@code null} if no such child.
      */
     public static Node getChild(final Node node, final String type)
     {
@@ -138,9 +138,9 @@ public final class DocumentReader
      * Returns child nodes of specified type.
      * @param node node
      * @param type child type, e.g. xsd:field.
-     * @return child nodes of specified type.
+     * @return child nodes of specified type, empty {@code List} of no such child.
      */
-    public static ArrayList<Node> getChildren(final Node node, final String type)
+    public static List<Node> getChildren(final Node node, final String type)
     {
         ArrayList<Node> children = new ArrayList<>();
         if (node.hasChildNodes())
@@ -155,6 +155,65 @@ public final class DocumentReader
             }
         }
         return children;
+    }
+
+    /**
+     * Types of annotation elements the {@code DocumentReader} can read. This is a combination of the element name (e.g.
+     * {@code xsd:appinfo}) and the source {@code name}.
+     *
+     * <pre>
+     * &lt;xsd:sequence&gt;
+     *   &lt;xsd:annotation&gt;
+     *     &lt;xsd:appinfo source="name"&gt;annotates the sequence&lt;/xsd:appinfo&gt;
+     *   &lt;/xsd:annotation&gt;
+     * &lt;/xsd:sequence&gt;
+     * </pre>
+     */
+    public enum NodeAnnotation
+    {
+        /** Element xsd:documentation. */
+        DOCUMENTATION("xsd:documentation", "description"),
+
+        /** Element xsd:appinfo. */
+        APPINFO_NAME("xsd:appinfo", "name"),
+
+        /** Element xsd:appinfo. */
+        APPINFO_PATTERN("xsd:appinfo", "pattern");
+
+        /** Element name. */
+        private final String elementName;
+
+        /** Source. */
+        private final String source;
+
+        /**
+         * Constructor.
+         * @param elementName element name
+         * @param source source name
+         */
+        NodeAnnotation(final String elementName, final String source)
+        {
+            this.elementName = elementName;
+            this.source = source;
+        }
+
+        /**
+         * Returns the element name.
+         * @return the element name
+         */
+        public String getElementName()
+        {
+            return this.elementName;
+        }
+
+        /**
+         * Returns the source.
+         * @return the source
+         */
+        public String getSource()
+        {
+            return this.source;
+        }
     }
 
 }

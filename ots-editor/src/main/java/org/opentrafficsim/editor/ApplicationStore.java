@@ -1,12 +1,15 @@
 package org.opentrafficsim.editor;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.djutils.exceptions.Throw;
@@ -23,16 +26,37 @@ public class ApplicationStore
 {
 
     /** Maximum number of recent files. */
-    private static final int MAX = 10;
+    private static final int MAX_SAVED_FILES = 10;
+
+    /** Maximum length for tooltips. */
+    private static final int MAX_TOOLTIP_LENGTH = 96;
+
+    /** Maximum number of items to show in a dropdown menu. */
+    private static final int MAX_DROPDOWN_ITEMS = 20;
+
+    /** Maximum number of back navigation steps stored. */
+    private static final int MAX_NAVIGATE = 50;
+
+    /** Color for invalid nodes and values (background). */
+    private static final Color INVALID_COLOR = new Color(255, 240, 240);
+
+    /** Color for expression nodes and values (background). */
+    private static final Color EXPRESSION_COLOR = new Color(252, 250, 239);
 
     /** Store of loaded and set properties. */
-    private final Properties store = new Properties();
+    private final Properties store;
 
     /** Application name. */
     private final String applicationName;
 
     /** File to store settings. */
     private final String file;
+
+    /** Cached colors. */
+    private final Map<String, Color> colorCache = new LinkedHashMap<>();
+
+    /** Cached ints. */
+    private final Map<String, Integer> intCache = new LinkedHashMap<>();
 
     /**
      * Constructor. Properties are stored under "{user.home}/{enterprise}/{application}.ini".
@@ -42,6 +66,12 @@ public class ApplicationStore
     public ApplicationStore(final String enterpriseName, final String applicationName)
     {
         Throw.whenNull(enterpriseName, "Enterprise may not bee null.");
+        this.store = new Properties();
+        this.store.put("expression_color", stringFromColor(EXPRESSION_COLOR));
+        this.store.put("invalid_color", stringFromColor(INVALID_COLOR));
+        this.store.put("max_tooltip_length", Integer.toString(MAX_TOOLTIP_LENGTH));
+        this.store.put("max_dropdown_items", Integer.toString(MAX_DROPDOWN_ITEMS));
+        this.store.put("max_navigate", Integer.toString(MAX_NAVIGATE));
         this.applicationName = applicationName;
         this.file =
                 System.getProperty("user.home") + File.separator + enterpriseName + File.separator + applicationName + ".ini";
@@ -57,6 +87,7 @@ public class ApplicationStore
                 //
             }
         }
+        save(); // stores defaults as an example to edit the file
     }
 
     /**
@@ -80,12 +111,20 @@ public class ApplicationStore
         Throw.whenNull(key, "Key may not be null.");
         Throw.whenNull(value, "Value may not be null.");
         this.store.put(key, value);
+        save();
+    }
+
+    /**
+     * Save the properties.
+     */
+    private void save()
+    {
         try
         {
             File f = new File(this.file);
             f.getParentFile().mkdirs();
             FileWriter writer = new FileWriter(f);
-            this.store.store(writer, this.applicationName);
+            this.store.store(writer, this.applicationName + " user settings");
         }
         catch (IOException exception)
         {
@@ -114,34 +153,34 @@ public class ApplicationStore
     /**
      * Add recent file. If the file is already in the list, it is moved to the front.
      * @param key key under which files are stored.
-     * @param file latest file.
+     * @param fileName latest file.
      */
-    public void addRecentFile(final String key, final String file)
+    public void addRecentFile(final String key, final String fileName)
     {
         Throw.whenNull(key, "Key may not be null.");
-        Throw.whenNull(file, "File may not be null.");
+        Throw.whenNull(fileName, "File may not be null.");
         List<String> files = getRecentFiles(key);
-        if (files.contains(file))
+        if (files.contains(fileName))
         {
-            if (files.get(0).equals(file))
+            if (files.get(0).equals(fileName))
             {
                 return;
             }
-            files.remove(file);
+            files.remove(fileName);
         }
-        files.add(0, file);
+        files.add(0, fileName);
         setFiles(key, files);
     }
 
     /**
      * Clears a recent file.
      * @param key key.
-     * @param file file.
+     * @param fileName file.
      */
-    public void removeRecentFile(final String key, final String file)
+    public void removeRecentFile(final String key, final String fileName)
     {
         List<String> files = getRecentFiles(key);
-        files.remove(file);
+        files.remove(fileName);
         setFiles(key, files);
     }
 
@@ -153,10 +192,17 @@ public class ApplicationStore
     private void setFiles(final String key, final List<String> files)
     {
         StringBuilder str = new StringBuilder();
-        int n = Math.min(files.size(), MAX);
-        files.stream().limit(n - 1).forEach((f) -> str.append(f).append("|"));
-        str.append(files.get(n - 1));
-        setProperty(key, str.toString());
+        int n = Math.min(files.size(), MAX_SAVED_FILES);
+        if (n > 0)
+        {
+            files.stream().limit(n - 1).forEach((f) -> str.append(f).append("|"));
+            str.append(files.get(n - 1));
+            setProperty(key, str.toString());
+        }
+        else
+        {
+            clearProperty(key);
+        }
     }
 
     /**
@@ -167,6 +213,48 @@ public class ApplicationStore
     {
         Throw.whenNull(key, "Key may not be null.");
         this.store.remove(key);
+        save();
     }
 
+    /**
+     * Returns color of given key.
+     * @param key key
+     * @return color
+     */
+    public Color getColor(final String key)
+    {
+        return this.colorCache.computeIfAbsent(key, (k) -> colorFromString(this.store.getProperty(k)));
+    }
+
+    /**
+     * Returns color from string.
+     * @param colorString color as string
+     * @return color
+     */
+    private static Color colorFromString(final String colorString)
+    {
+        String value = colorString.replace(" ", "");
+        String[] channels = value.substring(1, value.length() - 1).split(",");
+        return new Color(Integer.valueOf(channels[0]), Integer.valueOf(channels[1]), Integer.valueOf(channels[2]));
+    }
+
+    /**
+     * Returns string from color.
+     * @param color color
+     * @return string from color.
+     */
+    private String stringFromColor(final Color color)
+    {
+        return String.format("[%d, %d, %d]", color.getRed(), color.getGreen(), color.getBlue());
+    }
+
+    /**
+     * Returns int for given key.
+     * @param key key
+     * @return int
+     */
+    public int getInt(final String key)
+    {
+        return this.intCache.computeIfAbsent(key, (k) -> Integer.valueOf(this.store.getProperty(k)));
+    }
 }

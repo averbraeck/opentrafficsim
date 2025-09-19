@@ -64,6 +64,7 @@ import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
+import org.opentrafficsim.editor.decoration.DefaultDecorator;
 import org.opentrafficsim.swing.gui.AppearanceControlComboBox;
 import org.opentrafficsim.swing.gui.OtsControlPanel;
 
@@ -304,34 +305,35 @@ public final class EditorMap extends JPanel implements EventListener
             }
         };
 
+        Dimension buttonSize = new Dimension(24, 24);
         JToggleButton nodeButton = new JToggleButton(loadIcon("./OTS_node.png"));
-        nodeButton.setPreferredSize(new Dimension(24, 24));
-        nodeButton.setMinimumSize(new Dimension(24, 24));
-        nodeButton.setMaximumSize(new Dimension(24, 24));
+        nodeButton.setPreferredSize(buttonSize);
+        nodeButton.setMinimumSize(buttonSize);
+        nodeButton.setMaximumSize(buttonSize);
         nodeButton.setToolTipText("Add node");
         group.add(nodeButton);
         this.toolPanel.add(nodeButton);
 
         JToggleButton linkButton = new JToggleButton(loadIcon("./OTS_link.png"));
-        linkButton.setPreferredSize(new Dimension(24, 24));
-        linkButton.setMinimumSize(new Dimension(24, 24));
-        linkButton.setMaximumSize(new Dimension(24, 24));
+        linkButton.setPreferredSize(buttonSize);
+        linkButton.setMinimumSize(buttonSize);
+        linkButton.setMaximumSize(buttonSize);
         linkButton.setToolTipText("Add link");
         group.add(linkButton);
         this.toolPanel.add(linkButton);
 
         JToggleButton centroidButton = new JToggleButton(loadIcon("./OTS_centroid.png"));
-        centroidButton.setPreferredSize(new Dimension(24, 24));
-        centroidButton.setMinimumSize(new Dimension(24, 24));
-        centroidButton.setMaximumSize(new Dimension(24, 24));
+        centroidButton.setPreferredSize(buttonSize);
+        centroidButton.setMinimumSize(buttonSize);
+        centroidButton.setMaximumSize(buttonSize);
         centroidButton.setToolTipText("Add centroid");
         group.add(centroidButton);
         this.toolPanel.add(centroidButton);
 
         JToggleButton connectorButton = new JToggleButton(loadIcon("./OTS_connector.png"));
-        connectorButton.setPreferredSize(new Dimension(24, 24));
-        connectorButton.setMinimumSize(new Dimension(24, 24));
-        connectorButton.setMaximumSize(new Dimension(24, 24));
+        connectorButton.setPreferredSize(buttonSize);
+        connectorButton.setMinimumSize(buttonSize);
+        connectorButton.setMaximumSize(buttonSize);
         connectorButton.setToolTipText("Add connector");
         group.add(connectorButton);
         this.toolPanel.add(connectorButton);
@@ -374,25 +376,59 @@ public final class EditorMap extends JPanel implements EventListener
         this.toolPanel.add(new JLabel("Show:"));
 
         this.toolPanel.add(Box.createHorizontalStrut(5));
+        JButton resetY = new JButton(loadIcon("./Up-down.png"));
+        resetY.setMinimumSize(buttonSize);
+        resetY.setMaximumSize(buttonSize);
+        resetY.setPreferredSize(buttonSize);
+        resetY.setToolTipText("Reset Y-zoom");
+        resetY.addActionListener((e) -> this.visualizationPanel.resetZoomY());
+        this.toolPanel.add(resetY);
+
         JButton extent = new JButton(loadIcon("./Expand.png"));
-        extent.setMinimumSize(new Dimension(24, 24));
-        extent.setMaximumSize(new Dimension(24, 24));
-        extent.setPreferredSize(new Dimension(24, 24));
+        extent.setMinimumSize(buttonSize);
+        extent.setMaximumSize(buttonSize);
+        extent.setPreferredSize(buttonSize);
         extent.setToolTipText("Zoom whole network");
-        extent.addActionListener((e) -> this.visualizationPanel.zoomAll());
+        extent.addActionListener((e) -> safeZoomAll());
         this.toolPanel.add(extent);
 
         JButton grid = new JButton(loadIcon("./Grid.png"));
-        grid.setMinimumSize(new Dimension(24, 24));
-        grid.setMaximumSize(new Dimension(24, 24));
-        grid.setPreferredSize(new Dimension(24, 24));
+        grid.setMinimumSize(buttonSize);
+        grid.setMaximumSize(buttonSize);
+        grid.setPreferredSize(buttonSize);
         grid.setToolTipText("Toggle grid on/off");
-        grid.addActionListener((e) -> this.visualizationPanel.setShowGrid(!this.visualizationPanel.isShowGrid()));
+        grid.addActionListener((e) ->
+        {
+            this.visualizationPanel.setShowGrid(!this.visualizationPanel.isShowGrid());
+            this.updater.update();
+        });
         this.toolPanel.add(grid);
 
         this.toolPanel.add(Box.createHorizontalStrut(5));
 
         add(this.toolPanel, BorderLayout.NORTH);
+    }
+
+    /**
+     * Zoom all, or home extent if there are no objects.
+     */
+    private void safeZoomAll()
+    {
+        if (!this.visualizationPanel.getElements().isEmpty())
+        {
+            this.visualizationPanel.zoomAll();
+        }
+        else
+        {
+            try
+            {
+                this.visualizationPanel.home();
+            }
+            catch (Exception ex)
+            {
+                SwingUtilities.invokeLater(() -> this.visualizationPanel.home());
+            }
+        }
     }
 
     /**
@@ -404,7 +440,7 @@ public final class EditorMap extends JPanel implements EventListener
     {
         try
         {
-            return OtsEditor.loadIcon(file, 16, 16, -1, -1);
+            return DefaultDecorator.loadIcon(file, 16, 16, -1, -1);
         }
         catch (IOException ioe)
         {
@@ -557,7 +593,7 @@ public final class EditorMap extends JPanel implements EventListener
             XsdTreeNodeRoot root = (XsdTreeNodeRoot) event.getContent();
             root.addListener(this, XsdTreeNodeRoot.NODE_CREATED);
             root.addListener(this, XsdTreeNodeRoot.NODE_REMOVED);
-            SwingUtilities.invokeLater(() -> this.visualizationPanel.zoomAll());
+            SwingUtilities.invokeLater(() -> safeZoomAll());
         }
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
         {
