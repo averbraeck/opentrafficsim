@@ -13,6 +13,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.editor.decoration.validation.XsdAllValidator;
 import org.w3c.dom.Node;
 
@@ -30,8 +31,8 @@ public final class XsdTreeNodeUtil
     /** Pattern to split string by upper case, with lower case adjacent, without disregarding the match itself. */
     private static final Pattern UPPER_PATTERN = Pattern.compile("(?=\\p{Lu})(?<=\\p{Ll})|(?=\\p{Lu}\\p{Ll})");
 
-    /** Validators for xsd:all nodes and their children. */
-    private static final Map<String, XsdAllValidator> XSD_ALL_VALIDATORS = new LinkedHashMap<>();
+    /** Validators for xsd:all nodes and their children. This is maintained per root object, i.e. per tree. */
+    private static final Map<XsdTreeNodeRoot, Map<String, XsdAllValidator>> XSD_ALL_VALIDATORS = new LinkedHashMap<>();
 
     /**
      * Private constructor.
@@ -42,36 +43,17 @@ public final class XsdTreeNodeUtil
     }
 
     /**
-     * Add xsd all validator to the given node.
+     * Add xsd:all validator to the given node.
      * @param shared shared xsd:all node.
      * @param node xsd:all node, or one of its children.
      */
-    public static void addXsdAllValidator(final XsdTreeNode shared, final XsdTreeNode node)
+    static void addXsdAllValidator(final XsdTreeNode shared, final XsdTreeNode node)
     {
         String path = shared.getPathString();
-        XsdAllValidator validator = XSD_ALL_VALIDATORS.computeIfAbsent(path, (p) -> new XsdAllValidator(node.getRoot()));
+        XsdAllValidator validator = XSD_ALL_VALIDATORS.computeIfAbsent(shared.getRoot(), (r) -> new LinkedHashMap<>())
+                .computeIfAbsent(path, (p) -> new XsdAllValidator(node.getRoot()));
         node.addNodeValidator(validator);
         validator.addNode(node);
-    }
-
-    /**
-     * Parses the minOcccurs or maxOccurs value from given node. If it is not supplied, the default of 1 is given.
-     * @param node node.
-     * @param attribute "minOccurs" or "maxOccurs".
-     * @return value of occurs, -1 represents "unbounded".
-     */
-    static int getOccurs(final Node node, final String attribute)
-    {
-        String occurs = DocumentReader.getAttribute(node, attribute);
-        if (occurs == null)
-        {
-            return 1;
-        }
-        if ("unbounded".equals(occurs))
-        {
-            return -1;
-        }
-        return Integer.valueOf(occurs);
     }
 
     /**
@@ -82,12 +64,11 @@ public final class XsdTreeNodeUtil
      *            structures.
      * @param hiddenNodes nodes between the XSD node of the parent, and this tree node's XSD node.
      * @param schema schema to get types and referred elements from.
-     * @param flattenSequence when true, treats an xsd:sequence child as an extension of the node. In the context of a choice
-     *            this should remain separated.
-     * @param skip child index to skip, this is used when copying choice options from an option that is already created.
+     * @param skip child index to skip, this is used when copying choice options from an option that is already created (i.e.
+     *            {@code copyNode} in {@code XsdTreeNode.copyInto(copyNode)}).
      */
     static void addChildren(final Node node, final XsdTreeNode parentNode, final List<XsdTreeNode> children,
-            final ImmutableList<Node> hiddenNodes, final Schema schema, final boolean flattenSequence, final int skip)
+            final ImmutableList<Node> hiddenNodes, final Schema schema, final int skip)
     {
         int skipIndex = skip;
         XsdTreeNode root = parentNode.getRoot();
@@ -107,25 +88,24 @@ public final class XsdTreeNodeUtil
                     String type = DocumentReader.getAttribute(child, "type");
                     if (ref != null)
                     {
-                        element = new XsdTreeNode(parentNode, XsdTreeNodeUtil.ref(child, ref, schema),
-                                XsdTreeNodeUtil.append(hiddenNodes, node), child);
+                        element = new XsdTreeNode(parentNode, ref(child, ref, schema), append(hiddenNodes, node), child);
                     }
                     else if (type != null)
                     {
-                        Node typedNode = XsdTreeNodeUtil.type(child, type, schema);
+                        Node typedNode = type(child, type, schema);
                         if (typedNode == null)
                         {
                             // xsd:string or other basic type
-                            element = new XsdTreeNode(parentNode, child, XsdTreeNodeUtil.append(hiddenNodes, node));
+                            element = new XsdTreeNode(parentNode, child, append(hiddenNodes, node));
                         }
                         else
                         {
-                            element = new XsdTreeNode(parentNode, typedNode, XsdTreeNodeUtil.append(hiddenNodes, node), child);
+                            element = new XsdTreeNode(parentNode, typedNode, append(hiddenNodes, node), child);
                         }
                     }
                     else
                     {
-                        element = new XsdTreeNode(parentNode, child, XsdTreeNodeUtil.append(hiddenNodes, node));
+                        element = new XsdTreeNode(parentNode, child, append(hiddenNodes, node));
                     }
                     children.add(element);
                     root.fireEvent(XsdTreeNodeRoot.NODE_CREATED,
@@ -137,19 +117,10 @@ public final class XsdTreeNodeUtil
                         skipIndex = -1;
                         break;
                     }
-                    if (flattenSequence)
-                    {
-                        addChildren(child, parentNode, children, XsdTreeNodeUtil.append(hiddenNodes, node), schema,
-                                flattenSequence, -1);
-                    }
-                    else
-                    {
-                        // add sequence as option, 'children' is a list of options for a choice
-                        XsdTreeNode sequence = new XsdTreeNode(parentNode, child, XsdTreeNodeUtil.append(hiddenNodes, node));
-                        children.add(sequence);
-                        root.fireEvent(XsdTreeNodeRoot.NODE_CREATED,
-                                new Object[] {sequence, parentNode, parentNode.children.indexOf(sequence)});
-                    }
+                    XsdTreeNode sequence = new XsdTreeNode(parentNode, child, append(hiddenNodes, node));
+                    children.add(sequence);
+                    root.fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                            new Object[] {sequence, parentNode, parentNode.children.indexOf(sequence)});
                     break;
                 case "xsd:choice":
                 case "xsd:all":
@@ -158,16 +129,10 @@ public final class XsdTreeNodeUtil
                         skipIndex = -1;
                         break;
                     }
-                    XsdTreeNode choice = new XsdTreeNode(parentNode, child, XsdTreeNodeUtil.append(hiddenNodes, node));
+                    XsdTreeNode choice = new XsdTreeNode(parentNode, child, append(hiddenNodes, node));
                     root.fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                             new Object[] {choice, parentNode, parentNode.children.indexOf(choice)});
                     choice.createOptions();
-                    /*
-                     * We add the choice node, which is usually overwritten by the consecutive setting of an option. But not if
-                     * this choice is part of a sequence, that is itself an option in a parentChoice. Then, the option is set at
-                     * the level of the parent choice. The sequence option of the parentChoice in fact needs to be populated by
-                     * the choice nodes. If we don't add it here, the sequence will be empty.
-                     */
                     children.add(choice);
                     choice.setOption(choice.options.get(0));
                     break;
@@ -177,7 +142,7 @@ public final class XsdTreeNodeUtil
                         skipIndex = -1;
                         break;
                     }
-                    XsdTreeNode extension = new XsdTreeNode(parentNode, child, XsdTreeNodeUtil.append(hiddenNodes, node));
+                    XsdTreeNode extension = new XsdTreeNode(parentNode, child, append(hiddenNodes, node));
                     root.fireEvent(XsdTreeNodeRoot.NODE_CREATED,
                             new Object[] {extension, parentNode, parentNode.children.indexOf(extension)});
                     children.add(extension);
@@ -192,9 +157,28 @@ public final class XsdTreeNodeUtil
                     // nothing, not even report ignoring, these are not relevant regarding element structure
                     break;
                 default:
-                    System.out.println("Ignoring a " + child.getNodeName());
+                    CategoryLogger.always().trace("Ignoring a {}", child.getNodeName());
             }
         }
+    }
+
+    /**
+     * Returns the element referred to by ref={ref} in an xsd:element. Will return {@code XiIncludeNode.XI_INCLUDE} for
+     * xi:include.
+     * @param node node, must have ref={ref} attribute.
+     * @param ref value of ref={ref}.
+     * @param schema schema to take element from.
+     * @return element referred to by ref={ref} in an xsd:element.
+     */
+    private static Node ref(final Node node, final String ref, final Schema schema)
+    {
+        if (ref.equals("xi:include"))
+        {
+            return XiIncludeNode.XI_INCLUDE;
+        }
+        Node refNode = schema.getElement(ref);
+        Throw.when(refNode == null, RuntimeException.class, "Unable to load ref for %s from XSD schema.", ref);
+        return refNode;
     }
 
     /**
@@ -203,7 +187,7 @@ public final class XsdTreeNodeUtil
      * @param node node to append.
      * @return copy of the input list, with the extra node appended at the end.
      */
-    static ImmutableList<Node> append(final ImmutableList<Node> hiddenNodes, final Node node)
+    private static ImmutableList<Node> append(final ImmutableList<Node> hiddenNodes, final Node node)
     {
         List<Node> list = new ArrayList<>(hiddenNodes.size() + 1);
         list.addAll(hiddenNodes.toCollection());
@@ -212,7 +196,26 @@ public final class XsdTreeNodeUtil
     }
 
     /**
-     * Returns a list of options derived from a list of restrictions (xsd:restriction).
+     * Returns the element referred to by type={type} in an xsd:element. Returns {@code null} all types starting with "xsd:" as
+     * these are standard types to which user input can be validated directly.
+     * @param node node, must have type={type} attribute.
+     * @param type value of type={type}.
+     * @param schema schema to take type from.
+     * @return element referred to by type={type} in an xsd:element or {@code null} for standard xsd types.
+     */
+    private static Node type(final Node node, final String type, final Schema schema)
+    {
+        if (type.startsWith("xsd:"))
+        {
+            return null;
+        }
+        Node typeNode = schema.getType(type);
+        Throw.when(typeNode == null, RuntimeException.class, "Unable to load type for %s from XSD schema.", type);
+        return typeNode;
+    }
+
+    /**
+     * Returns a list of options derived from a list of restrictions (xsd:restriction) based on their internal xsd:enumeration.
      * @param restrictions list of restrictions.
      * @return list of options.
      */
@@ -231,7 +234,8 @@ public final class XsdTreeNodeUtil
     }
 
     /**
-     * Recursively throws creation events for all current nodes in the tree. This method is for {@code XsdTreeNodeRoot}.
+     * Recursively throws creation event on specific listener for all current nodes in the tree. This method is for
+     * {@code XsdTreeNodeRoot}.
      * @param node node.
      * @param listener listener.
      * @throws RemoteException if event cannot be fired.
@@ -330,44 +334,6 @@ public final class XsdTreeNodeUtil
     }
 
     /**
-     * Returns the element referred to by ref={ref} in an xsd:element. Will return {@code XiIncludeNode.XI_INCLUDE} for
-     * xi:include.
-     * @param node node, must have ref={ref} attribute.
-     * @param ref value of ref={ref}.
-     * @param schema schema to take element from.
-     * @return element referred to by ref={ref} in an xsd:element.
-     */
-    static Node ref(final Node node, final String ref, final Schema schema)
-    {
-        if (ref.equals("xi:include"))
-        {
-            return XiIncludeNode.XI_INCLUDE;
-        }
-        Node refNode = schema.getElement(ref);
-        Throw.when(refNode == null, RuntimeException.class, "Unable to load ref for %s from XSD schema.", ref);
-        return refNode;
-    }
-
-    /**
-     * Returns the element referred to by type={type} in an xsd:element. Ignores all types starting with "xsd:" as these are
-     * standard types to which user input can be validated directly.
-     * @param node node, must have type={type} attribute.
-     * @param type value of type={type}.
-     * @param schema schema to take type from.
-     * @return element referred to by type={type} in an xsd:element.
-     */
-    static Node type(final Node node, final String type, final Schema schema)
-    {
-        if (type.startsWith("xsd:"))
-        {
-            return null;
-        }
-        Node typeNode = schema.getType(type);
-        Throw.when(typeNode == null, RuntimeException.class, "Unable to load type for %s from XSD schema.", type);
-        return typeNode;
-    }
-
-    /**
      * Adds a thin space before each capital character in a {@code String}, except the first.
      * @param name name of node.
      * @return input string but with a thin space before each capital character, except the first.
@@ -384,16 +350,16 @@ public final class XsdTreeNodeUtil
         for (String part : parts)
         {
             stringBuilder.append(separator).append(part);
-            separator = " ";
+            separator = "\u2009"; // thin space
         }
         return stringBuilder.toString();
     }
 
     /**
-     * Returns whether the two values are equal, where {@code null} is consider equal to an empty string.
+     * Returns whether the two values are equal, where {@code null} is considered equal to an empty string.
      * @param value1 value 1.
      * @param value2 value 2.
-     * @return whether the two values are equal, where {@code null} is consider equal to an empty string.
+     * @return whether the two values are equal, where {@code null} is considered equal to an empty string.
      */
     public static boolean valuesAreEqual(final String value1, final String value2)
     {
@@ -406,7 +372,7 @@ public final class XsdTreeNodeUtil
      * Class that holds two indices related to loading XML nodes in to a structure of {@code XsdTreeNode}. Both pertain to the
      * index in a list of child nodes.
      */
-    protected static final class LoadingIndices
+    static final class LoadingIndices
     {
         /** Index of XML node. */
         private int xmlNode;
@@ -419,7 +385,7 @@ public final class XsdTreeNodeUtil
          * @param xmlNode index of XML node
          * @param xsdTreeNode index of XsdTreeNode
          */
-        public LoadingIndices(final int xmlNode, final int xsdTreeNode)
+        LoadingIndices(final int xmlNode, final int xsdTreeNode)
         {
             this.xmlNode = xmlNode;
             this.xsdTreeNode = xsdTreeNode;
@@ -459,6 +425,49 @@ public final class XsdTreeNodeUtil
         public void setXsdTreeNode(final int xsdTreeNode)
         {
             this.xsdTreeNode = xsdTreeNode;
+        }
+    }
+
+    /**
+     * Enum to specify what occurs is requested.
+     */
+    enum Occurs
+    {
+        /** Value for minOccurs. */
+        MIN("minOccurs"),
+
+        /** Value for maxOccurs. */
+        MAX("maxOccurs");
+
+        /** Node attribute. */
+        private final String attribute;
+
+        /**
+         * Constructor.
+         * @param attribute node attribute
+         */
+        Occurs(final String attribute)
+        {
+            this.attribute = attribute;
+        }
+
+        /**
+         * Parses the minOcccurs or maxOccurs value from given node. If it is not supplied, the default of 1 is given.
+         * @param node node.
+         * @return value of occurs, -1 represents "unbounded".
+         */
+        public int get(final Node node)
+        {
+            String occursValue = DocumentReader.getAttribute(node, this.attribute);
+            if (occursValue == null)
+            {
+                return 1;
+            }
+            if ("unbounded".equals(occursValue))
+            {
+                return -1;
+            }
+            return Integer.valueOf(occursValue);
         }
     }
 

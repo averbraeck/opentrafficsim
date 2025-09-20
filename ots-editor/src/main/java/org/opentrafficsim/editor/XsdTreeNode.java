@@ -35,6 +35,7 @@ import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.editor.DocumentReader.NodeAnnotation;
 import org.opentrafficsim.editor.XsdTreeNodeUtil.LoadingIndices;
+import org.opentrafficsim.editor.XsdTreeNodeUtil.Occurs;
 import org.opentrafficsim.editor.decoration.validation.CoupledValidator;
 import org.opentrafficsim.editor.decoration.validation.KeyValidator;
 import org.opentrafficsim.editor.decoration.validation.ValueValidator;
@@ -272,6 +273,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         this(parent, xsdNode, hiddenNodes, null);
     }
 
+    // TODO concept of parentChoice no longer exists
     /**
      * Constructor with referring node for extended types. If the node is xsd:choice or xsd:all, this node will represent the
      * choice. All options are then created as separate {@code XsdTreeNode}'s by this constructor. For each option that is an
@@ -294,7 +296,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      *
      * The hidden nodes will not include a referring node. For example the following "OBJECT" element will result in hidden
      * nodes {xsd:complexType, xsd:sequence} and the referring node is the {@code Node} with the ref="OBJECT" attribute. The
-     * {@code XsdTreeNode} representing this element will itself wrap the node with name="OBJECT".
+     * {@code XsdTreeNode} representing this element will itself wrap the referred node with name="OBJECT" as shown above.
      *
      * <pre>
      * &lt;xsd:element name="PARENT"&gt;
@@ -308,7 +310,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      *
      * @param parent parent.
      * @param xsdNode XSD node that this tree node represents.
-     * @param hiddenNodes nodes between the XSD node of the parent, and this tree node's XSD node.
+     * @param hiddenNodes nodes between the XSD node of the parent and this tree node's XSD node.
      * @param referringXsdNode original node that referred to {@code Node} through a ref={ref} or type={type} attribute, it is
      *            used for naming and occurrence, may be {@code null} if not applicable.
      */
@@ -348,8 +350,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     {
         Node node = this.choice != null ? this.choice.xsdNode
                 : (this.referringXsdNode == null ? this.xsdNode : this.referringXsdNode);
-        this.minOccurs = XsdTreeNodeUtil.getOccurs(node, "minOccurs");
-        this.maxOccurs = XsdTreeNodeUtil.getOccurs(node, "maxOccurs");
+        this.minOccurs = Occurs.MIN.get(node);
+        this.maxOccurs = Occurs.MAX.get(node);
         if (getNodeName().equals("xsd:all"))
         {
             NodeList children = this.xsdNode.getChildNodes();
@@ -538,7 +540,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         Throw.when(!this.xsdNode.getNodeName().equals("xsd:choice") && !this.xsdNode.getNodeName().equals("xsd:all"),
                 IllegalStateException.class, "Can only add options for a node of type xsd:choice or xsd:all.");
         this.options = new ArrayList<>();
-        XsdTreeNodeUtil.addChildren(this.xsdNode, this.parent, this.options, this.hiddenNodes, this.schema, false, -1);
+        XsdTreeNodeUtil.addChildren(this.xsdNode, this.parent, this.options, this.hiddenNodes, this.schema, -1);
         this.choice = this;
         for (XsdTreeNode option : this.options)
         {
@@ -721,7 +723,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 new ImmutableArrayList<>(Collections.emptyList()), this.schema);
         for (Entry<Node, ImmutableList<Node>> entry : relevantNodes.entrySet())
         {
-            XsdTreeNodeUtil.addChildren(entry.getKey(), this, this.children, entry.getValue(), this.schema, false, -1);
+            XsdTreeNodeUtil.addChildren(entry.getKey(), this, this.children, entry.getValue(), this.schema, -1);
         }
         for (int index = 0; index < this.children.size(); index++)
         {
@@ -773,11 +775,11 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         this.attributeInvalidMessage = new ArrayList<>();
         if (this.referringXsdNode != null)
         {
-            this.description = DocumentReader.getAnnotation(this.referringXsdNode, NodeAnnotation.DOCUMENTATION);
+            this.description = NodeAnnotation.DESCRIPTION.get(this.referringXsdNode);
         }
         if (this.description == null)
         {
-            this.description = DocumentReader.getAnnotation(this.xsdNode, NodeAnnotation.DOCUMENTATION);
+            this.description = NodeAnnotation.DESCRIPTION.get(this.xsdNode);
         }
         this.descriptionSpecificity = this.description != null ? 0 : Integer.MIN_VALUE;
         Node complexType =
@@ -796,7 +798,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     private void findAttributes(final Node node, final int specificity)
     {
-        String descript = DocumentReader.getAnnotation(node, NodeAnnotation.DOCUMENTATION);
+        String descript = NodeAnnotation.DESCRIPTION.get(node);
         if (descript != null && this.descriptionSpecificity < specificity)
         {
             this.descriptionSpecificity = specificity;
@@ -1359,19 +1361,19 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             int selectedIndex = this.choice.options.indexOf(this);
             choiceNode.options = new ArrayList<>();
             XsdTreeNodeUtil.addChildren(this.choice.xsdNode, copyNode.parent, choiceNode.options, this.choice.hiddenNodes,
-                    this.schema, false, selectedIndex);
+                    this.schema, selectedIndex);
             choiceNode.options.add(selectedIndex, copyNode);
             choiceNode.selected = choiceNode.options.get(selectedIndex);
             if (this.choice.getNodeName().equals("xsd:all"))
             {
-                XsdTreeNodeUtil.addXsdAllValidator(this.choice, this);
+                XsdTreeNodeUtil.addXsdAllValidator(choiceNode, choiceNode);
             }
             for (int index = 0; index < choiceNode.options.size(); index++)
             {
                 XsdTreeNode option = choiceNode.options.get(index);
                 if (this.choice.getNodeName().equals("xsd:all"))
                 {
-                    XsdTreeNodeUtil.addXsdAllValidator(this.choice, option);
+                    XsdTreeNodeUtil.addXsdAllValidator(choiceNode, option);
                 }
                 option.minOccurs = choiceNode.minOccurs;
                 option.maxOccurs = choiceNode.maxOccurs;
@@ -1421,8 +1423,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * Removes this node from the tree structure. For nodes with minOccurs = 0 that are the last of their type in the context of
      * their parent, the node is deactivated rather than removed. This method also explicitly removes all children nodes
-     * recursively. If the node is part of a sequence that is an option in a {@code parentChoice}, the node is removed from
-     * there.
+     * recursively.
      */
     public final void remove()
     {
@@ -2210,7 +2211,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             // this name may appear as an option for an xsd:choice or xsd:all
             StringBuilder stringBuilder = new StringBuilder();
             Node relevantNode = this.referringXsdNode == null ? this.xsdNode : this.referringXsdNode;
-            String annotation = DocumentReader.getAnnotation(relevantNode, NodeAnnotation.APPINFO_NAME);
+            String annotation = NodeAnnotation.APPINFO_NAME.get(relevantNode);
             if (annotation != null)
             {
                 stringBuilder.append(annotation);
@@ -2403,12 +2404,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                     case "xmlns:ots":
                     case "xmlns:xi":
                     case "xmlns:xsi":
-                        continue;
                     case "xsi:schemaLocation":
-                        if (this instanceof XsdTreeNodeRoot)
-                        {
-                            ((XsdTreeNodeRoot) this).setSchemaLocation(attributeNode.getNodeValue());
-                        } // else its an include file
                         continue;
                     default:
                         try

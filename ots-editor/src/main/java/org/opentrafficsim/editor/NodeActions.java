@@ -112,6 +112,7 @@ public class NodeActions
         List<XsdTreeNode> nodePath = childIndex < 0 ? parent.getPath() : parent.getChild(childIndex).getPath();
         TreePath path = new TreePath(nodePath.toArray());
         this.treeTable.getTree().setSelectionPath(path);
+        this.editor.getUndo().setPostActionShowNode(parent.getChild(childIndex));
 
         this.treeTable.updateUI();
     }

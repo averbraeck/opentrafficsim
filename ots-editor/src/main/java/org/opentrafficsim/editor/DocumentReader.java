@@ -53,48 +53,6 @@ public final class DocumentReader
     }
 
     /**
-     * Returns an annotation value. These are defined as below, for either xsd:appinfo or xsd:documentation. All space-like
-     * characters are replaced by blanks, and consecutive blanks are removed.
-     *
-     * <pre>
-     * &lt;xsd:sequence&gt;
-     *   &lt;xsd:annotation&gt;
-     *     &lt;xsd:appinfo source="name"&gt;annotates the sequence&lt;/xsd:appinfo&gt;
-     *   &lt;/xsd:annotation&gt;
-     * &lt;/xsd:sequence&gt;
-     * </pre>
-     *
-     * @param node node, either xsd:element or xsd:attribute.
-     * @param nodeAnnotation either "xsd:documentation" or "xsd:appinfo".
-     * @return annotation value, {@code null} if not found.
-     */
-    public static String getAnnotation(final Node node, final NodeAnnotation nodeAnnotation)
-    {
-        for (Node child : DocumentReader.getChildren(node, "xsd:annotation"))
-        {
-            for (Node annotation : DocumentReader.getChildren(child, nodeAnnotation.getElementName()))
-            {
-                String appInfoSource = DocumentReader.getAttribute(annotation, "source");
-                if (appInfoSource != null && appInfoSource.equals(nodeAnnotation.getSource()))
-                {
-                    StringBuilder str = new StringBuilder();
-                    for (int appIndex = 0; appIndex < annotation.getChildNodes().getLength(); appIndex++)
-                    {
-                        Node appInfo = annotation.getChildNodes().item(appIndex);
-                        if (appInfo.getNodeName().equals("#text"))
-                        {
-                            str.append(appInfo.getNodeValue());
-                        }
-                    }
-                    // tabs, line break, etc. to blanks, then remove consecutive blanks, then trailing/leading blanks
-                    return str.toString().replaceAll("\\s", " ").replaceAll("\\s{2,}", " ").trim();
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
      * Returns the attribute of a node. This is short for:
      *
      * <pre>
@@ -172,7 +130,7 @@ public final class DocumentReader
     public enum NodeAnnotation
     {
         /** Element xsd:documentation. */
-        DOCUMENTATION("xsd:documentation", "description"),
+        DESCRIPTION("xsd:documentation", "description"),
 
         /** Element xsd:appinfo. */
         APPINFO_NAME("xsd:appinfo", "name"),
@@ -198,21 +156,44 @@ public final class DocumentReader
         }
 
         /**
-         * Returns the element name.
-         * @return the element name
+         * Returns an annotation value. These are defined as below, for either xsd:appinfo or xsd:documentation. All space-like
+         * characters are replaced by blanks, and consecutive blanks are removed.
+         *
+         * <pre>
+         * &lt;xsd:sequence&gt;
+         *   &lt;xsd:annotation&gt;
+         *     &lt;xsd:appinfo source="name"&gt;annotates the sequence&lt;/xsd:appinfo&gt;
+         *   &lt;/xsd:annotation&gt;
+         * &lt;/xsd:sequence&gt;
+         * </pre>
+         *
+         * @param node node, either xsd:element or xsd:attribute.
+         * @return annotation value, {@code null} if not found.
          */
-        public String getElementName()
+        public String get(final Node node)
         {
-            return this.elementName;
-        }
-
-        /**
-         * Returns the source.
-         * @return the source
-         */
-        public String getSource()
-        {
-            return this.source;
+            for (Node child : DocumentReader.getChildren(node, "xsd:annotation"))
+            {
+                for (Node annotation : DocumentReader.getChildren(child, this.elementName))
+                {
+                    String appInfoSource = DocumentReader.getAttribute(annotation, "source");
+                    if (appInfoSource != null && appInfoSource.equals(this.source))
+                    {
+                        StringBuilder str = new StringBuilder();
+                        for (int appIndex = 0; appIndex < annotation.getChildNodes().getLength(); appIndex++)
+                        {
+                            Node appInfo = annotation.getChildNodes().item(appIndex);
+                            if (appInfo.getNodeName().equals("#text"))
+                            {
+                                str.append(appInfo.getNodeValue());
+                            }
+                        }
+                        // tabs, line break, etc. to blanks, then remove consecutive blanks, then trailing/leading blanks
+                        return str.toString().replaceAll("\\s", " ").replaceAll("\\s{2,}", " ").trim();
+                    }
+                }
+            }
+            return null;
         }
     }
 

@@ -101,7 +101,7 @@ public class AttributesTableModel extends AbstractTableModel
                 String use = DocumentReader.getAttribute(attribute, "use");
                 return use != null && use.equals("required") ? "*" : "";
             case 3:
-                return DocumentReader.getAnnotation(attribute, NodeAnnotation.DOCUMENTATION) != null ? "i" : null;
+                return NodeAnnotation.DESCRIPTION.get(attribute) != null ? "i" : null;
             default:
                 throw new IndexOutOfBoundsException();
         }

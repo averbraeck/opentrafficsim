@@ -7,7 +7,6 @@ import java.util.List;
 import javax.swing.JTable;
 
 import org.opentrafficsim.editor.AttributesTableModel;
-import org.opentrafficsim.editor.DocumentReader;
 import org.opentrafficsim.editor.DocumentReader.NodeAnnotation;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
@@ -47,7 +46,7 @@ public class AttributesMouseListener extends MouseAdapter
         int col = this.attributesTable.columnAtPoint(e.getPoint());
         int row = this.attributesTable.rowAtPoint(e.getPoint());
         XsdTreeNode node = ((AttributesTableModel) this.attributesTable.getModel()).getNode();
-        String description = DocumentReader.getAnnotation(node.getAttributeNode(row), NodeAnnotation.DOCUMENTATION);
+        String description = NodeAnnotation.DESCRIPTION.get(node.getAttributeNode(row));
         if (this.attributesTable.convertColumnIndexToModel(col) == 3
                 && this.attributesTable.getModel().getValueAt(row, col) != null)
         {

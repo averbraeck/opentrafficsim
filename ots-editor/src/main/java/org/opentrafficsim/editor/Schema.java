@@ -118,7 +118,7 @@ public class Schema
         if (!allTypes.isEmpty())
         {
             CategoryLogger.always().trace("{} types are defined but never extended or referred to.", allTypes.size());
-            // allTypes.forEach((str) -> System.out.println(" + " + str));
+            // allTypes.forEach((str) -> CategoryLogger.always().trace(" + {}", str));
         }
 
         Set<String> allElements = new LinkedHashSet<>(this.elements.keySet());
@@ -135,7 +135,7 @@ public class Schema
         {
             CategoryLogger.always().trace("{} elements are defined but never referred to, nor are they a type.",
                     allElements.size());
-            // allElements.forEach((str) -> System.out.println(" + " + str));
+            // allElements.forEach((str) -> CategoryLogger.always().trace(" + {}", str));
         }
 
         checkKeys();
@@ -144,7 +144,7 @@ public class Schema
 
         // allElements = new LinkedHashSet<>(this.elements.keySet());
         // allElements.removeIf((key) -> !key.startsWith("Ots."));
-        // allElements.forEach((key) -> System.out.println(key));
+        // allElements.forEach((key) -> CategoryLogger.always().trace(key));
 
         CategoryLogger.always().trace("Root found as '{}'.", DocumentReader.getAttribute(this.getRoot(), "name"));
         CategoryLogger.always().trace("Read {} files.", this.readFiles.size());

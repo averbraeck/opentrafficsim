@@ -415,7 +415,7 @@ public interface ValueValidator extends Comparable<ValueValidator>
             {
                 if (!Pattern.matches(patternString, value))
                 {
-                    String patternMessage = DocumentReader.getAnnotation(appInfoNode, NodeAnnotation.APPINFO_PATTERN);
+                    String patternMessage = NodeAnnotation.APPINFO_PATTERN.get(appInfoNode);
                     return patternMessage == null ? "Value does not match pattern " + patternString : patternMessage;
                 }
             }
