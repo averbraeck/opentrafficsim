@@ -53,7 +53,7 @@ public class LayoutCustomizer implements EventListener, Consumer<XsdTreeNode>
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
         {
             XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
-            if (node.getPathString().equals(XsdPaths.LINK + ".xsd:sequence")
+            if (node.getPathString().equals(XsdPaths.LINK + ".xsd:sequence") && node.getChildCount() > 0
                     && node.getChild(0).getPathString().equals(XsdPaths.LINK + ".DefinedLayout"))
             {
                 node.addConsumer("Customize", this);

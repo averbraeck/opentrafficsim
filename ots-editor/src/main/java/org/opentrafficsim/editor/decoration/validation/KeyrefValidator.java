@@ -102,6 +102,7 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
         List<String> values = gatherFieldValues(node);
         if (values.stream().allMatch((v) -> v == null))
         {
+            this.coupledKeyrefNodes.remove(node);
             return null;
         }
         // xsd:keyref referred value is present ?

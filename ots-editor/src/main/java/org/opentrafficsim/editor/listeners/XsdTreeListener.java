@@ -83,11 +83,11 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
     @Override
     public void valueChanged(final TreeSelectionEvent e)
     {
-        TreePath[] paths = e.getPaths();
-        if (paths.length > 0)
+        if (e.getPaths().length > 0)
         {
             // listen to attribute change, and set potential coupled node for navigation
-            XsdTreeNode node = (XsdTreeNode) paths[0].getLastPathComponent();
+            XsdTreeNode node = (XsdTreeNode) (e.getPaths().length == 1 ? e.getPaths()[0] : e.getNewLeadSelectionPath())
+                    .getLastPathComponent();
             if (this.listening != null)
             {
                 this.listening.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
@@ -106,6 +106,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
             }
             else
             {
+                System.out.println("Setting coupled node and listening to null");
                 this.editor.setCoupledNode(null, null, null);
                 this.listening = null;
             }
@@ -168,13 +169,16 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
     @Override
     public void notify(final Event event) throws RemoteException
     {
-        if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED) && "Id".equals(((Object[]) event.getContent())[1]))
+        if (this.listening != null)
         {
-            this.editor.setCoupledNode(this.listening.getCoupledKeyrefNodeAttribute("Id"), this.listening, "Id");
-        }
-        else if (event.getType().equals(XsdTreeNode.VALUE_CHANGED))
-        {
-            this.editor.setCoupledNode(this.listening.getCoupledKeyrefNodeValue(), this.listening, null);
+            if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED) && "Id".equals(((Object[]) event.getContent())[1]))
+            {
+                this.editor.setCoupledNode(this.listening.getCoupledKeyrefNodeAttribute("Id"), this.listening, "Id");
+            }
+            else if (event.getType().equals(XsdTreeNode.VALUE_CHANGED))
+            {
+                this.editor.setCoupledNode(this.listening.getCoupledKeyrefNodeValue(), this.listening, null);
+            }
         }
     }
 

@@ -245,6 +245,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         {
             this.priorityAnimation.destroy(getMap().getContextualized());
         }
+        this.roadLayoutNode = null;
     }
 
     @Override
