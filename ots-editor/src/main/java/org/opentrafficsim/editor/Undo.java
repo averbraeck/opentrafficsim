@@ -52,6 +52,9 @@ public class Undo implements EventListener
     /** Boolean to ignore changes during undo/redo, so no new undo/redo is made. */
     private boolean ignoreChanges = false;
 
+    /** Allocated next action to make concrete on first actual change. */
+    private Action nextAction;
+
     /**
      * Constructor.
      * @param editor editor.
@@ -96,7 +99,8 @@ public class Undo implements EventListener
      * up to the point the next action is started with this method. If no actual changes were made in between, the former start
      * of an action does not result in anything the user can undo or redo. When the user has stepped back a few undo actions,
      * and then makes a new change, rolled back undo steps can no longer be redone. Clearing rolled back undo steps is performed
-     * lazily on the first concrete change. Starting a new action does not clear rolled back undo steps by itself.
+     * lazily on the first concrete change by a sub-action. Starting a new action does not clear rolled back undo steps by
+     * itself.
      * @param type action type.
      * @param node node on which the action is applied, i.e. node that should be selected on undo/redo.
      * @param attribute attribute name, may be {@code null} for actions that are not an attribute value change.
@@ -113,32 +117,14 @@ public class Undo implements EventListener
             this.queue.pollLast();
         }
 
-        // TODO The following step must become a lazy execution once a concrete sub-action is added, i.e. like a dirty switch,
-        // otherwise the user loses redo's while nothing was effectively changed. Note that startAction() can be called as
-        // preparation for -possible- upcoming changes. Add this way of using startAction() in the contract.
-
-        // remove any possible redos fresher in the queue than our current pointer
-        while (this.cursor < this.queue.size() - 1)
-        {
-            this.queue.pollLast();
-        }
-
-        // add new entry in queue
-        this.currentSet = new ArrayDeque<>();
-        this.queue.add(new Action(type, this.currentSet, node, node.parent, attribute));
-        while (this.queue.size() > MAX_UNDO)
-        {
-            this.queue.pollFirst();
-        }
-
-        // set pointer to last non-empty element
-        this.cursor = this.queue.size() - 2;
-        updateButtons();
+        // allocate a next action with the right type, nodes and attribute, but with an empty set of sub-actions for now
+        // this does not yet represent an actual undoable action until any sub-action is added to it
+        this.nextAction = new Action(type, new ArrayDeque<>(), node, node.parent, attribute);
     }
 
     /**
-     * Adds sub action to current action.
-     * @param subAction sub action.
+     * Adds sub-action to current action.
+     * @param subAction sub-action.
      */
     private void add(final SubAction subAction)
     {
@@ -146,13 +132,26 @@ public class Undo implements EventListener
         {
             return;
         }
-        Throw.when(this.currentSet == null, IllegalStateException.class,
-                "Adding undo action without having called startUndoAction()");
-        if (this.currentSet.isEmpty())
+        // make allocated next action a concrete next action in the queue
+        if (this.nextAction != null)
         {
-            this.cursor = this.queue.size() - 1; // now the latest undo actually has content
+            // remove any possible redos fresher in the queue than our current pointer (i.e. rolled back undo steps)
+            while (this.cursor < this.queue.size() - 1)
+            {
+                this.queue.pollLast();
+            }
+            this.currentSet = this.nextAction.subActions;
+            this.queue.add(this.nextAction);
+            while (this.queue.size() > MAX_UNDO)
+            {
+                this.queue.pollFirst();
+            }
+            this.nextAction = null;
+            this.cursor = this.queue.size() - 1;
             updateButtons();
         }
+        Throw.when(this.currentSet == null, IllegalStateException.class,
+                "Adding undo action without having called startUndoAction()");
         this.currentSet.add(subAction);
     }
 
@@ -171,7 +170,7 @@ public class Undo implements EventListener
      */
     public boolean canRedo()
     {
-        return this.cursor < this.queue.size() - 1 && !this.queue.get(this.cursor + 1).subActions.isEmpty();
+        return this.cursor < this.queue.size() - 1;
     }
 
     /**
@@ -190,6 +189,7 @@ public class Undo implements EventListener
         {
             this.editor.collapse(action.node);
         }
+        // In case of Java 21: action.subActions.reversed().forEach((a) -> a.undo());
         Iterator<SubAction> iterator = action.subActions.descendingIterator();
         while (iterator.hasNext())
         {
@@ -215,11 +215,7 @@ public class Undo implements EventListener
         this.ignoreChanges = true;
         this.cursor++;
         Action action = this.queue.get(this.cursor);
-        Iterator<SubAction> iterator = action.subActions.iterator();
-        while (iterator.hasNext())
-        {
-            iterator.next().redo();
-        }
+        action.subActions.forEach((a) -> a.redo());
         action.parent.children.forEach((n) -> n.invalidate());
         action.parent.invalidate();
         this.editor.show(action.postActionShowNode, action.attribute);
@@ -241,7 +237,7 @@ public class Undo implements EventListener
     @Override
     public void notify(final Event event) throws RemoteException
     {
-        // listen and unlisten
+        // listen and unlisten to all possible changes
         if (event.getType().equals(OtsEditor.NEW_FILE))
         {
             XsdTreeNodeRoot root = (XsdTreeNodeRoot) event.getContent();
@@ -281,7 +277,7 @@ public class Undo implements EventListener
             XsdTreeNode parent = (XsdTreeNode) content[1];
             int index = (int) content[2];
             XsdTreeNode root = node.getRoot();
-            add(new SubActionRunnable(() ->
+            add(new SubAction(() ->
             {
                 parent.children.remove(node);
                 node.parent = null;
@@ -303,7 +299,7 @@ public class Undo implements EventListener
             XsdTreeNode parent = (XsdTreeNode) content[1];
             int index = (int) content[2];
             XsdTreeNode root = parent.getRoot();
-            add(new SubActionRunnable(() ->
+            add(new SubAction(() ->
             {
                 if (index < 0)
                 {
@@ -328,7 +324,7 @@ public class Undo implements EventListener
             Object[] content = (Object[]) event.getContent();
             XsdTreeNode node = (XsdTreeNode) content[0];
             String value = node.getValue();
-            add(new SubActionRunnable(() ->
+            add(new SubAction(() ->
             {
                 node.setValue((String) content[1]); // invokes event
                 node.invalidate();
@@ -343,15 +339,16 @@ public class Undo implements EventListener
             Object[] content = (Object[]) event.getContent();
             XsdTreeNode node = (XsdTreeNode) content[0];
             String attribute = (String) content[1];
+            String prevValue = (String) content[2];
             String value = node.getAttributeValue(attribute);
             // for include nodes, setAttributeValue will trigger addition and removal of nodes, we can ignore these events
             if (node.xsdNode.equals(XiIncludeNode.XI_INCLUDE))
             {
                 this.currentSet.clear();
             }
-            add(new SubActionRunnable(() ->
+            add(new SubAction(() ->
             {
-                node.setAttributeValue(attribute, (String) content[2]); // invokes event
+                node.setAttributeValue(attribute, prevValue); // invokes event
                 node.invalidate();
             }, () ->
             {
@@ -364,7 +361,7 @@ public class Undo implements EventListener
             Object[] content = (Object[]) event.getContent();
             XsdTreeNode node = (XsdTreeNode) content[0];
             boolean activated = (boolean) content[1];
-            add(new SubActionRunnable(() ->
+            add(new SubAction(() ->
             {
                 node.active = !activated;
                 node.fireEvent(XsdTreeNode.ACTIVATION_CHANGED, new Object[] {node, !activated});
@@ -381,7 +378,7 @@ public class Undo implements EventListener
             XsdTreeNode previous = (XsdTreeNode) content[2];
             if (previous != null)
             {
-                add(new SubActionRunnable(() ->
+                add(new SubAction(() ->
                 {
                     node.setOption(previous); // invokes event
                 }, () ->
@@ -396,7 +393,7 @@ public class Undo implements EventListener
             XsdTreeNode node = (XsdTreeNode) content[0];
             int oldIndex = (int) content[1];
             int newIndex = (int) content[2];
-            add(new SubActionRunnable(() ->
+            add(new SubAction(() ->
             {
                 node.parent.children.remove(node);
                 node.parent.children.add(oldIndex, node);
@@ -412,7 +409,9 @@ public class Undo implements EventListener
     }
 
     /**
-     * Sets the node to show in the tree after the action.
+     * Sets the node to show in the tree after the action. This is for example useful to set the selection on the duplicate of a
+     * duplicated node when redoing the duplication. Note that the node of the action that is otherwise shown would be the
+     * duplicated node, rather than the duplicate.
      * @param node node to show in the tree after the action.
      */
     public void setPostActionShowNode(final XsdTreeNode node)
@@ -421,118 +420,46 @@ public class Undo implements EventListener
     }
 
     /**
-     * Interface for any sub-action reflecting any change.
-     * <p>
-     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
-     */
-    private interface SubAction
-    {
-        /**
-         * Undo the change.
-         */
-        void undo();
-
-        /**
-         * Redo the change.
-         */
-        void redo();
-    }
-
-    /**
-     * Implements {@code SubAction} using two {@code Runnable}'s, definable as an lambda expression.
-     * <p>
-     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
-     */
-    private static class SubActionRunnable implements SubAction
-    {
-        /** Undo runnable. */
-        private Runnable undo;
-
-        /** Redo runnable. */
-        private Runnable redo;
-
-        /** String representation of this sub action. */
-        private String string;
-
-        /**
-         * Constructor.
-         * @param undo undo runnable.
-         * @param redo redo runnable.
-         * @param string string representation of this sub action.
-         */
-        public SubActionRunnable(final Runnable undo, final Runnable redo, final String string)
-        {
-            this.undo = undo;
-            this.redo = redo;
-            this.string = string;
-        }
-
-        @Override
-        public void undo()
-        {
-            this.undo.run();
-        }
-
-        @Override
-        public void redo()
-        {
-            this.redo.run();
-        }
-
-        @Override
-        public String toString()
-        {
-            return this.string;
-        }
-    }
-
-    /**
      * Class that groups information around an action.
-     * <p>
-     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     private class Action
     {
+        // can't be a record due to mutable postActionShowNode
+
         /** Name of the action, as presented with the undo/redo buttons. */
+        @SuppressWarnings("checkstyle:visibilitymodifier")
         final ActionType type;
 
-        /** Queue of sub actions. */
+        /** Queue of sub-actions. */
+        @SuppressWarnings("checkstyle:visibilitymodifier")
         final Deque<SubAction> subActions;
 
         /** Node involved in the action. */
+        @SuppressWarnings("checkstyle:visibilitymodifier")
         final XsdTreeNode node;
 
         /** Parent node of the node involved in the action. */
+        @SuppressWarnings("checkstyle:visibilitymodifier")
         final XsdTreeNode parent;
 
         /** Attribute for an attribute change, {@code null} otherwise. */
+        @SuppressWarnings("checkstyle:visibilitymodifier")
         final String attribute;
 
         /** Node to gain focus after the action. */
+        @SuppressWarnings("checkstyle:visibilitymodifier")
         XsdTreeNode postActionShowNode;
 
         /**
          * Constructor.
          * @param type type of the action, as presented with the undo/redo buttons.
-         * @param subActions queue of sub actions.
+         * @param subActions queue of sub-actions.
          * @param node node involved in the action.
          * @param parent parent node of the node involved in the action.
          * @param attribute attribute for an attribute change, {@code null} otherwise.
          */
-        public Action(final ActionType type, final Deque<SubAction> subActions, final XsdTreeNode node,
-                final XsdTreeNode parent, final String attribute)
+        Action(final ActionType type, final Deque<SubAction> subActions, final XsdTreeNode node, final XsdTreeNode parent,
+                final String attribute)
         {
             this.type = type;
             this.subActions = subActions;
@@ -545,12 +472,6 @@ public class Undo implements EventListener
 
     /**
      * Type of actions for undo.
-     * <p>
-     * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     public enum ActionType
     {
@@ -597,6 +518,56 @@ public class Undo implements EventListener
         public String toString()
         {
             return name().toLowerCase().replace("_", " ");
+        }
+    }
+
+    /**
+     * Sub-action defined by using two {@code Runnable}'s, definable as an lambda expression.
+     */
+    private static class SubAction
+    {
+        /** Undo runnable. */
+        private Runnable undo;
+
+        /** Redo runnable. */
+        private Runnable redo;
+
+        /** String representation of this sub-action. */
+        private String string;
+
+        /**
+         * Constructor.
+         * @param undo undo runnable.
+         * @param redo redo runnable.
+         * @param string string representation of this sub-action.
+         */
+        SubAction(final Runnable undo, final Runnable redo, final String string)
+        {
+            this.undo = undo;
+            this.redo = redo;
+            this.string = string;
+        }
+
+        /**
+         * Undo the sub-action.
+         */
+        public void undo()
+        {
+            this.undo.run();
+        }
+
+        /**
+         * Redo the sub-action.
+         */
+        public void redo()
+        {
+            this.redo.run();
+        }
+
+        @Override
+        public String toString()
+        {
+            return this.string;
         }
     }
 

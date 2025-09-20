@@ -106,7 +106,6 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
             }
             else
             {
-                System.out.println("Setting coupled node and listening to null");
                 this.editor.setCoupledNode(null, null, null);
                 this.listening = null;
             }

@@ -982,17 +982,21 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
      */
     public void startUndoActionOnTreeTable()
     {
-        XsdTreeNode node = (XsdTreeNode) this.treeTable.getValueAt(this.treeTable.getSelectedRow(),
-                this.treeTable.convertColumnIndexToView(0)); // columns may have been moved in view;
-        int col = this.treeTable.convertColumnIndexToModel(this.treeTable.getSelectedColumn());
-        if (col == 1)
+        // allow selection to update after any events triggering this
+        SwingUtilities.invokeLater(() ->
         {
-            this.undo.startAction(ActionType.ID_CHANGE, node, null);
-        }
-        else if (col == 2)
-        {
-            this.undo.startAction(ActionType.VALUE_CHANGE, node, null);
-        }
+            XsdTreeNode node = (XsdTreeNode) this.treeTable.getValueAt(this.treeTable.getSelectedRow(),
+                    this.treeTable.convertColumnIndexToView(0)); // columns may have been moved in view;
+            int col = this.treeTable.convertColumnIndexToModel(this.treeTable.getSelectedColumn());
+            if (col == 1)
+            {
+                this.undo.startAction(ActionType.ID_CHANGE, node, null);
+            }
+            else if (col == 2)
+            {
+                this.undo.startAction(ActionType.VALUE_CHANGE, node, null);
+            }
+        });
     }
 
     /**
