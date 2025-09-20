@@ -21,11 +21,11 @@ Eclipse is an Integrated Development Environment (IDE), which is a tool that off
     </tr>
     <tr>
         <td colspan=2><b>ots-trafficcontrol</b><br><i>event-based traffic control</i></td>
-        <td colspan=2><b>ots-animation</b><br><i>animation functionality independent of implementation</i></td>
+        <td colspan=2><b>ots-animation</b><br><i>draw data definitions for ots-road objects</i></td>
     </tr>
     <tr>
         <td colspan=3 width=75%><b>ots-road</b><br><i>microscopic simulation of vehicular traffic</i></td>
-        <td colspan=1><b>ots-draw</b><br><i>swing mimicking fuctionality</i></td>
+        <td colspan=1><b>ots-draw</b><br><i>swing mimicking functionality</i></td>
     </tr>
     <tr>
         <td colspan=2><b>ots-core</b><br><i>core of traffic simulation including network representation and macroscopic models</i></td>
