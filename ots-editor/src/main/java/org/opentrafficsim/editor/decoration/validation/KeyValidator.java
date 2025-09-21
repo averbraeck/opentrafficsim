@@ -86,10 +86,10 @@ public class KeyValidator extends XPathValidator implements EventListener
                     this.dependentAttributes.computeIfAbsent(node, (n) -> new LinkedHashMap<>()).put(attribute, fieldIndex);
                 }
                 node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED, ReferenceType.WEAK);
-//                if (node.isChoice())
-//                {
-//                    node.addListener(this, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
-//                }
+                if (node.isChoice())
+                {
+                    node.addListener(this, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
+                }
             }
         }
 
@@ -109,7 +109,7 @@ public class KeyValidator extends XPathValidator implements EventListener
         node.removeListener(this, XsdTreeNode.VALUE_CHANGED);
         node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
         node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
-//        node.removeListener(this, XsdTreeNode.OPTION_CHANGED);
+        node.removeListener(this, XsdTreeNode.OPTION_CHANGED);
     }
 
     @Override
