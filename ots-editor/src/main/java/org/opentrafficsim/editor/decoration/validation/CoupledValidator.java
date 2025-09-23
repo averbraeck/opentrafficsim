@@ -25,7 +25,7 @@ public interface CoupledValidator extends ValueValidator
      * @param node node with attribute or value that is bounded by this validator.
      * @return node to which the given node is coupled.
      */
-    XsdTreeNode getCoupledKeyrefNode(final XsdTreeNode node);
+    XsdTreeNode getCoupledNode(XsdTreeNode node);
 
     /**
      * Sets the given value on the attribute of the node, if the current value is not {@code null}. The node is invalidated

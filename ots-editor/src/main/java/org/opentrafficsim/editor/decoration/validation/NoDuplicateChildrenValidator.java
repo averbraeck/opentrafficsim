@@ -15,7 +15,8 @@ import org.opentrafficsim.editor.decoration.AbstractNodeDecoratorRemove;
 
 /**
  * Validates that children nodes are not duplicate within their parent. Nodes are considered equal if their path string and
- * value are equal, where null values are also considered.
+ * value are equal, where null values are also considered. This validator should not be used on {@code xsd:all} types as those
+ * are checked automatically and the value is not relevant in that case.
  * <p>
  * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -120,7 +121,7 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecoratorRemove im
      * @param node2 node 2.
      * @return whether the nodes are equal by path string and value.
      */
-    private final static boolean nodesEqual(final XsdTreeNode node1, final XsdTreeNode node2)
+    private static boolean nodesEqual(final XsdTreeNode node1, final XsdTreeNode node2)
     {
         if (!node1.getPathString().equals(node2.getPathString()))
         {

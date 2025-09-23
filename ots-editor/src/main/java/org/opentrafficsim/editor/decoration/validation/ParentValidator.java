@@ -148,7 +148,7 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
     {
         if (node.isType(ParentValidator.this.path))
         {
-            node.addAttributeValidator(this.parentAttribute, ParentValidator.this, null);
+            node.addAttributeValidator(this.parentAttribute, ParentValidator.this);
             getContext(node).add(node);
         }
     }

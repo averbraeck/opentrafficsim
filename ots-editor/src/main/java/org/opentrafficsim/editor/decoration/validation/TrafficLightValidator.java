@@ -106,7 +106,7 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
         String id = node.getAttributeValue("TrafficLightId");
         if (id != null && !id.isEmpty())
         {
-            XsdTreeNode linkNode = node.getCoupledKeyrefNodeAttribute("Link");
+            XsdTreeNode linkNode = node.getCoupledNodeAttribute("Link");
             if (linkNode != null)
             {
                 String lane = node.getAttributeValue("Lane");
@@ -143,7 +143,7 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
     @Override
     public List<String> getOptions(final XsdTreeNode node, final Object field)
     {
-        XsdTreeNode linkNode = node.getCoupledKeyrefNodeAttribute("Link");
+        XsdTreeNode linkNode = node.getCoupledNodeAttribute("Link");
         if (linkNode != null)
         {
             String lane = node.getAttributeValue("Lane");
@@ -165,7 +165,7 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
     }
 
     @Override
-    public XsdTreeNode getCoupledKeyrefNode(final XsdTreeNode node)
+    public XsdTreeNode getCoupledNode(final XsdTreeNode node)
     {
         return this.coupledNodes.get(node);
     }

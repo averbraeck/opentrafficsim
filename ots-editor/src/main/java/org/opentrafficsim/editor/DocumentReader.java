@@ -116,6 +116,16 @@ public final class DocumentReader
     }
 
     /**
+     * Remove HTML tags from string.
+     * @param string input string
+     * @return string with HTML tags removed, or {@code null} if the input is {@code null}
+     */
+    public static String filterHtml(final String string)
+    {
+        return string == null ? null : string.replaceAll("\\<[^>]*>", "");
+    }
+
+    /**
      * Types of annotation elements the {@code DocumentReader} can read. This is a combination of the element name (e.g.
      * {@code xsd:appinfo}) and the source {@code name}.
      *

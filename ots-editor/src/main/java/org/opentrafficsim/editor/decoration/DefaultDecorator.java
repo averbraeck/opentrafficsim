@@ -92,6 +92,7 @@ public final class DefaultDecorator
 
         // string functions
         new AttributesStringFunction(editor, "Ots.Network.Link.LaneOverride", "Lane");
+        new AttributesStringFunction(editor, "Ots.Network.Link.StripeOverride", "Stripe");
         new AttributesStringFunction(editor, ".SpeedLimit", "GtuType", "LegalSpeedLimit");
         new AttributesStringFunction(editor, "Ots.Demand.Od.Cell", "Origin", "Destination", "Category");
         new AttributesStringFunction(editor, "Ots.Demand.OdOptions.OdOptionsItem.Markov.State", "GtuType", "Parent",
@@ -120,6 +121,9 @@ public final class DefaultDecorator
         // new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.MandatoryIncentives");
         // new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.VoluntaryIncentives");
         // new NoDuplicateChildrenValidator(editor, "Ots.Models.Model.TacticalPlanner.Lmrs.AccelerationIncentives");
+        new RoadLayoutElementValidator(editor, "Ots.Network.Link.LaneOverride", LayoutCoupling.PARENT_PARENT_IS_LINK, "Lane");
+        new RoadLayoutElementValidator(editor, "Ots.Network.Link.StripeOverride", LayoutCoupling.PARENT_PARENT_IS_LINK,
+                "Stripe");
         new RoadLayoutElementValidator(editor, "Ots.Network.Link.TrafficLight", LayoutCoupling.PARENT_IS_LINK, "Lane");
         new RoadLayoutElementValidator(editor, "Ots.Demand.Od.Category.Lane", LayoutCoupling.LINK_ATTRIBUTE, "Lane");
         new RoadLayoutElementValidator(editor, "Ots.Demand.OdOptions.OdOptionsItem.Lane", LayoutCoupling.LINK_ATTRIBUTE,

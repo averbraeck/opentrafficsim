@@ -26,6 +26,7 @@ import javax.swing.tree.TreePath;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.opentrafficsim.editor.AttributesTableModel;
+import org.opentrafficsim.editor.DocumentReader;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.Undo.ActionType;
 import org.opentrafficsim.editor.XsdOption;
@@ -94,13 +95,13 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
             }
             if (node.isIdentifiable())
             {
-                this.editor.setCoupledNode(node.getCoupledKeyrefNodeAttribute("Id"), node, null);
+                this.editor.setCoupledNode(node.getCoupledNodeAttribute("Id"), node, null);
                 this.listening = node;
                 this.listening.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
             }
             else if (node.isEditable())
             {
-                this.editor.setCoupledNode(node.getCoupledKeyrefNodeValue(), node, null);
+                this.editor.setCoupledNode(node.getCoupledNodeValue(), node, null);
                 this.listening = node;
                 this.listening.addListener(this, XsdTreeNode.VALUE_CHANGED);
             }
@@ -127,7 +128,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
             }
             if (status == null)
             {
-                status = node.getDescription();
+                status = DocumentReader.filterHtml(node.getDescription());
             }
             if (status != null)
             {
@@ -172,11 +173,11 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
         {
             if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED) && "Id".equals(((Object[]) event.getContent())[1]))
             {
-                this.editor.setCoupledNode(this.listening.getCoupledKeyrefNodeAttribute("Id"), this.listening, "Id");
+                this.editor.setCoupledNode(this.listening.getCoupledNodeAttribute("Id"), this.listening, "Id");
             }
             else if (event.getType().equals(XsdTreeNode.VALUE_CHANGED))
             {
-                this.editor.setCoupledNode(this.listening.getCoupledKeyrefNodeValue(), this.listening, null);
+                this.editor.setCoupledNode(this.listening.getCoupledNodeValue(), this.listening, null);
             }
         }
     }
@@ -285,7 +286,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
                     && this.treeTable.convertColumnIndexToModel(this.treeTable.columnAtPoint(e.getPoint())) == 0)
             {
                 // activate
-                if (!treeNode.isActive() && !treeNode.isInclude())
+                if (!treeNode.isActive() && !treeNode.isIncluded())
                 {
                     this.editor.getUndo().startAction(ActionType.ACTIVATE, treeNode, null);
                     treeNode.setActive();
@@ -295,24 +296,32 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
                 return;
             }
             // show choice popup
-            if (!treeNode.isActive() || treeNode.isInclude())
+            if (!treeNode.isActive() || treeNode.isIncluded())
             {
                 return;
             }
-            Rectangle labelPortion = this.treeTable.getTree()
-                    .getPathBounds(this.treeTable.getTree().getPathForLocation(e.getPoint().x, e.getPoint().y));
-            if (labelPortion != null && labelPortion.contains(e.getPoint()) && this.editor.mayPresentChoice()
-                    && treeNode.isChoice())
+            int col = this.treeTable.columnAtPoint(e.getPoint());
+            if (this.treeTable.convertColumnIndexToModel(col) != 0)
             {
-                int row = this.treeTable.rowAtPoint(e.getPoint());
+                return;
+            }
+            int x = 0; // columns can be reordered, so adjust x coordinate to frame of tree column within the tree table
+            for (int c = 0; c < col; c++)
+            {
+                x += this.treeTable.getColumnModel().getColumn(c).getWidth();
+            }
+            Rectangle labelPortion = this.treeTable.getTree()
+                    .getPathBounds(this.treeTable.getTree().getPathForLocation(e.getPoint().x - x, e.getPoint().y));
+            if (labelPortion != null && labelPortion.contains(e.getPoint().x - x, e.getPoint().y)
+                    && this.editor.mayPresentChoice() && treeNode.isChoice())
+            {
                 JPopupMenu popup = new JPopupMenu();
                 for (XsdOption option : treeNode.getOptions())
                 {
                     JMenuItem button = new JMenuItem(option.optionNode().getShortString());
                     if (!option.selected())
                     {
-                        button.addActionListener(new ChoiceListener(option.choice(), option.optionNode(), row, this.editor,
-                                this.treeTable, this.attributesTable));
+                        button.addActionListener(new ChoiceListener(option.optionNode(), this.editor));
                     }
                     button.setFont(this.treeTable.getFont());
                     popup.add(button);
@@ -320,7 +329,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
                 this.editor.preparePopupRemoval(popup, this.treeTable);
                 this.treeTable.setComponentPopupMenu(popup);
                 this.editor.setChoiceNode(treeNode);
-                popup.show(this.treeTable, (int) labelPortion.getMinX(), (int) labelPortion.getMaxY() - 1);
+                popup.show(this.treeTable, (int) labelPortion.getMinX() + x, (int) labelPortion.getMaxY() - 1);
             }
         }
         else if (e.getButton() == MouseEvent.BUTTON3)
@@ -377,7 +386,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
             anyAdded = true;
         }
 
-        if (!treeNode.isInclude())
+        if (!treeNode.isIncluded())
         {
             anyAdded = addDefaultActions(treeNode, popup, anyAdded);
         }

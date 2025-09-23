@@ -3,14 +3,8 @@ package org.opentrafficsim.editor.listeners;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JTable;
-
-import org.opentrafficsim.editor.AttributesTableModel;
 import org.opentrafficsim.editor.OtsEditor;
-import org.opentrafficsim.editor.Undo.ActionType;
 import org.opentrafficsim.editor.XsdTreeNode;
-
-import de.javagl.treetable.JTreeTable;
 
 /**
  * Listener for selecting choice options.
@@ -22,51 +16,28 @@ import de.javagl.treetable.JTreeTable;
  */
 public class ChoiceListener implements ActionListener
 {
-    /** Choice node of the clicked option. */
-    private XsdTreeNode choiceNode;
 
     /** Option. */
     private XsdTreeNode option;
 
-    /** Row to reset the selection at. */
-    private int reselectionRow;
-
     /** Editor. */
     private final OtsEditor editor;
 
-    /** Tree table. */
-    private final JTreeTable treeTable;
-
-    /** Attributes table. */
-    private final JTable attributesTable;
-
     /**
      * Constructor.
-     * @param choiceNode choice node of the choice.
      * @param option possibly selected option.
-     * @param reselectionRow row to reset selection.
      * @param editor editor.
-     * @param treeTable tree table.
-     * @param attributesTable attributes table.
      */
-    public ChoiceListener(final XsdTreeNode choiceNode, final XsdTreeNode option, final int reselectionRow,
-            final OtsEditor editor, final JTreeTable treeTable, final JTable attributesTable)
+    public ChoiceListener(final XsdTreeNode option, final OtsEditor editor)
     {
-        this.choiceNode = choiceNode;
         this.option = option;
-        this.reselectionRow = reselectionRow;
         this.editor = editor;
-        this.treeTable = treeTable;
-        this.attributesTable = attributesTable;
     }
 
     @Override
     public void actionPerformed(final ActionEvent e)
     {
-        this.editor.getUndo().startAction(ActionType.OPTION, this.option.getOption(), null);
-        this.choiceNode.setOption(this.option);
-        this.treeTable.setRowSelectionInterval(this.reselectionRow, this.reselectionRow);
-        this.treeTable.updateUI();
-        this.attributesTable.setModel(new AttributesTableModel(this.option, this.treeTable));
+        this.editor.getNodeActions().setOption(this.option);
     }
+
 }

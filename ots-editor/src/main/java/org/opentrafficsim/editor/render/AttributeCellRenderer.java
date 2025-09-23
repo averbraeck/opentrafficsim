@@ -52,7 +52,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
     private final Color tableForgroundColor = UIManager.getColor("Table.foreground");
 
     /** Background color. */
-    private final Color tableBackroundColor = UIManager.getColor("Table.background");
+    private final Color tableBackgroundColor = UIManager.getColor("Table.background");
 
     /** Panel color. */
     private final Color panelBackgroundColor = UIManager.getColor("Panel.background");
@@ -167,7 +167,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
             else
             {
                 setToolTipText(value == null || value.toString().isEmpty() ? null : value.toString());
-                if (node.isInclude())
+                if (node.isIncluded())
                 {
                     setBackground(this.panelBackgroundColor);
                 }
@@ -177,7 +177,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
                 }
                 else
                 {
-                    setBackground(this.tableBackroundColor);
+                    setBackground(this.tableBackgroundColor);
                 }
             }
             setBorder(this.lineBorder);

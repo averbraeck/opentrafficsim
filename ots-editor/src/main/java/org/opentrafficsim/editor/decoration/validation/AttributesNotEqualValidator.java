@@ -56,8 +56,8 @@ public class AttributesNotEqualValidator extends AbstractNodeDecoratorAttribute 
     {
         if (this.predicate.test(node))
         {
-            node.addAttributeValidator(this.attributes.get(0), AttributesNotEqualValidator.this, null);
-            node.addAttributeValidator(this.attributes.get(1), AttributesNotEqualValidator.this, null);
+            node.addAttributeValidator(this.attributes.get(0), AttributesNotEqualValidator.this);
+            node.addAttributeValidator(this.attributes.get(1), AttributesNotEqualValidator.this);
         }
     }
 

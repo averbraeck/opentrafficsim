@@ -84,7 +84,7 @@ public class SynchronizableMapStripe implements SynchronizableStripe<MapStripeDa
     @Override
     public MapStripeData getUpstreamStripe()
     {
-        XsdTreeNode fromNode = this.linkData.getNode().getCoupledKeyrefNodeAttribute("NodeStart");
+        XsdTreeNode fromNode = this.linkData.getNode().getCoupledNodeAttribute("NodeStart");
         if (fromNode == null)
         {
             return null;
@@ -92,7 +92,7 @@ public class SynchronizableMapStripe implements SynchronizableStripe<MapStripeDa
         for (XsdTreeNode networkChild : this.linkData.getNode().getParent().getChildren())
         {
             if (networkChild.getNodeName().equals("Link")
-                    && fromNode.equals(networkChild.getCoupledKeyrefNodeAttribute("NodeEnd")))
+                    && fromNode.equals(networkChild.getCoupledNodeAttribute("NodeEnd")))
             {
                 MapLinkData otherLink = (MapLinkData) this.linkData.getMap().getData(networkChild);
                 if (otherLink == null)
@@ -114,7 +114,7 @@ public class SynchronizableMapStripe implements SynchronizableStripe<MapStripeDa
     @Override
     public MapStripeData getDownstreamStripe()
     {
-        XsdTreeNode fromNode = this.linkData.getNode().getCoupledKeyrefNodeAttribute("NodeEnd");
+        XsdTreeNode fromNode = this.linkData.getNode().getCoupledNodeAttribute("NodeEnd");
         if (fromNode == null)
         {
             return null;
@@ -122,7 +122,7 @@ public class SynchronizableMapStripe implements SynchronizableStripe<MapStripeDa
         for (XsdTreeNode networkChild : this.linkData.getNode().getParent().getChildren())
         {
             if (networkChild.getNodeName().equals("Link")
-                    && fromNode.equals(networkChild.getCoupledKeyrefNodeAttribute("NodeStart")))
+                    && fromNode.equals(networkChild.getCoupledNodeAttribute("NodeStart")))
             {
                 MapLinkData otherLink = (MapLinkData) this.linkData.getMap().getData(networkChild);
                 if (otherLink == null)

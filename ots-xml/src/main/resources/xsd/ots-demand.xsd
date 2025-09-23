@@ -12,6 +12,8 @@
   <xsd:include schemaLocation="ots-types.xsd" />
 
   <xsd:element name="Od">
+    <!-- TODO GlobalTime should have Time elements with a direct value, not a "Value" attribute. -->
+    <!-- TODO Cells should be able to refer to a demand pattern, to which then (and not otherwise) a factor may be applied. -->
     <xsd:complexType>
       <xsd:sequence>
         <xsd:element name="GlobalTime" type="ots:GlobalTimeType" minOccurs="0" maxOccurs="1" />

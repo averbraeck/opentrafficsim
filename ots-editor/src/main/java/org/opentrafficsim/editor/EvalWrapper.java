@@ -12,8 +12,10 @@ import java.util.Set;
 
 import org.djutils.eval.Eval;
 import org.djutils.event.Event;
+import org.djutils.logger.CategoryLogger;
 import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.editor.decoration.AbstractNodeDecoratorRemove;
+import org.opentrafficsim.road.network.factory.xml.CircularDependencyException;
 import org.opentrafficsim.road.network.factory.xml.parser.ScenarioParser;
 import org.opentrafficsim.road.network.factory.xml.parser.ScenarioParser.ParameterWrapper;
 import org.opentrafficsim.road.network.factory.xml.parser.ScenarioParser.ScenariosWrapper;
@@ -59,6 +61,9 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
     /** Listeners for a dirt evaluator. */
     private final Set<EvalListener> listeners = new LinkedHashSet<>();
 
+    /** Editor. */
+    private final OtsEditor editor;
+
     /**
      * Constructor.
      * @param editor editor.
@@ -66,6 +71,7 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
     public EvalWrapper(final OtsEditor editor)
     {
         super(editor);
+        this.editor = editor;
     }
 
     /**
@@ -96,11 +102,14 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
                     }
                 });
             }
+            catch (CircularDependencyException ex)
+            {
+                throw ex;
+            }
             catch (RuntimeException ex)
             {
-                this.dirty = false;
-                this.listeners.forEach((listener) -> listener.evalChanged());
-                throw ex;
+                this.editor.showInvalidExpression(ex.getMessage());
+                return null;
             }
             this.dirty = false;
             this.listeners.forEach((listener) -> listener.evalChanged());
@@ -234,8 +243,11 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
             if (node.isValid())
             {
                 ParameterWrapper parameter = wrap(node);
-                this.parameterMap.put(node, parameter);
-                this.defaultParamaters.add(parameter);
+                if (parameter != null)
+                {
+                    this.parameterMap.put(node, parameter);
+                    this.defaultParamaters.add(parameter);
+                }
             }
         }
         else if (node.getPathString().startsWith(XsdPaths.INPUT_PARAMETERS + "."))
@@ -297,7 +309,8 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
         }
         catch (Exception e)
         {
-            throw new RuntimeException("Unable to wrap node " + node + " as a parameter for Eval.");
+            CategoryLogger.always().trace("Unable to wrap node {} as a parameter for Eval.", node);
+            return null;
         }
     }
 

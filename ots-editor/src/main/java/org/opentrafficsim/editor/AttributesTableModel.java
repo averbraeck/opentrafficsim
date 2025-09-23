@@ -83,7 +83,7 @@ public class AttributesTableModel extends AbstractTableModel
             // disable check boxes regarding the 'Default' status of definitions as definitions edited in the editor never are
             return false;
         }
-        return columnIndex == 1 && !this.node.isInclude();
+        return columnIndex == 1 && !this.node.isIncluded();
     }
 
     @Override

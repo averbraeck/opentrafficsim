@@ -363,11 +363,18 @@
                   <xsd:element name="VoluntaryIncentives" minOccurs="0">
                     <xsd:complexType>
                       <xsd:annotation>
-                        <xsd:documentation source="description">Keep: keep right. SpeedWithCourtesy: based on anticipated
-                          speed, and potential lane changers. Courtesy: get or stay out of the way for lane change desire of
-                          others. SocioSpeed: get or stay out of the way for desired speed of others. StayRight: incentive for
-                          trucks to stay on the right-most two lanes, interpreted in line with the route. Class: from a class
-                          with empty constructor.
+                        <xsd:documentation source="description">
+                          &lt;b&gt;Keep&lt;/b&gt;: keep right. &lt;br/&gt;
+                          &lt;b&gt;SpeedWithCourtesy&lt;/b&gt;: based on anticipated speed, and potential lane changers.
+                          &lt;br/&gt;
+                          &lt;b&gt;Courtesy&lt;/b&gt;: get or stay out of the way for lane change desire of others.
+                          &lt;br/&gt;
+                          &lt;b&gt;SocioSpeed&lt;/b&gt;: get or stay out of the way for desired speed of others.
+                          &lt;br/&gt;
+                          &lt;b&gt;StayRight&lt;/b&gt;: incentive for trucks to stay on the right-most two lanes,
+                          interpreted in line with the route. &lt;br/&gt;
+                          &lt;b&gt;Class&lt;/b&gt;: from a class with empty
+                          constructor.
                         </xsd:documentation>
                       </xsd:annotation>
                       <xsd:all>
@@ -468,7 +475,7 @@
       <xsd:element name="Socio" type="ots:DesiredSpeedModelType">
         <xsd:annotation>
           <xsd:documentation source="description">
-            SOCIO wraps another desired speed model and adapts it with social
+            Socio wraps another desired speed model and adapts it with social
             consideration.
           </xsd:documentation>
         </xsd:annotation>

@@ -69,7 +69,7 @@ public class LayoutCustomizer implements EventListener, Consumer<XsdTreeNode>
     @Override
     public void accept(final XsdTreeNode node)
     {
-        XsdTreeNode defined = node.getChild(0).getCoupledKeyrefNodeValue();
+        XsdTreeNode defined = node.getChild(0).getCoupledNodeValue();
         if (defined == null)
         {
             // do nothing if there is no coupled defined road layout

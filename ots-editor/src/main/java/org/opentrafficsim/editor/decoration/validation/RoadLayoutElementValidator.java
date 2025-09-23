@@ -247,24 +247,30 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
             case LAYOUT_BY_PARENT_ID:
             {
                 linkNode = null;
-                layoutNode = node.getParent().getCoupledKeyrefNodeAttribute("Id");
+                layoutNode = node.getParent().getCoupledNodeAttribute("Id");
                 break;
             }
             case LINK_BY_PARENT_ID:
             {
-                linkNode = node.getParent().getCoupledKeyrefNodeAttribute("Id");
+                linkNode = node.getParent().getCoupledNodeAttribute("Id");
                 layoutNode = getLayoutFromLink(linkNode);
                 break;
             }
             case LINK_ATTRIBUTE:
             {
-                linkNode = node.getCoupledKeyrefNodeAttribute("Link");
+                linkNode = node.getCoupledNodeAttribute("Link");
                 layoutNode = getLayoutFromLink(linkNode);
                 break;
             }
             case PARENT_IS_LINK:
             {
                 linkNode = node.getParent();
+                layoutNode = getLayoutFromLink(linkNode);
+                break;
+            }
+            case PARENT_PARENT_IS_LINK:
+            {
+                linkNode = node.getParent().getParent();
                 layoutNode = getLayoutFromLink(linkNode);
                 break;
             }
@@ -275,7 +281,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         }
 
         // add node as validated by link/layout
-        if (linkNode != null)
+        if (linkNode != null && linkNode.getChildCount() > 1)
         {
             this.linkToNodes.computeIfAbsent(linkNode, (n) -> new LinkedHashSet<>()).add(node);
             for (XsdOption option : linkNode.getChild(1).getOptions())
@@ -396,7 +402,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
      */
     private final XsdTreeNode getLayoutFromLink(final XsdTreeNode linkNode)
     {
-        if (linkNode == null || !linkNode.isActive())
+        if (linkNode == null || !linkNode.isActive() || linkNode.getChildCount() <= 1)
         {
             return null;
         }
@@ -405,11 +411,11 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         {
             return layout;
         }
-        return layout.getChild(0).getCoupledKeyrefNodeValue(); // sequence of which DefinedLayout is the first node
+        return layout.getChild(0).getCoupledNodeValue(); // sequence of which DefinedLayout is the first node
     }
 
     @Override
-    public XsdTreeNode getCoupledKeyrefNode(final XsdTreeNode node)
+    public XsdTreeNode getCoupledNode(final XsdTreeNode node)
     {
         return this.coupledNode.get(node);
     };
@@ -435,7 +441,10 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         LINK_ATTRIBUTE,
 
         /** {Node}.{Parent} is a link from which the road layout is taken. */
-        PARENT_IS_LINK;
+        PARENT_IS_LINK,
+
+        /** {Node}.{Parent}.{Parent} is a link from which the road layout is taken. */
+        PARENT_PARENT_IS_LINK;
     }
 
     /**

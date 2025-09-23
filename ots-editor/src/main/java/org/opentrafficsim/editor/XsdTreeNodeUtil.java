@@ -260,18 +260,6 @@ public final class XsdTreeNodeUtil
     }
 
     /**
-     * Takes the minimum of both indices, while ignoring negative values (indicating an element was not found for deletion).
-     * @param insertIndex previously determined insertion index; may be updated to lower value.
-     * @param removeIndex index of element that is removed.
-     * @return minimum of both indices, while ignoring negative values.
-     */
-    static int resolveInsertion(final int insertIndex, final int removeIndex)
-    {
-        int tmp = insertIndex < 0 ? removeIndex : insertIndex;
-        return tmp < removeIndex ? tmp : removeIndex;
-    }
-
-    /**
      * Returns from the XSD definition the appropriate nodes to take children from at the level of the input node, in the order
      * in which they should appear. This is often the xsd:complexType within an xsd:element, but can become as complex as
      * containing multiple xsd:extension and their referred base types. An xsd:sequence is also common. Adding children in the
@@ -366,6 +354,65 @@ public final class XsdTreeNodeUtil
         boolean value1Empty = value1 == null || value1.isEmpty();
         boolean value2Empty = value2 == null || value2.isEmpty();
         return (value1Empty && value2Empty) || (value1 != null && value1.equals(value2));
+    }
+
+    /**
+     * Returns whether an xsdNode defines an editable element.
+     * @param xsdNode xsd node
+     * @param schema schema
+     * @return whether an xsdNode defines an editable element
+     */
+    static boolean isEditable(final Node xsdNode, final Schema schema)
+    {
+        if (xsdNode.equals(XiIncludeNode.XI_INCLUDE))
+        {
+            return false;
+        }
+        if (xsdNode.getChildNodes().getLength() == DocumentReader.getChildren(xsdNode, "#text").size()
+                && xsdNode.getChildNodes().getLength() > 0)
+        {
+            // #text children only means a simple type
+            return true;
+        }
+        Node simpleType =
+                xsdNode.getNodeName().equals("xsd:simpleType") ? xsdNode : DocumentReader.getChild(xsdNode, "xsd:simpleType");
+        if (simpleType != null)
+        {
+            return true;
+        }
+        Node complexType =
+                xsdNode.getNodeName().equals("xsd:complexType") ? xsdNode : DocumentReader.getChild(xsdNode, "xsd:complexType");
+        boolean isComplex = complexType != null;
+        while (complexType != null)
+        {
+            Node simpleContent = DocumentReader.getChild(complexType, "xsd:simpleContent");
+            if (simpleContent != null)
+            {
+                return true;
+            }
+            Node complexContent = DocumentReader.getChild(complexType, "xsd:complexContent");
+            complexType = null;
+            if (complexContent != null)
+            {
+                Node extension = DocumentReader.getChild(complexContent, "xsd:extension");
+                if (extension != null)
+                {
+                    String base = DocumentReader.getAttribute(extension, "base");
+                    complexType = schema.getType(base);
+                }
+            }
+        }
+        if (isComplex)
+        {
+            // complex and never found simpleContent through extension
+            return false;
+        }
+        String type = DocumentReader.getAttribute(xsdNode, "type");
+        if (xsdNode.getNodeName().equals("xsd:element") && (type == null || type.startsWith("xsd:")))
+        {
+            return true;
+        }
+        return false;
     }
 
     /**

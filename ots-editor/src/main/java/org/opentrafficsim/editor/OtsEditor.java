@@ -315,13 +315,13 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
                 OtsEditor.this.evalWrapper
                         .getEval(OtsEditor.this.scenario.getItemAt(OtsEditor.this.scenario.getSelectedIndex()));
             }
-            catch (CircularDependencyException exception)
+            catch (CircularDependencyException ex)
             {
-                showCircularInputParameters();
+                showCircularInputParameters(ex.getMessage());
             }
-            catch (RuntimeException exception)
+            catch (RuntimeException ex)
             {
-                // invalid parameter, should be shown in the tree as red cell
+                showInvalidExpression(ex.getMessage());
             }
         });
         controlsContainer.add(this.scenario);
@@ -448,11 +448,14 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         try
         {
             OtsEditor.this.evalWrapper.setDirty();
-            OtsEditor.this.evalWrapper.getEval(OtsEditor.this.scenario.getItemAt(index));
+            if (OtsEditor.this.evalWrapper.getEval(OtsEditor.this.scenario.getItemAt(index)) == null)
+            {
+                return;
+            }
         }
         catch (CircularDependencyException ex)
         {
-            showCircularInputParameters();
+            showCircularInputParameters(ex.getMessage());
             return;
         }
         File file;
@@ -1207,11 +1210,22 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
 
     /**
      * Show input parameters have a circular dependency.
+     * @param message exception message
      */
-    public void showCircularInputParameters()
+    public void showCircularInputParameters(final String message)
     {
-        JOptionPane.showMessageDialog(OtsEditor.this, "Input parameters have a circular dependency.",
+        JOptionPane.showMessageDialog(OtsEditor.this, "Input parameters have a circular dependency: " + message,
                 "Circular input parameter", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    /**
+     * Show message about invalid expression.
+     * @param message exception message
+     */
+    public void showInvalidExpression(final String message)
+    {
+        JOptionPane.showMessageDialog(OtsEditor.this, "An expression is not valid: " + message, "Expression not valid",
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**
@@ -1684,11 +1698,12 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     {
         try
         {
-            return this.evalWrapper.getEval(OtsEditor.this.scenario.getItemAt(OtsEditor.this.scenario.getSelectedIndex()));
+            Eval eval = this.evalWrapper.getEval(OtsEditor.this.scenario.getItemAt(OtsEditor.this.scenario.getSelectedIndex()));
+            return eval == null ? this.evalWrapper.getLastValidEval() : eval;
         }
         catch (CircularDependencyException ex)
         {
-            showCircularInputParameters();
+            showCircularInputParameters(ex.getMessage());
             return this.evalWrapper.getLastValidEval();
         }
         catch (RuntimeException ex)

@@ -137,9 +137,9 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
         XsdTreeNode treeNode = (XsdTreeNode) node;
         if (column == 1)
         {
-            return treeNode.isIdentifiable() && !treeNode.isInclude();
+            return treeNode.isIdentifiable() && !treeNode.isIncluded();
         }
-        return treeNode.isEditable() && column == 2 && !treeNode.isInclude();
+        return treeNode.isEditable() && column == 2 && !treeNode.isIncluded();
     }
 
     @Override

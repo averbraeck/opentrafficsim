@@ -13,6 +13,7 @@ import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djutils.base.Identifiable;
 import org.djutils.eval.Eval;
 import org.djutils.eval.RetrieveValue;
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.road.network.factory.xml.CircularDependencyException;
 import org.opentrafficsim.xml.bindings.types.ExpressionType;
 import org.opentrafficsim.xml.generated.Demand;
@@ -97,19 +98,22 @@ public final class ScenarioParser
             parseInputParameters(scenariosWrapper.getScenarioInputParameters(), inputParametersMap, defaults);
         }
         // test whether values can be obtained successfully (might throw CircularDependencyException)
+        Map<String, String> result = new LinkedHashMap<>();
         for (ParameterWrapper parameter : scenariosWrapper.getDefaultInputParameters())
         {
             String id = parameter.getId();
-            eval.evaluate(id.substring(1, id.length() - 1));
+            result.put(id, eval.evaluate(id.substring(1, id.length() - 1)).toString());
         }
         if (scenariosWrapper.getScenarioInputParameters() != null)
         {
             for (ParameterWrapper parameter : scenariosWrapper.getScenarioInputParameters())
             {
                 String id = parameter.getId();
-                eval.evaluate(id.substring(1, id.length() - 1));
+                result.put(id, eval.evaluate(id.substring(1, id.length() - 1)).toString());
             }
         }
+        CategoryLogger.always().trace("Input parameters:");
+        result.forEach((k, v) -> CategoryLogger.always().trace("{}: {}", k, v));
         return eval;
     }
 
@@ -363,6 +367,10 @@ public final class ScenarioParser
             if (value instanceof Double)
             {
                 return Dimensionless.instantiateSI((Double) value);
+            }
+            if (value instanceof Integer)
+            {
+                return Dimensionless.instantiateSI((Integer) value);
             }
             return value;
         }

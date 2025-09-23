@@ -217,7 +217,7 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
         }
         if (getNode().hasAttribute("Link"))
         {
-            XsdTreeNode linkNode = getNode().getCoupledKeyrefNodeAttribute("Link");
+            XsdTreeNode linkNode = getNode().getCoupledNodeAttribute("Link");
             setLinkNode(linkNode);
         }
         setValue((v) -> this.lane = v, Adapters.get(String.class), getNode(), "Lane");
@@ -239,7 +239,7 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
             }
             else if ("Link".equals(attribute))
             {
-                XsdTreeNode linkNode = getNode().getCoupledKeyrefNodeAttribute("Link");
+                XsdTreeNode linkNode = getNode().getCoupledNodeAttribute("Link");
                 setLinkNode(linkNode);
             }
             else if ("Lane".equals(attribute))

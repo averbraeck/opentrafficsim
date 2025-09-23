@@ -87,15 +87,15 @@ public class XsdTreeCellRenderer extends DefaultTreeCellRenderer
         {
             preAppend(this.description, false);
         }
-        if (node.isChoice() && !node.isInclude())
+        if (node.isChoice() && !node.isIncluded())
         {
             preAppend(this.dropdown, false);
         }
         if (node.isActive())
         {
-            if (node.isInclude())
+            if (node.isIncluded())
             {
-                setForeground(OtsEditor.getInvalidColor());
+                setForeground(OtsEditor.INACTIVE_COLOR);
             }
             else
             {

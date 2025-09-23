@@ -76,12 +76,12 @@ public interface ValueValidator extends Comparable<ValueValidator>
 
     /**
      * Validates an includes file by checking whether it can be found.
+     * @param directory base directory for relative paths.
      * @param fileName file name and path, possibly relative.
      * @param fallback fallback file name and path, possibly relative.
-     * @param directory base directory for relative paths.
      * @return first encountered problem in validating the value of the include, {@code null} if there is no problem.
      */
-    static String reportInvalidInclude(final String fileName, final String fallback, final String directory)
+    static String reportInvalidInclude(final String directory, final String fileName, final String fallback)
     {
         if (fileName == null && fallback == null)
         {
@@ -106,7 +106,7 @@ public interface ValueValidator extends Comparable<ValueValidator>
             {
                 return "The file cannot be found.";
             }
-            return reportInvalidInclude(fallback, null, directory);
+            return reportInvalidInclude(directory, fallback, null); // check fallback instead
         }
         return null;
     }

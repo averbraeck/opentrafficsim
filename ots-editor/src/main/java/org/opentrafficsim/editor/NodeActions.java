@@ -195,6 +195,18 @@ public class NodeActions
     }
 
     /**
+     * Set node as selected in its choice.
+     * @param selected selected node
+     */
+    public void setOption(final XsdTreeNode selected)
+    {
+        this.editor.getUndo().startAction(ActionType.OPTION, selected.getOption(), null);
+        selected.setOption(selected);
+        this.editor.getUndo().setPostActionShowNode(selected);
+        this.editor.show(selected, null);
+    }
+
+    /**
      * Expand, or collapse, node.
      * @param node node.
      * @param path path in the tree of the node.

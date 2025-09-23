@@ -93,7 +93,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
         }
         this.directory = directory;
         // invalidate entire tree, as saving may trigger relative paths to includes to become ok, causing types to be found
-        invalidateAll(this);
+        invalidateAll();
     }
 
     @Override

@@ -71,14 +71,15 @@ public class ChoiceNodeStringFunction extends AbstractNodeDecorator
      */
     private void setStringFunctionWhenOnlyChoice(final XsdTreeNode node)
     {
-        if (node.getChildCount() == 1 && node.getChild(0).isChoice() && node.getChild(0).maxOccurs() == 1)
+        if (node.isSingleChoiceType())
         {
             node.setStringFunction(new Function<XsdTreeNode, String>()
             {
                 @Override
                 public String apply(final XsdTreeNode node)
                 {
-                    return node.getChild(0).toString();
+                    // if 0 children, node was deleted
+                    return node.getChildCount() > 0 ? node.getChild(0).toString() : "";
                 }
             }, false);
         }

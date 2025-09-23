@@ -3475,11 +3475,17 @@ import org.opentrafficsim.xml.bindings.types.TailgatingType;
 
 
             /**
-             * Keep: keep right. SpeedWithCourtesy: based on anticipated
-             *                           speed, and potential lane changers. Courtesy: get or stay out of the way for lane change desire of
-             *                           others. SocioSpeed: get or stay out of the way for desired speed of others. StayRight: incentive for
-             *                           trucks to stay on the right-most two lanes, interpreted in line with the route. Class: from a class
-             *                           with empty constructor.
+             * <b>Keep</b>: keep right. <br/>
+             *                           <b>SpeedWithCourtesy</b>: based on anticipated speed, and potential lane changers.
+             *                           <br/>
+             *                           <b>Courtesy</b>: get or stay out of the way for lane change desire of others.
+             *                           <br/>
+             *                           <b>SocioSpeed</b>: get or stay out of the way for desired speed of others.
+             *                           <br/>
+             *                           <b>StayRight</b>: incentive for trucks to stay on the right-most two lanes,
+             *                           interpreted in line with the route. <br/>
+             *                           <b>Class</b>: from a class with empty
+             *                           constructor.
              * 
              * <p>Java class for anonymous complex type</p>.
              * 

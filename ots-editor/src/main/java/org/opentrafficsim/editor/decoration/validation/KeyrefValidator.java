@@ -222,7 +222,7 @@ public class KeyrefValidator extends XPathValidator implements CoupledValidator
     }
 
     @Override
-    public XsdTreeNode getCoupledKeyrefNode(final XsdTreeNode node)
+    public XsdTreeNode getCoupledNode(final XsdTreeNode node)
     {
         return this.coupledKeyrefNodes.get(node);
     }

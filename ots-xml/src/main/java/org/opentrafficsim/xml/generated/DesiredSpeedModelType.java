@@ -46,7 +46,7 @@ import org.opentrafficsim.xml.bindings.types.ClassType;
     @XmlElement(name = "Idm")
     protected EmptyType idm;
     /**
-     * SOCIO wraps another desired speed model and adapts it with social
+     * Socio wraps another desired speed model and adapts it with social
      *             consideration.
      * 
      */
@@ -81,7 +81,7 @@ import org.opentrafficsim.xml.bindings.types.ClassType;
     }
 
     /**
-     * SOCIO wraps another desired speed model and adapts it with social
+     * Socio wraps another desired speed model and adapts it with social
      *             consideration.
      * 
      * @return
