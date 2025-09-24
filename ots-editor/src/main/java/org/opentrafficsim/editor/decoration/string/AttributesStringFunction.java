@@ -34,7 +34,6 @@ public class AttributesStringFunction extends AbstractStringFunction
     public AttributesStringFunction(final OtsEditor editor, final String path, final String... attributes)
     {
         super(editor, (node) -> node.getPathString().endsWith(path));
-        editor.addListener(this, OtsEditor.NEW_FILE);
         this.attributes = attributes;
     }
 
@@ -52,6 +51,7 @@ public class AttributesStringFunction extends AbstractStringFunction
     {
         return (node) ->
         {
+            // This will usually be a single attribute, and otherwise only a few. StringBuilder overhead probably not worth it.
             String sep = "";
             String out = "";
             for (String attribute : AttributesStringFunction.this.attributes)

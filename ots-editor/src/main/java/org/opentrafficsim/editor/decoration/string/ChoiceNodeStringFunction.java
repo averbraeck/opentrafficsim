@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.util.function.Function;
 
 import org.djutils.event.Event;
+import org.djutils.event.reference.ReferenceType;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.decoration.AbstractNodeDecorator;
@@ -28,20 +29,7 @@ public class ChoiceNodeStringFunction extends AbstractNodeDecorator
      */
     public ChoiceNodeStringFunction(final OtsEditor editor)
     {
-        super(editor, (n) -> true);
-    }
-
-    @Override
-    public void notify(final Event event) throws RemoteException
-    {
-        if (event.getType().equals(XsdTreeNode.ACTIVATION_CHANGED))
-        {
-            Object[] content = (Object[]) event.getContent();
-            XsdTreeNode node = (XsdTreeNode) content[0];
-            setStringFunctionWhenOnlyChoice(node);
-            node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
-        }
-        super.notify(event);
+        super(editor, (n) -> true); // accept all due to complicated, possibly activation delayed, setting of string function
     }
 
     @Override
@@ -54,12 +42,24 @@ public class ChoiceNodeStringFunction extends AbstractNodeDecorator
          */
         if (!node.isActive())
         {
-            node.addListener(ChoiceNodeStringFunction.this, XsdTreeNode.ACTIVATION_CHANGED);
+            node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED, ReferenceType.WEAK);
         }
         else
         {
             setStringFunctionWhenOnlyChoice(node);
         }
+    }
+
+    @Override
+    public void notify(final Event event) throws RemoteException
+    {
+        if (event.getType().equals(XsdTreeNode.ACTIVATION_CHANGED))
+        {
+            XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
+            setStringFunctionWhenOnlyChoice(node);
+            node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+        }
+        super.notify(event);
     }
 
     /**

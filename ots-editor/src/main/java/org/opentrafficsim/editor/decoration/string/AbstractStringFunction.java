@@ -38,8 +38,8 @@ public abstract class AbstractStringFunction extends AbstractNodeDecorator
     }
 
     /**
-     * Sets whether this function should overwrite existing string functions in the node.
-     * @param overwrite whether this function should overwrite existing string functions in the node
+     * Sets whether this function should overwrite an existing string function in the node. This is {@code true} by default.
+     * @param overwrite whether this function should overwrite an existing string function in the node
      */
     protected void setOverwrite(final boolean overwrite)
     {
@@ -57,7 +57,8 @@ public abstract class AbstractStringFunction extends AbstractNodeDecorator
     }
 
     /**
-     * Returns the string function that produces the right string from the contents of a node.
+     * Returns the string function that produces the right string from the contents of a node. It should be cached by the
+     * caller.
      * @return string function that produces the right string from the contents of a node.
      */
     public abstract Function<XsdTreeNode, String> getStringFunction();

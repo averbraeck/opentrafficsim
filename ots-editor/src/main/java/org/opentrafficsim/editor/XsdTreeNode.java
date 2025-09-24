@@ -2137,7 +2137,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     public void addValueValidator(final ValueValidator validator, final Object field)
     {
         Throw.when(validator instanceof CoupledValidator && coupledValidatorExists(this.valueValidators.keySet(), validator),
-                IllegalStateException.class, "Can only add one CoupledValidator to the node value.");
+                IllegalStateException.class, "Adding %s to the node value of %s but a CoupledValidator already exists.",
+                validator.getClass().getSimpleName(), getPathString());
         this.valueValidators.put(validator, field);
     }
 
@@ -2164,7 +2165,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         Throw.when(
                 validator instanceof CoupledValidator
                         && coupledValidatorExists(this.attributeValidators.get(attribute), validator),
-                IllegalStateException.class, "Can only add one CoupledValidator to the node value.");
+                IllegalStateException.class, "Adding %s to the attribute %s in %s but a CoupledValidator already exists.",
+                validator.getClass().getSimpleName(), attribute, getPathString());
         this.attributeValidators.computeIfAbsent(attribute, (key) -> new TreeSet<>()).add(validator);
         this.attributeValidatorFields.computeIfAbsent(attribute, (key) -> new LinkedHashMap<>()).put(validator, field);
     }
