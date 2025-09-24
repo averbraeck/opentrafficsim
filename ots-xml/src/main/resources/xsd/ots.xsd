@@ -636,12 +636,6 @@
       <xsd:field xpath="@SinkType" />
     </xsd:keyref>
 
-    <!-- Demand.OdOptions.OdOptionsItem.Lane.Link = Link.Id -->
-    <xsd:keyref name="odOptionsItemLaneLinkIdRef" refer="ots:linkKey">
-      <xsd:selector xpath="ots:Demand/ots:OdOptions/ots:OdOptionsItem/ots:Lane" />
-      <xsd:field xpath="@Link" />
-    </xsd:keyref>
-
     <!-- Demand.Sink.Type = DetectorType.Id -->
     <xsd:keyref name="sinkTypeIdRef" refer="ots:detectorTypeKey">
       <xsd:selector xpath="ots:Demand/ots:Sink" />
