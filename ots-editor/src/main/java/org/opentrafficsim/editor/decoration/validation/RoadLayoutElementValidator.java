@@ -79,7 +79,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
     public RoadLayoutElementValidator(final OtsEditor editor, final String path, final LayoutCoupling layoutCoupling,
             final String attribute)
     {
-        super(editor);
+        super(editor, (n) -> true);
         Throw.whenNull(path, "Path may not be null.");
         Throw.whenNull(layoutCoupling, "LayoutCoupling may not be null.");
         this.path = path;
@@ -112,7 +112,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
             }
             update(node); // take current info during creation, respond to further changes by listeners
         }
-        else if (node.getPathString().equals("Ots.Definitions.RoadLayouts.RoadLayout"))
+        else if (node.getPathString().equals(XsdPaths.DEFINED_ROADLAYOUT))
         {
             node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
         }
@@ -121,7 +121,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
     @Override
     public void notifyRemoved(final XsdTreeNode node)
     {
-        if (this.path.equals(node.getPathString()))
+        if (node.getPathString().endsWith(this.path))
         {
             XsdTreeNode linkNode = this.nodeToLink.remove(node);
             if (linkNode != null)

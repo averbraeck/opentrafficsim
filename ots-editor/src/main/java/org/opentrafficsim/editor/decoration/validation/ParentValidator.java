@@ -25,9 +25,6 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
     /** */
     private static final long serialVersionUID = 20230319L;
 
-    /** Path string for the nodes to validate. */
-    private final String path;
-
     /** Context level within which the parents may be found. */
     private String contextPath;
 
@@ -47,8 +44,7 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
      */
     public ParentValidator(final OtsEditor editor, final String path)
     {
-        super(editor);
-        this.path = path;
+        super(editor, (n) -> n.isType(path));
         this.contextPath = "Ots";
         this.idAttribute = "Id";
         this.parentAttribute = "Parent";
@@ -146,20 +142,14 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
     @Override
     public void notifyCreated(final XsdTreeNode node)
     {
-        if (node.isType(ParentValidator.this.path))
-        {
-            node.addAttributeValidator(this.parentAttribute, ParentValidator.this);
-            getContext(node).add(node);
-        }
+        node.addAttributeValidator(this.parentAttribute, ParentValidator.this);
+        getContext(node).add(node);
     }
 
     @Override
     public void notifyRemoved(final XsdTreeNode node)
     {
-        if (node.isType(ParentValidator.this.path))
-        {
-            getContext(node).remove(node);
-        }
+        getContext(node).remove(node);
     }
 
     /**

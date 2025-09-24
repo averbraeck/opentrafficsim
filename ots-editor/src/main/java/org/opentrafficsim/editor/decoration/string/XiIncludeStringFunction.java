@@ -26,8 +26,8 @@ public class XiIncludeStringFunction extends AbstractStringFunction
      */
     public XiIncludeStringFunction(final OtsEditor editor)
     {
-        super(editor, (node) -> node.getNodeName().equals("xi:include"));
-        this.overwrite = false;
+        super(editor, (n) -> n.getNodeName().equals("xi:include"));
+        setOverwrite(false);
     }
 
     @Override

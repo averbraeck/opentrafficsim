@@ -28,7 +28,7 @@ public class ChoiceNodeStringFunction extends AbstractNodeDecorator
      */
     public ChoiceNodeStringFunction(final OtsEditor editor)
     {
-        super(editor);
+        super(editor, (n) -> true);
     }
 
     @Override
@@ -41,10 +41,7 @@ public class ChoiceNodeStringFunction extends AbstractNodeDecorator
             setStringFunctionWhenOnlyChoice(node);
             node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
         }
-        else
-        {
-            super.notify(event);
-        }
+        super.notify(event);
     }
 
     @Override

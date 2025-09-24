@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import org.djutils.event.Event;
+import org.djutils.event.reference.ReferenceType;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeUtil;
@@ -46,7 +47,7 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecoratorRemove im
      */
     public NoDuplicateChildrenValidator(final OtsEditor editor, final String path, final String... children)
     {
-        super(editor);
+        super(editor, (n) -> true);
         this.path = path;
         this.children = Arrays.asList(children);
     }
@@ -79,10 +80,10 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecoratorRemove im
         if (added)
         {
             this.nodes.add(node);
-            node.addListener(this, XsdTreeNode.VALUE_CHANGED);
-            node.addListener(this, XsdTreeNode.OPTION_CHANGED);
-            node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
-            node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+            node.addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
+            node.addListener(this, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
+            node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
+            node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED, ReferenceType.WEAK);
             this.nodes.forEach((n) -> n.invalidate());
         }
     }

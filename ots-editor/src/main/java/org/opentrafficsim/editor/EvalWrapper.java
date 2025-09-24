@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.djutils.eval.Eval;
 import org.djutils.event.Event;
+import org.djutils.event.reference.ReferenceType;
 import org.djutils.logger.CategoryLogger;
 import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.editor.decoration.AbstractNodeDecoratorRemove;
@@ -70,7 +71,7 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
      */
     public EvalWrapper(final OtsEditor editor)
     {
-        super(editor);
+        super(editor, (n) -> true);
         this.editor = editor;
     }
 
@@ -141,15 +142,15 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
         else if (node.getPathString().equals(XsdPaths.INPUT_PARAMETERS)
                 || node.getPathString().equals(XsdPaths.DEFAULT_INPUT_PARAMETERS))
         {
-            node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+            node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED, ReferenceType.WEAK);
         }
         else if ((node.getPathString().startsWith(XsdPaths.INPUT_PARAMETERS + ".")
                 || node.getPathString().startsWith(XsdPaths.DEFAULT_INPUT_PARAMETERS + "."))
                 && !node.getNodeName().equals("xsd:choice")) // ignore the invisible XsdTreeNode created for an xsd:choice
         {
-            node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
-            node.addListener(this, XsdTreeNode.VALUE_CHANGED);
-            node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+            node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
+            node.addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
+            node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED, ReferenceType.WEAK);
             registerParameter(node); // node may be valid when its created as part of an undo, so we need to register it if so
             setDirty();
         }

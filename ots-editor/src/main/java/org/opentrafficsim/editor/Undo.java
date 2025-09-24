@@ -237,31 +237,7 @@ public class Undo implements EventListener
     @Override
     public void notify(final Event event) throws RemoteException
     {
-        // listen and unlisten to all possible changes
-        if (event.getType().equals(OtsEditor.NEW_FILE))
-        {
-            XsdTreeNodeRoot root = (XsdTreeNodeRoot) event.getContent();
-            root.addListener(this, XsdTreeNodeRoot.NODE_CREATED);
-            root.addListener(this, XsdTreeNodeRoot.NODE_REMOVED);
-        }
-        else if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
-        {
-            XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
-            node.addListener(this, XsdTreeNode.VALUE_CHANGED);
-            node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
-            node.addListener(this, XsdTreeNode.OPTION_CHANGED);
-            node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
-            node.addListener(this, XsdTreeNode.MOVED);
-        }
-        else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
-        {
-            XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
-            node.removeListener(this, XsdTreeNode.VALUE_CHANGED);
-            node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
-            node.removeListener(this, XsdTreeNode.OPTION_CHANGED);
-            node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
-            node.removeListener(this, XsdTreeNode.MOVED);
-        }
+        listenAndUnlisten(event);
 
         // ignore any changes during an undo or redo; these should not result in another undo or redo
         if (this.ignoreChanges)
@@ -404,7 +380,38 @@ public class Undo implements EventListener
                 node.parent.children.add(newIndex, node);
                 node.fireEvent(XsdTreeNode.MOVED, new Object[] {node, oldIndex, newIndex});
             }, "Move " + node.getPathString()));
+        }
+    }
 
+    /**
+     * Listen and un-listen to all possible changes.
+     * @param event event
+     */
+    private void listenAndUnlisten(final Event event)
+    {
+        if (event.getType().equals(OtsEditor.NEW_FILE))
+        {
+            XsdTreeNodeRoot root = (XsdTreeNodeRoot) event.getContent();
+            root.addListener(this, XsdTreeNodeRoot.NODE_CREATED);
+            root.addListener(this, XsdTreeNodeRoot.NODE_REMOVED);
+        }
+        else if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
+        {
+            XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
+            node.addListener(this, XsdTreeNode.VALUE_CHANGED);
+            node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+            node.addListener(this, XsdTreeNode.OPTION_CHANGED);
+            node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+            node.addListener(this, XsdTreeNode.MOVED);
+        }
+        else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
+        {
+            XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
+            node.removeListener(this, XsdTreeNode.VALUE_CHANGED);
+            node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
+            node.removeListener(this, XsdTreeNode.OPTION_CHANGED);
+            node.removeListener(this, XsdTreeNode.ACTIVATION_CHANGED);
+            node.removeListener(this, XsdTreeNode.MOVED);
         }
     }
 

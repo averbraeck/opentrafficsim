@@ -26,7 +26,7 @@ public class ClassNameTypeStringFunction extends AbstractStringFunction
     public ClassNameTypeStringFunction(final OtsEditor editor)
     {
         super(editor, (node) -> node.isType("ClassNameType"));
-        this.overwrite = false;
+        setOverwrite(false);
     }
 
     @Override

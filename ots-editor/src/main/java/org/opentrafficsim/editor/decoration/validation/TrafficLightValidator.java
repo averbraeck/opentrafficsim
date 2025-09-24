@@ -17,7 +17,7 @@ import org.opentrafficsim.editor.decoration.validation.RoadLayoutElementValidato
 /**
  * Checks that attribute TrafficLightId can be found on link under attribute Link (with keyref) having the same lane under
  * attribute Lane. This class relies on a {@code RoadLayoutElementValidator} to validate the Lane attribute with the Link
- * attribute, which will invalidate the node if either attribute is changed. This second validator is create in the constructor
+ * attribute, which will invalidate the node if either attribute is changed. This second validator is created in the constructor
  * of this validator.
  * <p>
  * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -31,9 +31,6 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
     /** */
     private static final long serialVersionUID = 20240306L;
 
-    /** Path location of nodes to attach to. */
-    private final String path;
-
     /** SignalGroup.TrafficLight to Link.TrafficLight coupling. */
     private final Map<XsdTreeNode, XsdTreeNode> coupledNodes = new LinkedHashMap<>();
 
@@ -44,28 +41,21 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
      */
     public TrafficLightValidator(final OtsEditor editor, final String path)
     {
-        super(editor);
-        this.path = path;
+        super(editor, (n) -> n.getPathString().endsWith(path));
         new RoadLayoutElementValidator(editor, path, LayoutCoupling.LINK_ATTRIBUTE, "Lane");
     }
 
     @Override
     public void notifyCreated(final XsdTreeNode node)
     {
-        if (node.getPathString().endsWith(this.path))
-        {
-            node.addAttributeValidator("TrafficLightId", this);
-            node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
-        }
+        node.addAttributeValidator("TrafficLightId", this);
+        node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
     }
 
     @Override
     public void notifyRemoved(final XsdTreeNode node)
     {
-        if (this.path.equals(node.getPathString()))
-        {
-            node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
-        }
+        node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
     }
 
     @Override

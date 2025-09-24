@@ -2,12 +2,15 @@ package org.opentrafficsim.editor.decoration;
 
 import java.rmi.RemoteException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.function.Predicate;
 
 import org.djutils.event.Event;
+import org.djutils.event.reference.ReferenceType;
+import org.djutils.immutablecollections.ImmutableArrayList;
+import org.djutils.immutablecollections.ImmutableList;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.XsdTreeNodeRoot;
 
 /**
  * General implementation of node decorators, such as validators and string functions, that also need to trigger on changed
@@ -24,48 +27,54 @@ public abstract class AbstractNodeDecoratorAttribute extends AbstractNodeDecorat
     /** */
     private static final long serialVersionUID = 20230910L;
 
-    /** Predicate to accept nodes that should have this attribute decorator. */
-    protected final Predicate<XsdTreeNode> predicate;
-
     /** Attributes to trigger on. */
-    protected final List<String> attributes;
+    private final ImmutableList<String> attributes;
 
     /**
      * Constructor.
      * @param editor editor.
-     * @param predicate predicate to accept nodes that should have this attribute decorator.
+     * @param predicate predicate to accept nodes that should have this decorator.
      * @param attributes attributes to trigger on.
      */
     public AbstractNodeDecoratorAttribute(final OtsEditor editor, final Predicate<XsdTreeNode> predicate,
             final String... attributes)
     {
-        super(editor);
-        this.predicate = predicate;
-        this.attributes = Arrays.asList(attributes);
+        super(editor, predicate);
+        this.attributes = new ImmutableArrayList<>(Arrays.asList(attributes));
     }
 
     @Override
     public void notify(final Event event) throws RemoteException
     {
-        super.notify(event); // NODE_CREATED
-        if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED))
+        super.notify(event); // NEW_FILE -> NODE_CREATED and NODE_CREATED -> notifyCreated()
+        if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
         {
+            // NODE_CREATED -> ATTRIBUTE_CHANGED
+            XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
+            if (acceptNode(node))
+            {
+                node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
+            }
+        }
+        else if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED))
+        {
+            // ATTRIBUTE_CHANGED -> notifyAttributeChanged()
             Object[] content = (Object[]) event.getContent();
             String attribute = (String) content[1];
             if (AbstractNodeDecoratorAttribute.this.attributes.contains(attribute))
             {
-                AbstractNodeDecoratorAttribute.this.notifyAttributeChanged((XsdTreeNode) content[0], attribute);
+                notifyAttributeChanged((XsdTreeNode) content[0], attribute);
             }
         }
     }
 
-    @Override
-    public void notifyCreated(final XsdTreeNode node)
+    /**
+     * Returns the attributes.
+     * @return attributes
+     */
+    public ImmutableList<String> getAttributes()
     {
-        if (this.predicate.test(node))
-        {
-            node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
-        }
+        return this.attributes;
     }
 
     /**

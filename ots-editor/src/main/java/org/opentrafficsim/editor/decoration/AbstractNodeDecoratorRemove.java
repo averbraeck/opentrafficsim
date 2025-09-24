@@ -1,8 +1,10 @@
 package org.opentrafficsim.editor.decoration;
 
 import java.rmi.RemoteException;
+import java.util.function.Predicate;
 
 import org.djutils.event.Event;
+import org.djutils.event.reference.ReferenceType;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
@@ -25,29 +27,31 @@ public abstract class AbstractNodeDecoratorRemove extends AbstractNodeDecorator
     /**
      * Constructor.
      * @param editor editor.
+     * @param predicate predicate to accept nodes that should have this decorator.
      */
-    public AbstractNodeDecoratorRemove(final OtsEditor editor)
+    public AbstractNodeDecoratorRemove(final OtsEditor editor, final Predicate<XsdTreeNode> predicate)
     {
-        super(editor);
+        super(editor, predicate);
     }
 
     @Override
     public void notify(final Event event) throws RemoteException
     {
+        super.notify(event); // NEW_FILE -> NODE_CREATED and NODE_CREATED -> notifyCreated()
         if (event.getType().equals(OtsEditor.NEW_FILE))
         {
-            super.notify(event); // NODE_CREATED registration
+            // NEW_FILE -> NODE_REMOVED
             XsdTreeNodeRoot root = (XsdTreeNodeRoot) event.getContent();
-            root.addListener(this, XsdTreeNodeRoot.NODE_REMOVED);
+            root.addListener(this, XsdTreeNodeRoot.NODE_REMOVED, ReferenceType.WEAK);
         }
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
         {
+            // NODE_REMOVED -> notifyRemoved()
             XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
-            notifyRemoved(node);
-        }
-        else
-        {
-            super.notify(event); // NODE_CREATED
+            if (acceptNode(node))
+            {
+                notifyRemoved(node);
+            }
         }
     }
 

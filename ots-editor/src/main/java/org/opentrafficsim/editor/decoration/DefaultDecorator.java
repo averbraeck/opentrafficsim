@@ -229,7 +229,7 @@ public final class DefaultDecorator
          */
         NodeCreatedRemovedPrinter(final OtsEditor editor)
         {
-            super(editor);
+            super(editor, (n) -> true);
         }
 
         @Override

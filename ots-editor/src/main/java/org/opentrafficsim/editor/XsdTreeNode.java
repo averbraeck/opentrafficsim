@@ -2136,7 +2136,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public void addValueValidator(final ValueValidator validator, final Object field)
     {
-        Throw.when(validator instanceof CoupledValidator && coupledValidatorExists(this.valueValidators.keySet()),
+        Throw.when(validator instanceof CoupledValidator && coupledValidatorExists(this.valueValidators.keySet(), validator),
                 IllegalStateException.class, "Can only add one CoupledValidator to the node value.");
         this.valueValidators.put(validator, field);
     }
@@ -2161,7 +2161,9 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public void addAttributeValidator(final String attribute, final ValueValidator validator, final Object field)
     {
-        Throw.when(validator instanceof CoupledValidator && coupledValidatorExists(this.attributeValidators.get(attribute)),
+        Throw.when(
+                validator instanceof CoupledValidator
+                        && coupledValidatorExists(this.attributeValidators.get(attribute), validator),
                 IllegalStateException.class, "Can only add one CoupledValidator to the node value.");
         this.attributeValidators.computeIfAbsent(attribute, (key) -> new TreeSet<>()).add(validator);
         this.attributeValidatorFields.computeIfAbsent(attribute, (key) -> new LinkedHashMap<>()).put(validator, field);
@@ -2170,11 +2172,13 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * Returns {@code true} if the set of validators contains a {@code CoupledValidator}.
      * @param validators validators
+     * @param validator validator taht is about to be added
      * @return {@code true} if the set of validators contains a {@code CoupledValidator}
      */
-    private boolean coupledValidatorExists(final Set<ValueValidator> validators)
+    private boolean coupledValidatorExists(final Set<ValueValidator> validators, final ValueValidator validator)
     {
-        return validators != null && validators.stream().filter((v) -> v instanceof CoupledValidator).count() > 0;
+        return validators != null
+                && validators.stream().filter((v) -> v instanceof CoupledValidator && !v.equals(validator)).count() > 0;
     }
 
     /**

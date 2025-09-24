@@ -38,27 +38,24 @@ public class AttributesNotEqualValidator extends AbstractNodeDecoratorAttribute 
         {
             return null;
         }
-        String attribute1 = node.getAttributeValue(this.attributes.get(0));
+        String attribute1 = node.getAttributeValue(getAttributes().get(0));
         if (attribute1 == null)
         {
             return null;
         }
-        String attribute2 = node.getAttributeValue(this.attributes.get(1));
+        String attribute2 = node.getAttributeValue(getAttributes().get(1));
         if (attribute2 == null || !attribute2.equals(attribute1))
         {
             return null;
         }
-        return this.attributes.get(0) + " and " + this.attributes.get(1) + " may not be equal.";
+        return getAttributes().get(0) + " and " + getAttributes().get(1) + " may not be equal.";
     }
 
     @Override
     public void notifyCreated(final XsdTreeNode node)
     {
-        if (this.predicate.test(node))
-        {
-            node.addAttributeValidator(this.attributes.get(0), AttributesNotEqualValidator.this);
-            node.addAttributeValidator(this.attributes.get(1), AttributesNotEqualValidator.this);
-        }
+        node.addAttributeValidator(getAttributes().get(0), AttributesNotEqualValidator.this);
+        node.addAttributeValidator(getAttributes().get(1), AttributesNotEqualValidator.this);
     }
 
     @Override

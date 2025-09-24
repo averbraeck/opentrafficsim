@@ -48,7 +48,14 @@ public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements C
     protected AutomaticLinkId(final OtsEditor editor, final Predicate<XsdTreeNode> predicate, final String... attributes)
     {
         super(editor, predicate, attributes);
+        // Update the link id only when both NodeStart and NodeEnd finished being typed.
+        // Otherwise we only include the first character of the second one being defined in the link id.
         editor.addAttributeCellEditorListener(this);
+    }
+
+    @Override
+    public void notifyCreated(final XsdTreeNode node)
+    {
     }
 
     @Override

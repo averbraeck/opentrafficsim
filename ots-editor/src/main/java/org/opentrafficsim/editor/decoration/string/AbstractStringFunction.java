@@ -21,11 +21,8 @@ public abstract class AbstractStringFunction extends AbstractNodeDecorator
     /** */
     private static final long serialVersionUID = 20230910L;
 
-    /** Predicate to accept nodes that should have this string function. */
-    private final Predicate<XsdTreeNode> predicate;
-
     /** Overwrite existing string functions. */
-    protected boolean overwrite = true;
+    private boolean overwrite = true;
 
     /** Cached string function, to prevented repeated creation in getStringFunction(). */
     private Function<XsdTreeNode, String> stringFunction;
@@ -33,25 +30,30 @@ public abstract class AbstractStringFunction extends AbstractNodeDecorator
     /**
      * Constructor.
      * @param editor editor.
-     * @param predicate predicate to accept nodes that should have this string function.
+     * @param predicate predicate to accept nodes that should have this decorator.
      */
     public AbstractStringFunction(final OtsEditor editor, final Predicate<XsdTreeNode> predicate)
     {
-        super(editor);
-        this.predicate = predicate;
+        super(editor, predicate);
+    }
+
+    /**
+     * Sets whether this function should overwrite existing string functions in the node.
+     * @param overwrite whether this function should overwrite existing string functions in the node
+     */
+    protected void setOverwrite(final boolean overwrite)
+    {
+        this.overwrite = overwrite;
     }
 
     @Override
     public void notifyCreated(final XsdTreeNode node)
     {
-        if (AbstractStringFunction.this.predicate.test(node))
+        if (this.stringFunction == null)
         {
-            if (this.stringFunction == null)
-            {
-                this.stringFunction = getStringFunction();
-            }
-            node.setStringFunction(this.stringFunction, this.overwrite);
+            this.stringFunction = getStringFunction();
         }
+        node.setStringFunction(this.stringFunction, this.overwrite);
     }
 
     /**

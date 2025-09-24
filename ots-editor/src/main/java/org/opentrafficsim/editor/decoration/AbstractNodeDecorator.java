@@ -1,6 +1,7 @@
 package org.opentrafficsim.editor.decoration;
 
 import java.rmi.RemoteException;
+import java.util.function.Predicate;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
@@ -23,13 +24,28 @@ public abstract class AbstractNodeDecorator implements EventListener
     /** */
     private static final long serialVersionUID = 20230910L;
 
+    /** Predicate to accept nodes that should have this attribute decorator. */
+    private final Predicate<XsdTreeNode> predicate;
+
     /**
      * Constructor.
      * @param editor editor.
+     * @param predicate predicate to accept nodes that should have this decorator.
      */
-    public AbstractNodeDecorator(final OtsEditor editor)
+    public AbstractNodeDecorator(final OtsEditor editor, final Predicate<XsdTreeNode> predicate)
     {
+        this.predicate = predicate;
         editor.addListener(this, OtsEditor.NEW_FILE);
+    }
+
+    /**
+     * Accept node by internal predicate.
+     * @param node node to accept
+     * @return whether the node should be accepted for this decorator
+     */
+    protected boolean acceptNode(final XsdTreeNode node)
+    {
+        return this.predicate.test(node);
     }
 
     @Override
@@ -43,7 +59,10 @@ public abstract class AbstractNodeDecorator implements EventListener
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
         {
             XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
-            AbstractNodeDecorator.this.notifyCreated(node);
+            if (acceptNode(node))
+            {
+                notifyCreated(node);
+            }
         }
     }
 

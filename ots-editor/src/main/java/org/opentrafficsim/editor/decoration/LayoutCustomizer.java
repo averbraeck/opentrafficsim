@@ -4,15 +4,13 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.djutils.event.Event;
 import org.djutils.event.EventListener;
-import org.djutils.event.reference.ReferenceType;
 import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.Undo.ActionType;
 import org.opentrafficsim.editor.XsdOption;
 import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
-import org.opentrafficsim.editor.Undo.ActionType;
 
 /**
  * Allows a defined road layout selected at a link, to be copied in to a customizable road layout at the link.
@@ -22,7 +20,7 @@ import org.opentrafficsim.editor.Undo.ActionType;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class LayoutCustomizer implements EventListener, Consumer<XsdTreeNode>
+public class LayoutCustomizer extends AbstractNodeDecoratorRemove implements EventListener, Consumer<XsdTreeNode>
 {
     /** */
     private static final long serialVersionUID = 20231110L;
@@ -37,33 +35,24 @@ public class LayoutCustomizer implements EventListener, Consumer<XsdTreeNode>
      */
     public LayoutCustomizer(final OtsEditor editor) throws RemoteException
     {
-        editor.addListener(this, OtsEditor.NEW_FILE);
+        super(editor, (n) -> true);
         this.editor = editor;
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notifyCreated(final XsdTreeNode node)
     {
-        if (event.getType().equals(OtsEditor.NEW_FILE))
+        if (node.getPathString().equals(XsdPaths.LINK + ".xsd:sequence") && node.getChildCount() > 0
+                && node.getChild(0).getPathString().equals(XsdPaths.LINK + ".DefinedLayout"))
         {
-            XsdTreeNodeRoot root = (XsdTreeNodeRoot) event.getContent();
-            root.addListener(this, XsdTreeNodeRoot.NODE_CREATED, ReferenceType.WEAK);
-            root.addListener(this, XsdTreeNodeRoot.NODE_REMOVED, ReferenceType.WEAK);
+            node.addConsumer("Customize", this);
         }
-        else if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
-        {
-            XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
-            if (node.getPathString().equals(XsdPaths.LINK + ".xsd:sequence") && node.getChildCount() > 0
-                    && node.getChild(0).getPathString().equals(XsdPaths.LINK + ".DefinedLayout"))
-            {
-                node.addConsumer("Customize", this);
-            }
-        }
-        else if (event.getType().equals(XsdTreeNodeRoot.NODE_REMOVED))
-        {
-            XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
-            node.removeListener(this, XsdTreeNodeRoot.NODE_REMOVED);
-        }
+    }
+
+    @Override
+    public void notifyRemoved(final XsdTreeNode node)
+    {
+        node.removeListener(this, XsdTreeNodeRoot.NODE_REMOVED);
     }
 
     @Override
