@@ -10,6 +10,8 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
@@ -70,6 +72,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 import javax.swing.tree.TreePath;
@@ -143,7 +146,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
             "Selection changed", new ObjectDescriptor("Selected node", "Selected node", XsdTreeNode.class)));
 
     /** Width of the divider between parts of the screen. */
-    private static final int DIVIDER_SIZE = 3;
+    private static final int DIVIDER_SIZE = 4;
 
     /** Time between autosaves. */
     private static final long AUTOSAVE_PERIOD_MS = 60000;
@@ -285,11 +288,13 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         this.leftRightSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, UPDATE_SPLIT_WHILE_DRAGGING);
         this.leftRightSplitPane.setDividerSize(DIVIDER_SIZE);
         this.leftRightSplitPane.setResizeWeight(0.5);
+        makeClickFlippable(this.leftRightSplitPane);
         add(this.leftRightSplitPane);
         this.rightSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, UPDATE_SPLIT_WHILE_DRAGGING);
         this.rightSplitPane.setDividerSize(DIVIDER_SIZE);
         this.rightSplitPane.setResizeWeight(0.5);
         this.rightSplitPane.setAlignmentX(0.5f);
+        makeClickFlippable(this.rightSplitPane);
         JPanel rightContainer = new JPanel();
         rightContainer.setLayout(new BoxLayout(rightContainer, BoxLayout.Y_AXIS));
         rightContainer.setBorder(new LineBorder(null, -1));
@@ -414,6 +419,26 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         this.statusLabel.setBorder(new BevelBorder(BevelBorder.LOWERED));
         add(this.statusLabel, BorderLayout.SOUTH);
         removeStatusLabel();
+    }
+
+    /**
+     * Makes the divider clickable cause the panel to exchange screen size the other way around.
+     * @param pane splitpane to make click-flippable.
+     */
+    private void makeClickFlippable(final JSplitPane pane)
+    {
+        ((BasicSplitPaneUI) pane.getUI()).getDivider().addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(final MouseEvent e)
+            {
+                int size = pane.getOrientation() == JSplitPane.HORIZONTAL_SPLIT ? pane.getWidth() : pane.getHeight();
+                int target = size - pane.getDividerLocation();
+                int minimum = pane.getMinimumDividerLocation();
+                int maximum = pane.getMaximumDividerLocation();
+                pane.setDividerLocation(Math.min(Math.max(target, minimum), maximum));
+            }
+        });
     }
 
     /**
