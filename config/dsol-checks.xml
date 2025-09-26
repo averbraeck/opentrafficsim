@@ -5,7 +5,7 @@
     This configuration file was written by the eclipse-cs plugin configuration editor
 -->
 <!--
-    Checkstyle-Configuration: dsol-checks
+    Checkstyle-Configuration: DSOL checks
     Description: none
 -->
 <module name="Checker">
@@ -197,6 +197,7 @@
   <module name="NewlineAtEndOfFile">
     <property name="severity" value="ignore"/>
     <property name="fileExtensions" value="java"/>
+    <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
   </module>
   <module name="Translation">
     <property name="severity" value="warning"/>
@@ -218,4 +219,7 @@
     <metadata name="net.sf.eclipsecs.core.lastEnabledSeverity" value="inherit"/>
   </module>
   <module name="SuppressWarningsFilter"/>
+  <module name="SuppressionFilter">
+    <property name="file" value="${config_loc}/checkstyle_suppressions.xml"/>
+  </module>
 </module>
