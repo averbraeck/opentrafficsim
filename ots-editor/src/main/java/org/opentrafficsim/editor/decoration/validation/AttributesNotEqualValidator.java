@@ -5,7 +5,7 @@ import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.decoration.AbstractNodeDecoratorAttribute;
 
 /**
- * Validates that the two attributes of a node are not the same.
+ * Validates that two attributes of a node are not the same.
  * <p>
  * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -14,6 +14,20 @@ import org.opentrafficsim.editor.decoration.AbstractNodeDecoratorAttribute;
  */
 public class AttributesNotEqualValidator extends AbstractNodeDecoratorAttribute implements ValueValidator
 {
+
+    /*-
+     * This somehow seems not to be possible with a key
+     * (https://stackoverflow.com/questions/16357694/xml-schema-force-two-attributes-to-be-different,
+     * https://stackoverflow.com/questions/19080473/xsd-unique-attribute-values-within-node,
+     * https://stackoverflow.com/questions/25054526/xsd-unique-values-of-two-different-attributes).
+     *
+     * This and similar attempts were tried within the Link element, but did not create issues in validation:
+     *
+     * <xsd:key name=linkStartEndNodeKey>
+     *   <xsd:selector xpath=".|." />
+     *   <xsd:field xpath="@NodeStart|@NodeEnd" />
+     * <xsd:key />
+     */
 
     /** */
     private static final long serialVersionUID = 20230910L;

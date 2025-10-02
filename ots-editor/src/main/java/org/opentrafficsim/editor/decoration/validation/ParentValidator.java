@@ -28,7 +28,7 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
     /** Context level within which the parents may be found. */
     private String contextPath;
 
-    /** Attribute defining a parent. */
+    /** Attribute identifying a parent. */
     private String idAttribute;
 
     /** Attribute referring to a parent. */
@@ -56,6 +56,7 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
      * @param contextPath context level within which the parents may be found.
      * @return this validator for method chaining.
      */
+    @SuppressWarnings("hiddenfield")
     public ParentValidator setContext(final String contextPath)
     {
         this.contextPath = contextPath;
@@ -63,10 +64,11 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
     }
 
     /**
-     * Sets the attribute that is the defining attribute of a parent. Default is "Id".
-     * @param idAttribute attribute defining a parent.
+     * Sets the attribute that is the identifying attribute of a parent. Default is "Id".
+     * @param idAttribute attribute identifying a parent.
      * @return this validator for method chaining.
      */
+    @SuppressWarnings("hiddenfield")
     public ParentValidator setIdAttribute(final String idAttribute)
     {
         this.idAttribute = idAttribute;
@@ -75,9 +77,10 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
 
     /**
      * Sets the attribute that refers to a parent. Default is "Parent".
-     * @param parentAttribute attribute defining a parent.
+     * @param parentAttribute attribute referring to a parent.
      * @return this validator for method chaining.
      */
+    @SuppressWarnings("hiddenfield")
     public ParentValidator setParentAttribute(final String parentAttribute)
     {
         this.parentAttribute = parentAttribute;
@@ -106,11 +109,11 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
      */
     private String validateParent(final Set<XsdTreeNode> context, final String parentId, final List<XsdTreeNode> nodeList)
     {
-        for (XsdTreeNode otherNode : context)
+        for (XsdTreeNode nodeInContext : context)
         {
-            if (otherNode.isActive() && parentId.equals(otherNode.getAttributeValue(this.idAttribute)))
+            if (nodeInContext.isActive() && parentId.equals(nodeInContext.getAttributeValue(this.idAttribute)))
             {
-                int index = nodeList.indexOf(otherNode);
+                int index = nodeList.indexOf(nodeInContext);
                 if (index == 0)
                 {
                     StringBuilder str = new StringBuilder("Parent refers to self: ");
@@ -120,19 +123,19 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
                         str.append(separator).append(node.getAttributeValue(this.idAttribute));
                         separator = " > ";
                     }
-                    str.append(separator).append(otherNode.getAttributeValue(this.idAttribute));
-                    return str.toString();
+                    str.append(separator).append(nodeInContext.getAttributeValue(this.idAttribute));
+                    return str.toString(); // A > B > C > A ... report at A
                 }
                 else if (index > 0)
                 {
                     return null; // A > B > C > C > C ... report at C, not at A
                 }
-                String value = otherNode.getAttributeValue(this.parentAttribute);
+                String value = nodeInContext.getAttributeValue(this.parentAttribute);
                 if (value == null || value.isEmpty())
                 {
                     return null;
                 }
-                nodeList.add(otherNode);
+                nodeList.add(nodeInContext);
                 return validateParent(context, value, nodeList);
             }
         }
@@ -142,7 +145,7 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
     @Override
     public void notifyCreated(final XsdTreeNode node)
     {
-        node.addAttributeValidator(this.parentAttribute, ParentValidator.this);
+        node.addAttributeValidator(this.parentAttribute, this);
         getContext(node).add(node);
     }
 
@@ -155,7 +158,7 @@ public class ParentValidator extends AbstractNodeDecoratorRemove implements Valu
     /**
      * Returns the context of the given node, i.e. all relevant possible parent nodes.
      * @param node node.
-     * @return Context of the given node, i.e. all relevant possible parent nodes.
+     * @return context of the given node, i.e. all relevant possible parent nodes.
      */
     private Set<XsdTreeNode> getContext(final XsdTreeNode node)
     {

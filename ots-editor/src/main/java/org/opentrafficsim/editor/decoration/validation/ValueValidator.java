@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.editor.DocumentReader;
 import org.opentrafficsim.editor.DocumentReader.NodeAnnotation;
 import org.opentrafficsim.editor.Schema;
@@ -45,33 +46,11 @@ public interface ValueValidator extends Comparable<ValueValidator>
      * may have the same name.
      * @param node node that is in the appropriate context.
      * @param field field for which to obtain the options.
-     * @return options, {@code null} if this is not an xsd:keyref restriction.
+     * @return options, {@code null} if this validator is not a restriction of limited options.
      */
     default List<String> getOptions(final XsdTreeNode node, final Object field)
     {
         return null;
-    }
-
-    /**
-     * Report first encountered problem in validating the value of the node.
-     * @param xsdNode node.
-     * @param value value.
-     * @param schema schema for type retrieval.
-     * @return first encountered problem in validating the value of the node, {@code null} if there is no problem.
-     */
-    static String reportInvalidValue(final Node xsdNode, final String value, final Schema schema)
-    {
-        if (xsdNode.getChildNodes().getLength() == DocumentReader.getChildren(xsdNode, "#text").size()
-                && DocumentReader.getAttribute(xsdNode, "type") == null)
-        {
-            // no children and no type, this is a plain tag, e.g. <Straight />, it needs no input.
-            return null;
-        }
-        if (value == null || value.isEmpty())
-        {
-            return "Value is empty.";
-        }
-        return reportTypeNonCompliance(xsdNode, xsdNode, "type", value, schema, null, null);
     }
 
     /**
@@ -109,6 +88,28 @@ public interface ValueValidator extends Comparable<ValueValidator>
             return reportInvalidInclude(directory, fallback, null); // check fallback instead
         }
         return null;
+    }
+
+    /**
+     * Report first encountered problem in validating the value of the node based on XSD type.
+     * @param xsdNode node.
+     * @param value value.
+     * @param schema schema for type retrieval.
+     * @return first encountered problem in validating the value of the node, {@code null} if there is no problem.
+     */
+    static String reportInvalidValue(final Node xsdNode, final String value, final Schema schema)
+    {
+        if (xsdNode.getChildNodes().getLength() == DocumentReader.getChildren(xsdNode, "#text").size()
+                && DocumentReader.getAttribute(xsdNode, "type") == null)
+        {
+            // no children and no type, this is a plain tag, e.g. <Straight />, it needs no input.
+            return null;
+        }
+        if (value == null || value.isEmpty())
+        {
+            return "Value is empty.";
+        }
+        return reportTypeNonCompliance(xsdNode, xsdNode, "type", value, schema, null, null);
     }
 
     /**
@@ -160,17 +161,17 @@ public interface ValueValidator extends Comparable<ValueValidator>
      * defines the attribute in the node that may refer to a type containing restrictions.
      * @param appInfoNode node having possible xsd:appinfo for a message.
      * @param node type node.
-     * @param attribute "type" on normal calls, "base" on recursive calls.
-     * @param value value.
+     * @param typeAttribute "type" on normal calls, "base" or "memberTypes" on recursive calls.
+     * @param value value, may be {@code null} (to have restrictions/base types returned).
      * @param schema schema for type retrieval.
-     * @param restrictions list that xsd:restriction nodes will be placed in to.
-     * @param baseType may be filled with 1 base type, e.g. xsd:double.
+     * @param restrictions list that xsd:restriction nodes will be placed in to, may be {@code null}.
+     * @param baseType is filled by this method with encountered base types, e.g. xsd:double, may be {@code null}.
      * @return first encountered problem in validating the value by a type, {@code null} if there is no problem.
      */
-    private static String reportTypeNonCompliance(final Node appInfoNode, final Node node, final String attribute,
+    private static String reportTypeNonCompliance(final Node appInfoNode, final Node node, final String typeAttribute,
             final String value, final Schema schema, final List<Node> restrictions, final List<String> baseType)
     {
-        String type = DocumentReader.getAttribute(node, attribute); // can request "base" on recursion
+        String type = DocumentReader.getAttribute(node, typeAttribute); // can request "base" or "memberTypes" on recursion
         String[] types = type == null ? new String[0] : type.split("\\s+"); // multiple possible when memberTypes in xsd:union
         List<String> reports = new ArrayList<>(types.length);
         for (String singleType : types)
@@ -269,7 +270,7 @@ public interface ValueValidator extends Comparable<ValueValidator>
      * @param value value.
      * @param schema schema for type retrieval.
      * @param restrictions list that xsd:restriction nodes will be placed in to.
-     * @param baseType may be filled with 1 base type, e.g. xsd:double.
+     * @param baseType is filled by this method with encountered base types, e.g. xsd:double, may be {@code null}.
      * @return first encountered problem in validating the value by a type, {@code null} if there is no problem.
      */
     private static String reportSingleTypeNonCompliance(final String type, final String value, final Schema schema,
@@ -380,7 +381,7 @@ public interface ValueValidator extends Comparable<ValueValidator>
                         String message = "Type " + type + " cannot be validated.";
                         if (!SUPPRESS_ERRORS.contains(message))
                         {
-                            System.err.println(message);
+                            CategoryLogger.always().error(message);
                             SUPPRESS_ERRORS.add(message);
                         }
                     }
@@ -423,9 +424,9 @@ public interface ValueValidator extends Comparable<ValueValidator>
             {
                 if (!SUPPRESS_ERRORS.contains(patternString))
                 {
-                    System.err.println("Could not validate value by pattern due to a PatternSyntaxException."
+                    CategoryLogger.always().error("Could not validate value by pattern due to a PatternSyntaxException."
                             + " This means the pattern is not valid.");
-                    System.err.println(exception.getMessage());
+                    CategoryLogger.always().error(exception.getMessage());
                     SUPPRESS_ERRORS.add(patternString);
                 }
             }
@@ -485,9 +486,9 @@ public interface ValueValidator extends Comparable<ValueValidator>
     {
         /*
          * CoupledValidators are sorted first in a SortedSet. This is to prevent the following: i) another validator finds an
-         * attribute not valid, ii) the coupled validator is never called, if it would have been it would have coupled a key and
-         * registered itself to the relevant key node, iii) the relevant key node value is changed, but the value pointing to it
-         * is not updated as the registration of the coupled id was never done.
+         * attribute not valid, ii) the coupled validator is never called, if it would have been it would have coupled a node
+         * and registered itself to the relevant node, iii) the relevant node value is changed, but the value pointing to it is
+         * not updated as the registration of the coupled value was never done.
          */
         if (this instanceof CoupledValidator)
         {

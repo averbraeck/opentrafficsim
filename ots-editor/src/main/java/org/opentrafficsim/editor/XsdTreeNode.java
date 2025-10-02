@@ -29,6 +29,7 @@ import org.djutils.event.EventListenerMap;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.event.reference.Reference;
+import org.djutils.event.reference.ReferenceType;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
@@ -40,6 +41,7 @@ import org.opentrafficsim.editor.XsdTreeNodeUtil.LoadingIndices;
 import org.opentrafficsim.editor.XsdTreeNodeUtil.Occurs;
 import org.opentrafficsim.editor.decoration.validation.CoupledValidator;
 import org.opentrafficsim.editor.decoration.validation.KeyValidator;
+import org.opentrafficsim.editor.decoration.validation.KeyrefValidator;
 import org.opentrafficsim.editor.decoration.validation.ValueValidator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -420,6 +422,15 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         return this.referringXsdNode == null ? this.xsdNode : this.referringXsdNode;
     }
 
+    /**
+     * Returns whether this is a virtual layer node representing a sequence.
+     * @return whether this is a virtual layer node representing a sequence
+     */
+    public boolean isSequence()
+    {
+        return this.xsdNode.getNodeName().equals("xsd:sequence");
+    }
+
     // ====== Choice/Options ======
 
     /**
@@ -510,7 +521,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         Throw.when(!this.xsdNode.getNodeName().equals("xsd:choice") && !this.xsdNode.getNodeName().equals("xsd:all"),
                 IllegalStateException.class, "Can only add options for a node of type xsd:choice or xsd:all.");
         this.options = new ArrayList<>();
-        XsdTreeNodeUtil.addChildren(this.xsdNode, this.parent, this.options, this.hiddenNodes, this.schema, -1);
+        XsdTreeNodeUtil.addChildren(this.xsdNode, this.parent, this.options, this.hiddenNodes, this.schema, false, -1);
         this.choice = this;
         for (XsdTreeNode option : this.options)
         {
@@ -742,7 +753,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 new ImmutableArrayList<>(Collections.emptyList()), this.schema);
         for (Entry<Node, ImmutableList<Node>> entry : relevantNodes.entrySet())
         {
-            XsdTreeNodeUtil.addChildren(entry.getKey(), this, this.children, entry.getValue(), this.schema, -1);
+            XsdTreeNodeUtil.addChildren(entry.getKey(), this, this.children, entry.getValue(), this.schema, true, -1);
         }
         for (int index = 0; index < this.children.size(); index++)
         {
@@ -1220,7 +1231,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      */
     public boolean isAddable()
     {
-        return this.maxOccurs == -1 || (this.parent != null && siblingPositions().size() < this.maxOccurs);
+        return isActive() && (this.maxOccurs == -1 || (this.parent != null && siblingPositions().size() < this.maxOccurs));
     }
 
     /**
@@ -1352,7 +1363,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             int selectedIndex = this.choice.options.indexOf(this);
             choiceNode.options = new ArrayList<>();
             XsdTreeNodeUtil.addChildren(this.choice.xsdNode, copyNode.parent, choiceNode.options, this.choice.hiddenNodes,
-                    this.schema, selectedIndex);
+                    this.schema, false, selectedIndex);
             choiceNode.options.add(selectedIndex, copyNode);
             choiceNode.selected = choiceNode.options.get(selectedIndex);
             if (this.choice.getNodeName().equals("xsd:all"))
@@ -1739,6 +1750,11 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     public String getDescription()
     {
         assureAttributesAndDescription();
+        if (this.description == null && isChoice())
+        {
+            this.choice.assureAttributesAndDescription();
+            return this.choice.description;
+        }
         return this.description;
     }
 
@@ -1756,7 +1772,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         if (this.xsdNode.getNodeName().equals("xsd:sequence"))
         {
             // this name may appear as an option for an xsd:choice or xsd:all
-            StringBuilder stringBuilder = new StringBuilder();
+            StringBuilder stringBuilder = new StringBuilder("{");
             Node relevantNode = getRelevantNode();
             String annotation = NodeAnnotation.APPINFO_NAME.get(relevantNode);
             if (annotation != null)
@@ -1791,9 +1807,10 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
                 }
                 this.active = preActive;
             }
+            stringBuilder.append("}");
             if (stringBuilder.length() > MAX_OPTIONNAME_LENGTH)
             {
-                return stringBuilder.substring(0, MAX_OPTIONNAME_LENGTH - 2) + "..";
+                return stringBuilder.substring(0, MAX_OPTIONNAME_LENGTH - 3) + "..}";
             }
             return stringBuilder.toString();
         }
@@ -2122,6 +2139,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * Adds a validator for the node.
      * @param validator validator.
+     * @throws IllegalStateException if a CoupledValidator is added while one was already added to the value before
      */
     public void addNodeValidator(final Function<XsdTreeNode, String> validator)
     {
@@ -2129,10 +2147,11 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
-     * Adds a validator for the value.
+     * Adds a validator for the value. The field object is any object that is returned to the validator in its
+     * {@code getOptions()} method, such that it can know for which field option values should be given.
      * @param validator validator.
      * @param field field.
-     * @throws IllegalStateException if a ValueValidator is added while one was already added to the value before
+     * @throws IllegalStateException if a CoupledValidator is added while one was already added to the value before
      */
     public void addValueValidator(final ValueValidator validator, final Object field)
     {
@@ -2146,6 +2165,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * Adds a validator for the value of an attribute.
      * @param attribute attribute name.
      * @param validator validator.
+     * @throws IllegalStateException if a CoupledValidator is added while one was already added to the attribute before
      */
     public void addAttributeValidator(final String attribute, final ValueValidator validator)
     {
@@ -2158,7 +2178,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
      * @param attribute attribute name.
      * @param validator validator.
      * @param field field.
-     * @throws IllegalStateException if a ValueValidator is added while one was already added to the attribute before
+     * @throws IllegalStateException if a CoupledValidator is added while one was already added to the attribute before
      */
     public void addAttributeValidator(final String attribute, final ValueValidator validator, final Object field)
     {
@@ -2174,7 +2194,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     /**
      * Returns {@code true} if the set of validators contains a {@code CoupledValidator}.
      * @param validators validators
-     * @param validator validator taht is about to be added
+     * @param validator validator that is about to be added
      * @return {@code true} if the set of validators contains a {@code CoupledValidator}
      */
     private boolean coupledValidatorExists(final Set<ValueValidator> validators, final ValueValidator validator)
@@ -2741,30 +2761,57 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     // ====== Listeners ======
 
     @Override
+    public boolean addListener(final EventListener listener, final EventType eventType, final ReferenceType referenceType)
+    {
+        boolean result = super.addListener(listener, eventType, referenceType);
+        sortListeners(eventType);
+        return result;
+    }
+
+    @Override
     public boolean addListener(final EventListener listener, final EventType eventType)
     {
         boolean result = super.addListener(listener, eventType);
-        /*
-         * Prioritizes KeyValidators; when an Id attribute is changed this will update any referring nodes to the new value
-         * first, before any other listener may break the coupling. Coupling is broken when for example validation is performed
-         * with the new Id value, to obtain the coupled node.
-         */
-        if (eventType.equals(XsdTreeNode.ATTRIBUTE_CHANGED))
-        {
-            EventListenerMap map = getEventListenerMap();
-            List<Reference<EventListener>> list = map.get(eventType);
-            List<Reference<EventListener>> keys = new ArrayList<>();
-            for (Reference<EventListener> listen : list)
-            {
-                if (listen.get() instanceof KeyValidator)
-                {
-                    keys.add(listen);
-                }
-            }
-            list.removeAll(keys);
-            list.addAll(0, keys);
-        }
+        sortListeners(eventType);
         return result;
+    }
+
+    /**
+     * Prioritizes listeners by: KeyValidator, KeyrefValidator, CoupledValidator, any other listener. This is to support the
+     * flow of dependencies when nodes need to be validated to create couplings. For example the RoadLayoutElementValidator
+     * depending on the coupling between Link.DefinedRoadLayout (node value) to a Definitions.RoadLayouts.RoadLayout (Id
+     * attribute value). However, this does not create any guarantee as the flow of actions and cascading changes is more
+     * complex than this linear notion. For example because an undo action creates several nodes in a single action.
+     * @param eventType event type for which to sort the listeners.
+     */
+    private void sortListeners(final EventType eventType)
+    {
+        EventListenerMap map = getEventListenerMap();
+        List<Reference<EventListener>> list = map.get(eventType);
+        List<Reference<EventListener>> keys = new ArrayList<>();
+        List<Reference<EventListener>> keyrefs = new ArrayList<>();
+        List<Reference<EventListener>> coupled = new ArrayList<>();
+        for (Reference<EventListener> listen : list)
+        {
+            if (listen.get() instanceof KeyValidator)
+            {
+                keys.add(listen);
+            }
+            else if (listen.get() instanceof KeyrefValidator)
+            {
+                keyrefs.add(listen);
+            }
+            else if (listen.get() instanceof CoupledValidator)
+            {
+                coupled.add(listen);
+            }
+        }
+        list.removeAll(coupled);
+        list.removeAll(keyrefs);
+        list.removeAll(keys);
+        list.addAll(0, coupled);
+        list.addAll(0, keyrefs);
+        list.addAll(0, keys);
     }
 
 }

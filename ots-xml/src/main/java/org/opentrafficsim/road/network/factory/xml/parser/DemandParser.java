@@ -76,7 +76,6 @@ import org.opentrafficsim.xml.generated.InjectionGenerator;
 import org.opentrafficsim.xml.generated.InjectionGenerator.Arrivals.Arrival;
 import org.opentrafficsim.xml.generated.RouteMix;
 import org.opentrafficsim.xml.generated.ShortestRoute;
-import org.opentrafficsim.xml.generated.ShortestRoute.Cost;
 import org.opentrafficsim.xml.generated.ShortestRouteMix;
 import org.opentrafficsim.xml.generated.Sink;
 
@@ -166,13 +165,7 @@ public final class DemandParser
             }
 
             LinkWeight linkWeight;
-            Cost cost = shortestRouteTag.getCost();
-            if (cost == null || cost.getDistance() != null)
-            {
-                // Default link weight / standard distance weight
-                linkWeight = LinkWeight.ASTAR_LENGTH_NO_CONNECTORS;
-            }
-            else if (cost.getFreeFlowTime() != null)
+            if (shortestRouteTag.getFreeFlowTime() != null)
             {
                 // Free flow time
                 Speed maxSpeed = new Speed(250.0, SpeedUnit.KM_PER_HOUR);
@@ -198,22 +191,21 @@ public final class DemandParser
                     }
                 };
             }
-            else if (cost.getDistanceAndFreeFlowTime() != null)
+            else if (shortestRouteTag.getDistanceAndFreeFlowTime() != null)
             {
                 // Balance time and distance
-                LinearDensity perDistance = cost.getDistanceAndFreeFlowTime().getDistanceCost().get(eval);
-                Frequency perTime = cost.getDistanceAndFreeFlowTime().getTimeCost().get(eval);
+                LinearDensity perDistance = shortestRouteTag.getDistanceAndFreeFlowTime().getDistanceCost().get(eval);
+                Frequency perTime = shortestRouteTag.getDistanceAndFreeFlowTime().getTimeCost().get(eval);
                 Speed maxSpeed = new Speed(250.0, SpeedUnit.KM_PER_HOUR);
                 AStarAdmissibleHeuristic<Node> aStarHeuristicTime = getTimeAStarHeuristic(maxSpeed);
                 linkWeight = new LinkWeight()
                 {
-
                     @Override
                     public double getWeight(final Link link)
                     {
                         if (link.isConnector())
                         {
-                            return 1000000;
+                            return 1000000.0;
                         }
                         Speed speedLimit = link instanceof CrossSectionLink
                                 ? getLinkSpeedLimit((CrossSectionLink) link, gtuType) : maxSpeed;
@@ -237,15 +229,14 @@ public final class DemandParser
             }
             else
             {
-                throw new NetworkException("Shortest route " + shortestRouteTag.getId() + " has invalid cost defined.");
+                // Default link weight / standard distance weight
+                linkWeight = LinkWeight.ASTAR_LENGTH_NO_CONNECTORS;
             }
 
             Route shortestRoute = otsNetwork.getShortestRouteBetween(gtuType, nodeFrom, nodeTo, nodesVia, linkWeight);
             Throw.when(shortestRoute == null, NetworkException.class, "Cannot find shortest route from %s to %s",
                     nodeFrom.getId(), nodeTo.getId());
-            for (
-
-            Node node : shortestRoute.getNodes())
+            for (Node node : shortestRoute.getNodes())
             {
                 route.addNode(node);
             }

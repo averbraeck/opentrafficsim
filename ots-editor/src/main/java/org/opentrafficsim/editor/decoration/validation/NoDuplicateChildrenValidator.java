@@ -27,6 +27,8 @@ import org.opentrafficsim.editor.decoration.AbstractNodeDecoratorRemove;
 public class NoDuplicateChildrenValidator extends AbstractNodeDecoratorRemove implements Function<XsdTreeNode, String>
 {
 
+    // This class is currently (October 2025) not used. It might be up for removal.
+
     /** */
     private static final long serialVersionUID = 20230910L;
 
@@ -47,7 +49,7 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecoratorRemove im
      */
     public NoDuplicateChildrenValidator(final OtsEditor editor, final String path, final String... children)
     {
-        super(editor, (n) -> true);
+        super(editor, (n) -> true); // always true as selection is a bit complicated and defined in notifyCreated()
         this.path = path;
         this.children = Arrays.asList(children);
     }
@@ -62,7 +64,7 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecoratorRemove im
             if (parent != null && parent.isType(this.path))
             {
                 added = true;
-                node.addNodeValidator(NoDuplicateChildrenValidator.this);
+                node.addNodeValidator(this);
             }
         }
         else
@@ -72,7 +74,7 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecoratorRemove im
                 if (node.isType(this.path + "." + child))
                 {
                     added = true;
-                    node.addNodeValidator(NoDuplicateChildrenValidator.this);
+                    node.addNodeValidator(this);
                     break;
                 }
             }
@@ -108,8 +110,7 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecoratorRemove im
         {
             return null;
         }
-        List<XsdTreeNode> childs = node.getParent().getChildren();
-        if (childs.stream().filter((n) -> nodesEqual(node, n)).count() > 1)
+        if (node.getParent().getChildren().stream().filter((n) -> nodesEqual(node, n)).count() > 1)
         {
             return "Duplicate elements " + node.getNodeName() + " is not allowed.";
         }
@@ -124,15 +125,8 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecoratorRemove im
      */
     private static boolean nodesEqual(final XsdTreeNode node1, final XsdTreeNode node2)
     {
-        if (!node1.getPathString().equals(node2.getPathString()))
-        {
-            return false;
-        }
-        if (!XsdTreeNodeUtil.valuesAreEqual(node1.getValue(), node2.getValue()))
-        {
-            return false;
-        }
-        return true;
+        return node1.getPathString().equals(node2.getPathString())
+                && XsdTreeNodeUtil.valuesAreEqual(node1.getValue(), node2.getValue());
     }
 
     @Override

@@ -11,7 +11,10 @@ import org.opentrafficsim.editor.XsdTreeNode;
 import org.w3c.dom.Node;
 
 /**
- * Common functionality between a key/unique validator, and a keyref validator.
+ * Common functionality between a key/unique validator, and a keyref validator. In case field paths refer to child nodes within
+ * a node selected by the selector of the key/unique/keyref, a validator should be assigned to the child node's value or the
+ * child node's relevant attribute. The method {@code Field.getValidPathIndex()} returns a valid path index for such nodes, and
+ * this method can be used to determine whether to assign a validator to a node.
  * <p>
  * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -22,18 +25,18 @@ public abstract class XPathValidator implements ValueValidator
 {
 
     /** The node defining the xsd:key, xsd:keyref or xsd:unique. */
-    protected final Node keyNode;
+    private final Node keyNode;
 
-    /** Path where the key was defined. */
-    protected final String keyPath;
+    /** Path where the key was defined, defining the context. */
+    private final String keyPath;
 
     /** Fields of this xsd:key, xsd:unique or xsd:keyref. */
-    protected final List<Field> fields;
+    private final List<Field> fields;
 
     /**
      * Constructor.
      * @param keyNode node defining the xsd:key, xsd:unique or xsd:keyref.
-     * @param keyPath path where the key was defined.
+     * @param keyPath path where the key was defined, defining the context.
      */
     public XPathValidator(final Node keyNode, final String keyPath)
     {
@@ -41,12 +44,38 @@ public abstract class XPathValidator implements ValueValidator
         Throw.whenNull(keyPath, "Key path may not be null.");
         this.keyNode = keyNode;
         this.keyPath = keyPath;
-        List<Node> fields = DocumentReader.getChildren(keyNode, "xsd:field");
         this.fields = new ArrayList<>();
-        for (Node field : fields)
+        for (Node field : DocumentReader.getChildren(keyNode, "xsd:field"))
         {
             this.fields.add(new Field(DocumentReader.getAttribute(field, "xpath")));
         }
+    }
+
+    /**
+     * Returns the key XSD node.
+     * @return the key XSD node
+     */
+    Node getKeyNode()
+    {
+        return this.keyNode;
+    }
+
+    /**
+     * Returns the path at which the xsd:key, xsd:unique or xsd:keyref is defined.
+     * @return path at which the xsd:key or xsd:keyref is defined.
+     */
+    String getKeyPath()
+    {
+        return this.keyPath;
+    }
+
+    /**
+     * Returns the fields of the key, unique or keyref.
+     * @return the fields of the key, unique or keyref
+     */
+    List<Field> getFields()
+    {
+        return this.fields;
     }
 
     /**
@@ -70,29 +99,29 @@ public abstract class XPathValidator implements ValueValidator
     }
 
     /**
-     * Gathers all the field values, i.e. attribute, child element value, or own value. As validators are registered with the
-     * node that has the value, attributes are gathered from the given node, while element values are taken from the correctly
-     * named children of the parent. Empty values are returned as {@code null}.
-     * @param node node for which to get the information.
+     * Gathers all the field values, i.e. attribute, child element value, or own value. The given node may either be a child
+     * node that a field path points to (who's value or attribute is relevant for one field) or the key node as selected by the
+     * selector. Empty values are returned as {@code null}.
+     * @param keyOrChildNode node for which to get the information.
      * @return field values.
      */
-    protected List<String> gatherFieldValues(final XsdTreeNode node)
+    List<String> gatherFieldValues(final XsdTreeNode keyOrChildNode)
     {
         List<String> values = new ArrayList<>();
-        if (node.getPathString().endsWith("DefaultInputParameters.String"))
+        if (keyOrChildNode.getPathString().endsWith("DefaultInputParameters.String"))
         {
             Throw.when(this.fields.size() != 1, IllegalStateException.class,
                     "Key %s is defined as possibly being a default input parameter, but it has multiple fields.", getKeyName());
             Throw.when(!this.fields.get(0).getFullFieldName().contains("@Id"), IllegalStateException.class,
                     "Key %s is defined as possibly being a default input parameter, but it does not have a field @Id",
                     getKeyName());
-            values.add(node.getId());
+            values.add(keyOrChildNode.getId());
         }
         else
         {
             for (Field field : this.fields)
             {
-                values.add(field.getValue(node));
+                values.add(field.getValue(keyOrChildNode));
             }
         }
         values.replaceAll((v) -> "".equals(v) ? null : v);
@@ -100,12 +129,12 @@ public abstract class XPathValidator implements ValueValidator
     }
 
     /**
-     * Returns a node that represent the proper context. This is a parent node of the given node, at the level where the
+     * Returns a node that represents the proper context. This is a parent node of the given node, at the level where the
      * xsd:key, xsd:unique or xsd:keyref was defined.
      * @param node any node somewhere in the context, i.e. subtree.
      * @return node that represents the proper context.
      */
-    protected XsdTreeNode getContext(final XsdTreeNode node)
+    XsdTreeNode getContext(final XsdTreeNode node)
     {
         XsdTreeNode context = null;
         List<XsdTreeNode> path = node.getPath();
@@ -121,29 +150,20 @@ public abstract class XPathValidator implements ValueValidator
     }
 
     /**
-     * Returns the path at which the xsd:key, xsd:unique or xsd:keyref is defined.
-     * @return path at which the xsd:key or xsd:keyref is defined.
-     */
-    public String getKeyPath()
-    {
-        return this.keyPath;
-    }
-
-    /**
      * Returns the path at which the xsd:key, xsd:unique or xsd:keyref is defined, with dots escaped.
-     * @return path at which the xsd:key or xsd:keyref is defined.
+     * @return path at which the xsd:key, xsd:unique or xsd:keyref is defined.
      */
-    public String getKeyPathPattern()
+    private String getKeyPathPattern()
     {
         return this.keyPath.replace(".", "\\.");
     }
 
     /**
-     * Returns whether the given node is of the correct type and in the correct context for this validator.
+     * Returns whether the given node is of the correct type by the selector and in the correct context for this validator.
      * @param node node.
-     * @return whether the given node is of the correct type and in the correct context for this validator.
+     * @return whether the given node is of the correct type by the selector and in the correct context for this validator.
      */
-    protected boolean isSelectedInContext(final XsdTreeNode node)
+    boolean isSelectedInContext(final XsdTreeNode node)
     {
         for (String selectorPath : getSelectorTypeString())
         {
@@ -162,29 +182,30 @@ public abstract class XPathValidator implements ValueValidator
      * node.
      * @param node node to add.
      */
-    abstract public void addNode(XsdTreeNode node);
+    public abstract void addNode(XsdTreeNode node);
 
     /**
      * Remove node. It is removed from all contexts and listening keyrefs. This method is called by a listener that the root
      * node has set up, for every removed node.
      * @param node node to remove.
      */
-    abstract public void removeNode(XsdTreeNode node);
+    public abstract void removeNode(XsdTreeNode node);
 
     /**
-     * Returns part of a pattern that can be used to find the right nodes. In particular:
+     * Returns part of a matching pattern that can be used to find the right nodes. In particular:
      * <ul>
-     * <li>".//" at the start will become ".*" meaning any nodes in between.</li>
+     * <li>".//" at the start will become "..*" meaning any nodes in between.</li>
      * <li>"/@" and anything after is cut, to ignore a final attribute.</li>
      * <li>"/" separator is replaced with ".".</li>
      * <li>"./" at the start will be cut, it refers to a node itself.</li>
-     * <li>"." will be placed at the start, unless the path starts with "@" in which case an empty string is returned.</li>
+     * <li>"." will be placed at the start, unless the path starts with "@" or is ".", in which case an empty string is
+     * returned.</li>
      * </ul>
      * All characters are escaped for regular expression as required.
      * @param path xpath.
      * @return suitable for pattern appending.
      */
-    protected static String appendPattern(final String path)
+    private static String appendPattern(final String path)
     {
         if (path.startsWith("@") || path.equals("."))
         {
@@ -212,27 +233,27 @@ public abstract class XPathValidator implements ValueValidator
     }
 
     /**
-     * Transforms an xpath specified path to a path that is presentable to the user.
+     * Transforms an xpath specified path to a path that is presentable to the user. In particular:
+     * <ul>
+     * <li>".//" is removed.</li>
+     * <li>"@" is removed.</li>
+     * <li>"/" separator is replaced with ".".</li>
+     * </ul>
      * @param path xpath specified path.
      * @return path that is presentable to the user.
      */
-    protected static String user(final String path)
+    static String userFriendlyXPath(final String path)
     {
         return path.replace(".//", "").replace("@", "").replace("/", ".");
     }
 
     /**
-     * The field class represents an xsd:field tag within an xsd:key, xsd:unique or xsd:keyref. It can return values for a node
-     * that is consistent with the xsd:selector. This class can deal with node values, attributes, and nested child elements. It
-     * can also deal with multiple field names defined for one field, e.g. "@Id|ots:ChildElement".
-     * <p>
-     * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+     * The field class represents an xsd:field tag within an xsd:key, xsd:unique or xsd:keyref. It can return values for any
+     * node that is consistent with the xsd:selector and the xsd:field value of this field. This class can deal with node
+     * values, attributes, and nested child elements. It can also deal with multiple field names defined for one field, e.g.
+     * "@Id|ots:ChildElement".
      */
-    public class Field
+    class Field
     {
         /** Complete field path. */
         private final String fullFieldPath;
@@ -244,7 +265,7 @@ public abstract class XPathValidator implements ValueValidator
          * Constructor.
          * @param fullFieldPath complete field path, e.g. "@GtuType" or "@Id|ots:TrafficLight"
          */
-        public Field(final String fullFieldPath)
+        Field(final String fullFieldPath)
         {
             this.fullFieldPath = fullFieldPath.replace("ots:", "").replace(" ", "");
             this.fieldPaths = this.fullFieldPath.split("\\|");
@@ -262,22 +283,25 @@ public abstract class XPathValidator implements ValueValidator
         }
 
         /**
-         * Returns which field path is valid for the given node.
+         * Returns which field path is valid for the given node. That is for a field with "@Id|ots:TrafficLight" it can be
+         * either 0 or 1 for matched nodes, or -1 for unmatched nodes. This method does not return the field index, as this
+         * class represents only a single field. If there is a valid path index the input node should be validated by the
+         * xsd:key, xsd:unique or xsd:keyref validator.
          * @param node node.
-         * @return index of the valid field name.
+         * @return index of the valid field name, or -1 if no such field.
          */
-        public int getValidPathIndex(final XsdTreeNode node)
+        int getValidPathIndex(final XsdTreeNode node)
         {
             String nodePath = node.getPathString();
             for (String selector : getSelectorTypeString())
             {
                 for (int i = 0; i < this.fieldPaths.length; i++)
                 {
-                    String fieldName = this.fieldPaths[i];
-                    if (Pattern.matches(getKeyPathPattern() + appendPattern(selector) + appendPattern(fieldName), nodePath))
+                    String fieldPath = this.fieldPaths[i];
+                    if (Pattern.matches(getKeyPathPattern() + appendPattern(selector) + appendPattern(fieldPath), nodePath))
                     {
-                        int attr = fieldName.indexOf("@");
-                        if (attr < 0 || fieldName.equals("."))
+                        int attr = fieldPath.indexOf("@");
+                        if (attr < 0 || fieldPath.equals("."))
                         {
                             if (node.isEditable())
                             {
@@ -286,7 +310,7 @@ public abstract class XPathValidator implements ValueValidator
                         }
                         else
                         {
-                            String attribute = fieldName.substring(attr + 1);
+                            String attribute = fieldPath.substring(attr + 1);
                             if (node.hasAttribute(attribute))
                             {
                                 return i;
@@ -303,57 +327,68 @@ public abstract class XPathValidator implements ValueValidator
          * @param index index.
          * @return field path at the given index.
          */
-        public String getFieldPath(final int index)
+        String getFieldPath(final int index)
         {
             return this.fieldPaths[index];
         }
 
         /**
-         * Returns the field value of the given node.
-         * @param node node.
+         * Returns the field value for the given node. The node can be any of three different types of nodes:
+         * <ul>
+         * <li>A key node at the level of the selector.</li>
+         * <li>A child node related to this field and any of the contained field paths (separated by "|").</li>
+         * <li>Some other child node not pertaining to this field, but pertaining to some other field.</li>
+         * </ul>
+         * In the last case, the parent node that is the key node is found. From this key node, as well as for the first case, a
+         * relevant child node for this field is recursively found and used to return the value or attribute value.
+         * <p>
+         * @param keyOrChildNode node.
          * @return value of the given node for this field.
          */
-        public String getValue(final XsdTreeNode node)
+        private String getValue(final XsdTreeNode keyOrChildNode)
         {
+            int validPathIndex = getValidPathIndex(keyOrChildNode);
+            if (validPathIndex >= 0)
+            {
+                // input node is child node pertaining to this field (case 2)
+                String fieldPath = this.fieldPaths[validPathIndex];
+                int attr = fieldPath.indexOf("@");
+                if (attr < 0)
+                {
+                    if (keyOrChildNode.isEditable())
+                    {
+                        return keyOrChildNode.getValue();
+                    }
+                    throw new RuntimeException("Field path " + fieldPath + " points to a node that cannot give a value.");
+                }
+                String attribute = fieldPath.substring(attr + 1);
+                if (keyOrChildNode.hasAttribute(attribute))
+                {
+                    return keyOrChildNode.getAttributeValue(attribute);
+                }
+                throw new RuntimeException(
+                        "Field path " + fieldPath + " points to a node that does not have attribute " + attribute + " .");
+            }
+            // input node is child node not pertaining to this field (case 3), or it is the key node (case 1)
+            XsdTreeNode keyLevelNode = keyOrChildNode;
+            while (keyLevelNode != null && !isSelectedInContext(keyLevelNode)) // no loops for case 1
+            {
+                keyLevelNode = keyLevelNode.getParent();
+            }
+            Throw.when(keyLevelNode == null, RuntimeException.class, "Unable to get valued from node " + keyOrChildNode
+                    + " within key/unique/keyref " + getKeyName() + " field " + this.fullFieldPath);
             for (String fieldPath : this.fieldPaths)
             {
-                if (fieldPath.equals(".") && node.isEditable())
-                {
-                    return node.getValue();
-                }
-                if (fieldPath.startsWith("@"))
-                {
-                    String attribute = fieldPath.substring(1);
-                    if (node.hasAttribute(attribute))
-                    {
-                        return node.getAttributeValue(attribute);
-                    }
-                }
-                // a child node may be calling this method, check whether the given node is the child directly
-                String nodePath = node.getPathString();
-                for (String selector : getSelectorTypeString())
-                {
-                    if (Pattern.matches(getKeyPathPattern() + appendPattern(selector) + appendPattern(fieldPath), nodePath))
-                    {
-                        if (node.isEditable())
-                        {
-                            return node.getValue();
-                        }
-                        throw new RuntimeException(
-                                "Field " + this.fullFieldPath + " points to a node that cannot give a value.");
-                    }
-                }
-                // if not a child directly, recursively find it
                 try
                 {
-                    return getChildValue(node, fieldPath);
+                    return getChildValue(keyLevelNode, fieldPath);
                 }
                 catch (NoSuchElementException ex)
                 {
                     // there can be more field names which may supply a value
                 }
             }
-            throw new RuntimeException("Field " + this.fullFieldPath + " cannot be found in node " + node);
+            throw new RuntimeException("Field " + this.fullFieldPath + " cannot be found for node " + keyOrChildNode);
         }
 
         /**
@@ -371,7 +406,7 @@ public abstract class XPathValidator implements ValueValidator
                 // It can be any child node whose final path matches the path in the context
                 for (XsdTreeNode child : node.getChildren())
                 {
-                    // substring(1) to ignore the initial dot
+                    // ".//" has become "..*", substring(1) to ignore the initial dot, then it's effectively an endsWith()
                     if (Pattern.matches(appendPattern(path).substring(1), child.getPathString()))
                     {
                         int attr = path.indexOf("/@");
@@ -419,7 +454,7 @@ public abstract class XPathValidator implements ValueValidator
                 }
                 throw new NoSuchElementException("Node " + node + " does not have a field " + path + ".");
             }
-            // Recursively go down the layers
+            // Recursively go down the layers, note paths must refer to children of which there can only be 1 by XSD rules
             return getChildValue(node.getFirstChild(path.substring(0, sep)), path.substring(sep + 1));
         }
 

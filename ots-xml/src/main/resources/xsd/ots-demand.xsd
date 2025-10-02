@@ -44,7 +44,7 @@
       <xsd:selector xpath="ots:Cell" />
       <xsd:field xpath="@Origin" />
       <xsd:field xpath="@Destination" />
-      <xsd:field xpath="@Category" /> <!-- optional field, so this can't be a xsd:key -->
+      <xsd:field xpath="@Category" /> <!-- optional field, so this can't be an xsd:key -->
     </xsd:unique>
 
   </xsd:element>
@@ -194,23 +194,24 @@
   <xsd:element name="ShortestRoute">
     <xsd:complexType>
       <xsd:sequence>
+        <xsd:choice minOccurs="0">
+          <xsd:annotation>
+            <xsd:documentation source="description">
+              Shortest route in terms of distance (default), free flow time, or a weighted mixture of both.
+            </xsd:documentation>
+          </xsd:annotation>
+          <xsd:element name="Distance" type="ots:EmptyType" />
+          <xsd:element name="FreeFlowTime" type="ots:EmptyType" />
+          <xsd:element name="DistanceAndFreeFlowTime">
+            <xsd:complexType>
+              <xsd:attribute name="DistanceCost" type="ots:LinearDensityType" />
+              <xsd:attribute name="TimeCost" type="ots:FrequencyType" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
         <xsd:element name="From" type="ots:string" minOccurs="1" />
         <xsd:element name="Via" type="ots:string" minOccurs="0" maxOccurs="unbounded" />
         <xsd:element name="To" type="ots:string" minOccurs="1" />
-        <xsd:element name="Cost" minOccurs="0">
-          <xsd:complexType>
-            <xsd:choice minOccurs="1">
-              <xsd:element name="Distance" type="ots:EmptyType" />
-              <xsd:element name="FreeFlowTime" type="ots:EmptyType" />
-              <xsd:element name="DistanceAndFreeFlowTime">
-                <xsd:complexType>
-                  <xsd:attribute name="DistanceCost" type="ots:LinearDensityType" use="optional" />
-                  <xsd:attribute name="TimeCost" type="ots:FrequencyType" use="optional" />
-                </xsd:complexType>
-              </xsd:element>
-            </xsd:choice>
-          </xsd:complexType>
-        </xsd:element>
       </xsd:sequence>
       <xsd:attribute name="Id" type="ots:IdType" use="required" />
       <xsd:attribute name="GtuType" type="ots:string" use="required" />

@@ -84,7 +84,7 @@ public class RoadLayoutListener extends ChangeListener<Map<XsdTreeNode, CseData>
         Map<XsdTreeNode, CseData> cseData = new LinkedHashMap<>();
         List<CseData> cseList = new ArrayList<>();
         Map<Object, Integer> indices = new LinkedHashMap<>();
-        List<XsdTreeNode> children = getNode().getChildren();
+        List<XsdTreeNode> children = getNode().getChildCount() > 0 ? getNode().getChildren() : new ArrayList<>();
         Iterator<OffsetElement> iterator = new Iterator<>()
         {
             /** Index. */

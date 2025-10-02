@@ -20,10 +20,10 @@ import org.w3c.dom.Node;
 /**
  * Validator for xsd:key and xsd:unique. Functionality these are very similar, with both allowing to define multiple fields.
  * They register with the right nodes in the same way. Both xsd:key or xsd:unique will check a range of values for uniqueness
- * and only differ in whether all values need to be present. This class will maintain a list of nodes (fed by an external
- * listener) and validate against (set of) field(s) uniqueness over those nodes.
+ * and only differ in whether all values need to be present. This class will maintain a list of nodes (fed automatically by an
+ * external listener) and validate against (set of) field(s) uniqueness over those nodes.
  * <p>
- * The KeyValidator class is prepared to work together with an KeyrefValidator, by maintaining a list of dependent
+ * The KeyValidator class is prepared to work together with a KeyrefValidator, by maintaining a list of dependent
  * KeyrefValidators, and notifying them if a field value in this KeyValidator was changed.
  * <p>
  * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
@@ -41,18 +41,18 @@ public class KeyValidator extends XPathValidator implements EventListener
     private Set<KeyrefValidator> listeningKeyrefValidators = new LinkedHashSet<>();
 
     /** Selected nodes maintained for an xsd:key or xsd:unique, grouped per context node. */
-    private final Map<XsdTreeNode, Set<XsdTreeNode>> nodes = new LinkedHashMap<>();
+    private final Map<XsdTreeNode, Set<XsdTreeNode>> keyNodes = new LinkedHashMap<>();
 
-    /** For each node, this map remembers which field depends on what attribute. */
-    private final Map<XsdTreeNode, Map<String, Integer>> dependentAttributes = new LinkedHashMap<>();
+    /** For each key node, this map remembers which field depends on what attribute. */
+    private final Map<XsdTreeNode, Map<String, Integer>> keyNodeAttributeFieldIndices = new LinkedHashMap<>();
 
-    /** For each node, this map remembers which field depends on its value. */
-    private final Map<XsdTreeNode, Integer> dependentValues = new LinkedHashMap<>();
+    /** For each key node, this map remembers which field depends on its value. */
+    private final Map<XsdTreeNode, Integer> keyNodeValueFieldIndices = new LinkedHashMap<>();
 
     /**
      * Constructor.
      * @param keyNode node defining the xsd:key or xsd:unique.
-     * @param keyPath path where the key was defined.
+     * @param keyPath path where the key was defined, defining the context.
      */
     public KeyValidator(final Node keyNode, final String keyPath)
     {
@@ -64,9 +64,9 @@ public class KeyValidator extends XPathValidator implements EventListener
     @Override
     public void addNode(final XsdTreeNode node)
     {
-        for (int fieldIndex = 0; fieldIndex < this.fields.size(); fieldIndex++)
+        for (int fieldIndex = 0; fieldIndex < getFields().size(); fieldIndex++)
         {
-            Field field = this.fields.get(fieldIndex);
+            Field field = getFields().get(fieldIndex);
             int pathIndex = field.getValidPathIndex(node);
             if (pathIndex >= 0)
             {
@@ -76,14 +76,15 @@ public class KeyValidator extends XPathValidator implements EventListener
                 {
                     node.addValueValidator(this, field);
                     node.addListener(this, XsdTreeNode.VALUE_CHANGED, ReferenceType.WEAK);
-                    this.dependentValues.put(node, fieldIndex);
+                    this.keyNodeValueFieldIndices.put(node, fieldIndex);
                 }
                 else
                 {
                     String attribute = path.substring(attr + 1);
                     node.addAttributeValidator(attribute, this, field);
                     node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
-                    this.dependentAttributes.computeIfAbsent(node, (n) -> new LinkedHashMap<>()).put(attribute, fieldIndex);
+                    this.keyNodeAttributeFieldIndices.computeIfAbsent(node, (n) -> new LinkedHashMap<>()).put(attribute,
+                            fieldIndex);
                 }
                 node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED, ReferenceType.WEAK);
                 if (node.isChoice())
@@ -97,8 +98,8 @@ public class KeyValidator extends XPathValidator implements EventListener
         {
             node.addListener(this, XsdTreeNode.ACTIVATION_CHANGED, ReferenceType.WEAK);
             XsdTreeNode context = getContext(node);
-            this.nodes.computeIfAbsent(context, (key) -> new LinkedHashSet<>()).add(node);
-            invalidateAllDependent(); // new node may contain value set that a keyref want to couple to
+            this.keyNodes.computeIfAbsent(context, (key) -> new LinkedHashSet<>()).add(node);
+            invalidateAllDependent(); // new node may contain value set that a keyref wants to couple to
         }
     }
 
@@ -122,7 +123,7 @@ public class KeyValidator extends XPathValidator implements EventListener
         List<String> values = gatherFieldValues(node);
         if (values.contains(null))
         {
-            if (this.keyNode.getNodeName().equals("xsd:key"))
+            if (getKeyNode().getNodeName().equals("xsd:key"))
             {
                 // xsd:key; all must be present
                 List<String> missing = new ArrayList<>();
@@ -130,7 +131,7 @@ public class KeyValidator extends XPathValidator implements EventListener
                 {
                     if (values.get(i) == null)
                     {
-                        missing.add(user(this.fields.get(i).getFullFieldName()));
+                        missing.add(userFriendlyXPath(getFields().get(i).getFullFieldName()));
                     }
                 }
                 if (missing.size() == 1)
@@ -141,19 +142,20 @@ public class KeyValidator extends XPathValidator implements EventListener
             }
             else
             {
-                // xsd:unique with null value means this set of values is excluded from comparison
+                // xsd:unique with null value so this set of values is excluded from comparison (only full sets must be unique)
                 return null;
             }
         }
-        Collection<List<String>> set = getAllValueSets(node).values();
+        Collection<List<String>> set = gatherFieldValuesInContext(node).values();
         if (Collections.frequency(set, values) > 1)
         {
-            if (this.fields.size() == 1)
+            if (getFields().size() == 1)
             {
-                String name = user(this.fields.get(0).getFullFieldName());
-                return "Value " + values.get(0) + " for " + name + " is not unique within " + user(this.keyPath) + ".";
+                String name = userFriendlyXPath(getFields().get(0).getFullFieldName());
+                return "Value " + values.get(0) + " for " + name + " is not unique within " + userFriendlyXPath(getKeyPath())
+                        + ".";
             }
-            return "Values " + values + " are not unique within " + user(this.keyPath) + ".";
+            return "Values " + values + " are not unique within " + userFriendlyXPath(getKeyPath()) + ".";
         }
         return null;
     }
@@ -161,13 +163,10 @@ public class KeyValidator extends XPathValidator implements EventListener
     @Override
     public void notify(final Event event) throws RemoteException
     {
-        for (Set<XsdTreeNode> nodes : this.nodes.values())
-        {
-            for (XsdTreeNode node : nodes)
-            {
-                node.invalidate();
-            }
-        }
+        // invalidate all key nodes as something has changed
+        this.keyNodes.values().forEach((set) -> set.forEach((node) -> node.invalidate()));
+
+        // add/remove on activation/selection, and invalidate all dependent keyrefs
         if (XsdTreeNode.ACTIVATION_CHANGED.equals(event.getType()))
         {
             Object[] content = (Object[]) event.getContent();
@@ -178,21 +177,20 @@ public class KeyValidator extends XPathValidator implements EventListener
         }
         else if (XsdTreeNode.VALUE_CHANGED.equals(event.getType()))
         {
-            Object[] content = (Object[]) event.getContent();
-            XsdTreeNode node = (XsdTreeNode) content[0];
-            updateReferringKeyrefs(node, this.dependentValues.get(node), node.getValue());
+            XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
+            updateReferringKeyrefs(node, this.keyNodeValueFieldIndices.get(node), node.getValue());
             invalidateAllDependent();
         }
         else if (XsdTreeNode.ATTRIBUTE_CHANGED.equals(event.getType()))
         {
             Object[] content = (Object[]) event.getContent();
             XsdTreeNode node = (XsdTreeNode) content[0];
-            if (!this.dependentAttributes.containsKey(node))
+            if (!this.keyNodeAttributeFieldIndices.containsKey(node))
             {
                 return;
             }
             String attribute = (String) content[1];
-            Map<String, Integer> attributeFields = this.dependentAttributes.get(node);
+            Map<String, Integer> attributeFields = this.keyNodeAttributeFieldIndices.get(node);
             if (!attributeFields.containsKey(attribute))
             {
                 return;
@@ -202,25 +200,43 @@ public class KeyValidator extends XPathValidator implements EventListener
         }
         else if (XsdTreeNode.OPTION_CHANGED.equals(event.getType()))
         {
-            Object[] content = (Object[]) event.getContent();
-            XsdTreeNode node = (XsdTreeNode) content[0];
+            XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];
             activationOrChoiceStatusChanged(node, node.getOption().equals(node));
             invalidateAllDependent();
         }
     }
 
     /**
-     * Remove node. This method is called internally for children of deactivated nodes, in which case we do not want to remove
-     * this validator as listener on the node, for when it gets activated later.
+     * Recursively removes or adds the children from an activated or deactivated node to/from this key. Children of a
+     * deactivated node no longer have valid key values. Only active nodes are considered.
+     * @param node node to remove or add.
+     * @param activeOrSelected when node was activated or selected, child nodes are added, otherwise removed.
+     */
+    private void activationOrChoiceStatusChanged(final XsdTreeNode node, final boolean activeOrSelected)
+    {
+        if (activeOrSelected)
+        {
+            addNode(node);
+        }
+        else
+        {
+            removeNodeKeepListening(node);
+        }
+        if (node.isActive())
+        {
+            node.getChildren().forEach((c) -> activationOrChoiceStatusChanged(c, activeOrSelected));
+        }
+    }
+
+    /**
+     * Remove node. This method is called internally for children of deactivated or unselected nodes, in which case we do not
+     * want to remove this validator as listener on the node, for when it gets activated or selected later.
      * @param node node to remove.
      */
     private void removeNodeKeepListening(final XsdTreeNode node)
     {
-        for (KeyrefValidator keyref : this.listeningKeyrefValidators)
-        {
-            keyref.removeNode(node);
-        }
-        for (Set<XsdTreeNode> set : this.nodes.values())
+        this.listeningKeyrefValidators.forEach((keyref) -> keyref.removeNode(node)); // no longer coupled to keyref
+        for (Set<XsdTreeNode> set : this.keyNodes.values())
         {
             if (set.contains(node))
             {
@@ -232,56 +248,6 @@ public class KeyValidator extends XPathValidator implements EventListener
         {
             node.removeListener(this, XsdTreeNode.VALUE_CHANGED);
             node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
-        }
-    }
-
-    /**
-     * Returns the present values of the fields for each node within the given context. Value sets containing {@code null} are
-     * not returned, as these are invalid for xsd:key's, and ignored for xsd:unique's.
-     * @param node node that is in the right context.
-     * @return list of all values per key node.
-     */
-    protected Map<XsdTreeNode, List<String>> getAllValueSets(final XsdTreeNode node)
-    {
-        XsdTreeNode context = getContext(node);
-        Map<XsdTreeNode, List<String>> map = new LinkedHashMap<>();
-        for (XsdTreeNode otherNode : this.nodes.computeIfAbsent(context, (key) -> new LinkedHashSet<>()))
-        {
-            if (otherNode.isActive())
-            {
-                List<String> values = gatherFieldValues(otherNode);
-                // only sets without null (xsd:key must have all values, xsd:unique ignores those sets)
-                if (!values.contains(null))
-                {
-                    map.put(otherNode, values);
-                }
-            }
-        }
-        return map;
-    }
-
-    /**
-     * Recursively removes or adds the children from an activated or deactivated node to/from this key. Children of a
-     * deactivated node no longer have valid key values. Only active nodes are considered.
-     * @param node node to remove or add.
-     * @param active when node was activated, child nodes are added, otherwise removed.
-     */
-    private void activationOrChoiceStatusChanged(final XsdTreeNode node, final boolean active)
-    {
-        if (active)
-        {
-            addNode(node);
-        }
-        else
-        {
-            removeNodeKeepListening(node);
-        }
-        if (node.isActive())
-        {
-            for (XsdTreeNode child : node.getChildren())
-            {
-                activationOrChoiceStatusChanged(child, active);
-            }
         }
     }
 
@@ -312,22 +278,21 @@ public class KeyValidator extends XPathValidator implements EventListener
      */
     private boolean canUpdateKeyRefs(final XsdTreeNode keyNode, final int fieldIndex, final String newValue)
     {
-        // TODO
         /*
-         * This approach allows the following to happen. A coupled id is 'Abcd'. The user wants to remove the id by hitting
-         * backspace a few times. The value changes each time, and each change is allowed to change the coupled values. Finally
-         * the 'A' is also removed causing an empty value and the coupled values not to be updated. Effectively, removing the id
-         * value has now changed all coupled values from 'Abcd' to 'A'. A similar thing can happen with the last valid value
-         * before a duplicate new value is encountered. It is difficult to define a closed logic that can know when there is a
-         * final change of the id. Any operation in the editor can change id values, such as an extension, not only editor
-         * fields in the tree table or attributes table. The JTreeTable also has no clear event when editing starts, so we can't
-         * set some boolean to prevent updating the keyrefs during an episode of editing.
+         * FIXME This approach allows the following to happen. A coupled id is 'Abcd'. The user wants to remove the id by
+         * hitting backspace a few times. The value changes each time, and each change is allowed to change the coupled values.
+         * Finally the 'A' is also removed causing an empty value and the coupled values not to be updated. Effectively,
+         * removing the id value has now changed all coupled values from 'Abcd' to 'A'. A similar thing can happen with the last
+         * valid value before a duplicate new value is encountered. It is difficult to define a closed logic that can know when
+         * there is a final change of the id. Any operation in the editor can change id values, such as an extension, not only
+         * editor fields in the tree table or attributes table. The JTreeTable also has no clear event when editing starts, so
+         * we can't set some boolean to prevent updating the keyrefs during an episode of editing.
          */
         if (newValue == null || newValue.isEmpty())
         {
             return false; // value is empty
         }
-        Map<XsdTreeNode, List<String>> allValues = getAllValueSets(keyNode);
+        Map<XsdTreeNode, List<String>> allValues = gatherFieldValuesInContext(keyNode);
         List<String> values = allValues.remove(keyNode);
         if (values == null)
         {
@@ -335,9 +300,34 @@ public class KeyValidator extends XPathValidator implements EventListener
         }
         if (allValues.containsValue(values))
         {
-            return false; // there are duplicates
+            return false; // there is at least one duplicate to the values pertaining to the key node
         }
         return true;
+    }
+
+    /**
+     * Returns the present values of the fields for each node within the given context. Value sets containing {@code null} are
+     * not returned, as these are invalid for xsd:key's, and ignored for xsd:unique's.
+     * @param nodeInContext node that is in the right context.
+     * @return list of all values per key node.
+     */
+    Map<XsdTreeNode, List<String>> gatherFieldValuesInContext(final XsdTreeNode nodeInContext)
+    {
+        XsdTreeNode context = getContext(nodeInContext);
+        Map<XsdTreeNode, List<String>> map = new LinkedHashMap<>();
+        for (XsdTreeNode keyNode : this.keyNodes.computeIfAbsent(context, (key) -> new LinkedHashSet<>()))
+        {
+            if (keyNode.isActive())
+            {
+                List<String> values = gatherFieldValues(keyNode);
+                // only sets without null (xsd:key must have all values, xsd:unique ignores those sets)
+                if (!values.contains(null))
+                {
+                    map.put(keyNode, values);
+                }
+            }
+        }
+        return map;
     }
 
     /**
@@ -345,17 +335,14 @@ public class KeyValidator extends XPathValidator implements EventListener
      */
     private void invalidateAllDependent()
     {
-        for (KeyrefValidator validator : this.listeningKeyrefValidators)
-        {
-            validator.invalidateNodes();
-        }
+        this.listeningKeyrefValidators.forEach((validator) -> validator.invalidateKeyrefNodes());
     }
 
     /**
      * Adds a keyref validator as listening to this key.
      * @param keyrefValidator keyref validator.
      */
-    public void addListeningKeyrefValidator(final KeyrefValidator keyrefValidator)
+    void addListeningKeyrefValidator(final KeyrefValidator keyrefValidator)
     {
         this.listeningKeyrefValidators.add(keyrefValidator);
     }

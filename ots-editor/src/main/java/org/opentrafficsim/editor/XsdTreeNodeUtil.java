@@ -31,7 +31,7 @@ public final class XsdTreeNodeUtil
     /** Pattern to split string by upper case, with lower case adjacent, without disregarding the match itself. */
     private static final Pattern UPPER_PATTERN = Pattern.compile("(?=\\p{Lu})(?<=\\p{Ll})|(?=\\p{Lu}\\p{Ll})");
 
-    /** Validators for xsd:all nodes and their children. This is maintained per root object, i.e. per tree. */
+    /** Validators for xsd:all option nodes. This is maintained per root object (i.e. per tree) and xsd:all node. */
     private static final Map<XsdTreeNodeRoot, Map<String, XsdAllValidator>> XSD_ALL_VALIDATORS = new LinkedHashMap<>();
 
     /**
@@ -64,11 +64,13 @@ public final class XsdTreeNodeUtil
      *            structures.
      * @param hiddenNodes nodes between the XSD node of the parent, and this tree node's XSD node.
      * @param schema schema to get types and referred elements from.
+     * @param flattenSequence when true, treats an xsd:sequence child as an extension of the node. In the context of a choice
+     *            this should be {@code null}.
      * @param skip child index to skip, this is used when copying choice options from an option that is already created (i.e.
      *            {@code copyNode} in {@code XsdTreeNode.copyInto(copyNode)}).
      */
     static void addChildren(final Node node, final XsdTreeNode parentNode, final List<XsdTreeNode> children,
-            final ImmutableList<Node> hiddenNodes, final Schema schema, final int skip)
+            final ImmutableList<Node> hiddenNodes, final Schema schema, final boolean flattenSequence, final int skip)
     {
         int skipIndex = skip;
         XsdTreeNode root = parentNode.getRoot();
@@ -117,10 +119,17 @@ public final class XsdTreeNodeUtil
                         skipIndex = -1;
                         break;
                     }
-                    XsdTreeNode sequence = new XsdTreeNode(parentNode, child, append(hiddenNodes, node));
-                    children.add(sequence);
-                    root.fireEvent(XsdTreeNodeRoot.NODE_CREATED,
-                            new Object[] {sequence, parentNode, parentNode.children.indexOf(sequence)});
+                    if (flattenSequence)
+                    {
+                        addChildren(child, parentNode, children, XsdTreeNodeUtil.append(hiddenNodes, node), schema, false, -1);
+                    }
+                    else
+                    {
+                        XsdTreeNode sequence = new XsdTreeNode(parentNode, child, append(hiddenNodes, node));
+                        children.add(sequence);
+                        root.fireEvent(XsdTreeNodeRoot.NODE_CREATED,
+                                new Object[] {sequence, parentNode, parentNode.children.indexOf(sequence)});
+                    }
                     break;
                 case "xsd:choice":
                 case "xsd:all":

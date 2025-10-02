@@ -40,18 +40,18 @@ import jakarta.xml.bind.annotation.XmlType;
 
     private static final long serialVersionUID = 10102L;
     /**
-     * Road layout. Lanes to the right of the design line have negative offset. Those
-     *         to the left have positive offset. When not specifying offsets, sequence the lines from right (most negative) to left
-     *         (most positive).
+     * Road layout. Lanes to the right of the design line have negative offset.
+     *         Those to the left have positive offset. When not specifying offsets, sequence the lines from right (most negative) to
+     *         left (most positive).
      * 
      */
     @XmlElement(name = "RoadLayout")
     protected List<RoadLayout> roadLayout;
 
     /**
-     * Road layout. Lanes to the right of the design line have negative offset. Those
-     *         to the left have positive offset. When not specifying offsets, sequence the lines from right (most negative) to left
-     *         (most positive).
+     * Road layout. Lanes to the right of the design line have negative offset.
+     *         Those to the left have positive offset. When not specifying offsets, sequence the lines from right (most negative) to
+     *         left (most positive).
      * 
      * Gets the value of the roadLayout property.
      * 

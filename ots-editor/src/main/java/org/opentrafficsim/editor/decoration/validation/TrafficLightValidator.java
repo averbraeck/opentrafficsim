@@ -3,16 +3,19 @@ package org.opentrafficsim.editor.decoration.validation;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.djutils.event.Event;
-import org.djutils.event.reference.ReferenceType;
 import org.opentrafficsim.editor.OtsEditor;
+import org.opentrafficsim.editor.XsdPaths;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.decoration.AbstractNodeDecoratorRemove;
 import org.opentrafficsim.editor.decoration.validation.RoadLayoutElementValidator.LayoutCoupling;
+import org.opentrafficsim.editor.decoration.validation.RoadLayoutElementValidator.RoadLayoutElementAttribute;
 
 /**
  * Checks that attribute TrafficLightId can be found on link under attribute Link (with keyref) having the same lane under
@@ -31,6 +34,9 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
     /** */
     private static final long serialVersionUID = 20240306L;
 
+    /** All nodes bing validated. */
+    private final Set<XsdTreeNode> validatingNodes = new LinkedHashSet<>();
+
     /** SignalGroup.TrafficLight to Link.TrafficLight coupling. */
     private final Map<XsdTreeNode, XsdTreeNode> coupledNodes = new LinkedHashMap<>();
 
@@ -41,20 +47,27 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
      */
     public TrafficLightValidator(final OtsEditor editor, final String path)
     {
-        super(editor, (n) -> n.getPathString().endsWith(path));
-        new RoadLayoutElementValidator(editor, path, LayoutCoupling.LINK_ATTRIBUTE, "Lane");
+        super(editor, (n) -> n.getPathString().endsWith(path) || n.getPathString().equals(XsdPaths.TRAFFIC_LIGHT));
+        new RoadLayoutElementValidator(editor, path, LayoutCoupling.LINK_ATTRIBUTE, RoadLayoutElementAttribute.LANE);
     }
 
     @Override
     public void notifyCreated(final XsdTreeNode node)
     {
-        node.addAttributeValidator("TrafficLightId", this);
-        node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
+        if (!node.getPathString().equals(XsdPaths.TRAFFIC_LIGHT))
+        {
+            // Validated node
+            this.validatingNodes.add(node);
+            node.addAttributeValidator("TrafficLightId", this);
+        }
+        // Validated node or traffic light node
+        node.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
     }
 
     @Override
     public void notifyRemoved(final XsdTreeNode node)
     {
+        this.validatingNodes.remove(node);
         node.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
     }
 
@@ -65,22 +78,31 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
         {
             Object[] content = (Object[]) event.getContent();
             XsdTreeNode node = (XsdTreeNode) content[0];
-            if (this.coupledNodes.containsValue(node))
+            if (node.getPathString().equals(XsdPaths.TRAFFIC_LIGHT))
             {
+                // Traffic light node
                 if ("Id".equals(content[1]))
                 {
-                    String newId = node.getId();
-                    for (Entry<XsdTreeNode, XsdTreeNode> entry : this.coupledNodes.entrySet())
+                    if (getCouplings().containsValue(node))
                     {
-                        if (entry.getValue().equals(node))
+                        // Id changed on coupled node
+                        String newId = node.getId();
+                        for (Entry<XsdTreeNode, XsdTreeNode> entry : getCouplings().entrySet())
                         {
-                            CoupledValidator.setAttributeIfNotNull(entry.getKey(), "TrafficLightId", newId);
+                            if (entry.getValue().equals(node))
+                            {
+                                CoupledValidator.setAttributeIfNotNull(entry.getKey(), "TrafficLightId", newId);
+                            }
                         }
                     }
+
+                    // Id changed on traffic light, any could couple to this
+                    this.validatingNodes.forEach((n) -> n.invalidate());
                 }
             }
             else
             {
+                // Id change on validated node
                 node.invalidate();
             }
         }
@@ -93,40 +115,39 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
     @Override
     public String validate(final XsdTreeNode node)
     {
-        String id = node.getAttributeValue("TrafficLightId");
-        if (id != null && !id.isEmpty())
+        String trafficLightId = node.getAttributeValue("TrafficLightId");
+        if (trafficLightId != null && !trafficLightId.isEmpty())
         {
             XsdTreeNode linkNode = node.getCoupledNodeAttribute("Link");
-            if (linkNode != null)
+            if (linkNode == null)
             {
-                String lane = node.getAttributeValue("Lane");
-                if (lane != null)
+                removeCoupling(node);
+                return "Unable to find traffic light due to invalid Link value.";
+            }
+            String lane = node.getAttributeValue("Lane");
+            if (lane == null)
+            {
+                removeCoupling(node);
+                return "Unable to find traffic light due to missing Lane value.";
+            }
+            for (XsdTreeNode child : linkNode.getChildren())
+            {
+                if (child.getNodeName().equals("TrafficLight") && child.isActive()
+                        && lane.equals(child.getAttributeValue("Lane")))
                 {
-                    for (XsdTreeNode child : linkNode.getChildren())
+                    if (trafficLightId.equals(child.getId()))
                     {
-                        if (child.getNodeName().equals("TrafficLight") && child.isActive()
-                                && lane.equals(child.getAttributeValue("Lane")))
-                        {
-                            if (id.equals(child.getId()))
-                            {
-                                this.coupledNodes.put(node, child);
-                                child.addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
-                                return null;
-                            }
-                        }
+                        addCoupling(node, child);
+                        return null;
                     }
-                    XsdTreeNode trafficLightNode = this.coupledNodes.get(node);
-                    this.coupledNodes.remove(node);
-                    if (trafficLightNode != null && !this.coupledNodes.containsValue(trafficLightNode))
-                    {
-                        trafficLightNode.removeListener(this, XsdTreeNode.ATTRIBUTE_CHANGED);
-                    }
-                    return "There is no traffic light with id " + id + " on link " + node.getAttributeValue("Link")
-                            + " at lane " + lane + ".";
                 }
             }
+            removeCoupling(node);
+            return "There is no traffic light with id " + trafficLightId + " on link " + node.getAttributeValue("Link")
+                    + " at lane " + lane + ".";
         }
-        this.coupledNodes.remove(node);
+        // let default missing required value message notify about a missing id
+        removeCoupling(node);
         return null;
     }
 
@@ -154,10 +175,11 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
         return null;
     }
 
+    /** {@inheritDoc} */
     @Override
-    public XsdTreeNode getCoupledNode(final XsdTreeNode node)
+    public Map<XsdTreeNode, XsdTreeNode> getCouplings()
     {
-        return this.coupledNodes.get(node);
+        return this.coupledNodes;
     }
 
 }

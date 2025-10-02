@@ -5,12 +5,14 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.function.Consumer;
 
 import javax.swing.AbstractButton;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.editor.decoration.validation.CoupledValidator;
 
 /**
  * Undo unit for the OTS editor. This class stores an internal queue of actions. Changes to XsdTreeNodes should be grouped per
@@ -235,6 +237,7 @@ public class Undo implements EventListener
     }
 
     @Override
+    @SuppressWarnings("methodlength")
     public void notify(final Event event) throws RemoteException
     {
         listenAndUnlisten(event);
@@ -303,11 +306,9 @@ public class Undo implements EventListener
             add(new SubAction(() ->
             {
                 node.setValue((String) content[1]); // invokes event
-                node.invalidate();
             }, () ->
             {
                 node.setValue(value); // invokes event
-                node.invalidate();
             }, "Change " + node.getPathString() + " value: " + value));
         }
         else if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED))
@@ -325,11 +326,9 @@ public class Undo implements EventListener
             add(new SubAction(() ->
             {
                 node.setAttributeValue(attribute, prevValue); // invokes event
-                node.invalidate();
             }, () ->
             {
                 node.setAttributeValue(attribute, value); // invokes event
-                node.invalidate();
             }, "Create " + node.getPathString() + ".@" + attribute + ": " + value));
         }
         else if (event.getType().equals(XsdTreeNode.ACTIVATION_CHANGED))
@@ -381,6 +380,32 @@ public class Undo implements EventListener
                 node.fireEvent(XsdTreeNode.MOVED, new Object[] {node, oldIndex, newIndex});
             }, "Move " + node.getPathString()));
         }
+        else if (event.getType().equals(CoupledValidator.COUPLING))
+        {
+            if (this.currentSet == null)
+            {
+                return; // We can ignore couplings created by node expansion after loading a file
+            }
+            Object[] content = (Object[]) event.getContent();
+            CoupledValidator validator = (CoupledValidator) content[0];
+            XsdTreeNode fromNode = (XsdTreeNode) content[1];
+            XsdTreeNode toNode = (XsdTreeNode) content[2];
+            XsdTreeNode prevToNode = (XsdTreeNode) content[3];
+            Consumer<XsdTreeNode> consumer = (node) -> // this works either way, towards prevToNode (undo) or toNode (redo)
+            {
+                if (node == null)
+                {
+                    validator.removeCoupling(fromNode);
+                }
+                else
+                {
+                    validator.addCoupling(fromNode, node);
+                }
+                fromNode.invalidate();
+            };
+            add(new SubAction(() -> consumer.accept(prevToNode), () -> consumer.accept(toNode),
+                    "Coupling " + fromNode.getNodeName()));
+        }
     }
 
     /**
@@ -394,6 +419,7 @@ public class Undo implements EventListener
             XsdTreeNodeRoot root = (XsdTreeNodeRoot) event.getContent();
             root.addListener(this, XsdTreeNodeRoot.NODE_CREATED);
             root.addListener(this, XsdTreeNodeRoot.NODE_REMOVED);
+            root.addListener(this, CoupledValidator.COUPLING);
         }
         else if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
         {

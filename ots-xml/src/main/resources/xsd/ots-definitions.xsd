@@ -80,8 +80,7 @@
       <xsd:attribute name="GtuType" type="ots:string" use="required" />
       <xsd:attribute name="Compatible" type="ots:boolean" use="optional" default="true">
         <xsd:annotation>
-          <xsd:documentation source="description">
-            When false, the GTU type is explicitly subtracted from the allowed GTU
+          <xsd:documentation source="description">When false, the GTU type is explicitly subtracted from the allowed GTU
             types.
           </xsd:documentation>
         </xsd:annotation>
@@ -107,10 +106,8 @@
 
   <xsd:element name="LaneBias">
     <xsd:annotation>
-      <xsd:documentation source="description">
-        Sets the preferred lateral position for vehicle generation for the given GTU
-        type either based on speed, or a fixed
-        lateral position (between 0 for right and 1 for left of the road width, in terms
+      <xsd:documentation source="description">Sets the preferred lateral position for vehicle generation for the given GTU
+        type either based on speed, or a fixed lateral position (between 0 for right and 1 for left of the road width, in terms
         of lanes).
       </xsd:documentation>
     </xsd:annotation>
@@ -386,10 +383,9 @@
 
   <xsd:element name="RoadLayout">
     <xsd:annotation>
-      <xsd:documentation source="description">
-        Road layout. Lanes to the right of the design line have negative offset. Those
-        to the left have positive offset. When not specifying offsets, sequence the lines from right (most negative) to left
-        (most positive).
+      <xsd:documentation source="description"> Road layout. Lanes to the right of the design line have negative offset.
+        Those to the left have positive offset. When not specifying offsets, sequence the lines from right (most negative) to
+        left (most positive).
       </xsd:documentation>
     </xsd:annotation>
     <xsd:complexType>

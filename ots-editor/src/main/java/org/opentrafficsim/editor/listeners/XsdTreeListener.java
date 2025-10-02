@@ -31,6 +31,7 @@ import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.Undo.ActionType;
 import org.opentrafficsim.editor.XsdOption;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.XsdTreeNodeRoot;
 
 import de.javagl.treetable.JTreeTable;
 
@@ -421,11 +422,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
          */
         if (treeNode.isActive() && treeNode.isAddable())
         {
-            if (separatorNeeded)
-            {
-                separatorNeeded = false;
-                popup.add(new JSeparator());
-            }
+            separatorNeeded = addSeparator(separatorNeeded, popup);
             JMenuItem add = new JMenuItem("Add");
             add.addActionListener(new ActionListener()
             {
@@ -455,11 +452,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
         }
         if (treeNode.isActive() && treeNode.isRemovable())
         {
-            if (separatorNeeded)
-            {
-                separatorNeeded = false;
-                popup.add(new JSeparator());
-            }
+            separatorNeeded = addSeparator(separatorNeeded, popup);
             JMenuItem remove = new JMenuItem("Remove");
             remove.addActionListener(new ActionListener()
             {
@@ -480,11 +473,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
         }
         if (treeNode.isActive() && (treeNode.isRemovable() || treeNode.isAddable()))
         {
-            if (separatorNeeded)
-            {
-                separatorNeeded = false;
-                popup.add(new JSeparator());
-            }
+            separatorNeeded = addSeparator(separatorNeeded, popup);
             JMenuItem copy = new JMenuItem("Copy");
             copy.addActionListener(new ActionListener()
             {
@@ -502,11 +491,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
         }
         if (treeNode.isActive() && treeNode.isRemovable())
         {
-            if (separatorNeeded)
-            {
-                separatorNeeded = false;
-                popup.add(new JSeparator());
-            }
+            separatorNeeded = addSeparator(separatorNeeded, popup);
             JMenuItem cut = new JMenuItem("Cut");
             cut.addActionListener(new ActionListener()
             {
@@ -527,11 +512,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
         {
             if (treeNode.isActive() && treeNode.isAddable())
             {
-                if (separatorNeeded)
-                {
-                    separatorNeeded = false;
-                    popup.add(new JSeparator());
-                }
+                separatorNeeded = addSeparator(separatorNeeded, popup);
                 JMenuItem cut = new JMenuItem("Insert");
                 cut.addActionListener(new ActionListener()
                 {
@@ -549,11 +530,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
             }
             if (!treeNode.isActive() || treeNode.isAddable())
             {
-                if (separatorNeeded)
-                {
-                    separatorNeeded = false;
-                    popup.add(new JSeparator());
-                }
+                separatorNeeded = addSeparator(separatorNeeded, popup);
                 JMenuItem cut = new JMenuItem("Paste");
                 cut.addActionListener(new ActionListener()
                 {
@@ -577,11 +554,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
         List<XsdOption> options = treeNode.getOptions();
         if (treeNode.isActive() && treeNode.isChoice() && options.size() > 1)
         {
-            if (separatorNeeded)
-            {
-                separatorNeeded = false;
-                popup.add(new JSeparator());
-            }
+            separatorNeeded = addSeparator(separatorNeeded, popup);
             JMenuItem revolve = new JMenuItem("Revolve option");
             revolve.addActionListener(new ActionListener()
             {
@@ -597,13 +570,29 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
             anyAdded = true;
             groupAdded = true;
         }
-        if (!treeNode.isActive() || treeNode.getChildCount() > 0)
+        if (treeNode instanceof XsdTreeNodeRoot)
         {
-            if (separatorNeeded)
+            separatorNeeded = addSeparator(separatorNeeded, popup);
+            JMenuItem expand = new JMenuItem("Collapse all");
+            expand.addActionListener(new ActionListener()
             {
-                separatorNeeded = false;
-                popup.add(new JSeparator());
-            }
+                @Override
+                public void actionPerformed(final ActionEvent e)
+                {
+                    for (int i = XsdTreeListener.this.treeTable.getTree().getRowCount() - 1; i > 0; i--)
+                    {
+                        XsdTreeListener.this.treeTable.getTree().collapseRow(i);
+                    }
+                }
+            });
+            expand.setFont(this.treeTable.getFont());
+            popup.add(expand);
+            anyAdded = true;
+            groupAdded = true;
+        }
+        else if (!treeNode.isActive() || treeNode.getChildCount() > 0)
+        {
+            separatorNeeded = addSeparator(separatorNeeded, popup);
             TreePath path = this.treeTable.getTree().getSelectionPath();
             boolean expanded = this.treeTable.getTree().isExpanded(path);
             JMenuItem expand = new JMenuItem(expanded ? "Collapse" : "Expand");
@@ -626,11 +615,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
 
         if (treeNode.isActive() && treeNode.canMoveUp())
         {
-            if (separatorNeeded)
-            {
-                separatorNeeded = false;
-                popup.add(new JSeparator());
-            }
+            separatorNeeded = addSeparator(separatorNeeded, popup);
             JMenuItem moveUp = new JMenuItem("Move up");
             moveUp.addActionListener(new ActionListener()
             {
@@ -647,11 +632,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
         }
         if (treeNode.isActive() && treeNode.canMoveDown())
         {
-            if (separatorNeeded)
-            {
-                separatorNeeded = false;
-                popup.add(new JSeparator());
-            }
+            separatorNeeded = addSeparator(separatorNeeded, popup);
             JMenuItem moveDown = new JMenuItem("Move down");
             moveDown.addActionListener(new ActionListener()
             {
@@ -667,6 +648,21 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
             anyAdded = true;
         }
         return anyAdded;
+    }
+
+    /**
+     * Add separator if required.
+     * @param separatorNeeded whether a separator is needed
+     * @param popup the popup to add a separator to
+     * @return {@code false} always for usage in {@code separatorNeeded = addSeparator(separatorNeeded, popup)}
+     */
+    private boolean addSeparator(final boolean separatorNeeded, final JPopupMenu popup)
+    {
+        if (separatorNeeded)
+        {
+            popup.add(new JSeparator());
+        }
+        return false;
     }
 
 }

@@ -353,16 +353,6 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
-     * Create an instance of {@link org.opentrafficsim.xml.generated.ShortestRoute.Cost }
-     * 
-     * @return
-     *     the new instance of {@link org.opentrafficsim.xml.generated.ShortestRoute.Cost }
-     */
-    public org.opentrafficsim.xml.generated.ShortestRoute.Cost createShortestRouteCost() {
-        return new org.opentrafficsim.xml.generated.ShortestRoute.Cost();
-    }
-
-    /**
      * Create an instance of {@link OdOptions.OdOptionsItem }
      * 
      * @return
@@ -1033,6 +1023,26 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
     }
 
     /**
+     * Create an instance of {@link EmptyType }
+     * 
+     * @return
+     *     the new instance of {@link EmptyType }
+     */
+    public EmptyType createEmptyType() {
+        return new EmptyType();
+    }
+
+    /**
+     * Create an instance of {@link org.opentrafficsim.xml.generated.ShortestRoute.DistanceAndFreeFlowTime }
+     * 
+     * @return
+     *     the new instance of {@link org.opentrafficsim.xml.generated.ShortestRoute.DistanceAndFreeFlowTime }
+     */
+    public org.opentrafficsim.xml.generated.ShortestRoute.DistanceAndFreeFlowTime createShortestRouteDistanceAndFreeFlowTime() {
+        return new org.opentrafficsim.xml.generated.ShortestRoute.DistanceAndFreeFlowTime();
+    }
+
+    /**
      * Create an instance of {@link RouteMix.Route }
      * 
      * @return
@@ -1160,16 +1170,6 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
      */
     public Connector createConnector() {
         return new Connector();
-    }
-
-    /**
-     * Create an instance of {@link EmptyType }
-     * 
-     * @return
-     *     the new instance of {@link EmptyType }
-     */
-    public EmptyType createEmptyType() {
-        return new EmptyType();
     }
 
     /**
@@ -2190,16 +2190,6 @@ import org.opentrafficsim.xml.bindings.types.LinearDensityType;
      */
     public InjectionGenerator.Arrivals.Arrival createInjectionGeneratorArrivalsArrival() {
         return new InjectionGenerator.Arrivals.Arrival();
-    }
-
-    /**
-     * Create an instance of {@link org.opentrafficsim.xml.generated.ShortestRoute.Cost.DistanceAndFreeFlowTime }
-     * 
-     * @return
-     *     the new instance of {@link org.opentrafficsim.xml.generated.ShortestRoute.Cost.DistanceAndFreeFlowTime }
-     */
-    public org.opentrafficsim.xml.generated.ShortestRoute.Cost.DistanceAndFreeFlowTime createShortestRouteCostDistanceAndFreeFlowTime() {
-        return new org.opentrafficsim.xml.generated.ShortestRoute.Cost.DistanceAndFreeFlowTime();
     }
 
     /**
