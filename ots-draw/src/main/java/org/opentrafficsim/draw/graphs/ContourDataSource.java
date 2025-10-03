@@ -13,14 +13,16 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.event.EventType;
+import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
 import org.djutils.logger.CategoryLogger;
+import org.djutils.metadata.MetaData;
+import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.draw.egtf.Converter;
 import org.opentrafficsim.draw.egtf.DataSource;
 import org.opentrafficsim.draw.egtf.DataStream;
 import org.opentrafficsim.draw.egtf.Egtf;
-import org.opentrafficsim.draw.egtf.EgtfEvent;
-import org.opentrafficsim.draw.egtf.EgtfListener;
 import org.opentrafficsim.draw.egtf.Filter;
 import org.opentrafficsim.draw.egtf.Quantity;
 import org.opentrafficsim.draw.egtf.typed.TypedQuantity;
@@ -44,8 +46,25 @@ import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ContourDataSource
+public class ContourDataSource extends LocalEventProducer
 {
+
+    // *******************
+    // *** EVENT TYPES ***
+    // *******************
+
+    /** Granularity changed. */
+    public static final EventType GRANULARITY = new EventType("GRANULARITY",
+            new MetaData("Granularity", "Granularity changed.", new ObjectDescriptor("Axis", "Axis", Dimension.class),
+                    new ObjectDescriptor("Granularity", "Granularity", Double.class)));
+
+    /** Interpolation changed. */
+    public static final EventType INTERPOLATE = new EventType("INTERPOLATE", new MetaData("Interpolate", "Interpolate changed.",
+            new ObjectDescriptor("Interpolate", "Interpolate", Boolean.class)));
+
+    /** Smooth changed. */
+    public static final EventType SMOOTH = new EventType("SMOOTH",
+            new MetaData("Smooth", "Smooth changed.", new ObjectDescriptor("Smooth", "Smooth", Boolean.class)));
 
     // *************************
     // *** GLOBAL PROPERTIES ***
@@ -72,12 +91,6 @@ public class ContourDataSource
      * Adaptive Smoothing Method, the actual cumulative distribution is slightly different. Hence, this is just a heuristic.
      */
     private static final int KERNEL_FACTOR = 5;
-
-    /** Spatial kernel size. Larger value may be used when using a large granularity. */
-    private static final Length SIGMA = Length.instantiateSI(300);
-
-    /** Temporal kernel size. Larger value may be used when using a large granularity. */
-    private static final Duration TAU = Duration.instantiateSI(30);
 
     /** Maximum free flow propagation speed. */
     private static final Speed MAX_C_FREE = new Speed(80.0, SpeedUnit.KM_PER_HOUR);
@@ -366,9 +379,9 @@ public class ContourDataSource
      * Called by {@code AbstractContourPlot} to update the time. This will invalidate the plot triggering a redraw.
      * @param updateTime current time
      */
-    @SuppressWarnings("synthetic-access")
     final synchronized void increaseTime(final Duration updateTime)
     {
+        // pick up suggested granularity that was set the previous time we were in this method
         if (updateTime.si > this.timeAxis.maxValue)
         {
             this.timeAxis.setMaxValue(updateTime.si);
@@ -381,6 +394,17 @@ public class ContourDataSource
         {
             invalidate(updateTime);
         }
+    }
+
+    /**
+     * Offer granularity to the updater. This is a thread-safe execution as it hands over setting the granularity to the graph
+     * updater.
+     * @param dimension space or time
+     * @param granularity granularity in space or time (SI unit)
+     */
+    public final void offerGranularity(final Dimension dimension, final double granularity)
+    {
+        this.graphUpdater.offer(() -> setGranularity(dimension, granularity));
     }
 
     /**
@@ -408,6 +432,7 @@ public class ContourDataSource
             }
         }
         invalidate(null);
+        fireEvent(GRANULARITY, new Object[] {dimension, granularity});
     }
 
     /**
@@ -430,11 +455,12 @@ public class ContourDataSource
                 invalidate(null);
             }
         }
+        fireEvent(INTERPOLATE, interpolate);
     }
 
     /**
      * Sets the adaptive smoothing enabled or disabled. This will invalidate the plot triggering a redraw.
-     * @param smooth whether to smooth the plor
+     * @param smooth whether to smooth the plot
      */
     public final void setSmooth(final boolean smooth)
     {
@@ -446,6 +472,7 @@ public class ContourDataSource
                 invalidate(null);
             }
         }
+        fireEvent(SMOOTH, smooth);
     }
 
     // ************************
@@ -555,8 +582,8 @@ public class ContourDataSource
             if (smooth0)
             {
                 // time of current bin - kernel size, get bin of that time, get time (middle) of that bin
-                tFromEgtf = this.timeAxis.getBinValue(redo0 ? 0 : this.timeAxis.getValueBin(
-                        this.timeAxis.getBinValue(fromTimeIndex) - Math.max(TAU.si, timeGranularity / 2) * KERNEL_FACTOR));
+                tFromEgtf = this.timeAxis.getBinValue(redo0 ? 0 : this.timeAxis
+                        .getValueBin(this.timeAxis.getBinValue(fromTimeIndex) - timeGranularity * 2 * KERNEL_FACTOR));
                 nFromEgtf = this.timeAxis.getValueBin(tFromEgtf);
             }
             // starting execution, so reset redo trigger which any next command may set to true if needed
@@ -597,24 +624,21 @@ public class ContourDataSource
                     this.additionalStreams.put(contourDataType, generic.addStreamSI(contourDataType.getQuantity(), 1.0, 1.0));
                 }
 
-                // in principle we use sigma and tau, unless the data is so rough, we need more (granularity / 2).
-                double tau2 = Math.max(TAU.si, timeGranularity / 2);
-                double sigma2 = Math.max(SIGMA.si, spaceGranularity / 2);
+                // kernel size based on granularity.
+                double tau2 = timeGranularity * 2;
+                double sigma2 = spaceGranularity * 2;
                 // for maximum space and time range, increase sigma and tau by KERNEL_FACTOR, beyond which both kernels diminish
-                this.egtf.setGaussKernelSI(sigma2 * KERNEL_FACTOR, tau2 * KERNEL_FACTOR, sigma2, tau2);
+                this.egtf.setKernelSI(sigma2 * KERNEL_FACTOR, tau2 * KERNEL_FACTOR, sigma2, tau2);
 
                 // add listener to provide a filter status update and to possibly stop the filter when the plot is invalidated
-                this.egtf.addListener(new EgtfListener()
+                this.egtf.addListener((event) ->
                 {
-                    @Override
-                    public void notifyProgress(final EgtfEvent event)
+                    // check stop (explicit use of property, not locally stored value)
+                    if (ContourDataSource.this.redo)
                     {
-                        // check stop (explicit use of property, not locally stored value)
-                        if (ContourDataSource.this.redo)
-                        {
-                            // plots need to be redone
-                            event.interrupt(); // stop the EGTF
-                        }
+                        // plots need to be redone
+                        System.out.println("Interrupting EGTF");
+                        event.interrupt(); // stop the EGTF
                     }
                 });
             }

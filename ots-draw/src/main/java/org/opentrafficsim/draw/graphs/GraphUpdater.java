@@ -22,7 +22,10 @@ public class GraphUpdater<T>
 {
 
     /** Queue of update times for executing Thread. */
-    private final BlockingQueue<T> queue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
+
+    /** Default updater. */
+    private final Updater<T> updater;
 
     /**
      * Constructs and starts a thread that performs each given task from a queue.
@@ -32,9 +35,9 @@ public class GraphUpdater<T>
      */
     public GraphUpdater(final String workerName, final Thread invokingThread, final Updater<T> updater)
     {
+        this.updater = updater;
         new Thread(new Runnable()
         {
-            @SuppressWarnings({"synthetic-access"})
             @Override
             public void run()
             {
@@ -42,10 +45,10 @@ public class GraphUpdater<T>
                 {
                     try
                     {
-                        T t = GraphUpdater.this.queue.poll(5, TimeUnit.SECONDS);
-                        if (t != null)
+                        Runnable runnable = GraphUpdater.this.queue.poll(5, TimeUnit.SECONDS);
+                        if (runnable != null)
                         {
-                            updater.update(t);
+                            runnable.run();
                         }
                     }
                     catch (InterruptedException exception)
@@ -59,12 +62,21 @@ public class GraphUpdater<T>
     }
 
     /**
-     * Offer a next value to the queue.
+     * Offer a next value to the queue for the default updater.
      * @param t next value to offer to the queue
      */
     public final void offer(final T t)
     {
-        this.queue.offer(t);
+        this.queue.offer(() -> this.updater.update(t));
+    }
+
+    /**
+     * Add specific runnable to the queue.
+     * @param runnable specific runnable for the queue
+     */
+    public final void offer(final Runnable runnable)
+    {
+        this.queue.offer(runnable);
     }
 
     /**

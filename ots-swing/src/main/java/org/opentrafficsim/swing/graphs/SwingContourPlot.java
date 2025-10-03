@@ -1,7 +1,6 @@
 package org.opentrafficsim.swing.graphs;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -11,7 +10,10 @@ import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 
+import org.djutils.event.Event;
+import org.djutils.event.EventListener;
 import org.opentrafficsim.draw.graphs.AbstractContourPlot;
+import org.opentrafficsim.draw.graphs.ContourDataSource;
 import org.opentrafficsim.draw.graphs.ContourDataSource.Dimension;
 
 /**
@@ -24,7 +26,7 @@ import org.opentrafficsim.draw.graphs.ContourDataSource.Dimension;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class SwingContourPlot extends SwingSpaceTimePlot
+public class SwingContourPlot extends SwingSpaceTimePlot implements EventListener
 {
     /** */
     private static final long serialVersionUID = 20190823L;
@@ -41,6 +43,9 @@ public class SwingContourPlot extends SwingSpaceTimePlot
     /** Check box for interpolation. */
     private JCheckBoxMenuItem interpolateCheckBox;
 
+    /** Whether to ignore events as this is itself the plot causing change of granularity/interpolate/smooth setting. */
+    private boolean ignoreEvent = false;
+
     /**
      * Create a new SwingContourPlot with embedded plot.
      * @param plot the plot to embed
@@ -48,6 +53,9 @@ public class SwingContourPlot extends SwingSpaceTimePlot
     public SwingContourPlot(final AbstractContourPlot<?> plot)
     {
         super(plot);
+        plot.getDataPool().addListener(this, ContourDataSource.GRANULARITY);
+        plot.getDataPool().addListener(this, ContourDataSource.INTERPOLATE);
+        plot.getDataPool().addListener(this, ContourDataSource.SMOOTH);
     }
 
     @Override
@@ -65,27 +73,23 @@ public class SwingContourPlot extends SwingSpaceTimePlot
                 getPlot().getDataPool().getGranularity(Dimension.TIME), this.timeGranularityButtons);
         popupMenu.insert(timeGranularityMenu, 1);
         this.smoothCheckBox = new JCheckBoxMenuItem("Adaptive smoothing method", false);
-        this.smoothCheckBox.addActionListener(new ActionListener()
+        this.smoothCheckBox.addActionListener((e) ->
         {
-            @Override
-            public void actionPerformed(final ActionEvent e)
-            {
-                getPlot().getDataPool().setSmooth(((JCheckBoxMenuItem) e.getSource()).isSelected());
-                getPlot().notifyPlotChange();
-            }
+            SwingContourPlot.this.ignoreEvent = true;
+            getPlot().getDataPool().setSmooth(((JCheckBoxMenuItem) e.getSource()).isSelected());
+            getPlot().notifyPlotChange();
+            SwingContourPlot.this.ignoreEvent = false;
         });
         popupMenu.insert(this.smoothCheckBox, 2);
         this.interpolateCheckBox = new JCheckBoxMenuItem("Bilinear interpolation", true);
-        this.interpolateCheckBox.addActionListener(new ActionListener()
+        this.interpolateCheckBox.addActionListener((e) ->
         {
-            @Override
-            public void actionPerformed(final ActionEvent e)
-            {
-                boolean interpolate = ((JCheckBoxMenuItem) e.getSource()).isSelected();
-                getPlot().getBlockRenderer().setInterpolate(interpolate);
-                getPlot().getDataPool().setInterpolate(interpolate);
-                getPlot().notifyPlotChange();
-            }
+            SwingContourPlot.this.ignoreEvent = true;
+            boolean interpolate = ((JCheckBoxMenuItem) e.getSource()).isSelected();
+            getPlot().getBlockRenderer().setInterpolate(interpolate);
+            getPlot().getDataPool().setInterpolate(interpolate);
+            getPlot().notifyPlotChange();
+            SwingContourPlot.this.ignoreEvent = false;
         });
         popupMenu.insert(this.interpolateCheckBox, 3);
     }
@@ -115,26 +119,24 @@ public class SwingContourPlot extends SwingSpaceTimePlot
             granularityButtons.put(item, value);
             item.setSelected(value == initialValue);
             item.setActionCommand(command);
-            item.addActionListener(new ActionListener()
+            item.addActionListener((actionEvent) ->
             {
-                @Override
-                public void actionPerformed(final ActionEvent actionEvent)
+                SwingContourPlot.this.ignoreEvent = true;
+                if (command.equalsIgnoreCase("setSpaceGranularity"))
                 {
-                    if (command.equalsIgnoreCase("setSpaceGranularity"))
-                    {
-                        double granularity = SwingContourPlot.this.spaceGranularityButtons.get(actionEvent.getSource());
-                        getPlot().getDataPool().setGranularity(Dimension.DISTANCE, granularity);
-                    }
-                    else if (command.equalsIgnoreCase("setTimeGranularity"))
-                    {
-                        double granularity = SwingContourPlot.this.timeGranularityButtons.get(actionEvent.getSource());
-                        getPlot().getDataPool().setGranularity(Dimension.TIME, granularity);
-                    }
-                    else
-                    {
-                        throw new RuntimeException("Unknown ActionEvent");
-                    }
+                    double granularity = SwingContourPlot.this.spaceGranularityButtons.get(actionEvent.getSource());
+                    getPlot().getDataPool().offerGranularity(Dimension.DISTANCE, granularity);
                 }
+                else if (command.equalsIgnoreCase("setTimeGranularity"))
+                {
+                    double granularity = SwingContourPlot.this.timeGranularityButtons.get(actionEvent.getSource());
+                    getPlot().getDataPool().offerGranularity(Dimension.TIME, granularity);
+                }
+                else
+                {
+                    throw new RuntimeException("Unknown ActionEvent");
+                }
+                SwingContourPlot.this.ignoreEvent = false;
             });
             result.add(item);
             group.add(item);
@@ -148,52 +150,34 @@ public class SwingContourPlot extends SwingSpaceTimePlot
         return (AbstractContourPlot<?>) super.getPlot();
     }
 
-    /**
-     * Sets the correct space granularity radio button to selected. This is done from a {@code DataPool} to keep multiple plots
-     * consistent.
-     * @param granularity space granularity
-     */
-    protected final void setSpaceGranularityRadioButton(final double granularity)
+
+    @Override
+    public void notify(final Event event) throws RemoteException
     {
-        getPlot().setSpaceGranularity(granularity);
-        for (JRadioButtonMenuItem button : this.spaceGranularityButtons.keySet())
+        if (this.ignoreEvent)
         {
-            button.setSelected(this.spaceGranularityButtons.get(button) == granularity);
+            return;
         }
-    }
-
-    /**
-     * Sets the correct time granularity radio button to selected. This is done from a {@code DataPool} to keep multiple plots
-     * consistent.
-     * @param granularity time granularity
-     */
-    protected final void setTimeGranularityRadioButton(final double granularity)
-    {
-        getPlot().setTimeGranularity(granularity);
-        for (JRadioButtonMenuItem button : this.timeGranularityButtons.keySet())
+        if (event.getType().equals(ContourDataSource.GRANULARITY))
         {
-            button.setSelected(this.timeGranularityButtons.get(button) == granularity);
+            Object[] payload = (Object[]) event.getContent();
+            Dimension dimension = (Dimension) payload[0];
+            double granularity = (double) payload[1];
+            Map<JRadioButtonMenuItem, Double> buttonMap =
+                    Dimension.DISTANCE.equals(dimension) ? this.spaceGranularityButtons : this.timeGranularityButtons;
+            for (JRadioButtonMenuItem button : buttonMap.keySet())
+            {
+                button.setSelected(Math.abs(buttonMap.get(button) - granularity) < 0.001);
+            }
         }
-    }
-
-    /**
-     * Sets the check box for smooth rendering. This is done from a {@code DataPool} to keep multiple plots consistent.
-     * @param smooth selected or not
-     */
-    protected final void setSmoothing(final boolean smooth)
-    {
-        this.smoothCheckBox.setSelected(smooth);
-    }
-
-    /**
-     * Sets the check box for interpolated rendering and block renderer setting. This is done from a {@code DataPool} to keep
-     * multiple plots consistent.
-     * @param interpolate selected or not
-     */
-    protected final void setInterpolation(final boolean interpolate)
-    {
-        getPlot().setInterpolation(interpolate);
-        this.interpolateCheckBox.setSelected(interpolate);
+        else if (event.getType().equals(ContourDataSource.INTERPOLATE))
+        {
+            this.interpolateCheckBox.setSelected((boolean) event.getContent());
+        }
+        else if (event.getType().equals(ContourDataSource.SMOOTH))
+        {
+            this.smoothCheckBox.setSelected((boolean) event.getContent());
+        }
     }
 
 }
