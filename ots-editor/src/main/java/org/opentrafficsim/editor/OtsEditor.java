@@ -387,18 +387,12 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         // attributes table
         AttributesTableModel tableModel = new AttributesTableModel(null, this.treeTable);
         DefaultTableColumnModel columns = new DefaultTableColumnModel();
-        TableColumn column1 = new TableColumn(0);
-        column1.setHeaderValue(tableModel.getColumnName(0));
-        columns.addColumn(column1);
-        TableColumn column2 = new TableColumn(1);
-        column2.setHeaderValue(tableModel.getColumnName(1));
-        columns.addColumn(column2);
-        TableColumn column3 = new TableColumn(2);
-        column3.setHeaderValue(tableModel.getColumnName(2));
-        columns.addColumn(column3);
-        TableColumn column4 = new TableColumn(3);
-        column4.setHeaderValue(tableModel.getColumnName(3));
-        columns.addColumn(column4);
+        for (int i = 0; i < tableModel.getColumnCount(); i++)
+        {
+            TableColumn column = new TableColumn(i);
+            column.setHeaderValue(tableModel.getColumnName(i));
+            columns.addColumn(column);
+        }
         this.attributesTable = new JTable(tableModel, columns);
         this.attributesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.attributesTable.putClientProperty("terminateEditOnFocusLost", true);
@@ -1014,13 +1008,13 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
         SwingUtilities.invokeLater(() ->
         {
             XsdTreeNode node = (XsdTreeNode) this.treeTable.getValueAt(this.treeTable.getSelectedRow(),
-                    this.treeTable.convertColumnIndexToView(0)); // columns may have been moved in view;
+                    this.treeTable.convertColumnIndexToView(XsdTreeTableModel.TREE_COLUMN)); // columns may have been moved
             int col = this.treeTable.convertColumnIndexToModel(this.treeTable.getSelectedColumn());
-            if (col == 1)
+            if (col == XsdTreeTableModel.ID_COLUMN)
             {
                 this.undo.startAction(ActionType.ID_CHANGE, node, null);
             }
-            else if (col == 2)
+            else if (col == XsdTreeTableModel.VALUE_COLUMN)
             {
                 this.undo.startAction(ActionType.VALUE_CHANGE, node, null);
             }
@@ -1035,7 +1029,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     public XsdTreeNode getTreeNodeAtPoint(final Point point)
     {
         int row = this.treeTable.rowAtPoint(point);
-        int col = this.treeTable.convertColumnIndexToView(0); // columns may have been moved in view
+        int col = this.treeTable.convertColumnIndexToView(XsdTreeTableModel.TREE_COLUMN); // columns may have been moved
         return (XsdTreeNode) this.treeTable.getValueAt(row, col);
     }
 

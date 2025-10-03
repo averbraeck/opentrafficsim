@@ -12,6 +12,7 @@ import javax.swing.event.ChangeEvent;
 
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.XsdTreeTableModel;
 
 import de.javagl.treetable.JTreeTable;
 
@@ -80,16 +81,16 @@ public class XsdTreeEditorListener extends KeyAdapter implements FocusListener, 
     private void setValue(final JTextField textField)
     {
         int editorCol = this.treeTable.convertColumnIndexToView(this.treeTable.getSelectedColumn());
-        if (editorCol == 1 || editorCol == 2)
+        if (editorCol == XsdTreeTableModel.ID_COLUMN || editorCol == XsdTreeTableModel.VALUE_COLUMN)
         {
             int row = this.treeTable.getSelectedRow();
-            int col = this.treeTable.convertColumnIndexToView(0); // columns may have been moved in view
+            int col = this.treeTable.convertColumnIndexToView(XsdTreeTableModel.TREE_COLUMN); // columns may have been moved
             XsdTreeNode treeNode = (XsdTreeNode) this.treeTable.getValueAt(row, col);
-            if (editorCol == 1)
+            if (editorCol == XsdTreeTableModel.ID_COLUMN)
             {
                 treeNode.setId(textField.getText());
             }
-            else if (editorCol == 2)
+            else if (editorCol == XsdTreeTableModel.VALUE_COLUMN)
             {
                 treeNode.setValue(textField.getText());
             }

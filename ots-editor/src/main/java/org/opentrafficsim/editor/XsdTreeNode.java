@@ -895,7 +895,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     public Node getAttributeNode(final int index)
     {
         assureAttributesAndDescription();
-        Objects.checkIndex(index, this.attributeCount());
+        Objects.checkIndex(index, attributeCount());
         return this.attributeNodes.get(index);
     }
 
@@ -908,7 +908,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     @SuppressWarnings("checkstyle:hiddenfield")
     public void setAttributeValue(final int index, final String value)
     {
-        Objects.checkIndex(index, this.attributeCount());
+        Objects.checkIndex(index, attributeCount());
         String previous = this.attributeValues.get(index);
         if (!XsdTreeNodeUtil.valuesAreEqual(previous, value))
         {
@@ -938,7 +938,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     public String getDefaultAttributeValue(final int index)
     {
         assureAttributesAndDescription();
-        Objects.checkIndex(index, this.attributeCount());
+        Objects.checkIndex(index, attributeCount());
         return DocumentReader.getAttribute(this.attributeNodes.get(index), "default");
     }
 
@@ -963,7 +963,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     public String getAttributeValue(final int index)
     {
         assureAttributesAndDescription();
-        Objects.checkIndex(index, this.attributeCount());
+        Objects.checkIndex(index, attributeCount());
         return this.attributeValues.get(index);
     }
 
@@ -1135,7 +1135,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         if (this.isIdentifiable == null)
         {
             assureAttributesAndDescription();
-            for (int index = 0; index < this.attributeCount(); index++)
+            for (int index = 0; index < attributeCount(); index++)
             {
                 Node node = this.attributeNodes.get(index);
                 if (DocumentReader.getAttribute(node, "name").equals("Id"))
@@ -2386,7 +2386,7 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
             element.setTextContent(this.value);
         }
 
-        for (int index = 0; index < this.attributeCount(); index++)
+        for (int index = 0; index < attributeCount(); index++)
         {
             String attributeValue = this.attributeValues.get(index);
             if (attributeValue != null && !attributeValue.isEmpty())

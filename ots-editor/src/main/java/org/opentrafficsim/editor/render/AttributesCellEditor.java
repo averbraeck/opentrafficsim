@@ -95,7 +95,7 @@ public class AttributesCellEditor extends DefaultCellEditor
         XsdTreeNode node = ((AttributesTableModel) table.getModel()).getNode();
         String attribute = DocumentReader.getAttribute(node.getAttributeNode(row), "name");
         this.editor.getUndo().startAction(ActionType.ATTRIBUTE_CHANGE, node, attribute);
-        if (table.convertColumnIndexToModel(column) == 1)
+        if (table.convertColumnIndexToModel(column) == AttributesTableModel.VALUE_COLUMN)
         {
             this.checkBox.setVisible(false);
             if ("xsd:boolean".equals(node.getAttributeBaseType(row)))
@@ -140,7 +140,7 @@ public class AttributesCellEditor extends DefaultCellEditor
         }
         this.checkMode = false;
         // JTable.GenericEditor cannot be extended, setting a black border on the wrapped JTextField is the main thing it does
-        ((JComponent) getComponent()).setBorder(new LineBorder(Color.black));
+        ((JComponent) getComponent()).setBorder(new LineBorder(Color.BLACK));
         return super.getTableCellEditorComponent(table, value, isSelected, row, column);
     }
 }

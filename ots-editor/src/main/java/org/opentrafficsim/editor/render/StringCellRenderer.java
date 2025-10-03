@@ -12,6 +12,7 @@ import javax.swing.table.TableCellRenderer;
 
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
+import org.opentrafficsim.editor.XsdTreeTableModel;
 
 import de.javagl.treetable.JTreeTable;
 
@@ -56,9 +57,9 @@ public class StringCellRenderer extends JLabel implements TableCellRenderer
         }
         else
         {
-            int treeColumn = this.treeTable.convertColumnIndexToView(0); // columns may have been moved in view
-            int idColumn = this.treeTable.convertColumnIndexToView(1);
-            int valueColumn = this.treeTable.convertColumnIndexToView(2);
+            int treeColumn = this.treeTable.convertColumnIndexToView(XsdTreeTableModel.TREE_COLUMN); // columns may be moved
+            int idColumn = this.treeTable.convertColumnIndexToView(XsdTreeTableModel.ID_COLUMN);
+            int valueColumn = this.treeTable.convertColumnIndexToView(XsdTreeTableModel.VALUE_COLUMN);
             XsdTreeNode node = (XsdTreeNode) this.treeTable.getValueAt(row, treeColumn);
             String message = node.isSelfValid() ? null : (column == idColumn ? node.reportInvalidId()
                     : (column == valueColumn ? node.reportInvalidValue() : null));

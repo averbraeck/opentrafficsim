@@ -33,6 +33,7 @@ import org.opentrafficsim.editor.Undo.ActionType;
 import org.opentrafficsim.editor.XsdOption;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
+import org.opentrafficsim.editor.XsdTreeTableModel;
 
 import de.javagl.treetable.JTreeTable;
 
@@ -252,7 +253,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
             {
                 XsdTreeNode treeNode = this.editor.getTreeNodeAtPoint(e.getPoint());
                 int colNumber = this.treeTable.convertColumnIndexToModel(col);
-                if (colNumber == 1 && treeNode.isIdentifiable())
+                if (colNumber == XsdTreeTableModel.ID_COLUMN && treeNode.isIdentifiable())
                 {
                     List<String> allOptions = treeNode.getIdRestrictions();
                     this.editor.valueOptionsPopup(allOptions, this.treeTable, (t) ->
@@ -260,7 +261,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
                         treeNode.setId(t);
                     });
                 }
-                else if (colNumber == 2)
+                else if (colNumber == XsdTreeTableModel.VALUE_COLUMN)
                 {
                     List<String> allOptions = treeNode.getValueRestrictions();
                     this.editor.valueOptionsPopup(allOptions, this.treeTable, (t) ->
@@ -278,8 +279,8 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
         XsdTreeNode treeNode = this.editor.getTreeNodeAtPoint(e.getPoint());
         if (e.getButton() == MouseEvent.BUTTON1)
         {
-            if (e.getClickCount() > 1
-                    && this.treeTable.convertColumnIndexToModel(this.treeTable.columnAtPoint(e.getPoint())) == 0)
+            if (e.getClickCount() > 1 && this.treeTable
+                    .convertColumnIndexToModel(this.treeTable.columnAtPoint(e.getPoint())) == XsdTreeTableModel.TREE_COLUMN)
             {
                 // activate
                 if (!treeNode.isActive() && !treeNode.isIncluded())
@@ -297,7 +298,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
                 return;
             }
             int col = this.treeTable.columnAtPoint(e.getPoint());
-            if (this.treeTable.convertColumnIndexToModel(col) != 0)
+            if (this.treeTable.convertColumnIndexToModel(col) != XsdTreeTableModel.TREE_COLUMN)
             {
                 return;
             }

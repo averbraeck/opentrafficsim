@@ -1,6 +1,7 @@
 package org.opentrafficsim.editor;
 
 import java.rmi.RemoteException;
+import java.util.Arrays;
 
 import javax.swing.SwingUtilities;
 
@@ -23,6 +24,15 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
 
     /** Column names. */
     private static final String[] COLUMN_NAMES = new String[] {"Item", "Id", "Value", "#"};
+
+    /** Index of the tree column. */
+    public static final int TREE_COLUMN = Arrays.asList(COLUMN_NAMES).indexOf("Item");
+
+    /** Index of the Id column. */
+    public static final int ID_COLUMN = Arrays.asList(COLUMN_NAMES).indexOf("Id");
+
+    /** Index of the Value column. */
+    public static final int VALUE_COLUMN = Arrays.asList(COLUMN_NAMES).indexOf("Value");
 
     /** Minimum column widths. */
     private static final int[] MIN_COLUMN_WIDTHS = new int[] {100, 50, 50, 30};
@@ -77,11 +87,11 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
     @Override
     public Object getValueAt(final Object node, final int column)
     {
-        if (column == 0)
+        if (column == TREE_COLUMN)
         {
             return node; // required for tree view of column 0
         }
-        if (column == 1)
+        if (column == ID_COLUMN)
         {
             if (((XsdTreeNode) node).isIdentifiable())
             {
@@ -89,7 +99,7 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
             }
             return "";
         }
-        else if (column == 2)
+        else if (column == VALUE_COLUMN)
         {
             if (((XsdTreeNode) node).isEditable())
             {
@@ -130,26 +140,26 @@ public class XsdTreeTableModel extends AbstractTreeTableModel
     @Override
     public boolean isCellEditable(final Object node, final int column)
     {
-        if (column == 0)
+        if (column == TREE_COLUMN)
         {
             return true; // required for tree in column 0
         }
         XsdTreeNode treeNode = (XsdTreeNode) node;
-        if (column == 1)
+        if (column == ID_COLUMN)
         {
             return treeNode.isIdentifiable() && !treeNode.isIncluded();
         }
-        return treeNode.isEditable() && column == 2 && !treeNode.isIncluded();
+        return treeNode.isEditable() && column == VALUE_COLUMN && !treeNode.isIncluded();
     }
 
     @Override
     public void setValueAt(final Object aValue, final Object node, final int column)
     {
-        if (column == 1)
+        if (column == ID_COLUMN)
         {
             ((XsdTreeNode) node).setId(aValue.toString());
         }
-        else if (column == 2)
+        else if (column == VALUE_COLUMN)
         {
             ((XsdTreeNode) node).setValue(aValue.toString());
         }

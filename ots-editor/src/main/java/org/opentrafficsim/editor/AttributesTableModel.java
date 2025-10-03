@@ -1,5 +1,7 @@
 package org.opentrafficsim.editor;
 
+import java.util.Arrays;
+
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
@@ -25,6 +27,18 @@ public class AttributesTableModel extends AbstractTableModel
 
     /** Column names. */
     private static final String[] COLUMN_NAMES = new String[] {"Property", "Value", "Use", ""};
+
+    /** Index of the property column. */
+    public static final int PROPERTY_COLUMN = Arrays.asList(COLUMN_NAMES).indexOf("Property");
+
+    /** Index of the value column. */
+    public static final int VALUE_COLUMN = Arrays.asList(COLUMN_NAMES).indexOf("Value");
+
+    /** Index of the use column. */
+    public static final int USE_COLUMN = Arrays.asList(COLUMN_NAMES).indexOf("Use");
+
+    /** Index of the description column. */
+    public static final int DESCRIPTION_COLUMN = Arrays.asList(COLUMN_NAMES).indexOf("");
 
     /** Minimum column widths. */
     private static final int[] MIN_COLUMN_WIDTHS = new int[] {50, 50, 30, 20};
@@ -83,34 +97,38 @@ public class AttributesTableModel extends AbstractTableModel
             // disable check boxes regarding the 'Default' status of definitions as definitions edited in the editor never are
             return false;
         }
-        return columnIndex == 1 && !this.node.isIncluded();
+        return columnIndex == VALUE_COLUMN && !this.node.isIncluded();
     }
 
     @Override
     public Object getValueAt(final int rowIndex, final int columnIndex)
     {
         Node attribute = this.node.getAttributeNode(rowIndex);
-        switch (columnIndex)
+        if (columnIndex == PROPERTY_COLUMN)
         {
-            case 0:
-                return XsdTreeNodeUtil.separatedName(DocumentReader.getAttribute(attribute, "name"));
-            case 1:
-                Object value = this.node.getAttributeValue(rowIndex);
-                return value;
-            case 2:
-                String use = DocumentReader.getAttribute(attribute, "use");
-                return use != null && use.equals("required") ? "*" : "";
-            case 3:
-                return NodeAnnotation.DESCRIPTION.get(attribute) != null ? "i" : null;
-            default:
-                throw new IndexOutOfBoundsException();
+            return XsdTreeNodeUtil.separatedName(DocumentReader.getAttribute(attribute, "name"));
         }
+        else if (columnIndex == VALUE_COLUMN)
+        {
+            Object value = this.node.getAttributeValue(rowIndex);
+            return value;
+        }
+        else if (columnIndex == USE_COLUMN)
+        {
+            String use = DocumentReader.getAttribute(attribute, "use");
+            return use != null && use.equals("required") ? "*" : "";
+        }
+        else if (columnIndex == DESCRIPTION_COLUMN)
+        {
+            return NodeAnnotation.DESCRIPTION.get(attribute) != null ? "i" : null;
+        }
+        throw new IndexOutOfBoundsException();
     }
 
     @Override
     public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex)
     {
-        Throw.when(columnIndex != 1, IllegalArgumentException.class,
+        Throw.when(columnIndex != VALUE_COLUMN, IllegalArgumentException.class,
                 "Attribute table model requested to set a value from a column that does not represent the attribute value.");
         if (aValue == null)
         {

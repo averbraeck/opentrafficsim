@@ -54,7 +54,7 @@ public class AttributesMouseListener extends MouseAdapter
         int row = this.attributesTable.rowAtPoint(e.getPoint());
         XsdTreeNode node = ((AttributesTableModel) this.attributesTable.getModel()).getNode();
         String description = NodeAnnotation.DESCRIPTION.get(node.getAttributeNode(row));
-        if (this.attributesTable.convertColumnIndexToModel(col) == 3
+        if (this.attributesTable.convertColumnIndexToModel(col) == AttributesTableModel.DESCRIPTION_COLUMN
                 && this.attributesTable.getModel().getValueAt(row, col) != null)
         {
             this.editor.showDescription(description);
@@ -81,7 +81,7 @@ public class AttributesMouseListener extends MouseAdapter
     {
         // show popup for attributes with a selection of allowable values (xsd:keyref, xsd:enumeration)
         int col = this.attributesTable.columnAtPoint(e.getPoint());
-        if (this.attributesTable.convertColumnIndexToModel(col) == 1)
+        if (this.attributesTable.convertColumnIndexToModel(col) == AttributesTableModel.VALUE_COLUMN)
         {
             int row = this.attributesTable.rowAtPoint(e.getPoint());
             XsdTreeNode node = ((AttributesTableModel) this.attributesTable.getModel()).getNode();

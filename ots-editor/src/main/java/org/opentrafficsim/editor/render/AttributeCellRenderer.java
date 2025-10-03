@@ -76,7 +76,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
             final boolean hasFocus, final int row, final int column)
     {
         XsdTreeNode node = null;
-        if (table.convertColumnIndexToModel(column) == 1)
+        if (table.convertColumnIndexToModel(column) == AttributesTableModel.VALUE_COLUMN)
         {
             node = ((AttributesTableModel) table.getModel()).getNode();
             String baseType = node.getAttributeBaseType(row);
@@ -130,7 +130,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
         }
 
         boolean showingDefault = false;
-        if (table.convertColumnIndexToModel(column) == 1)
+        if (table.convertColumnIndexToModel(column) == AttributesTableModel.VALUE_COLUMN)
         {
             if (value == null || value.toString().isEmpty())
             {
@@ -144,19 +144,20 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
                 setText(value.toString());
             }
         }
-        else if (table.convertColumnIndexToModel(column) < 3)
+        else if (table.convertColumnIndexToModel(column) == AttributesTableModel.DESCRIPTION_COLUMN)
         {
-            setText(value == null ? "" : value.toString());
+            setText("");
         }
         else
         {
-            setText("");
+            setText(value == null ? "" : value.toString());
+
         }
         setFont(table.getFont());
         table.setGridColor(table.getBackground());
         setIcon(null);
         setForeground(showingDefault ? OtsEditor.INACTIVE_COLOR : this.tableForgroundColor);
-        if (table.convertColumnIndexToModel(column) == 1)
+        if (table.convertColumnIndexToModel(column) == AttributesTableModel.VALUE_COLUMN)
         {
             String message = node.isSelfValid() ? null : node.reportInvalidAttributeValue(row);
             if (message != null)
@@ -186,7 +187,7 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
         {
             setToolTipText(null);
             setBorder(EMPTY_BORDER);
-            if (table.convertColumnIndexToModel(column) == 3 && value != null)
+            if (table.convertColumnIndexToModel(column) == AttributesTableModel.DESCRIPTION_COLUMN && value != null)
             {
                 setIcon(this.infoIcon);
             }
@@ -199,7 +200,8 @@ public class AttributeCellRenderer extends JLabel implements TableCellRenderer
                 setBackground(table.getBackground());
             }
         }
-        if (table.convertColumnIndexToModel(column) > 1)
+        if (table.convertColumnIndexToModel(column) == AttributesTableModel.USE_COLUMN
+                || table.convertColumnIndexToModel(column) == AttributesTableModel.DESCRIPTION_COLUMN)
         {
             setHorizontalAlignment(SwingConstants.CENTER);
         }
