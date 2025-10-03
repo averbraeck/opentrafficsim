@@ -19,7 +19,7 @@ The following steps are undertaken to publish a new release.
     - Create a new Tag under 'Choose a tag'. For the tag name use _vX.Y.Z_, where _X.Y.Z_ should match the version.
     - Release title: _OTS vX.Y.Z_, where _vX.Y.Z_ should match the tag.
     - In the main text field, describe the release. It is common practice to enumerate all the included issues since the previous release.
-5. The click 'Publish release`.
+5. Then click 'Publish release`.
 
 After this a Github Action named _Maven Package to Central (v3)_, defined in `maven-publish.yml` is executed. This runs various tests and when successful, eventually publishes new jar-files of the various OTS projects to Maven Central.
 
