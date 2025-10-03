@@ -4,9 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -44,13 +44,13 @@ public final class EstimationTest
     @Test
     public void testEstimation() throws ParameterException, OperationalPlanException
     {
-        singleEstimation(Estimation.FACTOR_ESTIMATION, 0.9, Time.instantiateSI(59.0));
-        singleEstimation(Estimation.FACTOR_ESTIMATION, 0.9, Time.instantiateSI(58.0));
-        singleEstimation(Estimation.FACTOR_ESTIMATION, 0.5, Time.instantiateSI(59.0));
-        singleEstimation(Estimation.FACTOR_ESTIMATION, 0.8, Time.instantiateSI(58.0));
+        singleEstimation(Estimation.FACTOR_ESTIMATION, 0.9, Duration.instantiateSI(59.0));
+        singleEstimation(Estimation.FACTOR_ESTIMATION, 0.9, Duration.instantiateSI(58.0));
+        singleEstimation(Estimation.FACTOR_ESTIMATION, 0.5, Duration.instantiateSI(59.0));
+        singleEstimation(Estimation.FACTOR_ESTIMATION, 0.8, Duration.instantiateSI(58.0));
         // Mimic NONE estimation by using 1.0 for the situational awareness (all equations multiplied by 1)
-        singleEstimation(Estimation.NONE, 1.0, Time.instantiateSI(59.0));
-        singleEstimation(Estimation.NONE, 1.0, Time.instantiateSI(58.0));
+        singleEstimation(Estimation.NONE, 1.0, Duration.instantiateSI(59.0));
+        singleEstimation(Estimation.NONE, 1.0, Duration.instantiateSI(58.0));
     }
 
     /**
@@ -61,11 +61,11 @@ public final class EstimationTest
      * @throws ParameterException exception
      * @throws OperationalPlanException exception
      */
-    private void singleEstimation(final Estimation estimation, final double sa, final Time estTime)
+    private void singleEstimation(final Estimation estimation, final double sa, final Duration estTime)
             throws ParameterException, OperationalPlanException
     {
         // Scenario
-        Time now = Time.instantiateSI(60.0);
+        Duration now = Duration.instantiateSI(60.0);
         Speed egoSpeed = Speed.instantiateSI(26.0);
         Speed otherSpeed = Speed.instantiateSI(25.0);
         Length egoPosition = Length.instantiateSI(200.0);
@@ -81,8 +81,8 @@ public final class EstimationTest
         perceivingParameters.setParameter(AdaptationSituationalAwareness.SA, sa);
         Mockito.when(perceivingGtu.getParameters()).thenReturn(perceivingParameters);
         Mockito.when(perceivingGtu.getOdometer()).thenReturn(egoPosition);
-        Mockito.when(perceivingGtu.getSpeed(any(Time.class))).thenReturn(egoSpeed);
-        Mockito.when(perceivingGtu.getOdometer(any(Time.class)))
+        Mockito.when(perceivingGtu.getSpeed(any(Duration.class))).thenReturn(egoSpeed);
+        Mockito.when(perceivingGtu.getOdometer(any(Duration.class)))
                 .thenAnswer((t) -> egoPosition.minus(now.minus(estTime).times(egoSpeed)));
         EgoPerception<?, ?> ego = Mockito.mock(EgoPerception.class);
         Mockito.when(ego.getSpeed()).thenReturn(egoSpeed);
@@ -94,10 +94,10 @@ public final class EstimationTest
         // Perceived GTU
         LaneBasedGtu perceivedGtu = Mockito.mock(LaneBasedGtu.class);
         Mockito.when(perceivedGtu.getOdometer()).thenReturn(otherPosition);
-        Mockito.when(perceivedGtu.getOdometer(any(Time.class)))
+        Mockito.when(perceivedGtu.getOdometer(any(Duration.class)))
                 .thenAnswer((t) -> otherPosition.minus(now.minus(estTime).times(otherSpeed)));
-        Mockito.when(perceivedGtu.getSpeed(any(Time.class))).thenReturn(otherSpeed);
-        Mockito.when(perceivedGtu.getAcceleration(any(Time.class))).thenReturn(Acceleration.ZERO);
+        Mockito.when(perceivedGtu.getSpeed(any(Duration.class))).thenReturn(otherSpeed);
+        Mockito.when(perceivedGtu.getAcceleration(any(Duration.class))).thenReturn(Acceleration.ZERO);
 
         // == static reference ==
         // downstream: vehicle is 30m downstream, was closer

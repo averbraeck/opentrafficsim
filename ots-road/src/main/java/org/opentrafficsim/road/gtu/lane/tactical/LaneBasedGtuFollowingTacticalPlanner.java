@@ -2,7 +2,6 @@ package org.opentrafficsim.road.gtu.lane.tactical;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -49,7 +48,7 @@ public class LaneBasedGtuFollowingTacticalPlanner extends AbstractLaneBasedTacti
     }
 
     @Override
-    public final OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint2d locationAtStartTime)
+    public final OperationalPlan generateOperationalPlan(final Duration startTime, final DirectedPoint2d locationAtStartTime)
             throws NetworkException, GtuException, ParameterException
     {
         // ask Perception for the local situation

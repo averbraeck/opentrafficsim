@@ -2,7 +2,7 @@ package org.opentrafficsim.core.perception.collections;
 
 import java.util.Deque;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 
 /**
  * Interface for historical deques.
@@ -27,10 +27,10 @@ public interface HistoricalDeque<E> extends HistoricalQueue<E>, Deque<E>
 
     /**
      * Returns a past deque.
-     * @param time time to obtain the deque at
+     * @param time simulation time to obtain the deque at
      * @return past deque
      */
     @Override
-    Deque<E> get(Time time);
+    Deque<E> get(Duration time);
 
 }

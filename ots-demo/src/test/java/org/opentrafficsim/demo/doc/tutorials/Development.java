@@ -3,6 +3,7 @@ package org.opentrafficsim.demo.doc.tutorials;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.profile.Profile;
 import org.junit.jupiter.api.Test;
@@ -107,7 +108,7 @@ public class Development
         }
 
         // @docs/08-tutorials/development.md#how-to-make-a-property-historical
-        public double[][] getMatrix(final Time time)
+        public double[][] getMatrix(final Duration time)
         {
             double[][] out = getMatrix();
             for (EventMatrix event : getEvents(time))

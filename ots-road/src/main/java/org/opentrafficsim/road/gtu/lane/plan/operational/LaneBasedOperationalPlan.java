@@ -1,6 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.plan.operational;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -37,8 +37,8 @@ public class LaneBasedOperationalPlan extends OperationalPlan
      * @throws OperationalPlanException when the path is too short for the operation
      */
     @SuppressWarnings("checkstyle:parameternumber")
-    public LaneBasedOperationalPlan(final LaneBasedGtu gtu, final OtsLine2d path, final Time startTime, final Segments segments,
-            final boolean deviative) throws OperationalPlanException
+    public LaneBasedOperationalPlan(final LaneBasedGtu gtu, final OtsLine2d path, final Duration startTime,
+            final Segments segments, final boolean deviative) throws OperationalPlanException
     {
         super(gtu, path, startTime, segments);
         this.deviative = deviative;

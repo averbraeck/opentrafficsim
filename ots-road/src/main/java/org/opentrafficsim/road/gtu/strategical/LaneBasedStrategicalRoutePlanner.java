@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -107,7 +107,7 @@ public class LaneBasedStrategicalRoutePlanner implements LaneBasedStrategicalPla
     }
 
     @Override
-    public LaneBasedTacticalPlanner getTacticalPlanner(final Time time)
+    public LaneBasedTacticalPlanner getTacticalPlanner(final Duration time)
     {
         return this.fixedTacticalPlanner; // fixed anyway
     }

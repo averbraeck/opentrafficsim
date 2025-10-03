@@ -4,9 +4,9 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.djunits.unit.DurationUnit;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vfloat.scalar.FloatDuration;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -49,7 +49,7 @@ public class TimeToCollision extends ExtendedDataDuration<GtuDataRoad>
             set.add(ref.lane());
             Length pos = ref.position();
             Length cumulDist = Length.ZERO; // from start of lane
-            Time now = gtuObj.getSimulator().getSimulatorAbsTime();
+            Duration now = gtuObj.getSimulator().getSimulatorTime();
             LaneBasedGtu next = null;
             while (set.size() == 1)
             {

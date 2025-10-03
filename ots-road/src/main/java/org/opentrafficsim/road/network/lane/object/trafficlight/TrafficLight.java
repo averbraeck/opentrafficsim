@@ -4,8 +4,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
@@ -94,10 +94,10 @@ public class TrafficLight extends AbstractLaneBasedObject
 
     /**
      * Get the traffic light color in the past.
-     * @param time time to obtain traffic light color.
+     * @param time simulation time to obtain traffic light color.
      * @return current traffic light color.
      */
-    public final TrafficLightColor getTrafficLightColor(final Time time)
+    public final TrafficLightColor getTrafficLightColor(final Duration time)
     {
         return this.trafficLightColor.get(time);
     }

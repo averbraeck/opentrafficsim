@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.perception;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 
 /**
  * Simple implementation without history that can be used inside a generic context where also implementations with history can
@@ -42,7 +42,7 @@ public class NullHistorical<T> implements Historical<T>
     }
 
     @Override
-    public T get(final Time time)
+    public T get(final Duration time)
     {
         return this.val;
     }

@@ -373,7 +373,7 @@ public final class Sim0mqPublisher
                             return false;
 
                         case "SIMULATEUNTIL":
-                            if (message.length == 9 && message[8] instanceof Time)
+                            if (message.length == 9 && message[8] instanceof Duration)
                             {
                                 System.out.println("Simulating up to " + message[8]);
                                 if (null == this.network)
@@ -398,7 +398,7 @@ public final class Sim0mqPublisher
                                 ReturnWrapper returnWrapper = new ReturnWrapperImpl(this.zContext, new Object[] {"SIM01", true,
                                         message[2], message[3], message[4], message[5], message[6], 0}, socketMap);
                                 returnWrapper.ack(resultMessage);
-                                simulator.runUpTo((Time) message[8]);
+                                simulator.runUpTo((Duration) message[8]);
                                 int count = 0;
                                 while (this.network.getSimulator().isStartingOrRunning())
                                 {

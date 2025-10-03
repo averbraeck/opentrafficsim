@@ -3,7 +3,7 @@ package org.opentrafficsim.core.perception.collections;
 import java.util.Collection;
 import java.util.PriorityQueue;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.core.perception.HistoryManager;
 
 /**
@@ -52,7 +52,7 @@ public class HistoricalPriorityQueue<E> extends AbstractHistoricalQueue<E, Prior
     }
 
     @Override
-    public PriorityQueue<E> get(final Time time)
+    public PriorityQueue<E> get(final Duration time)
     {
         if (isLastState(time))
         {

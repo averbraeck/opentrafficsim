@@ -3,7 +3,7 @@ package org.opentrafficsim.core.perception.collections;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.core.perception.HistoryManager;
 
 /**
@@ -52,7 +52,7 @@ public class HistoricalArrayList<E> extends AbstractHistoricalList<E, ArrayList<
     }
 
     @Override
-    public ArrayList<E> get(final Time time)
+    public ArrayList<E> get(final Duration time)
     {
         if (isLastState(time))
         {

@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.network.lane;
 
 import org.djunits.unit.DurationUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
@@ -118,7 +117,7 @@ public final class DetectorTest implements UNITS
                 new LaneBasedStrategicalRoutePlanner(new LaneBasedGtuFollowingTacticalPlanner(fas, car), car);
         car.setParameters(parameters);
         car.init(strategicalPlanner, initialLongitudinalPositions.getLocation(), initialSpeed);
-        simulator.runUpTo(new Time(1, TimeUnit.BASE_SECOND));
+        simulator.runUpTo(Duration.ONE);
         if (!simulator.isStartingOrRunning())
         {
             simulator.start();

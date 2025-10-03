@@ -76,8 +76,8 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructu
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectIntersectionPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.PerceivedGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.PerceivedGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
@@ -589,7 +589,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
         }
 
         @Override
-        public OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint2d locationAtStartTime)
+        public OperationalPlan generateOperationalPlan(final Duration startTime, final DirectedPoint2d locationAtStartTime)
                 throws GtuException, NetworkException, ParameterException
         {
             // get some general input

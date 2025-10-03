@@ -3,7 +3,6 @@ package org.opentrafficsim.core.perception;
 import java.rmi.RemoteException;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.exceptions.Try;
@@ -62,9 +61,9 @@ public class HistoryManagerDevs extends HistoryManager implements EventListener
     }
 
     @Override
-    public Time now()
+    public Duration now()
     {
-        return this.simulator.getSimulatorAbsTime();
+        return this.simulator.getSimulatorTime();
     }
 
     /**

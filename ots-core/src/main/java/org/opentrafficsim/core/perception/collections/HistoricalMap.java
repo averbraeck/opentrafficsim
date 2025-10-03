@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 
 /**
  * Interface for historical maps.
@@ -31,10 +31,10 @@ public interface HistoricalMap<K, V> extends Map<K, V>
 
     /**
      * Returns a past map.
-     * @param time time to obtain the map at
+     * @param time simulation time to obtain the map at
      * @return past map
      */
-    Map<K, V> get(Time time);
+    Map<K, V> get(Duration time);
 
     @Override
     default void replaceAll(final BiFunction<? super K, ? super V, ? extends V> function)

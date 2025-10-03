@@ -13,9 +13,9 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.djunits.unit.LengthUnit;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
@@ -94,7 +94,7 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     private List<LaneBasedGtu> gtuListAtTime = null;
 
     /** Time of last returned GTU list. */
-    private Time gtuListTime = null;
+    private Duration gtuListTime = null;
 
     /**
      * Adjacent left lanes that some GTU types can change onto. Left is defined relative to the direction of the design line of
@@ -763,12 +763,12 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * compared to the DESIGN LINE.
      * @param position the position before which the relative position of a GTU will be searched.
      * @param relativePosition RelativePosition.TYPE; the relative position we want to compare against
-     * @param when the time for which to evaluate the positions.
+     * @param when the simulation time for which to evaluate the positions.
      * @return the first GTU before a position on this lane in the given direction, or null if no GTU could be found.
      * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
-    public final LaneBasedGtu getGtuAhead(final Length position, final RelativePosition.Type relativePosition, final Time when)
-            throws GtuException
+    public final LaneBasedGtu getGtuAhead(final Length position, final RelativePosition.Type relativePosition,
+            final Duration when) throws GtuException
     {
         List<LaneBasedGtu> list = this.gtuList.get(when);
         if (list.isEmpty())
@@ -796,8 +796,8 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
      * @return the first GTU after a position on this lane in the given direction, or null if no GTU could be found.
      * @throws GtuException when there is a problem with the position of the GTUs on the lane.
      */
-    public final LaneBasedGtu getGtuBehind(final Length position, final RelativePosition.Type relativePosition, final Time when)
-            throws GtuException
+    public final LaneBasedGtu getGtuBehind(final Length position, final RelativePosition.Type relativePosition,
+            final Duration when) throws GtuException
     {
         List<LaneBasedGtu> list = this.gtuList.get(when);
         if (list.isEmpty())
@@ -1269,10 +1269,10 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Returns the list of GTU's at the specified time.
-     * @param time time
+     * @param time simulation time
      * @return list of GTU's at the specified times
      */
-    public final List<LaneBasedGtu> getGtuList(final Time time)
+    public final List<LaneBasedGtu> getGtuList(final Duration time)
     {
         if (time.equals(this.gtuListTime))
         {
@@ -1294,10 +1294,10 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
 
     /**
      * Returns the number of GTU's at specified time.
-     * @param time time
+     * @param time simulation time
      * @return number of GTU's.
      */
-    public final int numberOfGtus(final Time time)
+    public final int numberOfGtus(final Duration time)
     {
         return getGtuList(time).size();
     }
@@ -1328,10 +1328,10 @@ public class Lane extends CrossSectionElement implements HierarchicallyTyped<Lan
     /**
      * Returns the index'th GTU at specified time.
      * @param index index of the GTU
-     * @param time time
+     * @param time simulation time
      * @return the index'th GTU
      */
-    public final LaneBasedGtu getGtu(final int index, final Time time)
+    public final LaneBasedGtu getGtu(final int index, final Duration time)
     {
         return getGtuList(time).get(index);
     }

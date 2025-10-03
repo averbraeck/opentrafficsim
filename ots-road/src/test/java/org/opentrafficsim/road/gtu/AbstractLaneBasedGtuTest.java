@@ -2,7 +2,6 @@ package org.opentrafficsim.road.gtu;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -11,7 +10,6 @@ import java.util.Set;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
@@ -191,7 +189,7 @@ public final class AbstractLaneBasedGtuTest implements UNITS
         double step = 0.01d;
         for (int i = 0;; i++)
         {
-            Time stepTime = new Time(i * step, TimeUnit.BASE_SECOND);
+            Duration stepTime = Duration.instantiateSI(i * step);
             if (stepTime.getSI() > validFor.getSI())
             {
                 break;

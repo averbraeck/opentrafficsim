@@ -316,7 +316,7 @@ public class LaneStructure
                     // this navigator only returns records when there are no GTUs on the lane
                     return Try.assign(
                             () -> record.getLane().getGtuAhead(record.getStartDistance().neg().plus(dx), otherPosition,
-                                    record.getLane().getNetwork().getSimulator().getSimulatorAbsTime()),
+                                    record.getLane().getNetwork().getSimulator().getSimulatorTime()),
                             "Problem with GTU") == null ? record.getNext() : new LinkedHashSet<>();
                 }, (record) ->
                 {
@@ -324,7 +324,7 @@ public class LaneStructure
                     LaneBasedGtu down =
                             Try.assign(
                                     () -> record.getLane().getGtuAhead(record.getStartDistance().neg().plus(dx), otherPosition,
-                                            record.getLane().getNetwork().getSimulator().getSimulatorAbsTime()),
+                                            record.getLane().getNetwork().getSimulator().getSimulatorTime()),
                                     "Problem with GTU");
                     return down == null ? Collections.emptyList() : List.of(down);
                 }, (t, r) -> r.getStartDistance().plus(position(t, r, otherDistancePosition)).minus(dxDistance));
@@ -357,7 +357,7 @@ public class LaneStructure
                     LaneBasedGtu gtu =
                             Try.assign(
                                     () -> record.getLane().getGtuBehind(record.getStartDistance().neg().plus(dx), otherPosition,
-                                            record.getLane().getNetwork().getSimulator().getSimulatorAbsTime()),
+                                            record.getLane().getNetwork().getSimulator().getSimulatorTime()),
                                     "Problem with GTU");
                     Set<LaneRecord> set = new LinkedHashSet<>();
                     if (gtu == null)
@@ -372,7 +372,7 @@ public class LaneStructure
                     LaneBasedGtu up =
                             Try.assign(
                                     () -> record.getLane().getGtuBehind(record.getStartDistance().neg().plus(dx), otherPosition,
-                                            record.getLane().getNetwork().getSimulator().getSimulatorAbsTime()),
+                                            record.getLane().getNetwork().getSimulator().getSimulatorTime()),
                                     "Problem with GTU");
                     return up == null ? Collections.emptyList() : List.of(up);
                 }, (t, r) -> dxDistance.minus(r.getStartDistance().plus(position(t, r, otherDistancePosition))));

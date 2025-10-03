@@ -8,10 +8,10 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.LinearDensityUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
@@ -28,8 +28,8 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.PerceivedGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.PerceivedGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.LaneOperationalPlanBuilder;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
@@ -86,7 +86,7 @@ public class Toledo extends AbstractLaneBasedTacticalPlanner
     }
 
     @Override
-    public final OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint2d locationAtStartTime)
+    public final OperationalPlan generateOperationalPlan(final Duration startTime, final DirectedPoint2d locationAtStartTime)
             throws GtuException, NetworkException, ParameterException
     {
 

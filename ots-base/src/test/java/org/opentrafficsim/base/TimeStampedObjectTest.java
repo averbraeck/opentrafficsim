@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.djunits.unit.TimeUnit;
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.unit.DurationUnit;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -33,8 +33,8 @@ public final class TimeStampedObjectTest
     @Test
     public void testTimeStampedObject()
     {
-        Time timeStamp1 = new Time(123, TimeUnit.DEFAULT);
-        Time timeStamp2 = new Time(456, TimeUnit.DEFAULT);
+        Duration timeStamp1 = new Duration(123, DurationUnit.SI);
+        Duration timeStamp2 = new Duration(456, DurationUnit.SI);
         TimeStampedObject<String> tso1 = new TimeStampedObject<String>("tso1", timeStamp1);
         assertEquals(timeStamp1, tso1.timestamp(), "time stamp matches");
         assertEquals("tso1", tso1.object(), "string matches");

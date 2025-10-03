@@ -55,7 +55,7 @@ public class AccelerationChecker extends AbstractLaneBasedMoveChecker
     public void checkMove(final LaneBasedGtu gtu) throws Exception
     {
         Acceleration a = gtu.getOperationalPlan().getAcceleration(Duration.ZERO);
-        if (gtu.getOperationalPlan().getSpeed(Duration.ZERO).si > this.minSpeed.si
+        if (gtu.getOperationalPlan().getSpeedFromStart(Duration.ZERO).si > this.minSpeed.si
                 && (a.si < this.min.si || a.si > this.max.si))
         {
             gtu.getSimulator().getLogger().always().error("GTU: {} acceleration out of bounds ({}, {})", this.min, this.max);

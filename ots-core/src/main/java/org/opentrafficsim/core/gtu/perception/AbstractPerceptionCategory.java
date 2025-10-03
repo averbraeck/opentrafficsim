@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.Type;
 import org.opentrafficsim.core.gtu.Gtu;
@@ -75,13 +75,13 @@ public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Percep
      * @return current time
      * @throws GtuException if the GTU has not been initialized
      */
-    public final Time getTimestamp() throws GtuException
+    public final Duration getTimestamp() throws GtuException
     {
         if (getGtu() == null)
         {
             throw new GtuException("gtu value has not been initialized for LanePerception when perceiving.");
         }
-        return getGtu().getSimulator().getSimulatorAbsTime();
+        return getGtu().getSimulator().getSimulatorTime();
     }
 
     /**
@@ -106,9 +106,9 @@ public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Percep
     {
         @SuppressWarnings("unchecked")
         TimeStampedObject<T> stampedObject = (TimeStampedObject<T>) this.cache.get(key);
-        if (stampedObject == null || stampedObject.timestamp().lt(getGtu().getSimulator().getSimulatorAbsTime()))
+        if (stampedObject == null || stampedObject.timestamp().lt(getGtu().getSimulator().getSimulatorTime()))
         {
-            stampedObject = new TimeStampedObject<>(supplier.get(), getGtu().getSimulator().getSimulatorAbsTime());
+            stampedObject = new TimeStampedObject<>(supplier.get(), getGtu().getSimulator().getSimulatorTime());
             this.cache.put(key, stampedObject);
         }
         return stampedObject.object();

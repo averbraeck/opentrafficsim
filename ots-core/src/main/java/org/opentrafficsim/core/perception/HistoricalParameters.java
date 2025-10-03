@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.perception;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterType;
@@ -50,7 +50,7 @@ public class HistoricalParameters extends AbstractHistorical<ParameterValueSet<?
      * @param time simulation time
      * @return parameters at the given simulation time
      */
-    public Parameters getParameters(final Time time)
+    public Parameters getParameters(final Duration time)
     {
         Parameters parameters = getParameters();
         for (ParameterEvent event : getEvents(time))

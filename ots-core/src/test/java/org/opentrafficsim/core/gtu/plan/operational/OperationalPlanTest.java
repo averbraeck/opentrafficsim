@@ -7,12 +7,10 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
@@ -44,7 +42,7 @@ public final class OperationalPlanTest
     public void testOperationalPlan() throws OperationalPlanException
     {
         DirectedPoint2d waitPoint = new DirectedPoint2d(12, 13, 17);
-        Time startTime = new Time(100, TimeUnit.DEFAULT);
+        Duration startTime = Duration.instantiateSI(100.0);
         Duration duration = new Duration(1, DurationUnit.MINUTE);
         OperationalPlan op = OperationalPlan.standStill(null, waitPoint, startTime, duration);
         assertEquals(0, op.getStartSpeed().si, 0, "Start speed is 0");
@@ -56,7 +54,7 @@ public final class OperationalPlanTest
         assertEquals(0, waitPoint.distance(op.getEndLocation()), 0.0001, "End location is " + waitPoint);
         try
         {
-            op.getLocation(new Duration(-0.1, DurationUnit.SI));
+            op.getLocationFromStart(new Duration(-0.1, DurationUnit.SI));
             fail("getLocation for negative relative time should have thrown an OperationalPlanException");
         }
         catch (OperationalPlanException ope)
@@ -65,18 +63,18 @@ public final class OperationalPlanTest
         }
         try
         {
-            op.getLocation(new Time(99.5, TimeUnit.DEFAULT));
+            op.getLocation(Duration.instantiateSI(99.5));
             fail("getLocation for absolute time before start time should have thrown an OperationalPlanException");
         }
         catch (OperationalPlanException ope)
         {
             // Ignore expected exception
         }
-        op.getLocation(new Time(100.1, TimeUnit.DEFAULT)); // Should NOT throw an exception
-        op.getLocation(new Time(159.9, TimeUnit.DEFAULT)); // Should NOT throw an exception
+        op.getLocation(Duration.instantiateSI(100.1)); // Should NOT throw an exception
+        op.getLocation(Duration.instantiateSI(159.9)); // Should NOT throw an exception
         try
         {
-            op.getLocation(new Time(160.1, TimeUnit.DEFAULT));
+            op.getLocation(Duration.instantiateSI(160.1));
             fail("getLocation for absolute time after end time should have thrown an OperationalPlanException");
         }
         catch (OperationalPlanException ope)
@@ -85,7 +83,7 @@ public final class OperationalPlanTest
         }
         for (int i = 0; i <= duration.si; i++)
         {
-            Time t = startTime.plus(new Duration(i, DurationUnit.SECOND));
+            Duration t = startTime.plus(new Duration(i, DurationUnit.SECOND));
             DirectedPoint2d locationAtT = op.getLocation(t);
             // System.out.println("Location at time " + t + " is " + locationAtT);
             // Use a tolerance that is larger than the z-offset (0.001)
@@ -127,7 +125,7 @@ public final class OperationalPlanTest
             assertEquals(0, path.get(i).distance(returnedPath.get(i)), 0.0001, "position of point " + i);
         }
 
-        Time endTime = startTime.plus(new Duration(t, DurationUnit.SECOND));
+        Duration endTime = startTime.plus(new Duration(t, DurationUnit.SECOND));
         // System.out.println("End time is " + endTime);
         Acceleration a = new Acceleration(speedDifference / t, AccelerationUnit.SI);
         // System.out.println("required acceleration is " + a);
@@ -156,7 +154,7 @@ public final class OperationalPlanTest
         for (int i = 0; i <= steps; i++)
         {
             double stepTime = startTime.si + t * i / steps * 0.9999; // sometimes fails for endTime
-            Time absTime = new Time(stepTime, TimeUnit.DEFAULT);
+            Duration absTime = new Duration(stepTime, DurationUnit.SI);
             double deltaT = stepTime - startTime.si;
             Duration relTime = new Duration(deltaT, DurationUnit.SI);
             double expectedDistance = startSpeed.si * deltaT + 0.5 * a.si * deltaT * deltaT;
@@ -164,14 +162,14 @@ public final class OperationalPlanTest
             Point2d expectedPosition = path.getLocationPointFraction(fraction);
             DirectedPoint2d actualPosition = op.getLocation(absTime);
             assertEquals(0, expectedPosition.distance(actualPosition), 0.002, "Position at abs time " + deltaT);
-            actualPosition = op.getLocation(relTime);
+            actualPosition = op.getLocationFromStart(relTime);
             assertEquals(0, expectedPosition.distance(actualPosition), 0.002, "Position at rel time " + deltaT);
             double expectedSpeed = startSpeed.si + a.si * deltaT;
             Speed actualSpeed = op.getSpeed(absTime);
             assertEquals(expectedSpeed, actualSpeed.si, 0.0001, "Speed at abs time " + deltaT);
-            actualSpeed = op.getSpeed(relTime);
+            actualSpeed = op.getSpeedFromStart(relTime);
             assertEquals(expectedSpeed, actualSpeed.si, 0.0001, "Speed at rel time " + deltaT);
-            Time actualTimeAtPosition = op.timeAtDistance(new Length(fraction * path.getLength(), LengthUnit.SI));
+            Duration actualTimeAtPosition = op.timeAtDistance(new Length(fraction * path.getLength(), LengthUnit.SI));
             assertEquals(startTime.si + deltaT, actualTimeAtPosition.si, 0.0001, "TimeAtDistance matches time");
             double actualAcceleration = op.getAcceleration(absTime).si;
             assertEquals(a.si, actualAcceleration, 0.00001, "acceleration at abs time");
@@ -190,14 +188,14 @@ public final class OperationalPlanTest
     public void constantSpeedPlanBuilderTest() throws OperationalPlanException
     {
         OtsLine2d path = new OtsLine2d(new Point2d(0, 0), new Point2d(1000, 0));
-        Time startTime = Time.valueOf("100 s");
+        Duration startTime = Duration.valueOf("100 s");
         Speed speed = Speed.valueOf("20 m/s");
         OperationalPlan csp = new OperationalPlan(null, path, startTime,
                 Segments.off(speed, path.getTypedLength().divide(speed), Acceleration.ZERO));
 
         assertEquals(path, csp.getPath(), "path is returned");
         assertEquals(startTime, csp.getStartTime(), "start time is returned");
-        Time endTime = startTime.plus(path.getTypedLength().divide(speed));
+        Duration endTime = startTime.plus(path.getTypedLength().divide(speed));
         assertEquals(endTime.si, csp.getEndTime().si, (endTime.si - startTime.si) / 10000, "endTime matches");
         assertEquals(speed, csp.getStartSpeed(), "startSpeed is speed");
         DirectedPoint2d endLocation = csp.getEndLocation();
@@ -206,7 +204,7 @@ public final class OperationalPlanTest
         for (int step = 0; step < 10; step++)
         {
             double fraction = step / 10d;
-            Time when = startTime.plus(endTime.minus(startTime).times(fraction));
+            Duration when = startTime.plus(endTime.minus(startTime).times(fraction));
             DirectedPoint2d actualLocation = csp.getLocation(when);
             Point2d expectedLocation = path.getLocationPointFraction(fraction);
             assertEquals(0, expectedLocation.distance(actualLocation), 0.001, "actual location matches expected location");
@@ -222,7 +220,7 @@ public final class OperationalPlanTest
     public void constantAccelerationPlanBuilderTest() throws OperationalPlanException
     {
         OtsLine2d path = new OtsLine2d(new Point2d(0, 0), new Point2d(1000, 0));
-        Time startTime = Time.valueOf("100 s");
+        Duration startTime = Duration.valueOf("100 s");
         for (double startSpeedDouble : new double[] {0, 10, 20, 30})
         {
             Speed startSpeed = Speed.instantiateSI(startSpeedDouble);
@@ -240,7 +238,7 @@ public final class OperationalPlanTest
                         Segments.off(startSpeed, Duration.instantiateSI(t), Acceleration.instantiateSI(speedDifference / t)));
                 assertEquals(startTime, cap.getStartTime(), "start time is returned");
                 assertEquals(startSpeed, cap.getStartSpeed(), "startSpeed is start speed");
-                Time endTime = cap.getEndTime();
+                Duration endTime = cap.getEndTime();
                 Acceleration a = cap.getAcceleration(startTime);
                 assertEquals(a.si, cap.getAcceleration(endTime).si, 0.0001,
                         "acceleration is the same at start time and end time");
@@ -253,7 +251,7 @@ public final class OperationalPlanTest
                     // S(t) v0 * t + 0.5 * a * t * t
                     double distance = startSpeed.si * fractionTime.si + 0.5 * a.si * fractionTime.si * fractionTime.si;
                     Point2d expectedPoint = path.getLocationPointFraction(distance / path.getLength());
-                    DirectedPoint2d p = cap.getLocation(fractionTime);
+                    DirectedPoint2d p = cap.getLocationFromStart(fractionTime);
                     assertEquals(0, expectedPoint.distance(p), 0.001, "position along the way matches");
                 }
             }
@@ -268,7 +266,7 @@ public final class OperationalPlanTest
     public void stopPlanBuilderTest() throws OperationalPlanException
     {
         DirectedPoint2d loc = new DirectedPoint2d(0, 0, 0);
-        Time startTime = Time.valueOf("100 s");
+        Duration startTime = Duration.valueOf("100 s");
         OperationalPlan sp = OperationalPlan.standStill(null, loc, startTime, Duration.ONE);
         assertEquals(startTime, sp.getStartTime(), "start time is returned");
         assertEquals(Speed.ZERO, sp.getStartSpeed(), "startSpeed is start speed");

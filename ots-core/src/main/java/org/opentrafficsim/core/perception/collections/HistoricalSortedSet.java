@@ -2,7 +2,7 @@ package org.opentrafficsim.core.perception.collections;
 
 import java.util.SortedSet;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 
 /**
  * Interface for historical sorted sets.
@@ -27,10 +27,10 @@ public interface HistoricalSortedSet<E> extends HistoricalSet<E>, SortedSet<E>
 
     /**
      * Returns a past sorted set.
-     * @param time time to obtain the sorted set at
+     * @param time simulation time to obtain the sorted set at
      * @return past sorted set
      */
     @Override
-    SortedSet<E> get(Time time);
+    SortedSet<E> get(Duration time);
 
 }

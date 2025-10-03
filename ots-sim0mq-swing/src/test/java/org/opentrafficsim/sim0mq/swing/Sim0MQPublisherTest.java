@@ -15,9 +15,7 @@ import java.util.List;
 import javax.naming.NamingException;
 
 import org.djunits.unit.DurationUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.io.URLResource;
 import org.djutils.serialization.SerializationException;
 import org.junit.jupiter.api.Test;
@@ -141,7 +139,7 @@ public final class Sim0MQPublisherTest
         waitAndVerifyAckNack(receivedMessages, 1.0, badCommand, conversationId, false, "Don't know how to handle message:");
 
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                ++conversationId, new Object[] {new Time(10, TimeUnit.BASE_SECOND)}));
+                ++conversationId, new Object[] {Duration.instantiateSI(10.0)}));
         waitAndVerifyAckNack(receivedMessages, 1.0, "SIMULATEUNTIL", conversationId, false, "No network loaded");
 
         badCommand = "GTUs in network|SUBSCRIBE_TO_ADD";
@@ -217,7 +215,7 @@ public final class Sim0MQPublisherTest
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|SUBSCRIBE_TO_ADD", ++conversationId));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                ++conversationId, new Object[] {new Time(10, TimeUnit.BASE_SECOND)}));
+                ++conversationId, new Object[] {Duration.instantiateSI(10.0)}));
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", ++conversationId));
         int conversationIdForSubscribeToAdd = ++conversationId; // We need that to unsubscribe later
@@ -230,7 +228,7 @@ public final class Sim0MQPublisherTest
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTU move|SUBSCRIBE_TO_CHANGE",
                 conversationIdForGTU2Move, "2")); // Subscribe to move events of GTU 2
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                ++conversationId, new Object[] {new Time(20, TimeUnit.BASE_SECOND)}));
+                ++conversationId, new Object[] {Duration.instantiateSI(20.0)}));
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", ++conversationId));
         waitAndEatMessagesUntilConversationId(receivedMessages, 1.0, conversationId);
@@ -243,15 +241,15 @@ public final class Sim0MQPublisherTest
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
                 "GTU move|UNSUBSCRIBE_FROM_CHANGE", conversationIdForGTU2Move, "2")); // Subscribe to move events of GTU 2
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                ++conversationId, new Object[] {new Time(30, TimeUnit.BASE_SECOND)}));
+                ++conversationId, new Object[] {Duration.instantiateSI(30.0)}));
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", ++conversationId));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
                 "GTUs in network|GET_ADDRESS_META_DATA", ++conversationId));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                ++conversationId, new Object[] {new Time(60, TimeUnit.BASE_SECOND)}));
+                ++conversationId, new Object[] {Duration.instantiateSI(60.0)}));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                ++conversationId, new Object[] {new Time(70, TimeUnit.BASE_SECOND)}));
+                ++conversationId, new Object[] {Duration.instantiateSI(70.0)}));
         waitAndEatMessagesUntilConversationId(receivedMessages, 1.0, conversationId);
         waitAndVerifyAckNack(receivedMessages, 1.0, "SIMULATEUNTIL", conversationId, false,
                 "Simulation is already at end of simulation time");

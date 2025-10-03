@@ -14,7 +14,6 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.AccelerationVector;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.base.geometry.OtsLine2d;
@@ -101,7 +100,7 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
     }
 
     @Override
-    public final OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint2d locationAtStartTime)
+    public final OperationalPlan generateOperationalPlan(final Duration startTime, final DirectedPoint2d locationAtStartTime)
             throws NetworkException, GtuException, ParameterException
     {
         try

@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.core.perception.HistoryManager;
 
 /**
@@ -56,7 +56,7 @@ public class HistoricalLinkedList<E> extends AbstractHistoricalList<E, LinkedLis
     }
 
     @Override
-    public LinkedList<E> get(final Time time)
+    public LinkedList<E> get(final Duration time)
     {
         if (isLastState(time))
         {

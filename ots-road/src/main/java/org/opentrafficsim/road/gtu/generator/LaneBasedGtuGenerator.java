@@ -302,7 +302,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
         getFirstLeaders(position.getPosition().lane(),
                 position.getPosition().position().neg().minus(characteristics.getFront()), position.getPosition().position(),
                 leaders);
-        Duration since = this.simulator.getSimulatorAbsTime().minus(timedCharacteristics.timestamp());
+        Duration since = this.simulator.getSimulatorTime().minus(timedCharacteristics.timestamp());
         Placement placement = this.roomChecker.canPlace(leaders, characteristics, since, position.getPosition());
         if (placement.canPlace())
         {
@@ -377,7 +377,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
             linkMap.put(lanePosition, new LinkedList<>());
         }
         Queue<TimeStampedObject<LaneBasedGtuCharacteristics>> queue = linkMap.get(lanePosition);
-        queue.add(new TimeStampedObject<>(characteristics, this.simulator.getSimulatorAbsTime()));
+        queue.add(new TimeStampedObject<>(characteristics, this.simulator.getSimulatorTime()));
         // @docs/02-model-structure/dsol.md#event-based-simulation
         if (queue.size() == 1)
         {
@@ -426,7 +426,7 @@ public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGene
     private void getFirstLeaders(final Lane lane, final Length startDistance, final Length beyond, final Set<PerceivedGtu> set)
             throws GtuException
     {
-        LaneBasedGtu next = lane.getGtuAhead(beyond, RelativePosition.FRONT, this.simulator.getSimulatorAbsTime());
+        LaneBasedGtu next = lane.getGtuAhead(beyond, RelativePosition.FRONT, this.simulator.getSimulatorTime());
         if (next != null)
         {
             Length headway = startDistance.plus(next.getPosition(lane, next.getRear()));

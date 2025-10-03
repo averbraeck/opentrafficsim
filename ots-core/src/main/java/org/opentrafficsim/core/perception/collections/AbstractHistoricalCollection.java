@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.core.perception.AbstractHistorical;
 import org.opentrafficsim.core.perception.HistoryManager;
 import org.opentrafficsim.core.perception.collections.AbstractHistoricalCollection.EventCollection;
@@ -70,11 +70,11 @@ public abstract class AbstractHistoricalCollection<E, C extends Collection<E>>
 
     /**
      * Fill collection with the collection at the given simulation time.
-     * @param time time
+     * @param time simulation time
      * @param collection collection to fill
      * @return input collection filled
      */
-    protected final C fill(final Time time, final C collection)
+    protected final C fill(final Duration time, final C collection)
     {
         // copy all current elements and decrement per event
         collection.addAll(this.current);

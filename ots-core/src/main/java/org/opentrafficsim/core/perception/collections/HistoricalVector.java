@@ -3,7 +3,7 @@ package org.opentrafficsim.core.perception.collections;
 import java.util.Collection;
 import java.util.Vector;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.core.perception.HistoryManager;
 
 /**
@@ -55,7 +55,7 @@ public class HistoricalVector<E> extends AbstractHistoricalList<E, Vector<E>>
     }
 
     @Override
-    public Vector<E> get(final Time time)
+    public Vector<E> get(final Duration time)
     {
         if (isLastState(time))
         {

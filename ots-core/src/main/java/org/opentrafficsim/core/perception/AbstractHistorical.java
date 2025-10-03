@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.perception.AbstractHistorical.Event;
 import org.opentrafficsim.core.perception.HistoryManager.HistoricalElement;
@@ -78,10 +77,10 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
     }
 
     /**
-     * Returns the current time.
-     * @return current time
+     * Returns the current simulation time.
+     * @return current simulation time
      */
-    protected final Time now()
+    protected final Duration now()
     {
         return this.historyManager.now();
     }
@@ -91,7 +90,7 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
      * @param time past time up to which to include events
      * @return list of events, ordered last to first, that includes all events <i>after</i> {@code time}
      */
-    protected final List<E> getEvents(final Time time)
+    protected final List<E> getEvents(final Duration time)
     {
         List<E> list = new ArrayList<>();
         int i = this.events.size() - 1;
@@ -108,7 +107,7 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
      * @param time past time at which to obtain event
      * @return most recent event from <i>before</i> {@code time}
      */
-    protected final E getEvent(final Time time)
+    protected final E getEvent(final Duration time)
     {
         E prev = null;
         for (int i = this.events.size() - 1; i >= 0; i--)
@@ -140,10 +139,10 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
 
     /**
      * Returns whether the state at the given time is equal to the state at the current time.
-     * @param time time
+     * @param time simulation time
      * @return whether the state at the given time is equal to the state at the current time
      */
-    protected final boolean isLastState(final Time time)
+    protected final boolean isLastState(final Duration time)
     {
         return this.events.isEmpty() ? true : this.events.get(this.events.size() - 1).getTime() <= time.si;
     }
@@ -183,10 +182,11 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
     }
 
     @Override
-    public Iterator<Time> timeIterator()
+    public Iterator<Duration> timeIterator()
     {
         return IntStream.range(0, this.events.size())
-                .mapToObj((index) -> Time.instantiateSI(this.events.get(this.events.size() - 1 - index).getTime())).iterator();
+                .mapToObj((index) -> Duration.instantiateSI(this.events.get(this.events.size() - 1 - index).getTime()))
+                .iterator();
     }
 
     /**

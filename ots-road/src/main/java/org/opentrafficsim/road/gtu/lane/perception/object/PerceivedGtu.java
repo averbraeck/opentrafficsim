@@ -1,9 +1,9 @@
 package org.opentrafficsim.road.gtu.lane.perception.object;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.Parameters;
@@ -102,16 +102,16 @@ public interface PerceivedGtu extends PerceivedObject
          */
         static Signals of(final LaneBasedGtu gtu)
         {
-            return of(gtu, gtu.getSimulator().getSimulatorAbsTime());
+            return of(gtu, gtu.getSimulator().getSimulatorTime());
         }
 
         /**
          * Wraps a GTU and returns its signals.
          * @param gtu GTU
-         * @param time time of the signals
+         * @param time simulation time of the signals
          * @return signals view of the GTU
          */
-        static Signals of(final LaneBasedGtu gtu, final Time time)
+        static Signals of(final LaneBasedGtu gtu, final Duration time)
         {
             return new Signals()
             {
@@ -197,7 +197,7 @@ public interface PerceivedGtu extends PerceivedObject
          */
         static Maneuver of(final LaneBasedGtu gtu)
         {
-            return of(gtu, gtu.getSimulator().getSimulatorAbsTime());
+            return of(gtu, gtu.getSimulator().getSimulatorTime());
         }
 
         /**
@@ -206,7 +206,7 @@ public interface PerceivedGtu extends PerceivedObject
          * @param time time of the maneuver
          * @return maneuver view of the GTU
          */
-        static Maneuver of(final LaneBasedGtu gtu, final Time time)
+        static Maneuver of(final LaneBasedGtu gtu, final Duration time)
         {
             Throw.whenNull(gtu, "gtu");
             Throw.whenNull(time, "time");
@@ -340,7 +340,7 @@ public interface PerceivedGtu extends PerceivedObject
         static Behavior of(final LaneBasedGtu gtu)
         {
             Throw.whenNull(gtu, "gtu");
-            return of0(gtu, gtu.getSimulator().getSimulatorAbsTime(), null);
+            return of0(gtu, gtu.getSimulator().getSimulatorTime(), null);
         }
 
         /**
@@ -354,18 +354,18 @@ public interface PerceivedGtu extends PerceivedObject
         {
             Throw.whenNull(gtu, "gtu");
             Throw.whenNull(gtuTypeAssumptions, "gtuTypeAssumptions");
-            return of0(gtu, gtu.getSimulator().getSimulatorAbsTime(), gtuTypeAssumptions);
+            return of0(gtu, gtu.getSimulator().getSimulatorTime(), gtuTypeAssumptions);
         }
 
         /**
          * Wraps a GTU and returns its behavior. The given time only applies to the parameters, lane change desire and social
          * pressure.
          * @param gtu GTU
-         * @param time time of the behavior
+         * @param time simulation time of the behavior
          * @return behavior view of the GTU
          * @throws NullPointerException when any input argument is {@code null}
          */
-        static Behavior of(final LaneBasedGtu gtu, final Time time)
+        static Behavior of(final LaneBasedGtu gtu, final Duration time)
         {
             return of0(gtu, time, null);
         }
@@ -373,12 +373,12 @@ public interface PerceivedGtu extends PerceivedObject
         /**
          * Wraps a GTU and returns its behavior. The given time only applies to the lane change desire and social pressure.
          * @param gtu GTU
-         * @param time time of the behavior
+         * @param time simulation time of the behavior
          * @param gtuTypeAssumptions assumptions on the GTU type
          * @return behavior view of the GTU
          * @throws NullPointerException when any input argument is {@code null}
          */
-        static Behavior of(final LaneBasedGtu gtu, final Time time, final GtuTypeAssumptions gtuTypeAssumptions)
+        static Behavior of(final LaneBasedGtu gtu, final Duration time, final GtuTypeAssumptions gtuTypeAssumptions)
         {
             Throw.whenNull(gtuTypeAssumptions, "gtuTypeAssumptions");
             return of0(gtu, time, gtuTypeAssumptions);
@@ -388,11 +388,11 @@ public interface PerceivedGtu extends PerceivedObject
          * Wraps a GTU and returns its behavior. The given time only applies to the parameters, lane change desire and social
          * pressure.
          * @param gtu GTU
-         * @param time time of the behavior
+         * @param time simulation time of the behavior
          * @param gtuTypeAssumptions assumptions on the GTU type, can be {@code null}
          * @return behavior view of the GTU
          */
-        private static Behavior of0(final LaneBasedGtu gtu, final Time time, final GtuTypeAssumptions gtuTypeAssumptions)
+        private static Behavior of0(final LaneBasedGtu gtu, final Duration time, final GtuTypeAssumptions gtuTypeAssumptions)
         {
             Throw.whenNull(gtu, "gtu");
             Throw.whenNull(time, "time");
@@ -592,11 +592,11 @@ public interface PerceivedGtu extends PerceivedObject
      * Returns perceived GTU at the given time with given kinematics.
      * @param gtu GTU that is perceived
      * @param kinematics kinematics for the vehicle
-     * @param time time at which the GTU is perceived
+     * @param time simulation time at which the GTU is perceived
      * @return perceived view of the GTU
      * @throws NullPointerException when {@code gtu} is null
      */
-    static PerceivedGtu of(final LaneBasedGtu gtu, final Kinematics kinematics, final Time time)
+    static PerceivedGtu of(final LaneBasedGtu gtu, final Kinematics kinematics, final Duration time)
     {
         Throw.whenNull(gtu, "gtu");
         return new PerceivedGtuBase(gtu.getId(), gtu.getType(), gtu.getLength(), gtu.getWidth(), kinematics,

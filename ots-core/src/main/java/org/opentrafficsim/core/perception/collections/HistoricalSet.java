@@ -2,7 +2,7 @@ package org.opentrafficsim.core.perception.collections;
 
 import java.util.Set;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 
 /**
  * Interface for historical sets.
@@ -27,10 +27,10 @@ public interface HistoricalSet<E> extends HistoricalCollection<E>, Set<E>
 
     /**
      * Returns a past set.
-     * @param time time to obtain the set at
+     * @param time simulation time to obtain the set at
      * @return past set
      */
     @Override
-    Set<E> get(Time time);
+    Set<E> get(Duration time);
 
 }

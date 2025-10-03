@@ -10,7 +10,6 @@ import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.curve.BezierCubic2d;
 import org.djutils.draw.curve.Flattener2d;
 import org.djutils.draw.curve.Flattener2d.MaxDeviationAndAngle;
@@ -80,7 +79,7 @@ public final class LaneOperationalPlanBuilder
         Length deviation = Length.ZERO;
         boolean deviative = true;
         OtsLine2d path = getPath(gtu, nearestPosition, acceleration, duration, tManeuver, deviation, deviative);
-        Time now = gtu.getSimulator().getSimulatorAbsTime();
+        Duration now = gtu.getSimulator().getSimulatorTime();
         Segments segments = Segments.off(gtu.getSpeed(), duration, acceleration);
         return Try.assign(() -> new LaneBasedOperationalPlan(gtu, path, now, segments, deviative),
                 "Building roaming plan produced inconsistent LaneBasedOperationalPlan.");
@@ -135,7 +134,7 @@ public final class LaneOperationalPlanBuilder
         deviative = deviative || simplePlan.getDeviation().si > SNAP.si;
         OtsLine2d path = getPath(gtu, nearestPosition, simplePlan.getAcceleration(), simplePlan.getDuration(), tManeuver,
                 simplePlan.getDeviation(), deviative);
-        Time now = gtu.getSimulator().getSimulatorAbsTime();
+        Duration now = gtu.getSimulator().getSimulatorTime();
         Segments segments = Segments.off(gtu.getSpeed(), simplePlan.getDuration(), simplePlan.getAcceleration());
         boolean finalDeviative = deviative;
         return Try.assign(() -> new LaneBasedOperationalPlan(gtu, path, now, segments, finalDeviative),

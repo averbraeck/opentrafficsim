@@ -252,7 +252,7 @@ public final class TestFixedTimeController
         assertEquals(ftcId, ftc.getId(), "FTC id");
         assertTrue(ftc.toString().startsWith("FixedTimeController ["), "toString returns something descriptive");
 
-        simulator.runUpTo(Time.instantiateSI(1));
+        simulator.runUpTo(Duration.ONE);
         while (simulator.isStartingOrRunning())
         {
             try
@@ -411,7 +411,7 @@ public final class TestFixedTimeController
                                         simulator.scheduleEventAbs(Duration.instantiateSI(second + 0.75),
                                                 () -> checkState(simulator, ftc, true));
                                     }
-                                    Time stopTime = Time.instantiateSI(300);
+                                    Duration stopTime = Duration.instantiateSI(300.0);
                                     simulator.runUpTo(stopTime);
                                     while (simulator.isStartingOrRunning())
                                     {
@@ -424,7 +424,7 @@ public final class TestFixedTimeController
                                             exception.printStackTrace();
                                         }
                                     }
-                                    if (simulator.getSimulatorAbsTime().lt(stopTime))
+                                    if (simulator.getSimulatorTime().lt(stopTime))
                                     {
                                         // something went wrong; call checkState with stopSimulatorOnError set to false
                                         checkState(simulator, ftc, Boolean.FALSE);

@@ -20,6 +20,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -330,7 +331,7 @@ public final class TransceiverTest
         LaneType laneType = DefaultsRoadNl.RESIDENTIAL_ROAD;
         OtsReplication replication = Mockito.mock(OtsReplication.class);
         HistoryManagerDevs hmd = Mockito.mock(HistoryManagerDevs.class);
-        Mockito.when(hmd.now()).thenReturn(Time.ZERO);
+        Mockito.when(hmd.now()).thenReturn(Duration.ZERO);
         Mockito.when(replication.getHistoryManager(simulator)).thenReturn(hmd);
         Mockito.when(simulator.getReplication()).thenReturn(replication);
         Lane lane = LaneGeometryUtil.createStraightLane(link, "lane", Length.ZERO, new Length(3, LengthUnit.METER), laneType,

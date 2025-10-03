@@ -68,8 +68,7 @@ public final class GtuTest
      * @throws RemoteException should not happen uncaught; if it does the test has failed
      */
     @Test
-    public void testAbstractGtu()
-            throws GtuException, SimRuntimeException, NetworkException, NamingException, RemoteException
+    public void testAbstractGtu() throws GtuException, SimRuntimeException, NetworkException, NamingException, RemoteException
     {
         TestGtu firstGTU = null;
         TestGtu lastGTU = null;
@@ -94,7 +93,7 @@ public final class GtuTest
             }
 
             @Override
-            public TacticalPlanner<?, ?> getTacticalPlanner(final Time time)
+            public TacticalPlanner<?, ?> getTacticalPlanner(final Duration time)
             {
                 return null;
             }

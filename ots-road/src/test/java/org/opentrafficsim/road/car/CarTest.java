@@ -7,7 +7,6 @@ import java.util.Map;
 import javax.naming.NamingException;
 
 import org.djunits.unit.DurationUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
@@ -75,7 +74,7 @@ public final class CarTest implements UNITS
     @Test
     public void carTest() throws NetworkException, SimRuntimeException, NamingException, GtuException
     {
-        Time initialTime = new Time(0, TimeUnit.BASE_SECOND);
+        Duration initialTime = new Duration(0, DurationUnit.SI);
         OtsSimulatorInterface simulator = makeSimulator();
         RoadNetwork network = new RoadNetwork("network", simulator);
         GtuType gtuType = DefaultsNl.CAR;

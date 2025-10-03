@@ -5,7 +5,7 @@
 Knowing a few tricks in Eclipse can make life as a programmer a lot easier. The following tips should be helpful when developing OTS.
 
 #### 1. Abbreviated package names.
-The package explorer can become difficult to navigate as OTS has many projects and packages, many of which have long names. Package names, or parts thereof, can be abbreviated. Go to Window -> Preferences -> Java -> Appearance -> Abbreviate package names. The following abbreviations are suggested:
+The package explorer in Eclipse can become difficult to navigate as OTS has many projects and packages, many of which have long names. Package names, or parts thereof, can be abbreviated. Go to Window -> Preferences -> Java -> Appearance -> Abbreviate package names. The following abbreviations are suggested:
 <table>
     <tr><td>a)</td><td>nl.tudelft.simulation = [n.t.s]</td></tr>
     <tr><td>b)</td><td>org.opentrafficsim.base = [base]</td></tr>
@@ -140,13 +140,13 @@ In some cases it can be a hassle to setup interdependent objects just to test a 
 For delayed perception of information from the simulation environment, the simulation environment needs to be able to provide past information. Information is stored in properties of java classes. By converting a property in to a historical version, this can be achieved. In many cases this is little work. Below three separated cases are discussed. Which one is valid depends on the type of the attribute.
 
 _Is the property immutable (e.g. `Length`, `double`, `String`) or a (indirect) pointer to an object with its own historical properties?_<br/>
-In these cases the property can simply be changed to type `Historical<E>`, with `E` being the original type, and using implementation `HistoricalValue<E>`. Any code referring to the property directly now needs to use `get()` and `set()` on the property. For external code nothing changes, as this should use a setter and getter method that are themselves changed. To make a historical value available to external code, a getter method with `Time` input should be added, which calls `get(Time)` on the property.
+In these cases the property can simply be changed to type `Historical<E>`, with `E` being the original type, and using implementation `HistoricalValue<E>`. Any code referring to the property directly now needs to use `get()` and `set()` on the property. For external code nothing changes, as this should use a setter and getter method that are themselves changed. To make a historical value available to external code, a getter method with `Time` input should be added, which calls `get(Duration)` on the property.
 
 _Is the property of a type from the Collections Framework (e.g. `Set`, `List`, `Map`)?_<br/>
-For collection framework types one only needs to add `Historical` in front of the type. For example a `Set<E>` becomes `HistoricalSet<E>`. All methods of the original class are also implemented by the historical class. To obtain a historical state of the collection, a getter method with `Time` input should be added, which calls `get(Time)` on the property.
+For collection framework types one only needs to add `Historical` in front of the type. For example a `Set<E>` becomes `HistoricalSet<E>`. All methods of the original class are also implemented by the historical class. To obtain a historical state of the collection, a getter method with `Duration` input should be added, which calls `get(Duration)` on the property.
 
 _Is the property of any other type?_<br/>
-For these cases one first has to consider whether individual properties of the property object may need to be historical, rather than the object as a whole. If the object itself can better be made historical a new implementation of `AbstractHistorical` is required. In case the property type class already has a super class, the property type class will need to implement `HistoryManager.HistoricalElement` in order to interact with the `HistoryManager`, and manage its own history and interaction with the `HistoryManager`. The reader is referred to section [Historical complex objects](../05-perception/historical.md#historical-complex-objects) for a baseline understanding of events as used in `AbstractHistorical`. The functionality that should be created is that the state of the property at any given time in the past can be provided (limited in duration by a `HistoryManager`). To this end an implementation can keep the current object, make a copy of it, and reverse all applicable events on the copy. Thus, such events should have sufficient information such that they can (or can be used to) reverse the mutation. To obtain applicable events `AbstractHistorical` has some utility methods for sub-classes, such as `getEvents(Time)` which returns an ordered list of events between the provided `Time` and the current time in reversed order.
+For these cases one first has to consider whether individual properties of the property object may need to be historical, rather than the object as a whole. If the object itself can better be made historical a new implementation of `AbstractHistorical` is required. In case the property type class already has a super class, the property type class will need to implement `HistoryManager.HistoricalElement` in order to interact with the `HistoryManager`, and manage its own history and interaction with the `HistoryManager`. The reader is referred to section [Historical complex objects](../05-perception/historical.md#historical-complex-objects) for a baseline understanding of events as used in `AbstractHistorical`. The functionality that should be created is that the state of the property at any given time in the past can be provided (limited in duration by a `HistoryManager`). To this end an implementation can keep the current object, make a copy of it, and reverse all applicable events on the copy. Thus, such events should have sufficient information such that they can (or can be used to) reverse the mutation. To obtain applicable events `AbstractHistorical` has some utility methods for sub-classes, such as `getEvents(Duration)` which returns an ordered list of events between the provided `Duration` and the current time in reversed order.
 
 As an example let’s assume we have a class for a 2-dimensional double (`double[][]`) matrix with history called `HistoricalMatrix`. It extends `AbstractHistorical` and is coupled with an event class called `EventMatrix`. Below the class is shown with a property of the current state of the matrix `double[][]`, a constructor coupling it with a `HistoryManager`, and the method `getMatrix()` which returns a safe copy of the current state.
 
@@ -177,7 +177,7 @@ As an example let’s assume we have a class for a 2-dimensional double (`double
     }
 ```
 
-Note that access to the property `matrix` should be restricted to inside the class, as any mutation should encompass creation of an event. The class will additionally get a `setValue(…)` and `getMatrix(Time)` method, but before these are explained the class `EventMatrix` is discussed. In order to restore a value, the previous value, the row and the column need to be stored. Thus, the class for events of the matrix stores this information. The class extends `EventValue` which stores time for the functionality in `AbstractHistorical` and the (previous) value. Finally, it has a method called `restore(double[][])` which restores the mutation in the given matrix.
+Note that access to the property `matrix` should be restricted to inside the class, as any mutation should encompass creation of an event. The class will additionally get a `setValue(…)` and `getMatrix(Duration)` method, but before these are explained the class `EventMatrix` is discussed. In order to restore a value, the previous value, the row and the column need to be stored. Thus, the class for events of the matrix stores this information. The class extends `EventValue` which stores time for the functionality in `AbstractHistorical` and the (previous) value. Finally, it has a method called `restore(double[][])` which restores the mutation in the given matrix.
 
 ```java
     public class EventMatrix extends EventValue<Double>
@@ -213,10 +213,10 @@ The class `HistoricalMatrix` gets the following `setValue(…)` method, which ad
     }
 ```
 
-Finally the `getMatrix(Time)` method can be added. It obtains a safe copy of the current state of the matrix, then loops over all events from now until the given time in the past as returned by `getEvents(Time)` of `AbstractHistorical`. For each event the `restore()` operation is invoked, resulting in a `double[][]` in the state at the given time.
+Finally the `getMatrix(Duration)` method can be added. It obtains a safe copy of the current state of the matrix, then loops over all events from now until the given time in the past as returned by `getEvents(Duration)` of `AbstractHistorical`. For each event the `restore()` operation is invoked, resulting in a `double[][]` in the state at the given time.
 
 ```java
-    public double[][] getMatrix(final Time time)
+    public double[][] getMatrix(final Duration time)
     {
         double[][] out = getMatrix();
         for (EventMatrix event : getEvents(time))

@@ -13,7 +13,6 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.djunits.unit.DurationUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
@@ -188,8 +187,8 @@ public final class LaneBasedGtuTest implements UNITS
         assertEquals(null, leader.getId(), "With one vehicle in the network forward headwayGTU should return null");
         // TODO see how we can ask the vehicle to look this far behind
         Length reverseMaxDistance = truck.getParameters().getParameter(ParameterTypes.LOOKBACKOLD);
-        PerceivedObject follower = truck.getTacticalPlanner().getPerception().getPerceptionCategory(DefaultSimplePerception.class)
-                .getBackwardHeadway();
+        PerceivedObject follower = truck.getTacticalPlanner().getPerception()
+                .getPerceptionCategory(DefaultSimplePerception.class).getBackwardHeadway();
         assertTrue(Math.abs(reverseMaxDistance.getSI()) >= Math.abs(follower.getDistance().si) && follower.getDistance().si < 0,
                 "With one vehicle in the network reverse headway should return a value less than zero, and smaller than |maxDistance|");
         assertEquals(null, follower.getId(), "With one vehicle in the network reverse headwayGTU should return null");
@@ -378,7 +377,7 @@ public final class LaneBasedGtuTest implements UNITS
             simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model,
                     HistoryManagerDevs.noHistory(simulator));
             // Run the simulator clock to some non-zero value
-            simulator.runUpTo(new Time(60, TimeUnit.BASE_SECOND));
+            simulator.runUpTo(Duration.instantiateSI(60.0));
             while (simulator.isStartingOrRunning())
             {
                 try
@@ -414,7 +413,7 @@ public final class LaneBasedGtuTest implements UNITS
             car.setParameters(parameters);
             car.init(strategicalPlanner, getReferencePosition(carPositions).getLocation(), carSpeed);
             // Let the simulator execute the move method of the car
-            simulator.runUpTo(new Time(61, TimeUnit.BASE_SECOND));
+            simulator.runUpTo(Duration.instantiateSI(61.0));
             while (simulator.isStartingOrRunning())
             {
                 try

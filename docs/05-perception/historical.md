@@ -11,7 +11,7 @@ Any information that perception may require in the past, needs to be defined lik
 ```java
     void set(T value);
     T get();
-    T get(Time time);
+    T get(Duration time);
 ```
 
 The first two set and get the value at the current time, while the latter obtains an historical value, i.e. from the past. The class `AbstractHistorical` performs most of the hard work regarding bookkeeping of previous values. Internally it maintains a list of timed events from which past values can be reconstructed. Each event represents a mutation to the value. An important part of the functionality is coupling with a `HistoryManager`, which performs cleaning up of old events. The default implementation within OTS is `HistoryManagerDevs`, which uses events, a clean-up interval, and a guaranteed history duration. (Only if the object itself exists for a shorter time in simulation, is the history duration not guaranteed. In these cases the oldest state is returned.) This history duration should be set to a value that is larger than the maximum perception delay that can occur in simulation, while being as small as possible to limit memory usage.
@@ -29,8 +29,8 @@ The `Historical` is automatically coupled to the `HistoryManager`. The class `Hi
     return event == null ? null : event.getValue();
 ```
 
-Besides the method `getEvent(Time)`, several other methods are available for subclasses of `AbstractHistorical` to reconstruct the value at the given time. For properties that are of a type from the Java Collections Framework (like `Set`s and `Map`s), there is a shadow package available for historical versions of all of these utility classes in `org.opentrafficsim.core.perception.collections`. At both interface and implementation level historical shadows are available. For example we have `HistoricalCollection<E>` and `HistoricalSet<E>` which respectively extend the interfaces `Collection<E>` and `Set<E>`. Because the shadow package extends the Java Collections Framework, all the regular methods still work and function at the current time, such as `add(…)`, `remove(…)`, `clear()`, etc.. 
-Converting a property of type `Set<E>` to `HistoricalSet<E>`, or any other collection or map, thus requires little change in code. Additionally the interfaces define a method `get(Time)` to obtain a paste state of the collection or map.
+Besides the method `getEvent(Duration)`, several other methods are available for subclasses of `AbstractHistorical` to reconstruct the value at the given time. For properties that are of a type from the Java Collections Framework (like `Set`s and `Map`s), there is a shadow package available for historical versions of all of these utility classes in `org.opentrafficsim.core.perception.collections`. At both interface and implementation level historical shadows are available. For example we have `HistoricalCollection<E>` and `HistoricalSet<E>` which respectively extend the interfaces `Collection<E>` and `Set<E>`. Because the shadow package extends the Java Collections Framework, all the regular methods still work and function at the current time, such as `add(…)`, `remove(…)`, `clear()`, etc.. 
+Converting a property of type `Set<E>` to `HistoricalSet<E>`, or any other collection or map, thus requires little change in code. Additionally the interfaces define a method `get(Duration)` to obtain a paste state of the collection or map.
 
 
 ## Historical complex objects

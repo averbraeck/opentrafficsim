@@ -72,7 +72,7 @@ public class BusStopConflictRule implements ConflictRule
         {
             while (gtu == null && lane != null)
             {
-                gtu = lane.getGtuBehind(pos, RelativePosition.FRONT, this.simulator.getSimulatorAbsTime());
+                gtu = lane.getGtuBehind(pos, RelativePosition.FRONT, this.simulator.getSimulatorTime());
                 if (gtu == null)
                 {
                     Set<Lane> set = lane.prevLanes(this.busType);

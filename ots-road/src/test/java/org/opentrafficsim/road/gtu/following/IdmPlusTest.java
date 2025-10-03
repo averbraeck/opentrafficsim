@@ -8,7 +8,6 @@ import java.util.Collection;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -83,7 +82,7 @@ public final class IdmPlusTest implements UNITS
         GtuType gtuType = DefaultsNl.CAR;
         LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
         Lane lane = CarTest.makeLane(network, laneType, simulator);
-        Time initialTime = new Time(0, TimeUnit.BASE_SECOND);
+        Duration initialTime = new Duration(0, DurationUnit.SI);
         Length initialPosition = new Length(123.456, METER);
         Speed initialSpeed = new Speed(0, KM_PER_HOUR);
         Length length = new Length(5.0, METER);
@@ -311,7 +310,7 @@ public final class IdmPlusTest implements UNITS
         leaderCar41.getTacticalPlanner().getPerception().perceive();
         for (int timeStep = 0; timeStep < 200; timeStep++)
         {
-            Time simulateUntil = new Time(0.1 * timeStep, TimeUnit.BASE_SECOND);
+            Duration simulateUntil = Duration.instantiateSI(0.1 * timeStep);
             simulator.runUpTo(simulateUntil);
             while (simulator.isStartingOrRunning())
             {

@@ -2,7 +2,7 @@ package org.opentrafficsim.core.perception.collections;
 
 import java.util.Queue;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 
 /**
  * Interface for historical queues.
@@ -27,10 +27,10 @@ public interface HistoricalQueue<E> extends HistoricalCollection<E>, Queue<E>
 
     /**
      * Returns a past queue.
-     * @param time time to obtain the queue at
+     * @param time simulation time to obtain the queue at
      * @return past queue
      */
     @Override
-    Queue<E> get(Time time);
+    Queue<E> get(Duration time);
 
 }

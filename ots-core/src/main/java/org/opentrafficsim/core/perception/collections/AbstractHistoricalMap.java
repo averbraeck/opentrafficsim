@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.perception.AbstractHistorical;
 import org.opentrafficsim.core.perception.HistoryManager;
@@ -71,11 +71,11 @@ public abstract class AbstractHistoricalMap<K, V, M extends Map<K, V>> extends A
 
     /**
      * Fill map with the map at the given simulation time.
-     * @param time time
+     * @param time simulation time
      * @param map map to fill
      * @return input map filled
      */
-    protected M fill(final Time time, final M map)
+    protected M fill(final Duration time, final M map)
     {
         // copy all current elements and decrement per event
         map.putAll(this.current);

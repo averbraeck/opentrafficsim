@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.perception;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 
 /**
  * Interface for single valued historicals.
@@ -31,10 +31,10 @@ public interface Historical<T>
 
     /**
      * Get value at given time.
-     * @param time time to get the value
+     * @param time simulation time to get the value
      * @return value at current time
      * @throws NullPointerException when time is null
      */
-    T get(Time time);
+    T get(Duration time);
 
 }

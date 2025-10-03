@@ -4,7 +4,6 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -75,13 +74,13 @@ public interface PerceivedGtuType
         private final Anticipation anticipation;
 
         /** Last update time. */
-        private Time updateTime = null;
+        private Duration updateTime = null;
 
         /** Reaction time at update time. */
         private Duration tr;
 
         /** Historical moment considered at update time. */
-        private Time when;
+        private Duration when;
 
         /** Traveled distance during reaction time at update time. */
         private Length traveledDistance;
@@ -102,12 +101,12 @@ public interface PerceivedGtuType
                 final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream)
                 throws GtuException, ParameterException
         {
-            Time now = perceivedGtu.getSimulator().getSimulatorAbsTime();
+            Duration now = perceivedGtu.getSimulator().getSimulatorTime();
             if (this.updateTime == null || now.si > this.updateTime.si)
             {
                 this.updateTime = now;
                 this.tr = perceivingGtu.getParameters().getParameter(ParameterTypes.TR);
-                Time whenTemp = now.minus(this.tr);
+                Duration whenTemp = now.minus(this.tr);
                 if (this.when == null || whenTemp.si > this.when.si)
                 {
                     // never go backwards in time if the reaction time increases
@@ -121,6 +120,11 @@ public interface PerceivedGtuType
             {
                 triplet = this.estimation.estimate(perceivingGtu, reference, perceivedGtu, distance, downstream, this.when);
                 triplet = this.anticipation.anticipate(triplet, this.tr, this.traveledDistance, downstream);
+                Length maxNegativeHeadway = perceivedGtu.getLength().plus(reference.getLength()).neg();
+                if (triplet.headway().lt(maxNegativeHeadway))
+                {
+                    triplet = new NeighborTriplet(maxNegativeHeadway, triplet.speed(), triplet.acceleration());
+                }
             }
             else
             {

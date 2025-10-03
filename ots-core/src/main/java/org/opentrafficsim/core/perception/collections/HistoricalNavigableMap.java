@@ -2,7 +2,7 @@ package org.opentrafficsim.core.perception.collections;
 
 import java.util.NavigableMap;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 
 /**
  * Interface for historical navigable maps.
@@ -28,10 +28,10 @@ public interface HistoricalNavigableMap<K, V> extends HistoricalSortedMap<K, V>,
 
     /**
      * Returns a past navigable map.
-     * @param time time to obtain the navigable map at
+     * @param time simulation time to obtain the navigable map at
      * @return past navigable map
      */
     @Override
-    NavigableMap<K, V> get(Time time);
+    NavigableMap<K, V> get(Duration time);
 
 }

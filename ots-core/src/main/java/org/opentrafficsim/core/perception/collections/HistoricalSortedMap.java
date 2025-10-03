@@ -2,7 +2,7 @@ package org.opentrafficsim.core.perception.collections;
 
 import java.util.SortedMap;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 
 /**
  * Interface for historical sorted maps.
@@ -28,10 +28,10 @@ public interface HistoricalSortedMap<K, V> extends HistoricalMap<K, V>, SortedMa
 
     /**
      * Returns a past sorted map.
-     * @param time time to obtain the sorted map at
+     * @param time simulation time to obtain the sorted map at
      * @return past sorted map
      */
     @Override
-    SortedMap<K, V> get(Time time);
+    SortedMap<K, V> get(Duration time);
 
 }

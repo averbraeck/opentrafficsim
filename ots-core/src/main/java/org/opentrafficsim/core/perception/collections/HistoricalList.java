@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.UnaryOperator;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 
 /**
  * Interface for historical lists.
@@ -31,11 +31,11 @@ public interface HistoricalList<E> extends HistoricalCollection<E>, List<E>
 
     /**
      * Returns a past list.
-     * @param time time to obtain the list at
+     * @param time simulation time to obtain the list at
      * @return past list
      */
     @Override
-    List<E> get(Time time);
+    List<E> get(Duration time);
 
     @Override
     default void replaceAll(final UnaryOperator<E> operator)

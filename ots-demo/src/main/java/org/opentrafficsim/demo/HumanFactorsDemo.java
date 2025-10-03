@@ -61,6 +61,7 @@ import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.generator.characteristics.DefaultLaneBasedGtuCharacteristicsGeneratorOd;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGeneratorOd;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
@@ -454,6 +455,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             odOptions.set(OdOptions.NO_LC_DIST, Length.instantiateSI(150.0));
             odOptions.set(OdOptions.GTU_TYPE, this.characteristics);
             odOptions.set(OdOptions.LANE_BIAS, DefaultsRoadNl.LANE_BIAS_CAR_TRUCK);
+            odOptions.set(OdOptions.BOOKKEEPING, LaneBookkeeping.START);
             OdApplier.applyOd(this.network, od, odOptions, DefaultsNl.VEHICLES);
         }
     }

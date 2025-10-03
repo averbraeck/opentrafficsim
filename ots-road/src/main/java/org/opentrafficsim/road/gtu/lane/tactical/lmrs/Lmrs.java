@@ -1,8 +1,8 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -74,7 +74,7 @@ public class Lmrs extends AbstractIncentivesTacticalPlanner implements DesireBas
     }
 
     @Override
-    public final OperationalPlan generateOperationalPlan(final Time startTime, final DirectedPoint2d locationAtStartTime)
+    public final OperationalPlan generateOperationalPlan(final Duration startTime, final DirectedPoint2d locationAtStartTime)
             throws GtuException, NetworkException, ParameterException
     {
         // obtain objects to get info

@@ -1,6 +1,6 @@
 package org.opentrafficsim.base.geometry;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.draw.Directed;
 import org.djutils.draw.Transform2d;
 import org.djutils.draw.bounds.Bounds2d;
@@ -44,10 +44,10 @@ public interface OtsShape extends Locatable
     /**
      * Return the contour of a dynamic object at time 'time' in world coordinates. The default implementation returns the static
      * contour.
-     * @param time the time for which we want the shape
+     * @param time simulation time for which we want the shape
      * @return the shape of the object at time 'time'
      */
-    default Polygon2d getAbsoluteContour(final Time time)
+    default Polygon2d getAbsoluteContour(final Duration time)
     {
         return getAbsoluteContour();
     }

@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.gtu.plan.strategical;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.base.parameters.ParameterTypeClass;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -60,10 +60,10 @@ public interface StrategicalPlanner
 
     /**
      * Get tactical planner for the GTU. The stratigical planner is free to dynamically change this.
-     * @param time time at which to obtain the tactical planner
+     * @param time simulation time at which to obtain the tactical planner
      * @return tactical planner
      */
-    TacticalPlanner<?, ?> getTacticalPlanner(Time time);
+    TacticalPlanner<?, ?> getTacticalPlanner(Duration time);
 
     /**
      * Determine the next node in a network based on a current Link we are on.

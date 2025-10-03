@@ -6,7 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 
 /**
  * Interface for historical collections.
@@ -30,13 +30,13 @@ public interface HistoricalCollection<E> extends Collection<E>
 
     /**
      * Returns a past collection.
-     * @param time time to obtain the collection at
+     * @param time simulation time to obtain the collection at
      * @return past collection
      */
-    Collection<E> get(Time time);
+    Collection<E> get(Duration time);
 
     @Override
-    default boolean removeIf(Predicate<? super E> filter)
+    default boolean removeIf(final Predicate<? super E> filter)
     {
         Objects.requireNonNull(filter);
         boolean removed = false;

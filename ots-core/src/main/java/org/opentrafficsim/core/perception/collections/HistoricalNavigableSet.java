@@ -2,7 +2,7 @@ package org.opentrafficsim.core.perception.collections;
 
 import java.util.NavigableSet;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 
 /**
  * Interface for historical navigable sets.
@@ -27,10 +27,10 @@ public interface HistoricalNavigableSet<E> extends HistoricalSortedSet<E>, Navig
 
     /**
      * Returns a past navigable set.
-     * @param time time to obtain the navigable set at
+     * @param time simulation time to obtain the navigable set at
      * @return past navigable set
      */
     @Override
-    NavigableSet<E> get(Time time);
+    NavigableSet<E> get(Duration time);
 
 }

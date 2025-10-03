@@ -6,7 +6,6 @@ import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 
 /**
  * History manager with automatic garbage collection by the java garbage collector using weak references to the
@@ -59,7 +58,7 @@ public abstract class HistoryManager
      * Returns the current simulation time. This is used by historicals to time-stamp state changes.
      * @return current simulation time.
      */
-    protected abstract Time now();
+    protected abstract Duration now();
 
     /**
      * Historical view for the history manager.
@@ -94,7 +93,7 @@ public abstract class HistoryManager
          * Returns event times from most recent to oldest.
          * @return iterator over event times
          */
-        Iterator<Time> timeIterator();
+        Iterator<Duration> timeIterator();
     }
 
     /**

@@ -3,9 +3,9 @@ package org.opentrafficsim.road.gtu.lane.perception.categories;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -41,7 +41,7 @@ public class AnticipationTrafficPerception extends AbstractPerceptionCategory<La
     protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 
     /** Last time speed was updated. */
-    private Time lastSpeedTime = null;
+    private Duration lastSpeedTime = null;
 
     /** Anticipated speed by vehicles in the left lane. */
     private Map<RelativeLane, Double> antFromLeft = new LinkedHashMap<>();
@@ -73,7 +73,7 @@ public class AnticipationTrafficPerception extends AbstractPerceptionCategory<La
     @Override
     public Speed getSpeed(final RelativeLane lane) throws ParameterException
     {
-        Time now = Try.assign(() -> getTimestamp(), "");
+        Duration now = Try.assign(() -> getTimestamp(), "");
         if (this.lastSpeedTime == null || this.lastSpeedTime.si < now.si)
         {
             // due to lane interdependency, we clear all
@@ -157,7 +157,7 @@ public class AnticipationTrafficPerception extends AbstractPerceptionCategory<La
     @Override
     public LinearDensity getDensity(final RelativeLane lane)
     {
-        Time now = Try.assign(() -> getTimestamp(), "");
+        Duration now = Try.assign(() -> getTimestamp(), "");
         TimeStampedObject<LinearDensity> tK = this.density.get(lane);
         if (tK == null || tK.timestamp().si < now.si)
         {

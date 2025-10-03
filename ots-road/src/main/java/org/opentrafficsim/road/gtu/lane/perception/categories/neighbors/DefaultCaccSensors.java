@@ -1,9 +1,9 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories.neighbors;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -40,13 +40,14 @@ public class DefaultCaccSensors implements PerceivedGtuType
 
     /** {@inheritDoc} */
     @Override
-    public PerceivedGtu createPerceivedGtu(final LaneBasedGtu perceivingGtu, final LaneBasedObject reference, final LaneBasedGtu perceivedGtu,
-            final Length distance, final boolean downstream) throws GtuException, ParameterException
+    public PerceivedGtu createPerceivedGtu(final LaneBasedGtu perceivingGtu, final LaneBasedObject reference,
+            final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream)
+            throws GtuException, ParameterException
     {
-        Time t;
+        Duration t;
         try
         {
-            t = perceivingGtu.getSimulator().getSimulatorAbsTime()
+            t = perceivingGtu.getSimulator().getSimulatorTime()
                     .minus(((ControlTacticalPlanner) perceivingGtu.getTacticalPlanner()).getSettings()
                             .getParameter(LongitudinalControllerPerception.DELAY));
         }

@@ -77,7 +77,7 @@ public final class ConflictTest implements EventListener
         OtsSimulatorInterface simulator = MockDevsSimulator.createMock();
         OtsReplication replication = Mockito.mock(OtsReplication.class);
         HistoryManagerDevs hmd = Mockito.mock(HistoryManagerDevs.class);
-        Mockito.when(hmd.now()).thenReturn(Time.ZERO);
+        Mockito.when(hmd.now()).thenReturn(Duration.ZERO);
         Mockito.when(replication.getHistoryManager(simulator)).thenReturn(hmd);
         Mockito.when(simulator.getReplication()).thenReturn(replication);
         Mockito.when(simulator.getSimulatorAbsTime()).thenReturn(Time.ZERO);

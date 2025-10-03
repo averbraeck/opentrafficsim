@@ -75,7 +75,7 @@ public class Documentation
             this.odometer = new HistoricalValue<>(historyManager, this, Length.ZERO);
         }
 
-        T getValue(final Time time)
+        T getValue(final Duration time)
         {
             // @docs/05-perception/historical.md
             EventValue<T> event = getEvent(time);

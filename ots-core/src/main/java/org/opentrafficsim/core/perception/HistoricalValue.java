@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.perception;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.perception.AbstractHistorical.EventValue;
 
@@ -72,7 +72,7 @@ public class HistoricalValue<T> extends AbstractHistorical<T, EventValue<T>> imp
     }
 
     @Override
-    public final T get(final Time time)
+    public final T get(final Duration time)
     {
         Throw.whenNull(time, "Time may not be null.");
         if (time.si >= this.lastTime)

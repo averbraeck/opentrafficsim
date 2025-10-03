@@ -12,13 +12,11 @@ import java.util.Set;
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.PositionUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.PositionVector;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.bounds.Bounds2d;
@@ -32,6 +30,7 @@ import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
+import org.djutils.logger.CategoryLogger;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.HierarchicallyTyped;
@@ -121,6 +120,12 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
 
     /** Align step. */
     private double alignStep = Double.NaN;
+
+    /** Cache location time. */
+    private Duration cacheLocationTime = Duration.NaN;
+
+    /** Cached location at that time. */
+    private DirectedPoint2d cacheLocation = null;
 
     /** Cached speed time. */
     private double cachedSpeedTime = Double.NaN;
@@ -423,7 +428,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
     {
         try
         {
-            Time now = this.simulator.getSimulatorAbsTime();
+            Duration now = this.simulator.getSimulatorTime();
 
             // Add the odometer distance from the currently running operational plan.
             // Because a plan can be interrupted, we explicitly calculate the covered distance till 'now'
@@ -463,7 +468,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
                 // store the event, so it can be cancelled in case the plan has to be interrupted and changed halfway
                 double tNext = Math.floor(now.si / this.alignStep + 1.0) * this.alignStep;
                 DirectedPoint2d p = (tNext - now.si < this.alignStep) ? newOperationalPlan.getEndLocation()
-                        : newOperationalPlan.getLocation(new Duration(tNext - now.si, DurationUnit.SI));
+                        : newOperationalPlan.getLocationFromStart(new Duration(tNext - now.si, DurationUnit.SI));
                 this.nextMoveEvent = this.simulator.scheduleEventRel(Duration.instantiateSI(tNext),
                         () -> Try.execute(() -> move(p), "ParameterException in move"));
             }
@@ -510,7 +515,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
     protected void interruptMove() throws SimRuntimeException, GtuException, NetworkException, ParameterException
     {
         this.simulator.cancelEvent(this.nextMoveEvent);
-        move(this.operationalPlan.get().getLocation(this.simulator.getSimulatorAbsTime()));
+        move(this.operationalPlan.get().getLocation(this.simulator.getSimulatorTime()));
     }
 
     @Override
@@ -593,11 +598,11 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
 
     /**
      * Get strategical planner at time.
-     * @param time time to obtain the strategical planner at
+     * @param time simulation time to obtain the strategical planner at
      * @return the planner responsible for the overall 'mission' of the GTU, usually indicating where it needs to go. It
      *         operates by instantiating tactical planners to do the work.
      */
-    public StrategicalPlanner getStrategicalPlanner(final Time time)
+    public StrategicalPlanner getStrategicalPlanner(final Duration time)
     {
         return this.strategicalPlanner.get(time);
     }
@@ -613,10 +618,10 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
 
     /**
      * Get tactical planner at time.
-     * @param time time to obtain the tactical planner at
+     * @param time simulation time to obtain the tactical planner at
      * @return the tactical planner that can generate an operational plan at the given time
      */
-    public TacticalPlanner<?, ?> getTacticalPlanner(final Time time)
+    public TacticalPlanner<?, ?> getTacticalPlanner(final Duration time)
     {
         return getStrategicalPlanner(time).getTacticalPlanner(time);
     }
@@ -632,10 +637,10 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
 
     /**
      * Get operational plan at time.
-     * @param time time to obtain the operational plan at
+     * @param time simulation time to obtain the operational plan at
      * @return the operational plan for the GTU at the given time.
      */
-    public final OperationalPlan getOperationalPlan(final Time time)
+    public final OperationalPlan getOperationalPlan(final Duration time)
     {
         return this.operationalPlan.get(time);
     }
@@ -655,19 +660,20 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      */
     public final Length getOdometer()
     {
-        return getOdometer(this.simulator.getSimulatorAbsTime());
+        return getOdometer(this.simulator.getSimulatorTime());
     }
 
     /**
      * Get odometer at time.
-     * @param time time to obtain the odometer at
+     * @param time simulation time to obtain the odometer at
      * @return the odometer value at given time.
      */
-    public final Length getOdometer(final Time time)
+    public final Length getOdometer(final Duration time)
     {
         synchronized (this)
         {
-            if (getOperationalPlan(time) == null)
+            OperationalPlan historicalPlan = getOperationalPlan(time);
+            if (historicalPlan == null || historicalPlan.getStartTime().gt(time) || historicalPlan.getEndTime().lt(time))
             {
                 return this.odometer.get(time);
             }
@@ -677,6 +683,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
             }
             catch (OperationalPlanException ope)
             {
+                CategoryLogger.always().warn("OperationalPlan could not give a traveled distance it the requested time.");
                 return this.odometer.get(time);
             }
         }
@@ -690,16 +697,16 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
     {
         synchronized (this)
         {
-            return getSpeed(this.simulator.getSimulatorAbsTime());
+            return getSpeed(this.simulator.getSimulatorTime());
         }
     }
 
     /**
      * Get speed at time.
-     * @param time time at which to obtain the speed
+     * @param time simulation time at which to obtain the speed
      * @return the current speed of the GTU, along the direction of movement.
      */
-    public final Speed getSpeed(final Time time)
+    public final Speed getSpeed(final Duration time)
     {
         synchronized (this)
         {
@@ -748,16 +755,16 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
     {
         synchronized (this)
         {
-            return getAcceleration(this.simulator.getSimulatorAbsTime());
+            return getAcceleration(this.simulator.getSimulatorTime());
         }
     }
 
     /**
      * Get acceleration at time.
-     * @param time time at which to obtain the acceleration
+     * @param time simulation time at which to obtain the acceleration
      * @return the current acceleration of the GTU, along the direction of movement.
      */
-    public final Acceleration getAcceleration(final Time time)
+    public final Acceleration getAcceleration(final Duration time)
     {
         synchronized (this)
         {
@@ -844,16 +851,10 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
         this.maximumDeceleration = maximumDeceleration;
     }
 
-    /** Cache location time. */
-    private Time cacheLocationTime = new Time(Double.NaN, TimeUnit.DEFAULT);
-
-    /** Cached location at that time. */
-    private DirectedPoint2d cacheLocation = null;
-
     @Override
     public synchronized DirectedPoint2d getLocation()
     {
-        Time locationTime = this.simulator.getSimulatorAbsTime();
+        Duration locationTime = this.simulator.getSimulatorTime();
         if (null == this.cacheLocationTime || this.cacheLocationTime.si != locationTime.si)
         {
             this.cacheLocation = getLocation(locationTime);
@@ -864,14 +865,14 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
 
     /**
      * Returns the location of the GTU at the given time.
-     * @param when time
+     * @param time simulation time
      * @return location of the GTU at the given time
      */
-    public synchronized DirectedPoint2d getLocation(final Time when)
+    public synchronized DirectedPoint2d getLocation(final Duration time)
     {
         try
         {
-            return this.operationalPlan.get(when).getLocation(when);
+            return this.operationalPlan.get(time).getLocation(time);
         }
         catch (OperationalPlanException exception)
         {
@@ -889,11 +890,11 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
      * Return the shape of a dynamic object at time 'time'. Note that the getContour() method without a time returns the
      * Minkowski sum of all shapes of the spatial object for a validity time window, e.g., a contour that describes all
      * locations of a GTU for the next time step, i.e., the contour of the GTU belonging to the next operational plan.
-     * @param time the time for which we want the shape
+     * @param time simulation time for which we want the shape
      * @return the shape of the object at time 'time'
      */
     @Override
-    public Polygon2d getAbsoluteContour(final Time time)
+    public Polygon2d getAbsoluteContour(final Duration time)
     {
         try
         {

@@ -3,7 +3,7 @@ package org.opentrafficsim.core.perception.collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.core.perception.HistoryManager;
 
 /**
@@ -53,7 +53,7 @@ public class HistoricalLinkedHashMap<K, V> extends AbstractHistoricalMap<K, V, L
     }
 
     @Override
-    public LinkedHashMap<K, V> get(final Time time)
+    public LinkedHashMap<K, V> get(final Duration time)
     {
         if (isLastState(time))
         {
