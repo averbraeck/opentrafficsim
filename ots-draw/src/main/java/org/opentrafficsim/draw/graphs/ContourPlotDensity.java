@@ -6,7 +6,6 @@ import org.djunits.unit.LinearDensityUnit;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.opentrafficsim.draw.BoundsPaintScale;
 import org.opentrafficsim.draw.Colors;
-import org.opentrafficsim.draw.graphs.ContourDataSource.ContourDataType;
 
 /**
  * Contour plot for density.
@@ -29,7 +28,8 @@ public class ContourPlotDensity extends AbstractContourPlot<LinearDensity>
      */
     public ContourPlotDensity(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool)
     {
-        super(caption, scheduler, dataPool, createPaintScale(), new LinearDensity(30.0, LinearDensityUnit.PER_KILOMETER),
+        // density is present by default, hence null contour data type
+        super(caption, scheduler, dataPool, null, createPaintScale(), new LinearDensity(30.0, LinearDensityUnit.PER_KILOMETER),
                 "%.0f/km", "density %.1f veh/km");
     }
 
@@ -60,12 +60,6 @@ public class ContourPlotDensity extends AbstractContourPlot<LinearDensity>
     protected double getValue(final int item, final double cellLength, final double cellSpan)
     {
         return getDataPool().getTotalTime(item) / (cellLength * cellSpan);
-    }
-
-    @Override
-    protected ContourDataType<LinearDensity, ?> getContourDataType()
-    {
-        return null; // density is present by default
     }
 
     @Override

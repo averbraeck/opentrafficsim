@@ -109,8 +109,8 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
      */
     public ContourPlotAcceleration(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool)
     {
-        super(caption, scheduler, dataPool, createPaintScale(), new Acceleration(1.0, AccelerationUnit.SI), "%.0fm/s\u00B2",
-                "acceleration %.2f m/s\u00B2");
+        super(caption, scheduler, dataPool, CONTOUR_DATA_TYPE, createPaintScale(), new Acceleration(1.0, AccelerationUnit.SI),
+                "%.0fm/s\u00B2", "acceleration %.2f m/s\u00B2");
     }
 
     /**
@@ -140,12 +140,6 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
     protected double getValue(final int item, final double cellLength, final double cellSpan)
     {
         return getDataPool().get(item, CONTOUR_DATA_TYPE);
-    }
-
-    @Override
-    protected ContourDataType<Acceleration, ArithmeticMean<Double, Double>> getContourDataType()
-    {
-        return CONTOUR_DATA_TYPE;
     }
 
     @Override

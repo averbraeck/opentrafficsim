@@ -6,7 +6,6 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.draw.BoundsPaintScale;
 import org.opentrafficsim.draw.Colors;
-import org.opentrafficsim.draw.graphs.ContourDataSource.ContourDataType;
 
 /**
  * Contour plot for speed.
@@ -29,7 +28,8 @@ public class ContourPlotSpeed extends AbstractContourPlot<Speed>
      */
     public ContourPlotSpeed(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool)
     {
-        super(caption, scheduler, dataPool, createPaintScale(), new Speed(30.0, SpeedUnit.KM_PER_HOUR), "%.0fkm/h",
+        // speed is present by default, hence null contour data type
+        super(caption, scheduler, dataPool, null, createPaintScale(), new Speed(30.0, SpeedUnit.KM_PER_HOUR), "%.0fkm/h",
                 "speed %.1f km/h");
     }
 
@@ -60,12 +60,6 @@ public class ContourPlotSpeed extends AbstractContourPlot<Speed>
     protected double getValue(final int item, final double cellLength, final double cellSpan)
     {
         return getDataPool().getSpeed(item);
-    }
-
-    @Override
-    protected ContourDataType<Speed, ?> getContourDataType()
-    {
-        return null; // speed is present by default
     }
 
     @Override

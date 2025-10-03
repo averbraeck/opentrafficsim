@@ -126,8 +126,8 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
      */
     public ContourPlotDelay(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool)
     {
-        super(caption, scheduler, dataPool, createPaintScale(), new Duration(0.05, DurationUnit.SI), "%.1f/km",
-                "delay %.1f /km");
+        super(caption, scheduler, dataPool, CONTOUR_DATA_TYPE, createPaintScale(), new Duration(0.05, DurationUnit.SI),
+                "%.1f/km", "delay %.1f /km");
     }
 
     /**
@@ -157,12 +157,6 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
     protected double getValue(final int item, final double cellLength, final double cellSpan)
     {
         return getDataPool().get(item, CONTOUR_DATA_TYPE) / (cellLength * cellSpan);
-    }
-
-    @Override
-    protected ContourDataType<Duration, Duration> getContourDataType()
-    {
-        return CONTOUR_DATA_TYPE;
     }
 
 }

@@ -48,6 +48,9 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
     /** Data pool. */
     private final ContourDataSource dataPool;
 
+    /** Contour data type. */
+    private final ContourDataType<Z, ?> contourDataType;
+
     /** Block renderer in chart. */
     private XyInterpolatedBlockRenderer blockRenderer = null;
 
@@ -56,18 +59,21 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      * @param caption caption
      * @param scheduler scheduler.
      * @param dataPool data pool
+     * @param contourDataType contour data type
      * @param paintScale paint scale
      * @param legendStep increment between color legend entries
      * @param legendFormat format string for the captions in the color legend
      * @param valueFormat format string used to create status label (under the mouse)
      */
+    @SuppressWarnings("parameternumber")
     public AbstractContourPlot(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool,
-            final BoundsPaintScale paintScale, final Z legendStep, final String legendFormat, final String valueFormat)
+            final ContourDataType<Z, ?> contourDataType, final BoundsPaintScale paintScale, final Z legendStep,
+            final String legendFormat, final String valueFormat)
     {
         super(caption, dataPool.getUpdateInterval(), scheduler, dataPool.getSamplerData(), dataPool.getPath(),
                 dataPool.getDelay());
-        dataPool.registerContourPlot(this);
         this.dataPool = dataPool;
+        this.contourDataType = contourDataType;
         this.paintScale = paintScale;
         this.legendStep = legendStep;
         this.legendFormat = legendFormat;
@@ -76,6 +82,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
         this.blockRenderer.setPaintScale(this.paintScale);
         this.blockRenderer.setBlockHeight(dataPool.getGranularity(Dimension.DISTANCE));
         this.blockRenderer.setBlockWidth(dataPool.getGranularity(Dimension.TIME));
+        dataPool.registerContourPlot(this);
         setChart(createChart());
     }
 
@@ -84,6 +91,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      * @param caption caption
      * @param scheduler scheduler.
      * @param dataPool data pool
+     * @param contourDataType contour data type
      * @param legendStep increment between color legend entries
      * @param legendFormat format string for the captions in the color legend
      * @param minValue minimum value
@@ -92,9 +100,11 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      */
     @SuppressWarnings("parameternumber")
     public AbstractContourPlot(final String caption, final PlotScheduler scheduler, final ContourDataSource dataPool,
-            final Z legendStep, final String legendFormat, final Z minValue, final Z maxValue, final String valueFormat)
+            final ContourDataType<Z, ?> contourDataType, final Z legendStep, final String legendFormat, final Z minValue,
+            final Z maxValue, final String valueFormat)
     {
-        this(caption, scheduler, dataPool, createPaintScale(minValue, maxValue), legendStep, legendFormat, valueFormat);
+        this(caption, scheduler, dataPool, contourDataType, createPaintScale(minValue, maxValue), legendStep, legendFormat,
+                valueFormat);
     }
 
     /**
@@ -323,7 +333,10 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
      * Returns the contour data type for use in a {@code ContourDataSource}.
      * @return contour data type
      */
-    protected abstract ContourDataType<Z, ?> getContourDataType();
+    protected ContourDataType<Z, ?> getContourDataType()
+    {
+        return this.contourDataType;
+    }
 
     /**
      * Returns the block renderer.
