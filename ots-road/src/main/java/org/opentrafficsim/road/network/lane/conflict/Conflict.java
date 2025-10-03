@@ -12,8 +12,8 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
@@ -99,7 +99,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     private Iterable<Entry<LaneBasedGtu>> upstreamGtus;
 
     /** Upstream GTUs update time. */
-    private Time upstreamTime;
+    private Duration upstreamTime;
 
     /** Lanes on which upstream GTUs are found. */
     private Map<LaneBasedGtu, Lane> upstreamLanes = new LinkedHashMap<>();
@@ -108,7 +108,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     private Iterable<Entry<LaneBasedGtu>> downstreamGtus;
 
     /** Downstream GTUs update time. */
-    private Time downstreamTime;
+    private Duration downstreamTime;
 
     /** Lanes on which downstream GTUs are found. */
     private Map<LaneBasedGtu, Lane> downstreamLanes = new LinkedHashMap<>();
@@ -214,7 +214,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             final PerceivedGtuType perceivedGtuType, final Length visibility)
     {
         provideUpstreamVisibility(visibility);
-        Time time = this.getLane().getLink().getSimulator().getSimulatorAbsTime();
+        Duration time = this.getLane().getLink().getSimulator().getSimulatorTime();
         if (this.upstreamTime == null || !time.eq(this.upstreamTime))
         {
             for (LaneBasedGtu gtu : this.upstreamListening)
@@ -275,7 +275,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             final PerceivedGtuType perceivedGtuType, final Length visibility)
     {
         provideDownstreamVisibility(visibility);
-        Time time = this.getLane().getLink().getSimulator().getSimulatorAbsTime();
+        Duration time = this.getLane().getLink().getSimulator().getSimulatorTime();
         if (this.downstreamTime == null || !time.eq(this.downstreamTime))
         {
             for (LaneBasedGtu gtu : this.downstreamListening)

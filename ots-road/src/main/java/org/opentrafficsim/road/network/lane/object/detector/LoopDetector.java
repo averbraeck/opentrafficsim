@@ -488,8 +488,7 @@ public class LoopDetector extends LaneDetector
         {
             if (!measurement.isPeriodic())
             {
-                map.put(measurement,
-                        getAggregateValue(measurement, getSimulator().getSimulatorAbsTime().minus(Time.ZERO), dat));
+                map.put(measurement, getAggregateValue(measurement, getSimulator().getSimulatorTime(), dat));
             }
         }
         return map;
@@ -553,8 +552,7 @@ public class LoopDetector extends LaneDetector
         Throw.when(!this.data.containsKey(gtuType), IllegalArgumentException.class, "No data for %s.", gtuType);
         Throw.when(measurement.isPeriodic(), IllegalArgumentException.class, "Measurement %s is not non-periodic.",
                 measurement.getName());
-        return (T) getAggregateValue(measurement, getSimulator().getSimulatorAbsTime().minus(Time.ZERO),
-                this.data.get(gtuType));
+        return (T) getAggregateValue(measurement, getSimulator().getSimulatorTime(), this.data.get(gtuType));
     }
 
     /**
@@ -1082,7 +1080,7 @@ public class LoopDetector extends LaneDetector
         protected PlatoonMeasurement accumulateEntry(final PlatoonMeasurement cumulative, final LaneBasedGtu gtu,
                 final LoopDetector loopDetector)
         {
-            Time now = gtu.getSimulator().getSimulatorAbsTime();
+            Duration now = gtu.getSimulator().getSimulatorTime();
             if (now.si - cumulative.lastExitTime.si < this.threshold.si)
             {
                 cumulative.gtuCount++;
@@ -1107,7 +1105,7 @@ public class LoopDetector extends LaneDetector
             int index = cumulative.enteredGTUs.indexOf(gtu);
             if (index >= 0)
             {
-                cumulative.lastExitTime = gtu.getSimulator().getSimulatorAbsTime();
+                cumulative.lastExitTime = gtu.getSimulator().getSimulatorTime();
                 // gtu is likely the oldest gtu in the list at index 0, but sometimes an older gtu may have left the detector by
                 // changing lane, by clearing up to this gtu, older gtu's are automatically removed
                 cumulative.enteredGTUs.subList(0, index).clear();
@@ -1150,7 +1148,7 @@ public class LoopDetector extends LaneDetector
         private int gtuCount = 0;
 
         /** Time the last GTU exited the detector. */
-        private Time lastExitTime = Time.instantiateSI(Double.NEGATIVE_INFINITY);
+        private Duration lastExitTime = Duration.instantiateSI(Double.NEGATIVE_INFINITY);
 
         /** Stored sizes of earlier platoons. */
         private List<Integer> platoons = new ArrayList<>();

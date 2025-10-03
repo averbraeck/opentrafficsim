@@ -222,11 +222,11 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
                     new HistoryManagerDevs(this.simulator, this.historyTime, Duration.instantiateSI(10.0)));
             this.simulator.addListener(this, Replication.END_REPLICATION_EVENT);
             double tReport = 60.0;
-            Time t = this.simulator.getSimulatorAbsTime();
+            Duration t = this.simulator.getSimulatorTime();
             while (t.si < this.simulationTime.si)
             {
                 this.simulator.step();
-                t = this.simulator.getSimulatorAbsTime();
+                t = this.simulator.getSimulatorTime();
                 if (t.si >= tReport)
                 {
                     System.out.println("Simulation time is " + t);

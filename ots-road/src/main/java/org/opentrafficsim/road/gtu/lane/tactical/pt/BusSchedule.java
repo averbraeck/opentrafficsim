@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.NetworkException;
@@ -35,10 +34,10 @@ public class BusSchedule extends Route
     private final Map<String, BusStopInfo> schedule = new LinkedHashMap<>();
 
     /** Map of actual departures stored per bus stop. */
-    private final Map<String, Time> actualDeparturesBusStop = new LinkedHashMap<>();
+    private final Map<String, Duration> actualDeparturesBusStop = new LinkedHashMap<>();
 
     /** Map of actual departures stored per conflict. */
-    private final Map<String, Time> actualDeparturesConflict = new LinkedHashMap<>();
+    private final Map<String, Duration> actualDeparturesConflict = new LinkedHashMap<>();
 
     /**
      * Constructor.
@@ -74,7 +73,7 @@ public class BusSchedule extends Route
      * @param dwellTime dwell time
      * @param forceSchedule whether to wait until departure time
      */
-    public final void addBusStop(final String busStopId, final Time departureTime, final Duration dwellTime,
+    public final void addBusStop(final String busStopId, final Duration departureTime, final Duration dwellTime,
             final boolean forceSchedule)
     {
         Throw.whenNull(busStopId, "Bus stop id may not be null.");
@@ -89,7 +88,7 @@ public class BusSchedule extends Route
      * @param time time to check
      * @return whether the bus of this line should stop for this bus stop
      */
-    public final boolean isLineStop(final String busStopId, final Time time)
+    public final boolean isLineStop(final String busStopId, final Duration time)
     {
         return this.schedule.containsKey(busStopId) && (!this.actualDeparturesConflict.containsKey(busStopId)
                 || time.lt(this.actualDeparturesConflict.get(busStopId)));
@@ -100,7 +99,7 @@ public class BusSchedule extends Route
      * @param busStopId id of bus stop
      * @return departure time for the given bus stop
      */
-    public final Time getDepartureTime(final String busStopId)
+    public final Duration getDepartureTime(final String busStopId)
     {
         checkStop(busStopId);
         return this.schedule.get(busStopId).getDepartureTime();
@@ -145,7 +144,7 @@ public class BusSchedule extends Route
      * @param conflictIds conflicts downstream of the bus stop
      * @param time actual departure time
      */
-    public final void setActualDeparture(final String busStopId, final Set<String> conflictIds, final Time time)
+    public final void setActualDeparture(final String busStopId, final Set<String> conflictIds, final Duration time)
     {
         this.actualDeparturesBusStop.put(busStopId, time);
         for (String conflictId : conflictIds)
@@ -159,7 +158,7 @@ public class BusSchedule extends Route
      * @param busStopId bus stop id
      * @return actual departure time, {@code null} if not given
      */
-    public final Time getActualDepartureBusStop(final String busStopId)
+    public final Duration getActualDepartureBusStop(final String busStopId)
     {
         return this.actualDeparturesBusStop.get(busStopId);
     }
@@ -169,7 +168,7 @@ public class BusSchedule extends Route
      * @param conflictId conflict id
      * @return actual departure time, {@code null} if not given
      */
-    public final Time getActualDepartureConflict(final String conflictId)
+    public final Duration getActualDepartureConflict(final String conflictId)
     {
         return this.actualDeparturesConflict.get(conflictId);
     }
@@ -204,7 +203,7 @@ public class BusSchedule extends Route
     {
 
         /** Departure time. */
-        private final Time departureTime;
+        private final Duration departureTime;
 
         /** Dwell time. */
         private final Duration dwellTime;
@@ -217,7 +216,7 @@ public class BusSchedule extends Route
          * @param dwellTime dwell time
          * @param forceSchedule whether to wait until departure time
          */
-        BusStopInfo(final Time departureTime, final Duration dwellTime, final boolean forceSchedule)
+        BusStopInfo(final Duration departureTime, final Duration dwellTime, final boolean forceSchedule)
         {
             this.departureTime = departureTime;
             this.dwellTime = dwellTime;
@@ -227,7 +226,7 @@ public class BusSchedule extends Route
         /**
          * @return departureTime.
          */
-        public final Time getDepartureTime()
+        public final Duration getDepartureTime()
         {
             return this.departureTime;
         }

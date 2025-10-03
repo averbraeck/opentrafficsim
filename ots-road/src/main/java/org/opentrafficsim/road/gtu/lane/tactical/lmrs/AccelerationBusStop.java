@@ -2,9 +2,9 @@ package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -72,7 +72,7 @@ public final class AccelerationBusStop implements AccelerationIncentive, Statele
             return;
         }
         BusSchedule busSchedule = (BusSchedule) gtu.getStrategicalPlanner().getRoute();
-        Time now = gtu.getSimulator().getSimulatorAbsTime();
+        Duration now = gtu.getSimulator().getSimulatorTime();
         Iterable<PerceivedBusStop> it = lane.isCurrent() ? stops : new FilteredIterable<>(stops, (busStop) ->
         {
             return busStop.getDistance().gt(mergeDistance);
@@ -91,10 +91,10 @@ public final class AccelerationBusStop implements AccelerationIncentive, Statele
                     if (stoppedAtStop)
                     {
                         // bus just stopped
-                        Time departureTime = now.plus(busSchedule.getDwellTime(busStopId));
+                        Duration departureTime = now.plus(busSchedule.getDwellTime(busStopId));
                         if (busSchedule.isForceSchedule(busStopId))
                         {
-                            departureTime = Time.max(departureTime, busSchedule.getDepartureTime(busStopId));
+                            departureTime = Duration.max(departureTime, busSchedule.getDepartureTime(busStopId));
                         }
                         busSchedule.setActualDeparture(busStopId, stop.getConflictIds(), departureTime);
                     }

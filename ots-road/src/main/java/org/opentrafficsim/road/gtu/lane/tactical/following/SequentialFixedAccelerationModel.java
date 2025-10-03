@@ -120,7 +120,7 @@ public class SequentialFixedAccelerationModel extends AbstractGtuFollowingModelM
      */
     private FixedAccelerationModel getAccelerationModel()
     {
-        Time when = this.simulator.getSimulatorAbsTime();
+        Duration when = this.simulator.getSimulatorTime();
         double remainingTime = when.getSI();
         for (FixedAccelerationModel step : this.steps)
         {
@@ -210,7 +210,8 @@ public class SequentialFixedAccelerationModel extends AbstractGtuFollowingModelM
 
     @Override
     public final Acceleration followingAcceleration(final Parameters parameters, final Speed speed,
-            final SpeedLimitInfo speedInfo, final PerceptionIterable<? extends PerceivedObject> leaders) throws ParameterException
+            final SpeedLimitInfo speedInfo, final PerceptionIterable<? extends PerceivedObject> leaders)
+            throws ParameterException
     {
         return null;
     }

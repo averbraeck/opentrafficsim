@@ -14,8 +14,8 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Function;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.LateralDirectionality;
@@ -49,7 +49,7 @@ public class LaneStructure
     private Length downstream;
 
     /** Time at which the structure was updated. */
-    private Time updated = null;
+    private Duration updated = null;
 
     /** Cross section of lane records at different relative lanes. */
     private final Map<RelativeLane, Set<LaneRecord>> crossSection = new LinkedHashMap<>();
@@ -463,7 +463,7 @@ public class LaneStructure
      */
     private synchronized void update()
     {
-        if (this.updated != null && this.updated.equals(this.egoGtu.getSimulator().getSimulatorAbsTime()))
+        if (this.updated != null && this.updated.equals(this.egoGtu.getSimulator().getSimulatorTime()))
         {
             return;
         }
@@ -498,7 +498,7 @@ public class LaneStructure
                 nextLateral(visited, downQueue, upQueue, latDownQueue, latUpQueue);
             }
         }
-        this.updated = this.egoGtu.getSimulator().getSimulatorAbsTime();
+        this.updated = this.egoGtu.getSimulator().getSimulatorTime();
     }
 
     /**

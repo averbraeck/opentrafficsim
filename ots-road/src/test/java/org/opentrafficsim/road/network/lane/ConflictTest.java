@@ -80,7 +80,6 @@ public final class ConflictTest implements EventListener
         Mockito.when(hmd.now()).thenReturn(Duration.ZERO);
         Mockito.when(replication.getHistoryManager(simulator)).thenReturn(hmd);
         Mockito.when(simulator.getReplication()).thenReturn(replication);
-        Mockito.when(simulator.getSimulatorAbsTime()).thenReturn(Time.ZERO);
         Mockito.when(simulator.getSimulatorTime()).thenReturn(Duration.ZERO);
         RoadNetwork network = new RoadNetwork("Network for conflict test", simulator);
         LinkType linkType = DefaultsNl.ROAD;

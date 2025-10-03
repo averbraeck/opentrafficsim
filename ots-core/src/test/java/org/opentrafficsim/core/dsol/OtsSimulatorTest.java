@@ -51,7 +51,7 @@ public final class OtsSimulatorTest
         Duration runLength = new Duration(500, DurationUnit.SECOND);
         OtsModel model = new OtsModel(simulator);
         simulator.initialize(startTime, warmupDuration, runLength, model, HistoryManagerDevs.noHistory(simulator));
-        assertEquals(startTime, simulator.getStartTimeAbs(), "startTime is returned");
+        assertEquals(startTime, simulator.getStartTime(), "startTime is returned");
         assertEquals(warmupDuration, simulator.getReplication().getWarmupPeriod(), "warmupDuration is returned");
         assertEquals(runLength, simulator.getReplication().getRunLength(), "runLength is returned");
         assertTrue(simulator.toString().startsWith("OtsSimulator"), "toString returns something descriptive");
@@ -63,7 +63,7 @@ public final class OtsSimulatorTest
             Thread.sleep(100);
         }
         assertFalse(simulator.isStartingOrRunning(), "simulator has stopped");
-        assertEquals(runLength, simulator.getSimulatorAbsTime().minus(startTime), "simulator time is runLength");
+        assertEquals(runLength, simulator.getSimulatorTime(), "simulator time is runLength");
         assertEquals(testArgument, this.receivedArgument, "event has been executed");
     }
 

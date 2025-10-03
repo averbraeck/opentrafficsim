@@ -709,7 +709,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
         private LateralDirectionality direction = LateralDirectionality.NONE;
 
         /** Time when the lane change was initiated. */
-        private Time initiationTime;
+        private Duration initiationTime;
 
         /**
          * Constructor.
@@ -754,7 +754,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
             }
 
             // synchronization
-            Duration since = this.gtu.getSimulator().getSimulatorAbsTime().minus(this.initiationTime);
+            Duration since = this.gtu.getSimulator().getSimulatorTime().minus(this.initiationTime);
             if (since.gt(this.settings.getParameter(SYNCTIME))
                     || this.gtu.getSpeed().lt(this.settings.getParameter(ParameterTypes.VCONG)))
             {
@@ -824,7 +824,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
             this.direction = dir;
             if (!dir.isNone())
             {
-                this.initiationTime = this.gtu.getSimulator().getSimulatorAbsTime();
+                this.initiationTime = this.gtu.getSimulator().getSimulatorTime();
             }
             else
             {

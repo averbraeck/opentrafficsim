@@ -12,7 +12,6 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -242,8 +241,8 @@ public final class TrafficLightDetectorTest implements EventListener
                         // this.loggedEvents.size());
                     }
                 }
-                Time stopTime = new Time(100, TimeUnit.BASE_SECOND);
-                while (simulator.getSimulatorAbsTime().lt(stopTime))
+                Duration stopTime = Duration.instantiateSI(100.0);
+                while (simulator.getSimulatorTime().lt(stopTime))
                 {
                     // System.out.println("simulation time is now " + simulator);
                     simulator.step();

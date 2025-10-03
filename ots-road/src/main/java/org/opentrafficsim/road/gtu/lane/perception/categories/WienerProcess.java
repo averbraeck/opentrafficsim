@@ -1,7 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.perception.categories;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
 import nl.tudelft.simulation.jstats.distributions.DistNormal;
@@ -49,7 +48,7 @@ public class WienerProcess extends DistNormal
     private Double value;
 
     /** Time the value was determined. */
-    private Time prevTime;
+    private Duration prevTime;
 
     /**
      * Constructor.
@@ -75,12 +74,12 @@ public class WienerProcess extends DistNormal
         if (this.value == null)
         {
             this.value = super.draw();
-            this.prevTime = this.simulator.getSimulatorAbsTime();
+            this.prevTime = this.simulator.getSimulatorTime();
         }
-        else if (this.simulator.getSimulatorAbsTime().gt(this.prevTime))
+        else if (this.simulator.getSimulatorTime().gt(this.prevTime))
         {
             // calculate next value
-            Time now = this.simulator.getSimulatorAbsTime();
+            Duration now = this.simulator.getSimulatorTime();
             double dt = now.si - this.prevTime.si;
             if (dt <= this.tau.si)
             {

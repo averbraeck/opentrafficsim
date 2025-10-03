@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Try;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -40,7 +39,7 @@ public class CycleTimeLightController implements RampMeteringLightController
     private boolean enabled = false;
 
     /** Time when red phase was started. */
-    private Map<TrafficLight, Time> greenStarts = new LinkedHashMap<>();
+    private Map<TrafficLight, Duration> greenStarts = new LinkedHashMap<>();
 
     /** Cycle time. */
     private Duration cTime;
@@ -72,7 +71,7 @@ public class CycleTimeLightController implements RampMeteringLightController
         {
             Try.execute(() -> new RampMeteringDetector(trafficLight, detectorType),
                     "Unexpected exception while creating a detector with a ramp metering traffic light.");
-            this.greenStarts.put(trafficLight, Time.instantiateSI(Double.NEGATIVE_INFINITY));
+            this.greenStarts.put(trafficLight, Duration.NEGATIVE_INFINITY);
         }
     }
 
@@ -137,7 +136,7 @@ public class CycleTimeLightController implements RampMeteringLightController
     protected void setGreen(final TrafficLight trafficLight)
     {
         this.greenEvents.remove(trafficLight);
-        this.greenStarts.put(trafficLight, this.simulator.getSimulatorAbsTime());
+        this.greenStarts.put(trafficLight, this.simulator.getSimulatorTime());
         this.simulator.getLogger().always().info("Traffic light set to GREEN");
         trafficLight.setTrafficLightColor(TrafficLightColor.GREEN);
     }
@@ -173,10 +172,10 @@ public class CycleTimeLightController implements RampMeteringLightController
                 try
                 {
                     // schedule green
-                    Time minRedTime = CycleTimeLightController.this.simulator.getSimulatorAbsTime().plus(MIN_RED_TIME);
-                    Time cycleRedTime = CycleTimeLightController.this.greenStarts.get(this.trafficLight)
+                    Duration minRedTime = CycleTimeLightController.this.simulator.getSimulatorTime().plus(MIN_RED_TIME);
+                    Duration cycleRedTime = CycleTimeLightController.this.greenStarts.get(this.trafficLight)
                             .plus(CycleTimeLightController.this.cTime);
-                    Time green;
+                    Duration green;
                     if (minRedTime.ge(cycleRedTime))
                     {
                         getSimulator().getLogger().always().info("Traffic light set to RED");

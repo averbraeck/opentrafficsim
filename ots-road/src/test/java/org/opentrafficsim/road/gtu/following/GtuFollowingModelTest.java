@@ -12,7 +12,6 @@ import java.util.Map;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.unit.util.UNITS;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -179,7 +178,7 @@ public final class GtuFollowingModelTest implements UNITS
         Collection<PerceivedObject> otherGTUs = new ArrayList<>();
         DualAccelerationStep asEmpty = gtuFollowingModel.computeDualAccelerationStep(gtu, otherGTUs, maxHeadway, speedLimit);
         // System.out.println("asEmpty: [" + asEmpty[0] + ", " + asEmpty[1] + "]");
-        Time expectedValidUntil = new Time(stepSize.getSI(), TimeUnit.BASE_SECOND);
+        Duration expectedValidUntil = stepSize;
         checkAccelerationStep("Empty collection", asEmpty, noLeader.getAcceleration(), noLeader.getAcceleration(),
                 expectedValidUntil);
         otherGTUs.add(PerceivedGtu.of(gtu,
@@ -298,7 +297,7 @@ public final class GtuFollowingModelTest implements UNITS
      * @param validUntil the expected validUntil value in both entries of as
      */
     private void checkAccelerationStep(final String description, final DualAccelerationStep as, final Acceleration a0,
-            final Acceleration a1, final Time validUntil)
+            final Acceleration a1, final Duration validUntil)
     {
         assertEquals(a0.getSI(), as.getLeaderAcceleration().getSI(), 0.001, description + ": a leader should be " + a0);
         assertEquals(a0.getSI(), as.getLeaderAccelerationStep().getAcceleration().getSI(), 0.001,

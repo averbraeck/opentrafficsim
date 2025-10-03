@@ -3,7 +3,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.following;
 import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 
 /**
  * Container for two instances of an AccelerationStep. One for the GTU that is deciding its move (the leader); one for the GTU
@@ -76,7 +76,7 @@ public class DualAccelerationStep implements Serializable
      * Return the time up to which the result of the leader is valid.
      * @return the time up to which the result of the leader is valid
      */
-    public final Time getLeaderValidUntil()
+    public final Duration getLeaderValidUntil()
     {
         return getLeaderAccelerationStep().getValidUntil();
     }
@@ -85,7 +85,7 @@ public class DualAccelerationStep implements Serializable
      * Return the time up to which the result of the follower is valid.
      * @return the time up to which the result of the follower is valid
      */
-    public final Time getFollowerValidUntil()
+    public final Duration getFollowerValidUntil()
     {
         return getFollowerAccelerationStep().getValidUntil();
     }

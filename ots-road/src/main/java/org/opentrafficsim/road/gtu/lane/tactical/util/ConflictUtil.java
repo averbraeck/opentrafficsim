@@ -194,7 +194,7 @@ public final class ConflictUtil
                         && conflict.getConflictRuleType().equals(BusStopConflictRule.class))
                 {
                     BusSchedule busSchedule = (BusSchedule) gtu.getStrategicalPlanner().getRoute();
-                    Time actualDeparture = busSchedule.getActualDepartureConflict(conflict.getId());
+                    Duration actualDeparture = busSchedule.getActualDepartureConflict(conflict.getId());
                     if (actualDeparture != null
                             && actualDeparture.si < gtu.getSimulator().getSimulatorTime().si + parameters.getParameter(TI).si)
                     {

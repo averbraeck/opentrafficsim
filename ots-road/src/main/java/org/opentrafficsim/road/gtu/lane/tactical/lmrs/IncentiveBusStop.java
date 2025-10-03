@@ -1,7 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.Stateless;
@@ -55,7 +55,7 @@ public final class IncentiveBusStop implements MandatoryIncentive, Stateless<Inc
         PerceivedBusStop firstStop = null;
         PerceptionCollectable<PerceivedBusStop, BusStop> stops =
                 perception.getPerceptionCategory(BusStopPerception.class).getBusStops();
-        Time now = perception.getGtu().getSimulator().getSimulatorAbsTime();
+        Duration now = perception.getGtu().getSimulator().getSimulatorTime();
         for (PerceivedBusStop stop : stops)
         {
             if (((BusSchedule) perception.getGtu().getStrategicalPlanner().getRoute()).isLineStop(stop.getId(), now))

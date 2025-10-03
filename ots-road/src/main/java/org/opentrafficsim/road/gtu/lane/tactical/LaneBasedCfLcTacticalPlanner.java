@@ -167,7 +167,7 @@ public class LaneBasedCfLcTacticalPlanner extends AbstractLaneBasedTacticalPlann
                     rightLaneTraffic, leftLaneTraffic, speedLimit,
                     new Acceleration(laneIncentives.get(preferred.isRight() ? 2 : 0)), new Acceleration(laneIncentives.get(1)),
                     new Acceleration(laneIncentives.get(preferred.isRight() ? 0 : 2)));
-            Duration duration = lcmr.getGfmr().getValidUntil().minus(getGtu().getSimulator().getSimulatorAbsTime());
+            Duration duration = lcmr.getGfmr().getValidUntil().minus(getGtu().getSimulator().getSimulatorTime());
             if (lcmr.getLaneChangeDirection() != null)
             {
                 laneBasedGTU.changeLaneInstantaneously(lcmr.getLaneChangeDirection());

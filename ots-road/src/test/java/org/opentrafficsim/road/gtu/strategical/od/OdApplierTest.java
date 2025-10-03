@@ -109,15 +109,6 @@ public class OdApplierTest
     private OtsSimulatorInterface createSimulatorMock()
     {
         OtsSimulatorInterface simulatorMock = Mockito.mock(OtsSimulatorInterface.class);
-        Answer<Time> answerTime = new Answer<Time>()
-        {
-            @Override
-            public Time answer(final InvocationOnMock invocation) throws Throwable
-            {
-                return OdApplierTest.this.time;
-            }
-        };
-        Mockito.when(simulatorMock.getSimulatorAbsTime()).then(answerTime);
         Answer<Duration> answerDuration = new Answer<Duration>()
         {
             @Override

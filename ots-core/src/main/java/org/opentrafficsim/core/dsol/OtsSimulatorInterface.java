@@ -61,23 +61,10 @@ public interface OtsSimulatorInterface extends DevsSimulatorInterface<Duration>,
             HistoryManager historyManager, int replicationNr) throws SimRuntimeException, NamingException;
 
     /**
-     * Return the absolute simulator time rather than the relative one since the start of the simulation.
-     * @return the absolute simulator time rather than the relative one since the start of the simulation
-     */
-    default Time getSimulatorAbsTime()
-    {
-        if (getSimulatorTime() == null || Double.isNaN(getSimulatorTime().si))
-        {
-            return getReplication() == null ? Time.ZERO : getStartTimeAbs();
-        }
-        return getStartTimeAbs().plus(getSimulatorTime());
-    }
-
-    /**
      * Return the absolute start time of the replication.
      * @return the absolute start time of the replication
      */
-    default Time getStartTimeAbs()
+    default Time getStartTime()
     {
         return getReplication().getStartTimeAbs();
     }

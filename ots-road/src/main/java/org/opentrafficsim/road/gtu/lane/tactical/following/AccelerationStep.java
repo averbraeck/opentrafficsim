@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 
 /**
  * Storage for the result of a GTU following model. <br>
@@ -25,7 +24,7 @@ public class AccelerationStep implements Serializable
     private final Acceleration acceleration;
 
     /** Time when the current time slot ends. */
-    private final Time validUntil;
+    private final Duration validUntil;
 
     /** Duration of the time step. */
     private final Duration duration;
@@ -36,7 +35,7 @@ public class AccelerationStep implements Serializable
      * @param validUntil time when this result expires
      * @param duration duration of the time step
      */
-    public AccelerationStep(final Acceleration acceleration, final Time validUntil, final Duration duration)
+    public AccelerationStep(final Acceleration acceleration, final Duration validUntil, final Duration duration)
     {
         this.acceleration = acceleration;
         this.validUntil = validUntil;
@@ -56,7 +55,7 @@ public class AccelerationStep implements Serializable
      * Returns valid time.
      * @return validUntil.
      */
-    public final Time getValidUntil()
+    public final Duration getValidUntil()
     {
         return this.validUntil;
     }

@@ -31,7 +31,7 @@ public class GtuDumper
     {
         try
         {
-            Time now = this.simulator.getSimulatorAbsTime();
+            Duration now = this.simulator.getSimulatorTime();
             String fileName = String.format("%s%08.2f.txt", this.fileNamePrefix, now.si);
             PrintWriter pw = new PrintWriter(new File(fileName));
             for (Gtu gtu : this.network.getGTUs())

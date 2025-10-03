@@ -879,7 +879,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
             if (destination.isOutput())
             {
                 fireTimedEvent(TRAFFIC_LIGHT_CHANGED, new Object[] {getId(), destination.getStream(), destination.getColor()},
-                        getSimulator().getSimulatorAbsTime());
+                        getSimulator().getSimulatorTime());
             }
             if (destination.isConflictGroup() && resultValue != 0)
             {

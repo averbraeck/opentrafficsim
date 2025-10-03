@@ -3,14 +3,11 @@ package org.opentrafficsim.road.gtu.lane.tactical.following;
 import java.util.Collection;
 
 import org.djunits.unit.AccelerationUnit;
-import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject;
@@ -33,8 +30,7 @@ public abstract class AbstractGtuFollowingModelMobil implements GtuFollowingMode
 
     /** Prohibitive deceleration used to construct the TOODANGEROUS result below. */
     private static final AccelerationStep PROHIBITIVEACCELERATIONSTEP =
-            new AccelerationStep(new Acceleration(Double.NEGATIVE_INFINITY, AccelerationUnit.SI),
-                    new Time(Double.NaN, TimeUnit.DEFAULT), new Duration(Double.NaN, DurationUnit.SI));
+            new AccelerationStep(new Acceleration(Double.NEGATIVE_INFINITY, AccelerationUnit.SI), Duration.NaN, Duration.NaN);
 
     /** Return value if lane change causes immediate collision. */
     public static final DualAccelerationStep TOODANGEROUS =
@@ -57,8 +53,8 @@ public abstract class AbstractGtuFollowingModelMobil implements GtuFollowingMode
 
     @Override
     public final DualAccelerationStep computeDualAccelerationStep(final LaneBasedGtu referenceGTU,
-            final Collection<PerceivedObject> otherHeadways, final Length maxDistance, final Speed speedLimit, final Duration stepSize)
-            throws GtuException
+            final Collection<PerceivedObject> otherHeadways, final Length maxDistance, final Speed speedLimit,
+            final Duration stepSize) throws GtuException
     {
         // Find out if there is an immediate collision
         for (PerceivedObject headway : otherHeadways)
@@ -95,7 +91,7 @@ public abstract class AbstractGtuFollowingModelMobil implements GtuFollowingMode
                 // This one is behind; assume our CFM holds also for the GTU behind us
                 AccelerationStep as = gfm.computeAccelerationStep(headway.getSpeed(), referenceGTU.getSpeed(),
                         new Length(-headway.getDistance().si, LengthUnit.SI), speedLimit,
-                        referenceGTU.getSimulator().getSimulatorAbsTime(), stepSize);
+                        referenceGTU.getSimulator().getSimulatorTime(), stepSize);
                 if (null == followerAccelerationStep || as.getAcceleration().lt(followerAccelerationStep.getAcceleration()))
                 {
                     followerAccelerationStep = as;
@@ -152,25 +148,25 @@ public abstract class AbstractGtuFollowingModelMobil implements GtuFollowingMode
         final Speed followerMaximumSpeed = gtu.getMaximumSpeed();
         Acceleration newAcceleration =
                 computeAcceleration(followerSpeed, followerMaximumSpeed, leaderOrBlockSpeed, distance, speedLimit, stepSize);
-        Time nextEvaluationTime = gtu.getSimulator().getSimulatorAbsTime().plus(stepSize);
+        Duration nextEvaluationTime = gtu.getSimulator().getSimulatorTime().plus(stepSize);
         return new AccelerationStep(newAcceleration, nextEvaluationTime, stepSize);
     }
 
     @Override
     public final AccelerationStep computeAccelerationStep(final Speed followerSpeed, final Speed leaderSpeed,
-            final Length headway, final Speed speedLimit, final Time currentTime)
+            final Length headway, final Speed speedLimit, final Duration currentTime)
     {
         return computeAccelerationStep(followerSpeed, leaderSpeed, headway, speedLimit, currentTime, getStepSize());
     }
 
     @Override
     public final AccelerationStep computeAccelerationStep(final Speed followerSpeed, final Speed leaderSpeed,
-            final Length headway, final Speed speedLimit, final Time currentTime, final Duration stepSize)
+            final Length headway, final Speed speedLimit, final Duration currentTime, final Duration stepSize)
     {
         final Speed followerMaximumSpeed = speedLimit; // the best approximation we can do...
         Acceleration newAcceleration =
                 computeAcceleration(followerSpeed, followerMaximumSpeed, leaderSpeed, headway, speedLimit, stepSize);
-        Time nextEvaluationTime = currentTime.plus(stepSize);
+        Duration nextEvaluationTime = currentTime.plus(stepSize);
         return new AccelerationStep(newAcceleration, nextEvaluationTime, stepSize);
     }
 
