@@ -176,7 +176,8 @@ public final class OperationalPlanTest
             actualAcceleration = op.getAcceleration(relTime).si;
             assertEquals(a.si, actualAcceleration, 0.00001, "acceleration at rel time");
             assertEquals(expectedDistance, op.getTraveledDistance(absTime).si, 0.0001, "traveled distance at abs time");
-            assertEquals(expectedDistance, op.getTraveledDistance(relTime).si, 0.0001, "traveled distance at rel time");
+            assertEquals(expectedDistance, op.getTraveledDistanceFromStart(relTime).si, 0.0001,
+                    "traveled distance at rel time");
         }
     }
 

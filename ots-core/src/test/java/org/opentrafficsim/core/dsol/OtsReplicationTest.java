@@ -60,7 +60,7 @@ public final class OtsReplicationTest
         assertEquals(runLength, replication.getRunLength(), "runLength can be retrieved");
         simulator.initialize(model, replication);
         HistoryManagerDevs hm = (HistoryManagerDevs) replication.getHistoryManager(simulator);
-        assertEquals(simulator.getSimulatorAbsTime(), hm.now(), "history manager knows time of simulator");
+        assertEquals(simulator.getSimulatorTime(), hm.now(), "history manager knows time of simulator");
         assertEquals(listenerCount + 1, simulator.numberOfListeners(Replication.END_REPLICATION_EVENT),
                 "history manager has subscribed to our simulator");
         hm = (HistoryManagerDevs) replication.getHistoryManager(simulator);
