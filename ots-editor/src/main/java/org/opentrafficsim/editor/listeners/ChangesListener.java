@@ -13,8 +13,11 @@ import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
 
 /**
- * Listener to all changes, which notifies the user subtly that changes were made. This listener also keeps the scenario drop
- * down list up to date.
+ * Listener to all changes. This listener:
+ * <ul>
+ * <li>Notifies the user subtly that changes were made by adding a "*" in the title bar.</li>
+ * <li>Keeps the scenario drop down list up to date.</li>
+ * </ul>
  * <p>
  * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -34,16 +37,7 @@ public class ChangesListener implements EventListener
     private final JComboBox<ScenarioWrapper> scenario;
 
     /** Sub-listener to update scenario name as the user types. */
-    private final EventListener scenarioNameListener = new EventListener()
-    {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        public void notify(final Event event) throws RemoteException
-        {
-            ChangesListener.this.scenario.repaint();
-        }
-    };
+    private final EventListener scenarioNameListener;
 
     /**
      * Constructor.
@@ -54,6 +48,7 @@ public class ChangesListener implements EventListener
     {
         this.editor = editor;
         this.scenario = scenario;
+        this.scenarioNameListener = (event) -> this.scenario.repaint();
     }
 
     @Override
@@ -92,12 +87,12 @@ public class ChangesListener implements EventListener
             {
                 for (int i = 0; i < this.scenario.getItemCount(); i++)
                 {
-                    ScenarioWrapper scenario = this.scenario.getItemAt(i);
-                    if (scenario.isScenario(node))
+                    ScenarioWrapper scenarioWrapper = this.scenario.getItemAt(i);
+                    if (scenarioWrapper.isScenario(node))
                     {
                         ScenarioWrapper selected = this.scenario.getItemAt(this.scenario.getSelectedIndex());
                         this.scenario.removeItemAt(i);
-                        this.scenario.insertItemAt(scenario, node.getParent().getChildren().indexOf(node));
+                        this.scenario.insertItemAt(scenarioWrapper, node.getParent().getChildren().indexOf(node));
                         this.scenario.setSelectedItem(selected);
                         break;
                     }
@@ -143,14 +138,14 @@ public class ChangesListener implements EventListener
             if (child.getPathString().equals(XsdPaths.SCENARIO))
             {
                 index++;
-                ScenarioWrapper item = this.scenario.getItemAt(index);
-                if (item != null && item.scenarioNode().equals(node))
+                if (child.equals(node))
                 {
-                    itemOfNode = item;
+                    itemOfNode = this.scenario.getItemAt(index);
                     break;
                 }
             }
         }
+        // inserted at end, or in between (else item already in scenario list)
         if (itemOfNode == null || !itemOfNode.scenarioNode().equals(node))
         {
             this.scenario.insertItemAt(new ScenarioWrapper(node), index);

@@ -113,12 +113,6 @@ public class Undo implements EventListener
         {
             return;
         }
-        if (this.currentSet != null && this.currentSet.isEmpty())
-        {
-            // last action set never resulted in any sub-action, overwrite it
-            this.queue.pollLast();
-        }
-
         // allocate a next action with the right type, nodes and attribute, but with an empty set of sub-actions for now
         // this does not yet represent an actual undoable action until any sub-action is added to it
         this.nextAction = new Action(type, new ArrayDeque<>(), node, node.parent, attribute);

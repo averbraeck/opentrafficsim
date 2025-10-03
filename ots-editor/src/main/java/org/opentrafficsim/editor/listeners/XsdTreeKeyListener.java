@@ -13,9 +13,13 @@ import org.opentrafficsim.editor.XsdTreeNode;
 import de.javagl.treetable.JTreeTable;
 
 /**
- * Listener for key events on the tree table. This involves keyboard shortcuts and starting (i.e. ending previous) undo actions.
- * The key actions in this class are also defined in XsdTreeListener, where they are defined as responses to key presses when
- * the right-click menu on a node is shown.
+ * Listener for key events on the tree table. This listener:
+ * <ul>
+ * <li>Executes keyboard shortcuts on tree table.</li>
+ * <li>Starts undo action (i.e. ending previous one) when navigating through the tree table with keys.</li>
+ * </ul>
+ * The key actions in this class are also defined in {@code XsdTreeListener}, where they are defined as responses to key presses
+ * when the right-click menu on a node is shown.
  * <p>
  * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.

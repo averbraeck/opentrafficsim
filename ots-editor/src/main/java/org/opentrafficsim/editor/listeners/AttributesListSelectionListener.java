@@ -13,7 +13,11 @@ import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 
 /**
- * Listener for events when an attribute is selected in the table.
+ * Listener for events when an attribute is selected in the table. This listener:
+ * <ul>
+ * <li>Sets the coupled node in the editor for navigation.</li>
+ * <li>Listens to the node for an attribute change to update the coupled node in the editor.</li>
+ * </ul>
  * <p>
  * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.

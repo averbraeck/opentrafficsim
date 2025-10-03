@@ -43,8 +43,6 @@ import org.opentrafficsim.editor.decoration.AbstractNodeDecoratorRemove;
 public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove implements CoupledValidator
 {
 
-    // TODO listen to Link.Id change
-
     /*
      * Implementation note: To validate attributes referring to elements within road layouts, this class often relies on the
      * coupling of Link.DefinedRoadLayout (node value) to a Definitions.RoadLayouts.RoadLayout (Id attribute value). When

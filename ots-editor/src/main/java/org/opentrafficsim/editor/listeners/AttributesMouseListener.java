@@ -13,7 +13,13 @@ import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 
 /**
- * Listener to the mouse for the attributes table.
+ * Listener to the mouse for the attributes table. This listener:
+ * <ul>
+ * <li>Creates a dialog showing an attribute description when the "i" icon is clicked.</li>
+ * <li>Sets the editor status label as either the invalidation message of an attribute, or the attribute description.</li>
+ * <li>Creates a popup when an attribute is selected that has restriction by having an xsd:keyref or being an
+ * xsd:enumaration.</li>
+ * </ul>
  * <p>
  * Copyright (c) 2023-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -43,7 +49,7 @@ public class AttributesMouseListener extends MouseAdapter
     @Override
     public void mouseClicked(final MouseEvent e)
     {
-        // makes description appear when information icon was clicked
+        // make description appear when information icon was clicked
         int col = this.attributesTable.columnAtPoint(e.getPoint());
         int row = this.attributesTable.rowAtPoint(e.getPoint());
         XsdTreeNode node = ((AttributesTableModel) this.attributesTable.getModel()).getNode();
@@ -53,6 +59,7 @@ public class AttributesMouseListener extends MouseAdapter
         {
             this.editor.showDescription(description);
         }
+        // set status label to invalid message or description
         this.editor.removeStatusLabel();
         String status = null;
         if (!node.isSelfValid())
@@ -72,7 +79,7 @@ public class AttributesMouseListener extends MouseAdapter
     @Override
     public void mouseReleased(final MouseEvent e)
     {
-        // shows popup for attributes with a selection of allowable values (xsd:keyref, xsd:enumeration)
+        // show popup for attributes with a selection of allowable values (xsd:keyref, xsd:enumeration)
         int col = this.attributesTable.columnAtPoint(e.getPoint());
         if (this.attributesTable.convertColumnIndexToModel(col) == 1)
         {

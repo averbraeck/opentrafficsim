@@ -10,7 +10,8 @@ import javax.swing.JTable;
 import de.javagl.treetable.JTreeTable;
 
 /**
- * Listener to when a value is selected in a popup showing a list of values.
+ * Listener to when a value is selected in a popup showing a list of values. This is either in the tree table or the attributes
+ * tables. The resulting action depends on the creator of the listener, e.g. setting an Id.
  * <p>
  * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.

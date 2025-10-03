@@ -16,8 +16,12 @@ import org.opentrafficsim.editor.XsdTreeNode;
 import de.javagl.treetable.JTreeTable;
 
 /**
- * Sets Id or Value while typing in the JTreeTable. Starts undo action (ending the previous one) whenever editing stops or focus
- * is gained or lost.
+ * Listener to tree editors. This listener:
+ * <ul>
+ * <li>Sets Id or Value while typing in the JTreeTable.</li>
+ * <li>Starts undo action (ending the previous one) whenever editing stops or focus is gained or lost in the JTreeTable
+ * editor.</li>
+ * </ul>
  * <p>
  * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
