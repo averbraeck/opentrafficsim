@@ -3,7 +3,7 @@ package org.opentrafficsim.kpi.sampling.impl;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.kpi.sampling.Sampler;
 import org.opentrafficsim.kpi.sampling.data.ExtendedDataType;
 import org.opentrafficsim.kpi.sampling.filter.FilterDataType;
@@ -37,26 +37,26 @@ public class TestSampler extends Sampler<TestGtuData, TestLaneData>
     }
 
     @Override
-    public Time now()
+    public Duration now()
     {
         return this.simulator.getTime();
     }
 
     @Override
-    public void scheduleStartRecording(final Time time, final TestLaneData lane)
+    public void scheduleStartRecording(final Duration time, final TestLaneData lane)
     {
         this.simulator.addEvent(this, time, lane, true);
     }
 
     @Override
-    public void scheduleStopRecording(final Time time, final TestLaneData lane)
+    public void scheduleStopRecording(final Duration time, final TestLaneData lane)
     {
         this.simulator.addEvent(this, time, lane, false);
     }
 
     @Override
     public void initRecording(final TestLaneData lane)
-    {  
+    {
         this.inits.add(new Entry(now(), lane));
     }
 
@@ -65,7 +65,7 @@ public class TestSampler extends Sampler<TestGtuData, TestLaneData>
     {
         this.finals.add(new Entry(now(), lane));
     }
-    
+
     /**
      * Returns the moments of initialization.
      * @return moments of initialization
@@ -89,7 +89,7 @@ public class TestSampler extends Sampler<TestGtuData, TestLaneData>
      * @param time time
      * @param lane lane
      */
-    public record Entry(Time time, TestLaneData lane)
+    public record Entry(Duration time, TestLaneData lane)
     {
     }
 

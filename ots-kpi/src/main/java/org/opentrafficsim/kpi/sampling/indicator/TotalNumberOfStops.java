@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.djunits.unit.DimensionlessUnit;
 import org.djunits.value.vdouble.scalar.Dimensionless;
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.Trajectory;
@@ -32,8 +32,8 @@ public class TotalNumberOfStops extends AbstractIndicator<Dimensionless>
     }
 
     @Override
-    protected <G extends GtuData> Dimensionless calculate(final Query<G, ?> query, final Time startTime, final Time endTime,
-            final List<TrajectoryGroup<G>> trajectoryGroups)
+    protected <G extends GtuData> Dimensionless calculate(final Query<G, ?> query, final Duration startTime,
+            final Duration endTime, final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         int sum = 0;
         for (TrajectoryGroup<?> trajectoryGroup : trajectoryGroups)

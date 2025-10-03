@@ -76,7 +76,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
     private final Duration delay;
 
     /** Time of last data update. */
-    private Time updateTime;
+    private Duration updateTime;
 
     /** Number of updates. */
     private int updates = 0;
@@ -205,7 +205,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
      * Increase the simulated time span.
      * @param time time to increase to
      */
-    protected abstract void increaseTime(Time time);
+    protected abstract void increaseTime(Duration time);
 
     /**
      * Notify all change listeners.
@@ -255,7 +255,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
         this.scheduler.cancelEvent(this);
         this.updates = (int) (this.scheduler.getTime().si / interval.si);
         this.updateInterval = interval;
-        this.updateTime = Time.instantiateSI(this.updates * this.updateInterval.si);
+        this.updateTime = Duration.instantiateSI(this.updates * this.updateInterval.si);
         scheduleNextUpdateEvent();
     }
 
@@ -263,7 +263,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
      * Returns time until which data should be plotted.
      * @return time until which data should be plotted
      */
-    public final Time getUpdateTime()
+    public final Duration getUpdateTime()
     {
         return this.updateTime;
     }

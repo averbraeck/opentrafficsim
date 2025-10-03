@@ -165,13 +165,13 @@ public class ContourDataSource
     // *****************************
 
     /** Updater for update times. */
-    private final GraphUpdater<Time> graphUpdater;
+    private final GraphUpdater<Duration> graphUpdater;
 
     /** Whether any command since or during the last update asks for a complete redo. */
     private boolean redo = true;
 
     /** Time up to which to determine data. This is a multiple of the update interval, which is now, or recent on a redo. */
-    private Time toTime;
+    private Duration toTime;
 
     /** Number of items that are ready. To return NaN values if not ready, and for operations between consecutive updates. */
     private int readyItems = -1;
@@ -367,7 +367,7 @@ public class ContourDataSource
      * @param updateTime current time
      */
     @SuppressWarnings("synthetic-access")
-    final synchronized void increaseTime(final Time updateTime)
+    final synchronized void increaseTime(final Duration updateTime)
     {
         if (updateTime.si > this.timeAxis.maxValue)
         {
@@ -463,7 +463,7 @@ public class ContourDataSource
      * data, before starting the actual work.
      * @param t time up to which to show data
      */
-    private synchronized void invalidate(final Time t)
+    private synchronized void invalidate(final Duration t)
     {
         if (t != null)
         {
@@ -497,7 +497,7 @@ public class ContourDataSource
      * @param t time up to which to show data
      */
     @SuppressWarnings({"synthetic-access", "methodlength"})
-    private void update(final Time t)
+    private void update(final Duration t)
     {
         Throw.when(this.plots.isEmpty(), IllegalStateException.class, "ContourDataSource is used, but not by a contour plot!");
 
@@ -645,8 +645,8 @@ public class ContourDataSource
         // loop cells to update data
         for (int j = fromTimeIndex; j <= toTimeIndex; j++)
         {
-            Time tFrom = Time.instantiateSI(timeTicks[j]);
-            Time tTo = Time.instantiateSI(timeTicks[j + 1]);
+            Duration tFrom = Duration.instantiateSI(timeTicks[j]);
+            Duration tTo = Duration.instantiateSI(timeTicks[j + 1]);
 
             // we never filter time, time always spans the entire simulation, it will contain tFrom till tTo
 
@@ -833,7 +833,7 @@ public class ContourDataSource
     @SuppressWarnings("unchecked")
     private <I> void addAdditional(final Map<ContourDataType<?, ?>, Object> additionalIntermediate,
             final ContourDataType<?, ?> contourDataType, final List<TrajectoryGroup<?>> included, final List<Length> xStart,
-            final List<Length> xEnd, final Time tFrom, final Time tTo)
+            final List<Length> xEnd, final Duration tFrom, final Duration tTo)
     {
         additionalIntermediate.put(contourDataType, ((ContourDataType<?, I>) contourDataType)
                 .processSeries((I) additionalIntermediate.get(contourDataType), included, xStart, xEnd, tFrom, tTo));
@@ -1200,8 +1200,8 @@ public class ContourDataSource
          * @param tTo end time of cell
          * @return intermediate value
          */
-        I processSeries(I intermediate, List<TrajectoryGroup<?>> trajectories, List<Length> xFrom, List<Length> xTo, Time tFrom,
-                Time tTo);
+        I processSeries(I intermediate, List<TrajectoryGroup<?>> trajectories, List<Length> xFrom, List<Length> xTo,
+                Duration tFrom, Duration tTo);
 
         /**
          * Returns the final value of the intermediate result after all lanes.

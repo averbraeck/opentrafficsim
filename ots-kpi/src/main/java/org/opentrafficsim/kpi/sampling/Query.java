@@ -13,7 +13,6 @@ import java.util.UUID;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.base.Identifiable;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableIterator;
@@ -157,7 +156,7 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
      * @param endTime end time
      */
     public void addSpaceTimeRegionLink(final LinkData<? extends L> link, final Length startPosition, final Length endPosition,
-            final Time startTime, final Time endTime)
+            final Duration startTime, final Duration endTime)
     {
         Throw.whenNull(link, "Link may not be null.");
         Throw.whenNull(startPosition, "Start position may not be null.");
@@ -185,8 +184,8 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
      * @param startTime start time
      * @param endTime end time
      */
-    public void addSpaceTimeRegion(final L lane, final Length startPosition, final Length endPosition, final Time startTime,
-            final Time endTime)
+    public void addSpaceTimeRegion(final L lane, final Length startPosition, final Length endPosition, final Duration startTime,
+            final Duration endTime)
     {
         Throw.whenNull(lane, "Lane direction may not be null.");
         Throw.whenNull(startPosition, "Start position may not be null.");
@@ -227,9 +226,9 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
      * @param <T> underlying class of filter data type and its value
      * @return list of trajectory groups in accordance with the query
      */
-    public <T> List<TrajectoryGroup<G>> getTrajectoryGroups(final Time endTime)
+    public <T> List<TrajectoryGroup<G>> getTrajectoryGroups(final Duration endTime)
     {
-        return getTrajectoryGroups(Time.ZERO, endTime);
+        return getTrajectoryGroups(Duration.ZERO, endTime);
     }
 
     /**
@@ -242,7 +241,7 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
      * @return list of trajectory groups in accordance with the query
      */
     @SuppressWarnings("unchecked")
-    public <T> List<TrajectoryGroup<G>> getTrajectoryGroups(final Time startTime, final Time endTime)
+    public <T> List<TrajectoryGroup<G>> getTrajectoryGroups(final Duration startTime, final Duration endTime)
     {
         Throw.whenNull(startTime, "Start t may not be null.");
         Throw.whenNull(endTime, "End t may not be null.");
@@ -251,8 +250,8 @@ public final class Query<G extends GtuData, L extends LaneData<L>> implements Id
         List<TrajectoryGroup<G>> trajectoryGroupList = new ArrayList<>();
         for (SpaceTimeRegion<? extends L> spaceTimeRegion : this.spaceTimeRegions)
         {
-            Time start = startTime.gt(spaceTimeRegion.startTime()) ? startTime : spaceTimeRegion.startTime();
-            Time end = endTime.lt(spaceTimeRegion.endTime()) ? endTime : spaceTimeRegion.endTime();
+            Duration start = startTime.gt(spaceTimeRegion.startTime()) ? startTime : spaceTimeRegion.startTime();
+            Duration end = endTime.lt(spaceTimeRegion.endTime()) ? endTime : spaceTimeRegion.endTime();
             TrajectoryGroup<G> trajectoryGroup;
             if (this.sampler.getSamplerData().getTrajectoryGroup(spaceTimeRegion.lane()) == null)
             {

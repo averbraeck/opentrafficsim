@@ -14,7 +14,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.TimedEvent;
@@ -130,13 +129,13 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
     }
 
     @Override
-    public final Time now()
+    public final Duration now()
     {
-        return this.simulator.getSimulatorAbsTime();
+        return this.simulator.getSimulatorTime();
     }
 
     @Override
-    public final void scheduleStartRecording(final Time time, final LaneDataRoad lane)
+    public final void scheduleStartRecording(final Duration time, final LaneDataRoad lane)
     {
         try
         {
@@ -149,7 +148,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
     }
 
     @Override
-    public final void scheduleStopRecording(final Time time, final LaneDataRoad lane)
+    public final void scheduleStopRecording(final Duration time, final LaneDataRoad lane)
     {
         try
         {

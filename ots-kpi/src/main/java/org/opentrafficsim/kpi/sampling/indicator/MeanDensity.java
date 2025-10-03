@@ -2,8 +2,8 @@ package org.opentrafficsim.kpi.sampling.indicator;
 
 import java.util.List;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.LinearDensity;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
@@ -35,8 +35,8 @@ public class MeanDensity extends AbstractIndicator<LinearDensity>
 
     @Override
     // @docs/07-output/indicators.md
-    protected <G extends GtuData> LinearDensity calculate(final Query<G, ?> query, final Time startTime, final Time endTime,
-            final List<TrajectoryGroup<G>> trajectoryGroups)
+    protected <G extends GtuData> LinearDensity calculate(final Query<G, ?> query, final Duration startTime,
+            final Duration endTime, final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         double ttt = this.travelTime.getValue(query, startTime, endTime, trajectoryGroups).si;
         double area = 0;

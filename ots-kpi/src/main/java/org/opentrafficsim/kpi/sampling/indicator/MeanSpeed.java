@@ -2,8 +2,8 @@ package org.opentrafficsim.kpi.sampling.indicator;
 
 import java.util.List;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.TrajectoryGroup;
@@ -39,7 +39,7 @@ public class MeanSpeed extends AbstractIndicator<Speed>
     }
 
     @Override
-    protected <G extends GtuData> Speed calculate(final Query<G, ?> query, final Time startTime, final Time endTime,
+    protected <G extends GtuData> Speed calculate(final Query<G, ?> query, final Duration startTime, final Duration endTime,
             final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         return this.travelDistance.getValue(query, startTime, endTime, trajectoryGroups)

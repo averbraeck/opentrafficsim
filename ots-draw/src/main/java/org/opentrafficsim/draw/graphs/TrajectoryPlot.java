@@ -15,7 +15,6 @@ import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.LegendItem;
@@ -69,7 +68,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
     private static final Shape LEGEND_LINE = new CubicCurve2D.Float(-20, 7, -10, -7, 0, 7, 20, -7);
 
     /** Updater for update times. */
-    private final GraphUpdater<Time> graphUpdater;
+    private final GraphUpdater<Duration> graphUpdater;
 
     /** Counter of the number of trajectories imported per lane. */
     private final Map<LaneData<?>, Integer> knownTrajectories = new LinkedHashMap<>();
@@ -259,7 +258,7 @@ public class TrajectoryPlot extends AbstractSamplerPlot implements XYDataset
     }
 
     @Override
-    protected void increaseTime(final Time time)
+    protected void increaseTime(final Duration time)
     {
         if (this.graphUpdater != null) // null during construction
         {

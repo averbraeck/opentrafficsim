@@ -5,7 +5,6 @@ import java.util.function.BiFunction;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.Query;
@@ -47,7 +46,7 @@ public class TotalDelay extends AbstractIndicator<Duration>
     }
 
     @Override
-    protected <G extends GtuData> Duration calculate(final Query<G, ?> query, final Time startTime, final Time endTime,
+    protected <G extends GtuData> Duration calculate(final Query<G, ?> query, final Duration startTime, final Duration endTime,
             final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         double delay = 0.0;

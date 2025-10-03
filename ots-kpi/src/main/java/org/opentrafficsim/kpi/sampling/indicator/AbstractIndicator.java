@@ -2,7 +2,7 @@ package org.opentrafficsim.kpi.sampling.indicator;
 
 import java.util.List;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.base.DoubleScalar;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuData;
@@ -28,10 +28,10 @@ public abstract class AbstractIndicator<T extends DoubleScalar<?, ?>>
     private Query<?, ?> lastQuery;
 
     /** Last start time. */
-    private Time lastStartTime;
+    private Duration lastStartTime;
 
     /** Last end time. */
-    private Time lastEndTime;
+    private Duration lastEndTime;
 
     /** Last value. */
     private T lastValue;
@@ -53,10 +53,10 @@ public abstract class AbstractIndicator<T extends DoubleScalar<?, ?>>
      * @param <G> GTU data type
      * @return value for given query
      */
-    public final <G extends GtuData> T getValue(final Query<G, ?> query, final Time endTime,
+    public final <G extends GtuData> T getValue(final Query<G, ?> query, final Duration endTime,
             final List<TrajectoryGroup<G>> trajectoryGroups)
     {
-        return getValue(query, Time.ZERO, endTime, trajectoryGroups);
+        return getValue(query, Duration.ZERO, endTime, trajectoryGroups);
     }
 
     /**
@@ -68,7 +68,7 @@ public abstract class AbstractIndicator<T extends DoubleScalar<?, ?>>
      * @param <G> GTU data type
      * @return value for given query
      */
-    public final <G extends GtuData> T getValue(final Query<G, ?> query, final Time startTime, final Time endTime,
+    public final <G extends GtuData> T getValue(final Query<G, ?> query, final Duration startTime, final Duration endTime,
             final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         Throw.whenNull(query, "Query may not be null.");
@@ -94,7 +94,7 @@ public abstract class AbstractIndicator<T extends DoubleScalar<?, ?>>
      * @param <G> GTU data type
      * @return value for given trajectory groups
      */
-    protected abstract <G extends GtuData> T calculate(Query<G, ?> query, Time startTime, Time endTime,
+    protected abstract <G extends GtuData> T calculate(Query<G, ?> query, Duration startTime, Duration endTime,
             List<TrajectoryGroup<G>> trajectoryGroups);
 
 }

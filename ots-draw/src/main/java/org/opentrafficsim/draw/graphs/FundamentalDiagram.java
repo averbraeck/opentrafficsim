@@ -16,7 +16,6 @@ import java.util.TreeSet;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableLinkedHashSet;
 import org.djutils.immutablecollections.ImmutableSet;
@@ -73,7 +72,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
     private final List<String> seriesLabels = new ArrayList<>();
 
     /** Updater for update times. */
-    private final GraphUpdater<Time> graphUpdater;
+    private final GraphUpdater<Duration> graphUpdater;
 
     /** Property for chart listener to provide time info for status label. */
     private String timeInfo = "";
@@ -196,7 +195,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
     }
 
     @Override
-    protected void increaseTime(final Time time)
+    protected void increaseTime(final Duration time)
     {
         if (this.graphUpdater != null && time.si >= this.getSource().getAggregationPeriod().si) // null during construction
         {
@@ -483,7 +482,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
          * @param interval update interval
          * @param time time until which data has to be recalculated
          */
-        void setUpdateInterval(Duration interval, Time time);
+        void setUpdateInterval(Duration interval, Duration time);
 
         /**
          * The aggregation period.
@@ -501,7 +500,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
          * Recalculates the data after the aggregation or update time was changed.
          * @param time time up to which recalculation is required
          */
-        void recalculate(Time time);
+        void recalculate(Duration time);
 
         /**
          * Return the delay for graph updates so future influencing events have occurred, e.d. GTU move's.
@@ -513,7 +512,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
          * Increase the time span.
          * @param time time to increase to
          */
-        void increaseTime(Time time);
+        void increaseTime(Duration time);
 
         /**
          * Returns the number of series (i.e. lanes or 1 for aggregated).
@@ -679,14 +678,14 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         }
 
         @Override
-        protected void getMeasurements(final Trajectory<?> trajectory, final Time startTime, final Time endTime,
+        protected void getMeasurements(final Trajectory<?> trajectory, final Duration startTime, final Duration endTime,
                 final Length length, final int series, final double[] measurements)
         {
             Length x = getSpace().position(series);
             if (GraphUtil.considerTrajectory(trajectory, x, x.plus(Length.instantiateSI(1.0e-3))))
             {
                 // detailed check
-                Time t = trajectory.getTimeAtPosition(x);
+                Duration t = trajectory.getTimeAtPosition(x);
                 if (t.si >= startTime.si && t.si < endTime.si)
                 {
                     measurements[0] = 1; // first = count
@@ -738,8 +737,8 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         }
 
         @Override
-        protected void getMeasurements(final Trajectory<?> trajectory, final Time startTime, final Time endTime,
-                final Length length, final int sereies, final double[] measurements)
+        protected void getMeasurements(final Trajectory<?> trajectory, final Duration startTime, final Duration endTime,
+                final Length length, final int series, final double[] measurements)
         {
             SpaceTimeView stv = trajectory.getSpaceTimeView(Length.ZERO, length, startTime, endTime);
             measurements[0] = stv.distance().si; // first = total traveled distance
@@ -784,7 +783,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         private Duration aggregationPeriod;
 
         /** Last update time. */
-        private Time lastUpdateTime;
+        private Duration lastUpdateTime;
 
         /** Number of series. */
         private final int nSeries;
@@ -834,7 +833,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             for (L laneDirection : space)
             {
                 sampler.registerSpaceTimeRegion(new SpaceTimeRegion<>(laneDirection, Length.ZERO, laneDirection.getLength(),
-                        sampler.now(), Time.instantiateSI(Double.MAX_VALUE)));
+                        sampler.now(), Duration.instantiateSI(Double.MAX_VALUE)));
 
                 // info per kpi lane direction
                 this.lastConsecutivelyAssignedTrajectories.put(laneDirection, -1);
@@ -863,7 +862,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         }
 
         @Override
-        public void setUpdateInterval(final Duration interval, final Time time)
+        public void setUpdateInterval(final Duration interval, final Duration time)
         {
             if (this.updateInterval != interval)
             {
@@ -888,7 +887,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         }
 
         @Override
-        public void recalculate(final Time time)
+        public void recalculate(final Duration time)
         {
             new Thread(new Runnable()
             {
@@ -917,7 +916,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
                         while ((AbstractSpaceSamplerFdSource.this.periodNumber + 1) * getUpdateInterval().si
                                 + AbstractSpaceSamplerFdSource.this.aggregationPeriod.si <= time.si)
                         {
-                            increaseTime(Time
+                            increaseTime(Duration
                                     .instantiateSI((AbstractSpaceSamplerFdSource.this.periodNumber + 1) * getUpdateInterval().si
                                             + AbstractSpaceSamplerFdSource.this.aggregationPeriod.si));
                             // TODO: if multiple plots are coupled to the same source, other plots are not invalidated
@@ -939,7 +938,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         }
 
         @Override
-        public synchronized void increaseTime(final Time time)
+        public synchronized void increaseTime(final Duration time)
         {
             if (time.si < this.aggregationPeriod.si)
             {
@@ -966,7 +965,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             }
 
             // loop positions and trajectories
-            Time startTime = time.minus(this.aggregationPeriod);
+            Duration startTime = time.minus(this.aggregationPeriod);
             double first = 0;
             double second = 0.0;
             for (int series = 0; series < this.space.getNumberOfSeries(); series++)
@@ -1115,7 +1114,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
          * @param series series number in the section
          * @param measurements array with length 2 to place the first and second measurement in
          */
-        protected abstract void getMeasurements(Trajectory<?> trajectory, Time startTime, Time endTime, Length length,
+        protected abstract void getMeasurements(Trajectory<?> trajectory, Duration startTime, Duration endTime, Length length,
                 int series, double[] measurements);
 
         /**
@@ -1199,7 +1198,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         }
 
         @Override
-        public void setUpdateInterval(final Duration interval, final Time time)
+        public void setUpdateInterval(final Duration interval, final Duration time)
         {
             for (FdSource source : this.sources)
             {
@@ -1223,7 +1222,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         }
 
         @Override
-        public void recalculate(final Time time)
+        public void recalculate(final Duration time)
         {
             for (FdSource source : this.sources)
             {
@@ -1238,7 +1237,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         }
 
         @Override
-        public void increaseTime(final Time time)
+        public void increaseTime(final Duration time)
         {
             for (FdSource source : this.sources)
             {

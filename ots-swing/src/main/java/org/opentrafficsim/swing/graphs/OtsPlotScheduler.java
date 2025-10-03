@@ -4,7 +4,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.draw.graphs.AbstractPlot;
 import org.opentrafficsim.draw.graphs.PlotScheduler;
@@ -38,9 +37,9 @@ public class OtsPlotScheduler implements PlotScheduler
     }
 
     @Override
-    public Time getTime()
+    public Duration getTime()
     {
-        return Time.instantiateSI(this.simulator.getSimulatorTime().si);
+        return this.simulator.getSimulatorTime();
     }
 
     @Override

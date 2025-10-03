@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.exceptions.Throw;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.LegendItem;
@@ -295,7 +295,7 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
     }
 
     @Override
-    protected final void increaseTime(final Time time)
+    protected final void increaseTime(final Duration time)
     {
         if (this.dataPool != null) // dataPool is null at construction
         {

@@ -5,9 +5,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
@@ -206,8 +206,8 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
         {
             for (L lane : section)
             {
-                sampler.registerSpaceTimeRegion(new SpaceTimeRegion<>(lane, Length.ZERO, lane.getLength(), Time.ZERO,
-                        Time.instantiateSI(Double.MAX_VALUE)));
+                sampler.registerSpaceTimeRegion(new SpaceTimeRegion<>(lane, Length.ZERO, lane.getLength(), Duration.ZERO,
+                        Duration.instantiateSI(Double.MAX_VALUE)));
             }
         }
     }
@@ -227,7 +227,7 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
      * @param speedLimit speed limit on the section
      * @param sections list of underlying objects
      */
-    public static record Section<L>(Length length, Speed speedLimit, List<L> sections) implements Iterable<L>
+    public record Section<L>(Length length, Speed speedLimit, List<L> sections) implements Iterable<L>
     {
         /**
          * Returns the source object.

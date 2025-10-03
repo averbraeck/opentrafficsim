@@ -2,7 +2,7 @@ package org.opentrafficsim.kpi.sampling.impl;
 
 import java.util.PriorityQueue;
 
-import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.scalar.Duration;
 
 /**
  * Test simulator.
@@ -14,7 +14,7 @@ public class TestSimulator
     private final PriorityQueue<Event> queue = new PriorityQueue<>();
 
     /** Current time. */
-    private Time now = Time.ZERO;
+    private Duration now = Duration.ZERO;
 
     /**
      * Constructor.
@@ -31,7 +31,7 @@ public class TestSimulator
      * @param lane lane
      * @param start start or stop recording
      */
-    public void addEvent(final TestSampler sampler, final Time time, final TestLaneData lane, final boolean start)
+    public void addEvent(final TestSampler sampler, final Duration time, final TestLaneData lane, final boolean start)
     {
         this.queue.add(new Event(sampler, time, lane, start));
     }
@@ -40,7 +40,7 @@ public class TestSimulator
      * Executes all events until time (inclusive).
      * @param time time
      */
-    public void executeUntil(final Time time)
+    public void executeUntil(final Duration time)
     {
         while (!this.queue.isEmpty())
         {
@@ -59,7 +59,7 @@ public class TestSimulator
      * Set time.
      * @param time time
      */
-    public void setTime(final Time time)
+    public void setTime(final Duration time)
     {
         this.now = time;
     }
@@ -68,7 +68,7 @@ public class TestSimulator
      * Returns the current time.
      * @return time
      */
-    public Time getTime()
+    public Duration getTime()
     {
         return this.now;
     }
@@ -80,7 +80,7 @@ public class TestSimulator
      * @param lane lane
      * @param start start or stop recording
      */
-    private record Event(TestSampler sampler, Time time, TestLaneData lane, boolean start) implements Comparable<Event>
+    private record Event(TestSampler sampler, Duration time, TestLaneData lane, boolean start) implements Comparable<Event>
     {
         /**
          * Execute event.

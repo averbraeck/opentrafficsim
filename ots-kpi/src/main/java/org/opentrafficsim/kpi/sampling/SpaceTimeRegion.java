@@ -1,7 +1,7 @@
 package org.opentrafficsim.kpi.sampling;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.LaneData;
 
@@ -21,8 +21,8 @@ import org.opentrafficsim.kpi.interfaces.LaneData;
  * @param startTime start time
  * @param endTime end time
  */
-public record SpaceTimeRegion<L extends LaneData<L>>(L lane, Length startPosition, Length endPosition, Time startTime,
-        Time endTime)
+public record SpaceTimeRegion<L extends LaneData<L>>(L lane, Length startPosition, Length endPosition, Duration startTime,
+        Duration endTime)
 {
 
     /**

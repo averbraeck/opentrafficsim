@@ -6,8 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Time;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.LegendItem;
@@ -44,7 +44,7 @@ public final class GraphUtil
      * @param endTime end time
      * @return true if the trajectory should be considered for the given time
      */
-    public static boolean considerTrajectory(final Trajectory<?> trajectory, final Time startTime, final Time endTime)
+    public static boolean considerTrajectory(final Trajectory<?> trajectory, final Duration startTime, final Duration endTime)
     {
         return trajectory.size() > 0 && trajectory.getT(0) <= endTime.si
                 && trajectory.getT(trajectory.size() - 1) >= startTime.si;

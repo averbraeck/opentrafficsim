@@ -2,8 +2,8 @@ package org.opentrafficsim.kpi.sampling.indicator;
 
 import java.util.List;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.sampling.Query;
 import org.opentrafficsim.kpi.sampling.Trajectory;
@@ -31,7 +31,7 @@ public class TotalTravelDistance extends AbstractIndicator<Length>
     }
 
     @Override
-    protected <G extends GtuData> Length calculate(final Query<G, ?> query, final Time startTime, final Time endTime,
+    protected <G extends GtuData> Length calculate(final Query<G, ?> query, final Duration startTime, final Duration endTime,
             final List<TrajectoryGroup<G>> trajectoryGroups)
     {
         Length sum = Length.ZERO;

@@ -179,7 +179,7 @@ public final class ContourPlotTest implements UNITS
         OtsReplication replication = new OtsReplication("test", Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0),
                 HistoryManagerDevs.noHistory(this.mockedSimulator));
         Mockito.when(this.mockedSimulator.getReplication()).thenReturn(replication);
-        Mockito.when(this.mockedScheduler.getTime()).thenReturn(Time.ZERO);
+        Mockito.when(this.mockedScheduler.getTime()).thenReturn(Duration.ZERO);
     }
 
     /**

@@ -7,9 +7,9 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.interfaces.LaneData;
@@ -87,7 +87,7 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
     public final void registerSpaceTimeRegion(final SpaceTimeRegion<L> spaceTimeRegion)
     {
         Throw.whenNull(spaceTimeRegion, "SpaceTimeRegion may not be null.");
-        Time firstPossibleDataTime;
+        Duration firstPossibleDataTime;
         if (this.samplerData.contains(spaceTimeRegion.lane()))
         {
             firstPossibleDataTime = this.samplerData.getTrajectoryGroup(spaceTimeRegion.lane()).getStartTime();
@@ -107,7 +107,7 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
      * Returns the current simulation time.
      * @return current simulation time
      */
-    public abstract Time now();
+    public abstract Duration now();
 
     /**
      * Schedules the start of recording for a given lane, i.e. the implementation has to invoke {@code startRecording} at the
@@ -116,7 +116,7 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
      * @param time time to start recording
      * @param lane lane to start recording
      */
-    public abstract void scheduleStartRecording(Time time, L lane);
+    public abstract void scheduleStartRecording(Duration time, L lane);
 
     /**
      * Schedules the stop of recording for a given lane, i.e. the implementation has to invoke {@code stopRecording} at the
@@ -125,7 +125,7 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
      * @param time time to stop recording
      * @param lane lane to stop recording
      */
-    public abstract void scheduleStopRecording(Time time, L lane);
+    public abstract void scheduleStopRecording(Duration time, L lane);
 
     /**
      * Start recording at the given time (which should be the current time) on the given lane.
@@ -189,7 +189,7 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
      * @param gtu gtu
      */
     public final void addGtuWithSnapshot(final L lane, final Length position, final Speed speed,
-            final Acceleration acceleration, final Time time, final G gtu)
+            final Acceleration acceleration, final Duration time, final G gtu)
     {
         Throw.whenNull(lane, "LaneData may not be null.");
         Throw.whenNull(position, "Position may not be null.");
@@ -228,7 +228,7 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
      * @param gtu gtu
      */
     public final void snapshot(final L lane, final Length position, final Speed speed, final Acceleration acceleration,
-            final Time time, final G gtu)
+            final Duration time, final G gtu)
     {
         Throw.whenNull(lane, "LaneData may not be null.");
         Throw.whenNull(position, "Position may not be null.");
@@ -258,7 +258,7 @@ public abstract class Sampler<G extends GtuData, L extends LaneData<L>>
      * @param gtu gtu
      */
     public final void removeGtuWithSnapshot(final L lane, final Length position, final Speed speed,
-            final Acceleration acceleration, final Time time, final G gtu)
+            final Acceleration acceleration, final Duration time, final G gtu)
     {
         snapshot(lane, position, speed, acceleration, time, gtu);
         removeGtu(lane, gtu);

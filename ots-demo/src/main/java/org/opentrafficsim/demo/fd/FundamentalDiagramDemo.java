@@ -730,7 +730,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
                 new FundamentalDiagram("Flow-speed", Quantity.FLOW, Quantity.SPEED, this.scheduler, source, this.fdLine);
 
         // recalculate over past data
-        source.recalculate(getSimulator().getSimulatorAbsTime());
+        source.recalculate(getSimulator().getSimulatorTime());
 
         // store graphs so changes to setting may affect the graphs
         this.funamentalDiagrams.clear();

@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Time;
 import org.opentrafficsim.draw.graphs.GraphPath.Section;
 import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.SamplerData;
@@ -34,7 +33,7 @@ public abstract class AbstractSamplerPlot extends AbstractSpaceTimePlot
     private final GraphPath<? extends LaneData<?>> path;
 
     /** Time when trajectories were last updated per series in the path. */
-    private List<Time> lastUpdateTime = new ArrayList<>();
+    private List<Duration> lastUpdateTime = new ArrayList<>();
 
     /** Cached trajectories per series in the path. */
     private List<List<TrajectoryGroup<?>>> trajectoriesCache = new ArrayList<>();

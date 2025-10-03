@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.kpi.interfaces.GtuData;
 import org.opentrafficsim.kpi.interfaces.LaneData;
@@ -25,7 +25,7 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
 {
 
     /** Start time of trajectories. */
-    private final Time startTime;
+    private final Duration startTime;
 
     /** Start position of the section. */
     private final Length startPosition;
@@ -44,7 +44,7 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
      * @param startTime start time of trajectories
      * @param lane lane
      */
-    public TrajectoryGroup(final Time startTime, final LaneData<?> lane)
+    public TrajectoryGroup(final Duration startTime, final LaneData<?> lane)
     {
         this(startTime, Length.ZERO, lane == null ? null : lane.getLength(), lane);
     }
@@ -56,7 +56,8 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
      * @param endPosition end position
      * @param lane the lane
      */
-    public TrajectoryGroup(final Time startTime, final Length startPosition, final Length endPosition, final LaneData<?> lane)
+    public TrajectoryGroup(final Duration startTime, final Length startPosition, final Length endPosition,
+            final LaneData<?> lane)
     {
         Throw.whenNull(startTime, "Start time may not be null.");
         // keep before position check; prevents "End position may not be null" due to missing direction in other constructor
@@ -84,7 +85,7 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
      * Returns the start time.
      * @return start time
      */
-    public final Time getStartTime()
+    public final Duration getStartTime()
     {
         return this.startTime;
     }
@@ -155,7 +156,7 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
      * @param t1 end time
      * @return list of trajectories
      */
-    public final synchronized TrajectoryGroup<G> getTrajectoryGroup(final Time t0, final Time t1)
+    public final synchronized TrajectoryGroup<G> getTrajectoryGroup(final Duration t0, final Duration t1)
     {
         TrajectoryGroup<G> out = new TrajectoryGroup<>(this.startTime.lt(t0) ? t0 : this.startTime, this.lane);
         for (Trajectory<G> trajectory : this.trajectories)
@@ -177,8 +178,8 @@ public class TrajectoryGroup<G extends GtuData> implements Iterable<Trajectory<G
      * @param t1 end time
      * @return list of trajectories
      */
-    public final synchronized TrajectoryGroup<G> getTrajectoryGroup(final Length x0, final Length x1, final Time t0,
-            final Time t1)
+    public final synchronized TrajectoryGroup<G> getTrajectoryGroup(final Length x0, final Length x1, final Duration t0,
+            final Duration t1)
     {
         TrajectoryGroup<G> out = new TrajectoryGroup<>(this.startTime.lt(t0) ? t0 : this.startTime, this.lane);
         for (Trajectory<G> trajectory : this.trajectories)

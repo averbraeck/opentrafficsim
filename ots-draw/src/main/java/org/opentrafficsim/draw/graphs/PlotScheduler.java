@@ -1,7 +1,6 @@
 package org.opentrafficsim.draw.graphs;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 
 /**
  * Interface between plots (subclasses of {@code AbstractPlot}) and some source that knows about time in the context, e.g. a
@@ -22,9 +21,9 @@ public interface PlotScheduler
     PlotScheduler OFFLINE = new PlotScheduler()
     {
         @Override
-        public Time getTime()
+        public Duration getTime()
         {
-            return Time.instantiateSI(Double.MAX_VALUE);
+            return Duration.instantiateSI(Double.MAX_VALUE);
         }
 
         @Override
@@ -44,7 +43,7 @@ public interface PlotScheduler
      * Returns the time.
      * @return time.
      */
-    Time getTime();
+    Duration getTime();
 
     /**
      * Cancel event on plot.

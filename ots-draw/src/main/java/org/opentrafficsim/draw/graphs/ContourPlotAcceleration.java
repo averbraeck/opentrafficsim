@@ -7,8 +7,8 @@ import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.ValueRuntimeException;
 import org.djunits.value.vdouble.matrix.AccelerationMatrix;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.math.means.ArithmeticMean;
 import org.opentrafficsim.draw.BoundsPaintScale;
 import org.opentrafficsim.draw.Colors;
@@ -64,7 +64,7 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
                 @Override
                 public ArithmeticMean<Double, Double> processSeries(final ArithmeticMean<Double, Double> intermediate,
                         final List<TrajectoryGroup<?>> trajectories, final List<Length> xFrom, final List<Length> xTo,
-                        final Time tFrom, final Time tTo)
+                        final Duration tFrom, final Duration tTo)
                 {
                     for (int i = 0; i < trajectories.size(); i++)
                     {

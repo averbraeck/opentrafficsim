@@ -14,7 +14,6 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vfloat.vector.FloatAccelerationVector;
 import org.djunits.value.vfloat.vector.FloatLengthVector;
 import org.djunits.value.vfloat.vector.FloatSpeedVector;
@@ -115,7 +114,7 @@ public final class Trajectory<G extends GtuData>
      * @param acceleration acceleration
      * @param time time
      */
-    public void add(final Length position, final Speed speed, final Acceleration acceleration, final Time time)
+    public void add(final Length position, final Speed speed, final Acceleration acceleration, final Duration time)
     {
         add(position, speed, acceleration, time, null);
     }
@@ -128,7 +127,7 @@ public final class Trajectory<G extends GtuData>
      * @param time time
      * @param gtu gtu to add extended data for
      */
-    public void add(final Length position, final Speed speed, final Acceleration acceleration, final Time time, final G gtu)
+    public void add(final Length position, final Speed speed, final Acceleration acceleration, final Duration time, final G gtu)
     {
         Throw.whenNull(position, "Position may not be null.");
         Throw.whenNull(speed, "Speed may not be null.");
@@ -489,8 +488,8 @@ public final class Trajectory<G extends GtuData>
      * @param endTime end time
      * @return space-time view of this trajectory
      */
-    public SpaceTimeView getSpaceTimeView(final Length startPosition, final Length endPosition, final Time startTime,
-            final Time endTime)
+    public SpaceTimeView getSpaceTimeView(final Length startPosition, final Length endPosition, final Duration startTime,
+            final Duration endTime)
     {
         if (size() < 2)
         {
@@ -554,7 +553,7 @@ public final class Trajectory<G extends GtuData>
      * @throws NullPointerException if an input is null
      * @throws IllegalArgumentException of minTime is smaller than maxTime
      */
-    public Trajectory<G> subSet(final Time startTime, final Time endTime)
+    public Trajectory<G> subSet(final Duration startTime, final Duration endTime)
     {
         Throw.whenNull(startTime, "Start time may not be null");
         Throw.whenNull(endTime, "End time may not be null");
@@ -576,7 +575,8 @@ public final class Trajectory<G extends GtuData>
      * @throws NullPointerException if an input is null
      * @throws IllegalArgumentException of minLength/Time is smaller than maxLength/Time
      */
-    public Trajectory<G> subSet(final Length startPosition, final Length endPosition, final Time startTime, final Time endTime)
+    public Trajectory<G> subSet(final Length startPosition, final Length endPosition, final Duration startTime,
+            final Duration endTime)
     {
         // could use this.subSet(minLength, maxLength).subSet(minTime, maxTime), but that copies twice
         Throw.whenNull(startPosition, "Start position may not be null");
@@ -619,7 +619,7 @@ public final class Trajectory<G extends GtuData>
      * @param endTime end time
      * @return spatial boundaries
      */
-    private Boundaries timeBoundaries(final Time startTime, final Time endTime)
+    private Boundaries timeBoundaries(final Duration startTime, final Duration endTime)
     {
         if (startTime.si > this.t[this.size - 1] || endTime.si < this.t[0])
         {
@@ -672,9 +672,9 @@ public final class Trajectory<G extends GtuData>
      * @param position position
      * @return interpolated time at the given position
      */
-    public Time getTimeAtPosition(final Length position)
+    public Duration getTimeAtPosition(final Length position)
     {
-        return Time.instantiateSI(getBoundaryAtPosition((float) position.si, false).getValue(this.t));
+        return Duration.instantiateSI(getBoundaryAtPosition((float) position.si, false).getValue(this.t));
     }
 
     /**
@@ -702,7 +702,7 @@ public final class Trajectory<G extends GtuData>
      * @param time time
      * @return interpolated position at the given time
      */
-    public Length getPositionAtTime(final Time time)
+    public Length getPositionAtTime(final Duration time)
     {
         return Length.instantiateSI(getBoundaryAtTime((float) time.si, false).getValue(this.x));
     }
@@ -712,7 +712,7 @@ public final class Trajectory<G extends GtuData>
      * @param time time
      * @return interpolated speed at the given time
      */
-    public Speed getSpeedAtTime(final Time time)
+    public Speed getSpeedAtTime(final Duration time)
     {
         return Speed.instantiateSI(getBoundaryAtTime((float) time.si, false).getValue(this.v));
     }
@@ -722,7 +722,7 @@ public final class Trajectory<G extends GtuData>
      * @param time time
      * @return interpolated acceleration at the given time
      */
-    public Acceleration getAccelerationAtTime(final Time time)
+    public Acceleration getAccelerationAtTime(final Duration time)
     {
         return Acceleration.instantiateSI(getBoundaryAtTime((float) time.si, false).getValue(this.a));
     }
