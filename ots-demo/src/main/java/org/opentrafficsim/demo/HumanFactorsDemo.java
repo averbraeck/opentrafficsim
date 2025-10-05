@@ -17,8 +17,8 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.FrequencyVector;
-import org.djunits.value.vdouble.vector.TimeVector;
 import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
@@ -436,7 +436,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             List<Node> destinations = new ArrayList<>();
             destinations.add(nodeB);
             OdMatrix od = new OdMatrix("OD", origins, destinations, categorization,
-                    new TimeVector(new double[] {0.0, 1800.0, 3600.0}), Interpolation.LINEAR);
+                    new DurationVector(new double[] {0.0, 1800.0, 3600.0}), Interpolation.LINEAR);
             FrequencyVector demand = new FrequencyVector(new double[] {2000.0, 4000.0, 1000.0}, FrequencyUnit.PER_HOUR);
             double truckFraction = 0.1;
             od.putDemandVector(nodeA, nodeB, new Category(categorization, DefaultsNl.CAR), demand, 1.0 - truckFraction);

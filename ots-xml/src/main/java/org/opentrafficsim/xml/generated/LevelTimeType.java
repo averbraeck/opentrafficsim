@@ -8,8 +8,8 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.XmlValue;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.opentrafficsim.xml.bindings.TimeAdapter;
-import org.opentrafficsim.xml.bindings.types.TimeType;
+import org.opentrafficsim.xml.bindings.DurationAdapter;
+import org.opentrafficsim.xml.bindings.types.DurationType;
 
 
 /**
@@ -21,7 +21,7 @@ import org.opentrafficsim.xml.bindings.types.TimeType;
  * <complexType name="LevelTimeType">
  *   <simpleContent>
  *     <extension base="<http://www.opentrafficsim.org/ots>LevelType">
- *       <attribute name="Time" type="{http://www.opentrafficsim.org/ots}TimeType" />
+ *       <attribute name="Time" type="{http://www.opentrafficsim.org/ots}DurationType" />
  *     </extension>
  *   </simpleContent>
  * </complexType>
@@ -41,8 +41,8 @@ import org.opentrafficsim.xml.bindings.types.TimeType;
     @XmlValue
     protected String value;
     @XmlAttribute(name = "Time")
-    @XmlJavaTypeAdapter(TimeAdapter.class)
-    protected TimeType time;
+    @XmlJavaTypeAdapter(DurationAdapter.class)
+    protected DurationType time;
 
     /**
      * Gets the value of the value property.
@@ -76,7 +76,7 @@ import org.opentrafficsim.xml.bindings.types.TimeType;
      *     {@link String }
      *     
      */
-    public TimeType getTime() {
+    public DurationType getTime() {
         return time;
     }
 
@@ -88,7 +88,7 @@ import org.opentrafficsim.xml.bindings.types.TimeType;
      *     {@link String }
      *     
      */
-    public void setTime(TimeType value) {
+    public void setTime(DurationType value) {
         this.time = value;
     }
 

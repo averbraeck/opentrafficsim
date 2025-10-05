@@ -15,17 +15,17 @@ import java.util.function.Supplier;
 
 import javax.naming.NamingException;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.ValueRuntimeException;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.FrequencyVector;
-import org.djunits.value.vdouble.vector.TimeVector;
 import org.djutils.draw.point.Point2d;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -396,7 +396,7 @@ public class OdApplierTest
         origins.add(nodeA);
         List<Node> destinations = new ArrayList<>();
         destinations.add(nodeB);
-        TimeVector timeVector = new TimeVector(timeVec, TimeUnit.DEFAULT);
+        DurationVector timeVector = new DurationVector(timeVec, DurationUnit.SECOND);
         OdMatrix od = new OdMatrix("ODExample", origins, destinations, categorization, timeVector, interpolation);
         FrequencyVector demand = new FrequencyVector(demandVec, FrequencyUnit.PER_HOUR);
         GtuType gtuType = DefaultsNl.CAR;

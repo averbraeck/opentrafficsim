@@ -13,14 +13,12 @@ import java.util.TreeMap;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.ValueRuntimeException;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.FrequencyVector;
-import org.djunits.value.vdouble.vector.TimeVector;
 import org.djutils.base.Identifiable;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.network.NetworkException;
@@ -59,7 +57,7 @@ public class OdMatrix implements Serializable, Identifiable
     private final Categorization categorization;
 
     /** Global time vector. */
-    private final TimeVector globalTimeVector;
+    private final DurationVector globalTimeVector;
 
     /** Global interpolation of the data. */
     private final Interpolation globalInterpolation;
@@ -83,12 +81,13 @@ public class OdMatrix implements Serializable, Identifiable
      * @param origins origin nodes
      * @param destinations destination nodes
      * @param categorization categorization of data
-     * @param globalTimeVector default time
+     * @param globalDurationVector default time
      * @param globalInterpolation interpolation of demand data
      * @throws NullPointerException if any input is null
      */
     public OdMatrix(final String id, final List<? extends Node> origins, final List<? extends Node> destinations,
-            final Categorization categorization, final TimeVector globalTimeVector, final Interpolation globalInterpolation)
+            final Categorization categorization, final DurationVector globalDurationVector,
+            final Interpolation globalInterpolation)
     {
         Throw.whenNull(id, "Id may not be null.");
         Throw.whenNull(origins, "Origins may not be null.");
@@ -96,7 +95,7 @@ public class OdMatrix implements Serializable, Identifiable
         Throw.whenNull(destinations, "Destination may not be null.");
         Throw.when(destinations.contains(null), NullPointerException.class, "Destination may not contain null.");
         Throw.whenNull(categorization, "Categorization may not be null.");
-        // Throw.whenNull(globalTimeVector, "Global time vector may not be null.");
+        // Throw.whenNull(globalDurationVector, "Global time vector may not be null.");
         // Throw.whenNull(globalInterpolation, "Global interpolation may not be null.");
         this.id = id;
         this.origins = new ArrayList<>(origins);
@@ -104,7 +103,7 @@ public class OdMatrix implements Serializable, Identifiable
         Collections.sort(this.origins, COMPARATOR);
         Collections.sort(this.destinations, COMPARATOR);
         this.categorization = categorization;
-        this.globalTimeVector = globalTimeVector;
+        this.globalTimeVector = globalDurationVector;
         this.globalInterpolation = globalInterpolation;
         // build empty OD
         for (Node origin : origins)
@@ -170,7 +169,7 @@ public class OdMatrix implements Serializable, Identifiable
      * Returns global time vector.
      * @return global time vector
      */
-    public final TimeVector getGlobalTimeVector()
+    public final DurationVector getGlobalTimeVector()
     {
         return this.globalTimeVector;
     }
@@ -241,7 +240,7 @@ public class OdMatrix implements Serializable, Identifiable
      * @throws NullPointerException if an input is null
      */
     public final void putDemandVector(final Node origin, final Node destination, final Category category,
-            final FrequencyVector demand, final TimeVector timeVector, final Interpolation interpolation)
+            final FrequencyVector demand, final DurationVector timeVector, final Interpolation interpolation)
     {
         Throw.whenNull(origin, "Origin may not be null.");
         Throw.whenNull(destination, "Destination may not be null.");
@@ -261,17 +260,17 @@ public class OdMatrix implements Serializable, Identifiable
         {
             Throw.when(q.lt0(), IllegalArgumentException.class, "Demand contains negative value(s).");
         }
-        Time prevTime;
+        Duration prevTime;
         try
         {
-            prevTime = timeVector.get(0).eq0() ? Time.instantiateSI(-1.0) : Time.ZERO;
+            prevTime = timeVector.get(0).eq0() ? Duration.instantiateSI(-1.0) : Duration.ZERO;
         }
         catch (ValueRuntimeException exception)
         {
             // verified to be > 1, so no empty vector
             throw new RuntimeException("Unexpected exception while checking time vector.", exception);
         }
-        for (Time time : timeVector)
+        for (Duration time : timeVector)
         {
             Throw.when(prevTime.ge(time), IllegalArgumentException.class,
                     "Time vector is not strictly increasing, or contains negative time.");
@@ -292,7 +291,7 @@ public class OdMatrix implements Serializable, Identifiable
                 throw new IllegalArgumentException("Route in OD has no nodes.", exception);
             }
         }
-        DurationVector durationVector = new DurationVector(timeVector.getValuesInUnit());
+        DurationVector durationVector = new DurationVector(timeVector.getValuesInUnit(), timeVector.getDisplayUnit());
         DemandPattern demandPattern = new DemandPattern(demand, durationVector, interpolation);
         this.demandData.get(origin).get(destination).put(category, demandPattern);
     }
@@ -314,7 +313,8 @@ public class OdMatrix implements Serializable, Identifiable
      * @throws NullPointerException if an input is null
      */
     public final void putDemandVector(final Node origin, final Node destination, final Category category,
-            final FrequencyVector demand, final TimeVector timeVector, final Interpolation interpolation, final double fraction)
+            final FrequencyVector demand, final DurationVector timeVector, final Interpolation interpolation,
+            final double fraction)
     {
         Throw.whenNull(demand, "Demand data may not be null.");
         FrequencyVector demandScaled;
@@ -360,14 +360,14 @@ public class OdMatrix implements Serializable, Identifiable
      * @throws NullPointerException if an input is null
      */
     public final void putDemandVector(final Node origin, final Node destination, final Category category,
-            final FrequencyVector demand, final TimeVector timeVector, final Interpolation interpolation,
+            final FrequencyVector demand, final DurationVector timeVector, final Interpolation interpolation,
             final double[] fraction)
     {
         Throw.whenNull(demand, "Demand data may not be null.");
         Throw.whenNull(fraction, "Fraction data may not be null.");
         Throw.whenNull(timeVector, "Time vector may not be null.");
         Throw.when(demand.size() != timeVector.size() || timeVector.size() != fraction.length, IllegalArgumentException.class,
-                "Arrays are of unequal length: demand=%d, timeVector=%d, fraction=%d", demand.size(), timeVector.size(),
+                "Arrays are of unequal length: demand=%d, DurationVector=%d, fraction=%d", demand.size(), timeVector.size(),
                 fraction.length);
         double[] in = demand.getValuesInUnit();
         double[] scaled = new double[in.length];
@@ -418,7 +418,7 @@ public class OdMatrix implements Serializable, Identifiable
      * @throws IllegalArgumentException if the category does not belong to the categorization
      * @throws NullPointerException if an input is null
      */
-    public final DurationVector getTimeVector(final Node origin, final Node destination, final Category category)
+    public final DurationVector getDurationVector(final Node origin, final Node destination, final Category category)
     {
         DemandPattern demandPattern = getDemandPattern(origin, destination, category);
         if (demandPattern == null)
@@ -569,7 +569,7 @@ public class OdMatrix implements Serializable, Identifiable
      * @throws NullPointerException if an input is null
      */
     public final void putTripsVector(final Node origin, final Node destination, final Category category, final int[] trips,
-            final TimeVector timeVector)
+            final DurationVector timeVector)
     {
         // this is what we need here, other checks in putDemandVector
         Throw.whenNull(trips, "Demand data may not be null.");
@@ -582,8 +582,8 @@ public class OdMatrix implements Serializable, Identifiable
         {
             for (int i = 0; i < trips.length; i++)
             {
-                flow[i] = trips[i] / (timeVector.get(i + 1).getInUnit(TimeUnit.BASE_HOUR)
-                        - timeVector.get(i).getInUnit(TimeUnit.BASE_HOUR));
+                flow[i] = trips[i]
+                        / (timeVector.get(i + 1).getInUnit(DurationUnit.HOUR) - timeVector.get(i).getInUnit(DurationUnit.HOUR));
             }
             // last value can remain zero as initialized
             putDemandVector(origin, destination, category, new FrequencyVector(flow, FrequencyUnit.PER_HOUR), timeVector,
@@ -614,7 +614,7 @@ public class OdMatrix implements Serializable, Identifiable
             return null;
         }
         int[] trips = new int[demand.size() - 1];
-        DurationVector time = getTimeVector(origin, destination, category);
+        DurationVector time = getDurationVector(origin, destination, category);
         Interpolation interpolation = getInterpolation(origin, destination, category);
         for (int i = 0; i < trips.length; i++)
         {
@@ -645,7 +645,7 @@ public class OdMatrix implements Serializable, Identifiable
      */
     public final int getTrips(final Node origin, final Node destination, final Category category, final int periodIndex)
     {
-        DurationVector time = getTimeVector(origin, destination, category);
+        DurationVector time = getDurationVector(origin, destination, category);
         if (time == null)
         {
             return 0;
@@ -686,7 +686,7 @@ public class OdMatrix implements Serializable, Identifiable
         Interpolation interpolation = getInterpolation(origin, destination, category);
         Throw.when(!interpolation.equals(Interpolation.STEPWISE), UnsupportedOperationException.class,
                 "Can only increase the number of trips for data with stepwise interpolation.");
-        DurationVector time = getTimeVector(origin, destination, category);
+        DurationVector time = getDurationVector(origin, destination, category);
         Throw.when(periodIndex < 0 || periodIndex >= time.size() - 1, IndexOutOfBoundsException.class,
                 "Period index out of range.");
         FrequencyVector demand = getDemandVector(origin, destination, category);
@@ -698,7 +698,7 @@ public class OdMatrix implements Serializable, Identifiable
             Throw.when(dem[periodIndex] < -additionalDemand, UnsupportedOperationException.class,
                     "Demand may not become negative.");
             dem[periodIndex] += additionalDemand;
-            TimeVector timeVector = new TimeVector(time.getValuesInUnit());
+            DurationVector timeVector = new DurationVector(time.getValuesInUnit());
             putDemandVector(origin, destination, category, new FrequencyVector(dem, FrequencyUnit.PER_HOUR), timeVector,
                     Interpolation.STEPWISE);
         }
@@ -775,7 +775,7 @@ public class OdMatrix implements Serializable, Identifiable
         int sum = 0;
         for (Category category : getCategories(origin, destination))
         {
-            DurationVector time = getTimeVector(origin, destination, category);
+            DurationVector time = getDurationVector(origin, destination, category);
             FrequencyVector demand = getDemandVector(origin, destination, category);
             Interpolation interpolation = getInterpolation(origin, destination, category);
             for (int i = 0; i < time.size() - 1; i++)

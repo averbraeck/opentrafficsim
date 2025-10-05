@@ -9,17 +9,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.FrequencyVector;
-import org.djunits.value.vdouble.vector.TimeVector;
 import org.djutils.cli.CliUtil;
 import org.djutils.data.csv.CsvData;
 import org.djutils.data.serialization.TextSerializationException;
@@ -177,7 +177,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
     private String rampDemandString;
 
     /** Demand time. */
-    private TimeVector demandTime;
+    private DurationVector demandTime;
 
     /** Demand time string. */
     @Option(names = "--demandTime", description = "Demand time in min.", defaultValue = "0,10,40,50,70")
@@ -219,7 +219,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
         CliUtil.execute(demo, args);
         demo.mainDemand = new FrequencyVector(arrayFromString(demo.mainDemandString), FrequencyUnit.PER_HOUR);
         demo.rampDemand = new FrequencyVector(arrayFromString(demo.rampDemandString), FrequencyUnit.PER_HOUR);
-        demo.demandTime = new TimeVector(arrayFromString(demo.demandTimeString), TimeUnit.BASE_MINUTE);
+        demo.demandTime = new DurationVector(arrayFromString(demo.demandTimeString), DurationUnit.MINUTE);
         demo.start();
     }
 
@@ -350,9 +350,8 @@ public class RampMeteringDemo extends AbstractSimulationScript
         od.putDemandVector(nodeE, nodeD, controlledCarCat, this.rampDemand, 0.4);
         OdOptions odOptions = new OdOptions();
         DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory factory =
-                new DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory(
-                        new LaneBasedStrategicalRoutePlannerFactory(
-                                new LmrsFactory.Factory().withDefaultIncentives().build(stream)));
+                new DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory(new LaneBasedStrategicalRoutePlannerFactory(
+                        new LmrsFactory.Factory().withDefaultIncentives().build(stream)));
         odOptions.set(OdOptions.GTU_TYPE, new ControlledStrategicalPlannerGenerator(factory.create()));
         odOptions.set(OdOptions.BOOKKEEPING, LaneBookkeeping.INSTANT);
         odOptions.set(OdOptions.LANE_BIAS, new LaneBiases().addBias(car, LaneBias.WEAK_LEFT));

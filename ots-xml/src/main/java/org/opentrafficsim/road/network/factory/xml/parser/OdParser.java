@@ -10,15 +10,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
+import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.FrequencyVector;
-import org.djunits.value.vdouble.vector.TimeVector;
 import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
@@ -146,7 +147,7 @@ public final class OdParser
             Categorization categorization = parseCategories(otsNetwork, definitions, od, categories, eval);
 
             // Global time vector
-            TimeVector globalTimeVector = null;
+            DurationVector globalTimeVector = null;
             if (od.getGlobalTime() != null)
             {
                 List<Time> timeList = new ArrayList<>();
@@ -155,7 +156,7 @@ public final class OdParser
                     timeList.add(time.getValue().get(eval));
                 }
                 Collections.sort(timeList);
-                globalTimeVector = Try.assign(() -> new TimeVector(timeList, TimeUnit.DEFAULT), XmlParserException.class,
+                globalTimeVector = Try.assign(() -> new DurationVector(timeList, DurationUnit.SECOND), XmlParserException.class,
                         "Global time has no values.");
             }
 
@@ -292,7 +293,7 @@ public final class OdParser
             final MultiKeyMap<Set<Cell>> demandPerOD, final Eval eval) throws XmlParserException
     {
         Categorization categorization = odMatrix.getCategorization();
-        TimeVector globalTimeVector = odMatrix.getGlobalTimeVector();
+        DurationVector globalTimeVector = odMatrix.getGlobalTimeVector();
         Interpolation globalInterpolation = odMatrix.getGlobalInterpolation();
         for (Object o : demandPerOD.getKeys())
         {
@@ -335,7 +336,7 @@ public final class OdParser
                     }
 
                     // TimeVector: cell > main > global
-                    TimeVector timeVector = cell.getLevel() != null && cell.getLevel().get(0).getTime() != null
+                    DurationVector timeVector = cell.getLevel() != null && cell.getLevel().get(0).getTime() != null
                             ? parseTimeVector(cell.getLevel(), eval)
                             : (main != null && main.getLevel() != null && main.getLevel().get(0).getTime() != null
                                     ? parseTimeVector(main.getLevel(), eval) : globalTimeVector);
@@ -686,15 +687,15 @@ public final class OdParser
      * @return time vector
      * @throws XmlParserException if global time has no values
      */
-    private static TimeVector parseTimeVector(final List<LevelTimeType> list, final Eval eval) throws XmlParserException
+    private static DurationVector parseTimeVector(final List<LevelTimeType> list, final Eval eval) throws XmlParserException
     {
-        List<Time> timeList = new ArrayList<>();
+        List<Duration> timeList = new ArrayList<>();
         for (LevelTimeType time : list)
         {
             timeList.add(time.getTime().get(eval));
         }
         Collections.sort(timeList);
-        return new TimeVector(timeList, TimeUnit.DEFAULT);
+        return new DurationVector(timeList, DurationUnit.SECOND);
     }
 
     /**

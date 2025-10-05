@@ -100,7 +100,7 @@ And we use stepwise demand with half-hour periods.
 ```java
     DoubleVectorData data =
             DoubleVectorData.instantiate(new double[] {0.0, 0.5, 1.0}, TimeUnit.BASE_HOUR.getScale(), StorageType.DENSE);
-    TimeVector timeVector = new TimeVector(data, TimeUnit.BASE_HOUR);
+    DurationVector timeVector = new DurationVector(data, DurationUnit.HOUR);
     Interpolation interpolation = Interpolation.STEPWISE;
 ```
 
@@ -130,7 +130,7 @@ Suppose we have truck data in 1-hour periods, but with piecewise linear demand. 
 
 ```java
     data = DoubleVectorData.instantiate(new double[] {0.0, 1.0}, TimeUnit.BASE_HOUR.getScale(), StorageType.DENSE);
-    TimeVector truckTime = new TimeVector(data, TimeUnit.BASE_HOUR);
+    DurationVector truckTime = new DurationVector(data, DurationUnit.HOUR);
     data = DoubleVectorData.instantiate(new double[] {100.0, 150.0}, FrequencyUnit.PER_HOUR.getScale(), StorageType.DENSE);
     FrequencyVector demandABTruck = new FrequencyVector(data, FrequencyUnit.PER_HOUR);
     odMatrix.putDemandVector(nodeA, nodeB, truckCategory, demandABTruck, truckTime, Interpolation.LINEAR);

@@ -5,6 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.unit.FrequencyUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.storage.StorageType;
@@ -12,8 +13,8 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Mass;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.FrequencyVector;
-import org.djunits.value.vdouble.vector.TimeVector;
 import org.djunits.value.vdouble.vector.data.DoubleVectorData;
 import org.mockito.Mockito;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -82,7 +83,7 @@ public class OdExample
 
         DoubleVectorData data =
                 DoubleVectorData.instantiate(new double[] {0.0, 0.5, 1.0}, TimeUnit.BASE_HOUR.getScale(), StorageType.DENSE);
-        TimeVector timeVector = new TimeVector(data, TimeUnit.BASE_HOUR);
+        DurationVector timeVector = new DurationVector(data, DurationUnit.HOUR);
         Interpolation interpolation = Interpolation.STEPWISE;
 
         OdMatrix odMatrix = new OdMatrix("MyOD", origins, destinations, categorization, timeVector, interpolation);
@@ -96,7 +97,7 @@ public class OdExample
         odMatrix.putDemandVector(nodeA, nodeB, carCategory, demandABCar);
 
         data = DoubleVectorData.instantiate(new double[] {0.0, 1.0}, TimeUnit.BASE_HOUR.getScale(), StorageType.DENSE);
-        TimeVector truckTime = new TimeVector(data, TimeUnit.BASE_HOUR);
+        DurationVector truckTime = new DurationVector(data, DurationUnit.HOUR);
         data = DoubleVectorData.instantiate(new double[] {100.0, 150.0}, FrequencyUnit.PER_HOUR.getScale(), StorageType.DENSE);
         FrequencyVector demandABTruck = new FrequencyVector(data, FrequencyUnit.PER_HOUR);
         odMatrix.putDemandVector(nodeA, nodeB, truckCategory, demandABTruck, truckTime, Interpolation.LINEAR);
