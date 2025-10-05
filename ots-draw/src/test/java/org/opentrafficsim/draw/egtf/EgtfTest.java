@@ -1,4 +1,4 @@
-package org.opentrafficsim.core.egtf;
+package org.opentrafficsim.draw.egtf;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -6,10 +6,6 @@ import java.util.Locale;
 
 import org.djutils.exceptions.Try;
 import org.junit.jupiter.api.Test;
-import org.opentrafficsim.draw.egtf.DataSource;
-import org.opentrafficsim.draw.egtf.DataStream;
-import org.opentrafficsim.draw.egtf.Egtf;
-import org.opentrafficsim.draw.egtf.Filter;
 import org.opentrafficsim.draw.egtf.typed.TypedQuantity;
 
 /**
