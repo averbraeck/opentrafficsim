@@ -35,11 +35,7 @@ import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharact
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGeneratorOd;
 import org.opentrafficsim.road.gtu.lane.VehicleModel;
 import org.opentrafficsim.road.gtu.lane.VehicleModelFactory;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
@@ -134,9 +130,8 @@ public class OdExample
                 GtuCharacteristics gtuCharacteristics = Defaults.NL.apply(gtuType, randomStream).get();
                 VehicleModel vehicleModel = VehicleModel.NONE;
 
-                CarFollowingModelFactory<?> carFollowing = new IdmPlusFactory(randomStream);
-                PerceptionFactory perception = new DefaultLmrsPerceptionFactory();
-                LaneBasedTacticalPlannerFactory<?> tactical = new LmrsFactory(carFollowing, perception);
+                LaneBasedTacticalPlannerFactory<?> tactical =
+                        new LmrsFactory.Factory().withDefaultIncentives().build(randomStream);
                 LaneBasedStrategicalPlannerFactory<?> strategical = new LaneBasedStrategicalRoutePlannerFactory(tactical);
 
                 return new LaneBasedGtuCharacteristics(gtuCharacteristics, strategical, route, origin, destination,
@@ -163,9 +158,7 @@ public class OdExample
         GtuType car = DefaultsNl.CAR;
         GtuType truck = DefaultsNl.TRUCK;
 
-        CarFollowingModelFactory<?> carFollowing = new IdmPlusFactory(randomStream);
-        PerceptionFactory perception = new DefaultLmrsPerceptionFactory();
-        LmrsFactory tactical = new LmrsFactory(carFollowing, perception);
+        LmrsFactory tactical = new LmrsFactory.Factory().withDefaultIncentives().build(randomStream);
         ParameterFactoryByType params = new ParameterFactoryByType();
         params.addParameter(truck, ParameterTypes.A, Acceleration.instantiateSI(0.8));
         LaneBasedStrategicalPlannerFactory<?> strategical = new LaneBasedStrategicalRoutePlannerFactory(tactical, params);

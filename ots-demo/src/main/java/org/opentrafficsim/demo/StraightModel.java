@@ -40,8 +40,6 @@ import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplat
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplateDistribution;
 import org.opentrafficsim.road.gtu.generator.headway.HeadwayGenerator;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
@@ -155,9 +153,9 @@ public class StraightModel extends AbstractOtsModel implements UNITS
                     new ContinuousDistDoubleScalar.Rel<>(new DistUniform(this.stream, 80, 95), SpeedUnit.KM_PER_HOUR);
             Supplier<Route> routeGenerator = new FixedRouteGenerator(null);
             LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactoryCars = new LaneBasedStrategicalRoutePlannerFactory(
-                    new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()));
+                    new LmrsFactory.Factory().withDefaultIncentives().build(this.stream));
             LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFctoryTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                    new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()));
+                    new LmrsFactory.Factory().withDefaultIncentives().build(this.stream));
             LaneBasedGtuTemplate carTemplate = new LaneBasedGtuTemplate(car, new ConstantSupplier<>(Length.instantiateSI(4.0)),
                     new ConstantSupplier<>(Length.instantiateSI(2.0)), speedCar, strategicalPlannerFactoryCars, routeGenerator);
             LaneBasedGtuTemplate truckTemplate = new LaneBasedGtuTemplate(truck,

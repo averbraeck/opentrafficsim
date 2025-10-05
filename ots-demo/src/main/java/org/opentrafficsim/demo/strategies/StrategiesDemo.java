@@ -5,15 +5,11 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.function.Supplier;
 
 import javax.naming.NamingException;
 import javax.swing.Box;
@@ -77,7 +73,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSocioSpeed;
@@ -85,13 +80,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveStayRight;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.SocioDesiredSpeed;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
@@ -533,30 +523,25 @@ public class StrategiesDemo extends AbstractSimulationScript
         parameterFactory.addParameter(DefaultsNl.TRUCK, ParameterTypes.FSPEED, 1.0);
         for (GtuType gtuType : new GtuType[] {DefaultsNl.CAR, DefaultsNl.TRUCK})
         {
-            // incentives
-            Set<Supplier<? extends MandatoryIncentive>> mandatoryIncentives = Set.of(IncentiveRoute.SINGLETON);
+            LmrsFactory.Factory factory =
+                    new LmrsFactory.Factory().setPerceptionFactory(perceptionFactory).setTailgating(Tailgating.PRESSURE);
 
-            Set<Supplier<? extends VoluntaryIncentive>> voluntaryIncentives = new LinkedHashSet<>();
-            voluntaryIncentives.add(IncentiveSpeedWithCourtesy.SINGLETON);
-            voluntaryIncentives.add(IncentiveKeep.SINGLETON);
-            voluntaryIncentives.add(IncentiveSocioSpeed.SINGLETON);
+            factory.addMandatoryIncentive(IncentiveRoute.SINGLETON);
+            factory.addVoluntaryIncentive(IncentiveSpeedWithCourtesy.SINGLETON);
+            factory.addVoluntaryIncentive(IncentiveKeep.SINGLETON);
+            factory.addVoluntaryIncentive(IncentiveSocioSpeed.SINGLETON);
             if (gtuType.equals(DefaultsNl.TRUCK))
             {
-                voluntaryIncentives.add(IncentiveStayRight.SINGLETON);
+                factory.addVoluntaryIncentive(IncentiveStayRight.SINGLETON);
             }
 
-            Set<Supplier<? extends AccelerationIncentive>> accelerationIncentives = Collections.emptySet();
+            // trucks don't change their desired speed
+            factory.setCarFollowingModelFactory(
+                    gtuType.equals(DefaultsNl.CAR) ? new SocioIdmFactory() : new IdmPlusFactory(this.stream));
 
-            // car-following factory
-            CarFollowingModelFactory<?> cfFactory = // trucks don't change their desired speed
-                    gtuType.equals(DefaultsNl.CAR) ? new SocioIdmFactory() : new IdmPlusFactory(this.stream);
-            // tailgating
-            Tailgating tlgt = Tailgating.PRESSURE;
             // strategical and tactical factory
             LaneBasedStrategicalPlannerFactory<?> laneBasedStrategicalPlannerFactory =
-                    new LaneBasedStrategicalRoutePlannerFactory(new LmrsFactory(cfFactory, perceptionFactory,
-                            Synchronization.PASSIVE, Cooperation.PASSIVE, GapAcceptance.INFORMED, tlgt, mandatoryIncentives,
-                            voluntaryIncentives, accelerationIncentives), parameterFactory);
+                    new LaneBasedStrategicalRoutePlannerFactory(factory.build(null), parameterFactory);
             this.factories.put(gtuType, laneBasedStrategicalPlannerFactory);
         }
         for (int i = 0; i < lanes1.size(); i++)

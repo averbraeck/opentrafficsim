@@ -4,12 +4,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Supplier;
 
 import javax.naming.NamingException;
 
@@ -72,9 +70,9 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructu
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Anticipation;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Estimation;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.PerceivedGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.PerceivedGtuType.AnticipationPerceivedGtuType;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.TaskHeadwayCollector;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTask;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationHeadway;
@@ -82,17 +80,16 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalA
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSpeed;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.BehavioralAdaptation;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
 import org.opentrafficsim.road.gtu.lane.perception.mental.TaskCarFollowing;
 import org.opentrafficsim.road.gtu.lane.perception.mental.TaskManager;
 import org.opentrafficsim.road.gtu.lane.perception.mental.TaskRoadSideDistraction;
+import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdmFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
@@ -100,13 +97,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSocioSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.SocioDesiredSpeed;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionGeometry;
@@ -337,26 +329,24 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
                 }
             } : new DefaultLmrsPerceptionFactory();
 
+            LmrsFactory.Factory factory = new LmrsFactory.Factory().setCarFollowingModelFactory(cfModelFactory)
+                    .setPerceptionFactory(perceptionFactory);
+
             // Tailgating, in case of social interactions, reduces the headway based on exerted social pressure on the leader
-            Tailgating tailgating = social ? Tailgating.PRESSURE : Tailgating.NONE;
+            factory.setTailgating(social ? Tailgating.PRESSURE : Tailgating.NONE);
 
             // incentives: mandatory, voluntary
-            Set<Supplier<? extends MandatoryIncentive>> mandatoryIncentives = Set.of(IncentiveRoute.SINGLETON);
-            Set<Supplier<? extends VoluntaryIncentive>> voluntaryIncentives = new LinkedHashSet<>();
-            voluntaryIncentives.add(IncentiveSpeedWithCourtesy.SINGLETON);
-            voluntaryIncentives.add(IncentiveKeep.SINGLETON);
+            factory.addMandatoryIncentive(IncentiveRoute.SINGLETON);
+            factory.addVoluntaryIncentive(IncentiveSpeedWithCourtesy.SINGLETON);
+            factory.addVoluntaryIncentive(IncentiveKeep.SINGLETON);
             if (social)
             {
-                voluntaryIncentives.add(IncentiveSocioSpeed.SINGLETON);
+                factory.addVoluntaryIncentive(IncentiveSocioSpeed.SINGLETON);
             }
-            Set<Supplier<? extends AccelerationIncentive>> accelerationIncentives = Collections.emptySet();
 
             // Layered factories (tactical, strategical, strategical in an OD context)
-            LmrsFactory lmrsFactory = new LmrsFactory(cfModelFactory, perceptionFactory, Synchronization.PASSIVE,
-                    Cooperation.PASSIVE, GapAcceptance.INFORMED, tailgating, mandatoryIncentives, voluntaryIncentives,
-                    accelerationIncentives);
             LaneBasedStrategicalRoutePlannerFactory strategicalPlannerFactory =
-                    new LaneBasedStrategicalRoutePlannerFactory(lmrsFactory, parameterFactory);
+                    new LaneBasedStrategicalRoutePlannerFactory(factory.build(null), parameterFactory);
             this.characteristics =
                     new DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory(strategicalPlannerFactory).create();
         }

@@ -201,10 +201,10 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
             this.parametersCar = InputParameterHelper.getParametersCar(getInputParameterMap());
             this.parametersTruck = InputParameterHelper.getParametersTruck(getInputParameterMap());
 
-            this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
-                    new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()));
-            this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                    new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()));
+            this.strategicalPlannerGeneratorCars =
+                    new LaneBasedStrategicalRoutePlannerFactory(new LmrsFactory.Factory().build(this.stream));
+            this.strategicalPlannerGeneratorTrucks =
+                    new LaneBasedStrategicalRoutePlannerFactory(new LmrsFactory.Factory().build(this.stream));
 
             GtuType gtuType = DefaultsNl.CAR;
             LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;

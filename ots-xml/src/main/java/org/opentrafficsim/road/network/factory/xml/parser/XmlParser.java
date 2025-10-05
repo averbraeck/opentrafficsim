@@ -52,7 +52,6 @@ import org.opentrafficsim.xml.generated.Ots;
 import org.opentrafficsim.xml.generated.RoadLayout;
 import org.opentrafficsim.xml.generated.ScenarioType;
 import org.opentrafficsim.xml.generated.StripeType;
-import org.pmw.tinylog.Level;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -239,7 +238,6 @@ public final class XmlParser implements Serializable
             TrafficControlException
     {
         CategoryLogger.setLogCategories(Cat.PARSER);
-        CategoryLogger.setAllLogLevel(Level.TRACE);
 
         // input parameters
         Eval eval = ScenarioParser.parseInputParameters(ots.getScenarios(), scenario);
@@ -309,7 +307,7 @@ public final class XmlParser implements Serializable
             // OD generators
             List<LaneBasedGtuGenerator> generators = OdParser.parseDemand(otsNetwork, definitions, demand, gtuTemplates,
                     laneBiases, factories, modelIdReferrals, streamInformation, eval);
-            //System.out.println("Created " + generators.size() + " generators based on origin destination matrices");
+            // System.out.println("Created " + generators.size() + " generators based on origin destination matrices");
         }
 
         // control

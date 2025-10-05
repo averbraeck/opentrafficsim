@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
-import java.util.function.Supplier;
 
 import org.djunits.unit.Unit;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -75,14 +74,11 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationBusStop;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationConflicts;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationNoRightOvertake;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationSpeedLimitTransition;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationTrafficLights;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveBusStop;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveCourtesy;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveDummy;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveGetInLane;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
@@ -94,10 +90,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.SocioDesiredSpeed;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.RoadNetwork;
@@ -523,8 +517,9 @@ public class ModelParser
             else
             {
                 // default
-                tacticalPlannerFactory = new LmrsFactory(new IdmPlusFactory(streamInformation.getStream("generation")),
-                        new DefaultLmrsPerceptionFactory());
+                tacticalPlannerFactory = new LmrsFactory.Factory()
+                        .setCarFollowingModelFactory(new IdmPlusFactory(streamInformation.getStream("generation")))
+                        .withDefaultIncentives().build(null);
             }
 
             LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory;
@@ -557,95 +552,95 @@ public class ModelParser
             final org.opentrafficsim.xml.generated.ModelType.TacticalPlanner.Lmrs lmrs,
             final StreamInformation streamInformation, final Eval eval) throws XmlParserException
     {
+        LmrsFactory.Factory factory = new LmrsFactory.Factory();
+
+        // Car-following model
+        factory.setCarFollowingModelFactory(parseCarFollowingModel(lmrs.getCarFollowingModel(), streamInformation, eval));
+
+        // Perception
+        factory.setPerceptionFactory(parsePerception(lmrs.getPerception(), eval));
+
         // Synchronization
-        Synchronization synchronization =
-                lmrs.getSynchronization() != null ? lmrs.getSynchronization().get(eval) : Synchronization.PASSIVE;
+        factory.setSynchonization(
+                lmrs.getSynchronization() != null ? lmrs.getSynchronization().get(eval) : Synchronization.PASSIVE);
 
         // Cooperation
-        Cooperation cooperation = lmrs.getCooperation() != null ? lmrs.getCooperation().get(eval) : Cooperation.PASSIVE;
+        factory.setCooperation(lmrs.getCooperation() != null ? lmrs.getCooperation().get(eval) : Cooperation.PASSIVE);
 
         // Gap-acceptance
-        GapAcceptance gapAcceptance =
-                lmrs.getGapAcceptance() != null ? lmrs.getGapAcceptance().get(eval) : GapAcceptance.INFORMED;
+        factory.setGapAcceptance(lmrs.getGapAcceptance() != null ? lmrs.getGapAcceptance().get(eval) : GapAcceptance.INFORMED);
 
         // Tailgating
-        Tailgating tailgating = lmrs.getTailgating() != null ? lmrs.getTailgating().get(eval) : Tailgating.NONE;
+        factory.setTailgating(lmrs.getTailgating() != null ? lmrs.getTailgating().get(eval) : Tailgating.NONE);
 
         // Mandatory incentives
-        Set<Supplier<? extends MandatoryIncentive>> mandatoryIncentives = new LinkedHashSet<>();
+        boolean anyAdded = false;
         if (lmrs.getMandatoryIncentives().getRoute() != null)
         {
-            mandatoryIncentives.add(IncentiveRoute.SINGLETON);
+            factory.addMandatoryIncentive(IncentiveRoute.SINGLETON);
+            anyAdded = true;
         }
         if (lmrs.getMandatoryIncentives().getGetInLane() != null)
         {
-            mandatoryIncentives.add(IncentiveGetInLane.SINGLETON);
+            factory.addMandatoryIncentive(IncentiveGetInLane.SINGLETON);
+            anyAdded = true;
         }
         if (lmrs.getMandatoryIncentives().getBusStop() != null)
         {
-            mandatoryIncentives.add(IncentiveBusStop.SINGLETON);
+            factory.addMandatoryIncentive(IncentiveBusStop.SINGLETON);
+            anyAdded = true;
         }
-        if (mandatoryIncentives.isEmpty())
+        if (!anyAdded)
         {
-            mandatoryIncentives.add(IncentiveDummy.SINGLETON);
+            factory.withDefaultIncentives();
         }
 
         // Voluntary incentives
-        Set<Supplier<? extends VoluntaryIncentive>> voluntaryIncentives = new LinkedHashSet<>();
         if (lmrs.getVoluntaryIncentives().getKeep() != null)
         {
-            voluntaryIncentives.add(IncentiveKeep.SINGLETON);
+            factory.addVoluntaryIncentive(IncentiveKeep.SINGLETON);
         }
         if (lmrs.getVoluntaryIncentives().getSpeedWithCourtesy() != null)
         {
-            voluntaryIncentives.add(IncentiveSpeedWithCourtesy.SINGLETON);
+            factory.addVoluntaryIncentive(IncentiveSpeedWithCourtesy.SINGLETON);
         }
         if (lmrs.getVoluntaryIncentives().getCourtesy() != null)
         {
-            voluntaryIncentives.add(IncentiveCourtesy.SINGLETON);
+            factory.addVoluntaryIncentive(IncentiveCourtesy.SINGLETON);
         }
         if (lmrs.getVoluntaryIncentives().getSocioSpeed() != null)
         {
-            voluntaryIncentives.add(IncentiveSocioSpeed.SINGLETON);
+            factory.addVoluntaryIncentive(IncentiveSocioSpeed.SINGLETON);
         }
         if (lmrs.getVoluntaryIncentives().getStayRight() != null)
         {
-            voluntaryIncentives.add(IncentiveStayRight.SINGLETON);
+            factory.addVoluntaryIncentive(IncentiveStayRight.SINGLETON);
         }
 
         // Acceleration incentives
-        Set<Supplier<? extends AccelerationIncentive>> accelerationIncentives = new LinkedHashSet<>();
         if (lmrs.getAccelerationIncentives().getBusStop() != null)
         {
-            accelerationIncentives.add(AccelerationBusStop.SINGLETON);
+            factory.addAccelerationIncentive(AccelerationBusStop.SINGLETON);
         }
         if (lmrs.getAccelerationIncentives().getConflicts() != null)
         {
-            accelerationIncentives.add(() -> new AccelerationConflicts());
+            factory.addAccelerationIncentive(() -> new AccelerationConflicts());
         }
         if (lmrs.getAccelerationIncentives().getSpeedLimitTransitions() != null)
         {
-            accelerationIncentives.add(AccelerationSpeedLimitTransition.SINGLETON);
+            factory.addAccelerationIncentive(AccelerationSpeedLimitTransition.SINGLETON);
         }
         if (lmrs.getAccelerationIncentives().getTrafficLights() != null)
         {
-            accelerationIncentives.add(AccelerationTrafficLights.SINGLETON);
+            factory.addAccelerationIncentive(AccelerationTrafficLights.SINGLETON);
         }
         if (lmrs.getAccelerationIncentives().getNoRightOvertake() != null)
         {
-            accelerationIncentives.add(AccelerationNoRightOvertake.SINGLETON);
+            factory.addAccelerationIncentive(AccelerationNoRightOvertake.SINGLETON);
         }
 
-        // Perception
-        PerceptionFactory perceptionFactory = parsePerception(lmrs.getPerception(), eval);
-
-        // Car-following model
-        CarFollowingModelFactory<? extends CarFollowingModel> carFollowingModelFactory =
-                parseCarFollowingModel(lmrs.getCarFollowingModel(), streamInformation, eval);
-
         // Lmrs factory
-        return new LmrsFactory(carFollowingModelFactory, perceptionFactory, synchronization, cooperation, gapAcceptance,
-                tailgating, mandatoryIncentives, voluntaryIncentives, accelerationIncentives);
+        return factory.build(null);
     }
 
     /**

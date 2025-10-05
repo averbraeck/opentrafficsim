@@ -49,8 +49,6 @@ import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator.Placement;
 import org.opentrafficsim.road.gtu.generator.characteristics.DefaultLaneBasedGtuCharacteristicsGeneratorOd;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristics;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
@@ -351,7 +349,7 @@ public final class InjectionsTest
         // Create the generator and its components
         ImmutableMap<String, GtuType> gtuTypes = new ImmutableLinkedHashMap<>(Map.of("NL.CAR", DefaultsNl.CAR));
         StreamInterface stream = new MersenneTwister();
-        LmrsFactory tacticalFactory = new LmrsFactory(new IdmPlusFactory(stream), new DefaultLmrsPerceptionFactory());
+        LmrsFactory tacticalFactory = new LmrsFactory.Factory().build(stream);
         LaneBasedStrategicalRoutePlannerFactory strategicalPlannerFactory =
                 new LaneBasedStrategicalRoutePlannerFactory(tacticalFactory);
         Injections injections = new Injections(arrivals, network, gtuTypes, Defaults.NL, strategicalPlannerFactory, stream,

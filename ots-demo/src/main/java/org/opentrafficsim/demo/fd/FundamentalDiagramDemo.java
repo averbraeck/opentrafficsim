@@ -77,12 +77,7 @@ import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharact
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuCharacteristicsGenerator;
 import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
 import org.opentrafficsim.road.gtu.lane.VehicleModel;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
@@ -240,10 +235,8 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             }
         };
         // GTU characteristics generator
-        CarFollowingModelFactory<IdmPlus> carFollowingModelFactory = new IdmPlusFactory(stream);
-        PerceptionFactory perceptionFactory = new DefaultLmrsPerceptionFactory();
         LaneBasedTacticalPlannerFactory<Lmrs> tacticalPlannerFactory =
-                new LmrsFactory(carFollowingModelFactory, perceptionFactory);
+                new LmrsFactory.Factory().withDefaultIncentives().build(stream);
         DistNormal fSpeed = new DistNormal(stream, 123.7 / 120.0, 12.0 / 120.0);
         ParameterFactory parametersFactory = new ParameterFactory()
         {

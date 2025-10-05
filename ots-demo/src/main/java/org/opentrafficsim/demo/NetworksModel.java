@@ -27,6 +27,7 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.EventType;
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.FrequencyAndObject;
@@ -53,8 +54,6 @@ import org.opentrafficsim.road.gtu.generator.GeneratorPositions;
 import org.opentrafficsim.road.gtu.generator.LaneBasedGtuGenerator;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplate;
 import org.opentrafficsim.road.gtu.generator.characteristics.LaneBasedGtuTemplateDistribution;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
@@ -195,9 +194,9 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
 
             ParameterFactory params = new InputParameterHelper(getInputParameterMap());
             this.strategicalPlannerFactoryCars = new LaneBasedStrategicalRoutePlannerFactory(
-                    new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()), params);
+                    new LmrsFactory.Factory().withDefaultIncentives().build(this.stream), params);
             this.strategicalPlannerFactoryTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                    new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()), params);
+                    new LmrsFactory.Factory().withDefaultIncentives().build(this.stream), params);
 
             Point2d pFrom2a = new Point2d(0, -50);
             Point2d pFrom2b = new Point2d(490, -0.5);
@@ -499,12 +498,12 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
         EventType eventType = event.getType();
         if (Network.GTU_ADD_EVENT.equals(eventType))
         {
-            System.out.println("A GTU was created (id " + (String) event.getContent() + ")");
+            CategoryLogger.always().trace("A GTU was created (id " + (String) event.getContent() + ")");
             this.knownGTUs.add(this.network.getGTU((String) event.getContent()));
         }
         else if (Network.GTU_REMOVE_EVENT.equals(eventType))
         {
-            System.out.println("A GTU was removed (id " + ((String) event.getContent()) + ")");
+            CategoryLogger.always().trace("A GTU was removed (id " + ((String) event.getContent()) + ")");
             this.knownGTUs.remove(this.network.getGTU((String) event.getContent()));
         }
     }

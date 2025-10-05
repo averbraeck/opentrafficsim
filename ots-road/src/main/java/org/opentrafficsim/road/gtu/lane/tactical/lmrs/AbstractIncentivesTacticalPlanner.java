@@ -5,8 +5,6 @@ import java.util.LinkedHashSet;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableLinkedHashSet;
 import org.djutils.immutablecollections.ImmutableSet;
-import org.opentrafficsim.base.parameters.ParameterTypeClassList;
-import org.opentrafficsim.base.parameters.constraint.ClassCollectionConstraint;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
@@ -29,31 +27,6 @@ public abstract class AbstractIncentivesTacticalPlanner extends AbstractLaneBase
     /** */
     private static final long serialVersionUID = 20190731L;
 
-    /**
-     * Constructor.
-     * @param carFollowingModel Car-following model.
-     * @param gtu GTU
-     * @param lanePerception perception
-     */
-    public AbstractIncentivesTacticalPlanner(final CarFollowingModel carFollowingModel, final LaneBasedGtu gtu,
-            final LanePerception lanePerception)
-    {
-        super(carFollowingModel, gtu, lanePerception);
-    }
-
-    /** Parameter type for mandatory lane change incentives. */
-    public static final ParameterTypeClassList<MandatoryIncentive> MANDATORY = new ParameterTypeClassList<>("man.incent.",
-            "Mandatory lane-change incentives.", ParameterTypeClassList.getValueClass(MandatoryIncentive.class));
-
-    /** Parameter type for voluntary lane change incentives. */
-    public static final ParameterTypeClassList<VoluntaryIncentive> VOLUNTARY = new ParameterTypeClassList<>("vol.incent.",
-            "Voluntary lane-change incentives.", ParameterTypeClassList.getValueClass(VoluntaryIncentive.class));
-
-    /** Parameter type for acceleration incentives. */
-    public static final ParameterTypeClassList<AccelerationIncentive> ACCELERATION = new ParameterTypeClassList<>("acc.incent.",
-            "Acceleration incentives.", ParameterTypeClassList.getValueClass(AccelerationIncentive.class),
-            ClassCollectionConstraint.newInstance(AccelerationBusStop.class));
-
     /** Set of mandatory lane change incentives. */
     private final LinkedHashSet<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
 
@@ -74,6 +47,18 @@ public abstract class AbstractIncentivesTacticalPlanner extends AbstractLaneBase
     /** Immutable set of acceleration lane change incentives. */
     private final ImmutableSet<AccelerationIncentive> immutableAccelerationIncentives =
             new ImmutableLinkedHashSet<>(this.accelerationIncentives, Immutable.WRAP);
+
+    /**
+     * Constructor.
+     * @param carFollowingModel Car-following model.
+     * @param gtu GTU
+     * @param lanePerception perception
+     */
+    public AbstractIncentivesTacticalPlanner(final CarFollowingModel carFollowingModel, final LaneBasedGtu gtu,
+            final LanePerception lanePerception)
+    {
+        super(carFollowingModel, gtu, lanePerception);
+    }
 
     /**
      * Adds a mandatory incentive. Ignores {@code null}.
@@ -109,24 +94,6 @@ public abstract class AbstractIncentivesTacticalPlanner extends AbstractLaneBase
         {
             this.accelerationIncentives.add(incentive);
         }
-    }
-
-    /**
-     * Sets the default lane change incentives.
-     */
-    public final void setDefaultIncentives()
-    {
-        this.mandatoryIncentives.clear();
-        this.voluntaryIncentives.clear();
-        this.accelerationIncentives.clear();
-        this.mandatoryIncentives.add(IncentiveRoute.SINGLETON);
-        // this.mandatoryIncentives.add(IncentiveGetInLane.SINGLETON);
-        this.voluntaryIncentives.add(IncentiveSpeedWithCourtesy.SINGLETON);
-        this.voluntaryIncentives.add(IncentiveKeep.SINGLETON);
-        this.voluntaryIncentives.add(IncentiveQueue.SINGLETON);
-        this.accelerationIncentives.add(AccelerationSpeedLimitTransition.SINGLETON);
-        this.accelerationIncentives.add(AccelerationTrafficLights.SINGLETON);
-        this.accelerationIncentives.add(new AccelerationConflicts());
     }
 
     /**

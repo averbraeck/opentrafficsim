@@ -75,10 +75,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.AccelerationIncentive;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveCourtesy;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveGetInLane;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveKeep;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveRoute;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSocioSpeed;
@@ -86,12 +83,9 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.IncentiveSpeedWithCourtesy
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Cooperation;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.GapAcceptance;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.MandatoryIncentive;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
 import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
-import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.xml.parser.XmlParser;
@@ -323,28 +317,18 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             ParameterSet params = new ParameterSet();
             params.setDefaultParameter(AbstractIdm.DELTA);
 
-            Set<Supplier<? extends MandatoryIncentive>> mandatoryIncentives = new LinkedHashSet<>();
-            mandatoryIncentives.add(IncentiveRoute.SINGLETON);
+            LmrsFactory.Factory factory = new LmrsFactory.Factory().setCarFollowingModelFactory(idmPlusFactory)
+                    .setSynchonization(SYNCHRONIZATION).setCooperation(COOPERATION);
+            factory.addMandatoryIncentive(IncentiveRoute.SINGLETON);
+            factory.addVoluntaryIncentive(IncentiveSpeedWithCourtesy.SINGLETON);
+            factory.addVoluntaryIncentive(IncentiveKeep.SINGLETON);
             if (ADDITIONAL_INCENTIVES)
             {
-                if ("".equals("We skip this for now"))
-                {
-                    mandatoryIncentives.add(IncentiveGetInLane.SINGLETON);
-                }
+                factory.addVoluntaryIncentive(IncentiveCourtesy.SINGLETON);
+                factory.addVoluntaryIncentive(IncentiveSocioSpeed.SINGLETON);
             }
-            Set<Supplier<? extends VoluntaryIncentive>> voluntaryIncentives = new LinkedHashSet<>();
-            voluntaryIncentives.add(IncentiveSpeedWithCourtesy.SINGLETON);
-            voluntaryIncentives.add(IncentiveKeep.SINGLETON);
-            if (ADDITIONAL_INCENTIVES)
-            {
-                voluntaryIncentives.add(IncentiveCourtesy.SINGLETON);
-                voluntaryIncentives.add(IncentiveSocioSpeed.SINGLETON);
-            }
-            Set<Supplier<? extends AccelerationIncentive>> accelerationIncentives = Collections.emptySet();
 
-            LaneBasedTacticalPlannerFactory<Lmrs> tacticalFactory = new LmrsFactory(idmPlusFactory,
-                    new DefaultLmrsPerceptionFactory(), SYNCHRONIZATION, COOPERATION, GapAcceptance.INFORMED, Tailgating.NONE,
-                    mandatoryIncentives, voluntaryIncentives, accelerationIncentives);
+            LaneBasedTacticalPlannerFactory<Lmrs> tacticalFactory = factory.build(null);
 
             GtuType car = DefaultsNl.CAR;
             GtuType truck = DefaultsNl.TRUCK;

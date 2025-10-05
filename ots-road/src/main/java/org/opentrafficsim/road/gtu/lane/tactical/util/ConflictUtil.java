@@ -18,6 +18,7 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeAcceleration;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
@@ -325,7 +326,7 @@ public final class ConflictUtil
 
         if (a.si < -6.0 && speed.si > 5 / 3.6)
         {
-            System.err.println("Deceleration from conflict util stronger than 6m/s^2.");
+            CategoryLogger.always().trace("Deceleration from conflict util stronger than 6m/s^2.");
             // return Acceleration.POSITIVE_INFINITY;
         }
         return a;

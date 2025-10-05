@@ -193,12 +193,10 @@ Let us assume that for this simulation the GTU type and route are defined in the
     VehicleModel vehicleModel = VehicleModel.NONE;
 ```
 
-What remains to be defined is a `LaneBasedStrategicalPlannerFactory`. Defining components bottom up the following code uses some standard components. Note that the strategical planner factory can be defined once, for example as a property of the anonymous class, rather that for every call to the `draw()` method.
+What remains to be defined is a `LaneBasedStrategicalPlannerFactory`. Defining components bottom up the following code uses some standard components by use of the `LmrsFactory.Factory` factory. In this factory many specific components can be defined. Note that the strategical planner factory can be defined once, for example as a property of the anonymous class, rather than for every call to the `draw()` method.
 
 ```java
-    CarFollowingModelFactory<?> carFollowing = new IdmPlusFactory(randomStream);
-    PerceptionFactory perception = new DefaultLmrsPerceptionFactory();
-    LaneBasedTacticalPlannerFactory<?> tactical = new LmrsFactory(carFollowing, perception);
+    LaneBasedTacticalPlannerFactory<?> tactical = new LmrsFactory.Factory().withDefaultIncentives().build(randomStream);
     LaneBasedStrategicalPlannerFactory<?> strategical = new LaneBasedStrategicalRoutePlannerFactory(tactical);
 ```
 
@@ -234,9 +232,7 @@ For clarity the rest of the example code does not use method chaining. It should
 Next, factories for model components are set up similar to how this was done before. A `ParameterFactory` is included to set a different acceleration value for trucks. The highest level factory (strategical) is used on the GTU characteristics generator factory. Note that this is a simple case. Depending on the GTU type, and possibly the origin or destination, the strategical planner factory may return various models, possibly based on a set of delegate strategical planner factories.
 
 ```java
-    CarFollowingModelFactory<?> carFollowing = new IdmPlusFactory(randomStream);
-    PerceptionFactory perception = new DefaultLmrsPerceptionFactory();
-    LmrsFactory tactical = new LmrsFactory(carFollowing, perception);
+    LmrsFactory tactical = new LmrsFactory.Factory().withDefaultIncentives().build(randomStream);
     ParameterFactoryByType params = new ParameterFactoryByType();
     params.addParameter(truck, ParameterTypes.A, Acceleration.instantiateSI(0.8));
     LaneBasedStrategicalPlannerFactory<?> strategical = new LaneBasedStrategicalRoutePlannerFactory(tactical, params);
