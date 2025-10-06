@@ -8,11 +8,9 @@ import java.util.List;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -35,13 +33,10 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.DefaultTestParameters;
+import org.opentrafficsim.road.FixedCarFollowing;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCfLcTacticalPlanner;
-import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.RoadNetwork;
@@ -216,11 +211,9 @@ public final class TrafficLightDetectorTest implements EventListener
                 // initialLongitudinalPositions.add(new LanePosition(gtuPosition.getLane(), gtuPosition.getPosition()));
                 LanePosition initialLongitudinalPositions = new LanePosition(gtuPosition.lane(), gtuPosition.position());
                 Parameters parameters = DefaultTestParameters.create();
-                LaneChangeModel laneChangeModel = new Egoistic();
-                GtuFollowingModelOld gtuFollowingModel = new FixedAccelerationModel(
-                        new Acceleration(0, AccelerationUnit.METER_PER_SECOND_2), new Duration(10, DurationUnit.SECOND));
                 LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
-                        new LaneBasedCfLcTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
+                        new LmrsFactory.Factory().setCarFollowingModelFactory(new FixedCarFollowing()).build(null).create(gtu),
+                        gtu);
                 gtu.setParameters(parameters);
                 Speed initialSpeed = new Speed(10, SpeedUnit.METER_PER_SECOND);
                 if (lanes.length == 6 && pos >= 103)

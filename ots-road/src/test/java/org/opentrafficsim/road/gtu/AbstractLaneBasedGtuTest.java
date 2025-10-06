@@ -31,13 +31,10 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.DefaultTestParameters;
+import org.opentrafficsim.road.FixedCarFollowing;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCfLcTacticalPlanner;
-import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.FixedLaneChangeModel;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.RoadNetwork;
@@ -103,11 +100,9 @@ public final class AbstractLaneBasedGtuTest implements UNITS
         // initialLongitudinalPositions.add(new LanePosition(lanesGroupB[1], positionB));
         // A Car needs a CarFollowingModel
         Acceleration acceleration = new Acceleration(2, METER_PER_SECOND_2);
-        Duration validFor = new Duration(10, SECOND);
-        GtuFollowingModelOld gfm = new FixedAccelerationModel(acceleration, validFor);
+        Duration validFor = new Duration(0.5, SECOND);
         // A Car needs a lane change model
         // AbstractLaneChangeModel laneChangeModel = new Egoistic();
-        LaneChangeModel laneChangeModel = new FixedLaneChangeModel(null);
         // A Car needs an initial speed
         Speed initialSpeed = new Speed(50, KM_PER_HOUR);
         // Length of the Car
@@ -130,8 +125,8 @@ public final class AbstractLaneBasedGtuTest implements UNITS
         // LaneBasedBehavioralCharacteristics drivingCharacteristics =
         // new LaneBasedBehavioralCharacteristics(gfm, laneChangeModel);
         LaneBasedGtu car = new LaneBasedGtu(carID, gtuType, carLength, carWidth, maximumSpeed, carLength.times(0.5), network);
-        LaneBasedStrategicalPlanner strategicalPlanner =
-                new LaneBasedStrategicalRoutePlanner(new LaneBasedCfLcTacticalPlanner(gfm, laneChangeModel, car), car);
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(new LmrsFactory.Factory()
+                .setCarFollowingModelFactory(new FixedCarFollowing(acceleration)).build(null).create(car), car);
         car.setParameters(parameters);
         car.init(strategicalPlanner, new LanePosition(lanesGroupA[1], positionA).getLocation(), initialSpeed);
         // Now we can verify the various fields in the newly created Car
@@ -184,7 +179,7 @@ public final class AbstractLaneBasedGtuTest implements UNITS
         assertEquals(0, car.getOperationalPlan().getStartTime().getSI(), 0.00001, "lastEvaluation time is 0");
         // assertEquals("nextEvaluation time is 0", 0, car.getOperationalPlan().getEndTime().getSI(), 0.00001);
         // edit wouter schakel: fixed acceleration model has t=10s, first plan is made during initialization
-        assertEquals(10.0, car.getOperationalPlan().getEndTime().getSI(), 0.00001, "nextEvaluation time is 10");
+        assertEquals(0.5, car.getOperationalPlan().getEndTime().getSI(), 0.00001, "nextEvaluation time is 10");
         // Increase the simulator clock in small steps and verify the both positions on all lanes at each step
         double step = 0.01d;
         for (int i = 0;; i++)

@@ -2,12 +2,9 @@ package org.opentrafficsim.road.network.lane;
 
 import javax.naming.NamingException;
 
-import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DirectionUnit;
-import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.unit.SpeedUnit;
-import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -24,8 +21,6 @@ import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.car.CarTest;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.FixedLaneChangeModel;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.factory.LaneFactory;
 
@@ -100,9 +95,8 @@ public final class CurveTest
                             + " time for reference to get to end " + timeAtEnd);
                 }
             }
-            LaneBasedGtu car = CarTest.makeReferenceCar("car", gtuType, straight1[lane], initialPosition, speed,
-                    new FixedAccelerationModel(new Acceleration(0, AccelerationUnit.SI), new Duration(25, DurationUnit.SI)),
-                    new FixedLaneChangeModel(null), (RoadNetwork) network);
+            LaneBasedGtu car =
+                    CarTest.makeReferenceCar("car", gtuType, straight1[lane], initialPosition, speed, (RoadNetwork) network);
             if (VERBOSE)
             {
                 printEventList(simulator);

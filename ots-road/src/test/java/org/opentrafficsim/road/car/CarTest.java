@@ -8,7 +8,6 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.util.UNITS;
-import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -28,22 +27,19 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.road.DefaultTestParameters;
+import org.opentrafficsim.road.FixedCarFollowing;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCfLcTacticalPlanner;
-import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LaneGeometryUtil;
+import org.opentrafficsim.road.network.lane.LaneKeepingPolicy;
 import org.opentrafficsim.road.network.lane.LanePosition;
 import org.opentrafficsim.road.network.lane.LaneType;
-import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 
@@ -82,11 +78,7 @@ public final class CarTest implements UNITS
         Lane lane = makeLane(network, laneType, simulator);
         Length initialPosition = new Length(12, METER);
         Speed initialSpeed = new Speed(34, KM_PER_HOUR);
-        GtuFollowingModelOld gtuFollowingModel =
-                new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Duration(10, SECOND));
-        LaneChangeModel laneChangeModel = new Egoistic();
-        LaneBasedGtu referenceCar = makeReferenceCar("12345", gtuType, lane, initialPosition, initialSpeed, gtuFollowingModel,
-                laneChangeModel, network);
+        LaneBasedGtu referenceCar = makeReferenceCar("12345", gtuType, lane, initialPosition, initialSpeed, network);
         assertEquals("12345", referenceCar.getId(), "The car should store it's ID");
         assertEquals(initialPosition.getSI(), referenceCar.getPosition(lane, referenceCar.getReference(), initialTime).getSI(),
                 0.0001, "At t=initialTime the car should be at it's initial position");
@@ -121,8 +113,6 @@ public final class CarTest implements UNITS
      * @param lane the lane on which the new Car is positioned
      * @param initialPosition the initial longitudinal position of the new Car
      * @param initialSpeed the initial speed
-     * @param gtuFollowingModel the GTU following model
-     * @param laneChangeModel the lane change model
      * @param network the network
      * @return the new Car
      * @throws NamingException on network error when making the animation
@@ -131,8 +121,7 @@ public final class CarTest implements UNITS
      * @throws GtuException when construction of the GTU fails (probably due to an invalid parameter)
      */
     public static LaneBasedGtu makeReferenceCar(final String id, final GtuType gtuType, final Lane lane,
-            final Length initialPosition, final Speed initialSpeed, final GtuFollowingModelOld gtuFollowingModel,
-            final LaneChangeModel laneChangeModel, final RoadNetwork network)
+            final Length initialPosition, final Speed initialSpeed, final RoadNetwork network)
             throws NamingException, NetworkException, SimRuntimeException, GtuException
     {
         Length length = new Length(5.0, METER);
@@ -140,9 +129,9 @@ public final class CarTest implements UNITS
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
         Parameters parameters = DefaultTestParameters.create();
         LaneBasedGtu gtu = new LaneBasedGtu(id, gtuType, length, width, maxSpeed, length.times(0.5), network);
-        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
-                new LaneBasedCfLcTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
         gtu.setParameters(parameters);
+        LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
+                new LmrsFactory.Factory().setCarFollowingModelFactory(new FixedCarFollowing()).build(null).create(gtu), gtu);
         gtu.init(strategicalPlanner, new LanePosition(lane, initialPosition).getLocation(), initialSpeed);
 
         return gtu;

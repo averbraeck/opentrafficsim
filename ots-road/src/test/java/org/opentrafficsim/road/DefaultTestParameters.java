@@ -11,6 +11,8 @@ import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeInteger;
 import org.opentrafficsim.base.parameters.ParameterTypeNumeric;
 import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 
 /**
  * Creator of set of parameters with default values.
@@ -41,54 +43,57 @@ public final class DefaultTestParameters
         ParameterSet params = new ParameterSet();
 
         // set all default values using reflection
-        Set<Field> fields = ClassUtil.getAllFields(ParameterTypes.class);
-        try
+        for (Class<?> clazz : new Class[] {ParameterTypes.class, LmrsParameters.class, AbstractIdm.class})
         {
-            for (Field field : fields)
+            Set<Field> fields = ClassUtil.getAllFields(clazz);
+            try
             {
-                try
+                for (Field field : fields)
                 {
-                    if (ParameterTypeNumeric.class.isAssignableFrom(field.getType()))
+                    try
                     {
-                        field.setAccessible(true);
-                        @SuppressWarnings("rawtypes")
-                        ParameterTypeNumeric p = (ParameterTypeNumeric) field.get(ParameterTypes.class);
-                        params.setParameter(p, p.getDefaultValue());
+                        if (ParameterTypeNumeric.class.isAssignableFrom(field.getType()))
+                        {
+                            field.setAccessible(true);
+                            @SuppressWarnings("rawtypes")
+                            ParameterTypeNumeric p = (ParameterTypeNumeric) field.get(ParameterTypes.class);
+                            params.setParameter(p, p.getDefaultValue());
+                        }
+                        else if (ParameterTypeBoolean.class.equals(field.getType()))
+                        {
+                            field.setAccessible(true);
+                            ParameterTypeBoolean p = (ParameterTypeBoolean) field.get(ParameterTypes.class);
+                            params.setParameter(p, p.getDefaultValue());
+                        }
+                        else if (ParameterTypeDouble.class.equals(field.getType()))
+                        {
+                            field.setAccessible(true);
+                            ParameterTypeDouble p = (ParameterTypeDouble) field.get(ParameterTypes.class);
+                            params.setParameter(p, p.getDefaultValue());
+                        }
+                        else if (ParameterTypeInteger.class.equals(field.getType()))
+                        {
+                            field.setAccessible(true);
+                            ParameterTypeInteger p = (ParameterTypeInteger) field.get(ParameterTypes.class);
+                            params.setParameter(p, p.getDefaultValue());
+                        }
+                        // FIXME: add another else to catch any unanticipated cases?
                     }
-                    else if (ParameterTypeBoolean.class.equals(field.getType()))
+                    catch (ParameterException pe)
                     {
-                        field.setAccessible(true);
-                        ParameterTypeBoolean p = (ParameterTypeBoolean) field.get(ParameterTypes.class);
-                        params.setParameter(p, p.getDefaultValue());
+                        // FIXME: Explain why this exception can/should be ignored.
+                        // do not set parameter without default value
                     }
-                    else if (ParameterTypeDouble.class.equals(field.getType()))
-                    {
-                        field.setAccessible(true);
-                        ParameterTypeDouble p = (ParameterTypeDouble) field.get(ParameterTypes.class);
-                        params.setParameter(p, p.getDefaultValue());
-                    }
-                    else if (ParameterTypeInteger.class.equals(field.getType()))
-                    {
-                        field.setAccessible(true);
-                        ParameterTypeInteger p = (ParameterTypeInteger) field.get(ParameterTypes.class);
-                        params.setParameter(p, p.getDefaultValue());
-                    }
-                    // FIXME: add another else to catch any unanticipated cases?
-                }
-                catch (ParameterException pe)
-                {
-                    // FIXME: Explain why this exception can/should be ignored.
-                    // do not set parameter without default value
                 }
             }
-        }
-        catch (IllegalArgumentException iare)
-        {
-            iare.printStackTrace();
-        }
-        catch (IllegalAccessException iace)
-        {
-            iace.printStackTrace();
+            catch (IllegalArgumentException iare)
+            {
+                iare.printStackTrace();
+            }
+            catch (IllegalAccessException iace)
+            {
+                iace.printStackTrace();
+            }
         }
         return params;
     }

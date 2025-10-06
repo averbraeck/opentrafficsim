@@ -14,10 +14,8 @@ import java.util.Set;
 import javax.naming.NamingException;
 import javax.swing.JOptionPane;
 
-import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.TimeUnit;
 import org.djunits.unit.util.UNITS;
-import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -45,12 +43,7 @@ import org.opentrafficsim.kpi.interfaces.LaneData;
 import org.opentrafficsim.kpi.sampling.SamplerData;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedCfLcTacticalPlanner;
-import org.opentrafficsim.road.gtu.lane.tactical.following.FixedAccelerationModel;
-import org.opentrafficsim.road.gtu.lane.tactical.following.GtuFollowingModelOld;
-import org.opentrafficsim.road.gtu.lane.tactical.following.SequentialFixedAccelerationModel;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.Egoistic;
-import org.opentrafficsim.road.gtu.lane.tactical.lanechangemobil.LaneChangeModel;
+import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlanner;
 import org.opentrafficsim.road.network.RoadNetwork;
@@ -467,18 +460,18 @@ public final class ContourPlotTest implements UNITS
         Length initialPosition = new Length(100, METER);
         Speed initialSpeed = new Speed(50, KM_PER_HOUR);
         // Create a car running 50 km.h
-        SequentialFixedAccelerationModel gtuFollowingModel =
-                new SequentialFixedAccelerationModel(simulator, new Acceleration(2.0, AccelerationUnit.METER_PER_SECOND_2));
-        // Make the car run at constant speed for one minute
-        gtuFollowingModel
-                .addStep(new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Duration(60, SECOND)));
-        // Make the car run at constant speed for another minute
-        gtuFollowingModel
-                .addStep(new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Duration(600, SECOND)));
-        // Make the car run at constant speed for five more minutes
-        gtuFollowingModel
-                .addStep(new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Duration(300, SECOND)));
-        LaneChangeModel laneChangeModel = new Egoistic();
+        // SequentialFixedAccelerationModel gtuFollowingModel =
+        // new SequentialFixedAccelerationModel(simulator, new Acceleration(2.0, AccelerationUnit.METER_PER_SECOND_2));
+        // // Make the car run at constant speed for one minute
+        // gtuFollowingModel
+        // .addStep(new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Duration(60, SECOND)));
+        // // Make the car run at constant speed for another minute
+        // gtuFollowingModel
+        // .addStep(new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Duration(600, SECOND)));
+        // // Make the car run at constant speed for five more minutes
+        // gtuFollowingModel
+        // .addStep(new FixedAccelerationModel(new Acceleration(0, METER_PER_SECOND_2), new Duration(300, SECOND)));
+        // LaneChangeModel laneChangeModel = new Egoistic();
 
         // Check that the initial data in the graph contains no trace of any car.
         for (int item = 0; item < bins; item++)
@@ -774,8 +767,7 @@ public final class ContourPlotTest implements UNITS
      */
     private static LaneBasedGtu makeReferenceCar(final String id, final GtuType gtuType, final Lane lane,
             final Length initialPosition, final Speed initialSpeed, final OtsSimulatorInterface simulator,
-            final GtuFollowingModelOld gtuFollowingModel, final LaneChangeModel laneChangeModel, final RoadNetwork network)
-            throws NamingException, NetworkException, SimRuntimeException, GtuException
+            final RoadNetwork network) throws NamingException, NetworkException, SimRuntimeException, GtuException
     {
         // TODO: simulator argument can be remove, but this method is currently only used in code that is commented out
         Length length = new Length(5.0, METER);
@@ -783,7 +775,7 @@ public final class ContourPlotTest implements UNITS
         Speed maxSpeed = new Speed(120, KM_PER_HOUR);
         LaneBasedGtu gtu = new LaneBasedGtu(id, gtuType, length, width, maxSpeed, length.times(0.5), network);
         LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(
-                new LaneBasedCfLcTacticalPlanner(gtuFollowingModel, laneChangeModel, gtu), gtu);
+                new LmrsFactory.Factory().setCarFollowingModelFactory(new FixedCarFollowing()).build(null).create(gtu), gtu);
         gtu.init(strategicalPlanner, new LanePosition(lane, initialPosition).getLocation(), initialSpeed);
 
         return gtu;

@@ -7,7 +7,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
-import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 /**
  * This class is mostly the same as a Lane. But as a shoulder it can be recognized by algorithms and models to be responded to

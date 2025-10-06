@@ -16,7 +16,6 @@ import org.opentrafficsim.core.network.LinkType;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
 import org.opentrafficsim.road.network.RoadNetwork;
-import org.opentrafficsim.road.network.lane.changing.LaneKeepingPolicy;
 
 /**
  * A CrossSectionLink is a link with lanes where GTUs can possibly switch between lanes.
