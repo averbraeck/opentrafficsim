@@ -287,7 +287,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
             // setup a base iterable to provide the GTUs
             this.downstreamLanes.clear();
             this.downstreamGtus = new Reiterable(new NavigatingIterable<LaneBasedGtu, SimpleLaneRecord>(LaneBasedGtu.class,
-                    this.maxDownstreamVisibility, Set.of(this.root), (l) -> l.getPrev(), (l) ->
+                    this.maxDownstreamVisibility, Set.of(this.root), (l) -> l.getNext(), (l) ->
                     {
                         // this lister finds the relevant sublist of GTUs
                         List<LaneBasedGtu> gtus = l.getLane().getGtuList().toList();
