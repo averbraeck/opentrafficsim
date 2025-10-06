@@ -88,7 +88,9 @@
     <maven.gpg.version>3.2.7</maven.gpg.version>
     <jaxb-maven-plugin.version>4.0.8</jaxb-maven-plugin.version>
     <maven-replacer.version>1.5.3</maven-replacer.version>
-
+    
+    <config.location>config</config.location>
+    
   </properties>
 
 
@@ -821,9 +823,9 @@
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>${maven.checkstyle.version}</version>
         <configuration>
-          <configLocation>/config/dsol-checks.xml</configLocation>
-          <suppressionsLocation>/config/checkstyle_suppressions.xml</suppressionsLocation>
-          <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
+          <!-- This allows checsktyle in maven to understand ${config_loc} within dsol-checks.xml -->
+          <propertyExpansion>config_loc=${config.location}</propertyExpansion>
+          <configLocation>${config.location}/dsol-checks.xml</configLocation>
         </configuration>
         <reportSets>
           <reportSet>
