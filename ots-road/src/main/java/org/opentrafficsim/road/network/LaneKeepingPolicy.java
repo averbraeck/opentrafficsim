@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.network.lane;
+package org.opentrafficsim.road.network;
 
 /**
  * Enum to indicate the general lane keeping rules: keep left, keep right, or keep lane. When KEEP_RIGHT or KEEP_LEFT is used,

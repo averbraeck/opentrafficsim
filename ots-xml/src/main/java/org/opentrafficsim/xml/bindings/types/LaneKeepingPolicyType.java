@@ -1,6 +1,6 @@
 package org.opentrafficsim.xml.bindings.types;
 
-import org.opentrafficsim.road.network.lane.LaneKeepingPolicy;
+import org.opentrafficsim.road.network.LaneKeepingPolicy;
 
 /**
  * Expression type with LaneKeepingPolicy value.
