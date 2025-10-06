@@ -550,6 +550,7 @@ public class ContourDataSource extends LocalEventProducer
         int fromTimeIndex = 0;
         int toTimeIndex;
         double tFromEgtf = 0;
+        int skipTime = 0;
         int nFromEgtf = 0;
         synchronized (this)
         {
@@ -583,8 +584,20 @@ public class ContourDataSource extends LocalEventProducer
             {
                 // time of current bin - kernel size, get bin of that time, get time (middle) of that bin
                 tFromEgtf = this.timeAxis.getBinValue(redo0 ? 0 : this.timeAxis
-                        .getValueBin(this.timeAxis.getBinValue(fromTimeIndex) - timeGranularity * 2 * KERNEL_FACTOR));
+                        .getValueBin(this.timeAxis.getBinValue(fromTimeIndex) - timeGranularity * 4 * KERNEL_FACTOR));
                 nFromEgtf = this.timeAxis.getValueBin(tFromEgtf);
+
+                /*
+                 * The above time is based on twice the kernel size (timeGranularity * 2 * KERNEL_FACTOR) because the fast
+                 * implementation only accounts for data on (and within range of) the output grid. To make sure all data within
+                 * the kernel size (now-kernel : now) is correct (given the data available up to now), we need all data in twice
+                 * that size (now-2*kernel : now). Only the second half of that (now-kernel : now) should be written in the
+                 * output data. The value of skipTime makes overwriteSmoothed() skip the first half (now-2*kernel : now-kernel).
+                 */
+                double tFromEgtf2 = this.timeAxis.getBinValue(redo0 ? 0 : this.timeAxis
+                        .getValueBin(this.timeAxis.getBinValue(fromTimeIndex) - timeGranularity * 2 * KERNEL_FACTOR));
+                int nFromEgtf2 = this.timeAxis.getValueBin(tFromEgtf2);
+                skipTime = nFromEgtf2 - nFromEgtf;
             }
             // starting execution, so reset redo trigger which any next command may set to true if needed
             this.redo = false;
@@ -831,12 +844,12 @@ public class ContourDataSource extends LocalEventProducer
                     quantities.toArray(new Quantity<?, ?>[quantities.size()]));
             if (filter != null) // null if interrupted
             {
-                overwriteSmoothed(this.distance, nFromEgtf, filter.getSI(this.travelDistanceQuantity));
-                overwriteSmoothed(this.time, nFromEgtf, filter.getSI(this.travelTimeQuantity));
+                overwriteSmoothed(this.distance, nFromEgtf, filter.getSI(this.travelDistanceQuantity), skipTime);
+                overwriteSmoothed(this.time, nFromEgtf, filter.getSI(this.travelTimeQuantity), skipTime);
                 for (ContourDataType<?, ?> contourDataType : this.additionalData.keySet())
                 {
                     overwriteSmoothed(this.additionalData.get(contourDataType), nFromEgtf,
-                            filter.getSI(contourDataType.getQuantity()));
+                            filter.getSI(contourDataType.getQuantity()), skipTime);
                 }
                 this.plots.forEach((plot) -> plot.notifyPlotChange());
             }
@@ -882,13 +895,14 @@ public class ContourDataSource extends LocalEventProducer
      * @param raw the raw unsmoothed data
      * @param rawCol column from which onward to fill smoothed data in to the raw data which is used for plotting
      * @param smoothed smoothed data returned by {@code EGTF}
+     * @param skipTime bins to skip as this was only part of the smoothed data to include the kernel size
      */
-    private void overwriteSmoothed(final float[][] raw, final int rawCol, final double[][] smoothed)
+    private void overwriteSmoothed(final float[][] raw, final int rawCol, final double[][] smoothed, final int skipTime)
     {
         for (int i = 0; i < raw.length; i++)
         {
             // can't use System.arraycopy due to float vs double
-            for (int j = 0; j < smoothed[i].length; j++)
+            for (int j = skipTime; j < smoothed[i].length; j++)
             {
                 raw[i][j + rawCol] = (float) smoothed[i][j];
             }
