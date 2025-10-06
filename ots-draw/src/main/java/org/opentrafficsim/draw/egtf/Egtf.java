@@ -402,7 +402,7 @@ public class Egtf
      */
     public void setKernelSI(final double sigma, final double tau)
     {
-        setKernelSI(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, sigma, tau);
+        setKernelSI(sigma, tau, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
     }
 
     /**
@@ -424,7 +424,7 @@ public class Egtf
      */
     public void setGaussKernelSI(final double sigma, final double tau)
     {
-        setGaussKernelSI(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, sigma, tau);
+        setGaussKernelSI(sigma, tau, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
     }
 
     /**

@@ -45,6 +45,9 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
     /** Mean speed limit over the entire path. */
     private final Speed speedLimit;
 
+    /** Whether the path is circular. */
+    private boolean circular = false;
+
     /**
      * Constructor for a one-series path.
      * @param name name
@@ -84,6 +87,27 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
             mean.add(section.speedLimit().si, section.length().si);
         }
         this.speedLimit = Speed.instantiateSI(mean.getMean());
+    }
+
+    /**
+     * Sets whether this path is circular.
+     * @param circular whether this path is circular
+     * @return this graph path for method chaining
+     */
+    @SuppressWarnings("hiddenfield")
+    public GraphPath<S> setCircular(final boolean circular)
+    {
+        this.circular = circular;
+        return this;
+    }
+
+    /**
+     * Returns whether this path is circular.
+     * @return whether this path is circular
+     */
+    public boolean isCircular()
+    {
+        return this.circular;
     }
 
     /**

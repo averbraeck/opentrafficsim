@@ -544,6 +544,8 @@ public class ContourDataSource extends LocalEventProducer
         boolean interpolate0;
         double timeGranularity;
         double spaceGranularity;
+        double timeKernelSize;
+        double spaceKernelSize;
         double[] spaceTicks;
         double[] timeTicks;
         int fromSpaceIndex = 0;
@@ -571,6 +573,9 @@ public class ContourDataSource extends LocalEventProducer
             }
             timeGranularity = this.timeAxis.granularity;
             spaceGranularity = this.spaceAxis.granularity;
+            // kernel size based on granularity
+            timeKernelSize = timeGranularity * 2 * KERNEL_FACTOR;
+            spaceKernelSize = spaceGranularity * 2 * KERNEL_FACTOR;
             spaceTicks = this.spaceAxis.getTicks();
             timeTicks = this.timeAxis.getTicks();
             if (!redo0)
@@ -583,19 +588,19 @@ public class ContourDataSource extends LocalEventProducer
             if (smooth0)
             {
                 // time of current bin - kernel size, get bin of that time, get time (middle) of that bin
-                tFromEgtf = this.timeAxis.getBinValue(redo0 ? 0 : this.timeAxis
-                        .getValueBin(this.timeAxis.getBinValue(fromTimeIndex) - timeGranularity * 4 * KERNEL_FACTOR));
+                tFromEgtf = this.timeAxis.getBinValue(
+                        redo0 ? 0 : this.timeAxis.getValueBin(this.timeAxis.getBinValue(fromTimeIndex) - 2 * timeKernelSize));
                 nFromEgtf = this.timeAxis.getValueBin(tFromEgtf);
 
                 /*
-                 * The above time is based on twice the kernel size (timeGranularity * 2 * KERNEL_FACTOR) because the fast
-                 * implementation only accounts for data on (and within range of) the output grid. To make sure all data within
-                 * the kernel size (now-kernel : now) is correct (given the data available up to now), we need all data in twice
-                 * that size (now-2*kernel : now). Only the second half of that (now-kernel : now) should be written in the
-                 * output data. The value of skipTime makes overwriteSmoothed() skip the first half (now-2*kernel : now-kernel).
+                 * The above time is based on twice the kernel size because the fast implementation only accounts for data on
+                 * (and within range of) the output grid. To make sure all data within the kernel size (now-kernel : now) is
+                 * correct (given the data available up to now), we need all data in twice that size (now-2*kernel : now). Only
+                 * the second half of that (now-kernel : now) should be written in the output data. The value of skipTime makes
+                 * overwriteSmoothed() skip the first half (now-2*kernel : now-kernel).
                  */
-                double tFromEgtf2 = this.timeAxis.getBinValue(redo0 ? 0 : this.timeAxis
-                        .getValueBin(this.timeAxis.getBinValue(fromTimeIndex) - timeGranularity * 2 * KERNEL_FACTOR));
+                double tFromEgtf2 = this.timeAxis.getBinValue(
+                        redo0 ? 0 : this.timeAxis.getValueBin(this.timeAxis.getBinValue(fromTimeIndex) - timeKernelSize));
                 int nFromEgtf2 = this.timeAxis.getValueBin(tFromEgtf2);
                 skipTime = nFromEgtf2 - nFromEgtf;
             }
@@ -637,11 +642,9 @@ public class ContourDataSource extends LocalEventProducer
                     this.additionalStreams.put(contourDataType, generic.addStreamSI(contourDataType.getQuantity(), 1.0, 1.0));
                 }
 
-                // kernel size based on granularity.
-                double tau2 = timeGranularity * 2;
-                double sigma2 = spaceGranularity * 2;
                 // for maximum space and time range, increase sigma and tau by KERNEL_FACTOR, beyond which both kernels diminish
-                this.egtf.setKernelSI(sigma2 * KERNEL_FACTOR, tau2 * KERNEL_FACTOR, sigma2, tau2);
+                this.egtf.setKernelSI(spaceKernelSize / KERNEL_FACTOR, timeKernelSize / KERNEL_FACTOR, spaceKernelSize,
+                        timeGranularity);
 
                 // add listener to provide a filter status update and to possibly stop the filter when the plot is invalidated
                 this.egtf.addListener((event) ->
@@ -797,21 +800,24 @@ public class ContourDataSource extends LocalEventProducer
                 }
 
                 // add data to EGTF (yes it's a copy, but our local data will be overwritten with smoothed data later)
+                // furthermore, this allows us to double the data for circular paths within the kernel size
                 if (smooth0)
                 {
                     // center of cell
                     double xDat = (xFrom.si + xTo.si) / 2.0;
                     double tDat = (tFrom.si + tTo.si) / 2.0;
-                    // speed data is implicit as totalDistance/totalTime, but the EGTF needs it explicitly
-                    this.egtf.addPointDataSI(this.speedStream, xDat, tDat, totalDistance / totalTime);
-                    this.egtf.addPointDataSI(this.travelDistanceStream, xDat, tDat, totalDistance);
-                    this.egtf.addPointDataSI(this.travelTimeStream, xDat, tDat, totalTime);
-                    for (ContourDataType<?, ?> contourDataType : this.additionalStreams.keySet())
+                    if (this.path.isCircular())
                     {
-                        ContourDataSource.this.egtf.addPointDataSI(
-                                ContourDataSource.this.additionalStreams.get(contourDataType), xDat, tDat,
-                                this.additionalData.get(contourDataType)[i][j]);
+                        if (xDat < spaceKernelSize)
+                        {
+                            setDataInEgtf(this.path.getTotalLength().si + xDat, tDat, totalDistance, totalTime, i, j);
+                        }
+                        if (xDat > this.path.getTotalLength().si - spaceKernelSize)
+                        {
+                            setDataInEgtf(xDat - this.path.getTotalLength().si, tDat, totalDistance, totalTime, i, j);
+                        }
                     }
+                    setDataInEgtf(xDat, tDat, totalDistance, totalTime, i, j);
                 }
 
                 // check stop (explicit use of properties, not locally stored values)
@@ -839,20 +845,44 @@ public class ContourDataSource extends LocalEventProducer
             {
                 quantities.add(contourDataType.getQuantity());
             }
-            Filter filter = this.egtf.filterFastSI(spaceTicks[0] + 0.5 * spaceGranularity, spaceGranularity,
-                    spaceTicks[0] + (-1.5 + spaceTicks.length) * spaceGranularity, tFromEgtf, timeGranularity, t.si,
+            int skipSpace = this.path.isCircular() ? (int) Math.ceil(spaceKernelSize / spaceGranularity) : 0;
+            Filter filter = this.egtf.filterFastSI(spaceTicks[0] + (0.5 - skipSpace) * spaceGranularity, spaceGranularity,
+                    spaceTicks[0] + (-1.5 + spaceTicks.length + skipSpace) * spaceGranularity, tFromEgtf, timeGranularity, t.si,
                     quantities.toArray(new Quantity<?, ?>[quantities.size()]));
             if (filter != null) // null if interrupted
             {
-                overwriteSmoothed(this.distance, nFromEgtf, filter.getSI(this.travelDistanceQuantity), skipTime);
-                overwriteSmoothed(this.time, nFromEgtf, filter.getSI(this.travelTimeQuantity), skipTime);
+                overwriteSmoothed(this.distance, nFromEgtf, filter.getSI(this.travelDistanceQuantity), skipTime, skipSpace);
+                overwriteSmoothed(this.time, nFromEgtf, filter.getSI(this.travelTimeQuantity), skipTime, skipSpace);
                 for (ContourDataType<?, ?> contourDataType : this.additionalData.keySet())
                 {
                     overwriteSmoothed(this.additionalData.get(contourDataType), nFromEgtf,
-                            filter.getSI(contourDataType.getQuantity()), skipTime);
+                            filter.getSI(contourDataType.getQuantity()), skipTime, skipSpace);
                 }
                 this.plots.forEach((plot) -> plot.notifyPlotChange());
             }
+        }
+    }
+
+    /**
+     * Sets data in the EGTF for filtering.
+     * @param xDat position of data
+     * @param tDat time of data
+     * @param totalDistance total distance traveled
+     * @param totalTime total time traveled
+     * @param i space index in data grid
+     * @param j time index in data grid
+     */
+    private void setDataInEgtf(final double xDat, final double tDat, final double totalDistance, final double totalTime,
+            final int i, final int j)
+    {
+        // speed data is implicit as totalDistance/totalTime, but the EGTF needs it explicitly
+        this.egtf.addPointDataSI(this.speedStream, xDat, tDat, totalDistance / totalTime);
+        this.egtf.addPointDataSI(this.travelDistanceStream, xDat, tDat, totalDistance);
+        this.egtf.addPointDataSI(this.travelTimeStream, xDat, tDat, totalTime);
+        for (ContourDataType<?, ?> contourDataType : this.additionalStreams.keySet())
+        {
+            this.egtf.addPointDataSI(this.additionalStreams.get(contourDataType), xDat, tDat,
+                    this.additionalData.get(contourDataType)[i][j]);
         }
     }
 
@@ -896,15 +926,18 @@ public class ContourDataSource extends LocalEventProducer
      * @param rawCol column from which onward to fill smoothed data in to the raw data which is used for plotting
      * @param smoothed smoothed data returned by {@code EGTF}
      * @param skipTime bins to skip as this was only part of the smoothed data to include the kernel size
+     * @param skipSpace bins to ignore at start and end because of circular graph path (i.e. this was only included for data)
      */
-    private void overwriteSmoothed(final float[][] raw, final int rawCol, final double[][] smoothed, final int skipTime)
+    private void overwriteSmoothed(final float[][] raw, final int rawCol, final double[][] smoothed, final int skipTime,
+            final int skipSpace)
     {
         for (int i = 0; i < raw.length; i++)
         {
+            int ii = i + skipSpace;
             // can't use System.arraycopy due to float vs double
-            for (int j = skipTime; j < smoothed[i].length; j++)
+            for (int j = skipTime; j < smoothed[ii].length; j++)
             {
-                raw[i][j + rawCol] = (float) smoothed[i][j];
+                raw[i][j + rawCol] = (float) smoothed[ii][j];
             }
         }
     }

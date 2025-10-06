@@ -306,9 +306,9 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
             List<Lane> start = new ArrayList<>();
             start.add(getModel().getPath(0).get(0));
             start.add(getModel().getPath(1).get(0));
-            path01 = GraphLaneUtil.createPath(names, start);
-            path0 = GraphLaneUtil.createPath(names.get(0), start.get(0));
-            path1 = GraphLaneUtil.createPath(names.get(1), start.get(1));
+            path01 = GraphLaneUtil.createPath(names, start).setCircular(true);
+            path0 = GraphLaneUtil.createPath(names.get(0), start.get(0)).setCircular(true);
+            path1 = GraphLaneUtil.createPath(names.get(1), start.get(1)).setCircular(true);
         }
         catch (NetworkException exception)
         {
