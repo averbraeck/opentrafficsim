@@ -3,7 +3,7 @@
 <jaxb:bindings xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ots="http://www.opentrafficsim.org/ots"
   xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:version="3.0" jaxb:extensionBindingPrefixes="xjc simplify"
-  xmlns:simplify="http://jaxb2-commons.dev.java.net/basic/simplify">
+  xmlns:simplify="urn:jaxb.jvnet.org:plugin:simplify">
 
   <!-- Global bindings define an adapter to convert an XML type anywhere where it is used. -->
   <jaxb:globalBindings typesafeEnumMemberName="generateName">
