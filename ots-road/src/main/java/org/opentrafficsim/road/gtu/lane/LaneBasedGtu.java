@@ -1508,6 +1508,16 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         return front.minus(rear);
     }
 
+    /**
+     * Stops the GTU using a permanent stand-still operational plan.
+     */
+    public void stop()
+    {
+        getSimulator().cancelEvent(getNextMoveEvent());
+        setOperationalPlan(
+                OperationalPlan.standStill(this, getLocation(), getSimulator().getSimulatorTime(), Duration.POSITIVE_INFINITY));
+    }
+
     @Override
     @SuppressWarnings("checkstyle:designforextension")
     public void destroy()
