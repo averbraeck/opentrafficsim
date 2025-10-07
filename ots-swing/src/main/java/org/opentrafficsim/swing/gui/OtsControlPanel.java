@@ -1133,7 +1133,6 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 {
                     String value = getText();
                     int caretPosition = getCaretPosition();
-                    System.out.println(caretPosition);
                     ((RegexFormatter) getFormatter()).setOverwriteMode(caretPosition > value.indexOf(':') - 2);
                 }
             });
@@ -1156,13 +1155,22 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             });
             addFocusListener(new FocusAdapter()
             {
-                /** {@inheritDoc} */
                 @Override
                 public void focusLost(final FocusEvent e)
                 {
                     OtsControlPanel.this.clockLabel.setVisible(true);
                     setVisible(false);
                     getParent().invalidate();
+                }
+            });
+            OtsControlPanel.this.addMouseListener(new MouseAdapter()
+            {
+                @Override
+                public void mouseClicked(final MouseEvent e)
+                {
+                    // removes focus from time edit when the user clicks anywhere on the control panel
+                    TimeEdit.this.setFocusable(false);
+                    TimeEdit.this.setFocusable(true);
                 }
             });
             RegexFormatter formatter = (RegexFormatter) getFormatter();
