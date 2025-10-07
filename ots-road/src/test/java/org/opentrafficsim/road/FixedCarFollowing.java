@@ -80,6 +80,14 @@ public class FixedCarFollowing implements CarFollowingModelFactory<FixedCarFollo
     public class FixedCarFollowingModel implements CarFollowingModel
     {
 
+        /**
+         * Constructor.
+         */
+        public FixedCarFollowingModel()
+        {
+            //
+        }
+
         @Override
         public Length desiredHeadway(final Parameters parameters, final Speed speed) throws ParameterException
         {

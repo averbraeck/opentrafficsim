@@ -23,6 +23,14 @@ public class StatelessTest
 {
 
     /**
+     * Constructor.
+     */
+    public StatelessTest()
+    {
+        //
+    }
+
+    /**
      * Tests that classes with {@code @Stateless} are stateless.
      */
     @Test

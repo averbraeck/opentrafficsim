@@ -173,6 +173,14 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
         /** Singleton instance. */
         public static final IdmDesiredHeadwayModel SINGLETON = new IdmDesiredHeadwayModel();
 
+        /**
+         * Constructor.
+         */
+        public IdmDesiredHeadwayModel()
+        {
+            //
+        }
+
         @Override
         public IdmDesiredHeadwayModel get()
         {
@@ -193,6 +201,14 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
     {
         /** Singleton instance. */
         public static final IdmDesiredSpeedModel SINGLETON = new IdmDesiredSpeedModel();
+
+        /**
+         * Constructor.
+         */
+        public IdmDesiredSpeedModel()
+        {
+            //
+        }
 
         @Override
         public IdmDesiredSpeedModel get()

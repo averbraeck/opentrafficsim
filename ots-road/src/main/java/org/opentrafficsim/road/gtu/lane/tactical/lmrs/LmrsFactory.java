@@ -163,6 +163,14 @@ public class LmrsFactory extends AbstractLaneBasedTacticalPlannerFactory<Lmrs> i
         private Set<Supplier<? extends AccelerationIncentive>> accelerationIncentives = new LinkedHashSet<>();
 
         /**
+         * Constructor.
+         */
+        public Factory()
+        {
+            //
+        }
+
+        /**
          * Sets car-following model factory.
          * @param carFollowingModelFactory car-following model factory.
          * @return this factory for method changing

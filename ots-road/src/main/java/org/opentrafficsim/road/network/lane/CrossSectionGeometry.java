@@ -77,7 +77,7 @@ public record CrossSectionGeometry(OtsLine2d centerLine, Polygon2d absoluteConto
 
     /**
      * Returns the location.
-     * @return
+     * @return returns the location of this geometry
      */
     public DirectedPoint2d getLocation()
     {

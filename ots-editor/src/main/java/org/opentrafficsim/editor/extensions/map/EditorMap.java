@@ -1064,6 +1064,14 @@ public final class EditorMap extends JPanel implements EventListener
         private static final long serialVersionUID = 1L;
 
         /**
+         * Constructor.
+         */
+        public MapUpdater()
+        {
+            //
+        }
+
+        /**
          * Fire update animation event.
          */
         public void update()
