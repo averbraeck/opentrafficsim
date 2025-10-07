@@ -2,7 +2,6 @@ package org.opentrafficsim.demo.trafficcontrol;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
-import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -107,8 +106,8 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
             final TrafCodModel trafcodModel = new TrafCodModel(simulator, "TrafCODModel", "TrafCOD demonstration Model", xml);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), trafcodModel,
                     HistoryManagerDevs.noHistory(simulator));
-            OtsAnimationPanel animationPanel = new OtsAnimationPanel(trafcodModel.getNetwork().getExtent(),
-                    new Dimension(800, 600), simulator, trafcodModel, DEFAULT_GTU_COLORERS, trafcodModel.getNetwork());
+            OtsAnimationPanel animationPanel = new OtsAnimationPanel(trafcodModel.getNetwork().getExtent(), simulator,
+                    trafcodModel, DEFAULT_GTU_COLORERS, trafcodModel.getNetwork());
             TrafCodDemo2 app = new TrafCodDemo2("TrafCOD demo complex crossing", animationPanel, trafcodModel);
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();

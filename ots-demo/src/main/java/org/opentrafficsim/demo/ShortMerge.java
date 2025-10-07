@@ -1,6 +1,5 @@
 package org.opentrafficsim.demo;
 
-import java.awt.Dimension;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -219,8 +218,11 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             List<Colorer<? super Gtu>> colorers = new ArrayList<>(DEFAULT_GTU_COLORERS);
             colorers.add(new SynchronizationGtuColorer());
             colorers.add(new IncentiveGtuColorer(IncentiveCourtesy.class, "Courtesy incentive"));
-            OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(), new Dimension(800, 600),
-                    simulator, otsModel, colorers, otsModel.getNetwork());
+            OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(), simulator, otsModel,
+                    colorers, otsModel.getNetwork());
+
+            System.out.println(animationPanel.getPreferredSize());
+
             ShortMerge app = new ShortMerge("ShortMerge", animationPanel, otsModel);
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();

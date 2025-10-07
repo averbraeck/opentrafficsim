@@ -1,6 +1,5 @@
 package org.opentrafficsim.swing.gui;
 
-import java.awt.Dimension;
 import java.rmi.RemoteException;
 import java.util.Map;
 
@@ -47,8 +46,8 @@ public class CustomSimulation extends OtsSimulationApplication<CustomSimulation.
     {
         try
         {
-            OtsAnimationPanel animationPanel = new OtsAnimationPanel(model.getNetwork().getExtent(), new Dimension(800, 600),
-                    simulator, model, DEFAULT_GTU_COLORERS, model.getNetwork());
+            OtsAnimationPanel animationPanel = new OtsAnimationPanel(model.getNetwork().getExtent(), simulator, model,
+                    DEFAULT_GTU_COLORERS, model.getNetwork());
             CustomSimulation app = new CustomSimulation("Custom Simulation", animationPanel, model);
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();

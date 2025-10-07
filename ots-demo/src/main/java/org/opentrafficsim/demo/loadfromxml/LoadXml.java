@@ -1,6 +1,5 @@
 package org.opentrafficsim.demo.loadfromxml;
 
-import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -135,8 +134,8 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
             xmlModel.getStreams().putAll(map);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), xmlModel,
                     new HistoryManagerDevs(simulator, Duration.instantiateSI(5.0), Duration.instantiateSI(10.0)));
-            OtsAnimationPanel animationPanel = new OtsAnimationPanel(xmlModel.getNetwork().getExtent(), new Dimension(800, 600),
-                    simulator, xmlModel, DEFAULT_GTU_COLORERS, xmlModel.getNetwork());
+            OtsAnimationPanel animationPanel = new OtsAnimationPanel(xmlModel.getNetwork().getExtent(), simulator, xmlModel,
+                    DEFAULT_GTU_COLORERS, xmlModel.getNetwork());
             animationPanel.enableSimulationControlButtons();
             LoadXml loadXml = new LoadXml(xmlModel, animationPanel);
             // TODO: permabilityType (CAR above) can probably not be null, but we will move stripe type to stripe later

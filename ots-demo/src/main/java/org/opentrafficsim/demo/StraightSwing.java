@@ -1,6 +1,5 @@
 package org.opentrafficsim.demo;
 
-import java.awt.Dimension;
 import java.rmi.RemoteException;
 
 import javax.naming.NamingException;
@@ -88,8 +87,8 @@ public class StraightSwing extends OtsSimulationApplication<StraightModel> imple
             {
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(1500.0), otsModel,
                         HistoryManagerDevs.noHistory(simulator));
-                OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(),
-                        new Dimension(800, 600), simulator, otsModel, DEFAULT_GTU_COLORERS, otsModel.getNetwork());
+                OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(), simulator, otsModel,
+                        DEFAULT_GTU_COLORERS, otsModel.getNetwork());
                 StraightSwing app = new StraightSwing("Straight", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
                 animationPanel.enableSimulationControlButtons();

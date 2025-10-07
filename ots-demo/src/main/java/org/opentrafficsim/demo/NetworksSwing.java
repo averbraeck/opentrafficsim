@@ -1,6 +1,5 @@
 package org.opentrafficsim.demo;
 
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -99,8 +98,8 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
             {
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel,
                         HistoryManagerDevs.noHistory(simulator));
-                OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(),
-                        new Dimension(800, 600), simulator, otsModel, DEFAULT_GTU_COLORERS, otsModel.getNetwork());
+                OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(), simulator, otsModel,
+                        DEFAULT_GTU_COLORERS, otsModel.getNetwork());
                 NetworksSwing app = new NetworksSwing("Networks", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
                 animationPanel.enableSimulationControlButtons();

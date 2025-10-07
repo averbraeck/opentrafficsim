@@ -1,7 +1,6 @@
 package org.opentrafficsim.demo;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -173,8 +172,8 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             List<Colorer<? super Gtu>> colorers = List.of(new FixedColorer<>(Color.BLUE, "Blue"), new SpeedGtuColorer(),
                     new AccelerationGtuColorer(), new SocialPressureGtuColorer(),
                     new IncentiveGtuColorer(IncentiveSocioSpeed.class), new TaskSaturationGtuColorer());
-            OtsAnimationPanel animationPanel = new OtsAnimationPanel(junctionModel.getNetwork().getExtent(),
-                    new Dimension(800, 600), simulator, junctionModel, colorers, junctionModel.getNetwork());
+            OtsAnimationPanel animationPanel = new OtsAnimationPanel(junctionModel.getNetwork().getExtent(), simulator,
+                    junctionModel, colorers, junctionModel.getNetwork());
             new HumanFactorsDemo(junctionModel, animationPanel);
             animationPanel.enableSimulationControlButtons();
         }

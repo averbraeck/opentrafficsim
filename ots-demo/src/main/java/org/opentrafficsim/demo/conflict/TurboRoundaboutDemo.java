@@ -1,6 +1,5 @@
 package org.opentrafficsim.demo.conflict;
 
-import java.awt.Dimension;
 import java.net.URL;
 import java.rmi.RemoteException;
 
@@ -69,8 +68,8 @@ public class TurboRoundaboutDemo extends OtsSimulationApplication<TurboRoundabou
             final TurboRoundaboutModel junctionModel = new TurboRoundaboutModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), junctionModel,
                     HistoryManagerDevs.noHistory(simulator));
-            OtsAnimationPanel animationPanel = new OtsAnimationPanel(junctionModel.getNetwork().getExtent(),
-                    new Dimension(800, 600), simulator, junctionModel, DEFAULT_GTU_COLORERS, junctionModel.getNetwork());
+            OtsAnimationPanel animationPanel = new OtsAnimationPanel(junctionModel.getNetwork().getExtent(), simulator,
+                    junctionModel, DEFAULT_GTU_COLORERS, junctionModel.getNetwork());
             TurboRoundaboutDemo app = new TurboRoundaboutDemo("Turbo-Roundabout demo", animationPanel, junctionModel);
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();

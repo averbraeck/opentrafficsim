@@ -1,6 +1,5 @@
 package org.opentrafficsim.swing.script;
 
-import java.awt.Dimension;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -243,9 +242,8 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
             final ScriptModel scriptModel = new ScriptModel(this.simulator);
             this.simulator.initialize(this.startTime, this.warmupTime, this.simulationTime, scriptModel,
                     new HistoryManagerDevs(this.simulator, this.historyTime, Duration.instantiateSI(10.0)));
-            OtsAnimationPanel animationPanel =
-                    new OtsAnimationPanel(scriptModel.getNetwork().getExtent(), new Dimension(800, 600),
-                            (OtsAnimator) this.simulator, scriptModel, getGtuColorers(), scriptModel.getNetwork());
+            OtsAnimationPanel animationPanel = new OtsAnimationPanel(scriptModel.getNetwork().getExtent(),
+                    (OtsAnimator) this.simulator, scriptModel, getGtuColorers(), scriptModel.getNetwork());
             setAnimationToggles(animationPanel);
             setupDemo(animationPanel, scriptModel.getNetwork());
             OtsSimulationApplication<ScriptModel> app =

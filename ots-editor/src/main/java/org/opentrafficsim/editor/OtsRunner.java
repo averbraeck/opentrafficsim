@@ -1,6 +1,5 @@
 package org.opentrafficsim.editor;
 
-import java.awt.Dimension;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.util.Collections;
@@ -62,8 +61,8 @@ public class OtsRunner extends OtsSimulationApplication<OtsRunnerModel>
             final OtsRunnerModel runnerModel = new OtsRunnerModel(simulator, file, scenario);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), runnerModel,
                     new HistoryManagerDevs(simulator, Duration.instantiateSI(5.0), Duration.instantiateSI(10.0)));
-            OtsAnimationPanel animationPanel = new OtsAnimationPanel(runnerModel.getNetwork().getExtent(),
-                    new Dimension(800, 600), simulator, runnerModel, DEFAULT_GTU_COLORERS, runnerModel.getNetwork());
+            OtsAnimationPanel animationPanel = new OtsAnimationPanel(runnerModel.getNetwork().getExtent(), simulator,
+                    runnerModel, DEFAULT_GTU_COLORERS, runnerModel.getNetwork());
             OtsRunner app = new OtsRunner(animationPanel, runnerModel);
             app.setExitOnClose(false);
             animationPanel.enableSimulationControlButtons();

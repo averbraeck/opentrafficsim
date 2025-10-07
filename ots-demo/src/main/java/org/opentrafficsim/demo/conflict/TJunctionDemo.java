@@ -1,6 +1,5 @@
 package org.opentrafficsim.demo.conflict;
 
-import java.awt.Dimension;
 import java.net.URL;
 import java.rmi.RemoteException;
 
@@ -12,7 +11,6 @@ import org.djutils.io.URLResource;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.demo.DefaultsFactory;
 import org.opentrafficsim.demo.conflict.TJunctionDemo.TJunctionModel;
@@ -70,8 +68,8 @@ public class TJunctionDemo extends OtsSimulationApplication<TJunctionModel>
             final TJunctionModel junctionModel = new TJunctionModel(simulator);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), junctionModel,
                     HistoryManagerDevs.noHistory(simulator));
-            OtsAnimationPanel animationPanel = new OtsAnimationPanel(junctionModel.getNetwork().getExtent(),
-                    new Dimension(800, 600), simulator, junctionModel, DEFAULT_GTU_COLORERS, junctionModel.getNetwork());
+            OtsAnimationPanel animationPanel = new OtsAnimationPanel(junctionModel.getNetwork().getExtent(), simulator,
+                    junctionModel, DEFAULT_GTU_COLORERS, junctionModel.getNetwork());
             TJunctionDemo app = new TJunctionDemo("T-Junction demo", animationPanel, junctionModel);
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();

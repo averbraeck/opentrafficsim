@@ -143,7 +143,6 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
     /**
      * Construct a panel that looks like the DSOLPanel for quick building of OTS applications.
      * @param extent bottom left corner, length and width of the area (world) to animate.
-     * @param size the size to be used for the animation.
      * @param simulator the simulator or animator of the model.
      * @param otsModel the builder and rebuilder of the simulation, based on properties.
      * @param gtuColorers the colorers to use for the GTUs.
@@ -151,15 +150,14 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
      * @throws RemoteException when notification of the animation panel fails
      * @throws DsolException when simulator does not implement AnimatorInterface
      */
-    public OtsAnimationPanel(final Rectangle2D extent, final Dimension size, final OtsAnimator simulator,
-            final OtsModelInterface otsModel, final List<Colorer<? super Gtu>> gtuColorers, final Network network)
-            throws RemoteException, DsolException
+    public OtsAnimationPanel(final Rectangle2D extent, final OtsAnimator simulator, final OtsModelInterface otsModel,
+            final List<Colorer<? super Gtu>> gtuColorers, final Network network) throws RemoteException, DsolException
     {
         super(simulator, otsModel);
 
         // Add the animation panel as a tab.
 
-        this.animationPanel = new AutoAnimationPanel(extent, size, simulator, network);
+        this.animationPanel = new AutoAnimationPanel(extent, simulator, network);
         this.animationPanel.showGrid(false);
         this.borderPanel = new JPanel(new BorderLayout());
         this.borderPanel.add(this.animationPanel, BorderLayout.CENTER);
@@ -839,16 +837,16 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         /**
          * Constructor.
          * @param extent home extent
-         * @param size size
          * @param simulator simulator
          * @param network network
          * @throws RemoteException on remote animation error
          * @throws DsolException when simulator does not implement AnimatorInterface
          */
-        AutoAnimationPanel(final Rectangle2D extent, final Dimension size, final OtsSimulatorInterface simulator,
-                final Network network) throws RemoteException, DsolException
+        AutoAnimationPanel(final Rectangle2D extent, final OtsSimulatorInterface simulator, final Network network)
+                throws RemoteException, DsolException
         {
             super(new Bounds2d(extent.getMinX(), extent.getMaxX(), extent.getMinY(), extent.getMaxY()), simulator);
+            setPreferredSize(new Dimension(800, 600));
             this.network = network;
             MouseListener[] listeners = getMouseListeners();
             for (MouseListener listener : listeners)

@@ -241,8 +241,8 @@ public final class Sim0mqPublisher
             this.model.getStreams().putAll(map);
             animator.initialize(Time.ZERO, warmupTime, simulationDuration, this.model, HistoryManagerDevs.noHistory(animator));
             this.publisher = new Publisher(this.network);
-            this.animationPanel = new OtsAnimationPanel(this.model.getNetwork().getExtent(), new Dimension(1100, 1000),
-                    animator, this.model, OtsSwingApplication.DEFAULT_GTU_COLORERS, this.model.getNetwork());
+            this.animationPanel = new OtsAnimationPanel(this.model.getNetwork().getExtent(), animator, this.model,
+                    OtsSwingApplication.DEFAULT_GTU_COLORERS, this.model.getNetwork());
             new OtsSimulationApplication<Sim0mqOtsModel>(this.model, this.animationPanel, Collections.emptyMap());
             JFrame frame = (JFrame) this.animationPanel.getParent().getParent().getParent();
             frame.setExtendedState(Frame.NORMAL);
