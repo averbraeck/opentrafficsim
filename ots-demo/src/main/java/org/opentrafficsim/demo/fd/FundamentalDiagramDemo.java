@@ -642,14 +642,14 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         };
         this.trajectoryPanel = swingTrajectoryPlot.getContentPane();
 
+        // create fundamental diagrams
+        createFundamentalDiagramsForCrossSections();
+
         // reset simulator state
         if (!getSimulator().isStartingOrRunning() && wasRunning)
         {
             getSimulator().start();
         }
-
-        // create fundamental diagrams
-        createFundamentalDiagramsForCrossSections();
     }
 
     /**
