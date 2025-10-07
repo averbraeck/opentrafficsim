@@ -220,9 +220,6 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
             colorers.add(new IncentiveGtuColorer(IncentiveCourtesy.class, "Courtesy incentive"));
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(), simulator, otsModel,
                     colorers, otsModel.getNetwork());
-
-            System.out.println(animationPanel.getPreferredSize());
-
             ShortMerge app = new ShortMerge("ShortMerge", animationPanel, otsModel);
             app.setExitOnClose(exitOnClose);
             animationPanel.enableSimulationControlButtons();
