@@ -1,12 +1,19 @@
 package org.opentrafficsim.swing.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
@@ -43,7 +50,6 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatter;
-import javax.swing.text.MaskFormatter;
 
 import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -83,7 +89,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
     private final OtsModelInterface model;
 
     /** The clock. */
-    private final ClockLabel clockPanel;
+    private final ClockLabel clockLabel;
 
     /** The time warp control. */
     private final TimeWarpPanel timeWarpPanel;
@@ -172,18 +178,19 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             }
         }
         JLabel speedLabel = new AppearanceControlLabel();
-        this.clockPanel = new ClockLabel(speedLabel);
-        this.clockPanel.setPreferredSize(new Dimension(125, 35));
-        this.clockPanel.setMaximumSize(new Dimension(125, 35));
-        buttonPanel.add(this.clockPanel);
-        speedLabel.setPreferredSize(new Dimension(85, 35));
-        speedLabel.setMaximumSize(new Dimension(85, 35));
-        buttonPanel.add(speedLabel);
+        this.clockLabel = new ClockLabel(speedLabel);
+        this.clockLabel.setPreferredSize(new Dimension(130, 25));
+        this.clockLabel.setMaximumSize(new Dimension(130, 25));
+        buttonPanel.add(this.clockLabel);
         this.timeEdit = new TimeEdit(new Time(0, TimeUnit.DEFAULT));
-        this.timeEdit.setPreferredSize(new Dimension(135, 30));
-        this.timeEdit.setMaximumSize(new Dimension(135, 30));
+        this.timeEdit.setPreferredSize(new Dimension(130, 25));
+        this.timeEdit.setMaximumSize(new Dimension(130, 25));
         this.timeEdit.addPropertyChangeListener("value", this);
         buttonPanel.add(this.timeEdit);
+        speedLabel.setPreferredSize(new Dimension(85, 25));
+        speedLabel.setMaximumSize(new Dimension(85, 25));
+        buttonPanel.add(speedLabel);
+
         this.add(buttonPanel);
         this.otsSearchPanel = new OtsSearchPanel(otsAnimationPanel);
         this.add(this.otsSearchPanel, BorderLayout.SOUTH);
@@ -495,9 +502,9 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                     getSimulator().cleanUp();
                 }
 
-                if (this.clockPanel != null)
+                if (this.clockLabel != null)
                 {
-                    this.clockPanel.cancelTimer(); // cancel the timer on the clock panel.
+                    this.clockLabel.cancelTimer(); // cancel the timer on the clock panel.
                 }
                 // TODO: are there timers or threads we need to stop?
             }
@@ -976,9 +983,22 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             super("00:00:00" + OtsControlPanel.this.decimalSeparator + "000");
             this.speedLabel = speedLabel;
             speedLabel.setFont(getTimeFont());
-            this.setFont(getTimeFont());
+            setFont(getTimeFont());
+            setHorizontalAlignment(SwingConstants.RIGHT);
+            setOpaque(true);
             this.timer = new Timer();
             this.timer.scheduleAtFixedRate(new TimeUpdateTask(), 0, ClockLabel.UPDATEINTERVAL);
+            addMouseListener(new MouseAdapter()
+            {
+                @Override
+                public void mouseClicked(final MouseEvent e)
+                {
+                    setVisible(false);
+                    OtsControlPanel.this.timeEdit.setVisible(true);
+                    OtsControlPanel.this.timeEdit.requestFocus();
+                    getParent().invalidate();
+                }
+            });
         }
 
         /**
@@ -1063,6 +1083,20 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         }
 
         @Override
+        public boolean isBackground()
+        {
+            return true;
+        }
+
+        @Override
+        public void setBackground(final Color color)
+        {
+            double f = 0.92;
+            super.setBackground(
+                    new Color((int) (color.getRed() * f), (int) (color.getGreen() * f), (int) (color.getBlue() * f)));
+        }
+
+        @Override
         public Integer getFontSize()
         {
             return null;
@@ -1082,29 +1116,63 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         /** */
         private static final long serialVersionUID = 20141212L;
 
+        /** Last caret position in the time editor. USed to know whether to skip left or right around ':', '.' or ','. */
+        private int lastCaretPosition = -1;
+
         /**
          * Construct a new TimeEdit.
          * @param initialValue the initial value for the TimeEdit
          */
         TimeEdit(final Time initialValue)
         {
-            super(new RegexFormatter("\\d\\d\\d\\d:[0-5]\\d:[0-5]\\d\\" + OtsControlPanel.this.decimalSeparator + "\\d\\d\\d"));
-            MaskFormatter mf = null;
-            try
+            super(new RegexFormatter("\\d{2,}:[0-5]\\d:[0-5]\\d\\" + OtsControlPanel.this.decimalSeparator + "\\d\\d\\d"));
+            addKeyListener(new KeyAdapter()
             {
-                mf = new MaskFormatter("####:##:##" + OtsControlPanel.this.decimalSeparator + "###");
-                mf.setPlaceholderCharacter('0');
-                mf.setAllowsInvalid(false);
-                mf.setCommitsOnValidEdit(true);
-                mf.setOverwriteMode(true);
-                mf.install(this);
-            }
-            catch (ParseException exception)
+                @Override
+                public void keyPressed(final KeyEvent e)
+                {
+                    String value = getText();
+                    int caretPosition = getCaretPosition();
+                    System.out.println(caretPosition);
+                    ((RegexFormatter) getFormatter()).setOverwriteMode(caretPosition > value.indexOf(':') - 2);
+                }
+            });
+            addCaretListener((e) ->
             {
-                exception.printStackTrace();
-            }
+                String value = getText();
+                int caretPosition = getCaretPosition();
+                if (value.length() - 1 > caretPosition && (value.charAt(caretPosition) == ':'
+                        || value.charAt(caretPosition) == '.' || value.charAt(caretPosition) == ','))
+                {
+                    caretPosition = caretPosition + (this.lastCaretPosition <= caretPosition ? 1 : -1);
+                    this.lastCaretPosition = caretPosition;
+                    this.setCaretPosition(caretPosition);
+                }
+                else if (e.getDot() != e.getMark())
+                {
+                    this.lastCaretPosition = caretPosition;
+                    this.setCaretPosition(caretPosition);
+                }
+            });
+            addFocusListener(new FocusAdapter()
+            {
+                /** {@inheritDoc} */
+                @Override
+                public void focusLost(final FocusEvent e)
+                {
+                    OtsControlPanel.this.clockLabel.setVisible(true);
+                    setVisible(false);
+                    getParent().invalidate();
+                }
+            });
+            RegexFormatter formatter = (RegexFormatter) getFormatter();
+            formatter.setAllowsInvalid(false);
+            formatter.setCommitsOnValidEdit(true);
+            formatter.setOverwriteMode(true);
             setTime(initialValue);
             setFont(getTimeFont());
+            setHorizontalAlignment(SwingConstants.RIGHT);
+            setVisible(false);
         }
 
         /**
@@ -1118,7 +1186,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             int h = (int) seconds / 3600;
             int m = (int) (seconds - h * 3600) / 60;
             double s = v - h * 3600 - m * 60;
-            this.setText(String.format("%04d:%02d:%06.3f", h, m, s));
+            this.setText(String.format("%02d:%02d:%06.3f", h, m, s));
         }
 
         @Override

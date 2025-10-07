@@ -59,7 +59,6 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
     {
         this.otsAnimationPanel = otsAnimationPanel;
         this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-        this.add(Box.createHorizontalStrut(10));
         this.add(new JLabel(OtsControlPanel.loadIcon("/View.png")));
         this.add(Box.createHorizontalStrut(5));
         ObjectKind<?>[] objectKinds = new ObjectKind[] {new ObjectKind<Gtu>("GTU")
@@ -85,11 +84,12 @@ public class OtsSearchPanel extends JPanel implements ActionListener, FocusListe
             }
         }};
         this.typeToSearch = new JComboBox<ObjectKind<?>>(objectKinds);
+        this.typeToSearch.setPreferredSize(new Dimension(55, 25));
         this.add(this.typeToSearch);
 
         /** Text field with appearance control. */
         this.idTextField = new AppearanceControlTextField();
-        this.idTextField.setPreferredSize(new Dimension(100, 0));
+        this.idTextField.setPreferredSize(new Dimension(100, 25));
         this.add(this.idTextField);
         this.trackObject = new JCheckBox("Track");
         this.add(this.trackObject);
