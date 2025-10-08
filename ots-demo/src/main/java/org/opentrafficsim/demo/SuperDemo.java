@@ -143,24 +143,6 @@ public class SuperDemo extends JFrame
         new SuperDemo();
     }
 
-    /** the class to prevent the models from exiting the whole SuperDemo application. */
-    static class NoExitSecurityManager extends SecurityManager
-    {
-        /**
-         * Constructor.
-         */
-        NoExitSecurityManager()
-        {
-            //
-        }
-
-        @Override
-        public void checkExit(final int status)
-        {
-            throw new SecurityException();
-        }
-    }
-
     /** the information about the demos. */
     private static class Demo implements ActionListener
     {
