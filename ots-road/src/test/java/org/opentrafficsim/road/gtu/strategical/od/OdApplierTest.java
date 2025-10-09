@@ -145,8 +145,8 @@ public class OdApplierTest
         this.model = createModelMock();
         this.simulator = createSimulatorMock();
         HistoryManagerDevs historyManager = Mockito.mock(HistoryManagerDevs.class);
-        this.replication = new OtsReplication("replication for ODApplierTest", Time.ZERO, Duration.ZERO,
-                Duration.instantiateSI(10.0), historyManager);
+        this.replication = new OtsReplication("replication for ODApplierTest", Time.ZERO, Duration.ZERO, Duration.ofSI(10.0),
+                historyManager);
         Mockito.when(this.simulator.getReplication()).thenReturn(this.replication);
         this.time = Time.ZERO;
         makeNetwork();
@@ -166,12 +166,12 @@ public class OdApplierTest
         CrossSectionLink linkAB = new CrossSectionLink(this.network, "AB", nodeA, nodeB, DefaultsNl.ROAD,
                 new OtsLine2d(pointA, pointB), null, LaneKeepingPolicy.KEEPRIGHT);
         this.lanes.put("lane1",
-                LaneGeometryUtil.createStraightLane(linkAB, "lane1", Length.instantiateSI(1.75), Length.instantiateSI(1.75),
-                        Length.instantiateSI(3.5), Length.instantiateSI(3.5), DefaultsRoadNl.HIGHWAY,
+                LaneGeometryUtil.createStraightLane(linkAB, "lane1", Length.ofSI(1.75), Length.ofSI(1.75), Length.ofSI(3.5),
+                        Length.ofSI(3.5), DefaultsRoadNl.HIGHWAY,
                         Map.of(DefaultsNl.VEHICLE, new Speed(120, SpeedUnit.KM_PER_HOUR))));
         this.lanes.put("lane2",
-                LaneGeometryUtil.createStraightLane(linkAB, "lane2", Length.instantiateSI(-1.75), Length.instantiateSI(-1.75),
-                        Length.instantiateSI(3.5), Length.instantiateSI(3.5), DefaultsRoadNl.HIGHWAY,
+                LaneGeometryUtil.createStraightLane(linkAB, "lane2", Length.ofSI(-1.75), Length.ofSI(-1.75), Length.ofSI(3.5),
+                        Length.ofSI(3.5), DefaultsRoadNl.HIGHWAY,
                         Map.of(DefaultsNl.VEHICLE, new Speed(120, SpeedUnit.KM_PER_HOUR))));
         Set<GtuType> gtuTypes = new LinkedHashSet<>();
         gtuTypes.add(DefaultsNl.VEHICLE);
@@ -247,25 +247,25 @@ public class OdApplierTest
             Supplier<Duration> headwayGenerator = generatorObjects.get(id).headwayGenerator();
             double factor = id.equals("A1") ? 0.4 : 0.6;
             // now check various points in time
-            this.time = Time.instantiateSI(0); // spanning initial 0-demand period
+            this.time = Time.ofSI(0); // spanning initial 0-demand period
             assertAboutEqual(headwayGenerator.get(), 100 + 1 / (factor * 1000 / 3600));
-            this.time = Time.instantiateSI(30); // spanning 0-demand period partially
+            this.time = Time.ofSI(30); // spanning 0-demand period partially
             assertAboutEqual(headwayGenerator.get(), 70 + 1 / (factor * 1000 / 3600));
-            this.time = Time.instantiateSI(100); // start of demand period
+            this.time = Time.ofSI(100); // start of demand period
             assertAboutEqual(headwayGenerator.get(), 1 / (factor * 1000 / 3600));
-            this.time = Time.instantiateSI(130); // middle of demand period
+            this.time = Time.ofSI(130); // middle of demand period
             assertAboutEqual(headwayGenerator.get(), 1 / (factor * 1000 / 3600));
-            this.time = Time.instantiateSI(199); // over slice edge
+            this.time = Time.ofSI(199); // over slice edge
             double preSlice = factor * 1000 / 3600;
             assertAboutEqual(headwayGenerator.get(), 1 + (1 - preSlice) / (factor * 2000 / 3600));
-            this.time = Time.instantiateSI(299); // spanning 0-demand period in the middle
+            this.time = Time.ofSI(299); // spanning 0-demand period in the middle
             preSlice = factor * 2000 / 3600;
             assertAboutEqual(headwayGenerator.get(), 201 + (1 - preSlice) / (factor * 2000 / 3600));
-            this.time = Time.instantiateSI(599); // just before end
+            this.time = Time.ofSI(599); // just before end
             assertEquals(headwayGenerator.get(), null);
-            this.time = Time.instantiateSI(600); // on end
+            this.time = Time.ofSI(600); // on end
             assertEquals(headwayGenerator.get(), null);
-            this.time = Time.instantiateSI(700); // beyond end
+            this.time = Time.ofSI(700); // beyond end
             assertEquals(headwayGenerator.get(), null);
         }
 
@@ -283,26 +283,26 @@ public class OdApplierTest
             Supplier<Duration> headwayGenerator = generatorObjects.get(id).headwayGenerator();
             double factor = id.equals("A1") ? 0.4 : 0.6;
             // now check various points in time
-            this.time = Time.instantiateSI(0); // spanning initial 0-demand period
+            this.time = Time.ofSI(0); // spanning initial 0-demand period
             double inv = inverseTrapezoidal(1.0, 100, 1000, 200, 2000, 100, factor);
             assertAboutEqual(headwayGenerator.get(), 100 + inv);
-            this.time = Time.instantiateSI(30); // spanning 0-demand period partially
+            this.time = Time.ofSI(30); // spanning 0-demand period partially
             assertAboutEqual(headwayGenerator.get(), 70 + inv);
-            this.time = Time.instantiateSI(100); // start of demand period
+            this.time = Time.ofSI(100); // start of demand period
             assertAboutEqual(headwayGenerator.get(), inv);
-            this.time = Time.instantiateSI(130); // middle of demand period
+            this.time = Time.ofSI(130); // middle of demand period
             assertAboutEqual(headwayGenerator.get(), inverseTrapezoidal(1.0, 100, 1000, 200, 2000, 130, factor));
-            this.time = Time.instantiateSI(199); // over slice edge
+            this.time = Time.ofSI(199); // over slice edge
             double preSlice = trapezoidal(100, 1000, 200, 2000, 199, 200, factor);
             assertAboutEqual(headwayGenerator.get(), 1 + inverseTrapezoidal(1.0 - preSlice, 200, 2000, 300, 0, 200, factor));
-            this.time = Time.instantiateSI(299); // spanning 0-demand period in the middle
+            this.time = Time.ofSI(299); // spanning 0-demand period in the middle
             preSlice = trapezoidal(200, 2000, 300, 0, 299, 300, factor);
             assertAboutEqual(headwayGenerator.get(), 101 + inverseTrapezoidal(1.0 - preSlice, 400, 0, 500, 2000, 400, factor));
-            this.time = Time.instantiateSI(599); // just before end
+            this.time = Time.ofSI(599); // just before end
             assertEquals(headwayGenerator.get(), null);
-            this.time = Time.instantiateSI(600); // on end
+            this.time = Time.ofSI(600); // on end
             assertEquals(headwayGenerator.get(), null);
-            this.time = Time.instantiateSI(700); // beyond end
+            this.time = Time.ofSI(700); // beyond end
             assertEquals(headwayGenerator.get(), null);
         }
 
@@ -340,7 +340,7 @@ public class OdApplierTest
                                 }
                                 else
                                 {
-                                    this.time = Time.instantiateSI(7200);
+                                    this.time = Time.ofSI(7200);
                                 }
                             }
                             this.time = Time.ZERO;

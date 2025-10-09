@@ -20,7 +20,6 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.base.DoubleScalar;
 import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
@@ -200,7 +199,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
 
             Point2d pFrom2a = new Point2d(0, -50);
             Point2d pFrom2b = new Point2d(490, -0.5);
-            Direction onrampDirection = Direction.instantiateSI(pFrom2a.directionTo(pFrom2b));
+            Direction onrampDirection = Direction.ofSI(pFrom2a.directionTo(pFrom2b));
             Node from = new Node(this.network, "From", new Point2d(0, 0), Direction.ZERO);
             Node end = new Node(this.network, "End", new Point2d(2000, 0), Direction.ZERO);
             Node from2a = new Node(this.network, "From2a", pFrom2a, onrampDirection);
@@ -208,7 +207,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
             Node firstVia = new Node(this.network, "Via1", new Point2d(500, 0), Direction.ZERO);
             Point2d pEnd2a = new Point2d(1020, -0.5);
             Point2d pEnd2b = new Point2d(2000, -50);
-            Direction offrampDirection = Direction.instantiateSI(pEnd2a.directionTo(pEnd2b));
+            Direction offrampDirection = Direction.ofSI(pEnd2a.directionTo(pEnd2b));
             Node end2a = new Node(this.network, "End2a", pEnd2a, offrampDirection);
             Node end2b = new Node(this.network, "End2b", pEnd2b, offrampDirection);
             Node secondVia = new Node(this.network, "Via2", new Point2d(1000, 0), Direction.ZERO);
@@ -223,8 +222,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
             double contP = (double) getInputParameter("generic.flow");
             Duration averageHeadway = new Duration(3600.0 / contP, SECOND);
             Duration minimumHeadway = new Duration(3, SECOND);
-            this.headwaySupplier =
-                    new DistErlang(new MersenneTwister(1234), DoubleScalar.minus(averageHeadway, minimumHeadway).getSI(), 4);
+            this.headwaySupplier = new DistErlang(new MersenneTwister(1234), averageHeadway.minus(minimumHeadway).getSI(), 4);
 
             LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
             Lane[] rampLanes = null;
@@ -468,7 +466,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
         double endX = to.getPoint().x + (endLinkLength / link.getLength().getSI()) * (to.getPoint().x - from.getPoint().x);
         double endY = to.getPoint().y + (endLinkLength / link.getLength().getSI()) * (to.getPoint().y - from.getPoint().y);
         Node end = new Node(this.network, link.getId() + "END", new Point2d(endX, endY),
-                Direction.instantiateSI(Math.atan2(to.getPoint().y - from.getPoint().y, to.getPoint().x - from.getPoint().x)));
+                Direction.ofSI(Math.atan2(to.getPoint().y - from.getPoint().y, to.getPoint().x - from.getPoint().x)));
         double dir = Math.atan2(to.getPoint().y - from.getPoint().y, to.getPoint().x - from.getPoint().x);
         DirectedPoint2d startPoint = new DirectedPoint2d(to.getPoint().x, to.getPoint().y, dir);
         ContinuousLine designLine = new ContinuousStraight(startPoint, endLinkLength);

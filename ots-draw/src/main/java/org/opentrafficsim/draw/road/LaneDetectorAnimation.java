@@ -12,8 +12,8 @@ import javax.naming.NamingException;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.draw.LineLocatable;
-import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.RenderableTextSource;
+import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.road.LaneDetectorAnimation.LaneDetectorData;
 
 import nl.tudelft.simulation.naming.context.Contextualized;

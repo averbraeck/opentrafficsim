@@ -26,7 +26,7 @@ public class DJUnits
         double speedKmps = speedKm.getInUnit(SpeedUnit.KM_PER_SECOND);
 
         // @docs/02-model-structure/djunits.md
-        Speed speedSi = Speed.instantiateSI(25.0);
+        Speed speedSi = Speed.ofSI(25.0);
 
         // @docs/02-model-structure/djunits.md
         System.out.println(speedSi.equals(speedKm)); // true
@@ -45,7 +45,7 @@ public class DJUnits
         // @docs/02-model-structure/djunits.md
         public Length move(final Speed v, final Duration t, final Acceleration a)
         {
-            return Length.instantiateSI(v.si * t.si + .5 * a.si * t.si * t.si);
+            return Length.ofSI(v.si * t.si + .5 * a.si * t.si * t.si);
         }
     }
 
@@ -55,7 +55,7 @@ public class DJUnits
         Duration t = null;
         Acceleration a = null;
         // @docs/02-model-structure/djunits.md
-        Length.instantiateSI(v.si * t.si + .5 * a.si * t.si);
+        Length.ofSI(v.si * t.si + .5 * a.si * t.si);
     }
 
 }

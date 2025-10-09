@@ -108,7 +108,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      */
     public final Length getLateralCenterPosition(final double fractionalPosition)
     {
-        return Length.instantiateSI(this.offset.get(fractionalPosition));
+        return Length.ofSI(this.offset.get(fractionalPosition));
     }
 
     /**
@@ -138,7 +138,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      */
     public final Length getWidth(final double fractionalPosition)
     {
-        return Length.instantiateSI(this.width.get(fractionalPosition));
+        return Length.ofSI(this.width.get(fractionalPosition));
     }
 
     /**
@@ -156,7 +156,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      */
     public final Length getOffsetAtBegin()
     {
-        return Length.instantiateSI(this.offset.get(0.0));
+        return Length.ofSI(this.offset.get(0.0));
     }
 
     /**
@@ -165,7 +165,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      */
     public final Length getOffsetAtEnd()
     {
-        return Length.instantiateSI(this.offset.get(1.0));
+        return Length.ofSI(this.offset.get(1.0));
     }
 
     /**
@@ -174,7 +174,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      */
     public final Length getBeginWidth()
     {
-        return Length.instantiateSI(this.width.get(0.0));
+        return Length.ofSI(this.width.get(0.0));
     }
 
     /**
@@ -183,7 +183,7 @@ public abstract class CrossSectionElement extends LocalEventProducer implements 
      */
     public final Length getEndWidth()
     {
-        return Length.instantiateSI(this.width.get(1.0));
+        return Length.ofSI(this.width.get(1.0));
     }
 
     /**

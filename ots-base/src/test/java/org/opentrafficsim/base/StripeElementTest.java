@@ -9,7 +9,7 @@ import java.awt.Color;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.vector.LengthVector;
-import org.djutils.exceptions.Try;
+import org.djutils.test.UnitTest;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.StripeElement.StripeLateralSync;
 
@@ -62,7 +62,7 @@ public final class StripeElementTest
         assertFalse(el.isContinuous());
 
         // Meaningless combination
-        Try.testFail(() -> new StripeElement(Length.ONE, null, new LengthVector(new double[] {1.0, 2.0})),
+        UnitTest.testFail(() -> new StripeElement(Length.ONE, null, new LengthVector(new double[] {1.0, 2.0})),
                 IllegalArgumentException.class);
 
         assertFalse(StripeLateralSync.NONE.isLinkBased());

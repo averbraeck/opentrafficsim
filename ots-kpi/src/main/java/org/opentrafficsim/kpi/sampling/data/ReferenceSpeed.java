@@ -30,7 +30,7 @@ public class ReferenceSpeed extends ExtendedDataSpeed<GtuData>
     @Override
     public final FloatSpeed getValue(final GtuData gtu)
     {
-        return FloatSpeed.instantiateSI((float) gtu.getReferenceSpeed().si);
+        return FloatSpeed.ofSI((float) gtu.getReferenceSpeed().si);
     }
 
     @Override

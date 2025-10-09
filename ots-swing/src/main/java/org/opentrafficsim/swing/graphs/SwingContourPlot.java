@@ -150,7 +150,6 @@ public class SwingContourPlot extends SwingSpaceTimePlot implements EventListene
         return (AbstractContourPlot<?>) super.getPlot();
     }
 
-
     @Override
     public void notify(final Event event) throws RemoteException
     {

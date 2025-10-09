@@ -101,7 +101,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
      * Margin to add to plan length to check if the path will enter the next section. This is because the plan might follow a
      * shorter path than the lane center line.
      */
-    private static final Length EVENT_MARGIN = Length.instantiateSI(50.0);
+    private static final Length EVENT_MARGIN = Length.ofSI(50.0);
 
     /** Lane. */
     private final HistoricalValue<Lane> lane;
@@ -268,7 +268,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         Duration now = getSimulator().getSimulatorTime();
         if (initialSpeed.lt(OperationalPlan.DRIFTING_SPEED))
         {
-            setOperationalPlan(OperationalPlan.standStill(this, initialLocation, now, Duration.instantiateSI(1E-6)));
+            setOperationalPlan(OperationalPlan.standStill(this, initialLocation, now, Duration.ofSI(1E-6)));
         }
         else
         {
@@ -557,7 +557,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                 if (dist < minDist)
                 {
                     roamingPosition =
-                            new LanePosition(checkLane, Length.instantiateSI(checkLane.getCenterLine().getLength() * fraction));
+                            new LanePosition(checkLane, Length.ofSI(checkLane.getCenterLine().getLength() * fraction));
                     minDist = dist;
                 }
             }
@@ -599,7 +599,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
         DirectedPoint2d a = lane.getCenterLine().getLocationFractionExtended(fraction);
         Point2d b = new Point2d(a.x + Math.cos(a.dirZ), a.y + Math.sin(a.dirZ));
         double sign = (b.x - a.x) * (location.y - a.y) - (b.y - a.y) * (location.x - a.x) > 0.0 ? 1.0 : -1.0;
-        return Length.instantiateSI(sign * lane.getCenterLine().getLocationFractionExtended(fraction).distance(location));
+        return Length.ofSI(sign * lane.getCenterLine().getLocationFractionExtended(fraction).distance(location));
     }
 
     /**
@@ -762,8 +762,8 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                     Duration lateralCrossingTime = getTimeOfLateralCrossing(firstTimeOnLane, lastTimeOnLane, willRoam);
                     if (willRoam)
                     {
-                        this.roamEvent = getSimulator().scheduleEventAbs(Duration.instantiateSI(lateralCrossingTime.si),
-                                () -> exitLane());
+                        this.roamEvent =
+                                getSimulator().scheduleEventAbs(Duration.ofSI(lateralCrossingTime.si), () -> exitLane());
                         return; // no further lanes to check when roaming
                     }
                     else
@@ -782,9 +782,8 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                             planStartPositionAtLaneOnPath = positionOnTargetLane.minus(distanceTillLaneChange);
                             this.pendingLanesToEnter.put(lateralCrossingTime, laneOnPath);
                             Lane finalLane = laneOnPath;
-                            this.pendingEnterEvents.put(laneOnPath,
-                                    getSimulator().scheduleEventAbs(Duration.instantiateSI(lateralCrossingTime.si),
-                                            () -> enterLane(finalLane, fractionOnTargetLane)));
+                            this.pendingEnterEvents.put(laneOnPath, getSimulator().scheduleEventAbs(
+                                    Duration.ofSI(lateralCrossingTime.si), () -> enterLane(finalLane, fractionOnTargetLane)));
                         }
                     }
                 }
@@ -804,8 +803,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                     {
                         Duration timeRearLeaving = Try.assign(() -> getOperationalPlan().getTimeAtDistance(distanceRearLeaving),
                                 "Distance till rear leaves link is beyond plan.");
-                        this.roamEvent =
-                                getSimulator().scheduleEventAbs(Duration.instantiateSI(timeRearLeaving.si), () -> exitLane());
+                        this.roamEvent = getSimulator().scheduleEventAbs(Duration.ofSI(timeRearLeaving.si), () -> exitLane());
                     }
                     return; // no further lanes to check
                 }
@@ -819,8 +817,8 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                     }
                     this.pendingLanesToEnter.put(enterTime, laneOnPath);
                     Lane finalLane = laneOnPath;
-                    this.pendingEnterEvents.put(laneOnPath, getSimulator()
-                            .scheduleEventAbs(Duration.instantiateSI(enterTime.si), () -> enterLane(finalLane, 0.0)));
+                    this.pendingEnterEvents.put(laneOnPath,
+                            getSimulator().scheduleEventAbs(Duration.ofSI(enterTime.si), () -> enterLane(finalLane, 0.0)));
                 }
             }
             else
@@ -864,7 +862,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
             while (low <= high)
             {
                 mid = (low + high) / 2;
-                position0 = Length.max(startPosition, Length.min(Length.instantiateSI(path.lengthAtIndex(mid)), endPosition));
+                position0 = Length.max(startPosition, Length.min(Length.ofSI(path.lengthAtIndex(mid)), endPosition));
                 Duration time0 = getOperationalPlan().getTimeAtDistance(position0);
                 overshoot0 = laneLateralOvershoot(time0).minus(lateralMargin);
                 if (overshoot0.le0())
@@ -878,12 +876,11 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
             }
             if (mid == low)
             {
-                position0 =
-                        Length.max(startPosition, Length.min(Length.instantiateSI(path.lengthAtIndex(low - 1)), endPosition));
+                position0 = Length.max(startPosition, Length.min(Length.ofSI(path.lengthAtIndex(low - 1)), endPosition));
                 Duration time0 = getOperationalPlan().getTimeAtDistance(position0);
                 overshoot0 = laneLateralOvershoot(time0).minus(lateralMargin);
             }
-            Length position1 = Length.min(endPosition, Length.instantiateSI(path.lengthAtIndex(low)));
+            Length position1 = Length.min(endPosition, Length.ofSI(path.lengthAtIndex(low)));
             Duration time1 = getOperationalPlan().getTimeAtDistance(position1);
             Length overshoot1 = laneLateralOvershoot(time1);
             double factor = overshoot0.neg().si / (overshoot1.si - overshoot0.si);
@@ -1245,7 +1242,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                 }
                 if (cumul <= getOperationalPlan().getTotalLength().si)
                 {
-                    return getOperationalPlan().timeAtDistance(Length.instantiateSI(cumul));
+                    return getOperationalPlan().timeAtDistance(Length.ofSI(cumul));
                 }
                 // ref will cross the line, but GTU will not travel enough for rear to cross
                 return null;

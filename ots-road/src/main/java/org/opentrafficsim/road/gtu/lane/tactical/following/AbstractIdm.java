@@ -100,11 +100,10 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
         // return free term if there are no leaders
         if (leaders.isEmpty())
         {
-            return Acceleration.instantiateSI(aFree);
+            return Acceleration.ofSI(aFree);
         }
         // return combined acceleration
-        return combineInteractionTerm(Acceleration.instantiateSI(aFree), parameters, speed, desiredSpeed, desiredHeadway,
-                leaders);
+        return combineInteractionTerm(Acceleration.ofSI(aFree), parameters, speed, desiredSpeed, desiredHeadway, leaders);
     }
 
     /**
@@ -119,7 +118,8 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
      * @throws ParameterException In case of parameter exception.
      */
     protected abstract Acceleration combineInteractionTerm(Acceleration aFree, Parameters parameters, Speed speed,
-            Speed desiredSpeed, Length desiredHeadway, PerceptionIterable<? extends PerceivedObject> leaders) throws ParameterException;
+            Speed desiredSpeed, Length desiredHeadway, PerceptionIterable<? extends PerceivedObject> leaders)
+            throws ParameterException;
 
     /**
      * Determines the dynamic desired headway, which is non-negative.
@@ -146,7 +146,7 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
          * Limit used to be 0, but the IDM is very sensitive there. With a decelerating leader, an ok acceleration in one time
          * step, may results in acceleration < -10 in the next.
          */
-        return Length.instantiateSI(sStar >= s0.si ? sStar : s0.si);
+        return Length.ofSI(sStar >= s0.si ? sStar : s0.si);
     }
 
     /**
@@ -162,7 +162,7 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
     {
         Acceleration a = parameters.getParameter(A);
         Acceleration b = parameters.getParameter(B);
-        return Length.instantiateSI(speed.si * (speed.si - leaderSpeed.si) / (2 * Math.sqrt(a.si * b.si)));
+        return Length.ofSI(speed.si * (speed.si - leaderSpeed.si) / (2 * Math.sqrt(a.si * b.si)));
     }
 
     /**
@@ -190,7 +190,7 @@ public abstract class AbstractIdm extends AbstractCarFollowingModel
         @Override
         public Length desiredHeadway(final Parameters parameters, final Speed speed) throws ParameterException
         {
-            return Length.instantiateSI(parameters.getParameter(S0).si + speed.si * parameters.getParameter(T).si);
+            return Length.ofSI(parameters.getParameter(S0).si + speed.si * parameters.getParameter(T).si);
         }
     }
 

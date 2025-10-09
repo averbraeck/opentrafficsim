@@ -69,7 +69,7 @@ public interface LaneRecordInterface<R extends LaneRecordInterface<R>>
      */
     default Length getDistanceToPosition(final Length position)
     {
-        return Length.instantiateSI(getStartDistance().si + position.si);
+        return Length.ofSI(getStartDistance().si + position.si);
     }
 
     /**

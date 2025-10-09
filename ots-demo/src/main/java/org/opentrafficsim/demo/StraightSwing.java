@@ -85,7 +85,7 @@ public class StraightSwing extends OtsSimulationApplication<StraightModel> imple
             final StraightModel otsModel = new StraightModel(simulator);
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
-                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(1500.0), otsModel,
+                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(1500.0), otsModel,
                         HistoryManagerDevs.noHistory(simulator));
                 OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(), simulator, otsModel,
                         DEFAULT_GTU_COLORERS, otsModel.getNetwork());
@@ -131,7 +131,7 @@ public class StraightSwing extends OtsSimulationApplication<StraightModel> imple
         PlotScheduler scheduler = new OtsPlotScheduler(simulator);
 
         plot = new SwingTrajectoryPlot(
-                new TrajectoryPlot("TrajectoryPlot", Duration.instantiateSI(10.0), scheduler, sampler.getSamplerData(), path));
+                new TrajectoryPlot("TrajectoryPlot", Duration.ofSI(10.0), scheduler, sampler.getSamplerData(), path));
         charts.setCell(plot.getContentPane(), 0, 0);
 
         plot = new SwingContourPlot(new ContourPlotDensity("DensityPlot", scheduler, dataPool));

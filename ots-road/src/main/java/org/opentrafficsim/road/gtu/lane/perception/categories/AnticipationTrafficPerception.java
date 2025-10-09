@@ -133,7 +133,7 @@ public class AnticipationTrafficPerception extends AbstractPerceptionCategory<La
             double fromRight = this.antFromRight.get(lane);
             v = v < fromRight ? v : fromRight;
         }
-        return Speed.instantiateSI(v);
+        return Speed.ofSI(v);
     }
 
     /**

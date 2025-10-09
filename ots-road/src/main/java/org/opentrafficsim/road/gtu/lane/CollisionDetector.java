@@ -104,8 +104,8 @@ public class CollisionDetector extends AbstractLaneBasedMoveChecker implements E
             LaneBasedObject object = (LaneBasedObject) payload[1];
             Speed objectSpeed = object instanceof Gtu otherGtu ? otherGtu.getSpeed() : Speed.ZERO;
             Speed dv = gtu.getSpeed().minus(objectSpeed);
-            Length distance = Length.instantiateSI(gtu.getLocation().distance(object.getLocation()));
-            Angle angle = Angle.instantiateSI(AngleUtil.normalizeAroundZero(object.getDirZ() - gtu.getDirZ()));
+            Length distance = Length.ofSI(gtu.getLocation().distance(object.getLocation()));
+            Angle angle = Angle.ofSI(AngleUtil.normalizeAroundZero(object.getDirZ() - gtu.getDirZ()));
             CategoryLogger.always().info("GTU " + gtu.getId() + " collided with " + object.getId() + " at a point distance of "
                     + distance + " with a speed difference of " + dv + " and and angle of " + angle + ".");
         }, COLLISION), "Unable to listen to collisions.");

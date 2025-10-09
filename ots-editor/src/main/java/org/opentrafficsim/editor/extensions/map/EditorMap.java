@@ -169,7 +169,7 @@ public final class EditorMap extends JPanel implements EventListener
         /*-
         {
             private static final long serialVersionUID = 20231016L;
-
+        
             @Override
             public void setExtent(final Bounds2d extent)
             {
@@ -181,7 +181,7 @@ public final class EditorMap extends JPanel implements EventListener
                 }
                 super.setExtent(extent);
             }
-
+        
             @Override
             public synchronized void zoomAll()
             {
@@ -198,7 +198,7 @@ public final class EditorMap extends JPanel implements EventListener
                 }
                 EditorMap.this.ignoreKeepScale = false;
             }
-
+        
             @Override
             public synchronized void home()
             {

@@ -32,7 +32,7 @@ public abstract class ExtendedDataSpeed<G extends GtuData> extends ExtendedDataF
     @Override
     protected final FloatSpeed convertValue(final float value)
     {
-        return FloatSpeed.instantiateSI(value);
+        return FloatSpeed.ofSI(value);
     }
 
     @Override
@@ -50,7 +50,7 @@ public abstract class ExtendedDataSpeed<G extends GtuData> extends ExtendedDataF
     @Override
     public FloatSpeed parseValue(final String string)
     {
-        return FloatSpeed.instantiateSI(Float.valueOf(string));
+        return FloatSpeed.ofSI(Float.valueOf(string));
     }
 
 }

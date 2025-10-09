@@ -42,8 +42,8 @@ public class ContinuousArc implements ContinuousLine
      */
     public ContinuousArc(final DirectedPoint2d startPoint, final double radius, final boolean left, final double length)
     {
-        this(startPoint, radius, left, Angle.instantiateSI(
-                Throw.when(length, length <= 0.0, IllegalArgumentException.class, "Length must be above 0.") / radius));
+        this(startPoint, radius, left, Angle
+                .ofSI(Throw.when(length, length <= 0.0, IllegalArgumentException.class, "Length must be above 0.") / radius));
     }
 
     /**

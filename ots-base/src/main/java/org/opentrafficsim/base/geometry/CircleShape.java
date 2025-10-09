@@ -105,8 +105,6 @@ public abstract class CircleShape implements OtsShape
         return this.polygon;
     }
 
-
-
     @Override
     public String toString()
     {

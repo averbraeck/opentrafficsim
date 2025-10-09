@@ -526,7 +526,7 @@ class Sim0mqOtsModel extends AbstractOtsModel
             new XmlParser(this.network).setStream(new ByteArrayInputStream(this.xml.getBytes(StandardCharsets.UTF_8))).build();
             // TODO: obtain relevant GTU type from xml
             ConflictBuilder.buildConflictsParallel(this.network, getSimulator(),
-                    new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)), new LaneCombinationList(),
+                    new ConflictBuilder.FixedWidthGenerator(Length.ofSI(2.0)), new LaneCombinationList(),
                     new LaneCombinationList());
         }
         catch (NetworkException | JAXBException | URISyntaxException | XmlParserException | SAXException

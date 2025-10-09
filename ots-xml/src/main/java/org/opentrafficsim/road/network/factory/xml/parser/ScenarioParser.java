@@ -288,8 +288,7 @@ public final class ScenarioParser
      * @param id id.
      * @param value value expression type.
      */
-    public record ParameterWrapper(String id, ExpressionType<?> value)
-            implements Identifiable, Supplier<ExpressionType<?>>
+    public record ParameterWrapper(String id, ExpressionType<?> value) implements Identifiable, Supplier<ExpressionType<?>>
     {
         @Override
         public String getId()
@@ -366,11 +365,11 @@ public final class ScenarioParser
             this.lookingUp.remove(name);
             if (value instanceof Double)
             {
-                return Dimensionless.instantiateSI((Double) value);
+                return Dimensionless.ofSI((Double) value);
             }
             if (value instanceof Integer)
             {
-                return Dimensionless.instantiateSI((Integer) value);
+                return Dimensionless.ofSI((Integer) value);
             }
             return value;
         }

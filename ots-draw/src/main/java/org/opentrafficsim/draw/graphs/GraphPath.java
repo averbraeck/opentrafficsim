@@ -86,7 +86,7 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
         {
             mean.add(section.speedLimit().si, section.length().si);
         }
-        this.speedLimit = Speed.instantiateSI(mean.getMean());
+        this.speedLimit = Speed.ofSI(mean.getMean());
     }
 
     /**
@@ -231,7 +231,7 @@ public class GraphPath<S> extends AbstractGraphSpace<S>
             for (L lane : section)
             {
                 sampler.registerSpaceTimeRegion(new SpaceTimeRegion<>(lane, Length.ZERO, lane.getLength(), Duration.ZERO,
-                        Duration.instantiateSI(Double.MAX_VALUE)));
+                        Duration.ofSI(Double.MAX_VALUE)));
             }
         }
     }

@@ -139,7 +139,7 @@ public final class Sim0MQPublisherTest
         waitAndVerifyAckNack(receivedMessages, 1.0, badCommand, conversationId, false, "Don't know how to handle message:");
 
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                ++conversationId, new Object[] {Duration.instantiateSI(10.0)}));
+                ++conversationId, new Object[] {Duration.ofSI(10.0)}));
         waitAndVerifyAckNack(receivedMessages, 1.0, "SIMULATEUNTIL", conversationId, false, "No network loaded");
 
         badCommand = "GTUs in network|SUBSCRIBE_TO_ADD";
@@ -215,7 +215,7 @@ public final class Sim0MQPublisherTest
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|SUBSCRIBE_TO_ADD", ++conversationId));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                ++conversationId, new Object[] {Duration.instantiateSI(10.0)}));
+                ++conversationId, new Object[] {Duration.ofSI(10.0)}));
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", ++conversationId));
         int conversationIdForSubscribeToAdd = ++conversationId; // We need that to unsubscribe later
@@ -228,7 +228,7 @@ public final class Sim0MQPublisherTest
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTU move|SUBSCRIBE_TO_CHANGE",
                 conversationIdForGTU2Move, "2")); // Subscribe to move events of GTU 2
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                ++conversationId, new Object[] {Duration.instantiateSI(20.0)}));
+                ++conversationId, new Object[] {Duration.ofSI(20.0)}));
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", ++conversationId));
         waitAndEatMessagesUntilConversationId(receivedMessages, 1.0, conversationId);
@@ -241,15 +241,15 @@ public final class Sim0MQPublisherTest
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
                 "GTU move|UNSUBSCRIBE_FROM_CHANGE", conversationIdForGTU2Move, "2")); // Subscribe to move events of GTU 2
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                ++conversationId, new Object[] {Duration.instantiateSI(30.0)}));
+                ++conversationId, new Object[] {Duration.ofSI(30.0)}));
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", ++conversationId));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
                 "GTUs in network|GET_ADDRESS_META_DATA", ++conversationId));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                ++conversationId, new Object[] {Duration.instantiateSI(60.0)}));
+                ++conversationId, new Object[] {Duration.ofSI(60.0)}));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                ++conversationId, new Object[] {Duration.instantiateSI(70.0)}));
+                ++conversationId, new Object[] {Duration.ofSI(70.0)}));
         waitAndEatMessagesUntilConversationId(receivedMessages, 1.0, conversationId);
         waitAndVerifyAckNack(receivedMessages, 1.0, "SIMULATEUNTIL", conversationId, false,
                 "Simulation is already at end of simulation time");

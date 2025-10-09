@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Ray2d;
-import org.djutils.exceptions.Try;
+import org.djutils.test.UnitTest;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.geometry.OtsLine2d.FractionalFallback;
 
@@ -41,12 +41,12 @@ public final class DirectionalPolyLineTest
             y[i] = Math.sin(i * Math.PI / (n - 1));
         }
         PolyLine2d line = new PolyLine2d(x, y);
-        Direction startDirection = Direction.instantiateSI(.5 * Math.PI);
-        Direction endDirection = Direction.instantiateSI(1.5 * Math.PI);
+        Direction startDirection = Direction.ofSI(.5 * Math.PI);
+        Direction endDirection = Direction.ofSI(1.5 * Math.PI);
 
-        Try.testFail(() -> new DirectionalPolyLine(null, startDirection, endDirection), NullPointerException.class);
-        Try.testFail(() -> new DirectionalPolyLine(line, null, endDirection), NullPointerException.class);
-        Try.testFail(() -> new DirectionalPolyLine(line, startDirection, null), NullPointerException.class);
+        UnitTest.testFail(() -> new DirectionalPolyLine(null, startDirection, endDirection), NullPointerException.class);
+        UnitTest.testFail(() -> new DirectionalPolyLine(line, null, endDirection), NullPointerException.class);
+        UnitTest.testFail(() -> new DirectionalPolyLine(line, startDirection, null), NullPointerException.class);
 
         DirectionalPolyLine baseLine = new DirectionalPolyLine(line, startDirection, endDirection);
         assertEquals(startDirection, baseLine.getStartDirection());

@@ -121,7 +121,7 @@ public class LoopDetector extends LaneDetector
                 @Override
                 protected Speed aggregate(final Double cumulative, final int gtuCount, final Duration aggregation)
                 {
-                    Speed speed = Speed.instantiateSI(gtuCount / cumulative);
+                    Speed speed = Speed.ofSI(gtuCount / cumulative);
                     speed.setDisplayUnit(SpeedUnit.KM_PER_HOUR);
                     return speed;
                 }
@@ -240,8 +240,8 @@ public class LoopDetector extends LaneDetector
             throws NetworkException
     {
         // Note: length not important for flow and mean speed
-        this(id, new LanePosition(lane, longitudinalPosition), Length.ZERO, detectorType, Time.instantiateSI(60.0),
-                Duration.instantiateSI(60.0), MEAN_SPEED);
+        this(id, new LanePosition(lane, longitudinalPosition), Length.ZERO, detectorType, Time.ofSI(60.0), Duration.ofSI(60.0),
+                MEAN_SPEED);
     }
 
     /**
@@ -262,7 +262,7 @@ public class LoopDetector extends LaneDetector
         super(id, position.lane(), position.position(), RelativePosition.FRONT, detectorType);
         Throw.when(aggregation.si <= 0.0, IllegalArgumentException.class, "Aggregation time should be positive.");
         this.length = length;
-        this.currentAggregation = Duration.instantiateSI(firstAggregation.si);
+        this.currentAggregation = Duration.ofSI(firstAggregation.si);
         this.aggregation = aggregation;
         this.firstAggregation = firstAggregation;
         Try.execute(() -> getSimulator().scheduleEventAbs(this.currentAggregation, () -> aggregate()), "");
@@ -410,7 +410,7 @@ public class LoopDetector extends LaneDetector
             }
         }
         this.currentAggregation = this.aggregation; // after first possibly irregular period, all periods regular
-        Duration time = Duration.instantiateSI(this.firstAggregation.si).plus(this.aggregation.times(this.period++));
+        Duration time = Duration.ofSI(this.firstAggregation.si).plus(this.aggregation.times(this.period++));
         Try.execute(() -> getSimulator().scheduleEventAbs(time, () -> aggregate()), "");
     }
 
@@ -695,7 +695,7 @@ public class LoopDetector extends LaneDetector
                         {
                             data[dataIndex++] = this.dat.getKey() == null ? "" : this.dat.getKey().getId();
                         }
-                        data[dataIndex++] = Duration.instantiateSI(t < 0.0 ? 0.0 : t);
+                        data[dataIndex++] = Duration.ofSI(t < 0.0 ? 0.0 : t);
                         data[dataIndex++] = this.dat.getValue().flow.get(index);
                         for (LoopDetectorMeasurement<?, ?> measurement : measurements)
                         {
@@ -1148,7 +1148,7 @@ public class LoopDetector extends LaneDetector
         private int gtuCount = 0;
 
         /** Time the last GTU exited the detector. */
-        private Duration lastExitTime = Duration.instantiateSI(Double.NEGATIVE_INFINITY);
+        private Duration lastExitTime = Duration.ofSI(Double.NEGATIVE_INFINITY);
 
         /** Stored sizes of earlier platoons. */
         private List<Integer> platoons = new ArrayList<>();

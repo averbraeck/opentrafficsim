@@ -95,49 +95,43 @@ public final class DefaultsNl extends Defaults implements BiFunction<GtuType, St
         if (gtuType.equals(CAR))
         {
             // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
-            template = new GtuTemplate(gtuType, new ConstantSupplier<>(Length.instantiateSI(4.19)),
-                    new ConstantSupplier<>(Length.instantiateSI(1.7)),
-                    new ConstantSupplier<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
+            template = new GtuTemplate(gtuType, new ConstantSupplier<>(Length.ofSI(4.19)),
+                    new ConstantSupplier<>(Length.ofSI(1.7)), new ConstantSupplier<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
         }
         else if (gtuType.equals(TRUCK))
         {
             // from "Maatgevende normen in de Nederlandse richtlijnen voor wegontwerp", R-2014-38, SWOV
-            template = new GtuTemplate(gtuType, new ConstantSupplier<>(Length.instantiateSI(12.0)),
-                    new ConstantSupplier<>(Length.instantiateSI(2.55)),
+            template = new GtuTemplate(gtuType, new ConstantSupplier<>(Length.ofSI(12.0)),
+                    new ConstantSupplier<>(Length.ofSI(2.55)),
                     new ContinuousDistSpeed(new DistNormal(randomStream, 85.0, 2.5), SpeedUnit.KM_PER_HOUR));
         }
         else if (gtuType.equals(BUS))
         {
-            template = new GtuTemplate(gtuType, new ConstantSupplier<>(Length.instantiateSI(12.0)),
-                    new ConstantSupplier<>(Length.instantiateSI(2.55)),
-                    new ConstantSupplier<>(new Speed(90, SpeedUnit.KM_PER_HOUR)));
+            template = new GtuTemplate(gtuType, new ConstantSupplier<>(Length.ofSI(12.0)),
+                    new ConstantSupplier<>(Length.ofSI(2.55)), new ConstantSupplier<>(new Speed(90, SpeedUnit.KM_PER_HOUR)));
         }
         else if (gtuType.equals(VAN))
         {
-            template = new GtuTemplate(gtuType, new ConstantSupplier<>(Length.instantiateSI(5.0)),
-                    new ConstantSupplier<>(Length.instantiateSI(2.4)),
-                    new ConstantSupplier<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
+            template = new GtuTemplate(gtuType, new ConstantSupplier<>(Length.ofSI(5.0)),
+                    new ConstantSupplier<>(Length.ofSI(2.4)), new ConstantSupplier<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
         }
         else if (gtuType.equals(EMERGENCY_VEHICLE))
         {
-            template = new GtuTemplate(gtuType, new ConstantSupplier<>(Length.instantiateSI(5.0)),
-                    new ConstantSupplier<>(Length.instantiateSI(2.55)),
-                    new ConstantSupplier<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
+            template = new GtuTemplate(gtuType, new ConstantSupplier<>(Length.ofSI(5.0)),
+                    new ConstantSupplier<>(Length.ofSI(2.55)), new ConstantSupplier<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
         }
         else if (gtuType.equals(MOTORCYCLE))
         {
             // Yamaha R7 2022
-            template = new GtuTemplate(gtuType, new ConstantSupplier<>(Length.instantiateSI(2.1)),
-                    new ConstantSupplier<>(Length.instantiateSI(0.7)),
-                    new ConstantSupplier<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
+            template = new GtuTemplate(gtuType, new ConstantSupplier<>(Length.ofSI(2.1)),
+                    new ConstantSupplier<>(Length.ofSI(0.7)), new ConstantSupplier<>(new Speed(180, SpeedUnit.KM_PER_HOUR)));
         }
         else if (gtuType.equals(BICYCLE))
         {
             // length/width: https://www.verderfietsen.nl/fiets-afmetingen/
             // width: https://www.fietsberaad.nl/CROWFietsberaad/media/Kennis/Bestanden/document000172.pdf?ext=.pdf
-            template = new GtuTemplate(gtuType, new ConstantSupplier<>(Length.instantiateSI(1.9)),
-                    new ConstantSupplier<>(Length.instantiateSI(0.6)),
-                    new ConstantSupplier<>(new Speed(35, SpeedUnit.KM_PER_HOUR)));
+            template = new GtuTemplate(gtuType, new ConstantSupplier<>(Length.ofSI(1.9)),
+                    new ConstantSupplier<>(Length.ofSI(0.6)), new ConstantSupplier<>(new Speed(35, SpeedUnit.KM_PER_HOUR)));
         }
         else
         {

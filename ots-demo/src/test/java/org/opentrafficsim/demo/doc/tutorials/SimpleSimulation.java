@@ -68,16 +68,13 @@ public class SimpleSimulation extends AbstractSimulationScript
         LaneType freewayLane = DefaultsRoadNl.FREEWAY;
         CrossSectionLink link = new CrossSectionLink(network, "AB", nodeA, nodeB, freewayLink, new OtsLine2d(pointA, pointB),
                 null, LaneKeepingPolicy.KEEPRIGHT);
-        LaneGeometryUtil.createStraightLane(link, "Left", Length.instantiateSI(1.75), Length.instantiateSI(3.5), freewayLane,
+        LaneGeometryUtil.createStraightLane(link, "Left", Length.ofSI(1.75), Length.ofSI(3.5), freewayLane,
                 Map.of(car, new Speed(120, SpeedUnit.KM_PER_HOUR)));
-        LaneGeometryUtil.createStraightLane(link, "Right", Length.instantiateSI(-1.75), Length.instantiateSI(3.5), freewayLane,
+        LaneGeometryUtil.createStraightLane(link, "Right", Length.ofSI(-1.75), Length.ofSI(3.5), freewayLane,
                 Map.of(car, new Speed(120, SpeedUnit.KM_PER_HOUR)));
-        LaneGeometryUtil.createStraightStripe(DefaultsRoadNl.SOLID, "1", link, Length.instantiateSI(3.5),
-                Length.instantiateSI(0.2));
-        LaneGeometryUtil.createStraightStripe(DefaultsRoadNl.DASHED, "2", link, Length.instantiateSI(0.0),
-                Length.instantiateSI(0.2));
-        LaneGeometryUtil.createStraightStripe(DefaultsRoadNl.SOLID, "3", link, Length.instantiateSI(-3.5),
-                Length.instantiateSI(0.2));
+        LaneGeometryUtil.createStraightStripe(DefaultsRoadNl.SOLID, "1", link, Length.ofSI(3.5), Length.ofSI(0.2));
+        LaneGeometryUtil.createStraightStripe(DefaultsRoadNl.DASHED, "2", link, Length.ofSI(0.0), Length.ofSI(0.2));
+        LaneGeometryUtil.createStraightStripe(DefaultsRoadNl.SOLID, "3", link, Length.ofSI(-3.5), Length.ofSI(0.2));
         return network;
     }
 

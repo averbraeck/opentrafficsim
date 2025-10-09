@@ -33,7 +33,7 @@ public abstract class ExtendedDataLength<G extends GtuData>
     @Override
     protected final FloatLength convertValue(final float value)
     {
-        return FloatLength.instantiateSI(value);
+        return FloatLength.ofSI(value);
     }
 
     @Override
@@ -51,7 +51,7 @@ public abstract class ExtendedDataLength<G extends GtuData>
     @Override
     public FloatLength parseValue(final String string)
     {
-        return FloatLength.instantiateSI(Float.valueOf(string));
+        return FloatLength.ofSI(Float.valueOf(string));
     }
 
 }

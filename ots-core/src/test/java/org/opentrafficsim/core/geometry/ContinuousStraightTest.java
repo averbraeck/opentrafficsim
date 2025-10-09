@@ -7,7 +7,7 @@ import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
-import org.djutils.exceptions.Try;
+import org.djutils.test.UnitTest;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -37,7 +37,7 @@ public final class ContinuousStraightTest
     public void straightTest()
     {
         DirectedPoint2d startPoint = new DirectedPoint2d(0.0, 0.0, 0.0);
-        Try.testFail(() -> new ContinuousStraight(startPoint, -100.0), "Negative length should not be allowed.",
+        UnitTest.testFail(() -> new ContinuousStraight(startPoint, -100.0), "Negative length should not be allowed.",
                 IllegalArgumentException.class);
         ContinuousStraight straight = new ContinuousStraight(startPoint, 100.0);
 

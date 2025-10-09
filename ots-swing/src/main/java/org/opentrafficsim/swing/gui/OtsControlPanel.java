@@ -57,6 +57,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.Resource;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -427,7 +428,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 }
                 catch (SimRuntimeException exception)
                 {
-                    this.simulator.getLogger().always()
+                    CategoryLogger.always()
                             .error("Caught an exception while trying to schedule an autoPauseSimulator event "
                                     + "at the current simulator time");
                 }
@@ -554,7 +555,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             // }
             else
             {
-                this.simulator.getLogger().always().error(new Exception("Unknown button?"));
+                CategoryLogger.always().error(new Exception("Unknown button?"));
             }
         }
         // System.out.println("FixButtons finishing");
@@ -595,7 +596,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 }
                 catch (SimRuntimeException exception)
                 {
-                    this.simulator.getLogger().always()
+                    CategoryLogger.always()
                             .error("Caught an exception while trying to re-schedule an autoPauseEvent at the next real event");
                 }
             }
@@ -665,12 +666,12 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         {
             try
             {
-                this.stopAtEvent = scheduleEvent(Duration.instantiateSI(stopTime), SimEventInterface.MAX_PRIORITY,
-                        () -> autoPauseSimulator());
+                this.stopAtEvent =
+                        scheduleEvent(Duration.ofSI(stopTime), SimEventInterface.MAX_PRIORITY, () -> autoPauseSimulator());
             }
             catch (SimRuntimeException exception)
             {
-                this.simulator.getLogger().always()
+                CategoryLogger.always()
                         .error("Caught an exception while trying to schedule an autoPauseSimulator event");
             }
         }

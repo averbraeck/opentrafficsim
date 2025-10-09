@@ -45,10 +45,10 @@ public final class LaneOperationalPlanBuilder
 {
 
     /** Length within which GTUs snap to the lane center line. */
-    private static final Length SNAP = Length.instantiateSI(1e-3);
+    private static final Length SNAP = Length.ofSI(1e-3);
 
     /** Typical lane width for which the typical lane change duration applies. */
-    private static final Length LANE_WIDTH = Length.instantiateSI(3.5);
+    private static final Length LANE_WIDTH = Length.ofSI(3.5);
 
     /** Max angle of numerical simplification. */
     private static final double FLATTEN_ANGLE = Math.PI / 360.0;
@@ -212,7 +212,7 @@ public final class LaneOperationalPlanBuilder
             if (lastPoint != null && lastPoint.distance(centerLine.getFirst()) > SNAP.si)
             {
                 // It is not appropriate to follow the lane center lines due to a lane gap
-                Length laneGap = Length.instantiateSI(lastPoint.distance(centerLine.getFirst()));
+                Length laneGap = Length.ofSI(lastPoint.distance(centerLine.getFirst()));
                 HorizonSpace horizonSpace =
                         getHorizonSpace(gtu, nearestPosition, acceleration, timeStep, tManeuver, deviation, laneGap);
                 return bezierToHorizon(gtu, nearestPosition, deviation, horizonSpace);
@@ -300,7 +300,7 @@ public final class LaneOperationalPlanBuilder
         {
             leftOfLane = Math.signum(Math.cos(Math.sin(nearestPoint.dirZ) * dx - nearestPoint.dirZ) * dy);
         }
-        Length distanceToNearest = Length.instantiateSI(Math.abs(deviation.si - leftOfLane * dCenterLine));
+        Length distanceToNearest = Length.ofSI(Math.abs(deviation.si - leftOfLane * dCenterLine));
 
         // Lateral deviation: 0 to 1 within first {LANE_WIDTH}m (also applies to lane gap)
         double fLatDeviation = Math.min(1.0, Math.max(distanceToNearest.si, laneGap.si) / LANE_WIDTH.si);
@@ -311,7 +311,7 @@ public final class LaneOperationalPlanBuilder
 
         // Difference direction to target and vehicle direction: 2 to 0 within pi/2
         // For these maneuvers more time is required than a normal lane change
-        Direction dirToNearest = Direction.instantiateSI(Math.atan2(dy, dx));
+        Direction dirToNearest = Direction.ofSI(Math.atan2(dy, dx));
         double fToTarget = 0.0;
         if (dCenterLine > SNAP.si)
         {
@@ -334,7 +334,7 @@ public final class LaneOperationalPlanBuilder
         {
             rPlan = gtu.getSpeed().si * timeStep.si + .5 * acceleration.si * timeStep.si * timeStep.si;
         }
-        Length horizon = Length.instantiateSI(Math.max(Math.max(turnDiameter.si, rPlan), gtu.getSpeed().si * tHorizon));
+        Length horizon = Length.ofSI(Math.max(Math.max(turnDiameter.si, rPlan), gtu.getSpeed().si * tHorizon));
         return new HorizonSpace(distanceToNearest, dirToNearest, horizon, turnDiameter, nearestPoint);
     }
 
@@ -479,8 +479,7 @@ public final class LaneOperationalPlanBuilder
         }
 
         // Return intersection of lane path and horizon
-        LanePosition endPosition =
-                getTargetLanePosition(gtu, nearestPosition, horizonSpace.horizon(), Angle.instantiateSI(alpha));
+        LanePosition endPosition = getTargetLanePosition(gtu, nearestPosition, horizonSpace.horizon(), Angle.ofSI(alpha));
         if (endPosition != null)
         {
             return endPosition.getLocation();
@@ -580,14 +579,13 @@ public final class LaneOperationalPlanBuilder
                             // In viewing port?
                             if (Math.abs(alpha) <= viewport.si)
                             {
-                                return new LanePosition(lane, Length.instantiateSI(distCumulLane + f * dr));
+                                return new LanePosition(lane, Length.ofSI(distCumulLane + f * dr));
                             }
                             else
                             {
                                 // Crossing with center line outside of viewport (could be turn radius). Increase horizon and
                                 // try again but with full default viewport.
-                                return getTargetLanePosition(gtu, startPosition, horizon.times(2.0),
-                                        Angle.instantiateSI(Math.PI / 4.0));
+                                return getTargetLanePosition(gtu, startPosition, horizon.times(2.0), Angle.ofSI(Math.PI / 4.0));
                             }
                         }
                         pointSign = -1.0;
@@ -600,7 +598,7 @@ public final class LaneOperationalPlanBuilder
             Lane nextLane = gtu.getNextLaneForRoute(lane);
             if (nextLane == null)
             {
-                return new LanePosition(lane, Length.instantiateSI(startPosition.lane().getCenterLine().getLength()));
+                return new LanePosition(lane, Length.ofSI(startPosition.lane().getCenterLine().getLength()));
             }
             lane = nextLane;
             laneCenter = lane.getCenterLine();

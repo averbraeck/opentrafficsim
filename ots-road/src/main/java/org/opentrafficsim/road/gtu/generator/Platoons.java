@@ -15,6 +15,7 @@ import org.djunits.value.vdouble.vector.DurationVector;
 import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
+import org.djutils.logger.CategoryLogger;
 import org.djutils.math.means.ArithmeticMean;
 import org.opentrafficsim.base.geometry.OtsGeometryException;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -328,8 +329,7 @@ public abstract class Platoons<T>
         double factor = (total - platooning) / (total - lost);
         if (factor < 0.0)
         {
-            this.simulator.getLogger().always().warn("Reducing demand of {} by {}, demand is set to 0.", total,
-                    total - factor * total);
+            CategoryLogger.always().warn("Reducing demand of {} by {}, demand is set to 0.", total, total - factor * total);
             factor = 0.0;
         }
         // create and return factor copy

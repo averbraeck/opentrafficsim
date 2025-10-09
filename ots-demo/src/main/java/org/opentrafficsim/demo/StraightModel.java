@@ -156,11 +156,10 @@ public class StraightModel extends AbstractOtsModel implements UNITS
                     new LmrsFactory.Factory().withDefaultIncentives().build(this.stream));
             LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFctoryTrucks = new LaneBasedStrategicalRoutePlannerFactory(
                     new LmrsFactory.Factory().withDefaultIncentives().build(this.stream));
-            LaneBasedGtuTemplate carTemplate = new LaneBasedGtuTemplate(car, new ConstantSupplier<>(Length.instantiateSI(4.0)),
-                    new ConstantSupplier<>(Length.instantiateSI(2.0)), speedCar, strategicalPlannerFactoryCars, routeGenerator);
-            LaneBasedGtuTemplate truckTemplate = new LaneBasedGtuTemplate(truck,
-                    new ConstantSupplier<>(Length.instantiateSI(15.0)), new ConstantSupplier<>(Length.instantiateSI(2.5)),
-                    speedTruck, strategicalPlannerFctoryTrucks, routeGenerator);
+            LaneBasedGtuTemplate carTemplate = new LaneBasedGtuTemplate(car, new ConstantSupplier<>(Length.ofSI(4.0)),
+                    new ConstantSupplier<>(Length.ofSI(2.0)), speedCar, strategicalPlannerFactoryCars, routeGenerator);
+            LaneBasedGtuTemplate truckTemplate = new LaneBasedGtuTemplate(truck, new ConstantSupplier<>(Length.ofSI(15.0)),
+                    new ConstantSupplier<>(Length.ofSI(2.5)), speedTruck, strategicalPlannerFctoryTrucks, routeGenerator);
             ObjectDistribution<LaneBasedGtuTemplate> gtuTypeDistribution = new ObjectDistribution<>(this.stream);
             gtuTypeDistribution.add(new FrequencyAndObject<>(this.carProbability, carTemplate));
             gtuTypeDistribution.add(new FrequencyAndObject<>(1.0 - this.carProbability, truckTemplate));
@@ -179,9 +178,9 @@ public class StraightModel extends AbstractOtsModel implements UNITS
                     new TrafficLight(this.lane.getId() + "_TL", this.lane, new Length(new Length(4000.0, LengthUnit.METER)));
             this.block.setTrafficLightColor(TrafficLightColor.GREEN);
             // Create a block at t = 5 minutes
-            this.simulator.scheduleEventAbs(Duration.instantiateSI(300.0), () -> createBlock());
+            this.simulator.scheduleEventAbs(Duration.ofSI(300.0), () -> createBlock());
             // Remove the block at t = 7 minutes
-            this.simulator.scheduleEventAbs(Duration.instantiateSI(420.0), () -> removeBlock());
+            this.simulator.scheduleEventAbs(Duration.ofSI(420.0), () -> removeBlock());
         }
         catch (SimRuntimeException | NetworkException | InputParameterException | ParameterException exception)
         {

@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.network.Network;
 
 /**
@@ -33,7 +34,7 @@ public class AccelerationChecker extends AbstractLaneBasedMoveChecker
      */
     public AccelerationChecker(final Network network)
     {
-        this(network, Acceleration.instantiateSI(-10.0), Acceleration.instantiateSI(5), Speed.instantiateSI(2.5));
+        this(network, Acceleration.ofSI(-10.0), Acceleration.ofSI(5), Speed.ofSI(2.5));
     }
 
     /**
@@ -58,7 +59,7 @@ public class AccelerationChecker extends AbstractLaneBasedMoveChecker
         if (gtu.getOperationalPlan().getSpeedFromStart(Duration.ZERO).si > this.minSpeed.si
                 && (a.si < this.min.si || a.si > this.max.si))
         {
-            gtu.getSimulator().getLogger().always().error("GTU: {} acceleration out of bounds ({}, {})", this.min, this.max);
+            CategoryLogger.always().error("GTU: {} acceleration out of bounds ({}, {})", this.min, this.max);
         }
     }
 

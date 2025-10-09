@@ -30,7 +30,7 @@ public class WorldDirData extends ExtendedDataFloat<DirectionUnit, FloatDirectio
     @Override
     protected FloatDirection convertValue(final float value)
     {
-        return FloatDirection.instantiateSI(value);
+        return FloatDirection.ofSI(value);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class WorldDirData extends ExtendedDataFloat<DirectionUnit, FloatDirectio
     @Override
     public FloatDirection parseValue(final String string)
     {
-        return FloatDirection.instantiateSI(Float.valueOf(string));
+        return FloatDirection.ofSI(Float.valueOf(string));
     }
 
 }

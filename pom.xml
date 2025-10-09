@@ -49,9 +49,9 @@
 
     <ots.version>${project.version}</ots.version>
     <tinylog.version>1.3.6</tinylog.version>
-    <djunits.version>5.2.1</djunits.version>
-    <djutils.version>2.3.2</djutils.version>
-    <dsol.version>4.2.11</dsol.version>
+    <djunits.version>5.4.1</djunits.version>
+    <djutils.version>2.4.1</djutils.version>
+    <dsol.version>4.3.0</dsol.version>
     <sim0mq.version>2.1.5</sim0mq.version>
     <jfreechart.version>1.5.5</jfreechart.version>
     <jgrapht.version>1.5.2</jgrapht.version>
@@ -122,6 +122,13 @@
       <version>${mockito.version}</version>
       <scope>test</scope>
     </dependency>
+    
+    <dependency>
+	  <groupId>org.djutils</groupId>
+	  <artifactId>djutils-test</artifactId>
+	  <version>${djutils.version}</version>
+	  <scope>test</scope>
+	</dependency>
 
   </dependencies>
 
@@ -178,7 +185,7 @@
         <artifactId>djutils-swing</artifactId>
         <version>${djutils.version}</version>
       </dependency>
-
+      
       <dependency>
         <groupId>nl.tudelft.simulation</groupId>
         <artifactId>dsol-base</artifactId>

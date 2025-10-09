@@ -445,7 +445,7 @@ public class ModelParser
                 {
                     return first;
                 }
-                return Dimensionless.instantiateSI(((Number) first).doubleValue());
+                return Dimensionless.ofSI(((Number) first).doubleValue());
             }
             if (value.equals("then"))
             {
@@ -453,7 +453,7 @@ public class ModelParser
                 {
                     return then;
                 }
-                return Dimensionless.instantiateSI(((Number) then).doubleValue());
+                return Dimensionless.ofSI(((Number) then).doubleValue());
             }
             throw new RuntimeException(
                     "Value for " + value + " in correlation expression is not valid. Only 'first' and 'then' allowed.");
@@ -463,7 +463,7 @@ public class ModelParser
         {
             try
             {
-                Method method = clazz.getDeclaredMethod("instantiateSI", new Class<?>[] {double.class});
+                Method method = clazz.getDeclaredMethod("ofSI", new Class<?>[] {double.class});
                 return (T) method.invoke(null, ((DoubleScalar<?, ?>) result).si);
             }
             catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex)

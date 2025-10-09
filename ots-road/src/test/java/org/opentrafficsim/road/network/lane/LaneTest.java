@@ -209,13 +209,13 @@ public final class LaneTest implements UNITS
         lane.addListener(listener, Lane.DETECTOR_ADD_EVENT);
         lane.addListener(listener, Lane.DETECTOR_REMOVE_EVENT);
         assertEquals(0, listener.events.size(), "event list is initially empty");
-        LaneDetector sensor1 = new MockSensor("sensor1", Length.instantiateSI(length / 4)).getMock();
+        LaneDetector sensor1 = new MockSensor("sensor1", Length.ofSI(length / 4)).getMock();
         lane.addDetector(sensor1);
         assertEquals(1, listener.events.size(), "event list now contains one event");
         assertEquals(listener.events.get(0).getType(), Lane.DETECTOR_ADD_EVENT, "event indicates that a sensor got added");
         assertEquals(1, lane.getDetectors().size(), "lane now contains one sensor");
         assertEquals(sensor1, lane.getDetectors().get(0), "sensor on lane is sensor1");
-        LaneDetector sensor2 = new MockSensor("sensor2", Length.instantiateSI(length / 2)).getMock();
+        LaneDetector sensor2 = new MockSensor("sensor2", Length.ofSI(length / 2)).getMock();
         lane.addDetector(sensor2);
         assertEquals(2, listener.events.size(), "event list now contains two events");
         assertEquals(listener.events.get(1).getType(), Lane.DETECTOR_ADD_EVENT, "event indicates that a sensor got added");
@@ -223,10 +223,10 @@ public final class LaneTest implements UNITS
         assertEquals(2, sensors.size(), "lane now contains two sensors");
         assertTrue(sensors.contains(sensor1), "sensor list contains sensor1");
         assertTrue(sensors.contains(sensor2), "sensor list contains sensor2");
-        sensors = lane.getDetectors(Length.ZERO, Length.instantiateSI(length / 3), DefaultsNl.VEHICLE);
+        sensors = lane.getDetectors(Length.ZERO, Length.ofSI(length / 3), DefaultsNl.VEHICLE);
         assertEquals(1, sensors.size(), "first third of lane contains 1 sensor");
         assertTrue(sensors.contains(sensor1), "sensor list contains sensor1");
-        sensors = lane.getDetectors(Length.instantiateSI(length / 3), Length.instantiateSI(length), DefaultsNl.VEHICLE);
+        sensors = lane.getDetectors(Length.ofSI(length / 3), Length.ofSI(length), DefaultsNl.VEHICLE);
         assertEquals(1, sensors.size(), "last two-thirds of lane contains 1 sensor");
         assertTrue(sensors.contains(sensor2), "sensor list contains sensor2");
         sensors = lane.getDetectors(DefaultsNl.VEHICLE);
@@ -273,7 +273,7 @@ public final class LaneTest implements UNITS
         {
             // Ignore expected exception
         }
-        LaneDetector badSensor = new MockSensor("sensor3", Length.instantiateSI(-0.1)).getMock();
+        LaneDetector badSensor = new MockSensor("sensor3", Length.ofSI(-0.1)).getMock();
         try
         {
             lane.addDetector(badSensor);
@@ -283,7 +283,7 @@ public final class LaneTest implements UNITS
         {
             // Ignore expected exception
         }
-        badSensor = new MockSensor("sensor4", Length.instantiateSI(length + 0.1)).getMock();
+        badSensor = new MockSensor("sensor4", Length.ofSI(length + 0.1)).getMock();
         try
         {
             lane.addDetector(badSensor);
@@ -296,23 +296,23 @@ public final class LaneTest implements UNITS
         lane.removeDetector(sensor2);
         List<LaneBasedObject> lboList = lane.getLaneBasedObjects();
         assertEquals(0, lboList.size(), "lane initially contains zero lane based objects");
-        LaneBasedObject lbo1 = new MockLaneBasedObject("lbo1", Length.instantiateSI(length / 4)).getMock();
+        LaneBasedObject lbo1 = new MockLaneBasedObject("lbo1", Length.ofSI(length / 4)).getMock();
         listener.getEvents().clear();
         lane.addListener(listener, Lane.OBJECT_ADD_EVENT);
         lane.addListener(listener, Lane.OBJECT_REMOVE_EVENT);
         lane.addLaneBasedObject(lbo1);
         assertEquals(1, listener.getEvents().size(), "adding a lane based object cause the lane to emit an event");
         assertEquals(Lane.OBJECT_ADD_EVENT, listener.getEvents().get(0).getType(), "The emitted event was a OBJECT_ADD_EVENT");
-        LaneBasedObject lbo2 = new MockLaneBasedObject("lbo2", Length.instantiateSI(3 * length / 4)).getMock();
+        LaneBasedObject lbo2 = new MockLaneBasedObject("lbo2", Length.ofSI(3 * length / 4)).getMock();
         lane.addLaneBasedObject(lbo2);
         lboList = lane.getLaneBasedObjects();
         assertEquals(2, lboList.size(), "lane based object list now contains two objects");
         assertTrue(lboList.contains(lbo1), "lane base object list contains lbo1");
         assertTrue(lboList.contains(lbo2), "lane base object list contains lbo2");
-        lboList = lane.getLaneBasedObjects(Length.ZERO, Length.instantiateSI(length / 2));
+        lboList = lane.getLaneBasedObjects(Length.ZERO, Length.ofSI(length / 2));
         assertEquals(1, lboList.size(), "first half of lane contains one object");
         assertEquals(lbo1, lboList.get(0), "object in first haf of lane is lbo1");
-        lboList = lane.getLaneBasedObjects(Length.instantiateSI(length / 2), Length.instantiateSI(length));
+        lboList = lane.getLaneBasedObjects(Length.ofSI(length / 2), Length.ofSI(length));
         assertEquals(1, lboList.size(), "second half of lane contains one object");
         assertEquals(lbo2, lboList.get(0), "object in second haf of lane is lbo2");
         SortedMap<Double, List<LaneBasedObject>> sortedMap = lane.getLaneBasedObjectMap();
@@ -338,7 +338,7 @@ public final class LaneTest implements UNITS
                 expected = new ArrayList<>();
                 expected.add(nextObject);
             }
-            List<LaneBasedObject> got = lane.getObjectAhead(Length.instantiateSI(positionSI));
+            List<LaneBasedObject> got = lane.getObjectAhead(Length.ofSI(positionSI));
             assertEquals(expected, got, "First bunch of objects ahead of d");
 
             nextObject = positionSI > lbo2.getLongitudinalPosition().si ? lbo2
@@ -349,7 +349,7 @@ public final class LaneTest implements UNITS
                 expected = new ArrayList<>();
                 expected.add(nextObject);
             }
-            got = lane.getObjectBehind(Length.instantiateSI(positionSI));
+            got = lane.getObjectBehind(Length.ofSI(positionSI));
             assertEquals(expected, got, "First bunch of objects behind d");
         }
 
@@ -375,7 +375,7 @@ public final class LaneTest implements UNITS
         {
             // Ignore expected exception
         }
-        LaneBasedObject badLBO = new MockLaneBasedObject("badLBO", Length.instantiateSI(-0.1)).getMock();
+        LaneBasedObject badLBO = new MockLaneBasedObject("badLBO", Length.ofSI(-0.1)).getMock();
         try
         {
             lane.addLaneBasedObject(badLBO);
@@ -385,7 +385,7 @@ public final class LaneTest implements UNITS
         {
             // Ignore expected exception
         }
-        badLBO = new MockLaneBasedObject("badLBO", Length.instantiateSI(length + 0.1)).getMock();
+        badLBO = new MockLaneBasedObject("badLBO", Length.ofSI(length + 0.1)).getMock();
         try
         {
             lane.addLaneBasedObject(badLBO);
@@ -575,9 +575,9 @@ public final class LaneTest implements UNITS
         OtsLine2d line = new OtsLine2d(coordinates);
         CrossSectionLink link =
                 new CrossSectionLink(network, "A to B", start, end, DefaultsNl.ROAD, line, null, LaneKeepingPolicy.KEEPRIGHT);
-        Length offsetAtStart = Length.instantiateSI(5);
-        Length offsetAtEnd = Length.instantiateSI(15);
-        Length width = Length.instantiateSI(4);
+        Length offsetAtStart = Length.ofSI(5);
+        Length offsetAtEnd = Length.ofSI(15);
+        Length width = Length.ofSI(4);
         Lane lane =
                 LaneGeometryUtil.createStraightLane(link, "lane", offsetAtStart, offsetAtEnd, width, width, laneType, speedMap);
         OtsLine2d laneCenterLine = lane.getCenterLine();
@@ -650,11 +650,11 @@ public final class LaneTest implements UNITS
                     laneType.addCompatibleGtuType(DefaultsNl.VEHICLE);
                     Map<GtuType, Speed> speedMap = new LinkedHashMap<>();
                     speedMap.put(DefaultsNl.VEHICLE, new Speed(50, KM_PER_HOUR));
-                    Node start = new Node(network, "start", new Point2d(xStart, yStart), Direction.instantiateSI(angle));
+                    Node start = new Node(network, "start", new Point2d(xStart, yStart), Direction.ofSI(angle));
                     double linkLength = 1000;
                     double xEnd = xStart + linkLength * Math.cos(angle);
                     double yEnd = yStart + linkLength * Math.sin(angle);
-                    Node end = new Node(network, "end", new Point2d(xEnd, yEnd), Direction.instantiateSI(angle));
+                    Node end = new Node(network, "end", new Point2d(xEnd, yEnd), Direction.ofSI(angle));
                     Point2d[] coordinates = new Point2d[2];
                     coordinates[0] = start.getPoint();
                     coordinates[1] = end.getPoint();

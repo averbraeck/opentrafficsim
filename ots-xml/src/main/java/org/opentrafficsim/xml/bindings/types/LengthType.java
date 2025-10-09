@@ -15,7 +15,7 @@ public class LengthType extends ExpressionType<Length>
 {
 
     /** Function to convert output from expression to the right type. */
-    private static final SerializableFunction<Object, Length> TO_TYPE = (o) -> Length.instantiateSI(((Number) o).doubleValue());
+    private static final SerializableFunction<Object, Length> TO_TYPE = (o) -> Length.ofSI(((Number) o).doubleValue());
 
     /**
      * Constructor with value.

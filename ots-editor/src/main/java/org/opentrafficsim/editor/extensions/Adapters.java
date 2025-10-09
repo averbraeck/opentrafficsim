@@ -59,11 +59,11 @@ public final class Adapters
         ADAPTERS.put(String.class, new StringAdapter());
         ADAPTERS.put(StripeLateralSync.class, new StripeLateralSyncAdapter());
     }
-    
+
     /** */
     private Adapters()
     {
-        
+
     }
 
     /**

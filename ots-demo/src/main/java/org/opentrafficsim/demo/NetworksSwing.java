@@ -96,7 +96,7 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
             final NetworksModel otsModel = new NetworksModel(simulator);
             if (NetworksParameterDialog.process(otsModel.getInputParameterMap()))
             {
-                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel,
+                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), otsModel,
                         HistoryManagerDevs.noHistory(simulator));
                 OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(), simulator, otsModel,
                         DEFAULT_GTU_COLORERS, otsModel.getNetwork());
@@ -129,7 +129,7 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
         int rows = 0 == columns ? 0 : (int) Math.ceil(graphCount * 1.0 / columns);
         TablePanel charts = new TablePanel(columns, rows);
         RoadSampler sampler = new RoadSampler(getModel().getNetwork());
-        Duration updateInterval = Duration.instantiateSI(10.0);
+        Duration updateInterval = Duration.ofSI(10.0);
         for (int graphIndex = 0; graphIndex < graphCount; graphIndex++)
         {
             List<Lane> start = new ArrayList<>();

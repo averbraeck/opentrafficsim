@@ -29,9 +29,9 @@ public final class RouteTest
     public void routeTest() throws NetworkException
     {
         /*-
-
+        
         TODO THE ROUTE CLASSES HAVE CHANGED SO THE TESTS HAVE TO BE ADAPTED
-
+        
         Route route = new Route("name");
         assertEquals("No arguments constructor creates an empty Route", 0, route.size());
         try
@@ -139,7 +139,7 @@ public final class RouteTest
         assertEquals("vistNextNode should have returned n3", n3, nextNode);
         nextNode = route.visitNextNode();
         assertEquals("vistNextNode should have returned null", null, nextNode);
-
+        
         List<Node> list = new ArrayList<Node>();
         list.add(n0);
         list.add(n1);
@@ -202,7 +202,7 @@ public final class RouteTest
         {
             // Ignore expected exception
         }
-
+        
          */
     }
 

@@ -36,7 +36,7 @@ public class MeanTravelTimePerDistance extends AbstractIndicator<Duration>
     protected <G extends GtuData> Duration calculate(final Query<G, ?> query, final Duration startTime, final Duration endTime,
             final List<TrajectoryGroup<G>> trajectoryGroups)
     {
-        return Duration.instantiateSI(1.0 / this.meanSpeed.getValue(query, startTime, endTime, trajectoryGroups).si);
+        return Duration.ofSI(1.0 / this.meanSpeed.getValue(query, startTime, endTime, trajectoryGroups).si);
     }
 
     @Override

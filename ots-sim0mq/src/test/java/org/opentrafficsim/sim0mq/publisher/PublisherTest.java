@@ -238,7 +238,7 @@ public final class PublisherTest implements OtsModelInterface
                 LaneCombinationList ignoreList = new LaneCombinationList();
                 LaneCombinationList permittedList = new LaneCombinationList();
                 ConflictBuilder.buildConflictsParallel(this.network, getSimulator(),
-                        new ConflictBuilder.FixedWidthGenerator(Length.instantiateSI(2.0)), ignoreList, permittedList);
+                        new ConflictBuilder.FixedWidthGenerator(Length.ofSI(2.0)), ignoreList, permittedList);
             }
             catch (Exception e)
             {

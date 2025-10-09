@@ -49,16 +49,16 @@ The autorun parameter triggers animation when false. These, and other, parameter
         LaneType freewayLane = DefaultsRoadNl.FREEWAY;
         CrossSectionLink link = new CrossSectionLink(network, "AB", nodeA, nodeB, freewayLink, new OtsLine3d(pointA, pointB),
                 null, LaneKeepingPolicy.KEEPRIGHT);
-        LaneGeometryUtil.createStraightLane(link, "Left", Length.instantiateSI(1.75), Length.instantiateSI(3.5), freewayLane,
+        LaneGeometryUtil.createStraightLane(link, "Left", Length.ofSI(1.75), Length.ofSI(3.5), freewayLane,
                 Map.of(car, new Speed(120, SpeedUnit.KM_PER_HOUR)));
-        LaneGeometryUtil.createStraightLane(link, "Right", Length.instantiateSI(-1.75), Length.instantiateSI(3.5), freewayLane,
+        LaneGeometryUtil.createStraightLane(link, "Right", Length.ofSI(-1.75), Length.ofSI(3.5), freewayLane,
                 Map.of(car, new Speed(120, SpeedUnit.KM_PER_HOUR)));
-        LaneGeometryUtil.createStraightStripe(DefaultsRoadNl.SOLID, "1", link, Length.instantiateSI(3.5), 
-                Length.instantiateSI(0.2));
-        LaneGeometryUtil.createStraightStripe(DefaultsRoadNl.DASHED, "2", link, Length.instantiateSI(0.0), 
-                Length.instantiateSI(0.2));
-        LaneGeometryUtil.createStraightStripe(DefaultsRoadNl.SOLID, "3", link, Length.instantiateSI(-3.5), 
-                Length.instantiateSI(0.2));
+        LaneGeometryUtil.createStraightStripe(DefaultsRoadNl.SOLID, "1", link, Length.ofSI(3.5), 
+                Length.ofSI(0.2));
+        LaneGeometryUtil.createStraightStripe(DefaultsRoadNl.DASHED, "2", link, Length.ofSI(0.0), 
+                Length.ofSI(0.2));
+        LaneGeometryUtil.createStraightStripe(DefaultsRoadNl.SOLID, "3", link, Length.ofSI(-3.5), 
+                Length.ofSI(0.2));
         return network;
     }
 ```
@@ -234,7 +234,7 @@ Next, factories for model components are set up similar to how this was done bef
 ```java
     LmrsFactory tactical = new LmrsFactory.Factory().withDefaultIncentives().build(randomStream);
     ParameterFactoryByType params = new ParameterFactoryByType();
-    params.addParameter(truck, ParameterTypes.A, Acceleration.instantiateSI(0.8));
+    params.addParameter(truck, ParameterTypes.A, Acceleration.ofSI(0.8));
     LaneBasedStrategicalPlannerFactory<?> strategical = new LaneBasedStrategicalRoutePlannerFactory(tactical, params);
     Factory factoryOD = new DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory(strategical);
 ```
@@ -253,9 +253,9 @@ Suppose we want non-default dimensions for cars, but for trucks the defaults are
 ```java
     Set<GtuTemplate> templates = new LinkedHashSet<>();
     templates.add(new GtuTemplate(car,
-            new ConstantGenerator<>(Length.instantiateSI(4.5)),
-            new ConstantGenerator<>(Length.instantiateSI(1.9)), 
-            new ConstantGenerator<>(Speed.instantiateSI(50))));
+            new ConstantGenerator<>(Length.ofSI(4.5)),
+            new ConstantGenerator<>(Length.ofSI(1.9)), 
+            new ConstantGenerator<>(Speed.ofSI(50))));
     factoryOD.setTemplates(templates);
     GtuType.registerTemplateSupplier(truck, Defaults.NL);
 ```

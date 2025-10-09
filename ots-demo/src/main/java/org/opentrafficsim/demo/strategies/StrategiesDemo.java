@@ -155,8 +155,7 @@ public class StrategiesDemo extends AbstractSimulationScript
     {
         super("Strategies demo", "Demo of driving strategies in LMRS.");
         setGtuColorers(List.of(new FixedColorer<>(Color.BLUE, "Blue"), new SpeedGtuColorer(), new AccelerationGtuColorer(),
-                new SocialPressureGtuColorer(),
-                new DesiredHeadwayGtuColorer(Duration.instantiateSI(0.5), Duration.instantiateSI(1.6)),
+                new SocialPressureGtuColorer(), new DesiredHeadwayGtuColorer(Duration.ofSI(0.5), Duration.ofSI(1.6)),
                 new IncentiveGtuColorer(IncentiveSocioSpeed.class)));
         try
         {
@@ -428,7 +427,7 @@ public class StrategiesDemo extends AbstractSimulationScript
                 this.queue.clear();
             }
         }
-        getSimulator().scheduleEventRel(Duration.instantiateSI(0.5), () -> checkVehicleNumber());
+        getSimulator().scheduleEventRel(Duration.ofSI(0.5), () -> checkVehicleNumber());
     }
 
     /** Lane change listener. */
@@ -497,14 +496,14 @@ public class StrategiesDemo extends AbstractSimulationScript
         Node nodeB = new Node(network, "B", new Point2d(radius, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
 
         ContinuousArc half1 =
-                new ContinuousArc(new DirectedPoint2d(radius, 0.0, Math.PI / 2), radius, true, Angle.instantiateSI(Math.PI));
+                new ContinuousArc(new DirectedPoint2d(radius, 0.0, Math.PI / 2), radius, true, Angle.ofSI(Math.PI));
         List<Lane> lanes1 = new LaneFactory(network, nodeB, nodeA, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPRIGHT,
-                DefaultsNl.VEHICLE, half1).leftToRight(0.0, Length.instantiateSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit)
+                DefaultsNl.VEHICLE, half1).leftToRight(0.0, Length.ofSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit)
                         .addLanes(DefaultsRoadNl.DASHED).getLanes();
         ContinuousArc half2 =
-                new ContinuousArc(new DirectedPoint2d(-radius, 0.0, -Math.PI / 2), radius, true, Angle.instantiateSI(Math.PI));
+                new ContinuousArc(new DirectedPoint2d(-radius, 0.0, -Math.PI / 2), radius, true, Angle.ofSI(Math.PI));
         List<Lane> lanes2 = new LaneFactory(network, nodeA, nodeB, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPRIGHT,
-                DefaultsNl.VEHICLE, half2).leftToRight(0.0, Length.instantiateSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit)
+                DefaultsNl.VEHICLE, half2).leftToRight(0.0, Length.ofSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit)
                         .addLanes(DefaultsRoadNl.DASHED).getLanes();
 
         // Strategical factories
@@ -516,10 +515,10 @@ public class StrategiesDemo extends AbstractSimulationScript
         parameterFactory.addParameter(DefaultsNl.TRUCK, LmrsParameters.SOCIO, 1.0);
         parameterFactory.addParameter(DefaultsNl.CAR, LmrsParameters.VGAIN, new Speed(35.0, SpeedUnit.KM_PER_HOUR));
         parameterFactory.addParameter(DefaultsNl.TRUCK, LmrsParameters.VGAIN, new Speed(50.0, SpeedUnit.KM_PER_HOUR));
-        parameterFactory.addParameter(ParameterTypes.TMAX, Duration.instantiateSI(1.6));
+        parameterFactory.addParameter(ParameterTypes.TMAX, Duration.ofSI(1.6));
         parameterFactory.addParameter(DefaultsNl.CAR, ParameterTypes.FSPEED,
                 new DistNormal(this.stream, 123.7 / 120.0, 12.0 / 120.0));
-        parameterFactory.addParameter(DefaultsNl.TRUCK, ParameterTypes.A, Acceleration.instantiateSI(0.4));
+        parameterFactory.addParameter(DefaultsNl.TRUCK, ParameterTypes.A, Acceleration.ofSI(0.4));
         parameterFactory.addParameter(DefaultsNl.TRUCK, ParameterTypes.FSPEED, 1.0);
         for (GtuType gtuType : new GtuType[] {DefaultsNl.CAR, DefaultsNl.TRUCK})
         {
@@ -546,7 +545,7 @@ public class StrategiesDemo extends AbstractSimulationScript
         }
         for (int i = 0; i < lanes1.size(); i++)
         {
-            Length pos = Length.instantiateSI(10.0);
+            Length pos = Length.ofSI(10.0);
             Length gap = lanes1.get(i).getLength().plus(lanes2.get(i).getLength()).divide(this.gtuNum / 2);
             for (int j = 0; j < 2; j++)
             {
@@ -604,7 +603,7 @@ public class StrategiesDemo extends AbstractSimulationScript
                 gtuCharacteristics.getWidth(), gtuCharacteristics.getMaximumSpeed(), gtuCharacteristics.getFront(), net);
         gtu.setMaximumAcceleration(gtuCharacteristics.getMaximumAcceleration());
         gtu.setMaximumDeceleration(gtuCharacteristics.getMaximumDeceleration());
-        gtu.setNoLaneChangeDistance(Length.instantiateSI(50));
+        gtu.setNoLaneChangeDistance(Length.ofSI(50));
         gtu.setBookkeeping(LaneBookkeeping.INSTANT);
 
         // strategical planner

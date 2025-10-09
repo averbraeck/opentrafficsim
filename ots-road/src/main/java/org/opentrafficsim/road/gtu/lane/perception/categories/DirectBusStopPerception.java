@@ -71,8 +71,7 @@ public class DirectBusStopPerception extends AbstractPerceptionCategory<LaneBase
                     new MultiLanePerceptionIterable<>(getGtu());
             for (RelativeLane lane : getPerception().getLaneStructure().getRootCrossSection())
             {
-                Iterable<
-                        Entry<BusStop>> busStops = getPerception().getLaneStructure().getDownstreamObjects(lane, BusStop.class,
+                Iterable<Entry<BusStop>> busStops = getPerception().getLaneStructure().getDownstreamObjects(lane, BusStop.class,
                         RelativePosition.FRONT, true);
 
                 LaneRecord record = getPerception().getLaneStructure().getRootRecord(lane);

@@ -57,7 +57,7 @@ public final class Segments
     {
         if (acceleration.lt0() && startSpeed.si / -acceleration.si < duration.si)
         {
-            Duration durationTillStandStill = Duration.instantiateSI(startSpeed.si / -acceleration.si);
+            Duration durationTillStandStill = Duration.ofSI(startSpeed.si / -acceleration.si);
             this.segments.add(new Segment(startSpeed, durationTillStandStill, acceleration));
             this.segments.add(Segment.standStill(duration.minus(durationTillStandStill)));
         }

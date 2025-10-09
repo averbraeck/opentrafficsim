@@ -89,7 +89,7 @@ public class ContourPlotAcceleration extends AbstractContourPlot<Acceleration>
                 @Override
                 public Acceleration finalize(final ArithmeticMean<Double, Double> intermediate)
                 {
-                    return Acceleration.instantiateSI(intermediate.getMean());
+                    return Acceleration.ofSI(intermediate.getMean());
                 }
 
                 @SuppressWarnings("synthetic-access")

@@ -1,5 +1,13 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.canBeAhead;
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.gentleUrgency;
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.getFollower;
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.getMergeDistance;
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.requiredBufferSpace;
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.stopForEnd;
+import static org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization.tagAlongAcceleration;
+
 import java.util.SortedSet;
 
 import org.djunits.unit.AccelerationUnit;
@@ -283,7 +291,7 @@ public interface Synchronization extends LmrsParameters
 
             // for short ramps, include braking distance, i.e. we -do- select a gap somewhat upstream of the merge point;
             // should we abandon this gap, we still have braking distance and minimum lane change distance left
-            Length xMergeSync = xCur.minus(Length.instantiateSI(.5 * ownSpeed.si * ownSpeed.si / b.si));
+            Length xMergeSync = xCur.minus(Length.ofSI(.5 * ownSpeed.si * ownSpeed.si / b.si));
             xMergeSync = Length.min(xMerge, xMergeSync);
 
             // abandon the gap if the sync vehicle is no longer adjacent, in congestion within xMergeSync, or too far
@@ -375,7 +383,7 @@ public interface Synchronization extends LmrsParameters
                     double c = requiredBufferSpace(ownSpeed, nCur, x0, t0, lc, dCoop).si;
                     double t = (xCur.si - follower.getDistance().si - c) / follower.getSpeed().si;
                     double xGap = ownSpeed.si * (tMin.si + desire * (tMax.si - tMin.si));
-                    Acceleration acc = Acceleration.instantiateSI(2 * (xCur.si - c - ownSpeed.si * t - xGap) / (t * t));
+                    Acceleration acc = Acceleration.ofSI(2 * (xCur.si - c - ownSpeed.si * t - xGap) / (t * t));
                     if (follower.getSpeed().eq0() || acc.si < -ownSpeed.si / t || t < 0)
                     {
                         // inappropriate to get behind
@@ -397,7 +405,7 @@ public interface Synchronization extends LmrsParameters
                         double c = requiredBufferSpace(ownSpeed, nCur, x0, t0, lc, dCoop).si;
                         double t = (xCur.si - leaders.first().getDistance().si - c) / leaders.first().getSpeed().si;
                         double xGap = ownSpeed.si * (tMin.si + desire * (tMax.si - tMin.si));
-                        Acceleration acc = Acceleration.instantiateSI(2 * (xCur.si - c - ownSpeed.si * t - xGap) / (t * t));
+                        Acceleration acc = Acceleration.ofSI(2 * (xCur.si - c - ownSpeed.si * t - xGap) / (t * t));
                         if (!(leaders.first().getSpeed().eq0() || acc.si < -ownSpeed.si / t || t < 0))
                         {
                             a = Acceleration.max(a, acc);

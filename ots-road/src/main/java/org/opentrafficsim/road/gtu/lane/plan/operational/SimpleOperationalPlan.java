@@ -96,7 +96,7 @@ public class SimpleOperationalPlan implements Serializable
         Throw.whenNull(deviation, "Deviation may not be null.");
         Throw.whenNull(laneChangeDirection, "Lane change direction may not be null.");
         checkAcceleration(acceleration);
-        this.acceleration = Acceleration.max(Acceleration.instantiateSI(-100.0), acceleration);
+        this.acceleration = Acceleration.max(Acceleration.ofSI(-100.0), acceleration);
         this.duration = duration;
         this.deviation = deviation;
         this.laneChangeDirection = laneChangeDirection;
@@ -164,7 +164,7 @@ public class SimpleOperationalPlan implements Serializable
     public final void minimizeAcceleration(final Acceleration a)
     {
         checkAcceleration(a);
-        this.acceleration = Acceleration.max(Acceleration.instantiateSI(-100.0), Acceleration.min(this.acceleration, a));
+        this.acceleration = Acceleration.max(Acceleration.ofSI(-100.0), Acceleration.min(this.acceleration, a));
     }
 
     /**

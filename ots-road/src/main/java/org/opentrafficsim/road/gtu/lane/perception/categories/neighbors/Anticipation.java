@@ -70,7 +70,7 @@ public interface Anticipation
                 double dx = neighborTriplet.speed().si * t + .5 * neighborTriplet.acceleration().si * t * t;
                 // upstream neighbor approaches when faster
                 return new NeighborTriplet(
-                        Length.instantiateSI(
+                        Length.ofSI(
                                 neighborTriplet.headway().si + (downstream ? 1.0 : -1.0) * (dx - traveledDistanceReference.si)),
                         Speed.ZERO, Acceleration.ZERO);
             }
@@ -79,9 +79,8 @@ public interface Anticipation
             double dv = neighborTriplet.acceleration().si * duration.si;
             // upstream neighbor approaches when faster
             return new NeighborTriplet(
-                    Length.instantiateSI(
-                            neighborTriplet.headway().si + (downstream ? 1.0 : -1.0) * (dx - traveledDistanceReference.si)),
-                    Speed.instantiateSI(neighborTriplet.speed().si + dv), neighborTriplet.acceleration());
+                    Length.ofSI(neighborTriplet.headway().si + (downstream ? 1.0 : -1.0) * (dx - traveledDistanceReference.si)),
+                    Speed.ofSI(neighborTriplet.speed().si + dv), neighborTriplet.acceleration());
         }
 
         @Override

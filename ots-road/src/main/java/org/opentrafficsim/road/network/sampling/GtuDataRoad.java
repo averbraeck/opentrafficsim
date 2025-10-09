@@ -90,7 +90,7 @@ public class GtuDataRoad implements GtuData
         {
             double v1 = this.gtu.getPosition().lane().getSpeedLimit(this.gtu.getType()).si;
             double v2 = this.gtu.getMaximumSpeed().si;
-            return Speed.instantiateSI(v1 < v2 ? v1 : v2);
+            return Speed.ofSI(v1 < v2 ? v1 : v2);
         }
         catch (NetworkException exception)
         {

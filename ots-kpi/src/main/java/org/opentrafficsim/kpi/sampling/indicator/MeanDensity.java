@@ -44,7 +44,7 @@ public class MeanDensity extends AbstractIndicator<LinearDensity>
         {
             area += trajectoryGroup.getLength().si * (endTime.si - startTime.si);
         }
-        return LinearDensity.instantiateSI(ttt / area);
+        return LinearDensity.ofSI(ttt / area);
     }
 
     @Override

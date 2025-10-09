@@ -13,8 +13,8 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 
-import org.djutils.exceptions.Try;
 import org.djutils.swing.multislider.AbstractMultiSlider.FinalValueChangeListener;
+import org.djutils.test.UnitTest;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -48,21 +48,21 @@ public final class ProbabilityDistributionTest
     {
         List<String> cat = List.of("A", "B", "C");
         double[] probs = new double[] {0.1, 0.3, 0.6};
-        Try.testFail(() -> new ProbabilityDistributionEditor<>(null, probs, 2), NullPointerException.class);
-        Try.testFail(() -> new ProbabilityDistributionEditor<>(cat, null, 2), NullPointerException.class);
-        Try.testFail(() -> new ProbabilityDistributionEditor<>(cat, probs, 0), IllegalArgumentException.class);
-        Try.testFail(() -> new ProbabilityDistributionEditor<>(cat, new double[] {0.1, 0.3, 0.5}, 2),
+        UnitTest.testFail(() -> new ProbabilityDistributionEditor<>(null, probs, 2), NullPointerException.class);
+        UnitTest.testFail(() -> new ProbabilityDistributionEditor<>(cat, null, 2), NullPointerException.class);
+        UnitTest.testFail(() -> new ProbabilityDistributionEditor<>(cat, probs, 0), IllegalArgumentException.class);
+        UnitTest.testFail(() -> new ProbabilityDistributionEditor<>(cat, new double[] {0.1, 0.3, 0.5}, 2),
                 IllegalArgumentException.class);
-        Try.testFail(() -> new ProbabilityDistributionEditor<>(cat, new double[] {-0.1, 0.3, 0.7}, 2),
+        UnitTest.testFail(() -> new ProbabilityDistributionEditor<>(cat, new double[] {-0.1, 0.3, 0.7}, 2),
                 IllegalArgumentException.class);
-        Try.testFail(() -> new ProbabilityDistributionEditor<>(List.of("A", "B", "B"), probs, 2),
+        UnitTest.testFail(() -> new ProbabilityDistributionEditor<>(List.of("A", "B", "B"), probs, 2),
                 IllegalArgumentException.class);
 
         ProbabilityDistributionEditor<String> edit = new ProbabilityDistributionEditor<>(cat, probs, 2);
         edit.setCategoryFontSize(11.0f);
         edit.setCategoryLabelFunction((t, p) -> "");
-        Try.testFail(() -> edit.setCategoryLabelFunction(null), NullPointerException.class);
-        Try.testFail(() -> edit.setCategoryFontSize(0.0f), IllegalArgumentException.class);
+        UnitTest.testFail(() -> edit.setCategoryLabelFunction(null), NullPointerException.class);
+        UnitTest.testFail(() -> edit.setCategoryFontSize(0.0f), IllegalArgumentException.class);
         double[] probsOut = edit.getProbabilities();
         for (int i = 0; i < probs.length; i++)
         {
@@ -70,9 +70,9 @@ public final class ProbabilityDistributionTest
             assertEquals(probs[i], edit.getProbability(i), 1e-9, "Output probability not correct.");
             assertEquals(probs[i], edit.getProbability(cat.get(i)), 1e-9, "Output probability not correct.");
         }
-        Try.testFail(() -> edit.getProbability(-1), IndexOutOfBoundsException.class);
-        Try.testFail(() -> edit.getProbability(cat.size()), IndexOutOfBoundsException.class);
-        Try.testFail(() -> edit.getProbability("D"), IllegalArgumentException.class);
+        UnitTest.testFail(() -> edit.getProbability(-1), IndexOutOfBoundsException.class);
+        UnitTest.testFail(() -> edit.getProbability(cat.size()), IndexOutOfBoundsException.class);
+        UnitTest.testFail(() -> edit.getProbability("D"), IllegalArgumentException.class);
 
         ProbabilityDistributionEditor<Integer> edit2 = new ProbabilityDistributionEditor<>(List.of(1, 2, 3), probs, 2);
         edit2.getProbability(1);
@@ -95,7 +95,8 @@ public final class ProbabilityDistributionTest
                 new ProbabilityDistributionEditor<>(List.of(DefaultsNl.CAR, DefaultsNl.VAN, DefaultsNl.BUS, DefaultsNl.TRUCK),
                         new double[] {0.4, 0.3, 0.25, 0.05}, 2);
         slider.setCategoryFontSize(11.0f);
-        slider.setCategoryLabelFunction((g, p) -> String.format("%s %.1f%%", g.getId().replace("NL.", "").toLowerCase(), p * 100.0));
+        slider.setCategoryLabelFunction(
+                (g, p) -> String.format("%s %.1f%%", g.getId().replace("NL.", "").toLowerCase(), p * 100.0));
         // slider.setPaintTicks(false);
         // slider.setPaintLabels(true);
         panel.add(slider, BorderLayout.PAGE_START);

@@ -75,8 +75,8 @@ public final class SamplerTest
     @Test
     public void testInitFinalize()
     {
-        Length length = Length.instantiateSI(1000.0);
-        Duration end = Duration.instantiateSI(3600.0);
+        Length length = Length.ofSI(1000.0);
+        Duration end = Duration.ofSI(3600.0);
         TestLinkData link = new TestLinkData("AB", length);
         TestLaneData lane1 = new TestLaneData("1", length, link);
         TestLaneData lane2 = new TestLaneData("2", length, link);
@@ -87,34 +87,34 @@ public final class SamplerTest
             TestSampler sampler = new TestSampler(Collections.emptySet(), Collections.emptySet(), simulator);
 
             sampler.registerSpaceTimeRegion(new SpaceTimeRegion<TestLaneData>(lane1, Length.ZERO, length, Duration.ZERO, end));
-            sampler.registerSpaceTimeRegion(new SpaceTimeRegion<TestLaneData>(lane2, Length.ZERO, length,
-                    Duration.instantiateSI(100.0), Duration.instantiateSI(200.0)));
+            sampler.registerSpaceTimeRegion(
+                    new SpaceTimeRegion<TestLaneData>(lane2, Length.ZERO, length, Duration.ofSI(100.0), Duration.ofSI(200.0)));
 
             if (registerLater)
             {
                 // move clock before we register next space-time regions
-                simulator.executeUntil(Duration.instantiateSI(250.0));
+                simulator.executeUntil(Duration.ofSI(250.0));
                 sampler.stopRecording(lane2); // should do nothing, end-time is 3600s & this method should be called through sim
             }
-            sampler.registerSpaceTimeRegion(new SpaceTimeRegion<>(lane2, Length.ZERO, length, Duration.instantiateSI(300.0),
-                    Duration.instantiateSI(400.0)));
-            sampler.registerSpaceTimeRegion(new SpaceTimeRegion<>(lane2, Length.ZERO, length, Duration.instantiateSI(350.0),
-                    Duration.instantiateSI(450.0)));
+            sampler.registerSpaceTimeRegion(
+                    new SpaceTimeRegion<>(lane2, Length.ZERO, length, Duration.ofSI(300.0), Duration.ofSI(400.0)));
+            sampler.registerSpaceTimeRegion(
+                    new SpaceTimeRegion<>(lane2, Length.ZERO, length, Duration.ofSI(350.0), Duration.ofSI(450.0)));
 
-            simulator.executeUntil(Duration.instantiateSI(3600.0));
+            simulator.executeUntil(Duration.ofSI(3600.0));
 
             // Let's check that all the right events, and no wrong events, occurred.
             var inits = sampler.getInits();
             assertTrue(inits.remove(new Entry(Duration.ZERO, lane1)));
-            assertTrue(inits.remove(new Entry(Duration.instantiateSI(100.0), lane2)));
-            assertTrue(inits.remove(new Entry(Duration.instantiateSI(300.0), lane2)));
+            assertTrue(inits.remove(new Entry(Duration.ofSI(100.0), lane2)));
+            assertTrue(inits.remove(new Entry(Duration.ofSI(300.0), lane2)));
             assertTrue(inits.isEmpty());
 
             var finals = sampler.getFinals();
             assertTrue(finals.remove(new Entry(end, lane1)));
-            assertTrue(finals.remove(new Entry(Duration.instantiateSI(200.0), lane2)));
+            assertTrue(finals.remove(new Entry(Duration.ofSI(200.0), lane2)));
             // no stop at 400 due to overlap with 350-450
-            assertNotNull(finals.remove(new Entry(Duration.instantiateSI(450.0), lane2)));
+            assertNotNull(finals.remove(new Entry(Duration.ofSI(450.0), lane2)));
             assertTrue(finals.isEmpty());
         }
     }
@@ -146,7 +146,7 @@ public final class SamplerTest
     @Test
     public void testSmallDataCase()
     {
-        Length length = Length.instantiateSI(1000.0);
+        Length length = Length.ofSI(1000.0);
         TestLinkData link = new TestLinkData("AB", length);
         TestLaneData lane1 = new TestLaneData("1", length, link);
         TestLaneData lane2 = new TestLaneData("2", length, link);
@@ -159,45 +159,40 @@ public final class SamplerTest
                 Set.of(filterDataGtuType, filterDataCrossSection), simulator);
 
         SpaceTimeRegion<TestLaneData> space1 =
-                new SpaceTimeRegion<>(lane1, Length.ZERO, length, Duration.ZERO, Duration.instantiateSI(60.0));
+                new SpaceTimeRegion<>(lane1, Length.ZERO, length, Duration.ZERO, Duration.ofSI(60.0));
         SpaceTimeRegion<TestLaneData> space2 =
-                new SpaceTimeRegion<>(lane2, Length.ZERO, length, Duration.ZERO, Duration.instantiateSI(60.0));
+                new SpaceTimeRegion<>(lane2, Length.ZERO, length, Duration.ZERO, Duration.ofSI(60.0));
         sampler.registerSpaceTimeRegion(space1);
         sampler.registerSpaceTimeRegion(space2);
 
-        simulator.executeUntil(Duration.instantiateSI(60.0));
+        simulator.executeUntil(Duration.ofSI(60.0));
 
-        TestGtuData car1 = new TestGtuData("1", "A", "B", "car", "routeAB", Speed.instantiateSI(33.0));
-        TestGtuData car2 = new TestGtuData("2", "A", "B", "car", "routeAB", Speed.instantiateSI(33.0));
-        TestGtuData car3 = new TestGtuData("3", "A", "B", "car", "routeAB", Speed.instantiateSI(33.0));
-        TestGtuData truck = new TestGtuData("4", "A", "B", "truck", "routeAB", Speed.instantiateSI(22.0));
+        TestGtuData car1 = new TestGtuData("1", "A", "B", "car", "routeAB", Speed.ofSI(33.0));
+        TestGtuData car2 = new TestGtuData("2", "A", "B", "car", "routeAB", Speed.ofSI(33.0));
+        TestGtuData car3 = new TestGtuData("3", "A", "B", "car", "routeAB", Speed.ofSI(33.0));
+        TestGtuData truck = new TestGtuData("4", "A", "B", "truck", "routeAB", Speed.ofSI(22.0));
 
-        sampler.addGtuWithSnapshot(lane1, length.times(1.1), Speed.instantiateSI(25.0), Acceleration.ZERO, Duration.ZERO, car1);
+        sampler.addGtuWithSnapshot(lane1, length.times(1.1), Speed.ofSI(25.0), Acceleration.ZERO, Duration.ZERO, car1);
         assertTrue(sampler.getSamplerData().getTrajectoryGroup(lane1).getTrajectories().isEmpty(),
                 "Add GTU beyond length of lane should not have added data.");
         assertTrue(sampler.getSamplerData().isEmpty());
 
         // add data
-        sampler.addGtuWithSnapshot(lane1, Length.ZERO, Speed.instantiateSI(25.0), Acceleration.ZERO, Duration.ZERO, car1);
-        sampler.addGtuWithSnapshot(lane1, Length.ZERO, Speed.instantiateSI(25.0), Acceleration.ZERO,
-                Duration.instantiateSI(10.0), car2);
-        sampler.addGtuWithSnapshot(lane2, Length.ZERO, Speed.instantiateSI(20.0), Acceleration.ZERO,
-                Duration.instantiateSI(10.0), truck);
+        sampler.addGtuWithSnapshot(lane1, Length.ZERO, Speed.ofSI(25.0), Acceleration.ZERO, Duration.ZERO, car1);
+        sampler.addGtuWithSnapshot(lane1, Length.ZERO, Speed.ofSI(25.0), Acceleration.ZERO, Duration.ofSI(10.0), car2);
+        sampler.addGtuWithSnapshot(lane2, Length.ZERO, Speed.ofSI(20.0), Acceleration.ZERO, Duration.ofSI(10.0), truck);
 
         // test existing GTU on non measuring lane
-        sampler.snapshot(lane3, Length.ZERO, Speed.instantiateSI(25.0), Acceleration.ZERO, Duration.ZERO, car1);
+        sampler.snapshot(lane3, Length.ZERO, Speed.ofSI(25.0), Acceleration.ZERO, Duration.ZERO, car1);
         // test non-existing (in sampler) GTU on existing lane
-        sampler.snapshot(lane1, Length.ZERO, Speed.instantiateSI(25.0), Acceleration.ZERO, Duration.ZERO, car3);
+        sampler.snapshot(lane1, Length.ZERO, Speed.ofSI(25.0), Acceleration.ZERO, Duration.ZERO, car3);
         sampler.removeGtu(lane3, car1);
         sampler.removeGtu(lane1, car3);
 
         // remove
-        sampler.removeGtuWithSnapshot(lane1, length, Speed.instantiateSI(25.0), Acceleration.ZERO, Duration.instantiateSI(40.0),
-                car1);
-        sampler.removeGtuWithSnapshot(lane1, length, Speed.instantiateSI(25.0), Acceleration.ZERO, Duration.instantiateSI(50.0),
-                car2);
-        sampler.removeGtuWithSnapshot(lane2, length, Speed.instantiateSI(20.0), Acceleration.ZERO, Duration.instantiateSI(60.0),
-                truck);
+        sampler.removeGtuWithSnapshot(lane1, length, Speed.ofSI(25.0), Acceleration.ZERO, Duration.ofSI(40.0), car1);
+        sampler.removeGtuWithSnapshot(lane1, length, Speed.ofSI(25.0), Acceleration.ZERO, Duration.ofSI(50.0), car2);
+        sampler.removeGtuWithSnapshot(lane2, length, Speed.ofSI(20.0), Acceleration.ZERO, Duration.ofSI(60.0), truck);
 
         assertEquals(2, sampler.getSamplerData().getLanes().size());
 
@@ -295,7 +290,7 @@ public final class SamplerTest
         assertNotNull(query.toString());
         assertFalse(query.getSpaceTimeIterator().hasNext());
 
-        Duration t = Duration.instantiateSI(30.0);
+        Duration t = Duration.ofSI(30.0);
         for (boolean wholeLink : new boolean[] {false, true})
         {
             for (boolean includeTrucks : new boolean[] {false, true})
@@ -320,13 +315,13 @@ public final class SamplerTest
                 }
                 for (double tEnd = 0.0; tEnd < 35.0; tEnd += 10.0)
                 {
-                    List<TrajectoryGroup<TestGtuData>> groups = query.getTrajectoryGroups(Duration.instantiateSI(tEnd));
+                    List<TrajectoryGroup<TestGtuData>> groups = query.getTrajectoryGroups(Duration.ofSI(tEnd));
                     testTrajectoryGroup(groups.get(0));
 
                     assertEquals(wholeLink ? 2 : 1, groups.size());
                     assertEquals(wholeLink ? 2 : 1, query.spaceTimeRegionSize());
 
-                    t = Duration.instantiateSI(tEnd);
+                    t = Duration.ofSI(tEnd);
                     double t2 = tEnd > 10.0 ? tEnd - 10.0 : 0.0;
                     double totalTravelDistance = tEnd * 25.0 + t2 * 25.0 + (wholeLink & includeTrucks ? t2 * 20.0 : 0.0);
                     TotalTravelDistance totalTravelDistanceKpi = new TotalTravelDistance();
@@ -363,12 +358,12 @@ public final class SamplerTest
                     double refTravelTime =
                             tEnd * 25.0 / 35.0 + t2 * 25.0 / 35.0 + (wholeLink & includeTrucks ? t2 * 20.0 / 35.0 : 0.0);
                     assertEquals(totalTravelTime - refTravelTime,
-                            new TotalDelay(Speed.instantiateSI(35.0)).getValue(query, t, groups).si, 0.001);
+                            new TotalDelay(Speed.ofSI(35.0)).getValue(query, t, groups).si, 0.001);
                     // ref based on provider giving pre-defined ref speeds per GTU type
                     refTravelTime =
                             tEnd * 25.0 / 33.0 + t2 * 25.0 / 33.0 + (wholeLink & includeTrucks ? t2 * 20.0 / 22.0 : 0.0);
                     assertEquals(totalTravelTime - refTravelTime,
-                            new TotalDelay((lane, gtuTypeId) -> Speed.instantiateSI(gtuTypeId.equals("car") ? 33.0 : 22.0))
+                            new TotalDelay((lane, gtuTypeId) -> Speed.ofSI(gtuTypeId.equals("car") ? 33.0 : 22.0))
                                     .getValue(query, t, groups).si,
                             0.001);
                     // ref based on recorded ref speed, which is equal to ref speeds per GTU type
@@ -394,18 +389,18 @@ public final class SamplerTest
         {
             assertTrue(group.contains((Trajectory<?>) group.getTrajectories().get(0)));
         }
-        assertEquals(group.size(), group.getTrajectoryGroup(Length.ZERO, Length.instantiateSI(1000.0)).size());
-        assertEquals(0, group.getTrajectoryGroup(Length.instantiateSI(900.0), Length.instantiateSI(1000.0)).size());
-        assertEquals(group.size(), group.getTrajectoryGroup(Duration.ZERO, Duration.instantiateSI(60.0)).size());
-        assertEquals(0, group.getTrajectoryGroup(Duration.instantiateSI(50.0), Duration.instantiateSI(60.0)).size());
+        assertEquals(group.size(), group.getTrajectoryGroup(Length.ZERO, Length.ofSI(1000.0)).size());
+        assertEquals(0, group.getTrajectoryGroup(Length.ofSI(900.0), Length.ofSI(1000.0)).size());
+        assertEquals(group.size(), group.getTrajectoryGroup(Duration.ZERO, Duration.ofSI(60.0)).size());
+        assertEquals(0, group.getTrajectoryGroup(Duration.ofSI(50.0), Duration.ofSI(60.0)).size());
 
         group.hashCode();
         assertTrue(group.equals(group));
         assertFalse(group.equals(null));
         assertFalse(group.equals("This is not a group."));
-        assertFalse(group.equals(new TrajectoryGroup<>(Duration.instantiateSI(1.0), lane)));
-        assertFalse(group.equals(new TrajectoryGroup<>(Duration.ZERO, Length.ONE, Length.instantiateSI(1000.0), lane)));
-        assertFalse(group.equals(new TrajectoryGroup<>(Duration.ZERO, Length.ZERO, Length.instantiateSI(1001.0), lane)));
+        assertFalse(group.equals(new TrajectoryGroup<>(Duration.ofSI(1.0), lane)));
+        assertFalse(group.equals(new TrajectoryGroup<>(Duration.ZERO, Length.ONE, Length.ofSI(1000.0), lane)));
+        assertFalse(group.equals(new TrajectoryGroup<>(Duration.ZERO, Length.ZERO, Length.ofSI(1001.0), lane)));
         assertNotNull(group.toString());
     }
 
@@ -453,8 +448,7 @@ public final class SamplerTest
     public void crossSectionTest(final TestSampler sampler, final TestLinkData link)
     {
         FilterDataSet filterDataSet = new FilterDataSet();
-        CrossSection crossSection =
-                new CrossSection(Set.of(new LanePosition(link.getLanes().get(0), Length.instantiateSI(600.0))));
+        CrossSection crossSection = new CrossSection(Set.of(new LanePosition(link.getLanes().get(0), Length.ofSI(600.0))));
         assertNotNull(crossSection.toString());
         assertEquals(1, crossSection.size());
         assertEquals(1, crossSection.getLanePositions().size());
@@ -466,9 +460,9 @@ public final class SamplerTest
         for (int i = 0; i < tArray.length; i++)
         {
             Query<TestGtuData, TestLaneData> query = new Query<>(sampler, "id", "description", filterDataSet);
-            query.addSpaceTimeRegion(link.getLanes().get(0), Length.ZERO, Length.instantiateSI(1000.0), Duration.ZERO,
-                    Duration.instantiateSI(tArray[i]));
-            List<TrajectoryGroup<TestGtuData>> groups = query.getTrajectoryGroups(Duration.instantiateSI(60.0));
+            query.addSpaceTimeRegion(link.getLanes().get(0), Length.ZERO, Length.ofSI(1000.0), Duration.ZERO,
+                    Duration.ofSI(tArray[i]));
+            List<TrajectoryGroup<TestGtuData>> groups = query.getTrajectoryGroups(Duration.ofSI(60.0));
             assertEquals(i, groups.get(0).size());
         }
 
@@ -553,7 +547,7 @@ public final class SamplerTest
         @Override
         protected FloatDirection convertValue(final float value)
         {
-            return FloatDirection.instantiateSI(value);
+            return FloatDirection.ofSI(value);
         }
 
         @Override

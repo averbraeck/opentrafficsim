@@ -11,12 +11,12 @@ import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.base.geometry.OtsShape;
-import org.opentrafficsim.draw.LineLocatable;
 import org.opentrafficsim.draw.DrawLevel;
+import org.opentrafficsim.draw.LineLocatable;
 import org.opentrafficsim.draw.OtsRenderable;
 import org.opentrafficsim.draw.PaintLine;
-import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.RenderableTextSource;
+import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation.CrossSectionElementData;
 import org.opentrafficsim.draw.road.LaneAnimation.LaneData;
 

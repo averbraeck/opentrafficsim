@@ -39,7 +39,7 @@ public class Documentation
     static
     {
         // @docs/04-demand/iat-generator.md
-        Supplier<Duration> constant = new ConstantSupplier<>(Duration.instantiateSI(2.0));
+        Supplier<Duration> constant = new ConstantSupplier<>(Duration.ofSI(2.0));
 
         // @docs/04-demand/traffic-od.md#nested-markov-chain-for-gtu-types
         MarkovCorrelation<GtuType, Frequency> markov = new MarkovCorrelation<>();
@@ -88,11 +88,11 @@ public class Documentation
         Parameters parameters = null;
 
         // @docs/06-behavior/parameters.md
-        parameters.setParameter(ParameterTypes.A, Acceleration.instantiateSI(1.4));
+        parameters.setParameter(ParameterTypes.A, Acceleration.ofSI(1.4));
         Acceleration a = parameters.getParameter(ParameterTypes.A);
 
         // @docs/06-behavior/parameters.md
-        parameters.setParameterResettable(ParameterTypes.B, Acceleration.instantiateSI(3.5));
+        parameters.setParameterResettable(ParameterTypes.B, Acceleration.ofSI(3.5));
         parameters.resetParameter(ParameterTypes.B);
     }
 }

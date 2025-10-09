@@ -58,7 +58,8 @@ public abstract class AbstractCarFollowingModel implements CarFollowingModel
 
     @Override
     public final Acceleration followingAcceleration(final Parameters parameters, final Speed speed,
-            final SpeedLimitInfo speedLimitInfo, final PerceptionIterable<? extends PerceivedObject> leaders) throws ParameterException
+            final SpeedLimitInfo speedLimitInfo, final PerceptionIterable<? extends PerceivedObject> leaders)
+            throws ParameterException
     {
         Throw.whenNull(parameters, "Parameters may not be null.");
         Throw.whenNull(speed, "Speed may not be null.");

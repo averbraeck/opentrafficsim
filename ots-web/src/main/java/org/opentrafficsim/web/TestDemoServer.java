@@ -203,7 +203,7 @@ public class TestDemoServer
                     OtsSimulatorInterface simulator = model.getSimulator();
                     try
                     {
-                        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), model,
+                        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), model,
                                 HistoryManagerDevs.noHistory(simulator));
                         OtsWebModel webModel = new OtsWebModel(model.getShortName(), simulator);
                         TestDemoServer.this.sessionWebModelMap.put(sessionId, webModel);

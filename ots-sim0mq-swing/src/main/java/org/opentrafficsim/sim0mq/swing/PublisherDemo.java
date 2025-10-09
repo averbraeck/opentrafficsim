@@ -104,7 +104,7 @@ public final class PublisherDemo
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                conversationId++, new Object[] {Duration.instantiateSI(10.0)}));
+                conversationId++, new Object[] {Duration.ofSI(10.0)}));
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++));
         int conversationIdForSubscribeToAdd = conversationId++; // We need that to unsubscribe later
@@ -116,7 +116,7 @@ public final class PublisherDemo
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTU move|SUBSCRIBE_TO_CHANGE",
                 conversationIdForGTU2Move, "2")); // Subscribe to move events of GTU 2
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                conversationId++, new Object[] {Duration.instantiateSI(20.0)}));
+                conversationId++, new Object[] {Duration.ofSI(20.0)}));
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++));
         // unsubscribe from GTU ADD events using saved conversationId
@@ -125,7 +125,7 @@ public final class PublisherDemo
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",
                 "GTU move|UNSUBSCRIBE_FROM_CHANGE", conversationIdForGTU2Move, "2")); // Subscribe to move events of GTU 2
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "SIMULATEUNTIL",
-                conversationId++, new Object[] {Duration.instantiateSI(30.0)}));
+                conversationId++, new Object[] {Duration.ofSI(30.0)}));
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_CURRENT", conversationId++));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave",

@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.djutils.exceptions.Try;
+import org.djutils.test.UnitTest;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.compatibility.GtuCompatibility;
 import org.opentrafficsim.core.definitions.DefaultsNl;
@@ -37,7 +37,7 @@ public final class LinkTypeTest
     @SuppressWarnings({"unlikely-arg-type"})
     public void testLinkType()
     {
-        Try.testFail(() -> new LinkType(null, null), NullPointerException.class);
+        UnitTest.testFail(() -> new LinkType(null, null), NullPointerException.class);
 
         GtuType carType = new GtuType("Car", DefaultsNl.VEHICLE);
         GtuType truckType = new GtuType("Truck", DefaultsNl.VEHICLE);

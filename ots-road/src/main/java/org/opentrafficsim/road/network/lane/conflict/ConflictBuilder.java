@@ -17,6 +17,7 @@ import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableMap;
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -27,7 +28,8 @@ import org.opentrafficsim.road.network.lane.CrossSectionElement;
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.Shoulder;
-import org.pmw.tinylog.Level;
+
+import ch.qos.logback.classic.Level;
 
 /**
  * Conflict builder allows automatic generation of conflicts. This happens based on the geometry of lanes. Parallel execution
@@ -147,7 +149,7 @@ public final class ConflictBuilder
             final String conflictId)
     {
         long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
-        simulator.getLogger().always().trace("GENERATING CONFLICTS (NON-PARALLEL MODE). {} COMBINATIONS", totalCombinations);
+        CategoryLogger.always().trace("GENERATING CONFLICTS (NON-PARALLEL MODE). {} COMBINATIONS", totalCombinations);
         long lastReported = 0;
         Map<Lane, OtsLine2d> leftEdges = new LinkedHashMap<>();
         Map<Lane, OtsLine2d> rightEdges = new LinkedHashMap<>();
@@ -157,7 +159,7 @@ public final class ConflictBuilder
             long combinationsDone = totalCombinations - ((long) (lanes.size() - i)) * ((long) (lanes.size() - i)) / 2;
             if (combinationsDone / 100000000 > lastReported)
             {
-                simulator.getLogger().always()
+                CategoryLogger.always()
                         .debug(String.format(
                                 "generating conflicts at %.0f%% (generated %d merge conflicts, %d split "
                                         + "conflicts, %d crossing conflicts)",
@@ -192,7 +194,7 @@ public final class ConflictBuilder
                 }
             }
         }
-        simulator.getLogger().always()
+        CategoryLogger.always()
                 .trace(String.format(
                         "generating conflicts complete (generated %d merge conflicts, %d split "
                                 + "conflicts, %d crossing conflicts)",
@@ -355,7 +357,7 @@ public final class ConflictBuilder
                     }
                     if (Double.isNaN(fraction1))
                     {
-                        simulator.getLogger().always().info("Fixing fractions of merge conflict{}", paddedConflictId);
+                        CategoryLogger.always().info("Fixing fractions of merge conflict{}", paddedConflictId);
                         fraction1 = 0;
                         fraction2 = 0;
                     }
@@ -408,7 +410,7 @@ public final class ConflictBuilder
                     }
                     if (Double.isNaN(fraction1))
                     {
-                        simulator.getLogger().always().info("Fixing fractions of split conflict{}", paddedConflictId);
+                        CategoryLogger.always().info("Fixing fractions of split conflict{}", paddedConflictId);
                         fraction1 = 1;
                         fraction2 = 1;
                     }
@@ -446,8 +448,7 @@ public final class ConflictBuilder
                 {
                     if (Double.isNaN(f1Start) || Double.isNaN(f2Start) || Double.isNaN(f2End))
                     {
-                        simulator.getLogger().always().warn("NOT YET Fixing fractions of crossing conflict{}",
-                                paddedConflictId);
+                        CategoryLogger.always().warn("NOT YET Fixing fractions of crossing conflict{}", paddedConflictId);
                     }
                     buildCrossingConflict(lane1, f1Start, intersection.getFraction1(), lane2, f2Start, f2End, simulator,
                             widthGenerator, permitted);
@@ -645,8 +646,7 @@ public final class ConflictBuilder
         }
         if (Math.abs(f1 - f2) < 1E-8)
         {
-            lane.getLink().getSimulator().getLogger().always()
-                    .debug("f1 (" + f1 + ") equals f2 (" + f2 + "); problematic lane is " + lane.toString());
+            CategoryLogger.always().debug("f1 (" + f1 + ") equals f2 (" + f2 + "); problematic lane is " + lane.toString());
             // Fix up
             if (f1 > 0)
             {
@@ -1029,7 +1029,7 @@ public final class ConflictBuilder
             long combinationsDone = totalCombinations - ((long) (lanes.size() - i)) * ((long) (lanes.size() - i - 1)) / 2;
             if (combinationsDone / 100000000 > lastReported)
             {
-                simulator.getLogger().always()
+                CategoryLogger.always()
                         .debug(String.format(
                                 "generating conflicts at %.0f%% (generated %d merge conflicts, %d split "
                                         + "conflicts, %d crossing conflicts)",
@@ -1112,7 +1112,7 @@ public final class ConflictBuilder
             }
         }
 
-        simulator.getLogger().always()
+        CategoryLogger.always()
                 .debug(String.format(
                         "generating conflicts complete (generated %d merge conflicts, %d split "
                                 + "conflicts, %d crossing conflicts)",
@@ -1148,7 +1148,7 @@ public final class ConflictBuilder
             long combinationsDone = totalCombinations - ((long) (lanes.size() - i)) * ((long) (lanes.size() - i - 1)) / 2;
             if (combinationsDone / 100000000 > lastReported)
             {
-                simulator.getLogger().always()
+                CategoryLogger.always()
                         .debug(String.format(
                                 "generating conflicts at %.0f%% (generated %d merge conflicts, %d split "
                                         + "conflicts, %d crossing conflicts)",
@@ -1203,7 +1203,7 @@ public final class ConflictBuilder
             }
         }
 
-        simulator.getLogger().always()
+        CategoryLogger.always()
                 .debug(String.format(
                         "generating conflicts complete (generated %d merge conflicts, %d split "
                                 + "conflicts, %d crossing conflicts)",
@@ -1239,9 +1239,9 @@ public final class ConflictBuilder
                 }
             }
             // TODO: make parallel
-            // simulator.getLogger().setAllLogLevel(Level.WARNING);
+            // CategoryLogger.setAllLogLevel(Level.WARNING);
             buildConflicts(lanes, simulator, widthGenerator, new LaneCombinationList(), new LaneCombinationList(), conflictId);
-            simulator.getLogger().setAllLogLevel(Level.DEBUG);
+            CategoryLogger.setLogLevelAll(Level.DEBUG);
         }
     }
 
@@ -1394,8 +1394,7 @@ public final class ConflictBuilder
                     }
                     catch (NetworkException ne)
                     {
-                        lane2.getLink().getSimulator().getLogger().always().error(ne,
-                                "Conflict build with bad combination of types / rules.");
+                        CategoryLogger.always().error(ne, "Conflict build with bad combination of types / rules.");
                     }
                 }
 

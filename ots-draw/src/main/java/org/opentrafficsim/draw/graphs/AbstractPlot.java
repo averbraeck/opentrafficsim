@@ -55,7 +55,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
             new MetaData("Graph remove", "Graph removed", new ObjectDescriptor("Graph id", "Id of the graph", String.class)));
 
     /** Initial upper bound for the time scale. */
-    public static final Time DEFAULT_INITIAL_UPPER_TIME_BOUND = Time.instantiateSI(300.0);
+    public static final Time DEFAULT_INITIAL_UPPER_TIME_BOUND = Time.ofSI(300.0);
 
     /** Scheduler. */
     private final PlotScheduler scheduler;
@@ -255,7 +255,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
         this.scheduler.cancelEvent(this);
         this.updates = (int) (this.scheduler.getTime().si / interval.si);
         this.updateInterval = interval;
-        this.updateTime = Duration.instantiateSI(this.updates * this.updateInterval.si);
+        this.updateTime = Duration.ofSI(this.updates * this.updateInterval.si);
         scheduleNextUpdateEvent();
     }
 
@@ -287,7 +287,7 @@ public abstract class AbstractPlot implements Identifiable, Dataset
     {
         this.updates++;
         // events are scheduled slightly later, so all influencing movements have occurred
-        this.scheduler.scheduleUpdate(Duration.instantiateSI(this.updateInterval.si * this.updates + this.delay.si), this);
+        this.scheduler.scheduleUpdate(Duration.ofSI(this.updateInterval.si * this.updates + this.delay.si), this);
     }
 
     /**

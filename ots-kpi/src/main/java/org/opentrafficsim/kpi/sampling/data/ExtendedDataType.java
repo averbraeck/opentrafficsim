@@ -125,19 +125,26 @@ public abstract class ExtendedDataType<T, O, S, G extends GtuData> extends DataT
         Throw.whenNull(value1, "Values to interpolate may not be null.");
         if (value0 instanceof DoubleScalarRel<?, ?>)
         {
-            return (T) DoubleScalarRel.interpolate((R) value0, (R) value1, f);
+            return (T) ((DoubleScalarRel<RU, R>) value0).times(1.0 - f).plus(((DoubleScalarRel<RU, R>) value1).times(f));
         }
         if (value0 instanceof DoubleScalarAbs<?, ?, ?, ?>)
         {
-            return (T) DoubleScalarAbs.interpolate((A) value0, (A) value1, f);
+            DoubleScalarAbs<AU, A, ?, ?> val0 = (DoubleScalarAbs<AU, A, ?, ?>) value0;
+            DoubleScalarAbs<AU, A, ?, ?> val1 = (DoubleScalarAbs<AU, A, ?, ?>) value1;
+            AU unit = val0.getDisplayUnit();
+            return (T) val0.instantiateAbs(val0.getInUnit(unit) * (1.0 - f) + val1.getInUnit(unit) * f, unit);
         }
         if (value0 instanceof FloatScalarRel<?, ?>)
         {
-            return (T) FloatScalarRel.interpolate((FR) value0, (FR) value1, (float) f);
+            return (T) ((FloatScalarRel<RU, FR>) value0).times(1.0 - f).plus(((FloatScalarRel<RU, FR>) value1).times(f));
         }
         if (value0 instanceof FloatScalarAbs<?, ?, ?, ?>)
         {
-            return (T) FloatScalarAbs.interpolate((FA) value0, (FA) value1, (float) f);
+            FloatScalarAbs<AU, FA, ?, ?> val0 = (FloatScalarAbs<AU, FA, ?, ?>) value0;
+            FloatScalarAbs<AU, FA, ?, ?> val1 = (FloatScalarAbs<AU, FA, ?, ?>) value1;
+            AU unit = val0.getDisplayUnit();
+            float ff = (float) f;
+            return (T) val0.instantiateAbs(val0.getInUnit(unit) * (1.0f - ff) + val1.getInUnit(unit) * ff, unit);
         }
         if (value0 instanceof Double)
         {

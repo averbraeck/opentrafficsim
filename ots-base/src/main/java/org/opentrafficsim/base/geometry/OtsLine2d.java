@@ -72,7 +72,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
     public OtsLine2d(final Point2d... points)
     {
         super(points);
-        this.length = Length.instantiateSI(lengthAtIndex(size() - 1));
+        this.length = Length.ofSI(lengthAtIndex(size() - 1));
     }
 
     /**
@@ -82,7 +82,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
     public OtsLine2d(final PolyLine2d line2d)
     {
         super(line2d.iterator());
-        this.length = Length.instantiateSI(lengthAtIndex(size() - 1));
+        this.length = Length.ofSI(lengthAtIndex(size() - 1));
     }
 
     /**
@@ -92,7 +92,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
     public OtsLine2d(final Iterator<Point2d> line2d)
     {
         super(line2d);
-        this.length = Length.instantiateSI(lengthAtIndex(size() - 1));
+        this.length = Length.ofSI(lengthAtIndex(size() - 1));
     }
 
     /**
@@ -102,7 +102,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
     public OtsLine2d(final List<Point2d> pointList)
     {
         super(pointList);
-        this.length = Length.instantiateSI(lengthAtIndex(size() - 1));
+        this.length = Length.ofSI(lengthAtIndex(size() - 1));
     }
 
     /**
@@ -728,7 +728,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
         {
             if (this.vertexRadii.length < 2)
             {
-                return Length.instantiateSI(Double.NaN);
+                return Length.ofSI(Double.NaN);
             }
             return this.vertexRadii[1];
         }
@@ -775,7 +775,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
         Point2d intersection = intersectionOfLines(p1, p2, p3, p4);
         if (null == intersection)
         {
-            return Length.instantiateSI(Double.NaN);
+            return Length.ofSI(Double.NaN);
         }
         // determine left or right
         double refLength = length1 < length2 ? length1 : length2;
@@ -784,10 +784,10 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
         if (radius < i2p2 && i2p2 > refLength)
         {
             // left as p1 is closer than p2 (which was placed to the right) and not on the perpendicular line
-            return Length.instantiateSI(radius);
+            return Length.ofSI(radius);
         }
         // right as not left
-        return Length.instantiateSI(-radius);
+        return Length.ofSI(-radius);
     }
 
     /**

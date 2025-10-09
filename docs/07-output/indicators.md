@@ -42,6 +42,6 @@ Indicators can also use other indicators. For instance, the code below uses tota
         {
             area += trajectoryGroup.getLength().si * (endTime.si - startTime.si);
         }
-        return LinearDensity.instantiateSI(ttt / area);
+        return LinearDensity.ofSI(ttt / area);
     }
 ```

@@ -40,13 +40,14 @@ public class LinearAcc extends AbstractLinearFreeControl
 
     @Override
     public Acceleration getFollowingAcceleration(final LaneBasedGtu gtu,
-            final PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders, final Parameters settings) throws ParameterException
+            final PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders, final Parameters settings)
+            throws ParameterException
     {
         PerceivedGtu leader = leaders.first();
         double es =
                 leader.getDistance().si - gtu.getSpeed().si * settings.getParameter(TDACC).si - settings.getParameter(X0).si;
         double ev = leader.getSpeed().si - gtu.getSpeed().si;
-        return Acceleration.instantiateSI(settings.getParameter(KS) * es + settings.getParameter(KV) * ev);
+        return Acceleration.ofSI(settings.getParameter(KS) * es + settings.getParameter(KV) * ev);
     }
 
 }

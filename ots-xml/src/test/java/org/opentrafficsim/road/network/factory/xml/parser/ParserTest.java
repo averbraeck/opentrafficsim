@@ -48,7 +48,7 @@ public final class ParserTest
     {
         OtsSimulator simulator = new OtsSimulator("Test");
         final TestModel testModel = new TestModel(simulator);
-        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), testModel,
+        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), testModel,
                 HistoryManagerDevs.noHistory(simulator));
 
         // test node

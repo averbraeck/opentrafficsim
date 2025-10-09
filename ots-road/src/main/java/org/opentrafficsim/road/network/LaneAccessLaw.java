@@ -10,11 +10,11 @@ package org.opentrafficsim.road.network;
  */
 public enum LaneAccessLaw
 {
-    
+
     /** Legal lane access law. */
     LEGAL,
 
     /** Physical lane access law. */
     PHYSICAL;
-    
+
 }

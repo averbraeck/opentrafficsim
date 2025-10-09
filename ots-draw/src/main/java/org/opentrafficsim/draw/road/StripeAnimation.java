@@ -11,14 +11,13 @@ import java.util.Set;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.PolyLine2d;
-import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.StripeElement;
 import org.opentrafficsim.base.geometry.DirectionalPolyLine;
 import org.opentrafficsim.base.geometry.OtsLine2d.FractionalFallback;
-import org.opentrafficsim.draw.LineLocatable;
 import org.opentrafficsim.draw.DrawLevel;
+import org.opentrafficsim.draw.LineLocatable;
 import org.opentrafficsim.draw.OtsRenderable;
 import org.opentrafficsim.draw.PaintPolygons;
 import org.opentrafficsim.draw.road.StripeAnimation.StripeData;

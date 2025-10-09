@@ -44,13 +44,13 @@ public final class EstimationTest
     @Test
     public void testEstimation() throws ParameterException, OperationalPlanException
     {
-        singleEstimation(Estimation.FACTOR_ESTIMATION, 0.9, Duration.instantiateSI(59.0));
-        singleEstimation(Estimation.FACTOR_ESTIMATION, 0.9, Duration.instantiateSI(58.0));
-        singleEstimation(Estimation.FACTOR_ESTIMATION, 0.5, Duration.instantiateSI(59.0));
-        singleEstimation(Estimation.FACTOR_ESTIMATION, 0.8, Duration.instantiateSI(58.0));
+        singleEstimation(Estimation.FACTOR_ESTIMATION, 0.9, Duration.ofSI(59.0));
+        singleEstimation(Estimation.FACTOR_ESTIMATION, 0.9, Duration.ofSI(58.0));
+        singleEstimation(Estimation.FACTOR_ESTIMATION, 0.5, Duration.ofSI(59.0));
+        singleEstimation(Estimation.FACTOR_ESTIMATION, 0.8, Duration.ofSI(58.0));
         // Mimic NONE estimation by using 1.0 for the situational awareness (all equations multiplied by 1)
-        singleEstimation(Estimation.NONE, 1.0, Duration.instantiateSI(59.0));
-        singleEstimation(Estimation.NONE, 1.0, Duration.instantiateSI(58.0));
+        singleEstimation(Estimation.NONE, 1.0, Duration.ofSI(59.0));
+        singleEstimation(Estimation.NONE, 1.0, Duration.ofSI(58.0));
     }
 
     /**
@@ -65,11 +65,11 @@ public final class EstimationTest
             throws ParameterException, OperationalPlanException
     {
         // Scenario
-        Duration now = Duration.instantiateSI(60.0);
-        Speed egoSpeed = Speed.instantiateSI(26.0);
-        Speed otherSpeed = Speed.instantiateSI(25.0);
-        Length egoPosition = Length.instantiateSI(200.0);
-        Length otherPosition = Length.instantiateSI(230.0);
+        Duration now = Duration.ofSI(60.0);
+        Speed egoSpeed = Speed.ofSI(26.0);
+        Speed otherSpeed = Speed.ofSI(25.0);
+        Length egoPosition = Length.ofSI(200.0);
+        Length otherPosition = Length.ofSI(230.0);
         Length currentHeadway = otherPosition.minus(egoPosition);
         double factor = 1.0 + (1.0 - sa);
 

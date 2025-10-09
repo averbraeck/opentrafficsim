@@ -60,7 +60,7 @@ public class AccelerationColorer<T> extends AbstractLegendBarColorer<T, Accelera
      */
     public AccelerationColorer(final Function<? super T, Acceleration> valueFunction)
     {
-        this(valueFunction, Acceleration.instantiateSI(-6.0), Acceleration.instantiateSI(2.0));
+        this(valueFunction, Acceleration.ofSI(-6.0), Acceleration.ofSI(2.0));
     }
 
     @Override

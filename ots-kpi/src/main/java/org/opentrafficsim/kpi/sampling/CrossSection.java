@@ -99,11 +99,12 @@ public class CrossSection implements Serializable, Iterable<LanePosition>
      * @param lane lane
      * @param position position
      */
-    @SuppressWarnings("javadoc") // @param's present but warning still given, bug?
     public record LanePosition(LaneData<?> lane, Length position)
     {
         /**
          * Construct a new LanePosition.
+         * @param lane lane
+         * @param position position
          */
         public LanePosition
         {

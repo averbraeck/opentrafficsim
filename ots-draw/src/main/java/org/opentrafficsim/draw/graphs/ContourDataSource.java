@@ -209,7 +209,7 @@ public class ContourDataSource extends LocalEventProducer
      */
     public ContourDataSource(final SamplerData<?> samplerData, final GraphPath<? extends LaneData<?>> path)
     {
-        this(samplerData, Duration.instantiateSI(1.0), path, DEFAULT_SPACE_GRANULARITIES, DEFAULT_SPACE_GRANULARITY_INDEX,
+        this(samplerData, Duration.ofSI(1.0), path, DEFAULT_SPACE_GRANULARITIES, DEFAULT_SPACE_GRANULARITY_INDEX,
                 DEFAULT_TIME_GRANULARITIES, DEFAULT_TIME_GRANULARITY_INDEX, DEFAULT_LOWER_TIME_BOUND,
                 AbstractPlot.DEFAULT_INITIAL_UPPER_TIME_BOUND);
     }
@@ -232,7 +232,7 @@ public class ContourDataSource extends LocalEventProducer
             final double[] timeGranularity, final int initTimeIndex, final Time start, final Time initialEnd)
     {
         this.samplerData = samplerData;
-        this.updateInterval = Duration.instantiateSI(timeGranularity[initTimeIndex]);
+        this.updateInterval = Duration.ofSI(timeGranularity[initTimeIndex]);
         this.delay = delay;
         this.path = path;
         this.spaceAxis = new Axis(0.0, path.getTotalLength().si, spaceGranularity[initSpaceIndex], spaceGranularity);
@@ -427,7 +427,7 @@ public class ContourDataSource extends LocalEventProducer
             this.desiredTimeGranularity = granularity;
             for (AbstractContourPlot<?> contourPlot : ContourDataSource.this.plots)
             {
-                contourPlot.setUpdateInterval(Duration.instantiateSI(granularity));
+                contourPlot.setUpdateInterval(Duration.ofSI(granularity));
                 contourPlot.setTimeGranularity(granularity);
             }
         }
@@ -631,7 +631,7 @@ public class ContourDataSource extends LocalEventProducer
 
                 // create data source and its data streams for speed, distance traveled, time traveled, and additional
                 DataSource generic = this.egtf.getDataSource("generic");
-                generic.addStream(TypedQuantity.SPEED, Speed.instantiateSI(1.0), Speed.instantiateSI(1.0));
+                generic.addStream(TypedQuantity.SPEED, Speed.ofSI(1.0), Speed.ofSI(1.0));
                 generic.addStreamSI(this.travelTimeQuantity, 1.0, 1.0);
                 generic.addStreamSI(this.travelDistanceQuantity, 1.0, 1.0);
                 this.speedStream = generic.getStream(TypedQuantity.SPEED);
@@ -685,8 +685,8 @@ public class ContourDataSource extends LocalEventProducer
         // loop cells to update data
         for (int j = fromTimeIndex; j <= toTimeIndex; j++)
         {
-            Duration tFrom = Duration.instantiateSI(timeTicks[j]);
-            Duration tTo = Duration.instantiateSI(timeTicks[j + 1]);
+            Duration tFrom = Duration.ofSI(timeTicks[j]);
+            Duration tTo = Duration.ofSI(timeTicks[j + 1]);
 
             // we never filter time, time always spans the entire simulation, it will contain tFrom till tTo
 
@@ -703,8 +703,8 @@ public class ContourDataSource extends LocalEventProducer
 
                 // only first loop with offset, later in time, none of the space was done in the previous update
                 fromSpaceIndex = 0;
-                Length xFrom = Length.instantiateSI(spaceTicks[i]);
-                Length xTo = Length.instantiateSI(Math.min(spaceTicks[i + 1], this.path.getTotalLength().si));
+                Length xFrom = Length.ofSI(spaceTicks[i]);
+                Length xTo = Length.ofSI(Math.min(spaceTicks[i + 1], this.path.getTotalLength().si));
 
                 // init cell data
                 double totalDistance = 0.0;

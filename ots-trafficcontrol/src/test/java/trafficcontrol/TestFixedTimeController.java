@@ -65,10 +65,10 @@ public final class TestFixedTimeController
         Set<String> trafficLightIds = new LinkedHashSet<>();
         String trafficLightId = "08.1";
         trafficLightIds.add(trafficLightId);
-        Duration signalGroupOffset = Duration.instantiateSI(5);
-        Duration preGreen = Duration.instantiateSI(2);
-        Duration green = Duration.instantiateSI(10);
-        Duration yellow = Duration.instantiateSI(3.5);
+        Duration signalGroupOffset = Duration.ofSI(5);
+        Duration preGreen = Duration.ofSI(2);
+        Duration green = Duration.ofSI(10);
+        Duration yellow = Duration.ofSI(3.5);
         try
         {
             new SignalGroup(null, trafficLightIds, signalGroupOffset, preGreen, green, yellow);
@@ -144,7 +144,7 @@ public final class TestFixedTimeController
 
         String ftcId = "FTCid";
         OtsSimulatorInterface simulator = new OtsSimulator("TestFixedTimeController");
-        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600), createModelMock(),
+        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600), createModelMock(),
                 HistoryManagerDevs.noHistory(simulator));
         Map<String, TrafficLight> trafficLightMap = new LinkedHashMap<String, TrafficLight>();
         String networkId = "networkID";
@@ -152,8 +152,8 @@ public final class TestFixedTimeController
         Network network = new Network(networkId, simulator);
         network.addObject(trafficLightMap.get(trafficLightId));
 
-        Duration cycleTime = Duration.instantiateSI(90);
-        Duration offset = Duration.instantiateSI(20);
+        Duration cycleTime = Duration.ofSI(90);
+        Duration offset = Duration.ofSI(20);
         Set<SignalGroup> signalGroups = new LinkedHashSet<>();
         ImmutableSet<String> ids = sg.getTrafficLightIds();
         for (String tlId : ids)
@@ -230,7 +230,7 @@ public final class TestFixedTimeController
         }
         try
         {
-            new FixedTimeController(ftcId, simulator, network, Duration.instantiateSI(0), offset, signalGroups);
+            new FixedTimeController(ftcId, simulator, network, Duration.ofSI(0), offset, signalGroups);
             fail("Illegal cycle time should hav thrown an exception");
         }
         catch (IllegalArgumentException iae)
@@ -239,7 +239,7 @@ public final class TestFixedTimeController
         }
         try
         {
-            new FixedTimeController(ftcId, simulator, network, Duration.instantiateSI(-10), offset, signalGroups);
+            new FixedTimeController(ftcId, simulator, network, Duration.ofSI(-10), offset, signalGroups);
             fail("Illegal cycle time should hav thrown an exception");
         }
         catch (IllegalArgumentException iae)
@@ -285,10 +285,10 @@ public final class TestFixedTimeController
         Set<String> trafficLightIds1 = new LinkedHashSet<>();
         String trafficLightId = "08.1";
         trafficLightIds1.add(trafficLightId);
-        Duration signalGroupOffset = Duration.instantiateSI(5);
-        Duration preGreen = Duration.instantiateSI(2);
-        Duration green = Duration.instantiateSI(10);
-        Duration yellow = Duration.instantiateSI(3.5);
+        Duration signalGroupOffset = Duration.ofSI(5);
+        Duration preGreen = Duration.ofSI(2);
+        Duration green = Duration.ofSI(10);
+        Duration yellow = Duration.ofSI(3.5);
         SignalGroup sg1 = new SignalGroup(signalGroupId, trafficLightIds1, signalGroupOffset, preGreen, green, yellow);
         String signalGroupId2 = "sgId2";
         Set<String> trafficLightIds2 = new LinkedHashSet<>();
@@ -297,7 +297,7 @@ public final class TestFixedTimeController
 
         String ftcId = "FTCid";
         OtsSimulatorInterface simulator = new OtsSimulator("TestFixedTimeController");
-        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600), createModelMock(),
+        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600), createModelMock(),
                 HistoryManagerDevs.noHistory(simulator));
         Map<String, TrafficLight> trafficLightMap = new LinkedHashMap<String, TrafficLight>();
         String networkId = "networkID";
@@ -305,8 +305,8 @@ public final class TestFixedTimeController
         Network network = new Network(networkId, simulator);
         network.addObject(trafficLightMap.get(trafficLightId));
 
-        Duration cycleTime = Duration.instantiateSI(90);
-        Duration offset = Duration.instantiateSI(20);
+        Duration cycleTime = Duration.ofSI(90);
+        Duration offset = Duration.ofSI(20);
         Set<SignalGroup> signalGroups = new LinkedHashSet<>();
         signalGroups.add(sg1);
         signalGroups.add(sg2);
@@ -337,22 +337,22 @@ public final class TestFixedTimeController
         Set<SignalGroup> signalGroups = new LinkedHashSet<>();
         for (int cycleTime : new int[] {60, 90})
         {
-            Duration cycle = Duration.instantiateSI(cycleTime);
+            Duration cycle = Duration.ofSI(cycleTime);
             for (int ftcOffsetTime : new int[] {-100, -10, 0, 10, 100})
             {
-                Duration ftcOffset = Duration.instantiateSI(ftcOffsetTime);
+                Duration ftcOffset = Duration.ofSI(ftcOffsetTime);
                 for (int sgOffsetTime : new int[] {-99, -9, 0, 9, 99})
                 {
-                    Duration sgOffset = Duration.instantiateSI(sgOffsetTime);
+                    Duration sgOffset = Duration.ofSI(sgOffsetTime);
                     for (int preGreenTime : new int[] {0, 3})
                     {
-                        Duration preGreen = Duration.instantiateSI(preGreenTime);
+                        Duration preGreen = Duration.ofSI(preGreenTime);
                         for (int greenTime : new int[] {5, 15, 100})
                         {
-                            Duration green = Duration.instantiateSI(greenTime);
+                            Duration green = Duration.ofSI(greenTime);
                             for (double yellowTime : new double[] {0, 3.5, 4.5})
                             {
-                                Duration yellow = Duration.instantiateSI(yellowTime);
+                                Duration yellow = Duration.ofSI(yellowTime);
                                 double minimumCycleTime = preGreenTime + greenTime + yellowTime;
                                 SignalGroup sg =
                                         new SignalGroup(signalGroupId, trafficLightIds, sgOffset, preGreen, green, yellow);
@@ -360,7 +360,7 @@ public final class TestFixedTimeController
                                 signalGroups.add(sg);
                                 String ftcId = "FTCid";
                                 OtsSimulatorInterface simulator = new OtsSimulator("TestFixedTimeController");
-                                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600), createModelMock(),
+                                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600), createModelMock(),
                                         HistoryManagerDevs.noHistory(simulator));
                                 Map<String, TrafficLight> trafficLightMap = new LinkedHashMap<String, TrafficLight>();
                                 String networkId = "networkID";
@@ -406,12 +406,12 @@ public final class TestFixedTimeController
                                     // second
                                     for (int second = 0; second <= 300; second++)
                                     {
-                                        simulator.scheduleEventAbs(Duration.instantiateSI(second + 0.25),
+                                        simulator.scheduleEventAbs(Duration.ofSI(second + 0.25),
                                                 () -> checkState(simulator, ftc, true));
-                                        simulator.scheduleEventAbs(Duration.instantiateSI(second + 0.75),
+                                        simulator.scheduleEventAbs(Duration.ofSI(second + 0.75),
                                                 () -> checkState(simulator, ftc, true));
                                     }
-                                    Duration stopTime = Duration.instantiateSI(300.0);
+                                    Duration stopTime = Duration.ofSI(300.0);
                                     simulator.runUpTo(stopTime);
                                     while (simulator.isStartingOrRunning())
                                     {

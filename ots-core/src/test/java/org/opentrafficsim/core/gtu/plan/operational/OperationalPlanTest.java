@@ -42,7 +42,7 @@ public final class OperationalPlanTest
     public void testOperationalPlan() throws OperationalPlanException
     {
         DirectedPoint2d waitPoint = new DirectedPoint2d(12, 13, 17);
-        Duration startTime = Duration.instantiateSI(100.0);
+        Duration startTime = Duration.ofSI(100.0);
         Duration duration = new Duration(1, DurationUnit.MINUTE);
         OperationalPlan op = OperationalPlan.standStill(null, waitPoint, startTime, duration);
         assertEquals(0, op.getStartSpeed().si, 0, "Start speed is 0");
@@ -63,18 +63,18 @@ public final class OperationalPlanTest
         }
         try
         {
-            op.getLocation(Duration.instantiateSI(99.5));
+            op.getLocation(Duration.ofSI(99.5));
             fail("getLocation for absolute time before start time should have thrown an OperationalPlanException");
         }
         catch (OperationalPlanException ope)
         {
             // Ignore expected exception
         }
-        op.getLocation(Duration.instantiateSI(100.1)); // Should NOT throw an exception
-        op.getLocation(Duration.instantiateSI(159.9)); // Should NOT throw an exception
+        op.getLocation(Duration.ofSI(100.1)); // Should NOT throw an exception
+        op.getLocation(Duration.ofSI(159.9)); // Should NOT throw an exception
         try
         {
-            op.getLocation(Duration.instantiateSI(160.1));
+            op.getLocation(Duration.ofSI(160.1));
             fail("getLocation for absolute time after end time should have thrown an OperationalPlanException");
         }
         catch (OperationalPlanException ope)
@@ -110,7 +110,7 @@ public final class OperationalPlanTest
         double t = pathLength / (startSpeed.si + 0.5 * speedDifference);
 
         op = new OperationalPlan(null, path, startTime,
-                Segments.off(startSpeed, Duration.instantiateSI(t), Acceleration.instantiateSI(speedDifference / t)));
+                Segments.off(startSpeed, Duration.ofSI(t), Acceleration.ofSI(speedDifference / t)));
 
         assertEquals(startSpeed.si, op.getStartSpeed().si, 0.00001, "Start speed is " + startSpeed);
         assertEquals(startTime.si, op.getStartTime().si, 0.00001, "Start time is " + startTime);
@@ -224,10 +224,10 @@ public final class OperationalPlanTest
         Duration startTime = Duration.valueOf("100 s");
         for (double startSpeedDouble : new double[] {0, 10, 20, 30})
         {
-            Speed startSpeed = Speed.instantiateSI(startSpeedDouble);
+            Speed startSpeed = Speed.ofSI(startSpeedDouble);
             for (double endSpeedDouble : new double[] {0, 10, 20, 30})
             {
-                Speed endSpeed = Speed.instantiateSI(endSpeedDouble);
+                Speed endSpeed = Speed.ofSI(endSpeedDouble);
                 if (startSpeedDouble == 0 && endSpeedDouble == 0)
                 {
                     continue;
@@ -236,7 +236,7 @@ public final class OperationalPlanTest
                 double speedDifference = endSpeed.minus(startSpeed).si;
                 double t = pathLength / (startSpeed.si + 0.5 * speedDifference);
                 OperationalPlan cap = new OperationalPlan(null, path, startTime,
-                        Segments.off(startSpeed, Duration.instantiateSI(t), Acceleration.instantiateSI(speedDifference / t)));
+                        Segments.off(startSpeed, Duration.ofSI(t), Acceleration.ofSI(speedDifference / t)));
                 assertEquals(startTime, cap.getStartTime(), "start time is returned");
                 assertEquals(startSpeed, cap.getStartSpeed(), "startSpeed is start speed");
                 Duration endTime = cap.getEndTime();

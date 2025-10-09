@@ -28,8 +28,6 @@ import org.opentrafficsim.core.network.route.Route;
 import org.opentrafficsim.road.definitions.DefaultsRoadNl;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
-import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
-import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
@@ -127,8 +125,8 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
             }
 
             genericMap.add(new InputParameterDoubleScalar<LengthUnit, Length>("trackLength", "Track length",
-                    "Track length (circumfence of the track)", Length.instantiateSI(1000.0), Length.instantiateSI(500.0),
-                    Length.instantiateSI(2000.0), true, true, "%.0f", 1.5));
+                    "Track length (circumfence of the track)", Length.ofSI(1000.0), Length.ofSI(500.0), Length.ofSI(2000.0),
+                    true, true, "%.0f", 1.5));
             genericMap.add(new InputParameterDouble("densityMean", "Mean density (veh / km)",
                     "mean density of the vehicles (vehicles per kilometer)", 30.0, 5.0, 45.0, true, true, "%.0f", 2.0));
             genericMap.add(new InputParameterDouble("densityVariability", "Density variability",
@@ -281,8 +279,8 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
         gtu.setNoLaneChangeDistance(Length.ZERO);
         gtu.setBookkeeping(
                 ((boolean) getInputParameter("generic.gradualLaneChange")) ? LaneBookkeeping.EDGE : LaneBookkeeping.INSTANT);
-        gtu.setMaximumAcceleration(Acceleration.instantiateSI(3.0));
-        gtu.setMaximumDeceleration(Acceleration.instantiateSI(-8.0));
+        gtu.setMaximumAcceleration(Acceleration.ofSI(3.0));
+        gtu.setMaximumDeceleration(Acceleration.ofSI(-8.0));
 
         // strategical planner
         LaneBasedStrategicalPlanner strategicalPlanner;

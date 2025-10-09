@@ -185,8 +185,7 @@ public abstract class AbstractHistorical<T, E extends Event> implements Historic
     public Iterator<Duration> timeIterator()
     {
         return IntStream.range(0, this.events.size())
-                .mapToObj((index) -> Duration.instantiateSI(this.events.get(this.events.size() - 1 - index).getTime()))
-                .iterator();
+                .mapToObj((index) -> Duration.ofSI(this.events.get(this.events.size() - 1 - index).getTime())).iterator();
     }
 
     /**

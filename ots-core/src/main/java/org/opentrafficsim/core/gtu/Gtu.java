@@ -238,8 +238,8 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
         this.relativePositions.put(RelativePosition.REAR,
                 new RelativePosition(front.minus(this.length), Length.ZERO, Length.ZERO, RelativePosition.REAR));
         Point2d midPoint = this.shape.getRelativeBounds().midPoint();
-        this.relativePositions.put(RelativePosition.CENTER, new RelativePosition(Length.instantiateSI(midPoint.x),
-                Length.instantiateSI(midPoint.y), Length.ZERO, RelativePosition.CENTER));
+        this.relativePositions.put(RelativePosition.CENTER,
+                new RelativePosition(Length.ofSI(midPoint.x), Length.ofSI(midPoint.y), Length.ZERO, RelativePosition.CENTER));
     }
 
     /**
@@ -256,9 +256,9 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
     public Gtu(final String id, final GtuType gtuType, final OtsSimulatorInterface simulator,
             final PerceivableContext perceivableContext, final Polygon2d contour, final Speed maximumSpeed) throws GtuException
     {
-        this(id, gtuType, simulator, perceivableContext, Length.instantiateSI(contour.getAbsoluteBounds().getDeltaX()),
-                Length.instantiateSI(contour.getAbsoluteBounds().getDeltaY()),
-                Length.instantiateSI(contour.getAbsoluteBounds().getMaxX()), contour, maximumSpeed);
+        this(id, gtuType, simulator, perceivableContext, Length.ofSI(contour.getAbsoluteBounds().getDeltaX()),
+                Length.ofSI(contour.getAbsoluteBounds().getDeltaY()), Length.ofSI(contour.getAbsoluteBounds().getMaxX()),
+                contour, maximumSpeed);
     }
 
     /**
@@ -469,7 +469,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
                 double tNext = Math.floor(now.si / this.alignStep + 1.0) * this.alignStep;
                 DirectedPoint2d p = (tNext - now.si < this.alignStep) ? newOperationalPlan.getEndLocation()
                         : newOperationalPlan.getLocationFromStart(new Duration(tNext - now.si, DurationUnit.SI));
-                this.nextMoveEvent = this.simulator.scheduleEventRel(Duration.instantiateSI(tNext),
+                this.nextMoveEvent = this.simulator.scheduleEventRel(Duration.ofSI(tNext),
                         () -> Try.execute(() -> move(p), "ParameterException in move"));
             }
             else

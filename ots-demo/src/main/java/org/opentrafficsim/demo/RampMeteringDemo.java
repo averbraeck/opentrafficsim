@@ -160,7 +160,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
     /** Accepted gap. */
     @Option(names = "--acceptedGap", description = "Accepted gap.") // , defaultValue = "0.5s")
-    private Duration acceptedGap = Duration.instantiateSI(0.5);
+    private Duration acceptedGap = Duration.ofSI(0.5);
 
     /** Main demand. */
     private FrequencyVector mainDemand;
@@ -276,7 +276,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
 
         LinkType freeway = DefaultsNl.FREEWAY;
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;
-        Length laneWidth = Length.instantiateSI(3.6);
+        Length laneWidth = Length.ofSI(3.6);
         LaneType freewayLane = DefaultsRoadNl.FREEWAY;
         Speed speedLimit = new Speed(120, SpeedUnit.KM_PER_HOUR);
         Speed rampSpeedLimit = new Speed(70, SpeedUnit.KM_PER_HOUR);
@@ -297,17 +297,17 @@ public class RampMeteringDemo extends AbstractSimulationScript
                 .setOffsetStart(laneWidth.times(1.5).neg()).setOffsetEnd(laneWidth.times(1.5).neg())
                 .leftToRight(0.5, laneWidth, freewayLane, speedLimit).addLanes().getLanes();
         // detectors
-        Time first = Time.instantiateSI(60.0);
-        Duration agg = Duration.instantiateSI(60.0);
+        Time first = Time.ofSI(60.0);
+        Duration agg = Duration.ofSI(60.0);
         // TODO: detector length affects occupancy, which length to use?
         Length detectorLength = Length.ZERO;
-        LoopDetector det1 = new LoopDetector("1", new LanePosition(lanesAB.get(0), Length.instantiateSI(2900)), detectorLength,
+        LoopDetector det1 = new LoopDetector("1", new LanePosition(lanesAB.get(0), Length.ofSI(2900)), detectorLength,
                 DefaultsNl.LOOP_DETECTOR, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
-        LoopDetector det2 = new LoopDetector("2", new LanePosition(lanesAB.get(1), Length.instantiateSI(2900)), detectorLength,
+        LoopDetector det2 = new LoopDetector("2", new LanePosition(lanesAB.get(1), Length.ofSI(2900)), detectorLength,
                 DefaultsNl.LOOP_DETECTOR, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
-        LoopDetector det3 = new LoopDetector("3", new LanePosition(lanesCD.get(0), Length.instantiateSI(100)), detectorLength,
+        LoopDetector det3 = new LoopDetector("3", new LanePosition(lanesCD.get(0), Length.ofSI(100)), detectorLength,
                 DefaultsNl.LOOP_DETECTOR, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
-        LoopDetector det4 = new LoopDetector("4", new LanePosition(lanesCD.get(1), Length.instantiateSI(100)), detectorLength,
+        LoopDetector det4 = new LoopDetector("4", new LanePosition(lanesCD.get(1), Length.ofSI(100)), detectorLength,
                 DefaultsNl.LOOP_DETECTOR, first, agg, LoopDetector.MEAN_SPEED, LoopDetector.OCCUPANCY);
         List<LoopDetector> detectors12 = new ArrayList<>();
         detectors12.add(det1);
@@ -355,7 +355,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
         odOptions.set(OdOptions.GTU_TYPE, new ControlledStrategicalPlannerGenerator(factory.create()));
         odOptions.set(OdOptions.BOOKKEEPING, LaneBookkeeping.INSTANT);
         odOptions.set(OdOptions.LANE_BIAS, new LaneBiases().addBias(car, LaneBias.WEAK_LEFT));
-        odOptions.set(OdOptions.NO_LC_DIST, Length.instantiateSI(300));
+        odOptions.set(OdOptions.NO_LC_DIST, Length.ofSI(300));
         OdApplier.applyOd(network, od, odOptions, DefaultsNl.ROAD_USERS);
 
         return network;
@@ -509,16 +509,16 @@ public class RampMeteringDemo extends AbstractSimulationScript
                             try
                             {
                                 // system operation settings
-                                settings.setParameter(SyncAndAccept.SYNCTIME, Duration.instantiateSI(1.0));
-                                settings.setParameter(SyncAndAccept.COOPTIME, Duration.instantiateSI(2.0));
+                                settings.setParameter(SyncAndAccept.SYNCTIME, Duration.ofSI(1.0));
+                                settings.setParameter(SyncAndAccept.COOPTIME, Duration.ofSI(2.0));
                                 // parameters used in car-following model for gap-acceptance
                                 settings.setParameter(AbstractIdm.DELTA, 1.0);
-                                settings.setParameter(ParameterTypes.S0, Length.instantiateSI(3.0));
-                                settings.setParameter(ParameterTypes.A, Acceleration.instantiateSI(2.0));
-                                settings.setParameter(ParameterTypes.B, Acceleration.instantiateSI(2.0));
+                                settings.setParameter(ParameterTypes.S0, Length.ofSI(3.0));
+                                settings.setParameter(ParameterTypes.A, Acceleration.ofSI(2.0));
+                                settings.setParameter(ParameterTypes.B, Acceleration.ofSI(2.0));
                                 settings.setParameter(ParameterTypes.T, RampMeteringDemo.this.acceptedGap);
                                 settings.setParameter(ParameterTypes.FSPEED, 1.0);
-                                settings.setParameter(ParameterTypes.B0, Acceleration.instantiateSI(0.5));
+                                settings.setParameter(ParameterTypes.B0, Acceleration.ofSI(0.5));
                                 settings.setParameter(ParameterTypes.VCONG, new Speed(60, SpeedUnit.KM_PER_HOUR));
                             }
                             catch (ParameterException exception)
@@ -701,11 +701,11 @@ public class RampMeteringDemo extends AbstractSimulationScript
     {
         /** Parameter of time after lane change command when the system will start synchronization. */
         public static final ParameterTypeDuration SYNCTIME = new ParameterTypeDuration("tSync",
-                "Time after which synchronization starts.", Duration.instantiateSI(1.0), NumericConstraint.POSITIVE);
+                "Time after which synchronization starts.", Duration.ofSI(1.0), NumericConstraint.POSITIVE);
 
         /** Parameter of time after lane change command when the system will start cooperation (indicator). */
         public static final ParameterTypeDuration COOPTIME = new ParameterTypeDuration("tCoop",
-                "Time after which cooperation starts (indicator).", Duration.instantiateSI(2.0), NumericConstraint.POSITIVE);
+                "Time after which cooperation starts (indicator).", Duration.ofSI(2.0), NumericConstraint.POSITIVE);
 
         /** GTU. */
         private final LaneBasedGtu gtu;

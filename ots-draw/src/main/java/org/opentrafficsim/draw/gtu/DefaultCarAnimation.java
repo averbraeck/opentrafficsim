@@ -16,8 +16,8 @@ import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.OtsRenderable;
-import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.RenderableTextSource;
+import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.gtu.DefaultCarAnimation.GtuData;
 
 import nl.tudelft.simulation.naming.context.Contextualized;

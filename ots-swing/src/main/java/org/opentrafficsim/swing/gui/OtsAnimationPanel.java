@@ -41,6 +41,7 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.TimedEvent;
 import org.djutils.exceptions.Throw;
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.animation.data.AnimationGtuData;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
@@ -929,9 +930,8 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
                     }
                     catch (RemoteException exception)
                     {
-                        getSimulator().getLogger().always().warn(
-                                "Caught RemoteException trying to locate {} with id {} in network {}.", panKind, panId,
-                                this.network.getId());
+                        CategoryLogger.always().warn("Caught RemoteException trying to locate {} with id {} in network {}.",
+                                panKind, panId, this.network.getId());
                         return;
                     }
                 }

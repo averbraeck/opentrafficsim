@@ -67,14 +67,13 @@ public final class LaneChangeInfoTest
         // Preparations
         OtsModelInterface model = Mockito.mock(OtsModelInterface.class);
         OtsSimulatorInterface simulator = new OtsSimulator("Lane change info test");
-        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600), model,
-                HistoryManagerDevs.noHistory(simulator));
+        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600), model, HistoryManagerDevs.noHistory(simulator));
         RoadNetwork network = new RoadNetwork("Lane change info test network", simulator);
         GtuType car = DefaultsNl.CAR;
 
         LinkType freeway = DefaultsNl.FREEWAY;
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;
-        Length laneWidth = Length.instantiateSI(3.5);
+        Length laneWidth = Length.ofSI(3.5);
         LaneType freewayLane = DefaultsRoadNl.FREEWAY;
         Speed speedLimit = new Speed(120, SpeedUnit.KM_PER_HOUR);
 
@@ -131,7 +130,7 @@ public final class LaneChangeInfoTest
         LaneAccessLaw law = LaneAccessLaw.LEGAL;
         LateralDirectionality left = LateralDirectionality.LEFT;
         LateralDirectionality right = LateralDirectionality.RIGHT;
-        Length range = Length.instantiateSI(10000);
+        Length range = Length.ofSI(10000);
 
         // Route A -> F2
         Route routeAF2 = network.getShortestRouteBetween(car, nodeA, nodeF2);
@@ -225,12 +224,12 @@ public final class LaneChangeInfoTest
         check(network.getLaneChangeInfo(lanesGH.get(2), routeAH, car, range, law), null, new int[] {}, new double[] {});
 
         // Shorter ranges for AB -> F2
-        range = Length.instantiateSI(1000);
+        range = Length.ofSI(1000);
         check(network.getLaneChangeInfo(lanesAB.get(0), routeAF2, car, range, law), right, new int[] {1, 2},
                 new double[] {200, 500});
-        range = Length.instantiateSI(400);
+        range = Length.ofSI(400);
         check(network.getLaneChangeInfo(lanesAB.get(0), routeAF2, car, range, law), right, new int[] {1}, new double[] {200});
-        range = Length.instantiateSI(100);
+        range = Length.ofSI(100);
         check(network.getLaneChangeInfo(lanesAB.get(0), routeAF2, car, range, law), null, new int[] {}, new double[] {});
 
     }

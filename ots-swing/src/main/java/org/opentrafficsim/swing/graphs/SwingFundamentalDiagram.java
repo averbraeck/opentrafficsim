@@ -215,7 +215,7 @@ public class SwingFundamentalDiagram extends SwingPlot
                     if ((int) (.5 + getPlot().getSource().getAggregationPeriod().si
                             / getPlot().getSource().getUpdateInterval().si) != f)
                     {
-                        Duration interval = Duration.instantiateSI(getPlot().getSource().getAggregationPeriod().si / f);
+                        Duration interval = Duration.ofSI(getPlot().getSource().getAggregationPeriod().si / f);
                         for (FundamentalDiagram diagram : getPlot().getSource().getDiagrams())
                         {
                             diagram.setUpdateInterval(interval);
@@ -261,7 +261,7 @@ public class SwingFundamentalDiagram extends SwingPlot
                     {
                         int n = (int) (0.5 + getPlot().getSource().getAggregationPeriod().si
                                 / getPlot().getSource().getUpdateInterval().si);
-                        Duration period = Duration.instantiateSI(t);
+                        Duration period = Duration.ofSI(t);
                         Duration interval = period.divide(n);
                         for (FundamentalDiagram diagram : getPlot().getSource().getDiagrams())
                         {

@@ -178,7 +178,7 @@ public class ContinuousClothoid implements ContinuousLine
             {
                 to = to + 2.0 * Math.PI;
             }
-            Angle angle = Angle.instantiateSI(Math.abs(to - from));
+            Angle angle = Angle.ofSI(Math.abs(to - from));
             this.length = angle.si * Math.abs(r);
             this.a = 0.0;
             this.startCurvature = 1.0 / r;
@@ -285,7 +285,7 @@ public class ContinuousClothoid implements ContinuousLine
         double ang = AngleUtil.normalizeAroundZero(startPoint.dirZ) - Math.abs(this.alphaMin);
         this.t0 = new double[] {Math.cos(ang), Math.sin(ang)};
         this.n0 = new double[] {this.t0[1], -this.t0[0]};
-        Direction endDirection = Direction.instantiateSI(ang + Math.abs(this.alphaMax));
+        Direction endDirection = Direction.ofSI(ang + Math.abs(this.alphaMax));
         if (startCurvature > endCurvature)
         {
             // In these cases the algorithm works in the negative direction. We need to flip over the line through the start
@@ -307,7 +307,7 @@ public class ContinuousClothoid implements ContinuousLine
             this.n0[1] = (twoM * n00 + mmMinusOne * n01) / onePlusMm;
 
             double ang2 = Math.atan2(this.t0[1], this.t0[0]);
-            endDirection = Direction.instantiateSI(ang2 - Math.abs(this.alphaMax) + Math.PI);
+            endDirection = Direction.ofSI(ang2 - Math.abs(this.alphaMax) + Math.PI);
         }
         PolyLine2d line = flatten(new Flattener.NumSegments(1));
         Point2d end = Try.assign(() -> line.get(line.size() - 1), "Line does not have an end point.");

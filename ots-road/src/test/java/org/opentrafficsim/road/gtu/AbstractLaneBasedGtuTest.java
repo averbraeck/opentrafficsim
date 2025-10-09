@@ -184,7 +184,7 @@ public final class AbstractLaneBasedGtuTest implements UNITS
         double step = 0.01d;
         for (int i = 0;; i++)
         {
-            Duration stepTime = Duration.instantiateSI(i * step);
+            Duration stepTime = Duration.ofSI(i * step);
             if (stepTime.getSI() > validFor.getSI())
             {
                 break;

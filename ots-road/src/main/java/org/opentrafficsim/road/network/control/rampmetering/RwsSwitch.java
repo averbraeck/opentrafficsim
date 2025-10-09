@@ -25,7 +25,7 @@ public class RwsSwitch extends SingleCrossSectionSwitch
 {
 
     /** Maximum cycle time. */
-    private static final Duration MAX_CYCLE_TIME = Duration.instantiateSI(15);
+    private static final Duration MAX_CYCLE_TIME = Duration.ofSI(15);
 
     /** Capacity. */
     private final Frequency capacity;
@@ -48,7 +48,7 @@ public class RwsSwitch extends SingleCrossSectionSwitch
      */
     public RwsSwitch(final List<LoopDetector> detectors)
     {
-        super(Duration.instantiateSI(60.0), detectors);
+        super(Duration.ofSI(60.0), detectors);
         this.capacity = new Frequency(2000, FrequencyUnit.PER_HOUR).times(detectors.size());
         this.flowThreshold = new Frequency(1500, FrequencyUnit.PER_HOUR).times(detectors.size());
     }
@@ -63,7 +63,7 @@ public class RwsSwitch extends SingleCrossSectionSwitch
         {
             if (flow.lt(this.capacity))
             {
-                this.cycleTime = Duration.instantiateSI(1.0 / this.capacity.minus(flow).si);
+                this.cycleTime = Duration.ofSI(1.0 / this.capacity.minus(flow).si);
                 this.cycleTime = Duration.min(this.cycleTime, MAX_CYCLE_TIME);
             }
             else

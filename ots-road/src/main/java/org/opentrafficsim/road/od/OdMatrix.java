@@ -263,7 +263,7 @@ public class OdMatrix implements Serializable, Identifiable
         Duration prevTime;
         try
         {
-            prevTime = timeVector.get(0).eq0() ? Duration.instantiateSI(-1.0) : Duration.ZERO;
+            prevTime = timeVector.get(0).eq0() ? Duration.ofSI(-1.0) : Duration.ZERO;
         }
         catch (ValueRuntimeException exception)
         {
@@ -470,7 +470,7 @@ public class OdMatrix implements Serializable, Identifiable
         {
             return new Frequency(0.0, FrequencyUnit.PER_HOUR); // Frequency.ZERO gives "Hz" which is not nice for flow
         }
-        return demandPattern.getFrequency(Duration.instantiateSI(time.si), sliceStart);
+        return demandPattern.getFrequency(Duration.ofSI(time.si), sliceStart);
     }
 
     /**

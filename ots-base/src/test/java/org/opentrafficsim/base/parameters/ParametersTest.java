@@ -539,12 +539,12 @@ public final class ParametersTest implements ConstraintInterface
             InvocationTargetException, NoSuchMethodException, SecurityException
     {
         // @formatter:off
-        checkDefaultValuesPerClass(ParameterTypeSpeed.class,         Speed.instantiateSI(3));
-        checkDefaultValuesPerClass(ParameterTypeAcceleration.class,  Acceleration.instantiateSI(3));
-        checkDefaultValuesPerClass(ParameterTypeLength.class,        Length.instantiateSI(3));
-        checkDefaultValuesPerClass(ParameterTypeFrequency.class,     Frequency.instantiateSI(3));
-        checkDefaultValuesPerClass(ParameterTypeDuration.class,      Duration.instantiateSI(3));
-        checkDefaultValuesPerClass(ParameterTypeLinearDensity.class, LinearDensity.instantiateSI(3));
+        checkDefaultValuesPerClass(ParameterTypeSpeed.class,         Speed.ofSI(3));
+        checkDefaultValuesPerClass(ParameterTypeAcceleration.class,  Acceleration.ofSI(3));
+        checkDefaultValuesPerClass(ParameterTypeLength.class,        Length.ofSI(3));
+        checkDefaultValuesPerClass(ParameterTypeFrequency.class,     Frequency.ofSI(3));
+        checkDefaultValuesPerClass(ParameterTypeDuration.class,      Duration.ofSI(3));
+        checkDefaultValuesPerClass(ParameterTypeLinearDensity.class, LinearDensity.ofSI(3));
         checkDefaultValuesPerClass(ParameterTypeBoolean.class,       Boolean.valueOf(false));
         checkDefaultValuesPerClass(ParameterTypeDouble.class,        Double.valueOf(3));
         checkDefaultValuesPerClass(ParameterTypeInteger.class,       Integer.valueOf(3));

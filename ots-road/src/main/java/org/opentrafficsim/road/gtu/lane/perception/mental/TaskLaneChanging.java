@@ -79,7 +79,7 @@ public class TaskLaneChanging extends TaskHeadwayBased
         {
             return Duration.ZERO;
         }
-        return Duration.instantiateSI(h1.si * h2.si / (lat * (h1.si + h2.si)));
+        return Duration.ofSI(h1.si * h2.si / (lat * (h1.si + h2.si)));
     }
 
     /**

@@ -9,8 +9,8 @@ import org.djutils.draw.point.Point2d;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.OtsRenderable;
-import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.RenderableTextSource;
+import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.road.GtuGeneratorPositionAnimation.GtuGeneratorPositionData;
 
 import nl.tudelft.simulation.naming.context.Contextualized;

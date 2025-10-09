@@ -52,9 +52,8 @@ public class GtuTemplate implements Serializable, Supplier<GtuCharacteristics>
     public GtuTemplate(final GtuType gtuType, final Supplier<Length> lengthSupplier, final Supplier<Length> widthSupplier,
             final Supplier<Speed> maximumSpeedSupplier) throws NullPointerException
     {
-        this(gtuType, lengthSupplier, widthSupplier, maximumSpeedSupplier,
-                new ConstantSupplier<>(Acceleration.instantiateSI(3.0)),
-                new ConstantSupplier<>(Acceleration.instantiateSI(-8.0)));
+        this(gtuType, lengthSupplier, widthSupplier, maximumSpeedSupplier, new ConstantSupplier<>(Acceleration.ofSI(3.0)),
+                new ConstantSupplier<>(Acceleration.ofSI(-8.0)));
     }
 
     /**

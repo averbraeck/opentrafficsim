@@ -59,8 +59,8 @@ public class OtsRunner extends OtsSimulationApplication<OtsRunnerModel>
             // TODO two-pass XML parser to read history, simulation time, etc.
             OtsAnimator simulator = new OtsAnimator("EditorRun");
             final OtsRunnerModel runnerModel = new OtsRunnerModel(simulator, file, scenario);
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), runnerModel,
-                    new HistoryManagerDevs(simulator, Duration.instantiateSI(5.0), Duration.instantiateSI(10.0)));
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), runnerModel,
+                    new HistoryManagerDevs(simulator, Duration.ofSI(5.0), Duration.ofSI(10.0)));
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(runnerModel.getNetwork().getExtent(), simulator,
                     runnerModel, DEFAULT_GTU_COLORERS, runnerModel.getNetwork());
             OtsRunner app = new OtsRunner(animationPanel, runnerModel);

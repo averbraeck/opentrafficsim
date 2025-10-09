@@ -15,7 +15,7 @@ public class SpeedType extends ExpressionType<Speed>
 {
 
     /** Function to convert output from expression to the right type. */
-    private static final SerializableFunction<Object, Speed> TO_TYPE = (o) -> Speed.instantiateSI(((Number) o).doubleValue());
+    private static final SerializableFunction<Object, Speed> TO_TYPE = (o) -> Speed.ofSI(((Number) o).doubleValue());
 
     /**
      * Constructor with value.

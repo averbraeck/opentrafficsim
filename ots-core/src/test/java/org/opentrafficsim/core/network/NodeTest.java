@@ -46,7 +46,7 @@ public final class NodeTest
     {
         Network network = new Network("Node test network", MockSimulator.createMock());
         Point2d point1 = new Point2d(20, 40);
-        Direction heading = Direction.instantiateSI(Math.toRadians(123));
+        Direction heading = Direction.ofSI(Math.toRadians(123));
         DirectedPoint2d point1Oriented = new DirectedPoint2d(point1, heading.si);
         Node node1 = new Node(network, "node 1", point1, heading);
         assertEquals(network, node1.getNetwork(), "network matches");

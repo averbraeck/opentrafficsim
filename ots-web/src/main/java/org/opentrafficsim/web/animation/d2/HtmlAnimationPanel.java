@@ -17,6 +17,7 @@ import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.point.Point;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.animation.gtu.colorer.GtuColorerManager;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.web.animation.HtmlGraphics2d;
@@ -252,7 +253,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
                 }
                 catch (Exception exception)
                 {
-                    this.simulator.getLogger().always().warn(exception, "notify");
+                    CategoryLogger.always().warn(exception, "notify");
                 }
             }
         }

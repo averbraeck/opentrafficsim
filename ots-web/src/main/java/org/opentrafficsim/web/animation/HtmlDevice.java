@@ -5,8 +5,6 @@ import java.awt.GraphicsDevice;
 
 import org.djutils.logger.CategoryLogger;
 
-import nl.tudelft.simulation.dsol.logger.Cat;
-
 /**
  * HTMLDevice.java.
  * <p>
@@ -26,35 +24,35 @@ public class HtmlDevice extends GraphicsDevice
      */
     public HtmlDevice(final GraphicsConfiguration htmlGraphicsConfiguration)
     {
-        CategoryLogger.filter(Cat.WEB).trace("HTMLDevice.<init>");
+        CategoryLogger.always().trace("HTMLDevice.<init>");
         this.htmlGraphicsConfigurations = new GraphicsConfiguration[] {htmlGraphicsConfiguration};
     }
 
     @Override
     public int getType()
     {
-        CategoryLogger.filter(Cat.WEB).trace("HTMLDevice.getType()");
+        CategoryLogger.always().trace("HTMLDevice.getType()");
         return GraphicsDevice.TYPE_RASTER_SCREEN;
     }
 
     @Override
     public String getIDstring()
     {
-        CategoryLogger.filter(Cat.WEB).trace("HTMLDevice.getIDString()");
+        CategoryLogger.always().trace("HTMLDevice.getIDString()");
         return "HTMLDevice";
     }
 
     @Override
     public GraphicsConfiguration[] getConfigurations()
     {
-        CategoryLogger.filter(Cat.WEB).trace("HTMLDevice.getConfiguration()");
+        CategoryLogger.always().trace("HTMLDevice.getConfiguration()");
         return this.htmlGraphicsConfigurations;
     }
 
     @Override
     public GraphicsConfiguration getDefaultConfiguration()
     {
-        CategoryLogger.filter(Cat.WEB).trace("HTMLDevice.getDefaultConfiguration()");
+        CategoryLogger.always().trace("HTMLDevice.getDefaultConfiguration()");
         return this.htmlGraphicsConfigurations[0];
     }
 

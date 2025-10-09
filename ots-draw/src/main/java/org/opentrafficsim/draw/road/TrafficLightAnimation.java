@@ -10,8 +10,8 @@ import javax.naming.NamingException;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.RenderableTextSource;
+import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 import org.opentrafficsim.draw.road.TrafficLightAnimation.TrafficLightData;
 

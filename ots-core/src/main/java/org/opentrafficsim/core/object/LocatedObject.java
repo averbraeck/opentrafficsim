@@ -20,12 +20,11 @@ public interface LocatedObject extends OtsShape, Identifiable, EventProducer, Se
 {
 
     /**
-     * Returns the object height. 
+     * Returns the object height.
      * @return the height of the object (can be Length.ZERO).
      */
     Length getHeight();
 
-    
     /**
      * Returns the full id that makes the id unique in the network.
      * @return the full id that makes the id unique in the network.

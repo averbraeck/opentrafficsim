@@ -105,7 +105,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
             final CircularRoadModel otsModel = new CircularRoadModel(simulator);
             System.out.println(otsModel.getInputParameterMap());
             TabbedParameterDialog.process(otsModel.getInputParameterMap());
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel,
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), otsModel,
                     HistoryManagerDevs.noHistory(simulator));
             Thread getLocationThread = new Thread()
             {
@@ -257,7 +257,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
             // buttonClick.start(); // start the thread that will try to click on the start button
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
-                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel,
+                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), otsModel,
                         HistoryManagerDevs.noHistory(simulator));
                 OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(), simulator, otsModel,
                         DEFAULT_GTU_COLORERS, otsModel.getNetwork());
@@ -319,7 +319,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
         GraphPath.initRecording(sampler, path1);
         ContourDataSource dataPool0 = new ContourDataSource(sampler.getSamplerData(), path0);
         ContourDataSource dataPool1 = new ContourDataSource(sampler.getSamplerData(), path1);
-        Duration updateInterval = Duration.instantiateSI(10.0);
+        Duration updateInterval = Duration.ofSI(10.0);
 
         SwingPlot plot = null;
         GraphPath<LaneDataRoad> path = null;
@@ -351,14 +351,14 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
             throw new RuntimeException(exception);
         }
 
-        plot = new SwingFundamentalDiagram(new FundamentalDiagram("Fundamental diagram Density-Flow", Quantity.DENSITY,
-                Quantity.FLOW, scheduler,
-                FundamentalDiagram.sourceFromSampler(sampler, crossSection, true, Duration.instantiateSI(60.0), false), null));
+        plot = new SwingFundamentalDiagram(
+                new FundamentalDiagram("Fundamental diagram Density-Flow", Quantity.DENSITY, Quantity.FLOW, scheduler,
+                        FundamentalDiagram.sourceFromSampler(sampler, crossSection, true, Duration.ofSI(60.0), false), null));
         trajectoryChart.setCell(plot.getContentPane(), 1, 0);
 
-        plot = new SwingFundamentalDiagram(new FundamentalDiagram("Fundamental diagram Flow-Speed", Quantity.FLOW,
-                Quantity.SPEED, scheduler,
-                FundamentalDiagram.sourceFromSampler(sampler, crossSection, false, Duration.instantiateSI(60.0), false), null));
+        plot = new SwingFundamentalDiagram(
+                new FundamentalDiagram("Fundamental diagram Flow-Speed", Quantity.FLOW, Quantity.SPEED, scheduler,
+                        FundamentalDiagram.sourceFromSampler(sampler, crossSection, false, Duration.ofSI(60.0), false), null));
         trajectoryChart.setCell(plot.getContentPane(), 1, 1);
 
         getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "Trajectories",

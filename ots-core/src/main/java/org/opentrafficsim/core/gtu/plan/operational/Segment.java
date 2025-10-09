@@ -76,6 +76,7 @@ public record Segment(boolean isStandStill, Speed startSpeed, Duration duration,
      * @param duration duration since start time of segment.
      * @return speed at the given duration relative to the start of the segment.
      */
+    @SuppressWarnings("hiddenfield")
     public Speed speed(final Duration duration)
     {
         Throw.when(duration.lt0(), IllegalArgumentException.class, "Duration must be positive.");
@@ -84,7 +85,7 @@ public record Segment(boolean isStandStill, Speed startSpeed, Duration duration,
         {
             return Speed.ZERO;
         }
-        return Speed.instantiateSI(this.startSpeed.si + duration.si * this.acceleration.si);
+        return Speed.ofSI(this.startSpeed.si + duration.si * this.acceleration.si);
     }
 
     /**
@@ -92,6 +93,7 @@ public record Segment(boolean isStandStill, Speed startSpeed, Duration duration,
      * @param duration duration since start time of segment.
      * @return distance traveled at the given duration relative to the start of the segment.
      */
+    @SuppressWarnings("hiddenfield")
     public Length distance(final Duration duration)
     {
         Throw.when(duration.lt0(), IllegalArgumentException.class, "Duration must be positive.");
@@ -100,7 +102,7 @@ public record Segment(boolean isStandStill, Speed startSpeed, Duration duration,
         {
             return Length.ZERO;
         }
-        return Length.instantiateSI(duration.si * this.startSpeed.si + .5 * this.acceleration.si * duration.si * duration.si);
+        return Length.ofSI(duration.si * this.startSpeed.si + .5 * this.acceleration.si * duration.si * duration.si);
     }
 
     /**

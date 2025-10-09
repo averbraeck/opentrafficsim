@@ -10,8 +10,8 @@ import javax.naming.NamingException;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.point.DirectedPoint2d;
-import org.opentrafficsim.draw.LineLocatable;
 import org.opentrafficsim.draw.DrawLevel;
+import org.opentrafficsim.draw.LineLocatable;
 import org.opentrafficsim.draw.OtsRenderable;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 

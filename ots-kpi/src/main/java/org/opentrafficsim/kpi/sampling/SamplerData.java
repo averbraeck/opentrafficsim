@@ -385,16 +385,16 @@ public class SamplerData<G extends GtuData> extends Table
                         data[dataIndex] = this.currentTrajectory.getGtuId();
                         break;
                     case "t":
-                        data[dataIndex] = FloatDuration.instantiateSI(this.currentTrajectory.getT(trajectoryIndex));
+                        data[dataIndex] = FloatDuration.ofSI(this.currentTrajectory.getT(trajectoryIndex));
                         break;
                     case "x":
-                        data[dataIndex] = FloatLength.instantiateSI(this.currentTrajectory.getX(trajectoryIndex));
+                        data[dataIndex] = FloatLength.ofSI(this.currentTrajectory.getX(trajectoryIndex));
                         break;
                     case "v":
-                        data[dataIndex] = FloatSpeed.instantiateSI(this.currentTrajectory.getV(trajectoryIndex));
+                        data[dataIndex] = FloatSpeed.ofSI(this.currentTrajectory.getV(trajectoryIndex));
                         break;
                     case "a":
-                        data[dataIndex] = FloatAcceleration.instantiateSI(this.currentTrajectory.getA(trajectoryIndex));
+                        data[dataIndex] = FloatAcceleration.ofSI(this.currentTrajectory.getA(trajectoryIndex));
                         break;
                     default:
 

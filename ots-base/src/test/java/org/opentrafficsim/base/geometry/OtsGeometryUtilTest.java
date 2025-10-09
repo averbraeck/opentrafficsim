@@ -70,7 +70,7 @@ public final class OtsGeometryUtilTest
     private void testSlice(final int n, final double radius)
     {
         double deviation = (1.0 - Math.cos(Math.PI / n)) * radius;
-        Angle ang = Angle.instantiateSI(Math.PI);
+        Angle ang = Angle.ofSI(Math.PI);
         assertEquals(n / 2, OtsGeometryUtil.getNumSegmentsForRadius(deviation * 1.001, ang, radius));
         assertEquals((n / 2) + 1, OtsGeometryUtil.getNumSegmentsForRadius(deviation * 0.999, ang, radius));
     }

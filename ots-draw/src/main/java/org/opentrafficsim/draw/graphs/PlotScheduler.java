@@ -23,7 +23,7 @@ public interface PlotScheduler
         @Override
         public Duration getTime()
         {
-            return Duration.instantiateSI(Double.MAX_VALUE);
+            return Duration.ofSI(Double.MAX_VALUE);
         }
 
         @Override

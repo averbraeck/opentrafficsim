@@ -128,10 +128,10 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
     private Speed speedLimit = new Speed(120.0, SpeedUnit.KM_PER_HOUR);
 
     /** Tmin. */
-    private Duration tMin = Duration.instantiateSI(0.56);
+    private Duration tMin = Duration.ofSI(0.56);
 
     /** Tmax. */
-    private Duration tMax = Duration.instantiateSI(1.2);
+    private Duration tMax = Duration.ofSI(1.2);
 
     /** Panel splitting controls from graphs. */
     private JPanel splitPanel;
@@ -211,7 +211,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
 
         LinkType linkType = DefaultsNl.FREEWAY;
         LaneKeepingPolicy policy = LaneKeepingPolicy.KEEPRIGHT;
-        Length laneWidth = Length.instantiateSI(3.5);
+        Length laneWidth = Length.ofSI(3.5);
         LaneType laneType = DefaultsRoadNl.FREEWAY;
         Speed speedLim = new Speed(120.0, SpeedUnit.KM_PER_HOUR);
 
@@ -231,7 +231,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             {
                 @SuppressWarnings("synthetic-access")
                 double mean = 1.0 / FundamentalDiagramDemo.this.demand.si;
-                return Duration.instantiateSI(-mean * Math.log(stream.nextDouble()));
+                return Duration.ofSI(-mean * Math.log(stream.nextDouble()));
             }
         };
         // GTU characteristics generator
@@ -246,11 +246,11 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             {
                 if (gtuType.equals(truck))
                 {
-                    parameters.setParameter(ParameterTypes.A, Acceleration.instantiateSI(0.4));
+                    parameters.setParameter(ParameterTypes.A, Acceleration.ofSI(0.4));
                 }
                 else
                 {
-                    parameters.setParameter(ParameterTypes.A, Acceleration.instantiateSI(2.0));
+                    parameters.setParameter(ParameterTypes.A, Acceleration.ofSI(2.0));
                 }
                 parameters.setParameter(ParameterTypes.FSPEED, fSpeed.draw()); // also for trucks due to low speed limit option
                 parameters.setParameter(ParameterTypes.TMIN, FundamentalDiagramDemo.this.tMin);
@@ -290,7 +290,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
                 laneBasedGtuCharacteristicsGenerator, generatorPositions, network, sim, roomChecker, idGenerator);
         generator.setErrorHandler(GtuErrorHandler.DELETE);
         generator.setBookkeeping(LaneBookkeeping.INSTANT);
-        generator.setNoLaneChangeDistance(Length.instantiateSI(100.0));
+        generator.setNoLaneChangeDistance(Length.ofSI(100.0));
 
         // Sinks
         for (Lane lane : lanesBC)
@@ -485,8 +485,8 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             public void stateChanged(final ChangeEvent e)
             {
                 double value = ((JSlider) e.getSource()).getValue() / 10.0;
-                FundamentalDiagramDemo.this.tMin = Duration.instantiateSI((0.56 / 1.2) * value);
-                FundamentalDiagramDemo.this.tMax = Duration.instantiateSI(value);
+                FundamentalDiagramDemo.this.tMin = Duration.ofSI((0.56 / 1.2) * value);
+                FundamentalDiagramDemo.this.tMax = Duration.ofSI(value);
                 FundamentalDiagramDemo.this.fdLine.update();
                 notifyPlotsChanged();
                 for (Gtu gtu : getNetwork().getGTUs())
@@ -584,13 +584,13 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             String linkId;
             if (i >= 1500.0)
             {
-                lanePosition = Length.instantiateSI(i - 1500.0);
+                lanePosition = Length.ofSI(i - 1500.0);
                 linkId = "Lane-dropDestination";
             }
             else
             {
                 names.add(1, "Middle");
-                lanePosition = Length.instantiateSI(i);
+                lanePosition = Length.ofSI(i);
                 linkId = "OriginLane-drop";
             }
             LinkPosition linkPosition = new LinkPosition(getNetwork().getLink(linkId), lanePosition);
@@ -603,7 +603,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             {
                 throw new RuntimeException("Unable to create cross section.", exception);
             }
-            Duration aggregationTime = Duration.instantiateSI(30.0);
+            Duration aggregationTime = Duration.ofSI(30.0);
             FdSource source = FundamentalDiagram.sourceFromSampler(this.sampler, crossSection, true, aggregationTime, false);
             this.fdSourceMap.put(String.format("%.2f", i / 1000.0).replace(",", "."), source);
         }
@@ -626,8 +626,8 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
             firstLanes.add(lane);
         }
         GraphPath<LaneDataRoad> path = Try.assign(() -> GraphLaneUtil.createPath(names, firstLanes), "");
-        this.trajectoryPlot = new TrajectoryPlot("Trajectories", Duration.instantiateSI(5.0), this.scheduler,
-                this.sampler.getSamplerData(), path);
+        this.trajectoryPlot =
+                new TrajectoryPlot("Trajectories", Duration.ofSI(5.0), this.scheduler, this.sampler.getSamplerData(), path);
         this.trajectoryPlot.updateFixedDomainRange(true);
         SwingTrajectoryPlot swingTrajectoryPlot = new SwingTrajectoryPlot(this.trajectoryPlot)
         {

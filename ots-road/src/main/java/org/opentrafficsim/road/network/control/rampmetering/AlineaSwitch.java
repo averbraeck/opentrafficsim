@@ -23,7 +23,7 @@ public class AlineaSwitch extends SingleCrossSectionSwitch
 {
 
     /** Maximum cycle time. */
-    private static final Duration MAX_CYCLE_TIME = Duration.instantiateSI(15);
+    private static final Duration MAX_CYCLE_TIME = Duration.ofSI(15);
 
     /** Capacity. */
     private final Frequency capacity;
@@ -46,7 +46,7 @@ public class AlineaSwitch extends SingleCrossSectionSwitch
      */
     public AlineaSwitch(final List<LoopDetector> detectors)
     {
-        super(Duration.instantiateSI(60.0), detectors);
+        super(Duration.ofSI(60.0), detectors);
         this.capacity = new Frequency(2000, FrequencyUnit.PER_HOUR).times(detectors.size());
         this.flowThreshold = new Frequency(1500, FrequencyUnit.PER_HOUR).times(detectors.size());
     }
@@ -58,7 +58,7 @@ public class AlineaSwitch extends SingleCrossSectionSwitch
         if (meanSpeed().le(this.speedThreshold)
                 || (this.lastFlow != null && flow.lt(this.lastFlow) && flow.gt(this.flowThreshold)))
         {
-            this.cycleTime = Duration.instantiateSI(1.0 / this.capacity.minus(flow).si);
+            this.cycleTime = Duration.ofSI(1.0 / this.capacity.minus(flow).si);
             this.cycleTime = Duration.min(this.cycleTime, MAX_CYCLE_TIME);
             this.lastFlow = flow;
             return true;

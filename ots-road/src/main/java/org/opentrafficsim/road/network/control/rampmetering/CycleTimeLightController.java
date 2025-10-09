@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.exceptions.Try;
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -33,7 +34,7 @@ public class CycleTimeLightController implements RampMeteringLightController
 {
 
     /** Minimum red duration. */
-    private static final Duration MIN_RED_TIME = Duration.instantiateSI(2.0);
+    private static final Duration MIN_RED_TIME = Duration.ofSI(2.0);
 
     /** Whether the controller is enabled. */
     private boolean enabled = false;
@@ -106,7 +107,7 @@ public class CycleTimeLightController implements RampMeteringLightController
     @Override
     public void enable(final Duration cycleTime)
     {
-        this.simulator.getLogger().always().info("Traffic light uses " + cycleTime);
+        CategoryLogger.always().info("Traffic light uses " + cycleTime);
         this.cTime = cycleTime;
         if (!this.enabled)
         {
@@ -125,7 +126,7 @@ public class CycleTimeLightController implements RampMeteringLightController
     protected void setRed(final TrafficLight trafficLight)
     {
         this.redEvents.remove(trafficLight);
-        this.simulator.getLogger().always().info("Traffic light set to RED");
+        CategoryLogger.always().info("Traffic light set to RED");
         trafficLight.setTrafficLightColor(TrafficLightColor.RED);
     }
 
@@ -137,7 +138,7 @@ public class CycleTimeLightController implements RampMeteringLightController
     {
         this.greenEvents.remove(trafficLight);
         this.greenStarts.put(trafficLight, this.simulator.getSimulatorTime());
-        this.simulator.getLogger().always().info("Traffic light set to GREEN");
+        CategoryLogger.always().info("Traffic light set to GREEN");
         trafficLight.setTrafficLightColor(TrafficLightColor.GREEN);
     }
 
@@ -178,20 +179,20 @@ public class CycleTimeLightController implements RampMeteringLightController
                     Duration green;
                     if (minRedTime.ge(cycleRedTime))
                     {
-                        getSimulator().getLogger().always().info("Traffic light set to RED");
+                        CategoryLogger.always().info("Traffic light set to RED");
                         this.trafficLight.setTrafficLightColor(TrafficLightColor.RED);
                         green = minRedTime;
                     }
                     else
                     {
-                        getSimulator().getLogger().always().info("Traffic light set to YELLOW (RED over 'MIN_RED_TIME')");
+                        CategoryLogger.always().info("Traffic light set to YELLOW (RED over 'MIN_RED_TIME')");
                         this.trafficLight.setTrafficLightColor(TrafficLightColor.YELLOW);
                         CycleTimeLightController.this.redEvents.put(this.trafficLight, CycleTimeLightController.this.simulator
                                 .scheduleEventRel(MIN_RED_TIME, () -> CycleTimeLightController.this.setRed(this.trafficLight)));
                         green = cycleRedTime;
                     }
                     CycleTimeLightController.this.greenEvents.put(this.trafficLight,
-                            CycleTimeLightController.this.simulator.scheduleEventAbs(Duration.instantiateSI(green.si),
+                            CycleTimeLightController.this.simulator.scheduleEventAbs(Duration.ofSI(green.si),
                                     () -> CycleTimeLightController.this.setGreen(this.trafficLight)));
                 }
                 catch (SimRuntimeException exception)

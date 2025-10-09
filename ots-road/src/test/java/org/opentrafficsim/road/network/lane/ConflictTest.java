@@ -18,7 +18,6 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.Export;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;

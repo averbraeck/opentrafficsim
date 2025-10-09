@@ -9,8 +9,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.Resource;
 import org.opentrafficsim.editor.decoration.DefaultDecorator;
-import org.pmw.tinylog.Level;
 import org.xml.sax.SAXException;
+
+import ch.qos.logback.classic.Level;
 
 /**
  * Runs the editor with default decoration and built-in XML schema.
@@ -44,7 +45,7 @@ public final class RunEditor
     public static void main(final String[] args) throws IOException, SAXException, ParserConfigurationException,
             InterruptedException, URISyntaxException, NamingException
     {
-        CategoryLogger.setAllLogLevel(Level.TRACE);
+        CategoryLogger.setLogLevelAll(Level.TRACE);
         OtsEditor editor = new OtsEditor();
         DefaultDecorator.decorate(editor);
         editor.setSchema(DocumentReader.open(Resource.getResourceAsUri("/xsd/ots.xsd")));

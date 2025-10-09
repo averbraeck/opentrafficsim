@@ -234,7 +234,7 @@ public final class TrafficLightDetectorTest implements EventListener
                         // this.loggedEvents.size());
                     }
                 }
-                Duration stopTime = Duration.instantiateSI(100.0);
+                Duration stopTime = Duration.ofSI(100.0);
                 while (simulator.getSimulatorTime().lt(stopTime))
                 {
                     // System.out.println("simulation time is now " + simulator);

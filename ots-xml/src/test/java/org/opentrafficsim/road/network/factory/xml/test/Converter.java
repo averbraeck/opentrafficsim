@@ -175,7 +175,7 @@ public class Converter
             <SpeedLimit GtuType="NL.TRUCK" LegalSpeedLimit="40km/h" />
           </LinkType>
         </LinkTypes>
-
+        
         <LaneTypes>
           <LaneType Id="STREET">
             <Compatibility GtuType="NL.VEHICLE" />
@@ -236,7 +236,7 @@ public class Converter
             <SpeedLimit GtuType="NL.TRUCK" LegalSpeedLimit="40km/h" />
           </LinkType>
         </LinkTypes>
-
+        
         <LaneTypes>
           <LaneType Id="STREET">
             <Compatibility GtuType="NL.VEHICLE" />
@@ -389,7 +389,7 @@ public class Converter
            <Link Id="L2EB" NodeStart="N2EB" NodeEnd="N3EB" RoadLayout="HW3AFSLAG">
              <Polyline IntermediatePoints="(137792,395679) (137816,395665) (137902.6725,395617.2567)" />
            </Link>
-
+        
            NEW:
              <Link Id="NS23" NodeStart="NS2" NodeEnd="NS3" Type="NL.STREET">
                <Straight />

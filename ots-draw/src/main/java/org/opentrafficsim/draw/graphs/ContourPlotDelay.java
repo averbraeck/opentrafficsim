@@ -99,7 +99,7 @@ public class ContourPlotDelay extends AbstractContourPlot<Duration>
                     }
                 }
             }
-            return Duration.instantiateSI(intermediate.si + sumActualTime - sumRefTime);
+            return Duration.ofSI(intermediate.si + sumActualTime - sumRefTime);
         }
 
         @Override

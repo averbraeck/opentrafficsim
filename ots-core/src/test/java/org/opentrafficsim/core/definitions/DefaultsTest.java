@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.djutils.exceptions.Try;
+import org.djutils.test.UnitTest;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LinkType;
@@ -46,7 +46,7 @@ public final class DefaultsTest
         assertNotNull(Defaults.NL.apply(DefaultsNl.EMERGENCY_VEHICLE, stream));
         assertNotNull(Defaults.NL.apply(DefaultsNl.MOTORCYCLE, stream));
         assertNotNull(Defaults.NL.apply(DefaultsNl.BICYCLE, stream));
-        Try.testFail(() -> Defaults.NL.apply(new GtuType("NEW"), stream), NullPointerException.class);
+        UnitTest.testFail(() -> Defaults.NL.apply(new GtuType("NEW"), stream), NullPointerException.class);
 
         assertEquals(Defaults.NL.getLocale().getCountry(), "NL");
         assertNotNull(Defaults.getByName(GtuType.class, "NL.CAR"));
@@ -67,12 +67,12 @@ public final class DefaultsTest
     {
         Definitions defs = new Definitions();
 
-        Try.testFail(() -> defs.add(GtuType.class, null), NullPointerException.class);
-        Try.testFail(() -> defs.add(null, DefaultsNl.CAR), NullPointerException.class);
+        UnitTest.testFail(() -> defs.add(GtuType.class, null), NullPointerException.class);
+        UnitTest.testFail(() -> defs.add(null, DefaultsNl.CAR), NullPointerException.class);
         defs.add(GtuType.class, DefaultsNl.CAR);
 
-        Try.testFail(() -> defs.get(GtuType.class, null), NullPointerException.class);
-        Try.testFail(() -> defs.get(null, "NL.CAR"), NullPointerException.class);
+        UnitTest.testFail(() -> defs.get(GtuType.class, null), NullPointerException.class);
+        UnitTest.testFail(() -> defs.get(null, "NL.CAR"), NullPointerException.class);
         assertEquals(DefaultsNl.CAR, defs.get(GtuType.class, "NL.CAR"));
         assertNull(defs.get(GtuType.class, "NL.NOT_A_TYPE"));
         assertNull(defs.get(LinkType.class, "NL.HIGHWAY"));

@@ -298,7 +298,7 @@ public class Link extends LocalEventProducer
         {
             return Length.ZERO;
         }
-        return Length.instantiateSI(this.elevation.get(fractionalPosition));
+        return Length.ofSI(this.elevation.get(fractionalPosition));
     }
 
     /**

@@ -45,7 +45,7 @@ public class ChildNodeFinder
             return false;
         }
     }
-    
+
     /**
      * Whether the node has given child which is also active.
      * @param name child name
@@ -55,7 +55,7 @@ public class ChildNodeFinder
     {
         return hasChild(name) && this.child.isActive();
     }
-    
+
     /**
      * Returns the previously found node.
      * @return previously found node

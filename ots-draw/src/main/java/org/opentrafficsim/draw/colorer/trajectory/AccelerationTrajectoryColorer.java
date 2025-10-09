@@ -27,7 +27,7 @@ public class AccelerationTrajectoryColorer extends AccelerationColorer<Trajector
 
     /** Value function. */
     private static final Function<TrajectorySection, Acceleration> VALUE =
-            (traj) -> Acceleration.instantiateSI(traj.trajectory().getA(traj.section()));
+            (traj) -> Acceleration.ofSI(traj.trajectory().getA(traj.section()));
 
     /**
      * Constructor.

@@ -161,7 +161,7 @@ public class OdExample
 
         LmrsFactory tactical = new LmrsFactory.Factory().withDefaultIncentives().build(randomStream);
         ParameterFactoryByType params = new ParameterFactoryByType();
-        params.addParameter(truck, ParameterTypes.A, Acceleration.instantiateSI(0.8));
+        params.addParameter(truck, ParameterTypes.A, Acceleration.ofSI(0.8));
         LaneBasedStrategicalPlannerFactory<?> strategical = new LaneBasedStrategicalRoutePlannerFactory(tactical, params);
         Factory factoryOD = new DefaultLaneBasedGtuCharacteristicsGeneratorOd.Factory(strategical);
 
@@ -171,8 +171,8 @@ public class OdExample
         factoryOD.setGtuTypeGenerator(gtuTypeGenerator);
 
         Set<GtuTemplate> templates = new LinkedHashSet<>();
-        templates.add(new GtuTemplate(car, new ConstantSupplier<>(Length.instantiateSI(4.5)),
-                new ConstantSupplier<>(Length.instantiateSI(1.9)), new ConstantSupplier<>(Speed.instantiateSI(50))));
+        templates.add(new GtuTemplate(car, new ConstantSupplier<>(Length.ofSI(4.5)), new ConstantSupplier<>(Length.ofSI(1.9)),
+                new ConstantSupplier<>(Speed.ofSI(50))));
         factoryOD.setTemplates(templates);
 
         DistContinuousMass carMass = new DistContinuousMass(new DistUniform(randomStream, 500, 1500));

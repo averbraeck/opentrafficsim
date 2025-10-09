@@ -15,7 +15,6 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vfloat.scalar.FloatAcceleration;
 import org.djunits.value.vfloat.scalar.FloatDuration;
 import org.djunits.value.vfloat.scalar.FloatLength;
@@ -66,7 +65,7 @@ public final class TrajectoryTest
         }
 
         // prepare input
-        TestGtuData gtu = new TestGtuData("id", "A", "B", "car", "route", Speed.instantiateSI(10.0));
+        TestGtuData gtu = new TestGtuData("id", "A", "B", "car", "route", Speed.ofSI(10.0));
         ExtendedDataDuration<TestGtuData> ttc = new ExtendedDataDuration<>("ttc", "time to collision")
         {
             @Override
@@ -98,16 +97,16 @@ public final class TrajectoryTest
         // trajectory with constant speed
         trajectory = new Trajectory<>(gtu, Map.of(new FilterDataGtuType(), "car", new FilterDataOrigin(), "A"),
                 Collections.emptySet());
-        Speed v = Speed.instantiateSI(30.0);
+        Speed v = Speed.ofSI(30.0);
         for (double t = 0.0; t < 10.0; t += 0.5)
         {
-            Length x = Length.instantiateSI(v.si * t);
-            Duration tim = Duration.instantiateSI(t);
+            Length x = Length.ofSI(v.si * t);
+            Duration tim = Duration.ofSI(t);
             trajectory.add(x, v, Acceleration.ZERO, tim);
             if (t > 0.0)
             {
-                Length pos = Length.instantiateSI(x.si - 0.25 * v.si);
-                Duration moment = Duration.instantiateSI(tim.si - 0.25);
+                Length pos = Length.ofSI(x.si - 0.25 * v.si);
+                Duration moment = Duration.ofSI(tim.si - 0.25);
                 assertEquals(moment.si, trajectory.getTimeAtPosition(pos).si, 0.001);
                 assertEquals(v.si, trajectory.getSpeedAtPosition(pos).si, 0.001);
                 assertEquals(0.0, trajectory.getAccelerationAtPosition(pos).si, 0.001);
@@ -136,19 +135,19 @@ public final class TrajectoryTest
         trajectory = new Trajectory<>(gtu, Collections.emptyMap(), Collections.emptySet());
         trajectory2 = new Trajectory<>(gtu, Collections.emptyMap(), Collections.emptySet());
         trajectory.add(Length.ZERO, Speed.ZERO, Acceleration.ZERO, Duration.ZERO);
-        trajectory2.add(Length.ZERO, Speed.ZERO, Acceleration.ZERO, Duration.instantiateSI(1.0));
+        trajectory2.add(Length.ZERO, Speed.ZERO, Acceleration.ZERO, Duration.ofSI(1.0));
         assertFalse(trajectory.equals(trajectory2));
         assertFalse(trajectory2.equals(trajectory));
 
         trajectory = new Trajectory<>(gtu, Collections.emptyMap(), Collections.emptySet());
-        TestGtuData gtu2 = new TestGtuData("id2", "A", "B", "car", "route", Speed.instantiateSI(10.0));
+        TestGtuData gtu2 = new TestGtuData("id2", "A", "B", "car", "route", Speed.ofSI(10.0));
         trajectory2 = new Trajectory<>(gtu2, Collections.emptyMap(), Collections.emptySet());
         assertFalse(trajectory.equals(trajectory2)); // triggers on gtuId != gtuId
-        trajectory2.add(Length.ZERO, Speed.ZERO, Acceleration.ZERO, Duration.instantiateSI(1.0));
+        trajectory2.add(Length.ZERO, Speed.ZERO, Acceleration.ZERO, Duration.ofSI(1.0));
         assertFalse(trajectory.equals(trajectory2)); // triggers on size != size
         trajectory.add(Length.ZERO, Speed.ZERO, Acceleration.ZERO, Duration.ZERO);
         trajectory2 = new Trajectory<>(gtu, Collections.emptyMap(), Collections.emptySet());
-        trajectory2.add(Length.ZERO, Speed.ZERO, Acceleration.ZERO, Duration.instantiateSI(1.0));
+        trajectory2.add(Length.ZERO, Speed.ZERO, Acceleration.ZERO, Duration.ofSI(1.0));
         assertFalse(trajectory.equals(trajectory2)); // triggers on t[0] != t[0]
 
         assertNotNull(trajectory.toString());
@@ -163,14 +162,14 @@ public final class TrajectoryTest
     private void smallSimulation(final Trajectory<TestGtuData> trajectory, final TestGtuData gtu)
     {
         double v0 = 30.0;
-        Acceleration a = Acceleration.instantiateSI(-1.2);
+        Acceleration a = Acceleration.ofSI(-1.2);
         int n = 0;
-        Length x0 = Length.instantiateSI(100.0);
-        Length x1 = Length.instantiateSI(200.0);
-        Length xMax = Length.instantiateSI(300.0);
-        Duration t0 = Duration.instantiateSI(4.0);
-        Duration t1 = Duration.instantiateSI(8.0);
-        Duration tMax = Duration.instantiateSI(10.0);
+        Length x0 = Length.ofSI(100.0);
+        Length x1 = Length.ofSI(200.0);
+        Length xMax = Length.ofSI(300.0);
+        Duration t0 = Duration.ofSI(4.0);
+        Duration t1 = Duration.ofSI(8.0);
+        Duration tMax = Duration.ofSI(10.0);
 
         assertEquals(0, trajectory.subSet(Length.ZERO, xMax).size());
         assertEquals(0, trajectory.subSet(Duration.ZERO, tMax).size());
@@ -178,9 +177,9 @@ public final class TrajectoryTest
 
         for (double t = 0.0; t < tMax.si; t += 0.5)
         {
-            Length x = Length.instantiateSI(v0 * t + 0.5 * a.si * t * t);
-            Speed v = Speed.instantiateSI(v0 + t * a.si);
-            Duration tim = Duration.instantiateSI(t);
+            Length x = Length.ofSI(v0 * t + 0.5 * a.si * t * t);
+            Speed v = Speed.ofSI(v0 + t * a.si);
+            Duration tim = Duration.ofSI(t);
             if (gtu == null)
             {
                 trajectory.add(x, v, a, tim);
@@ -194,10 +193,10 @@ public final class TrajectoryTest
             testArray(trajectory.getV(), n, v.floatValue());
             testArray(trajectory.getT(), n, tim.floatValue());
             testArray(trajectory.getA(), n, a.floatValue());
-            testUnitVector(trajectory.getPosition(), n, FloatLength.instantiateSI(x.floatValue()));
-            testUnitVector(trajectory.getSpeed(), n, FloatSpeed.instantiateSI(v.floatValue()));
-            testUnitVector(trajectory.getTime(), n, FloatTime.instantiateSI(tim.floatValue()));
-            testUnitVector(trajectory.getAcceleration(), n, FloatAcceleration.instantiateSI(a.floatValue()));
+            testUnitVector(trajectory.getPosition(), n, FloatLength.ofSI(x.floatValue()));
+            testUnitVector(trajectory.getSpeed(), n, FloatSpeed.ofSI(v.floatValue()));
+            testUnitVector(trajectory.getTime(), n, FloatTime.ofSI(tim.floatValue()));
+            testUnitVector(trajectory.getAcceleration(), n, FloatAcceleration.ofSI(a.floatValue()));
             assertEquals(trajectory.getTotalDuration().si, tim.si, 0.001);
             assertEquals(trajectory.getTotalLength().si, x.si, 0.001);
 
@@ -206,7 +205,7 @@ public final class TrajectoryTest
             {
                 Length xExpected = Length.max(Length.ZERO, Length.min(x, x1).minus(x0));
                 testSpaceTimeView(trajectory.getSpaceTimeView(x0, x1, Duration.ZERO, tMax), xExpected, null);
-                Duration tExpected = Duration.max(Duration.ZERO, Time.min(tim, t1).minus(t0));
+                Duration tExpected = Duration.max(Duration.ZERO, Duration.min(tim, t1).minus(t0));
                 testSpaceTimeView(trajectory.getSpaceTimeView(Length.ZERO, xMax, t0, t1), null, tExpected);
             }
             n++;

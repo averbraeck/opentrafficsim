@@ -311,7 +311,7 @@ public interface PerceivedConflict extends PerceivedLaneBasedObject
             @Override
             public Length getWidthAtFraction(final double fraction)
             {
-                return Length.instantiateSI((1.0 - fraction) * startWidth + fraction * endWidth);
+                return Length.ofSI((1.0 - fraction) * startWidth + fraction * endWidth);
             }
         };
     }

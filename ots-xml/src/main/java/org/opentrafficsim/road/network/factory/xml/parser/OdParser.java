@@ -425,7 +425,7 @@ public final class OdParser
             final Od od, final Categorization categorization, final Eval eval) throws XmlParserException
     {
         OdOptions odOptions =
-                new OdOptions().set(OdOptions.GTU_ID, new IdSupplier("")).set(OdOptions.NO_LC_DIST, Length.instantiateSI(1.0));
+                new OdOptions().set(OdOptions.GTU_ID, new IdSupplier("")).set(OdOptions.NO_LC_DIST, Length.ofSI(1.0));
 
         // default global option to integrate defined templates
         StreamInterface stream = streamMap.getStream("generation");

@@ -39,7 +39,7 @@ public class GtuSpawner
     private StreamInterface stream = new MersenneTwister(123L);
 
     /** Length over which no lane changes will happen. */
-    private Length noLaneChangeDistance = Length.instantiateSI(100.0);
+    private Length noLaneChangeDistance = Length.ofSI(100.0);
 
     /** Lane bookkeeping. */
     private LaneBookkeeping bookkeeping = LaneBookkeeping.EDGE;

@@ -592,7 +592,7 @@ public final class LmrsUtil implements LmrsParameters
         double limitedDesire = desire < 0 ? 0 : desire > 1 ? 1 : desire;
         double tDes = limitedDesire * params.getParameter(TMIN).si + (1 - limitedDesire) * params.getParameter(TMAX).si;
         double t = params.getParameter(T).si;
-        params.setParameterResettable(T, Duration.instantiateSI(tDes < t ? tDes : t));
+        params.setParameterResettable(T, Duration.ofSI(tDes < t ? tDes : t));
     }
 
     /**

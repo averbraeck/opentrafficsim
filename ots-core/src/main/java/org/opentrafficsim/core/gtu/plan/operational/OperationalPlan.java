@@ -12,6 +12,7 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableList;
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -66,10 +67,10 @@ public class OperationalPlan implements Serializable
     private final double[] segmentStartDistances;
 
     /** The drifting speed. Speeds under this value will be cropped to zero. */
-    public static final Speed DRIFTING_SPEED = Speed.instantiateSI(0.001);
+    public static final Speed DRIFTING_SPEED = Speed.ofSI(0.001);
 
     /** Minimum distance of an operational plan path; anything shorter will be truncated to 0. */
-    public static final Length MINIMUM_CREDIBLE_PATH_LENGTH = Length.instantiateSI(0.001);
+    public static final Length MINIMUM_CREDIBLE_PATH_LENGTH = Length.ofSI(0.001);
 
     /**
      * Creates a stand-still plan at a point. A 1m path in the direction of the point is created.
@@ -150,8 +151,8 @@ public class OperationalPlan implements Serializable
                 i--;
             }
             double distanceInLast = this.totalLength.si - this.segmentStartDistances[i - 1];
-            Duration timeInLast = this.segments.get(i - 1).durationAtDistance(Length.instantiateSI(distanceInLast));
-            this.totalDuration = Duration.instantiateSI(timeInLast.si + this.segmentStartDurations[i - 1]);
+            Duration timeInLast = this.segments.get(i - 1).durationAtDistance(Length.ofSI(distanceInLast));
+            this.totalDuration = Duration.ofSI(timeInLast.si + this.segmentStartDurations[i - 1]);
             this.path = path;
         }
         else
@@ -266,9 +267,9 @@ public class OperationalPlan implements Serializable
         {
             segment++;
         }
-        Duration durationInSegment = this.segments.get(segment)
-                .durationAtDistance(Length.instantiateSI(distance.si - this.segmentStartDistances[segment]));
-        return Duration.instantiateSI(this.startTime.si + this.segmentStartDurations[segment] + durationInSegment.si);
+        Duration durationInSegment =
+                this.segments.get(segment).durationAtDistance(Length.ofSI(distance.si - this.segmentStartDistances[segment]));
+        return Duration.ofSI(this.startTime.si + this.segmentStartDurations[segment] + durationInSegment.si);
     }
 
     /**
@@ -303,8 +304,7 @@ public class OperationalPlan implements Serializable
      * @return the location after the given duration since the start of the plan.
      * @throws OperationalPlanException when the time is after the validity of the operational plan
      */
-    public final DirectedPoint2d getLocation(final Duration time, final RelativePosition pos)
-            throws OperationalPlanException
+    public final DirectedPoint2d getLocation(final Duration time, final RelativePosition pos) throws OperationalPlanException
     {
         double distanceSI = getTraveledDistance(time).si + pos.dx().si;
         return this.path.getLocationExtendedSI(distanceSI);
@@ -330,7 +330,7 @@ public class OperationalPlan implements Serializable
     public final Speed getSpeed(final Duration time) throws OperationalPlanException
     {
         int segment = getSegment(time);
-        Duration durationInSegment = Duration.instantiateSI(time.si - this.startTime.si - this.segmentStartDurations[segment]);
+        Duration durationInSegment = Duration.ofSI(time.si - this.startTime.si - this.segmentStartDurations[segment]);
         durationInSegment = fixDoublePrecision(durationInSegment, segment);
         return this.segments.get(segment).speed(durationInSegment);
     }
@@ -397,10 +397,10 @@ public class OperationalPlan implements Serializable
         Throw.when(time.si > this.getEndTime().si + 1e-6, OperationalPlanException.class,
                 "getTravelDistance exception: requested traveled distance beyond end of plan");
         int segment = getSegment(time);
-        Duration durationInSegment = Duration.instantiateSI(time.si - this.startTime.si - this.segmentStartDurations[segment]);
+        Duration durationInSegment = Duration.ofSI(time.si - this.startTime.si - this.segmentStartDurations[segment]);
         durationInSegment = fixDoublePrecision(durationInSegment, segment);
         double distanceInSegment = this.segments.get(segment).distance(durationInSegment).si;
-        return Length.instantiateSI(this.segmentStartDistances[segment] + distanceInSegment);
+        return Length.ofSI(this.segmentStartDistances[segment] + distanceInSegment);
     }
 
     /**
@@ -419,8 +419,8 @@ public class OperationalPlan implements Serializable
             segment++;
         }
         Duration dt = this.segments.get(segment)
-                .durationAtDistance(traveledDistance.minus(Length.instantiateSI(this.segmentStartDistances[segment])));
-        return Duration.instantiateSI(this.segmentStartDurations[segment] + dt.si);
+                .durationAtDistance(traveledDistance.minus(Length.ofSI(this.segmentStartDistances[segment])));
+        return Duration.ofSI(this.segmentStartDurations[segment] + dt.si);
     }
 
     /**
@@ -455,7 +455,7 @@ public class OperationalPlan implements Serializable
                 Point2d p = Point2d.intersectionOfLines(this.path.get(0), this.path.get(1), p1, p2);
                 double dist = traveledDistanceAlongPath - this.path.get(0).distance(p);
                 dist = dist >= 0.0 ? dist : 0.0; // negative in case of a gap
-                return timeAtDistance(Length.instantiateSI(dist));
+                return timeAtDistance(Length.ofSI(dist));
             }
             for (int i = 0; i < this.path.size() - 1; i++)
             {
@@ -478,7 +478,7 @@ public class OperationalPlan implements Serializable
                     {
                         return Duration.NaN;
                     }
-                    return timeAtDistance(Length.instantiateSI(traveledDistanceAlongPath));
+                    return timeAtDistance(Length.ofSI(traveledDistanceAlongPath));
                 }
                 else
                 {
@@ -490,7 +490,7 @@ public class OperationalPlan implements Serializable
         {
             throw new RuntimeException("Index out of bounds on projection of point to path of operational plan", exception);
         }
-        this.gtu.getSimulator().getLogger().always().error("timeAtPoint failed");
+        CategoryLogger.always().error("timeAtPoint failed");
         return null;
     }
 

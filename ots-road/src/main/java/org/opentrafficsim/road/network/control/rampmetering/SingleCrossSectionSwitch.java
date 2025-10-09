@@ -63,7 +63,7 @@ public abstract class SingleCrossSectionSwitch implements RampMeteringSwitch
                 n++;
             }
         }
-        return Speed.instantiateSI(value / n);
+        return Speed.ofSI(value / n);
     }
 
     /**
@@ -89,7 +89,7 @@ public abstract class SingleCrossSectionSwitch implements RampMeteringSwitch
                 value += detector.getLastFlow().si;
             }
         }
-        return Frequency.instantiateSI(value);
+        return Frequency.ofSI(value);
     }
 
 }

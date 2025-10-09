@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.Locale;
 
-import org.djutils.exceptions.Try;
+import org.djutils.test.UnitTest;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.draw.egtf.typed.TypedQuantity;
 
@@ -181,12 +181,12 @@ public final class EgtfTest
         Egtf egtf = new Egtf();
         DataSource det = egtf.getDataSource("detectors");
         DataStream<?> detSpeed = det.addStreamSI(TypedQuantity.SPEED, 10.0, 5.0);
-        Try.testFail(() -> det.addStreamSI(TypedQuantity.SPEED, 5.0, 2.5), "Double speed quantity for detectors should fail.");
-        Try.testFail(() -> egtf.addVectorDataSI(detSpeed, new double[2], new double[3], new double[3]),
+        UnitTest.testFail(() -> det.addStreamSI(TypedQuantity.SPEED, 5.0, 2.5), "Double speed quantity for detectors should fail.");
+        UnitTest.testFail(() -> egtf.addVectorDataSI(detSpeed, new double[2], new double[3], new double[3]),
                 "Unequal lengths should result in a fail.", IllegalArgumentException.class);
-        Try.testFail(() -> egtf.addVectorDataSI(detSpeed, new double[3], new double[2], new double[3]),
+        UnitTest.testFail(() -> egtf.addVectorDataSI(detSpeed, new double[3], new double[2], new double[3]),
                 "Unequal lengths should result in a fail.", IllegalArgumentException.class);
-        Try.testFail(() -> egtf.addVectorDataSI(detSpeed, new double[3], new double[3], new double[2]),
+        UnitTest.testFail(() -> egtf.addVectorDataSI(detSpeed, new double[3], new double[3], new double[2]),
                 "Unequal lengths should result in a fail.", IllegalArgumentException.class);
     }
 

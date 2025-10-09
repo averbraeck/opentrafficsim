@@ -63,7 +63,7 @@ public class TotalDelay extends AbstractIndicator<Duration>
                 }
             }
         }
-        return Duration.instantiateSI(delay);
+        return Duration.ofSI(delay);
     }
 
     @Override

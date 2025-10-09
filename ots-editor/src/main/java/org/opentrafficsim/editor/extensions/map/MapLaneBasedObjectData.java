@@ -278,7 +278,7 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
             return;
         }
         this.positionFromStart =
-                ParseUtil.parseLengthBeginEnd(this.position, Length.instantiateSI(linkData.getCenterLine().getLength()));
+                ParseUtil.parseLengthBeginEnd(this.position, Length.ofSI(linkData.getCenterLine().getLength()));
 
         Length w = laneData.getWidth(this.positionFromStart);
         if (this.laneWidth != null && !this.laneWidth.equals(w))

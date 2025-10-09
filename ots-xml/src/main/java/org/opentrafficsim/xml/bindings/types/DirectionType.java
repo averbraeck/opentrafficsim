@@ -15,8 +15,7 @@ public class DirectionType extends ExpressionType<Direction>
 {
 
     /** Function to convert output from expression to the right type. */
-    private static final SerializableFunction<Object, Direction> TO_TYPE =
-            (o) -> Direction.instantiateSI(((Number) o).doubleValue());
+    private static final SerializableFunction<Object, Direction> TO_TYPE = (o) -> Direction.ofSI(((Number) o).doubleValue());
 
     /**
      * Constructor with value.

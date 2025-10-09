@@ -474,8 +474,8 @@ public final class Trajectory<G extends GtuData>
         {
             return new SpaceTimeView(Length.ZERO, Duration.ZERO);
         }
-        return new SpaceTimeView(Length.instantiateSI(this.x[this.size - 1] - this.x[0]),
-                Duration.instantiateSI(this.t[this.size - 1] - this.t[0]));
+        return new SpaceTimeView(Length.ofSI(this.x[this.size - 1] - this.x[0]),
+                Duration.ofSI(this.t[this.size - 1] - this.t[0]));
     }
 
     /**
@@ -520,7 +520,7 @@ public final class Trajectory<G extends GtuData>
             xTo = this.x[bounds.to];
             tTo = this.t[bounds.to];
         }
-        return new SpaceTimeView(Length.instantiateSI(xTo - xFrom), Duration.instantiateSI(tTo - tFrom));
+        return new SpaceTimeView(Length.ofSI(xTo - xFrom), Duration.ofSI(tTo - tFrom));
     }
 
     /**
@@ -674,7 +674,7 @@ public final class Trajectory<G extends GtuData>
      */
     public Duration getTimeAtPosition(final Length position)
     {
-        return Duration.instantiateSI(getBoundaryAtPosition((float) position.si, false).getValue(this.t));
+        return Duration.ofSI(getBoundaryAtPosition((float) position.si, false).getValue(this.t));
     }
 
     /**
@@ -684,7 +684,7 @@ public final class Trajectory<G extends GtuData>
      */
     public Speed getSpeedAtPosition(final Length position)
     {
-        return Speed.instantiateSI(getBoundaryAtPosition((float) position.si, false).getValue(this.v));
+        return Speed.ofSI(getBoundaryAtPosition((float) position.si, false).getValue(this.v));
     }
 
     /**
@@ -694,7 +694,7 @@ public final class Trajectory<G extends GtuData>
      */
     public Acceleration getAccelerationAtPosition(final Length position)
     {
-        return Acceleration.instantiateSI(getBoundaryAtPosition((float) position.si, false).getValue(this.a));
+        return Acceleration.ofSI(getBoundaryAtPosition((float) position.si, false).getValue(this.a));
     }
 
     /**
@@ -704,7 +704,7 @@ public final class Trajectory<G extends GtuData>
      */
     public Length getPositionAtTime(final Duration time)
     {
-        return Length.instantiateSI(getBoundaryAtTime((float) time.si, false).getValue(this.x));
+        return Length.ofSI(getBoundaryAtTime((float) time.si, false).getValue(this.x));
     }
 
     /**
@@ -714,7 +714,7 @@ public final class Trajectory<G extends GtuData>
      */
     public Speed getSpeedAtTime(final Duration time)
     {
-        return Speed.instantiateSI(getBoundaryAtTime((float) time.si, false).getValue(this.v));
+        return Speed.ofSI(getBoundaryAtTime((float) time.si, false).getValue(this.v));
     }
 
     /**
@@ -724,7 +724,7 @@ public final class Trajectory<G extends GtuData>
      */
     public Acceleration getAccelerationAtTime(final Duration time)
     {
-        return Acceleration.instantiateSI(getBoundaryAtTime((float) time.si, false).getValue(this.a));
+        return Acceleration.ofSI(getBoundaryAtTime((float) time.si, false).getValue(this.a));
     }
 
     /**

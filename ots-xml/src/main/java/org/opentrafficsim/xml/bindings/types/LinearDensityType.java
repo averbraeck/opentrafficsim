@@ -16,7 +16,7 @@ public class LinearDensityType extends ExpressionType<LinearDensity>
 
     /** Function to convert output from expression to the right type. */
     private static final SerializableFunction<Object, LinearDensity> TO_TYPE =
-            (o) -> LinearDensity.instantiateSI(((Number) o).doubleValue());
+            (o) -> LinearDensity.ofSI(((Number) o).doubleValue());
 
     /**
      * Constructor with value.

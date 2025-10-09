@@ -12,7 +12,7 @@ For each quantity, DJUNITS has a number of _units_. Values can be obtained or cr
 A slightly more convenient way to create values is by directly creating it in SI units:
 
 ```java
-    Speed speedSi = Speed.instantiateSI(25.0);
+    Speed speedSi = Speed.ofSI(25.0);
 ```
 
 Note that `speedKm` and `speedSi` are essentially equal as 25m/s = 90km/h. The creation unit is stored with the value, which is mostly for display purposes.
@@ -37,20 +37,20 @@ It is difficult to see what is exactly added to, or multiplied by, what. There i
 ```java
     public Length move(final Speed v, final Duration t, final Acceleration a)
     {
-        return Length.instantiateSI(v.si * t.si + .5 * a.si * t.si * t.si);
+        return Length.ofSI(v.si * t.si + .5 * a.si * t.si * t.si);
     } 
 ```
 
 There is one risk to this, which is that the values we calculate may not at all be consistent with the quantity we create. We know that ‘speed &times; duration’ + ‘0.5 &times; acceleration &times; duration<sup>2</sup>’ is length, but this is not checked. For example, no error is given on the following line where we forget to square the duration.
 
 ```java
-    Length.instantiateSI(v.si * t.si + .5 * a.si * t.si);
+    Length.ofSI(v.si * t.si + .5 * a.si * t.si);
 ```
 
 Therefore usage of DJUNITS is advised as follows:
 
 * Method input and output is strongly typed as DJUNITS quantities.
 * Short calculations within a method remain strongly typed.
-* Longer calculations, or calculations that are performance critical (i.e. performed very often), are done using `.si`, and `.instantiateSI()` on the result for output.
+* Longer calculations, or calculations that are performance critical (i.e. performed very often), are done using `.si`, and `.ofSI()` on the result for output.
 
 As calculations are strongly typed or using SI units, unit errors are unlikely to arise. Using strongly typed method input and output prevents that methods are invoked with values in units the method does not expect.

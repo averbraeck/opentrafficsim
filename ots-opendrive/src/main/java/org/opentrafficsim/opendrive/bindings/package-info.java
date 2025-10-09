@@ -6,5 +6,6 @@
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
- * @author <a href="https://github.com/wjschakel">Wouter Schakel</a> */
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
+ */
 package org.opentrafficsim.opendrive.bindings;

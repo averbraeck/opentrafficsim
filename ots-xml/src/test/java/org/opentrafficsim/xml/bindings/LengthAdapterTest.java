@@ -6,7 +6,7 @@ import java.util.Locale;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.exceptions.Try;
+import org.djutils.test.UnitTest;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.xml.bindings.types.LengthType;
 
@@ -92,21 +92,21 @@ public final class LengthAdapterTest
             // assertEquals(new LengthType(new Length(2.3, unit)), lengthAdapter.unmarshal("+2.3 " + us));
             assertEquals(new LengthType(new Length(2.3, unit)), lengthAdapter.unmarshal("2.3" + us));
             // assertEquals(new LengthType(new Length(2.3, unit)), lengthAdapter.unmarshal("+2.3" + us));
-            Try.testFail(() -> lengthAdapter.unmarshal("-2.3 " + us));
-            Try.testFail(() -> lengthAdapter.unmarshal("-2.3" + us));
+            UnitTest.testFail(() -> lengthAdapter.unmarshal("-2.3 " + us));
+            UnitTest.testFail(() -> lengthAdapter.unmarshal("-2.3" + us));
 
             assertEquals("2.3 " + us, lengthAdapter.marshal(new LengthType(new Length(2.3, unit))));
-            Try.testFail(() -> lengthAdapter.marshal(new LengthType(new Length(-2.3, unit))));
+            UnitTest.testFail(() -> lengthAdapter.marshal(new LengthType(new Length(-2.3, unit))));
 
             assertEquals(new LengthType(new Length(0.0, unit)), lengthAdapter.unmarshal("0.0 " + us));
             // assertEquals(new LengthType(new Length(0.0, unit)), lengthAdapter.unmarshal("+0.0 " + us));
             assertEquals(new LengthType(new Length(0.0, unit)), lengthAdapter.unmarshal("0.0" + us));
             // assertEquals(new LengthType(new Length(0.0, unit)), lengthAdapter.unmarshal("+0.0" + us));
-            Try.testFail(() -> lengthAdapter.unmarshal("-0.0 " + us));
-            Try.testFail(() -> lengthAdapter.unmarshal("-0.0" + us));
+            UnitTest.testFail(() -> lengthAdapter.unmarshal("-0.0 " + us));
+            UnitTest.testFail(() -> lengthAdapter.unmarshal("-0.0" + us));
 
             assertEquals("0.0 " + us, lengthAdapter.marshal(new LengthType(new Length(0.0, unit))));
-            Try.testFail(() -> lengthAdapter.marshal(new LengthType(new Length(-0.0, unit))));
+            UnitTest.testFail(() -> lengthAdapter.marshal(new LengthType(new Length(-0.0, unit))));
         }
     }
 

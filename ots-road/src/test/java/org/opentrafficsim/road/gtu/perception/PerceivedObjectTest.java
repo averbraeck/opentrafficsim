@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djutils.exceptions.Try;
+import org.djutils.test.UnitTest;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedObject.Kinematics;
 
@@ -33,120 +33,112 @@ public final class PerceivedObjectTest
     public void testKinematicsAndOverlap()
     {
         // other longer
-        final Length otherLength = Length.instantiateSI(12.0);
-        final Length egoLength = Length.instantiateSI(4.0);
+        final Length otherLength = Length.ofSI(12.0);
+        final Length egoLength = Length.ofSI(4.0);
 
         // downstream longer
-        testSingleDistance(true, Length.instantiateSI(10.0), null, null, null, otherLength, egoLength);
-        testSingleDistance(true, Length.instantiateSI(5.0), null, null, null, otherLength, egoLength);
-        testSingleDistance(true, Length.instantiateSI(0.0), null, null, null, otherLength, egoLength);
-        testSingleDistance(true, Length.instantiateSI(-1.0), Length.instantiateSI(3.0), Length.instantiateSI(1.0),
-                Length.instantiateSI(11.0), otherLength, egoLength);
-        testSingleDistance(true, Length.instantiateSI(-3.0), Length.instantiateSI(1.0), Length.instantiateSI(3.0),
-                Length.instantiateSI(9.0), otherLength, egoLength);
-        testSingleDistance(true, Length.instantiateSI(-4.0), Length.instantiateSI(0.0), Length.instantiateSI(4.0),
-                Length.instantiateSI(8.0), otherLength, egoLength);
-        testSingleDistance(true, Length.instantiateSI(-6.0), Length.instantiateSI(-2.0), Length.instantiateSI(4.0),
-                Length.instantiateSI(6.0), otherLength, egoLength);
-        testSingleDistance(true, Length.instantiateSI(-7.0), Length.instantiateSI(-3.0), Length.instantiateSI(4.0),
-                Length.instantiateSI(5.0), otherLength, egoLength);
-        testSingleDistance(true, Length.instantiateSI(-12.0), Length.instantiateSI(-8.0), Length.instantiateSI(4.0),
-                Length.instantiateSI(0.0), otherLength, egoLength);
-        testSingleDistance(true, Length.instantiateSI(-13.0), Length.instantiateSI(-9.0), Length.instantiateSI(3.0),
-                Length.instantiateSI(-1.0), otherLength, egoLength);
-        testSingleDistance(true, Length.instantiateSI(-15.0), Length.instantiateSI(-11.0), Length.instantiateSI(1.0),
-                Length.instantiateSI(-3.0), otherLength, egoLength);
-        testSingleDistance(true, Length.instantiateSI(-16.0), Length.instantiateSI(-12.0), Length.instantiateSI(0.0),
-                Length.instantiateSI(-4.0), otherLength, egoLength);
-        Try.testFail(
-                () -> testSingleDistance(true, Length.instantiateSI(-17.0), Length.instantiateSI(-12.0),
-                        Length.instantiateSI(0.0), Length.instantiateSI(-4.0), otherLength, egoLength),
-                IllegalArgumentException.class);
+        testSingleDistance(true, Length.ofSI(10.0), null, null, null, otherLength, egoLength);
+        testSingleDistance(true, Length.ofSI(5.0), null, null, null, otherLength, egoLength);
+        testSingleDistance(true, Length.ofSI(0.0), null, null, null, otherLength, egoLength);
+        testSingleDistance(true, Length.ofSI(-1.0), Length.ofSI(3.0), Length.ofSI(1.0), Length.ofSI(11.0), otherLength,
+                egoLength);
+        testSingleDistance(true, Length.ofSI(-3.0), Length.ofSI(1.0), Length.ofSI(3.0), Length.ofSI(9.0), otherLength,
+                egoLength);
+        testSingleDistance(true, Length.ofSI(-4.0), Length.ofSI(0.0), Length.ofSI(4.0), Length.ofSI(8.0), otherLength,
+                egoLength);
+        testSingleDistance(true, Length.ofSI(-6.0), Length.ofSI(-2.0), Length.ofSI(4.0), Length.ofSI(6.0), otherLength,
+                egoLength);
+        testSingleDistance(true, Length.ofSI(-7.0), Length.ofSI(-3.0), Length.ofSI(4.0), Length.ofSI(5.0), otherLength,
+                egoLength);
+        testSingleDistance(true, Length.ofSI(-12.0), Length.ofSI(-8.0), Length.ofSI(4.0), Length.ofSI(0.0), otherLength,
+                egoLength);
+        testSingleDistance(true, Length.ofSI(-13.0), Length.ofSI(-9.0), Length.ofSI(3.0), Length.ofSI(-1.0), otherLength,
+                egoLength);
+        testSingleDistance(true, Length.ofSI(-15.0), Length.ofSI(-11.0), Length.ofSI(1.0), Length.ofSI(-3.0), otherLength,
+                egoLength);
+        testSingleDistance(true, Length.ofSI(-16.0), Length.ofSI(-12.0), Length.ofSI(0.0), Length.ofSI(-4.0), otherLength,
+                egoLength);
+        UnitTest.testFail(() -> testSingleDistance(true, Length.ofSI(-17.0), Length.ofSI(-12.0), Length.ofSI(0.0), Length.ofSI(-4.0),
+                otherLength, egoLength), IllegalArgumentException.class);
 
         // upstream longer
-        testSingleDistance(false, Length.instantiateSI(10.0), null, null, null, otherLength, egoLength);
-        testSingleDistance(false, Length.instantiateSI(5.0), null, null, null, otherLength, egoLength);
-        testSingleDistance(false, Length.instantiateSI(0.0), null, null, null, otherLength, egoLength);
-        testSingleDistance(false, Length.instantiateSI(-1.0), Length.instantiateSI(-11.0), Length.instantiateSI(1.0),
-                Length.instantiateSI(-3.0), otherLength, egoLength);
-        testSingleDistance(false, Length.instantiateSI(-3.0), Length.instantiateSI(-9.0), Length.instantiateSI(3.0),
-                Length.instantiateSI(-1.0), otherLength, egoLength);
-        testSingleDistance(false, Length.instantiateSI(-4.0), Length.instantiateSI(-8.0), Length.instantiateSI(4.0),
-                Length.instantiateSI(-0.0), otherLength, egoLength);
-        testSingleDistance(false, Length.instantiateSI(-6.0), Length.instantiateSI(-6.0), Length.instantiateSI(4.0),
-                Length.instantiateSI(2.0), otherLength, egoLength);
-        testSingleDistance(false, Length.instantiateSI(-7.0), Length.instantiateSI(-5.0), Length.instantiateSI(4.0),
-                Length.instantiateSI(3.0), otherLength, egoLength);
-        testSingleDistance(false, Length.instantiateSI(-12.0), Length.instantiateSI(0.0), Length.instantiateSI(4.0),
-                Length.instantiateSI(8.0), otherLength, egoLength);
-        testSingleDistance(false, Length.instantiateSI(-13.0), Length.instantiateSI(1.0), Length.instantiateSI(3.0),
-                Length.instantiateSI(9.0), otherLength, egoLength);
-        testSingleDistance(false, Length.instantiateSI(-15.0), Length.instantiateSI(3.0), Length.instantiateSI(1.0),
-                Length.instantiateSI(11.0), otherLength, egoLength);
-        testSingleDistance(false, Length.instantiateSI(-16.0), Length.instantiateSI(4.0), Length.instantiateSI(0.0),
-                Length.instantiateSI(12.0), otherLength, egoLength);
-        Try.testFail(
-                () -> testSingleDistance(false, Length.instantiateSI(-17.0), Length.instantiateSI(-12.0),
-                        Length.instantiateSI(0.0), Length.instantiateSI(-4.0), otherLength, egoLength),
-                IllegalArgumentException.class);
+        testSingleDistance(false, Length.ofSI(10.0), null, null, null, otherLength, egoLength);
+        testSingleDistance(false, Length.ofSI(5.0), null, null, null, otherLength, egoLength);
+        testSingleDistance(false, Length.ofSI(0.0), null, null, null, otherLength, egoLength);
+        testSingleDistance(false, Length.ofSI(-1.0), Length.ofSI(-11.0), Length.ofSI(1.0), Length.ofSI(-3.0), otherLength,
+                egoLength);
+        testSingleDistance(false, Length.ofSI(-3.0), Length.ofSI(-9.0), Length.ofSI(3.0), Length.ofSI(-1.0), otherLength,
+                egoLength);
+        testSingleDistance(false, Length.ofSI(-4.0), Length.ofSI(-8.0), Length.ofSI(4.0), Length.ofSI(-0.0), otherLength,
+                egoLength);
+        testSingleDistance(false, Length.ofSI(-6.0), Length.ofSI(-6.0), Length.ofSI(4.0), Length.ofSI(2.0), otherLength,
+                egoLength);
+        testSingleDistance(false, Length.ofSI(-7.0), Length.ofSI(-5.0), Length.ofSI(4.0), Length.ofSI(3.0), otherLength,
+                egoLength);
+        testSingleDistance(false, Length.ofSI(-12.0), Length.ofSI(0.0), Length.ofSI(4.0), Length.ofSI(8.0), otherLength,
+                egoLength);
+        testSingleDistance(false, Length.ofSI(-13.0), Length.ofSI(1.0), Length.ofSI(3.0), Length.ofSI(9.0), otherLength,
+                egoLength);
+        testSingleDistance(false, Length.ofSI(-15.0), Length.ofSI(3.0), Length.ofSI(1.0), Length.ofSI(11.0), otherLength,
+                egoLength);
+        testSingleDistance(false, Length.ofSI(-16.0), Length.ofSI(4.0), Length.ofSI(0.0), Length.ofSI(12.0), otherLength,
+                egoLength);
+        UnitTest.testFail(() -> testSingleDistance(false, Length.ofSI(-17.0), Length.ofSI(-12.0), Length.ofSI(0.0),
+                Length.ofSI(-4.0), otherLength, egoLength), IllegalArgumentException.class);
 
         // other shorter
-        final Length otherLength2 = Length.instantiateSI(4.0);
-        final Length egoLength2 = Length.instantiateSI(12.0);
+        final Length otherLength2 = Length.ofSI(4.0);
+        final Length egoLength2 = Length.ofSI(12.0);
 
         // downstream shorter
-        testSingleDistance(true, Length.instantiateSI(10.0), null, null, null, otherLength2, egoLength2);
-        testSingleDistance(true, Length.instantiateSI(5.0), null, null, null, otherLength2, egoLength2);
-        testSingleDistance(true, Length.instantiateSI(0.0), null, null, null, otherLength2, egoLength2);
-        testSingleDistance(true, Length.instantiateSI(-1.0), Length.instantiateSI(11.0), Length.instantiateSI(1.0),
-                Length.instantiateSI(3.0), otherLength2, egoLength2);
-        testSingleDistance(true, Length.instantiateSI(-3.0), Length.instantiateSI(9.0), Length.instantiateSI(3.0),
-                Length.instantiateSI(1.0), otherLength2, egoLength2);
-        testSingleDistance(true, Length.instantiateSI(-4.0), Length.instantiateSI(8.0), Length.instantiateSI(4.0),
-                Length.instantiateSI(0.0), otherLength2, egoLength2);
-        testSingleDistance(true, Length.instantiateSI(-6.0), Length.instantiateSI(6.0), Length.instantiateSI(4.0),
-                Length.instantiateSI(-2.0), otherLength2, egoLength2);
-        testSingleDistance(true, Length.instantiateSI(-7.0), Length.instantiateSI(5.0), Length.instantiateSI(4.0),
-                Length.instantiateSI(-3.0), otherLength2, egoLength2);
-        testSingleDistance(true, Length.instantiateSI(-12.0), Length.instantiateSI(0.0), Length.instantiateSI(4.0),
-                Length.instantiateSI(-8.0), otherLength2, egoLength2);
-        testSingleDistance(true, Length.instantiateSI(-13.0), Length.instantiateSI(-1.0), Length.instantiateSI(3.0),
-                Length.instantiateSI(-9.0), otherLength2, egoLength2);
-        testSingleDistance(true, Length.instantiateSI(-15.0), Length.instantiateSI(-3.0), Length.instantiateSI(1.0),
-                Length.instantiateSI(-11.0), otherLength2, egoLength2);
-        testSingleDistance(true, Length.instantiateSI(-16.0), Length.instantiateSI(-4.0), Length.instantiateSI(0.0),
-                Length.instantiateSI(-12.0), otherLength2, egoLength2);
-        Try.testFail(
-                () -> testSingleDistance(true, Length.instantiateSI(-17.0), Length.instantiateSI(-12.0),
-                        Length.instantiateSI(0.0), Length.instantiateSI(-4.0), otherLength2, egoLength2),
-                IllegalArgumentException.class);
+        testSingleDistance(true, Length.ofSI(10.0), null, null, null, otherLength2, egoLength2);
+        testSingleDistance(true, Length.ofSI(5.0), null, null, null, otherLength2, egoLength2);
+        testSingleDistance(true, Length.ofSI(0.0), null, null, null, otherLength2, egoLength2);
+        testSingleDistance(true, Length.ofSI(-1.0), Length.ofSI(11.0), Length.ofSI(1.0), Length.ofSI(3.0), otherLength2,
+                egoLength2);
+        testSingleDistance(true, Length.ofSI(-3.0), Length.ofSI(9.0), Length.ofSI(3.0), Length.ofSI(1.0), otherLength2,
+                egoLength2);
+        testSingleDistance(true, Length.ofSI(-4.0), Length.ofSI(8.0), Length.ofSI(4.0), Length.ofSI(0.0), otherLength2,
+                egoLength2);
+        testSingleDistance(true, Length.ofSI(-6.0), Length.ofSI(6.0), Length.ofSI(4.0), Length.ofSI(-2.0), otherLength2,
+                egoLength2);
+        testSingleDistance(true, Length.ofSI(-7.0), Length.ofSI(5.0), Length.ofSI(4.0), Length.ofSI(-3.0), otherLength2,
+                egoLength2);
+        testSingleDistance(true, Length.ofSI(-12.0), Length.ofSI(0.0), Length.ofSI(4.0), Length.ofSI(-8.0), otherLength2,
+                egoLength2);
+        testSingleDistance(true, Length.ofSI(-13.0), Length.ofSI(-1.0), Length.ofSI(3.0), Length.ofSI(-9.0), otherLength2,
+                egoLength2);
+        testSingleDistance(true, Length.ofSI(-15.0), Length.ofSI(-3.0), Length.ofSI(1.0), Length.ofSI(-11.0), otherLength2,
+                egoLength2);
+        testSingleDistance(true, Length.ofSI(-16.0), Length.ofSI(-4.0), Length.ofSI(0.0), Length.ofSI(-12.0), otherLength2,
+                egoLength2);
+        UnitTest.testFail(() -> testSingleDistance(true, Length.ofSI(-17.0), Length.ofSI(-12.0), Length.ofSI(0.0), Length.ofSI(-4.0),
+                otherLength2, egoLength2), IllegalArgumentException.class);
 
         // upstream shorter
-        testSingleDistance(false, Length.instantiateSI(10.0), null, null, null, otherLength2, egoLength2);
-        testSingleDistance(false, Length.instantiateSI(5.0), null, null, null, otherLength2, egoLength2);
-        testSingleDistance(false, Length.instantiateSI(0.0), null, null, null, otherLength2, egoLength2);
-        testSingleDistance(false, Length.instantiateSI(-1.0), Length.instantiateSI(-3.0), Length.instantiateSI(1.0),
-                Length.instantiateSI(-11.0), otherLength2, egoLength2);
-        testSingleDistance(false, Length.instantiateSI(-3.0), Length.instantiateSI(-1.0), Length.instantiateSI(3.0),
-                Length.instantiateSI(-9.0), otherLength2, egoLength2);
-        testSingleDistance(false, Length.instantiateSI(-4.0), Length.instantiateSI(-0.0), Length.instantiateSI(4.0),
-                Length.instantiateSI(-8.0), otherLength2, egoLength2);
-        testSingleDistance(false, Length.instantiateSI(-6.0), Length.instantiateSI(2.0), Length.instantiateSI(4.0),
-                Length.instantiateSI(-6.0), otherLength2, egoLength2);
-        testSingleDistance(false, Length.instantiateSI(-7.0), Length.instantiateSI(3.0), Length.instantiateSI(4.0),
-                Length.instantiateSI(-5.0), otherLength2, egoLength2);
-        testSingleDistance(false, Length.instantiateSI(-12.0), Length.instantiateSI(8.0), Length.instantiateSI(4.0),
-                Length.instantiateSI(-0.0), otherLength2, egoLength2);
-        testSingleDistance(false, Length.instantiateSI(-13.0), Length.instantiateSI(9.0), Length.instantiateSI(3.0),
-                Length.instantiateSI(1.0), otherLength2, egoLength2);
-        testSingleDistance(false, Length.instantiateSI(-15.0), Length.instantiateSI(11.0), Length.instantiateSI(1.0),
-                Length.instantiateSI(3.0), otherLength2, egoLength2);
-        testSingleDistance(false, Length.instantiateSI(-16.0), Length.instantiateSI(12.0), Length.instantiateSI(0.0),
-                Length.instantiateSI(4.0), otherLength2, egoLength2);
-        Try.testFail(
-                () -> testSingleDistance(false, Length.instantiateSI(-17.0), Length.instantiateSI(-12.0),
-                        Length.instantiateSI(0.0), Length.instantiateSI(-4.0), otherLength2, egoLength2),
-                IllegalArgumentException.class);
+        testSingleDistance(false, Length.ofSI(10.0), null, null, null, otherLength2, egoLength2);
+        testSingleDistance(false, Length.ofSI(5.0), null, null, null, otherLength2, egoLength2);
+        testSingleDistance(false, Length.ofSI(0.0), null, null, null, otherLength2, egoLength2);
+        testSingleDistance(false, Length.ofSI(-1.0), Length.ofSI(-3.0), Length.ofSI(1.0), Length.ofSI(-11.0), otherLength2,
+                egoLength2);
+        testSingleDistance(false, Length.ofSI(-3.0), Length.ofSI(-1.0), Length.ofSI(3.0), Length.ofSI(-9.0), otherLength2,
+                egoLength2);
+        testSingleDistance(false, Length.ofSI(-4.0), Length.ofSI(-0.0), Length.ofSI(4.0), Length.ofSI(-8.0), otherLength2,
+                egoLength2);
+        testSingleDistance(false, Length.ofSI(-6.0), Length.ofSI(2.0), Length.ofSI(4.0), Length.ofSI(-6.0), otherLength2,
+                egoLength2);
+        testSingleDistance(false, Length.ofSI(-7.0), Length.ofSI(3.0), Length.ofSI(4.0), Length.ofSI(-5.0), otherLength2,
+                egoLength2);
+        testSingleDistance(false, Length.ofSI(-12.0), Length.ofSI(8.0), Length.ofSI(4.0), Length.ofSI(-0.0), otherLength2,
+                egoLength2);
+        testSingleDistance(false, Length.ofSI(-13.0), Length.ofSI(9.0), Length.ofSI(3.0), Length.ofSI(1.0), otherLength2,
+                egoLength2);
+        testSingleDistance(false, Length.ofSI(-15.0), Length.ofSI(11.0), Length.ofSI(1.0), Length.ofSI(3.0), otherLength2,
+                egoLength2);
+        testSingleDistance(false, Length.ofSI(-16.0), Length.ofSI(12.0), Length.ofSI(0.0), Length.ofSI(4.0), otherLength2,
+                egoLength2);
+        UnitTest.testFail(() -> testSingleDistance(false, Length.ofSI(-17.0), Length.ofSI(-12.0), Length.ofSI(0.0),
+                Length.ofSI(-4.0), otherLength2, egoLength2), IllegalArgumentException.class);
     }
 
     /**

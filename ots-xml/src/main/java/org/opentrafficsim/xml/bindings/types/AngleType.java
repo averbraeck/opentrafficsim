@@ -15,7 +15,7 @@ public class AngleType extends ExpressionType<Angle>
 {
 
     /** Function to convert output from expression to the right type. */
-    private static final SerializableFunction<Object, Angle> TO_TYPE = (o) -> Angle.instantiateSI(((Number) o).doubleValue());
+    private static final SerializableFunction<Object, Angle> TO_TYPE = (o) -> Angle.ofSI(((Number) o).doubleValue());
 
     /**
      * Constructor with value.

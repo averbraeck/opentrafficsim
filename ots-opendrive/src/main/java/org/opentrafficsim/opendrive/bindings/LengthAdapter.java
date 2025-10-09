@@ -31,7 +31,7 @@ public class LengthAdapter extends XmlAdapter<String, Length>
         {
             return Length.valueOf(str); // m, km, ft and mile supported in same abbreviation in Length
         }
-        return Length.instantiateSI(Double.valueOf(str));
+        return Length.ofSI(Double.valueOf(str));
     }
 
     @Override

@@ -147,7 +147,7 @@ public final class GraphLaneUtil
             Lane firstCurrentLane = currentLanes.stream().filter((l) -> l != null).findFirst().get();
             Length sectionLength = firstCurrentLane.getLength();
             sections.add(new Section<>(sectionLength, sectionSpeed, sectionLanes));
-            
+
             // per link and then per lane, find the downstream lane
             Map<Link, List<Lane>> nextLinks = new LinkedHashMap<>();
             Link link = firstCurrentLane.getLink();

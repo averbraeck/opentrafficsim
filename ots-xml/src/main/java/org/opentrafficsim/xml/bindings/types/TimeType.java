@@ -15,7 +15,7 @@ public class TimeType extends ExpressionType<Time>
 {
 
     /** Function to convert output from expression to the right type. */
-    private static final SerializableFunction<Object, Time> TO_TYPE = (o) -> Time.instantiateSI(((Number) o).doubleValue());
+    private static final SerializableFunction<Object, Time> TO_TYPE = (o) -> Time.ofSI(((Number) o).doubleValue());
 
     /**
      * Constructor with value.

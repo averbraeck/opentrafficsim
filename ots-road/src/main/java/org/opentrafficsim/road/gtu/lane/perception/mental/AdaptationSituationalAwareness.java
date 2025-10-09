@@ -70,7 +70,7 @@ public class AdaptationSituationalAwareness implements BehavioralAdaptation
 
     /** Maximum reaction time at 0 situational awareness. */
     public static final ParameterTypeDuration TR_MAX =
-            new ParameterTypeDuration("TRmax", "Maximum reaction time", Duration.instantiateSI(2.0), POSITIVE);
+            new ParameterTypeDuration("TRmax", "Maximum reaction time", Duration.ofSI(2.0), POSITIVE);
 
     /**
      * Constructor.

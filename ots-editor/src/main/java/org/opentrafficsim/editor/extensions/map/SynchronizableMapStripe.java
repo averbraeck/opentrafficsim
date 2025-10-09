@@ -91,8 +91,7 @@ public class SynchronizableMapStripe implements SynchronizableStripe<MapStripeDa
         }
         for (XsdTreeNode networkChild : this.linkData.getNode().getParent().getChildren())
         {
-            if (networkChild.getNodeName().equals("Link")
-                    && fromNode.equals(networkChild.getCoupledNodeAttribute("NodeEnd")))
+            if (networkChild.getNodeName().equals("Link") && fromNode.equals(networkChild.getCoupledNodeAttribute("NodeEnd")))
             {
                 MapLinkData otherLink = (MapLinkData) this.linkData.getMap().getData(networkChild);
                 if (otherLink == null)
@@ -121,8 +120,7 @@ public class SynchronizableMapStripe implements SynchronizableStripe<MapStripeDa
         }
         for (XsdTreeNode networkChild : this.linkData.getNode().getParent().getChildren())
         {
-            if (networkChild.getNodeName().equals("Link")
-                    && fromNode.equals(networkChild.getCoupledNodeAttribute("NodeStart")))
+            if (networkChild.getNodeName().equals("Link") && fromNode.equals(networkChild.getCoupledNodeAttribute("NodeStart")))
             {
                 MapLinkData otherLink = (MapLinkData) this.linkData.getMap().getData(networkChild);
                 if (otherLink == null)
@@ -172,14 +170,14 @@ public class SynchronizableMapStripe implements SynchronizableStripe<MapStripeDa
     @Override
     public void setStartPhase(final double phase)
     {
-        this.data.setDashOffset(Length.instantiateSI(phase * getPeriod()));
+        this.data.setDashOffset(Length.ofSI(phase * getPeriod()));
     }
 
     @Override
     public void setEndPhase(final double phase)
     {
         double len = getPeriod() - ((this.data.getCenterLine().getLength() - phase * getPeriod()) % getPeriod());
-        this.data.setDashOffset(Length.instantiateSI(len));
+        this.data.setDashOffset(Length.ofSI(len));
     }
 
 }

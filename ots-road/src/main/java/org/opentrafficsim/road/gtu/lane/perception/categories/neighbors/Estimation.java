@@ -97,7 +97,7 @@ public interface Estimation
         {
             delta = -delta; // faster leader increases the headway, faster follower reduces the headway
         }
-        return Length.instantiateSI(distance.si + delta);
+        return Length.ofSI(distance.si + delta);
     }
 
     /**

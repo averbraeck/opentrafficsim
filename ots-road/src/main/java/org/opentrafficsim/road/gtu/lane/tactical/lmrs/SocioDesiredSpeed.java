@@ -74,7 +74,7 @@ public class SocioDesiredSpeed implements DesiredSpeedModel, Initialisable
                 Speed vGain = parameters.getParameter(VGAIN);
                 PerceivedGtu follower = followers.first();
                 double rhoFollower = follower.getBehavior().socialPressure();
-                desiredSpeed = Speed.instantiateSI(desiredSpeed.si + rhoFollower * sigma * vGain.si);
+                desiredSpeed = Speed.ofSI(desiredSpeed.si + rhoFollower * sigma * vGain.si);
             }
         }
         return desiredSpeed;

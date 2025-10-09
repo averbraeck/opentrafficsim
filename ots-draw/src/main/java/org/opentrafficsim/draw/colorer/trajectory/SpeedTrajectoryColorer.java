@@ -25,7 +25,7 @@ public class SpeedTrajectoryColorer extends SpeedColorer<TrajectorySection> impl
 
     /** Value function. */
     private static final Function<TrajectorySection, Speed> VALUE =
-            (traj) -> Speed.instantiateSI(traj.trajectory().getV(traj.section()));
+            (traj) -> Speed.ofSI(traj.trajectory().getV(traj.section()));
 
     /**
      * Constructor.

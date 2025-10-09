@@ -33,7 +33,7 @@ public abstract class ExtendedDataDuration<G extends GtuData>
     @Override
     protected final FloatDuration convertValue(final float value)
     {
-        return FloatDuration.instantiateSI(value);
+        return FloatDuration.ofSI(value);
     }
 
     @Override
@@ -51,7 +51,7 @@ public abstract class ExtendedDataDuration<G extends GtuData>
     @Override
     public FloatDuration parseValue(final String string)
     {
-        return FloatDuration.instantiateSI(Float.valueOf(string));
+        return FloatDuration.ofSI(Float.valueOf(string));
     }
 
 }

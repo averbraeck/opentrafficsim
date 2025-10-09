@@ -158,7 +158,7 @@ public class Node implements HierarchicallyTyped<NodeType, Node>, OtsShape, Seri
      */
     public Direction getHeading()
     {
-        return Direction.instantiateSI(this.point.dirZ);
+        return Direction.ofSI(this.point.dirZ);
     }
 
     /**

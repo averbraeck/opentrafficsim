@@ -397,7 +397,7 @@ public final class LaneBasedGtuTest implements UNITS
             simulator.initialize(Time.ZERO, Duration.ZERO, new Duration(3600.0, DurationUnit.SECOND), model,
                     HistoryManagerDevs.noHistory(simulator));
             // Run the simulator clock to some non-zero value
-            simulator.runUpTo(Duration.instantiateSI(60.0));
+            simulator.runUpTo(Duration.ofSI(60.0));
             while (simulator.isStartingOrRunning())
             {
                 try
@@ -425,13 +425,13 @@ public final class LaneBasedGtuTest implements UNITS
             Parameters parameters = DefaultTestParameters.create();
 
             LaneBasedGtu car = new LaneBasedGtu("Car" + this.idGenerator.get(), carType, new Length(4, METER),
-                    new Length(1.8, METER), maximumSpeed, Length.instantiateSI(2.0), network);
+                    new Length(1.8, METER), maximumSpeed, Length.ofSI(2.0), network);
             LaneBasedStrategicalPlanner strategicalPlanner = new LaneBasedStrategicalRoutePlanner(new LmrsFactory.Factory()
                     .setCarFollowingModelFactory(new FixedCarFollowing(acceleration)).build(null).create(car), car);
             car.setParameters(parameters);
             car.init(strategicalPlanner, getReferencePosition(carPositions).getLocation(), carSpeed);
             // Let the simulator execute the move method of the car
-            simulator.runUpTo(Duration.instantiateSI(61.0));
+            simulator.runUpTo(Duration.ofSI(61.0));
             while (simulator.isStartingOrRunning())
             {
                 try

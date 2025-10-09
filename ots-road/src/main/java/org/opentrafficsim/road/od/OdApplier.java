@@ -17,6 +17,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.exceptions.Throw;
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -441,13 +442,13 @@ public final class OdApplier
             catch (SimRuntimeException exception)
             {
                 // should not happen, we check that time is 0
-                simulator.getLogger().always().error(exception);
+                CategoryLogger.always().error(exception);
                 throw new RuntimeException(exception);
             }
             catch (NetworkException exception)
             {
                 // should not happen, as unique ids are guaranteed by UUID
-                simulator.getLogger().always().error(exception);
+                CategoryLogger.always().error(exception);
                 throw new RuntimeException(exception);
             }
         }
@@ -530,7 +531,7 @@ public final class OdApplier
                     catch (NetworkException exception)
                     {
                         // can not happen, we use Length.ZERO and lane.getLength()
-                        destination.getNetwork().getSimulator().getLogger().always().error(exception);
+                        CategoryLogger.always().error(exception);
                         throw new RuntimeException(exception);
                     }
                 }

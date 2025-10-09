@@ -66,7 +66,7 @@ public class TurboRoundaboutDemo extends OtsSimulationApplication<TurboRoundabou
         {
             OtsAnimator simulator = new OtsAnimator("TurboRoundaboutDemo");
             final TurboRoundaboutModel junctionModel = new TurboRoundaboutModel(simulator);
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), junctionModel,
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), junctionModel,
                     HistoryManagerDevs.noHistory(simulator));
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(junctionModel.getNetwork().getExtent(), simulator,
                     junctionModel, DEFAULT_GTU_COLORERS, junctionModel.getNetwork());

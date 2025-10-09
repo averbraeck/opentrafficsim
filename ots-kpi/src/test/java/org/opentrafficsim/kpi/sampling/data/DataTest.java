@@ -50,10 +50,10 @@ public final class DataTest
     public void testData()
     {
         // ReferenceSpeed
-        Speed speed = Speed.instantiateSI(10.0);
+        Speed speed = Speed.ofSI(10.0);
         TestGtuData gtu = new TestGtuData("id", "origin", "destination", "gtuType", "route", speed);
         assertNotNull(ReferenceSpeed.INSTANCE.toString());
-        assertEquals(ReferenceSpeed.INSTANCE.getValue(gtu), FloatSpeed.instantiateSI((float) speed.si));
+        assertEquals(ReferenceSpeed.INSTANCE.getValue(gtu), FloatSpeed.ofSI((float) speed.si));
 
         float[] data = new float[] {0.0f, 1.0f};
 
@@ -68,7 +68,7 @@ public final class DataTest
         };
         assertEquals(FloatDuration.ZERO, durationData.convertValue(0.0f));
         assertEquals(new FloatDurationVector(data), durationData.convert(data));
-        assertEquals(FloatDuration.instantiateSI(0.3f), durationData.interpolate(FloatDuration.ZERO, FloatDuration.ONE, 0.3));
+        assertEquals(FloatDuration.ofSI(0.3f), durationData.interpolate(FloatDuration.ZERO, FloatDuration.ONE, 0.3));
         assertEquals(FloatDuration.ONE, durationData.parseValue("1.0"));
 
         // ExtendedDataLength
@@ -82,7 +82,7 @@ public final class DataTest
         };
         assertEquals(FloatLength.ZERO, lengthData.convertValue(0.0f));
         assertEquals(new FloatLengthVector(data), lengthData.convert(data));
-        assertEquals(FloatLength.instantiateSI(0.3f), lengthData.interpolate(FloatLength.ZERO, FloatLength.ONE, 0.3));
+        assertEquals(FloatLength.ofSI(0.3f), lengthData.interpolate(FloatLength.ZERO, FloatLength.ONE, 0.3));
         assertEquals(FloatLength.ONE, lengthData.parseValue("1.0"));
 
         // ExtendedDataSpeed
@@ -96,7 +96,7 @@ public final class DataTest
         };
         assertEquals(FloatSpeed.ZERO, speedData.convertValue(0.0f));
         assertEquals(new FloatSpeedVector(data), speedData.convert(data));
-        assertEquals(FloatSpeed.instantiateSI(0.3f), speedData.interpolate(FloatSpeed.ZERO, FloatSpeed.ONE, 0.3));
+        assertEquals(FloatSpeed.ofSI(0.3f), speedData.interpolate(FloatSpeed.ZERO, FloatSpeed.ONE, 0.3));
         assertEquals(FloatSpeed.ONE, speedData.parseValue("1.0"));
 
         // ExtendedDataFloat
@@ -114,7 +114,7 @@ public final class DataTest
         float[] newArray = new float[10];
         newArray[1] = 1.0f;
         newArray[2] = 2.0f;
-        assertTrue(Arrays.equals(newArray, speedData.setValue(data, 2, FloatSpeed.instantiateSI(2.0f))));
+        assertTrue(Arrays.equals(newArray, speedData.setValue(data, 2, FloatSpeed.ofSI(2.0f))));
 
         // ExtendedDataNumber
         ExtendedDataNumber<TestGtuData> numberData = new ExtendedDataNumber<>("id", "description")
@@ -172,19 +172,19 @@ public final class DataTest
     {
         // DoubleScalarRel
         ExtendedDataType<Speed, SpeedVector, double[], TestGtuData> doubleRel = mock();
-        assertEquals(Speed.instantiateSI(0.3), doubleRel.interpolate(Speed.ZERO, Speed.ONE, 0.3));
+        assertEquals(Speed.ofSI(0.3), doubleRel.interpolate(Speed.ZERO, Speed.ONE, 0.3));
 
         // DoubleScalarAbs
         ExtendedDataType<Time, TimeVector, double[], TestGtuData> doubleAbs = mock();
-        assertEquals(Time.instantiateSI(0.3), doubleAbs.interpolate(Time.ZERO, Time.instantiateSI(1.0), 0.3));
+        assertEquals(Time.ofSI(0.3), doubleAbs.interpolate(Time.ZERO, Time.ofSI(1.0), 0.3));
 
         // FloatScalarRel
         ExtendedDataType<FloatSpeed, FloatSpeedVector, double[], TestGtuData> floatRel = mock();
-        assertEquals(FloatSpeed.instantiateSI(0.3f), floatRel.interpolate(FloatSpeed.ZERO, FloatSpeed.ONE, 0.3));
+        assertEquals(FloatSpeed.ofSI(0.3f), floatRel.interpolate(FloatSpeed.ZERO, FloatSpeed.ONE, 0.3));
 
         // FloatScalarAbs
         ExtendedDataType<FloatTime, FloatTimeVector, double[], TestGtuData> floatAbs = mock();
-        assertEquals(FloatTime.instantiateSI(0.3f), floatAbs.interpolate(FloatTime.ZERO, FloatTime.instantiateSI(1.0f), 0.3));
+        assertEquals(FloatTime.ofSI(0.3f), floatAbs.interpolate(FloatTime.ZERO, FloatTime.ofSI(1.0f), 0.3));
 
         // Double
         ExtendedDataType<Double, double[], double[], TestGtuData> doubleType = mock();

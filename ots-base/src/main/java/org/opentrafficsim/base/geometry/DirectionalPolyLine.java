@@ -73,9 +73,8 @@ public class DirectionalPolyLine extends OtsLine2d
     @Override
     public DirectionalPolyLine extractFractional(final double start, final double end)
     {
-        return new DirectionalPolyLine(super.extractFractional(start, end),
-                Direction.instantiateSI(getLocationFraction(start).dirZ),
-                Direction.instantiateSI(getLocationFraction(end).dirZ));
+        return new DirectionalPolyLine(super.extractFractional(start, end), Direction.ofSI(getLocationFraction(start).dirZ),
+                Direction.ofSI(getLocationFraction(end).dirZ));
     }
 
     @Override

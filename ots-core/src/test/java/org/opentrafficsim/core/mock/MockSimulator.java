@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.mock;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.mockito.Mockito;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 

@@ -113,7 +113,7 @@ public class Distraction
      */
     public final Duration nextInterArrival()
     {
-        return Duration.instantiateSI(-Math.log(this.stream.nextDouble()) / this.frequency.si);
+        return Duration.ofSI(-Math.log(this.stream.nextDouble()) / this.frequency.si);
     }
 
     /**

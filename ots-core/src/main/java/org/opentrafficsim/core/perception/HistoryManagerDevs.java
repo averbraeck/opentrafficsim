@@ -57,7 +57,7 @@ public class HistoryManagerDevs extends HistoryManager implements EventListener
      */
     public static HistoryManagerDevs noHistory(final OtsSimulatorInterface simulator)
     {
-        return new HistoryManagerDevs(simulator, Duration.ZERO, Duration.instantiateSI(10.0));
+        return new HistoryManagerDevs(simulator, Duration.ZERO, Duration.ofSI(10.0));
     }
 
     @Override

@@ -25,7 +25,7 @@ public final class Acceleration3dTest
 {
 
     /** */
-    private  Acceleration3dTest()
+    private Acceleration3dTest()
     {
         // do not instantiate test class
     }

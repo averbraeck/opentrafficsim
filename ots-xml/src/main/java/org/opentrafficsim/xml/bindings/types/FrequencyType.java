@@ -15,8 +15,7 @@ public class FrequencyType extends ExpressionType<Frequency>
 {
 
     /** Function to convert output from expression to the right type. */
-    private static final SerializableFunction<Object, Frequency> TO_TYPE =
-            (o) -> Frequency.instantiateSI(((Number) o).doubleValue());
+    private static final SerializableFunction<Object, Frequency> TO_TYPE = (o) -> Frequency.ofSI(((Number) o).doubleValue());
 
     /**
      * Constructor with value.

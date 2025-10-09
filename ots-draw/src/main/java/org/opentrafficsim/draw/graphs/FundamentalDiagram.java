@@ -682,7 +682,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
                 final Length length, final int series, final double[] measurements)
         {
             Length x = getSpace().position(series);
-            if (GraphUtil.considerTrajectory(trajectory, x, x.plus(Length.instantiateSI(1.0e-3))))
+            if (GraphUtil.considerTrajectory(trajectory, x, x.plus(Length.ofSI(1.0e-3))))
             {
                 // detailed check
                 Duration t = trajectory.getTimeAtPosition(x);
@@ -833,7 +833,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
             for (L laneDirection : space)
             {
                 sampler.registerSpaceTimeRegion(new SpaceTimeRegion<>(laneDirection, Length.ZERO, laneDirection.getLength(),
-                        sampler.now(), Duration.instantiateSI(Double.MAX_VALUE)));
+                        sampler.now(), Duration.ofSI(Double.MAX_VALUE)));
 
                 // info per kpi lane direction
                 this.lastConsecutivelyAssignedTrajectories.put(laneDirection, -1);
@@ -916,8 +916,8 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
                         while ((AbstractSpaceSamplerFdSource.this.periodNumber + 1) * getUpdateInterval().si
                                 + AbstractSpaceSamplerFdSource.this.aggregationPeriod.si <= time.si)
                         {
-                            increaseTime(Duration
-                                    .instantiateSI((AbstractSpaceSamplerFdSource.this.periodNumber + 1) * getUpdateInterval().si
+                            increaseTime(
+                                    Duration.ofSI((AbstractSpaceSamplerFdSource.this.periodNumber + 1) * getUpdateInterval().si
                                             + AbstractSpaceSamplerFdSource.this.aggregationPeriod.si));
                             // TODO: if multiple plots are coupled to the same source, other plots are not invalidated
                             // TODO: change of aggregation period / update freq, is not updated in the GUI on other plots
@@ -934,7 +934,7 @@ public class FundamentalDiagram extends AbstractBoundedPlot implements XYDataset
         @Override
         public Duration getDelay()
         {
-            return Duration.instantiateSI(1.0);
+            return Duration.ofSI(1.0);
         }
 
         @Override

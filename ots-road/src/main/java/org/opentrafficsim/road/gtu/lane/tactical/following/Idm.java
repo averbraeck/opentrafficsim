@@ -60,7 +60,7 @@ public class Idm extends AbstractIdm
         double sRatio =
                 dynamicDesiredHeadway(parameters, speed, desiredHeadway, leader.getSpeed()).si / leader.getDistance().si;
         double aInt = -a.si * sRatio * sRatio;
-        return Acceleration.instantiateSI(aFree.si + aInt);
+        return Acceleration.ofSI(aFree.si + aInt);
     }
 
 }

@@ -22,6 +22,7 @@ import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
+import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.StripeElement;
 import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 import org.opentrafficsim.base.geometry.OtsLine2d;
@@ -208,13 +209,13 @@ public final class NetworkParser
             Node node = (Node) otsNetwork.getNode(nodeId);
             if (null == node)
             {
-                simulator.getLogger().always().debug("No node (" + nodeId + ") for Connector " + xmlConnector.getId());
+                CategoryLogger.always().debug("No node (" + nodeId + ") for Connector " + xmlConnector.getId());
             }
             String centroidId = xmlConnector.getCentroid().get(eval);
             Node centroid = (Node) otsNetwork.getNode(centroidId);
             if (null == centroid)
             {
-                simulator.getLogger().always().debug("No centroid (" + centroidId + ") for Connector " + xmlConnector.getId());
+                CategoryLogger.always().debug("No centroid (" + centroidId + ") for Connector " + xmlConnector.getId());
             }
             String id = xmlConnector.getId();
             double demandWeight = xmlConnector.getDemandWeight().get(eval);
@@ -279,7 +280,7 @@ public final class NetworkParser
                 {
                     endHeading -= 2.0 * Math.PI;
                 }
-                designLine = new ContinuousArc(start, radius, left, Angle.instantiateSI(Math.abs(endHeading) - startHeading));
+                designLine = new ContinuousArc(start, radius, left, Angle.ofSI(Math.abs(endHeading) - startHeading));
             }
             else if (xmlLink.getBezier() != null)
             {
@@ -695,14 +696,14 @@ public final class NetworkParser
             }
             else if (network.getConflicts().getDefaultWidth() != null)
             {
-                widthGenerator = new FixedWidthGenerator(Length.instantiateSI(2.0));
+                widthGenerator = new FixedWidthGenerator(Length.ofSI(2.0));
             }
             else
             {
                 throw new XmlParserException("Conflicts tag contains no valid element.");
             }
 
-            otsNetwork.getSimulator().getLogger().always().info("Generating conflicts");
+            CategoryLogger.always().info("Generating conflicts");
             Map<String, Set<org.opentrafficsim.core.network.Link>> conflictCandidateMap = new LinkedHashMap<>();
             for (Link link : network.getLink())
             {
@@ -715,8 +716,7 @@ public final class NetworkParser
                     conflictCandidateMap.get(link.getConflictId().get(eval)).add(otsNetwork.getLink(link.getId()));
                 }
             }
-            otsNetwork.getSimulator().getLogger().always().info("Map size of conflict candidate regions = {}",
-                    conflictCandidateMap.size());
+            CategoryLogger.always().info("Map size of conflict candidate regions = {}", conflictCandidateMap.size());
 
             // TODO: if there is any conflict ID specified, conflictCandidateMap is filled, and no other conflict anywhere will
             // be generated. How can we combine generation and specifying conflict IDs?
@@ -730,7 +730,7 @@ public final class NetworkParser
                 ConflictBuilder.buildConflictsParallel(otsNetwork, conflictCandidateMap, otsNetwork.getSimulator(),
                         widthGenerator);
             }
-            otsNetwork.getSimulator().getLogger().always().info("Object map size = {}", otsNetwork.getObjectMap().size());
+            CategoryLogger.always().info("Object map size = {}", otsNetwork.getObjectMap().size());
         }
     }
 

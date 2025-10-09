@@ -34,7 +34,7 @@ public final class IndicatorTest
         assertNotNull(ttd.toString());
         MeanSpeed ms = new MeanSpeed(ttd, ttt);
         assertNotNull(ms.toString());
-        
+
         assertNotNull(new TotalNumberOfStops().toString());
         assertNotNull(new TotalDelayReference().toString());
         assertNotNull(new TotalDelay(Speed.ZERO).toString());
@@ -43,5 +43,5 @@ public final class IndicatorTest
         assertNotNull(new MeanIntensity(ttd).toString());
         assertNotNull(new MeanDensity(ttt).toString());
     }
-    
+
 }

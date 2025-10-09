@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.PrintWriter;
 
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;

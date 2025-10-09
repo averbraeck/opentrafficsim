@@ -104,7 +104,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
             System.out.println("url is " + url);
             String xml = readStringFromURL(url);
             final TrafCodModel trafcodModel = new TrafCodModel(simulator, "TrafCODModel", "TrafCOD demonstration Model", xml);
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), trafcodModel,
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), trafcodModel,
                     HistoryManagerDevs.noHistory(simulator));
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(trafcodModel.getNetwork().getExtent(), simulator,
                     trafcodModel, DEFAULT_GTU_COLORERS, trafcodModel.getNetwork());

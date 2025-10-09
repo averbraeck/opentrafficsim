@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
-import org.djutils.exceptions.Try;
+import org.djutils.test.UnitTest;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.xml.bindings.types.LengthBeginEndType;
 import org.opentrafficsim.xml.bindings.types.LengthBeginEndType.LengthBeginEnd;
@@ -96,14 +96,14 @@ public final class LengthBeginEndAdapterTest
         assertEquals("0.5", lbeAdapter.marshal(lbeFraction05));
         assertEquals("1.0", lbeAdapter.marshal(lbeFraction10));
 
-        Try.testFail(() -> lbeAdapter.unmarshal("XYZ"));
-        Try.testFail(() -> lbeAdapter.unmarshal("BEGIN XYZ"));
-        Try.testFail(() -> lbeAdapter.unmarshal("END XYZ"));
-        Try.testFail(() -> lbeAdapter.unmarshal("END-XYZ"));
-        Try.testFail(() -> lbeAdapter.unmarshal("END-100"));
-        Try.testFail(() -> lbeAdapter.unmarshal("-0.5"));
-        Try.testFail(() -> lbeAdapter.unmarshal("-50%"));
-        Try.testFail(() -> lbeAdapter.unmarshal("END+10m"));
+        UnitTest.testFail(() -> lbeAdapter.unmarshal("XYZ"));
+        UnitTest.testFail(() -> lbeAdapter.unmarshal("BEGIN XYZ"));
+        UnitTest.testFail(() -> lbeAdapter.unmarshal("END XYZ"));
+        UnitTest.testFail(() -> lbeAdapter.unmarshal("END-XYZ"));
+        UnitTest.testFail(() -> lbeAdapter.unmarshal("END-100"));
+        UnitTest.testFail(() -> lbeAdapter.unmarshal("-0.5"));
+        UnitTest.testFail(() -> lbeAdapter.unmarshal("-50%"));
+        UnitTest.testFail(() -> lbeAdapter.unmarshal("END+10m"));
 
         for (boolean begin : new boolean[] {false, true})
         {
@@ -118,20 +118,20 @@ public final class LengthBeginEndAdapterTest
 
                 assertEquals(lbe23.getValue(), lbeAdapter.unmarshal(prefix + "2.3 " + us).getValue());
                 assertEquals(lbe23.getValue(), lbeAdapter.unmarshal(prefix + "2.3" + us).getValue());
-                Try.testFail(() -> lbeAdapter.unmarshal(prefix + "-2.3 " + us));
-                Try.testFail(() -> lbeAdapter.unmarshal(prefix + "-2.3" + us));
+                UnitTest.testFail(() -> lbeAdapter.unmarshal(prefix + "-2.3 " + us));
+                UnitTest.testFail(() -> lbeAdapter.unmarshal(prefix + "-2.3" + us));
 
                 assertEquals(prefix + "2.3 " + us, lbeAdapter.marshal(lbe23));
-                Try.testFail(
+                UnitTest.testFail(
                         () -> lbeAdapter.marshal(new LengthBeginEndType(new LengthBeginEnd(begin, new Length(-2.3, unit)))));
 
                 assertEquals(lbe00.getValue(), lbeAdapter.unmarshal(prefix + "0.0 " + us).getValue());
                 assertEquals(lbe00.getValue(), lbeAdapter.unmarshal(prefix + "0.0" + us).getValue());
-                Try.testFail(() -> lbeAdapter.unmarshal(prefix + "-0.0 " + us));
-                Try.testFail(() -> lbeAdapter.unmarshal(prefix + "-0.0" + us));
+                UnitTest.testFail(() -> lbeAdapter.unmarshal(prefix + "-0.0 " + us));
+                UnitTest.testFail(() -> lbeAdapter.unmarshal(prefix + "-0.0" + us));
 
                 assertEquals(begin ? "BEGIN" : "END", lbeAdapter.marshal(lbe00));
-                Try.testFail(
+                UnitTest.testFail(
                         () -> lbeAdapter.marshal(new LengthBeginEndType(new LengthBeginEnd(begin, new Length(-0.0, unit)))));
             }
         }

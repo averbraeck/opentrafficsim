@@ -40,7 +40,7 @@ public class HeadwayGenerator implements Supplier<Duration>
     @Override
     public Duration get()
     {
-        return Duration.instantiateSI(-Math.log(this.stream.nextDouble()) / this.demand.si);
+        return Duration.ofSI(-Math.log(this.stream.nextDouble()) / this.demand.si);
     }
 
 }

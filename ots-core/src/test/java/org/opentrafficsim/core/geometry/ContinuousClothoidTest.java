@@ -116,11 +116,11 @@ public class ContinuousClothoidTest
         {
             DirectedPoint2d start =
                     new DirectedPoint2d(r.nextDouble() * 10.0, r.nextDouble() * 10.0, (r.nextDouble() * 2 - 1) * Math.PI);
-            Length length = Length.instantiateSI(10.0 + r.nextDouble() * 500.0);
+            Length length = Length.ofSI(10.0 + r.nextDouble() * 500.0);
             double sign = r.nextBoolean() ? 1.0 : -1.0;
-            LinearDensity startCurvature = LinearDensity.instantiateSI(sign / (50.0 + r.nextDouble() * 1000.0));
+            LinearDensity startCurvature = LinearDensity.ofSI(sign / (50.0 + r.nextDouble() * 1000.0));
             sign = r.nextBoolean() ? 1.0 : -1.0;
-            LinearDensity endCurvature = LinearDensity.instantiateSI(sign / (50.0 + r.nextDouble() * 1000.0));
+            LinearDensity endCurvature = LinearDensity.ofSI(sign / (50.0 + r.nextDouble() * 1000.0));
 
             ContinuousClothoid clothoid = ContinuousClothoid.withLength(start, length.si, startCurvature.si, endCurvature.si);
             PolyLine2d line = clothoid.flatten(new NumSegments(64));
@@ -140,11 +140,10 @@ public class ContinuousClothoidTest
             DirectedPoint2d start =
                     new DirectedPoint2d(r.nextDouble() * 10.0, r.nextDouble() * 10.0, (r.nextDouble() * 2 - 1) * Math.PI);
             double sign = r.nextBoolean() ? 1.0 : -1.0;
-            LinearDensity startCurvature = LinearDensity.instantiateSI(sign / (50.0 + r.nextDouble() * 1000.0));
+            LinearDensity startCurvature = LinearDensity.ofSI(sign / (50.0 + r.nextDouble() * 1000.0));
             sign = r.nextBoolean() ? 1.0 : -1.0;
-            LinearDensity endCurvature = LinearDensity.instantiateSI(sign / (50.0 + r.nextDouble() * 1000.0));
-            Length a = Length
-                    .instantiateSI(Math.sqrt((10.0 + r.nextDouble() * 500.0) / Math.abs(endCurvature.si - startCurvature.si)));
+            LinearDensity endCurvature = LinearDensity.ofSI(sign / (50.0 + r.nextDouble() * 1000.0));
+            Length a = Length.ofSI(Math.sqrt((10.0 + r.nextDouble() * 500.0) / Math.abs(endCurvature.si - startCurvature.si)));
 
             ContinuousClothoid clothoid = new ContinuousClothoid(start, a.si, startCurvature.si, endCurvature.si);
             PolyLine2d line = clothoid.flatten(new NumSegments(64));

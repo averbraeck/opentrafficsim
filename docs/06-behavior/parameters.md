@@ -10,14 +10,14 @@ Parameters quantify movement of GTUs and can be obtained from the GTU using `get
 In actual usage the java generics disappear.
 
 ```java
-    parameters.setParameter(ParameterTypes.A, Acceleration.instantiateSI(1.4));
+    parameters.setParameter(ParameterTypes.A, Acceleration.ofSI(1.4));
     Acceleration a = parameters.getParameter(ParameterTypes.A);
 ```
 
 Here we see `ParameterTypes.A` being used, which is the maximum car-following acceleration. It is possible to set a parameter value tentatively, for example as one applies a temporary different context on the own GTU (e.g. applying the car-following model on a traffic light, where larger decelerations are accepted), or when assessing behavior of surrounding GTUs (e.g. setting the desired headway of a surrounding GTU to a short value for evaluation of a gap when urgently changing lane). After such cases, the parameter value may be set back to the previous value, whatever it was. This can be achieved with the following two method calls. (The reason that `setParameter()` does not remember the previous value is efficiency.) If the reset is not called, the tentative value becomes permanent (until it is set again).
 
 ```java
-    parameters.setParameterResettable(ParameterTypes.B, Acceleration.instantiateSI(3.5));
+    parameters.setParameterResettable(ParameterTypes.B, Acceleration.ofSI(3.5));
     parameters.resetParameter(ParameterTypes.B);
 ```
 

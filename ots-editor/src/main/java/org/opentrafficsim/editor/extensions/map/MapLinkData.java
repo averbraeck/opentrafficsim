@@ -1368,7 +1368,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     {
                         endHeading -= 2.0 * Math.PI;
                     }
-                    Angle angle = Angle.instantiateSI(left ? endHeading - from.dirZ : from.dirZ - endHeading);
+                    Angle angle = Angle.ofSI(left ? endHeading - from.dirZ : from.dirZ - endHeading);
                     return new ContinuousArc(from, this.radius.si, left, angle);
                 default:
                     throw new RuntimeException("Drawing of shape node " + this.shapeNode.getNodeName() + " is not supported.");
@@ -1384,7 +1384,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     {
         if (this.designLine != null && this.designLine instanceof ContinuousClothoid)
         {
-            return LinearDensity.instantiateSI(((ContinuousClothoid) this.designLine).getStartCurvature());
+            return LinearDensity.ofSI(((ContinuousClothoid) this.designLine).getStartCurvature());
         }
         return null;
     }
@@ -1397,7 +1397,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     {
         if (this.designLine != null && this.designLine instanceof ContinuousClothoid)
         {
-            return LinearDensity.instantiateSI(((ContinuousClothoid) this.designLine).getEndCurvature());
+            return LinearDensity.ofSI(((ContinuousClothoid) this.designLine).getEndCurvature());
         }
         return null;
     }
@@ -1410,7 +1410,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     {
         if (this.designLine != null && this.designLine instanceof ContinuousClothoid)
         {
-            return Length.instantiateSI(((ContinuousClothoid) this.designLine).getLength());
+            return Length.ofSI(((ContinuousClothoid) this.designLine).getLength());
         }
         return null;
     }
@@ -1423,7 +1423,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     {
         if (this.designLine != null && this.designLine instanceof ContinuousClothoid)
         {
-            return Length.instantiateSI(((ContinuousClothoid) this.designLine).getA());
+            return Length.ofSI(((ContinuousClothoid) this.designLine).getA());
         }
         return null;
     }

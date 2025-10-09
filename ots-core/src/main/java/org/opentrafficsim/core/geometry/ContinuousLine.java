@@ -1,7 +1,5 @@
 package org.opentrafficsim.core.geometry;
 
-import java.util.function.Function;
-
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.line.PolyLine2d;
@@ -41,7 +39,7 @@ public interface ContinuousLine
      */
     default Direction getStartDirection()
     {
-        return Direction.instantiateSI(getStartPoint().dirZ);
+        return Direction.ofSI(getStartPoint().dirZ);
     }
 
     /**
@@ -50,7 +48,7 @@ public interface ContinuousLine
      */
     default Direction getEndDirection()
     {
-        return Direction.instantiateSI(getEndPoint().dirZ);
+        return Direction.ofSI(getEndPoint().dirZ);
     }
 
     /**

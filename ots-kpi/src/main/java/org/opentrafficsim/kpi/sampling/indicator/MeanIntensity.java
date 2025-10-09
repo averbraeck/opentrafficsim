@@ -43,7 +43,7 @@ public class MeanIntensity extends AbstractIndicator<Frequency>
         {
             area += trajectoryGroup.getLength().si * (endTime.si - startTime.si);
         }
-        return Frequency.instantiateSI(ttd / area);
+        return Frequency.ofSI(ttd / area);
     }
 
     @Override

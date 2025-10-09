@@ -116,7 +116,7 @@ public enum DefaultDistraction
      */
     private static Frequency freq(final int occurrences, final double exposure)
     {
-        return Frequency.instantiateSI(occurrences / (BASELINE_DURATION_SECONDS * exposure));
+        return Frequency.ofSI(occurrences / (BASELINE_DURATION_SECONDS * exposure));
     }
 
     /**
@@ -126,7 +126,7 @@ public enum DefaultDistraction
      */
     private static Duration dur(final double duration)
     {
-        return Duration.instantiateSI(duration);
+        return Duration.ofSI(duration);
     }
 
     /**

@@ -69,7 +69,7 @@ public class StripeData
     {
         return this.elements;
     }
-    
+
     /**
      * Sets the elements.
      * @param elements elements
@@ -165,7 +165,7 @@ public class StripeData
         }
         return this.period;
     }
-    
+
     /**
      * Returns the period after which the given line gap-dash patterns repeat as a whole. Lengths are rounded to a precision of
      * 0.0001 to find the greatest common divisor.
@@ -214,7 +214,7 @@ public class StripeData
         }
         return gcd / 10000.0;
     }
-    
+
     /**
      * Returns the width, which is the sum of stripe elements.
      * @return width

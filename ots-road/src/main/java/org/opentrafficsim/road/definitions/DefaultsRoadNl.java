@@ -109,7 +109,7 @@ public class DefaultsRoadNl extends DefaultsRoad
     /***************************************************************************************/
 
     /** Standard width. */
-    private static final Length CM20 = Length.instantiateSI(0.2);
+    private static final Length CM20 = Length.ofSI(0.2);
 
     /** Standard dashes. */
     private static final LengthVector DASH = new LengthVector(new double[] {9.0, 3.0});

@@ -132,8 +132,8 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
             // TODO: This seed is Aimsun specific.
             map.put("generation", new MersenneTwister(6L));
             xmlModel.getStreams().putAll(map);
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), xmlModel,
-                    new HistoryManagerDevs(simulator, Duration.instantiateSI(5.0), Duration.instantiateSI(10.0)));
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), xmlModel,
+                    new HistoryManagerDevs(simulator, Duration.ofSI(5.0), Duration.ofSI(10.0)));
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(xmlModel.getNetwork().getExtent(), simulator, xmlModel,
                     DEFAULT_GTU_COLORERS, xmlModel.getNetwork());
             animationPanel.enableSimulationControlButtons();

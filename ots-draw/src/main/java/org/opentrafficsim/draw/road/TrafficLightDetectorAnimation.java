@@ -16,8 +16,8 @@ import org.djutils.draw.point.DirectedPoint2d;
 import org.opentrafficsim.draw.DrawLevel;
 import org.opentrafficsim.draw.OtsRenderable;
 import org.opentrafficsim.draw.PaintPolygons;
-import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.RenderableTextSource;
+import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.road.TrafficLightDetectorAnimation.TrafficLightDetectorData;
 
 import nl.tudelft.simulation.naming.context.Contextualized;

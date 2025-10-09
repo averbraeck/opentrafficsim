@@ -91,7 +91,7 @@ public class Speed3dTest
         {
             // Ignore expected exception
         }
-        s3d = new Speed3d(Speed.instantiateSI(x), Speed.instantiateSI(y), Speed.instantiateSI(z));
+        s3d = new Speed3d(Speed.ofSI(x), Speed.ofSI(y), Speed.ofSI(z));
         checkSpeed(s3d, x, y, z);
         s3d = new Speed3d(new Speed(x, SpeedUnit.KM_PER_HOUR), new Speed(y, SpeedUnit.KM_PER_HOUR),
                 new Speed(z, SpeedUnit.KM_PER_HOUR));
@@ -99,7 +99,7 @@ public class Speed3dTest
         double theta = Math.PI * 0.4;
         double phi = Math.PI * 0.3;
         double length = 10;
-        s3d = new Speed3d(Speed.instantiateSI(length), new Direction(theta, DirectionUnit.EAST_RADIAN),
+        s3d = new Speed3d(Speed.ofSI(length), new Direction(theta, DirectionUnit.EAST_RADIAN),
                 new Direction(phi, DirectionUnit.EAST_RADIAN));
         checkSpeed(s3d, length * Math.cos(phi) * Math.sin(theta), length * Math.sin(phi) * Math.sin(theta),
                 length * Math.cos(theta));

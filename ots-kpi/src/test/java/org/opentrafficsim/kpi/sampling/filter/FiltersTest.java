@@ -33,7 +33,7 @@ public final class FiltersTest
     @Test
     public void testFilters()
     {
-        TestGtuData gtu = new TestGtuData("id", "origin", "destination", "gtuType", "route", Speed.instantiateSI(10.0));
+        TestGtuData gtu = new TestGtuData("id", "origin", "destination", "gtuType", "route", Speed.ofSI(10.0));
         testFilter(new FilterDataOrigin(), "origin", gtu);
         testFilter(new FilterDataDestination(), "destination", gtu);
         testFilter(new FilterDataGtuType(), "gtuType", gtu);

@@ -218,7 +218,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
             this.simulator = new OtsSimulator(this.name);
             final ScriptModel scriptModel = new ScriptModel(this.simulator);
             this.simulator.initialize(this.startTime, this.warmupTime, this.simulationTime, scriptModel,
-                    new HistoryManagerDevs(this.simulator, this.historyTime, Duration.instantiateSI(10.0)));
+                    new HistoryManagerDevs(this.simulator, this.historyTime, Duration.ofSI(10.0)));
             this.simulator.addListener(this, Replication.END_REPLICATION_EVENT);
             double tReport = 60.0;
             Duration t = this.simulator.getSimulatorTime();
@@ -241,7 +241,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
             this.simulator = new OtsAnimator(this.name);
             final ScriptModel scriptModel = new ScriptModel(this.simulator);
             this.simulator.initialize(this.startTime, this.warmupTime, this.simulationTime, scriptModel,
-                    new HistoryManagerDevs(this.simulator, this.historyTime, Duration.instantiateSI(10.0)));
+                    new HistoryManagerDevs(this.simulator, this.historyTime, Duration.ofSI(10.0)));
             OtsAnimationPanel animationPanel = new OtsAnimationPanel(scriptModel.getNetwork().getExtent(),
                     (OtsAnimator) this.simulator, scriptModel, getGtuColorers(), scriptModel.getNetwork());
             setAnimationToggles(animationPanel);

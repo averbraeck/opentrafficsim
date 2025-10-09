@@ -151,7 +151,7 @@ public class ArrivalsHeadwayGenerator implements Supplier<Duration>
             else
             {
                 // return resulting integration times
-                return Duration.instantiateSI(t1.si + t - now.si);
+                return Duration.ofSI(t1.si + t - now.si);
             }
         }
         throw new RuntimeException("Exception while determining headway from Arrivals.");

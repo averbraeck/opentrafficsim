@@ -58,7 +58,7 @@ public class TaskRoadSideDistraction extends AbstractTask
         while (it.hasNext())
         {
             Distraction next = it.next();
-            Double distraction = next.getDistraction(Length.instantiateSI(odo - this.odos.get(next)));
+            Double distraction = next.getDistraction(Length.ofSI(odo - this.odos.get(next)));
             if (distraction == null)
             {
                 it.remove();

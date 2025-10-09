@@ -11,8 +11,8 @@ import javax.naming.NamingException;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.draw.LineLocatable;
-import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.RenderableTextSource;
+import org.opentrafficsim.draw.TextAlignment;
 import org.opentrafficsim.draw.road.AbstractLineAnimation.LaneBasedObjectData;
 import org.opentrafficsim.draw.road.BusStopAnimation.BusStopData;
 
@@ -49,8 +49,8 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStopData>
     {
         super(laneDetector, contextualized, new Length(0.5, LengthUnit.SI));
         float halfLength = (float) (laneDetector.getLine().getLength() / 2.0);
-        this.text = new Text(laneDetector, laneDetector::getId, 0.0f, halfLength + 0.2f, TextAlignment.CENTER,
-                Color.BLACK, contextualized);
+        this.text = new Text(laneDetector, laneDetector::getId, 0.0f, halfLength + 0.2f, TextAlignment.CENTER, Color.BLACK,
+                contextualized);
     }
 
     /**

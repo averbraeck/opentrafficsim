@@ -343,8 +343,8 @@ public final class GtuTest
         TestGtu(final String id, final GtuType gtuType, final OtsSimulatorInterface simulator,
                 final PerceivableContext perceivableContext) throws SimRuntimeException, GtuException
         {
-            super(id, gtuType, simulator, perceivableContext, Length.instantiateSI(4.0), Length.instantiateSI(1.8),
-                    Length.instantiateSI(2.0), Speed.instantiateSI(50.0));
+            super(id, gtuType, simulator, perceivableContext, Length.ofSI(4.0), Length.ofSI(1.8), Length.ofSI(2.0),
+                    Speed.ofSI(50.0));
         }
 
         @Override

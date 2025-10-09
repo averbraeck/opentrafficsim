@@ -24,9 +24,9 @@ import org.djutils.data.Column;
 import org.djutils.data.ListTable;
 import org.djutils.data.Table;
 import org.djutils.draw.point.Point2d;
-import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
+import org.djutils.test.UnitTest;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.opentrafficsim.base.geometry.OtsGeometryException;
@@ -125,61 +125,61 @@ public final class InjectionsTest
         Column<Object> front2 = new Column<>(Injections.FRONT_COLUMN, "", Object.class, "m");
 
         // tests on Injections with only table as input
-        Try.testFail(() -> baseInjections(), IllegalArgumentException.class); // need time always
+        UnitTest.testFail(() -> baseInjections(), IllegalArgumentException.class); // need time always
         baseInjections(time);
-        Try.testFail(() -> baseInjections(time2), IllegalArgumentException.class); // xxx2 = wrong value type
+        UnitTest.testFail(() -> baseInjections(time2), IllegalArgumentException.class); // xxx2 = wrong value type
         baseInjections(time, id);
-        Try.testFail(() -> baseInjections(time, id2), IllegalArgumentException.class);
-        Try.testFail(() -> baseInjections(time, position).asGeneratorPositions().getAllPositions(),
+        UnitTest.testFail(() -> baseInjections(time, id2), IllegalArgumentException.class);
+        UnitTest.testFail(() -> baseInjections(time, position).asGeneratorPositions().getAllPositions(),
                 IllegalArgumentException.class); // pos, lane, link?
-        Try.testFail(() -> baseInjections(time, position2), IllegalArgumentException.class);
-        Try.testFail(() -> baseInjections(time, lane).asGeneratorPositions().getAllPositions(), IllegalArgumentException.class);
-        Try.testFail(() -> baseInjections(time, lane2), IllegalArgumentException.class);
-        Try.testFail(() -> baseInjections(time, link).asGeneratorPositions().getAllPositions(), IllegalArgumentException.class);
-        Try.testFail(() -> baseInjections(time, link2), IllegalArgumentException.class);
+        UnitTest.testFail(() -> baseInjections(time, position2), IllegalArgumentException.class);
+        UnitTest.testFail(() -> baseInjections(time, lane).asGeneratorPositions().getAllPositions(), IllegalArgumentException.class);
+        UnitTest.testFail(() -> baseInjections(time, lane2), IllegalArgumentException.class);
+        UnitTest.testFail(() -> baseInjections(time, link).asGeneratorPositions().getAllPositions(), IllegalArgumentException.class);
+        UnitTest.testFail(() -> baseInjections(time, link2), IllegalArgumentException.class);
         // position types are defined
         assertTrue(baseInjections(time, id, position, lane, link).asGeneratorPositions().getAllPositions().isEmpty());
         // no speed
-        Try.testFail(() -> baseInjections(time).asRoomChecker().canPlace(null, null, null, null), IllegalStateException.class);
-        Try.testFail(() -> baseInjections(time, speed).asRoomChecker().canPlace(null, null, null, null),
+        UnitTest.testFail(() -> baseInjections(time).asRoomChecker().canPlace(null, null, null, null), IllegalStateException.class);
+        UnitTest.testFail(() -> baseInjections(time, speed).asRoomChecker().canPlace(null, null, null, null),
                 IllegalStateException.class); // no ttc
-        Try.testFail(() -> baseInjections(time, speed2), IllegalArgumentException.class);
-        Try.testFail(() -> baseInjections(time, gtu), IllegalArgumentException.class); // need full Injections constructor input
-        Try.testFail(() -> baseInjections(time, origin), IllegalArgumentException.class);
-        Try.testFail(() -> baseInjections(time, destination), IllegalArgumentException.class);
-        Try.testFail(() -> baseInjections(time, route), IllegalArgumentException.class);
-        Try.testFail(() -> baseInjections(time, length), IllegalArgumentException.class);
-        Try.testFail(() -> baseInjections(time, width), IllegalArgumentException.class);
-        Try.testFail(() -> baseInjections(time, maxspeed), IllegalArgumentException.class);
-        Try.testFail(() -> baseInjections(time, maxacceleration), IllegalArgumentException.class);
-        Try.testFail(() -> baseInjections(time, maxdeceleration), IllegalArgumentException.class);
-        Try.testFail(() -> baseInjections(time, front), IllegalArgumentException.class);
+        UnitTest.testFail(() -> baseInjections(time, speed2), IllegalArgumentException.class);
+        UnitTest.testFail(() -> baseInjections(time, gtu), IllegalArgumentException.class); // need full Injections constructor input
+        UnitTest.testFail(() -> baseInjections(time, origin), IllegalArgumentException.class);
+        UnitTest.testFail(() -> baseInjections(time, destination), IllegalArgumentException.class);
+        UnitTest.testFail(() -> baseInjections(time, route), IllegalArgumentException.class);
+        UnitTest.testFail(() -> baseInjections(time, length), IllegalArgumentException.class);
+        UnitTest.testFail(() -> baseInjections(time, width), IllegalArgumentException.class);
+        UnitTest.testFail(() -> baseInjections(time, maxspeed), IllegalArgumentException.class);
+        UnitTest.testFail(() -> baseInjections(time, maxacceleration), IllegalArgumentException.class);
+        UnitTest.testFail(() -> baseInjections(time, maxdeceleration), IllegalArgumentException.class);
+        UnitTest.testFail(() -> baseInjections(time, front), IllegalArgumentException.class);
 
         // tests on Injections with table as input, and all other input mocked
         mockInjections(time, gtu);
         mockInjections(time, speed);
         // data?
-        Try.testFail(() -> mockInjections(time, speed).asRoomChecker().canPlace(null, null, null, null),
+        UnitTest.testFail(() -> mockInjections(time, speed).asRoomChecker().canPlace(null, null, null, null),
                 NoSuchElementException.class);
-        Try.testFail(() -> mockInjections(time, gtu2), IllegalArgumentException.class);
-        Try.testFail(() -> mockInjections(time, origin2), IllegalArgumentException.class);
-        Try.testFail(() -> mockInjections(time, destination2), IllegalArgumentException.class);
-        Try.testFail(() -> mockInjections(time, route2), IllegalArgumentException.class);
-        Try.testFail(() -> mockInjections(time, length2), IllegalArgumentException.class);
-        Try.testFail(() -> mockInjections(time, width2), IllegalArgumentException.class);
-        Try.testFail(() -> mockInjections(time, maxspeed2), IllegalArgumentException.class);
-        Try.testFail(() -> mockInjections(time, maxacceleration2), IllegalArgumentException.class);
-        Try.testFail(() -> mockInjections(time, maxdeceleration2), IllegalArgumentException.class);
-        Try.testFail(() -> mockInjections(time, front2), IllegalArgumentException.class);
+        UnitTest.testFail(() -> mockInjections(time, gtu2), IllegalArgumentException.class);
+        UnitTest.testFail(() -> mockInjections(time, origin2), IllegalArgumentException.class);
+        UnitTest.testFail(() -> mockInjections(time, destination2), IllegalArgumentException.class);
+        UnitTest.testFail(() -> mockInjections(time, route2), IllegalArgumentException.class);
+        UnitTest.testFail(() -> mockInjections(time, length2), IllegalArgumentException.class);
+        UnitTest.testFail(() -> mockInjections(time, width2), IllegalArgumentException.class);
+        UnitTest.testFail(() -> mockInjections(time, maxspeed2), IllegalArgumentException.class);
+        UnitTest.testFail(() -> mockInjections(time, maxacceleration2), IllegalArgumentException.class);
+        UnitTest.testFail(() -> mockInjections(time, maxdeceleration2), IllegalArgumentException.class);
+        UnitTest.testFail(() -> mockInjections(time, front2), IllegalArgumentException.class);
 
         // tests on arrival times, ids and placement
         ListTable arrivals = new ListTable("id", "", Set.of(id, time, speed));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(1.0), id, "1", speed, Speed.instantiateSI(10.0)));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(3.0), id, "2", speed, Speed.instantiateSI(11.0)));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(6.0), id, "3", speed, Speed.instantiateSI(12.0)));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(10.0), id, "4", speed, Speed.instantiateSI(13.0)));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(15.0), id, "5", speed, Speed.instantiateSI(14.0)));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(21.0), id, "6", speed, Speed.instantiateSI(15.0)));
+        arrivals.addRow(Map.of(time, Duration.ofSI(1.0), id, "1", speed, Speed.ofSI(10.0)));
+        arrivals.addRow(Map.of(time, Duration.ofSI(3.0), id, "2", speed, Speed.ofSI(11.0)));
+        arrivals.addRow(Map.of(time, Duration.ofSI(6.0), id, "3", speed, Speed.ofSI(12.0)));
+        arrivals.addRow(Map.of(time, Duration.ofSI(10.0), id, "4", speed, Speed.ofSI(13.0)));
+        arrivals.addRow(Map.of(time, Duration.ofSI(15.0), id, "5", speed, Speed.ofSI(14.0)));
+        arrivals.addRow(Map.of(time, Duration.ofSI(21.0), id, "6", speed, Speed.ofSI(15.0)));
         Injections arrivalsInjection = new Injections(arrivals, null, null, null, null, null, Duration.ONE);
         LanePosition generationLane = Mockito.mock(LanePosition.class);
         for (int i = 0; i < 6; i++)
@@ -215,32 +215,32 @@ public final class InjectionsTest
         Node nodeB = new Node(network, "B", new Point2d(100.0, 0.0), Direction.ZERO);
         CrossSectionLink linkAB = new CrossSectionLink(network, "AB", nodeA, nodeB, DefaultsNl.FREEWAY,
                 new OtsLine2d(nodeA.getPoint(), nodeB.getPoint()), null, LaneKeepingPolicy.KEEPRIGHT);
-        Length laneWidth = Length.instantiateSI(3.5);
+        Length laneWidth = Length.ofSI(3.5);
         LaneGeometryUtil.createStraightLane(linkAB, "Lane1", Length.ZERO, laneWidth, DefaultsRoadNl.FREEWAY,
                 Collections.emptyMap());
         LaneGeometryUtil.createStraightLane(linkAB, "Lane2", laneWidth, laneWidth, DefaultsRoadNl.FREEWAY,
                 Collections.emptyMap());
         // -- table
         Table arrivals2 = new ListTable("id", "", Set.of(time, length)); // no GTU type column
-        Try.testFail(() -> fullInjections(arrivals2, network).asLaneBasedGtuCharacteristicsGenerator(),
+        UnitTest.testFail(() -> fullInjections(arrivals2, network).asLaneBasedGtuCharacteristicsGenerator(),
                 IllegalStateException.class);
         arrivals = new ListTable("id", "", Set.of(time, gtu, length, position, lane, link));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(1.0), gtu, "NL.CAR", length, Length.instantiateSI(1.0), position,
-                Length.instantiateSI(10.0), lane, "Lane1", link, "AB"));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(2.0), gtu, "NL.CAR", length, Length.instantiateSI(2.0), position,
-                Length.instantiateSI(20.0), lane, "Lane2", link, "AB"));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(3.0), gtu, "NL.CAR", length, Length.instantiateSI(3.0), position,
-                Length.instantiateSI(30.0), lane, "Lane1", link, "AB"));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(4.0), gtu, "NL.CAR", length, Length.instantiateSI(4.0), position,
-                Length.instantiateSI(40.0), lane, "Lane2", link, "AB"));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(5.0), gtu, "NL.TRUCK", length, Length.instantiateSI(5.0), position,
-                Length.instantiateSI(50.0), lane, "Lane1", link, "AB"));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(6.0), gtu, "NL.TRUCK", length, Length.instantiateSI(6.0), position,
-                Length.instantiateSI(60.0), lane, "Lane2", link, "AB"));
+        arrivals.addRow(Map.of(time, Duration.ofSI(1.0), gtu, "NL.CAR", length, Length.ofSI(1.0), position, Length.ofSI(10.0),
+                lane, "Lane1", link, "AB"));
+        arrivals.addRow(Map.of(time, Duration.ofSI(2.0), gtu, "NL.CAR", length, Length.ofSI(2.0), position, Length.ofSI(20.0),
+                lane, "Lane2", link, "AB"));
+        arrivals.addRow(Map.of(time, Duration.ofSI(3.0), gtu, "NL.CAR", length, Length.ofSI(3.0), position, Length.ofSI(30.0),
+                lane, "Lane1", link, "AB"));
+        arrivals.addRow(Map.of(time, Duration.ofSI(4.0), gtu, "NL.CAR", length, Length.ofSI(4.0), position, Length.ofSI(40.0),
+                lane, "Lane2", link, "AB"));
+        arrivals.addRow(Map.of(time, Duration.ofSI(5.0), gtu, "NL.TRUCK", length, Length.ofSI(5.0), position, Length.ofSI(50.0),
+                lane, "Lane1", link, "AB"));
+        arrivals.addRow(Map.of(time, Duration.ofSI(6.0), gtu, "NL.TRUCK", length, Length.ofSI(6.0), position, Length.ofSI(60.0),
+                lane, "Lane2", link, "AB"));
         // -- the test
         Injections full = fullInjections(arrivals, network);
         assertEquals(6, full.asGeneratorPositions().getAllPositions().size());
-        Try.testFail(() -> full.asLaneBasedGtuCharacteristicsGenerator().draw(), IllegalStateException.class); // first headway
+        UnitTest.testFail(() -> full.asLaneBasedGtuCharacteristicsGenerator().draw(), IllegalStateException.class); // first headway
         String[] lanes = new String[] {"Lane1", "Lane2"};
         int laneIndex = 0;
         for (int i = 0; i < 5; i++)
@@ -254,7 +254,7 @@ public final class InjectionsTest
             laneIndex = 1 - laneIndex;
             assertEquals((i + 1) * 10.0, p.getPosition().position().si, 1e-9);
         }
-        Try.testFail(() -> full.asLaneBasedGtuCharacteristicsGenerator().draw(), IllegalStateException.class); // consec. draw
+        UnitTest.testFail(() -> full.asLaneBasedGtuCharacteristicsGenerator().draw(), IllegalStateException.class); // consec. draw
     }
 
     /**
@@ -307,7 +307,7 @@ public final class InjectionsTest
     {
         // A small test network with two completely separated lanes on different links
         OtsSimulatorInterface simulator = new OtsSimulator("simulator");
-        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), Mockito.mock(OtsModelInterface.class),
+        simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), Mockito.mock(OtsModelInterface.class),
                 HistoryManagerDevs.noHistory(simulator));
         RoadNetwork network = new RoadNetwork("network", simulator);
         Point2d pointA = new Point2d(0.0, 0.0);
@@ -322,11 +322,11 @@ public final class InjectionsTest
                 new OtsLine2d(pointA, pointB), null, LaneKeepingPolicy.KEEPRIGHT);
         CrossSectionLink linkCD = new CrossSectionLink(network, "CD", nodeC, nodeD, DefaultsNl.FREEWAY,
                 new OtsLine2d(pointC, pointD), null, LaneKeepingPolicy.KEEPRIGHT);
-        Map<GtuType, Speed> speedLimit = Map.of(DefaultsNl.CAR, Speed.instantiateSI(25.0));
-        Lane lane1 = LaneGeometryUtil.createStraightLane(linkAB, "lane1", Length.ZERO, Length.instantiateSI(3.5),
-                DefaultsRoadNl.FREEWAY, speedLimit);
-        Lane lane2 = LaneGeometryUtil.createStraightLane(linkCD, "lane2", Length.ZERO, Length.instantiateSI(3.5),
-                DefaultsRoadNl.FREEWAY, speedLimit);
+        Map<GtuType, Speed> speedLimit = Map.of(DefaultsNl.CAR, Speed.ofSI(25.0));
+        Lane lane1 = LaneGeometryUtil.createStraightLane(linkAB, "lane1", Length.ZERO, Length.ofSI(3.5), DefaultsRoadNl.FREEWAY,
+                speedLimit);
+        Lane lane2 = LaneGeometryUtil.createStraightLane(linkCD, "lane2", Length.ZERO, Length.ofSI(3.5), DefaultsRoadNl.FREEWAY,
+                speedLimit);
 
         // Columns
         Column<Duration> time = new Column<>(Injections.TIME_COLUMN, "", Duration.class, "s");
@@ -339,12 +339,12 @@ public final class InjectionsTest
 
         // Create arrivals, with 2 GTUs on lane 1 that are too close for direct generation
         ListTable arrivals = new ListTable("id", "", Set.of(id, time, gtu, position, lane, link, speed));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(1.0), id, "1", gtu, "NL.CAR", position, Length.instantiateSI(10.0),
-                lane, "lane1", link, "AB", speed, Speed.instantiateSI(5.0)));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(1.5), id, "2", gtu, "NL.CAR", position, Length.instantiateSI(10.0),
-                lane, "lane1", link, "AB", speed, Speed.instantiateSI(25.0)));
-        arrivals.addRow(Map.of(time, Duration.instantiateSI(1.6), id, "3", gtu, "NL.CAR", position, Length.instantiateSI(10.0),
-                lane, "lane2", link, "CD", speed, Speed.instantiateSI(25.0)));
+        arrivals.addRow(Map.of(time, Duration.ofSI(1.0), id, "1", gtu, "NL.CAR", position, Length.ofSI(10.0), lane, "lane1",
+                link, "AB", speed, Speed.ofSI(5.0)));
+        arrivals.addRow(Map.of(time, Duration.ofSI(1.5), id, "2", gtu, "NL.CAR", position, Length.ofSI(10.0), lane, "lane1",
+                link, "AB", speed, Speed.ofSI(25.0)));
+        arrivals.addRow(Map.of(time, Duration.ofSI(1.6), id, "3", gtu, "NL.CAR", position, Length.ofSI(10.0), lane, "lane2",
+                link, "CD", speed, Speed.ofSI(25.0)));
 
         // Create the generator and its components
         ImmutableMap<String, GtuType> gtuTypes = new ImmutableLinkedHashMap<>(Map.of("NL.CAR", DefaultsNl.CAR));
@@ -353,7 +353,7 @@ public final class InjectionsTest
         LaneBasedStrategicalRoutePlannerFactory strategicalPlannerFactory =
                 new LaneBasedStrategicalRoutePlannerFactory(tacticalFactory);
         Injections injections = new Injections(arrivals, network, gtuTypes, Defaults.NL, strategicalPlannerFactory, stream,
-                Duration.instantiateSI(60.0));
+                Duration.ofSI(60.0));
         new LaneBasedGtuGenerator("id", injections.asArrivalsSupplier(), injections.asLaneBasedGtuCharacteristicsGenerator(),
                 injections.asGeneratorPositions(), network, simulator, injections.asRoomChecker(), injections.asIdSupplier());
 

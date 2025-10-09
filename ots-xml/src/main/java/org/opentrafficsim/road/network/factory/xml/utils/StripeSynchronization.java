@@ -328,14 +328,14 @@ public final class StripeSynchronization<T>
             @Override
             public void setStartPhase(final double phase)
             {
-                stripe.setDashOffset(Length.instantiateSI(phase * getPeriod()));
+                stripe.setDashOffset(Length.ofSI(phase * getPeriod()));
             }
 
             @Override
             public void setEndPhase(final double phase)
             {
                 double len = getPeriod() - ((stripe.getCenterLine().getLength() - phase * getPeriod()) % getPeriod());
-                stripe.setDashOffset(Length.instantiateSI(len));
+                stripe.setDashOffset(Length.ofSI(len));
             }
         };
     }

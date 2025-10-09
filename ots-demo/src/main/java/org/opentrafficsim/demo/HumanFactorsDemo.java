@@ -166,8 +166,8 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
         {
             OtsAnimator simulator = new OtsAnimator("HFDemo");
             final HumanFactorsModel junctionModel = new HumanFactorsModel(simulator);
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), junctionModel,
-                    new HistoryManagerDevs(simulator, Duration.instantiateSI(3.0), Duration.instantiateSI(10.0)));
+            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), junctionModel,
+                    new HistoryManagerDevs(simulator, Duration.ofSI(3.0), Duration.ofSI(10.0)));
             // Note some relevant colorers for social interactions and task saturation
             List<Colorer<? super Gtu>> colorers = List.of(new FixedColorer<>(Color.BLUE, "Blue"), new SpeedGtuColorer(),
                     new AccelerationGtuColorer(), new SocialPressureGtuColorer(),
@@ -256,7 +256,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
                  * simple for trucks.
                  */
                 parameterFactory.addParameter(Tailgating.RHO, 0.0);
-                parameterFactory.addParameter(ParameterTypes.TMAX, Duration.instantiateSI(1.6));
+                parameterFactory.addParameter(ParameterTypes.TMAX, Duration.ofSI(1.6));
                 parameterFactory.addParameter(DefaultsNl.CAR, LmrsParameters.SOCIO, new DistTriangular(stream, 0.0, 0.25, 1.0));
                 parameterFactory.addParameter(DefaultsNl.CAR, LmrsParameters.VGAIN, // mu =~ 3.3789, sigma = 0.4, mode = 25.0
                         new ContinuousDistSpeed(new DistLogNormal(stream, Math.log(25.0) + 0.4 * 0.4, 0.4),
@@ -403,10 +403,10 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
                     ContinuousPiecewiseLinearFunction.of(0.0, offset5), ContinuousPiecewiseLinearFunction.of(0.0, width5)));
 
             // Add distraction halfway on the network, 0.3 on left lane, 0.2 on right lane, with distance profile
-            new Distraction("distractionLeft", left, Length.instantiateSI(1500.0), new TrapezoidProfile(0.3,
-                    Length.instantiateSI(-100.0), Length.instantiateSI(50.0), Length.instantiateSI(150.0)));
-            new Distraction("distractionRight", right, Length.instantiateSI(1500.0), new TrapezoidProfile(0.2,
-                    Length.instantiateSI(-100.0), Length.instantiateSI(50.0), Length.instantiateSI(150.0)));
+            new Distraction("distractionLeft", left, Length.ofSI(1500.0),
+                    new TrapezoidProfile(0.3, Length.ofSI(-100.0), Length.ofSI(50.0), Length.ofSI(150.0)));
+            new Distraction("distractionRight", right, Length.ofSI(1500.0),
+                    new TrapezoidProfile(0.2, Length.ofSI(-100.0), Length.ofSI(50.0), Length.ofSI(150.0)));
         }
 
         /**
@@ -441,7 +441,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             od.putDemandVector(nodeA, nodeB, new Category(categorization, DefaultsNl.CAR), demand, 1.0 - truckFraction);
             od.putDemandVector(nodeA, nodeB, new Category(categorization, DefaultsNl.TRUCK), demand, truckFraction);
             OdOptions odOptions = new OdOptions();
-            odOptions.set(OdOptions.NO_LC_DIST, Length.instantiateSI(150.0));
+            odOptions.set(OdOptions.NO_LC_DIST, Length.ofSI(150.0));
             odOptions.set(OdOptions.GTU_TYPE, this.characteristics);
             odOptions.set(OdOptions.LANE_BIAS, DefaultsRoadNl.LANE_BIAS_CAR_TRUCK);
             odOptions.set(OdOptions.BOOKKEEPING, LaneBookkeeping.START);
@@ -517,7 +517,7 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
 
         /** Car-following task parameter. */
         public static final ParameterTypeDuration HEXP = new ParameterTypeDuration("Hexp",
-                "Exponential decay of car-following task by headway.", Duration.instantiateSI(4.0), NumericConstraint.POSITIVE);
+                "Exponential decay of car-following task by headway.", Duration.ofSI(4.0), NumericConstraint.POSITIVE);
 
         /**
          * Constructor.

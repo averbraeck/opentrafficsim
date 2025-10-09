@@ -37,7 +37,8 @@ public class LinearCacc extends LinearAcc
 
     @Override
     public Acceleration getFollowingAcceleration(final LaneBasedGtu gtu,
-            final PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders, final Parameters settings) throws ParameterException
+            final PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders, final Parameters settings)
+            throws ParameterException
     {
         PerceivedGtu leader = leaders.first();
         if (leader.getAcceleration() == null)
@@ -49,7 +50,7 @@ public class LinearCacc extends LinearAcc
                 leader.getDistance().si - gtu.getSpeed().si * settings.getParameter(TDCACC).si - settings.getParameter(X0).si;
         double ev = leader.getSpeed().si - gtu.getSpeed().si;
         double kaui = settings.getParameter(KA) * leader.getAcceleration().si;
-        return Acceleration.instantiateSI(settings.getParameter(KS) * es + settings.getParameter(KV) * ev + kaui);
+        return Acceleration.ofSI(settings.getParameter(KS) * es + settings.getParameter(KV) * ev + kaui);
     }
 
 }

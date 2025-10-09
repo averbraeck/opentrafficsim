@@ -60,10 +60,10 @@ public final class GtuCharacteristicsTest implements OtsModelInterface
         Length widthB = new Length(2.5, LengthUnit.METER);
         Speed maximumSpeedA = new Speed(180, SpeedUnit.KM_PER_HOUR);
         Speed maximumSpeedB = new Speed(130, SpeedUnit.KM_PER_HOUR);
-        GtuCharacteristics gtucA = new GtuCharacteristics(gtuTypeA, lengthA, widthA, maximumSpeedA,
-                Acceleration.instantiateSI(3.0), Acceleration.instantiateSI(-8.0), lengthA.times(0.5));
-        GtuCharacteristics gtucB = new GtuCharacteristics(gtuTypeB, lengthB, widthB, maximumSpeedB,
-                Acceleration.instantiateSI(3.0), Acceleration.instantiateSI(-8.0), lengthB.times(0.5));
+        GtuCharacteristics gtucA = new GtuCharacteristics(gtuTypeA, lengthA, widthA, maximumSpeedA, Acceleration.ofSI(3.0),
+                Acceleration.ofSI(-8.0), lengthA.times(0.5));
+        GtuCharacteristics gtucB = new GtuCharacteristics(gtuTypeB, lengthB, widthB, maximumSpeedB, Acceleration.ofSI(3.0),
+                Acceleration.ofSI(-8.0), lengthB.times(0.5));
         assertEquals(gtuTypeA, gtucA.getGtuType(), "gtuTypeA");
         assertEquals(gtuTypeB, gtucB.getGtuType(), "gtuTypeB");
         assertEquals(lengthA, gtucA.getLength(), "lengthA");

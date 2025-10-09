@@ -237,7 +237,7 @@ public final class XmlParser implements Serializable
             SAXException, ParserConfigurationException, SimRuntimeException, GtuException, MalformedURLException, IOException,
             TrafficControlException
     {
-        CategoryLogger.setLogCategories(Cat.PARSER);
+        //CategoryLogger.setLogCategories(Cat.PARSER);
 
         // input parameters
         Eval eval = ScenarioParser.parseInputParameters(ots.getScenarios(), scenario);
