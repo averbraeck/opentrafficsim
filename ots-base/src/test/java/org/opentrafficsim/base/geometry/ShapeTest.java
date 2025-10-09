@@ -81,22 +81,22 @@ public final class ShapeTest
         circle.toString();
 
         // signed distance
-        assertEquals(p - r, circle.signedDistance(new Point2d(p, 0.0)), 0.001);
-        assertEquals(p - r, circle.signedDistance(new Point2d(0.0, p)), 0.001);
-        assertEquals(p - r, circle.signedDistance(new Point2d(-p, 0.0)), 0.001);
-        assertEquals(p - r, circle.signedDistance(new Point2d(0.0, -p)), 0.001);
-        assertEquals(Math.sqrt(2.0 * p * p) - r, circle.signedDistance(new Point2d(p, p)), 0.001);
-        assertEquals(Math.sqrt(2.0 * p * p) - r, circle.signedDistance(new Point2d(-p, p)), 0.001);
-        assertEquals(Math.sqrt(2.0 * p * p) - r, circle.signedDistance(new Point2d(p, -p)), 0.001);
-        assertEquals(Math.sqrt(2.0 * p * p) - r, circle.signedDistance(new Point2d(-p, -p)), 0.001);
-        assertEquals(p, circle.signedDistance(new Point2d(r + p, 0.0)), 0.001);
-        assertEquals(p, circle.signedDistance(new Point2d(0.0, r + p)), 0.001);
-        assertEquals(p, circle.signedDistance(new Point2d(-r - p, 0.0)), 0.001);
-        assertEquals(p, circle.signedDistance(new Point2d(0.0, -r - p)), 0.001);
-        assertEquals(Math.sqrt(2.0 * (r + p) * (r + p)) - r, circle.signedDistance(new Point2d(r + p, r + p)), 0.001);
-        assertEquals(Math.sqrt(2.0 * (r + p) * (r + p)) - r, circle.signedDistance(new Point2d(-r - p, r + p)), 0.001);
-        assertEquals(Math.sqrt(2.0 * (r + p) * (r + p)) - r, circle.signedDistance(new Point2d(r + p, -r - p)), 0.001);
-        assertEquals(Math.sqrt(2.0 * (r + p) * (r + p)) - r, circle.signedDistance(new Point2d(-r - p, -r - p)), 0.001);
+        assertEquals(p - r, circle.signedDistance(p, 0.0), 0.001);
+        assertEquals(p - r, circle.signedDistance(0.0, p), 0.001);
+        assertEquals(p - r, circle.signedDistance(-p, 0.0), 0.001);
+        assertEquals(p - r, circle.signedDistance(0.0, -p), 0.001);
+        assertEquals(Math.sqrt(2.0 * p * p) - r, circle.signedDistance(p, p), 0.001);
+        assertEquals(Math.sqrt(2.0 * p * p) - r, circle.signedDistance(-p, p), 0.001);
+        assertEquals(Math.sqrt(2.0 * p * p) - r, circle.signedDistance(p, -p), 0.001);
+        assertEquals(Math.sqrt(2.0 * p * p) - r, circle.signedDistance(-p, -p), 0.001);
+        assertEquals(p, circle.signedDistance(r + p, 0.0), 0.001);
+        assertEquals(p, circle.signedDistance(0.0, r + p), 0.001);
+        assertEquals(p, circle.signedDistance(-r - p, 0.0), 0.001);
+        assertEquals(p, circle.signedDistance(0.0, -r - p), 0.001);
+        assertEquals(Math.sqrt(2.0 * (r + p) * (r + p)) - r, circle.signedDistance(r + p, r + p), 0.001);
+        assertEquals(Math.sqrt(2.0 * (r + p) * (r + p)) - r, circle.signedDistance(-r - p, r + p), 0.001);
+        assertEquals(Math.sqrt(2.0 * (r + p) * (r + p)) - r, circle.signedDistance(r + p, -r - p), 0.001);
+        assertEquals(Math.sqrt(2.0 * (r + p) * (r + p)) - r, circle.signedDistance(-r - p, -r - p), 0.001);
 
         // points in and out
         assertTrue(circle.contains(p, 0.0));
