@@ -1169,9 +1169,19 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 @Override
                 public void mouseClicked(final MouseEvent e)
                 {
-                    // removes focus from time edit when the user clicks anywhere on the control panel
-                    TimeEdit.this.setFocusable(false);
-                    TimeEdit.this.setFocusable(true);
+                    if (OtsControlPanel.this.timeEdit.hasFocus())
+                    {
+                        // removes focus from time edit when the user clicks anywhere on the control panel
+                        TimeEdit.this.setFocusable(false);
+                        TimeEdit.this.setFocusable(true);
+                    }
+                    // this listener prevents events from reaching the main panel with popup menu, make it appear from here
+                    JPanel mainPanel = (JPanel) ((AppearanceApplication) SwingUtilities
+                            .getAncestorOfClass(AppearanceApplication.class, OtsControlPanel.this)).getContentPane();
+                    if (e.getButton() == MouseEvent.BUTTON3 && e.getClickCount() == 1)
+                    {
+                        mainPanel.getComponentPopupMenu().show(mainPanel, e.getX(), e.getY());
+                    }
                 }
             });
             RegexFormatter formatter = (RegexFormatter) getFormatter();
