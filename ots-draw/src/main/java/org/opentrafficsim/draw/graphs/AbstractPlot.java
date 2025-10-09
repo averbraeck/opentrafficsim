@@ -84,6 +84,12 @@ public abstract class AbstractPlot implements Identifiable, Dataset
     /** Update interval. */
     private Duration updateInterval;
 
+    /** Whether the plot is in an update. */
+    private boolean inUpdate = false;
+
+    /** Offered update interval to set on next update scheduling. */
+    private Duration offeredUpdateInterval;
+
     /**
      * Constructor.
      * @param scheduler scheduler.
@@ -250,13 +256,32 @@ public abstract class AbstractPlot implements Identifiable, Dataset
      * Sets a new update interval.
      * @param interval update interval
      */
-    public final void setUpdateInterval(final Duration interval)
+    public final synchronized void setUpdateInterval(final Duration interval)
     {
         this.scheduler.cancelEvent(this);
         this.updates = (int) (this.scheduler.getTime().si / interval.si);
         this.updateInterval = interval;
         this.updateTime = Duration.ofSI(this.updates * this.updateInterval.si);
         scheduleNextUpdateEvent();
+    }
+
+    /**
+     * Offer new update time. This is a Thread-safe method as this update time will only be set once a current update finishes,
+     * or no current update is running.
+     * @param interval update interval
+     */
+    public void offerUpdateInterval(final Duration interval)
+    {
+        if (this.inUpdate)
+        {
+            // Let the current update finish and pick it up when scheduling the next update
+            this.offeredUpdateInterval = interval;
+        }
+        else
+        {
+            // We can set it immediately, so let's not delay until next update for if we go from a large to small update time
+            setUpdateInterval(interval);
+        }
     }
 
     /**
@@ -271,13 +296,14 @@ public abstract class AbstractPlot implements Identifiable, Dataset
     /**
      * Redraws the plot and schedules the next update.
      */
-    public void update()
+    public synchronized void update()
     {
-        // TODO: next event may be scheduled in the past if the scheduler is running fast during these few calls
+        this.inUpdate = true;
         this.updateTime = this.scheduler.getTime();
         increaseTime(this.updateTime.minus(this.delay));
         notifyPlotChange();
         scheduleNextUpdateEvent();
+        this.inUpdate = false;
     }
 
     /**
@@ -285,6 +311,14 @@ public abstract class AbstractPlot implements Identifiable, Dataset
      */
     private void scheduleNextUpdateEvent()
     {
+        if (this.offeredUpdateInterval != null)
+        {
+            this.scheduler.cancelEvent(this);
+            this.updates = (int) (this.scheduler.getTime().si / this.offeredUpdateInterval.si);
+            this.updateInterval = this.offeredUpdateInterval;
+            this.updateTime = Duration.ofSI(this.updates * this.updateInterval.si);
+            this.offeredUpdateInterval = null;
+        }
         this.updates++;
         // events are scheduled slightly later, so all influencing movements have occurred
         this.scheduler.scheduleUpdate(Duration.ofSI(this.updateInterval.si * this.updates + this.delay.si), this);

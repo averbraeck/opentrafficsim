@@ -376,24 +376,28 @@ public class ContourDataSource extends LocalEventProducer
     }
 
     /**
-     * Called by {@code AbstractContourPlot} to update the time. This will invalidate the plot triggering a redraw.
+     * Called by {@code AbstractContourPlot} to update the time. This will invalidate the plot triggering a redraw. This is a
+     * thread-safe execution as it hands over increasing the time to the graph updater.
      * @param updateTime current time
      */
-    final synchronized void increaseTime(final Duration updateTime)
+    final void increaseTime(final Duration updateTime)
     {
-        // pick up suggested granularity that was set the previous time we were in this method
-        if (updateTime.si > this.timeAxis.maxValue)
+        this.graphUpdater.offer(() ->
         {
-            this.timeAxis.setMaxValue(updateTime.si);
-            for (AbstractContourPlot<?> plot : this.plots)
+            // pick up suggested granularity that was set the previous time we were in this method
+            if (updateTime.si > this.timeAxis.maxValue)
             {
-                plot.setUpperDomainBound(updateTime.si);
+                this.timeAxis.setMaxValue(updateTime.si);
+                for (AbstractContourPlot<?> plot : this.plots)
+                {
+                    plot.setUpperDomainBound(updateTime.si);
+                }
             }
-        }
-        if (this.toTime == null || updateTime.si > this.toTime.si) // null at initialization
-        {
-            invalidate(updateTime);
-        }
+            if (this.toTime == null || updateTime.si > this.toTime.si) // null at initialization
+            {
+                invalidate(updateTime);
+            }
+        });
     }
 
     /**
@@ -427,7 +431,8 @@ public class ContourDataSource extends LocalEventProducer
             this.desiredTimeGranularity = granularity;
             for (AbstractContourPlot<?> contourPlot : ContourDataSource.this.plots)
             {
-                contourPlot.setUpdateInterval(Duration.ofSI(granularity));
+                // offer instead of setting as plot might be updating and also want to schedule the next update
+                contourPlot.offerUpdateInterval(Duration.ofSI(granularity));
                 contourPlot.setTimeGranularity(granularity);
             }
         }

@@ -125,11 +125,13 @@ public class SwingContourPlot extends SwingSpaceTimePlot implements EventListene
                 if (command.equalsIgnoreCase("setSpaceGranularity"))
                 {
                     double granularity = SwingContourPlot.this.spaceGranularityButtons.get(actionEvent.getSource());
+                    // offer instead of setting as data pool may be working in the background using the granularity
                     getPlot().getDataPool().offerGranularity(Dimension.DISTANCE, granularity);
                 }
                 else if (command.equalsIgnoreCase("setTimeGranularity"))
                 {
                     double granularity = SwingContourPlot.this.timeGranularityButtons.get(actionEvent.getSource());
+                    // offer instead of setting as data pool may be working in the background using the granularity
                     getPlot().getDataPool().offerGranularity(Dimension.TIME, granularity);
                 }
                 else

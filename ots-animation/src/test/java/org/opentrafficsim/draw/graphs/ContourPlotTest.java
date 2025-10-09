@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -320,11 +319,11 @@ public final class ContourPlotTest implements UNITS
         // Vary the time granularity
         for (double timeGranularity : ContourDataSource.DEFAULT_TIME_GRANULARITIES)
         {
-            cp.actionPerformed(new ActionEvent(timeGranularity, 0, "setTimeGranularity"));
+            cp.setTimeGranularity(timeGranularity);
             // Vary the distance granularity
             for (double distanceGranularity : ContourDataSource.DEFAULT_SPACE_GRANULARITIES)
             {
-                cp.actionPerformed(new ActionEvent(distanceGranularity, 0, "setSpaceGranularity"));
+                cp.setSpaceGranularity(distanceGranularity);
                 cp.notifyPlotChange();
                 expectedXBins = (int) Math.ceil((AbstractPlot.DEFAULT_INITIAL_UPPER_TIME_BOUND.getSI()) / timeGranularity)
                         + (cp.getDataPool().timeAxis.isInterpolate() ? 1 : 0);
@@ -411,49 +410,12 @@ public final class ContourPlotTest implements UNITS
                 // }
             }
         }
-        // Test some ActionEvents that ContourPlot can not handle
-        try
-        {
-            cp.actionPerformed(new ActionEvent(cp, 0, "blabla"));
-            fail("Should have thrown an Exception");
-        }
-        catch (RuntimeException e)
-        {
-            // Ignore expected exception
-        }
-        try
-        {
-            cp.actionPerformed(new ActionEvent(cp, 0, "setDistanceGranularity -1"));
-            fail("Should have thrown an Exception");
-        }
-        catch (RuntimeException e)
-        {
-            // Ignore expected exception
-        }
-        try
-        {
-            cp.actionPerformed(new ActionEvent(cp, 0, "setDistanceGranularity abc"));
-            fail("Should have thrown an Exception");
-        }
-        catch (RuntimeException e)
-        {
-            // Ignore expected exception
-        }
-        try
-        {
-            cp.actionPerformed(new ActionEvent(cp, 0, "setDistanceGranularitIE 10")); // typo in the event name
-            fail("Should have thrown an Exception");
-        }
-        catch (RuntimeException e)
-        {
-            // Ignore expected exception
-        }
         // Make the time granularity a bit more reasonable
         final double useTimeGranularity = 30; // [s]
-        cp.actionPerformed(new ActionEvent(useTimeGranularity, 0, "setTimeGranularity"));
+        cp.setTimeGranularity(useTimeGranularity);
         final double useDistanceGranularity =
                 ContourDataSource.DEFAULT_SPACE_GRANULARITIES[ContourDataSource.DEFAULT_SPACE_GRANULARITIES.length - 1];
-        cp.actionPerformed(new ActionEvent(useDistanceGranularity, 0, "setSpaceGranularity"));
+        cp.setSpaceGranularity(useDistanceGranularity);
         cp.notifyPlotChange();
         bins = cp.getItemCount(0);
         Time initialTime = new Time(0, TimeUnit.BASE_SECOND);

@@ -1,8 +1,6 @@
 package org.opentrafficsim.draw.graphs;
 
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.exceptions.Throw;
@@ -29,8 +27,7 @@ import org.opentrafficsim.draw.graphs.ContourDataSource.Dimension;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <Z> z-value type
  */
-public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamplerPlot
-        implements XyInterpolatedDataset, ActionListener
+public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamplerPlot implements XyInterpolatedDataset
 {
 
     /** Color scale for the graph. */
@@ -345,28 +342,6 @@ public abstract class AbstractContourPlot<Z extends Number> extends AbstractSamp
     public XyInterpolatedBlockRenderer getBlockRenderer()
     {
         return this.blockRenderer;
-    }
-
-    @Override
-    public final void actionPerformed(final ActionEvent actionEvent)
-    {
-        String command = actionEvent.getActionCommand();
-        if (command.equalsIgnoreCase("setSpaceGranularity"))
-        {
-            // The source field is abused to contain the granularity
-            double granularity = (double) actionEvent.getSource();
-            setSpaceGranularity(granularity);
-        }
-        else if (command.equalsIgnoreCase("setTimeGranularity"))
-        {
-            // The source field is abused to contain the granularity
-            double granularity = (double) actionEvent.getSource();
-            setTimeGranularity(granularity);
-        }
-        else
-        {
-            throw new RuntimeException("Unhandled ActionEvent (actionCommand is " + actionEvent.getActionCommand() + "\")");
-        }
     }
 
 }
