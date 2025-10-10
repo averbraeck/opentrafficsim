@@ -2,12 +2,15 @@ package org.opentrafficsim.road.gtu;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.core.gtu.Stateless;
+
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.FieldInfo;
 
 /**
  * Tests that all classes that extend {@code Stateless} have no non-final or non-static fields.
@@ -36,15 +39,17 @@ public class StatelessTest
     @Test
     public void testStateless()
     {
-        Collection<Class<?>> classes = ClassList.classList("org.opentrafficsim", true);
-        for (Class<?> clazz : classes)
+        Collection<ClassInfo> classList =
+                new ClassGraph().acceptPackages("org.opentrafficsim").ignoreClassVisibility().ignoreFieldVisibility().scan()
+                        .getAllClasses().stream().filter((ci) -> !ci.isInterface()).collect(Collectors.toSet());
+        for (ClassInfo ci : classList)
         {
-            if (Stateless.class.isAssignableFrom(clazz))
+            if (ci.extendsSuperclass(Stateless.class))
             {
-                for (Field field : clazz.getDeclaredFields())
+                for (FieldInfo field : ci.getDeclaredFieldInfo())
                 {
-                    assertTrue(Modifier.isFinal(field.getModifiers()) || Modifier.isStatic(field.getModifiers()), "Field '"
-                            + field.getName() + "' is not final or static in stateless class " + clazz.getSimpleName());
+                    assertTrue(field.isFinal() || field.isStatic(),
+                            "Field '" + field.getName() + "' is not final or static in stateless class " + ci.getSimpleName());
                 }
             }
         }

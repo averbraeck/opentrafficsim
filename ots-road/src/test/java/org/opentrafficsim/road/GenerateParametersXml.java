@@ -2,12 +2,19 @@ package org.opentrafficsim.road;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterType;
+
+import io.github.classgraph.ClassGraph;
 
 /**
  * Loops all OTS classes and prints XML lines for all parameters (@code ParameterType) found.
@@ -37,9 +44,13 @@ public final class GenerateParametersXml
      */
     public static void main(final String[] args) throws IllegalArgumentException, IllegalAccessException, ParameterException
     {
-        Locale.setDefault(new Locale("NL-nl"));
+        Locale.setDefault(Locale.US);
         Set<ParameterType<?>> done = new LinkedHashSet<>();
-        for (Class<?> clazz : ClassList.classList("org.opentrafficsim", false))
+
+        Collection<Class<?>> classList = new ClassGraph().acceptPackages("org.opentrafficsim").scan().getAllClasses().stream()
+                .map((ci) -> ci.loadClass()).collect(Collectors.toSet());
+        Map<String, ParameterType<?>> parameters = new TreeMap<>(); // sort by field (package.class.field)
+        for (Class<?> clazz : classList)
         {
             for (Field field : clazz.getDeclaredFields())
             {
@@ -49,24 +60,47 @@ public final class GenerateParametersXml
                     if (fieldValue instanceof ParameterType && !done.contains(fieldValue))
                     {
                         ParameterType<?> parameter = (ParameterType<?>) fieldValue;
-                        String id = parameter.getId();
-                        String description = parameter.getDescription();
                         String fld = field.getDeclaringClass().getName() + "." + field.getName();
-                        if (parameter.hasDefaultValue())
+                        if (parameters.containsValue(parameter))
                         {
-                            String value = parameter.getDefaultValue().toString();
-                            System.out.println(
-                                    String.format("  <ots:Length Id=\"%s\" Description=\"%s\" Field=\"%s\" Default=\"%s\" />",
-                                            id, description, fld, value));
+                            // Find field under which it is stored. Replace if this new field is shorter.
+                            // Shorter = heuristic for a better place to defined the parameter with.
+                            String f = parameters.entrySet().stream().filter((e) -> e.getValue().equals(parameter)).findFirst()
+                                    .get().getKey();
+                            if (f.length() > fld.length())
+                            {
+                                parameters.remove(f);
+                                parameters.put(fld, parameter);
+                            }
                         }
                         else
                         {
-                            System.out.println(String.format("  <ots:Length Id=\"%s\" Description=\"%s\" Field=\"%s\" />", id,
-                                    description, fld));
+                            parameters.put(fld, parameter);
                         }
-                        done.add(parameter);
                     }
                 }
+            }
+        }
+
+        for (Entry<String, ParameterType<?>> entry : parameters.entrySet())
+        {
+            ParameterType<?> parameter = entry.getValue();
+            String fld = entry.getKey();
+
+            String id = parameter.getId();
+            String description = parameter.getDescription();
+
+            String valueTypeName = parameter.getValueClass().getSimpleName();
+            if (parameter.hasDefaultValue())
+            {
+                String value = parameter.getDefaultValue().toString();
+                System.out.println(String.format("  <ots:%s Id=\"%s\" Description=\"%s\" Field=\"%s\" Default=\"%s\" />",
+                        valueTypeName, id, description, fld, value));
+            }
+            else
+            {
+                System.out.println(String.format("  <ots:%s Id=\"%s\" Description=\"%s\" Field=\"%s\" />", valueTypeName, id,
+                        description, fld));
             }
         }
     }

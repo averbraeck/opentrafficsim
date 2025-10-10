@@ -10,11 +10,13 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.TimeStampedObject;
 import org.opentrafficsim.core.gtu.perception.AbstractPerceptionCategory;
-import org.opentrafficsim.road.ClassList;
+
+import io.github.classgraph.ClassGraph;
 
 /**
  * Verifies methods in perception categories.
@@ -70,7 +72,11 @@ public final class VerifyPerceptionCategoryMethods
     public void perceptionCategoryTest()
     {
         // TODO: to what extent do we want to prescribe this now that we have more flexible perception categories
-        Collection<Class<?>> classList = ClassList.classList("org.opentrafficsim", true);
+
+        Collection<Class<?>> classList =
+                new ClassGraph().acceptPackages("org.opentrafficsim").ignoreClassVisibility().scan().getAllClasses().stream()
+                        .filter((ci) -> !ci.isInterface()).map((ci) -> ci.loadClass()).collect(Collectors.toSet());
+
         for (Class<?> c : classList)
         {
             if (AbstractPerceptionCategory.class.isAssignableFrom(c) && !Modifier.isAbstract(c.getModifiers()))

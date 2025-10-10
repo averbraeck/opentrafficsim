@@ -3,11 +3,18 @@ package org.opentrafficsim.road;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
+
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.MethodInfoList;
 
 /**
  * Verify that all classes have a toString method (unless the class in non-instantiable, or an enum, or abstract. <br>
@@ -36,27 +43,14 @@ public final class VerifyRequiredMethods
     @Test
     public void toStringTest()
     {
-        Collection<Class<?>> classList = ClassList.classList("org.opentrafficsim", true);
-        for (Class<?> c : classList)
+        Collection<ClassInfo> classList =
+                new ClassGraph().acceptPackages("org.opentrafficsim").ignoreClassVisibility().ignoreFieldVisibility().scan()
+                        .getAllClasses().stream().filter((ci) -> !ci.isInterface()).filter((ci) -> !isAnonymousInnerClass(ci))
+                        .filter((ci) -> !Exception.class.isAssignableFrom(ci.loadClass())).collect(Collectors.toSet());
+        for (ClassInfo ci : classList)
         {
-            if (Exception.class.isAssignableFrom(c))
-            {
-                continue;
-            }
-            if (ClassList.isAnonymousInnerClass(c))
-            {
-                continue;
-            }
             Method toStringMethod = null;
-            boolean isAbstract = false;
-            for (String modifierString : Modifier.toString(c.getModifiers()).split(" "))
-            {
-                if (modifierString.equals("abstract"))
-                {
-                    isAbstract = true;
-                    break;
-                }
-            }
+            Class<?> c = ci.loadClass();
             for (Method m : c.getDeclaredMethods())
             {
                 if (m.getName().equals("toString") && m.getParameterCount() == 0)
@@ -64,6 +58,7 @@ public final class VerifyRequiredMethods
                     toStringMethod = m;
                 }
             }
+
             if (null == toStringMethod)
             {
                 // Get the nearest toString method from the parent tree
@@ -76,32 +71,23 @@ public final class VerifyRequiredMethods
                     exception.printStackTrace();
                     fail("Cannot happen: getMethod(\"toString\") should never fail - there is one in Object");
                 }
-                boolean isFinal = false;
-                for (String modifierString : Modifier.toString(toStringMethod.getModifiers()).split(" "))
-                {
-                    if ("final".equals(modifierString))
-                    {
-                        isFinal = true;
-                        break;
-                    }
-                }
-                if (isFinal)
+                if (isFinal(toStringMethod))
                 {
                     System.out.println("Class " + c.getName() + " can not override the toString method because a super "
                             + "class implements a final toString method");
                 }
-                else if (!ClassList.hasNonStaticFields(c))
+                else if (!hasNonStaticFields(c))
 
                 {
                     System.out.println("Class " + c.getName()
                             + " does not have to override the toString method because it does not have non-static fields");
                 }
-                else if (isAbstract)
+                else if (ci.isAbstract())
                 {
                     System.out.println("Class " + c.getName() + " does not have to override the toString method because "
                             + "it is an abstract class");
                 }
-                else if (c.isEnum())
+                else if (ci.isEnum())
                 {
                     System.out.println(
                             "Class " + c.getName() + " does not have to override toString because this class " + "is an enum");
@@ -121,32 +107,35 @@ public final class VerifyRequiredMethods
     @Test
     public void serializableTest()
     {
-        Collection<Class<?>> classList = ClassList.classList("org.opentrafficsim", true);
-        for (Class<?> c : classList)
+        Collection<ClassInfo> classList =
+                new ClassGraph().acceptPackages("org.opentrafficsim").ignoreClassVisibility().ignoreFieldVisibility().scan()
+                        .getAllClasses().stream().filter((ci) -> !ci.isInterface()).collect(Collectors.toSet());
+        for (ClassInfo ci : classList)
         {
+            Class<?> c = ci.loadClass();
             if (Serializable.class.isAssignableFrom(c))
             {
-                if (c.isEnum())
+                if (ci.isEnum())
                 {
                     // System.out.println("Class " + c.getName() + " is an enum and (by inheritance) implements Serializable");
                 }
-                else if (!ClassList.hasNonStaticFields(c))
+                else if (!hasNonStaticFields(c))
                 {
-                    System.err.println("Class " + c.getName()
+                    System.err.println("Class " + ci.getName()
                             + " does not contain non-static fields and should NOT implement Serializable");
                 }
                 else if (Thread.class.isAssignableFrom(c))
                 {
-                    System.err.println("Class " + c.getName() + " is a thread and should NOT implement Serializable");
+                    System.err.println("Class " + ci.getName() + " is a thread and should NOT implement Serializable");
                 }
-                else if (ClassList.isAnonymousInnerClass(c))
+                else if (isAnonymousInnerClass(ci))
                 {
                     System.err.println(
-                            "Class " + c.getName() + " is an anonymous inner class and should NOT implement Serializable");
+                            "Class " + ci.getName() + " is an anonymous inner class and should NOT implement Serializable");
                 }
                 else if (Exception.class.isAssignableFrom(c))
                 {
-                    System.out.println("Class " + c.getName() + " is an Exception and (correctly) implements Serializable");
+                    System.out.println("Class " + ci.getName() + " is an Exception and (correctly) implements Serializable");
                 }
                 else
                 {
@@ -155,22 +144,22 @@ public final class VerifyRequiredMethods
             }
             else
             {
-                if (c.isEnum())
+                if (ci.isEnum())
                 {
-                    System.err
-                            .println("Class " + c.getName() + " is an enum and should (by inheritence) implement Serializable");
+                    System.err.println(
+                            "Class " + ci.getName() + " is an enum and should (by inheritence) implement Serializable");
                 }
-                else if (!ClassList.hasNonStaticFields(c))
+                else if (!hasNonStaticFields(c))
                 {
                     // System.out.println("Class " + c.getName()
-                    // + " does not contain non-static fields and (correctly does not implement Serializable");
+                    // + " does not contain non-static fields and (correctly) does not implement Serializable");
                 }
                 else if (Thread.class.isAssignableFrom(c))
                 {
                     // System.out.println("Class " + c.getName() +
                     // " is a thread and (correctly) does not implement Serializable");
                 }
-                else if (ClassList.isAnonymousInnerClass(c))
+                else if (isAnonymousInnerClass(ci))
                 {
                     // System.out.println("Class " + c.getName()
                     // + " is an anonymous inner class and (correctly) does not implement Serializable");
@@ -178,11 +167,11 @@ public final class VerifyRequiredMethods
                 else if (Exception.class.isAssignableFrom(c))
                 {
                     System.err.println(
-                            "Class " + c.getName() + " is an Exception and should (but does NOT) implement Serializable");
+                            "Class " + ci.getName() + " is an Exception and should (but does NOT) implement Serializable");
                 }
                 else
                 {
-                    System.err.println("Class " + c.getName() + " should (but does NOT) implement Serializable");
+                    System.err.println("Class " + ci.getName() + " should (but does NOT) implement Serializable");
                 }
             }
         }
@@ -194,27 +183,14 @@ public final class VerifyRequiredMethods
     @Test
     public void equalsAndHashCodeTest()
     {
-        Collection<Class<?>> classList = ClassList.classList("org.opentrafficsim", true);
-        for (Class<?> c : classList)
+        Collection<ClassInfo> classList = new ClassGraph().acceptPackages("org.opentrafficsim").enableMethodInfo().scan()
+                .getAllClasses().stream().filter((ci) -> !ci.isInterface())
+                .filter((ci) -> !Exception.class.isAssignableFrom(ci.loadClass())).collect(Collectors.toSet());
+        for (ClassInfo ci : classList)
         {
-            if (Exception.class.isAssignableFrom(c))
-            {
-                continue;
-            }
-            Method equalsMethod = null;
-            Method hashCodeMethod = null;
-            for (Method m : c.getDeclaredMethods())
-            {
-                if (m.getName().equals("equals"))
-                {
-                    equalsMethod = m;
-                }
-                else if (m.getName().equals("hashCode"))
-                {
-                    hashCodeMethod = m;
-                }
-            }
-            if (null == equalsMethod)
+            MethodInfoList equalsMethod = ci.getDeclaredMethodInfo("equals");
+            MethodInfoList hashCodeMethod = ci.getDeclaredMethodInfo("hashCode");
+            if (equalsMethod.size() == 0)
             {
                 if (null == hashCodeMethod)
                 {
@@ -225,15 +201,59 @@ public final class VerifyRequiredMethods
                     // System.out.println("Class " + c.getName() + " implements hashCode, but not equals");
                 }
             }
-            else if (null == hashCodeMethod)
+            else if (hashCodeMethod.size() == 0)
             {
-                fail("Class " + c.getName() + " implements equals but NOT hashCode");
+                fail("Class " + ci.getName() + " implements equals but NOT hashCode");
             }
             else
             {
                 // System.out.println("Class " + c.getName() + " implements equals and hashCode (good)");
             }
         }
+    }
+
+    /**
+     * Returns whether the method is final.
+     * @param method method
+     * @return whether the method is final
+     */
+    private static boolean isFinal(final Method method)
+    {
+        return Arrays.asList(Modifier.toString(method.getModifiers()).split(" ")).contains("final");
+    }
+
+    /**
+     * Returns whether the class is an anonymous inner class. Note that {@code ClassInfo.isAnonymousInnerClass()} incorrectly
+     * identifies locally defined classes with a name as anonymous. This method therefore additionally requires the first
+     * character in the class name to no be a digit.
+     * @param ci class ifno
+     * @return whether the class is an anonymous inner class
+     */
+    private static boolean isAnonymousInnerClass(final ClassInfo ci)
+    {
+        return ci.isAnonymousInnerClass() && !Character.isDigit(ci.getSimpleName().charAt(0));
+    }
+
+    /**
+     * Report if a class has non-static fields.
+     * @param c the class
+     * @return true if the class has non-static fields
+     */
+    private static boolean hasNonStaticFields(final Class<?> c)
+    {
+        // Cannot use ClassInfo as it does not load super classes not within "org.opentrafficsim"
+        for (Field f : c.getDeclaredFields())
+        {
+            if (!Modifier.isStatic(f.getModifiers()))
+            {
+                return true;
+            }
+        }
+        if (c.equals(Object.class))
+        {
+            return false;
+        }
+        return hasNonStaticFields(c.getSuperclass());
     }
 
 }
