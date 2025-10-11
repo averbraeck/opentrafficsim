@@ -148,4 +148,15 @@ public class CollisionDetector extends AbstractLaneBasedMoveChecker implements E
         return this;
     }
 
+    /**
+     * Destroys the GTU upon a collision.
+     * @return this collision detector for method chaining
+     */
+    public CollisionDetector destroyGtu()
+    {
+        Try.execute(() -> addListener((e) -> ((LaneBasedGtu) ((Object[]) e.getContent())[0]).destroy(), COLLISION),
+                "Unable to listen to collisions.");
+        return this;
+    }
+
 }
