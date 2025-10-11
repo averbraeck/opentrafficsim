@@ -556,11 +556,6 @@ public class HtmlGraphics2d extends Graphics2D
                 addTransformDraw("drawRect", rect.x, rect.y, rect.width, rect.height);
             }
         }
-        // else if (shape instanceof SerializablePath)
-        // {
-        // Path2D.Float path = (Path2D.Float) shape;
-        // addTransformPathFloat(path, fill);
-        // }
         else if (shape instanceof Path2D.Float)
         {
             Path2D.Float path = (Path2D.Float) shape;

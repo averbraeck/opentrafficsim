@@ -22,8 +22,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
 import org.djutils.io.URLResource;
-import org.djutils.logger.CategoryLogger;
-import org.opentrafficsim.base.logger.Cat;
 import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.distributions.FrequencyAndObject;
@@ -237,8 +235,6 @@ public final class XmlParser implements Serializable
             SAXException, ParserConfigurationException, SimRuntimeException, GtuException, MalformedURLException, IOException,
             TrafficControlException
     {
-        //CategoryLogger.setLogCategories(Cat.PARSER);
-
         // input parameters
         Eval eval = ScenarioParser.parseInputParameters(ots.getScenarios(), scenario);
 

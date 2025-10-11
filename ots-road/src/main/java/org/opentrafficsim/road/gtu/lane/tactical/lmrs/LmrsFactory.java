@@ -304,7 +304,7 @@ public class LmrsFactory extends AbstractLaneBasedTacticalPlannerFactory<Lmrs> i
                 this.mandatoryIncentives.add(IncentiveDummy.SINGLETON);
                 if (this.voluntaryIncentives.isEmpty() && this.accelerationIncentives.isEmpty())
                 {
-                    CategoryLogger.always().debug("LmrsFactory uses no incentives at all.");
+                    CategoryLogger.always().info("LmrsFactory uses no incentives at all.");
                 }
             }
             if (this.carFollowingModelFactory == null)
