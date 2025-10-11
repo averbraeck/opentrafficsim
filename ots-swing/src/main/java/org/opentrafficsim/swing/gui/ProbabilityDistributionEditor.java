@@ -15,10 +15,8 @@ import java.util.function.BiFunction;
 import java.util.stream.IntStream;
 
 import javax.swing.JLabel;
-import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.plaf.basic.BasicSliderUI;
 
 import org.djutils.exceptions.Throw;
 import org.djutils.swing.multislider.LinearMultiSlider;
@@ -139,25 +137,14 @@ public class ProbabilityDistributionEditor<T> extends LinearMultiSlider<Double>
         super.paint(g);
         Graphics2D g2 = (Graphics2D) g;
 
-        // similar code as in AbstractMultiSlider.calculateTrackSize(), but that''s all private
-        int trackSizeLoPx = 0;
-        JSlider js = getSlider(0);
-        BasicSliderUI ui = (BasicSliderUI) js.getUI();
-        int loValue = js.getMinimum();
-        int w = 0;
-        while (w < js.getWidth() && ui.valueForXPosition(w) == loValue)
-        {
-            trackSizeLoPx = w++;
-        }
-
         // edges between probability bands
         int[] edges = new int[getNumberOfThumbs() + 2];
-        edges[0] = trackSizeLoPx;
+        edges[0] = getTrackSizeLoPx();
         for (int i = 0; i < getNumberOfThumbs(); i++)
         {
             edges[i + 1] = thumbPositionPx(i);
         }
-        edges[edges.length - 1] = trackSizeLoPx + trackSize();
+        edges[edges.length - 1] = getTrackSizeLoPx() + trackSize();
 
         // draw labels
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
