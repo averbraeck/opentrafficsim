@@ -5,6 +5,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 
+import javax.swing.SwingUtilities;
+
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.event.PlotChangeEvent;
 import org.jfree.chart.plot.PlotRenderingInfo;
@@ -40,25 +42,35 @@ public abstract class PointerHandler implements MouseListener, MouseMotionListen
     {
         final ChartPanel cp = (ChartPanel) mouseEvent.getSource();
         final XYPlot plot = cp.getChart().getXYPlot();
-        // Show a cross hair cursor while the mouse is on the graph
-        final boolean showCrossHair = cp.getScreenDataArea().contains(mouseEvent.getPoint());
-        if (cp.getHorizontalAxisTrace() != showCrossHair)
+        final boolean onChartArea = cp.getScreenDataArea().contains(mouseEvent.getPoint());
+        if (cp.getHorizontalAxisTrace() != onChartArea)
         {
-            cp.setHorizontalAxisTrace(showCrossHair);
-            cp.setVerticalAxisTrace(showCrossHair);
-            plot.notifyListeners(new PlotChangeEvent(plot));
+            cp.setHorizontalAxisTrace(onChartArea);
+            cp.setVerticalAxisTrace(onChartArea);
         }
-        if (showCrossHair)
+        if (onChartArea)
         {
             Point2D p = cp.translateScreenToJava2D(mouseEvent.getPoint());
             PlotRenderingInfo pi = cp.getChartRenderingInfo().getPlotInfo();
             updateHint(plot.getDomainAxis().java2DToValue(p.getX(), pi.getDataArea(), plot.getDomainAxisEdge()),
                     plot.getRangeAxis().java2DToValue(p.getY(), pi.getDataArea(), plot.getRangeAxisEdge()));
+            /*
+             * Because of the required repaint() below, we need to trigger painting of the crosshair later.
+             */
+            SwingUtilities.invokeLater(() -> cp.mouseMoved(mouseEvent));
         }
         else
         {
             updateHint(Double.NaN, Double.NaN);
         }
+
+        /*
+         * Due to the updateHint() above, the chart panel is repainted and causes paintComponent to be invoked. This will remove
+         * pointers to the vertical and horizontal trace lines. The chart panel's own mouseMoved method can then no longer
+         * un-paint the old line when the mouse is moved. A large collection of visible crosshairs results. Therefore, we need
+         * to repaint again to remove the old crosshair.
+         */
+        cp.repaint();
     }
 
     /**
