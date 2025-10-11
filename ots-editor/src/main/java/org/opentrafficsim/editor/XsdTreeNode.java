@@ -2777,8 +2777,8 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     }
 
     /**
-     * Prioritizes listeners by: KeyValidator, KeyrefValidator, CoupledValidator, any other listener. This is to support the
-     * flow of dependencies when nodes need to be validated to create couplings. For example the RoadLayoutElementValidator
+     * Prioritizes listeners by: Undo, KeyValidator, KeyrefValidator, CoupledValidator, any other listener. This is to support
+     * the flow of dependencies when nodes need to be validated to create couplings. For example the RoadLayoutElementValidator
      * depending on the coupling between Link.DefinedRoadLayout (node value) to a Definitions.RoadLayouts.RoadLayout (Id
      * attribute value). However, this does not create any guarantee as the flow of actions and cascading changes is more
      * complex than this linear notion. For example because an undo action creates several nodes in a single action.
@@ -2787,13 +2787,18 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
     private void sortListeners(final EventType eventType)
     {
         EventListenerMap map = getEventListenerMap();
+        Reference<EventListener> undo = null;
         List<Reference<EventListener>> list = map.get(eventType);
         List<Reference<EventListener>> keys = new ArrayList<>();
         List<Reference<EventListener>> keyrefs = new ArrayList<>();
         List<Reference<EventListener>> coupled = new ArrayList<>();
         for (Reference<EventListener> listen : list)
         {
-            if (listen.get() instanceof KeyValidator)
+            if (listen.get() instanceof Undo)
+            {
+                undo = listen;
+            }
+            else if (listen.get() instanceof KeyValidator)
             {
                 keys.add(listen);
             }
@@ -2812,6 +2817,11 @@ public class XsdTreeNode extends LocalEventProducer implements Serializable
         list.addAll(0, coupled);
         list.addAll(0, keyrefs);
         list.addAll(0, keys);
+        if (undo != null)
+        {
+            list.remove(undo);
+            list.add(0, undo);
+        }
     }
 
 }
