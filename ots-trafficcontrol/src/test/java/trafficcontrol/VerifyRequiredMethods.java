@@ -1,4 +1,4 @@
-package org.opentrafficsim.road;
+package trafficcontrol;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
