@@ -1,15 +1,18 @@
 package org.opentrafficsim.core.dsol;
 
 import java.io.Serializable;
+import java.util.function.Supplier;
 
 import javax.naming.NamingException;
 
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.perception.HistoryManager;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
+import nl.tudelft.simulation.dsol.experiment.Replication;
 import nl.tudelft.simulation.dsol.simulators.DevsRealTimeAnimator;
 import nl.tudelft.simulation.dsol.simulators.ErrorStrategy;
 
@@ -59,6 +62,9 @@ public class OtsAnimator extends DevsRealTimeAnimator<Duration> implements OtsSi
     {
         setErrorStrategy(ErrorStrategy.WARN_AND_PAUSE);
         setAnimationDelay(20); // 50 Hz animation update
+        Supplier<Duration> simTimeSupplier = this::getSimulatorTime;
+        Logger.setSimTimeSupplier(simTimeSupplier);
+        addListener((e) -> Logger.removeSimTimeSupplier(simTimeSupplier), Replication.END_REPLICATION_EVENT);
         super.initialize(model, replication);
     }
 
