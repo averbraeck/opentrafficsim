@@ -13,8 +13,16 @@ import org.opentrafficsim.base.parameters.ParameterException;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ExceptionsTest
+public final class ExceptionsTest
 {
+
+    /**
+     * Constructor.
+     */
+    private ExceptionsTest()
+    {
+        //
+    }
 
     /**
      * Test exception in base.

@@ -26,11 +26,19 @@ import ch.qos.logback.core.testUtil.StringListAppender;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class LoggerTester
+public final class LoggerTester
 {
 
     /** Test appender which stores log lines in a list so they can be checked. */
     private static StringListAppender<ILoggingEvent> appender = new StringListAppender<>();
+
+    /**
+     * Constructor.
+     */
+    private LoggerTester()
+    {
+        //
+    }
 
     /**
      * Tests OTS logger.
