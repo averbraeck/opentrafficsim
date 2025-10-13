@@ -1,6 +1,5 @@
 package org.opentrafficsim.web;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,20 +13,22 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djunits.value.vdouble.scalar.base.DoubleScalar;
 import org.djunits.value.vfloat.scalar.base.FloatScalar;
 import org.djutils.io.URLResource;
+import org.eclipse.jetty.ee10.servlet.SessionHandler;
+import org.eclipse.jetty.io.Content;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.SessionIdManager;
-import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.server.session.DefaultSessionCache;
-import org.eclipse.jetty.server.session.DefaultSessionIdManager;
-import org.eclipse.jetty.server.session.NullSessionDataStore;
-import org.eclipse.jetty.server.session.SessionCache;
-import org.eclipse.jetty.server.session.SessionDataStore;
-import org.eclipse.jetty.server.session.SessionHandler;
-import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.session.DefaultSessionCache;
+import org.eclipse.jetty.session.DefaultSessionIdManager;
+import org.eclipse.jetty.session.NullSessionDataStore;
+import org.eclipse.jetty.session.SessionCache;
+import org.eclipse.jetty.session.SessionDataStore;
+import org.eclipse.jetty.util.Callback;
+import org.eclipse.jetty.util.Fields;
 import org.opentrafficsim.animation.DefaultAnimationFactory;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
@@ -36,9 +37,6 @@ import org.opentrafficsim.core.perception.HistoryManagerDevs;
 import org.opentrafficsim.web.test.CircularRoadModel;
 import org.opentrafficsim.web.test.TJunctionModel;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameter;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterBoolean;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDistContinuousSelection;
@@ -111,12 +109,13 @@ public class TestDemoServer
             String webRoot = homeFolder.toExternalForm();
             System.out.println("webRoot is " + webRoot);
 
-            resourceHandler.setDirectoriesListed(true);
+            resourceHandler.setDirAllowed(true);
             resourceHandler.setWelcomeFiles(new String[] {"testdemo.html"});
-            resourceHandler.setResourceBase(webRoot);
+            resourceHandler.setBaseResourceAsString(webRoot);
 
-            SessionIdManager idManager = new DefaultSessionIdManager(server);
-            server.setSessionIdManager(idManager);
+            DefaultSessionIdManager idManager = new DefaultSessionIdManager(server);
+            idManager.setWorkerName("testDemoServer");
+            server.addBean(idManager, true);
 
             SessionHandler sessionHandler = new SessionHandler();
             SessionCache sessionCache = new DefaultSessionCache(sessionHandler);
@@ -124,8 +123,12 @@ public class TestDemoServer
             sessionCache.setSessionDataStore(sessionDataStore);
             sessionHandler.setSessionCache(sessionCache);
 
-            HandlerList handlers = new HandlerList();
-            handlers.setHandlers(new Handler[] {resourceHandler, sessionHandler, new XHRHandler(TestDemoServer.this)});
+            ContextHandler handler1 = new ContextHandler(resourceHandler, "/");
+            ContextHandler handler2 = new ContextHandler(sessionHandler, "/");
+            ContextHandler handler3 = new ContextHandler(new XHRHandler(TestDemoServer.this), "/");
+            ContextHandlerCollection handlers = new ContextHandlerCollection();
+            handlers.setHandlers(new Handler[] {handler1, handler2, handler3});
+            handlers.mapContexts();
             server.setHandler(handlers);
 
             try
@@ -146,34 +149,24 @@ public class TestDemoServer
         /**
          * Constructor.
          */
-        public MyResourceHandler()
+        MyResourceHandler()
         {
             //
         }
 
         @Override
-        public Resource getResource(final String path) throws IOException
+        public boolean handle(final Request request, final Response response, final Callback callback) throws Exception
         {
-            System.out.println(path);
-            return super.getResource(path);
-        }
 
-        @Override
-        public void handle(final String target, final Request baseRequest, final HttpServletRequest request,
-                final HttpServletResponse response) throws IOException, ServletException
-        {
-            /*-
-            System.out.println("target      = " + target);
-            System.out.println("baseRequest = " + baseRequest);
-            System.out.println("request     = " + request);
-            System.out.println("request.param " + request.getParameterMap());
-            System.out.println();
-             */
+            // https://jetty.org/docs/jetty/12.1/programming-guide/migration/11-to-12.html#api-changes
+
+            String target = request.getHttpURI().getPathQuery();
 
             if (target.startsWith("/parameters.html"))
             {
-                String modelId = request.getParameterMap().get("model")[0];
-                String sessionId = request.getParameterMap().get("sessionId")[0];
+                Fields fields = Request.getParameters(request);
+                String modelId = fields.getValue("model");
+                String sessionId = fields.getValue("sessionId");
                 if (!TestDemoServer.this.sessionModelMap.containsKey(sessionId))
                 {
                     System.out.println("parameters: " + modelId);
@@ -193,8 +186,9 @@ public class TestDemoServer
 
             if (target.startsWith("/model.html"))
             {
-                String modelId = request.getParameterMap().get("model")[0];
-                String sessionId = request.getParameterMap().get("sessionId")[0];
+                Fields fields = Request.getParameters(request);
+                String modelId = fields.getValue("model");
+                String sessionId = fields.getValue("sessionId");
                 if (TestDemoServer.this.sessionModelMap.containsKey(sessionId)
                         && !TestDemoServer.this.sessionWebModelMap.containsKey(sessionId))
                 {
@@ -218,7 +212,7 @@ public class TestDemoServer
             }
 
             // handle whatever needs to be done...
-            super.handle(target, baseRequest, request, response);
+            return super.handle(request, response, callback);
         }
     }
 
@@ -230,7 +224,7 @@ public class TestDemoServer
      * The source code and binary code of this software is proprietary information of Delft University of Technology.
      * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
      */
-    public static class XHRHandler extends AbstractHandler
+    public static class XHRHandler extends Handler.Abstract
     {
         /** web server for callback of actions. */
         private final TestDemoServer webServer;
@@ -244,25 +238,33 @@ public class TestDemoServer
             this.webServer = webServer;
         }
 
+        /** {@inheritDoc} */
         @Override
-        public void handle(final String target, final Request baseRequest, final HttpServletRequest request,
-                final HttpServletResponse response) throws IOException, ServletException
+        public boolean handle(final Request request, final Response response, final Callback callback) throws Exception
         {
-            if (request.getParameterMap().containsKey("sessionId"))
+
+            // https://jetty.org/docs/jetty/12.1/programming-guide/migration/11-to-12.html#api-changes
+
+            Fields fields = Request.getParameters(request);
+            String sessionId = fields.getValue("sessionId");
+            if (sessionId != null)
             {
-                String sessionId = request.getParameterMap().get("sessionId")[0];
                 if (this.webServer.sessionWebModelMap.containsKey(sessionId))
                 {
-                    this.webServer.sessionWebModelMap.get(sessionId).handle(target, baseRequest, request, response);
+                    boolean handled = this.webServer.sessionWebModelMap.get(sessionId).handle(request, response, callback);
+                    if (handled)
+                    {
+                        return true;
+                    }
                 }
                 else if (this.webServer.sessionModelMap.containsKey(sessionId))
                 {
                     OtsModelInterface model = this.webServer.sessionModelMap.get(sessionId);
                     String answer = "<message>ok</message>";
 
-                    if (request.getParameter("message") != null)
+                    String message = fields.getValue("message");
+                    if (message != null)
                     {
-                        String message = request.getParameter("message");
                         String[] parts = message.split("\\|");
                         String command = parts[0];
 
@@ -289,21 +291,19 @@ public class TestDemoServer
                             default:
                             {
                                 System.err.println("Got unknown message from client: " + command);
-                                answer = "<message>" + request.getParameter("message") + "</message>";
+                                answer = "<message>" + request.getAttribute("message") + "</message>";
                                 break;
                             }
                         }
                     }
 
-                    response.setContentType("text/xml");
-                    response.setHeader("Cache-Control", "no-cache");
-                    response.setContentLength(answer.length());
-                    response.setStatus(HttpServletResponse.SC_OK);
-                    response.getWriter().write(answer);
-                    response.flushBuffer();
-                    baseRequest.setHandled(true);
+                    Content.Sink.write(response, true, answer, callback);
+
+                    return true; // handled
                 }
             }
+
+            return false;
         }
 
         /**

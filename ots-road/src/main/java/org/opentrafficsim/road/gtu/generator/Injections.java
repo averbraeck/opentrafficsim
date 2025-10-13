@@ -28,6 +28,7 @@ import org.djutils.data.Table;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
+import org.djutils.logger.CategoryLogger;
 import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
@@ -51,7 +52,6 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactor
 import org.opentrafficsim.road.network.lane.CrossSectionLink;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.lane.LanePosition;
-import org.pmw.tinylog.Logger;
 
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
@@ -327,7 +327,8 @@ public class Injections
                     needStrategicalPlannerFactory = true;
                     break;
                 default:
-                    Logger.info("Column " + entry.getKey() + " for GTU injection not supported. It is ignored.");
+                    CategoryLogger.always()
+                            .info("Column " + entry.getKey() + " for GTU injection not supported. It is ignored.");
                     needClass = null;
             }
             if (needClass != null)

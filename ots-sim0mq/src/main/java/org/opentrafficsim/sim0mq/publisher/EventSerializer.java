@@ -4,7 +4,7 @@ import org.djutils.event.Event;
 import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.metadata.MetaData;
-import org.djutils.serialization.EndianUtil;
+import org.djutils.serialization.Endianness;
 import org.djutils.serialization.SerializationException;
 import org.djutils.serialization.serializers.Pointer;
 import org.djutils.serialization.serializers.Serializer;
@@ -62,7 +62,7 @@ public class EventSerializer<E extends Event> implements Serializer<Event>
     }
 
     @Override
-    public void serialize(final Event object, final byte[] buffer, final Pointer pointer, final EndianUtil endianUtil)
+    public void serialize(final Event object, final byte[] buffer, final Pointer pointer, final Endianness endianness)
             throws SerializationException
     {
         // TODO Auto-generated method stub
@@ -70,7 +70,7 @@ public class EventSerializer<E extends Event> implements Serializer<Event>
     }
 
     @Override
-    public void serializeWithPrefix(final Event object, final byte[] buffer, final Pointer pointer, final EndianUtil endianUtil)
+    public void serializeWithPrefix(final Event object, final byte[] buffer, final Pointer pointer, final Endianness endianness)
             throws SerializationException
     {
         // TODO Auto-generated method stub
@@ -78,7 +78,7 @@ public class EventSerializer<E extends Event> implements Serializer<Event>
     }
 
     @Override
-    public Event deSerialize(final byte[] buffer, final Pointer pointer, final EndianUtil endianUtil)
+    public Event deSerialize(final byte[] buffer, final Pointer pointer, final Endianness endianness)
             throws SerializationException
     {
         // TODO Auto-generated method stub

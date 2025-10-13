@@ -2,12 +2,10 @@ package org.opentrafficsim.web;
 
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
-import java.io.IOException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -19,12 +17,15 @@ import org.djutils.event.EventListener;
 import org.djutils.event.TimedEvent;
 import org.djutils.io.URLResource;
 import org.djutils.logger.CategoryLogger;
+import org.eclipse.jetty.io.Content;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.util.Callback;
+import org.eclipse.jetty.util.Fields;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.web.animation.WebAnimationToggles;
@@ -32,9 +33,6 @@ import org.opentrafficsim.web.animation.d2.HtmlAnimationPanel;
 import org.opentrafficsim.web.animation.d2.HtmlGridPanel;
 import org.opentrafficsim.web.animation.d2.ToggleButtonInfo;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import nl.tudelft.simulation.dsol.SimRuntimeException;
 import nl.tudelft.simulation.dsol.animation.Locatable;
 import nl.tudelft.simulation.dsol.animation.d2.Renderable2dInterface;
@@ -123,11 +121,11 @@ public abstract class OtsWebServer implements EventListener
             String webRoot = homeFolder.toExternalForm();
             System.out.println("webRoot is " + webRoot);
 
-            resourceHandler.setDirectoriesListed(true);
+            resourceHandler.setDirAllowed(true);
             resourceHandler.setWelcomeFiles(new String[] {"index.html"});
-            resourceHandler.setResourceBase(webRoot);
+            resourceHandler.setBaseResourceAsString(webRoot);
 
-            HandlerList handlers = new HandlerList();
+            ContextHandlerCollection handlers = new ContextHandlerCollection();
             handlers.setHandlers(new Handler[] {resourceHandler, new XHRHandler(OtsWebServer.this)});
             server.setHandler(handlers);
 
@@ -259,7 +257,7 @@ public abstract class OtsWebServer implements EventListener
      * </p>
      * @author <a href="https://github.com/averbraeck" target="_blank">Alexander Verbraeck</a>
      */
-    public static class XHRHandler extends AbstractHandler
+    public static class XHRHandler extends Handler.Abstract
     {
         /** web server for callback of actions. */
         final OtsWebServer webServer;
@@ -280,21 +278,16 @@ public abstract class OtsWebServer implements EventListener
         }
 
         @Override
-        public void handle(final String target, final Request baseRequest, final HttpServletRequest request,
-                final HttpServletResponse response) throws IOException, ServletException
+        public boolean handle(final Request request, final Response response, final Callback callback) throws Exception
         {
-            // System.out.println("target=" + target);
-            // System.out.println("baseRequest=" + baseRequest);
-            // System.out.println("request=" + request);
 
-            Map<String, String[]> params = request.getParameterMap();
-            // System.out.println(params);
+            // https://jetty.org/docs/jetty/12.1/programming-guide/migration/11-to-12.html#api-changes
 
+            Fields fields = Request.getParameters(request);
+            String message = fields.getValue("message");
             String answer = "<message>ok</message>";
-
-            if (request.getParameter("message") != null)
+            if (message != null)
             {
-                String message = request.getParameter("message");
                 String[] parts = message.split("\\|");
                 String command = parts[0];
                 HtmlAnimationPanel animationPanel = this.webServer.getAnimationPanel();
@@ -567,18 +560,19 @@ public abstract class OtsWebServer implements EventListener
                     default:
                     {
                         System.err.println("Got unknown message from client: " + command);
-                        answer = "<message>" + request.getParameter("message") + "</message>";
+                        answer = "<message>" + request.getAttribute("message") + "</message>";
                         break;
                     }
                 }
             }
 
-            if (request.getParameter("slider") != null)
+            String slider = fields.getValue("slider");
+            if (slider != null)
             {
                 // System.out.println(request.getParameter("slider") + "\n");
                 try
                 {
-                    int value = Integer.parseInt(request.getParameter("slider"));
+                    int value = Integer.parseInt(slider);
                     // values range from 100 to 1400. 100 = 0.1, 400 = 1, 1399 = infinite
                     double speedFactor = 1.0;
                     if (value > 1398)
@@ -594,15 +588,8 @@ public abstract class OtsWebServer implements EventListener
                 }
             }
 
-            // System.out.println(answer);
-
-            response.setContentType("text/xml");
-            response.setHeader("Cache-Control", "no-cache");
-            response.setContentLength(answer.length());
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().write(answer);
-            response.flushBuffer();
-            baseRequest.setHandled(true);
+            Content.Sink.write(response, true, answer, callback);
+            return true; // handled
         }
 
         /**
