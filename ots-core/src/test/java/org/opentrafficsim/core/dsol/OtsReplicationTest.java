@@ -54,6 +54,8 @@ public final class OtsReplicationTest
         Duration history = new Duration(123, DurationUnit.SECOND);
         Duration cleanupInterval = new Duration(234, DurationUnit.SECOND);
         HistoryManager ourHM = new HistoryManagerDevs(simulator, history, cleanupInterval);
+        assertEquals(listenerCount + 1, simulator.numberOfListeners(Replication.END_REPLICATION_EVENT),
+                "history manager has subscribed to our simulator");
         OtsReplication replication = new OtsReplication(id, startTime, warmupPeriod, runLength, ourHM);
         assertEquals(startTime, replication.getStartTimeAbs(), "startTime can be retrieved");
         assertEquals(warmupPeriod, replication.getWarmupPeriod(), "warmupPeriod can be retrieved");
@@ -61,8 +63,6 @@ public final class OtsReplicationTest
         simulator.initialize(model, replication);
         HistoryManagerDevs hm = (HistoryManagerDevs) replication.getHistoryManager(simulator);
         assertEquals(simulator.getSimulatorTime(), hm.now(), "history manager knows time of simulator");
-        assertEquals(listenerCount + 1, simulator.numberOfListeners(Replication.END_REPLICATION_EVENT),
-                "history manager has subscribed to our simulator");
         hm = (HistoryManagerDevs) replication.getHistoryManager(simulator);
         assertEquals(ourHM, hm, "Our manually set history manager is returned");
         assertTrue(replication.toString().startsWith("OtsReplication"), "toString method returns something descriptive");
