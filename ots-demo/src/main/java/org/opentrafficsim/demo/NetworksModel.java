@@ -20,6 +20,8 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.draw.curve.OffsetCurve2d;
+import org.djutils.draw.curve.Straight2d;
 import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
@@ -33,8 +35,6 @@ import org.opentrafficsim.core.distributions.FrequencyAndObject;
 import org.opentrafficsim.core.distributions.ObjectDistribution;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.ContinuousLine;
-import org.opentrafficsim.core.geometry.ContinuousStraight;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -469,7 +469,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
                 Direction.ofSI(Math.atan2(to.getPoint().y - from.getPoint().y, to.getPoint().x - from.getPoint().x)));
         double dir = Math.atan2(to.getPoint().y - from.getPoint().y, to.getPoint().x - from.getPoint().x);
         DirectedPoint2d startPoint = new DirectedPoint2d(to.getPoint().x, to.getPoint().y, dir);
-        ContinuousLine designLine = new ContinuousStraight(startPoint, endLinkLength);
+        OffsetCurve2d designLine = new Straight2d(startPoint, endLinkLength);
         CrossSectionLink endLink = LaneFactory.makeLink(this.network, link.getId() + "endLink", to, end, null, this.simulator);
 
         for (Lane lane : lanes)

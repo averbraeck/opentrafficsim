@@ -38,8 +38,7 @@ import org.djutils.event.EventListener;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.event.reference.ReferenceType;
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.core.geometry.Flattener;
-import org.opentrafficsim.core.geometry.Flattener.NumSegments;
+import org.opentrafficsim.core.geometry.CurveFlattener;
 import org.opentrafficsim.draw.network.LinkAnimation;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
 import org.opentrafficsim.draw.network.NodeAnimation;
@@ -169,7 +168,7 @@ public final class EditorMap extends JPanel implements EventListener
         /*-
         {
             private static final long serialVersionUID = 20231016L;
-        
+
             @Override
             public void setExtent(final Bounds2d extent)
             {
@@ -181,7 +180,7 @@ public final class EditorMap extends JPanel implements EventListener
                 }
                 super.setExtent(extent);
             }
-        
+
             @Override
             public synchronized void zoomAll()
             {
@@ -198,7 +197,7 @@ public final class EditorMap extends JPanel implements EventListener
                 }
                 EditorMap.this.ignoreKeepScale = false;
             }
-        
+
             @Override
             public synchronized void home()
             {
@@ -1033,17 +1032,17 @@ public final class EditorMap extends JPanel implements EventListener
      * Returns the network level flattener, or a 64 segment flattener of none specified.
      * @return flattener.
      */
-    public Flattener getNetworkFlattener()
+    public CurveFlattener getNetworkFlattener()
     {
         if (this.networkFlattenerListener != null)
         {
-            Flattener flattener = this.networkFlattenerListener.getData();
+            CurveFlattener flattener = this.networkFlattenerListener.getData();
             if (flattener != null)
             {
                 return flattener; // otherwise, return default
             }
         }
-        return new NumSegments(64);
+        return new CurveFlattener(64);
     }
 
     /**

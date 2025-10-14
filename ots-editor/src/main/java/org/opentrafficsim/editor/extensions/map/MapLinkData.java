@@ -23,9 +23,15 @@ import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.vector.LengthVector;
+import org.djutils.draw.curve.Arc2d;
+import org.djutils.draw.curve.BezierCubic2d;
+import org.djutils.draw.curve.Clothoid2d;
+import org.djutils.draw.curve.OffsetCurve2d;
+import org.djutils.draw.curve.Straight2d;
 import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
+import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
@@ -41,14 +47,8 @@ import org.opentrafficsim.base.StripeElement;
 import org.opentrafficsim.base.StripeElement.StripeLateralSync;
 import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 import org.opentrafficsim.base.geometry.OtsShape;
-import org.opentrafficsim.core.geometry.Bezier;
-import org.opentrafficsim.core.geometry.ContinuousArc;
-import org.opentrafficsim.core.geometry.ContinuousBezierCubic;
-import org.opentrafficsim.core.geometry.ContinuousClothoid;
-import org.opentrafficsim.core.geometry.ContinuousLine;
-import org.opentrafficsim.core.geometry.ContinuousPolyLine;
-import org.opentrafficsim.core.geometry.ContinuousStraight;
-import org.opentrafficsim.core.geometry.Flattener;
+import org.opentrafficsim.core.geometry.CurveFlattener;
+import org.opentrafficsim.core.geometry.PolyLineCurve2d;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
 import org.opentrafficsim.draw.road.CrossSectionElementAnimation;
 import org.opentrafficsim.draw.road.LaneAnimation;
@@ -121,7 +121,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     private Point2d to;
 
     /** Continuous design line. */
-    private ContinuousLine designLine = null;
+    private OffsetCurve2d designLine = null;
 
     /** Flattened design line. */
     private PolyLine2d flattenedDesignLine = null;
@@ -564,7 +564,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         {
             return;
         }
-        this.flattenedDesignLine = this.designLine.flatten(getFlattener());
+        this.flattenedDesignLine = this.designLine.toPolyLine(getFlattener());
         DirectedPoint2d point = this.flattenedDesignLine.getLocationFractionExtended(0.5);
         this.location = new DirectedPoint2d(point.x, point.y, point.dirZ);
         this.absoluteContour =
@@ -584,11 +584,11 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
      * Returns the flattener to use, which is either a flattener defined at link level, or at network level.
      * @return Flattener, flattener to use.
      */
-    private Flattener getFlattener()
+    private CurveFlattener getFlattener()
     {
         if (this.flattenerListener != null)
         {
-            Flattener flattener = this.flattenerListener.getData();
+            CurveFlattener flattener = this.flattenerListener.getData();
             if (flattener != null)
             {
                 return flattener; // otherwise not valid, return network level flattener
@@ -1305,13 +1305,13 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
          * @param to possibly offset end point.
          * @return line from the shape and attributes.
          */
-        public ContinuousLine getContiuousLine(final DirectedPoint2d from, final DirectedPoint2d to)
+        public OffsetCurve2d getContiuousLine(final DirectedPoint2d from, final DirectedPoint2d to)
         {
             switch (this.shapeNode.getNodeName())
             {
                 case "Straight":
                     double length = from.distance(to);
-                    return new ContinuousStraight(from, length);
+                    return new Straight2d(from, length);
                 case "Polyline":
                     List<Point2d> list = new ArrayList<>();
                     list.add(from);
@@ -1324,17 +1324,16 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     {
                         return null;
                     }
-                    return new ContinuousPolyLine(new PolyLine2d(list), from, to);
+                    return new PolyLineCurve2d(new PolyLine2d(list), from.dirZ, to.dirZ);
                 case "Bezier":
                     double shape = this.shape == null ? 1.0 : this.shape;
                     boolean weighted = this.weighted == null ? false : this.weighted;
-                    Point2d[] points = Bezier.cubicControlPoints(from, to, shape, weighted);
-                    return new ContinuousBezierCubic(points[0], points[1], points[2], points[3]);
+                    return new BezierCubic2d(new Ray2d(from), new Ray2d(to), shape, weighted);
                 case "Clothoid":
                     if (this.shapeNode.getChildCount() == 0 || this.shapeNode.getChild(0).getChildCount() == 0
                             || this.shapeNode.getChild(0).getChild(0).getNodeName().equals("Interpolated"))
                     {
-                        return new ContinuousClothoid(from, to);
+                        return new Clothoid2d(from, to);
                     }
                     else if (this.shapeNode.getChild(0).getChild(0).getNodeName().equals("Length"))
                     {
@@ -1342,8 +1341,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                         {
                             return null;
                         }
-                        return ContinuousClothoid.withLength(from, this.length.si, this.startCurvature.si,
-                                this.endCurvature.si);
+                        return Clothoid2d.withLength(from, this.length.si, this.startCurvature.si, this.endCurvature.si);
                     }
                     else
                     {
@@ -1351,7 +1349,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                         {
                             return null;
                         }
-                        return new ContinuousClothoid(from, this.a.si, this.startCurvature.si, this.endCurvature.si);
+                        return new Clothoid2d(from, this.a.si, this.startCurvature.si, this.endCurvature.si);
                     }
                 case "Arc":
                     if (this.direction == null || this.radius == null)
@@ -1369,7 +1367,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                         endHeading -= 2.0 * Math.PI;
                     }
                     Angle angle = Angle.ofSI(left ? endHeading - from.dirZ : from.dirZ - endHeading);
-                    return new ContinuousArc(from, this.radius.si, left, angle);
+                    return new Arc2d(from, this.radius.si, left, angle.si);
                 default:
                     throw new RuntimeException("Drawing of shape node " + this.shapeNode.getNodeName() + " is not supported.");
             }
@@ -1382,9 +1380,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
      */
     public LinearDensity getClothoidStartCurvature()
     {
-        if (this.designLine != null && this.designLine instanceof ContinuousClothoid)
+        if (this.designLine != null && this.designLine instanceof Clothoid2d)
         {
-            return LinearDensity.ofSI(((ContinuousClothoid) this.designLine).getStartCurvature());
+            return LinearDensity.ofSI(((Clothoid2d) this.designLine).getStartCurvature());
         }
         return null;
     }
@@ -1395,9 +1393,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
      */
     public LinearDensity getClothoidEndCurvature()
     {
-        if (this.designLine != null && this.designLine instanceof ContinuousClothoid)
+        if (this.designLine != null && this.designLine instanceof Clothoid2d)
         {
-            return LinearDensity.ofSI(((ContinuousClothoid) this.designLine).getEndCurvature());
+            return LinearDensity.ofSI(((Clothoid2d) this.designLine).getEndCurvature());
         }
         return null;
     }
@@ -1408,9 +1406,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
      */
     public Length getClothoidLength()
     {
-        if (this.designLine != null && this.designLine instanceof ContinuousClothoid)
+        if (this.designLine != null && this.designLine instanceof Clothoid2d)
         {
-            return Length.ofSI(((ContinuousClothoid) this.designLine).getLength());
+            return Length.ofSI(((Clothoid2d) this.designLine).getLength());
         }
         return null;
     }
@@ -1421,9 +1419,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
      */
     public Length getClothoidA()
     {
-        if (this.designLine != null && this.designLine instanceof ContinuousClothoid)
+        if (this.designLine != null && this.designLine instanceof Clothoid2d)
         {
-            return Length.ofSI(((ContinuousClothoid) this.designLine).getA());
+            return Length.ofSI(((Clothoid2d) this.designLine).getA());
         }
         return null;
     }
@@ -1435,9 +1433,9 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
      */
     public String getClothoidAppliedShape()
     {
-        if (this.designLine != null && this.designLine instanceof ContinuousClothoid)
+        if (this.designLine != null && this.designLine instanceof Clothoid2d)
         {
-            return ((ContinuousClothoid) this.designLine).getAppliedShape();
+            return ((Clothoid2d) this.designLine).getAppliedShape();
         }
         return null;
     }

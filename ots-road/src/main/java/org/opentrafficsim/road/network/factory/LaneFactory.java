@@ -12,7 +12,11 @@ import javax.naming.NamingException;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.draw.curve.BezierCubic2d;
+import org.djutils.draw.curve.OffsetCurve2d;
+import org.djutils.draw.curve.Straight2d;
 import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
+import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
@@ -21,12 +25,8 @@ import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.Bezier;
-import org.opentrafficsim.core.geometry.ContinuousBezierCubic;
-import org.opentrafficsim.core.geometry.ContinuousLine;
-import org.opentrafficsim.core.geometry.ContinuousPolyLine;
-import org.opentrafficsim.core.geometry.ContinuousStraight;
-import org.opentrafficsim.core.geometry.Flattener.NumSegments;
+import org.opentrafficsim.core.geometry.CurveFlattener;
+import org.opentrafficsim.core.geometry.PolyLineCurve2d;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.LinkType;
@@ -57,13 +57,13 @@ public final class LaneFactory
     private static final double BEZIER_MARGIN = Math.toRadians(0.5);
 
     /** Number of segments to use. */
-    private static final NumSegments SEGMENTS = new NumSegments(64);
+    private static final CurveFlattener SEGMENTS = new CurveFlattener(64);
 
     /** Link. */
     private final CrossSectionLink link;
 
     /** Design line. */
-    private final ContinuousLine line;
+    private final OffsetCurve2d line;
 
     /** Offset for next cross section elements. Left side of lane when building left to right, and vice versa. */
     private Length offset;
@@ -124,10 +124,10 @@ public final class LaneFactory
      */
     public LaneFactory(final RoadNetwork network, final Node from, final Node to, final LinkType type,
             final OtsSimulatorInterface simulator, final LaneKeepingPolicy policy, final GtuType gtuType,
-            final ContinuousLine line) throws NetworkException
+            final OffsetCurve2d line) throws NetworkException
     {
         this.link = new CrossSectionLink(network, from.getId() + to.getId(), from, to, type,
-                new OtsLine2d(line.flatten(SEGMENTS)), null, policy);
+                new OtsLine2d(line.toPolyLine(SEGMENTS)), null, policy);
         this.line = line;
         this.gtuType = gtuType;
     }
@@ -139,7 +139,7 @@ public final class LaneFactory
      * @param to to node
      * @return design line
      */
-    private static ContinuousLine makeLine(final Node from, final Node to)
+    private static OffsetCurve2d makeLine(final Node from, final Node to)
     {
         // Straight or bezier?
         double rotCrow = Math.atan2(to.getLocation().y - from.getLocation().y, to.getLocation().x - from.getLocation().x);
@@ -152,15 +152,14 @@ public final class LaneFactory
         {
             dRot -= 2.0 * Math.PI;
         }
-        ContinuousLine line;
+        OffsetCurve2d line;
         if (from.getLocation().getDirZ() != to.getLocation().getDirZ() || Math.abs(dRot) > BEZIER_MARGIN)
         {
-            Point2d[] points = Bezier.cubicControlPoints(from.getLocation(), to.getLocation(), 1.0, false);
-            line = new ContinuousBezierCubic(points[0], points[1], points[2], points[3]);
+            line = new BezierCubic2d(new Ray2d(from.getLocation()), new Ray2d(to.getLocation()), 1.0, false);
         }
         else
         {
-            line = new ContinuousStraight(from.getLocation(), from.getPoint().distance(to.getPoint()));
+            line = new Straight2d(from.getLocation(), from.getPoint().distance(to.getPoint()));
         }
         return line;
     }
@@ -408,8 +407,8 @@ public final class LaneFactory
             final Length latPosAtStart, final Length latPosAtEnd, final Length width, final Speed speedLimit,
             final OtsSimulatorInterface simulator, final GtuType gtuType) throws NetworkException
     {
-        ContinuousLine line = new ContinuousPolyLine(link.getDesignLine(), link.getStartNode().getLocation(),
-                link.getEndNode().getLocation());
+        OffsetCurve2d line = new PolyLineCurve2d(link.getDesignLine(), link.getStartNode().getLocation().dirZ,
+                link.getEndNode().getLocation().dirZ);
         ContinuousPiecewiseLinearFunction offsetFunc =
                 ContinuousPiecewiseLinearFunction.of(0.0, latPosAtStart.si, 1.0, latPosAtEnd.si);
         ContinuousPiecewiseLinearFunction widthFunc = ContinuousPiecewiseLinearFunction.of(0.0, width.si, 1.0, width.si);
@@ -547,11 +546,9 @@ public final class LaneFactory
         dp1 = OtsGeometryUtil.offsetPoint(dp1, (-0.5 - laneOffsetAtStart) * width.getSI());
         dp2 = OtsGeometryUtil.offsetPoint(dp2, (-0.5 - laneOffsetAtStart) * width.getSI());
 
-        Point2d[] controlPoints = Bezier.cubicControlPoints(dp1, dp2, 0.5, false);
-        ContinuousBezierCubic designLine =
-                new ContinuousBezierCubic(controlPoints[0], controlPoints[1], controlPoints[2], controlPoints[3]);
+        OffsetCurve2d designLine = new BezierCubic2d(new Ray2d(dp1), new Ray2d(dp2), 0.5, false);
         final CrossSectionLink link = makeLink(network, name, n2, n3,
-                designLine.flatten(SEGMENTS).getPointList().toArray(new Point2d[65]), simulator);
+                designLine.toPolyLine(SEGMENTS).getPointList().toArray(new Point2d[65]), simulator);
         Lane[] result = new Lane[laneCount];
 
         for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
@@ -586,8 +583,9 @@ public final class LaneFactory
         Point2d p2 = n2.getPoint();
         Point2d p3 = n3.getPoint();
         Point2d p4 = n4.getPoint();
-        DirectedPoint2d dp1 = new DirectedPoint2d(p2.x, p2.y, Math.atan2(p2.y - p1.y, p2.x - p1.x));
-        DirectedPoint2d dp2 = new DirectedPoint2d(p3.x, p3.y, Math.atan2(p4.y - p3.y, p4.x - p3.x));
-        return Bezier.cubic(dp1, dp2);
+        Ray2d dp1 = new Ray2d(p2.x, p2.y, Math.atan2(p2.y - p1.y, p2.x - p1.x));
+        Ray2d dp2 = new Ray2d(p3.x, p3.y, Math.atan2(p4.y - p3.y, p4.x - p3.x));
+
+        return new OtsLine2d(new BezierCubic2d(dp1, dp2).toPolyLine(SEGMENTS));
     }
 }

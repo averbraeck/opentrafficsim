@@ -24,13 +24,14 @@ import javax.swing.event.ChangeListener;
 import org.djunits.unit.DirectionUnit;
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.cli.CliException;
 import org.djutils.cli.CliUtil;
+import org.djutils.draw.curve.Arc2d;
+import org.djutils.draw.curve.OffsetCurve2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
@@ -48,7 +49,6 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.definitions.Defaults;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.ContinuousArc;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -495,13 +495,13 @@ public class StrategiesDemo extends AbstractSimulationScript
         Node nodeA = new Node(network, "A", new Point2d(-radius, 0), new Direction(270, DirectionUnit.EAST_DEGREE));
         Node nodeB = new Node(network, "B", new Point2d(radius, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
 
-        ContinuousArc half1 =
-                new ContinuousArc(new DirectedPoint2d(radius, 0.0, Math.PI / 2), radius, true, Angle.ofSI(Math.PI));
+        OffsetCurve2d half1 =
+                new Arc2d(new DirectedPoint2d(radius, 0.0, Math.PI / 2), radius, true, Math.PI);
         List<Lane> lanes1 = new LaneFactory(network, nodeB, nodeA, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPRIGHT,
                 DefaultsNl.VEHICLE, half1).leftToRight(0.0, Length.ofSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit)
                         .addLanes(DefaultsRoadNl.DASHED).getLanes();
-        ContinuousArc half2 =
-                new ContinuousArc(new DirectedPoint2d(-radius, 0.0, -Math.PI / 2), radius, true, Angle.ofSI(Math.PI));
+        OffsetCurve2d half2 =
+                new Arc2d(new DirectedPoint2d(-radius, 0.0, -Math.PI / 2), radius, true, Math.PI);
         List<Lane> lanes2 = new LaneFactory(network, nodeA, nodeB, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPRIGHT,
                 DefaultsNl.VEHICLE, half2).leftToRight(0.0, Length.ofSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit)
                         .addLanes(DefaultsRoadNl.DASHED).getLanes();

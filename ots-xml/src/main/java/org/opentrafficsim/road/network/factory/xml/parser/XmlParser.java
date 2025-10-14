@@ -19,6 +19,7 @@ import javax.xml.transform.sax.SAXSource;
 import org.djunits.value.vdouble.scalar.Direction;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.djutils.draw.curve.OffsetCurve2d;
 import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
 import org.djutils.io.URLResource;
@@ -27,8 +28,7 @@ import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.distributions.FrequencyAndObject;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.ContinuousLine;
-import org.opentrafficsim.core.geometry.Flattener;
+import org.opentrafficsim.core.geometry.CurveFlattener;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.idgenerator.IdSupplier;
@@ -256,8 +256,8 @@ public final class XmlParser implements Serializable
         Network network = ots.getNetwork();
         Map<String, Direction> nodeDirections = NetworkParser.calculateNodeAngles(otsNetwork, network, eval);
         NetworkParser.parseNodes(otsNetwork, network, nodeDirections, eval);
-        Map<String, ContinuousLine> designLines = new LinkedHashMap<>();
-        Map<String, Flattener> flatteners = new LinkedHashMap<>();
+        Map<String, OffsetCurve2d> designLines = new LinkedHashMap<>();
+        Map<String, CurveFlattener> flatteners = new LinkedHashMap<>();
         NetworkParser.parseLinks(otsNetwork, definitions, network, nodeDirections, otsNetwork.getSimulator(), designLines,
                 flatteners, eval);
         NetworkParser.applyRoadLayouts(otsNetwork, definitions, network, roadLayoutMap, linkTypeSpeedLimitMap, designLines,

@@ -3,6 +3,8 @@ package org.opentrafficsim.road.network.lane;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.djutils.draw.curve.OffsetCurve2d;
+import org.djutils.draw.curve.OffsetFlattener2d;
 import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.line.PolyLine2d;
 import org.djutils.draw.line.Polygon2d;
@@ -11,8 +13,6 @@ import org.djutils.exceptions.Throw;
 import org.djutils.math.functions.MathFunction.TupleSt;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.geometry.OtsShape;
-import org.opentrafficsim.core.geometry.ContinuousLine;
-import org.opentrafficsim.core.geometry.Flattener;
 
 /**
  * Cross-section element geometry. A static method {@code of(...)} is available to generate geometry based on a design line and
@@ -27,7 +27,6 @@ import org.opentrafficsim.core.geometry.Flattener;
  * @param offset offset
  * @param width width
  */
-@SuppressWarnings("javadoc")
 public record CrossSectionGeometry(OtsLine2d centerLine, Polygon2d absoluteContour, ContinuousPiecewiseLinearFunction offset,
         ContinuousPiecewiseLinearFunction width)
 {
@@ -53,10 +52,10 @@ public record CrossSectionGeometry(OtsLine2d centerLine, Polygon2d absoluteConto
      * @param width offset information
      * @return geometry for cross-section element
      */
-    public static CrossSectionGeometry of(final ContinuousLine designLine, final Flattener flattener,
+    public static CrossSectionGeometry of(final OffsetCurve2d designLine, final OffsetFlattener2d flattener,
             final ContinuousPiecewiseLinearFunction offset, final ContinuousPiecewiseLinearFunction width)
     {
-        PolyLine2d line = designLine.flattenOffset(offset, flattener);
+        PolyLine2d line = designLine.toPolyLine(flattener, offset);
         Map<Double, Double> leftMap = new LinkedHashMap<>();
         Map<Double, Double> rightMap = new LinkedHashMap<>();
         for (TupleSt st : offset)
@@ -69,8 +68,8 @@ public record CrossSectionGeometry(OtsLine2d centerLine, Polygon2d absoluteConto
             leftMap.put(st.s(), offset.get(st.s()) + .5 * width.get(st.s()));
             rightMap.put(st.s(), offset.get(st.s()) - .5 * width.get(st.s()));
         }
-        PolyLine2d left = designLine.flattenOffset(new ContinuousPiecewiseLinearFunction(leftMap), flattener);
-        PolyLine2d right = designLine.flattenOffset(new ContinuousPiecewiseLinearFunction(rightMap), flattener);
+        PolyLine2d left = designLine.toPolyLine(flattener, new ContinuousPiecewiseLinearFunction(leftMap));
+        PolyLine2d right = designLine.toPolyLine(flattener, new ContinuousPiecewiseLinearFunction(rightMap));
         Polygon2d cont = LaneGeometryUtil.getContour(left, right);
         return new CrossSectionGeometry(new OtsLine2d(line), cont, offset, width);
     }

@@ -16,8 +16,14 @@ import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.vector.LengthVector;
+import org.djutils.draw.curve.Arc2d;
+import org.djutils.draw.curve.BezierCubic2d;
+import org.djutils.draw.curve.Clothoid2d;
+import org.djutils.draw.curve.OffsetCurve2d;
+import org.djutils.draw.curve.Straight2d;
 import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.line.PolyLine2d;
+import org.djutils.draw.line.Ray2d;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.eval.Eval;
@@ -28,18 +34,8 @@ import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.geometry.Bezier;
-import org.opentrafficsim.core.geometry.ContinuousArc;
-import org.opentrafficsim.core.geometry.ContinuousBezierCubic;
-import org.opentrafficsim.core.geometry.ContinuousClothoid;
-import org.opentrafficsim.core.geometry.ContinuousLine;
-import org.opentrafficsim.core.geometry.ContinuousPolyLine;
-import org.opentrafficsim.core.geometry.ContinuousStraight;
-import org.opentrafficsim.core.geometry.Flattener;
-import org.opentrafficsim.core.geometry.Flattener.MaxAngle;
-import org.opentrafficsim.core.geometry.Flattener.MaxDeviation;
-import org.opentrafficsim.core.geometry.Flattener.MaxDeviationAndAngle;
-import org.opentrafficsim.core.geometry.Flattener.NumSegments;
+import org.opentrafficsim.core.geometry.CurveFlattener;
+import org.opentrafficsim.core.geometry.PolyLineCurve2d;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Centroid;
@@ -200,7 +196,7 @@ public final class NetworkParser
      */
     static void parseLinks(final RoadNetwork otsNetwork, final Definitions definitions, final Network network,
             final Map<String, Direction> nodeDirections, final OtsSimulatorInterface simulator,
-            final Map<String, ContinuousLine> designLines, final Map<String, Flattener> flatteners, final Eval eval)
+            final Map<String, OffsetCurve2d> designLines, final Map<String, CurveFlattener> flatteners, final Eval eval)
             throws NetworkException
     {
         for (org.opentrafficsim.xml.generated.Connector xmlConnector : network.getConnector())
@@ -225,8 +221,8 @@ public final class NetworkParser
             link.setDemandWeight(demandWeight);
         }
 
-        Flattener defaultFlattener =
-                network.getFlattener() == null ? new NumSegments(64) : getFlattener(null, network.getFlattener(), eval);
+        CurveFlattener defaultFlattener =
+                network.getFlattener() == null ? new CurveFlattener(64) : getFlattener(null, network.getFlattener(), eval);
         for (Link xmlLink : network.getLink())
         {
             Node startNode = (Node) otsNetwork.getNode(xmlLink.getNodeStart().get(eval));
@@ -249,11 +245,11 @@ public final class NetworkParser
                 end = OtsGeometryUtil.offsetPoint(end, xmlLink.getOffsetEnd().get(eval).si);
             }
 
-            ContinuousLine designLine;
-            Flattener flattener = defaultFlattener;
+            OffsetCurve2d designLine;
+            CurveFlattener flattener = defaultFlattener;
             if (xmlLink.getStraight() != null)
             {
-                designLine = new ContinuousStraight(start, Math.hypot(end.x - start.x, end.y - start.y));
+                designLine = new Straight2d(start, Math.hypot(end.x - start.x, end.y - start.y));
             }
             else if (xmlLink.getPolyline() != null)
             {
@@ -265,7 +261,7 @@ public final class NetworkParser
                 {
                     coordinates[p + 1] = xmlLink.getPolyline().getCoordinate().get(p).get(eval);
                 }
-                designLine = new ContinuousPolyLine(new PolyLine2d(coordinates));
+                designLine = new PolyLineCurve2d(new PolyLine2d(coordinates), startHeading, endHeading);
             }
             else if (xmlLink.getArc() != null)
             {
@@ -280,15 +276,14 @@ public final class NetworkParser
                 {
                     endHeading -= 2.0 * Math.PI;
                 }
-                designLine = new ContinuousArc(start, radius, left, Angle.ofSI(Math.abs(endHeading) - startHeading));
+                designLine = new Arc2d(start, radius, left, Math.abs(endHeading) - startHeading);
             }
             else if (xmlLink.getBezier() != null)
             {
                 flattener = getFlattener(defaultFlattener, xmlLink.getBezier().getFlattener(), eval);
                 double shape = xmlLink.getBezier().getShape().get(eval);
                 boolean weighted = xmlLink.getBezier().isWeighted();
-                Point2d[] designPoints = Bezier.cubicControlPoints(start, end, shape, weighted);
-                designLine = new ContinuousBezierCubic(designPoints[0], designPoints[1], designPoints[2], designPoints[3]);
+                designLine = new BezierCubic2d(new Ray2d(start), new Ray2d(end), shape, weighted);
             }
             else if (xmlLink.getClothoid() != null)
             {
@@ -298,7 +293,7 @@ public final class NetworkParser
                 // fields in getClothoid() appear as lists as StartCurvature and EndCurvature appear in multiple options
                 if (!xmlLink.getClothoid().getInterpolated().isEmpty())
                 {
-                    designLine = new ContinuousClothoid(start, end);
+                    designLine = new Clothoid2d(start, end);
                 }
                 else
                 {
@@ -307,14 +302,14 @@ public final class NetworkParser
                     if (!xmlLink.getClothoid().getLength().isEmpty())
                     {
                         Length length = xmlLink.getClothoid().getLength().get(0).get(eval);
-                        designLine = ContinuousClothoid.withLength(start, length.si, startCurvature.si, endCurvature.si);
+                        designLine = Clothoid2d.withLength(start, length.si, startCurvature.si, endCurvature.si);
                     }
                     else
                     {
                         Throw.when(xmlLink.getClothoid().getA().isEmpty(), NetworkException.class,
                                 "Clothoid for link %s is not correctly specified.", xmlLink.getId());
                         Length a = xmlLink.getClothoid().getA().get(0).get(eval);
-                        designLine = new ContinuousClothoid(start, a.si, startCurvature.si, endCurvature.si);
+                        designLine = new Clothoid2d(start, a.si, startCurvature.si, endCurvature.si);
                     }
                 }
             }
@@ -327,7 +322,7 @@ public final class NetworkParser
             designLines.put(xmlLink.getId(), designLine);
             flatteners.put(xmlLink.getId(), flattener);
 
-            PolyLine2d flattenedLine = designLine.flatten(flattener);
+            PolyLine2d flattenedLine = designLine.toPolyLine(flattener);
             LaneKeepingPolicy laneKeepingPolicy = xmlLink.getLaneKeeping().get(eval);
             LinkType linkType = definitions.get(LinkType.class, xmlLink.getType().get(eval));
             // TODO: elevation data
@@ -360,7 +355,7 @@ public final class NetworkParser
      */
     static void applyRoadLayouts(final RoadNetwork otsNetwork, final Definitions definitions, final Network network,
             final Map<String, RoadLayout> roadLayoutMap, final Map<LinkType, Map<GtuType, Speed>> linkTypeSpeedLimitMap,
-            final Map<String, ContinuousLine> designLines, final Map<String, Flattener> flatteners,
+            final Map<String, OffsetCurve2d> designLines, final Map<String, CurveFlattener> flatteners,
             final Map<String, StripeType> stripes, final Eval eval)
             throws NetworkException, XmlParserException, SimRuntimeException, GtuException
     {
@@ -447,8 +442,8 @@ public final class NetworkParser
             RoadLayoutOffsets.calculateOffsets(roadLayoutTag, cseDataList, cseTagMap, eval);
 
             // Stripe
-            ContinuousLine designLine = designLines.get(xmlLink.getId());
-            Flattener flattener = flatteners.get(xmlLink.getId());
+            OffsetCurve2d designLine = designLines.get(xmlLink.getId());
+            CurveFlattener flattener = flatteners.get(xmlLink.getId());
             for (CseStripe stripeTag : ParseUtil.getObjectsOfType(roadLayoutTag.getStripeOrLaneOrShoulder(), CseStripe.class))
             {
                 CseData cseData = cseDataList.get(cseTagMap.get(stripeTag));
@@ -566,7 +561,7 @@ public final class NetworkParser
      * @throws NetworkException when id of the stripe not unique
      * @throws XmlParserException when the stripe type cannot be recognized
      */
-    private static void makeStripe(final CrossSectionLink csl, final ContinuousLine designLine, final Flattener flattener,
+    private static void makeStripe(final CrossSectionLink csl, final OffsetCurve2d designLine, final CurveFlattener flattener,
             final Length startOffset, final Length endOffset, final CseStripe stripeTag,
             final List<CrossSectionElement> cseList, final Map<Stripe, SynchronizableStripe<Stripe>> stripesSync,
             final Definitions definitions, final Eval eval) throws NetworkException, XmlParserException
@@ -742,8 +737,8 @@ public final class NetworkParser
      * @return Flattener.
      * @throws NetworkException if the flattener is not correctly defined.
      */
-    private static Flattener getFlattener(final Flattener defaultFlattener, final FlattenerType flattenerType, final Eval eval)
-            throws NetworkException
+    private static CurveFlattener getFlattener(final CurveFlattener defaultFlattener, final FlattenerType flattenerType,
+            final Eval eval) throws NetworkException
     {
         if (flattenerType == null)
         {
@@ -751,7 +746,7 @@ public final class NetworkParser
         }
         if (flattenerType.getNumSegments() != null)
         {
-            return new NumSegments(flattenerType.getNumSegments().get(eval));
+            return new CurveFlattener(flattenerType.getNumSegments().get(eval));
         }
         else if (flattenerType.getDeviationAndAngle() != null)
         {
@@ -759,15 +754,14 @@ public final class NetworkParser
             {
                 if (flattenerType.getDeviationAndAngle().getMaxAngle() != null)
                 {
-                    return new MaxDeviationAndAngle(
-                            getDeviation(flattenerType.getDeviationAndAngle().getMaxDeviation().get(eval)),
+                    return new CurveFlattener(getDeviation(flattenerType.getDeviationAndAngle().getMaxDeviation().get(eval)),
                             getAngle(flattenerType.getDeviationAndAngle().getMaxAngle().get(eval)));
                 }
-                return new MaxDeviation(getDeviation(flattenerType.getDeviationAndAngle().getMaxDeviation().get(eval)));
+                return new CurveFlattener(getDeviation(flattenerType.getDeviationAndAngle().getMaxDeviation().get(eval)));
             }
             else if (flattenerType.getDeviationAndAngle().getMaxAngle() != null)
             {
-                return new MaxAngle(getAngle(flattenerType.getDeviationAndAngle().getMaxAngle().get(eval)));
+                return new CurveFlattener(Angle.ofSI(getAngle(flattenerType.getDeviationAndAngle().getMaxAngle().get(eval))));
             }
             throw new NetworkException("No deviation and/or angle for flattener specified.");
         }

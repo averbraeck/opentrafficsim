@@ -5,11 +5,7 @@ import java.util.function.Supplier;
 import org.djunits.value.vdouble.scalar.Angle;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.eval.Eval;
-import org.opentrafficsim.core.geometry.Flattener;
-import org.opentrafficsim.core.geometry.Flattener.MaxAngle;
-import org.opentrafficsim.core.geometry.Flattener.MaxDeviation;
-import org.opentrafficsim.core.geometry.Flattener.MaxDeviationAndAngle;
-import org.opentrafficsim.core.geometry.Flattener.NumSegments;
+import org.opentrafficsim.core.geometry.CurveFlattener;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.extensions.Adapters;
 
@@ -22,7 +18,7 @@ import org.opentrafficsim.editor.extensions.Adapters;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class FlattenerListener extends ChangeListener<Flattener>
+public class FlattenerListener extends ChangeListener<CurveFlattener>
 {
 
     /** */
@@ -39,7 +35,7 @@ public class FlattenerListener extends ChangeListener<Flattener>
     }
 
     @Override
-    Flattener calculateData()
+    CurveFlattener calculateData()
     {
         try
         {
@@ -49,20 +45,20 @@ public class FlattenerListener extends ChangeListener<Flattener>
             }
             if (getNode().getChild(0).getNodeName().equals("NumSegments"))
             {
-                return new NumSegments(Integer.valueOf(getNode().getChild(0).getValue()));
+                return new CurveFlattener(Integer.valueOf(getNode().getChild(0).getValue()));
             }
             if (getNode().getChild(0).getChild(0).isActive())
             {
                 if (getNode().getChild(0).getChild(1).isActive())
                 {
-                    return new MaxDeviationAndAngle(getDeviation(getNode().getChild(0).getChild(0)),
+                    return new CurveFlattener(getDeviation(getNode().getChild(0).getChild(0)),
                             getAngle(getNode().getChild(0).getChild(1)));
                 }
-                return new MaxDeviation(getDeviation(getNode().getChild(0).getChild(0)));
+                return new CurveFlattener(getDeviation(getNode().getChild(0).getChild(0)));
             }
             if (getNode().getChild(0).getChild(1).isActive())
             {
-                return new MaxAngle(getAngle(getNode().getChild(0).getChild(1)));
+                return new CurveFlattener(Angle.ofSI(getAngle(getNode().getChild(0).getChild(1))));
             }
         }
         catch (Exception ex)
