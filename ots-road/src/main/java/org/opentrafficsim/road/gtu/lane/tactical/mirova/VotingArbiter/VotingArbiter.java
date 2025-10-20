@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.mirova.VotingArbiter;
 
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ActionAdvice;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ActionState;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.ManeuverPattern;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern;
 
 import java.util.ArrayList;
 import java.util.List;

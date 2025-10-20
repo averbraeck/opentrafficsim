@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes;
 
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
@@ -12,13 +13,13 @@ public class HumanDrivenVehicle extends AbstractMirovaVehicle
 {
 
     public HumanDrivenVehicle(final CarFollowingModel carFollowingModel, final LaneBasedGtu gtu,
-            final LanePerception lanePerception, final MirovaTacticalPlanner tacticalPlanner)
+            final LanePerception lanePerception, final MirovaTacticalPlanner tacticalPlanner) throws OperationalPlanException
     {
         super(carFollowingModel, gtu, lanePerception, tacticalPlanner);
     }
 
     @Override
-    protected void initializeDrivingTasks()
+    protected void initializeDrivingTasks() throws OperationalPlanException
     {
         this.listDrivingTasks.add(new MergingHidas(this));
         this.listDrivingTasks.add(new SupportMergeHidas(this));
