@@ -3,81 +3,85 @@ package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes;
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
-import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Length;
-import org.djunits.value.vdouble.scalar.Speed;
+import org.djunits.value.vdouble.scalar.*;
 import org.djutils.exceptions.Try;
-import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.ParameterType;
-import org.opentrafficsim.base.parameters.ParameterTypes;
-import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.core.gtu.perception.EgoPerception;
-import org.opentrafficsim.core.gtu.perception.PerceptionCategory;
+import org.opentrafficsim.base.parameters.*;
+import org.opentrafficsim.core.gtu.*;
+import org.opentrafficsim.core.gtu.perception.*;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
-import org.opentrafficsim.road.gtu.lane.perception.categories.DirectDefaultSimplePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
-import org.opentrafficsim.road.gtu.lane.perception.categories.TrafficPerception;
+import org.opentrafficsim.road.gtu.lane.*;
+import org.opentrafficsim.road.gtu.lane.perception.*;
+import org.opentrafficsim.road.gtu.lane.perception.categories.*;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
-import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
-import org.opentrafficsim.road.gtu.lane.plan.operational.LaneChange;
-import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
+import org.opentrafficsim.road.gtu.lane.perception.headway.*;
+import org.opentrafficsim.road.gtu.lane.plan.operational.*;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.*;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.VotingArbiter.*;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ActionAdvice;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ActionState;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.DrivingTask;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.ManeuverPattern;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.*;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.*;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
-import org.opentrafficsim.road.network.LaneChangeInfo;
-import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
-import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
+import org.opentrafficsim.road.network.*;
+import org.opentrafficsim.road.network.speed.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
+import java.util.*;
 
+/**
+ * Abstract base vehicle for the MIROVA tactical framework.
+ * <p>
+ * Provides:
+ * <ul>
+ *   <li>Integration of LMRS-based tactical reasoning</li>
+ *   <li>Voting arbiter for maneuver arbitration</li>
+ *   <li>Central {@link VehicleContextManager} for contextual data handling</li>
+ * </ul>
+ * </p>
+ */
 public abstract class AbstractMirovaVehicle
 {
+    // ----------------------------------------------------------------------
+    // Tactical and Planning Components
+    // ----------------------------------------------------------------------
+
     protected final VotingArbiter votingArbiter;
-
     protected final MirovaTacticalPlanner tacticalPlanner;
-
     protected final ArrayList<DrivingTask> listDrivingTasks;
-
     protected List<DrivingTask> listActiveDrivingTasks;
-
     protected boolean runningManeuver = false;
-
     protected ActionState currentActionState = null;
-
     protected final CarFollowingModel carFollowingModel;
-
     protected final LaneBasedGtu gtu;
-
     protected final LanePerception lanePerception;
-
     protected SimpleOperationalPlan operationalPlan;
-
     protected final LaneChange laneChange;
 
+    // ----------------------------------------------------------------------
+    // LMRS Desire Dynamics
+    // ----------------------------------------------------------------------
+
     protected Double desire = 0.0;
-
     protected Duration desireRelaxationTime = new Duration(0.0, DurationUnit.SI);
+    private final double DFREE = 0.365;
+    private final double DMAND = 0.577;
+    private static final Speed vGain = Speed.instantiateSI(20.0);
+    private static final Speed vCrit = Speed.instantiateSI(16.7);
+    private static final Double socioSpeedSensitivity = 0.25;
 
-    // Konstruktor
+    // ----------------------------------------------------------------------
+    // Context Manager Integration
+    // ----------------------------------------------------------------------
+
+    /** Central contextual model for this vehicle. */
+    private final VehicleContextManager contextManager;
+
+    // ----------------------------------------------------------------------
+    // Construction
+    // ----------------------------------------------------------------------
+
     public AbstractMirovaVehicle(final CarFollowingModel carFollowingModel, final LaneBasedGtu gtu,
-            final LanePerception lanePerception, final MirovaTacticalPlanner tacticalPlanner)
+                                 final LanePerception lanePerception, final MirovaTacticalPlanner tacticalPlanner)
+            throws OperationalPlanException
     {
         this.votingArbiter = new VotingArbiter();
         this.tacticalPlanner = tacticalPlanner;
@@ -89,11 +93,20 @@ public abstract class AbstractMirovaVehicle
         this.lanePerception = lanePerception;
         this.laneChange = Try.assign(() -> new LaneChange(gtu), "Parameter LCDUR is required.", GtuException.class);
 
+        // Initialize context manager
+        this.contextManager = new VehicleContextManager(this);
     }
+
+    // ----------------------------------------------------------------------
+    // Main Tactical Update
+    // ----------------------------------------------------------------------
 
     public SimpleOperationalPlan update()
             throws OperationalPlanException, ParameterException, NullPointerException, IllegalArgumentException
     {
+        // 🔁 Update context first
+        this.contextManager.advanceTick();
+
         updateDesire();
         this.operationalPlan = null;
 
@@ -144,12 +157,47 @@ public abstract class AbstractMirovaVehicle
 
         else
         {
-            return new SimpleOperationalPlan(minAcceleration, this.getGtu().getParameters().getParameter(ParameterTypes.DT));
+            return new SimpleOperationalPlan(minAcceleration,
+                    this.getGtu().getParameters().getParameter(ParameterTypes.DT));
         }
 
     }
 
-    public void updateActiveDrivingTasks()
+    // ----------------------------------------------------------------------
+    // Context Handling
+    // ----------------------------------------------------------------------
+
+    /** Updates all registered context categories once per simulation tick. */
+    public void updateContext() {
+        this.contextManager.updateFromPerception();
+    }
+
+    /** Returns the central vehicle context manager. */
+    public VehicleContextManager getContextManager() {
+        return this.contextManager;
+    }
+
+    /** Generic accessor for a full context category. */
+    public <T extends ContextCategory> T getContext(Class<T> clazz) {
+        for (ContextCategory cat : this.contextManager.getAllCategories().values()) {
+            if (clazz.isInstance(cat)) {
+                return clazz.cast(cat);
+            }
+        }
+        return null;
+    }
+
+    /** Generic accessor for a specific value in a context category. */
+    public <T> T getContextValue(String categoryName, String key, Class<T> clazz) {
+        ContextCategory cat = this.contextManager.getCategory(categoryName, ContextCategory.class);
+        return cat != null ? cat.getValue(key, clazz) : null;
+    }
+
+    // ----------------------------------------------------------------------
+    // Driving Task Handling
+    // ----------------------------------------------------------------------
+
+    public void updateActiveDrivingTasks() throws ParameterException
     {
         this.listActiveDrivingTasks.clear();
         for (DrivingTask task : this.listDrivingTasks)
@@ -161,63 +209,8 @@ public abstract class AbstractMirovaVehicle
         }
     }
 
-    protected abstract void initializeDrivingTasks();
+    protected abstract void initializeDrivingTasks() throws OperationalPlanException;
 
-    /**
-     * Returns the deceleration of the lane change follower in the specified direction. This method iterates through all
-     * followers in the specified direction and calculates the minimum deceleration required to follow them.
-     * @param laneChangeDirection The direction of the lane change (LEFT or RIGHT).
-     * @return The deceleration required by the lane change follower.
-     * @throws ParameterException
-     * @throws IllegalArgumentException
-     * @throws NullPointerException
-     * @throws OperationalPlanException
-     */
-    public Acceleration getLaneChangeFollowerDeceleration(final LateralDirectionality laneChangeDirection)
-            throws ParameterException, OperationalPlanException, NullPointerException, IllegalArgumentException
-    {
-        Acceleration followerDeceleration = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
-        for (HeadwayGtu follower : getLanePerception().getPerceptionCategory(NeighborsPerception.class)
-                .getFirstFollowers(laneChangeDirection))
-        {
-            setDesiredHeadway(follower.getParameters());
-            Acceleration iteraryDeceleration =
-                    CarFollowingUtil.followSingleLeader(follower.getCarFollowingModel(), follower.getParameters(),
-                            follower.getSpeed(), follower.getSpeedLimitInfo(), follower.getDistance(), getGtu().getSpeed());
-            followerDeceleration = Acceleration.min(followerDeceleration, iteraryDeceleration);
-            resetDesiredHeadway(follower.getParameters());
-        }
-        return followerDeceleration;
-    }
-
-    /**
-     * Returns the deceleration of the ego vehicle in the specified lane change direction. This method iterates through all
-     * leaders in the specified direction and calculates the minimum deceleration required to follow them.
-     * @param laneChangeDirection The direction of the lane change (LEFT or RIGHT).
-     * @return The deceleration required by the ego vehicle during a lane change.
-     * @throws ParameterException
-     * @throws IllegalArgumentException
-     * @throws NullPointerException
-     * @throws OperationalPlanException
-     */
-    public Acceleration getLaneChangeEgoDeceleration(final LateralDirectionality laneChangeDirection)
-            throws ParameterException, OperationalPlanException, NullPointerException, IllegalArgumentException
-    {
-        Acceleration egoDeceleration = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
-        for (HeadwayGtu leader : getLanePerception().getPerceptionCategory(NeighborsPerception.class)
-                .getFirstLeaders(laneChangeDirection))
-        {
-            setDesiredHeadway();
-            Acceleration iteraryDeceleration =
-                    CarFollowingUtil.followSingleLeader(getCarFollowingModel(), getGtu().getParameters(), getGtu().getSpeed(),
-                            getLanePerception().getPerceptionCategory(InfrastructurePerception.class)
-                                    .getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(Length.ZERO),
-                            leader.getDistance(), leader.getSpeed());
-            egoDeceleration = Acceleration.min(egoDeceleration, iteraryDeceleration);
-            resetDesiredHeadway();
-        }
-        return egoDeceleration;
-    }
 
     /**
      * Returns the free driving time in the specified lane change direction. This method iterates through all leaders in the
@@ -428,4 +421,48 @@ public abstract class AbstractMirovaVehicle
                     .instantiateSI(this.desireRelaxationTime.si - dt.si < 0 ? 0.0 : this.desireRelaxationTime.si - dt.si);
         }
     }
+
+    /**
+     * Returns the free driving distance constant.
+     * @return the value of DFREE
+     */
+    public double getDFree() {
+        return this.DFREE;
+    }
+
+    /**
+     * Returns the mandatory driving distance constant.
+     * @return the value of DMAND
+     */
+    public double getDMand() {
+        return this.DMAND;
+    }
+
+    /**
+     * Returns the speed difference threshold (vGain) used in LMRS.
+     * @return the value of vGain
+     */
+    public static Speed getVGain() {
+        return vGain;
+    }
+
+    /**
+     * Returns the critical speed threshold (vCrit) used in LMRS.
+     * @return the value of vCrit
+     */
+    public static Speed getVCrit() {
+        return vCrit;
+    }
+
+    /**
+     * Returns the sensitivity parameter for social speed dynamics.
+     * @return the value of socioSpeedSensitivity
+     */
+    public static Double getSocioSpeedSensitivity() {
+        return socioSpeedSensitivity;
+    }
+
+
+
+
 }
