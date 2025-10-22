@@ -20,6 +20,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.*;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.VotingArbiter.*;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.*;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern.PatternType;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.KnowledgeChunk;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.*;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.network.*;
@@ -46,8 +48,6 @@ public abstract class AbstractMirovaVehicle
 
     protected final VotingArbiter votingArbiter;
     protected final MirovaTacticalPlanner tacticalPlanner;
-    protected final ArrayList<DrivingTask> listDrivingTasks;
-    protected List<DrivingTask> listActiveDrivingTasks;
     protected boolean runningManeuver = false;
     protected ActionState currentActionState = null;
     protected final CarFollowingModel carFollowingModel;
@@ -60,7 +60,7 @@ public abstract class AbstractMirovaVehicle
     // LMRS Desire Dynamics
     // ----------------------------------------------------------------------
 
-    protected Double desire = 0.0;
+    protected Double absoluteDesire = 0.0;
     protected Duration desireRelaxationTime = new Duration(0.0, DurationUnit.SI);
     private final double DFREE = 0.365;
     private final double DMAND = 0.577;
@@ -69,11 +69,16 @@ public abstract class AbstractMirovaVehicle
     private static final Double socioSpeedSensitivity = 0.25;
 
     // ----------------------------------------------------------------------
+    /** Declarative knowledge base for this vehicle. */
+    protected final List<KnowledgeChunk> knowledgeChunks = new ArrayList<>();
+
+    // ----------------------------------------------------------------------
     // Context Manager Integration
     // ----------------------------------------------------------------------
 
     /** Central contextual model for this vehicle. */
     private final VehicleContextManager contextManager;
+
 
     // ----------------------------------------------------------------------
     // Construction
@@ -85,9 +90,6 @@ public abstract class AbstractMirovaVehicle
     {
         this.votingArbiter = new VotingArbiter();
         this.tacticalPlanner = tacticalPlanner;
-        this.listDrivingTasks = new ArrayList<>();
-        initializeDrivingTasks();
-        this.listActiveDrivingTasks = new ArrayList<>();
         this.carFollowingModel = carFollowingModel;
         this.gtu = gtu;
         this.lanePerception = lanePerception;
@@ -100,68 +102,223 @@ public abstract class AbstractMirovaVehicle
     // ----------------------------------------------------------------------
     // Main Tactical Update
     // ----------------------------------------------------------------------
+    /**
+     * Executes one full tactical decision cycle for the MIROVA vehicle.
+     * <p>
+     * This method represents the central update routine that governs the vehicle’s
+     * tactical behavior on a microscopic level. Each simulation step includes the
+     * complete cognitive evaluation process consisting of perception, reasoning,
+     * and tactical decision making.
+     * </p>
+     *
+     * <h3>Process overview</h3>
+     * <ol>
+     *   <li><b>Perception update:</b> The {@link VehicleContextManager} updates all contextual
+     *       information (e.g., traffic state, neighboring vehicles, infrastructure).</li>
+     *   <li><b>Desire computation:</b> Each {@link KnowledgeChunk} contributes a partial
+     *       {@link Desire} component, which is combined into a total LMRS-style desire vector
+     *       ({@code netDesire}) representing the current motivation for lateral maneuvers.</li>
+     *   <li><b>Desire relaxation:</b> Temporal smoothing of lane-change motivation to avoid
+     *       abrupt transitions between tactical decisions.</li>
+     *   <li><b>Pattern selection:</b> Depending on the magnitude of {@code netDesire},
+     *       the system evaluates available {@link ManeuverPattern}s in hierarchical order:
+     *       <ul>
+     *         <li><b>Tactical lane changes</b> — if {@code d > d_tactical}</li>
+     *         <li><b>Free lane changes</b> — if {@code d > d_free}</li>
+     *         <li><b>Cooperative maneuvers</b> — if no lane change is possible but interaction
+     *             with other vehicles is required (e.g., gap creation, yielding)</li>
+     *       </ul>
+     *       If a free lane change is intended but infeasible (failed {@code checkAbility()}),
+     *       cooperative maneuvers are automatically considered as fallback.</li>
+     *   <li><b>Action execution:</b> The selected {@link ManeuverPattern} is activated by
+     *       starting its initial {@link ActionState}, which returns a corresponding
+     *       {@link SimpleOperationalPlan}.</li>
+     *   <li><b>Default behavior:</b> If no pattern is applicable, standard car-following is
+     *       continued on the current lane.</li>
+     * </ol>
+     *
+     * <p>
+     * The resulting {@link SimpleOperationalPlan} specifies the longitudinal and lateral
+     * acceleration targets for the current simulation step. Individual maneuver patterns
+     * are responsible for enforcing their own physical constraints and consistency.
+     * </p>
+     *
+     * @return the {@link SimpleOperationalPlan} representing the vehicle’s tactical decision
+     *         for the current time step
+     * @throws OperationalPlanException if no valid operational plan can be generated
+     * @throws ParameterException if a parameter lookup fails during desire or ability checks
+     * @throws NullPointerException if required perception or context data are unavailable
+     * @throws IllegalArgumentException if a consistency condition is violated
+     */
 
     public SimpleOperationalPlan update()
             throws OperationalPlanException, ParameterException, NullPointerException, IllegalArgumentException
     {
-        // 🔁 Update context first
+        // 1️. Update perception and contextual information
         this.contextManager.advanceTick();
 
+        // 2. Compute current LMRS-style net desire (aggregated from all knowledge chunks)
+        updateLaneChangeDesire();
+
+        // 3️. Derive a single scalar desire magnitude for car-following adjustments
+        this.absoluteDesire = this.laneChangeDesire.magnitude();
+
+        // 4️. Apply temporal relaxation (gradual decay of short-term motivation)
         updateDesire();
+
+        // 5️. Reset operational plan for this time step
         this.operationalPlan = null;
 
+        // 6️. If a maneuver is already running → continue executing it
         if (this.runningManeuver && this.currentActionState != null)
         {
             this.operationalPlan = this.currentActionState.update();
         }
         else
         {
-            updateActiveDrivingTasks();
-            List<ManeuverPattern> listManeuverPatterns = new ArrayList<>();
+            // 7️. Hierarchical pattern selection based on Desire → Context → Ability
+            ManeuverPattern selectedPattern = null;
 
-            for (DrivingTask task : this.listActiveDrivingTasks)
+            double dFree = this.getDFree();       // threshold for free lane changes
+            double dTactical = this.getDMand();   // threshold for tactical lane changes
+
+            // --- 7.1️. Tactical lane change (highest priority) ---
+            if (this.laneChangeDesire.magnitude() > dTactical)
             {
-                ManeuverPattern maneuverPattern = task.decideManeuverPattern();
-                if (maneuverPattern != null)
+                selectedPattern = selectPatternByType(PatternType.TACTICAL_LC);
+            }
+
+            // --- 7.2️. Free lane change ---
+            else if (this.laneChangeDesire.magnitude() > dFree)
+            {
+                // Try a standard free lane change first
+                selectedPattern = selectPatternByType(PatternType.FREE_LC);
+
+                // If not feasible → fall back to cooperative patterns
+                if (selectedPattern == null)
                 {
-                    listManeuverPatterns.add(maneuverPattern);
+                    selectedPattern = selectPatternByType(PatternType.COOPERATIVE);
                 }
             }
 
-            if (!listManeuverPatterns.isEmpty())
+            // --- 7.3️. Cooperative behavior (no strong desire or fallback) ---
+            else
             {
-                this.currentActionState = this.votingArbiter.execute(listManeuverPatterns);
-                if (this.currentActionState != null)
-                {
-                    this.operationalPlan = this.currentActionState.update();
-                }
+                selectedPattern = selectPatternByType(PatternType.COOPERATIVE);
             }
 
-        }
-
-        Acceleration minAcceleration = getMinAcceleration();
-
-        if (this.operationalPlan != null)
-        {
-            if (this.operationalPlan.getAcceleration().le(minAcceleration))
+            // 8️. Execute selected pattern or continue with default car-following
+            if (selectedPattern != null)
             {
-                return this.operationalPlan;
+                this.currentActionState = selectedPattern.getInitialActionState();
+                this.operationalPlan = this.currentActionState.update();
             }
             else
             {
-                this.operationalPlan.setAcceleration(minAcceleration);
-                return this.operationalPlan;
+                // Default: continue standard following (no tactical action)
+                this.operationalPlan = new SimpleOperationalPlan(
+                    getMinAcceleration(),
+                    this.getGtu().getParameters().getParameter(ParameterTypes.DT)
+                );
             }
-
         }
-
-        else
-        {
-            return new SimpleOperationalPlan(minAcceleration,
-                    this.getGtu().getParameters().getParameter(ParameterTypes.DT));
-        }
-
+        return this.operationalPlan;
     }
+
+    /**
+     * Selects the first applicable maneuver pattern of the given type
+     * by evaluating both contextual and physical feasibility conditions.
+     *
+     * @param type the pattern type to evaluate
+     * @return the first feasible pattern, or {@code null} if none match
+     * @throws ParameterException if parameter access fails
+     */
+    protected ManeuverPattern selectPatternByType(final PatternType type) throws ParameterException
+    {
+        for (KnowledgeChunk chunk : this.knowledgeChunks)
+        {
+            for (var supplier : chunk.getManeuverPatterns())
+            {
+                ManeuverPattern pattern = supplier.get();
+                if (pattern.getType() == type &&
+                    pattern.checkContext() &&
+                    pattern.checkAbility())
+                {
+                    return pattern;
+                }
+            }
+        }
+        return null;
+    }
+
+
+    /**
+     * Returns all {@link KnowledgeChunk}s currently assigned to this vehicle.
+     * These represent the declarative knowledge influencing tactical reasoning.
+     *
+     * @return list of all knowledge chunks
+     */
+    public List<KnowledgeChunk> getKnowledgeChunks() {
+        return this.knowledgeChunks;
+    }
+
+    /**
+     * Registers a new {@link KnowledgeChunk} to this vehicle.
+     * This method is typically called in the constructor of the concrete vehicle class.
+     *
+     * @param chunk the knowledge chunk to add
+     */
+    protected void addKnowledgeChunk(final KnowledgeChunk chunk) {
+        if (chunk != null && !this.knowledgeChunks.contains(chunk)) {
+            this.knowledgeChunks.add(chunk);
+        }
+    }
+
+     // ----------------------------------------------------------------------
+     // LMRS Desire Integration
+     // ----------------------------------------------------------------------
+
+     /** Current total lateral desire vector (left/right). */
+     protected Desire laneChangeDesire = Desire.zero();
+
+     /**
+      * Computes and updates the total (mandatory + discretionary) desire vector
+      * for this vehicle based on all active {@link KnowledgeChunk}s.
+      * <p>
+      * The result represents the LMRS-style aggregated motivation for lane changing,
+      * which can later be used for tactical decisions (e.g., thresholding, maneuver selection).
+      * </p>
+      *
+      * @throws ParameterException if any chunk’s desire computation fails
+      */
+     protected void updateLaneChangeDesire() throws ParameterException
+     {
+         Desire mandatorySum = Desire.zero();
+         Desire discretionarySum = Desire.zero();
+
+         // collect all desires from active chunks
+         for (KnowledgeChunk chunk : this.tacticalPlanner.getKnowledgeChunks())
+         {
+             if (chunk.isApplicable() == true)
+             {  Desire d = chunk.computeDesire();
+                 if (d.isMandatory())
+                     mandatorySum = mandatorySum.add(d);
+                 else
+                     discretionarySum = discretionarySum.add(d);}
+         }
+
+         // combine mandatory + discretionary using LMRS weighting per direction
+         double dSync = this.getDMand(); // or specific param from Parameters
+         double dCoop = this.getDFree(); // typical LMRS thresholds
+
+         this.laneChangeDesire = Desire.combine(mandatorySum, discretionarySum, dSync, dCoop);
+     }
+
+     /** Returns the current combined LMRS desire. */
+     public Desire getLaneChangeDesire() {
+         return this.laneChangeDesire;
+     }
+
 
     // ----------------------------------------------------------------------
     // Context Handling
@@ -178,7 +335,7 @@ public abstract class AbstractMirovaVehicle
     }
 
     /** Generic accessor for a full context category. */
-    public <T extends ContextCategory> T getContext(Class<T> clazz) {
+    public <T extends ContextCategory> T getContext(final Class<T> clazz) {
         for (ContextCategory cat : this.contextManager.getAllCategories().values()) {
             if (clazz.isInstance(cat)) {
                 return clazz.cast(cat);
@@ -188,28 +345,10 @@ public abstract class AbstractMirovaVehicle
     }
 
     /** Generic accessor for a specific value in a context category. */
-    public <T> T getContextValue(String categoryName, String key, Class<T> clazz) {
+    public <T> T getContextValue(final String categoryName, final String key, final Class<T> clazz) {
         ContextCategory cat = this.contextManager.getCategory(categoryName, ContextCategory.class);
         return cat != null ? cat.getValue(key, clazz) : null;
     }
-
-    // ----------------------------------------------------------------------
-    // Driving Task Handling
-    // ----------------------------------------------------------------------
-
-    public void updateActiveDrivingTasks() throws ParameterException
-    {
-        this.listActiveDrivingTasks.clear();
-        for (DrivingTask task : this.listDrivingTasks)
-        {
-            if (task.getActivation())
-            {
-                this.listActiveDrivingTasks.add(task);
-            }
-        }
-    }
-
-    protected abstract void initializeDrivingTasks() throws OperationalPlanException;
 
 
     /**
@@ -289,12 +428,12 @@ public abstract class AbstractMirovaVehicle
      * The value of T is interpolated between TMAX (no desire, {@code desire} = 0) and TMIN (full desire, {@code desire} = 1).
      * The desire value is clamped to the range [0, 1].
      * </p>
-     * @param desire lane change desire, where 0 means no desire (T = TMAX) and 1 means full desire (T = TMIN)
+     * @param absoluteDesire lane change desire, where 0 means no desire (T = TMAX) and 1 means full desire (T = TMIN)
      * @throws ParameterException if T, TMIN, or TMAX is not present in the parameters
      */
     public void setDesiredHeadway(final Parameters params) throws ParameterException
     {
-        double limitedDesire = this.desire < 0 ? 0 : this.desire > 1 ? 1 : this.desire;
+        double limitedDesire = this.absoluteDesire < 0 ? 0 : this.absoluteDesire > 1 ? 1 : this.absoluteDesire;
         double tDes = limitedDesire * params.getParameter(ParameterTypes.TMIN).si
                 + (1 - limitedDesire) * params.getParameter(ParameterTypes.TMAX).si;
         double t = params.getParameter(ParameterTypes.T).si;
@@ -330,7 +469,7 @@ public abstract class AbstractMirovaVehicle
      * Temporarily sets T based on the desire, computes the acceleration, and then resets T to its original value.
      * </p>
      * @param leader the headway to the leader vehicle (returns free acceleration if leaders are empty)
-     * @param desire lane change desire, where 0 means no desire and 1 means full desire
+     * @param absoluteDesire lane change desire, where 0 means no desire and 1 means full desire
      * @return the calculated acceleration based on the adjusted headway
      * @throws ParameterException if a required parameter is not defined
      * @throws OperationalPlanException if an error occurs during acceleration calculation
@@ -396,12 +535,12 @@ public abstract class AbstractMirovaVehicle
 
     public Double getDesire()
     {
-        return this.desire;
+        return this.absoluteDesire;
     }
 
     public void setDesire(final Double desire, final Duration desireRelaxationTime)
     {
-        this.desire = desire;
+        this.absoluteDesire = desire;
         this.desireRelaxationTime = desireRelaxationTime;
     }
 
@@ -411,10 +550,10 @@ public abstract class AbstractMirovaVehicle
         {
             Duration dt = this.getGtu().getParameters().getParameter(ParameterTypes.DT);
 
-            this.desire -= this.desire * dt.si / this.desireRelaxationTime.si;
-            if (this.desire < 0.0)
+            this.absoluteDesire -= this.absoluteDesire * dt.si / this.desireRelaxationTime.si;
+            if (this.absoluteDesire < 0.0)
             {
-                this.desire = 0.0;
+                this.absoluteDesire = 0.0;
             }
 
             this.desireRelaxationTime = Duration
