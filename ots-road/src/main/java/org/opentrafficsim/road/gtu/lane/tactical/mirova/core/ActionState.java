@@ -1,87 +1,132 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.core;
-//package mirova.scripts.model.prototype.abstract_classes;
 
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.DrivingTask.DrivingTask;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes.AbstractMirovaVehicle;
 
+/**
+ * Abstract base class representing an executable action state within a maneuver pattern.
+ * <p>
+ * Action states define concrete, time-continuous vehicle behavior during a specific
+ * phase of a maneuver (e.g., preparation, lane change, completion).
+ * Each ActionState is responsible for:
+ * <ul>
+ *   <li>executing control logic (e.g., car-following, gap maintenance) by returning a SimpleOperationalPlan</li>
+ *   <li>evaluating transition conditions to the next state</li>
+ *   <li>detecting abort conditions (if the maneuver is no longer feasible)</li>
+ * </ul>
+ * </p>
+ */
 public abstract class ActionState {
-    /**
-     * Abstract base class representing an action state in a driving task.
-     *
-     * This class serves as the foundation for implementing specific action states within a
-     * driving task. Action states define the behavior of a vehicle during a specific phase
-     * of a maneuver, such as acceleration, lane changes, or merging. Each action state is
-     * responsible for controlling the vehicle, updating its state, and managing transitions
-     * to subsequent states.
-     *
-     * Responsibilities:
-     * - Execute control logic to adjust the vehicle's behavior (e.g., speed, position).
-     * - Update the state at each simulation timestep or customized discretization.
-     * - Check and handle transitions to subsequent action states.
-     * - Abort the current state if the maneuver is no longer appropriate.
-     *
-     * Attributes:
-     * - drivingTask: The driving task associated with this action state.
-     * - active: Indicates whether the action state is currently active.
-     */
 
-    protected DrivingTask drivingTask;
-    private SimpleOperationalPlan operationalPlan;
+    /** Reference to the parent maneuver pattern. */
+    protected final ManeuverPattern maneuverPattern;
 
-    public ActionState(final DrivingTask drivingTask) {
-        this.drivingTask = drivingTask;
+    /** Associated vehicle (retrieved from the maneuver’s knowledge chunk). */
+    protected final AbstractMirovaVehicle vehicle;
 
+    /** Indicates whether this state is currently active. */
+    protected boolean active = false;
+
+    /** Optional cached operational plan for the current time step. */
+    protected SimpleOperationalPlan operationalPlan;
+
+    // ----------------------------------------------------------------------
+    // Construction
+    // ----------------------------------------------------------------------
+
+    public ActionState(final ManeuverPattern maneuverPattern) {
+        this.maneuverPattern = maneuverPattern;
+        this.vehicle = maneuverPattern.getKnowledgeChunk().getAbstractMirovaVehicle();
     }
 
-    /**
-     * Executes the control logic for the action state.
-     * This method adjusts the vehicle's behavior, such as speed or lateral position,
-     * based on the logic defined in the specific action state.
-     * @throws OperationalPlanException
-     * @throws ParameterException
-     */
-    public abstract SimpleOperationalPlan executeControl() throws ParameterException, OperationalPlanException;
+    // ----------------------------------------------------------------------
+    // Core execution cycle
+    // ----------------------------------------------------------------------
 
     /**
-     * Updates the ActionState at each simulation timestep or customized discretization.
-     * This method performs the following steps:
-     * - Updates the vehicle's state in the simulation by setting the current action state.
-     * - Checks for transitions to subsequent action states using the next method.
-     * - Checks if the current maneuver is still appropriate using the abort method.
-     * - Executes the control logic for the current state using the executeControl method.
-     * @throws IllegalArgumentException
-     * @throws NullPointerException
-     * @throws ParameterException
-     * @throws OperationalPlanException
+     * Executes a full update step for this state:
+     * <ol>
+     *   <li>Performs control logic via {@link #executeControl()}</li>
+     *   <li>Checks transitions via {@link #next()}</li>
+     *   <li>Checks abort conditions via {@link #abort()}</li>
+     * </ol>
+     * @return the resulting operational plan for this time step
      */
-    public SimpleOperationalPlan update() throws OperationalPlanException, ParameterException, NullPointerException, IllegalArgumentException {
-        this.drivingTask.getAbstractMirovaVehicle().setRunningManeuver(true);
+    public SimpleOperationalPlan update()
+            throws OperationalPlanException, ParameterException, NullPointerException, IllegalArgumentException {
+
+        this.vehicle.setRunningManeuver(true);
+
+        // 1. Execute control logic (produces operational plan)
+        this.operationalPlan = this.executeControl();
+
+        // 2. Transition check
         this.next();
+
+        // 3. Abort check
         this.abort();
-        return this.executeControl();
+
+        return this.operationalPlan;
     }
 
-    /**
-     * Checks whether the conditions for transitioning to the next action state are met.
-     * If the transition conditions are satisfied, this method triggers the transition
-     * to the subsequent action state.
-     * @throws IllegalArgumentException
-     * @throws NullPointerException
-     * @throws ParameterException
-     * @throws OperationalPlanException
-     */
-    public abstract void next() throws OperationalPlanException, ParameterException, NullPointerException, IllegalArgumentException;
+    // ----------------------------------------------------------------------
+    // Abstract responsibilities
+    // ----------------------------------------------------------------------
 
     /**
-     * Checks whether the current maneuver is still appropriate.
-     * If the conditions for continuing the current maneuver are no longer valid,
-     * this method handles the logic for aborting the current state.
-     * @throws ParameterException
-     * @throws IllegalArgumentException
-     * @throws NullPointerException
-     * @throws OperationalPlanException
+     * Executes the vehicle control logic for this action state.
+     * <p>
+     * Example: car-following, cooperative adaptation, or lane-change execution.
+     * </p>
+     * @return operational plan representing the control output for this step
      */
-    public abstract void abort() throws ParameterException, OperationalPlanException, NullPointerException, IllegalArgumentException;
+    public abstract SimpleOperationalPlan executeControl()
+            throws ParameterException, OperationalPlanException;
+
+    /**
+     * Checks transition conditions to the next action state.
+     * Should call {@link #transitionTo(ActionState)} if a transition occurs.
+     */
+    public abstract void next()
+            throws OperationalPlanException, ParameterException, NullPointerException, IllegalArgumentException;
+
+    /**
+     * Checks whether this state should be aborted (e.g. if the maneuver became infeasible).
+     */
+    public abstract void abort()
+            throws ParameterException, OperationalPlanException, NullPointerException, IllegalArgumentException;
+
+    // ----------------------------------------------------------------------
+    // Helper and lifecycle methods
+    // ----------------------------------------------------------------------
+
+    /**
+     * Transitions to the specified next state.
+     * @param nextState the new active state
+     */
+    protected void transitionTo(final ActionState nextState) {
+        this.active = false;
+        nextState.active = true;
+        this.vehicle.setCurrentActionState(nextState);
+    }
+
+    /** Returns whether this state is currently active.
+     * @return */
+    public boolean isActive() {
+        return this.active;
+    }
+
+    /** Returns the vehicle executing this action.
+     * @return */
+    public AbstractMirovaVehicle getVehicle() {
+        return this.vehicle;
+    }
+
+    /** Returns the parent maneuver pattern.
+     * @return */
+    public ManeuverPattern getManeuverPattern() {
+        return this.maneuverPattern;
+    }
 }
