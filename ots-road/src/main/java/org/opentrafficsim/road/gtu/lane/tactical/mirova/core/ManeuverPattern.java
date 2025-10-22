@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.mirova.core;
 
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.KnowledgeChunk;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes.AbstractMirovaVehicle;
 
 /**
  * Abstract base class for all maneuver patterns in the Mirova tactical planner.
@@ -23,7 +24,6 @@ public abstract class ManeuverPattern {
         FREE_LC,          // immediately executable lane change
         TACTICAL_LC,      // lane change requiring tactical preparation
         COOPERATIVE,      // cooperative or yielding maneuver
-        DEFAULT           // fallback / keep-lane
     }
 
     /** The initial action state that starts the state machine of this maneuver. */
@@ -34,6 +34,8 @@ public abstract class ManeuverPattern {
 
     /** The high-level category of this maneuver pattern. */
     protected final PatternType type;
+    /** Reference to the ego vehicle executing this maneuver. */
+    protected AbstractMirovaVehicle vehicle;
 
     // ----------------------------------------------------------------------
     // Construction
@@ -42,6 +44,7 @@ public abstract class ManeuverPattern {
     protected ManeuverPattern(final PatternType type, final KnowledgeChunk knowledgeChunk) {
         this.type = type;
         this.knowledgeChunk = knowledgeChunk;
+        this.vehicle = knowledgeChunk.getAbstractMirovaVehicle();
     }
 
     // ----------------------------------------------------------------------

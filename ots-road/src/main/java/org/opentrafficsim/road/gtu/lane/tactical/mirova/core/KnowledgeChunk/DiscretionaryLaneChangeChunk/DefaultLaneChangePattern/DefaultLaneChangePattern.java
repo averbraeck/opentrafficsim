@@ -1,16 +1,20 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.patterns;
 
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ActionState;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.KnowledgeChunk;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.NeighborsContext;
 
 /**
  * Default lane-change pattern used as a generic fallback maneuver.
  * <p>
- * This pattern represents a basic, always-applicable lane change.
- * It has no explicit contextual requirements and is considered valid
- * whenever it is requested by the tactical planner.
+ * This pattern represents a basic lane change pattern which is applicable if requirements on
+ * resulting deceleration are met.
+ * It has no explicit contextual requirements.
  * </p>
  * <p>
  * The pattern performs only an {@link #checkAbility()} feasibility check
@@ -63,10 +67,15 @@ public class DefaultLaneChangePattern extends ManeuverPattern {
      */
     @Override
     public boolean checkAbility() throws ParameterException {
-        var neighbors = getKnowledgeChunk().getNeighborsPerception();
-        double gap = this.direction.isLeft() ? neighbors.getGapLeft() : neighbors.getGapRight();
-        double relV = this.direction.isLeft() ? neighbors.getRelSpeedLeft() : neighbors.getRelSpeedRight();
-        return gap > 15.0 && relV > -5.0;
+        NeighborsContext nctx = this.vehicle.getContext(NeighborsContext.class);
+        Acceleration bDes = this.knowledgeChunk.getParameters().getParameter(ParameterTypes.B);
+        if (nctx.getEgoDeceleration(this.direction).gt(bDes) && nctx.getFollowerDeceleration(this.direction).gt(bDes))
+                {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     /**
