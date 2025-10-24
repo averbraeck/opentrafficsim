@@ -4,6 +4,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.SwingUtilities;
 
@@ -54,10 +55,6 @@ public abstract class PointerHandler implements MouseListener, MouseMotionListen
             PlotRenderingInfo pi = cp.getChartRenderingInfo().getPlotInfo();
             updateHint(plot.getDomainAxis().java2DToValue(p.getX(), pi.getDataArea(), plot.getDomainAxisEdge()),
                     plot.getRangeAxis().java2DToValue(p.getY(), pi.getDataArea(), plot.getRangeAxisEdge()));
-            /*
-             * Because of the required repaint() below, we need to trigger painting of the crosshair later.
-             */
-            SwingUtilities.invokeLater(() -> cp.mouseMoved(mouseEvent));
         }
         else
         {
@@ -71,6 +68,14 @@ public abstract class PointerHandler implements MouseListener, MouseMotionListen
          * to repaint again to remove the old crosshair.
          */
         cp.repaint();
+
+        if (onChartArea)
+        {
+            /*
+             * Because of the required repaint() above, we need to trigger painting of the crosshair later.
+             */
+            SwingUtilities.invokeLater(() -> cp.mouseMoved(mouseEvent));
+        }
     }
 
     /**
