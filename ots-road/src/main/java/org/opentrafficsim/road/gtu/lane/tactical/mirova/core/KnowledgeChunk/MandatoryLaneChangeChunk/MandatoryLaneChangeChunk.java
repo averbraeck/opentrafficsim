@@ -4,12 +4,16 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.KnowledgeChunk;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.DiscretionaryLaneChangeChunk.DefaultLaneChangePattern.DefaultLaneChangePattern;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes.AbstractMirovaVehicle;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.EgoContext;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.InfrastructureContext;
 import org.opentrafficsim.road.network.LaneChangeInfo;
 
 import java.util.EnumMap;
@@ -28,20 +32,21 @@ import java.util.function.Supplier;
 public class MandatoryLaneChangeChunk extends KnowledgeChunk
 {
 
-    /** Constructor. */
+    /** Constructor.
+     * @param vehicle
+     * @throws OperationalPlanException */
     public MandatoryLaneChangeChunk(final AbstractMirovaVehicle vehicle) throws OperationalPlanException
     {
         super(vehicle);
 
         // Link procedural knowledge (possible maneuvers)
-        this.addManeuverPattern(() -> createLaneChangePattern("LEFT"));
-        this.addManeuverPattern(() -> createLaneChangePattern("RIGHT"));
+        this.addManeuverPattern(() -> new DefaultLaneChangePattern(this, LateralDirectionality.LEFT));
+        this.addManeuverPattern(() -> new DefaultLaneChangePattern(this, LateralDirectionality.RIGHT));
     }
 
     @Override
     public boolean isApplicable() throws ParameterException
     {
-        InfrastructurePerception infra = getInfrastructurePerception();
         return true; // Always applicable
     }
 
@@ -60,8 +65,13 @@ public class MandatoryLaneChangeChunk extends KnowledgeChunk
      */
     public Desire computeDesire() throws ParameterException {
 
+     // --- Access Contexts (instead of direct perception) -----------------------
+
+        EgoContext egoCtx = this.getAbstractMirovaVehicle()
+                .getContext(EgoContext.class);
+
         Parameters p = getParameters();
-        double v = getAbstractMirovaVehicle().getGtu().getSpeed().si;
+        double v = egoCtx.getEgoSpeed().si;  // use context for speed
 
         // --- Step 1: desire-to-leave per lane (d_r,k) --------------------------
         // We'll store them in a small map for clarity.
@@ -108,27 +118,4 @@ public class MandatoryLaneChangeChunk extends KnowledgeChunk
     }
 
 
-    // ----------------------------------------------------------------------
-    // Helper: create ManeuverPattern factories
-    // ----------------------------------------------------------------------
-
-    private ManeuverPattern createLaneChangePattern(final String direction)
-    {
-        // Replace with your actual pattern subclasses
-        return new ManeuverPattern()
-        {
-            @Override
-            public void calculateActivation() throws ParameterException
-            {
-                // Basic placeholder activation logic for mandatory changes
-//                setActivation(1.0);
-            }
-
-            @Override
-            public String toString()
-            {
-                return "MandatoryLaneChangePattern[" + direction + "]";
-            }
-        };
-    }
 }

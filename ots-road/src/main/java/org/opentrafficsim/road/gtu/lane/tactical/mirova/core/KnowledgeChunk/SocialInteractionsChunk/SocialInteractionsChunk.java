@@ -29,9 +29,7 @@ public class SocialInteractionsChunk extends KnowledgeChunk
     public SocialInteractionsChunk(final AbstractMirovaVehicle vehicle) throws OperationalPlanException
     {
         super(vehicle);
-        // procedural patterns possibly triggered by social interactions
-        this.addManeuverPattern(() -> createManeuverPattern("GET_OUT_OF_THE_WAY"));
-        this.addManeuverPattern(() -> createManeuverPattern("STAY_OUT_OF_THE_WAY"));
+
     }
 
     @Override
@@ -78,7 +76,7 @@ public class SocialInteractionsChunk extends KnowledgeChunk
             dRight = rhoActualFollower * socioSpeedSensitivity; // encourage lane change to right with positive incentive
         }
 
-        return new Desire(0.0, dLeft, dRight, false); // discretionary desire
+        return new Desire(dLeft, dRight, false); // discretionary desire
 
     }
 
@@ -141,28 +139,5 @@ public class SocialInteractionsChunk extends KnowledgeChunk
 
 
 
-    // ----------------------------------------------------------------------
-    // helper: procedural knowledge patterns
-    // ----------------------------------------------------------------------
 
-    private ManeuverPattern createManeuverPattern(final String type)
-    {
-        return new ManeuverPattern()
-        {
-            @Override
-            public void calculateActivation() throws ParameterException
-            {
-                if (type.equals("GET_OUT_OF_THE_WAY"))
-                    setActivation(1.0); // strong activation if follower is tailgating
-                else if (type.equals("STAY_OUT_OF_THE_WAY"))
-                    setActivation(0.6); // moderate activation, suppress left change
-            }
-
-            @Override
-            public String toString()
-            {
-                return "SocialInteractionPattern[" + type + "]";
-            }
-        };
-    }
 }

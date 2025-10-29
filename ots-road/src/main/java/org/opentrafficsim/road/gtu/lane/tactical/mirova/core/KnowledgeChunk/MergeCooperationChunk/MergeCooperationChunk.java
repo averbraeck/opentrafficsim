@@ -29,9 +29,7 @@ public class MergeCooperationChunk extends KnowledgeChunk
     {
         super(vehicle);
 
-        // procedural patterns for cooperative maneuvers
-        this.addManeuverPattern(() -> createManeuverPattern("COOPERATIVE_LEFT"));
-        this.addManeuverPattern(() -> createManeuverPattern("COOPERATIVE_RIGHT"));
+
     }
 
     @Override
@@ -68,30 +66,9 @@ public class MergeCooperationChunk extends KnowledgeChunk
             dLeft = getAbstractMirovaVehicle().getDFree();
         }
 
-        this.desire = new Desire(0.0, dLeft, dRight, false);
+        this.desire = new Desire(dLeft, dRight, false);
         return this.desire;
     }
 
-    // ----------------------------------------------------------------------
-    // Helper: procedural pattern stubs
-    // ----------------------------------------------------------------------
 
-    private ManeuverPattern createManeuverPattern(final String direction)
-    {
-        return new ManeuverPattern()
-        {
-            @Override
-            public void calculateActivation() throws ParameterException
-            {
-                // Cooperative changes have moderate activation by default
-                setActivation(0.7);
-            }
-
-            @Override
-            public String toString()
-            {
-                return "MergeCooperationPattern[" + direction + "]";
-            }
-        };
-    }
 }

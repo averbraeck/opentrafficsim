@@ -2,6 +2,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.SortedSet;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -12,8 +13,10 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DirectDefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
+import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes.AbstractMirovaVehicle;
@@ -190,6 +193,81 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
         } catch (Exception e) {
             return new Acceleration(Double.NaN, AccelerationUnit.SI);
         }
+    }
+
+    // ----------------------------------------------------------------------
+    // Leader accessors
+    // ----------------------------------------------------------------------
+
+    /**
+     * Returns the current leader vehicle on the ego lane.
+     * <p>
+     * This uses the {@link DirectDefaultSimplePerception} category to find
+     * the nearest forward vehicle on the current lane.
+     * </p>
+     *
+     * @return {@link Headway} to the nearest leader ahead, or {@code null} if none exists
+     */
+    public Headway getCurrentLeader() {
+        try {
+            var direct = this.vehicle.getLanePerception()
+                    .getPerceptionCategory(DirectDefaultSimplePerception.class);
+            return direct != null ? direct.getForwardHeadwayGtu() : null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * Returns the nearest leader vehicle on the left adjacent lane, if available.
+     * <p>
+     * If no left lane or leader is present, this returns {@code null}.
+     * </p>
+     *
+     * @return nearest {@link HeadwayGtu} on the left lane, or {@code null}
+     */
+    public HeadwayGtu getLeftLeader() {
+        try {
+            var neighbors = this.vehicle.getLanePerception()
+                    .getPerceptionCategory(NeighborsPerception.class);
+            SortedSet<HeadwayGtu> leftLeaders = neighbors.getFirstLeaders(LateralDirectionality.LEFT);
+            return leftLeaders.isEmpty() ? null : leftLeaders.first();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * Returns the nearest leader vehicle on the right adjacent lane, if available.
+     * <p>
+     * If no right lane or leader is present, this returns {@code null}.
+     * </p>
+     *
+     * @return nearest {@link HeadwayGtu} on the right lane, or {@code null}
+     */
+    public HeadwayGtu getRightLeader() {
+        try {
+            var neighbors = this.vehicle.getLanePerception()
+                    .getPerceptionCategory(NeighborsPerception.class);
+            SortedSet<HeadwayGtu> rightLeaders = neighbors.getFirstLeaders(LateralDirectionality.RIGHT);
+            return rightLeaders.isEmpty() ? null : rightLeaders.first();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * Returns the leader vehicle in the specified lateral direction.
+     * <p>
+     * This is a convenience method that generalizes {@link #getLeftLeader()} and {@link #getRightLeader()}.
+     * </p>
+     *
+     * @param dir lateral direction (LEFT, RIGHT)
+     * @return the nearest {@link HeadwayGtu} in that direction, or {@code null}
+     */
+    public HeadwayGtu getLeaderInDirection(final LateralDirectionality dir) {
+        if (dir == null) return null;
+        return dir.isLeft() ? getLeftLeader() : getRightLeader();
     }
 
     @Override

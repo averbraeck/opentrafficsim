@@ -16,8 +16,10 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerc
 import org.opentrafficsim.road.gtu.lane.perception.categories.TrafficPerception;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.KnowledgeChunk;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.DiscretionaryLaneChangeChunk.DefaultLaneChangePattern.DefaultLaneChangePattern;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes.AbstractMirovaVehicle;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.MacroTrafficContext;
 import org.opentrafficsim.road.network.LaneChangeInfo;
 
 import java.util.SortedSet;
@@ -39,32 +41,33 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
         super(vehicle);
 
         // procedural maneuvers possibly triggered by discretionary desires
-        this.addManeuverPattern(() -> createLaneChangePattern("LEFT"));
-        this.addManeuverPattern(() -> createLaneChangePattern("RIGHT"));
+        this.addManeuverPattern(() -> new DefaultLaneChangePattern(this, LateralDirectionality.LEFT));
+        this.addManeuverPattern(() -> new DefaultLaneChangePattern(this, LateralDirectionality.RIGHT));
     }
 
     @Override
     public boolean isApplicable() throws ParameterException
     {
-        InfrastructurePerception infra = getInfrastructurePerception();
         return true; // Always applicable
     }
 
     @Override
-    public Desire computeDesire() throws ParameterException
+    public Desire computeDesire() throws ParameterException, OperationalPlanException
     {
         Speed vGain = getAbstractMirovaVehicle().getVGain();
+
+        MacroTrafficContext macroContext = getAbstractMirovaVehicle().getContext(MacroTrafficContext.class);
 
         double leftDist = getInfrastructurePerception().getLegalLaneChangePossibility(RelativeLane.CURRENT,
                 LateralDirectionality.LEFT).si;
         double rightDist = getInfrastructurePerception().getLegalLaneChangePossibility(RelativeLane.CURRENT,
                 LateralDirectionality.RIGHT).si;
         Dimensionless aGain;
-        Speed vCur = getTrafficPerception().getSpeed(RelativeLane.CURRENT);
+        Speed vCur = macroContext.getAverageSpeed(RelativeLane.CURRENT);
 
         Acceleration aCur = getEgoPerception().getAcceleration();
 
-        aCur = Try.assign(() -> getAbstractMirovaVehicle().getGtu().getCarFollowingAcceleration(), "Could not obtain the GTU.");
+        aCur = Try.assign(() -> getAbstractMirovaVehicle().computeLongitudinalAcceleration(), "Could not obtain the GTU.");
         if (aCur.si > 0)
         {
             Acceleration a = getParameters().getParameter(ParameterTypes.A);
@@ -79,7 +82,7 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
         double dLeft;
         if (leftDist > 0.0 && getInfrastructurePerception().getCrossSection().contains(RelativeLane.LEFT))
         {
-            Speed vLeft = getTrafficPerception().getSpeed(RelativeLane.LEFT);
+            Speed vLeft = macroContext.getAverageSpeed(RelativeLane.LEFT);
             dLeft = aGain.si * (vLeft.si - vCur.si) / vGain.si;
         }
         else
@@ -91,7 +94,7 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
          double dRight;
          if (rightDist > 0.0 && getInfrastructurePerception().getCrossSection().contains(RelativeLane.RIGHT))
          {
-         Speed vRight = getTrafficPerception().getSpeed(RelativeLane.RIGHT);
+         Speed vRight = macroContext.getAverageSpeed(RelativeLane.RIGHT);
          if (vCur.si >= getParameters().getParameter(ParameterTypes.VCONG).si)
          {
          dRight = aGain.si * Math.min(vRight.si - vCur.si, 0) / vGain.si;
@@ -124,30 +127,9 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
 
 
 
-        double dKeep = 0.0;
-        this.desire = new Desire(dKeep, dLeft, dRight, false);
+        this.desire = new Desire(dLeft, dRight, false);
         return this.desire;
     }
 
-    // ----------------------------------------------------------------------
-    // helper: procedural knowledge stubs
-    // ----------------------------------------------------------------------
 
-    private ManeuverPattern createLaneChangePattern(final String direction)
-    {
-        return new ManeuverPattern()
-        {
-            @Override
-            public void calculateActivation() throws ParameterException
-            {
-                setActivation(0.5); // moderate activation for discretionary changes
-            }
-
-            @Override
-            public String toString()
-            {
-                return "DiscretionaryLaneChangePattern[" + direction + "]";
-            }
-        };
-    }
 }

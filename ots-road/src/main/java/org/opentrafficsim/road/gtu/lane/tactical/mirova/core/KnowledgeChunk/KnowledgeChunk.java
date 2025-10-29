@@ -90,8 +90,9 @@ public abstract class KnowledgeChunk
      * (LMRS-style components for route following, overtaking, keeping right, cooperation, etc.).
      * @return a {@link Desire} object representing directional preferences
      * @throws ParameterException if parameters cannot be read
+     * @throws OperationalPlanException
      */
-    public abstract Desire computeDesire() throws ParameterException;
+    public abstract Desire computeDesire() throws ParameterException, OperationalPlanException;
 
  // ----------------------------------------------------------------------
     // Procedural knowledge interface

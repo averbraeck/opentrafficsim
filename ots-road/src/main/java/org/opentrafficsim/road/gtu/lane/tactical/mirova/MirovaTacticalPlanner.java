@@ -10,6 +10,7 @@ import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlan;
+import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
@@ -19,7 +20,7 @@ import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.AbstractLaneBasedTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes.AbstractMirovaVehicle;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes.HumanDrivenVehicle;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes.HumanDriverVehicle;
 
 public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
 {
@@ -31,10 +32,10 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
     };
 
     public MirovaTacticalPlanner(final CarFollowingModel carFollowingModel, final LaneBasedGtu gtu,
-            final LanePerception lanePerception)
+            final LanePerception lanePerception) throws OperationalPlanException
     {
         super(carFollowingModel, gtu, lanePerception);
-        mirovaVehicle = new HumanDrivenVehicle( carFollowingModel, gtu, lanePerception, this);
+        mirovaVehicle = new HumanDriverVehicle( carFollowingModel, gtu, lanePerception, this);
 
     }
 

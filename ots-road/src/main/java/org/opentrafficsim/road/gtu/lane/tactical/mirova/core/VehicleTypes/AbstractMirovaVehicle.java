@@ -314,8 +314,9 @@ public abstract class AbstractMirovaVehicle
       * </p>
       *
       * @throws ParameterException if any chunk’s desire computation fails
+     * @throws OperationalPlanException
       */
-     protected void updateLaneChangeDesire() throws ParameterException
+     protected void updateLaneChangeDesire() throws ParameterException, OperationalPlanException
      {
          Desire mandatorySum = Desire.zero();
          Desire discretionarySum = Desire.zero();
@@ -608,7 +609,7 @@ public abstract class AbstractMirovaVehicle
       * @throws ParameterException         if parameter retrieval fails
       * @throws OperationalPlanException   if the car-following model cannot produce a valid acceleration
       */
-     protected Acceleration computeLongitudinalAcceleration()
+     public Acceleration computeLongitudinalAcceleration()
              throws ParameterException, OperationalPlanException
      {
          // ----------------------------------------------------------------------

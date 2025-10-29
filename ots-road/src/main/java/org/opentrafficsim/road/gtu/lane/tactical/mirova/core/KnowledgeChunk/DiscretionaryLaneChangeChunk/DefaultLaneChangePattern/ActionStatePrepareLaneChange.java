@@ -2,63 +2,118 @@ package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.Dis
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ActionState;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.NeighborsContext;
-import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.*;
+import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 
 /**
- * State 1 – prepares the lane change.
+ * {@code ActionStatePrepareLaneChange}
  * <p>
- * Executes standard car-following while checking if the lane-change remains feasible.
+ * First phase of the lane-change maneuver.
+ * The vehicle maintains normal car-following behavior while continuously
+ * checking whether a lane change in the desired direction becomes feasible.
  * </p>
+ *
+ * <p><b>Transitions:</b></p>
+ * <ul>
+ *   <li><b>→ PerformLaneChange</b> if the safety conditions (ego + follower deceleration) are met.</li>
+ *   <li><b>→ AbortLaneChange</b> if feasibility fails or the desire drops significantly below threshold.</li>
+ * </ul>
  */
 public class ActionStatePrepareLaneChange extends ActionState {
 
+    /** Target direction of the lane change (LEFT or RIGHT). */
     private final LateralDirectionality direction;
+
+    /** Desire drop hysteresis to prevent oscillations. */
+    private static final double DESIRE_HYSTERESIS = 0.1;
 
     public ActionStatePrepareLaneChange(final ManeuverPattern pattern, final LateralDirectionality direction) {
         super(pattern);
         this.direction = direction;
     }
 
+    /**
+     * Executes standard car-following control.
+     * <p>
+     * During the preparation phase, no lateral motion is yet performed. The vehicle adapts
+     * its longitudinal acceleration using the MIROVA car-following controller.
+     * </p>
+     */
     @Override
     public SimpleOperationalPlan executeControl() throws ParameterException, OperationalPlanException {
-        // Standard car-following behavior until ready to change
-        return this.vehicle.desireBasedFollowingAcceleration();
+        // Delegate to the MIROVA vehicle’s car-following behavior
+
+        Acceleration acceleration = this.vehicle.computeLongitudinalAcceleration();
+        return new SimpleOperationalPlan(
+                acceleration,
+            this.vehicle.getGtu().getParameters().getParameter(ParameterTypes.DT)
+        );
+
     }
 
+    /**
+     * Evaluates transition to the next lane-change phase.
+     * <p>
+     * The state transitions to {@code ActionStatePerformLaneChange} if all feasibility
+     * conditions are met (ego and follower decelerations above threshold, lane not ending too soon).
+     * </p>
+     */
     @Override
     public void next() throws OperationalPlanException, ParameterException {
-        if (checkAbility()) {
-            // Transition to actual lane-change execution
-            ActionStatePerformLaneChange nextState =
+        if (checkFeasibility()) {
+            ActionState nextState =
                     new ActionStatePerformLaneChange(this.maneuverPattern, this.direction);
             transitionTo(nextState);
         }
     }
 
+    /**
+     * Checks whether the maneuver should be aborted.
+     * <p>
+     * The state aborts if the feasibility check fails or the lane-change desire
+     * drops significantly below the discretionary threshold.
+     * </p>
+     */
     @Override
     public void abort() throws ParameterException, OperationalPlanException {
-        // Abort if the desire drops to zero or feasibility fails -> + 0.1 to avoid oscillations
-        if (!checkAbility() || this.vehicle.getDesire() < this.vehicle.getDFree() + 0.1 ) {
+        if (!checkFeasibility() ||
+            this.vehicle.getDesire() < this.vehicle.getDFree() - DESIRE_HYSTERESIS) {
             this.vehicle.setRunningManeuver(false);
             this.active = false;
         }
     }
 
     /**
-     * Re-checks whether the lane change remains feasible using the NeighborsContext.
+     * Determines if the current traffic situation allows safe initiation of the lane change.
+     * <p>
+     * The check is based on the NeighborsContext and current deceleration capabilities
+     * of both ego and follower vehicles on the target lane.
+     * </p>
+     *
+     * @return true if the lane change can be safely initiated
+     * @throws ParameterException if model parameters cannot be retrieved
      */
-    private boolean checkAbility() throws ParameterException {
-        NeighborsContext nctx = this.vehicle.getContext(NeighborsContext.class);
+    private boolean checkFeasibility() throws ParameterException {
+        NeighborsContext neighbors = this.vehicle.getContext(NeighborsContext.class);
+        InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
+        EgoContext egoCtx = this.vehicle.getContext(EgoContext.class);
+
         Acceleration bDes = this.vehicle.getGtu().getParameters().getParameter(ParameterTypes.B);
-        Acceleration egoDecel = nctx.getEgoDeceleration(this.direction);
-        Acceleration follDecel = nctx.getFollowerDeceleration(this.direction);
+        Acceleration egoDecel = neighbors.getEgoDeceleration(this.direction);
+        Acceleration follDecel = neighbors.getFollowerDeceleration(this.direction);
+
 
         return egoDecel.gt(bDes) && follDecel.gt(bDes);
+    }
+
+    @Override
+    public String toString() {
+        return "ActionStatePrepareLaneChange[" + this.direction + "]";
     }
 }

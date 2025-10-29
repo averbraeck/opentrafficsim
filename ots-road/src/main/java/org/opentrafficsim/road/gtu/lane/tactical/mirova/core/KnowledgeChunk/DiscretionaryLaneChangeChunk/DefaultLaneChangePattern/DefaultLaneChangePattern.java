@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.lane.tactical.mirova.patterns;
+package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.DiscretionaryLaneChangeChunk.DefaultLaneChangePattern;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -87,7 +87,7 @@ public class DefaultLaneChangePattern extends ManeuverPattern {
     @Override
     public ActionState getInitialActionState() {
         if (this.initialActionState == null) {
-            this.initialActionState = new ActionState("PrepareLaneChange(" + this.direction + ")", this);
+            this.initialActionState = new ActionStatePrepareLaneChange(this, this.direction);
         }
         return this.initialActionState;
     }
