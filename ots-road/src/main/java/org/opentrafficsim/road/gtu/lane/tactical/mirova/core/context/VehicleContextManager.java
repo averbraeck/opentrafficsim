@@ -28,7 +28,7 @@ public class VehicleContextManager {
 
         // Register default context categories
         registerCategory(new EgoContext(vehicle));
-        registerCategory(new MacroTrafficContext(vehicle));
+//        registerCategory(new MacroTrafficContext(vehicle));
         registerCategory(new InfrastructureContext(vehicle));
         registerCategory(new NeighborsContext(vehicle));
     }

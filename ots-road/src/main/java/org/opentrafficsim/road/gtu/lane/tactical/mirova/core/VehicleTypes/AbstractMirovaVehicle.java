@@ -18,12 +18,13 @@ import org.opentrafficsim.road.gtu.lane.perception.headway.*;
 import org.opentrafficsim.road.gtu.lane.plan.operational.*;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.*;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.VotingArbiter.*;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.*;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern.PatternType;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.KnowledgeChunk;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.*;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.util.PatternSelector;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
+import org.opentrafficsim.road.gtu.lane.tactical.util.SpeedLimitUtil;
 import org.opentrafficsim.road.network.*;
 import org.opentrafficsim.road.network.speed.*;
 
@@ -46,7 +47,6 @@ public abstract class AbstractMirovaVehicle
     // Tactical and Planning Components
     // ----------------------------------------------------------------------
 
-    protected final VotingArbiter votingArbiter;
     protected final MirovaTacticalPlanner tacticalPlanner;
     protected boolean runningManeuver = false;
     protected ActionState currentActionState = null;
@@ -79,6 +79,33 @@ public abstract class AbstractMirovaVehicle
     /** Central contextual model for this vehicle. */
     private final VehicleContextManager contextManager;
 
+     /// ----------------------------------------------------------------------
+     // Headway Relaxation: Episode-based implementation (Schakel et al. 2012, 2023)
+     // ----------------------------------------------------------------------
+
+     /**
+      * Relaxation time constant τ (seconds) controlling the adaptation speed
+      * when the desired headway increases after a decrease in desire.
+      * <p>Typical LMRS range: 20–30 s.</p>
+      */
+     private Duration tauHeadway = new Duration(25.0, DurationUnit.SI);
+
+     /** Current relaxed headway T(t) used by the car-following model. */
+     private Duration currentRelaxedHeadway = null;
+
+     /** Instantaneous target headway derived from the current lane-change desire. */
+     private Duration targetDesiredHeadway = null;
+
+     /** Headway value at the start of the current relaxation episode. */
+     private Duration headwayAtRelaxStart = null;
+
+     /** Target headway fixed at the start of the current relaxation episode. */
+     private Duration targetAtRelaxStart = null;
+
+     /** Normalized relaxation progress from 0 (start) to 1 (completed). */
+     private double relaxProgress = 0.0;
+
+
 
     // ----------------------------------------------------------------------
     // Construction
@@ -88,7 +115,6 @@ public abstract class AbstractMirovaVehicle
                                  final LanePerception lanePerception, final MirovaTacticalPlanner tacticalPlanner)
             throws OperationalPlanException
     {
-        this.votingArbiter = new VotingArbiter();
         this.tacticalPlanner = tacticalPlanner;
         this.carFollowingModel = carFollowingModel;
         this.gtu = gtu;
@@ -163,8 +189,9 @@ public abstract class AbstractMirovaVehicle
         // 3️. Derive a single scalar desire magnitude for car-following adjustments
         this.absoluteDesire = this.laneChangeDesire.magnitude();
 
-        // 4️. Apply temporal relaxation (gradual decay of short-term motivation)
-        updateDesire();
+        // 4️. Apply temporal relaxation (gradual decay of short-term motivation and headway adaptation)
+        updateTargetDesiredHeadway();
+        updateCurrentRelaxedHeadway();
 
         // 5️. Reset operational plan for this time step
         this.operationalPlan = null;
@@ -177,6 +204,7 @@ public abstract class AbstractMirovaVehicle
         else
         {
             // 7️. Hierarchical pattern selection based on Desire → Context → Ability
+            // Pattern selection is delegated to PatternSelector for modular context evaluation.
             ManeuverPattern selectedPattern = null;
 
             double dFree = this.getDFree();       // threshold for free lane changes
@@ -217,7 +245,7 @@ public abstract class AbstractMirovaVehicle
             {
                 // Default: continue standard following (no tactical action)
                 this.operationalPlan = new SimpleOperationalPlan(
-                    getMinAcceleration(),
+                        computeLongitudinalAcceleration(),
                     this.getGtu().getParameters().getParameter(ParameterTypes.DT)
                 );
             }
@@ -226,30 +254,26 @@ public abstract class AbstractMirovaVehicle
     }
 
     /**
-     * Selects the first applicable maneuver pattern of the given type
-     * by evaluating both contextual and physical feasibility conditions.
+     * Selects the most suitable {@link ManeuverPattern} of a given {@link PatternType}
+     * using the centralized {@link PatternSelector} utility.
      *
-     * @param type the pattern type to evaluate
-     * @return the first feasible pattern, or {@code null} if none match
-     * @throws ParameterException if parameter access fails
+     * <p>This method delegates the selection process to the {@link PatternSelector}
+     * class, which encapsulates the contextual evaluation logic. The selector ensures
+     * that only patterns with all context requirements satisfied are considered and
+     * prefers the most specific applicable pattern based on contextual dependencies.</p>
+     *
+     * <p>By outsourcing the logic to {@link PatternSelector}, this class remains
+     * focused on tactical execution while keeping the pattern evaluation modular
+     * and easily replaceable.</p>
+     *
+     * @param type the {@link PatternType} to be evaluated (e.g., COOPERATIVE, FREE_LC)
+     * @return the most suitable maneuver pattern for the given type, or {@code null} if none match
+     * @throws ParameterException if perception or context evaluation fails during selection
      */
-    protected ManeuverPattern selectPatternByType(final PatternType type) throws ParameterException
-    {
-        for (KnowledgeChunk chunk : this.knowledgeChunks)
-        {
-            for (var supplier : chunk.getManeuverPatterns())
-            {
-                ManeuverPattern pattern = supplier.get();
-                if (pattern.getType() == type &&
-                    pattern.checkContext() &&
-                    pattern.checkAbility())
-                {
-                    return pattern;
-                }
-            }
-        }
-        return null;
+    protected ManeuverPattern selectPatternByType(final PatternType type) throws ParameterException {
+        return PatternSelector.select(this.knowledgeChunks, type);
     }
+
 
 
     /**
@@ -297,7 +321,7 @@ public abstract class AbstractMirovaVehicle
          Desire discretionarySum = Desire.zero();
 
          // collect all desires from active chunks
-         for (KnowledgeChunk chunk : this.tacticalPlanner.getKnowledgeChunks())
+         for (KnowledgeChunk chunk : this.getKnowledgeChunks())
          {
              if (chunk.isApplicable() == true)
              {  Desire d = chunk.computeDesire();
@@ -422,116 +446,272 @@ public abstract class AbstractMirovaVehicle
         return this.laneChange;
     }
 
-    /**
-     * Sets the time headway parameter T based on the current lane change desire.
-     * <p>
-     * The value of T is interpolated between TMAX (no desire, {@code desire} = 0) and TMIN (full desire, {@code desire} = 1).
-     * The desire value is clamped to the range [0, 1].
-     * </p>
-     * @param absoluteDesire lane change desire, where 0 means no desire (T = TMAX) and 1 means full desire (T = TMIN)
-     * @throws ParameterException if T, TMIN, or TMAX is not present in the parameters
-     */
-    public void setDesiredHeadway(final Parameters params) throws ParameterException
-    {
-        double limitedDesire = this.absoluteDesire < 0 ? 0 : this.absoluteDesire > 1 ? 1 : this.absoluteDesire;
-        double tDes = limitedDesire * params.getParameter(ParameterTypes.TMIN).si
-                + (1 - limitedDesire) * params.getParameter(ParameterTypes.TMAX).si;
-        double t = params.getParameter(ParameterTypes.T).si;
-        params.setParameterResettable(ParameterTypes.T, Duration.instantiateSI(tDes < t ? tDes : t));
-    }
 
-    public void setDesiredHeadway() throws ParameterException
-    {
-        Double desire = this.getDesire() == null ? 0.0 : this.getDesire();
-        setDesiredHeadway(this.getGtu().getParameters());
-    }
 
-    /**
-     * Resets the time headway parameter T to its default value.
-     * @throws ParameterException if T is not present in the parameters
-     */
-    public void resetDesiredHeadway(final Parameters params) throws ParameterException
-    {
-        params.resetParameter(ParameterTypes.T);
-    }
+     // ----------------------------------------------------------------------
+     // Headway Relaxation Methods
+     // ----------------------------------------------------------------------
 
-    public void resetDesiredHeadway() throws ParameterException
-    {
-        Double desire = this.getDesire() == null ? 0.0 : this.getDesire();
-        resetDesiredHeadway(this.getGtu().getParameters());
-    }
+     /**
+      * Initializes or restarts a headway relaxation episode toward a new target.
+      * <p>
+      * This method fixes the starting and target headways and resets the progress
+      * accumulator. It should be called whenever a significant change in the target
+      * headway occurs (e.g., due to a large change in lane-change desire).
+      * </p>
+      *
+      * @param newTarget the new target headway that should be reached after τ seconds
+      */
+     private void startHeadwayRelaxation(final Duration newTarget) {
+         if (this.currentRelaxedHeadway == null) {
+             this.currentRelaxedHeadway = newTarget;
+         }
+         this.headwayAtRelaxStart = this.currentRelaxedHeadway;
+         this.targetAtRelaxStart = newTarget;
+         this.relaxProgress = 0.0;
+     }
 
-    /**
-     * Calculates the acceleration using the car-following model, adjusting the time headway T according to the specified lane
-     * change desire. The value of T is interpolated between TMAX (no desire, {@code desire} = 0) and TMIN (full desire,
-     * {@code desire} = 1).
-     * <p>
-     * Temporarily sets T based on the desire, computes the acceleration, and then resets T to its original value.
-     * </p>
-     * @param leader the headway to the leader vehicle (returns free acceleration if leaders are empty)
-     * @param absoluteDesire lane change desire, where 0 means no desire and 1 means full desire
-     * @return the calculated acceleration based on the adjusted headway
-     * @throws ParameterException if a required parameter is not defined
-     * @throws OperationalPlanException if an error occurs during acceleration calculation
-     */
-    public Acceleration desireBasedFollowingAcceleration(final Headway leader)
-            throws ParameterException, OperationalPlanException
-    {
-        Double desire = this.getDesire() == null ? 0.0 : this.getDesire();
-        Parameters params = this.getGtu().getParameters();
-        Speed egoSpeed = getLanePerception().getPerceptionCategory(EgoPerception.class).getSpeed();
-        SpeedLimitInfo speedLimitInfo = this.getLanePerception().getPerceptionCategory(InfrastructurePerception.class)
-                .getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(new Length(1.0, LengthUnit.SI));
-        // set T
-        setDesiredHeadway();
-        // calculate acceleration
-        Acceleration a = CarFollowingUtil.followSingleLeader(getCarFollowingModel(), params, egoSpeed, speedLimitInfo,
-                leader.getDistance(), leader.getSpeed());
-        // reset T
-        resetDesiredHeadway();
-        return a;
-    }
 
-    public Acceleration desireBasedFollowingAcceleration() throws ParameterException, OperationalPlanException
-    {
-        Headway leader = getLanePerception().getPerceptionCategory(DirectDefaultSimplePerception.class).getForwardHeadwayGtu();
-        return desireBasedFollowingAcceleration(leader);
-    }
+     /**
+      * Updates the instantaneous target headway from the current lane-change desire.
+      * <p>
+      * If the target headway differs significantly from the previous value, a new
+      * relaxation episode is started to ensure a smooth transition.
+      * </p>
+      *
+      * @throws ParameterException if parameter access fails
+      */
+     protected void updateTargetDesiredHeadway() throws ParameterException {
+         final Parameters params = this.getGtu().getParameters();
+         final double limitedDesire = Math.max(0.0, Math.min(1.0, this.absoluteDesire));
 
-    public Acceleration freeAcceleration() throws OperationalPlanException, ParameterException
-    {
-        Parameters params = this.getGtu().getParameters();
-        Speed egoSpeed = getLanePerception().getPerceptionCategory(EgoPerception.class).getSpeed();
-        SpeedLimitInfo speedLimitInfo = this.getLanePerception().getPerceptionCategory(InfrastructurePerception.class)
-                .getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(new Length(1.0, LengthUnit.SI));
-        Acceleration freeAcceleration =
-                CarFollowingUtil.freeAcceleration(getCarFollowingModel(), params, egoSpeed, speedLimitInfo);
-        return freeAcceleration;
-    }
+         final double tMin = params.getParameter(ParameterTypes.TMIN).si;
+         final double tMax = params.getParameter(ParameterTypes.TMAX).si;
+         final Duration newTarget = Duration.instantiateSI(limitedDesire * tMin + (1.0 - limitedDesire) * tMax);
 
-    public Acceleration deadEndAcceleration() throws ParameterException, OperationalPlanException
-    {
-        SortedSet<LaneChangeInfo> currentLaneLCInfo = getLanePerception().getPerceptionCategory(InfrastructurePerception.class)
-                .getLegalLaneChangeInfo(RelativeLane.CURRENT);
-        Length currentLaneLCRemainingDistance =
-                currentLaneLCInfo.isEmpty() || currentLaneLCInfo.first().numberOfLaneChanges() == 0 ? Length.POSITIVE_INFINITY
-                        : currentLaneLCInfo.first().remainingDistance();
-        Parameters params = this.getGtu().getParameters();
-        Speed egoSpeed = getLanePerception().getPerceptionCategory(EgoPerception.class).getSpeed();
-        SpeedLimitInfo speedLimitInfo = this.getLanePerception().getPerceptionCategory(InfrastructurePerception.class)
-                .getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(new Length(1.0, LengthUnit.SI));
+         // Start a new relaxation episode only if the target changes significantly
+         final double EPS = 0.05; // 50 ms tolerance to avoid jitter
+         if (this.targetDesiredHeadway == null || Math.abs(newTarget.si - this.targetDesiredHeadway.si) > EPS) {
+             this.targetDesiredHeadway = newTarget;
+             startHeadwayRelaxation(newTarget);
+         } else {
+             this.targetDesiredHeadway = newTarget;
+         }
+     }
 
-        Acceleration a =
-                CarFollowingUtil.stop(this.carFollowingModel, params, egoSpeed, speedLimitInfo, currentLaneLCRemainingDistance);
 
-        return a;
+     /**
+      * Progresses the relaxed headway T(t) toward the episode’s target using a
+      * normalized progress accumulator. The adaptation follows a linear schedule
+      * that reaches the target exactly after τ seconds.
+      * <p>
+      * When the target headway is smaller than the current one (i.e., higher desire),
+      * adaptation occurs immediately without relaxation.
+      * </p>
+      *
+      * @throws ParameterException if parameter access fails
+      */
+     protected void updateCurrentRelaxedHeadway() throws ParameterException {
+         // Initialize if not yet set
+         if (this.currentRelaxedHeadway == null) {
+             if (this.targetDesiredHeadway == null) {
+                 updateTargetDesiredHeadway();
+             }
+             this.currentRelaxedHeadway = this.targetDesiredHeadway;
+             this.headwayAtRelaxStart = this.currentRelaxedHeadway;
+             this.targetAtRelaxStart = this.targetDesiredHeadway;
+             this.relaxProgress = 1.0;
+             return;
+         }
 
-    }
+         final Duration dt = this.getGtu().getParameters().getParameter(ParameterTypes.DT);
 
-    public Acceleration getMinAcceleration() throws OperationalPlanException, ParameterException {
-        Acceleration minAcceleration = Acceleration.min(freeAcceleration(), desireBasedFollowingAcceleration(), deadEndAcceleration());
-        return minAcceleration;
-    }
+         // Immediate change for decreasing headway or τ = 0
+         if (this.tauHeadway.si == 0.0 || this.targetDesiredHeadway.si <= this.currentRelaxedHeadway.si) {
+             this.currentRelaxedHeadway = this.targetDesiredHeadway;
+             this.headwayAtRelaxStart = this.currentRelaxedHeadway;
+             this.targetAtRelaxStart = this.targetDesiredHeadway;
+             this.relaxProgress = 1.0;
+         } else {
+             // Linear progression: reach target exactly after τ seconds
+             this.relaxProgress = Math.min(1.0, this.relaxProgress + dt.si / this.tauHeadway.si);
+             final double startT = this.headwayAtRelaxStart.si;
+             final double deltaT = this.targetAtRelaxStart.si - startT;
+             final double newT = startT + this.relaxProgress * deltaT;
+             this.currentRelaxedHeadway = Duration.instantiateSI(newT);
+         }
+
+         // Update GTU parameters for use by the car-following model
+         final Parameters params = this.getGtu().getParameters();
+         params.setParameterResettable(ParameterTypes.T, this.currentRelaxedHeadway);
+     }
+
+
+     /**
+      * Sets a new headway relaxation time constant τ (seconds).
+      * A value of zero disables relaxation and applies all headway
+      * changes immediately.
+      *
+      * @param tauSeconds the new relaxation time constant in seconds
+      */
+     public void setHeadwayRelaxationTime(final double tauSeconds) {
+         this.tauHeadway = Duration.instantiateSI(Math.max(0.0, tauSeconds));
+     }
+
+
+     /**
+      * Returns the current headway relaxation time constant τ.
+      *
+      * @return the relaxation time constant
+      */
+     public Duration getHeadwayRelaxationTime() {
+         return this.tauHeadway;
+     }
+
+
+     /**
+      * Returns the currently active relaxed headway used by the car-following model.
+      *
+      * @return the relaxed headway T(t)
+      */
+     public Duration getCurrentRelaxedHeadway() {
+         return this.currentRelaxedHeadway;
+     }
+
+
+     /**
+      * Returns the most recent target headway value derived from the current desire.
+      *
+      * @return the target headway T<sub>target</sub>
+      */
+     public Duration getTargetDesiredHeadway() {
+         return this.targetDesiredHeadway;
+     }
+
+     /**
+      * Computes the longitudinal acceleration for the current time step,
+      * considering all tactical and environmental influences provided
+      * via the vehicle’s {@link VehicleContextManager}.
+      * <p>
+      * The following control components are considered:
+      * <ul>
+      *   <li><b>Leader-following behavior:</b> based on perceived headway</li>
+      *   <li><b>Lane-end braking:</b> deceleration to enforce timely merging</li>
+      *   <li><b>Speed-limit adaptation:</b> handling of upcoming lower speed limits</li>
+      *   <li><b>Free-flow acceleration:</b> baseline term for unconstrained motion</li>
+      *   <li><b>Transition effects:</b> optional curvature or bump-based deceleration</li>
+      * </ul>
+      * The resulting acceleration is the minimum (most restrictive) value among all components.
+      * </p>
+      *
+      * @return final longitudinal acceleration [m/s²]
+      * @throws ParameterException         if parameter retrieval fails
+      * @throws OperationalPlanException   if the car-following model cannot produce a valid acceleration
+      */
+     protected Acceleration computeLongitudinalAcceleration()
+             throws ParameterException, OperationalPlanException
+     {
+         // ----------------------------------------------------------------------
+         // 1️⃣ Retrieve context and parameters
+         // ----------------------------------------------------------------------
+         VehicleContextManager ctx = this.getContextManager();
+         InfrastructureContext infra = ctx.getCategory("Infrastructure", InfrastructureContext.class);
+         Parameters params = this.getGtu().getParameters();
+         CarFollowingModel cfModel = this.getCarFollowingModel();
+
+         // Ego and environment data from context
+         Speed egoSpeed = getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed();
+
+
+         SpeedLimitInfo currentLimit = infra.getCurrentSpeedLimit();
+         SpeedLimitInfo nextLimit = infra.getNextSpeedLimit();
+         Speed legalSpeed = infra.getLegalSpeedLimit();
+         Length laneEndDist = infra.getDistanceToLaneEnd();
+
+         // Apply relaxed headway (from Desire relaxation)
+         params.setParameterResettable(ParameterTypes.T, this.getCurrentRelaxedHeadway());
+
+         // Candidate accelerations (we’ll take the minimum)
+         List<Acceleration> candidates = new ArrayList<>();
+
+         // ----------------------------------------------------------------------
+         // 2️⃣ Free acceleration (baseline)
+         // ----------------------------------------------------------------------
+         Acceleration aFree = CarFollowingUtil.freeAcceleration(cfModel, params, egoSpeed, currentLimit);
+         candidates.add(aFree);
+
+         // ----------------------------------------------------------------------
+         // 3️⃣ Leader-following (if a leader is detected)
+         // ----------------------------------------------------------------------
+         Headway leader = this.getLanePerception()
+                 .getPerceptionCategory(DirectDefaultSimplePerception.class)
+                 .getForwardHeadwayGtu();
+
+         if (leader != null)
+         {
+             Acceleration aLeader = CarFollowingUtil.followSingleLeader(
+                     cfModel,
+                     params,
+                     egoSpeed,
+                     currentLimit,
+                     leader.getDistance(),
+                     leader.getSpeed() != null ? leader.getSpeed() : Speed.ZERO);
+             candidates.add(aLeader);
+         }
+
+         // ----------------------------------------------------------------------
+         // 4️⃣ Lane-end braking (encourage merging)
+         // ----------------------------------------------------------------------
+         if (infra.isLaneEndUrgent())
+         {
+             Acceleration aLaneEnd = CarFollowingUtil.stop(
+                     cfModel, params, egoSpeed, currentLimit, laneEndDist);
+
+             // Only consider strong braking responses (to avoid minor fluctuations)
+             if (aLaneEnd.ge(params.getParameter(ParameterTypes.BCRIT).times(0.95)))
+             {
+                 candidates.add(aLaneEnd);
+             }
+         }
+
+         // ----------------------------------------------------------------------
+         // 5️⃣ Transition deceleration (e.g., curvature or bumps)
+         // ----------------------------------------------------------------------
+         // Still computed here (not inside context), for flexibility.
+         Acceleration aTrans = SpeedLimitUtil.considerSpeedLimitTransitions(
+                 params, egoSpeed,
+                 getLanePerception().getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(RelativeLane.CURRENT),
+                 cfModel);
+         if (aTrans != null && aTrans.lt(Acceleration.POSITIVE_INFINITY))
+         {
+             candidates.add(aTrans);
+         }
+
+         // ----------------------------------------------------------------------
+         // 6️⃣ Upcoming lower speed limit ahead
+         // ----------------------------------------------------------------------
+         if (nextLimit != null)
+         {
+             Speed nextLegal = SpeedLimitUtil.getLegalSpeedLimit(nextLimit);
+             if (nextLegal.lt(legalSpeed))
+             {
+                 Length distanceToLimit = new Length(200.0, LengthUnit.SI);
+                 Acceleration aLimit = CarFollowingUtil.approachTargetSpeed(
+                         cfModel, params, egoSpeed, nextLimit, distanceToLimit, nextLegal);
+                 candidates.add(aLimit);
+             }
+         }
+
+         // ----------------------------------------------------------------------
+         // 7️⃣ Compute most restrictive acceleration
+         // ----------------------------------------------------------------------
+         Acceleration finalAcc = candidates.stream()
+                 .min(Acceleration::compareTo)
+                 .orElse(aFree);
+
+         return finalAcc;
+     }
+
 
     public Double getDesire()
     {
@@ -542,23 +722,6 @@ public abstract class AbstractMirovaVehicle
     {
         this.absoluteDesire = desire;
         this.desireRelaxationTime = desireRelaxationTime;
-    }
-
-    public void updateDesire() throws ParameterException
-    {
-        if (this.desireRelaxationTime.si > 0.0)
-        {
-            Duration dt = this.getGtu().getParameters().getParameter(ParameterTypes.DT);
-
-            this.absoluteDesire -= this.absoluteDesire * dt.si / this.desireRelaxationTime.si;
-            if (this.absoluteDesire < 0.0)
-            {
-                this.absoluteDesire = 0.0;
-            }
-
-            this.desireRelaxationTime = Duration
-                    .instantiateSI(this.desireRelaxationTime.si - dt.si < 0 ? 0.0 : this.desireRelaxationTime.si - dt.si);
-        }
     }
 
     /**

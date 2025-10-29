@@ -6,15 +6,19 @@ import java.util.Map;
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
+import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes.AbstractMirovaVehicle;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
+import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
 /**
  * Context category describing the dynamic interaction between the ego vehicle
@@ -50,45 +54,91 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
     // Computation methods
     // ----------------------------------------------------------------------
 
+    /**
+     * Computes the deceleration required by the ego vehicle when attempting
+     * a lane change in the specified direction.
+     * <p>
+     * For each leader vehicle on the target lane, the car-following model is
+     * evaluated to determine the necessary braking effort to safely merge.
+     * The minimum (most restrictive) value across all leaders is returned.
+     * </p>
+     * <p>
+     * The current legal speed limit is retrieved from the cached
+     * {@link InfrastructureContext}, ensuring consistency across all
+     * context-dependent computations.
+     * </p>
+     *
+     * @param laneChangeDirection the intended lane change direction (LEFT or RIGHT)
+     * @return minimum required ego deceleration [m/s²]
+     * @throws ParameterException       if a parameter lookup fails
+     * @throws OperationalPlanException if car-following computation fails
+     */
     private Acceleration computeLaneChangeEgoDeceleration(final LateralDirectionality laneChangeDirection)
             throws ParameterException, OperationalPlanException {
         Acceleration egoDeceleration = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
         var neighbors = this.vehicle.getLanePerception().getPerceptionCategory(NeighborsPerception.class);
+        InfrastructureContext infra = this.vehicle.getContextManager()
+                .getCategory("Infrastructure", InfrastructureContext.class);
+
+        // Retrieve current legal speed limit info
+        SpeedLimitInfo currentLimitInfo = infra.getCurrentSpeedLimit();
+        CarFollowingModel cfModel = this.vehicle.getCarFollowingModel();
+        Parameters params = this.vehicle.getGtu().getParameters();
+        Speed egoSpeed = this.vehicle.getContextManager()
+                .getCategory("Ego", EgoContext.class)
+                .getEgoSpeed();
 
         for (HeadwayGtu leader : neighbors.getFirstLeaders(laneChangeDirection)) {
-            this.vehicle.setDesiredHeadway();
             Acceleration iteraryDecel = CarFollowingUtil.followSingleLeader(
-                    this.vehicle.getCarFollowingModel(),
-                    this.vehicle.getGtu().getParameters(),
-                    this.vehicle.getGtu().getSpeed(),
-                    this.vehicle.getLanePerception()
-                            .getPerceptionCategory(InfrastructurePerception.class)
-                            .getSpeedLimitProspect(RelativeLane.CURRENT)
-                            .getSpeedLimitInfo(Length.ZERO),
+                    cfModel,
+                    params,
+                    egoSpeed,
+                    currentLimitInfo,
                     leader.getDistance(),
                     leader.getSpeed());
             egoDeceleration = Acceleration.min(egoDeceleration, iteraryDecel);
-            this.vehicle.resetDesiredHeadway();
         }
         return egoDeceleration;
     }
 
+    /**
+     * Computes the deceleration required by the follower on the target lane
+     * to maintain safety if the ego vehicle were to change lanes.
+     * <p>
+     * This method evaluates, for each follower vehicle, the car-following model
+     * of that follower using its own parameters and perception. The result
+     * represents the minimum (most restrictive) deceleration that would be
+     * induced by the ego vehicle’s lane change.
+     * </p>
+     * <p>
+     * Uses cached infrastructure information from {@link InfrastructureContext}
+     * to ensure consistent speed limit evaluation across both vehicles.
+     * </p>
+     *
+     * @param laneChangeDirection the intended lane change direction (LEFT or RIGHT)
+     * @return minimum required follower deceleration [m/s²]
+     * @throws ParameterException       if a parameter lookup fails
+     * @throws OperationalPlanException if car-following computation fails
+     */
     private Acceleration computeLaneChangeFollowerDeceleration(final LateralDirectionality laneChangeDirection)
             throws ParameterException, OperationalPlanException {
         Acceleration followerDecelValue = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
         var neighbors = this.vehicle.getLanePerception().getPerceptionCategory(NeighborsPerception.class);
 
+        Speed egoSpeed = this.vehicle.getContextManager()
+                .getCategory("Ego", EgoContext.class)
+                .getEgoSpeed();
+
         for (HeadwayGtu follower : neighbors.getFirstFollowers(laneChangeDirection)) {
-            this.vehicle.setDesiredHeadway(follower.getParameters());
+
             Acceleration iteraryDecel = CarFollowingUtil.followSingleLeader(
                     follower.getCarFollowingModel(),
                     follower.getParameters(),
                     follower.getSpeed(),
                     follower.getSpeedLimitInfo(),
                     follower.getDistance(),
-                    this.vehicle.getGtu().getSpeed());
+                    egoSpeed);
             followerDecelValue = Acceleration.min(followerDecelValue, iteraryDecel);
-            this.vehicle.resetDesiredHeadway(follower.getParameters());
         }
         return followerDecelValue;
     }

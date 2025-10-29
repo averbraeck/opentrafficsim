@@ -102,12 +102,9 @@ public class MandatoryLaneChangeChunk extends KnowledgeChunk
             dRight = -dRightLane;               // undesired (target worse)
         }
 
-        // --- Step 3: optional keep component (not in LMRS) ---------------------
-        // For cognitive modelling, define an explicit "keep" signal:
-        double dKeep = 1.0 - Math.min(1.0, Math.max(Math.abs(dLeft), Math.abs(dRight)));
 
         // --- Build Desire vector ------------------------------------------------
-        return new Desire(dKeep, dLeft, dRight, true);
+        return new Desire(dLeft, dRight, true);
     }
 
 

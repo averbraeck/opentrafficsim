@@ -1,5 +1,8 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.core;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.KnowledgeChunk;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes.AbstractMirovaVehicle;
@@ -28,6 +31,9 @@ public abstract class ManeuverPattern {
 
     /** The initial action state that starts the state machine of this maneuver. */
     protected ActionState initialActionState;
+
+    /** Context categories required for this pattern to be applicable. */
+    protected final Set<String> requiredContextKeys = new HashSet<>();
 
     /** Knowledge chunk providing perception and tactical context information. */
     protected final KnowledgeChunk knowledgeChunk;
@@ -76,6 +82,12 @@ public abstract class ManeuverPattern {
     // ----------------------------------------------------------------------
     // Accessors
     // ----------------------------------------------------------------------
+
+    /** Returns the set of context categories required by this pattern. */
+    public Set<String> getRequiredContextKeys() {
+        return this.requiredContextKeys;
+    }
+
 
     /**
      * Returns the initial action state for this maneuver pattern. This state is used by
