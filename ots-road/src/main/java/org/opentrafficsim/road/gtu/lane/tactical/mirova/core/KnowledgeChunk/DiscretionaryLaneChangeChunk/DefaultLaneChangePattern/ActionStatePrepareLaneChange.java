@@ -4,6 +4,8 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ActionState;
@@ -44,9 +46,11 @@ public class ActionStatePrepareLaneChange extends ActionState {
      * During the preparation phase, no lateral motion is yet performed. The vehicle adapts
      * its longitudinal acceleration using the MIROVA car-following controller.
      * </p>
+     * @throws NetworkException
+     * @throws GtuException
      */
     @Override
-    public SimpleOperationalPlan executeControl() throws ParameterException, OperationalPlanException {
+    public SimpleOperationalPlan executeControl() throws ParameterException, GtuException, NetworkException {
         // Delegate to the MIROVA vehicle’s car-following behavior
 
         Acceleration acceleration = this.vehicle.computeLongitudinalAcceleration();
@@ -104,7 +108,7 @@ public class ActionStatePrepareLaneChange extends ActionState {
         InfrastructureContext infra = this.vehicle.getContext(InfrastructureContext.class);
         EgoContext egoCtx = this.vehicle.getContext(EgoContext.class);
 
-        Acceleration bDes = this.vehicle.getGtu().getParameters().getParameter(ParameterTypes.B);
+        Acceleration bDes = this.vehicle.getGtu().getParameters().getParameter(ParameterTypes.B).neg();
         Acceleration egoDecel = neighbors.getEgoDeceleration(this.direction);
         Acceleration follDecel = neighbors.getFollowerDeceleration(this.direction);
 

@@ -1,5 +1,6 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk;
 
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern;
 
@@ -9,13 +10,14 @@ import java.util.function.Supplier;
 
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectDefaultSimplePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.TrafficPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes.AbstractMirovaVehicle;
 
 /**
  * Abstract base class representing a declarative KnowledgeChunk in the cognitive driving model.
@@ -33,7 +35,7 @@ import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes.Abstra
 public abstract class KnowledgeChunk
 {
     /** Vehicle context. */
-    protected final AbstractMirovaVehicle vehicle;
+    protected final MirovaTacticalPlanner vehicle;
 
     /** Last computed desire. */
     protected Desire desire;
@@ -55,21 +57,21 @@ public abstract class KnowledgeChunk
      * @param vehicle the vehicle owning this knowledge chunk
      * @throws OperationalPlanException when perception categories cannot be accessed
      */
-    public KnowledgeChunk(final AbstractMirovaVehicle vehicle) throws OperationalPlanException
+    public KnowledgeChunk(final MirovaTacticalPlanner vehicle) throws OperationalPlanException
     {
         this.vehicle = vehicle;
         this.desire = Desire.zero();
         this.maneuverPatterns = new ArrayList<>();
         this.infrastructurePerception =
-                vehicle.getLanePerception().getPerceptionCategory(InfrastructurePerception.class);
+                vehicle.getPerception().getPerceptionCategory(InfrastructurePerception.class);
         this.trafficPerception =
-                vehicle.getLanePerception().getPerceptionCategory(TrafficPerception.class);
+                vehicle.getPerception().getPerceptionCategory(TrafficPerception.class);
         this.egoPerception =
-                vehicle.getLanePerception().getPerceptionCategory(EgoPerception.class);
+                vehicle.getPerception().getPerceptionCategory(EgoPerception.class);
         this.neighborsPerception =
-                vehicle.getLanePerception().getPerceptionCategory(NeighborsPerception.class);
+                vehicle.getPerception().getPerceptionCategory(NeighborsPerception.class);
         this.directDefaultSimplePerception =
-                vehicle.getLanePerception().getPerceptionCategory(DirectDefaultSimplePerception.class);
+                vehicle.getPerception().getPerceptionCategory(DirectDefaultSimplePerception.class);
         this.parameters = vehicle.getGtu().getParameters();
     }
 
@@ -91,8 +93,10 @@ public abstract class KnowledgeChunk
      * @return a {@link Desire} object representing directional preferences
      * @throws ParameterException if parameters cannot be read
      * @throws OperationalPlanException
+     * @throws NetworkException
+     * @throws GtuException
      */
-    public abstract Desire computeDesire() throws ParameterException, OperationalPlanException;
+    public abstract Desire computeDesire() throws ParameterException, OperationalPlanException, GtuException, NetworkException;
 
  // ----------------------------------------------------------------------
     // Procedural knowledge interface
@@ -121,7 +125,7 @@ public abstract class KnowledgeChunk
     // ACCESSORS
     // ----------------------------------------------------------------------
 
-    public AbstractMirovaVehicle getAbstractMirovaVehicle() { return this.vehicle; }
+    public MirovaTacticalPlanner getAbstractMirovaVehicle() { return this.vehicle; }
 
     public InfrastructurePerception getInfrastructurePerception() { return this.infrastructurePerception; }
 

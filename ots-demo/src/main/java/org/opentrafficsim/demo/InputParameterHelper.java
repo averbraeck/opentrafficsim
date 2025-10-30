@@ -12,6 +12,7 @@ import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.parameters.ParameterFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlus;
 
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDouble;
 import nl.tudelft.simulation.dsol.model.inputparameters.InputParameterDoubleScalar;
@@ -197,6 +198,7 @@ public final class InputParameterHelper implements ParameterFactory
         parametersCar.setParameter(ParameterTypes.B, bCar);
         parametersCar.setParameter(ParameterTypes.S0, s0Car);
         parametersCar.setParameter(ParameterTypes.T, tSafeCar);
+        parametersCar.setParameter(ParameterTypes.FSPEED, 1.4);
         return parametersCar;
     }
 
@@ -215,10 +217,12 @@ public final class InputParameterHelper implements ParameterFactory
         Acceleration bTruck = (Acceleration) rootMap.get("truck.b").getCalculatedValue();
         Length s0Truck = (Length) rootMap.get("truck.s0").getCalculatedValue();
         Duration tSafeTruck = (Duration) rootMap.get("truck.tSafe").getCalculatedValue();
+//        parametersTruck.setParameter(IdmPlus.V0, new Speed(80, KM_PER_HOUR));
         parametersTruck.setParameter(ParameterTypes.A, aTruck);
         parametersTruck.setParameter(ParameterTypes.B, bTruck);
         parametersTruck.setParameter(ParameterTypes.S0, s0Truck);
         parametersTruck.setParameter(ParameterTypes.T, tSafeTruck);
+        parametersTruck.setParameter(ParameterTypes.FSPEED, 0.8);
         return parametersTruck;
     }
 

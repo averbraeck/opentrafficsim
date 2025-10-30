@@ -9,16 +9,18 @@ import org.djutils.exceptions.Try;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.TrafficPerception;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.KnowledgeChunk;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.DiscretionaryLaneChangeChunk.DefaultLaneChangePattern.DefaultLaneChangePattern;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes.AbstractMirovaVehicle;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.MacroTrafficContext;
 import org.opentrafficsim.road.network.LaneChangeInfo;
 
@@ -36,7 +38,7 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
 {
 
 
-    public DiscretionaryLaneChangeChunk(final AbstractMirovaVehicle vehicle) throws OperationalPlanException
+    public DiscretionaryLaneChangeChunk(final MirovaTacticalPlanner vehicle) throws OperationalPlanException
     {
         super(vehicle);
 
@@ -52,7 +54,7 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
     }
 
     @Override
-    public Desire computeDesire() throws ParameterException, OperationalPlanException
+    public Desire computeDesire() throws ParameterException, GtuException, NetworkException
     {
         Speed vGain = getAbstractMirovaVehicle().getVGain();
 
@@ -67,7 +69,7 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
 
         Acceleration aCur = getEgoPerception().getAcceleration();
 
-        aCur = Try.assign(() -> getAbstractMirovaVehicle().computeLongitudinalAcceleration(), "Could not obtain the GTU.");
+        aCur = getAbstractMirovaVehicle().computeLongitudinalAcceleration(); // Try.assign(() -> getAbstractMirovaVehicle().computeLongitudinalAcceleration(), "Could not obtain the GTU.");
         if (aCur.si > 0)
         {
             Acceleration a = getParameters().getParameter(ParameterTypes.A);

@@ -1,9 +1,11 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.core;
 
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes.AbstractMirovaVehicle;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 
 /**
  * Abstract base class representing an executable action state within a maneuver pattern.
@@ -24,7 +26,7 @@ public abstract class ActionState {
     protected final ManeuverPattern maneuverPattern;
 
     /** Associated vehicle (retrieved from the maneuver’s knowledge chunk). */
-    protected final AbstractMirovaVehicle vehicle;
+    protected final MirovaTacticalPlanner vehicle;
 
     /** Indicates whether this state is currently active. */
     protected boolean active = false;
@@ -53,9 +55,11 @@ public abstract class ActionState {
      *   <li>Checks abort conditions via {@link #abort()}</li>
      * </ol>
      * @return the resulting operational plan for this time step
+     * @throws NetworkException
+     * @throws GtuException
      */
     public SimpleOperationalPlan update()
-            throws OperationalPlanException, ParameterException, NullPointerException, IllegalArgumentException {
+            throws ParameterException, NullPointerException, IllegalArgumentException, GtuException, NetworkException {
 
         this.vehicle.setRunningManeuver(true);
 
@@ -81,9 +85,11 @@ public abstract class ActionState {
      * Example: car-following, cooperative adaptation, or lane-change execution.
      * </p>
      * @return operational plan representing the control output for this step
+     * @throws NetworkException
+     * @throws GtuException
      */
     public abstract SimpleOperationalPlan executeControl()
-            throws ParameterException, OperationalPlanException;
+            throws ParameterException, OperationalPlanException, GtuException, NetworkException;
 
     /**
      * Checks transition conditions to the next action state.
@@ -120,7 +126,7 @@ public abstract class ActionState {
 
     /** Returns the vehicle executing this action.
      * @return */
-    public AbstractMirovaVehicle getVehicle() {
+    public MirovaTacticalPlanner getVehicle() {
         return this.vehicle;
     }
 

@@ -9,10 +9,10 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.categories.TrafficPerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.KnowledgeChunk;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes.AbstractMirovaVehicle;
 
 import java.util.function.Supplier;
 
@@ -30,7 +30,7 @@ public class CongestionChunk extends KnowledgeChunk
 
     private final double capacitDropGapIncreaseFactor = 1.2; // factor to increase time gap in congestion
 
-    public CongestionChunk(final AbstractMirovaVehicle vehicle) throws OperationalPlanException
+    public CongestionChunk(final MirovaTacticalPlanner vehicle) throws OperationalPlanException
     {
         super(vehicle);
 

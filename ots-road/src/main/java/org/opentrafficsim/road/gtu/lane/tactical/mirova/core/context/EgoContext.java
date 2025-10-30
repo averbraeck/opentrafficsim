@@ -2,7 +2,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context;
 
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes.AbstractMirovaVehicle;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 
 /**
  * Context category representing ego-vehicle-related state variables.
@@ -29,7 +29,7 @@ public class EgoContext extends ContextCategory implements UpdatableContext {
      *
      * @param vehicle the ego vehicle associated with this context
      */
-    public EgoContext(final AbstractMirovaVehicle vehicle) {
+    public EgoContext(final MirovaTacticalPlanner vehicle) {
         super("Ego", vehicle);
     }
 
@@ -67,7 +67,7 @@ public class EgoContext extends ContextCategory implements UpdatableContext {
      */
     private Speed computeSafeEgoSpeed() {
         try {
-            return this.vehicle.getLanePerception()
+            return this.vehicle.getPerception()
                     .getPerceptionCategory(EgoPerception.class)
                     .getSpeed();
         } catch (Exception e) {
@@ -88,7 +88,7 @@ public class EgoContext extends ContextCategory implements UpdatableContext {
      * @param vehicle the ego vehicle (unused)
      */
     @Override
-    public void updateFromPerception(final AbstractMirovaVehicle vehicle) {
+    public void updateFromPerception(final MirovaTacticalPlanner vehicle) {
         markCacheValid();
     }
 

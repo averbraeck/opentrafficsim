@@ -2,7 +2,8 @@ package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes.AbstractMirovaVehicle;
+
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 
 /**
  * Abstract base class for all context categories in the MIROVA framework.
@@ -21,7 +22,7 @@ public abstract class ContextCategory {
     protected final String name;
 
     /** Associated vehicle. */
-    protected final AbstractMirovaVehicle vehicle;
+    protected final MirovaTacticalPlanner vehicle;
 
     /** Local storage of all context values (key → value). */
     protected final Map<String, Object> values = new HashMap<>();
@@ -36,7 +37,7 @@ public abstract class ContextCategory {
     // Construction
     // ----------------------------------------------------------------------
 
-    protected ContextCategory(final String name, final AbstractMirovaVehicle vehicle) {
+    protected ContextCategory(final String name, final MirovaTacticalPlanner vehicle) {
         this.name = name;
         this.vehicle = vehicle;
     }
@@ -106,7 +107,7 @@ public abstract class ContextCategory {
         return this.name;
     }
 
-    public AbstractMirovaVehicle getVehicle() {
+    public MirovaTacticalPlanner getVehicle() {
         return this.vehicle;
     }
 

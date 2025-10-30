@@ -8,7 +8,7 @@ import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.TrafficPerception;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes.AbstractMirovaVehicle;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 
 /**
  * {@code MacroTrafficContext}
@@ -43,9 +43,9 @@ public class MacroTrafficContext extends ContextCategory implements UpdatableCon
     /**
      * Constructs a new {@code MacroTrafficContext} for the given vehicle.
      *
-     * @param vehicle the parent {@link AbstractMirovaVehicle}
+     * @param vehicle the parent {@link MirovaTacticalPlanner}
      */
-    public MacroTrafficContext(final AbstractMirovaVehicle vehicle) {
+    public MacroTrafficContext(final MirovaTacticalPlanner vehicle) {
         super("MacroTraffic", vehicle);
     }
 
@@ -224,7 +224,7 @@ public class MacroTrafficContext extends ContextCategory implements UpdatableCon
      */
     private Speed computeAverageSpeed(final RelativeLane lane)
             throws ParameterException, OperationalPlanException {
-        var trafficPerception = this.vehicle.getLanePerception()
+        var trafficPerception = this.vehicle.getPerception()
                 .getPerceptionCategory(TrafficPerception.class);
         if (trafficPerception == null)
             return new Speed(Double.NaN, SpeedUnit.SI);
@@ -242,7 +242,7 @@ public class MacroTrafficContext extends ContextCategory implements UpdatableCon
      */
     private LinearDensity computeDensity(final RelativeLane lane)
             throws OperationalPlanException, ParameterException {
-        var trafficPerception = this.vehicle.getLanePerception()
+        var trafficPerception = this.vehicle.getPerception()
                 .getPerceptionCategory(TrafficPerception.class);
         if (trafficPerception == null)
             return new LinearDensity(Double.NaN, LinearDensityUnit.PER_KILOMETER);
@@ -262,10 +262,10 @@ public class MacroTrafficContext extends ContextCategory implements UpdatableCon
      * first accessed during the tick.
      * </p>
      *
-     * @param vehicle the associated {@link AbstractMirovaVehicle}
+     * @param vehicle the associated {@link MirovaTacticalPlanner}
      */
     @Override
-    public void updateFromPerception(final AbstractMirovaVehicle vehicle) {
+    public void updateFromPerception(final MirovaTacticalPlanner vehicle) {
         markCacheValid();
     }
 

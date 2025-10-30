@@ -31,6 +31,8 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.IdmPlusFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.DefaultLmrsPerceptionFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.lmrs.LmrsFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.DefaultMirovaPerceptionFactory;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlanner;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactory;
 import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalRoutePlannerFactory;
@@ -201,10 +203,15 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
             this.parametersCar = InputParameterHelper.getParametersCar(getInputParameterMap());
             this.parametersTruck = InputParameterHelper.getParametersTruck(getInputParameterMap());
 
+//            this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
+//                    new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()));
+//            this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
+//                    new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()));
+
             this.strategicalPlannerGeneratorCars = new LaneBasedStrategicalRoutePlannerFactory(
-                    new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()));
+                    new MirovaTacticalPlannerFactory(new IdmPlusFactory(this.stream), new DefaultMirovaPerceptionFactory()));
             this.strategicalPlannerGeneratorTrucks = new LaneBasedStrategicalRoutePlannerFactory(
-                    new LmrsFactory(new IdmPlusFactory(this.stream), new DefaultLmrsPerceptionFactory()));
+                    new MirovaTacticalPlannerFactory(new IdmPlusFactory(this.stream), new DefaultMirovaPerceptionFactory()));
 
             GtuType gtuType = DefaultsNl.CAR;
             LaneType laneType = DefaultsRoadNl.TWO_WAY_LANE;
@@ -220,6 +227,7 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
             }
             Lane[] lanes1 = LaneFactory.makeMultiLane(this.network, "FirstHalf", start, halfway, coordsHalf1, laneCount,
                     laneType, this.speedLimit, this.simulator, DefaultsNl.VEHICLE);
+
             Point2d[] coordsHalf2 = new Point2d[127];
             for (int i = 0; i < coordsHalf2.length; i++)
             {
@@ -275,8 +283,9 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
         // GTU itself
         boolean generateTruck = this.stream.nextDouble() > this.carProbability;
         Length vehicleLength = new Length(generateTruck ? 15 : 4, METER);
+        Speed maxSpeed = new Speed(generateTruck ? 80 : 160, KM_PER_HOUR);
         LaneBasedGtu gtu = new LaneBasedGtu("" + (++this.carsCreated), gtuType, vehicleLength, new Length(1.8, METER),
-                new Speed(200, KM_PER_HOUR), vehicleLength.times(0.5), this.network);
+                maxSpeed, vehicleLength.times(0.5), this.network);
         gtu.setParameters(generateTruck ? this.parametersTruck : this.parametersCar);
         gtu.setNoLaneChangeDistance(Length.ZERO);
         gtu.setInstantaneousLaneChange(!((boolean) getInputParameter("generic.gradualLaneChange")));

@@ -4,8 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.KnowledgeChunk;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes.AbstractMirovaVehicle;
 
 /**
  * Abstract base class for all maneuver patterns in the Mirova tactical planner.
@@ -41,7 +41,7 @@ public abstract class ManeuverPattern {
     /** The high-level category of this maneuver pattern. */
     protected final PatternType type;
     /** Reference to the ego vehicle executing this maneuver. */
-    protected AbstractMirovaVehicle vehicle;
+    protected MirovaTacticalPlanner vehicle;
 
     // ----------------------------------------------------------------------
     // Construction

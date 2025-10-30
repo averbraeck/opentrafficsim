@@ -11,10 +11,10 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.perception.*;
 import org.opentrafficsim.road.gtu.lane.perception.categories.*;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.util.*;
 import org.opentrafficsim.road.network.*;
 import org.opentrafficsim.road.network.speed.*;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes.AbstractMirovaVehicle;
 
 /**
  * Context category providing infrastructure-related information relevant for
@@ -57,7 +57,7 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
      *
      * @param vehicle the ego vehicle associated with this context
      */
-    public InfrastructureContext(final AbstractMirovaVehicle vehicle) {
+    public InfrastructureContext(final MirovaTacticalPlanner vehicle) {
         super("Infrastructure", vehicle);
     }
 
@@ -207,7 +207,7 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
      */
     private Length computeDistanceToLaneEnd() throws ParameterException, OperationalPlanException {
         InfrastructurePerception infra =
-                this.vehicle.getLanePerception().getPerceptionCategory(InfrastructurePerception.class);
+                this.vehicle.getPerception().getPerceptionCategory(InfrastructurePerception.class);
 
         SortedSet<LaneChangeInfo> laneInfo = infra.getLegalLaneChangeInfo(RelativeLane.CURRENT);
         if (!laneInfo.isEmpty()) {
@@ -228,7 +228,7 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
      */
     private SpeedLimitInfo computeSpeedLimitInfo(final Length lookAhead) throws OperationalPlanException {
         InfrastructurePerception infra =
-                this.vehicle.getLanePerception().getPerceptionCategory(InfrastructurePerception.class);
+                this.vehicle.getPerception().getPerceptionCategory(InfrastructurePerception.class);
         return infra.getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(lookAhead);
     }
 
@@ -243,7 +243,7 @@ public class InfrastructureContext extends ContextCategory implements UpdatableC
      * @param vehicle the ego vehicle (unused)
      */
     @Override
-    public void updateFromPerception(final AbstractMirovaVehicle vehicle) {
+    public void updateFromPerception(final MirovaTacticalPlanner vehicle) {
         // Lazy: recomputed only when requested
         markCacheValid();
     }

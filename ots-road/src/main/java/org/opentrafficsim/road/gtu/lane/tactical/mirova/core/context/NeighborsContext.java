@@ -19,7 +19,7 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Neighbor
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModel;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes.AbstractMirovaVehicle;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
 import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
 
@@ -47,7 +47,7 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
     // Construction
     // ----------------------------------------------------------------------
 
-    public NeighborsContext(final AbstractMirovaVehicle vehicle) {
+    public NeighborsContext(final MirovaTacticalPlanner vehicle) {
         super("Neighbors", vehicle);
 
     }
@@ -79,7 +79,7 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
     private Acceleration computeLaneChangeEgoDeceleration(final LateralDirectionality laneChangeDirection)
             throws ParameterException, OperationalPlanException {
         Acceleration egoDeceleration = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
-        var neighbors = this.vehicle.getLanePerception().getPerceptionCategory(NeighborsPerception.class);
+        var neighbors = this.vehicle.getPerception().getPerceptionCategory(NeighborsPerception.class);
         InfrastructureContext infra = this.vehicle.getContextManager()
                 .getCategory("Infrastructure", InfrastructureContext.class);
 
@@ -126,7 +126,7 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
     private Acceleration computeLaneChangeFollowerDeceleration(final LateralDirectionality laneChangeDirection)
             throws ParameterException, OperationalPlanException {
         Acceleration followerDecelValue = new Acceleration(Double.POSITIVE_INFINITY, AccelerationUnit.SI);
-        var neighbors = this.vehicle.getLanePerception().getPerceptionCategory(NeighborsPerception.class);
+        var neighbors = this.vehicle.getPerception().getPerceptionCategory(NeighborsPerception.class);
 
         Speed egoSpeed = this.vehicle.getContextManager()
                 .getCategory("Ego", EgoContext.class)
@@ -210,7 +210,7 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
      */
     public Headway getCurrentLeader() {
         try {
-            var direct = this.vehicle.getLanePerception()
+            var direct = this.vehicle.getPerception()
                     .getPerceptionCategory(DirectDefaultSimplePerception.class);
             return direct != null ? direct.getForwardHeadwayGtu() : null;
         } catch (Exception e) {
@@ -228,7 +228,7 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
      */
     public HeadwayGtu getLeftLeader() {
         try {
-            var neighbors = this.vehicle.getLanePerception()
+            var neighbors = this.vehicle.getPerception()
                     .getPerceptionCategory(NeighborsPerception.class);
             SortedSet<HeadwayGtu> leftLeaders = neighbors.getFirstLeaders(LateralDirectionality.LEFT);
             return leftLeaders.isEmpty() ? null : leftLeaders.first();
@@ -247,7 +247,7 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
      */
     public HeadwayGtu getRightLeader() {
         try {
-            var neighbors = this.vehicle.getLanePerception()
+            var neighbors = this.vehicle.getPerception()
                     .getPerceptionCategory(NeighborsPerception.class);
             SortedSet<HeadwayGtu> rightLeaders = neighbors.getFirstLeaders(LateralDirectionality.RIGHT);
             return rightLeaders.isEmpty() ? null : rightLeaders.first();
@@ -281,7 +281,7 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
     }
 
     @Override
-    public void updateFromPerception(final AbstractMirovaVehicle vehicle) {
+    public void updateFromPerception(final MirovaTacticalPlanner vehicle) {
         // lazy: kein globales Update nötig
         markCacheValid();
     }

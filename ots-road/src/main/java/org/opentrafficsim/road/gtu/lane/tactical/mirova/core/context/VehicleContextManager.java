@@ -2,7 +2,8 @@ package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes.AbstractMirovaVehicle;
+
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 
 /**
  * Central manager that aggregates and updates all contextual information
@@ -14,7 +15,7 @@ public class VehicleContextManager {
     private final Map<String, ContextCategory> categories = new HashMap<>();
 
     /** Reference to the associated ego vehicle. */
-    private final AbstractMirovaVehicle vehicle;
+    private final MirovaTacticalPlanner vehicle;
 
     private long currentTick = 0;
 
@@ -23,12 +24,12 @@ public class VehicleContextManager {
     // Construction
     // ----------------------------------------------------------------------
 
-    public VehicleContextManager(final AbstractMirovaVehicle vehicle) {
+    public VehicleContextManager(final MirovaTacticalPlanner vehicle) {
         this.vehicle = vehicle;
 
         // Register default context categories
         registerCategory(new EgoContext(vehicle));
-//        registerCategory(new MacroTrafficContext(vehicle));
+        registerCategory(new MacroTrafficContext(vehicle));
         registerCategory(new InfrastructureContext(vehicle));
         registerCategory(new NeighborsContext(vehicle));
     }

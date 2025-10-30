@@ -53,16 +53,19 @@ public class DeterministicSpecificityStrategy implements PatternSelectionStrateg
         for (KnowledgeChunk chunk : chunks) {
             for (var supplier : chunk.getManeuverPatterns()) {
                 ManeuverPattern p = supplier.get();
+                System.out.printf("Evaluating pattern: " + p.toString() + "\n");
                 if (p.getType() != type) continue;
-
+                System.out.printf(" - Type matches (%s)\n", type);
                 if (p.checkContext() && p.checkAbility()) {
                     int specificity = p.getRequiredContextKeys().size();
-
+                    System.out.printf(" - Applicable with specificity %d\n", specificity);
                     if (specificity > maxKeys) {
                         best = p;
                         maxKeys = specificity;
+                        System.out.printf(" --> New best pattern selected.\n");
                     } else if (specificity == maxKeys) {
                         best = resolveTie(best, p);
+                        System.out.printf(" --> Tie resolved, selected pattern: %s\n", best.toString());
                     }
                 }
             }

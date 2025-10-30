@@ -7,11 +7,11 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.KnowledgeChunk;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.DiscretionaryLaneChangeChunk.DefaultLaneChangePattern.DefaultLaneChangePattern;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes.AbstractMirovaVehicle;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.EgoContext;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.InfrastructureContext;
 import org.opentrafficsim.road.network.LaneChangeInfo;
@@ -35,13 +35,13 @@ public class MandatoryLaneChangeChunk extends KnowledgeChunk
     /** Constructor.
      * @param vehicle
      * @throws OperationalPlanException */
-    public MandatoryLaneChangeChunk(final AbstractMirovaVehicle vehicle) throws OperationalPlanException
+    public MandatoryLaneChangeChunk(final MirovaTacticalPlanner vehicle) throws OperationalPlanException
     {
         super(vehicle);
 
         // Link procedural knowledge (possible maneuvers)
-        this.addManeuverPattern(() -> new DefaultLaneChangePattern(this, LateralDirectionality.LEFT));
-        this.addManeuverPattern(() -> new DefaultLaneChangePattern(this, LateralDirectionality.RIGHT));
+//        this.addManeuverPattern(() -> new DefaultLaneChangePattern(this, LateralDirectionality.LEFT));
+//        this.addManeuverPattern(() -> new DefaultLaneChangePattern(this, LateralDirectionality.RIGHT));
     }
 
     @Override

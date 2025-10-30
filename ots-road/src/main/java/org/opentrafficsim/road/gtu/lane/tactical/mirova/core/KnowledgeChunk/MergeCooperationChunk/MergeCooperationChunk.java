@@ -7,10 +7,10 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.Desire;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.KnowledgeChunk;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.ManeuverPattern;
-import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.VehicleTypes.AbstractMirovaVehicle;
 
 import java.util.function.Supplier;
 
@@ -25,7 +25,7 @@ import java.util.function.Supplier;
 public class MergeCooperationChunk extends KnowledgeChunk
 {
 
-    public MergeCooperationChunk(final AbstractMirovaVehicle vehicle) throws OperationalPlanException
+    public MergeCooperationChunk(final MirovaTacticalPlanner vehicle) throws OperationalPlanException
     {
         super(vehicle);
 

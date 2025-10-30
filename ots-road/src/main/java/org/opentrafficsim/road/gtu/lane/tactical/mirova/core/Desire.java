@@ -1,5 +1,7 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.core;
 
+import org.opentrafficsim.core.network.LateralDirectionality;
+
 /**
  * Represents directional lane-change desires according to the LMRS philosophy.
  * <p>
@@ -182,12 +184,12 @@ public final class Desire {
     /**
      * Determines the dominant direction of this desire.
      *
-     * @return "LEFT", "RIGHT", or "NONE" if no preference
+     * @return LateralDirectionality.LEFT or LateralDirectionality.RIGHT or null if no dominant direction
      */
-    public String dominantDirection() {
+    public LateralDirectionality dominantDirection() {
         if (Math.abs(this.left - this.right) < 1e-3)
-            return "NONE";
-        return (this.left > this.right) ? "LEFT" : "RIGHT";
+            return LateralDirectionality.NONE; // No dominant direction
+        return (this.left > this.right) ? LateralDirectionality.LEFT : LateralDirectionality.RIGHT;
     }
 
     @Override

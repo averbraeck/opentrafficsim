@@ -5,8 +5,10 @@ import org.djunits.value.vdouble.scalar.*;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
@@ -66,9 +68,11 @@ public class ActionStatePerformLaneChange extends ActionState {
      * the leader on the target lane. The resulting acceleration is the most restrictive
      * (minimum) across these influences.
      * </p>
+     * @throws NetworkException
+     * @throws GtuException
      */
     @Override
-    public SimpleOperationalPlan executeControl() throws ParameterException, OperationalPlanException {
+    public SimpleOperationalPlan executeControl() throws ParameterException, GtuException, NetworkException {
         InfrastructureContext infraCtx = this.vehicle.getContext(InfrastructureContext.class);
         NeighborsContext neighborsCtx = this.vehicle.getContext(NeighborsContext.class);
         EgoContext egoCtx = this.vehicle.getContext(EgoContext.class);
