@@ -8,9 +8,9 @@ import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.draw.ColorInterpolator;
 import org.opentrafficsim.draw.colorer.LegendColorer;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Mental;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
+import org.opentrafficsim.road.gtu.lane.perception.mental.ar.ArFuller;
+import org.opentrafficsim.road.gtu.lane.perception.mental.ar.ArTask;
 
 /**
  * Colorer for task demand with anticipation reliance indicated by interpolating towards white, for a specific task.
@@ -71,9 +71,9 @@ public class TaskGtuColorer implements LegendColorer<Gtu>
         if (gtu.getTacticalPlanner().getPerception() instanceof LanePerception)
         {
             Mental mental = ((LanePerception) gtu.getTacticalPlanner().getPerception()).getMental();
-            if (mental != null && mental instanceof Fuller)
+            if (mental != null && mental instanceof ArFuller fuller)
             {
-                for (Task task : ((Fuller) mental).getTasks())
+                for (ArTask task : fuller.getTasks())
                 {
                     if (task.getId().equals(this.id))
                     {

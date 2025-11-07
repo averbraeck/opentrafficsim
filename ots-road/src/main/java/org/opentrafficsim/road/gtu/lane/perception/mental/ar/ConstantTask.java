@@ -1,9 +1,6 @@
-package org.opentrafficsim.road.gtu.lane.perception.mental;
+package org.opentrafficsim.road.gtu.lane.perception.mental.ar;
 
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 
 /**
@@ -12,12 +9,14 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
- * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ConstantTask extends AbstractTask
+public class ConstantTask extends AbstractArTask
 {
+
+    /** Constant task demand level. */
+    private final double taskDemand;
+
     /**
      * Constructor.
      * @param id id
@@ -26,13 +25,13 @@ public class ConstantTask extends AbstractTask
     public ConstantTask(final String id, final double taskDemand)
     {
         super(id);
-        setTaskDemand(taskDemand);
+        this.taskDemand = taskDemand;
     }
 
     @Override
-    public double calculateTaskDemand(final LanePerception perception, final LaneBasedGtu gtu, final Parameters parameters)
-            throws ParameterException, GtuException
+    public double calculateTaskDemand(final LanePerception perception) throws ParameterException
     {
-        return getTaskDemand();
+        return this.taskDemand;
     }
+
 }

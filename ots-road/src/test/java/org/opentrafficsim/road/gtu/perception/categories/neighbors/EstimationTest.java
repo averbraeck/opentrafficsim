@@ -17,6 +17,7 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Estimation;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborTriplet;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness;
+import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
 import org.opentrafficsim.road.network.lane.conflict.Conflict;
 
 /**
@@ -76,7 +77,8 @@ public final class EstimationTest
         // Perceiving GTU
         LaneBasedGtu perceivingGtu = Mockito.mock(LaneBasedGtu.class, Mockito.RETURNS_DEEP_STUBS);
         ParameterSet perceivingParameters = new ParameterSet();
-        perceivingParameters.setParameter(Estimation.OVER_EST, 1.0);
+        perceivingParameters.setParameter(Fuller.OVER_EST, 1.0);
+        perceivingParameters.setParameter(Fuller.EST_FACTOR, factor);
         perceivingParameters.setParameter(AdaptationSituationalAwareness.SA_MAX, 1.0);
         perceivingParameters.setParameter(AdaptationSituationalAwareness.SA, sa);
         Mockito.when(perceivingGtu.getParameters()).thenReturn(perceivingParameters);

@@ -5,11 +5,10 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness;
+import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
 import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 
 /**
@@ -24,9 +23,6 @@ import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
  */
 public interface Estimation
 {
-
-    /** Over-estimation parameter type. Negative values reflect under-estimation. */
-    ParameterTypeDouble OVER_EST = new ParameterTypeDouble("OVER_EST", "Over estimation factor.", 1.0);
 
     /** No estimation errors. */
     Estimation NONE = new Estimation()
@@ -162,9 +158,7 @@ public interface Estimation
                 final LaneBasedGtu perceivedGtu, final Length distance, final boolean downstream, final Duration when)
                 throws ParameterException
         {
-            double sign = perceivingGtu.getParameters().getParameter(OVER_EST);
-            double factor = 1.0 + sign * (perceivingGtu.getParameters().getParameter(AdaptationSituationalAwareness.SA_MAX)
-                    - perceivingGtu.getParameters().getParameter(AdaptationSituationalAwareness.SA));
+            double factor = perceivingGtu.getParameters().getParameter(Fuller.EST_FACTOR);
             Length headway =
                     getDelayedDistance(perceivingGtu, reference, perceivedGtu, distance, downstream, when).times(factor);
             Speed speed = getEgoSpeed(perceivingGtu, reference)

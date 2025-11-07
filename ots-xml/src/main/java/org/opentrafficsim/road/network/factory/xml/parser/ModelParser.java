@@ -59,9 +59,8 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSpeed;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.BehavioralAdaptation;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Mental;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
-import org.opentrafficsim.road.gtu.lane.perception.mental.TaskManager;
-import org.opentrafficsim.road.gtu.lane.perception.mental.TaskManager.SummativeTaskManager;
+import org.opentrafficsim.road.gtu.lane.perception.mental.SumFuller;
+import org.opentrafficsim.road.gtu.lane.perception.mental.ar.ArTask;
 import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.ModelComponentSupplier;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
@@ -913,14 +912,14 @@ public class ModelParser
             org.opentrafficsim.xml.generated.PerceptionType.Mental.Fuller fuller = perception.getMental().getFuller();
 
             // Tasks
-            Set<Task> tasks = new LinkedHashSet<>();
+            Set<ArTask> tasks = new LinkedHashSet<>();
             for (ClassType taskClass : fuller.getTask())
             {
                 Class<?> clazz = taskClass.get(eval);
                 componentClasses.add(clazz);
                 try
                 {
-                    tasks.add((Task) ClassUtil.resolveConstructor(clazz, new Class<?>[0]).newInstance());
+                    tasks.add((ArTask) ClassUtil.resolveConstructor(clazz, new Class<?>[0]).newInstance());
                 }
                 catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                         | NoSuchMethodException exception)
@@ -934,6 +933,7 @@ public class ModelParser
             Set<BehavioralAdaptation> behavioralAdaptations = new LinkedHashSet<>();
             if (fuller.getBehavioralAdaptations().getSituationalAwareness() != null)
             {
+                // TODO this should be added by default when using SUMMATIVE or ANTICIPATION_RELIANCE
                 behavioralAdaptations.add(new AdaptationSituationalAwareness());
                 componentClasses.add(AdaptationSituationalAwareness.class);
             }
@@ -949,28 +949,26 @@ public class ModelParser
             }
 
             // Task manager
-            TaskManager taskManager;
             if (fuller.getTaskManager() == null)
             {
-                taskManager = null;
+                mental = null;
             }
             else
             {
                 switch (fuller.getTaskManager().get(eval))
                 {
                     case "SUMMATIVE":
-                        taskManager = new SummativeTaskManager();
+                        mental = new SumFuller<ArTask>(tasks, behavioralAdaptations);
                         break;
                     case "ANTICIPATION_RELIANCE":
                         // TODO: support once more consolidated
                         throw new XmlParserException("Task manager AnticipationReliance is not yet supported.");
+                    // TODO attention matrix
                     default:
                         throw new XmlParserException("Task manager " + fuller.getTaskManager() + " is unknown.");
                 }
             }
 
-            // Fuller
-            mental = new Fuller(tasks, behavioralAdaptations, taskManager);
         }
         else
         {

@@ -11,7 +11,7 @@ import java.util.function.Function;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <T> type of object to color
- * @param <V> value type obtained from GTU and used to determine the color
+ * @param <V> value type obtained from object and used to determine the color
  */
 public abstract class AbstractColorer<T, V> implements Colorer<T>
 {

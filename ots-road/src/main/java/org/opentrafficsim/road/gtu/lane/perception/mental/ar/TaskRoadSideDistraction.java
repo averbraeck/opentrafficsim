@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.lane.perception.mental;
+package org.opentrafficsim.road.gtu.lane.perception.mental.ar;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -6,10 +6,7 @@ import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.RelativePosition;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.structure.NavigatingIterable.Entry;
@@ -25,7 +22,7 @@ import org.opentrafficsim.road.network.lane.object.Distraction;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class TaskRoadSideDistraction extends AbstractTask
+public class TaskRoadSideDistraction extends AbstractArTask
 {
 
     /** Odometer values at distraction. */
@@ -38,10 +35,9 @@ public class TaskRoadSideDistraction extends AbstractTask
     }
 
     @Override
-    public double calculateTaskDemand(final LanePerception perception, final LaneBasedGtu gtu, final Parameters parameters)
-            throws ParameterException, GtuException
+    public double calculateTaskDemand(final LanePerception perception) throws ParameterException
     {
-        double odo = gtu.getOdometer().si;
+        double odo = perception.getGtu().getOdometer().si;
 
         for (RelativeLane lane : perception.getLaneStructure().getRootCrossSection())
         {

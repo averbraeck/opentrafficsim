@@ -3,23 +3,17 @@ package org.opentrafficsim.road.gtu.lane.perception.mental;
 import static org.opentrafficsim.base.parameters.constraint.NumericConstraint.POSITIVE;
 import static org.opentrafficsim.base.parameters.constraint.NumericConstraint.POSITIVEZERO;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
-import org.djutils.immutablecollections.Immutable;
-import org.djutils.immutablecollections.ImmutableLinkedHashSet;
 import org.djutils.immutablecollections.ImmutableSet;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.mental.TaskManager.SummativeTaskManager;
 
 /**
  * Task-capability interface in accordance to Fuller (2011). Task demand is the sum of demands described by individual
@@ -42,187 +36,69 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.TaskManager.SummativeT
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class Fuller implements Mental
+public abstract class Fuller implements Mental
 {
-
-    // Parameters
 
     /** Task capability in nominal task capability units, i.e. mean is 1. */
     public static final ParameterTypeDouble TC = new ParameterTypeDouble("TC", "Task capability", 1.0, POSITIVE);
 
-    /** Critical task saturation. */
-    public static final ParameterTypeDouble TS_CRIT =
-            new ParameterTypeDouble("TScrit", "Critical task saturation", 0.8, POSITIVEZERO)
-            {
-                /** */
-                private static final long serialVersionUID = 20180403L;
-
-                @Override
-                public void check(final Double value, final Parameters params) throws ParameterException
-                {
-                    Double tsMax = params.getParameterOrNull(TS_MAX);
-                    Throw.when(tsMax != null && value > tsMax, ParameterException.class,
-                            "Value for TS_CRIT should not be larger than TS_MAX.");
-                }
-            };
-
-    /** Maximum task saturation, pertaining to maximum deterioration. */
-    public static final ParameterTypeDouble TS_MAX =
-            new ParameterTypeDouble("TSmax", "Maximum task saturation", 2.0, POSITIVEZERO)
-            {
-                /** */
-                private static final long serialVersionUID = 20180403L;
-
-                @Override
-                public void check(final Double value, final Parameters params) throws ParameterException
-                {
-                    Double tsCrit = params.getParameterOrNull(TS_CRIT);
-                    Throw.when(tsCrit != null && value < tsCrit, ParameterException.class,
-                            "Value for TS_MAX should not be smaller than TS_CRIT.");
-                }
-            };
-
     /** Task saturation. */
     public static final ParameterTypeDouble TS = new ParameterTypeDouble("TS", "Task saturation", 0.0, POSITIVEZERO);
 
-    // Properties
+    /** Over-estimation parameter type. Negative values reflect under-estimation. */
+    public static final ParameterTypeDouble OVER_EST = new ParameterTypeDouble("OVER_EST", "Over estimation factor.", 1.0);
 
-    /** Tasks causing task demand. */
-    private final Set<Task> tasks;
+    /** Erroneous estimation factor on distance and speed difference. */
+    public static final ParameterTypeDouble EST_FACTOR = new ParameterTypeDouble("f_est",
+            "Erroneous estimation factor on distance and speed difference.", 1.0, NumericConstraint.POSITIVE);
 
     /** Behavioral adaptations depending on task saturation. */
     private final Set<BehavioralAdaptation> behavioralAdapatations;
 
-    /** Task manager. */
-    private final TaskManager taskManager;
-
-    /** Stored anticipation reliance per task. */
-    private Map<String, Double> anticipationReliances = new LinkedHashMap<>();
-
-    /** Stored task demand per task. */
-    private Map<String, Double> taskDemands = new LinkedHashMap<>();
-
     /**
      * Constructor with custom situational awareness.
-     * @param tasks tasks
      * @param behavioralAdapatations behavioralAdapatations
      */
-    public Fuller(final Set<? extends Task> tasks, final Set<BehavioralAdaptation> behavioralAdapatations)
+    public Fuller(final Set<BehavioralAdaptation> behavioralAdapatations)
     {
-        this(tasks, behavioralAdapatations, new SummativeTaskManager());
-    }
-
-    /**
-     * Constructor with custom situational awareness.
-     * @param tasks tasks
-     * @param behavioralAdapatations behavioralAdapatations
-     * @param taskManager task manager
-     */
-    public Fuller(final Set<? extends Task> tasks, final Set<BehavioralAdaptation> behavioralAdapatations,
-            final TaskManager taskManager)
-    {
-        Throw.whenNull(tasks, "Tasks may not be null.");
         Throw.whenNull(behavioralAdapatations, "Behavioral adaptations may not be null.");
-        this.tasks = new LinkedHashSet<>();
-        this.tasks.addAll(tasks);
         this.behavioralAdapatations = behavioralAdapatations;
-        this.taskManager = taskManager;
-    }
-
-    /**
-     * Adds a task.
-     * @param task task to add
-     */
-    public void addTask(final Task task)
-    {
-        this.tasks.add(task);
-    }
-
-    /**
-     * Removes a task.
-     * @param task task to remove
-     */
-    public void removeTask(final Task task)
-    {
-        this.tasks.remove(task);
-    }
-
-    /**
-     * Returns the tasks.
-     * @return ImmutableSet&lt;Task&gt; tasks
-     */
-    public ImmutableSet<Task> getTasks()
-    {
-        return new ImmutableLinkedHashSet<>(this.tasks, Immutable.WRAP);
     }
 
     @Override
-    public void apply(final LanePerception perception) throws ParameterException, GtuException
+    public void apply(final LanePerception perception) throws ParameterException
     {
         LaneBasedGtu gtu = Try.assign(() -> perception.getGtu(), "Could not obtain GTU.");
         Parameters parameters = gtu.getParameters();
-        double taskDemand = 0.0;
         // a) the fundamental diagrams of task workload are defined in the tasks
-        // b) sum task demand
-        this.taskManager.manage(this.tasks, perception, gtu, parameters);
-        this.anticipationReliances.clear();
-        this.taskDemands.clear();
-        for (Task task : this.tasks)
-        {
-            double ar = task.getAnticipationReliance();
-            double td = task.getTaskDemand();
-            this.anticipationReliances.put(task.getId(), ar);
-            this.taskDemands.put(task.getId(), td);
-            taskDemand += (td - ar);
-        }
-        double taskSaturation = taskDemand / parameters.getParameter(TC);
-        parameters.setParameter(TS, taskSaturation);
+        // b) sum task demand (possibly with anticipation reliance in sub-class)
+        parameters.setParameter(TS, getTotalTaskDemand(perception) / parameters.getParameter(TC));
         // c) behavioral adaptation
         for (BehavioralAdaptation behavioralAdapatation : this.behavioralAdapatations)
         {
-            behavioralAdapatation.adapt(parameters, taskSaturation);
+            behavioralAdapatation.adapt(parameters);
         }
-        // d) situational awareness can be implemented by one of the behavioral responses
-        // e) perception errors from situational awareness are included in the perception step
-        // f) reaction time from situational awareness are included in the perception step
+        // d) situational awareness can be implemented by one of the behavioral adaptations
+        // e) perception errors from situational awareness or otherwise by sub-class and included in the perception step
+        // f) reaction time from situational awareness or otherwise by sub-class and included in the perception step
     }
 
     /**
-     * Returns the anticipation reliance of the given task id.
-     * @param taskId task id to return the anticipation reliance for.
-     * @return anticipation reliance of given task id, {@code NaN if not present}
+     * Returns the total level of task demand, possibly after anticipation reliance.
+     * @param perception perception
+     * @return level of task demand
+     * @throws ParameterException if a parameter is missing or out of bounds
      */
-    public double getAnticipationReliance(final String taskId)
-    {
-        return this.anticipationReliances.getOrDefault(taskId, Double.NaN);
-    }
+    protected abstract double getTotalTaskDemand(LanePerception perception) throws ParameterException;
 
     /**
-     * Returns the demand of the given task id.
-     * @param taskId task id to return the demand for.
-     * @return demand of given task id, {@code NaN if not present}
+     * Returns the currently active tasks.
+     * @return tasks
      */
-    public double getTaskDemand(final String taskId)
-    {
-        return this.taskDemands.getOrDefault(taskId, Double.NaN);
-    }
-
-    @Override
-    public String toString()
-    {
-        return "Fuller [tasks=" + this.tasks + ", behavioralAdapatations=" + this.behavioralAdapatations + "]";
-    }
+    public abstract ImmutableSet<? extends Task> getTasks();
 
     /**
      * Behavioral adaptation by changing parameter values.
-     * <p>
-     * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved.
-     * <br>
-     * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
-     * </p>
-     * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
-     * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
-     * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
     @FunctionalInterface
     public interface BehavioralAdaptation
@@ -230,10 +106,9 @@ public class Fuller implements Mental
         /**
          * Adapt to task saturation by changing parameter values.
          * @param parameters parameters
-         * @param taskSaturation task saturation
          * @throws ParameterException if a parameter is missing or out of bounds
          */
-        void adapt(Parameters parameters, double taskSaturation) throws ParameterException;
+        void adapt(Parameters parameters) throws ParameterException;
     }
 
 }

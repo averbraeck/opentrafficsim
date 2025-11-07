@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.lane.perception.mental;
+package org.opentrafficsim.road.gtu.lane.perception.mental.ar;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -19,7 +19,7 @@ import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public abstract class TaskHeadwayBased extends AbstractTask
+public abstract class TaskHeadwayBased extends AbstractArTask
 {
 
     /**
@@ -35,9 +35,10 @@ public abstract class TaskHeadwayBased extends AbstractTask
     private Speed speed;
 
     @Override
-    public double calculateTaskDemand(final LanePerception perception, final LaneBasedGtu gtu, final Parameters parameters)
-            throws ParameterException
+    public double calculateTaskDemand(final LanePerception perception) throws ParameterException
     {
+        LaneBasedGtu gtu = perception.getGtu();
+        Parameters parameters = gtu.getParameters();
         double a = gtu.getAcceleration().si;
         double b = parameters.getParameter(ParameterTypes.B).si;
         double tMin = parameters.getParameter(ParameterTypes.TMIN).si;

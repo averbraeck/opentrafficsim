@@ -1,69 +1,41 @@
 package org.opentrafficsim.road.gtu.lane.perception.mental;
 
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
+
 /**
- * Has id, task demand and anticipation reliance as internal variables.
+ * Has task demand as internal variable.
  * <p>
- * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2025-2025 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
- * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
- * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public abstract class AbstractTask implements Task
 {
 
-    /** Id. */
-    private final String id;
-
     /** Task demand. */
     private double taskDemand;
 
-    /** Anticipation reliance. */
-    private double anticipationReliance;
+    @Override
+    public double getTaskDemand(final LanePerception perception) throws ParameterException
+    {
+        this.taskDemand = calculateTaskDemand(perception);
+        return this.taskDemand;
+    }
 
     /**
-     * Constructor.
-     * @param id id
+     * Calculates the task demand.
+     * @param perception perception
+     * @return task demand
+     * @throws ParameterException if a parameter is missing or out of bounds
      */
-    public AbstractTask(final String id)
-    {
-        this.id = id;
-    }
+    protected abstract double calculateTaskDemand(LanePerception perception) throws ParameterException;
 
     @Override
-    public String getId()
-    {
-        return this.id;
-    }
-
-    @Override
-    public final void setTaskDemand(final double taskDemand)
-    {
-        this.taskDemand = taskDemand;
-    }
-
-    @Override
-    public final double getTaskDemand()
+    public double getTaskDemand()
     {
         return this.taskDemand;
     }
 
-    @Override
-    public final void setAnticipationReliance(final double anticipationReliance)
-    {
-        this.anticipationReliance = anticipationReliance;
-    }
-
-    @Override
-    public final double getAnticipationReliance()
-    {
-        return this.anticipationReliance;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "Task (" + getId() + ")";
-    }
 }

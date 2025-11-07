@@ -21,7 +21,6 @@ import org.djunits.value.vdouble.vector.FrequencyVector;
 import org.djutils.draw.function.ContinuousPiecewiseLinearFunction;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.DirectedPoint2d;
-import org.djutils.exceptions.Throw;
 import org.opentrafficsim.animation.gtu.colorer.AccelerationGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.IncentiveGtuColorer;
 import org.opentrafficsim.animation.gtu.colorer.SocialPressureGtuColorer;
@@ -30,21 +29,15 @@ import org.opentrafficsim.animation.gtu.colorer.TaskSaturationGtuColorer;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
-import org.opentrafficsim.base.parameters.ParameterTypeDouble;
-import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.base.parameters.constraint.DualBound;
-import org.opentrafficsim.base.parameters.constraint.NumericConstraint;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
-import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.network.Node;
@@ -61,29 +54,25 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.LaneBookkeeping;
 import org.opentrafficsim.road.gtu.lane.perception.CategoricalLanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
-import org.opentrafficsim.road.gtu.lane.perception.PerceptionCollectable;
 import org.opentrafficsim.road.gtu.lane.perception.PerceptionFactory;
-import org.opentrafficsim.road.gtu.lane.perception.RelativeLane;
 import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationTrafficPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Anticipation;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Estimation;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.PerceivedGtuType;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.PerceivedGtuType.AnticipationPerceivedGtuType;
-import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.TaskHeadwayCollector;
-import org.opentrafficsim.road.gtu.lane.perception.mental.AbstractTask;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationHeadway;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSituationalAwareness;
 import org.opentrafficsim.road.gtu.lane.perception.mental.AdaptationSpeed;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller.BehavioralAdaptation;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
-import org.opentrafficsim.road.gtu.lane.perception.mental.TaskCarFollowing;
-import org.opentrafficsim.road.gtu.lane.perception.mental.TaskManager;
-import org.opentrafficsim.road.gtu.lane.perception.mental.TaskRoadSideDistraction;
-import org.opentrafficsim.road.gtu.lane.perception.object.PerceivedGtu;
+import org.opentrafficsim.road.gtu.lane.perception.mental.ar.ArFuller;
+import org.opentrafficsim.road.gtu.lane.perception.mental.ar.ArTask;
+import org.opentrafficsim.road.gtu.lane.perception.mental.ar.CarFollowingTaskExp;
+import org.opentrafficsim.road.gtu.lane.perception.mental.ar.LaneChangeTaskD;
+import org.opentrafficsim.road.gtu.lane.perception.mental.ar.TaskCarFollowing;
+import org.opentrafficsim.road.gtu.lane.perception.mental.ar.TaskRoadSideDistraction;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdm;
 import org.opentrafficsim.road.gtu.lane.tactical.following.AbstractIdmFactory;
 import org.opentrafficsim.road.gtu.lane.tactical.following.CarFollowingModelFactory;
@@ -289,10 +278,10 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
                      */
                     ParameterSet perceptionParams = new ParameterSet();
                     perceptionParams.setDefaultParameters(Fuller.class);
-                    perceptionParams.setDefaultParameters(TaskManagerAr.class);
+                    perceptionParams.setDefaultParameters(ArFuller.class);
                     perceptionParams.setDefaultParameters(AdaptationSituationalAwareness.class);
-                    perceptionParams.setDefaultParameter(CarFollowingTask.HEXP);
-                    perceptionParams.setDefaultParameter(Estimation.OVER_EST);
+                    perceptionParams.setDefaultParameter(CarFollowingTaskExp.HEXP);
+                    perceptionParams.setDefaultParameter(Fuller.OVER_EST);
                     perceptionParams.setDefaultParameter(AdaptationHeadway.BETA_T);
                     perceptionParams.setDefaultParameter(AdaptationSpeed.BETA_V0);
                     return perceptionParams;
@@ -302,20 +291,18 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
                 public LanePerception generatePerception(final LaneBasedGtu gtu)
                 {
                     // Tasks that determine task demand
-                    Set<Task> tasks = new LinkedHashSet<>();
+                    Set<ArTask> tasks = new LinkedHashSet<>();
                     tasks.add(new TaskCarFollowing());
-                    tasks.add(new LaneChangeTask());
+                    tasks.add(new LaneChangeTaskD());
                     tasks.add(new TaskRoadSideDistraction()); // Level of distraction is defined in Distraction network object
                     // Behavioral adaptations (AdaptationSituationalAwareness only sets situational awareness and reaction time)
                     Set<BehavioralAdaptation> behavioralAdapatations = new LinkedHashSet<>();
                     behavioralAdapatations.add(new AdaptationSituationalAwareness());
                     behavioralAdapatations.add(new AdaptationHeadway());
                     behavioralAdapatations.add(new AdaptationSpeed());
-                    // AR task manager, assuming lane changing to be primary
-                    TaskManager taskManager = new TaskManagerAr("lane-changing");
                     // Fuller framework based on components
                     CategoricalLanePerception perception =
-                            new CategoricalLanePerception(gtu, new Fuller(tasks, behavioralAdapatations, taskManager));
+                            new CategoricalLanePerception(gtu, new ArFuller(tasks, behavioralAdapatations, "lane-changing"));
                     // Imperfect estimation of distance and speed difference, with reaction time, and compensatory anticipation
                     PerceivedGtuType perceptionGtuType =
                             new AnticipationPerceivedGtuType(Estimation.FACTOR_ESTIMATION, Anticipation.CONSTANT_SPEED);
@@ -446,124 +433,6 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
             odOptions.set(OdOptions.LANE_BIAS, DefaultsRoadNl.LANE_BIAS_CAR_TRUCK);
             odOptions.set(OdOptions.BOOKKEEPING, LaneBookkeeping.START);
             OdApplier.applyOd(this.network, od, odOptions, DefaultsNl.VEHICLES);
-        }
-    }
-
-    /**
-     * Task manager implementation of anticipation reliance.
-     */
-    public static class TaskManagerAr implements TaskManager
-    {
-        /** Fraction of primary task that can be reduced by anticipation reliance. */
-        public static final ParameterTypeDouble ALPHA = new ParameterTypeDouble("alpha",
-                "Fraction of primary task that can be reduced by anticipation reliance.", 0.8, DualBound.UNITINTERVAL);
-
-        /** Fraction of auxiliary tasks that can be reduced by anticipation reliance. */
-        public static final ParameterTypeDouble BETA = new ParameterTypeDouble("beta",
-                "Fraction of auxiliary tasks that can be reduced by anticipation reliance.", 0.6, DualBound.UNITINTERVAL);
-
-        /** Primary task id. */
-        private final String primaryTaskId;
-
-        /**
-         * Constructor.
-         * @param primaryTaskId String; primary task id.
-         */
-        public TaskManagerAr(final String primaryTaskId)
-        {
-            Throw.whenNull(primaryTaskId, "Primary task id may not be null.");
-            this.primaryTaskId = primaryTaskId;
-        }
-
-        @Override
-        public void manage(final Set<Task> tasks, final LanePerception perception, final LaneBasedGtu gtu,
-                final Parameters parameters) throws ParameterException, GtuException
-        {
-            Task primary = null;
-            Set<Task> auxiliaryTasks = new LinkedHashSet<>();
-            for (Task task : tasks)
-            {
-                if (task.getId().equals(this.primaryTaskId))
-                {
-                    primary = task;
-                }
-                else
-                {
-                    auxiliaryTasks.add(task);
-                }
-            }
-            Throw.whenNull(primary, "There is no task with id '%s'.", this.primaryTaskId);
-            double primaryTaskDemand = primary.calculateTaskDemand(perception, gtu, parameters);
-            primary.setTaskDemand(primaryTaskDemand);
-            // max AR is alpha of TD, actual AR approaches 0 for increasing TD
-            double a = parameters.getParameter(ALPHA);
-            double b = parameters.getParameter(BETA);
-            primary.setAnticipationReliance(a * primaryTaskDemand * (1.0 - primaryTaskDemand));
-            for (Task auxiliary : auxiliaryTasks)
-            {
-                double auxiliaryTaskLoad = auxiliary.calculateTaskDemand(perception, gtu, parameters);
-                auxiliary.setTaskDemand(auxiliaryTaskLoad);
-                // max AR is beta of TD, actual AR approaches 0 as primary TD approaches 0
-                auxiliary.setAnticipationReliance(b * auxiliaryTaskLoad * primaryTaskDemand);
-            }
-        }
-    }
-
-    /**
-     * Car-following task demand based on headway.
-     */
-    public class CarFollowingTask extends AbstractTask
-    {
-
-        /** Car-following task parameter. */
-        public static final ParameterTypeDuration HEXP = new ParameterTypeDuration("Hexp",
-                "Exponential decay of car-following task by headway.", Duration.ofSI(4.0), NumericConstraint.POSITIVE);
-
-        /**
-         * Constructor.
-         */
-        public CarFollowingTask()
-        {
-            super("car-following");
-        }
-
-        @Override
-        public double calculateTaskDemand(final LanePerception perception, final LaneBasedGtu gtu, final Parameters parameters)
-                throws ParameterException, GtuException
-        {
-            try
-            {
-                NeighborsPerception neighbors = perception.getPerceptionCategory(NeighborsPerception.class);
-                PerceptionCollectable<PerceivedGtu, LaneBasedGtu> leaders = neighbors.getLeaders(RelativeLane.CURRENT);
-                Duration headway = leaders.collect(new TaskHeadwayCollector(gtu.getSpeed()));
-                return headway == null ? 0.0 : Math.exp(-headway.si / parameters.getParameter(HEXP).si);
-            }
-            catch (OperationalPlanException ex)
-            {
-                throw new GtuException(ex);
-            }
-        }
-    }
-
-    /**
-     * Lane change task demand depending on lane change desire.
-     */
-    public static class LaneChangeTask extends AbstractTask
-    {
-        /**
-         * Constructor.
-         */
-        public LaneChangeTask()
-        {
-            super("lane-changing");
-        }
-
-        @Override
-        public double calculateTaskDemand(final LanePerception perception, final LaneBasedGtu gtu, final Parameters parameters)
-                throws ParameterException, GtuException
-        {
-            return Math.max(0.0,
-                    Math.max(parameters.getParameter(LmrsParameters.DLEFT), parameters.getParameter(LmrsParameters.DRIGHT)));
         }
     }
 

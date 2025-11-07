@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.draw.Colors;
@@ -35,28 +37,42 @@ public class DistractionGtuColorer extends AbstractLegendColorer<Gtu, String> im
 
     /**
      * Constructor.
-     * @param distractions DefaultDistraction... distractions to color
+     * @param distractions distractions to color
      */
-    public DistractionGtuColorer(final DefaultDistraction... distractions)
+    public DistractionGtuColorer(final Set<DefaultDistraction> distractions)
     {
-        super(DistractionGtuColorer::getDistractionId, DistractionGtuColorer::getColor, createLegend(distractions));
+        super((g) -> getDistractionId(g, asIds(distractions)), DistractionGtuColorer::getColor, createLegend(distractions));
+    }
+
+    /**
+     * Returns the set of distractions as a set of their ids.
+     * @param distractions distractions
+     * @return distraction ids
+     */
+    private static Set<String> asIds(final Set<DefaultDistraction> distractions)
+    {
+        return distractions.stream().map((d) -> d.getId()).collect(Collectors.toSet());
     }
 
     /**
      * Value function.
      * @param gtu GTU
+     * @param distraction ids of considered distractions
      * @return id of distraction, or {@code null} if there is no distraction
      */
-    private static String getDistractionId(final Gtu gtu)
+    private static String getDistractionId(final Gtu gtu, final Set<String> distraction)
     {
         if (gtu.getTacticalPlanner().getPerception() instanceof LanePerception)
         {
             Mental mental = ((LanePerception) gtu.getTacticalPlanner().getPerception()).getMental();
-            if (mental != null && mental instanceof Fuller)
+            if (mental != null && mental instanceof Fuller fuller)
             {
-                for (Task task : ((Fuller) mental).getTasks())
+                for (Task task : fuller.getTasks())
                 {
-                    return task.getId();
+                    if (distraction.contains(task.getId()))
+                    {
+                        return task.getId();
+                    }
                 }
             }
         }
@@ -82,7 +98,7 @@ public class DistractionGtuColorer extends AbstractLegendColorer<Gtu, String> im
      * @param distractions distractions
      * @return legend
      */
-    private static List<LegendEntry> createLegend(final DefaultDistraction... distractions)
+    private static List<LegendEntry> createLegend(final Set<DefaultDistraction> distractions)
     {
         List<LegendEntry> list = new ArrayList<>();
         list.add(new LegendEntry(NONE, "None", "None"));

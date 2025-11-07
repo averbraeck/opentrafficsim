@@ -2,16 +2,10 @@ package org.opentrafficsim.road.gtu.lane.perception.mental;
 
 import org.djutils.base.Identifiable;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.Parameters;
-import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 
 /**
- * Interface for tasks, where each describes a fundamental relation between exogenous inputs causing a mental task demand. The
- * concept of anticipation reliance can be included, which is a reduction of mental task demand by prioritizing a primary task
- * and relying more on anticipation regarding secondary tasks. Control over the amount of anticipation reliance is
- * implementation dependent, but is typically not part of the task itself.
+ * Interface for tasks, where each describes a fundamental relation between exogenous inputs causing a mental task demand.
  * <p>
  * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
@@ -24,39 +18,17 @@ public interface Task extends Identifiable
 {
 
     /**
-     * Returns the gross task demand to be managed by a task manager.
+     * Returns the gross task demand.
      * @param perception perception
-     * @param gtu gtu
-     * @param parameters parameters
      * @return gross task demand
      * @throws ParameterException if a parameter is missing or out of bounds
-     * @throws GtuException exceptions pertaining to the GTU
      */
-    double calculateTaskDemand(LanePerception perception, LaneBasedGtu gtu, Parameters parameters)
-            throws ParameterException, GtuException;
+    double getTaskDemand(LanePerception perception) throws ParameterException;
 
     /**
-     * Sets (gross) task demand.
-     * @param taskDemand set task demand
-     */
-    void setTaskDemand(double taskDemand);
-
-    /**
-     * Returns the gross demand of this task, i.e without considering anticipation reliance.
-     * @return gross demand of this task, i.e. without considering anticipation reliance
+     * Returns the gross task demand as most recently returned by {@code getTaskDemand(LanePerception)}.
+     * @return gross task demand
      */
     double getTaskDemand();
-
-    /**
-     * Set anticipation reliance.
-     * @param anticipationReliance set anticipation reliance
-     */
-    void setAnticipationReliance(double anticipationReliance);
-
-    /**
-     * Returns the level of anticipation reliance.
-     * @return anticipation reliance
-     */
-    double getAnticipationReliance();
 
 }

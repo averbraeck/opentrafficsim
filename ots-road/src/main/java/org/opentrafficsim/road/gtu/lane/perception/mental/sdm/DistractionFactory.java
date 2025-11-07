@@ -42,24 +42,11 @@ public class DistractionFactory
      * @param taskDemand task demand
      * @return this factory for method chaining
      */
-    public final DistractionFactory addDistraction(final DefaultDistraction defaultDistraction, final double taskDemand)
+    public DistractionFactory addDistraction(final DefaultDistraction defaultDistraction, final double taskDemand)
     {
         return addDistraction(defaultDistraction.getId(), defaultDistraction.getDescription(),
                 defaultDistraction.getFrequency(), defaultDistraction.getExposure(), defaultDistraction.getAverageDuration(),
                 defaultDistraction.getStdDuration(), taskDemand);
-    }
-
-    /**
-     * Adds a default distraction.
-     * @param defaultDistraction default distraction
-     * @param taskSupplier task supplier
-     * @return this factory for method chaining
-     */
-    public final DistractionFactory addDistraction(final DefaultDistraction defaultDistraction, final TaskSupplier taskSupplier)
-    {
-        return addDistraction(defaultDistraction.getId(), defaultDistraction.getDescription(),
-                defaultDistraction.getFrequency(), defaultDistraction.getExposure(), defaultDistraction.getAverageDuration(),
-                defaultDistraction.getStdDuration(), taskSupplier);
     }
 
     /**
@@ -73,30 +60,11 @@ public class DistractionFactory
      * @param taskDemand task demand
      * @return this factory for method chaining
      */
-    public final DistractionFactory addDistraction(final String id, final String description, final Frequency frequency,
+    public DistractionFactory addDistraction(final String id, final String description, final Frequency frequency,
             final double exposure, final Duration averageDuration, final Duration stdDuration, final double taskDemand)
     {
-        addDistraction(id, description, frequency, exposure, averageDuration, stdDuration,
-                new TaskSupplier.Constant(id, taskDemand));
-        return this;
-    }
-
-    /**
-     * Helper method to create a distraction.
-     * @param id id
-     * @param description description
-     * @param frequency frequency per exposed driver
-     * @param exposure exposure (value in range [0...1])
-     * @param averageDuration average duration
-     * @param stdDuration standard deviation of duration
-     * @param taskSupplier task supplier
-     * @return this factory for method chaining
-     */
-    public final DistractionFactory addDistraction(final String id, final String description, final Frequency frequency,
-            final double exposure, final Duration averageDuration, final Duration stdDuration, final TaskSupplier taskSupplier)
-    {
         this.list.add(
-                new Distraction(id, description, frequency, exposure, averageDuration, stdDuration, this.stream, taskSupplier));
+                new Distraction(id, description, frequency, exposure, averageDuration, stdDuration, taskDemand, this.stream));
         return this;
     }
 
@@ -104,7 +72,7 @@ public class DistractionFactory
      * Returns the list of distractions.
      * @return list of distractions
      */
-    public final List<Distraction> build()
+    public List<Distraction> build()
     {
         return this.list;
     }

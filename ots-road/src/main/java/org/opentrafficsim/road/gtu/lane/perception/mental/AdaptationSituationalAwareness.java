@@ -81,16 +81,21 @@ public class AdaptationSituationalAwareness implements BehavioralAdaptation
     }
 
     @Override
-    public void adapt(final Parameters parameters, final double taskSaturation) throws ParameterException
+    public void adapt(final Parameters parameters) throws ParameterException
     {
         // situational awareness
-        double tsCrit = parameters.getParameter(Fuller.TS_CRIT);
-        double tsMax = parameters.getParameter(Fuller.TS_MAX);
+        double taskSaturation = parameters.getParameter(Fuller.TS);
+        double tsCrit = parameters.getParameter(SumFuller.TS_CRIT);
+        double tsMax = parameters.getParameter(SumFuller.TS_MAX);
         double saMin = parameters.getParameter(SA_MIN);
         double saMax = parameters.getParameter(SA_MAX);
         double sa = taskSaturation < tsCrit ? saMax
                 : (taskSaturation >= tsMax ? saMin : saMax - (saMax - saMin) * (taskSaturation - tsCrit) / (tsMax - tsCrit));
         parameters.setParameter(SA, sa);
+
+        // estimation factor
+        parameters.setParameter(Fuller.EST_FACTOR, 1.0 + parameters.getParameter(Fuller.OVER_EST) * (saMax - sa));
+
         // reaction time
         parameters.setParameter(ParameterTypes.TR, parameters.getParameter(TR_MAX).times(saMax - sa));
     }

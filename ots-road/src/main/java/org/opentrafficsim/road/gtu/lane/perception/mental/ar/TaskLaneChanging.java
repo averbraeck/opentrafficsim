@@ -1,4 +1,4 @@
-package org.opentrafficsim.road.gtu.lane.perception.mental;
+package org.opentrafficsim.road.gtu.lane.perception.mental.ar;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.exceptions.Try;

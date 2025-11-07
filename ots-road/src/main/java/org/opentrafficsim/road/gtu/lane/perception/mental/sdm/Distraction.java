@@ -5,8 +5,6 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.units.distributions.ContinuousDistDoubleScalar;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
-import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
 
 import nl.tudelft.simulation.jstats.distributions.DistLogNormal;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
@@ -39,11 +37,11 @@ public class Distraction
     /** Random number stream. */
     private final StreamInterface stream;
 
-    /** Task supplier. */
-    private final TaskSupplier taskSupplier;
-
     /** Distribution of duration. */
     private final ContinuousDistDoubleScalar.Rel<Duration, DurationUnit> dist;
+
+    /** Level of task demand. */
+    private final double taskDemand;
 
     /**
      * Constructor.
@@ -53,12 +51,11 @@ public class Distraction
      * @param exposure exposure (value in range [0...1])
      * @param averageDuration average duration
      * @param stdDuration standard deviation of duration
+     * @param taskDemand task demand
      * @param stream random number stream
-     * @param taskSupplier task supplier
      */
     public Distraction(final String id, final String description, final Frequency frequency, final double exposure,
-            final Duration averageDuration, final Duration stdDuration, final StreamInterface stream,
-            final TaskSupplier taskSupplier)
+            final Duration averageDuration, final Duration stdDuration, final double taskDemand, final StreamInterface stream)
     {
         Throw.whenNull(id, "Id may not be null.");
         Throw.whenNull(description, "Description may not be null.");
@@ -66,12 +63,14 @@ public class Distraction
         Throw.whenNull(averageDuration, "Average duration may not be null.");
         Throw.whenNull(stream, "Random stream may not be null.");
         Throw.when(exposure < 0.0 || exposure > 1.0, IllegalArgumentException.class, "Exposure should be in the range [0...1]");
+        Throw.when(taskDemand < 0.0 || taskDemand > 1.0, IllegalArgumentException.class,
+                "Task demand should be in the range [0...1]");
         this.id = id;
         this.description = description;
         this.frequency = frequency;
         this.exposure = exposure;
         this.stream = stream;
-        this.taskSupplier = taskSupplier;
+        this.taskDemand = taskDemand;
 
         double var = stdDuration.si * stdDuration.si;
         double avgSqrd = averageDuration.si * averageDuration.si;
@@ -84,7 +83,7 @@ public class Distraction
      * Returns the id.
      * @return id
      */
-    public final String getId()
+    public String getId()
     {
         return this.id;
     }
@@ -93,16 +92,25 @@ public class Distraction
      * Returns the description.
      * @return description
      */
-    public final String getDescription()
+    public String getDescription()
     {
         return this.description;
+    }
+
+    /**
+     * Returns the level of task demand.
+     * @return taskDemand level of task demand
+     */
+    public double getTaskDemand()
+    {
+        return this.taskDemand;
     }
 
     /**
      * Returns the next exposure.
      * @return next exposure
      */
-    public final boolean nextExposure()
+    public boolean nextExposure()
     {
         return this.stream.nextDouble() <= this.exposure;
     }
@@ -111,7 +119,7 @@ public class Distraction
      * Returns the next inter-arrival time of this secondary task.
      * @return next inter-arrival time of this secondary task
      */
-    public final Duration nextInterArrival()
+    public Duration nextInterArrival()
     {
         return Duration.ofSI(-Math.log(this.stream.nextDouble()) / this.frequency.si);
     }
@@ -120,19 +128,9 @@ public class Distraction
      * Returns the next duration of this secondary task.
      * @return next duration of this secondary task
      */
-    public final Duration nextDuration()
+    public Duration nextDuration()
     {
         return this.dist.get();
-    }
-
-    /**
-     * Returns a task for the given GTU.
-     * @param gtu gtu
-     * @return task for given GTU
-     */
-    public final Task getTask(final LaneBasedGtu gtu)
-    {
-        return this.taskSupplier.getTask(gtu);
     }
 
     @Override

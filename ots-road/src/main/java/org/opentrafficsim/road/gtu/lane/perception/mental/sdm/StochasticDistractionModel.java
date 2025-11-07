@@ -8,17 +8,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
-import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
+import org.djutils.logger.CategoryLogger;
+import org.djutils.multikeymap.MultiKeyMap;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
+import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Mental;
+import org.opentrafficsim.road.gtu.lane.perception.mental.SumFuller;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Task;
+import org.opentrafficsim.road.gtu.lane.perception.mental.ar.ConstantTask;
+import org.opentrafficsim.road.gtu.lane.perception.mental.channel.ChannelFuller;
+import org.opentrafficsim.road.gtu.lane.perception.mental.channel.ChannelTask;
+import org.opentrafficsim.road.gtu.lane.perception.mental.channel.ChannelTaskConstant;
 import org.opentrafficsim.road.network.RoadNetwork;
 
 import nl.tudelft.simulation.dsol.SimRuntimeException;
@@ -26,7 +34,7 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 /**
  * Stochastic Distraction Model by Manuel Lindorfer.
  * <p>
- * Copyright (c) 2013-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * Copyright (c) 2013-2025 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
  * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
@@ -42,9 +50,6 @@ public class StochasticDistractionModel implements EventListener
     /** List of distractions. */
     private final List<Distraction> distractions;
 
-    /** Simulator. */
-    private final OtsSimulatorInterface simulator;
-
     /** Network. */
     private final RoadNetwork network;
 
@@ -54,22 +59,26 @@ public class StochasticDistractionModel implements EventListener
     /** Queue of distractions per GTU. */
     private final Map<String, Queue<Distraction>> distractionQueues = new LinkedHashMap<>();
 
+    /** Task per GTU id and distraction id. */
+    private final MultiKeyMap<Task> tasks = new MultiKeyMap<>(String.class, String.class, Task.class);
+
+    /** Task per GTU id and distraction id. */
+    private final MultiKeyMap<Function<LanePerception, Set<ChannelTask>>> taskSuppliers =
+            new MultiKeyMap<>(String.class, String.class, Function.class);
+
     /**
      * Constructor. This model will react to GTU's being created in simulation and apply distractions.
      * @param allowMultiTasking whether to allow multi-tasking
      * @param distractions list of distractions
-     * @param simulator simulator
      * @param network network
      */
     public StochasticDistractionModel(final boolean allowMultiTasking, final List<Distraction> distractions,
-            final OtsSimulatorInterface simulator, final RoadNetwork network)
+            final RoadNetwork network)
     {
         Throw.whenNull(distractions, "List of tasks may not be null.");
-        Throw.whenNull(simulator, "Simulator may not be null.");
         Throw.whenNull(network, "Network may not be null.");
         this.allowMultiTasking = allowMultiTasking;
         this.distractions = distractions;
-        this.simulator = simulator;
         this.network = network;
         network.addListener(this, Network.GTU_ADD_EVENT);
         network.addListener(this, Network.GTU_REMOVE_EVENT);
@@ -82,6 +91,7 @@ public class StochasticDistractionModel implements EventListener
      * @param scheduleNext whether to schedule the next distraction (not if starting from queue)
      * @throws SimRuntimeException on time error
      */
+    @SuppressWarnings("unchecked")
     public void startDistraction(final LaneBasedGtu gtu, final Distraction distraction, final boolean scheduleNext)
             throws SimRuntimeException
     {
@@ -92,60 +102,105 @@ public class StochasticDistractionModel implements EventListener
         String gtuId = gtu.getId();
         if (this.allowMultiTasking || !this.distractedGTUs.contains(gtuId))
         {
-            // start the distraction now
-            if (!this.allowMultiTasking)
+            if (gtu.getTacticalPlanner().getPerception().getMental() instanceof Fuller fuller)
             {
-                this.distractedGTUs.add(gtuId);
+                // start the distraction now
+                if (!this.allowMultiTasking)
+                {
+                    this.distractedGTUs.add(gtuId);
+                }
+                if (gtu.getTacticalPlanner().getPerception().getMental() instanceof SumFuller sumFuller)
+                {
+                    Task task = new ConstantTask(distraction.getId(), distraction.getTaskDemand());
+                    ((SumFuller<Task>) sumFuller).addTask(task);
+                    this.tasks.put(task, gtuId, distraction.getId());
+                }
+                else if (gtu.getTacticalPlanner().getPerception().getMental() instanceof ChannelFuller channelFuller)
+                {
+                    boolean internal = !DefaultDistraction.EXTERNAL_DISTRACTION.getId().equals(distraction.getId());
+                    ChannelTask task = new ChannelTaskConstant(distraction.getId(),
+                            internal ? ChannelTask.IN_VEHICLE : ChannelTask.FRONT, distraction.getTaskDemand());
+                    Set<ChannelTask> set = Set.of(task);
+                    Function<LanePerception, Set<ChannelTask>> taskSupplier = (perception) -> set;
+                    channelFuller.addTaskSupplier(taskSupplier);
+                    this.taskSuppliers.put(taskSupplier, gtuId, distraction.getId());
+                }
+                else
+                {
+                    CategoryLogger.always().warn("Fuller implementation {} not supported by {}", fuller.getClass().getName(),
+                            getClass().getName());
+                }
+                // stop the distraction
+                this.network.getSimulator().scheduleEventRel(distraction.nextDuration(),
+                        () -> stopDistraction(gtu, distraction.getId()));
             }
-            Task task = distraction.getTask(gtu);
-            ((Fuller) gtu.getTacticalPlanner().getPerception().getMental()).addTask(task);
-            // stop the distraction
-            this.simulator.scheduleEventRel(distraction.nextDuration(), () -> stopDistraction(gtu, task));
+            else
+            {
+                return; // this vehicle (currently) does not use Fuller model
+            }
         }
         else
         {
             // need to queue distraction
-            if (!this.distractionQueues.containsKey(gtuId))
-            {
-                this.distractionQueues.put(gtuId, new LinkedList<>());
-            }
-            this.distractionQueues.get(gtuId).add(distraction);
+            this.distractionQueues.computeIfAbsent(gtuId, (id) -> new LinkedList<>()).add(distraction);
         }
         if (scheduleNext)
         {
             // schedule next distraction
-            this.simulator.scheduleEventRel(distraction.nextInterArrival(), () -> startDistraction(gtu, distraction, true));
+            this.network.getSimulator().scheduleEventRel(distraction.nextInterArrival(),
+                    () -> startDistraction(gtu, distraction, true));
         }
     }
 
     /**
      * Stops a distraction task.
      * @param gtu gtu to stop the task for
-     * @param task task to stop
+     * @param distractionId distraction id
      * @throws SimRuntimeException on time error
      */
-    public void stopDistraction(final LaneBasedGtu gtu, final Task task) throws SimRuntimeException
+    @SuppressWarnings("unchecked")
+    public void stopDistraction(final LaneBasedGtu gtu, final String distractionId) throws SimRuntimeException
     {
         if (gtu.isDestroyed())
         {
             return;
         }
+        boolean isFuller = false;
         String gtuId = gtu.getId();
-        ((Fuller) gtu.getTacticalPlanner().getPerception().getMental()).removeTask(task);
-        // start next distraction if any in queue
-        if (!this.allowMultiTasking)
+        if (gtu.getTacticalPlanner().getPerception().getMental() instanceof SumFuller sumFuller)
         {
-            this.distractedGTUs.remove(gtuId);
-            if (this.distractionQueues.containsKey(gtuId))
+            ((SumFuller<Task>) sumFuller).removeTask((Task) this.tasks.clear(gtuId, distractionId));
+            isFuller = true;
+        }
+        else if (gtu.getTacticalPlanner().getPerception().getMental() instanceof ChannelFuller channelFuller)
+        {
+            channelFuller.removeTaskSupplier(
+                    (Function<LanePerception, Set<ChannelTask>>) this.taskSuppliers.clear(gtuId, distractionId));
+            isFuller = true;
+        }
+        if (isFuller)
+        {
+            // start next distraction if any in queue
+            if (!this.allowMultiTasking)
             {
-                Queue<Distraction> queue = this.distractionQueues.get(gtuId);
-                Distraction distraction = queue.poll();
-                startDistraction(gtu, distraction, false);
-                if (queue.isEmpty())
+                this.distractedGTUs.remove(gtuId);
+                if (this.distractionQueues.containsKey(gtuId))
                 {
-                    this.distractionQueues.remove(gtuId);
+                    Queue<Distraction> queue = this.distractionQueues.get(gtuId);
+                    Distraction distraction = queue.poll();
+                    startDistraction(gtu, distraction, false);
+                    if (queue.isEmpty())
+                    {
+                        this.distractionQueues.remove(gtuId);
+                    }
                 }
             }
+        }
+        else
+        {
+            // this vehicle (currently) does not use Fuller model
+            this.distractedGTUs.remove(gtuId);
+            this.distractionQueues.remove(gtuId);
         }
     }
 
@@ -170,7 +225,7 @@ public class StochasticDistractionModel implements EventListener
                 {
                     if (distraction.nextExposure())
                     {
-                        this.simulator.scheduleEventRel(distraction.nextInterArrival(),
+                        this.network.getSimulator().scheduleEventRel(distraction.nextInterArrival(),
                                 () -> startDistraction(gtu, distraction, true));
                     }
                 }

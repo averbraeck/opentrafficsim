@@ -23,6 +23,11 @@
       <groupId>org.opentrafficsim</groupId>
       <artifactId>ots-kpi</artifactId>
     </dependency>
+    
+    <dependency>
+	  <groupId>gov.nist.math</groupId>
+	  <artifactId>jama</artifactId>
+	</dependency>
 
   </dependencies>
 

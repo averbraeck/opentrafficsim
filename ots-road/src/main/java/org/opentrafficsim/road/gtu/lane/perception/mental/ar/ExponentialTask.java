@@ -1,18 +1,21 @@
-package org.opentrafficsim.road.gtu.lane.perception.mental;
+package org.opentrafficsim.road.gtu.lane.perception.mental.ar;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
-import org.opentrafficsim.core.gtu.GtuException;
-import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 import org.opentrafficsim.road.gtu.lane.perception.LanePerception;
 
 /**
  * Class for exponential demand.
+ * <p>
+ * Copyright (c) 2024-2024 Delft University of Technology, PO Box 5, 2600 AA, Delft, the Netherlands. All rights reserved. <br>
+ * BSD-style license. See <a href="https://opentrafficsim.org/docs/license.html">OpenTrafficSim License</a>.
+ * </p>
+ * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ExponentialTask extends AbstractTask
+public class ExponentialTask extends AbstractArTask
 {
+
     /** Initial level of task demand. */
     private final double initialTaskDemand;
 
@@ -44,10 +47,9 @@ public class ExponentialTask extends AbstractTask
     }
 
     @Override
-    public double calculateTaskDemand(final LanePerception perception, final LaneBasedGtu gtu, final Parameters parameters)
-            throws ParameterException, GtuException
+    public double calculateTaskDemand(final LanePerception perception) throws ParameterException
     {
-        double t = gtu.getSimulator().getSimulatorTime().si - this.start;
+        double t = perception.getGtu().getSimulator().getSimulatorTime().si - this.start;
         return this.initialTaskDemand + this.additionalTaskDemand * (1.0 - Math.exp(-t / this.tau.si));
     }
 

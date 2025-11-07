@@ -8,6 +8,7 @@ import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.draw.ColorInterpolator;
 import org.opentrafficsim.draw.colorer.LegendColorer;
 import org.opentrafficsim.road.gtu.lane.perception.mental.Fuller;
+import org.opentrafficsim.road.gtu.lane.perception.mental.SumFuller;
 
 /**
  * Displays task saturation.
@@ -58,8 +59,8 @@ public class TaskSaturationGtuColorer implements LegendColorer<Gtu>
     public Color getColor(final Gtu gtu)
     {
         Double ts = gtu.getParameters().getParameterOrNull(Fuller.TS);
-        Double tsCrit = gtu.getParameters().getParameterOrNull(Fuller.TS_CRIT);
-        Double tsMax = gtu.getParameters().getParameterOrNull(Fuller.TS_MAX);
+        Double tsCrit = gtu.getParameters().getParameterOrNull(SumFuller.TS_CRIT);
+        Double tsMax = gtu.getParameters().getParameterOrNull(SumFuller.TS_MAX);
         if (ts == null || tsCrit == null || tsMax == null)
         {
             return NA;

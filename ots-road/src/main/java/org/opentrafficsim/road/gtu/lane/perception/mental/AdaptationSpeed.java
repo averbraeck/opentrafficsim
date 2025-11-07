@@ -37,13 +37,14 @@ public class AdaptationSpeed implements BehavioralAdaptation
     }
 
     @Override
-    public void adapt(final Parameters parameters, final double taskSaturation) throws ParameterException
+    public void adapt(final Parameters parameters) throws ParameterException
     {
         if (this.fSpeed0 == null)
         {
             this.fSpeed0 = parameters.getParameter(ParameterTypes.FSPEED);
         }
-        double eps = parameters.getParameter(Fuller.TS) - parameters.getParameter(Fuller.TS_CRIT);
+        Double tsCrit = parameters.getParameterOrNull(SumFuller.TS_CRIT);
+        double eps = parameters.getParameter(Fuller.TS) - (tsCrit == null ? 1.0 : tsCrit);
         eps = eps < 0.0 ? 0.0 : (eps > 1.0 ? 1.0 : eps);
         double factor = 1.0 - parameters.getParameter(BETA_V0) * eps;
         parameters.setParameter(ParameterTypes.FSPEED, this.fSpeed0 * factor);
