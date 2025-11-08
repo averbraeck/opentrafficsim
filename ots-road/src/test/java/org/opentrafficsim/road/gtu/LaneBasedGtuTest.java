@@ -311,7 +311,7 @@ public final class LaneBasedGtuTest implements UNITS
                         || step + carLength.getSI() <= truckPosition.getSI()
                         || step > truckPosition.getSI() + truckLength.getSI() ? 0 : 1;
                 // This one caught a complex bug
-                assertEquals(expectedLeftSize, leftParallel.collect(() -> Integer.valueOf(0), (inter, gtu, dist) ->
+                assertEquals(expectedLeftSize, (Integer) leftParallel.collect(() -> Integer.valueOf(0), (inter, gtu, dist) ->
                 {
                     if (dist.lt0())
                     {
@@ -338,7 +338,7 @@ public final class LaneBasedGtuTest implements UNITS
                 int expectedRightSize = laneRank + carLanesCovered - 1 <= truckFromLane || laneRank > truckUpToLane + 1
                         || step + carLength.getSI() < truckPosition.getSI()
                         || step > truckPosition.getSI() + truckLength.getSI() ? 0 : 1;
-                assertEquals(expectedRightSize, rightParallel.collect(() -> Integer.valueOf(0), (inter, gtu, dist) ->
+                assertEquals(expectedRightSize, (Integer) rightParallel.collect(() -> Integer.valueOf(0), (inter, gtu, dist) ->
                 {
                     if (dist.lt0())
                     {
