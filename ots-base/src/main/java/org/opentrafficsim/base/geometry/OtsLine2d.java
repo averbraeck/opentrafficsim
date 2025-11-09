@@ -3,7 +3,6 @@ package org.opentrafficsim.base.geometry;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -813,7 +812,7 @@ public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
     }
 
     @Override
-    public Bounds<?, ?> getRelativeBounds() throws RemoteException
+    public Bounds<?, ?> getRelativeBounds()
     {
         return OtsShape.toRelativeTransform(getLocation()).transform(getAbsoluteBounds());
     }

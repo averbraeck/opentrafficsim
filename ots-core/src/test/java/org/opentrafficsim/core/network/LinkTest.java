@@ -5,8 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.rmi.RemoteException;
-
 import org.djutils.draw.bounds.Bounds;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
@@ -139,7 +137,7 @@ public final class LinkTest implements EventListener
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         EventType eventType = event.getType();
         if (eventType.equals(Link.GTU_ADD_EVENT))

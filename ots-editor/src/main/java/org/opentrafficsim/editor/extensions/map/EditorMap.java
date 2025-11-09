@@ -563,7 +563,7 @@ public final class EditorMap extends JPanel implements EventListener
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         if (event.getType().equals(OtsEditor.NEW_FILE))
         {
@@ -629,7 +629,7 @@ public final class EditorMap extends JPanel implements EventListener
                     private static final long serialVersionUID = 20241206L;
 
                     @Override
-                    public void notify(final Event event) throws RemoteException
+                    public void notify(final Event event)
                     {
                         if (event.getType().equals(ChangeListener.CHANGE_EVENT))
                         {
@@ -834,7 +834,7 @@ public final class EditorMap extends JPanel implements EventListener
      * @param node node of element to draw.
      * @throws RemoteException context binding problem.
      */
-    private void add(final XsdTreeNode node) throws RemoteException
+    private void add(final XsdTreeNode node)
     {
         MapData data;
         if (this.datas.containsKey(node))

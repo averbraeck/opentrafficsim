@@ -174,7 +174,7 @@ public class XsdTreeNodeRoot extends XsdTreeNode
             private static final long serialVersionUID = 20230228L;
 
             @Override
-            public void notify(final Event event) throws RemoteException
+            public void notify(final Event event)
             {
                 // loop keys, keyrefs and uniques to add or remove the node (key, keyref or unique determines node relevance).
                 int iteration = 0;

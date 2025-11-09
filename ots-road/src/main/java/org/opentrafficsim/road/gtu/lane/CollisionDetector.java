@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.lane;
 
-import java.rmi.RemoteException;
 import java.util.Iterator;
 
 import org.djunits.value.vdouble.scalar.Angle;
@@ -86,7 +85,7 @@ public class CollisionDetector extends AbstractLaneBasedMoveChecker implements E
     }
 
     @Override
-    public EventListenerMap getEventListenerMap() throws RemoteException
+    public EventListenerMap getEventListenerMap()
     {
         return this.listenerMap;
     }

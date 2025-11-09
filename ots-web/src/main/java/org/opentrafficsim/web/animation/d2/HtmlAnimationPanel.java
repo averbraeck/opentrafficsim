@@ -215,7 +215,7 @@ public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
 
     @SuppressWarnings("unchecked")
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         if (event.getType().equals(ContextInterface.OBJECT_ADDED_EVENT))
         {

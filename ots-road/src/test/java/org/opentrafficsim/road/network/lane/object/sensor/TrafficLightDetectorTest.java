@@ -2,7 +2,6 @@ package org.opentrafficsim.road.network.lane.object.sensor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -257,7 +256,7 @@ public final class TrafficLightDetectorTest implements EventListener
     private List<Event> loggedEvents = new ArrayList<>();
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         System.out.println("Received event " + event);
         this.loggedEvents.add(event);

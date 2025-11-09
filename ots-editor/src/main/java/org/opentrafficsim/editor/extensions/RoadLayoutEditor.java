@@ -1,7 +1,6 @@
 package org.opentrafficsim.editor.extensions;
 
 import java.io.IOException;
-import java.rmi.RemoteException;
 import java.time.LocalDateTime;
 import java.util.function.Consumer;
 
@@ -60,7 +59,7 @@ public class RoadLayoutEditor implements EventListener, Consumer<XsdTreeNode>
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         // TODO: this is a dummy implementation
         if (event.getType().equals(OtsEditor.NEW_FILE))

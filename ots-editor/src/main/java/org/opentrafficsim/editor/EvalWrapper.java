@@ -1,7 +1,6 @@
 package org.opentrafficsim.editor;
 
 import java.lang.reflect.Constructor;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -186,7 +185,7 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED) || event.getType().equals(XsdTreeNode.VALUE_CHANGED))
         {

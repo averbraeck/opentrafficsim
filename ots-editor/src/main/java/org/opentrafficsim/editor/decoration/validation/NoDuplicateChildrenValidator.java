@@ -1,6 +1,5 @@
 package org.opentrafficsim.editor.decoration.validation;
 
-import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -130,7 +129,7 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecoratorRemove im
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         if (XsdTreeNode.VALUE_CHANGED.equals(event.getType()) || XsdTreeNode.OPTION_CHANGED.equals(event.getType())
                 || XsdTreeNode.ATTRIBUTE_CHANGED.equals(event.getType())

@@ -131,7 +131,7 @@ class EventMultiplexer extends LocalEventProducer implements EventListener
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         notifyTimedEvent(event);
     }

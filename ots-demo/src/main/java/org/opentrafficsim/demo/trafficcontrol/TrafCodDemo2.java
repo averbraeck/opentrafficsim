@@ -204,7 +204,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
         }
 
         @Override
-        public void notify(final Event event) throws RemoteException
+        public void notify(final Event event)
         {
             EventType type = event.getType();
             Object[] payload = (Object[]) event.getContent();

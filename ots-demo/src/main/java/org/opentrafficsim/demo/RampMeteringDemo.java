@@ -2,7 +2,6 @@ package org.opentrafficsim.demo;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -371,7 +370,7 @@ public class RampMeteringDemo extends AbstractSimulationScript
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         if (event.getType().equals(Network.GTU_ADD_EVENT))
         {

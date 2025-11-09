@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.perception.mental.sdm;
 
-import java.rmi.RemoteException;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -205,7 +204,7 @@ public class StochasticDistractionModel implements EventListener
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         if (event.getType().equals(Network.GTU_ADD_EVENT))
         {

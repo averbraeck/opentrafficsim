@@ -1,6 +1,5 @@
 package org.opentrafficsim.swing.script;
 
-import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
@@ -116,7 +115,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
             CliUtil.changeCommandDescription(this, this.description);
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             CliUtil.changeCommandVersion(this,
-                    formatter.format(new Date(ClassUtil.classFileDescriptor(this.getClass()).getLastChangedDate())));
+                    formatter.format(new Date(ClassUtil.classFileDescriptorForClass(this.getClass()).getLastChangedDate())));
         }
         catch (IllegalStateException | IllegalArgumentException | CliException exception)
         {
@@ -265,7 +264,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         if (event.getType().equals(Replication.END_REPLICATION_EVENT))
         {
@@ -404,15 +403,8 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
             AbstractSimulationScript.this.network =
                     Try.assign(() -> AbstractSimulationScript.this.setupSimulation(AbstractSimulationScript.this.simulator),
                             RuntimeException.class, "Exception while setting up simulation.");
-            try
-            {
-                AbstractSimulationScript.this.simulator.addListener(AbstractSimulationScript.this,
-                        Replication.END_REPLICATION_EVENT);
-            }
-            catch (RemoteException exception)
-            {
-                throw new SimRuntimeException(exception);
-            }
+            AbstractSimulationScript.this.simulator.addListener(AbstractSimulationScript.this,
+                    Replication.END_REPLICATION_EVENT);
         }
 
         @SuppressWarnings("synthetic-access")

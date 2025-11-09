@@ -83,7 +83,7 @@ public abstract class AbstractLineAnimation<T extends LaneBasedObjectData> exten
         DirectedPoint2d getLocation();
 
         @Override
-        default double getZ() throws RemoteException
+        default double getZ()
         {
             return DrawLevel.OBJECT.getZ();
         }

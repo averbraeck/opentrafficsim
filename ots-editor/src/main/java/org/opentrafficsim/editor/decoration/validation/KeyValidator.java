@@ -1,6 +1,5 @@
 package org.opentrafficsim.editor.decoration.validation;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -161,7 +160,7 @@ public class KeyValidator extends XPathValidator implements EventListener
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         // invalidate all key nodes as something has changed
         this.keyNodes.values().forEach((set) -> set.forEach((node) -> node.invalidate()));

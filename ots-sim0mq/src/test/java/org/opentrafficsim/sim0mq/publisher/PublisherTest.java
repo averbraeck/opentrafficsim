@@ -222,7 +222,7 @@ public final class PublisherTest implements OtsModelInterface
         }
 
         @Override
-        public void notify(final Event event) throws RemoteException
+        public void notify(final Event event)
         {
             System.err.println("Received event " + event);
         }

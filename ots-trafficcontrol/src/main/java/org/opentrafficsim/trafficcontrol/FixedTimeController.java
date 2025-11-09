@@ -1,6 +1,5 @@
 package org.opentrafficsim.trafficcontrol;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -261,7 +260,7 @@ public class FixedTimeController extends AbstractTrafficController
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         // nothing
     }

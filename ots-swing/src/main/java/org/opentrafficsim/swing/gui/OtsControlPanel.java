@@ -428,9 +428,8 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 }
                 catch (SimRuntimeException exception)
                 {
-                    CategoryLogger.always()
-                            .error("Caught an exception while trying to schedule an autoPauseSimulator event "
-                                    + "at the current simulator time");
+                    CategoryLogger.always().error("Caught an exception while trying to schedule an autoPauseSimulator event "
+                            + "at the current simulator time");
                 }
                 // System.out.println("NextTime: Starting simulator");
                 this.simulator.start();
@@ -671,8 +670,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             }
             catch (SimRuntimeException exception)
             {
-                CategoryLogger.always()
-                        .error("Caught an exception while trying to schedule an autoPauseSimulator event");
+                CategoryLogger.always().error("Caught an exception while trying to schedule an autoPauseSimulator event");
             }
         }
     }
@@ -1265,7 +1263,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
     }
 
     @Override
-    public final void notify(final Event event) throws RemoteException
+    public final void notify(final Event event)
     {
         if (event.getType().equals(Replication.END_REPLICATION_EVENT) || event.getType().equals(SimulatorInterface.START_EVENT)
                 || event.getType().equals(SimulatorInterface.STOP_EVENT)

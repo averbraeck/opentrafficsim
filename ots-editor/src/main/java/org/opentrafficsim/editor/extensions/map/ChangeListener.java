@@ -1,6 +1,5 @@
 package org.opentrafficsim.editor.extensions.map;
 
-import java.rmi.RemoteException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -13,9 +12,9 @@ import org.djutils.event.LocalEventProducer;
 import org.djutils.event.reference.ReferenceType;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.opentrafficsim.editor.EvalWrapper.EvalListener;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.XsdTreeNodeRoot;
-import org.opentrafficsim.editor.EvalWrapper.EvalListener;
 
 /**
  * Generic implementation to listen to any changes under a node, including its own attributes and activation status. The node
@@ -120,7 +119,7 @@ public abstract class ChangeListener<T> extends LocalEventProducer implements Ev
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         // for all events this listens to, the node is the first object in the content
         XsdTreeNode node = (XsdTreeNode) ((Object[]) event.getContent())[0];

@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.lane;
 
-import java.rmi.RemoteException;
-
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.opentrafficsim.base.OtsRuntimeException;
@@ -37,7 +35,7 @@ public abstract class AbstractLaneBasedMoveChecker implements EventListener
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         if (event.getType().equals(LaneBasedGtu.LANEBASED_MOVE_EVENT))
         {
@@ -61,7 +59,7 @@ public abstract class AbstractLaneBasedMoveChecker implements EventListener
         }
         else
         {
-            throw new RemoteException("AbstractMoveChecker is a listener to an unknown event type.");
+            throw new RuntimeException("AbstractMoveChecker is a listener to an unknown event type.");
         }
     }
 

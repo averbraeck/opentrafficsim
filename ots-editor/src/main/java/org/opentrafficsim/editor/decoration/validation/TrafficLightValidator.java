@@ -1,6 +1,5 @@
 package org.opentrafficsim.editor.decoration.validation;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -72,7 +71,7 @@ public class TrafficLightValidator extends AbstractNodeDecoratorRemove implement
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED))
         {

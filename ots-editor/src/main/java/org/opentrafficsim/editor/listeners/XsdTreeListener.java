@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.rmi.RemoteException;
 import java.util.List;
 
 import javax.swing.CellEditor;
@@ -25,7 +24,6 @@ import javax.swing.tree.TreePath;
 
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
-import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.editor.AttributesTableModel;
 import org.opentrafficsim.editor.DocumentReader;
 import org.opentrafficsim.editor.OtsEditor;
@@ -164,14 +162,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
             this.attributesTable.setModel(new AttributesTableModel(node, this.treeTable));
 
             // fire selection changed event
-            try
-            {
-                this.editor.fireEvent(OtsEditor.SELECTION_CHANGED, node);
-            }
-            catch (RemoteException exception)
-            {
-                CategoryLogger.always().error(exception);
-            }
+            this.editor.fireEvent(OtsEditor.SELECTION_CHANGED, node);
         }
         else
         {
@@ -181,7 +172,7 @@ public class XsdTreeListener extends MouseAdapter implements TreeSelectionListen
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         if (this.listening != null)
         {

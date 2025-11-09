@@ -1,6 +1,5 @@
 package org.opentrafficsim.editor.decoration.string;
 
-import java.rmi.RemoteException;
 import java.util.function.Function;
 
 import org.djutils.event.Event;
@@ -51,7 +50,7 @@ public class ChoiceNodeStringFunction extends AbstractNodeDecorator
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         if (event.getType().equals(XsdTreeNode.ACTIVATION_CHANGED))
         {

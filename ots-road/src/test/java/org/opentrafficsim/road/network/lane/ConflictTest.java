@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -240,7 +239,7 @@ public final class ConflictTest implements EventListener
     }
 
     @Override
-    public final void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         // System.out.println("received event " + event);
         this.collectedEvents.add(event);

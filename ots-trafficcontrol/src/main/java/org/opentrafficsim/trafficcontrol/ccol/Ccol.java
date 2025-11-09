@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.rmi.RemoteException;
 import java.util.Set;
 
 import org.djunits.unit.DurationUnit;
@@ -184,7 +183,7 @@ public class Ccol extends LocalEventProducer implements ActuatedTrafficControlle
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         EventType eventType = event.getType();
         if (eventType.equals(Replication.END_REPLICATION_EVENT))

@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.network.lane.object.detector;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -220,7 +219,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
     }
 
     @Override
-    public final void notify(final Event event) throws RemoteException
+    public final void notify(final Event event)
     {
         String gtuId = (String) ((Object[]) event.getContent())[0];
         LaneBasedGtu gtu = (LaneBasedGtu) this.network.getGTU(gtuId);

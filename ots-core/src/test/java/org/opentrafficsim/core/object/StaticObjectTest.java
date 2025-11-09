@@ -5,8 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.rmi.RemoteException;
-
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.line.Polygon2d;
@@ -111,7 +109,7 @@ public final class StaticObjectTest implements EventListener
      * Receiver for the events that should be emitted when a StaticObject is constructed.
      */
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         this.lastEvent = event;
     }

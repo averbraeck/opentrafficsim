@@ -23,7 +23,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -1132,7 +1131,7 @@ public class OtsEditor extends AppearanceApplication implements EventProducer
     }
 
     @Override
-    public EventListenerMap getEventListenerMap() throws RemoteException
+    public EventListenerMap getEventListenerMap()
     {
         return this.listenerMap;
     }

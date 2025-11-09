@@ -2,7 +2,6 @@ package org.opentrafficsim.web;
 
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
@@ -79,15 +78,8 @@ public class OtsWebModel implements EventListener
         this.title = title;
         this.simulator = simulator;
         Bounds2d extent = new Bounds2d(-200, 200, -200, 200);
-        try
-        {
-            simulator.addListener(this, SimulatorInterface.START_EVENT);
-            simulator.addListener(this, SimulatorInterface.STOP_EVENT);
-        }
-        catch (RemoteException re)
-        {
-            CategoryLogger.always().warn(re, "Problem adding listeners to Simulator");
-        }
+        simulator.addListener(this, SimulatorInterface.START_EVENT);
+        simulator.addListener(this, SimulatorInterface.STOP_EVENT);
 
         if (this.simulator instanceof AnimatorInterface)
         {
@@ -212,7 +204,7 @@ public class OtsWebModel implements EventListener
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         if (event.getType().equals(SimulatorInterface.START_EVENT))
         {

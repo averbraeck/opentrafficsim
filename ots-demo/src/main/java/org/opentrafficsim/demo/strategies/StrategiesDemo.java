@@ -3,7 +3,6 @@ package org.opentrafficsim.demo.strategies;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -454,7 +453,7 @@ public class StrategiesDemo extends AbstractSimulationScript
 
         @SuppressWarnings("synthetic-access")
         @Override
-        public void notify(final Event event) throws RemoteException
+        public void notify(final Event event)
         {
             if (event.getType().equals(LaneBasedGtu.LANE_CHANGE_EVENT))
             {
@@ -495,13 +494,11 @@ public class StrategiesDemo extends AbstractSimulationScript
         Node nodeA = new Node(network, "A", new Point2d(-radius, 0), new Direction(270, DirectionUnit.EAST_DEGREE));
         Node nodeB = new Node(network, "B", new Point2d(radius, 0), new Direction(90, DirectionUnit.EAST_DEGREE));
 
-        OffsetCurve2d half1 =
-                new Arc2d(new DirectedPoint2d(radius, 0.0, Math.PI / 2), radius, true, Math.PI);
+        OffsetCurve2d half1 = new Arc2d(new DirectedPoint2d(radius, 0.0, Math.PI / 2), radius, true, Math.PI);
         List<Lane> lanes1 = new LaneFactory(network, nodeB, nodeA, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPRIGHT,
                 DefaultsNl.VEHICLE, half1).leftToRight(0.0, Length.ofSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit)
                         .addLanes(DefaultsRoadNl.DASHED).getLanes();
-        OffsetCurve2d half2 =
-                new Arc2d(new DirectedPoint2d(-radius, 0.0, -Math.PI / 2), radius, true, Math.PI);
+        OffsetCurve2d half2 = new Arc2d(new DirectedPoint2d(-radius, 0.0, -Math.PI / 2), radius, true, Math.PI);
         List<Lane> lanes2 = new LaneFactory(network, nodeA, nodeB, DefaultsNl.FREEWAY, sim, LaneKeepingPolicy.KEEPRIGHT,
                 DefaultsNl.VEHICLE, half2).leftToRight(0.0, Length.ofSI(3.5), DefaultsRoadNl.FREEWAY, speedLimit)
                         .addLanes(DefaultsRoadNl.DASHED).getLanes();

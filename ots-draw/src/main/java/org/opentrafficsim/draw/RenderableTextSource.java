@@ -12,7 +12,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.ImageObserver;
 import java.io.Serializable;
-import java.rmi.RemoteException;
 import java.util.function.Supplier;
 
 import org.djutils.draw.Directed;
@@ -366,7 +365,7 @@ public abstract class RenderableTextSource<L extends OtsShape, T extends Rendera
     }
 
     @Override
-    public double getZ() throws RemoteException
+    public double getZ()
     {
         return DrawLevel.LABEL.getZ();
     }

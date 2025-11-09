@@ -1,6 +1,5 @@
 package org.opentrafficsim.demo;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -491,7 +490,7 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
     private Set<Gtu> knownGTUs = new LinkedHashSet<>();
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         EventType eventType = event.getType();
         if (Network.GTU_ADD_EVENT.equals(eventType))

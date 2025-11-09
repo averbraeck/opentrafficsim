@@ -40,7 +40,7 @@ public class TrafCodEditor implements EventListener, Consumer<XsdTreeNode>
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         // TODO: this is a dummy implementation
         if (event.getType().equals(OtsEditor.NEW_FILE))

@@ -11,7 +11,6 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
-import nl.tudelft.simulation.jstats.streams.StreamException;
 import nl.tudelft.simulation.jstats.streams.StreamInterface;
 
 /**
@@ -231,19 +230,6 @@ public final class DrawTest
 
         @Override
         public void reset()
-        {
-            // Do nothing
-        }
-
-        @Override
-        public byte[] saveState() throws StreamException
-        {
-            // Do nothing
-            return null;
-        }
-
-        @Override
-        public void restoreState(final byte[] state) throws StreamException
         {
             // Do nothing
         }

@@ -245,7 +245,7 @@ public class DefaultAnimationFactory implements EventListener
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         try
         {

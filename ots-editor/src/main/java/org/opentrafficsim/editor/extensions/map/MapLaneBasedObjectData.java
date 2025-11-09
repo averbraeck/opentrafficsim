@@ -79,25 +79,18 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
     {
         super(map, node, editor);
         getNode().addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
-        try
+        if (getNode().isActive())
         {
-            if (getNode().isActive())
+            if (getNode().isIdentifiable())
             {
-                if (getNode().isIdentifiable())
-                {
-                    notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Id", null}));
-                }
-                if (getNode().hasAttribute("Link"))
-                {
-                    notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Link", null}));
-                }
-                notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Lane", null}));
-                notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Position", null}));
+                notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Id", null}));
             }
-        }
-        catch (RemoteException e)
-        {
-            throw new RuntimeException(e);
+            if (getNode().hasAttribute("Link"))
+            {
+                notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Link", null}));
+            }
+            notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Lane", null}));
+            notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Position", null}));
         }
     }
 
@@ -108,26 +101,19 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
      */
     protected void setLinkNode(final XsdTreeNode linkNode)
     {
-        try
+        if (this.lastLinkNode != null)
         {
-            if (this.lastLinkNode != null)
-            {
-                MapLinkData data = (MapLinkData) getMap().getData(linkNode);
-                if (data != null)
-                {
-                    data.removeListener(this, MapLinkData.LAYOUT_REBUILT);
-                }
-            }
-            this.lastLinkNode = linkNode;
             MapLinkData data = (MapLinkData) getMap().getData(linkNode);
             if (data != null)
             {
-                data.addListener(this, MapLinkData.LAYOUT_REBUILT, ReferenceType.WEAK);
+                data.removeListener(this, MapLinkData.LAYOUT_REBUILT);
             }
         }
-        catch (RemoteException e)
+        this.lastLinkNode = linkNode;
+        MapLinkData data = (MapLinkData) getMap().getData(linkNode);
+        if (data != null)
         {
-            throw new RuntimeException(e);
+            data.addListener(this, MapLinkData.LAYOUT_REBUILT, ReferenceType.WEAK);
         }
     }
 
@@ -226,7 +212,7 @@ public abstract class MapLaneBasedObjectData extends MapData implements LaneBase
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED))
         {

@@ -1,7 +1,6 @@
 package org.opentrafficsim.editor.extensions.map;
 
 import java.awt.Color;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -179,14 +178,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
             XsdTreeNode layout = linkNode.getChild(1);
             if (layout.getOption().equals(layout))
             {
-                try
-                {
-                    notify(new Event(XsdTreeNode.OPTION_CHANGED, new Object[] {layout, layout, layout}));
-                }
-                catch (RemoteException e)
-                {
-                    throw new RuntimeException(e);
-                }
+                notify(new Event(XsdTreeNode.OPTION_CHANGED, new Object[] {layout, layout, layout}));
             }
         });
 
@@ -195,24 +187,17 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         {
             SwingUtilities.invokeLater(() ->
             {
-                try
-                {
-                    // this is for when delete is undone, as some children are recovered later, including the shape node
-                    this.shapeListener.shapeNode = linkNode.getChild(0);
-                    linkNode.getChild(0).addListener(this.shapeListener, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
+                // this is for when delete is undone, as some children are recovered later, including the shape node
+                this.shapeListener.shapeNode = linkNode.getChild(0);
+                linkNode.getChild(0).addListener(this.shapeListener, XsdTreeNode.OPTION_CHANGED, ReferenceType.WEAK);
 
-                    notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Id", null}));
-                    this.nodeStart = replaceNode(this.nodeStart, linkNode.getCoupledNodeAttribute("NodeStart"));
-                    this.nodeEnd = replaceNode(this.nodeEnd, linkNode.getCoupledNodeAttribute("NodeEnd"));
-                    notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "OffsetStart", null}));
-                    notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "OffsetEnd", null}));
-                    XsdTreeNode shape = linkNode.getChild(0);
-                    this.shapeListener.notify(new Event(XsdTreeNode.OPTION_CHANGED, new Object[] {shape, shape, shape}));
-                }
-                catch (RemoteException e)
-                {
-                    throw new RuntimeException(e);
-                }
+                notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Id", null}));
+                this.nodeStart = replaceNode(this.nodeStart, linkNode.getCoupledNodeAttribute("NodeStart"));
+                this.nodeEnd = replaceNode(this.nodeEnd, linkNode.getCoupledNodeAttribute("NodeEnd"));
+                notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "OffsetStart", null}));
+                notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "OffsetEnd", null}));
+                XsdTreeNode shape = linkNode.getChild(0);
+                this.shapeListener.notify(new Event(XsdTreeNode.OPTION_CHANGED, new Object[] {shape, shape, shape}));
             });
         }
     }
@@ -291,7 +276,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         if (event.getType().equals(XsdTreeNode.OPTION_CHANGED))
         {
@@ -851,7 +836,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
     }
 
     @Override
-    public EventListenerMap getEventListenerMap() throws RemoteException
+    public EventListenerMap getEventListenerMap()
     {
         return this.eventListenerMap;
     }
@@ -1029,7 +1014,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
         });
 
         @Override
-        public void notify(final Event event) throws RemoteException
+        public void notify(final Event event)
         {
             if (event.getType().equals(XsdTreeNode.OPTION_CHANGED))
             {

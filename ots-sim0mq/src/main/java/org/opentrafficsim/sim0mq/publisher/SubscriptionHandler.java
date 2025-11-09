@@ -7,12 +7,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.djutils.exceptions.Throw;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.EventProducer;
 import org.djutils.event.EventType;
 import org.djutils.event.TimedEvent;
+import org.djutils.exceptions.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
@@ -541,7 +541,7 @@ class Subscription implements EventListener
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         MetaData metaData = event.getType().getMetaData();
         int additionalFields = event.getType() instanceof EventType ? 1 : 0;

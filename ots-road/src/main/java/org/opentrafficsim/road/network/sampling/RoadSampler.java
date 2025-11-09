@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.network.sampling;
 
-import java.rmi.RemoteException;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -196,7 +195,7 @@ public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements E
 
     @Override
     // @docs/02-model-structure/djutils.md#event-producers-and-listeners (if-structure + add/removeListener(...))
-    public final void notify(final Event event) throws RemoteException
+    public final void notify(final Event event)
     {
         if (event.getType().equals(LaneBasedGtu.LANEBASED_MOVE_EVENT))
         {

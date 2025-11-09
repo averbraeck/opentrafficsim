@@ -1,6 +1,5 @@
 package org.opentrafficsim.editor.decoration.validation;
 
-import java.rmi.RemoteException;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -82,7 +81,7 @@ public class XsdAllValidator implements Function<XsdTreeNode, String>, EventList
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         if (XsdTreeNodeRoot.NODE_REMOVED.equals(event.getType()))
         {

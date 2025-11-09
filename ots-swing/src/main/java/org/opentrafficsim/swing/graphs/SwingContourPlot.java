@@ -1,6 +1,5 @@
 package org.opentrafficsim.swing.graphs;
 
-import java.rmi.RemoteException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -153,7 +152,7 @@ public class SwingContourPlot extends SwingSpaceTimePlot implements EventListene
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         if (this.ignoreEvent)
         {

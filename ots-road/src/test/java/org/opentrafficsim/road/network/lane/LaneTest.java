@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.awt.geom.Point2D;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -408,13 +407,13 @@ public final class LaneTest implements UNITS
         /**
          * Constructor.
          */
-        public Listener()
+        Listener()
         {
             //
         }
 
         @Override
-        public void notify(final Event event) throws RemoteException
+        public void notify(final Event event)
         {
             this.events.add(event);
         }

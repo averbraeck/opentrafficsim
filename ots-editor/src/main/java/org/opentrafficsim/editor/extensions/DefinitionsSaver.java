@@ -39,7 +39,7 @@ public class DefinitionsSaver implements EventListener, Consumer<XsdTreeNode>
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         if (event.getType().equals(OtsEditor.NEW_FILE))
         {

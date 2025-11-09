@@ -1,7 +1,5 @@
 package org.opentrafficsim.editor.listeners;
 
-import java.rmi.RemoteException;
-
 import javax.swing.JComboBox;
 
 import org.djutils.event.Event;
@@ -52,7 +50,7 @@ public class ChangesListener implements EventListener
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         if (event.getType().equals(XsdTreeNodeRoot.NODE_CREATED))
         {

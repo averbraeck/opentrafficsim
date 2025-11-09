@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.network.lane.conflict;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -339,7 +338,7 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         Object[] payload = (Object[]) event.getContent();
         LaneBasedGtu gtu = (LaneBasedGtu) getLane().getNetwork().getGTU((String) payload[0]);

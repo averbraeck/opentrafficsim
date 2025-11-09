@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Map;
 
@@ -82,7 +81,7 @@ public final class TransceiverTest
 
     /** Storage for last content submitted to notify method in EventListener. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
-    Serializable lastContent = null;
+    Object lastContent = null;
 
     /** Time stamp of last notify event. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
@@ -415,7 +414,7 @@ public final class TransceiverTest
 
             @SuppressWarnings("unchecked")
             @Override
-            public void notify(final Event event) throws RemoteException
+            public void notify(final Event event)
             {
                 TransceiverTest.this.lastContent = event.getContent();
                 TransceiverTest.this.lastTime = null;

@@ -1,7 +1,5 @@
 package org.opentrafficsim.core.perception;
 
-import java.rmi.RemoteException;
-
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
@@ -86,7 +84,7 @@ public class HistoryManagerDevs extends HistoryManager implements EventListener
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         if (event.getType().equals(Replication.START_REPLICATION_EVENT))
         {

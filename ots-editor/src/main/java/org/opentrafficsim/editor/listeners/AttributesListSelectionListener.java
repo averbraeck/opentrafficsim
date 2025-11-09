@@ -1,7 +1,5 @@
 package org.opentrafficsim.editor.listeners;
 
-import java.rmi.RemoteException;
-
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -75,7 +73,7 @@ public class AttributesListSelectionListener implements ListSelectionListener, E
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         if (this.attribute.equals(((Object[]) event.getContent())[1]))
         {

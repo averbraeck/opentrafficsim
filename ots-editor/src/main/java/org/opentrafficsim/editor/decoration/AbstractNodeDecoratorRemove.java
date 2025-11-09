@@ -1,6 +1,5 @@
 package org.opentrafficsim.editor.decoration;
 
-import java.rmi.RemoteException;
 import java.util.function.Predicate;
 
 import org.djutils.event.Event;
@@ -35,7 +34,7 @@ public abstract class AbstractNodeDecoratorRemove extends AbstractNodeDecorator
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         super.notify(event); // NEW_FILE -> NODE_CREATED and NODE_CREATED -> notifyCreated()
         if (event.getType().equals(OtsEditor.NEW_FILE))

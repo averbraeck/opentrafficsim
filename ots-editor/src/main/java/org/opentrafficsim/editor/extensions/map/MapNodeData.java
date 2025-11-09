@@ -62,18 +62,11 @@ public class MapNodeData extends MapData implements NodeData, EventListener
         super(map, nodeNode, editor);
         getNode().addListener(this, XsdTreeNode.ATTRIBUTE_CHANGED, ReferenceType.WEAK);
         // for when node is duplicated, set data immediately
-        try
+        if (getNode().isActive())
         {
-            if (getNode().isActive())
-            {
-                notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Id", null}));
-                notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Coordinate", null}));
-                notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Direction", null}));
-            }
-        }
-        catch (RemoteException e)
-        {
-            throw new RuntimeException(e);
+            notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Id", null}));
+            notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Coordinate", null}));
+            notify(new Event(XsdTreeNode.ATTRIBUTE_CHANGED, new Object[] {getNode(), "Direction", null}));
         }
         this.absoluteContour = OtsShape.boundsAsAbsoluteContour(this);
         this.relativeContour =
@@ -118,7 +111,7 @@ public class MapNodeData extends MapData implements NodeData, EventListener
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         String attribute = (String) ((Object[]) event.getContent())[1];
         String value = getNode().getAttributeValue(attribute);

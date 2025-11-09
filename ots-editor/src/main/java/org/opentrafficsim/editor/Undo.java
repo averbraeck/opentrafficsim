@@ -1,6 +1,5 @@
 package org.opentrafficsim.editor;
 
-import java.rmi.RemoteException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
@@ -232,7 +231,7 @@ public class Undo implements EventListener
 
     @Override
     @SuppressWarnings("methodlength")
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         listenAndUnlisten(event);
 

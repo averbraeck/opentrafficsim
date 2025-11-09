@@ -1,6 +1,5 @@
 package org.opentrafficsim.editor.decoration.validation;
 
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -181,7 +180,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         if (event.getType().equals(XsdTreeNode.ATTRIBUTE_CHANGED))
         {
@@ -581,7 +580,7 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
         private final Set<XsdTreeNode> nodes = new LinkedHashSet<>();
 
         @Override
-        public void notify(final Event event) throws RemoteException
+        public void notify(final Event event)
         {
             Object[] content = (Object[]) event.getContent();
             String attribute = (String) content[1];

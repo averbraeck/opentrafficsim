@@ -7,7 +7,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
@@ -1801,7 +1800,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         System.out.println("TrafCOD: received an event");
         if (event.getType().equals(TrafficController.TRAFFICCONTROL_SET_TRACING))
@@ -2651,7 +2650,7 @@ class Variable implements EventListener
     }
 
     @Override
-    public void notify(final Event event) throws RemoteException
+    public void notify(final Event event)
     {
         if (event.getType().equals(TrafficLightDetector.TRAFFIC_LIGHT_DETECTOR_TRIGGER_ENTRY_EVENT))
         {
