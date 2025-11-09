@@ -508,42 +508,94 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>${maven.javadoc.version}</version>
         <configuration>
+          <links>
+            <link>https://djunits.org/docs/latest/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils-base/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils-cli/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils-data/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils-draw/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils-eval/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils-serialization/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils-stats/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils-swing/apidocs/</link>
+            <link>https://sim0mq.org/docs/latest/apidocs/</link>
+            <link>https://docs.junit.org/${junit.version}/api/</link>
+            <link>https://javadoc.io/doc/jakarta.annotation/jakarta.annotation-api/${jakarta.annotation.version}/</link>
+          </links>
           <offlineLinks>
-            <offlineLink><url>http://www.jfree.org/jcommon/api/</url></offlineLink>
-            <offlineLink><url>http://www.jfree.org/jfreechart/api/javadoc/</url></offlineLink>
-            <offlineLink><url>https://simulation.tudelft.nl/dsol/docs/latest/dsol-base/apidocs/</url></offlineLink>
-            <offlineLink><url>https://simulation.tudelft.nl/dsol/docs/latest/dsol-naming/apidocs/</url></offlineLink>
-            <offlineLink><url>https://simulation.tudelft.nl/dsol/docs/latest/dsol-introspection/apidocs/</url></offlineLink>
-            <offlineLink><url>https://simulation.tudelft.nl/dsol/docs/latest/dsol-core/apidocs/</url></offlineLink>
-            <offlineLink><url>https://simulation.tudelft.nl/dsol/docs/latest/dsol-animation/apidocs/</url></offlineLink>
-            <offlineLink><url>https://simulation.tudelft.nl/dsol/docs/latest/dsol-animation-gis/apidocs/</url></offlineLink>
-            <offlineLink><url>https://simulation.tudelft.nl/dsol/docs/latest/dsol-animation-gis-esri/apidocs/</url></offlineLink>
-            <offlineLink><url>https://simulation.tudelft.nl/dsol/docs/latest/dsol-animation-gis-osm/apidocs/</url></offlineLink>
-            <offlineLink><url>https://simulation.tudelft.nl/dsol/docs/latest/dsol-swing/apidocs/</url></offlineLink>
-            <offlineLink><url>https://simulation.tudelft.nl/dsol/docs/latest/dsol-web/apidocs/</url></offlineLink>
-            <offlineLink><url>https://tinylog.org/v1/javadoc/</url></offlineLink>
-            <offlineLink><url>https://djunits.org/docs/latest/apidocs/</url></offlineLink>
-            <offlineLink><url>https://djutils.org/docs/latest/djutils/apidocs/</url></offlineLink>
-            <offlineLink><url>https://djutils.org/docs/latest/djutils-serialization/apidocs/</url></offlineLink>
-            <offlineLink><url>https://djutils.org/docs/latest/djutils-cli/apidocs/</url></offlineLink>
-            <offlineLink><url>https://djutils.org/docs/latest/djutils-data/apidocs/</url></offlineLink>
-            <offlineLink><url>https://djutils.org/docs/latest/djutils-draw/apidocs/</url></offlineLink>
-            <offlineLink><url>http://www.jdom.org/docs/apidocs/</url></offlineLink>
-            <offlineLink><url>https://sim0mq.org/docs/latest/apidocs/</url></offlineLink>
-            <offlineLink><url>https://junit.org/junit5/docs/current/api/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/org.eclipse.jetty/jetty-server/latest/org.eclipse.jetty.server/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/jakarta.annotation/jakarta.annotation-api/latest/jakarta.annotation/</url></offlineLink>            <offlineLink><url>https://javadoc.io/doc/de.siegmar/fastcsv/latest/de.siegmar.fastcsv/</url></offlineLink>
-            <offlineLink><url>https://jgrapht.org/javadoc/</url></offlineLink>
-            <offlineLink><url>https://x-stream.github.io/javadoc/</url></offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-animation/apidocs/</url>
+              <location>${basedir}/../ots-animation/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-base/apidocs/</url>
+              <location>${basedir}/../ots-base/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-core/apidocs/</url>
+              <location>${basedir}/../ots-core/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-demo/apidocs/</url>
+              <location>${basedir}/../ots-demo/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-draw/apidocs/</url>
+              <location>${basedir}/../ots-draw/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-editor/apidocs/</url>
+              <location>${basedir}/../ots-editor/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-kpi/apidocs/</url>
+              <location>${basedir}/../ots-kpi/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-opendrive/apidocs/</url>
+              <location>${basedir}/../ots-opendrive/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-road/apidocs/</url>
+              <location>${basedir}/../ots-road/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-sim0mq/apidocs/</url>
+              <location>${basedir}/../ots-sim0mq/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-sim0mq-kpi/apidocs/</url>
+              <location>${basedir}/../ots-sim0mq-kpi/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-sim0mq-swing/apidocs/</url>
+              <location>${basedir}/../ots-sim0mq-swing/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-swing/apidocs/</url>
+              <location>${basedir}/../ots-swing/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-trafficcontrol/apidocs/</url>
+              <location>${basedir}/../ots-trafficcontrol/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-web/apidocs/</url>
+              <location>${basedir}/../ots-web/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-xml/apidocs/</url>
+              <location>${basedir}/../ots-xml/target/site/apidocs/</location>
+            </offlineLink>
           </offlineLinks>
           <minmemory>256m</minmemory>
           <maxmemory>1g</maxmemory>
-          <show>package</show>
+          <show>protected</show>
           <detectJavaApiLink>true</detectJavaApiLink>
           <detectOfflineLinks>true</detectOfflineLinks>
-          <detectLinks>false</detectLinks>
+          <detectLinks>true</detectLinks>
           <release>${jdk.version}</release>
-          <excludePackageNames>*.generated,org.opentrafficsim.demo.doc,org.opentrafficsim.demo.doc.tutorials,com.bric.multislider</excludePackageNames>
+          <excludePackageNames>*.generated,org.opentrafficsim.demo.doc,org.opentrafficsim.demo.doc.tutorials</excludePackageNames>
         </configuration>
         <executions>
           <execution>
@@ -767,43 +819,94 @@
         <version>${maven.javadoc.version}</version>
 
         <configuration>
+          <links>
+            <link>https://djunits.org/docs/latest/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils-base/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils-cli/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils-data/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils-draw/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils-eval/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils-serialization/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils-stats/apidocs/</link>
+            <link>https://djutils.org/docs/latest/djutils-swing/apidocs/</link>
+            <link>https://sim0mq.org/docs/latest/apidocs/</link>
+            <link>https://docs.junit.org/${junit.version}/api/</link>
+            <link>https://javadoc.io/doc/jakarta.annotation/jakarta.annotation-api/${jakarta.annotation.version}/</link>
+          </links>
           <offlineLinks>
-            <offlineLink><url>http://www.jfree.org/jcommon/api/</url></offlineLink>
-            <offlineLink><url>http://www.jfree.org/jfreechart/api/javadoc/</url></offlineLink>
-            <offlineLink><url>https://simulation.tudelft.nl/dsol/docs/latest/dsol-base/apidocs/</url></offlineLink>
-            <offlineLink><url>https://simulation.tudelft.nl/dsol/docs/latest/dsol-naming/apidocs/</url></offlineLink>
-            <offlineLink><url>https://simulation.tudelft.nl/dsol/docs/latest/dsol-introspection/apidocs/</url></offlineLink>
-            <offlineLink><url>https://simulation.tudelft.nl/dsol/docs/latest/dsol-core/apidocs/</url></offlineLink>
-            <offlineLink><url>https://simulation.tudelft.nl/dsol/docs/latest/dsol-animation/apidocs/</url></offlineLink>
-            <offlineLink><url>https://simulation.tudelft.nl/dsol/docs/latest/dsol-animation-gis/apidocs/</url></offlineLink>
-            <offlineLink><url>https://simulation.tudelft.nl/dsol/docs/latest/dsol-animation-gis-esri/apidocs/</url></offlineLink>
-            <offlineLink><url>https://simulation.tudelft.nl/dsol/docs/latest/dsol-animation-gis-osm/apidocs/</url></offlineLink>
-            <offlineLink><url>https://simulation.tudelft.nl/dsol/docs/latest/dsol-swing/apidocs/</url></offlineLink>
-            <offlineLink><url>https://simulation.tudelft.nl/dsol/docs/latest/dsol-web/apidocs/</url></offlineLink>
-            <offlineLink><url>https://tinylog.org/v1/javadoc/</url></offlineLink>
-            <offlineLink><url>https://djunits.org/docs/latest/apidocs/</url></offlineLink>
-            <offlineLink><url>https://djutils.org/docs/latest/djutils/apidocs/</url></offlineLink>
-            <offlineLink><url>https://djutils.org/docs/latest/djutils-serialization/apidocs/</url></offlineLink>
-            <offlineLink><url>https://djutils.org/docs/latest/djutils-data/apidocs/</url></offlineLink>
-            <offlineLink><url>https://djutils.org/docs/latest/djutils-cli/apidocs/</url></offlineLink>
-            <offlineLink><url>https://djutils.org/docs/latest/djutils-draw/apidocs/</url></offlineLink>
-            <offlineLink><url>http://www.jdom.org/docs/apidocs/</url></offlineLink>
-            <offlineLink><url>https://sim0mq.org/docs/latest/apidocs/</url></offlineLink>
-            <offlineLink><url>https://junit.org/junit5/docs/current/api/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/org.eclipse.jetty/jetty-server/latest/org.eclipse.jetty.server/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/jakarta.annotation/jakarta.annotation-api/latest/jakarta.annotation/</url></offlineLink>
-            <offlineLink><url>https://javadoc.io/doc/de.siegmar/fastcsv/latest/de.siegmar.fastcsv/</url></offlineLink>
-            <offlineLink><url>https://jgrapht.org/javadoc/</url></offlineLink>
-            <offlineLink><url>https://x-stream.github.io/javadoc/</url></offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-animation/apidocs/</url>
+              <location>${basedir}/../ots-animation/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-base/apidocs/</url>
+              <location>${basedir}/../ots-base/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-core/apidocs/</url>
+              <location>${basedir}/../ots-core/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-demo/apidocs/</url>
+              <location>${basedir}/../ots-demo/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-draw/apidocs/</url>
+              <location>${basedir}/../ots-draw/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-editor/apidocs/</url>
+              <location>${basedir}/../ots-editor/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-kpi/apidocs/</url>
+              <location>${basedir}/../ots-kpi/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-opendrive/apidocs/</url>
+              <location>${basedir}/../ots-opendrive/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-road/apidocs/</url>
+              <location>${basedir}/../ots-road/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-sim0mq/apidocs/</url>
+              <location>${basedir}/../ots-sim0mq/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-sim0mq-kpi/apidocs/</url>
+              <location>${basedir}/../ots-sim0mq-kpi/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-sim0mq-swing/apidocs/</url>
+              <location>${basedir}/../ots-sim0mq-swing/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-swing/apidocs/</url>
+              <location>${basedir}/../ots-swing/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-trafficcontrol/apidocs/</url>
+              <location>${basedir}/../ots-trafficcontrol/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-web/apidocs/</url>
+              <location>${basedir}/../ots-web/target/site/apidocs/</location>
+            </offlineLink>
+            <offlineLink>
+              <url>https://opentrafficsim.org/docs/latest/ots-xml/apidocs/</url>
+              <location>${basedir}/../ots-xml/target/site/apidocs/</location>
+            </offlineLink>
           </offlineLinks>
           <minmemory>256m</minmemory>
           <maxmemory>1g</maxmemory>
-          <show>package</show>
+          <show>protected</show>
           <detectJavaApiLink>true</detectJavaApiLink>
           <detectOfflineLinks>true</detectOfflineLinks>
-          <detectLinks>false</detectLinks>
+          <detectLinks>true</detectLinks>
           <release>${jdk.version}</release>
-          <excludePackageNames>*.generated,org.opentrafficsim.demo.doc,org.opentrafficsim.demo.doc.tutorials,com.bric.multislider</excludePackageNames>
+          <excludePackageNames>*.generated,org.opentrafficsim.demo.doc,org.opentrafficsim.demo.doc.tutorials</excludePackageNames>
         </configuration>
         <reportSets>
           <reportSet>
