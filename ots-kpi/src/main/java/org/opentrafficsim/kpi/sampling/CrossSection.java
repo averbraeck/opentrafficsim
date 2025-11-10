@@ -1,6 +1,5 @@
 package org.opentrafficsim.kpi.sampling;
 
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -23,11 +22,8 @@ import org.opentrafficsim.kpi.sampling.CrossSection.LanePosition;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class CrossSection implements Serializable, Iterable<LanePosition>
+public class CrossSection implements Iterable<LanePosition>
 {
-
-    /** */
-    private static final long serialVersionUID = 20160929L;
 
     /** Set of lane locations. */
     private final Set<LanePosition> lanePositions;

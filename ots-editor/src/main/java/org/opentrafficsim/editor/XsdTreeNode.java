@@ -2,7 +2,6 @@ package org.opentrafficsim.editor;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -66,11 +65,8 @@ import org.xml.sax.SAXException;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class XsdTreeNode extends LocalEventProducer implements Serializable
+public class XsdTreeNode extends LocalEventProducer
 {
-
-    /** */
-    private static final long serialVersionUID = 20230224L;
 
     /** Event when a node value is changed. */
     public static final EventType VALUE_CHANGED = new EventType("VALUECHANGED",

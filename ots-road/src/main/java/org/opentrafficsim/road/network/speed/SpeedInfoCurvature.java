@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.network.speed;
 
-import java.io.Serializable;
-
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -18,11 +16,8 @@ import org.djutils.exceptions.Throw;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param radius curvature radius
  */
-public record SpeedInfoCurvature(Length radius) implements Serializable
+public record SpeedInfoCurvature(Length radius)
 {
-
-    /** */
-    private static final long serialVersionUID = 20160501L;
 
     /**
      * Constructor with curvature radius.

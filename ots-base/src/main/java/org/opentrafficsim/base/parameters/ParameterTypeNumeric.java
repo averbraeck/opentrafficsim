@@ -1,7 +1,5 @@
 package org.opentrafficsim.base.parameters;
 
-import java.io.Serializable;
-
 import org.opentrafficsim.base.parameters.constraint.Constraint;
 //import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -16,11 +14,8 @@ import org.opentrafficsim.base.parameters.constraint.Constraint;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @param <T> Class of the value.
  */
-public abstract class ParameterTypeNumeric<T extends Number> extends ParameterType<T> implements Serializable
+public abstract class ParameterTypeNumeric<T extends Number> extends ParameterType<T>
 {
-
-    /** */
-    private static final long serialVersionUID = 20160400L;
 
     /**
      * Constructor without default value and check.

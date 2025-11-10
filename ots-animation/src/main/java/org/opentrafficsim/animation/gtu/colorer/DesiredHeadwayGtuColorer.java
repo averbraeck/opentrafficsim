@@ -1,7 +1,6 @@
 package org.opentrafficsim.animation.gtu.colorer;
 
 import java.awt.Color;
-import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.List;
 
@@ -22,11 +21,8 @@ import org.opentrafficsim.draw.colorer.NumberFormatUnit;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class DesiredHeadwayGtuColorer extends AbstractLegendBarColorer<Gtu, Duration> implements Serializable
+public class DesiredHeadwayGtuColorer extends AbstractLegendBarColorer<Gtu, Duration>
 {
-
-    /** */
-    private static final long serialVersionUID = 20170420L;
 
     /** Low color. */
     private static final Color LOW = Color.RED;

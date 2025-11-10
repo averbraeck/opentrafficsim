@@ -1,7 +1,5 @@
 package org.opentrafficsim.base.parameters;
 
-import java.io.Serializable;
-
 /**
  * Wrapper class for boolean parameters.
  * <p>
@@ -11,11 +9,8 @@ import java.io.Serializable;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ParameterTypeBoolean extends ParameterType<Boolean> implements Serializable
+public class ParameterTypeBoolean extends ParameterType<Boolean>
 {
-    /** */
-    private static final long serialVersionUID = 20160400L;
-
     /**
      * Construct a new ParameterTypeBoolean without default value.
      * @param id short name of the new ParameterTypeBoolean

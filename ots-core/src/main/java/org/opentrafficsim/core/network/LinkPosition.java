@@ -1,7 +1,5 @@
 package org.opentrafficsim.core.network;
 
-import java.io.Serializable;
-
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Length;
 
@@ -17,11 +15,8 @@ import org.djunits.value.vdouble.scalar.Length;
  * @param link the link
  * @param fractionalLongitudinalPosition fractional position
  */
-public record LinkPosition(Link link, double fractionalLongitudinalPosition) implements Serializable
+public record LinkPosition(Link link, double fractionalLongitudinalPosition)
 {
-    /** */
-    private static final long serialVersionUID = 20181022L;
-
     /**
      * Create a link combined with a position on that link.
      * @param link the link

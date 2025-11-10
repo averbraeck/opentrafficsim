@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.geometry;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -151,11 +150,8 @@ public final class TestIntersectionPerformance
     /**
      * Storage for the results of a number of runs with identical numbers of shapes and vertices per shape.
      */
-    static class Results implements Serializable
+    static class Results
     {
-
-        /** */
-        private static final long serialVersionUID = 20160412L;
 
         /** Number of shapes constructed. */
         private final int numShapes;
@@ -306,11 +302,8 @@ public final class TestIntersectionPerformance
         /**
          * Storage for execution time, number of tests and number of hits.
          */
-        static class Result implements Serializable
+        static class Result
         {
-            /** */
-            private static final long serialVersionUID = 20160400L;
-
             /** Total execution time. */
             private final double executionTime;
 

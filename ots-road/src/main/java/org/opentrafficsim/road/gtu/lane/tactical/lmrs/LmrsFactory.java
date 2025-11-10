@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.lmrs;
 
-import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -40,11 +39,8 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class LmrsFactory extends AbstractLaneBasedTacticalPlannerFactory<Lmrs> implements Serializable
+public class LmrsFactory extends AbstractLaneBasedTacticalPlannerFactory<Lmrs>
 {
-
-    /** */
-    private static final long serialVersionUID = 20160811L;
 
     /** Type of synchronization. */
     private final Synchronization synchronization;

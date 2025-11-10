@@ -1,7 +1,6 @@
 package org.opentrafficsim.animation.gtu.colorer;
 
 import java.awt.Color;
-import java.io.Serializable;
 import java.text.NumberFormat;
 
 import org.djunits.unit.SpeedUnit;
@@ -24,11 +23,8 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class DesiredSpeedGtuColorer extends AbstractLegendBarColorer<Gtu, Speed> implements Serializable
+public class DesiredSpeedGtuColorer extends AbstractLegendBarColorer<Gtu, Speed>
 {
-    /** */
-    private static final long serialVersionUID = 20150000L;
-
     /** Number formatter. */
     private static final NumberFormatUnit FORMAT = new NumberFormatUnit("km/h", 0);
 

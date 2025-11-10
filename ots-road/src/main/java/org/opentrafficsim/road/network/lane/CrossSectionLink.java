@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.network.lane;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,11 +27,8 @@ import org.opentrafficsim.road.network.RoadNetwork;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class CrossSectionLink extends Link implements Serializable
+public class CrossSectionLink extends Link
 {
-    /** */
-    private static final long serialVersionUID = 20141015L;
-
     /** List of cross-section elements. */
     private final List<CrossSectionElement> crossSectionElementList = new ArrayList<>();
 

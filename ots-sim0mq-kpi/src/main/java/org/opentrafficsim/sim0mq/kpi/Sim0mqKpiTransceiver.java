@@ -1,7 +1,5 @@
 package org.opentrafficsim.sim0mq.kpi;
 
-import java.io.Serializable;
-
 import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djunits.value.vdouble.scalar.Time;
@@ -246,11 +244,8 @@ import org.opentrafficsim.kpi.sampling.indicator.TotalTravelTime;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class Sim0mqKpiTransceiver implements Serializable
+public class Sim0mqKpiTransceiver
 {
-
-    /** */
-    private static final long serialVersionUID = 20160923L;
 
     /** IMB connector. */
     // private final Connector connector;

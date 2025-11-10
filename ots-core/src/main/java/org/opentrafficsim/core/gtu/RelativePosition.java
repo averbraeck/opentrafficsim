@@ -1,7 +1,5 @@
 package org.opentrafficsim.core.gtu;
 
-import java.io.Serializable;
-
 import org.djunits.value.vdouble.scalar.Length;
 
 /**
@@ -20,11 +18,8 @@ import org.djunits.value.vdouble.scalar.Length;
  * @param dz positive z is up.
  * @param type type of relative position (FRONT, BACK, etc.).
  */
-public record RelativePosition(Length dx, Length dy, Length dz, Type type) implements Serializable
+public record RelativePosition(Length dx, Length dy, Length dz, Type type)
 {
-
-    /** */
-    private static final long serialVersionUID = 20141231L;
 
     /** Standard relative position type FRONT. */
     public static final Type FRONT = new Type("FRONT");
@@ -68,11 +63,8 @@ public record RelativePosition(Length dx, Length dy, Length dz, Type type) imple
      * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      */
-    public static class Type implements Serializable
+    public static class Type
     {
-        /** */
-        private static final long serialVersionUID = 20141231L;
-
         /** The type name. */
         private final String name;
 

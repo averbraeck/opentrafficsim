@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.network.speed;
 
-import java.io.Serializable;
-
 import org.djutils.base.Identifiable;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.Type;
@@ -16,11 +14,8 @@ import org.opentrafficsim.base.Type;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <T> Class of speed info that is linked to the speed limit type.
  */
-public class SpeedLimitType<T> implements Serializable, Identifiable, Type<SpeedLimitType<T>>
+public class SpeedLimitType<T> implements Identifiable, Type<SpeedLimitType<T>>
 {
-
-    /** */
-    private static final long serialVersionUID = 20160501L;
 
     /** Id of this speed limit type. */
     private final String id;

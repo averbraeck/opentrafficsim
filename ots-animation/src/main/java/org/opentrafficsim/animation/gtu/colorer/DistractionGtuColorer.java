@@ -1,7 +1,6 @@
 package org.opentrafficsim.animation.gtu.colorer;
 
 import java.awt.Color;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -26,11 +25,8 @@ import org.opentrafficsim.road.gtu.lane.perception.mental.sdm.DefaultDistraction
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class DistractionGtuColorer extends AbstractLegendColorer<Gtu, String> implements Serializable
+public class DistractionGtuColorer extends AbstractLegendColorer<Gtu, String>
 {
-
-    /** */
-    private static final long serialVersionUID = 20181106L;
 
     /** None color. */
     private static final Color NONE = Color.CYAN;

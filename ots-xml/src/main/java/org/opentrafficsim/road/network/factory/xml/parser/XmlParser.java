@@ -2,7 +2,6 @@ package org.opentrafficsim.road.network.factory.xml.parser;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -71,11 +70,8 @@ import nl.tudelft.simulation.dsol.experiment.StreamSeedInformation;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public final class XmlParser implements Serializable
+public final class XmlParser
 {
-    /** */
-    private static final long serialVersionUID = 2019022L;
-
     /** Road network. */
     private final RoadNetwork network;
 

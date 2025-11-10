@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.plan.operational;
 
-import java.io.Serializable;
-
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
@@ -24,11 +22,8 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 
-public class SimpleOperationalPlan implements Serializable
+public class SimpleOperationalPlan
 {
-
-    /** */
-    private static final long serialVersionUID = 20160811L;
 
     /** Acceleration. */
     private Acceleration acceleration;

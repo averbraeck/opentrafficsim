@@ -1,7 +1,5 @@
 package org.opentrafficsim.core.gtu.plan.operational;
 
-import java.io.Serializable;
-
 import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Duration;
@@ -27,11 +25,7 @@ import org.opentrafficsim.core.math.Solver;
  * @param acceleration acceleration of this segment.
  */
 public record Segment(boolean isStandStill, Speed startSpeed, Duration duration, Acceleration acceleration)
-        implements Serializable
 {
-
-    /** */
-    private static final long serialVersionUID = 20230421L;
 
     /**
      * Constructor.

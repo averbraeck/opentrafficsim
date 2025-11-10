@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.od;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -38,11 +37,8 @@ import org.opentrafficsim.road.gtu.generator.headway.DemandPattern;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class OdMatrix implements Serializable, Identifiable
+public class OdMatrix implements Identifiable
 {
-
-    /** */
-    private static final long serialVersionUID = 20160921L;
 
     /** Id. */
     private final String id;

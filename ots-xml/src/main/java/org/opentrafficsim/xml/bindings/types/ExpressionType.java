@@ -21,8 +21,7 @@ import org.djutils.exceptions.Throw;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <T> wrapped/returned value type
  */
-@SuppressWarnings("serial")
-public abstract class ExpressionType<T> implements Serializable
+public abstract class ExpressionType<T>
 {
 
     /** Function to forward expression output as is. */

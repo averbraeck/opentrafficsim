@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
-import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -21,11 +20,8 @@ import org.opentrafficsim.road.network.lane.LaneType;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class GtuTypeAssumptions implements Serializable
+public class GtuTypeAssumptions
 {
-    /** */
-    private static final long serialVersionUID = 20160527L;
-
     /** stored car following model of the observed GTU. */
     private final Map<GtuType, CarFollowingModel> carFollowingModelMap = new LinkedHashMap<>();
 

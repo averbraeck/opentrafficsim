@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.od;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,14 +18,11 @@ import org.djutils.exceptions.Throw;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class Categorization implements Serializable, Identifiable
+public class Categorization implements Identifiable
 {
 
     /** Empty categorization. */
     public static final Categorization UNCATEGORIZED = new Categorization("Uncategorized");
-
-    /** */
-    private static final long serialVersionUID = 20160921L;
 
     /** Id. */
     private final String id;

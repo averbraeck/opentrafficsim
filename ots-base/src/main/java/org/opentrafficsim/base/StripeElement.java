@@ -1,7 +1,6 @@
 package org.opentrafficsim.base;
 
 import java.awt.Color;
-import java.io.Serializable;
 
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.vector.LengthVector;
@@ -20,7 +19,7 @@ import org.djutils.exceptions.Throw;
  * @param color color
  * @param dashes dashes
  */
-public record StripeElement(Length width, Color color, LengthVector dashes) implements Serializable
+public record StripeElement(Length width, Color color, LengthVector dashes)
 {
 
     /* This class is in ots-base, as it is used by both ots-road and ots-draw. */

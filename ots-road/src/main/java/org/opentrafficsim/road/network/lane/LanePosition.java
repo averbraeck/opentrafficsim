@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.network.lane;
 
-import java.io.Serializable;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.draw.point.DirectedPoint2d;
 
@@ -17,11 +15,8 @@ import org.djutils.draw.point.DirectedPoint2d;
  * @param lane the lane for the position
  * @param position the position on the lane, relative to the cross section link (design line) line, or against it
  */
-public record LanePosition(Lane lane, Length position) implements Serializable
+public record LanePosition(Lane lane, Length position)
 {
-
-    /** */
-    private static final long serialVersionUID = 20151111L;
 
     /**
      * Retrieve the location and direction of the GTU on the lane.

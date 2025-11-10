@@ -1,7 +1,6 @@
 package org.opentrafficsim.animation.gtu.colorer;
 
 import java.awt.Color;
-import java.io.Serializable;
 import java.util.List;
 import java.util.function.Function;
 
@@ -20,11 +19,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Desire;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public abstract class DesireGtuColorer extends AbstractLegendColorer<Gtu, Desire> implements Serializable
+public abstract class DesireGtuColorer extends AbstractLegendColorer<Gtu, Desire>
 {
-
-    /** */
-    private static final long serialVersionUID = 20171304L;
 
     /** Left color. */
     private static final Color LEFT = Color.RED;

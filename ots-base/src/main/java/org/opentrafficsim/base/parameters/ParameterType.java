@@ -1,7 +1,5 @@
 package org.opentrafficsim.base.parameters;
 
-import java.io.Serializable;
-
 import org.djutils.base.Identifiable;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.base.Type;
@@ -17,11 +15,8 @@ import org.opentrafficsim.base.parameters.constraint.Constraint;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <T> Type of the value.
  */
-public class ParameterType<T> implements Serializable, Identifiable, Type<ParameterType<T>>
+public class ParameterType<T> implements Identifiable, Type<ParameterType<T>>
 {
-
-    /** */
-    private static final long serialVersionUID = 20160400L;
 
     /** Short name of parameter. */
     private final String id;

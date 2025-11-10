@@ -1,7 +1,5 @@
 package org.opentrafficsim.base;
 
-import java.io.Serializable;
-
 /**
  * Superclass of all sorts of types, for example GtuType, ParameterType, etc. The only method in this class is
  * <code>isType()</code> which should be used to check whether any type object of unknown type, is a specific type. For example:
@@ -15,7 +13,7 @@ import java.io.Serializable;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <T> Class of type.
  */
-public interface Type<T extends Type<T>> extends Serializable
+public interface Type<T extends Type<T>>
 {
 
     /**

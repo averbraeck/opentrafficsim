@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util.lmrs;
 
-import java.io.Serializable;
-
 import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.opentrafficsim.core.network.LateralDirectionality;
 
@@ -18,11 +16,8 @@ import org.opentrafficsim.core.network.LateralDirectionality;
  * @param left Left desire.
  * @param right Right desire.
  */
-public record Desire(double left, double right) implements Serializable
+public record Desire(double left, double right)
 {
-
-    /** */
-    private static final long serialVersionUID = 20160413L;
 
     /** Easy access and efficient zero desired. */
     public static final Desire ZERO = new Desire(0.0, 0.0);

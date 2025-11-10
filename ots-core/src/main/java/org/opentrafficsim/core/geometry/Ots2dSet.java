@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.geometry;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -306,11 +305,8 @@ public class Ots2dSet implements Set<Polygon2d>
     /**
      * Spatial-aware storage for a set of Polygon2d objects.
      */
-    class QuadTreeNode implements Serializable
+    class QuadTreeNode
     {
-        /** */
-        private static final long serialVersionUID = 20170400L;
-
         /** The Polygon2ds stored at this node. */
         private Set<Polygon2d> shapes = new LinkedHashSet<Polygon2d>();
 

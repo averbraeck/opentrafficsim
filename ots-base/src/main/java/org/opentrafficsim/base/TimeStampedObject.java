@@ -1,7 +1,5 @@
 package org.opentrafficsim.base;
 
-import java.io.Serializable;
-
 import org.djunits.value.vdouble.scalar.Duration;
 
 /**
@@ -17,8 +15,6 @@ import org.djunits.value.vdouble.scalar.Duration;
  * @param object the object.
  * @param timestamp the simulation time stamp.
  */
-public record TimeStampedObject<C>(C object, Duration timestamp) implements Serializable
+public record TimeStampedObject<C>(C object, Duration timestamp)
 {
-    /** */
-    private static final long serialVersionUID = 20160129L;
 }

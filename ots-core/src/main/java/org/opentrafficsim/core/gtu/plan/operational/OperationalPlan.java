@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.gtu.plan.operational;
 
-import java.io.Serializable;
 import java.util.Arrays;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -31,11 +30,8 @@ import org.opentrafficsim.core.gtu.RelativePosition;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class OperationalPlan implements Serializable
+public class OperationalPlan
 {
-    /** */
-    private static final long serialVersionUID = 20151114L;
-
     /** The path to follow from a certain time till a certain time. */
     private final OtsLine2d path;
 

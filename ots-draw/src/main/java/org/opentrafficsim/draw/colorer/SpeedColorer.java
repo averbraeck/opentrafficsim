@@ -1,6 +1,5 @@
 package org.opentrafficsim.draw.colorer;
 
-import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.function.Function;
 
@@ -20,11 +19,8 @@ import org.opentrafficsim.draw.Colors;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <T> type of object to color
  */
-public class SpeedColorer<T> extends AbstractLegendBarColorer<T, Speed> implements Serializable
+public class SpeedColorer<T> extends AbstractLegendBarColorer<T, Speed>
 {
-
-    /** */
-    private static final long serialVersionUID = 20150000L;
 
     /** Number formatter. */
     private static final NumberFormatUnit FORMAT = new NumberFormatUnit("km/h", 0);

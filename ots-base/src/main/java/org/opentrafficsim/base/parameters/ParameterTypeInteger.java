@@ -1,7 +1,5 @@
 package org.opentrafficsim.base.parameters;
 
-import java.io.Serializable;
-
 import org.opentrafficsim.base.parameters.constraint.Constraint;
 
 /**
@@ -13,11 +11,8 @@ import org.opentrafficsim.base.parameters.constraint.Constraint;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ParameterTypeInteger extends ParameterTypeNumeric<Integer> implements Serializable
+public class ParameterTypeInteger extends ParameterTypeNumeric<Integer>
 {
-    /** */
-    private static final long serialVersionUID = 20160400L;
-
     /**
      * Construct a new ParameterTypeInteger without default value and check.
      * @param id short name of the new ParameterTypeInteger

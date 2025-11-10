@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.network.route;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -8,7 +7,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.djutils.base.Identifiable;
-import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.network.Link;
 import org.opentrafficsim.core.network.NetworkException;
@@ -25,11 +23,8 @@ import org.opentrafficsim.core.network.Node;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class Route implements Serializable, Identifiable
+public class Route implements Identifiable
 {
-    /** */
-    private static final long serialVersionUID = 20221910L;
-
     /** The nodes of the route. */
     private final List<Node> nodes;
 

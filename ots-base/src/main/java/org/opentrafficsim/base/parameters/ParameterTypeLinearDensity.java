@@ -1,7 +1,5 @@
 package org.opentrafficsim.base.parameters;
 
-import java.io.Serializable;
-
 import org.djunits.value.vdouble.scalar.LinearDensity;
 import org.opentrafficsim.base.parameters.constraint.Constraint;
 
@@ -14,11 +12,8 @@ import org.opentrafficsim.base.parameters.constraint.Constraint;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ParameterTypeLinearDensity extends ParameterTypeNumeric<LinearDensity> implements Serializable
+public class ParameterTypeLinearDensity extends ParameterTypeNumeric<LinearDensity>
 {
-
-    /** */
-    private static final long serialVersionUID = 20150000L;
 
     /**
      * Construct a new ParameterTypeLinearDensity without default value and check.

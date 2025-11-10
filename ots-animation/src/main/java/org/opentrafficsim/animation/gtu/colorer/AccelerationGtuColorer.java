@@ -1,6 +1,5 @@
 package org.opentrafficsim.animation.gtu.colorer;
 
-import java.io.Serializable;
 import java.util.function.Function;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -18,11 +17,8 @@ import org.opentrafficsim.draw.colorer.AccelerationColorer;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class AccelerationGtuColorer extends AccelerationColorer<Gtu> implements Serializable
+public class AccelerationGtuColorer extends AccelerationColorer<Gtu>
 {
-
-    /** */
-    private static final long serialVersionUID = 20250902L;
 
     /** Value function. */
     private static final Function<Gtu, Acceleration> VALUE = (gtu) -> gtu.getAcceleration();

@@ -1,7 +1,6 @@
 package org.opentrafficsim.animation.gtu.colorer;
 
 import java.awt.Color;
-import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +20,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.Synchronizable.State;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class SynchronizationGtuColorer extends AbstractLegendColorer<Gtu, State> implements Serializable
+public class SynchronizationGtuColorer extends AbstractLegendColorer<Gtu, State>
 {
-
-    /** */
-    private static final long serialVersionUID = 20180223L;
 
     /** Synchronization colormap. */
     private static final Map<State, Color> COLOR_MAP = new EnumMap<>(Map.of(State.NONE, Color.WHITE, State.SYNCHRONIZING,

@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.od;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,14 +16,11 @@ import org.djutils.exceptions.Throw;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class Category implements Serializable
+public class Category
 {
 
     /** Empty category. */
     public static final Category UNCATEGORIZED = new Category(Categorization.UNCATEGORIZED);
-
-    /** */
-    private static final long serialVersionUID = 20160921L;
 
     /** Categorization. */
     private final Categorization categorization;

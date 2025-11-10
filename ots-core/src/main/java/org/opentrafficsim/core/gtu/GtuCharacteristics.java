@@ -1,7 +1,5 @@
 package org.opentrafficsim.core.gtu;
 
-import java.io.Serializable;
-
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -15,11 +13,8 @@ import org.djunits.value.vdouble.scalar.Speed;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class GtuCharacteristics implements Serializable
+public class GtuCharacteristics
 {
-
-    /** */
-    private static final long serialVersionUID = 20160000L;
 
     /** The type of the GTU. */
     private final GtuType gtuType;

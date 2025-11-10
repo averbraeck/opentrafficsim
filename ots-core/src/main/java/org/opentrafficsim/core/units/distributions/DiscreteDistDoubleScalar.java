@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.units.distributions;
 
-import java.io.Serializable;
 import java.util.function.Supplier;
 
 import org.djunits.unit.AbsoluteLinearUnit;
@@ -109,11 +108,8 @@ public interface DiscreteDistDoubleScalar
      * @param <RU> The relative unit type belonging to AU
      */
     class Abs<T extends DoubleScalarAbs<AU, T, RU, ?>, AU extends AbsoluteLinearUnit<AU, RU>, RU extends Unit<RU>>
-            extends AbstractDiscreteDistScalar implements Serializable, Supplier<T>
+            extends AbstractDiscreteDistScalar implements Supplier<T>
     {
-        /** */
-        private static final long serialVersionUID = 20150000L;
-
         /**
          * Constructor.
          * @param distribution the wrapped distribution function.

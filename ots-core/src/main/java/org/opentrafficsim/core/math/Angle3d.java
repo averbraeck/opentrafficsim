@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.math;
 
-import java.io.Serializable;
 import java.util.Locale;
 
 import org.djunits.unit.AngleUnit;
@@ -19,11 +18,8 @@ import org.djunits.value.vdouble.vector.AngleVector;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class Angle3d implements Serializable
+public class Angle3d
 {
-    /** */
-    private static final long serialVersionUID = 20160000L;
-
     /** The rotations of the rotation in 3D (RPY coded). */
     private final AngleVector rotation;
 

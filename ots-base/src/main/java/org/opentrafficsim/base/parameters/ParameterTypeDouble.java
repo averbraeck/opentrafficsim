@@ -1,7 +1,5 @@
 package org.opentrafficsim.base.parameters;
 
-import java.io.Serializable;
-
 import org.djunits.value.formatter.EngineeringFormatter;
 import org.opentrafficsim.base.parameters.constraint.Constraint;
 
@@ -14,11 +12,8 @@ import org.opentrafficsim.base.parameters.constraint.Constraint;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ParameterTypeDouble extends ParameterTypeNumeric<Double> implements Serializable
+public class ParameterTypeDouble extends ParameterTypeNumeric<Double>
 {
-
-    /** */
-    private static final long serialVersionUID = 120160400;
 
     /**
      * Construct a new ParameterTypeDouble without default value and check.

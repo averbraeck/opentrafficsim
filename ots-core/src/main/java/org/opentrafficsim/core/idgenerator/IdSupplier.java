@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.idgenerator;
 
-import java.io.Serializable;
 import java.util.function.Supplier;
 
 /**
@@ -11,11 +10,8 @@ import java.util.function.Supplier;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class IdSupplier implements Serializable, Supplier<String>
+public class IdSupplier implements Supplier<String>
 {
-    /** */
-    private static final long serialVersionUID = 1L;
-
     /** All supplied names start with this string. */
     private final String baseName;
 

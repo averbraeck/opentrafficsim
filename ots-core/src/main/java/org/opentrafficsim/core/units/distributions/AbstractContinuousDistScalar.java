@@ -1,7 +1,5 @@
 package org.opentrafficsim.core.units.distributions;
 
-import java.io.Serializable;
-
 import org.djunits.unit.Unit;
 
 import nl.tudelft.simulation.jstats.distributions.DistConstant;
@@ -17,11 +15,8 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * </p>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  */
-public abstract class AbstractContinuousDistScalar implements Serializable
+public abstract class AbstractContinuousDistScalar
 {
-    /** */
-    private static final long serialVersionUID = 20150000L;
-
     /** The wrapped distribution function. */
     private final DistContinuous distribution;
 

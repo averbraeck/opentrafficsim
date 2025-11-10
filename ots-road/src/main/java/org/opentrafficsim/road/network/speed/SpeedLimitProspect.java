@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.network.speed;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,11 +23,8 @@ import org.djutils.exceptions.Throw;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class SpeedLimitProspect implements Serializable
+public class SpeedLimitProspect
 {
-
-    /** */
-    private static final long serialVersionUID = 20160501L;
 
     /** Spatial prospect of speed info. */
     private final SortedSet<SpeedLimitEntry<?>> prospect = new TreeSet<>();

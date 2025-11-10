@@ -1,6 +1,5 @@
 package org.opentrafficsim.draw.colorer;
 
-import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.function.Function;
 
@@ -19,11 +18,8 @@ import org.opentrafficsim.draw.Colors;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <T> type of object to color
  */
-public class AccelerationColorer<T> extends AbstractLegendBarColorer<T, Acceleration> implements Serializable
+public class AccelerationColorer<T> extends AbstractLegendBarColorer<T, Acceleration>
 {
-
-    /** */
-    private static final long serialVersionUID = 201500001L;
 
     /** Number formatter. */
     private static final NumberFormatUnit FORMAT = new NumberFormatUnit("m/s\u00b2", 1);

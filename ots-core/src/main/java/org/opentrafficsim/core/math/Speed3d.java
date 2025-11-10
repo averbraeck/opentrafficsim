@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.math;
 
-import java.io.Serializable;
 import java.util.Locale;
 
 import org.djunits.unit.DirectionUnit;
@@ -26,11 +25,8 @@ import org.djunits.value.vdouble.vector.SpeedVector;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class Speed3d implements Serializable
+public class Speed3d
 {
-    /** */
-    private static final long serialVersionUID = 20160000L;
-
     /** The speed in 3D (XYZ coded). */
     private final SpeedVector speed;
 

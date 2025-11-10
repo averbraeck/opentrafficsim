@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.network.lane;
 
-import java.io.Serializable;
-
 import org.djunits.value.vdouble.scalar.Length;
 
 /**
@@ -12,11 +10,8 @@ import org.djunits.value.vdouble.scalar.Length;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public abstract class RoadMarkerAcross implements Serializable
+public abstract class RoadMarkerAcross
 {
-    /** */
-    private static final long serialVersionUID = 20141021L;
-
     /** Cross section element for which this is a road marker. Usually this will be a Lane. */
     private final CrossSectionElement crossSectionElement;
 

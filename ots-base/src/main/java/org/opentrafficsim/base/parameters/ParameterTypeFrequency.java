@@ -1,7 +1,5 @@
 package org.opentrafficsim.base.parameters;
 
-import java.io.Serializable;
-
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.opentrafficsim.base.parameters.constraint.Constraint;
 
@@ -14,11 +12,8 @@ import org.opentrafficsim.base.parameters.constraint.Constraint;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ParameterTypeFrequency extends ParameterTypeNumeric<Frequency> implements Serializable
+public class ParameterTypeFrequency extends ParameterTypeNumeric<Frequency>
 {
-
-    /** */
-    private static final long serialVersionUID = 20160400L;
 
     /**
      * Construct a new ParameterTypeFrequency without default value and check.

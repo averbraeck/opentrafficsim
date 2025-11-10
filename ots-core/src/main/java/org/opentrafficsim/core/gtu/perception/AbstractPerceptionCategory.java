@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.gtu.perception;
 
-import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -26,11 +25,8 @@ import org.opentrafficsim.core.gtu.GtuException;
  * @param <P> perception type
  */
 public abstract class AbstractPerceptionCategory<G extends Gtu, P extends Perception<G>>
-        implements Serializable, PerceptionCategory<G, P>, Type<AbstractPerceptionCategory<G, P>>
+        implements PerceptionCategory<G, P>, Type<AbstractPerceptionCategory<G, P>>
 {
-
-    /** */
-    private static final long serialVersionUID = 20160811L;
 
     /** Connected perception. */
     private final P perception;

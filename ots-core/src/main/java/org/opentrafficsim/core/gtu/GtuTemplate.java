@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.gtu;
 
-import java.io.Serializable;
 import java.util.function.Supplier;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -18,11 +17,8 @@ import org.opentrafficsim.core.distributions.ConstantSupplier;
  * $LastChangedDate$, @version $Revision$, by $Author$, initial version Jul 8, 2014 <br>
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  */
-public class GtuTemplate implements Serializable, Supplier<GtuCharacteristics>
+public class GtuTemplate implements Supplier<GtuCharacteristics>
 {
-    /** */
-    private static final long serialVersionUID = 20141230L;
-
     /** The type of the GTU. */
     private final GtuType gtuType;
 

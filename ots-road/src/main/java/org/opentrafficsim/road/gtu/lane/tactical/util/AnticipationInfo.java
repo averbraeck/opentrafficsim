@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util;
 
-import java.io.Serializable;
-
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -25,11 +23,8 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  * @param duration duration of movement
  * @param endSpeed end speed of movement
  */
-public final record AnticipationInfo(Duration duration, Speed endSpeed) implements Serializable
+public record AnticipationInfo(Duration duration, Speed endSpeed)
 {
-
-    /** */
-    private static final long serialVersionUID = 20160811L;
 
     /**
      * Returns info of the anticipation assuming constant acceleration.
