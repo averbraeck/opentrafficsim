@@ -115,11 +115,7 @@ public final class VerifyRequiredMethods
             Class<?> c = ci.loadClass();
             if (Serializable.class.isAssignableFrom(c))
             {
-                if (ci.isEnum())
-                {
-                    // System.out.println("Class " + c.getName() + " is an enum and (by inheritance) implements Serializable");
-                }
-                else if (!hasNonStaticFields(c))
+                if (!hasNonStaticFields(c))
                 {
                     System.err.println("Class " + ci.getName()
                             + " does not contain non-static fields and should NOT implement Serializable");
@@ -133,14 +129,6 @@ public final class VerifyRequiredMethods
                     System.err.println(
                             "Class " + ci.getName() + " is an anonymous inner class and should NOT implement Serializable");
                 }
-                else if (Exception.class.isAssignableFrom(c))
-                {
-                    System.out.println("Class " + ci.getName() + " is an Exception and (correctly) implements Serializable");
-                }
-                else
-                {
-                    // System.out.println("Class " + c.getName() + " should (and does) implement Serializable");
-                }
             }
             else
             {
@@ -149,29 +137,10 @@ public final class VerifyRequiredMethods
                     System.err.println(
                             "Class " + ci.getName() + " is an enum and should (by inheritence) implement Serializable");
                 }
-                else if (!hasNonStaticFields(c))
-                {
-                    // System.out.println("Class " + c.getName()
-                    // + " does not contain non-static fields and (correctly) does not implement Serializable");
-                }
-                else if (Thread.class.isAssignableFrom(c))
-                {
-                    // System.out.println("Class " + c.getName() +
-                    // " is a thread and (correctly) does not implement Serializable");
-                }
-                else if (isAnonymousInnerClass(ci))
-                {
-                    // System.out.println("Class " + c.getName()
-                    // + " is an anonymous inner class and (correctly) does not implement Serializable");
-                }
                 else if (Exception.class.isAssignableFrom(c))
                 {
                     System.err.println(
                             "Class " + ci.getName() + " is an Exception and should (but does NOT) implement Serializable");
-                }
-                else
-                {
-                    System.err.println("Class " + ci.getName() + " should (but does NOT) implement Serializable");
                 }
             }
         }
