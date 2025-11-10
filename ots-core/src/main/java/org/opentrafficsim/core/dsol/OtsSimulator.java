@@ -23,11 +23,8 @@ import nl.tudelft.simulation.dsol.simulators.ErrorStrategy;
  * </p>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class OtsSimulator extends DevsSimulator<Duration> implements OtsSimulatorInterface, Serializable
+public class OtsSimulator extends DevsSimulator<Duration> implements OtsSimulatorInterface
 {
-    /** */
-    private static final long serialVersionUID = 20150510L;
-
     /** Counter for replication. */
     private int lastReplication = 0;
 

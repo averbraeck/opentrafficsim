@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.parameters;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -402,11 +401,8 @@ public class ParameterFactoryByType implements ParameterFactory
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      * @param <T> value type
      */
-    private final class FixedEntry<T> implements ParameterEntry<T>, Serializable
+    private final class FixedEntry<T> implements ParameterEntry<T>
     {
-        /** */
-        private static final long serialVersionUID = 20170400L;
-
         /** Parameter type. */
         private final ParameterType<T> parameterType;
 
@@ -456,12 +452,8 @@ public class ParameterFactoryByType implements ParameterFactory
      * @param <U> unit type
      * @param <T> value type
      */
-    private final class DistributedEntry<U extends Unit<U>, T extends DoubleScalarRel<U, T>>
-            implements ParameterEntry<T>, Serializable
+    private final class DistributedEntry<U extends Unit<U>, T extends DoubleScalarRel<U, T>> implements ParameterEntry<T>
     {
-        /** */
-        private static final long serialVersionUID = 20180203L;
-
         /** Parameter type. */
         private final ParameterType<T> parameterType;
 
@@ -508,11 +500,8 @@ public class ParameterFactoryByType implements ParameterFactory
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    private final class DistributedEntryDouble implements ParameterEntry<Double>, Serializable
+    private final class DistributedEntryDouble implements ParameterEntry<Double>
     {
-        /** */
-        private static final long serialVersionUID = 20180203L;
-
         /** Parameter type. */
         private final ParameterType<Double> parameterType;
 
@@ -559,11 +548,8 @@ public class ParameterFactoryByType implements ParameterFactory
      * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      */
-    private final class DistributedEntryInteger implements ParameterEntry<Integer>, Serializable
+    private final class DistributedEntryInteger implements ParameterEntry<Integer>
     {
-        /** */
-        private static final long serialVersionUID = 20180203L;
-
         /** Parameter type. */
         private final ParameterType<Integer> parameterType;
 

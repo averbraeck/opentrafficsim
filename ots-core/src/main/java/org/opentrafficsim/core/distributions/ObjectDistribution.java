@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.distributions;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -19,11 +18,8 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @param <O> Type of the object returned by the draw method
  */
-public class ObjectDistribution<O> implements Supplier<O>, Serializable
+public class ObjectDistribution<O> implements Supplier<O>
 {
-    /** */
-    private static final long serialVersionUID = 20160301L;
-
     /** The objects (with their probabilities or frequencies). */
     private final List<FrequencyAndObject<O>> objects = new ArrayList<>();
 

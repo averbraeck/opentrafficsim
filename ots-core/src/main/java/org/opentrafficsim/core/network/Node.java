@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.network;
 
-import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -30,11 +29,8 @@ import org.opentrafficsim.core.gtu.GtuType;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class Node implements HierarchicallyTyped<NodeType, Node>, OtsShape, Serializable, Identifiable
+public class Node implements HierarchicallyTyped<NodeType, Node>, OtsShape, Identifiable
 {
-    /** */
-    private static final long serialVersionUID = 20150722L;
-
     /** Network. */
     private final Network network;
 

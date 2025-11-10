@@ -1,7 +1,6 @@
 package org.opentrafficsim.animation.gtu.colorer;
 
 import java.awt.Color;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,11 +21,8 @@ import org.opentrafficsim.draw.colorer.LegendColorer;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class SwitchableGtuColorer implements LegendColorer<Gtu>, Serializable
+public class SwitchableGtuColorer implements LegendColorer<Gtu>
 {
-    /** */
-    private static final long serialVersionUID = 20150000L;
-
     /** The currently active GtuColorer. */
     private Colorer<? super Gtu> activeColorer;
 

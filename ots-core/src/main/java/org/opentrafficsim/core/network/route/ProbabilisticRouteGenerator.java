@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.network.route;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -19,11 +18,8 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class ProbabilisticRouteGenerator implements Supplier<Route>, Serializable
+public class ProbabilisticRouteGenerator implements Supplier<Route>
 {
-
-    /** */
-    private static final long serialVersionUID = 20150000L;
 
     /** The Distribution from which routes are drawn. */
     private final ObjectDistribution<Route> distribution;

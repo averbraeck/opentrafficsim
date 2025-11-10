@@ -31,11 +31,8 @@ import org.djutils.logger.CategoryLogger;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class Ots2dSet implements Set<Polygon2d>, Serializable
+public class Ots2dSet implements Set<Polygon2d>
 {
-    /** */
-    private static final long serialVersionUID = 20170400L;
-
     /** Set of all shapes used for iterators, etc. */
     private final Set<Polygon2d> allShapes = new LinkedHashSet<Polygon2d>();
 
@@ -258,11 +255,8 @@ public class Ots2dSet implements Set<Polygon2d>, Serializable
     /**
      * Iterator for quad tree. Shall iterate over the local set of shapes and the (up to four) non-null leave nodes.
      */
-    class QuadTreeIterator implements Iterator<Polygon2d>, Serializable
+    class QuadTreeIterator implements Iterator<Polygon2d>
     {
-        /** */
-        private static final long serialVersionUID = 20170400L;
-
         /** Underlying iterator that traverses the allShapes Set. */
         private final Iterator<Polygon2d> theIterator = Ots2dSet.this.allShapes.iterator();
 

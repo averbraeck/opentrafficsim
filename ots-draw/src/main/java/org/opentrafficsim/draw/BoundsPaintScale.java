@@ -1,7 +1,6 @@
 package org.opentrafficsim.draw;
 
 import java.awt.Color;
-import java.io.Serializable;
 import java.util.Arrays;
 
 import org.djutils.exceptions.Throw;
@@ -17,11 +16,8 @@ import org.djutils.logger.CategoryLogger;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class BoundsPaintScale implements ColorPaintScale, Serializable
+public class BoundsPaintScale implements ColorPaintScale
 {
-
-    /** */
-    private static final long serialVersionUID = 20181008L;
 
     /** Boundary values for this ColorPaintScale. */
     private final double[] bounds;

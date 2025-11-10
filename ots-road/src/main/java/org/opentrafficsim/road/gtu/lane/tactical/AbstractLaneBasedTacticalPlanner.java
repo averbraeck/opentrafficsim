@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical;
 
-import java.io.Serializable;
-
 import org.opentrafficsim.base.parameters.ParameterTypeClass;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
 import org.opentrafficsim.base.parameters.ParameterTypeLength;
@@ -22,15 +20,12 @@ import org.opentrafficsim.road.gtu.lane.tactical.lmrs.Lmrs;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacticalPlanner, Serializable
+public abstract class AbstractLaneBasedTacticalPlanner implements LaneBasedTacticalPlanner
 {
 
     /** Tactical planner parameter. */
     public static final ParameterTypeClass<LaneBasedTacticalPlanner> LANE_TACTICAL_PLANNER = new ParameterTypeClass<>(
             "lane tactical planner", "Lane-based tactical planner class.", LaneBasedTacticalPlanner.class, Lmrs.class);
-
-    /** */
-    private static final long serialVersionUID = 20151125L;
 
     /** Look ahead parameter type. */
     protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;

@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.perception;
 
-import java.io.Serializable;
-
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.core.network.LateralDirectionality;
 
@@ -13,11 +11,8 @@ import org.opentrafficsim.core.network.LateralDirectionality;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class RelativeLane implements Comparable<RelativeLane>, Serializable
+public class RelativeLane implements Comparable<RelativeLane>
 {
-
-    /** */
-    private static final long serialVersionUID = 20160502L;
 
     /** Second left lane. */
     public static final RelativeLane SECOND_LEFT = new RelativeLane(LateralDirectionality.LEFT, 2);

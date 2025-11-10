@@ -1,6 +1,5 @@
 package org.opentrafficsim.base.parameters;
 
-import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -20,11 +19,8 @@ import org.djutils.reflection.ClassUtil;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class ParameterSet implements Parameters, Serializable
+public class ParameterSet implements Parameters
 {
-
-    /** */
-    private static final long serialVersionUID = 20160400L;
 
     /** Object to recognize that no value was set previously. */
     private static final Empty EMPTY = new Empty();

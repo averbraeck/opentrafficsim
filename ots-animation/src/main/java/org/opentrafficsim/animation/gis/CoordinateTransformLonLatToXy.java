@@ -1,7 +1,5 @@
 package org.opentrafficsim.animation.gis;
 
-import java.io.Serializable;
-
 import nl.tudelft.simulation.dsol.animation.gis.DoubleXY;
 import nl.tudelft.simulation.dsol.animation.gis.FloatXY;
 import nl.tudelft.simulation.dsol.animation.gis.transform.CoordinateTransform;
@@ -15,11 +13,8 @@ import nl.tudelft.simulation.dsol.animation.gis.transform.CoordinateTransform;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class CoordinateTransformLonLatToXy implements CoordinateTransform, Serializable
+public class CoordinateTransformLonLatToXy implements CoordinateTransform
 {
-    /** */
-    private static final long serialVersionUID = 20151130L;
-
     /** The x-center of the center point (0, 0). */
     private double centerX = 0.0;
 

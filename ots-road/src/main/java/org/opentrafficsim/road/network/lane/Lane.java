@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.network.lane;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -58,11 +57,8 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class Lane extends CrossSectionElement implements HierarchicallyTyped<LaneType, Lane>, Serializable
+public class Lane extends CrossSectionElement implements HierarchicallyTyped<LaneType, Lane>
 {
-    /** */
-    private static final long serialVersionUID = 20150826L;
-
     /** Type of lane to deduce compatibility with GTU types. */
     private final LaneType laneType;
 

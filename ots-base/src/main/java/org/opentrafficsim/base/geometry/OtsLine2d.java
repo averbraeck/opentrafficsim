@@ -2,7 +2,6 @@ package org.opentrafficsim.base.geometry;
 
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -28,11 +27,8 @@ import nl.tudelft.simulation.dsol.animation.Locatable;
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class OtsLine2d extends PolyLine2d implements Locatable, Serializable
+public class OtsLine2d extends PolyLine2d implements Locatable
 {
-    /** */
-    private static final long serialVersionUID = 20150722L;
-
     /** The cached typed length; will be calculated at time of construction. */
     private final Length length;
 

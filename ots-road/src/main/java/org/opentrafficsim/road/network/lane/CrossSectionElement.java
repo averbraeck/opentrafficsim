@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.network.lane;
 
-import java.io.Serializable;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.base.Identifiable;
 import org.djutils.draw.bounds.Bounds2d;
@@ -26,11 +24,8 @@ import org.opentrafficsim.road.network.RoadNetwork;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public abstract class CrossSectionElement extends LocalEventProducer implements OtsShape, Serializable, Identifiable
+public abstract class CrossSectionElement extends LocalEventProducer implements OtsShape, Identifiable
 {
-    /** */
-    private static final long serialVersionUID = 20150826L;
-
     /** The id. Should be unique within the parentLink. */
     private final String id;
 

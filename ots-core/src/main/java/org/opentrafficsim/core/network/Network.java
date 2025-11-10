@@ -1,7 +1,6 @@
 package org.opentrafficsim.core.network;
 
 import java.awt.geom.Rectangle2D;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -45,11 +44,8 @@ import org.opentrafficsim.core.perception.PerceivableContext;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://www.citg.tudelft.nl">Guus Tamminga</a>
  */
-public class Network extends LocalEventProducer implements PerceivableContext, Serializable, EventProducer
+public class Network extends LocalEventProducer implements PerceivableContext, EventProducer
 {
-    /** */
-    private static final long serialVersionUID = 20150722;
-
     /** Id of this network. */
     private final String id;
 

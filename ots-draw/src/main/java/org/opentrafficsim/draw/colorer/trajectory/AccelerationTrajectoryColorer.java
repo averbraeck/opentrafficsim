@@ -1,6 +1,5 @@
 package org.opentrafficsim.draw.colorer.trajectory;
 
-import java.io.Serializable;
 import java.util.function.Function;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
@@ -18,12 +17,8 @@ import org.opentrafficsim.draw.graphs.OffsetTrajectory.TrajectorySection;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class AccelerationTrajectoryColorer extends AccelerationColorer<TrajectorySection>
-        implements TrajectoryColorer, Serializable
+public class AccelerationTrajectoryColorer extends AccelerationColorer<TrajectorySection> implements TrajectoryColorer
 {
-
-    /** */
-    private static final long serialVersionUID = 20250902L;
 
     /** Value function. */
     private static final Function<TrajectorySection, Acceleration> VALUE =

@@ -1,6 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.tactical.util;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -980,11 +979,8 @@ public final class ConflictUtil
      * abandoned. Decelerations above what is considered safe deceleration may result due to numerical overshoot or other factor
      * coming into play in car-following models. Many other examples exist where a driver sticks to a certain plan.
      */
-    public static final class ConflictPlans implements Blockable, Serializable
+    public static final class ConflictPlans implements Blockable
     {
-
-        /** */
-        private static final long serialVersionUID = 20160811L;
 
         /** Phases of navigating an all-stop intersection per intersection. */
         private final LinkedHashMap<String, StopPhase> stopPhases = new LinkedHashMap<>();

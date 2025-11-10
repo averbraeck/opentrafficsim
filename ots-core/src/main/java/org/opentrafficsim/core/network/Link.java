@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.network;
 
-import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -32,12 +31,8 @@ import org.opentrafficsim.core.gtu.Gtu;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class Link extends LocalEventProducer
-        implements HierarchicallyTyped<LinkType, Link>, OtsShape, Serializable, Identifiable
+public class Link extends LocalEventProducer implements HierarchicallyTyped<LinkType, Link>, OtsShape, Identifiable
 {
-
-    /** */
-    private static final long serialVersionUID = 20150101L;
 
     /**
      * The <b>timed</b> event type for pub/sub indicating the removal of a GTU from the link. <br>

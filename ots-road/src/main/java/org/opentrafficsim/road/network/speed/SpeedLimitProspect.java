@@ -422,11 +422,8 @@ public class SpeedLimitProspect implements Serializable
      * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
      * @param <T> class of speed info
      */
-    private static class SpeedLimitEntry<T> implements Comparable<SpeedLimitEntry<?>>, Serializable
+    private static class SpeedLimitEntry<T> implements Comparable<SpeedLimitEntry<?>>
     {
-
-        /** */
-        private static final long serialVersionUID = 20160501L;
 
         /** Location of the speed info. */
         private Length distance;

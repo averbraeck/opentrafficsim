@@ -11,7 +11,6 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.ImageObserver;
-import java.io.Serializable;
 import java.util.function.Supplier;
 
 import org.djutils.draw.Directed;
@@ -38,12 +37,8 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  * @param <L> locatable type
  * @param <T> text animation type
  */
-public abstract class RenderableTextSource<L extends OtsShape, T extends RenderableTextSource<L, T>>
-        implements OtsShape, Serializable
+public abstract class RenderableTextSource<L extends OtsShape, T extends RenderableTextSource<L, T>> implements OtsShape
 {
-    /** */
-    private static final long serialVersionUID = 20161211L;
-
     /** The source. */
     private final L source;
 

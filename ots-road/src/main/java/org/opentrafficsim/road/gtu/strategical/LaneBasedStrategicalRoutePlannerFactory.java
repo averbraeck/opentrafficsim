@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.strategical;
 
-import java.io.Serializable;
-
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -27,11 +25,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.LaneBasedTacticalPlannerFactory
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 public class LaneBasedStrategicalRoutePlannerFactory
-        implements LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalRoutePlanner>, Serializable
+        implements LaneBasedStrategicalPlannerFactory<LaneBasedStrategicalRoutePlanner>
 {
-
-    /** */
-    private static final long serialVersionUID = 20160811L;
 
     /** Factory for tactical planners. */
     private final LaneBasedTacticalPlannerFactory<? extends LaneBasedTacticalPlanner> tacticalPlannerFactory;

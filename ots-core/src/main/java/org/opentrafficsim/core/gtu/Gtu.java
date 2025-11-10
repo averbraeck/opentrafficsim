@@ -1,6 +1,5 @@
 package org.opentrafficsim.core.gtu;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -64,11 +63,8 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuType, Gtu>, OtsShape, Serializable, Identifiable
+public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuType, Gtu>, OtsShape, Identifiable
 {
-    /** */
-    private static final long serialVersionUID = 20140822L;
-
     /** The id of the GTU. */
     private final String id;
 

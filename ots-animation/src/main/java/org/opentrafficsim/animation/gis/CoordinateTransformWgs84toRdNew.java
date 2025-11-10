@@ -1,7 +1,6 @@
 package org.opentrafficsim.animation.gis;
 
 import java.awt.geom.Point2D;
-import java.io.Serializable;
 
 import org.djutils.logger.CategoryLogger;
 
@@ -20,11 +19,8 @@ import nl.tudelft.simulation.dsol.animation.gis.transform.CoordinateTransform;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public class CoordinateTransformWgs84toRdNew implements CoordinateTransform, Serializable
+public class CoordinateTransformWgs84toRdNew implements CoordinateTransform
 {
-    /** */
-    private static final long serialVersionUID = 20141017L;
-
     /** the coordinate shift dx w.r.t. the origin if not in Amersfoort. dx will be subtracted from each RD.x coordinate */
     private final double dx;
 
