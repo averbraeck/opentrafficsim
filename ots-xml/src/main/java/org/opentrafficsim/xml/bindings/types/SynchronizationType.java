@@ -10,7 +10,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-@SuppressWarnings("serial")
 public class SynchronizationType extends ExpressionType<Synchronization>
 {
 

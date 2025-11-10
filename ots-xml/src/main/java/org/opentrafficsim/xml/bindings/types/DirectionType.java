@@ -10,7 +10,6 @@ import org.djunits.value.vdouble.scalar.Direction;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-@SuppressWarnings("serial")
 public class DirectionType extends ExpressionType<Direction>
 {
 

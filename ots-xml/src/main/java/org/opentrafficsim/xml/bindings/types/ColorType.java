@@ -10,7 +10,6 @@ import java.awt.Color;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-@SuppressWarnings("serial")
 public class ColorType extends ExpressionType<Color>
 {
 

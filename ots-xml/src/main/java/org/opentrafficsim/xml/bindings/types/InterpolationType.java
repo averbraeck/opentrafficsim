@@ -10,7 +10,6 @@ import org.opentrafficsim.road.od.Interpolation;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-@SuppressWarnings("serial")
 public class InterpolationType extends ExpressionType<Interpolation>
 {
 

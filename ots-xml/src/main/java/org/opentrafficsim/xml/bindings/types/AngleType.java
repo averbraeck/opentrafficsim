@@ -10,7 +10,6 @@ import org.djunits.value.vdouble.scalar.Angle;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-@SuppressWarnings("serial")
 public class AngleType extends ExpressionType<Angle>
 {
 

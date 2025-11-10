@@ -10,7 +10,6 @@ import org.djunits.value.vdouble.scalar.Duration;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-@SuppressWarnings("serial")
 public class DurationType extends ExpressionType<Duration>
 {
 

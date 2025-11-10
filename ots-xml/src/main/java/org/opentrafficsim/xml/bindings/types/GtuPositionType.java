@@ -11,7 +11,6 @@ import org.opentrafficsim.xml.bindings.types.GtuPositionType.GtuPosition;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
 // TODO: this type (xsd:GtuPositionType) is not used in XSD
-@SuppressWarnings("serial")
 public class GtuPositionType extends ExpressionType<GtuPosition>
 {
 

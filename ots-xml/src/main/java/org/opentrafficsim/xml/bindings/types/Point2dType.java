@@ -10,7 +10,6 @@ import org.djutils.draw.point.Point2d;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-@SuppressWarnings("serial")
 public class Point2dType extends ExpressionType<Point2d>
 {
 

@@ -10,7 +10,6 @@ import org.opentrafficsim.base.StripeElement.StripeLateralSync;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-@SuppressWarnings("serial")
 public class StripeLateralSyncType extends ExpressionType<StripeLateralSync>
 {
 

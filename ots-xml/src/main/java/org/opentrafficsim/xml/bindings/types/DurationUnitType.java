@@ -10,7 +10,6 @@ import org.djunits.unit.DurationUnit;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-@SuppressWarnings("serial")
 public class DurationUnitType extends ExpressionType<DurationUnit>
 {
 

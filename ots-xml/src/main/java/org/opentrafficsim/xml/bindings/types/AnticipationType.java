@@ -10,7 +10,6 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Anticipa
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-@SuppressWarnings("serial")
 public class AnticipationType extends ExpressionType<Anticipation>
 {
 

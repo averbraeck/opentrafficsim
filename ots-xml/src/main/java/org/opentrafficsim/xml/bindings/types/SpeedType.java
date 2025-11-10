@@ -10,7 +10,6 @@ import org.djunits.value.vdouble.scalar.Speed;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-@SuppressWarnings("serial")
 public class SpeedType extends ExpressionType<Speed>
 {
 

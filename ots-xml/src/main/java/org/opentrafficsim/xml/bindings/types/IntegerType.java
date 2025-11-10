@@ -8,7 +8,6 @@ package org.opentrafficsim.xml.bindings.types;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-@SuppressWarnings("serial")
 public class IntegerType extends ExpressionType<Integer>
 {
 

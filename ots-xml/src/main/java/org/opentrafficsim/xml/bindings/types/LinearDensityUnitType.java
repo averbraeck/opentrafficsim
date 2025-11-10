@@ -10,7 +10,6 @@ import org.djunits.unit.LinearDensityUnit;
  * </p>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-@SuppressWarnings("serial")
 public class LinearDensityUnitType extends ExpressionType<LinearDensityUnit>
 {
 
