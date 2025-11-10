@@ -17,9 +17,6 @@ import org.opentrafficsim.base.geometry.OtsLine2d;
 public class Connector extends Link
 {
 
-    /** */
-    private static final long serialVersionUID = 20230131L;
-
     /** Weight value to divide origin or destination flow over connectors. */
     private double demandWeight = 0.0;
 

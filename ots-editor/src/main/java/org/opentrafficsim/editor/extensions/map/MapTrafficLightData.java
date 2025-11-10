@@ -17,9 +17,6 @@ import org.opentrafficsim.editor.XsdTreeNode;
 public class MapTrafficLightData extends MapLaneBasedObjectData implements TrafficLightData
 {
 
-    /** */
-    private static final long serialVersionUID = 20240212L;
-
     /**
      * Constructor.
      * @param map map.

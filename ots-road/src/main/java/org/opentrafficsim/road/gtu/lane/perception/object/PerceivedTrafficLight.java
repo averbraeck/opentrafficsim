@@ -18,9 +18,6 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColo
 public class PerceivedTrafficLight extends PerceivedLaneBasedObjectBase
 {
 
-    /** */
-    private static final long serialVersionUID = 2025908L;
-
     /** The traffic light object for further observation, can not be null. */
     private final TrafficLight trafficLight;
 

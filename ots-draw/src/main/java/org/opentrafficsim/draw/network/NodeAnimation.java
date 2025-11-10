@@ -32,9 +32,6 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  */
 public class NodeAnimation extends OtsRenderable<NodeData>
 {
-    /** */
-    private static final long serialVersionUID = 20140000L;
-
     /** the Text object to destroy when the animation is destroyed. */
     private Text text;
 
@@ -105,9 +102,6 @@ public class NodeAnimation extends OtsRenderable<NodeData>
      */
     public static class Text extends RenderableTextSource<NodeData, Text>
     {
-        /** */
-        private static final long serialVersionUID = 20161211L;
-
         /**
          * Constructor.
          * @param source the object for which the text is displayed

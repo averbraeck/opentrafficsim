@@ -81,9 +81,6 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  */
 public class StraightModel extends AbstractOtsModel implements UNITS
 {
-    /** */
-    private static final long serialVersionUID = 20140815L;
-
     /** The network. */
     private final RoadNetwork network = new RoadNetwork("network", getSimulator());
 

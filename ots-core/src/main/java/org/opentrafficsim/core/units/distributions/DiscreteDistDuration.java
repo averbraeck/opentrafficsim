@@ -17,9 +17,6 @@ import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
 public class DiscreteDistDuration extends DiscreteDistDoubleScalar.Rel<Duration, DurationUnit>
 {
 
-    /** */
-    private static final long serialVersionUID = 20180829L;
-
     /**
      * Constructor.
      * @param distribution distribution

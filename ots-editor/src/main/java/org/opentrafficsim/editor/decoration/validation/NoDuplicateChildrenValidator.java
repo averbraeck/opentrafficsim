@@ -28,9 +28,6 @@ public class NoDuplicateChildrenValidator extends AbstractNodeDecoratorRemove im
 
     // This class is currently (October 2025) not used. It might be up for removal.
 
-    /** */
-    private static final long serialVersionUID = 20230910L;
-
     /** Path location of nodes to attach to. */
     private final String path;
 

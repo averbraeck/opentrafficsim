@@ -303,9 +303,6 @@ public final class LaneBasedTemplateGtuTypeTest implements UNITS
             super(simulator);
         }
 
-        /** */
-        private static final long serialVersionUID = 20141027L;
-
         @Override
         public final void constructModel() throws SimRuntimeException
         {

@@ -34,9 +34,6 @@ import nl.tudelft.simulation.dsol.statistics.SimulationStatistic;
 public final class GtuCharacteristicsTest implements OtsModelInterface
 {
     /** */
-    private static final long serialVersionUID = 20160311L;
-
-    /** */
     private GtuCharacteristicsTest()
     {
         // do not instantiate test class

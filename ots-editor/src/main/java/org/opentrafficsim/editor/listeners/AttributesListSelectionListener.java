@@ -25,9 +25,6 @@ import org.opentrafficsim.editor.XsdTreeNode;
 public class AttributesListSelectionListener implements ListSelectionListener, EventListener
 {
 
-    /** */
-    private static final long serialVersionUID = 20230923L;
-
     /** Editor. */
     private final OtsEditor editor;
 

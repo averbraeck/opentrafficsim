@@ -127,9 +127,6 @@ public final class DistributionsTest
         DistContinuous distCont = new DistContinuous(stream)
         {
 
-            /** */
-            private static final long serialVersionUID = 1L;
-
             @Override
             public double draw()
             {
@@ -155,9 +152,6 @@ public final class DistributionsTest
 
         DistDiscrete distDisc = new DistDiscrete(stream)
         {
-
-            /** */
-            private static final long serialVersionUID = 1L;
 
             @Override
             public long draw()
@@ -397,9 +391,6 @@ public final class DistributionsTest
      */
     static class JunkUnit extends Unit<JunkUnit>
     {
-        /** */
-        private static final long serialVersionUID = 1L;
-
         /** The base, with "m5" as the SI signature. */
         public static final Quantity<JunkUnit> BASE = new Quantity<>("Junk", "m5");
 
@@ -425,9 +416,6 @@ public final class DistributionsTest
      */
     static class AbsJunkUnit extends AbsoluteLinearUnit<AbsJunkUnit, JunkUnit>
     {
-        /** */
-        private static final long serialVersionUID = 1L;
-
         /** The base, with "m" as the SI signature. */
         public static final Quantity<AbsJunkUnit> BASE = new Quantity<>("AbsJunk", "m5");
 

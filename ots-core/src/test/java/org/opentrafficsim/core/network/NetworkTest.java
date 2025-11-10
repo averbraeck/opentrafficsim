@@ -37,9 +37,6 @@ import org.opentrafficsim.core.network.route.Route;
 public final class NetworkTest implements EventListener
 {
 
-    /** ... */
-    private static final long serialVersionUID = 1L;
-
     /** Count NODE_ADD events. */
     private int nodeAddedCount = 0;
 

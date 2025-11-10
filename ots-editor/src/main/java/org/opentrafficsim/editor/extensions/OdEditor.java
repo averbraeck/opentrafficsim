@@ -23,9 +23,6 @@ import org.opentrafficsim.editor.decoration.DefaultDecorator;
 public class OdEditor implements EventListener
 {
 
-    /** */
-    private static final long serialVersionUID = 20230313L;
-
     /** Editor. */
     private final OtsEditor editor;
 

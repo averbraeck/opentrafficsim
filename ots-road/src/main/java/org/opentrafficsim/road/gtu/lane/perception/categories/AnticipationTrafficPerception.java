@@ -34,9 +34,6 @@ public class AnticipationTrafficPerception extends AbstractPerceptionCategory<La
         implements TrafficPerception
 {
 
-    /** */
-    private static final long serialVersionUID = 20180313L;
-
     /** Look ahead parameter type. */
     protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 

@@ -16,9 +16,6 @@ import org.opentrafficsim.editor.XsdTreeNode;
 public class ClassNameTypeStringFunction extends AbstractStringFunction
 {
 
-    /** */
-    private static final long serialVersionUID = 20230910L;
-
     /**
      * Constructor.
      * @param editor editor.

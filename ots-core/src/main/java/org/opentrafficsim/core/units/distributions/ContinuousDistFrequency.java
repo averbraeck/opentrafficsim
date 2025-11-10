@@ -17,9 +17,6 @@ import nl.tudelft.simulation.jstats.distributions.DistContinuous;
 public class ContinuousDistFrequency extends ContinuousDistDoubleScalar.Rel<Frequency, FrequencyUnit>
 {
 
-    /** */
-    private static final long serialVersionUID = 20180829L;
-
     /**
      * Constructor.
      * @param distribution distribution

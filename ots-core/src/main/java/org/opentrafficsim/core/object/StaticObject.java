@@ -21,9 +21,6 @@ import org.opentrafficsim.core.network.NetworkException;
  */
 public class StaticObject extends LocalEventProducer implements LocatedObject
 {
-    /** */
-    private static final long serialVersionUID = 20160400L;
-
     /** the id. */
     private final String id;
 

@@ -44,9 +44,6 @@ import nl.tudelft.simulation.dsol.statistics.SimulationStatistic;
  */
 public final class GtuDumperTest implements OtsModelInterface
 {
-    /** ... */
-    private static final long serialVersionUID = 1L;
-
     /** Temporary directory that should be deleted by JUnit at end of test. */
     @TempDir
     private Path testDir;

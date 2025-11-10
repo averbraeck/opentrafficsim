@@ -108,9 +108,6 @@ public final class HierarchicalTypeTest
      */
     static class SubType extends HierarchicalType<SubType, S>
     {
-        /** */
-        private static final long serialVersionUID = 1L;
-
         /**
          * Construct a new SubType instance.
          * @param id id of the new SubType
@@ -164,9 +161,6 @@ public final class HierarchicalTypeTest
     /** XType. */
     static class XType extends HierarchicalType<XType, X>
     {
-        /** */
-        private static final long serialVersionUID = 1L;
-
         /**
          * Instantiate hierarchical type.
          * @param id the id
@@ -204,9 +198,6 @@ public final class HierarchicalTypeTest
     /** YType. */
     static class YType extends HierarchicalType<YType, Y>
     {
-        /** */
-        private static final long serialVersionUID = 1L;
-
         /**
          * Instantiate hierarchical type.
          * @param id the id
@@ -222,9 +213,6 @@ public final class HierarchicalTypeTest
     /** ZType. */
     static class ZType extends HierarchicalType<XType, X>
     {
-        /** */
-        private static final long serialVersionUID = 1L;
-
         /**
          * Instantiate hierarchical type.
          * @param id the id

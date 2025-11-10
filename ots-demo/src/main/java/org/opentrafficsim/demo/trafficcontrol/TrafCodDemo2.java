@@ -159,9 +159,6 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
      */
     public static class TrafCodModel extends AbstractOtsModel implements EventListener
     {
-        /** */
-        private static final long serialVersionUID = 20161020L;
-
         /** The network. */
         private RoadNetwork network;
 

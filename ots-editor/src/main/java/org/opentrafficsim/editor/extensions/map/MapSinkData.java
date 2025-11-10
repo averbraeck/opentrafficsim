@@ -15,9 +15,6 @@ import org.opentrafficsim.editor.XsdTreeNode;
 public class MapSinkData extends MapLaneBasedObjectData implements SinkData
 {
 
-    /** */
-    private static final long serialVersionUID = 20240302L;
-
     /**
      * Constructor.
      * @param map map.

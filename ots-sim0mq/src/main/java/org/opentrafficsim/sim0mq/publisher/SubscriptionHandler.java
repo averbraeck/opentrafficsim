@@ -525,9 +525,6 @@ public class SubscriptionHandler
  */
 class Subscription implements EventListener
 {
-    /** ... */
-    private static final long serialVersionUID = 20200428L;
-
     /** Generates envelopes for the messages sent over Sim0MQ. */
     private final ReturnWrapper returnWrapper;
 

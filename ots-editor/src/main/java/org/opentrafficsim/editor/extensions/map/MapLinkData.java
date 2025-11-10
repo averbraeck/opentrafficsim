@@ -79,9 +79,6 @@ import nl.tudelft.simulation.dsol.animation.d2.Renderable2d;
 public class MapLinkData extends MapData implements LinkData, EventListener, EventProducer
 {
 
-    /** */
-    private static final long serialVersionUID = 20231003L;
-
     /** Event when layout is rebuilt. */
     public static final EventType LAYOUT_REBUILT = new EventType("LAYOUTREBUILT", new MetaData("LAYOUT", "Layout is rebuilt.",
             new ObjectDescriptor("LinkData", "Map link data object.", MapLinkData.class)));
@@ -972,9 +969,6 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
      */
     private final class ShapeListener implements EventListener
     {
-        /** */
-        private static final long serialVersionUID = 20231020L;
-
         /** Node of the shape. */
         private XsdTreeNode shapeNode;
 

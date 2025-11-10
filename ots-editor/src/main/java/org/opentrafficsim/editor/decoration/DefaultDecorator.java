@@ -229,9 +229,6 @@ public final class DefaultDecorator
     @SuppressWarnings("unused") // Leave this class for debugging. It can be added by a line above that is commented out.
     private static class NodeCreatedRemovedPrinter extends AbstractNodeDecoratorRemove
     {
-        /** */
-        private static final long serialVersionUID = 20230910L;
-
         /**
          * Constructor.
          * @param editor editor.

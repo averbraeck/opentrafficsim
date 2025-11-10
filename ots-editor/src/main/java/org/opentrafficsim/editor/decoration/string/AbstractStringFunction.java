@@ -18,9 +18,6 @@ import org.opentrafficsim.editor.decoration.AbstractNodeDecorator;
 public abstract class AbstractStringFunction extends AbstractNodeDecorator
 {
 
-    /** */
-    private static final long serialVersionUID = 20230910L;
-
     /** Overwrite existing string functions. */
     private boolean overwrite = true;
 

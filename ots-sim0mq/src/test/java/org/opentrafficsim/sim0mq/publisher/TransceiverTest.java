@@ -409,9 +409,6 @@ public final class TransceiverTest
         TimedEvent<Time> tev = new TimedEvent<>(SimulatorInterface.START_EVENT, null, new Time(123, TimeUnit.BASE_SECOND));
         EventListener recordingListener = new EventListener()
         {
-            /** ... */
-            private static final long serialVersionUID = 1L;
-
             @SuppressWarnings("unchecked")
             @Override
             public void notify(final Event event)

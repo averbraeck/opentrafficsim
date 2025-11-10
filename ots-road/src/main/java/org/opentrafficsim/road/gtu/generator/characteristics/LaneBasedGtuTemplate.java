@@ -22,9 +22,6 @@ import org.opentrafficsim.road.gtu.strategical.LaneBasedStrategicalPlannerFactor
  */
 public class LaneBasedGtuTemplate extends GtuTemplate implements LaneBasedGtuCharacteristicsGenerator
 {
-    /** */
-    private static final long serialVersionUID = 20160101L;
-
     /** Factory for the strategical planner. */
     private final LaneBasedStrategicalPlannerFactory<?> strategicalPlannerFactory;
 

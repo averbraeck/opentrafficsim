@@ -35,9 +35,6 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  */
 public class StripeAnimation extends OtsRenderable<StripeData>
 {
-    /** */
-    private static final long serialVersionUID = 20141017L;
-
     /** Drawable paths. */
     private List<PaintData> paintDatas;
 

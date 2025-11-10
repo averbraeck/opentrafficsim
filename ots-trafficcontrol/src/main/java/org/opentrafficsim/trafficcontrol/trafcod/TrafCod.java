@@ -53,9 +53,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  */
 public class TrafCod extends AbstractTrafficController implements ActuatedTrafficController, EventListener
 {
-    /** */
-    private static final long serialVersionUID = 20161014L;
-
     /** Version of the supported TrafCOD files. */
     static final int TrafCod_VERSION = 100;
 
@@ -2037,9 +2034,6 @@ class NameAndStream
  */
 class Variable implements EventListener
 {
-    /** ... */
-    private static final long serialVersionUID = 20200313L;
-
     /** The TrafCOD engine. */
     private final TrafCod trafCOD;
 

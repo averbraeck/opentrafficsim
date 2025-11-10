@@ -85,9 +85,6 @@ public class TurboRoundaboutDemo extends OtsSimulationApplication<TurboRoundabou
      */
     public static class TurboRoundaboutModel extends AbstractOtsModel
     {
-        /** */
-        private static final long serialVersionUID = 20161211L;
-
         /** The network. */
         private RoadNetwork network;
 

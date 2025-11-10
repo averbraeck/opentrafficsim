@@ -22,9 +22,6 @@ public class DirectEgoPerception<G extends Gtu, P extends Perception<G>> extends
         implements EgoPerception<G, P>
 {
 
-    /** */
-    private static final long serialVersionUID = 20160811L;
-
     /**
      * Constructor.
      * @param perception perception

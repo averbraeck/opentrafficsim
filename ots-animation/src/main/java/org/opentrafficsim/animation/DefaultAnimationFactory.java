@@ -91,9 +91,6 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  */
 public class DefaultAnimationFactory implements EventListener
 {
-    /** */
-    private static final long serialVersionUID = 20230129L;
-
     /** The network. */
     private final Network network;
 

@@ -17,9 +17,6 @@ import org.opentrafficsim.editor.XsdTreeNode;
 public class CorrelationStringFunction extends AbstractStringFunction
 {
 
-    /** */
-    private static final long serialVersionUID = 20231011L;
-
     /**
      * Constructor.
      * @param editor editor.

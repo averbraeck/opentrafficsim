@@ -161,9 +161,6 @@ public final class DetectorTest implements UNITS
 /** Test detector. */
 class TriggerDetector extends LaneDetector
 {
-    /** */
-    private static final long serialVersionUID = 1L;
-
     /**
      * Constructor.
      * @param lane lane of the sensor
@@ -196,9 +193,6 @@ class TriggerDetector extends LaneDetector
  */
 class DummyModelForSensorTest extends AbstractOtsModel
 {
-    /** */
-    private static final long serialVersionUID = 20150114L;
-
     /**
      * Constructor.
      * @param simulator the simulator to use

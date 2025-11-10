@@ -30,9 +30,6 @@ import org.opentrafficsim.editor.decoration.validation.RoadLayoutElementValidato
 public class TrafficLightValidator extends AbstractNodeDecoratorRemove implements CoupledValidator
 {
 
-    /** */
-    private static final long serialVersionUID = 20240306L;
-
     /** All nodes bing validated. */
     private final Set<XsdTreeNode> validatingNodes = new LinkedHashSet<>();
 

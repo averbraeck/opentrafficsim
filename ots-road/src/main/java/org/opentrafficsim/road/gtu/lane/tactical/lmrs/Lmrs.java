@@ -49,9 +49,6 @@ import org.opentrafficsim.road.network.speed.SpeedLimitProspect;
 public class Lmrs extends AbstractIncentivesTacticalPlanner implements DesireBased, Synchronizable, Blockable
 {
 
-    /** Serialization id. */
-    private static final long serialVersionUID = 20160300L;
-
     /** LMRS data. */
     private final LmrsData lmrsData;
 

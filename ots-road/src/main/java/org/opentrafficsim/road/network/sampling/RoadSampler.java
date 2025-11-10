@@ -44,9 +44,6 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
 public class RoadSampler extends Sampler<GtuDataRoad, LaneDataRoad> implements EventListener
 {
 
-    /** */
-    private static final long serialVersionUID = 20200228L;
-
     /** Simulator. */
     private final OtsSimulatorInterface simulator;
 

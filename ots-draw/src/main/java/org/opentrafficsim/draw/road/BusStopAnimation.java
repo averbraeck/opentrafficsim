@@ -31,9 +31,6 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  */
 public class BusStopAnimation extends AbstractLineAnimation<BusStopData>
 {
-    /** */
-    private static final long serialVersionUID = 20150130L;
-
     /** the Text object to destroy when the animation is destroyed. */
     private final Text text;
 
@@ -95,9 +92,6 @@ public class BusStopAnimation extends AbstractLineAnimation<BusStopData>
      */
     public static class Text extends RenderableTextSource<BusStopData, Text>
     {
-        /** */
-        private static final long serialVersionUID = 20161211L;
-
         /**
          * Constructor.
          * @param source the object for which the text is displayed

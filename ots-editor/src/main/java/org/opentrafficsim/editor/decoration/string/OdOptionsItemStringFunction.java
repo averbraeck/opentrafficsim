@@ -17,9 +17,6 @@ import org.opentrafficsim.editor.XsdTreeNode;
 public class OdOptionsItemStringFunction extends AbstractStringFunction
 {
 
-    /** */
-    private static final long serialVersionUID = 20230911L;
-
     /**
      * Constructor.
      * @param editor editor.

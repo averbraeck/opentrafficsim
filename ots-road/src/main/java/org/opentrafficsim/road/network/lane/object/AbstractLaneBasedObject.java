@@ -26,9 +26,6 @@ import org.opentrafficsim.road.network.lane.object.detector.LaneDetector;
  */
 public abstract class AbstractLaneBasedObject extends StaticObject implements LaneBasedObject
 {
-    /** */
-    private static final long serialVersionUID = 20160909L;
-
     /** The lane for which this is a sensor. */
     private final Lane lane;
 

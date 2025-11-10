@@ -31,9 +31,6 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  */
 public class LinkAnimation extends OtsRenderable<LinkData>
 {
-    /** */
-    private static final long serialVersionUID = 20140000L;
-
     /** Width. */
     private float width;
 
@@ -161,9 +158,6 @@ public class LinkAnimation extends OtsRenderable<LinkData>
      */
     public static class Text extends RenderableTextSource<LinkData, Text>
     {
-        /** */
-        private static final long serialVersionUID = 20161211L;
-
         /**
          * Constructor.
          * @param source the object for which the text is displayed

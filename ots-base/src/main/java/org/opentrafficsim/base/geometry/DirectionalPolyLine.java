@@ -17,9 +17,6 @@ import org.djutils.exceptions.Throw;
  */
 public class DirectionalPolyLine extends OtsLine2d
 {
-    /** */
-    private static final long serialVersionUID = 20241130L;
-
     /** Start direction. */
     private final Direction startDirection;
 

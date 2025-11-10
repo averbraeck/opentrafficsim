@@ -165,9 +165,6 @@ public final class DrawTest
      */
     static class FixedStream implements StreamInterface
     {
-        /** ... */
-        private static final long serialVersionUID = 1L;
-
         /** Fixed result value. */
         private double result;
 

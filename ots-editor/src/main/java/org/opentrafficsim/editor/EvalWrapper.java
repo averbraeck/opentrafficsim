@@ -34,9 +34,6 @@ import org.opentrafficsim.xml.bindings.ExpressionAdapter;
 public class EvalWrapper extends AbstractNodeDecoratorRemove
 {
 
-    /** */
-    private static final long serialVersionUID = 20231005L;
-
     /** Mask of full class names where type adapters are to be found, depending on node name for %s. */
     private static final String ADAPTER_MASK = "org.opentrafficsim.xml.bindings.%sAdapter";
 

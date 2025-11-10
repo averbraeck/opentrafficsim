@@ -17,9 +17,6 @@ import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
 public class DiscreteDistElectricalCharge extends DiscreteDistDoubleScalar.Rel<ElectricalCharge, ElectricalChargeUnit>
 {
 
-    /** */
-    private static final long serialVersionUID = 20180829L;
-
     /**
      * Constructor.
      * @param distribution distribution

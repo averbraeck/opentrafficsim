@@ -38,9 +38,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 public class FixedTimeController extends AbstractTrafficController
 {
 
-    /** */
-    private static final long serialVersionUID = 20190221L;
-
     /** Cycle time. */
     private final Duration cycleTime;
 

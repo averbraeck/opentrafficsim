@@ -68,9 +68,6 @@ public class CustomSimulation extends OtsSimulationApplication<CustomSimulation.
      */
     public static class CustomModel extends AbstractOtsModel
     {
-        /** */
-        private static final long serialVersionUID = 20240418L;
-
         /** The network. */
         private RoadNetwork network;
 

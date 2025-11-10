@@ -19,9 +19,6 @@ import org.opentrafficsim.editor.decoration.AbstractNodeDecorator;
 public class ChoiceNodeStringFunction extends AbstractNodeDecorator
 {
 
-    /** */
-    private static final long serialVersionUID = 20230910L;
-
     /**
      * Constructor.
      * @param editor editor.

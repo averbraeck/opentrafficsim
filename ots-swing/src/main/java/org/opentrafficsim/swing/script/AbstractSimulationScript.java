@@ -57,9 +57,6 @@ import picocli.CommandLine.Option;
 @Command(description = "Test program for CLI", name = "Program", mixinStandardHelpOptions = true, showDefaultValues = true)
 public abstract class AbstractSimulationScript implements EventListener, Checkable
 {
-    /** */
-    private static final long serialVersionUID = 20200129L;
-
     /** Name. */
     private final String name;
 
@@ -377,9 +374,6 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
      */
     private class ScriptModel extends AbstractOtsModel
     {
-        /** */
-        private static final long serialVersionUID = 20180409L;
-
         /**
          * @param simulator the simulator
          */

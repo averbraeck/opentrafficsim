@@ -18,9 +18,6 @@ import org.djutils.exceptions.Throw;
 public class PerceivedObjectBase implements PerceivedObject
 {
 
-    /** */
-    private static final long serialVersionUID = 20250907L;
-
     /** Object id. */
     private final String id;
 

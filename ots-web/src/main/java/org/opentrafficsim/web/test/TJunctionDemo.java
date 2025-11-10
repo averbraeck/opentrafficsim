@@ -23,9 +23,6 @@ import org.opentrafficsim.web.OtsWebServer;
  */
 public class TJunctionDemo extends OtsWebServer
 {
-    /** */
-    private static final long serialVersionUID = 1L;
-
     /**
      * Create a T-Junction demo.
      * @param title the tile for the model

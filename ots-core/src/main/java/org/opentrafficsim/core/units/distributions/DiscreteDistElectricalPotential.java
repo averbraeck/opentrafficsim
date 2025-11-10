@@ -17,9 +17,6 @@ import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
 public class DiscreteDistElectricalPotential extends DiscreteDistDoubleScalar.Rel<ElectricalPotential, ElectricalPotentialUnit>
 {
 
-    /** */
-    private static final long serialVersionUID = 20180829L;
-
     /**
      * Constructor.
      * @param distribution distribution

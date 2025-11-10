@@ -30,9 +30,6 @@ public class CaccPerception extends AbstractPerceptionCategory<LaneBasedGtu, Lan
         implements LongitudinalControllerPerception
 {
 
-    /** */
-    private static final long serialVersionUID = 20190312L;
-
     /** Onboard sensors in the form of a headway GTU type. */
     private final PerceivedGtuType sensors;
 

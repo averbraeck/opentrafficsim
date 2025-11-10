@@ -17,9 +17,6 @@ import org.opentrafficsim.core.network.Network;
  */
 public abstract class AbstractLaneBasedMoveChecker implements EventListener
 {
-    /** */
-    private static final long serialVersionUID = 1L;
-
     /** Network. */
     private final Network network;
 

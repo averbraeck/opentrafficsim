@@ -20,9 +20,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  */
 public class TJunctionModel extends AbstractOtsModel
 {
-    /** */
-    private static final long serialVersionUID = 20161211L;
-
     /** The network. */
     private RoadNetwork network;
 

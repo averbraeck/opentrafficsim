@@ -31,9 +31,6 @@ import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
  */
 public class SinkDetector extends LaneDetector
 {
-    /** */
-    private static final long serialVersionUID = 20150130L;
-
     /** Predicate to use to destroy all GTUs with routes ending in the end node of this link, possibly via a connector. */
     public static final BiPredicate<SinkDetector, LaneBasedGtu> DESTINATION = new BiPredicate<>()
     {

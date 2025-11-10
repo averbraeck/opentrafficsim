@@ -16,9 +16,6 @@ import org.opentrafficsim.editor.XsdTreeNode;
 public class AttributesStringFunction extends AbstractStringFunction
 {
 
-    /** */
-    private static final long serialVersionUID = 20220301L;
-
     /** Attributes to show in the node name. */
     private final String[] attributes;
 

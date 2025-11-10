@@ -25,9 +25,6 @@ import org.opentrafficsim.editor.XsdTreeNodeRoot;
 public class ChangesListener implements EventListener
 {
 
-    /** */
-    private static final long serialVersionUID = 20230311L;
-
     /** Editor. */
     private final OtsEditor editor;
 

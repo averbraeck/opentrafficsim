@@ -19,9 +19,6 @@ import org.opentrafficsim.core.gtu.GtuType;
 public class PerceivedGtuBase extends PerceivedGtuSimple
 {
 
-    /** */
-    private static final long serialVersionUID = 20250907L;
-
     /** Behavior. */
     private final Behavior behavior;
 

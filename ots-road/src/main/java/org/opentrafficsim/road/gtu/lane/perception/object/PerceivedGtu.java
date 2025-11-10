@@ -485,8 +485,6 @@ public interface PerceivedGtu extends PerceivedObject
                 "GTU {} is moved in perception, but it is parallel.", getId());
         return new PerceivedGtu()
         {
-            private static final long serialVersionUID = 20250907L;
-
             @Override
             public ObjectType getObjectType()
             {

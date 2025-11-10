@@ -34,9 +34,6 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  */
 public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDetectorData>
 {
-    /** */
-    private static final long serialVersionUID = 20150130L;
-
     /** The traffic light detector. */
     private final TrafficLightDetectorData detector;
 
@@ -97,9 +94,6 @@ public class TrafficLightDetectorAnimation extends OtsRenderable<TrafficLightDet
      */
     public static class Text extends RenderableTextSource<TrafficLightDetectorData, Text> implements DetectorData.Text
     {
-        /** */
-        private static final long serialVersionUID = 20161211L;
-
         /**
          * Constructor.
          * @param source the object for which the text is displayed

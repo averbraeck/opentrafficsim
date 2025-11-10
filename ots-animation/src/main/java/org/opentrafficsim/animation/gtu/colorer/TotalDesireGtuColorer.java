@@ -16,9 +16,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
 public class TotalDesireGtuColorer extends DesireGtuColorer
 {
 
-    /** */
-    private static final long serialVersionUID = 20170414L;
-
     /**
      * Constructor.
      */

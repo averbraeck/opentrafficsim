@@ -16,9 +16,6 @@ import org.opentrafficsim.core.compatibility.GtuCompatibleInfraType;
  */
 public class LaneType extends GtuCompatibleInfraType<LaneType, Lane>
 {
-    /** */
-    private static final long serialVersionUID = 20140821L;
-
     /**
      * Constructor for root-level Lane types. The parent will be {@code null}.
      * @param id the id of the lane type.

@@ -115,9 +115,6 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 public class FundamentalDiagramDemo extends AbstractSimulationScript
 {
 
-    /** */
-    private static final long serialVersionUID = 20200509L;
-
     /** Dynamic demand. */
     private Frequency demand = new Frequency(3500.0, FrequencyUnit.PER_HOUR);
 
@@ -631,9 +628,6 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
         this.trajectoryPlot.updateFixedDomainRange(true);
         SwingTrajectoryPlot swingTrajectoryPlot = new SwingTrajectoryPlot(this.trajectoryPlot)
         {
-            /** */
-            private static final long serialVersionUID = 20200516L;
-
             @Override
             protected void addPopUpMenuItems(final JPopupMenu popupMenu)
             {
@@ -771,9 +765,6 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
      */
     private class SwingFundamentalDiagramNoControl extends SwingFundamentalDiagram
     {
-        /** */
-        private static final long serialVersionUID = 20200516L;
-
         /**
          * @param plot fundamental diagram
          */

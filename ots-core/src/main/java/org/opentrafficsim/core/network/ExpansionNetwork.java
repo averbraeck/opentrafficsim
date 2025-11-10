@@ -67,9 +67,6 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
  */
 public abstract class ExpansionNetwork extends Network
 {
-    /** */
-    private static final long serialVersionUID = 20150104L;
-
     /**
      * Constructor.
      * @param id the network id.

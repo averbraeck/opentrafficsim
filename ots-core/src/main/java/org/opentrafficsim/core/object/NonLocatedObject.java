@@ -1,7 +1,5 @@
 package org.opentrafficsim.core.object;
 
-import java.io.Serializable;
-
 import org.djutils.base.Identifiable;
 
 /**
@@ -16,7 +14,7 @@ import org.djutils.base.Identifiable;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public interface NonLocatedObject extends Identifiable, Serializable
+public interface NonLocatedObject extends Identifiable
 {
 
     /**

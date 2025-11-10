@@ -43,9 +43,6 @@ public class SumFuller<T extends Task> extends Fuller
     public static final ParameterTypeDouble TS_CRIT =
             new ParameterTypeDouble("TScrit", "Critical task saturation", 0.8, POSITIVEZERO)
             {
-                /** */
-                private static final long serialVersionUID = 20180403L;
-
                 @Override
                 public void check(final Double value, final Parameters params) throws ParameterException
                 {
@@ -59,9 +56,6 @@ public class SumFuller<T extends Task> extends Fuller
     public static final ParameterTypeDouble TS_MAX =
             new ParameterTypeDouble("TSmax", "Maximum task saturation", 2.0, POSITIVEZERO)
             {
-                /** */
-                private static final long serialVersionUID = 20180403L;
-
                 @Override
                 public void check(final Double value, final Parameters params) throws ParameterException
                 {

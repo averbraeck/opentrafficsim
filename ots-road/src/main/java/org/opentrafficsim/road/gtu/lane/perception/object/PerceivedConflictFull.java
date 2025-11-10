@@ -27,9 +27,6 @@ import org.opentrafficsim.road.network.lane.conflict.ConflictType;
 public class PerceivedConflictFull extends PerceivedLaneBasedObjectBase implements PerceivedConflict
 {
 
-    /** */
-    private static final long serialVersionUID = 20160602L;
-
     /** Conflict type. */
     private final ConflictType conflictType;
 

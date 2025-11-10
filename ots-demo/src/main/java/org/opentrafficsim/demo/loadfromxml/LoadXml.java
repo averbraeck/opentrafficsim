@@ -153,9 +153,6 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
      */
     static class XmlModel extends AbstractOtsModel
     {
-        /** */
-        private static final long serialVersionUID = 20170421L;
-
         /** The network. */
         private RoadNetwork network;
 

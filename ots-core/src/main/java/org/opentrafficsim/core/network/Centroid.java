@@ -16,9 +16,6 @@ import org.opentrafficsim.base.OtsRuntimeException;
  */
 public class Centroid extends Node
 {
-    /** */
-    private static final long serialVersionUID = 20221117L;
-
     /**
      * Construction of a Centroid Node.
      * @param network the network.

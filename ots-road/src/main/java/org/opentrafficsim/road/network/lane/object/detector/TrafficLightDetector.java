@@ -48,9 +48,6 @@ import org.opentrafficsim.road.network.lane.Lane;
  */
 public class TrafficLightDetector extends LocalEventProducer implements EventListener, Detector
 {
-    /** */
-    private static final long serialVersionUID = 20161103L;
-
     /** Id of this TrafficLightDetector. */
     private final String id;
 
@@ -445,9 +442,6 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
      */
     public class StartEndDetector extends LaneDetector
     {
-        /** */
-        private static final long serialVersionUID = 20161104L;
-
         /**
          * Construct a new StartEndDetector.
          * @param id the name of the new StartEndDetector

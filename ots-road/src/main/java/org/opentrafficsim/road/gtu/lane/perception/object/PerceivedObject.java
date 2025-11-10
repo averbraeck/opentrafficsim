@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.gtu.lane.perception.object;
 
-import java.io.Serializable;
-
 import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
@@ -19,7 +17,7 @@ import org.djutils.exceptions.Throw;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  */
-public interface PerceivedObject extends Identifiable, Serializable, Comparable<PerceivedObject>
+public interface PerceivedObject extends Identifiable, Comparable<PerceivedObject>
 {
 
     /**

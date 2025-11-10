@@ -34,9 +34,6 @@ import org.opentrafficsim.road.gtu.lane.perception.structure.LaneStructure;
 public class CategoricalLanePerception extends AbstractPerception<LaneBasedGtu> implements LanePerception
 {
 
-    /** */
-    private static final long serialVersionUID = 20151128L;
-
     /** Look ahead parameter type. */
     protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 

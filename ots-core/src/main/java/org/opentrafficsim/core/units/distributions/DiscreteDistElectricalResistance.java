@@ -18,9 +18,6 @@ public class DiscreteDistElectricalResistance
         extends DiscreteDistDoubleScalar.Rel<ElectricalResistance, ElectricalResistanceUnit>
 {
 
-    /** */
-    private static final long serialVersionUID = 20180829L;
-
     /**
      * Constructor.
      * @param distribution distribution

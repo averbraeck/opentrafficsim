@@ -791,9 +791,6 @@ public final class LaneTest implements UNITS
     /** The helper model. */
     protected static class Model extends AbstractOtsModel
     {
-        /** */
-        private static final long serialVersionUID = 20141027L;
-
         /**
          * Constructor.
          * @param simulator the simulator to use

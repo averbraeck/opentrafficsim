@@ -31,9 +31,6 @@ import org.opentrafficsim.road.network.lane.conflict.Conflict;
 public class BusStop extends AbstractLaneBasedObject
 {
 
-    /** */
-    private static final long serialVersionUID = 20170124L;
-
     /** Line numbers. */
     private final Set<String> lines = new LinkedHashSet<>();
 

@@ -57,9 +57,6 @@ import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
 public final class Conflict extends AbstractLaneBasedObject implements EventListener
 {
 
-    /** */
-    private static final long serialVersionUID = 20160915L;
-
     /** Conflict type, i.e. crossing, merge or split. */
     private final ConflictType conflictType;
 
@@ -499,9 +496,6 @@ public final class Conflict extends AbstractLaneBasedObject implements EventList
      */
     public class ConflictEnd extends AbstractLaneBasedObject
     {
-        /** */
-        private static final long serialVersionUID = 20161214L;
-
         /** Conflict at start of conflict area. */
         private final Conflict conflict;
 

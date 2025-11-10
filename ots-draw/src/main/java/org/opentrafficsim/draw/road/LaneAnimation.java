@@ -33,9 +33,6 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  */
 public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
 {
-    /** */
-    private static final long serialVersionUID = 20141017L;
-
     /** Color of the lane. */
     private final Color color;
 
@@ -172,9 +169,6 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
         /** Drawing color for the center line. */
         private static final Color COLOR = Color.MAGENTA.darker().darker();
 
-        /**  */
-        private static final long serialVersionUID = 20180426L;
-
         /** Drawable path. */
         private final Path2D.Float path;
 
@@ -212,9 +206,6 @@ public class LaneAnimation extends CrossSectionElementAnimation<LaneData>
      */
     public static class Text extends RenderableTextSource<LaneData, Text>
     {
-        /** */
-        private static final long serialVersionUID = 20161211L;
-
         /**
          * Constructor.
          * @param source the object for which the text is displayed

@@ -52,9 +52,6 @@ public class ChannelFuller extends Fuller implements ChannelMental
     public static final ParameterTypeDuration TAU_MIN = new ParameterTypeDuration("tau_min", "Minimum perception delay",
             Duration.ofSI(0.32), NumericConstraint.POSITIVEZERO)
     {
-        /** */
-        private static final long serialVersionUID = 20240919L;
-
         /** {@inheritDoc} */
         @Override
         public void check(final Duration value, final Parameters params) throws ParameterException
@@ -69,9 +66,6 @@ public class ChannelFuller extends Fuller implements ChannelMental
     public static final ParameterTypeDuration TAU_MAX = new ParameterTypeDuration("tau_max", "Maximum perception delay",
             Duration.ofSI(0.32 + 0.87), NumericConstraint.POSITIVE)
     {
-        /** */
-        private static final long serialVersionUID = 20240919L;
-
         /** {@inheritDoc} */
         @Override
         public void check(final Duration value, final Parameters params) throws ParameterException

@@ -15,9 +15,6 @@ import org.opentrafficsim.editor.XsdTreeNode;
 public class AutomaticConnectorId extends AutomaticLinkId
 {
 
-    /** */
-    private static final long serialVersionUID = 20230910L;
-
     /**
      * Constructor.
      * @param editor editor.

@@ -26,9 +26,6 @@ import org.opentrafficsim.road.network.lane.StripeData.StripePhaseSync;
  */
 public class Stripe extends CrossSectionElement
 {
-    /** */
-    private static final long serialVersionUID = 20141025L;
-
     /** Stripe data. */
     private final StripeData data;
 

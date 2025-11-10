@@ -26,9 +26,6 @@ import org.opentrafficsim.editor.decoration.validation.CoupledValidator;
 public class Undo implements EventListener
 {
 
-    /** */
-    private static final long serialVersionUID = 20230921L;
-
     /** Maximum number of undo actions stored. */
     private static final int MAX_UNDO = 50;
 

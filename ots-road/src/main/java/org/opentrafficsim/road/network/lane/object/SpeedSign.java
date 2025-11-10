@@ -20,9 +20,6 @@ import org.opentrafficsim.road.network.lane.Lane;
 public class SpeedSign extends AbstractLaneBasedObject
 {
 
-    /** */
-    private static final long serialVersionUID = 20170420L;
-
     /** Speed limit. */
     private final Speed speed;
 

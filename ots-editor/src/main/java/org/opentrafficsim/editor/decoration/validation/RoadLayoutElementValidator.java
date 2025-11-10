@@ -58,9 +58,6 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
      * to a node is made, including a cascade of nested changes.
      */
 
-    /** */
-    private static final long serialVersionUID = 20240305L;
-
     /** Path location of nodes to attach to. */
     private final String path;
 
@@ -573,9 +570,6 @@ public class RoadLayoutElementValidator extends AbstractNodeDecoratorRemove impl
      */
     private final class LayoutIdListener implements EventListener
     {
-        /** */
-        private static final long serialVersionUID = 20240305L;
-
         /** Nodes that need to update when the id changes. */
         private final Set<XsdTreeNode> nodes = new LinkedHashSet<>();
 

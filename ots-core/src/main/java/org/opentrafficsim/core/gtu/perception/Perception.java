@@ -1,7 +1,5 @@
 package org.opentrafficsim.core.gtu.perception;
 
-import java.io.Serializable;
-
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -19,7 +17,7 @@ import org.opentrafficsim.core.network.NetworkException;
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  * @param <G> GTU type
  */
-public interface Perception<G extends Gtu> extends Serializable
+public interface Perception<G extends Gtu>
 {
     /**
      * Invoked by the GTU prior to determining the operational plan. If the implementation works in-sync with the tactical

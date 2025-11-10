@@ -24,9 +24,6 @@ import org.opentrafficsim.core.network.route.Route;
 public class BusSchedule extends Route
 {
 
-    /** */
-    private static final long serialVersionUID = 20170124L;
-
     /** Line of the bus schedule. */
     private final String line;
 

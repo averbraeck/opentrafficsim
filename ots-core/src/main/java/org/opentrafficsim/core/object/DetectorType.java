@@ -15,9 +15,6 @@ import org.opentrafficsim.core.compatibility.GtuCompatibleInfraType;
 public class DetectorType extends GtuCompatibleInfraType<DetectorType, Detector>
 {
 
-    /** */
-    private static final long serialVersionUID = 20230201L;
-
     /**
      * Constructor for root-level types.
      * @param id id.

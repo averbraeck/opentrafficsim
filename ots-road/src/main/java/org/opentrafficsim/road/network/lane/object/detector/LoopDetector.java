@@ -58,9 +58,6 @@ import org.opentrafficsim.road.network.lane.LanePosition;
 public class LoopDetector extends LaneDetector
 {
 
-    /** */
-    private static final long serialVersionUID = 20180312L;
-
     /** Trigger event. Payload: [Id of LaneBasedGtu]. */
     public static final EventType LOOP_DETECTOR_TRIGGERED =
             new EventType("LOOPDETECTOR.TRIGGER", new MetaData("Dual loop detector triggered", "Dual loop detector triggered",
@@ -273,9 +270,6 @@ public class LoopDetector extends LaneDetector
         // rear detector
         class RearDetector extends LaneDetector
         {
-            /** */
-            private static final long serialVersionUID = 20180315L;
-
             /**
              * Constructor.
              * @param idRear id

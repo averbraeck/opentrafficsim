@@ -85,9 +85,6 @@ public class TJunctionDemo extends OtsSimulationApplication<TJunctionModel>
      */
     public static class TJunctionModel extends AbstractOtsModel
     {
-        /** */
-        private static final long serialVersionUID = 20161211L;
-
         /** The network. */
         private RoadNetwork network;
 

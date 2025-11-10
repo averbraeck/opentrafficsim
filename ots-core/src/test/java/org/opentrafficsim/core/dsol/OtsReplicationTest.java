@@ -73,9 +73,6 @@ public final class OtsReplicationTest
      */
     static class OtsModel extends AbstractOtsModel
     {
-        /** ... */
-        private static final long serialVersionUID = 1L;
-
         /**
          * Construct the instrumented OtsModel.
          * @param simulator the simulator

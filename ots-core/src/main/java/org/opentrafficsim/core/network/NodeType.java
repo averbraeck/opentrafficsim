@@ -16,9 +16,6 @@ import org.opentrafficsim.base.HierarchicalType;
  */
 public class NodeType extends HierarchicalType<NodeType, Node>
 {
-    /** */
-    private static final long serialVersionUID = 20140821L;
-
     /** Name of default type NODE. */
     public static final String NODE_NAME = "NODE";
 

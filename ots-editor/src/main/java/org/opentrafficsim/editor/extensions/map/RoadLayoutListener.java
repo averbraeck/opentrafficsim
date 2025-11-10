@@ -30,9 +30,6 @@ import org.opentrafficsim.road.network.factory.xml.utils.RoadLayoutOffsets.Offse
 public class RoadLayoutListener extends ChangeListener<Map<XsdTreeNode, CseData>>
 {
 
-    /** */
-    private static final long serialVersionUID = 20231114L;
-
     /**
      * Constructor.
      * @param layoutNode node of the layout, either in definitions or under a link.

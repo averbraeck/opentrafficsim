@@ -175,9 +175,6 @@ interface TrafCODObject
  */
 class DetectorImage implements TrafCODObject, EventListener
 {
-    /** ... */
-    private static final long serialVersionUID = 20200313L;
-
     /** The TrafCOD display. */
     private final TrafCodDisplay display;
 
@@ -272,9 +269,6 @@ class DetectorImage implements TrafCODObject, EventListener
  */
 class TrafficLightImage extends LocalEventProducer implements TrafCODObject
 {
-    /** ... */
-    private static final long serialVersionUID = 20200313L;
-
     /** The TrafCOD display. */
     private final TrafCodDisplay display;
 

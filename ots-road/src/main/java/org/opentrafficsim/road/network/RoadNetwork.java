@@ -39,9 +39,6 @@ import org.opentrafficsim.road.network.lane.Lane;
  */
 public class RoadNetwork extends Network
 {
-    /** */
-    private static final long serialVersionUID = 1L;
-
     /** Cached lane graph for legal connections, per GTU type. */
     private Map<GtuType, RouteWeightedGraph> legalLaneGraph = new LinkedHashMap<>();
 

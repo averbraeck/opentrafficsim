@@ -14,9 +14,6 @@ import org.opentrafficsim.base.HierarchicalType;
  */
 public final class GtuType extends HierarchicalType<GtuType, Gtu>
 {
-    /** */
-    private static final long serialVersionUID = 20141231L;
-
     /**
      * Constructor for root-level GTU types. The parent will be {@code null}.
      * @param id The id of the GtuType to make it identifiable.

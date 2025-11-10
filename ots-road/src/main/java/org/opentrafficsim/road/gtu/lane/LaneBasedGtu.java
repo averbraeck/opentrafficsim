@@ -94,9 +94,6 @@ import nl.tudelft.simulation.dsol.formalisms.eventscheduling.SimEventInterface;
  */
 public class LaneBasedGtu extends Gtu implements LaneBasedObject
 {
-    /** */
-    private static final long serialVersionUID = 20140822L;
-
     /**
      * Margin to add to plan length to check if the path will enter the next section. This is because the plan might follow a
      * shorter path than the lane center line.

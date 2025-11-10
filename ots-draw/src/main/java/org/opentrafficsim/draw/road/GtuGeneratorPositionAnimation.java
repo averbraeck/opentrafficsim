@@ -28,9 +28,6 @@ import nl.tudelft.simulation.naming.context.Contextualized;
 public class GtuGeneratorPositionAnimation extends OtsRenderable<GtuGeneratorPositionData>
 {
 
-    /** */
-    private static final long serialVersionUID = 20230204L;
-
     /** Chevron path to draw. */
     private static final Path2D.Float PATH;
 
@@ -92,9 +89,6 @@ public class GtuGeneratorPositionAnimation extends OtsRenderable<GtuGeneratorPos
      */
     public static class Queue extends RenderableTextSource<GtuGeneratorPositionData, Queue>
     {
-        /** */
-        private static final long serialVersionUID = 20230204L;
-
         /**
          * Constructor.
          * @param source source.

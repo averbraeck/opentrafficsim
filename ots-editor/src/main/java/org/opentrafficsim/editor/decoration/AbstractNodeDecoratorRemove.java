@@ -20,9 +20,6 @@ import org.opentrafficsim.editor.XsdTreeNodeRoot;
 public abstract class AbstractNodeDecoratorRemove extends AbstractNodeDecorator
 {
 
-    /** */
-    private static final long serialVersionUID = 20230910L;
-
     /**
      * Constructor.
      * @param editor editor.

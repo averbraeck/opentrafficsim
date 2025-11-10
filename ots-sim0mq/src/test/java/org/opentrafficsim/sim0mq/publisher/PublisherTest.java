@@ -49,9 +49,6 @@ import nl.tudelft.simulation.dsol.statistics.SimulationStatistic;
 public final class PublisherTest implements OtsModelInterface
 {
 
-    /** ... */
-    private static final long serialVersionUID = 20200505L;
-
     /** Storage for the last result submitted to the ReturnWrapper. */
     @SuppressWarnings("checkstyle:visibilitymodifier")
     Object[] lastResult = null;
@@ -199,9 +196,6 @@ public final class PublisherTest implements OtsModelInterface
      */
     class TestModel extends AbstractOtsModel implements EventListener
     {
-        /** */
-        private static final long serialVersionUID = 20170419L;
-
         /** The network. */
         private RoadNetwork network;
 

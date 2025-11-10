@@ -19,9 +19,6 @@ import org.opentrafficsim.road.network.lane.Lane;
  */
 public class ReportingDetector extends LaneDetector
 {
-    /** */
-    private static final long serialVersionUID = 20150130L;
-
     /**
      * Construct a new ReportingDetector.
      * @param lane the lane on which the new ReportingDetector will be located

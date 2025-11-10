@@ -20,9 +20,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
 public class FundamentalDiagramModel extends AbstractOtsModel
 {
 
-    /** */
-    private static final long serialVersionUID = 20200516L;
-
     /** The network. */
     private RoadNetwork network;
 

@@ -301,9 +301,6 @@ public final class AbstractLaneBasedGtuTest implements UNITS
  */
 class DummyModel extends AbstractOtsModel
 {
-    /** */
-    private static final long serialVersionUID = 20150114L;
-
     /**
      * Constructor.
      * @param simulator the simulator to use

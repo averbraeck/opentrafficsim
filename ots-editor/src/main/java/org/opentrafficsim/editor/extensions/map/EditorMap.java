@@ -167,8 +167,6 @@ public final class EditorMap extends JPanel implements EventListener
 
         /*-
         {
-            private static final long serialVersionUID = 20231016L;
-
             @Override
             public void setExtent(final Bounds2d extent)
             {
@@ -626,8 +624,6 @@ public final class EditorMap extends JPanel implements EventListener
             {
                 ChangeListener<Object> listener = new ChangeListener<>(node, () -> this.editor.getEval())
                 {
-                    private static final long serialVersionUID = 20241206L;
-
                     @Override
                     public void notify(final Event event)
                     {
@@ -832,7 +828,6 @@ public final class EditorMap extends JPanel implements EventListener
      * Adds a data representation of the node. This will not yet be drawn until the data object itself tells the map it is valid
      * to be drawn.
      * @param node node of element to draw.
-     * @throws RemoteException context binding problem.
      */
     private void add(final XsdTreeNode node)
     {
@@ -1059,9 +1054,6 @@ public final class EditorMap extends JPanel implements EventListener
      */
     public static class MapUpdater extends LocalEventProducer
     {
-        /** */
-        private static final long serialVersionUID = 1L;
-
         /**
          * Constructor.
          */

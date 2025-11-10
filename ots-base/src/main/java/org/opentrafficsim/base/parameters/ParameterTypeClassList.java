@@ -19,9 +19,6 @@ import org.opentrafficsim.base.parameters.constraint.Constraint;
 public class ParameterTypeClassList<T> extends ParameterType<List<Class<? extends T>>>
 {
 
-    /** */
-    private static final long serialVersionUID = 20170702L;
-
     /**
      * Constructor without default value and check.
      * @param id Short name of parameter.

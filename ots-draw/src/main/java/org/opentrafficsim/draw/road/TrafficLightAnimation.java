@@ -29,9 +29,6 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  */
 public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLightData>
 {
-    /** */
-    private static final long serialVersionUID = 20160000L;
-
     /** the Text object to destroy when the animation is destroyed. */
     private final Text text;
 
@@ -97,9 +94,6 @@ public class TrafficLightAnimation extends AbstractLineAnimation<TrafficLightDat
      */
     public static class Text extends RenderableTextSource<TrafficLightData, Text>
     {
-        /** */
-        private static final long serialVersionUID = 20161211L;
-
         /**
          * Constructor.
          * @param source the object for which the text is displayed

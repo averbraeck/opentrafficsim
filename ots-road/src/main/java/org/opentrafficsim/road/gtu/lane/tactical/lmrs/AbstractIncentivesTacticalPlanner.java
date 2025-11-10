@@ -24,9 +24,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.VoluntaryIncentive;
 public abstract class AbstractIncentivesTacticalPlanner extends AbstractLaneBasedTacticalPlanner
 {
 
-    /** */
-    private static final long serialVersionUID = 20190731L;
-
     /** Set of mandatory lane change incentives. */
     private final LinkedHashSet<MandatoryIncentive> mandatoryIncentives = new LinkedHashSet<>();
 

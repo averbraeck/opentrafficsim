@@ -14,9 +14,6 @@ import org.djunits.value.vdouble.scalar.Speed;
 public class SpeedLimitTypeSpeed extends SpeedLimitType<Speed>
 {
 
-    /** */
-    private static final long serialVersionUID = 20160501L;
-
     /**
      * Constructor.
      * @param id id of this speed limit type, which must be unique

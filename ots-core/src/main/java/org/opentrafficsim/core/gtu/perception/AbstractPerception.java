@@ -20,9 +20,6 @@ import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 public abstract class AbstractPerception<G extends Gtu> implements Perception<G>
 {
 
-    /** */
-    private static final long serialVersionUID = 20160729L;
-
     /** Set of available perception categories. */
     private final Map<Class<? extends PerceptionCategory<?, ?>>, PerceptionCategory<?, ?>> perceptionCategories =
             new LinkedHashMap<>();

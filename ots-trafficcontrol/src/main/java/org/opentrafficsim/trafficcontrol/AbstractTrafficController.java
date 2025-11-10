@@ -16,9 +16,6 @@ import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 public abstract class AbstractTrafficController extends LocalEventProducer implements TrafficController
 {
 
-    /** */
-    private static final long serialVersionUID = 20190221L;
-
     /** Id of this controller. */
     private final String id;
 

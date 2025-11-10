@@ -24,9 +24,6 @@ import org.opentrafficsim.editor.XsdTreeNodeRoot;
 public class XsdAllValidator implements Function<XsdTreeNode, String>, EventListener
 {
 
-    /** */
-    private static final long serialVersionUID = 20240314L;
-
     /** All nodes this validator validates. */
     private Set<XsdTreeNode> nodes = new LinkedHashSet<>();
 

@@ -29,9 +29,6 @@ public class AttributesNotEqualValidator extends AbstractNodeDecoratorAttribute 
      * <xsd:key />
      */
 
-    /** */
-    private static final long serialVersionUID = 20230910L;
-
     /**
      * Constructor.
      * @param editor editor.

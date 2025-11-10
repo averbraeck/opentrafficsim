@@ -20,9 +20,6 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
  */
 public class LaneBasedOperationalPlan extends OperationalPlan
 {
-    /** */
-    private static final long serialVersionUID = 20160120L;
-
     /** Deviative; meaning not along lane center lines. */
     private final boolean deviative;
 

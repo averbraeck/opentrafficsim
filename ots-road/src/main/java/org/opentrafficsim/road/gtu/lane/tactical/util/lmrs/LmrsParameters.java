@@ -28,9 +28,6 @@ public interface LmrsParameters
     ParameterTypeDouble DFREE =
             new ParameterTypeDouble("dFree", "Free lane change desire threshold", 0.365, ConstraintInterface.UNITINTERVAL)
             {
-                /** */
-                private static final long serialVersionUID = 20160413L;
-
                 @Override
                 public void check(final Double value, final Parameters params) throws ParameterException
                 {
@@ -50,9 +47,6 @@ public interface LmrsParameters
     ParameterTypeDouble DSYNC = new ParameterTypeDouble("dSync", "Synchronized lane change desire threshold", 0.577,
             ConstraintInterface.UNITINTERVAL)
     {
-        /** */
-        private static final long serialVersionUID = 20160413L;
-
         @Override
         public void check(final Double value, final Parameters params) throws ParameterException
         {
@@ -69,9 +63,6 @@ public interface LmrsParameters
     ParameterTypeDouble DCOOP = new ParameterTypeDouble("dCoop", "Cooperative lane change desire threshold", 0.788,
             ConstraintInterface.UNITINTERVAL)
     {
-        /** */
-        private static final long serialVersionUID = 20160413L;
-
         @Override
         public void check(final Double value, final Parameters params) throws ParameterException
         {

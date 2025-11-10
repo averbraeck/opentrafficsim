@@ -18,9 +18,6 @@ import org.opentrafficsim.editor.XsdTreeNode;
 public class MapGeneratorData extends MapLaneBasedObjectData implements GtuGeneratorPositionData
 {
 
-    /** */
-    private static final long serialVersionUID = 20240310L;
-
     /** Type, 'Generator' or 'List generator'. */
     private final String type;
 

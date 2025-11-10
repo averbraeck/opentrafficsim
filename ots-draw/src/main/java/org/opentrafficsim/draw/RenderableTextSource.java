@@ -551,9 +551,6 @@ public abstract class RenderableTextSource<L extends OtsShape, T extends Rendera
      */
     private static class RenderableText extends Renderable2d<RenderableTextSource<?, ?>>
     {
-        /** */
-        private static final long serialVersionUID = 20170400L;
-
         /**
          * Construct a new AnimationImpl.
          * @param source the source

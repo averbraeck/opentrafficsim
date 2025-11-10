@@ -554,9 +554,6 @@ public class RampMeteringDemo extends AbstractSimulationScript
     /** Tactical planner. */
     private static class ControlledTacticalPlanner extends AbstractIncentivesTacticalPlanner
     {
-        /** */
-        private static final long serialVersionUID = 20190731L;
-
         /** Lane change system. */
         private AutomaticLaneChangeSystem laneChangeSystem;
 

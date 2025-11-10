@@ -13,9 +13,6 @@ package org.opentrafficsim.road.network.speed;
 public class SpeedLimitTypeSpeedLegal extends SpeedLimitTypeSpeed implements LegalSpeedLimit
 {
 
-    /** */
-    private static final long serialVersionUID = 20160501L;
-
     /**
      * Constructor.
      * @param id id of this speed limit type, which must be unique

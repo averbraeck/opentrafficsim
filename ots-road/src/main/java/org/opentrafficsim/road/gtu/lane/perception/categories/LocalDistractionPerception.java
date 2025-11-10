@@ -30,9 +30,6 @@ import org.opentrafficsim.road.network.lane.object.LocalDistraction;
 public class LocalDistractionPerception extends AbstractPerceptionCategory<LaneBasedGtu, LanePerception>
 {
 
-    /** */
-    private static final long serialVersionUID = 20250617L;
-
     /** Look-ahead distance. */
     public static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 
@@ -92,9 +89,6 @@ public class LocalDistractionPerception extends AbstractPerceptionCategory<LaneB
      */
     public class PerceivedLocalDistraction extends PerceivedLaneBasedObjectBase
     {
-        /**  */
-        private static final long serialVersionUID = 20250617L;
-
         /** Distraction. */
         private final LocalDistraction distraction;
 

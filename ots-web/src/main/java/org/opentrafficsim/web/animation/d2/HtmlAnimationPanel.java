@@ -42,9 +42,6 @@ import nl.tudelft.simulation.naming.context.util.ContextUtil;
  */
 public class HtmlAnimationPanel extends HtmlGridPanel implements EventListener
 {
-    /** */
-    private static final long serialVersionUID = 1L;
-
     /** the elements of this panel. */
     private SortedSet<Renderable2dInterface<? extends Locatable>> elements =
             new TreeSet<Renderable2dInterface<? extends Locatable>>(new Renderable2dComparator());

@@ -22,9 +22,6 @@ import org.opentrafficsim.editor.decoration.AbstractNodeDecoratorRemove;
 public class ParentValidator extends AbstractNodeDecoratorRemove implements ValueValidator
 {
 
-    /** */
-    private static final long serialVersionUID = 20230319L;
-
     /** Context level within which the parents may be found. */
     private String contextPath;
 

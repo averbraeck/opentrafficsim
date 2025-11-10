@@ -20,9 +20,6 @@ import org.opentrafficsim.draw.graphs.OffsetTrajectory.TrajectorySection;
 public class SpeedTrajectoryColorer extends SpeedColorer<TrajectorySection> implements TrajectoryColorer
 {
 
-    /** */
-    private static final long serialVersionUID = 20250902;
-
     /** Value function. */
     private static final Function<TrajectorySection, Speed> VALUE =
             (traj) -> Speed.ofSI(traj.trajectory().getV(traj.section()));

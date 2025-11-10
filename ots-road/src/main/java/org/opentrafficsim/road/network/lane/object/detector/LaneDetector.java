@@ -31,9 +31,6 @@ import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 public abstract class LaneDetector extends AbstractLaneBasedObject
         implements Comparable<LaneDetector>, LaneBasedObject, Detector
 {
-    /** */
-    private static final long serialVersionUID = 20141231L;
-
     /** The relative position of the vehicle that triggers the detector. */
     private final RelativePosition.Type positionType;
 

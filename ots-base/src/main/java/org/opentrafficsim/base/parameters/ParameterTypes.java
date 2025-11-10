@@ -98,9 +98,6 @@ public class ParameterTypes implements ConstraintInterface
         B = new ParameterTypeAcceleration("b", "Maximum comfortable car-following deceleration", Acceleration.ofSI(2.09),
                 POSITIVE)
         {
-            /** */
-            private static final long serialVersionUID = 20170203L;
-
             @Override
             public void check(final Acceleration value, final Parameters params) throws ParameterException
             {
@@ -115,9 +112,6 @@ public class ParameterTypes implements ConstraintInterface
         BCRIT = new ParameterTypeAcceleration("bCrit", "Maximum critical deceleration, e.g. stop/go at traffic light",
                 Acceleration.ofSI(3.5), POSITIVE)
         {
-            /** */
-            private static final long serialVersionUID = 20170203L;
-
             @Override
             public void check(final Acceleration value, final Parameters params) throws ParameterException
             {
@@ -131,9 +125,6 @@ public class ParameterTypes implements ConstraintInterface
         B0 = new ParameterTypeAcceleration("b0", "Maximum adjustment deceleration, e.g. when speed limit drops",
                 Acceleration.ofSI(0.5), POSITIVE)
         {
-            /** */
-            private static final long serialVersionUID = 20170203L;
-
             @Override
             public void check(final Acceleration value, final Parameters params) throws ParameterException
             {
@@ -149,9 +140,6 @@ public class ParameterTypes implements ConstraintInterface
 
         TMIN = new ParameterTypeDuration("Tmin", "Minimum car-following headway", Duration.ofSI(0.56), POSITIVE)
         {
-            /** */
-            private static final long serialVersionUID = 20160400L;
-
             @Override
             public void check(final Duration value, final Parameters params) throws ParameterException
             {
@@ -163,9 +151,6 @@ public class ParameterTypes implements ConstraintInterface
 
         TMAX = new ParameterTypeDuration("Tmax", "Maximum car-following headway", Duration.ofSI(1.2), POSITIVE)
         {
-            /** */
-            private static final long serialVersionUID = 20160400L;
-
             @Override
             public void check(final Duration value, final Parameters params) throws ParameterException
             {

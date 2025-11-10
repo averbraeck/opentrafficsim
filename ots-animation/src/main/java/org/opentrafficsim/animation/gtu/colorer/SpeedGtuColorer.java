@@ -20,9 +20,6 @@ import org.opentrafficsim.draw.colorer.SpeedColorer;
 public class SpeedGtuColorer extends SpeedColorer<Gtu>
 {
 
-    /** */
-    private static final long serialVersionUID = 20150000L;
-
     /** Value function. */
     private static final Function<Gtu, Speed> VALUE = (gtu) -> gtu.getSpeed();
 

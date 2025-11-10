@@ -33,9 +33,6 @@ import org.w3c.dom.Node;
 public class KeyValidator extends XPathValidator implements EventListener
 {
 
-    /** */
-    private static final long serialVersionUID = 20230912L;
-
     /** Key validators (xsd:keyref) that are using this key validator (xsd:key) to validate. */
     private Set<KeyrefValidator> listeningKeyrefValidators = new LinkedHashSet<>();
 

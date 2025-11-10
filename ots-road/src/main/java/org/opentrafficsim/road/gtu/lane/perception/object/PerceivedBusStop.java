@@ -22,9 +22,6 @@ import org.opentrafficsim.road.network.lane.object.BusStop;
 public class PerceivedBusStop extends PerceivedLaneBasedObjectBase
 {
 
-    /** */
-    private static final long serialVersionUID = 20170127L;
-
     /** Relative lane. */
     private final RelativeLane relativeLane;
 

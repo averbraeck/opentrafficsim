@@ -38,9 +38,6 @@ public class DirectBusStopPerception extends AbstractPerceptionCategory<LaneBase
         implements BusStopPerception
 {
 
-    /** */
-    private static final long serialVersionUID = 20170127;
-
     /** Look ahead parameter type. */
     protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 

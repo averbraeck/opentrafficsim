@@ -18,9 +18,6 @@ import org.opentrafficsim.road.network.lane.Lane;
 public class PerceivedLaneBasedObjectBase extends PerceivedObjectBase implements PerceivedLaneBasedObject
 {
 
-    /** */
-    private static final long serialVersionUID = 20250908L;
-
     /** Lane. */
     private final Lane lane;
 

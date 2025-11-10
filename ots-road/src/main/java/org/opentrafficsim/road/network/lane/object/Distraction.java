@@ -18,9 +18,6 @@ import org.opentrafficsim.road.network.lane.Lane;
 public class Distraction extends AbstractLaneBasedObject
 {
 
-    /** */
-    private static final long serialVersionUID = 20180405L;
-
     /** Distraction profile. */
     private final DistractionProfile profile;
 

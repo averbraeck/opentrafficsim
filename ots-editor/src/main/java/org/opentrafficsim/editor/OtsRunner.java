@@ -84,9 +84,6 @@ public class OtsRunner extends OtsSimulationApplication<OtsRunnerModel>
      */
     public static class OtsRunnerModel extends AbstractOtsModel
     {
-        /** */
-        private static final long serialVersionUID = 20231012L;
-
         /** File. */
         private File file;
 

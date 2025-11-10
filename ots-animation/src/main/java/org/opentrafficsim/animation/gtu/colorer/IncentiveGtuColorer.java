@@ -16,9 +16,6 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Incentive;
 public class IncentiveGtuColorer extends DesireGtuColorer
 {
 
-    /** */
-    private static final long serialVersionUID = 20170414L;
-
     /** Incentive class. */
     private final String incentiveName;
 

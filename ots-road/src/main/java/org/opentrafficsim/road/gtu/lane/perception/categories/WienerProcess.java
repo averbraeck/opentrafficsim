@@ -29,9 +29,6 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
 public class WienerProcess extends DistNormal
 {
 
-    /** */
-    private static final long serialVersionUID = 20181018L;
-
     /** Simulator. */
     private final OtsSimulatorInterface simulator;
 

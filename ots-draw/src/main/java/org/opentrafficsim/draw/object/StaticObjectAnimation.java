@@ -29,9 +29,6 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  */
 public class StaticObjectAnimation extends OtsRenderable<StaticObjectData>
 {
-    /** */
-    private static final long serialVersionUID = 20160400L;
-
     /** Width. */
     private float width;
 

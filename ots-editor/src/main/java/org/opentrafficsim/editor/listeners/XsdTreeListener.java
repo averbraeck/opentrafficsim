@@ -60,9 +60,6 @@ import de.javagl.treetable.JTreeTable;
 public class XsdTreeListener extends MouseAdapter implements TreeSelectionListener, TreeWillExpandListener, EventListener
 {
 
-    /** */
-    private static final long serialVersionUID = 20250917L;
-
     /** Editor. */
     private final OtsEditor editor;
 

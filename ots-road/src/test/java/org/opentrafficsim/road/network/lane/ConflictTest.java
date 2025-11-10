@@ -50,9 +50,6 @@ import org.opentrafficsim.road.network.lane.conflict.DefaultConflictRule;
  */
 public final class ConflictTest implements EventListener
 {
-    /** ... */
-    private static final long serialVersionUID = 20200708L;
-
     /** Verbose test. */
     private static final boolean VERBOSE = false;
 

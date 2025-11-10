@@ -172,9 +172,6 @@ public interface DiscreteDistDoubleScalar
      */
     class Rel<T extends DoubleScalarRel<U, T>, U extends Unit<U>> extends AbstractDiscreteDistScalar implements Supplier<T>
     {
-        /** */
-        private static final long serialVersionUID = 20150000L;
-
         /**
          * Constructor.
          * @param distribution the wrapped distribution function.

@@ -34,9 +34,6 @@ import org.w3c.dom.Node;
 public class XsdTreeNodeRoot extends XsdTreeNode
 {
 
-    /** */
-    private static final long serialVersionUID = 20230224L;
-
     /**
      * Event when a node is created. This event is always thrown by the root of the data structure. Listeners should register
      * with the root.
@@ -170,9 +167,6 @@ public class XsdTreeNodeRoot extends XsdTreeNode
 
         EventListener listener = new EventListener()
         {
-            /** */
-            private static final long serialVersionUID = 20230228L;
-
             @Override
             public void notify(final Event event)
             {

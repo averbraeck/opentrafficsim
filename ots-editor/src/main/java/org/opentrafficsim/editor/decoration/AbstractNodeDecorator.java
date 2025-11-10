@@ -20,9 +20,6 @@ import org.opentrafficsim.editor.XsdTreeNodeRoot;
 public abstract class AbstractNodeDecorator implements EventListener
 {
 
-    /** */
-    private static final long serialVersionUID = 20230910L;
-
     /** Predicate to accept nodes that should have this attribute decorator. */
     private final Predicate<XsdTreeNode> predicate;
 

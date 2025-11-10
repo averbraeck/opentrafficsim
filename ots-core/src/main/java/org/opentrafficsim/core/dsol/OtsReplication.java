@@ -62,9 +62,6 @@ public class OtsReplication extends SingleReplication<Duration>
         return this.startTimeAbs;
     }
 
-    /** */
-    private static final long serialVersionUID = 20140815L;
-
     @Override
     public final String toString()
     {

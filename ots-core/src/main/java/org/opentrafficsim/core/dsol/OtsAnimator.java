@@ -27,9 +27,6 @@ import nl.tudelft.simulation.dsol.simulators.ErrorStrategy;
  */
 public class OtsAnimator extends DevsRealTimeAnimator<Duration> implements OtsSimulatorInterface
 {
-    /** */
-    private static final long serialVersionUID = 20150511L;
-
     /** Counter for replication. */
     private int lastReplication = 0;
 

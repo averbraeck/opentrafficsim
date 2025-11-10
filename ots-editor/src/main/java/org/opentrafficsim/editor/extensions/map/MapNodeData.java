@@ -27,9 +27,6 @@ import org.opentrafficsim.editor.extensions.Adapters;
 public class MapNodeData extends MapData implements NodeData, EventListener
 {
 
-    /** */
-    private static final long serialVersionUID = 20231003L;
-
     /** Bounds. */
     private static final Bounds2d BOUNDS = new Bounds2d(2.0, 2.0);
 

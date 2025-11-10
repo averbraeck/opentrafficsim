@@ -31,9 +31,6 @@ import nl.tudelft.simulation.naming.context.Contextualized;
 public abstract class AbstractLineAnimation<T extends LaneBasedObjectData> extends OtsRenderable<T>
 {
 
-    /** */
-    private static final long serialVersionUID = 20230929L;
-
     /** Rectangle to color. */
     private final Rectangle2D rectangle;
 

@@ -15,9 +15,6 @@ import org.opentrafficsim.core.compatibility.GtuCompatibleInfraType;
  */
 public class LinkType extends GtuCompatibleInfraType<LinkType, Link>
 {
-    /** */
-    private static final long serialVersionUID = 20140821L;
-
     /**
      * Constructor for root-level Link types. The parent will be {@code null}.
      * @param id the id of the link type (may not be {@code null}).

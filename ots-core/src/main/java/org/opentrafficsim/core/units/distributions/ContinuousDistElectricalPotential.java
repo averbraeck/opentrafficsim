@@ -18,9 +18,6 @@ public class ContinuousDistElectricalPotential
         extends ContinuousDistDoubleScalar.Rel<ElectricalPotential, ElectricalPotentialUnit>
 {
 
-    /** */
-    private static final long serialVersionUID = 20180829L;
-
     /**
      * Constructor.
      * @param distribution distribution

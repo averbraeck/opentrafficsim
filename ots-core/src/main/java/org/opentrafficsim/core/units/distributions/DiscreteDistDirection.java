@@ -18,9 +18,6 @@ import nl.tudelft.simulation.jstats.distributions.DistDiscrete;
 public class DiscreteDistDirection extends DiscreteDistDoubleScalar.Abs<Direction, DirectionUnit, AngleUnit>
 {
 
-    /** */
-    private static final long serialVersionUID = 20180829L;
-
     /**
      * Constructor.
      * @param distribution distribution

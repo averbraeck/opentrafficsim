@@ -23,9 +23,6 @@ import org.opentrafficsim.editor.XsdTreeNodeRoot;
 public abstract class AbstractNodeDecoratorAttribute extends AbstractNodeDecorator
 {
 
-    /** */
-    private static final long serialVersionUID = 20230910L;
-
     /** Attributes to trigger on. */
     private final ImmutableList<String> attributes;
 

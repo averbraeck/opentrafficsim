@@ -146,9 +146,6 @@ public class CycleTimeLightController implements RampMeteringLightController
     private class RampMeteringDetector extends LaneDetector
     {
 
-        /** */
-        private static final long serialVersionUID = 20190618L;
-
         /** The traffic light. */
         private final TrafficLight trafficLight;
 

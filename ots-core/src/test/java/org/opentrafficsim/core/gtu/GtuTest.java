@@ -51,9 +51,6 @@ public final class GtuTest
     public Gtu gtuOfStrategicalPlanner = null;
 
     /** */
-    private static final long serialVersionUID = 20151217L;
-
-    /** */
     private GtuTest()
     {
         // do not instantiate test class
@@ -300,9 +297,6 @@ public final class GtuTest
     /** Test GTU model. */
     class GtuModel extends AbstractOtsModel
     {
-        /** */
-        private static final long serialVersionUID = 1L;
-
         /**
          * Constructor.
          * @param simulator the simulator
@@ -328,9 +322,6 @@ public final class GtuTest
     /** Test GTU class. */
     class TestGtu extends Gtu
     {
-        /** */
-        private static final long serialVersionUID = 20151111L;
-
         /**
          * Constructor.
          * @param id id of the new GTU

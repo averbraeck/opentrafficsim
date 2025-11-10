@@ -17,9 +17,6 @@ import nl.tudelft.simulation.jstats.distributions.DistContinuous;
 public class ContinuousDistLength extends ContinuousDistDoubleScalar.Rel<Length, LengthUnit>
 {
 
-    /** */
-    private static final long serialVersionUID = 20180829L;
-
     /**
      * Constructor.
      * @param distribution distribution

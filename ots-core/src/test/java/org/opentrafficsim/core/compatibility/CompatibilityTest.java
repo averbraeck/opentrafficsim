@@ -91,9 +91,6 @@ public final class CompatibilityTest
     /** Test GtuCompatibleInfraType. */
     static class TestRoadType extends GtuCompatibleInfraType<TestRoadType, TestRoad>
     {
-        /** */
-        private static final long serialVersionUID = 20241108L;
-
         /**
          * Instantiate an infrastructure type.
          * @param id the id

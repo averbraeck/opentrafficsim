@@ -21,9 +21,6 @@ import org.opentrafficsim.road.network.LaneKeepingPolicy;
 public class Shoulder extends Lane
 {
 
-    /** */
-    private static final long serialVersionUID = 20240507L;
-
     /**
      * Constructor specifying geometry.
      * @param link link

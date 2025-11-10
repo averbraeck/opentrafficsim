@@ -31,9 +31,6 @@ import nl.tudelft.simulation.naming.context.Contextualized;
 public class PriorityAnimation extends OtsRenderable<PriorityData>
 {
 
-    /** */
-    private static final long serialVersionUID = 20240228L;
-
     /** Shadow. */
     private static final Color SHADOW = new Color(0, 0, 0, 128);
 

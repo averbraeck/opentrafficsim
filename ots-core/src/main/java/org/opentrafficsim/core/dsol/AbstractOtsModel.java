@@ -17,9 +17,6 @@ import nl.tudelft.simulation.jstats.streams.MersenneTwister;
  */
 public abstract class AbstractOtsModel extends AbstractDsolModel<Duration, OtsSimulatorInterface> implements OtsModelInterface
 {
-    /** */
-    private static final long serialVersionUID = 1L;
-
     /** A very short description of the simulation. */
     private String shortName;
 

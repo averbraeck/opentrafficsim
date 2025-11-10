@@ -43,9 +43,6 @@ public class DirectInfrastructurePerception extends AbstractPerceptionCategory<L
         implements InfrastructurePerception
 {
 
-    /** */
-    private static final long serialVersionUID = 20160811L;
-
     /** Range of lane change info perception. */
     public static final ParameterTypeLength PERCEPTION = ParameterTypes.PERCEPTION;
 

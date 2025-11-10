@@ -32,9 +32,6 @@ import nl.tudelft.simulation.naming.context.Contextualized;
 public class ConflictAnimation extends AbstractLineAnimation<ConflictData>
 {
 
-    /** */
-    private static final long serialVersionUID = 20161207L;
-
     /** Drawable paths. */
     private final Set<Path2D.Float> paths;
 

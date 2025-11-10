@@ -271,9 +271,6 @@ public final class ParametersTest implements ConstraintInterface
     /** Helper parameter type for custom constraint checks. */
     private static ParameterTypeSpeed v1 = new ParameterTypeSpeed("v1", "v1long")
     {
-        /** */
-        private static final long serialVersionUID = 20160400L;
-
         @Override
         public void check(final Speed v, final Parameters paramsa) throws ParameterException
         {
@@ -285,9 +282,6 @@ public final class ParametersTest implements ConstraintInterface
     /** Helper parameter type for custom constraint checks. */
     private static ParameterTypeSpeed v2 = new ParameterTypeSpeed("v2", "v2long")
     {
-        /** */
-        private static final long serialVersionUID = 20160400L;
-
         @Override
         public void check(final Speed v, final Parameters paramsa) throws ParameterException
         {

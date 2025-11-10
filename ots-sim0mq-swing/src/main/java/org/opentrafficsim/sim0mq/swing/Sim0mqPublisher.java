@@ -496,9 +496,6 @@ public final class Sim0mqPublisher
  */
 class Sim0mqOtsModel extends AbstractOtsModel
 {
-    /** */
-    private static final long serialVersionUID = 20170419L;
-
     /** The network. */
     private final RoadNetwork network;
 

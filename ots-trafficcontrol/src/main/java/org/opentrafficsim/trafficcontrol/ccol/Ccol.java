@@ -36,9 +36,6 @@ import nl.tudelft.simulation.dsol.experiment.Replication;
  */
 public class Ccol extends LocalEventProducer implements ActuatedTrafficController
 {
-    /** */
-    private static final long serialVersionUID = 20170126L;
-
     /** Name of this CCOL traffic controller. */
     private final String id;
 

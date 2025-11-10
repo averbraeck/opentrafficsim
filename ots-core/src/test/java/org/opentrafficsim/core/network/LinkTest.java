@@ -30,9 +30,6 @@ import org.opentrafficsim.core.mock.MockSimulator;
  */
 public final class LinkTest implements EventListener
 {
-    /** ... */
-    private static final long serialVersionUID = 1L;
-
     /** Count GTU_ADD events. */
     private int gtuAddedCount = 0;
 

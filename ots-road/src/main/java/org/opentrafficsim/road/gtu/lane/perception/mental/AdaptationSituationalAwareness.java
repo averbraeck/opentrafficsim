@@ -40,9 +40,6 @@ public class AdaptationSituationalAwareness implements BehavioralAdaptation
     public static final ParameterTypeDouble SA_MIN =
             new ParameterTypeDouble("SAmin", "Min. situational awareness", 0.5, POSITIVE)
             {
-                /** */
-                private static final long serialVersionUID = 20180403L;
-
                 @Override
                 public void check(final Double value, final Parameters params) throws ParameterException
                 {
@@ -56,9 +53,6 @@ public class AdaptationSituationalAwareness implements BehavioralAdaptation
     public static final ParameterTypeDouble SA_MAX =
             new ParameterTypeDouble("SAmax", "Max. situational awareness", 1.0, POSITIVE)
             {
-                /** */
-                private static final long serialVersionUID = 20180403L;
-
                 @Override
                 public void check(final Double value, final Parameters params) throws ParameterException
                 {

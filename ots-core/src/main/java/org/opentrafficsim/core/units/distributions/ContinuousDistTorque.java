@@ -17,9 +17,6 @@ import nl.tudelft.simulation.jstats.distributions.DistContinuous;
 public class ContinuousDistTorque extends ContinuousDistDoubleScalar.Rel<Torque, TorqueUnit>
 {
 
-    /** */
-    private static final long serialVersionUID = 20180829L;
-
     /**
      * Constructor.
      * @param distribution distribution

@@ -20,9 +20,6 @@ import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
 public class PerceivedGtuSimple extends PerceivedObjectBase implements PerceivedGtu
 {
 
-    /** */
-    private static final long serialVersionUID = 20250908L;
-
     /** GTU type. */
     private final GtuType gtuType;
 

@@ -180,8 +180,6 @@ public interface PerceivedConflict extends PerceivedLaneBasedObject
 
         return new PerceivedConflict()
         {
-            private static final long serialVersionUID = 20250913L;
-
             @Override
             public Lane getLane()
             {

@@ -1,7 +1,5 @@
 package org.opentrafficsim.road.network.lane.object.detector;
 
-import java.io.Serializable;
-
 import org.djutils.base.Identifiable;
 import org.djutils.event.EventType;
 import org.djutils.metadata.MetaData;
@@ -22,7 +20,7 @@ import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
  * @author <a href="https://github.com/averbraeck">Alexander Verbraeck</a>
  * @author <a href="https://github.com/peter-knoppers">Peter Knoppers</a>
  */
-public interface DirectionalOccupancyDetector extends Serializable, Identifiable
+public interface DirectionalOccupancyDetector extends Identifiable
 {
     /**
      * Returns the entry position.

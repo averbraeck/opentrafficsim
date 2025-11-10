@@ -22,9 +22,6 @@ import org.opentrafficsim.editor.XsdTreeNodeRoot;
  */
 public class TrafCodEditor implements EventListener, Consumer<XsdTreeNode>
 {
-    /** */
-    private static final long serialVersionUID = 20230313L;
-
     /** Editor. */
     private OtsEditor editor;
 

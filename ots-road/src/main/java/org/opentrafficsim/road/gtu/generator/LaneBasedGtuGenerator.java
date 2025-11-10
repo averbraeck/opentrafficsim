@@ -64,9 +64,6 @@ import nl.tudelft.simulation.dsol.SimRuntimeException;
  */
 public class LaneBasedGtuGenerator extends LocalEventProducer implements GtuGenerator
 {
-    /** */
-    private static final long serialVersionUID = 20160000L;
-
     /**
      * Event of a generated GTU. Payload: LaneBasedGtu
      */

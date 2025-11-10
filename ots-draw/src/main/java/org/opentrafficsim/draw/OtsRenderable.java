@@ -27,9 +27,6 @@ import nl.tudelft.simulation.naming.context.Contextualized;
 public abstract class OtsRenderable<L extends OtsShape> extends Renderable2d<L>
 {
 
-    /** */
-    private static final long serialVersionUID = 20240223L;
-
     /** Standard rendering keys. */
     private static final Key[] RENDERING_KEYS = new Key[] {RenderingHints.KEY_ANTIALIASING};
 

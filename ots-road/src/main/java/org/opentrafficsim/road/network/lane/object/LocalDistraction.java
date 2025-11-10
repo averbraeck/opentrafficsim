@@ -17,9 +17,6 @@ import org.opentrafficsim.road.network.lane.LanePosition;
 public class LocalDistraction extends AbstractLaneBasedObject
 {
 
-    /** */
-    private static final long serialVersionUID = 20250617L;
-
     /** Range of the distraction (upstream of the location). */
     private final Length range;
 

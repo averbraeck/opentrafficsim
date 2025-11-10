@@ -32,9 +32,6 @@ import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
  */
 public class TrafficLight extends AbstractLaneBasedObject
 {
-    /** */
-    private static final long serialVersionUID = 20230216L;
-
     /** The color of the traffic light. */
     private final Historical<TrafficLightColor> trafficLightColor;
 

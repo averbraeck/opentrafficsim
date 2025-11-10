@@ -16,9 +16,6 @@ import org.opentrafficsim.base.parameters.constraint.Constraint;
 public class ParameterTypeString extends ParameterType<String>
 {
 
-    /** */
-    private static final long serialVersionUID = 20170911L;
-
     /**
      * Constructor.
      * @param id short name of the new ParameterTypeString

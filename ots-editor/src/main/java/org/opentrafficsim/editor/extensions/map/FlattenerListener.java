@@ -21,9 +21,6 @@ import org.opentrafficsim.editor.extensions.Adapters;
 public class FlattenerListener extends ChangeListener<CurveFlattener>
 {
 
-    /** */
-    private static final long serialVersionUID = 20231114L;
-
     /**
      * Constructor.
      * @param flattenerNode node of the flattener, either at the network or at a link.

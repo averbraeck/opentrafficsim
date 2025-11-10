@@ -34,9 +34,6 @@ import nl.tudelft.simulation.naming.context.Contextualized;
 public class LaneDetectorAnimation<L extends LaneDetectorData, T extends RenderableTextSource<L, T>>
         extends AbstractLineAnimation<L>
 {
-    /** */
-    private static final long serialVersionUID = 20150130L;
-
     /** The color of the detector. */
     private final Color color;
 
@@ -139,9 +136,6 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends Rendera
      */
     public static class Text extends RenderableTextSource<LaneDetectorData, Text> implements DetectorData.Text
     {
-        /** */
-        private static final long serialVersionUID = 20161211L;
-
         /**
          * Constructor.
          * @param source the object for which the text is displayed
@@ -203,9 +197,6 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends Rendera
          */
         class LoopDetectorText extends RenderableTextSource<LoopDetectorData, LoopDetectorText>
         {
-            /** */
-            private static final long serialVersionUID = 20240301L;
-
             /**
              * Constructor.
              * @param laneDetector loop detector data.
@@ -245,9 +236,6 @@ public class LaneDetectorAnimation<L extends LaneDetectorData, T extends Rendera
          */
         class SinkText extends RenderableTextSource<SinkData, SinkText>
         {
-            /** */
-            private static final long serialVersionUID = 20240301L;
-
             /**
              * Constructor.
              * @param sink loop detector data.

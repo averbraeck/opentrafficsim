@@ -33,9 +33,6 @@ import org.opentrafficsim.xml.bindings.types.LengthBeginEndType.LengthBeginEnd;
 public abstract class MapLaneBasedObjectData extends MapData implements LaneBasedObjectData, EventListener
 {
 
-    /** */
-    private static final long serialVersionUID = 20240310L;
-
     /** Id. */
     private String id = "";
 

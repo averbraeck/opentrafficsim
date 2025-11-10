@@ -242,9 +242,6 @@ public class ShortMerge extends OtsSimulationApplication<ShortMergeModel>
      */
     public static class ShortMergeModel extends AbstractOtsModel
     {
-        /** */
-        private static final long serialVersionUID = 20170407L;
-
         /** The network. */
         private RoadNetwork network;
 

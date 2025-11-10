@@ -20,9 +20,6 @@ import org.opentrafficsim.editor.XsdTreeNode;
 public class AutomaticLinkId extends AbstractNodeDecoratorAttribute implements CellEditorListener
 {
 
-    /** */
-    private static final long serialVersionUID = 20230910L;
-
     /** Last node. */
     private XsdTreeNode lastNode = null;
 

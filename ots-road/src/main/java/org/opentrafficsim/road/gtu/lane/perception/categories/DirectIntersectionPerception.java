@@ -38,9 +38,6 @@ public class DirectIntersectionPerception extends AbstractPerceptionCategory<Lan
         implements IntersectionPerception
 {
 
-    /** */
-    private static final long serialVersionUID = 20160811L;
-
     /** Look ahead parameter type. */
     protected static final ParameterTypeLength LOOKAHEAD = ParameterTypes.LOOKAHEAD;
 

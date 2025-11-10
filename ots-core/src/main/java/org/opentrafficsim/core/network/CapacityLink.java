@@ -15,9 +15,6 @@ import org.opentrafficsim.base.geometry.OtsLine2d;
  */
 public class CapacityLink extends Link implements Capacity
 {
-    /** */
-    private static final long serialVersionUID = 20151108L;
-
     /** Link capacity in vehicles per time unit. This is a mutable property (e.g., blockage). */
     private Frequency capacity;
 

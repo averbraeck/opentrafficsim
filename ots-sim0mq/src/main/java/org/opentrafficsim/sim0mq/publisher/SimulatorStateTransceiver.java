@@ -1,6 +1,5 @@
 package org.opentrafficsim.sim0mq.publisher;
 
-import java.io.Serializable;
 import java.rmi.RemoteException;
 
 import org.djutils.event.Event;
@@ -116,9 +115,6 @@ public class SimulatorStateTransceiver extends AbstractTransceiver
  */
 class EventMultiplexer extends LocalEventProducer implements EventListener
 {
-    /** ... */
-    private static final long serialVersionUID = 20200618L;
-
     /**
      * Constructor.
      * @param simulator the simulator
@@ -142,7 +138,7 @@ class EventMultiplexer extends LocalEventProducer implements EventListener
      * @param <C> the casting class for the event timestamp
      * @param event the event to be notified of
      */
-    private <C extends Serializable & Comparable<C>> void notifyTimedEvent(final Event event)
+    private <C extends Comparable<C>> void notifyTimedEvent(final Event event)
     {
         @SuppressWarnings("unchecked")
         TimedEvent<C> timedEvent = (TimedEvent<C>) event;

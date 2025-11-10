@@ -37,9 +37,6 @@ import org.opentrafficsim.road.network.lane.object.LaneBasedObject;
 public class CollisionDetector extends AbstractLaneBasedMoveChecker implements EventProducer
 {
 
-    /** */
-    private static final long serialVersionUID = 20251007L;
-
     /** Collision event. */
     public static final EventType COLLISION = new EventType(new MetaData("COLLISION",
             "Event when a GTU collides into an object", new ObjectDescriptor("GTU", "Colliding GTU", LaneBasedGtu.class),

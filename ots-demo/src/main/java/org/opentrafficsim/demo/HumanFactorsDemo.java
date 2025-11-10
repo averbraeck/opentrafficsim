@@ -178,9 +178,6 @@ public final class HumanFactorsDemo extends OtsSimulationApplication<HumanFactor
     public static class HumanFactorsModel extends AbstractOtsModel
     {
 
-        /** */
-        private static final long serialVersionUID = 20241012L;
-
         /** The network. */
         private RoadNetwork network;
 

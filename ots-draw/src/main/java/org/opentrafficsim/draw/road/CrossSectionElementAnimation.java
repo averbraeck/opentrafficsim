@@ -28,9 +28,6 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  */
 public class CrossSectionElementAnimation<L extends CrossSectionElementData> extends OtsRenderable<L>
 {
-    /** */
-    private static final long serialVersionUID = 20141017L;
-
     /** The animation color. */
     private final Color color;
 

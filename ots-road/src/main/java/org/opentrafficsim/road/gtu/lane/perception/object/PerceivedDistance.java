@@ -17,9 +17,6 @@ import com.google.common.base.Objects;
 public class PerceivedDistance extends PerceivedObjectBase
 {
 
-    /** */
-    private static final long serialVersionUID = 20250908L;
-
     /**
      * Construct a new Headway information object with just a distance, without any further information about the object; it
      * assumes a speed of 0 at the headway, so it also good to store information about a lane drop.

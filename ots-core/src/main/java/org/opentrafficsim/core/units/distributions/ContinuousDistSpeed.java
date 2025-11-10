@@ -17,9 +17,6 @@ import nl.tudelft.simulation.jstats.distributions.DistContinuous;
 public class ContinuousDistSpeed extends ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>
 {
 
-    /** */
-    private static final long serialVersionUID = 20180829L;
-
     /**
      * Constructor.
      * @param distribution distribution

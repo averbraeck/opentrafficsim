@@ -32,9 +32,6 @@ import nl.tudelft.simulation.naming.context.Contextualized;
 public class SpeedSignAnimation extends OtsRenderable<SpeedSignData>
 {
 
-    /** */
-    private static final long serialVersionUID = 20170420L;
-
     /** Radius in meters. */
     private static final double RADIUS = 1.6;
 

@@ -34,9 +34,6 @@ import nl.tudelft.simulation.naming.context.Contextualized;
  */
 public class DefaultCarAnimation extends OtsRenderable<GtuData>
 {
-    /** */
-    private static final long serialVersionUID = 20150000L;
-
     /** the Text object to destroy when the GTU animation is destroyed. */
     private Text text;
 
@@ -235,9 +232,6 @@ public class DefaultCarAnimation extends OtsRenderable<GtuData>
      */
     public static class Text extends RenderableTextSource<GtuData, Text>
     {
-        /** */
-        private static final long serialVersionUID = 20161211L;
-
         /** is the animation destroyed? */
         private boolean isTextDestroyed = false;
 

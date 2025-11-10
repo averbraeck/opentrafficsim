@@ -22,9 +22,6 @@ import org.opentrafficsim.editor.XsdTreeNodeRoot;
  */
 public class LayoutCustomizer extends AbstractNodeDecoratorRemove implements EventListener, Consumer<XsdTreeNode>
 {
-    /** */
-    private static final long serialVersionUID = 20231110L;
-
     /** Editor. */
     private OtsEditor editor;
 

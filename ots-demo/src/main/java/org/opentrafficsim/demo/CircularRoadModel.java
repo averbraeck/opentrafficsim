@@ -57,9 +57,6 @@ import nl.tudelft.simulation.jstats.streams.StreamInterface;
  */
 public class CircularRoadModel extends AbstractOtsModel implements UNITS
 {
-    /** */
-    private static final long serialVersionUID = 20141121L;
-
     /** Number of cars created. */
     private int carsCreated = 0;
 

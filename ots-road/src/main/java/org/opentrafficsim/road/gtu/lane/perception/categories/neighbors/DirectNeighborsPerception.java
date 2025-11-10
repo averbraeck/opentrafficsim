@@ -34,9 +34,6 @@ public class DirectNeighborsPerception extends AbstractPerceptionCategory<LaneBa
         implements NeighborsPerception
 {
 
-    /** */
-    private static final long serialVersionUID = 20160811L;
-
     /** Perception GTU type that should be used. */
     private final PerceivedGtuType perceptionGtuType;
 

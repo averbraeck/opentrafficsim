@@ -21,9 +21,6 @@ import nl.tudelft.simulation.dsol.experiment.Replication;
  */
 public class HistoryManagerDevs extends HistoryManager implements EventListener
 {
-    /** */
-    private static final long serialVersionUID = 1L;
-
     /** Simulator. */
     private final OtsSimulatorInterface simulator;
 
