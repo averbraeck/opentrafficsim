@@ -230,7 +230,6 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
             }
             // Put the (not very evenly spaced) cars on the track
             double variability = (headway - 20) * headwayVariability;
-            System.out.println("headway is " + headway + " variability limit is " + variability);
             Random random = new Random(12345);
             for (int laneIndex = 0; laneIndex < laneCount; laneIndex++)
             {
@@ -242,7 +241,6 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
                     // Actual headway is uniformly distributed around headway
                     double laneRelativePos = pos > lane1Length ? pos - lane1Length : pos;
                     double actualHeadway = headway + (random.nextDouble() * 2 - 1) * variability;
-                    // System.out.println(lane + ", len=" + lane.getLength() + ", pos=" + laneRelativePos);
                     generateGTU(new Length(laneRelativePos, METER), lane, gtuType);
                     pos += actualHeadway;
                 }
@@ -309,28 +307,6 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
     public final Length getMinimumDistance()
     {
         return this.minimumDistance;
-    }
-
-    /**
-     * Stop simulation and throw an Error.
-     * @param theSimulator the simulator
-     * @param errorMessage the error message
-     */
-    public void stopSimulator(final OtsSimulatorInterface theSimulator, final String errorMessage)
-    {
-        System.out.println("Error: " + errorMessage);
-        try
-        {
-            if (theSimulator.isStartingOrRunning())
-            {
-                theSimulator.stop();
-            }
-        }
-        catch (SimRuntimeException exception)
-        {
-            exception.printStackTrace();
-        }
-        throw new Error(errorMessage);
     }
 
 }

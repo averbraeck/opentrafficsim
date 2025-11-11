@@ -23,6 +23,7 @@ import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.geometry.OtsShape;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition.Type;
 import org.opentrafficsim.core.network.Network;
@@ -295,7 +296,7 @@ public class TrafficLightDetector extends LocalEventProducer implements EventLis
         }
         else
         {
-            System.err.println("Unexpected event: " + event);
+            Logger.ots().error("Unexpected event: {}", event);
         }
     }
 

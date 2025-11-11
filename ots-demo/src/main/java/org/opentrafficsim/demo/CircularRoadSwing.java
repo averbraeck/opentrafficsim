@@ -75,7 +75,6 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
         // NetworkAnimation networkAnimation = new NetworkAnimation(model.getNetwork());
         // networkAnimation.addDrawingInfoClass(Lane.class, new DrawingInfoShape<>(Color.GRAY));
         RoadNetwork network = model.getNetwork();
-        System.out.println(network.getLinkMap());
     }
 
     @Override
@@ -95,125 +94,6 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
     }
 
     /**
-     * Run the simulation without animation.
-     */
-    public static void simulatorDemo()
-    {
-        try
-        {
-            OtsSimulator simulator = new OtsSimulator("CircularRoadSwing");
-            final CircularRoadModel otsModel = new CircularRoadModel(simulator);
-            System.out.println(otsModel.getInputParameterMap());
-            TabbedParameterDialog.process(otsModel.getInputParameterMap());
-            simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), otsModel,
-                    HistoryManagerDevs.noHistory(simulator));
-            Thread getLocationThread = new Thread()
-            {
-                @Override
-                public void run()
-                {
-                    System.out.println("getLocationThread starts up");
-                    int iteration = 0;
-                    int getLocationCalls = 0;
-                    while (simulator.isStartingOrRunning())
-                    {
-                        iteration++;
-                        for (Gtu gtu : otsModel.getNetwork().getGTUs())
-                        {
-                            gtu.getLocation();
-                            getLocationCalls++;
-                        }
-                        try
-                        {
-                            Thread.sleep(1);
-                        }
-                        catch (InterruptedException e)
-                        {
-                            e.printStackTrace();
-                        }
-                    }
-                    System.out.println("getLocationThread exits after " + iteration + " iterations and " + getLocationCalls
-                            + " getLocation calls");
-                }
-
-            };
-            simulator.start();
-            getLocationThread.start();
-            while (simulator.isStartingOrRunning())
-            {
-                Thread.sleep(1000);
-                // System.out.println("Simulator time is " + simulator.getSimulatorTime());
-            }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        System.exit(0);
-    }
-
-    /**
-     * Find the start simulation button and click it.
-     * @param component some component that could be the start button, or a container that contains the start button
-     * @return true if the start button was found (and clicked); false otherwise
-     */
-    public static boolean clickStart(final Component component)
-    {
-        if (component instanceof JButton)
-        {
-            JButton button = (JButton) component;
-            if (button.getText().contains("Start simulation model"))
-            {
-                button.doClick();
-                System.out.println("Auto clicked the start button");
-                return true;
-            }
-        }
-        else if (component instanceof Container)
-        {
-            for (Component comp : ((Container) component).getComponents())
-            {
-                if (clickStart(comp))
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Click the button that starts the animated simulation.
-     * @param component some component that (hopefully) is, or contains the start button
-     * @return true if the button was found (and clicked); false if the start button was not found
-     */
-    public static boolean clickRunPause(final Component component)
-    {
-        if (component instanceof JButton)
-        {
-            JButton button = (JButton) component;
-            // System.out.println("Found button with name " + button.getName());
-            if (button.getName().equals("runPauseButton"))
-            {
-                button.doClick();
-                System.out.println("Auto clicked the run button");
-                return true;
-            }
-        }
-        else if (component instanceof Container)
-        {
-            for (Component comp : ((Container) component).getComponents())
-            {
-                if (clickRunPause(comp))
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
      * Start the demo.
      * @param exitOnClose when running stand-alone: true; when running as part of a demo: false
      */
@@ -223,38 +103,6 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
         {
             OtsAnimator simulator = new OtsAnimator("CircularRoadSwing");
             final CircularRoadModel otsModel = new CircularRoadModel(simulator);
-            // Thread buttonClick = new Thread()
-            // {
-            // @Override
-            // public void run()
-            // {
-            // try
-            // {
-            // Thread.sleep(1000);
-            // }
-            // catch (InterruptedException e)
-            // {
-            // e.printStackTrace();
-            // } // wait for the TabbedParameterDialog to start up
-            // // Find the window
-            // for (Window window : Window.getWindows())
-            // {
-            // // System.out.println("Name of window is " + window.getName());
-            // if (window.getName().startsWith("dialog"))
-            // {
-            // for (Component comp : window.getComponents())
-            // {
-            // if (clickStart(comp))
-            // {
-            // return;
-            // }
-            // }
-            // }
-            // }
-            //
-            // }
-            // };
-            // buttonClick.start(); // start the thread that will try to click on the start button
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
                 simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), otsModel,
@@ -264,15 +112,6 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
                 CircularRoadSwing app = new CircularRoadSwing("Circular Road", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
                 animationPanel.enableSimulationControlButtons();
-                // simulator.setSpeedFactor(Double.MAX_VALUE, true);
-                // simulator.setSpeedFactor(1000.0, true);
-                // for (Component component : app.getComponents())
-                // {
-                // if (clickRunPause(component))
-                // {
-                // break;
-                // }
-                // }
             }
             else
             {

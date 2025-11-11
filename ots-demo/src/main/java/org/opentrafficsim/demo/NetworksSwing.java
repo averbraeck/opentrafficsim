@@ -66,7 +66,6 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
     {
         super(model, panel, DefaultsFactory.GTU_TYPE_MARKERS.toMap());
         RoadNetwork network = model.getNetwork();
-        System.out.println(network.getLinkMap());
     }
 
     @Override
@@ -278,7 +277,6 @@ public class NetworksSwing extends OtsSimulationApplication<NetworksModel> imple
             {
                 if (button.isSelected())
                 {
-                    System.out.println("SELECTED: " + this.values.get(this.buttons.indexOf(button)));
                     return this.values.get(this.buttons.indexOf(button));
                 }
             }

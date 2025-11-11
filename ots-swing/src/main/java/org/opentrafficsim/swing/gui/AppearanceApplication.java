@@ -35,6 +35,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.opentrafficsim.base.Resource;
+import org.opentrafficsim.base.logger.Logger;
 
 import nl.tudelft.simulation.dsol.swing.animation.d2.VisualizationPanel;
 
@@ -137,7 +138,7 @@ public class AppearanceApplication extends JFrame
                 }
                 catch (IOException exception)
                 {
-                    System.err.println("Could not store properties at " + propertiesFile + ".");
+                    Logger.ots().error("Could not store properties at {}.", propertiesFile);
                 }
             }
         });

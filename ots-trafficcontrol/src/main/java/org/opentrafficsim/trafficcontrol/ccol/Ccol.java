@@ -15,6 +15,7 @@ import org.djutils.event.Event;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.OtsSimulator;
 import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -121,7 +122,7 @@ public class Ccol extends LocalEventProducer implements ActuatedTrafficControlle
     {
         if (null != this.clientSocket)
         {
-            System.err.println("clientSocket already set");
+            Logger.ots().error("clientSocket already set");
             return;
         }
         this.clientSocket = socket;

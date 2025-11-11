@@ -849,7 +849,6 @@ public class OdMatrix implements Identifiable
                             sep = ", ";
                         }
                         catStr.append("]");
-                        // System.out.println("DEBUG format is \"" + format + "\"");
                         System.out.println(String.format(format, origin.getId(), destination.getId()) + catStr + " | "
                                 + categoryMap.get(category).demandVector());
                     }

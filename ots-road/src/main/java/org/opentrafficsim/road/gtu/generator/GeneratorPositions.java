@@ -14,6 +14,7 @@ import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.GtuType;
 import org.opentrafficsim.core.math.Draw;
@@ -454,7 +455,7 @@ public interface GeneratorPositions
             }
             if (0 == map.size())
             {
-                System.err.println("This really, really can't work...");
+                Logger.ots().error("This really, really can't work...");
             }
             return Draw.drawWeighted(map, this.stream);
         }

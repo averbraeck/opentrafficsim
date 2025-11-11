@@ -46,6 +46,7 @@ import org.opentrafficsim.base.StripeElement;
 import org.opentrafficsim.base.StripeElement.StripeLateralSync;
 import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 import org.opentrafficsim.base.geometry.OtsShape;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.geometry.CurveFlattener;
 import org.opentrafficsim.core.geometry.PolyLineCurve2d;
 import org.opentrafficsim.draw.network.LinkAnimation.LinkData;
@@ -740,7 +741,7 @@ public class MapLinkData extends MapData implements LinkData, EventListener, Eve
                     }
                     default:
                     {
-                        System.out.println("Dash synchronization " + dashOffsetNode.getNodeName() + " is unknown.");
+                        Logger.ots().warn("Dash synchronization " + dashOffsetNode.getNodeName() + " is unknown.");
                     }
                 }
             }

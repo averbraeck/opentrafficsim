@@ -19,6 +19,7 @@ import java.util.Set;
 import javax.swing.JPanel;
 
 import org.djunits.unit.DurationUnit;
+import org.djunits.value.formatter.EngineeringFormatter;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
@@ -26,6 +27,7 @@ import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableCollection;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
@@ -246,7 +248,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
         for (int lineno = 0; lineno < this.trafCODRules.size(); lineno++)
         {
             String trimmedLine = this.trafCODRules.get(lineno);
-            // System.out.println(lineno + ":\t" + inputLine);
+            Logger.ots().trace("{}:\t{}", lineno, trimmedLine);
             if (trimmedLine.length() == 0)
             {
                 continue;
@@ -405,7 +407,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
         {
             if (0 == v.getRefCount() && (!v.isOutput()) && (!v.getName().matches("^RA.")))
             {
-                // System.out.println("Warning: " + v.getName() + v.getStream() + " is never referenced");
+                Logger.ots().warn("Warning: {}{} is never referenced", v.getName(), v.getStream());
                 fireTimedEvent(TRAFFICCONTROL_CONTROLLER_WARNING,
                         new Object[] {getId(), v.toString(EnumSet.of(PrintFlags.ID)) + " is never referenced"},
                         this.simulator.getSimulatorTime());
@@ -414,14 +416,14 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
             {
                 if (!v.getFlags().contains(Flags.HAS_START_RULE))
                 {
-                    // System.out.println("Warning: " + v.getName() + v.getStream() + " has no start rule");
+                    Logger.ots().warn("Warning: {}{} has no start rule", v.getName(), v.getStream());
                     fireTimedEvent(TRAFFICCONTROL_CONTROLLER_WARNING,
                             new Object[] {getId(), v.toString(EnumSet.of(PrintFlags.ID)) + " has no start rule"},
                             this.simulator.getSimulatorTime());
                 }
                 if ((!v.getFlags().contains(Flags.HAS_END_RULE)) && (!v.isTimer()))
                 {
-                    // System.out.println("Warning: " + v.getName() + v.getStream() + " has no end rule");
+                    Logger.ots().warn("Warning: {}{} has no end rule", v.getName(), v.getStream());
                     fireTimedEvent(TRAFFICCONTROL_CONTROLLER_WARNING,
                             new Object[] {getId(), v.toString(EnumSet.of(PrintFlags.ID)) + " has no end rule"},
                             this.simulator.getSimulatorTime());
@@ -534,7 +536,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
                     {
                         throw new TrafficControlException("Cannor find detector image matching variable " + variable);
                     }
-                    // System.out.println("creating subscriptions to sensor " + tls);
+                    Logger.ots().trace("creating subscriptions to sensor {}", tls);
                     tls.addListener(el, TrafficLightDetector.TRAFFIC_LIGHT_DETECTOR_TRIGGER_ENTRY_EVENT);
                     tls.addListener(el, TrafficLightDetector.TRAFFIC_LIGHT_DETECTOR_TRIGGER_EXIT_EVENT);
                 }
@@ -568,7 +570,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
                 {
                     useFirstCoordinates = false; // TODO really figure out which coordinates to use
                 }
-                // System.out.println("map file description is " + inputLine);
+                Logger.ots().trace("map file description is {}", line);
                 // Make a decent attempt at constructing the URL of the map file
             }
             else if ("light".equals(fields[0]))
@@ -665,7 +667,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
      */
     private int decrementTimers() throws TrafficControlException
     {
-        // System.out.println("Decrement running timers");
+        Logger.ots().trace("Decrement running timers");
         int changeCount = 0;
         for (Variable v : this.variables.values())
         {
@@ -703,7 +705,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
     {
         fireTimedEvent(TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING, new Object[] {getId()},
                 this.simulator.getSimulatorTime());
-        // System.out.println("evalExprs: time is " + EngineeringFormatter.format(this.simulator.getSimulatorTime().si));
+        Logger.ots().trace("evalExprs: time is {}", EngineeringFormatter.format(this.simulator.getSimulatorTime().si));
         // insert some delay for testing; without this the simulation runs too fast
         // try
         // {
@@ -711,7 +713,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
         // }
         // catch (InterruptedException exception)
         // {
-        // System.out.println("Sleep in evalExprs was interrupted");
+        Logger.ots().trace("Sleep in evalExprs was interrupted");
         // // exception.printStackTrace();
         // }
         // Contrary to the C++ builder version; this implementation decrements the times at the start of evalExprs
@@ -728,7 +730,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
                 break;
             }
         }
-        // System.out.println("Executed " + (loop + 1) + " iteration(s)");
+        Logger.ots().trace("Executed {} iteration(s)", (loop + 1));
         if (loop >= this.maxLoopCount)
         {
             StringBuffer warningMessage = new StringBuffer();
@@ -892,8 +894,8 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
                 fireTimedEvent(TRAFFICCONTROL_CONFLICT_GROUP_CHANGED,
                         new Object[] {getId(), this.currentConflictGroup, conflictGroupList.toString()},
                         getSimulator().getSimulatorTime());
-                // System.out.println("Conflict group changed from " + this.currentConflictGroup + " to "
-                // + conflictGroupList.toString());
+                Logger.ots().trace("Conflict group changed from {} to {}", this.currentConflictGroup,
+                        conflictGroupList.toString());
                 this.currentConflictGroup = conflictGroupList.toString();
             }
         }
@@ -1279,14 +1281,13 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
                         break;
 
                     default:
-                        System.out.println(
-                                "<<<ERROR>>> encountered a non-Token object: " + token + " after " + result.toString());
+                        Logger.ots().error("<<<ERROR>>> encountered a non-Token object: {} after {}", token, result.toString());
                         throw new TrafficControlException("Unknown token");
                 }
             }
             else
             {
-                System.out.println("<<<ERROR>>> encountered a non-Token object: " + token + " after " + result.toString());
+                Logger.ots().error("<<<ERROR>>> encountered a non-Token object: {} after {}", token, result.toString());
                 throw new TrafficControlException("Not a token");
             }
         }
@@ -1799,13 +1800,13 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
     @Override
     public void notify(final Event event)
     {
-        System.out.println("TrafCOD: received an event");
+        Logger.ots().info("TrafCOD: received an event");
         if (event.getType().equals(TrafficController.TRAFFICCONTROL_SET_TRACING))
         {
             Object content = event.getContent();
             if (!(content instanceof Object[]))
             {
-                System.err.println("TrafCOD controller " + getId() + " received event with bad payload (" + content + ")");
+                Logger.ots().error("TrafCOD controller {} received event with bad payload ({})", getId(), content);
                 return;
             }
             Object[] fields = (Object[]) event.getContent();
@@ -1814,7 +1815,7 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
                 if (fields.length < 4 || !(fields[1] instanceof String) || !(fields[2] instanceof Integer)
                         || !(fields[3] instanceof Boolean))
                 {
-                    System.err.println("TrafCOD controller " + getId() + " received event with bad payload (" + content + ")");
+                    Logger.ots().error("TrafCOD controller {} received event with bad payload ({})", getId(), content);
                     return;
                 }
                 String name = (String) fields[1];
@@ -1825,8 +1826,8 @@ public class TrafCod extends AbstractTrafficController implements ActuatedTraffi
                     Variable v = this.variables.get(variableKey(name, (short) stream));
                     if (null == v)
                     {
-                        System.err.println("Received trace notification for nonexistent variable (name=\"" + name
-                                + "\", stream=" + stream + ")");
+                        Logger.ots().error("Received trace notification for nonexistent variable (name=\"{}\", stream={})",
+                                name, stream);
                     }
                     if (trace)
                     {
@@ -2183,7 +2184,7 @@ class Variable implements EventListener
             this.updateTime10 = timeStamp10;
             if (this.flags.contains(Flags.TRACED))
             {
-                System.out.println("Timer " + toString() + " expired");
+                Logger.ots().info("Timer {} expired", toString());
             }
             return true;
         }
@@ -2281,7 +2282,7 @@ class Variable implements EventListener
         }
         if (this.flags.contains(Flags.TRACED))
         {
-            // System.out.println("Variable " + this.name + this.stream + " changes from " + this.value + " to " + newValue
+            Logger.ots().trace("Variable {} {} changed from {} to {}", this.name, this.stream, this.value, newValue);
             // + " due to " + cause.toString());
             trafCODController.fireTrafCODEvent(TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED,
                     new Object[] {trafCODController.getId(), toString(EnumSet.of(PrintFlags.ID)), this.stream, this.value,

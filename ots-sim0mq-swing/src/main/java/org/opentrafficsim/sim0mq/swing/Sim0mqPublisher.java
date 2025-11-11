@@ -30,6 +30,7 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.decoderdumper.HexDumper;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.serialization.SerializationException;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -181,12 +182,12 @@ public final class Sim0mqPublisher
         poller.register(controlSocket, ZMQ.Poller.POLLIN);
         while (!Thread.currentThread().isInterrupted())
         {
-            // System.out.println("Publisher calls Poller.poll()");
+            Logger.ots().trace("Publisher calls Poller.poll()");
             poller.poll();
             if (poller.pollin(0))
             {
                 byte[] data = resultInputQueue.recv();
-                // System.out.println("Publisher got outgoing result of " + data.length + " bytes");
+                Logger.ots().trace("Publisher got outgoing result of " + data.length + " bytes");
                 byte[] fixedData = data;
                 int number = -1;
                 try
@@ -205,20 +206,20 @@ public final class Sim0mqPublisher
                     e.printStackTrace();
                 }
                 resultOutputQueue.send(fixedData, 0);
-                // System.out.println("Outgoing result handed over to controlSocket");
+                Logger.ots().trace("Outgoing result handed over to controlSocket");
                 continue; // Check for more results before checking the control input
             }
             if (poller.pollin(1))
             {
                 byte[] data = controlSocket.recv();
-                // System.out.println("Publisher received a command of " + data.length + " bytes");
+                Logger.ots().trace("Publisher received a command of " + data.length + " bytes");
                 if (!handleCommand(data, socketMap))
                 {
                     break;
                 }
             }
         }
-        System.out.println("Exiting publisher polling loop");
+        Logger.ots().info("Exiting publisher polling loop");
     }
 
     /**
@@ -303,7 +304,7 @@ public final class Sim0mqPublisher
             if (message.length >= 8 && message[5] instanceof String)
             {
                 String command = (String) message[5];
-                System.out.println("Publisher thread decoded Sim0MQ command: " + command);
+                Logger.ots().info("Publisher thread decoded Sim0MQ command: " + command);
 
                 String[] parts = command.split("\\|");
                 if (parts.length == 2)
@@ -315,7 +316,7 @@ public final class Sim0mqPublisher
                     if (null == this.publisher)
                     {
                         returnWrapper.nack("No simulation loaded; cannot execute command " + command);
-                        System.err.println("No publisher for command " + command);
+                        Logger.ots().error("No publisher for command " + command);
                         return true;
                     }
                     Object[] payload = Arrays.copyOfRange(message, 8, message.length);
@@ -342,7 +343,7 @@ public final class Sim0mqPublisher
                                         }
                                     }
                                 }
-                                // System.out.println("xml length = " + ((String) message[8]).length());
+                                Logger.ots().trace("xml length = " + ((String) message[8]).length());
                                 resultMessage = loadNetwork((String) message[8], (Duration) message[9], (Duration) message[10],
                                         (Long) message[11]);
                                 ackNack = null == resultMessage;
@@ -363,7 +364,7 @@ public final class Sim0mqPublisher
                             for (Container container = this.animationPanel; container != null; container =
                                     container.getParent())
                             {
-                                // System.out.println("container is " + container);
+                                Logger.ots().trace("container is " + container);
                                 if (container instanceof JFrame)
                                 {
                                     JFrame jFrame = (JFrame) container;
@@ -375,7 +376,7 @@ public final class Sim0mqPublisher
                         case "SIMULATEUNTIL":
                             if (message.length == 9 && message[8] instanceof Duration)
                             {
-                                System.out.println("Simulating up to " + message[8]);
+                                Logger.ots().info("Simulating up to " + message[8]);
                                 if (null == this.network)
                                 {
                                     resultMessage = "No network loaded";
@@ -402,18 +403,18 @@ public final class Sim0mqPublisher
                                 int count = 0;
                                 while (this.network.getSimulator().isStartingOrRunning())
                                 {
-                                    System.out.print(".");
+                                    Logger.ots().info(".");
                                     count++;
                                     if (count > 1000) // Quit after 1000 attempts of 10 ms; 10 s
                                     {
-                                        System.out.println("TIMEOUT - STOPPING SIMULATOR. TIME = "
+                                        Logger.ots().info("TIMEOUT - STOPPING SIMULATOR. TIME = "
                                                 + this.network.getSimulator().getSimulatorTime());
                                         this.network.getSimulator().stop();
                                         Iterator<SimEventInterface<Duration>> elIt =
                                                 this.network.getSimulator().getEventList().iterator();
                                         while (elIt.hasNext())
                                         {
-                                            System.out.println("EVENTLIST: " + elIt.next());
+                                            Logger.ots().info("EVENTLIST: " + elIt.next());
                                         }
                                     }
                                     try
@@ -476,14 +477,14 @@ public final class Sim0mqPublisher
             else
             {
                 // We cannot construct a ReturnWrapper because the request has too few fields.
-                System.err.println("Publisher expected Sim0MQ command but is has too few fields:");
-                System.err.println(HexDumper.hexDumper(data));
+                Logger.ots().error("Publisher expected Sim0MQ command but is has too few fields:");
+                Logger.ots().error(HexDumper.hexDumper(data));
                 return true; // Do we really want to try again?
             }
         }
         catch (Sim0MQException | SerializationException | RemoteException e)
         {
-            System.err.println("Publisher thread could not decode command");
+            Logger.ots().error("Publisher thread could not decode command");
             e.printStackTrace();
         }
         return result;

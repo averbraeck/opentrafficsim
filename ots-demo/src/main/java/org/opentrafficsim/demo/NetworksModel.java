@@ -377,14 +377,12 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
                 new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(this.stream, 1.6, 2.0), METER),
                 new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistUniform(this.stream, 140, 180), KM_PER_HOUR),
                 initialPositions, this.strategicalPlannerFactoryCars);
-        // System.out.println("Constructed template " + template);
         distribution.add(new FrequencyAndObject<>(this.carProbability, template));
         template = makeTemplate(this.stream, lane,
                 new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(this.stream, 8, 14), METER),
                 new ContinuousDistDoubleScalar.Rel<Length, LengthUnit>(new DistUniform(this.stream, 2.0, 2.5), METER),
                 new ContinuousDistDoubleScalar.Rel<Speed, SpeedUnit>(new DistUniform(this.stream, 100, 140), KM_PER_HOUR),
                 initialPositions, this.strategicalPlannerFactoryTrucks);
-        // System.out.println("Constructed template " + template);
         distribution.add(new FrequencyAndObject<>(1.0 - this.carProbability, template));
         LaneBasedGtuTemplateDistribution templateDistribution = new LaneBasedGtuTemplateDistribution(distribution);
         LaneBasedGtuGenerator.RoomChecker roomChecker = new CfRoomChecker();

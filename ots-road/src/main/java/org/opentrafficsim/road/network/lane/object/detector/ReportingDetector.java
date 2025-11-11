@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.network.lane.object.detector;
 
 import org.djunits.value.vdouble.scalar.Length;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.core.object.DetectorType;
@@ -38,7 +39,7 @@ public class ReportingDetector extends LaneDetector
     @Override
     public final void triggerResponse(final LaneBasedGtu gtu)
     {
-        System.out.println(this + " triggered by " + getPositionType().getName() + " of " + gtu);
+        Logger.ots().info(this + " triggered by " + getPositionType().getName() + " of " + gtu);
     }
 
     @Override

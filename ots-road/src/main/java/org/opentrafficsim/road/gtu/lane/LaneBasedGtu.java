@@ -647,8 +647,8 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
             }
             catch (Exception exception)
             {
-                System.err.println(exception.getMessage());
-                System.err.println("  GTU " + this + " DESTROYED AND REMOVED FROM THE SIMULATION");
+                Logger.ots().error(exception);
+                Logger.ots().error("  GTU {} DESTROYED AND REMOVED FROM THE SIMULATION", this);
                 destroy();
                 cancelAllEvents();
                 return true;

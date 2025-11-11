@@ -42,6 +42,7 @@ import org.djutils.event.EventListener;
 import org.djutils.event.TimedEvent;
 import org.djutils.exceptions.Throw;
 import org.opentrafficsim.animation.data.AnimationGtuData;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -245,7 +246,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
         this.autoPanKind = newAutoPanKind;
         this.autoPanTrack = newAutoPanTrack;
         this.autoPanOnNextPaintComponent = true;
-        // System.out.println("AutoPan id=" + newAutoPanId + ", kind=" + newAutoPanKind + ", track=" + newAutoPanTrack);
+        Logger.ots().trace("AutoPan id=" + newAutoPanId + ", kind=" + newAutoPanKind + ", track=" + newAutoPanTrack);
         if (null != this.autoPanId && null != OtsAnimationPanel.this.animationPanel && this.autoPanId.length() > 0
                 && null != this.autoPanKind)
         {
@@ -484,7 +485,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
     public final void actionPerformed(final ActionEvent actionEvent)
     {
         String actionCommand = actionEvent.getActionCommand();
-        // System.out.println("Action command is " + actionCommand);
+        Logger.ots().trace("Action command is " + actionCommand);
         try
         {
             if (actionCommand.equals("Reset Y-zoom"))
@@ -626,7 +627,7 @@ public class OtsAnimationPanel extends OtsSimulationPanel implements ActionListe
             Container parent = this.coordinateField.getParent();
             parent.setPreferredSize(requiredSize);
             parent.setMinimumSize(requiredSize);
-            // System.out.println("Increased minimum width to " + requiredSize.width);
+            Logger.ots().trace("Increased minimum width to " + requiredSize.width);
             parent.revalidate();
         }
         this.coordinateField.repaint();

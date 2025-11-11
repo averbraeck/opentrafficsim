@@ -1,6 +1,7 @@
 package org.opentrafficsim.road.gtu.lane;
 
 import org.djutils.exceptions.Try;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.perception.Perception;
 
@@ -174,7 +175,7 @@ public final class Break
      */
     private static void trigger()
     {
-        System.err.println("Break condition for debugging is true."); // SET BREAK POINT ON THIS LINE
+        Logger.ots().error("Break condition for debugging is true."); // SET BREAK POINT ON THIS LINE
     }
 
 }

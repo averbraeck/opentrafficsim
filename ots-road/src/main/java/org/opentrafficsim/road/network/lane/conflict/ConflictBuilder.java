@@ -1012,14 +1012,14 @@ public final class ConflictBuilder
             final WidthGenerator widthGenerator, final LaneCombinationList ignoreList, final LaneCombinationList permittedList)
     {
         long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
-        System.out.println("PARALLEL GENERATING OF CONFLICTS (SMALL JOBS). " + totalCombinations + " COMBINATIONS");
+        Logger.ots().trace("PARALLEL GENERATING OF CONFLICTS (SMALL JOBS). " + totalCombinations + " COMBINATIONS");
         long lastReported = 0;
         Map<Lane, OtsLine2d> leftEdges = new LinkedHashMap<>();
         Map<Lane, OtsLine2d> rightEdges = new LinkedHashMap<>();
 
         // make a threadpool and execute buildConflicts for all records
         int cores = Runtime.getRuntime().availableProcessors();
-        System.out.println("USING " + cores + " CORES");
+        Logger.ots().trace("USING " + cores + " CORES");
         ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(cores);
         AtomicInteger numberOfJobs = new AtomicInteger(0);
         final int maxqueue = 2 * cores;
@@ -1058,8 +1058,8 @@ public final class ConflictBuilder
                 }
                 catch (Exception e)
                 {
-                    System.err.println("Contour problem - lane1 = [" + lane1.getFullId() + "], lane2 = [" + lane2.getFullId()
-                            + "]; skipped");
+                    Logger.ots().error("Contour problem - lane1 = [{}], lane2 = [{}]; skipped", lane1.getFullId(),
+                            lane2.getFullId());
                     continue;
                 }
 
@@ -1131,14 +1131,14 @@ public final class ConflictBuilder
             final WidthGenerator widthGenerator, final LaneCombinationList ignoreList, final LaneCombinationList permittedList)
     {
         long totalCombinations = ((long) lanes.size()) * ((long) lanes.size() - 1) / 2;
-        System.out.println("PARALLEL GENERATING OF CONFLICTS (BIG JOBS). " + totalCombinations + " COMBINATIONS");
+        Logger.ots().trace("PARALLEL GENERATING OF CONFLICTS (BIG JOBS). " + totalCombinations + " COMBINATIONS");
         long lastReported = 0;
         Map<Lane, OtsLine2d> leftEdges = new LinkedHashMap<>();
         Map<Lane, OtsLine2d> rightEdges = new LinkedHashMap<>();
 
         // make a threadpool and execute buildConflicts for all records
         int cores = Runtime.getRuntime().availableProcessors();
-        System.out.println("USING " + cores + " CORES");
+        Logger.ots().trace("USING " + cores + " CORES");
         ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(cores);
         AtomicInteger numberOfJobs = new AtomicInteger(0);
         final int maxqueue = 200;
@@ -1223,7 +1223,6 @@ public final class ConflictBuilder
     {
         for (String conflictId : conflictCandidateMap.keySet())
         {
-            // System.out.println(conflictId);
             List<Lane> lanes = new ArrayList<>();
             for (Link link : conflictCandidateMap.get(conflictId))
             {
@@ -1376,8 +1375,8 @@ public final class ConflictBuilder
                     }
                     catch (Exception e)
                     {
-                        System.err.println("Contour problem - lane1 = [" + lane1.getFullId() + "], lane2 = ["
-                                + lane2.getFullId() + "]; skipped");
+                        Logger.ots().error("Contour problem - lane1 = [{}], lane2 = [{}]; skipped", lane1.getFullId(),
+                                lane2.getFullId());
                         continue;
                     }
 

@@ -41,6 +41,7 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Try;
 import org.djutils.math.means.HarmonicMean;
 import org.opentrafficsim.animation.GraphLaneUtil;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypes;
 import org.opentrafficsim.base.parameters.Parameters;
@@ -495,7 +496,7 @@ public class FundamentalDiagramDemo extends AbstractSimulationScript
                     }
                     catch (ParameterException exception)
                     {
-                        System.err.println("Unable to set headway parameter.");
+                        Logger.ots().error("Unable to set headway parameter.");
                     }
                 }
             }

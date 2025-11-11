@@ -18,6 +18,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Time;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
@@ -114,7 +115,7 @@ public class LoadXml extends OtsSimulationApplication<OtsModelInterface>
             fileChooser.removeChoosableFileFilter(fileChooser.getAcceptAllFileFilter());
             if (JFileChooser.APPROVE_OPTION != fileChooser.showOpenDialog(null))
             {
-                System.out.println("No file chosen; exiting");
+                Logger.ots().warn("No file chosen; exiting");
                 System.exit(0);
             }
             fileName = fileChooser.getSelectedFile().getAbsolutePath();

@@ -144,12 +144,12 @@ public class OtsWebModel implements EventListener
     {
         if (getSimulator() == null)
         {
-            System.out.println("SIMULATOR == NULL");
+            Logger.ots().warn("SIMULATOR == NULL");
             return false;
         }
         try
         {
-            System.out.println("START THE SIMULATOR");
+            Logger.ots().trace("START THE SIMULATOR");
             getSimulator().start();
         }
         catch (SimRuntimeException exception)
@@ -176,7 +176,7 @@ public class OtsWebModel implements EventListener
         }
         try
         {
-            System.out.println("STOP THE SIMULATOR");
+            Logger.ots().trace("STOP THE SIMULATOR");
             getSimulator().stop();
         }
         catch (SimRuntimeException exception)
@@ -264,7 +264,7 @@ public class OtsWebModel implements EventListener
                 case "windowSize":
                 {
                     if (parts.length != 3)
-                        System.err.println("wrong windowSize commmand: " + message);
+                        Logger.ots().error("wrong windowSize commmand: {}", message);
                     else
                     {
                         int width = Integer.parseInt(parts[1]);
@@ -486,7 +486,7 @@ public class OtsWebModel implements EventListener
                 case "toggle":
                 {
                     if (parts.length != 4)
-                        System.err.println("wrong toggle commmand: " + message);
+                        Logger.ots().error("wrong toggle commmand: {}", message);
                     else
                     {
                         String toggleName = parts[1];
@@ -512,7 +512,7 @@ public class OtsWebModel implements EventListener
 
                 default:
                 {
-                    System.err.println("OTSWebModel: Got unknown message from client: " + command);
+                    Logger.ots().error("OTSWebModel: Got unknown message from client: {}", command);
                     answer = "<message>" + request.getAttribute("message") + "</message>";
                     break;
                 }
@@ -522,7 +522,7 @@ public class OtsWebModel implements EventListener
         String slider = fields.getValue("slider");
         if (slider != null)
         {
-            // System.out.println(request.getParameter("slider") + "\n");
+            Logger.ots().trace("{}", slider);
             try
             {
                 int value = Integer.parseInt(slider);
@@ -533,7 +533,7 @@ public class OtsWebModel implements EventListener
                 else
                     speedFactor = Math.pow(2.15444, value / 100.0) / 21.5444;
                 setSpeedFactor(speedFactor);
-                // System.out.println("speed factor changed to " + speedFactor);
+                Logger.ots().trace("speed factor changed to {}", speedFactor);
             }
             catch (NumberFormatException exception)
             {

@@ -18,6 +18,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.animation.DefaultAnimationFactory;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulator;
@@ -224,7 +225,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
                 t = this.simulator.getSimulatorTime();
                 if (t.si >= tReport)
                 {
-                    System.out.println("Simulation time is " + t);
+                    Logger.ots().info("Simulation time is " + t);
                     tReport += 60.0;
                 }
             }

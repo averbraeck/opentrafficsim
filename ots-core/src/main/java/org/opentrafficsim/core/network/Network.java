@@ -159,7 +159,6 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
      */
     public final boolean containsNode(final Node node)
     {
-        // System.out.println(node);
         return this.nodeMap.keySet().contains(node.getId());
     }
 

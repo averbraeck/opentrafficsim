@@ -18,6 +18,7 @@ import javax.imageio.ImageIO;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djutils.eval.Eval;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
@@ -162,7 +163,7 @@ public final class ControlParser
             // TODO: implement coordinates file
             if (trafCODConsole.getCoordinatesFile() != null)
             {
-                System.out.println("coordinates file is " + trafCODConsole.getCoordinatesFile());
+                Logger.ots().trace("coordinates file is " + trafCODConsole.getCoordinatesFile());
                 throw new TrafficControlException("Loading coordinates from file not implemented yet");
             }
             String objectLocationsString = trafCODConsole.getCoordinates().getValue().get(eval);
@@ -184,7 +185,7 @@ public final class ControlParser
             // fireEvent(TrafficController.TRAFFICCONTROL_SET_TRACING, new Object[] {controllerName, "TD1", 11, true});
             // fireEvent(TrafficController.TRAFFICCONTROL_SET_TRACING, new Object[] {controllerName, "TGX", 11, true});
             // fireEvent(TrafficController.TRAFFICCONTROL_SET_TRACING, new Object[] {controllerName, "TL", 11, true});
-            // System.out.println("demo: emitting a SET TRACING event for all variables related to stream 11");
+            // Logger.ots().trace("demo: emitting a SET TRACING event for all variables related to stream 11");
             // fireEvent(TrafficController.TRAFFICCONTROL_SET_TRACING, new Object[] { controllerName, "", 11, true });
 
             // this.trafCOD.traceVariablesOfStream(TrafficController.NO_STREAM, true);

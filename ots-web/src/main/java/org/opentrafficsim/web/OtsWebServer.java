@@ -111,7 +111,7 @@ public abstract class OtsWebServer implements EventListener
             // root folder; to work in Eclipse, as an external jar, and in an embedded jar
             URL homeFolder = URLResource.getResource("/resources/home");
             String webRoot = homeFolder.toExternalForm();
-            System.out.println("webRoot is " + webRoot);
+            Logger.ots().trace("webRoot is " + webRoot);
 
             resourceHandler.setDirAllowed(true);
             resourceHandler.setWelcomeFiles(new String[] {"index.html"});
@@ -168,12 +168,12 @@ public abstract class OtsWebServer implements EventListener
     {
         if (getSimulator() == null)
         {
-            System.out.println("SIMULATOR == NULL");
+            Logger.ots().trace("SIMULATOR == NULL");
             return false;
         }
         try
         {
-            System.out.println("START THE SIMULATOR");
+            Logger.ots().trace("START THE SIMULATOR");
             getSimulator().start();
         }
         catch (SimRuntimeException exception)
@@ -200,7 +200,7 @@ public abstract class OtsWebServer implements EventListener
         }
         try
         {
-            System.out.println("STOP THE SIMULATOR");
+            Logger.ots().trace("STOP THE SIMULATOR");
             getSimulator().stop();
         }
         catch (SimRuntimeException exception)
@@ -303,7 +303,7 @@ public abstract class OtsWebServer implements EventListener
                     case "windowSize":
                     {
                         if (parts.length != 3)
-                            System.err.println("wrong windowSize commmand: " + message);
+                            Logger.ots().error("wrong windowSize commmand: {}", message);
                         else
                         {
                             int width = Integer.parseInt(parts[1]);
@@ -525,7 +525,7 @@ public abstract class OtsWebServer implements EventListener
                     case "toggle":
                     {
                         if (parts.length != 4)
-                            System.err.println("wrong toggle commmand: " + message);
+                            Logger.ots().error("wrong toggle commmand: {}", message);
                         else
                         {
                             String toggleName = parts[1];
@@ -551,7 +551,7 @@ public abstract class OtsWebServer implements EventListener
 
                     default:
                     {
-                        System.err.println("Got unknown message from client: " + command);
+                        Logger.ots().error("Got unknown message from client: {}", command);
                         answer = "<message>" + request.getAttribute("message") + "</message>";
                         break;
                     }
@@ -561,7 +561,7 @@ public abstract class OtsWebServer implements EventListener
             String slider = fields.getValue("slider");
             if (slider != null)
             {
-                // System.out.println(request.getParameter("slider") + "\n");
+                Logger.ots().trace("{}", slider);
                 try
                 {
                     int value = Integer.parseInt(slider);
@@ -572,7 +572,7 @@ public abstract class OtsWebServer implements EventListener
                     else
                         speedFactor = Math.pow(2.15444, value / 100.0) / 21.5444;
                     this.webServer.setSpeedFactor(speedFactor);
-                    // System.out.println("speed factor changed to " + speedFactor);
+                    Logger.ots().trace("speed factor changed to {}", speedFactor);
                 }
                 catch (NumberFormatException exception)
                 {

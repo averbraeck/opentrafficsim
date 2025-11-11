@@ -30,6 +30,7 @@ import org.eclipse.jetty.session.SessionDataStore;
 import org.eclipse.jetty.util.Callback;
 import org.eclipse.jetty.util.Fields;
 import org.opentrafficsim.animation.DefaultAnimationFactory;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -107,7 +108,7 @@ public class TestDemoServer
             // root folder; to work in Eclipse, as an external jar, and in an embedded jar
             URL homeFolder = URLResource.getResource("/resources/home");
             String webRoot = homeFolder.toExternalForm();
-            System.out.println("webRoot is " + webRoot);
+            Logger.ots().trace("webRoot is " + webRoot);
 
             resourceHandler.setDirAllowed(true);
             resourceHandler.setWelcomeFiles(new String[] {"testdemo.html"});
@@ -169,7 +170,7 @@ public class TestDemoServer
                 String sessionId = fields.getValue("sessionId");
                 if (!TestDemoServer.this.sessionModelMap.containsKey(sessionId))
                 {
-                    System.out.println("parameters: " + modelId);
+                    Logger.ots().trace("parameters: " + modelId);
                     OtsAnimator simulator = new OtsAnimator("TestDemoServer");
                     simulator.setAnimation(false);
                     OtsModelInterface model = null;
@@ -180,7 +181,7 @@ public class TestDemoServer
                     if (model != null)
                         TestDemoServer.this.sessionModelMap.put(sessionId, model);
                     else
-                        System.err.println("Could not find model " + modelId);
+                        Logger.ots().error("Could not find model " + modelId);
                 }
             }
 
@@ -192,7 +193,7 @@ public class TestDemoServer
                 if (TestDemoServer.this.sessionModelMap.containsKey(sessionId)
                         && !TestDemoServer.this.sessionWebModelMap.containsKey(sessionId))
                 {
-                    System.out.println("startModel: " + modelId);
+                    Logger.ots().trace("startModel: " + modelId);
                     OtsModelInterface model = TestDemoServer.this.sessionModelMap.get(sessionId);
                     OtsSimulatorInterface simulator = model.getSimulator();
                     try
@@ -290,7 +291,7 @@ public class TestDemoServer
 
                             default:
                             {
-                                System.err.println("Got unknown message from client: " + command);
+                                Logger.ots().error("Got unknown message from client: {}", command);
                                 answer = "<message>" + request.getAttribute("message") + "</message>";
                                 break;
                             }
@@ -320,7 +321,7 @@ public class TestDemoServer
             {
                 if (!(tab instanceof InputParameterMap))
                 {
-                    System.err.println("Input parameter " + tab.getShortName() + " cannot be displayed in a tab");
+                    Logger.ots().error("Input parameter {} cannot be displayed in a tab", tab.getShortName());
                 }
                 else
                 {
@@ -547,13 +548,13 @@ public class TestDemoServer
                         param.getDoubleParameter().setDoubleValue(Double.valueOf(val));
                         String unitString = unitMap.get(id);
                         if (unitString == null)
-                            System.err.println("Could not find unit for Doublevalie parameter with id=" + id);
+                            Logger.ots().error("Could not find unit for Doublevalie parameter with id={}", id);
                         else
                         {
                             Unit<?> unit = param.getUnitParameter().getOptions().get(unitString);
                             if (unit == null)
-                                System.err.println(
-                                        "Could not find unit " + unitString + " for Doublevalie parameter with id=" + id);
+                                Logger.ots().error("Could not find unit {} for Doublevalie parameter with id={}", unitString,
+                                        id);
                             else
                             {
                                 param.getUnitParameter().setObjectValue(unit);

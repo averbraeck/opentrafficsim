@@ -18,6 +18,7 @@ import javax.swing.ToolTipManager;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.LocalEventProducer;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.road.network.lane.object.detector.TrafficLightDetector;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLightColor;
 
@@ -111,7 +112,7 @@ public class TrafCodDisplay extends JPanel implements MouseMotionListener, Mouse
                 break;
             }
         }
-        // System.out.println("Setting tool tip text to " + toolTipText);
+        Logger.ots().trace("Setting tool tip text to " + toolTipText);
         setToolTipText(toolTipText);
     }
 
@@ -346,12 +347,12 @@ class TrafficLightImage extends LocalEventProducer implements TrafCODObject
                 break;
 
             default:
-                System.err.println("Unhandled TrafficLightColor: " + this.color);
+                Logger.ots().error("Unhandled TrafficLightColor: {}", this.color);
                 return;
         }
         g2.setColor(lightColor);
         g2.fillOval(this.x - DISC_SIZE / 2, this.y - DISC_SIZE / 2, DISC_SIZE, DISC_SIZE);
-        // System.out.println("Drawn disk in color " + lightColor);
+        Logger.ots().trace("Drawn disk in color {}", lightColor);
     }
 
 }

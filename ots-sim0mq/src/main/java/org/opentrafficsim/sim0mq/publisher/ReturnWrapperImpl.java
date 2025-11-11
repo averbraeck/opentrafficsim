@@ -4,8 +4,11 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.djutils.exceptions.Throw;
+import org.djutils.serialization.Endianness;
 import org.djutils.serialization.SerializationException;
 import org.djutils.serialization.SerializationRuntimeException;
+import org.djutils.serialization.util.SerialDataDumper;
+import org.opentrafficsim.base.logger.Logger;
 import org.sim0mq.Sim0MQException;
 import org.sim0mq.message.Sim0MQMessage;
 import org.zeromq.SocketType;
@@ -95,18 +98,18 @@ public class ReturnWrapperImpl implements ReturnWrapper
         ZMQ.Socket socket = this.socketMap.get(threadId);
         while (null == socket)
         {
-            // System.out.println("socket map is " + this.socketMap);
-            System.out.println("Creating new internal socket for thread " + threadId + " (map currently contains "
+            Logger.ots().trace("socket map is " + this.socketMap);
+            Logger.ots().trace("Creating new internal socket for thread " + threadId + " (map currently contains "
                     + this.socketMap.size() + " entries)");
             socket = this.zContext.createSocket(SocketType.PUSH);
             socket.setHWM(100000);
             socket.connect("inproc://simulationEvents");
             this.socketMap.put(threadId, socket);
-            // System.out.println("Socket created; map now contains " + this.socketMap.size() + " entries");
+            Logger.ots().trace("Socket created; map now contains " + this.socketMap.size() + " entries");
         }
-        // System.out.println("pre send");
+        Logger.ots().trace("pre send");
         socket.send(data, 0);
-        // System.out.println("post send");
+        Logger.ots().trace("post send");
     }
 
     @Override
@@ -128,7 +131,7 @@ public class ReturnWrapperImpl implements ReturnWrapper
         byte[] result = Sim0MQMessage.encodeUTF8(true, this.federationId, this.ourAddress, this.returnAddress,
                 fixedMessageTypeId, this.messageId, fixedPayload);
         sendToMaster(result);
-        // System.out.println(SerialDataDumper.serialDataDumper(EndianUtil.BIG_ENDIAN, result));
+        Logger.ots().trace(SerialDataDumper.serialDataDumper(Endianness.BIG_ENDIAN, result));
     }
 
     @Override

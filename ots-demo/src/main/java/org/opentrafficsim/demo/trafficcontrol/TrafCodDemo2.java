@@ -101,7 +101,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
         {
             OtsAnimator simulator = new OtsAnimator("TrafCODDemo2");
             URL url = URLResource.getResource("/resources/TrafCODDemo2/TrafCODDemo2.xml");
-            System.out.println("url is " + url);
+            Logger.ots().info("url is " + url);
             String xml = readStringFromURL(url);
             final TrafCodModel trafcodModel = new TrafCodModel(simulator, "TrafCODModel", "TrafCOD demonstration Model", xml);
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.ofSI(3600.0), trafcodModel,
@@ -207,7 +207,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
             Object[] payload = (Object[]) event.getContent();
             if (TrafficController.TRAFFICCONTROL_CONTROLLER_EVALUATING.equals(type))
             {
-                // System.out.println("Evaluation starts at " + getSimulator().getSimulatorTime());
+                Logger.ots().info("Evaluation starts at " + getSimulator().getSimulatorTime());
                 return;
             }
             else if (TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED.equals(type))

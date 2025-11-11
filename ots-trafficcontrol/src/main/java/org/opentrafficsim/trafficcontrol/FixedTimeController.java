@@ -18,6 +18,7 @@ import org.djutils.immutablecollections.ImmutableHashSet;
 import org.djutils.immutablecollections.ImmutableList;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.immutablecollections.ImmutableSet;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.road.network.lane.object.trafficlight.TrafficLight;
@@ -185,7 +186,7 @@ public class FixedTimeController extends AbstractTrafficController
                     // Remove the traffic light from the current signal groups that it is part of
                     for (SignalGroup sg : sgList)
                     {
-                        // System.out.println("Reducing " + sg);
+                        Logger.ots().trace("Reducing {}", sg);
                         newSignalGroupName = newSignalGroupName + "_" + sg.getId();
                         Set<String> trafficLightIds = new LinkedHashSet<>();
                         for (String tlId : sg.getTrafficLightIds())

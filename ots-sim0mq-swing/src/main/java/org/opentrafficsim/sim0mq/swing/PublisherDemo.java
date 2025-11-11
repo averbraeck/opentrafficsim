@@ -10,10 +10,11 @@ import java.util.List;
 import javax.naming.NamingException;
 
 import org.djunits.unit.DurationUnit;
-import org.djunits.unit.TimeUnit;
 import org.djunits.value.vdouble.scalar.Duration;
-import org.djunits.value.vdouble.scalar.Time;
+import org.djutils.serialization.Endianness;
 import org.djutils.serialization.SerializationException;
+import org.djutils.serialization.util.SerialDataDumper;
+import org.opentrafficsim.base.logger.Logger;
 import org.sim0mq.Sim0MQException;
 import org.sim0mq.message.Sim0MQMessage;
 import org.zeromq.SocketType;
@@ -80,16 +81,16 @@ public final class PublisherDemo
         }
         if (receivedMessages.size() == 0)
         {
-            System.err.println("publisher does not respond");
+            Logger.ots().error("publisher does not respond");
         }
         else
         {
             Object[] objects = Sim0MQMessage.decodeToArray(receivedMessages.get(0));
             if (!objects[5].equals(badCommand))
             {
-                System.err.println("publisher return unexpected response");
+                Logger.ots().error("publisher return unexpected response");
             }
-            System.out.println("Got expected response to unsupported command");
+            Logger.ots().info("Got expected response to unsupported command");
         }
 
         // FIXME: This is of course not the intention...
@@ -133,16 +134,16 @@ public final class PublisherDemo
         sendCommand(publisherControlSocket,
                 Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "GTUs in network|GET_RESULT_META_DATA", conversationId++));
         sendCommand(publisherControlSocket, Sim0MQMessage.encodeUTF8(true, 0, "Master", "Slave", "DIE", conversationId++));
-        System.out.println("Master has sent last command; Publisher should be busy for a while and then die");
-        System.out.println("Master joining publisher thread (this should block until publisher has died)");
+        Logger.ots().info("Master has sent last command; Publisher should be busy for a while and then die");
+        Logger.ots().info("Master joining publisher thread (this should block until publisher has died)");
         publisherThread.join();
-        System.out.println("Master has joined publisher thread");
-        System.out.println("Master interrupts read message thread");
+        Logger.ots().info("Master has joined publisher thread");
+        Logger.ots().info("Master interrupts read message thread");
         readMessageThread.interrupt();
-        System.out.println("Master has interrupted read message thread; joining ...");
+        Logger.ots().info("Master has interrupted read message thread; joining ...");
         readMessageThread.join();
-        System.out.println("Master has joined read message thread");
-        System.out.println("Master exits");
+        Logger.ots().info("Master has joined read message thread");
+        Logger.ots().info("Master exits");
     }
 
     /**
@@ -155,7 +156,7 @@ public final class PublisherDemo
         try
         {
             Object[] unpackedMessage = Sim0MQMessage.decodeToArray(message);
-            System.out.println("Master sending command " + unpackedMessage[5] + " conversation id " + unpackedMessage[6]);
+            Logger.ots().info("Master sending command " + unpackedMessage[5] + " conversation id " + unpackedMessage[6]);
         }
         catch (Sim0MQException | SerializationException e)
         {
@@ -189,7 +190,7 @@ public final class PublisherDemo
         @Override
         public void run()
         {
-            System.out.println("Read message thread starting up");
+            Logger.ots().info("Read message thread starting up");
             ZMQ.Socket socket = this.zContext.createSocket(SocketType.PULL);
             socket.setReceiveTimeOut(100);
             socket.bind("inproc://publisherOutput");
@@ -201,7 +202,7 @@ public final class PublisherDemo
                     this.storage.add(one);
                 }
             }
-            System.out.println("Read message thread exits due to interrupt");
+            Logger.ots().info("Read message thread exits due to interrupt");
         }
 
     }
@@ -221,7 +222,7 @@ public final class PublisherDemo
             if (null != message)
             {
                 output.append("Master received " + message.length + " byte message: ");
-                // System.out.println(SerialDataDumper.serialDataDumper(EndianUtil.BIG_ENDIAN, message));
+                Logger.ots().trace(SerialDataDumper.serialDataDumper(Endianness.BIG_ENDIAN, message));
                 try
                 {
                     Object[] fields = Sim0MQMessage.decodeToArray(message);
@@ -235,15 +236,15 @@ public final class PublisherDemo
                 {
                     e.printStackTrace();
                 }
-                System.out.println(output);
+                Logger.ots().info(output);
                 resultList.add(message);
             }
             else
             {
                 if (resultList.size() > 0)
                 {
-                    System.out.println(
-                            "Master picked up " + resultList.size() + " message" + (resultList.size() == 1 ? "" : "s"));
+                    Logger.ots()
+                            .info("Master picked up " + resultList.size() + " message" + (resultList.size() == 1 ? "" : "s"));
                 }
                 break;
             }
@@ -287,7 +288,7 @@ public final class PublisherDemo
             {
                 e.printStackTrace();
             }
-            System.out.println("Publisher thread exits");
+            Logger.ots().info("Publisher thread exits");
         }
 
     }

@@ -13,6 +13,7 @@ import org.djutils.event.EventListener;
 import org.djutils.event.EventType;
 import org.junit.jupiter.api.Test;
 import org.opentrafficsim.base.geometry.OtsLine2d;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.mock.MockGtu;
@@ -147,7 +148,7 @@ public final class LinkTest implements EventListener
         }
         else
         {
-            System.err.println("unhandled event is " + event);
+            Logger.ots().error("unhandled event is {}", event);
             this.otherEventCount++;
         }
     }

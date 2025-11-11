@@ -8,6 +8,7 @@ import java.util.List;
 import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
+import org.opentrafficsim.base.logger.Logger;
 
 /**
  * Measure the performance of the Polygon2d intersection method.
@@ -185,13 +186,12 @@ public final class TestIntersectionPerformance
             {
                 if (numTests != this.stats.get(0).getNumTests())
                 {
-                    System.err.println(
-                            "Number of tests per run changed from " + this.stats.get(0).getNumTests() + " to " + numTests);
+                    Logger.ots().error("Number of tests per run changed from {} to {}", this.stats.get(0).getNumTests(),
+                            numTests);
                 }
                 if (numHits != this.stats.get(0).getNumHits())
                 {
-                    System.err.println(
-                            "Number of hits per run changed from " + this.stats.get(0).getNumHits() + " to " + numHits);
+                    Logger.ots().error("Number of hits per run changed from {} to {}", this.stats.get(0).getNumHits(), numHits);
                 }
             }
             this.stats.add(new Result(numTests, numHits, executionTime));

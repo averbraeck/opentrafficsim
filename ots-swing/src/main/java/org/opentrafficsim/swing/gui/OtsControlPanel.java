@@ -282,7 +282,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         }
         catch (NullPointerException | IOException npe)
         {
-            System.err.println("Could not load icon from path " + iconPath);
+            Logger.ots().error("Could not load icon from path {}", iconPath);
             return null;
         }
     }
@@ -300,7 +300,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
         }
         catch (NullPointerException | IOException e)
         {
-            System.err.println("Could not load icon from path " + iconPath);
+            Logger.ots().error("Could not load icon from path {}", iconPath);
             return null;
         }
     }
@@ -389,7 +389,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
     public final void actionPerformed(final ActionEvent actionEvent)
     {
         String actionCommand = actionEvent.getActionCommand();
-        // System.out.println("actionCommand: " + actionCommand);
+        Logger.ots().trace("actionCommand: " + actionCommand);
         try
         {
             if (actionCommand.equals("Step"))
@@ -404,12 +404,12 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             {
                 if (this.simulator.isStartingOrRunning())
                 {
-                    // System.out.println("RunPause: Stopping simulator");
+                    Logger.ots().trace("RunPause: Stopping simulator");
                     this.simulator.stop();
                 }
                 else if (getSimulator().getEventList().size() > 0)
                 {
-                    // System.out.println("RunPause: Starting simulator");
+                    Logger.ots().trace("RunPause: Starting simulator");
                     this.simulator.start();
                 }
             }
@@ -417,7 +417,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             {
                 if (getSimulator().isStartingOrRunning())
                 {
-                    // System.out.println("NextTime: Stopping simulator");
+                    Logger.ots().trace("NextTime: Stopping simulator");
                     getSimulator().stop();
                 }
                 try
@@ -430,7 +430,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                     Logger.ots().error("Caught an exception while trying to schedule an autoPauseSimulator event "
                             + "at the current simulator time");
                 }
-                // System.out.println("NextTime: Starting simulator");
+                Logger.ots().trace("NextTime: Starting simulator");
                 this.simulator.start();
             }
             if (actionCommand.equals("Reset"))
@@ -519,7 +519,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
      */
     protected final void fixButtons()
     {
-        // System.out.println("FixButtons entered");
+        Logger.ots().trace("FixButtons entered");
         final boolean moreWorkToDo = getSimulator().getEventList().size() > 0;
         for (JButton button : this.buttons)
         {
@@ -556,7 +556,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 Logger.ots().error(new Exception("Unknown button?"));
             }
         }
-        // System.out.println("FixButtons finishing");
+        Logger.ots().trace("FixButtons finishing");
     }
 
     /**
@@ -564,12 +564,12 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
      */
     public final void autoPauseSimulator()
     {
-        // System.out.println("OtsControlPanel.autoPauseSimulator entered");
+        Logger.ots().trace("OtsControlPanel.autoPauseSimulator entered");
         if (getSimulator().isStartingOrRunning())
         {
             try
             {
-                // System.out.println("AutoPauseSimulator: stopping simulator");
+                Logger.ots().trace("AutoPauseSimulator: stopping simulator");
                 getSimulator().stop();
             }
             catch (SimRuntimeException exception1)
@@ -578,18 +578,18 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             }
             Duration currentTick = getSimulator().getSimulatorTime();
             Duration nextTick = getSimulator().getEventList().first().getAbsoluteExecutionTime();
-            // System.out.println("currentTick is " + currentTick);
-            // System.out.println("nextTick is " + nextTick);
+            Logger.ots().trace("currentTick is {}", currentTick);
+            Logger.ots().trace("nextTick is {}", nextTick);
             if (nextTick.gt(currentTick))
             {
                 // The clock is now just beyond where it was when the user requested the NextTime operation
                 // Insert another autoPauseSimulator event just before what is now the time of the next event
                 // and let the simulator time increment to that time
-                // System.out.println("Re-Scheduling at " + nextTick);
+                Logger.ots().trace("Re-Scheduling at " + nextTick);
                 try
                 {
                     this.stopAtEvent = scheduleEvent(nextTick, SimEventInterface.MAX_PRIORITY, () -> autoPauseSimulator());
-                    // System.out.println("AutoPauseSimulator: starting simulator");
+                    Logger.ots().trace("AutoPauseSimulator: starting simulator");
                     getSimulator().start();
                 }
                 catch (SimRuntimeException exception)
@@ -600,25 +600,25 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             }
             else
             {
-                // System.out.println("Not re-scheduling");
+                Logger.ots().trace("Not re-scheduling");
                 if (SwingUtilities.isEventDispatchThread())
                 {
-                    // System.out.println("Already on EventDispatchThread");
+                    Logger.ots().trace("Already on EventDispatchThread");
                     fixButtons();
                 }
                 else
                 {
                     try
                     {
-                        // System.out.println("Current thread is NOT EventDispatchThread: " + Thread.currentThread());
+                        Logger.ots().trace("Current thread is NOT EventDispatchThread: " + Thread.currentThread());
                         SwingUtilities.invokeAndWait(new Runnable()
                         {
                             @Override
                             public void run()
                             {
-                                // System.out.println("Runnable started");
+                                Logger.ots().trace("Runnable started");
                                 fixButtons();
-                                // System.out.println("Runnable finishing");
+                                Logger.ots().trace("Runnable finishing");
                             }
                         });
                     }
@@ -626,7 +626,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                     {
                         if (e instanceof InterruptedException)
                         {
-                            System.out.println("Caught " + e);
+                            Logger.ots().error(e);
                             // e.printStackTrace();
                         }
                         else
@@ -637,13 +637,13 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 }
             }
         }
-        // System.out.println("OtsControlPanel.autoPauseSimulator finished");
+        Logger.ots().trace("OtsControlPanel.autoPauseSimulator finished");
     }
 
     @Override
     public final void propertyChange(final PropertyChangeEvent evt)
     {
-        // System.out.println("PropertyChanged: " + evt);
+        Logger.ots().trace("PropertyChanged: " + evt);
         if (null != this.stopAtEvent)
         {
             getSimulator().cancelEvent(this.stopAtEvent); // silently ignore false result
@@ -945,8 +945,8 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                     bestError = logError;
                 }
             }
-            // System.out.println("setSpeedfactor: factor is " + factor + ", best slider value is " + bestStep
-            // + " current value is " + this.slider.getValue());
+            Logger.ots().trace("setSpeedfactor: factor is {}, best slider value is {} current value is {}", factor, bestStep,
+                    this.slider.getValue());
             if (this.slider.getValue() != bestStep)
             {
                 this.slider.setValue(bestStep);
@@ -1244,10 +1244,10 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             Matcher matcher = this.pattern.matcher(text);
             if (matcher.matches())
             {
-                // System.out.println("String \"" + text + "\" matches");
+                Logger.ots().trace("String \"" + text + "\" matches");
                 return super.stringToValue(text);
             }
-            // System.out.println("String \"" + text + "\" does not match");
+            Logger.ots().trace("String \"" + text + "\" does not match");
             throw new ParseException("Pattern did not match", 0);
         }
 
@@ -1265,7 +1265,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 || event.getType().equals(SimulatorInterface.STOP_EVENT)
                 || event.getType().equals(DevsRealTimeAnimator.CHANGE_SPEED_FACTOR_EVENT))
         {
-            // System.out.println("OtsControlPanel receive event " + event);
+            Logger.ots().trace("OtsControlPanel receive event " + event);
             if (event.getType().equals(DevsRealTimeAnimator.CHANGE_SPEED_FACTOR_EVENT))
             {
                 this.timeWarpPanel.setSpeedFactor((Double) event.getContent());

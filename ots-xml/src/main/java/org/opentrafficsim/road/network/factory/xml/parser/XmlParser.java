@@ -22,6 +22,7 @@ import org.djutils.draw.curve.OffsetCurve2d;
 import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
 import org.djutils.io.URLResource;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.distributions.FrequencyAndObject;
@@ -273,7 +274,7 @@ public final class XmlParser
             IdSupplier idGenerator = new IdSupplier("");
             List<LaneBasedGtuGenerator> generators = DemandParser.parseGenerators(otsNetwork, definitions, demand, gtuTemplates,
                     routeMixMap, shortestRouteMixMap, streamInformation, idGenerator, eval);
-            // System.out.println("Created " + generators.size() + " generators based on explicit generator definitions");
+            Logger.ots().trace("Created {} generators based on explicit generator definitions", generators.size());
             generators = DemandParser.parseInjectionGenerators(otsNetwork, definitions, demand, gtuTemplates, routeMixMap,
                     shortestRouteMixMap, streamInformation, idGenerator, eval);
             // System.out
@@ -299,7 +300,7 @@ public final class XmlParser
             // OD generators
             List<LaneBasedGtuGenerator> generators = OdParser.parseDemand(otsNetwork, definitions, demand, gtuTemplates,
                     laneBiases, factories, modelIdReferrals, streamInformation, eval);
-            // System.out.println("Created " + generators.size() + " generators based on origin destination matrices");
+            Logger.ots().trace("Created {} generators based on origin destination matrices", generators.size());
         }
 
         // control

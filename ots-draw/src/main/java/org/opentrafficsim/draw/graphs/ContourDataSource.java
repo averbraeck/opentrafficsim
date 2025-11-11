@@ -658,7 +658,7 @@ public class ContourDataSource extends LocalEventProducer
                     if (ContourDataSource.this.redo)
                     {
                         // plots need to be redone
-                        System.out.println("Interrupting EGTF");
+                        Logger.ots().info("Interrupting EGTF");
                         event.interrupt(); // stop the EGTF
                     }
                 });

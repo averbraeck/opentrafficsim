@@ -16,6 +16,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.serialization.SerializationException;
+import org.opentrafficsim.base.logger.Logger;
 import org.sim0mq.Sim0MQException;
 
 /**
@@ -346,7 +347,7 @@ public class SubscriptionHandler
         {
             return Command.GET_COMMANDS;
         }
-        System.err.println("Could not find command with name \"" + commandString + "\"");
+        Logger.ots().error("Could not find command with name \"{}\"", commandString);
         return null;
     }
 

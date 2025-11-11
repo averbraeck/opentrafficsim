@@ -467,13 +467,13 @@ public final class OdApplier
             stream = simulator.getModel().getStream("default");
             if (stream == null)
             {
-                System.out
-                        .println("Using locally created stream (not from the simulator) for vehicle generation, with seed 1.");
+                Logger.ots()
+                        .trace("Using locally created stream (not from the simulator) for vehicle generation, with seed 1.");
                 stream = new MersenneTwister(1L);
             }
             else
             {
-                System.out.println("Using stream 'default' for vehicle generation.");
+                Logger.ots().trace("Using stream 'default' for vehicle generation.");
             }
         }
         return stream;

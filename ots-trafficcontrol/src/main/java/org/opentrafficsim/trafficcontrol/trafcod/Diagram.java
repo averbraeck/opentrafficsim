@@ -26,6 +26,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
 import org.djutils.exceptions.Throw;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.trafficcontrol.TrafficControlException;
 import org.opentrafficsim.trafficcontrol.TrafficController;
 
@@ -123,12 +124,6 @@ public class Diagram
                 return o1 - o2;
             }
         });
-        // System.out.println("streams:");
-        // for (short stream : this.streams)
-        // {
-        // System.out.print(String.format(" %02d", stream));
-        // }
-        // System.out.println("");
 
         // Primary car streams
         //@formatter:off
@@ -136,33 +131,33 @@ public class Diagram
         {
             int quadrant = (stream - 1) / 3;
             this.routes.put(stream, rotateRoute(quadrant, assembleRoute(
-                    new RouteStep(-BOUNDARY, CAR_RIGHT), 
-                    new RouteStep(-SHOULDER, CAR_RIGHT, Command.STOP_LINE_AND_ICON), 
-                    new RouteStep(-CAR_CENTER, CAR_RIGHT), 
+                    new RouteStep(-BOUNDARY, CAR_RIGHT),
+                    new RouteStep(-SHOULDER, CAR_RIGHT, Command.STOP_LINE_AND_ICON),
+                    new RouteStep(-CAR_CENTER, CAR_RIGHT),
                     new RouteStep(-CAR_CENTER, BOUNDARY))));
             this.routes.put((short) (stream + 1), rotateRoute(quadrant, assembleRoute(
-                    new RouteStep(-BOUNDARY, CAR_CENTER), 
-                    new RouteStep(-SHOULDER, CAR_CENTER, Command.STOP_LINE_AND_ICON), 
-                    new RouteStep(Command.IF, stream + 1 + 60), 
-                        new RouteStep(-CAR_ROUNDABOUT_LEFT, CAR_CENTER), 
-                    new RouteStep(Command.ELSE), 
-                        new RouteStep(BOUNDARY, CAR_CENTER), 
+                    new RouteStep(-BOUNDARY, CAR_CENTER),
+                    new RouteStep(-SHOULDER, CAR_CENTER, Command.STOP_LINE_AND_ICON),
+                    new RouteStep(Command.IF, stream + 1 + 60),
+                        new RouteStep(-CAR_ROUNDABOUT_LEFT, CAR_CENTER),
+                    new RouteStep(Command.ELSE),
+                        new RouteStep(BOUNDARY, CAR_CENTER),
                     new RouteStep(Command.END_IF))));
             this.routes.put((short) (stream + 2), rotateRoute(quadrant, assembleRoute(
-                    new RouteStep(-BOUNDARY, CAR_LEFT), 
-                    new RouteStep(-SHOULDER, CAR_LEFT, Command.STOP_LINE_AND_ICON), 
-                    new RouteStep(Command.IF, stream + 2 + 60), 
-                        new RouteStep(-CAR_ROUNDABOUT_LEFT, CAR_LEFT), 
+                    new RouteStep(-BOUNDARY, CAR_LEFT),
+                    new RouteStep(-SHOULDER, CAR_LEFT, Command.STOP_LINE_AND_ICON),
+                    new RouteStep(Command.IF, stream + 2 + 60),
+                        new RouteStep(-CAR_ROUNDABOUT_LEFT, CAR_LEFT),
                     new RouteStep(Command.ELSE_IF, (stream + 10) % 12 + 60),
-                        new RouteStep(CAR_CENTER, CAR_LEFT), 
+                        new RouteStep(CAR_CENTER, CAR_LEFT),
                         new RouteStep(CAR_CENTER, CAR_ROUNDABOUT_LEFT),
-                    new RouteStep(Command.ELSE), 
-                        new RouteStep(-CAR_LEFT, CAR_LEFT), 
-                        new RouteStep(-CAR_LEFT, PT_DIV_L), 
-                        new RouteStep(-CAR_ROUNDABOUT_LEFT, PT_DIV_L), 
-                        new RouteStep(-CAR_ROUNDABOUT_LEFT, -CAR_LEFT), 
+                    new RouteStep(Command.ELSE),
+                        new RouteStep(-CAR_LEFT, CAR_LEFT),
+                        new RouteStep(-CAR_LEFT, PT_DIV_L),
+                        new RouteStep(-CAR_ROUNDABOUT_LEFT, PT_DIV_L),
+                        new RouteStep(-CAR_ROUNDABOUT_LEFT, -CAR_LEFT),
                         new RouteStep(PT_DIV_L, -CAR_LEFT),
-                        new RouteStep(PT_DIV_L, -CAR_CENTER), 
+                        new RouteStep(PT_DIV_L, -CAR_CENTER),
                         new RouteStep(CAR_CENTER, -CAR_CENTER),
                         new RouteStep(CAR_CENTER, -BOUNDARY),
                     new RouteStep(Command.END_IF))));
@@ -172,17 +167,17 @@ public class Diagram
         {
             int quadrant = (stream - 19) / 2 % 4;
             this.routes.put(stream, rotateRoute(quadrant, assembleRoute(
-                    new RouteStep(DIVIDER_1, BICYCLE, Command.ICON), 
+                    new RouteStep(DIVIDER_1, BICYCLE, Command.ICON),
                     new RouteStep(SHOULDER, BICYCLE),
                     new RouteStep(BOUNDARY, BICYCLE, Command.ICON))));
             this.routes.put((short) (stream + 1), rotateRoute(quadrant, assembleRoute(
-                    new RouteStep(-BOUNDARY, BICYCLE), 
+                    new RouteStep(-BOUNDARY, BICYCLE),
                     new RouteStep(-DIVIDER_3, BICYCLE, Command.ICON),
-                    new RouteStep(Command.IF, stream), 
+                    new RouteStep(Command.IF, stream),
                     new RouteStep(-DIVIDER_1, BICYCLE, Command.ICON),
-                    new RouteStep(Command.ELSE), 
-                        new RouteStep(SHOULDER, BICYCLE), 
-                        new RouteStep(BOUNDARY, BICYCLE, Command.ICON), 
+                    new RouteStep(Command.ELSE),
+                        new RouteStep(SHOULDER, BICYCLE),
+                        new RouteStep(BOUNDARY, BICYCLE, Command.ICON),
                     new RouteStep(Command.END_IF))));
         }
         // Pedestrian streams
@@ -190,13 +185,13 @@ public class Diagram
         {
             int quadrant = (stream - 29) / 2 % 4;
             this.routes.put(stream, rotateRoute(quadrant, assembleRoute(
-                    new RouteStep(DIVIDER_1, SIDEWALK), 
+                    new RouteStep(DIVIDER_1, SIDEWALK),
                     new RouteStep(BOUNDARY, SIDEWALK))));
             this.routes.put((short) (stream + 1), rotateRoute(quadrant, assembleRoute(
-                    new RouteStep(-BOUNDARY, SIDEWALK), 
-                    new RouteStep(Command.IF, stream), 
-                        new RouteStep(-DIVIDER_1, SIDEWALK), 
-                    new RouteStep(Command.ELSE), 
+                    new RouteStep(-BOUNDARY, SIDEWALK),
+                    new RouteStep(Command.IF, stream),
+                        new RouteStep(-DIVIDER_1, SIDEWALK),
+                    new RouteStep(Command.ELSE),
                         new RouteStep(BOUNDARY, SIDEWALK),
                     new RouteStep(Command.END_IF))));
         }
@@ -205,37 +200,37 @@ public class Diagram
         {
             int quadrant = (stream - 41) / 3;
             this.routes.put(stream, rotateRoute(quadrant, assembleRoute(
-                    new RouteStep(-BOUNDARY, PT_DIV_L), 
-                    new RouteStep(-SHOULDER, PT_DIV_L, Command.STOP_LINE), 
+                    new RouteStep(-BOUNDARY, PT_DIV_L),
+                    new RouteStep(-SHOULDER, PT_DIV_L, Command.STOP_LINE),
                     new RouteStep(-PT_SIDEWALK_SHOULDER, PT_DIV_L, Command.ICON),
-                    new RouteStep(-CAR_RIGHT, PT_DIV_L), 
-                    new RouteStep(-CAR_RIGHT, CAR_LEFT), 
-                    new RouteStep(-PT_DIV_L, CAR_LEFT), 
-                    new RouteStep(-PT_DIV_L, SHOULDER), 
+                    new RouteStep(-CAR_RIGHT, PT_DIV_L),
+                    new RouteStep(-CAR_RIGHT, CAR_LEFT),
+                    new RouteStep(-PT_DIV_L, CAR_LEFT),
+                    new RouteStep(-PT_DIV_L, SHOULDER),
                     new RouteStep(-PT_DIV_L, BOUNDARY, Command.ICON))));
             this.routes.put((short) (stream + 1), rotateRoute(quadrant, assembleRoute(
-                    new RouteStep(-BOUNDARY, PT_DIV_L), 
-                    new RouteStep(-SHOULDER, PT_DIV_L, Command.STOP_LINE), 
+                    new RouteStep(-BOUNDARY, PT_DIV_L),
+                    new RouteStep(-SHOULDER, PT_DIV_L, Command.STOP_LINE),
                     new RouteStep(-PT_SIDEWALK_SHOULDER, PT_DIV_L, Command.ICON),
-                    new RouteStep(SHOULDER, PT_DIV_L), 
+                    new RouteStep(SHOULDER, PT_DIV_L),
                     new RouteStep(BOUNDARY, PT_DIV_L))));
             this.routes.put((short) (stream + 2), rotateRoute(quadrant, assembleRoute(
-                    new RouteStep(-BOUNDARY, PT_DIV_L), 
-                    new RouteStep(-SHOULDER, PT_DIV_L, Command.STOP_LINE), 
+                    new RouteStep(-BOUNDARY, PT_DIV_L),
+                    new RouteStep(-SHOULDER, PT_DIV_L, Command.STOP_LINE),
                     new RouteStep(-PT_SIDEWALK_SHOULDER, PT_DIV_L, Command.ICON),
-                    new RouteStep(-CAR_RIGHT, PT_DIV_L), 
-                    new RouteStep(-CAR_RIGHT, CAR_ROUNDABOUT_LEFT), 
-                    new RouteStep(-PT_DIV_L, CAR_ROUNDABOUT_LEFT), 
-                    new RouteStep(Command.IF, (stream + 2 - 40) % 12 + 60), 
-                        new RouteStep(-PT_DIV_L, -PT_DIV_L), 
-                        new RouteStep(PT_DIV_L, -PT_DIV_L), 
-                    new RouteStep(Command.ELSE), 
-                        new RouteStep(-PT_DIV_L, -CAR_CENTER), 
-                        new RouteStep(CAR_ROUNDABOUT_LEFT, -CAR_CENTER), 
-                        new RouteStep(CAR_ROUNDABOUT_LEFT, -CAR_RIGHT), 
-                        new RouteStep(PT_DIV_L, -CAR_RIGHT), 
+                    new RouteStep(-CAR_RIGHT, PT_DIV_L),
+                    new RouteStep(-CAR_RIGHT, CAR_ROUNDABOUT_LEFT),
+                    new RouteStep(-PT_DIV_L, CAR_ROUNDABOUT_LEFT),
+                    new RouteStep(Command.IF, (stream + 2 - 40) % 12 + 60),
+                        new RouteStep(-PT_DIV_L, -PT_DIV_L),
+                        new RouteStep(PT_DIV_L, -PT_DIV_L),
+                    new RouteStep(Command.ELSE),
+                        new RouteStep(-PT_DIV_L, -CAR_CENTER),
+                        new RouteStep(CAR_ROUNDABOUT_LEFT, -CAR_CENTER),
+                        new RouteStep(CAR_ROUNDABOUT_LEFT, -CAR_RIGHT),
+                        new RouteStep(PT_DIV_L, -CAR_RIGHT),
                     new RouteStep(Command.END_IF),
-                    new RouteStep(PT_DIV_L, -SHOULDER), 
+                    new RouteStep(PT_DIV_L, -SHOULDER),
                     new RouteStep(PT_DIV_L, -BOUNDARY, Command.ICON))));
         }
         // Secondary car streams
@@ -243,17 +238,17 @@ public class Diagram
         {
             int quadrant = (stream - 61) / 3;
             this.routes.put(stream, rotateRoute(quadrant, assembleRoute(
-                    new RouteStep(-CAR_ROUNDABOUT_LEFT, CAR_CENTER), 
-                    new RouteStep(CAR_ROUNDABOUT_LEFT, CAR_CENTER, Command.STOP_LINE_AND_ICON), 
+                    new RouteStep(-CAR_ROUNDABOUT_LEFT, CAR_CENTER),
+                    new RouteStep(CAR_ROUNDABOUT_LEFT, CAR_CENTER, Command.STOP_LINE_AND_ICON),
                     new RouteStep(BOUNDARY, CAR_CENTER))));
             this.routes.put((short) (stream + 1), rotateRoute(quadrant, assembleRoute(
-                    new RouteStep(-CAR_ROUNDABOUT_LEFT, CAR_LEFT), 
-                    new RouteStep(CAR_ROUNDABOUT_LEFT, CAR_LEFT, Command.STOP_LINE_AND_ICON), 
-                    new RouteStep(CAR_CENTER, CAR_LEFT), 
+                    new RouteStep(-CAR_ROUNDABOUT_LEFT, CAR_LEFT),
+                    new RouteStep(CAR_ROUNDABOUT_LEFT, CAR_LEFT, Command.STOP_LINE_AND_ICON),
+                    new RouteStep(CAR_CENTER, CAR_LEFT),
                     new RouteStep(Command.IF, ((stream - 61) + 11) % 12 + 60),
-                    new RouteStep(CAR_CENTER, CAR_ROUNDABOUT_LEFT), 
-                    new RouteStep(Command.ELSE), 
-                    new RouteStep(CAR_CENTER, -BOUNDARY), 
+                    new RouteStep(CAR_CENTER, CAR_ROUNDABOUT_LEFT),
+                    new RouteStep(Command.ELSE),
+                    new RouteStep(CAR_CENTER, -BOUNDARY),
                     new RouteStep(Command.END_IF))));
         }
        // @formatter:on
@@ -749,7 +744,7 @@ public class Diagram
             XYPair[] path = this.routes.get(stream);
             if (null == path)
             {
-                System.err.println("Cannot find path for stream " + stream);
+                Logger.ots().error("Cannot find path for stream {}", stream);
                 continue;
             }
             XYPair prevPair = null;

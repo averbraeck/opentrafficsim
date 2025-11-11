@@ -175,7 +175,7 @@ public final class NetworkParser
         {
             if (!nodeDirections.containsKey(xmlNode.getId()))
             {
-                System.err.println("Warning: Node " + xmlNode.getId() + " does not have a (calculated) direction");
+                Logger.ots().warn("Warning: Node {} does not have a (calculated) direction", xmlNode.getId());
             }
         }
 

@@ -12,6 +12,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.opentrafficsim.base.Resource;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.editor.OtsEditor;
 import org.opentrafficsim.editor.XsdTreeNode;
 import org.opentrafficsim.editor.decoration.string.AttributesStringFunction;
@@ -241,13 +242,13 @@ public final class DefaultDecorator
         @Override
         public void notifyCreated(final XsdTreeNode node)
         {
-            System.out.println("Created: " + node.getPathString());
+            Logger.ots().trace("Created: " + node.getPathString());
         }
 
         @Override
         public void notifyRemoved(final XsdTreeNode node)
         {
-            System.out.println("Removed: " + node.getPathString());
+            Logger.ots().trace("Removed: " + node.getPathString());
         }
     }
 

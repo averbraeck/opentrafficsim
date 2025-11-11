@@ -930,8 +930,6 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
             swath.addAll(extendedPath.offsetLine(getWidth().si / 2.0).getPointList());
             swath.addAll(extendedPath.offsetLine(-getWidth().si / 2.0).reverse().getPointList());
             Polygon2d s = new Polygon2d(swath);
-            // System.out.println("gtu " + getId() + ", w=" + getWidth() + ", path="
-            // + this.operationalPlan.get().getPath().toString() + ", shape=" + s);
             return s;
         }
         catch (Exception e)
