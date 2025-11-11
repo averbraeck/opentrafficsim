@@ -155,8 +155,8 @@ public final class LoggerTester
             threads.add(new Thread(() ->
             {
                 // Set time supplier and string to match for this parent thread
-                Logger.setSimTimeSupplier(() -> time.get(j));
-                String match = " [   " + j + ".000s]";
+                Logger.setSimTimeSupplier(() -> time.get(j), "[%" + (8 + j) + ".3fs]");
+                String match = " [   " + " ".repeat(j) + j + ".000s]";
                 synchronized (appender)
                 {
                     Logger.ots().info("test_message");
