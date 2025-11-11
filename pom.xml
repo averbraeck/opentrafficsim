@@ -934,7 +934,7 @@
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>${maven.checkstyle.version}</version>
         <configuration>
-          <!-- This allows checsktyle in maven to understand ${config_loc} within dsol-checks.xml -->
+          <!-- This allows checkstyle in maven to understand ${config_loc} within dsol-checks.xml -->
           <propertyExpansion>config_loc=${config.location}</propertyExpansion>
           <configLocation>${config.location}/dsol-checks.xml</configLocation>
         </configuration>
