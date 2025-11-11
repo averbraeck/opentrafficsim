@@ -13,7 +13,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.editor.decoration.validation.XsdAllValidator;
 import org.w3c.dom.Node;
 
@@ -166,7 +166,7 @@ public final class XsdTreeNodeUtil
                     // nothing, not even report ignoring, these are not relevant regarding element structure
                     break;
                 default:
-                    CategoryLogger.always().trace("Ignoring a {}", child.getNodeName());
+                    Logger.ots().trace("Ignoring a {}", child.getNodeName());
             }
         }
     }

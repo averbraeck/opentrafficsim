@@ -2,8 +2,8 @@ package org.opentrafficsim.xml.bindings;
 
 import java.awt.Color;
 
-import org.djutils.logger.CategoryLogger;
 import org.djutils.reflection.ClassUtil;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.xml.bindings.types.ColorType;
 
 /**
@@ -61,7 +61,7 @@ public class ColorAdapter extends ExpressionAdapter<Color, ColorType>
         }
         catch (Exception exception)
         {
-            CategoryLogger.always().error(exception, "Problem parsing color '" + field + "'");
+            Logger.ots().error(exception, "Problem parsing color '" + field + "'");
             throw new IllegalArgumentException("Error parsing color " + field, exception);
         }
     }

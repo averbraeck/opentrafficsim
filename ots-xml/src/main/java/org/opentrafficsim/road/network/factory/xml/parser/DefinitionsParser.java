@@ -11,6 +11,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.reflection.ClassUtil;
 import org.opentrafficsim.base.HierarchicalType;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.base.parameters.ParameterType;
 import org.opentrafficsim.core.compatibility.GtuCompatibleInfraType;
 import org.opentrafficsim.core.definitions.Defaults;
@@ -206,7 +207,7 @@ public final class DefinitionsParser
                                         new Class[] {String.class, typeClass})).newInstance(h.getId(), parent),
                                 XmlParserException.class, "No accessible constructor with (String, %s) in %s",
                                 typeClass.getSimpleName(), typeClass.getSimpleName());
-                        // CategoryLogger.with(Cat.PARSER).trace("Added {} {}", typeClass.getSimpleName(), t);
+                        Logger.ots().trace("Added {} {}", typeClass.getSimpleName(), t);
                     }
                     else
                     {
@@ -216,7 +217,7 @@ public final class DefinitionsParser
                                         .newInstance(h.getId()),
                                 XmlParserException.class, "No accessible constructor with (String) in %s",
                                 typeClass.getSimpleName());
-                        // CategoryLogger.with(Cat.PARSER).trace("Added {} {}", typeClass.getSimpleName(), t);
+                        Logger.ots().trace("Added {} {}", typeClass.getSimpleName(), t);
                     }
                     parsedDefinitions.add(typeClass, t);
 

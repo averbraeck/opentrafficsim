@@ -1,6 +1,6 @@
 package org.opentrafficsim.xml.bindings;
 
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.xml.bindings.types.ClassType;
 
 /**
@@ -37,7 +37,7 @@ public class ClassAdapter extends ExpressionAdapter<Class, ClassType>
         }
         catch (Exception exception)
         {
-            CategoryLogger.always().error(exception, "Problem parsing classname '" + field + "'");
+            Logger.ots().error(exception, "Problem parsing classname '" + field + "'");
             throw new IllegalArgumentException("Error parsing classname " + field, exception);
         }
     }

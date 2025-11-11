@@ -2,7 +2,7 @@ package org.opentrafficsim.xml.bindings;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.exceptions.Throw;
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.xml.bindings.types.DurationType;
 
 /**
@@ -41,7 +41,7 @@ public class PositiveDurationAdapter extends ScalarAdapter<Duration, DurationTyp
         }
         catch (Exception exception)
         {
-            CategoryLogger.always().error(exception, "Problem parsing Duration '" + field + "'");
+            Logger.ots().error(exception, "Problem parsing Duration '" + field + "'");
             throw exception;
         }
     }

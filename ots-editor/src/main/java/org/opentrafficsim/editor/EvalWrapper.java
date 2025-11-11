@@ -12,8 +12,8 @@ import java.util.Set;
 import org.djutils.eval.Eval;
 import org.djutils.event.Event;
 import org.djutils.event.reference.ReferenceType;
-import org.djutils.logger.CategoryLogger;
 import org.djutils.reflection.ClassUtil;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.editor.decoration.AbstractNodeDecoratorRemove;
 import org.opentrafficsim.road.network.factory.xml.CircularDependencyException;
 import org.opentrafficsim.road.network.factory.xml.parser.ScenarioParser;
@@ -306,7 +306,7 @@ public class EvalWrapper extends AbstractNodeDecoratorRemove
         }
         catch (Exception e)
         {
-            CategoryLogger.always().trace("Unable to wrap node {} as a parameter for Eval.", node);
+            Logger.ots().trace("Unable to wrap node {} as a parameter for Eval.", node);
             return null;
         }
     }

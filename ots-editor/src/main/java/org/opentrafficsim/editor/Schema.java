@@ -17,7 +17,7 @@ import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.djutils.exceptions.Throw;
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -117,8 +117,8 @@ public class Schema
         }
         if (!allTypes.isEmpty())
         {
-            CategoryLogger.always().trace("{} types are defined but never extended or referred to.", allTypes.size());
-            // allTypes.forEach((str) -> CategoryLogger.always().trace(" + {}", str));
+            Logger.ots().trace("{} types are defined but never extended or referred to.", allTypes.size());
+            // allTypes.forEach((str) -> Logger.ots().trace(" + {}", str));
         }
 
         Set<String> allElements = new LinkedHashSet<>(this.elements.keySet());
@@ -133,9 +133,9 @@ public class Schema
         allElements.removeIf((path) -> path.startsWith("Ots"));
         if (!allElements.isEmpty())
         {
-            CategoryLogger.always().trace("{} elements are defined but never referred to, nor are they a type.",
+            Logger.ots().trace("{} elements are defined but never referred to, nor are they a type.",
                     allElements.size());
-            // allElements.forEach((str) -> CategoryLogger.always().trace(" + {}", str));
+            // allElements.forEach((str) -> Logger.ots().trace(" + {}", str));
         }
 
         checkKeys();
@@ -144,22 +144,22 @@ public class Schema
 
         // allElements = new LinkedHashSet<>(this.elements.keySet());
         // allElements.removeIf((key) -> !key.startsWith("Ots."));
-        // allElements.forEach((key) -> CategoryLogger.always().trace(key));
+        // allElements.forEach((key) -> Logger.ots().trace(key));
 
-        CategoryLogger.always().trace("Root found as '{}'.", DocumentReader.getAttribute(this.getRoot(), "name"));
-        CategoryLogger.always().trace("Read {} files.", this.readFiles.size());
-        CategoryLogger.always().trace("Read {} elements.", this.elements.size());
-        CategoryLogger.always().trace("Read {} types.", this.types.size());
-        CategoryLogger.always().trace("Read {} extended types.", this.extendedTypes.size());
-        CategoryLogger.always().trace("Read {} documentations.", this.documentation.size());
-        CategoryLogger.always().trace("Read {} keys.", this.keys.size());
-        CategoryLogger.always().trace("Read {} keyrefs.", this.keyrefs.size());
-        CategoryLogger.always().trace("Read {} uniques.", this.uniques.size());
+        Logger.ots().trace("Root found as '{}'.", DocumentReader.getAttribute(this.getRoot(), "name"));
+        Logger.ots().trace("Read {} files.", this.readFiles.size());
+        Logger.ots().trace("Read {} elements.", this.elements.size());
+        Logger.ots().trace("Read {} types.", this.types.size());
+        Logger.ots().trace("Read {} extended types.", this.extendedTypes.size());
+        Logger.ots().trace("Read {} documentations.", this.documentation.size());
+        Logger.ots().trace("Read {} keys.", this.keys.size());
+        Logger.ots().trace("Read {} keyrefs.", this.keyrefs.size());
+        Logger.ots().trace("Read {} uniques.", this.uniques.size());
         for (String type : this.extendedTypes.keySet())
         {
             if (!this.types.containsKey(type) && !type.startsWith("xsd:"))
             {
-                CategoryLogger.always().trace("Type '{}' is extended but was not found.", type);
+                Logger.ots().trace("Type '{}' is extended but was not found.", type);
             }
         }
     }
@@ -193,7 +193,7 @@ public class Schema
     {
         if (recursion(path))
         {
-            CategoryLogger.always().trace("Recursion found at {}, further expansion is halted.", path);
+            Logger.ots().trace("Recursion found at {}, further expansion is halted.", path);
             return;
         }
 
@@ -581,7 +581,7 @@ public class Schema
                 }
                 if (selected == null)
                 {
-                    CategoryLogger.always().trace("{} {} ({}) not found among elements.", label, element, path);
+                    Logger.ots().trace("{} {} ({}) not found among elements.", label, element, path);
                 }
                 else
                 {
@@ -601,13 +601,13 @@ public class Schema
                             }
                             else
                             {
-                                CategoryLogger.always().trace("Field {} in {} {} not checked.", xpathField, label.toLowerCase(),
+                                Logger.ots().trace("Field {} in {} {} not checked.", xpathField, label.toLowerCase(),
                                         element);
                             }
                         }
                         if (!found)
                         {
-                            CategoryLogger.always().trace("{} {} ({}) points to non existing field {}.", label, element, path,
+                            Logger.ots().trace("{} {} ({}) points to non existing field {}.", label, element, path,
                                     xpathFieldString);
                         }
                     }
@@ -637,14 +637,14 @@ public class Schema
             }
             if (!keyFound)
             {
-                CategoryLogger.always().trace("Keyref {} refers to non existing key {}.", keyref,
+                Logger.ots().trace("Keyref {} refers to non existing key {}.", keyref,
                         DocumentReader.getAttribute(node, "refer"));
             }
             String context = fullPath.substring(0, fullPath.lastIndexOf("."));
             List<Node> elementList = getSelectedElements(context, node);
             if (elementList.isEmpty())
             {
-                CategoryLogger.always().trace("Keyref {} ({}) not found among elements.", keyref, getXpath(node));
+                Logger.ots().trace("Keyref {} ({}) not found among elements.", keyref, getXpath(node));
             }
             else
             {
@@ -658,7 +658,7 @@ public class Schema
                         String xpathField = xpathFieldValues.length == 1 ? xpathFieldValues[0] : xpathFieldValues[i];
                         if (!followXPath(selected, xpathField))
                         {
-                            CategoryLogger.always().trace("Keyref {} ({}) points to non existing field {}.", keyref,
+                            Logger.ots().trace("Keyref {} ({}) points to non existing field {}.", keyref,
                                     getXpath(node).split("\\|")[i], xpathField);
                         }
                     }

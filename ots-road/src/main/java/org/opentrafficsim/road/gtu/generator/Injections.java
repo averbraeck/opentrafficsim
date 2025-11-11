@@ -28,8 +28,8 @@ import org.djutils.data.Table;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
-import org.djutils.logger.CategoryLogger;
 import org.djutils.multikeymap.MultiKeyMap;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.GtuCharacteristics;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -327,8 +327,7 @@ public class Injections
                     needStrategicalPlannerFactory = true;
                     break;
                 default:
-                    CategoryLogger.always()
-                            .info("Column " + entry.getKey() + " for GTU injection not supported. It is ignored.");
+                    Logger.ots().info("Column " + entry.getKey() + " for GTU injection not supported. It is ignored.");
                     needClass = null;
             }
             if (needClass != null)

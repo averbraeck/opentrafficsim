@@ -6,7 +6,7 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.ColorModel;
 
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Logger;
 
 /**
  * The <code>HTMLGraphicsConfiguration</code> class describes the characteristics of the HTML canvas in the browser, as a
@@ -34,13 +34,13 @@ public class HtmlGraphicsConfiguration extends GraphicsConfiguration
      */
     public HtmlGraphicsConfiguration()
     {
-        CategoryLogger.always().trace("HTMLGraphicsConfiguration.<init>");
+        Logger.ots().trace("HTMLGraphicsConfiguration.<init>");
     }
 
     @Override
     public GraphicsDevice getDevice()
     {
-        CategoryLogger.always().trace("HTMLGraphicsConfiguration.getDevice()");
+        Logger.ots().trace("HTMLGraphicsConfiguration.getDevice()");
         return this.htmlDevice;
     }
 
@@ -51,42 +51,42 @@ public class HtmlGraphicsConfiguration extends GraphicsConfiguration
      */
     public void setDevice(final HtmlDevice htmlDevice)
     {
-        CategoryLogger.always().trace("HTMLGraphicsConfiguration.setDevice()");
+        Logger.ots().trace("HTMLGraphicsConfiguration.setDevice()");
         this.htmlDevice = htmlDevice;
     }
 
     @Override
     public ColorModel getColorModel()
     {
-        CategoryLogger.always().trace("HTMLGraphicsConfiguration.getColorModel()");
+        Logger.ots().trace("HTMLGraphicsConfiguration.getColorModel()");
         return ColorModel.getRGBdefault();
     }
 
     @Override
     public ColorModel getColorModel(final int transparency)
     {
-        CategoryLogger.always().trace("HTMLGraphicsConfiguration.getColorModel()");
+        Logger.ots().trace("HTMLGraphicsConfiguration.getColorModel()");
         return ColorModel.getRGBdefault();
     }
 
     @Override
     public AffineTransform getDefaultTransform()
     {
-        CategoryLogger.always().trace("HTMLGraphicsConfiguration.getDefaultTransform()");
+        Logger.ots().trace("HTMLGraphicsConfiguration.getDefaultTransform()");
         return this.identityTransform;
     }
 
     @Override
     public AffineTransform getNormalizingTransform()
     {
-        CategoryLogger.always().trace("HTMLGraphicsConfiguration.getNormalizingTransform()");
+        Logger.ots().trace("HTMLGraphicsConfiguration.getNormalizingTransform()");
         return this.identityTransform;
     }
 
     @Override
     public Rectangle getBounds()
     {
-        CategoryLogger.always().trace("HTMLGraphicsConfiguration.getBounds()");
+        Logger.ots().trace("HTMLGraphicsConfiguration.getBounds()");
         return this.bounds;
     }
 

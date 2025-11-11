@@ -1,7 +1,7 @@
 package org.opentrafficsim.xml.bindings;
 
 import org.djutils.exceptions.Throw;
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.xml.bindings.types.DoubleType;
 
 /**
@@ -50,10 +50,10 @@ public class FractionAdapter extends ExpressionAdapter<Double, DoubleType>
         }
         catch (Exception exception)
         {
-            CategoryLogger.always().error(exception, "Problem parsing fraction '" + field + "'");
+            Logger.ots().error(exception, "Problem parsing fraction '" + field + "'");
             throw new IllegalArgumentException("Error parsing fraction " + field, exception);
         }
-        CategoryLogger.always().error("Problem parsing fraction '" + field + "'");
+        Logger.ots().error("Problem parsing fraction '" + field + "'");
         throw new IllegalArgumentException("Error parsing fraction " + field);
     }
 

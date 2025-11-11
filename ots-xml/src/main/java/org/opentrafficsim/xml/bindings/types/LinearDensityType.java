@@ -13,6 +13,9 @@ import org.djunits.value.vdouble.scalar.LinearDensity;
 public class LinearDensityType extends ExpressionType<LinearDensity>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /** Function to convert output from expression to the right type. */
     private static final SerializableFunction<Object, LinearDensity> TO_TYPE =
             (o) -> LinearDensity.ofSI(((Number) o).doubleValue());

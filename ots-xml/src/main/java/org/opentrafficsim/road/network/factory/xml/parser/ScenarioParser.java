@@ -13,7 +13,7 @@ import org.djunits.value.vdouble.scalar.Dimensionless;
 import org.djutils.base.Identifiable;
 import org.djutils.eval.Eval;
 import org.djutils.eval.RetrieveValue;
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.road.network.factory.xml.CircularDependencyException;
 import org.opentrafficsim.xml.bindings.types.ExpressionType;
 import org.opentrafficsim.xml.generated.Demand;
@@ -112,8 +112,8 @@ public final class ScenarioParser
                 result.put(id, eval.evaluate(id.substring(1, id.length() - 1)).toString());
             }
         }
-        CategoryLogger.always().trace("Input parameters:");
-        result.forEach((k, v) -> CategoryLogger.always().trace("{}: {}", k, v));
+        Logger.ots().trace("Input parameters:");
+        result.forEach((k, v) -> Logger.ots().trace("{}: {}", k, v));
         return eval;
     }
 

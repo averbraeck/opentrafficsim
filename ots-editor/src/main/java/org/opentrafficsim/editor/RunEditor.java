@@ -6,8 +6,8 @@ import java.net.URISyntaxException;
 import javax.naming.NamingException;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.Resource;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.editor.decoration.DefaultDecorator;
 import org.xml.sax.SAXException;
 
@@ -45,7 +45,7 @@ public final class RunEditor
     public static void main(final String[] args) throws IOException, SAXException, ParserConfigurationException,
             InterruptedException, URISyntaxException, NamingException
     {
-        CategoryLogger.setLogLevelAll(Level.TRACE);
+        Logger.setLogLevel(Level.TRACE);
         OtsEditor editor = new OtsEditor();
         DefaultDecorator.decorate(editor);
         editor.setSchema(DocumentReader.open(Resource.getResourceAsUri("/xsd/ots.xsd")));

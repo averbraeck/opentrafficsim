@@ -11,6 +11,9 @@ package org.opentrafficsim.xml.bindings.types;
 public class BooleanType extends ExpressionType<Boolean>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.

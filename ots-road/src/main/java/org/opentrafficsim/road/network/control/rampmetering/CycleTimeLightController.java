@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djutils.exceptions.Try;
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.RelativePosition;
 import org.opentrafficsim.core.network.NetworkException;
@@ -107,7 +107,7 @@ public class CycleTimeLightController implements RampMeteringLightController
     @Override
     public void enable(final Duration cycleTime)
     {
-        CategoryLogger.always().info("Traffic light uses " + cycleTime);
+        Logger.ots().info("Traffic light uses " + cycleTime);
         this.cTime = cycleTime;
         if (!this.enabled)
         {
@@ -126,7 +126,7 @@ public class CycleTimeLightController implements RampMeteringLightController
     protected void setRed(final TrafficLight trafficLight)
     {
         this.redEvents.remove(trafficLight);
-        CategoryLogger.always().info("Traffic light set to RED");
+        Logger.ots().info("Traffic light set to RED");
         trafficLight.setTrafficLightColor(TrafficLightColor.RED);
     }
 
@@ -138,7 +138,7 @@ public class CycleTimeLightController implements RampMeteringLightController
     {
         this.greenEvents.remove(trafficLight);
         this.greenStarts.put(trafficLight, this.simulator.getSimulatorTime());
-        CategoryLogger.always().info("Traffic light set to GREEN");
+        Logger.ots().info("Traffic light set to GREEN");
         trafficLight.setTrafficLightColor(TrafficLightColor.GREEN);
     }
 
@@ -176,13 +176,13 @@ public class CycleTimeLightController implements RampMeteringLightController
                     Duration green;
                     if (minRedTime.ge(cycleRedTime))
                     {
-                        CategoryLogger.always().info("Traffic light set to RED");
+                        Logger.ots().info("Traffic light set to RED");
                         this.trafficLight.setTrafficLightColor(TrafficLightColor.RED);
                         green = minRedTime;
                     }
                     else
                     {
-                        CategoryLogger.always().info("Traffic light set to YELLOW (RED over 'MIN_RED_TIME')");
+                        Logger.ots().info("Traffic light set to YELLOW (RED over 'MIN_RED_TIME')");
                         this.trafficLight.setTrafficLightColor(TrafficLightColor.YELLOW);
                         CycleTimeLightController.this.redEvents.put(this.trafficLight, CycleTimeLightController.this.simulator
                                 .scheduleEventRel(MIN_RED_TIME, () -> CycleTimeLightController.this.setRed(this.trafficLight)));

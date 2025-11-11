@@ -11,7 +11,6 @@ import javax.naming.NamingException;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
-import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.animation.data.AnimationBusStopData;
 import org.opentrafficsim.animation.data.AnimationConflictData;
 import org.opentrafficsim.animation.data.AnimationCrossSectionElementData;
@@ -28,6 +27,7 @@ import org.opentrafficsim.animation.data.AnimationStripeData;
 import org.opentrafficsim.animation.data.AnimationTrafficLightData;
 import org.opentrafficsim.animation.data.AnimationTrafficLightDetectorData;
 import org.opentrafficsim.animation.gtu.colorer.GtuColorerManager;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuGenerator.GtuGeneratorPosition;
@@ -288,7 +288,7 @@ public class DefaultAnimationFactory implements EventListener
         }
         catch (SimRuntimeException exception)
         {
-            CategoryLogger.always().error(exception, "Exception while updating network animation.");
+            Logger.ots().error(exception, "Exception while updating network animation.");
         }
     }
 
@@ -370,7 +370,7 @@ public class DefaultAnimationFactory implements EventListener
         }
         catch (RemoteException | NamingException exception)
         {
-            CategoryLogger.always().error(exception, "Exception while drawing Object of class LocatedObject.");
+            Logger.ots().error(exception, "Exception while drawing Object of class LocatedObject.");
         }
     }
 

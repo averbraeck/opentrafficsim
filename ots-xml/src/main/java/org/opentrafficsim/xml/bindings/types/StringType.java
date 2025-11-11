@@ -11,6 +11,9 @@ package org.opentrafficsim.xml.bindings.types;
 public class StringType extends ExpressionType<String>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /**
      * Constructor with input that is either the value or an expression.
      * @param input input, either the value or an expression, may be {@code null} as value.

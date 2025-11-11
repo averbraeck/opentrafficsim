@@ -14,6 +14,9 @@ import org.opentrafficsim.xml.bindings.types.LengthBeginEndType.LengthBeginEnd;
 public class LengthBeginEndType extends ExpressionType<LengthBeginEnd>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.

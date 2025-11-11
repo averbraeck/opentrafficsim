@@ -4,7 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterSet;
 import org.opentrafficsim.base.parameters.ParameterTypes;
@@ -300,7 +300,7 @@ public class LmrsFactory extends AbstractLaneBasedTacticalPlannerFactory<Lmrs>
                 this.mandatoryIncentives.add(IncentiveDummy.SINGLETON);
                 if (this.voluntaryIncentives.isEmpty() && this.accelerationIncentives.isEmpty())
                 {
-                    CategoryLogger.always().info("LmrsFactory uses no incentives at all.");
+                    Logger.ots().info("LmrsFactory uses no incentives at all.");
                 }
             }
             if (this.carFollowingModelFactory == null)

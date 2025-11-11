@@ -8,7 +8,7 @@ import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Frequency;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.djutils.exceptions.Throw;
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.road.network.lane.object.detector.LoopDetector;
 
 /**
@@ -57,7 +57,7 @@ public class RwsSwitch extends SingleCrossSectionSwitch
     public boolean isEnabled()
     {
         Frequency flow = totalFlow();
-        CategoryLogger.always().info("Flow is " + flow.getInUnit(FrequencyUnit.PER_HOUR));
+        Logger.ots().info("Flow is " + flow.getInUnit(FrequencyUnit.PER_HOUR));
         if (meanSpeed().le(this.speedThreshold)
                 || (this.lastFlow != null && flow.gt(this.lastFlow) && flow.gt(this.flowThreshold)))
         {

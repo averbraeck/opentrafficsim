@@ -1,6 +1,6 @@
 package org.opentrafficsim.xml.bindings;
 
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.xml.bindings.types.ArcDirectionType;
 import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
 
@@ -46,10 +46,10 @@ public class ArcDirectionAdapter extends ExpressionAdapter<ArcDirection, ArcDire
         }
         catch (Exception exception)
         {
-            CategoryLogger.always().error(exception, "Problem parsing ArcDirection (LeftRight) '" + field + "'");
+            Logger.ots().error(exception, "Problem parsing ArcDirection (LeftRight) '" + field + "'");
             throw new IllegalArgumentException("Error parsing ArcDirection (LeftRight) " + field, exception);
         }
-        CategoryLogger.always().error("Problem parsing ArcDirection (LeftRight) '" + field + "'");
+        Logger.ots().error("Problem parsing ArcDirection (LeftRight) '" + field + "'");
         throw new IllegalArgumentException("Error parsing ArcDirection (LeftRight) " + field);
     }
 

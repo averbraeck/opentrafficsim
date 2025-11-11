@@ -13,6 +13,9 @@ import org.djunits.value.vdouble.scalar.Duration;
 public class DurationType extends ExpressionType<Duration>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /** Function to convert output from expression to the right type. */
     private static final SerializableFunction<Object, Duration> TO_TYPE = (o) -> Duration.ofSI(((Number) o).doubleValue());
 

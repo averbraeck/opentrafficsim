@@ -21,8 +21,13 @@ import org.djutils.exceptions.Throw;
  * @author <a href="https://github.com/wjschakel">Wouter Schakel</a>
  * @param <T> wrapped/returned value type
  */
-public abstract class ExpressionType<T>
+public abstract class ExpressionType<T> implements Serializable
 {
+
+    // This class is Serializable so it can easily be cloned
+
+    /** */
+    private static final long serialVersionUID = 20251111L;
 
     /** Function to forward expression output as is. */
     private static final transient SerializableFunction<?, ?> AS_IS = (o) -> o;

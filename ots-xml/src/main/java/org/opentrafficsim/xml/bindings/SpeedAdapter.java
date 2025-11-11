@@ -1,7 +1,7 @@
 package org.opentrafficsim.xml.bindings;
 
 import org.djunits.value.vdouble.scalar.Speed;
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.xml.bindings.types.SpeedType;
 
 /**
@@ -37,7 +37,7 @@ public class SpeedAdapter extends ScalarAdapter<Speed, SpeedType>
         }
         catch (Exception exception)
         {
-            CategoryLogger.always().error(exception, "Problem parsing Speed '" + field + "'");
+            Logger.ots().error(exception, "Problem parsing Speed '" + field + "'");
             throw exception;
         }
     }

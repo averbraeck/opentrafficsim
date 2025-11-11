@@ -13,6 +13,9 @@ import org.opentrafficsim.xml.bindings.types.EncodingType.Encoding;
 public class EncodingType extends ExpressionType<Encoding>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.

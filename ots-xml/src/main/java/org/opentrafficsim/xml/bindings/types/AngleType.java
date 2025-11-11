@@ -13,6 +13,9 @@ import org.djunits.value.vdouble.scalar.Angle;
 public class AngleType extends ExpressionType<Angle>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /** Function to convert output from expression to the right type. */
     private static final SerializableFunction<Object, Angle> TO_TYPE = (o) -> Angle.ofSI(((Number) o).doubleValue());
 

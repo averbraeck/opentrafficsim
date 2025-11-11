@@ -20,7 +20,7 @@ import org.djutils.event.EventListener;
 import org.djutils.event.EventType;
 import org.djutils.immutablecollections.ImmutableMap;
 import org.djutils.io.URLResource;
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.AbstractOtsModel;
 import org.opentrafficsim.core.dsol.OtsAnimator;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -212,15 +212,15 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
             }
             else if (TrafficController.TRAFFICCONTROL_CONFLICT_GROUP_CHANGED.equals(type))
             {
-                CategoryLogger.always().info("Conflict group changed from {} to {}", (String) payload[1], (String) payload[2]);
+                Logger.ots().info("Conflict group changed from {} to {}", (String) payload[1], (String) payload[2]);
             }
             else if (TrafficController.TRAFFICCONTROL_TRACED_VARIABLE_UPDATED.equals(type))
             {
-                CategoryLogger.always().info("Variable changed %s <- %d   %s", payload[1], payload[4], payload[5]);
+                Logger.ots().info("Variable changed %s <- %d   %s", payload[1], payload[4], payload[5]);
             }
             else if (TrafficController.TRAFFICCONTROL_CONTROLLER_WARNING.equals(type))
             {
-                CategoryLogger.always().info("Warning " + payload[1]);
+                Logger.ots().info("Warning " + payload[1]);
             }
             else
             {
@@ -233,7 +233,7 @@ public class TrafCodDemo2 extends OtsSimulationApplication<TrafCodModel>
                     separator = ",";
                 }
                 stringBuilder.append("]");
-                CategoryLogger.always().info(stringBuilder.toString());
+                Logger.ots().info(stringBuilder.toString());
             }
         }
 

@@ -13,6 +13,9 @@ import org.djunits.unit.LinearDensityUnit;
 public class LinearDensityUnitType extends ExpressionType<LinearDensityUnit>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.

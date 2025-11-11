@@ -12,8 +12,8 @@ import java.util.function.Function;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
-import org.djutils.logger.CategoryLogger;
 import org.djutils.multikeymap.MultiKeyMap;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.network.Network;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -126,7 +126,7 @@ public class StochasticDistractionModel implements EventListener
                 }
                 else
                 {
-                    CategoryLogger.always().warn("Fuller implementation {} not supported by {}", fuller.getClass().getName(),
+                    Logger.ots().warn("Fuller implementation {} not supported by {}", fuller.getClass().getName(),
                             getClass().getName());
                 }
                 // stop the distraction

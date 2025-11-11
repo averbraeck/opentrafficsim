@@ -13,6 +13,9 @@ import org.djunits.value.vdouble.scalar.Time;
 public class TimeType extends ExpressionType<Time>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /** Function to convert output from expression to the right type. */
     private static final SerializableFunction<Object, Time> TO_TYPE = (o) -> Time.ofSI(((Number) o).doubleValue());
 

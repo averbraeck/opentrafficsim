@@ -13,6 +13,9 @@ import org.djutils.draw.point.Point2d;
 public class Point2dType extends ExpressionType<Point2d>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.

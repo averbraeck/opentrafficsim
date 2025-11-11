@@ -2,7 +2,7 @@ package org.opentrafficsim.animation.gis;
 
 import java.awt.geom.Point2D;
 
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Logger;
 
 import nl.tudelft.simulation.dsol.animation.gis.DoubleXY;
 import nl.tudelft.simulation.dsol.animation.gis.FloatXY;
@@ -62,7 +62,7 @@ public class CoordinateTransformWgs84toRdNew implements CoordinateTransform
         }
         catch (Exception exception)
         {
-            CategoryLogger.always().error(exception);
+            Logger.ots().error(exception);
             return new DoubleXY(0, 0);
         }
     }

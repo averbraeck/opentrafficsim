@@ -9,7 +9,7 @@ import org.djutils.draw.bounds.Bounds2d;
 import org.djutils.draw.line.Polygon2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Logger;
 
 /**
  * Set of Polygon2d objects and provides methods for fast selection of those objects that intersect a Polygon2d. <br>
@@ -109,7 +109,7 @@ public class Ots2dSet implements Set<Polygon2d>
         }
         if (!this.quadTree.add(e))
         {
-            CategoryLogger.always().error("add: ERROR object could not be added to the quad tree");
+            Logger.ots().error("add: ERROR object could not be added to the quad tree");
         }
         return this.allShapes.add(e);
     }
@@ -123,7 +123,7 @@ public class Ots2dSet implements Set<Polygon2d>
         }
         if (!this.quadTree.remove((Polygon2d) o))
         {
-            CategoryLogger.always().error("remove: ERROR object could not be removed from the quad tree");
+            Logger.ots().error("remove: ERROR object could not be removed from the quad tree");
         }
         return true;
     }
@@ -289,7 +289,7 @@ public class Ots2dSet implements Set<Polygon2d>
             this.theIterator.remove();
             if (!Ots2dSet.this.quadTree.remove(this.lastResult))
             {
-                CategoryLogger.always().error("iterator.remove: ERROR: could not remove {} from the quad tree",
+                Logger.ots().error("iterator.remove: ERROR: could not remove {} from the quad tree",
                         this.lastResult);
             }
         }

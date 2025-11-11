@@ -1,6 +1,6 @@
 package org.opentrafficsim.core.gtu;
 
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Logger;
 
 /**
  * GTU error handler.
@@ -31,7 +31,7 @@ public interface GtuErrorHandler
         @Override
         public void handle(final Gtu gtu, final Exception ex) throws Exception
         {
-            CategoryLogger.always().info("Deleting GTU {} due to exception.", gtu.getId());
+            Logger.ots().info("Deleting GTU {} due to exception.", gtu.getId());
             gtu.destroy();
         }
     };

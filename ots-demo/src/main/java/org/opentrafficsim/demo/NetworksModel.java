@@ -27,7 +27,7 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.EventType;
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.definitions.DefaultsNl;
 import org.opentrafficsim.core.distributions.FrequencyAndObject;
@@ -492,12 +492,12 @@ public class NetworksModel extends AbstractOtsModel implements EventListener, UN
         EventType eventType = event.getType();
         if (Network.GTU_ADD_EVENT.equals(eventType))
         {
-            CategoryLogger.always().trace("A GTU was created (id " + (String) event.getContent() + ")");
+            Logger.ots().trace("A GTU was created (id " + (String) event.getContent() + ")");
             this.knownGTUs.add(this.network.getGTU((String) event.getContent()));
         }
         else if (Network.GTU_REMOVE_EVENT.equals(eventType))
         {
-            CategoryLogger.always().trace("A GTU was removed (id " + ((String) event.getContent()) + ")");
+            Logger.ots().trace("A GTU was removed (id " + ((String) event.getContent()) + ")");
             this.knownGTUs.remove(this.network.getGTU((String) event.getContent()));
         }
     }

@@ -13,6 +13,9 @@ import java.lang.reflect.Field;
 public class FieldType extends ExpressionType<Field>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.

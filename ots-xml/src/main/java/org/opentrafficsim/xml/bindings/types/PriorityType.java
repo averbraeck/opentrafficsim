@@ -13,6 +13,9 @@ import org.opentrafficsim.road.network.lane.CrossSectionLink.Priority;
 public class PriorityType extends ExpressionType<Priority>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.

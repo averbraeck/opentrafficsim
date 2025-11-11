@@ -13,6 +13,9 @@ import org.djunits.unit.LengthUnit;
 public class LengthUnitType extends ExpressionType<LengthUnit>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.

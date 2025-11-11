@@ -13,6 +13,9 @@ import java.awt.Color;
 public class ColorType extends ExpressionType<Color>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.

@@ -13,6 +13,9 @@ import org.djunits.value.vdouble.scalar.Speed;
 public class SpeedType extends ExpressionType<Speed>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /** Function to convert output from expression to the right type. */
     private static final SerializableFunction<Object, Speed> TO_TYPE = (o) -> Speed.ofSI(((Number) o).doubleValue());
 

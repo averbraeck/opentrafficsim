@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 import org.opentrafficsim.road.network.factory.xml.XmlParserException;
 
@@ -33,7 +34,7 @@ public final class Cloner
      * @throws XmlParserException on cloning error
      */
     @SuppressWarnings("unchecked")
-    public static <T> T clone(final T object) throws XmlParserException
+    public static <T extends Serializable> T clone(final T object) throws XmlParserException
     {
         try
         {

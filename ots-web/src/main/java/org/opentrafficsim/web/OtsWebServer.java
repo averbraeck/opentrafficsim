@@ -15,7 +15,6 @@ import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.event.TimedEvent;
 import org.djutils.io.URLResource;
-import org.djutils.logger.CategoryLogger;
 import org.eclipse.jetty.io.Content;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
@@ -25,6 +24,7 @@ import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.util.Callback;
 import org.eclipse.jetty.util.Fields;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.web.animation.WebAnimationToggles;
@@ -178,7 +178,7 @@ public abstract class OtsWebServer implements EventListener
         }
         catch (SimRuntimeException exception)
         {
-            CategoryLogger.always().warn(exception, "Problem starting Simulator");
+            Logger.ots().warn(exception, "Problem starting Simulator");
         }
         if (getSimulator().isStartingOrRunning())
         {
@@ -205,7 +205,7 @@ public abstract class OtsWebServer implements EventListener
         }
         catch (SimRuntimeException exception)
         {
-            CategoryLogger.always().warn(exception, "Problem stopping Simulator");
+            Logger.ots().warn(exception, "Problem stopping Simulator");
         }
         if (!getSimulator().isStartingOrRunning())
         {
@@ -422,7 +422,7 @@ public abstract class OtsWebServer implements EventListener
                             }
                             catch (Exception exception)
                             {
-                                CategoryLogger.always().warn(exception, "getSelectedObjects");
+                                Logger.ots().warn(exception, "getSelectedObjects");
                             }
                             if (targets.size() > 0)
                             {

@@ -29,7 +29,6 @@ import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableLinkedHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
-import org.djutils.logger.CategoryLogger;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.HierarchicallyTyped;
@@ -37,6 +36,7 @@ import org.opentrafficsim.base.geometry.OffsetRectangleShape;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.geometry.OtsShape;
 import org.opentrafficsim.base.geometry.PolygonShape;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
@@ -679,7 +679,7 @@ public class Gtu extends LocalEventProducer implements HierarchicallyTyped<GtuTy
             }
             catch (OperationalPlanException ope)
             {
-                CategoryLogger.always().warn("OperationalPlan could not give a traveled distance it the requested time.");
+                Logger.ots().warn("OperationalPlan could not give a traveled distance it the requested time.");
                 return this.odometer.get(time);
             }
         }

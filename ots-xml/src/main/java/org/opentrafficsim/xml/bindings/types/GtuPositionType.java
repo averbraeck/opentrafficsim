@@ -14,6 +14,9 @@ import org.opentrafficsim.xml.bindings.types.GtuPositionType.GtuPosition;
 public class GtuPositionType extends ExpressionType<GtuPosition>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.

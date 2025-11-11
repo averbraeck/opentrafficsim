@@ -11,8 +11,8 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
 import org.djutils.immutablecollections.ImmutableList;
-import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.geometry.OtsLine2d;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.RelativePosition;
 
@@ -486,7 +486,7 @@ public class OperationalPlan
         {
             throw new RuntimeException("Index out of bounds on projection of point to path of operational plan", exception);
         }
-        CategoryLogger.always().error("timeAtPoint failed");
+        Logger.ots().error("timeAtPoint failed");
         return null;
     }
 

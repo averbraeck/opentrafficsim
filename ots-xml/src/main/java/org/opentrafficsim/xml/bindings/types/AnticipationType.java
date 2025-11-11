@@ -13,6 +13,9 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Anticipa
 public class AnticipationType extends ExpressionType<Anticipation>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.

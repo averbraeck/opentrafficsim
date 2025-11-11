@@ -9,10 +9,10 @@ import org.djutils.event.EventListenerMap;
 import org.djutils.event.EventProducer;
 import org.djutils.event.EventType;
 import org.djutils.exceptions.Try;
-import org.djutils.logger.CategoryLogger;
 import org.djutils.math.AngleUtil;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
@@ -102,8 +102,8 @@ public class CollisionDetector extends AbstractLaneBasedMoveChecker implements E
             Speed dv = gtu.getSpeed().minus(objectSpeed);
             Length distance = Length.ofSI(gtu.getLocation().distance(object.getLocation()));
             Angle angle = Angle.ofSI(AngleUtil.normalizeAroundZero(object.getDirZ() - gtu.getDirZ()));
-            CategoryLogger.always().info("GTU " + gtu.getId() + " collided with " + object.getId() + " at a point distance of "
-                    + distance + " with a speed difference of " + dv + " and and angle of " + angle + ".");
+            Logger.ots().info("GTU " + gtu.getId() + " collided with " + object.getId() + " at a point distance of " + distance
+                    + " with a speed difference of " + dv + " and and angle of " + angle + ".");
         }, COLLISION), "Unable to listen to collisions.");
         return this;
     }

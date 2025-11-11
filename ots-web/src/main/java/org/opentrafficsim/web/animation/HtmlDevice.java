@@ -3,7 +3,7 @@ package org.opentrafficsim.web.animation;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Logger;
 
 /**
  * HTMLDevice.java.
@@ -24,35 +24,35 @@ public class HtmlDevice extends GraphicsDevice
      */
     public HtmlDevice(final GraphicsConfiguration htmlGraphicsConfiguration)
     {
-        CategoryLogger.always().trace("HTMLDevice.<init>");
+        Logger.ots().trace("HTMLDevice.<init>");
         this.htmlGraphicsConfigurations = new GraphicsConfiguration[] {htmlGraphicsConfiguration};
     }
 
     @Override
     public int getType()
     {
-        CategoryLogger.always().trace("HTMLDevice.getType()");
+        Logger.ots().trace("HTMLDevice.getType()");
         return GraphicsDevice.TYPE_RASTER_SCREEN;
     }
 
     @Override
     public String getIDstring()
     {
-        CategoryLogger.always().trace("HTMLDevice.getIDString()");
+        Logger.ots().trace("HTMLDevice.getIDString()");
         return "HTMLDevice";
     }
 
     @Override
     public GraphicsConfiguration[] getConfigurations()
     {
-        CategoryLogger.always().trace("HTMLDevice.getConfiguration()");
+        Logger.ots().trace("HTMLDevice.getConfiguration()");
         return this.htmlGraphicsConfigurations;
     }
 
     @Override
     public GraphicsConfiguration getDefaultConfiguration()
     {
-        CategoryLogger.always().trace("HTMLDevice.getDefaultConfiguration()");
+        Logger.ots().trace("HTMLDevice.getDefaultConfiguration()");
         return this.htmlGraphicsConfigurations[0];
     }
 

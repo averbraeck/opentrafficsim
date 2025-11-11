@@ -28,10 +28,10 @@ import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.eval.Eval;
 import org.djutils.exceptions.Throw;
-import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.StripeElement;
 import org.opentrafficsim.base.geometry.OtsGeometryUtil;
 import org.opentrafficsim.base.geometry.OtsLine2d;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.definitions.Definitions;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.geometry.CurveFlattener;
@@ -205,13 +205,13 @@ public final class NetworkParser
             Node node = (Node) otsNetwork.getNode(nodeId);
             if (null == node)
             {
-                CategoryLogger.always().debug("No node (" + nodeId + ") for Connector " + xmlConnector.getId());
+                Logger.ots().debug("No node (" + nodeId + ") for Connector " + xmlConnector.getId());
             }
             String centroidId = xmlConnector.getCentroid().get(eval);
             Node centroid = (Node) otsNetwork.getNode(centroidId);
             if (null == centroid)
             {
-                CategoryLogger.always().debug("No centroid (" + centroidId + ") for Connector " + xmlConnector.getId());
+                Logger.ots().debug("No centroid (" + centroidId + ") for Connector " + xmlConnector.getId());
             }
             String id = xmlConnector.getId();
             double demandWeight = xmlConnector.getDemandWeight().get(eval);
@@ -698,7 +698,7 @@ public final class NetworkParser
                 throw new XmlParserException("Conflicts tag contains no valid element.");
             }
 
-            CategoryLogger.always().info("Generating conflicts");
+            Logger.ots().info("Generating conflicts");
             Map<String, Set<org.opentrafficsim.core.network.Link>> conflictCandidateMap = new LinkedHashMap<>();
             for (Link link : network.getLink())
             {
@@ -711,7 +711,7 @@ public final class NetworkParser
                     conflictCandidateMap.get(link.getConflictId().get(eval)).add(otsNetwork.getLink(link.getId()));
                 }
             }
-            CategoryLogger.always().info("Map size of conflict candidate regions = {}", conflictCandidateMap.size());
+            Logger.ots().info("Map size of conflict candidate regions = {}", conflictCandidateMap.size());
 
             // TODO: if there is any conflict ID specified, conflictCandidateMap is filled, and no other conflict anywhere will
             // be generated. How can we combine generation and specifying conflict IDs?
@@ -725,7 +725,7 @@ public final class NetworkParser
                 ConflictBuilder.buildConflictsParallel(otsNetwork, conflictCandidateMap, otsNetwork.getSimulator(),
                         widthGenerator);
             }
-            CategoryLogger.always().info("Object map size = {}", otsNetwork.getObjectMap().size());
+            Logger.ots().info("Object map size = {}", otsNetwork.getObjectMap().size());
         }
     }
 

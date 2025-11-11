@@ -16,9 +16,9 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.EventType;
 import org.djutils.event.LocalEventProducer;
 import org.djutils.exceptions.Throw;
-import org.djutils.logger.CategoryLogger;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.draw.egtf.Converter;
 import org.opentrafficsim.draw.egtf.DataSource;
 import org.opentrafficsim.draw.egtf.DataStream;
@@ -730,7 +730,7 @@ public class ContourDataSource extends LocalEventProducer
                         TrajectoryGroup<?> trajectoryGroup = this.samplerData.getTrajectoryGroup(section.getSource(series));
                         if (null == trajectoryGroup)
                         {
-                            CategoryLogger.always().error("trajectoryGroup {} is null", series);
+                            Logger.ots().error("trajectoryGroup {} is null", series);
                         }
                         trajectories.add(trajectoryGroup);
                     }
@@ -773,7 +773,7 @@ public class ContourDataSource extends LocalEventProducer
                                 }
                                 catch (IllegalArgumentException exception)
                                 {
-                                    CategoryLogger.always().debug(exception,
+                                    Logger.ots().debug(exception,
                                             "Unable to generate space-time view from x = {} to {} and t = {} to {}.",
                                             xStart.get(k), xEnd.get(k), tFrom, tTo);
                                     continue;

@@ -13,6 +13,9 @@ import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.Estimati
 public class EstimationType extends ExpressionType<Estimation>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.

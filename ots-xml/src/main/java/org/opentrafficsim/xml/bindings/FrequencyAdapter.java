@@ -1,7 +1,7 @@
 package org.opentrafficsim.xml.bindings;
 
 import org.djunits.value.vdouble.scalar.Frequency;
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.xml.bindings.types.FrequencyType;
 
 /**
@@ -37,7 +37,7 @@ public class FrequencyAdapter extends ScalarAdapter<Frequency, FrequencyType>
         }
         catch (Exception exception)
         {
-            CategoryLogger.always().error(exception, "Problem parsing Frequency '" + field + "'");
+            Logger.ots().error(exception, "Problem parsing Frequency '" + field + "'");
             throw exception;
         }
     }

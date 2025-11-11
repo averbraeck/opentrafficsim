@@ -13,7 +13,7 @@ import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableLinkedHashSet;
 import org.djutils.immutablecollections.ImmutableSet;
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.ParameterTypeDouble;
 import org.opentrafficsim.base.parameters.ParameterTypeDuration;
@@ -119,8 +119,7 @@ public class ChannelFuller extends Fuller implements ChannelMental
                 if (td >= 1.0)
                 {
                     td = 0.999;
-                    CategoryLogger.always().warn("Task {} produced task demand that is greater than, or equal to, 1.0.",
-                            task.getId());
+                    Logger.ots().warn("Task {} produced task demand that is greater than, or equal to, 1.0.", task.getId());
                 }
                 channelTaskDemand.merge(task.getChannel(), td, Math::max); // map to max value
                 gatheredTasks.add(task);

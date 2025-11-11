@@ -13,6 +13,9 @@ import org.opentrafficsim.road.od.Interpolation;
 public class InterpolationType extends ExpressionType<Interpolation>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.

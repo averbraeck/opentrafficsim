@@ -13,6 +13,9 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Synchronization;
 public class SynchronizationType extends ExpressionType<Synchronization>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.

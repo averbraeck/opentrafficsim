@@ -32,9 +32,9 @@ import org.djutils.event.reference.ReferenceType;
 import org.djutils.exceptions.Throw;
 import org.djutils.immutablecollections.ImmutableArrayList;
 import org.djutils.immutablecollections.ImmutableList;
-import org.djutils.logger.CategoryLogger;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.editor.DocumentReader.NodeAnnotation;
 import org.opentrafficsim.editor.XsdTreeNodeUtil.LoadingIndices;
 import org.opentrafficsim.editor.XsdTreeNodeUtil.Occurs;
@@ -2469,8 +2469,8 @@ public class XsdTreeNode extends LocalEventProducer
                         }
                         catch (NoSuchElementException e)
                         {
-                            CategoryLogger.always().warn("Unable to load attribute {}=\"{}\" in {}.",
-                                    attributeNode.getNodeName(), attributeNode.getNodeValue(), getShortString());
+                            Logger.ots().warn("Unable to load attribute {}=\"{}\" in {}.", attributeNode.getNodeName(),
+                                    attributeNode.getNodeValue(), getShortString());
                         }
                 }
             }
@@ -2598,7 +2598,7 @@ public class XsdTreeNode extends LocalEventProducer
                 {
                     if (loadedDuringPass == 0)
                     {
-                        CategoryLogger.always().warn("Failing to load {}, it is not a valid node.", nameXml);
+                        Logger.ots().warn("Failing to load {}, it is not a valid node.", nameXml);
                         xmlNodeIndex++;
                         xsdTreeNodeIndex = 0; // start next pass, without increasing # passes as to just skip the node
                         continue;
@@ -2610,7 +2610,7 @@ public class XsdTreeNode extends LocalEventProducer
                         {
                             if (!loadingSubSequence) // when loading sub sequence, just escalate back the recursion
                             {
-                                CategoryLogger.always().warn("Failing to load {}, maximum number of passes reached.", nameXml);
+                                Logger.ots().warn("Failing to load {}, maximum number of passes reached.", nameXml);
                             }
                             indices.setXmlNode(xmlNodeIndex);
                             return;

@@ -13,6 +13,9 @@ import org.djunits.value.vdouble.scalar.Frequency;
 public class FrequencyType extends ExpressionType<Frequency>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /** Function to convert output from expression to the right type. */
     private static final SerializableFunction<Object, Frequency> TO_TYPE = (o) -> Frequency.ofSI(((Number) o).doubleValue());
 

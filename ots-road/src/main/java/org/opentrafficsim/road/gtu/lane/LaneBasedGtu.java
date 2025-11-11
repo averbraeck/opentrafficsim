@@ -24,11 +24,11 @@ import org.djutils.draw.point.Point2d;
 import org.djutils.event.EventType;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
-import org.djutils.logger.CategoryLogger;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.geometry.OtsLine2d.FractionalFallback;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuException;
@@ -810,7 +810,7 @@ public class LaneBasedGtu extends Gtu implements LaneBasedObject
                     {
                         // NaN indicates we just missed it between moves, due to curvature and small gaps
                         enterTime = getSimulator().getSimulatorTime();
-                        CategoryLogger.always().error("GTU {} enters lane through hack.", getId());
+                        Logger.ots().error("GTU {} enters lane through hack.", getId());
                     }
                     this.pendingLanesToEnter.put(enterTime, laneOnPath);
                     Lane finalLane = laneOnPath;

@@ -17,7 +17,6 @@ import org.djutils.event.LocalEventProducer;
 import org.djutils.immutablecollections.Immutable;
 import org.djutils.immutablecollections.ImmutableHashMap;
 import org.djutils.immutablecollections.ImmutableMap;
-import org.djutils.logger.CategoryLogger;
 import org.djutils.metadata.MetaData;
 import org.djutils.metadata.ObjectDescriptor;
 import org.djutils.multikeymap.MultiKeyMap;
@@ -25,6 +24,7 @@ import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.AStarShortestPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 import org.opentrafficsim.core.gtu.Gtu;
 import org.opentrafficsim.core.gtu.GtuType;
@@ -853,7 +853,7 @@ public class Network extends LocalEventProducer implements PerceivableContext, E
                             : new AStarShortestPath<>(graph, linkWeight.getAStarHeuristic()).getPath(from, to);
             if (path == null)
             {
-                CategoryLogger.always().debug("Cannot find a path from " + nodeFrom + " via " + nodesVia + " to " + nodeTo
+                Logger.ots().debug("Cannot find a path from " + nodeFrom + " via " + nodesVia + " to " + nodeTo
                         + " (failing between " + from + " and " + to + ")");
                 return null;
             }

@@ -2,7 +2,7 @@ package org.opentrafficsim.xml.bindings;
 
 import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.exceptions.Throw;
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.xml.bindings.types.TimeType;
 
 /**
@@ -40,7 +40,7 @@ public class PositiveTimeAdapter extends ScalarAdapter<Time, TimeType>
         }
         catch (Exception exception)
         {
-            CategoryLogger.always().error(exception, "Problem parsing Time '" + field + "'");
+            Logger.ots().error(exception, "Problem parsing Time '" + field + "'");
             throw exception;
         }
     }

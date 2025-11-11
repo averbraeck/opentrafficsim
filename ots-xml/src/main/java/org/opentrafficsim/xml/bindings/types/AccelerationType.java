@@ -13,6 +13,9 @@ import org.djunits.value.vdouble.scalar.Acceleration;
 public class AccelerationType extends ExpressionType<Acceleration>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /** Function to convert output from expression to the right type. */
     private static final SerializableFunction<Object, Acceleration> TO_TYPE =
             (o) -> Acceleration.ofSI(((Number) o).doubleValue());

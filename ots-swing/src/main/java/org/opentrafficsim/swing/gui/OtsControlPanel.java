@@ -56,8 +56,8 @@ import org.djunits.value.vdouble.scalar.Time;
 import org.djutils.event.Event;
 import org.djutils.event.EventListener;
 import org.djutils.exceptions.Throw;
-import org.djutils.logger.CategoryLogger;
 import org.opentrafficsim.base.Resource;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.dsol.OtsModelInterface;
 import org.opentrafficsim.core.dsol.OtsSimulatorInterface;
 
@@ -427,7 +427,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 }
                 catch (SimRuntimeException exception)
                 {
-                    CategoryLogger.always().error("Caught an exception while trying to schedule an autoPauseSimulator event "
+                    Logger.ots().error("Caught an exception while trying to schedule an autoPauseSimulator event "
                             + "at the current simulator time");
                 }
                 // System.out.println("NextTime: Starting simulator");
@@ -553,7 +553,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             // }
             else
             {
-                CategoryLogger.always().error(new Exception("Unknown button?"));
+                Logger.ots().error(new Exception("Unknown button?"));
             }
         }
         // System.out.println("FixButtons finishing");
@@ -594,7 +594,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
                 }
                 catch (SimRuntimeException exception)
                 {
-                    CategoryLogger.always()
+                    Logger.ots()
                             .error("Caught an exception while trying to re-schedule an autoPauseEvent at the next real event");
                 }
             }
@@ -669,7 +669,7 @@ public class OtsControlPanel extends JPanel implements ActionListener, PropertyC
             }
             catch (SimRuntimeException exception)
             {
-                CategoryLogger.always().error("Caught an exception while trying to schedule an autoPauseSimulator event");
+                Logger.ots().error("Caught an exception while trying to schedule an autoPauseSimulator event");
             }
         }
     }

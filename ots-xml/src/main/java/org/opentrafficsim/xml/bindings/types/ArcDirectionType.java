@@ -13,6 +13,9 @@ import org.opentrafficsim.xml.bindings.types.ArcDirectionType.ArcDirection;
 public class ArcDirectionType extends ExpressionType<ArcDirection>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.

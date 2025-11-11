@@ -17,10 +17,10 @@ import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.draw.point.Point2d;
 import org.djutils.exceptions.Throw;
 import org.djutils.exceptions.Try;
-import org.djutils.logger.CategoryLogger;
 import org.djutils.math.AngleUtil;
 import org.opentrafficsim.base.geometry.OtsLine2d;
 import org.opentrafficsim.base.geometry.OtsLine2d.FractionalFallback;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.core.gtu.plan.operational.Segments;
 import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.road.gtu.lane.LaneBasedGtu;
@@ -713,12 +713,12 @@ public final class LaneOperationalPlanBuilder
             prevFrom = from;
             if (null == from)
             {
-                CategoryLogger.always().warn("About to die: GTU {} has null from value", gtu.getId());
+                Logger.ots().warn("About to die: GTU {} has null from value", gtu.getId());
             }
             from = gtu.getNextLaneForRoute(from);
             // if (from != null && from.getType().equals(Lane.SHOULDER))
             // {
-            // CategoryLogger.always().warn("GTU {} on link {} will move on to shoulder.", gtu.getId(),
+            // Logger.ots().warn("GTU {} on link {} will move on to shoulder.", gtu.getId(),
             // ref.getLane().getLink().getId());
             // }
             prevPos = pos;
@@ -745,12 +745,12 @@ public final class LaneOperationalPlanBuilder
                     if (latLane != null && gtu.getNextLaneForRoute(latLane) != null)
                     {
                         gtu.changeLaneInstantaneously(lat);
-                        CategoryLogger.always().warn("GTU {} on link {} is forced to change lane towards {}", gtu.getId(),
+                        Logger.ots().warn("GTU {} on link {} is forced to change lane towards {}", gtu.getId(),
                                 ref.lane().getLink().getId(), lat);
                         return createPathAlongCenterLine(gtu, distance);
                     }
                 }
-                CategoryLogger.always().error("GTU {} on link {} has nowhere to go and no sink detector either", gtu.getId(),
+                Logger.ots().error("GTU {} on link {} has nowhere to go and no sink detector either", gtu.getId(),
                         ref.lane().getLink().getId());
                 gtu.destroy();
                 return path;

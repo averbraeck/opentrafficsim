@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.editor.DocumentReader;
 import org.opentrafficsim.editor.DocumentReader.NodeAnnotation;
 import org.opentrafficsim.editor.Schema;
@@ -381,7 +381,7 @@ public interface ValueValidator extends Comparable<ValueValidator>
                         String message = "Type " + type + " cannot be validated.";
                         if (!SUPPRESS_ERRORS.contains(message))
                         {
-                            CategoryLogger.always().error(message);
+                            Logger.ots().error(message);
                             SUPPRESS_ERRORS.add(message);
                         }
                     }
@@ -424,9 +424,9 @@ public interface ValueValidator extends Comparable<ValueValidator>
             {
                 if (!SUPPRESS_ERRORS.contains(patternString))
                 {
-                    CategoryLogger.always().error("Could not validate value by pattern due to a PatternSyntaxException."
+                    Logger.ots().error("Could not validate value by pattern due to a PatternSyntaxException."
                             + " This means the pattern is not valid.");
-                    CategoryLogger.always().error(exception.getMessage());
+                    Logger.ots().error(exception.getMessage());
                     SUPPRESS_ERRORS.add(patternString);
                 }
             }

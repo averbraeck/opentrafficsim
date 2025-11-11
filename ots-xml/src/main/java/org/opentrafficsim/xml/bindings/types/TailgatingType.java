@@ -13,6 +13,9 @@ import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.Tailgating;
 public class TailgatingType extends ExpressionType<Tailgating>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.

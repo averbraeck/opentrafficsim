@@ -4,7 +4,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Logger;
 
 /**
  * The GraphUpdater can be used to repeatedly offer a value that is automatically processed in order of offering in a parallel
@@ -53,7 +53,7 @@ public class GraphUpdater<T>
                     }
                     catch (InterruptedException exception)
                     {
-                        CategoryLogger.always().error(exception, "Worker {} thread stopped.", workerName);
+                        Logger.ots().error(exception, "Worker {} thread stopped.", workerName);
                         break;
                     }
                 }

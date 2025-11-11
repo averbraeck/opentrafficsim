@@ -13,6 +13,9 @@ import org.djunits.value.vdouble.scalar.Direction;
 public class DirectionType extends ExpressionType<Direction>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /** Function to convert output from expression to the right type. */
     private static final SerializableFunction<Object, Direction> TO_TYPE = (o) -> Direction.ofSI(((Number) o).doubleValue());
 

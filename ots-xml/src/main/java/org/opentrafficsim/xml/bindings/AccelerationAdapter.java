@@ -1,7 +1,7 @@
 package org.opentrafficsim.xml.bindings;
 
 import org.djunits.value.vdouble.scalar.Acceleration;
-import org.djutils.logger.CategoryLogger;
+import org.opentrafficsim.base.logger.Logger;
 import org.opentrafficsim.xml.bindings.types.AccelerationType;
 
 /**
@@ -37,7 +37,7 @@ public class AccelerationAdapter extends ScalarAdapter<Acceleration, Acceleratio
         }
         catch (Exception exception)
         {
-            CategoryLogger.always().error(exception, "Problem parsing Acceleration '" + field + "'");
+            Logger.ots().error(exception, "Problem parsing Acceleration '" + field + "'");
             throw exception;
         }
     }

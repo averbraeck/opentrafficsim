@@ -13,6 +13,9 @@ import org.djunits.unit.AccelerationUnit;
 public class AccelerationUnitType extends ExpressionType<AccelerationUnit>
 {
 
+    /** */
+    private static final long serialVersionUID = 20251111L;
+
     /**
      * Constructor with value.
      * @param value value, may be {@code null}.
