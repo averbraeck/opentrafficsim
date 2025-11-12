@@ -175,10 +175,10 @@ public final class Desire {
     /**
      * Returns the overall magnitude of this desire (the maximum absolute directional value).
      *
-     * @return maximum(|left|, |right|)
+     * @return maximum(left, right)
      */
     public double magnitude() {
-        return Math.max(Math.abs(this.left), Math.abs(this.right));
+        return Math.max(0, Math.max(this.left, this.right));
     }
 
     /**

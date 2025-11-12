@@ -1,8 +1,10 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.DiscretionaryLaneChangeChunk.DefaultLaneChangePattern;
 
 import org.opentrafficsim.base.parameters.ParameterException;
-import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
+import org.opentrafficsim.base.parameters.ParameterTypes;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.network.LateralDirectionality;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.*;
 
@@ -46,28 +48,38 @@ public class ActionStateCompleteLaneChange extends ActionState {
      * control loop in the next tactical update step.
      *
      * @return a neutral operational plan with zero acceleration (optional placeholder)
+     * @throws NetworkException
+     * @throws GtuException
      */
     @Override
-    public SimpleOperationalPlan executeControl() throws ParameterException, OperationalPlanException {
+    public SimpleOperationalPlan executeControl() throws ParameterException, GtuException, NetworkException {
         // Immediately finalize maneuver
         finalizeManeuver();
-        return null;
+        return new SimpleOperationalPlan(
+                this.vehicle.computeLongitudinalAcceleration(),
+            this.vehicle.getGtu().getParameters().getParameter(ParameterTypes.DT),
+            LateralDirectionality.NONE
+        );
     }
 
     /**
      * No transition follows — this is the terminal state.
+     * @return
      */
     @Override
-    public void next() {
+    public SimpleOperationalPlan next() {
         // No next state: this is terminal
+        return null;
     }
 
     /**
      * No abort possible — lane change already completed successfully.
+     * @return
      */
     @Override
-    public void abort() {
+    public SimpleOperationalPlan abort() {
         // No abort logic after completion
+        return null;
     }
 
     // ----------------------------------------------------------------------

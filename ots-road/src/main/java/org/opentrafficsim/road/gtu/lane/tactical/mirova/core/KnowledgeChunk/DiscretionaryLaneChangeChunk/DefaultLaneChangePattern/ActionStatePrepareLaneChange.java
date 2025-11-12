@@ -67,14 +67,20 @@ public class ActionStatePrepareLaneChange extends ActionState {
      * The state transitions to {@code ActionStatePerformLaneChange} if all feasibility
      * conditions are met (ego and follower decelerations above threshold, lane not ending too soon).
      * </p>
+     * @return
+     * @throws NetworkException
+     * @throws GtuException
+     * @throws IllegalArgumentException
+     * @throws NullPointerException
      */
     @Override
-    public void next() throws OperationalPlanException, ParameterException {
+    public SimpleOperationalPlan next() throws ParameterException, NullPointerException, IllegalArgumentException, GtuException, NetworkException {
         if (checkFeasibility()) {
             ActionState nextState =
                     new ActionStatePerformLaneChange(this.maneuverPattern, this.direction);
-            transitionTo(nextState);
+            return transitionTo(nextState);
         }
+        return null; // remain in current state
     }
 
     /**
@@ -83,14 +89,16 @@ public class ActionStatePrepareLaneChange extends ActionState {
      * The state aborts if the feasibility check fails or the lane-change desire
      * drops significantly below the discretionary threshold.
      * </p>
+     * @return
      */
     @Override
-    public void abort() throws ParameterException, OperationalPlanException {
+    public SimpleOperationalPlan abort() throws ParameterException, OperationalPlanException {
         if (!checkFeasibility() ||
             this.vehicle.getDesire() < this.vehicle.getDFree() - DESIRE_HYSTERESIS) {
             this.vehicle.setRunningManeuver(false);
             this.active = false;
         }
+        return null;
     }
 
     /**

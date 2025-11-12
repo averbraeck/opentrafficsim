@@ -59,11 +59,11 @@ public class MergeCooperationChunk extends KnowledgeChunk
         double dRight = 0.0;
         if (infra.getPhysicalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.LEFT).lt(lookAheadDistance))
         {
-            dRight = getAbstractMirovaVehicle().getDFree();
+            dRight = getMirovaTacticalPlanner().getDFree();
         }
         if (infra.getPhysicalLaneChangePossibility(RelativeLane.CURRENT, LateralDirectionality.RIGHT).lt(lookAheadDistance))
         {
-            dLeft = getAbstractMirovaVehicle().getDFree();
+            dLeft = getMirovaTacticalPlanner().getDFree();
         }
 
         this.desire = new Desire(dLeft, dRight, false);

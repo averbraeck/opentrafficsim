@@ -11,6 +11,7 @@ import org.opentrafficsim.core.network.LateralDirectionality;
 import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.perception.headway.Headway;
 import org.opentrafficsim.road.gtu.lane.perception.headway.HeadwayGtu;
+import org.opentrafficsim.road.gtu.lane.plan.operational.LaneBasedOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.plan.operational.SimpleOperationalPlan;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.*;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.*;
@@ -104,19 +105,23 @@ public class ActionStatePerformLaneChange extends ActionState {
             }
         }
 
-        if (this.vehicle.getLaneChange().isChangingLane()) {
-            // Create operational plan
-            return new SimpleOperationalPlan(
-                    minAcc,
-                    params.getParameter(ParameterTypes.DT),
-                    null);
-        } else {
-            // Create operational plan
-            return new SimpleOperationalPlan(
-                    minAcc,
-                    params.getParameter(ParameterTypes.DT),
-                    this.direction);
-        }
+        return new SimpleOperationalPlan(
+                minAcc,
+                params.getParameter(ParameterTypes.DT),
+                this.direction);
+//        if (this.vehicle.getLaneChange().isChangingLane()) {
+//            // Create operational plan
+//            return new SimpleOperationalPlan(
+//                    minAcc,
+//                    params.getParameter(ParameterTypes.DT),
+//                    LateralDirectionality.NONE);
+//        } else {
+//            // Create operational plan
+//            return new SimpleOperationalPlan(
+//                    minAcc,
+//                    params.getParameter(ParameterTypes.DT),
+//                    this.direction);
+//        }
         }
 
     // ----------------------------------------------------------------------
@@ -125,23 +130,30 @@ public class ActionStatePerformLaneChange extends ActionState {
 
     /**
      * Proceeds to {@link ActionStateCompleteLaneChange} when the lane change is completed.
+     * @return
+     * @throws NetworkException
+     * @throws GtuException
+     * @throws IllegalArgumentException
+     * @throws NullPointerException
      */
     @Override
-    public void next() throws ParameterException, OperationalPlanException {
+    public SimpleOperationalPlan next() throws ParameterException, NullPointerException, IllegalArgumentException, GtuException, NetworkException {
         boolean finished = !this.vehicle.getLaneChange().isChangingLane()
                 && !this.originLane.equals(this.vehicle.getGtu().getLane());
 
         if (finished) {
             ActionState nextState = new ActionStateCompleteLaneChange(this.maneuverPattern, this.direction);
-            transitionTo(nextState);
+            return transitionTo(nextState);
         }
+        return null;
     }
 
     /**
      * Checks whether the lane-change should be aborted (safety or desire violation).
+     * @return
      */
     @Override
-    public void abort() throws ParameterException, OperationalPlanException {
+    public SimpleOperationalPlan abort() throws ParameterException, OperationalPlanException {
         // abort Lane Change is currently not supported
     //        NeighborsContext neighbors = this.vehicle.getContext(NeighborsContext.class);
     //        Acceleration bDes = this.vehicle.getGtu().getParameters().getParameter(ParameterTypes.B);
@@ -155,6 +167,7 @@ public class ActionStatePerformLaneChange extends ActionState {
     //            ActionState nextState = new ActionStateAbortLaneChange(this.maneuverPattern, this.direction);
     //            transitionTo(nextState);
     //        }
+        return null;
     }
 
     @Override

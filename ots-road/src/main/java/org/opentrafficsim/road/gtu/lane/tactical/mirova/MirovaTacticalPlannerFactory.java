@@ -18,6 +18,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.Merg
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.SocialInteractionsChunk.SocialInteractionsChunk;
 import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
 
 /**
  * Factory that creates instances of {@link MirovaTacticalPlannerOLD}.
@@ -53,12 +55,13 @@ public class MirovaTacticalPlannerFactory  extends AbstractLaneBasedTacticalPlan
     {
         try
         {
+            gtu.setParameters(getParameters());
             MirovaTacticalPlanner planner = new MirovaTacticalPlanner(nextCarFollowingModel(gtu), gtu, getPerceptionFactory().generatePerception(gtu));
             planner.addKnowledgeChunk(new DiscretionaryLaneChangeChunk(planner));
-            planner.addKnowledgeChunk(new MandatoryLaneChangeChunk(planner));
-            planner.addKnowledgeChunk(new SocialInteractionsChunk(planner));
-            planner.addKnowledgeChunk(new MergeCooperationChunk(planner));
-            planner.addKnowledgeChunk(new CongestionChunk(planner));
+//            planner.addKnowledgeChunk(new MandatoryLaneChangeChunk(planner));
+//            planner.addKnowledgeChunk(new SocialInteractionsChunk(planner));
+//            planner.addKnowledgeChunk(new MergeCooperationChunk(planner));
+//            planner.addKnowledgeChunk(new CongestionChunk(planner));
             return planner;
         }
         catch (Exception e)
@@ -73,8 +76,9 @@ public class MirovaTacticalPlannerFactory  extends AbstractLaneBasedTacticalPlan
         ParameterSet parameters = new ParameterSet();
         parameters.setDefaultParameters(ConflictUtil.class);
         parameters.setDefaultParameters(TrafficLightUtil.class);
-        getCarFollowingParameters().setAllIn(parameters);
-        getPerceptionFactory().getParameters().setAllIn(parameters);
+        parameters.setDefaultParameters(LmrsUtil.class);
+        parameters.setDefaultParameters(LmrsParameters.class);
+
         parameters.setDefaultParameter(ParameterTypes.VCONG);
         parameters.setDefaultParameter(ParameterTypes.T0);
         parameters.setDefaultParameter(ParameterTypes.LCDUR);
@@ -88,6 +92,8 @@ public class MirovaTacticalPlannerFactory  extends AbstractLaneBasedTacticalPlan
         parameters.setDefaultParameter(ParameterTypes.TAU);
         parameters.setDefaultParameter(ParameterTypes.LOOKAHEAD);
         parameters.setDefaultParameter(ParameterTypes.LOOKBACK);
+        getCarFollowingParameters().setAllIn(parameters);
+        getPerceptionFactory().getParameters().setAllIn(parameters);
 
         return parameters;
     }

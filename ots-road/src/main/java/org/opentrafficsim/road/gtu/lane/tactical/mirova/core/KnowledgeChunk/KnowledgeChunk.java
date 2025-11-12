@@ -11,12 +11,16 @@ import java.util.function.Supplier;
 import org.opentrafficsim.base.parameters.ParameterException;
 import org.opentrafficsim.base.parameters.Parameters;
 import org.opentrafficsim.core.gtu.GtuException;
+import org.opentrafficsim.core.gtu.perception.DirectEgoPerception;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
 import org.opentrafficsim.core.gtu.plan.operational.OperationalPlanException;
 import org.opentrafficsim.core.network.NetworkException;
+import org.opentrafficsim.road.gtu.lane.perception.categories.AnticipationTrafficPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.DirectDefaultSimplePerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.DirectInfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.InfrastructurePerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.TrafficPerception;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 
 /**
@@ -41,10 +45,10 @@ public abstract class KnowledgeChunk
     protected Desire desire;
 
     /** Perception categories. */
-    private final InfrastructurePerception infrastructurePerception;
-    private final TrafficPerception trafficPerception;
-    private final EgoPerception egoPerception;
-    private final NeighborsPerception neighborsPerception;
+    private final DirectInfrastructurePerception infrastructurePerception;
+    private final AnticipationTrafficPerception trafficPerception;
+    private final DirectEgoPerception egoPerception;
+    private final DirectNeighborsPerception neighborsPerception;
     private final DirectDefaultSimplePerception directDefaultSimplePerception;
 
     /** Vehicle parameters. */
@@ -63,13 +67,13 @@ public abstract class KnowledgeChunk
         this.desire = Desire.zero();
         this.maneuverPatterns = new ArrayList<>();
         this.infrastructurePerception =
-                vehicle.getPerception().getPerceptionCategory(InfrastructurePerception.class);
+                vehicle.getPerception().getPerceptionCategory(DirectInfrastructurePerception.class);
         this.trafficPerception =
-                vehicle.getPerception().getPerceptionCategory(TrafficPerception.class);
+                vehicle.getPerception().getPerceptionCategory(AnticipationTrafficPerception.class);
         this.egoPerception =
-                vehicle.getPerception().getPerceptionCategory(EgoPerception.class);
+                vehicle.getPerception().getPerceptionCategory(DirectEgoPerception.class);
         this.neighborsPerception =
-                vehicle.getPerception().getPerceptionCategory(NeighborsPerception.class);
+                vehicle.getPerception().getPerceptionCategory(DirectNeighborsPerception.class);
         this.directDefaultSimplePerception =
                 vehicle.getPerception().getPerceptionCategory(DirectDefaultSimplePerception.class);
         this.parameters = vehicle.getGtu().getParameters();
@@ -125,15 +129,15 @@ public abstract class KnowledgeChunk
     // ACCESSORS
     // ----------------------------------------------------------------------
 
-    public MirovaTacticalPlanner getAbstractMirovaVehicle() { return this.vehicle; }
+    public MirovaTacticalPlanner getMirovaTacticalPlanner() { return this.vehicle; }
 
-    public InfrastructurePerception getInfrastructurePerception() { return this.infrastructurePerception; }
+    public DirectInfrastructurePerception getInfrastructurePerception() { return this.infrastructurePerception; }
 
-    public TrafficPerception getTrafficPerception() { return this.trafficPerception; }
+    public AnticipationTrafficPerception getTrafficPerception() { return this.trafficPerception; }
 
-    public EgoPerception getEgoPerception() { return this.egoPerception; }
+    public DirectEgoPerception getEgoPerception() { return this.egoPerception; }
 
-    public NeighborsPerception getNeighborsPerception() { return this.neighborsPerception; }
+    public DirectNeighborsPerception getNeighborsPerception() { return this.neighborsPerception; }
 
     public DirectDefaultSimplePerception getDirectDefaultSimplePerception() { return this.directDefaultSimplePerception; }
 

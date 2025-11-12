@@ -132,7 +132,7 @@ public class CircularRoadModel extends AbstractOtsModel implements UNITS
                     "Track length (circumfence of the track)", Length.instantiateSI(1000.0), Length.instantiateSI(500.0),
                     Length.instantiateSI(2000.0), true, true, "%.0f", 1.5));
             genericMap.add(new InputParameterDouble("densityMean", "Mean density (veh / km)",
-                    "mean density of the vehicles (vehicles per kilometer)", 30.0, 5.0, 45.0, true, true, "%.0f", 2.0));
+                    "mean density of the vehicles (vehicles per kilometer)", 15.0, 5.0, 45.0, true, true, "%.0f", 2.0));
             genericMap.add(new InputParameterDouble("densityVariability", "Density variability",
                     "Variability of the denisty: variability * (headway - 20) meters", 0.0, 0.0, 1.0, true, true, "%.00f",
                     3.0));

@@ -66,7 +66,7 @@ public abstract class ContextCategory {
     }
 
     /** Stores a value in the cache and optionally in the context value map. */
-    protected <T> void cacheValue(final String key, final T value, final boolean storeInValues) {
+    public <T> void cacheValue(final String key, final T value, final boolean storeInValues) {
         this.cache.put(key, value);
         if (storeInValues)
             this.values.put(key, value);
@@ -75,7 +75,7 @@ public abstract class ContextCategory {
 
     /** Retrieves a cached value, or null if not present or outdated. */
     @SuppressWarnings("unchecked")
-    protected <T> T getCachedValue(final String key, final Class<T> type) {
+    public <T> T getCachedValue(final String key, final Class<T> type) {
         if (!isCacheValid())
             return null;
         Object v = this.cache.get(key);

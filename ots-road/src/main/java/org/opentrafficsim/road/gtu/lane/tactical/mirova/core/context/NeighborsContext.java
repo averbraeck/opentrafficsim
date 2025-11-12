@@ -6,6 +6,7 @@ import java.util.SortedSet;
 
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.value.vdouble.scalar.Acceleration;
+import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Speed;
 import org.opentrafficsim.base.parameters.ParameterException;
@@ -38,10 +39,13 @@ import org.opentrafficsim.road.network.speed.SpeedLimitInfo;
  */
 public class NeighborsContext extends ContextCategory implements UpdatableContext {
 
-    private static final String EGO_DECEL_LEFT = "egoDecel_LEFT";
-    private static final String EGO_DECEL_RIGHT = "egoDecel_RIGHT";
-    private static final String FOLLOWER_DECEL_LEFT = "followerDecel_LEFT";
-    private static final String FOLLOWER_DECEL_RIGHT = "followerDecel_RIGHT";
+    public static final String EGO_DECEL_LEFT = "egoDecel_LEFT";
+    public static final String EGO_DECEL_RIGHT = "egoDecel_RIGHT";
+    public static final String FOLLOWER_DECEL_LEFT = "followerDecel_LEFT";
+    public static final String FOLLOWER_DECEL_RIGHT = "followerDecel_RIGHT";
+    public static final String FRONT_GAP_DISTANCE = "frontGapDistance";
+    public static final String FRONT_GAP_DELTA_SPEED = "frontGapDeltaSpeed";
+    public static final String FRONT_GAP_TIME_HEADWAY = "frontGapTimeHeadway";
 
     // ----------------------------------------------------------------------
     // Construction
@@ -179,6 +183,33 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
         return result;
     }
 
+    public Length getFrontGapDistance() {
+        Length cached = getCachedValue(FRONT_GAP_DISTANCE, Length.class);
+        if (cached != null) return cached;
+
+        Length result = computeFrontGapDistance();
+        cacheValue(FRONT_GAP_DISTANCE, result, true);
+        return result;
+    }
+
+    public Speed getFrontGapDeltaSpeed() {
+        Speed cached = getCachedValue(FRONT_GAP_DELTA_SPEED, Speed.class);
+        if (cached != null) return cached;
+
+        Speed result = computeFrontGapDeltaSpeed();
+        cacheValue(FRONT_GAP_DELTA_SPEED, result, true);
+        return result;
+    }
+
+    public Duration getFrontGapTimeHeadway() {
+        Duration cached = getCachedValue(FRONT_GAP_TIME_HEADWAY, Duration.class);
+        if (cached != null) return cached;
+
+        Duration result = computeFrontGapTimeHeadway();
+        cacheValue(FRONT_GAP_TIME_HEADWAY, result, true);
+        return result;
+    }
+
     private Acceleration computeSafeEgoDecel(final LateralDirectionality dir) {
         try {
             return computeLaneChangeEgoDeceleration(dir);
@@ -192,6 +223,50 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
             return computeLaneChangeFollowerDeceleration(dir);
         } catch (Exception e) {
             return new Acceleration(Double.NaN, AccelerationUnit.SI);
+        }
+    }
+
+    private Length computeFrontGapDistance() {
+        try {
+            Headway leaderHeadway = getCurrentLeader();
+            if (leaderHeadway != null) {
+                return leaderHeadway.getDistance();
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private Speed computeFrontGapDeltaSpeed() {
+        try {
+            Headway leaderHeadway = getCurrentLeader();
+            if (leaderHeadway != null) {
+                return this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed().minus(leaderHeadway.getSpeed());
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private Duration computeFrontGapTimeHeadway() {
+        try {
+            Headway leaderHeadway = getCurrentLeader();
+            if (leaderHeadway != null) {
+                Speed egoSpeed = this.vehicle.getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed();
+                if (egoSpeed.gt(Speed.ZERO)) {
+                    return Duration.instantiateSI(leaderHeadway.getDistance().si / egoSpeed.si);
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
         }
     }
 
@@ -269,6 +344,8 @@ public class NeighborsContext extends ContextCategory implements UpdatableContex
         if (dir == null) return null;
         return dir.isLeft() ? getLeftLeader() : getRightLeader();
     }
+
+
 
     @Override
     public String toString() {

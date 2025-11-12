@@ -10,6 +10,7 @@ import java.util.List;
 import javax.naming.NamingException;
 import javax.swing.JButton;
 
+import org.djunits.unit.DurationUnit;
 import org.djunits.value.vdouble.scalar.Duration;
 import org.djunits.value.vdouble.scalar.Length;
 import org.djunits.value.vdouble.scalar.Time;
@@ -33,6 +34,17 @@ import org.opentrafficsim.draw.graphs.GraphPath;
 import org.opentrafficsim.draw.graphs.PlotScheduler;
 import org.opentrafficsim.draw.graphs.TrajectoryPlot;
 import org.opentrafficsim.kpi.interfaces.LaneData;
+import org.opentrafficsim.kpi.sampling.Sampler;
+import org.opentrafficsim.kpi.sampling.SamplerData;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.util.logging.MirovaCsvLogger;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.util.logging.extendeddata.ExtendedDataActionState;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.util.logging.extendeddata.ExtendedDataDesire;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.util.logging.extendeddata.ExtendedDataIsChangingLane;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.util.logging.extendeddata.ExtendedDataLaneChangeDesireLeft;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.util.logging.extendeddata.ExtendedDataLaneChangeDesireRight;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.util.logging.extendeddata.ExtendedDataLaneChangePlan;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.util.logging.extendeddata.ExtendedDataLaneChangePlanDirection;
+import org.opentrafficsim.road.gtu.lane.tactical.mirova.util.logging.extendeddata.ExtendedDataRelaxedHeadway;
 import org.opentrafficsim.road.network.RoadNetwork;
 import org.opentrafficsim.road.network.lane.Lane;
 import org.opentrafficsim.road.network.sampling.LaneDataRoad;
@@ -62,6 +74,8 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
 {
     /** */
     private static final long serialVersionUID = 1L;
+
+    private static final Duration simDuration = Duration.instantiateSI(600.0);
 
     /**
      * Create a CircularRoad Swing application.
@@ -108,6 +122,8 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
             TabbedParameterDialog.process(otsModel.getInputParameterMap());
             simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel,
                     HistoryManagerDevs.noHistory(simulator));
+
+
             Thread getLocationThread = new Thread()
             {
                 @Override
@@ -138,6 +154,7 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
                 }
 
             };
+
             simulator.start();
             getLocationThread.start();
             while (simulator.isStartingOrRunning())
@@ -258,10 +275,11 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
             // buttonClick.start(); // start the thread that will try to click on the start button
             if (TabbedParameterDialog.process(otsModel.getInputParameterMap()))
             {
-                simulator.initialize(Time.ZERO, Duration.ZERO, Duration.instantiateSI(3600.0), otsModel,
+                simulator.initialize(Time.ZERO, Duration.ZERO, simDuration, otsModel,
                         HistoryManagerDevs.noHistory(simulator));
                 OtsAnimationPanel animationPanel = new OtsAnimationPanel(otsModel.getNetwork().getExtent(),
                         new Dimension(800, 600), simulator, otsModel, DEFAULT_GTU_COLORERS, otsModel.getNetwork());
+
                 CircularRoadSwing app = new CircularRoadSwing("Circular Road", animationPanel, otsModel);
                 app.setExitOnClose(exitOnClose);
                 animationPanel.enableSimulationControlButtons();
@@ -315,6 +333,17 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
             throw new RuntimeException("Could not create a path as a lane has no set speed limit.", exception);
         }
         RoadSampler sampler = new RoadSampler(getModel().getNetwork());
+        RoadSampler samplerExtended = RoadSampler.build(getModel().getNetwork())
+                .registerExtendedDataType(new ExtendedDataRelaxedHeadway())
+//                .registerExtendedDataType(new ExtendedDataActionState())
+//                .registerExtendedDataType(new ExtendedDataLaneChangeDesireLeft())
+//                .registerExtendedDataType(new ExtendedDataLaneChangeDesireRight())
+//                .registerExtendedDataType(new ExtendedDataIsChangingLane())
+//                .registerExtendedDataType(new ExtendedDataLaneChangePlan())
+//                .registerExtendedDataType(new ExtendedDataLaneChangePlanDirection())
+                .create();
+        samplerExtended.scheduleStartRecording(Time.instantiateSI(1), path01.get(0).getSource(0));
+        samplerExtended.scheduleStopRecording(Time.instantiateSI(599), path01.get(0).getSource(0));
         GraphPath.initRecording(sampler, path01);
         GraphPath.initRecording(sampler, path0);
         GraphPath.initRecording(sampler, path1);
@@ -390,6 +419,38 @@ public class CircularRoadSwing extends OtsSimulationApplication<CircularRoadMode
             getAnimationPanel().getTabbedPane().addTab(getAnimationPanel().getTabbedPane().getTabCount(), "stats lane " + lane,
                     charts);
         }
+
+        SamplerData samplerData = samplerExtended.getSamplerData();
+
+        samplerData.writeToFile("D:\\Mitarbeitende\\gw2128\\projects\\mirova\\circular_road_demo\\trajectory_data.csv");
+
+
+     // --- Export CSV automatically after simulation ---
+//        try
+//        {
+//            simulator.addListener(
+//                (event) -> {
+//                    try
+//                    {
+//                        sampler.getSamplerData().writeToFile(
+//                            "D:\\Mitarbeitende\\gw2128\\projects\\mirova\\circular_road_demo\\trajectory_data.csv"
+//                        );
+//                        System.out.println("[MIROVA] Trajectory CSV export completed.");
+//                    }
+//                    catch (Exception e)
+//                    {
+//                        e.printStackTrace();
+//                    }
+//                },
+//                OtsSimulatorInterface.STOP_EVENT
+//            );
+//        }
+//        catch (java.rmi.RemoteException e)
+//        {
+//            // In einer lokalen Simulation tritt das praktisch nie auf
+//            System.err.println("RemoteException ignored (local simulation context): " + e.getMessage());
+//        }
+
     }
 
 }

@@ -50,7 +50,7 @@ public abstract class ManeuverPattern {
     protected ManeuverPattern(final PatternType type, final KnowledgeChunk knowledgeChunk) {
         this.type = type;
         this.knowledgeChunk = knowledgeChunk;
-        this.vehicle = knowledgeChunk.getAbstractMirovaVehicle();
+        this.vehicle = knowledgeChunk.getMirovaTacticalPlanner();
     }
 
     // ----------------------------------------------------------------------

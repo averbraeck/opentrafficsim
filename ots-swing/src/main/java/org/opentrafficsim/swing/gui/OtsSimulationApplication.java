@@ -1,5 +1,6 @@
 package org.opentrafficsim.swing.gui;
 
+import java.rmi.RemoteException;
 import java.util.Map;
 
 import org.opentrafficsim.animation.DefaultAnimationFactory;
@@ -75,6 +76,7 @@ public class OtsSimulationApplication<T extends OtsModelInterface> extends OtsSw
 
     /**
      * Adds tabs. This method is overridable. The default does nothing.
+
      */
     protected void addTabs()
     {

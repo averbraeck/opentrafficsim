@@ -51,7 +51,7 @@ public class SocialInteractionsChunk extends KnowledgeChunk
     public Desire computeDesire() throws ParameterException
     {
 
-        double socioSpeedSensitivity = getAbstractMirovaVehicle().getSocioSpeedSensitivity();
+        double socioSpeedSensitivity = getMirovaTacticalPlanner().getSocioSpeedSensitivity();
         // Stay out of the way (left lane)
         Double rhoPotentialFollower = followerSocialPressure(RelativeLane.LEFT);
         Double rhoEgoPotential = egoSocialPressure(RelativeLane.LEFT);
@@ -87,7 +87,7 @@ public class SocialInteractionsChunk extends KnowledgeChunk
             return null; // no follower
         }
 
-        Speed vGain = getAbstractMirovaVehicle().getVGain();
+        Speed vGain = getMirovaTacticalPlanner().getVGain();
         Speed vLeader = getEgoPerception().getSpeed();
         HeadwayGtu follower = getNeighborsPerception().getFollowers(lane).first();
         Speed followerDesiredSpeed = follower.getDesiredSpeed();
@@ -104,9 +104,9 @@ public class SocialInteractionsChunk extends KnowledgeChunk
         {
             return null; // no leader
         }
-        Speed vGain = getAbstractMirovaVehicle().getVGain();
+        Speed vGain = getMirovaTacticalPlanner().getVGain();
         Speed vFollower = getEgoPerception().getSpeed();
-        Speed followerDesiredSpeed = getAbstractMirovaVehicle().getGtu().getDesiredSpeed();
+        Speed followerDesiredSpeed = getMirovaTacticalPlanner().getGtu().getDesiredSpeed();
         Length followerLookahead = getParameters().getParameter(ParameterTypes.LOOKAHEAD);
         HeadwayGtu leader = getNeighborsPerception().getLeaders(lane).first();
         Speed vLeader = leader.getSpeed();     // same-lane leader

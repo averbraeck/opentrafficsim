@@ -40,7 +40,7 @@ public abstract class ActionState {
 
     public ActionState(final ManeuverPattern maneuverPattern) {
         this.maneuverPattern = maneuverPattern;
-        this.vehicle = maneuverPattern.getKnowledgeChunk().getAbstractMirovaVehicle();
+        this.vehicle = maneuverPattern.getKnowledgeChunk().getMirovaTacticalPlanner();
     }
 
     // ----------------------------------------------------------------------
@@ -63,14 +63,21 @@ public abstract class ActionState {
 
         this.vehicle.setRunningManeuver(true);
 
-        // 1. Execute control logic (produces operational plan)
-        this.operationalPlan = this.executeControl();
+        // 1. Abort check
+        this.operationalPlan = this.abort();
+
+        if (this.operationalPlan != null) {
+            return this.operationalPlan;
+        }
 
         // 2. Transition check
-        this.next();
+        this.operationalPlan = this.next();
+        if (this.operationalPlan != null) {
+            return this.operationalPlan;
+        }
 
-        // 3. Abort check
-        this.abort();
+        // 3. Execute control logic (produces operational plan)
+        this.operationalPlan = this.executeControl();
 
         return this.operationalPlan;
     }
@@ -94,14 +101,16 @@ public abstract class ActionState {
     /**
      * Checks transition conditions to the next action state.
      * Should call {@link #transitionTo(ActionState)} if a transition occurs.
+     * @throws NetworkException
+     * @throws GtuException
      */
-    public abstract void next()
-            throws OperationalPlanException, ParameterException, NullPointerException, IllegalArgumentException;
+    public abstract SimpleOperationalPlan next()
+            throws OperationalPlanException, ParameterException, NullPointerException, IllegalArgumentException, GtuException, NetworkException;
 
     /**
      * Checks whether this state should be aborted (e.g. if the maneuver became infeasible).
      */
-    public abstract void abort()
+    public abstract SimpleOperationalPlan abort()
             throws ParameterException, OperationalPlanException, NullPointerException, IllegalArgumentException;
 
     // ----------------------------------------------------------------------
@@ -111,11 +120,18 @@ public abstract class ActionState {
     /**
      * Transitions to the specified next state.
      * @param nextState the new active state
+     * @return
+     * @throws NetworkException
+     * @throws GtuException
+     * @throws IllegalArgumentException
+     * @throws NullPointerException
+     * @throws ParameterException
      */
-    protected void transitionTo(final ActionState nextState) {
+    protected SimpleOperationalPlan transitionTo(final ActionState nextState) throws ParameterException, NullPointerException, IllegalArgumentException, GtuException, NetworkException {
         this.active = false;
         nextState.active = true;
         this.vehicle.setCurrentActionState(nextState);
+        return nextState.update();
     }
 
     /** Returns whether this state is currently active.

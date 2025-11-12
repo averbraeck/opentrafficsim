@@ -3,6 +3,7 @@ package org.opentrafficsim.road.gtu.lane.tactical.mirova;
 import org.djunits.unit.AccelerationUnit;
 import org.djunits.unit.DurationUnit;
 import org.djunits.unit.LengthUnit;
+import org.djunits.unit.SpeedUnit;
 import org.djunits.value.vdouble.scalar.*;
 import org.djutils.draw.point.DirectedPoint2d;
 import org.djutils.exceptions.Try;
@@ -16,6 +17,7 @@ import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.*;
 import org.opentrafficsim.road.gtu.lane.perception.*;
 import org.opentrafficsim.road.gtu.lane.perception.categories.*;
+import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.DirectNeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.categories.neighbors.NeighborsPerception;
 import org.opentrafficsim.road.gtu.lane.perception.headway.*;
 import org.opentrafficsim.road.gtu.lane.plan.operational.*;
@@ -27,7 +29,11 @@ import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.KnowledgeChunk.Know
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context.*;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.core.util.PatternSelector;
 import org.opentrafficsim.road.gtu.lane.tactical.util.CarFollowingUtil;
+import org.opentrafficsim.road.gtu.lane.tactical.util.ConflictUtil;
 import org.opentrafficsim.road.gtu.lane.tactical.util.SpeedLimitUtil;
+import org.opentrafficsim.road.gtu.lane.tactical.util.TrafficLightUtil;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsParameters;
+import org.opentrafficsim.road.gtu.lane.tactical.util.lmrs.LmrsUtil;
 import org.opentrafficsim.road.network.*;
 import org.opentrafficsim.road.network.speed.*;
 
@@ -59,7 +65,8 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
     // ----------------------------------------------------------------------
     // LMRS Desire Dynamics
     // ----------------------------------------------------------------------
-
+    /** Current total lateral desire vector (left/right). */
+    protected Desire laneChangeDesire = Desire.zero();
     protected Double absoluteDesire = 0.0;
     protected Duration desireRelaxationTime = new Duration(0.0, DurationUnit.SI);
     private final double DFREE = 0.365;
@@ -67,6 +74,9 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
     private static final Speed vGain = Speed.instantiateSI(20.0);
     private static final Speed vCrit = Speed.instantiateSI(16.7);
     private static final Double socioSpeedSensitivity = 0.25;
+
+    /** */
+    private Parameters params;
 
     // ----------------------------------------------------------------------
     /** Declarative knowledge base for this vehicle. */
@@ -117,10 +127,14 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
         super(carFollowingModel, gtu, lanePerception);
 
         this.laneChange = Try.assign(() -> new LaneChange(gtu), "Parameter LCDUR is required.", GtuException.class);
-        this.currentRelaxedHeadway = gtu.getParameters().getParameter(ParameterTypes.T);
+
+//        this.laneChange.setDesiredLaneChangeDuration(getGtu().getParameters().getParameter(ParameterTypes.LCDUR));
+//        this.currentRelaxedHeadway = gtu.getParameters().getParameter(ParameterTypes.T);
 
         // Initialize context manager
         this.contextManager = new VehicleContextManager(this);
+        this.params = getGtu().getParameters();
+        this.laneChange.setDesiredLaneChangeDuration(getGtu().getParameters().getParameter(ParameterTypes.LCDUR));
 
     }
 
@@ -144,13 +158,14 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
             throws GtuException, NetworkException, ParameterException
     {
         SimpleOperationalPlan plan;
-        if (getGtu().getFront() == null || getGtu().getReferencePosition() == null) {
+        if (getGtu().getFront() == null || getGtu().getReferencePosition() == null || getGtu().getOperationalPlan() == null) {
             // GTU noch nicht vollständig positioniert → überspringe diesen Takt
-            plan =  new SimpleOperationalPlan(Acceleration.ZERO, Duration.instantiateSI(0.1), LateralDirectionality.NONE);
+            plan =  new SimpleOperationalPlan(Acceleration.ZERO, Duration.instantiateSI(1.0), LateralDirectionality.NONE);
         }
 
         else {
             plan = this.update();
+
         }
 
         return LaneOperationalPlanBuilder.buildPlanFromSimplePlan(getGtu(), startTime, plan, this.getLaneChange());
@@ -212,12 +227,18 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
     public SimpleOperationalPlan update()
             throws ParameterException, NullPointerException, IllegalArgumentException, GtuException, NetworkException
     {
-        getPerception().perceive();
-        // 1️. Update perception and contextual information
+        if (this.currentRelaxedHeadway == null) {
+            this.currentRelaxedHeadway = this.getGtu().getParameters().getParameter(ParameterTypes.T);
+        }
+
+          // 1️. Update perception and contextual information
+        this.getPerception().getPerceptionCategory(DirectDefaultSimplePerception.class).updateForwardHeadwayGtu();
         this.contextManager.advanceTick();
+
 
         // 2. Compute current LMRS-style net desire (aggregated from all knowledge chunks)
         updateLaneChangeDesire();
+
 
         // 3️. Derive a single scalar desire magnitude for car-following adjustments
         this.absoluteDesire = this.laneChangeDesire.magnitude();
@@ -244,13 +265,13 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
             double dTactical = this.getDMand();   // threshold for tactical lane changes
 
             // --- 7.1️. Tactical lane change (highest priority) ---
-            if (this.laneChangeDesire.magnitude() > dTactical)
+            if (this.laneChangeDesire.magnitude() >= dTactical)
             {
                 selectedPattern = selectPatternByType(PatternType.TACTICAL_LC);
             }
 
             // --- 7.2️. Free lane change ---
-            else if (this.laneChangeDesire.magnitude() > dFree)
+            else if (this.laneChangeDesire.magnitude() >= dFree)
             {
                 // Try a standard free lane change first
                 selectedPattern = selectPatternByType(PatternType.FREE_LC);
@@ -274,28 +295,48 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
                 this.currentActionState = selectedPattern.getInitialActionState();
                 this.operationalPlan = this.currentActionState.update();
             }
-            else
-            {
-                // Default: continue standard following (no tactical action)
-                this.operationalPlan = new SimpleOperationalPlan(
-                        computeLongitudinalAcceleration(),
-                    this.getGtu().getParameters().getParameter(ParameterTypes.DT)
-                );
-            }
+
         }
 
-        String activeActionState = (this.currentActionState != null) ? this.currentActionState.toString() : "none";
+        if (this.operationalPlan == null)
+        {
+             // Default: continue standard following (no tactical action)
+                this.operationalPlan = new SimpleOperationalPlan(
+                        //computeLongitudinalAcceleration()
+                        getContextManager().getCategory("Ego", EgoContext.class).getCurrentCarFollowingAcceleration(),
+                    this.getGtu().getParameters().getParameter(ParameterTypes.DT),
+                    LateralDirectionality.NONE
+                );
+        }
 
-        SpeedLimitInfo currentSpeedLimitInfo = getPerception().getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(new Length(0.0, LengthUnit.SI));
-        Speed desired = getCarFollowingModel().desiredSpeed(getGtu().getParameters(), currentSpeedLimitInfo);
-        System.out.printf("%s type=%s vMaxVeh=%s desired=%s%n activeActionState=%s laneChangeDesire=[left=%.3f,right=%.3f]%n headway=%.3f%n",
-            getGtu(), getGtu().getType().getId(),
-            SpeedLimitUtil.getMaximumVehicleSpeed(currentSpeedLimitInfo),
-            desired,
-            activeActionState,
-            this.laneChangeDesire.getLeft(),
-            this.laneChangeDesire.getRight(),
-            getCurrentRelaxedHeadway().si);
+        else
+        {
+            getContextManager().getCategory("Ego", EgoContext.class).cacheValue(EgoContext.CURRENT_CF_ACCELERATION, this.operationalPlan.getAcceleration(), true);
+        }
+
+//        if (getGtu().getId().equals("15"))
+//        {
+//
+//            String activeActionState = (this.currentActionState != null) ? this.currentActionState.toString() : "none";
+//
+//            SpeedLimitInfo currentSpeedLimitInfo = getPerception().getPerceptionCategory(InfrastructurePerception.class).getSpeedLimitProspect(RelativeLane.CURRENT).getSpeedLimitInfo(new Length(0.0, LengthUnit.SI));
+//            Speed desired = getCarFollowingModel().desiredSpeed(getGtu().getParameters(), currentSpeedLimitInfo);
+//            System.out.printf("%s type=%s vMaxVeh=%s desired=%s%n activeActionState=%s laneChangeDesire=[left=%.3f,right=%.3f]%n headway=%.3f%n lane=%s%n isChangingLane=%b%n PlanisLaneChange=%b PlanDir=%s%n%n",
+//                getGtu(), getGtu().getType().getId(),
+//                SpeedLimitUtil.getMaximumVehicleSpeed(currentSpeedLimitInfo),
+//                desired,
+//                activeActionState,
+//                this.laneChangeDesire.getLeft(),
+//                this.laneChangeDesire.getRight(),
+//                getCurrentRelaxedHeadway().si,
+//                this.getGtu().getLane().toString(),
+//                this.laneChange.isChangingLane(),
+//                this.operationalPlan.isLaneChange(),
+//                this.operationalPlan.getLaneChangeDirection());
+//
+//           }
+
+
         return this.operationalPlan;
     }
 
@@ -314,7 +355,6 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
      *
      * @param type the {@link PatternType} to be evaluated (e.g., COOPERATIVE, FREE_LC)
      * @return the most suitable maneuver pattern for the given type, or {@code null} if none match
-     * @throws ParameterException if perception or context evaluation fails during selection
      */
     protected ManeuverPattern selectPatternByType(final PatternType type) throws ParameterException {
         return PatternSelector.select(this.knowledgeChunks, type);
@@ -348,8 +388,7 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
      // LMRS Desire Integration
      // ----------------------------------------------------------------------
 
-     /** Current total lateral desire vector (left/right). */
-     protected Desire laneChangeDesire = Desire.zero();
+
 
      /**
       * Computes and updates the total (mandatory + discretionary) desire vector
@@ -656,11 +695,10 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
          // Ego and environment data from context
          Speed egoSpeed = getContextManager().getCategory("Ego", EgoContext.class).getEgoSpeed();
 
-
          SpeedLimitInfo currentSpeedLimitInfo =  getPerception()
                  .getPerceptionCategory(InfrastructurePerception.class)
                  .getSpeedLimitProspect(RelativeLane.CURRENT)
-                 .getSpeedLimitInfo(Length.ZERO);;
+                 .getSpeedLimitInfo(Length.ZERO);
          SpeedLimitInfo nextLimit = infra.getNextSpeedLimit();
          Speed legalSpeed = infra.getLegalSpeedLimit();
          Length laneEndDist = infra.getDistanceToLaneEnd();
@@ -680,15 +718,15 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
          // ----------------------------------------------------------------------
          // 3️⃣ Leader-following (if a leader is detected)
          // ----------------------------------------------------------------------
-         this.getPerception().getPerceptionCategory(DirectDefaultSimplePerception.class).updateForwardHeadwayGtu();
+
          Headway leader = this.getPerception()
                  .getPerceptionCategory(DirectDefaultSimplePerception.class)
                  .getForwardHeadwayGtu();
-
          NeighborsPerception neighbors =
                  getPerception().getPerceptionCategory(NeighborsPerception.class);
-             PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders =
+         PerceptionCollectable<HeadwayGtu, LaneBasedGtu> leaders =
                  neighbors.getLeaders(RelativeLane.CURRENT);
+
          Acceleration aCf = getCarFollowingModel().followingAcceleration(
                  params,
                  egoSpeed,
@@ -737,7 +775,6 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
          {
              candidates.add(aTrans);
          }
-
          // ----------------------------------------------------------------------
          // 6️⃣ Upcoming lower speed limit ahead
          // ----------------------------------------------------------------------
@@ -752,7 +789,6 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
                  candidates.add(aLimit);
              }
          }
-
          // ----------------------------------------------------------------------
          // 7️⃣ Compute most restrictive acceleration
          // ----------------------------------------------------------------------
@@ -815,5 +851,46 @@ public class MirovaTacticalPlanner extends AbstractLaneBasedTacticalPlanner
         return socioSpeedSensitivity;
     }
 
+    public Map<String, Object> getProperties() {
+        Map<String, Object> props = new LinkedHashMap<>();
+        props.put("Speed [km/h]", getGtu().getSpeed());
+        props.put("Acceleration [m/s²]", getGtu().getAcceleration());
+        props.put("Current Desire", String.format("%.3f", this.absoluteDesire));
+        props.put("Headway (relaxed)", getCurrentRelaxedHeadway());
+        props.put("Lane Change Active", this.getLaneChange().isChangingLane());
+        props.put("Active ActionState",
+                  this.currentActionState != null ? this.currentActionState.toString() : "none");
+        return props;
+    }
+
+    public Double getRelaxProgress() {
+        return this.relaxProgress;
+    }
+
+    public Duration getTargetDesire() {
+        return this.targetDesiredHeadway;
+    }
+
+
+    /**
+     * @return
+     */
+    public SimpleOperationalPlan getOperationalPlan() {
+        return this.operationalPlan;
+    }
+
+    /**
+     * @return
+     */
+    public Parameters getParameters() {
+        return this.params;
+    }
+
+//    /**
+//     * @param params
+//     */
+//    public void setParameters(final Parameters params) {
+//        this.params = params;
+//    }
 
 }

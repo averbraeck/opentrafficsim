@@ -62,8 +62,8 @@ public class CongestionChunk extends KnowledgeChunk
     @Override
     public Desire computeDesire() throws ParameterException
     {
-        double dLeft = - getAbstractMirovaVehicle().getDFree(); // suppress lane changes
-        double dRight = - getAbstractMirovaVehicle().getDFree(); // suppress lane changes
+        double dLeft = - getMirovaTacticalPlanner().getDFree(); // suppress lane changes
+        double dRight = - getMirovaTacticalPlanner().getDFree(); // suppress lane changes
 
         this.desire = new Desire(dLeft, dRight, false);
         return this.desire;
@@ -73,7 +73,7 @@ public class CongestionChunk extends KnowledgeChunk
     {
         if (getEgoPerception().getSpeed().lt(Speed.instantiateSI(5.0)))
         {
-            getAbstractMirovaVehicle().setDesire(this.capacitDropGapIncreaseFactor, this.capacityDropRelaxationDuration);
+            getMirovaTacticalPlanner().setDesire(this.capacitDropGapIncreaseFactor, this.capacityDropRelaxationDuration);
         }
     }
 

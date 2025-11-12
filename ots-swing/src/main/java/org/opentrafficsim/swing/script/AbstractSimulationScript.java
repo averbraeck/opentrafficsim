@@ -90,7 +90,7 @@ public abstract class AbstractSimulationScript implements EventListener, Checkab
 
     /** Simulation time. */
     @Option(names = {"-t", "--simulationTime"}, description = "Simulation time (including warm-up time)",
-            defaultValue = "3600s")
+            defaultValue = "600s")
     private Duration simulationTime;
 
     /** Simulation time. */

@@ -67,7 +67,7 @@ public class MandatoryLaneChangeChunk extends KnowledgeChunk
 
      // --- Access Contexts (instead of direct perception) -----------------------
 
-        EgoContext egoCtx = this.getAbstractMirovaVehicle()
+        EgoContext egoCtx = this.getMirovaTacticalPlanner()
                 .getContext(EgoContext.class);
 
         Parameters p = getParameters();

@@ -38,9 +38,10 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
 {
 
 
-    public DiscretionaryLaneChangeChunk(final MirovaTacticalPlanner vehicle) throws OperationalPlanException
+    public DiscretionaryLaneChangeChunk(final MirovaTacticalPlanner vehicle) throws OperationalPlanException, ParameterException
     {
         super(vehicle);
+
 
         // procedural maneuvers possibly triggered by discretionary desires
         this.addManeuverPattern(() -> new DefaultLaneChangePattern(this, LateralDirectionality.LEFT));
@@ -56,9 +57,9 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
     @Override
     public Desire computeDesire() throws ParameterException, GtuException, NetworkException
     {
-        Speed vGain = getAbstractMirovaVehicle().getVGain();
+        Speed vGain = getMirovaTacticalPlanner().getVGain();
 
-        MacroTrafficContext macroContext = getAbstractMirovaVehicle().getContext(MacroTrafficContext.class);
+        MacroTrafficContext macroContext = getMirovaTacticalPlanner().getContext(MacroTrafficContext.class);
 
         double leftDist = getInfrastructurePerception().getLegalLaneChangePossibility(RelativeLane.CURRENT,
                 LateralDirectionality.LEFT).si;
@@ -67,9 +68,8 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
         Dimensionless aGain;
         Speed vCur = macroContext.getAverageSpeed(RelativeLane.CURRENT);
 
-        Acceleration aCur = getEgoPerception().getAcceleration();
 
-        aCur = getAbstractMirovaVehicle().computeLongitudinalAcceleration(); // Try.assign(() -> getAbstractMirovaVehicle().computeLongitudinalAcceleration(), "Could not obtain the GTU.");
+        Acceleration aCur = getMirovaTacticalPlanner().computeLongitudinalAcceleration(); // Try.assign(() -> getAbstractMirovaVehicle().computeLongitudinalAcceleration(), "Could not obtain the GTU.");
         if (aCur.si > 0)
         {
             Acceleration a = getParameters().getParameter(ParameterTypes.A);
@@ -91,42 +91,44 @@ public class DiscretionaryLaneChangeChunk extends KnowledgeChunk
         {
             dLeft = 0.0;
         }
-
         // right desire
          double dRight;
          if (rightDist > 0.0 && getInfrastructurePerception().getCrossSection().contains(RelativeLane.RIGHT))
          {
-         Speed vRight = macroContext.getAverageSpeed(RelativeLane.RIGHT);
-         if (vCur.si >= getParameters().getParameter(ParameterTypes.VCONG).si)
-         {
-         dRight = aGain.si * Math.min(vRight.si - vCur.si, 0) / vGain.si;
+             Speed vRight = macroContext.getAverageSpeed(RelativeLane.RIGHT);
+             if (vCur.si >= getParameters().getParameter(ParameterTypes.VCONG).si)
+             {
+                 dRight = aGain.si * Math.min(vRight.si - vCur.si, 0) / vGain.si;
+             }
+             else
+             {
+                 dRight = aGain.si * (vRight.si - vCur.si) / vGain.si;
+             }
          }
          else
-         {
-         dRight = aGain.si * (vRight.si - vCur.si) / vGain.si;
-         }
-         }
-         else
-         {
-         dRight = 0.0;
-         }
-
-         double dFree = getAbstractMirovaVehicle().getDFree(); // getAbstractMirovaVehicle().getGtu().getParameters().getParameter(DFREE);
-
+             {
+             dRight = 0.0;
+             }
+         double dFree = getMirovaTacticalPlanner().getDFree(); // getAbstractMirovaVehicle().getGtu().getParameters().getParameter(DFREE);
          Parameters params = getParameters();
+//         SortedSet<LaneChangeInfo> rightLaneLCInfo =
+//                 getInfrastructurePerception().getLegalLaneChangeInfo(RelativeLane.RIGHT);
+//         System.out.println("Right lane LC info: " + rightLaneLCInfo.toString());
+//         Length rightLaneLCRemainingDistance =
+//                 rightLaneLCInfo.isEmpty() || rightLaneLCInfo.first().numberOfLaneChanges() == 0 ? Length.POSITIVE_INFINITY
+//                         : rightLaneLCInfo.first().remainingDistance();
+//
 
-         SortedSet<LaneChangeInfo> rightLaneLCInfo =
-                 getInfrastructurePerception().getLegalLaneChangeInfo(RelativeLane.RIGHT);
-         Length rightLaneLCRemainingDistance =
-                 rightLaneLCInfo.isEmpty() || rightLaneLCInfo.first().numberOfLaneChanges() == 0 ? Length.POSITIVE_INFINITY
-                         : rightLaneLCInfo.first().remainingDistance();
 
-         if (getTrafficPerception().getSpeed(RelativeLane.RIGHT).ge(getAbstractMirovaVehicle().getGtu().getDesiredSpeed()) && rightLaneLCRemainingDistance
-                 .ge(params.getParameter(ParameterTypes.LOOKAHEAD)))
+         if (rightDist > 0.0)
          {
-             dRight = dRight + dFree;
-         }
+             if (getTrafficPerception().getSpeed(RelativeLane.RIGHT).ge(getMirovaTacticalPlanner().getGtu().getDesiredSpeed()) && Length.instantiateSI(rightDist)
+                     .ge(params.getParameter(ParameterTypes.LOOKAHEAD)))
+             {
+                 dRight = dRight + dFree;
+             }
 
+         }
 
 
         this.desire = new Desire(dLeft, dRight, false);

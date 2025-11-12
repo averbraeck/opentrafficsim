@@ -1,7 +1,11 @@
 package org.opentrafficsim.road.gtu.lane.tactical.mirova.core.context;
 
+import org.djunits.value.vdouble.scalar.Acceleration;
 import org.djunits.value.vdouble.scalar.Speed;
+import org.opentrafficsim.base.parameters.ParameterException;
+import org.opentrafficsim.core.gtu.GtuException;
 import org.opentrafficsim.core.gtu.perception.EgoPerception;
+import org.opentrafficsim.core.network.NetworkException;
 import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 
 /**
@@ -18,8 +22,8 @@ import org.opentrafficsim.road.gtu.lane.tactical.mirova.MirovaTacticalPlanner;
 public class EgoContext extends ContextCategory implements UpdatableContext {
 
     /** Cache key for ego speed. */
-    private static final String EGO_SPEED = "egoSpeed";
-
+    public static final String EGO_SPEED = "egoSpeed";
+    public static final String CURRENT_CF_ACCELERATION = "currentCarFollowingAcceleration";
     // ----------------------------------------------------------------------
     // Construction
     // ----------------------------------------------------------------------
@@ -50,8 +54,23 @@ public class EgoContext extends ContextCategory implements UpdatableContext {
         Speed cached = getCachedValue(EGO_SPEED, Speed.class);
         if (cached != null) return cached;
 
-        Speed result = computeSafeEgoSpeed();
+        Speed result = computeEgoSpeed();
         cacheValue(EGO_SPEED, result, true);
+        return result;
+    }
+
+    /**
+     * @return
+     * @throws ParameterException
+     * @throws GtuException
+     * @throws NetworkException
+     */
+    public Acceleration getCurrentCarFollowingAcceleration() throws ParameterException, GtuException, NetworkException {
+        Acceleration cached = getCachedValue(CURRENT_CF_ACCELERATION, Acceleration.class);
+        if (cached != null) return cached;
+
+        Acceleration result = this.vehicle.computeLongitudinalAcceleration();
+        cacheValue(CURRENT_CF_ACCELERATION, result, true);
         return result;
     }
 
@@ -65,7 +84,7 @@ public class EgoContext extends ContextCategory implements UpdatableContext {
      *
      * @return ego speed or {@link Speed#ZERO} on error
      */
-    private Speed computeSafeEgoSpeed() {
+    private Speed computeEgoSpeed() {
         try {
             return this.vehicle.getPerception()
                     .getPerceptionCategory(EgoPerception.class)

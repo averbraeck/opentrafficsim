@@ -52,8 +52,8 @@ public class DefaultLaneChangePattern extends ManeuverPattern {
      */
     @Override
     public boolean checkContext() {
-        if (this.knowledgeChunk.getAbstractMirovaVehicle().getLaneChangeDesire().dominantDirection().equals(this.direction)) {
-            System.out.println("DefaultLaneChangePattern: checkContext true for direction " + this.direction);
+        if (this.knowledgeChunk.getMirovaTacticalPlanner().getLaneChangeDesire().dominantDirection().equals(this.direction)) {
+//            System.out.println("DefaultLaneChangePattern: checkContext true for direction " + this.direction);
             return true;
         }
         else {
@@ -75,9 +75,9 @@ public class DefaultLaneChangePattern extends ManeuverPattern {
     public boolean checkAbility() throws ParameterException {
         NeighborsContext nctx = this.vehicle.getContext(NeighborsContext.class);
         Acceleration bDes = this.knowledgeChunk.getParameters().getParameter(ParameterTypes.B).neg();
-        System.out.println("DefaultLaneChangePattern: checkAbility with bDes=" + bDes +
-                ", egoDecel=" + nctx.getEgoDeceleration(this.direction) +
-                ", follDecel=" + nctx.getFollowerDeceleration(this.direction));
+//        System.out.println("DefaultLaneChangePattern: checkAbility with bDes=" + bDes +
+//                ", egoDecel=" + nctx.getEgoDeceleration(this.direction) +
+//                ", follDecel=" + nctx.getFollowerDeceleration(this.direction));
         if (nctx.getEgoDeceleration(this.direction).gt(bDes) && nctx.getFollowerDeceleration(this.direction).gt(bDes))
                 {
             return true;
