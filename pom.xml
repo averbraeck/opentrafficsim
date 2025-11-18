@@ -522,6 +522,7 @@
             <link>https://sim0mq.org/docs/latest/apidocs/</link>
             <link>https://docs.junit.org/${junit.version}/api/</link>
             <link>https://javadoc.io/doc/jakarta.annotation/jakarta.annotation-api/${jakarta.annotation.version}/</link>
+            <link>https://javadoc.io/doc/jakarta.xml.bind/jakarta.xml.bind-api/${jakarta.xml.bind-api.version}/</link>
           </links>
           <offlineLinks>
             <offlineLink>
@@ -833,6 +834,7 @@
             <link>https://sim0mq.org/docs/latest/apidocs/</link>
             <link>https://docs.junit.org/${junit.version}/api/</link>
             <link>https://javadoc.io/doc/jakarta.annotation/jakarta.annotation-api/${jakarta.annotation.version}/</link>
+            <link>https://javadoc.io/doc/jakarta.xml.bind/jakarta.xml.bind-api/${jakarta.xml.bind-api.version}/</link>
           </links>
           <offlineLinks>
             <offlineLink>
