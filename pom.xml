@@ -38,6 +38,7 @@
 
   <properties>
     <argLine>-javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar</argLine>
+    <javadocExcludePackageNames>*.generated,org.opentrafficsim.demo.doc,org.opentrafficsim.demo.doc.tutorials</javadocExcludePackageNames>
 
     <jdk.version>17</jdk.version>
     <maven.compiler.source>17</maven.compiler.source>
@@ -595,7 +596,7 @@
           <detectOfflineLinks>true</detectOfflineLinks>
           <detectLinks>true</detectLinks>
           <release>${jdk.version}</release>
-          <excludePackageNames>*.generated,org.opentrafficsim.demo.doc,org.opentrafficsim.demo.doc.tutorials</excludePackageNames>
+          <excludePackageNames>${javadocExcludePackageNames}</excludePackageNames>
         </configuration>
         <executions>
           <execution>
@@ -906,7 +907,7 @@
           <detectOfflineLinks>true</detectOfflineLinks>
           <detectLinks>true</detectLinks>
           <release>${jdk.version}</release>
-          <excludePackageNames>*.generated,org.opentrafficsim.demo.doc,org.opentrafficsim.demo.doc.tutorials</excludePackageNames>
+          <excludePackageNames>${javadocExcludePackageNames}</excludePackageNames>
         </configuration>
         <reportSets>
           <reportSet>
